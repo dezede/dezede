@@ -18,9 +18,9 @@
       {% endfor %}
     </ul>
     <br />
-    <h4 style="text-align: center; font-style: italic;">{% trans "Compte rendu :" %}</h4>
+    <h4 style="text-align: center; font-style: italic;">{% trans "Comptes rendus :" %}</h4>
     <div style="text-align: justify;">
-      {{ source.contenu }}
+      {{ source.contenu|safe }}
     </div>
   </div>
 {% empty %}

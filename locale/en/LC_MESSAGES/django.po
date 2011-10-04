@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-21 16:50+0200\n"
+"POT-Creation-Date: 2011-10-04 18:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,10 +17,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: urls.py:23 urls.py:24 templates/lieu.html:14 templates/lieux.html:5
+#: urls.py:22 urls.py:23 templates/lieu.html:14 templates/lieux.html:5
 #: templates/sources.html:14
 msgid "lieux"
 msgstr "places"
+
+#: templates/source.html:10 templates/sources.html:21
+msgid "Comptes rendus :"
+msgstr "Reports:"
 
 #: templates/sources.html:17
 #, python-format
@@ -30,10 +34,6 @@ msgid ""
 msgstr ""
 "%(prenoms)s <span style=\"font-variant: small-caps;\">%(auteur)s</span> "
 "(%(profession)s), "
-
-#: templates/sources.html:21
-msgid "Compte rendu :"
-msgstr "Report:"
 
 #: templates/sources.html:27
 msgid "Aucune source n'a été trouvée selon ces critères."

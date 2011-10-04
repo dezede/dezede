@@ -7,6 +7,6 @@
     {% endfor %}
   </ol>
   <br />
-  <h4 style="text-align: center; font-style: italic;">Compte-rendu :</h4>
-  {{ source.contenu }}
+  <h4 style="text-align: center; font-style: italic;">{% trans "Comptes rendus :" %}</h4>
+  {{ source.contenu|safe }}
 </div>
