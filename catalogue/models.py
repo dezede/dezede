@@ -1,4 +1,5 @@
 from django.db.models import *
+from tinymce.models import *
 import datetime
 
 class Default(Model):
@@ -41,7 +42,7 @@ class Source(Model):
     lieu = ForeignKey(Lieu, related_name='sources')
     nom = CharField(max_length=500, blank=True)
     programme = ForeignKey(Programme, related_name='sources')
-    contenu = TextField()
+    contenu = HTMLField()
     class Meta:
         ordering = ['date']
     def __unicode__(self):

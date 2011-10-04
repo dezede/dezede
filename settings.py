@@ -1,11 +1,14 @@
 # Django settings for musicologie project.
 # coding: utf-8
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+SITE_ROOT = os.path.abspath(os.path.dirname(__file__))
+
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('Bertrand Bordage', 'bordage.bertrand@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -35,7 +38,7 @@ TIME_ZONE = 'Europe/Paris'
 LANGUAGE_CODE = 'fr'
 
 LANGUAGES = (
-    ('fr', 'Français'),
+    ('fr', 'Francais'),
     ('en', 'English'),
 )
 
@@ -51,17 +54,12 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
-
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+MEDIA_URL = '/media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = ''
@@ -84,11 +82,20 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'musicologie.urls'
 
 TEMPLATE_DIRS = (
-    'templates',
+    os.path.join(SITE_ROOT, 'templates'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
+
+STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    'templates/static',
+)
+
+ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -96,6 +103,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'tinymce',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'musicologie.catalogue',
@@ -106,4 +115,23 @@ LOCALE_PATHS = (
 )
 
 DATE_FORMAT = 'l j F Y'
+
+TINYMCE_DEFAULT_CONFIG = {
+    'mode' : 'textareas',
+    'theme' : 'advanced',
+    'plugins' : 'advhr,advimage,autosave,contextmenu,fullscreen,inlinepopups,insertdatetime,media,nonbreaking,paste,preview,save,searchreplace,style,table',
+    'theme_advanced_buttons1' : 'newdocument,cancel,pasteword,|,fullscreen,preview,code,|,selectall,cut,copy,paste,|,undo,redo,|,link,unlink,image,media,|,table,delete_table,row_after,delete_row,col_after,delete_col,split_cells,merge_cells,|,sub,sup,|,charmap,nonbreaking,|,search',
+    'theme_advanced_buttons2' : 'styleprops,removeformat,formatselect,fontselect,fontsizeselect,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,outdent,indent,|,forecolor,backcolor,|,insertdate,inserttime,advhr',
+    'theme_advanced_buttons3' : '',
+    'theme_advanced_toolbar_location' : 'top',
+    'theme_advanced_toolbar_align' : 'center',
+    'theme_advanced_statusbar_location' : 'bottom',
+    'width' : '768',
+    'theme_advanced_resizing' : 'true',
+    'theme_advanced_resizing_min_width' : '768',
+    'theme_advanced_resizing_max_width' : '768',
+    'plugin_insertdate_dateFormat' : '%A %d %B %Y',
+    'plugin_insertdate_timeFormat' : '%H:%M',
+    'save_enablewhendirty' : 'true',
+}
 

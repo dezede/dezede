@@ -1,5 +1,7 @@
 from django.conf.urls.defaults import *
 from django.utils.translation import ugettext as _
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from musicologie import settings
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -19,5 +21,19 @@ urlpatterns = patterns('',
     (r'^sources/(?P<lieu_slug>[-\w]+)/(?P<annee>\d+)/(?P<mois>\d+)/(?P<jour>\d+)/$', 'catalogue.views.index_sources'),
     (r'^'+_('lieux')+'/$', 'catalogue.views.index_lieux'),
     (r'^'+_('lieux')+'/(?P<lieu_slug>[-\w]+)/$', 'catalogue.views.detail_lieu'),
+    (r'^tinymce/', include('tinymce.urls')),
 )
+
+urlpatterns += staticfiles_urlpatterns()
+
+if settings.DEBUG:
+    from django.views.static import serve
+    _media_url = settings.MEDIA_URL
+    if _media_url.startswith('/'):
+        _media_url = _media_url[1:]
+        urlpatterns += patterns('',
+                                (r'^%s(?P<path>.*)$' % _media_url,
+                                serve,
+                                {'document_root': settings.MEDIA_ROOT}))
+    del(_media_url, serve)
 
