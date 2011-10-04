@@ -1,0 +1,12 @@
+<div style="width: 50%; margin-left: 25%;">
+  <h4 style="text-align: center;">{{ source.date|date:"l d F Y"|capfirst }}</h4>
+  {{ source.lieu }}, {{ source.lieu.parent }}<br />
+  <ol>
+    {% for oeuvre in source.programme.oeuvres.all %}
+      <li>{% for auteur in oeuvre.auteurs.all %}<span style="font-variant: small-caps;">{{ auteur }}</span> ({{ auteur.prenoms }}) [{{ auteur.profession }}], {% endfor %}<i>{{ oeuvre }}</i>, {{ oeuvre.type }}</li>
+    {% endfor %}
+  </ol>
+  <br />
+  <h4 style="text-align: center; font-style: italic;">Compte-rendu :</h4>
+  {{ source.contenu }}
+</div>

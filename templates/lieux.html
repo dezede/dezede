@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% trans "lieux"|capfirst %}
+{% endblock %}
+
+{% block body %}
+  <ul>
+    {% for lieu in lieux %}
+      <li>
+        <a href="{{ lieu.slug }}">{{ lieu }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
