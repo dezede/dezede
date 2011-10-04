@@ -1,0 +1,20 @@
+** Installation **
+
+  Paquets requis :
+    django 1.3.1 (sudo pip install django==1.3.1)
+    python-docutils 0.7
+
+
+** Lancement **
+
+  Préparation des bases de données :
+    python manage.py syncdb
+
+  Collecte des fichiers statiques :
+    python manage.py collectstatic -l
+
+  Compilation des fichier de langues :
+    python manage.py compilemessages
+
+  Lancement du serveur de développement :
+    python manage.py runserver

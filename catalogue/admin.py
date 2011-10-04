@@ -1,4 +1,4 @@
-from catalogue.models import *
+from musicologie.catalogue.models import *
 from django.contrib import admin
 
 class LieuAdmin(admin.ModelAdmin):

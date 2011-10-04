@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from catalogue.models import *
+from musicologie.catalogue.models import *
 from datetime import date
 
 def index_sources(request, lieu_slug=None, annee=None, mois=None, jour=None):
