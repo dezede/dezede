@@ -127,6 +127,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_toolbar_align' : 'center',
     'theme_advanced_statusbar_location' : 'bottom',
     'width' : '768',
+    'height' : '300',
     'theme_advanced_resizing' : 'true',
     'theme_advanced_resizing_min_width' : '768',
     'theme_advanced_resizing_max_width' : '768',
