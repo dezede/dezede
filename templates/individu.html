@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {{ individu }}
+{% endblock %}
+
+{% block body %}
+  <h3>
+    {{ individu }}{% if individu.parent %}, <a href="../{{ individu.parent.slug }}">{{ individu.parent.nom }}</a>{% endif %}
+  </h3>
+  Naissance : {{ individu.naissance }}<br />
+  Mort : {{ individu.mort }}<br />
+  Profession : {{ individu.profession }}<br />
+  
+  {% for enfant in individu.enfants.all %}
+    {% if forloop.first %}
+      Enfants :<br />
+      <ul>
+    {% endif %}
+      <li><a href="/individus/{{ enfant.slug }}">{{ enfant }}</a></li>
+    {% if forloop.last %}
+      </ul>
+    {% endif %}
+  {% endfor %}
+  <hr />
+  {% if individu.oeuvres.all %}
+    Oeuvres :
+    <ul>
+      {% for oeuvre in individu.oeuvres.all %}
+        <li>
+          {{ oeuvre }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}
+

@@ -1,7 +1,6 @@
 from django.shortcuts import render_to_response
 from musicologie.catalogue.models import *
 from datetime import date
-from django.db.models import Q
 
 def index_evenements(request, lieu_slug=None, annee=None, mois=None, jour=None):
     evenements = Evenement.objects
@@ -26,3 +25,11 @@ def index_lieux(request):
 def detail_lieu(request, lieu_slug):
     lieu = Lieu.objects.get(slug=lieu_slug)
     return render_to_response('lieu.html', {'lieu': lieu})
+
+def index_individus(request):
+    return render_to_response('individus.html', {'individus': Individu.objects.all()})
+
+def detail_individu(request, individu_slug):
+    individu = Individu.objects.get(slug=individu_slug)
+    return render_to_response('individu.html', {'individu': individu})
+

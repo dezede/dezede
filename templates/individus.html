@@ -2,22 +2,22 @@
 {% load i18n %}
 
 {% block title %}
-  {% trans "lieux"|capfirst %}
+  {% trans "individus"|capfirst %}
 {% endblock %}
 
 {% block body %}
-  {% for lieu in lieux %}
+  {% for individu in individus %}
     {% if forloop.first %}
       <ul>
     {% endif %}
-     <li>
-      <a href="{{ lieu.slug }}">{{ lieu.nom }}</a>
+    <li>
+      <a href="{{ individu.slug }}">{{ individu }}</a>
     </li>
-    {% if forloop.last %}
+    {% if forloop.first %}
       </ul>
     {% endif %}
   {% empty %}
-    {% trans "Aucun lieu ne figure dans la base de données." %}
+    {% trans "Aucun individu ne figure dans la base de données." %}
   {% endfor %}
 {% endblock %}
 

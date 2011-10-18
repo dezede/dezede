@@ -14,20 +14,22 @@
       <li><a href="/{% trans "lieux" %}/{{ enfant.slug }}">{{ enfant.nom }}</a></li>
     {% endfor %}
   </ul>
-  {% if lieu.evenements.all %}
-    <a href="/evenements/{{ lieu.slug }}">Sources :</a>
-    <ul>
-      {% for evenement in lieu.evenements.all %}
-        <li>
-          <a href="/evenements/{{ lieu.slug }}/{{ evenement.date.year }}/{{ evenement.date.month }}/{{ evenement.date.day }}">
-            {{ evenement.date }} :
-            <ul>
-              {% for oeuvre in evenement.programme.oeuvres.all %}<li>{{ oeuvre.nom }}</li>{% endfor %}
-            </ul>
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+  {% for evenement in lieu.evenements.all %}
+    {% if forloop.first %}
+      <a href="/evenements/{{ lieu.slug }}">Sources :</a>
+      <ul>
+    {% endif %}
+    <li>
+      <a href="/evenements/{{ lieu.slug }}/{{ evenement.date.year }}/{{ evenement.date.month }}/{{ evenement.date.day }}">
+        {{ evenement.date }} :
+        <ul>
+          {% for oeuvre in evenement.programme.oeuvres.all %}<li>{{ oeuvre.nom }}</li>{% endfor %}
+        </ul>
+      </a>
+    </li>
+    {% if forloop.last %}
+      </ul>
+    {% endif %}
+  {% endfor %}
 {% endblock %}
 

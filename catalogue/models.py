@@ -15,7 +15,7 @@ def autoslugify(Mod, nom):
 class Lieu(Model):
     nom = CharField(max_length=200)
     parent = ForeignKey('self', related_name='enfants', null=True, blank=True)
-    slug = SlugField(blank = True)
+    slug = SlugField(blank=True)
     class Meta:
         verbose_name_plural = 'lieux'
         ordering = ['nom']
@@ -30,9 +30,18 @@ class Lieu(Model):
 class Individu(Model):
     nom = CharField(max_length=200)
     prenoms = CharField(max_length=200)
+    naissance = CharField(max_length=100)
+    mort = CharField(max_length=100)
     profession = CharField(max_length=200)
+    parents = ManyToManyField('Individu', related_name='enfants', blank=True)
+    slug = SlugField(blank=True)
+    class Meta:
+        ordering = ['nom']
+    def save(self, *args, **kwargs):
+        self.slug = autoslugify(Individu, self.__unicode__())
+        super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
-        return self.nom
+        return self.prenoms + ' ' + self.nom
 
 class Oeuvre(Model):
     nom = CharField(max_length=200)
