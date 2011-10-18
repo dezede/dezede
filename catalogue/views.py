@@ -1,14 +1,19 @@
 from django.shortcuts import render_to_response
 from musicologie.catalogue.models import *
 from datetime import date
+from django.db.models import Q
 
-def index_sources(request, lieu_slug=None, annee=None, mois=None, jour=None):
-    sources = Source.objects
-    if(lieu_slug): sources = sources.filter(lieu__slug=lieu_slug)
-    if(annee): sources = sources.filter(date__year=int(annee))
-    if(mois): sources = sources.filter(date__month=int(mois))
-    if(jour): sources = sources.filter(date__day=int(jour))
-    return render_to_response('sources.html', {'sources': sources.all()})
+def index_evenements(request, lieu_slug=None, annee=None, mois=None, jour=None):
+    evenements = Evenement.objects
+    if(lieu_slug): evenements = evenements.filter(lieu__slug=lieu_slug)
+    if(annee): evenements = evenements.filter(date__year=int(annee))
+    if(mois): evenements = evenements.filter(date__month=int(mois))
+    if(jour): evenements = evenements.filter(date__day=int(jour))
+    datalist = []
+    for evenement in evenements.all():
+        types = TypedeSource.objects.filter(sources__evenement=evenement).distinct()
+        datalist.append([evenement, types])
+    return render_to_response('evenements.html', {'datalist': datalist})
 
 def detail_source(request, lieu_slug, annee, mois, jour):
     lieu = Lieu.objects.get(slug=lieu_slug)

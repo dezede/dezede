@@ -6,28 +6,28 @@
 {% endblock %}
 
 {% block body %}
-<h3>
-  {{ lieu }}{% if lieu.parent %}, <a href="../{{ lieu.parent.slug }}">{{ lieu.parent }}</a>{% endif %}
-</h3>
-<ul>
-  {% for enfant in lieu.enfants.all %}
-    <li><a href="/{% trans "lieux" %}/{{ enfant.slug }}">{{ enfant }}</a></li>
-  {% endfor %}
-</ul>
-{% if lieu.sources.all %}
-  <a href="/sources/{{ lieu.slug }}">Sources :</a>
+  <h3>
+    {{ lieu.nom }}{% if lieu.parent %}, <a href="../{{ lieu.parent.slug }}">{{ lieu.parent.nom }}</a>{% endif %}
+  </h3>
   <ul>
-    {% for source in lieu.sources.all %}
-      <li>
-        <a href="/sources/{{ lieu.slug }}/{{ source.date.year }}/{{ source.date.month }}/{{ source.date.day }}">
-          {{ source.date }} :
-          <ul>
-            {% for oeuvre in source.programme.oeuvres.all %}<li>{{ oeuvre.nom }}</li>{% endfor %}
-          </ul>
-        </a>
-      </li>
+    {% for enfant in lieu.enfants.all %}
+      <li><a href="/{% trans "lieux" %}/{{ enfant.slug }}">{{ enfant.nom }}</a></li>
     {% endfor %}
   </ul>
-{% endif %}
+  {% if lieu.evenements.all %}
+    <a href="/evenements/{{ lieu.slug }}">Sources :</a>
+    <ul>
+      {% for evenement in lieu.evenements.all %}
+        <li>
+          <a href="/evenements/{{ lieu.slug }}/{{ evenement.date.year }}/{{ evenement.date.month }}/{{ evenement.date.day }}">
+            {{ evenement.date }} :
+            <ul>
+              {% for oeuvre in evenement.programme.oeuvres.all %}<li>{{ oeuvre.nom }}</li>{% endfor %}
+            </ul>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 {% endblock %}
 

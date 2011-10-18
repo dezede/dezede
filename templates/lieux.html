@@ -9,8 +9,9 @@
   <ul>
     {% for lieu in lieux %}
       <li>
-        <a href="{{ lieu.slug }}">{{ lieu }}</a>
+        <a href="{{ lieu.slug }}">{{ lieu.nom }}</a>
       </li>
     {% endfor %}
   </ul>
 {% endblock %}
+

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% for element in datalist %}
+    {% with element|first as evenement %}
+      {{ evenement.lieu }}, {{ evenement.date }}{% if not forloop.last %} &ndash;{% endif %}
+    {% endwith %}
+  {% endfor %}
+{% endblock %}
+
+{% block body %}
+{% for element in datalist %}
+  {% with element|first as evenement %}{% with element|last as types %}
+    <div style="border: 1.5px solid; border-radius: 15px; padding: 20px; margin-bottom: 30px;">
+      <h3 style="text-align: center;">{{ evenement.date|date|capfirst }}</h3>
+      {% if evenement.lieu.parent %}{{ evenement.lieu.parent.nom }},{% endif %}
+      <a href="/{% trans "lieux" %}/{{ evenement.lieu.slug }}">
+        {{ evenement.lieu.nom }}</a><br />
+      <ul>
+        {% for oeuvre in evenement.programme.oeuvres.all %}
+          <li>
+          {% for auteur in oeuvre.auteurs.all %}
+            {% blocktrans with auteur.prenoms as prenoms and auteur.profession as profession %}
+              <span style="font-variant: small-caps;">{{ auteur }}</span> ({{ prenoms }}) [{{ profession }}],
+            {% endblocktrans %}
+          {% endfor %}<i>{{ oeuvre }}</i>, {{ oeuvre.type }}</li>
+        {% endfor %}
+      </ul>
+      <br />
+      {% for type in types %}
+        <h4 style="text-align: center; font-style: italic;">{{ type.pluriel|capfirst }}</h4>
+        {% for source in evenement.sources.all %}
+          {% if source.type == type %}
+            {{ source.contenu|safe }}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  {% endwith %}{% endwith %}
+{% empty %}
+  <div style="text-align: center;">{% trans "Aucune source n'a été trouvée selon ces critères." %}</div>
+{% endfor %}
+{% endblock %}
