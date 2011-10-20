@@ -1,5 +1,7 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
+from django.template import Context, RequestContext
 from musicologie.catalogue.models import *
+from musicologie.catalogue.forms import *
 from datetime import date
 
 def index_evenements(request, lieu_slug=None, annee=None, mois=None, jour=None):
@@ -32,4 +34,19 @@ def index_individus(request):
 def detail_individu(request, individu_slug):
     individu = Individu.objects.get(slug=individu_slug)
     return render_to_response('individu.html', {'individu': individu})
+
+def saisie_source(request, source_id=None):
+    if source_id != None:
+        source = Source.objects.get(pk=source_id)
+    else:
+        source = None
+    if request.method == 'POST':
+        form = SourceForm(request.POST, instance=source)
+        if form.is_valid():
+            form.save()
+            return redirect('/saisie/source/')
+    else:
+        form = SourceForm(instance=source)
+    c = RequestContext(request, {'form': form, 'sources': Source.objects.all(), 'source': source,})
+    return render_to_response('saisie-source.html', c)
 

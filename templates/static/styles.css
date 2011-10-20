@@ -1,0 +1,32 @@
+body
+{
+  margin: 0px;
+}
+
+#navbar
+{
+  width: 768px;
+  margin: 0px auto;
+  margin-bottom: 10px;
+  text-align: center;
+  border: 1px solid black;
+  border-top: none;
+}
+
+#navbar a
+{
+  display: inline-block;
+  padding: 4px 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a
+{
+  color: red;
+}
+
+a:visited
+{
+  color: brown;
+}
