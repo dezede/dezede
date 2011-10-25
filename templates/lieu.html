@@ -23,7 +23,7 @@
       <a href="/evenements/{{ lieu.slug }}/{{ evenement.date.year }}/{{ evenement.date.month }}/{{ evenement.date.day }}">
         {{ evenement.date }} :
         <ul>
-          {% for oeuvre in evenement.programme.oeuvres.all %}<li>{{ oeuvre.nom }}</li>{% endfor %}
+          {% for oeuvre in evenement.programme.oeuvres.all %}<li>{{ oeuvre }}</li>{% endfor %}
         </ul>
       </a>
     </li>

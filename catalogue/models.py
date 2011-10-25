@@ -29,7 +29,7 @@ class Lieu(Model):
 
 class Individu(Model):
     nom = CharField(max_length=200)
-    prenoms = CharField(max_length=200)
+    prenoms = CharField(max_length=200, verbose_name='prénoms')
     naissance = CharField(max_length=100)
     mort = CharField(max_length=100)
     profession = CharField(max_length=200)
@@ -45,23 +45,27 @@ class Individu(Model):
         return self.prenoms + ' ' + self.nom
 
 class Oeuvre(Model):
-    nom = CharField(max_length=200)
-    type = CharField(max_length=200)
+    titre = CharField(max_length=200)
+    soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
+    genre = CharField(max_length=400)
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True)
     slug = SlugField(blank=True)
     def save(self, *args, **kwargs):
         if self.slug == '':
-            self.slug = autoslugify(Oeuvre, self.nom)
+            self.slug = autoslugify(Oeuvre, self.titre)
         super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
-        return self.nom
+        if self.soustitre and Oeuvre.objects.filter(titre=self.titre).count() > 1:
+            return self.titre + ' / ' + self.soustitre
+        else:
+            return self.titre
 
 class Programme(Model):
-    oeuvres = ManyToManyField(Oeuvre, related_name='programmes')
+    oeuvres = ManyToManyField(Oeuvre, related_name='programmes', verbose_name='œuvres')
     def __unicode__(self):
         disp_str = ''
         for i, oeuvre in enumerate(self.oeuvres.all()):
-            disp_str += oeuvre.nom
+            disp_str += oeuvre.titre
             if i < len(self.oeuvres.all()) - 1:
                 disp_str += '  -  '
         return disp_str
@@ -82,7 +86,7 @@ class Evenement(Model):
 
 class TypedeSource(Model):
     nom = CharField(max_length=200)
-    pluriel = CharField(max_length=201)
+    pluriel = CharField(max_length=230)
     class Meta:
         verbose_name = 'type de source'
         verbose_name_plural = 'types de source'
@@ -91,7 +95,7 @@ class TypedeSource(Model):
         return self.nom
 
 class Source(Model):
-    evenement = ForeignKey(Evenement, related_name='sources')
+    evenement = ForeignKey(Evenement, related_name='sources', verbose_name='événement')
     type = ForeignKey(TypedeSource, related_name='sources')
     contenu = HTMLField()
     class Meta:
