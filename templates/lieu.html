@@ -30,6 +30,10 @@
     {% if forloop.last %}
       </ul>
     {% endif %}
+  {% empty %}
+    {% if not lieu.enfants.all %}
+      Aucun événement référencé pour ce lieu.
+    {% endif %}
   {% endfor %}
 {% endblock %}
 
