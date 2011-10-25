@@ -46,7 +46,7 @@ class Individu(Model):
 class Oeuvre(Model):
     nom = CharField(max_length=200)
     type = CharField(max_length=200)
-    auteurs = ManyToManyField(Individu, related_name='oeuvres')
+    auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True)
     slug = SlugField(blank=True)
     def save(self, *args, **kwargs):
         self.slug = autoslugify(Oeuvre, self.nom)

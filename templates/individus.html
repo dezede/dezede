@@ -8,13 +8,24 @@
 {% block body %}
   {% for individu in individus %}
     {% if forloop.first %}
-      <ul>
+      <table class="liste">
+        <thead>
+          <td>Nom</td>
+          <td>Prénoms</td>
+          <td>Naissance</td>
+          <td>Décès</td>
+        </thead>
+        <tbody>
     {% endif %}
-    <li>
-      <a href="{{ individu.slug }}">{{ individu }}</a>
-    </li>
+    <tr onclick="document.location = '/individus/{{ individu.slug }}';" title="Ouvrir l'autorité">
+      <td>{{ individu.nom }}</td>
+      <td>{{ individu.prenoms }}</td>
+      <td>{{ individu.naissance }}</td>
+      <td>{{ individu.mort }}</td>
+    </tr>
     {% if forloop.last %}
-      </ul>
+      </tbody>
+      </table>
     {% endif %}
   {% empty %}
     {% trans "Aucun individu ne figure dans la base de données." %}

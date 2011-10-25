@@ -17,7 +17,7 @@
         {% if evenement.lieu.parent %}{{ evenement.lieu.parent.nom }},{% endif %}
         <a href="/{% trans "lieux" %}/{{ evenement.lieu.slug }}">
           {{ evenement.lieu.nom }}</a><br />
-        <ul>
+        <ol>
           {% for oeuvre in evenement.programme.oeuvres.all %}
             <li>
             {% for auteur in oeuvre.auteurs.all %}
@@ -27,13 +27,13 @@
               {% endblocktrans %}
             {% endfor %}<i>{{ oeuvre }}</i>, {{ oeuvre.type }}</li>
           {% endfor %}
-        </ul>
+        </ol>
         <br />
         {% for type in types %}
           <h4 style="text-align: center; font-style: italic;">{{ type.pluriel|capfirst }}</h4>
           {% for source in evenement.sources.all %}
             {% if source.type == type %}
-              {{ source.contenu|safe }}
+              <div style="text-align: justify;">{{ source.contenu|safe }}</div>
             {% endif %}
           {% endfor %}
         {% endfor %}

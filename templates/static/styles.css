@@ -23,10 +23,35 @@ body
 
 a
 {
-  color: red;
+  color: black;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  -moz-transition: color 0.3s ease;
+  -webkit-transition: color 0.3s ease;
+  -o-transition: color 0.3s ease;
 }
 
-a:visited
+a:hover
 {
-  color: brown;
+  color: red;
+  text-decoration: underline;
 }
+
+.liste td
+{
+  border: 1px solid black;
+  padding: 2px 5px;
+  padding-right: 10px;
+}
+
+.liste tbody tr:hover
+{
+  cursor: pointer;
+  background-color: lightgrey;
+}
+
+.liste
+{
+  border-collapse: collapse;
+}
+
