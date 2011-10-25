@@ -7,15 +7,17 @@
 
 {% block body %}
   <h3>
-    {{ individu }}{% if individu.parent %}, <a href="../{{ individu.parent.slug }}">{{ individu.parent.nom }}</a>{% endif %}
+    {{ individu }}
   </h3>
-  Naissance : {{ individu.naissance }}<br />
-  Mort : {{ individu.mort }}<br />
+  Naissance : {% if individu.naissance %}{{ individu.naissance }}{% else %}?{% endif %}<br />
+  Mort : {% if individu.mort %}{{ individu.mort }}{% else %}?{% endif %}<br />
+  {% if individu.surnom %}Surnom : {{ individu.surnom }}<br />{% endif %}
+  {% for parent in individu.parents.all %}{% if forloop.first %}Parents : {% endif %}<a href="../{{ parent.slug }}">{{ parent }}</a>{% if not forloop.last %},{% else %}<br />{% endif %}{% endfor %}
   Profession : {{ individu.profession }}<br />
-  
+
   {% for enfant in individu.enfants.all %}
     {% if forloop.first %}
-      Enfants :<br />
+      <h4>Enfants :</h4>
       <ul>
     {% endif %}
       <li><a href="/individus/{{ enfant.slug }}">{{ enfant }}</a></li>
@@ -23,16 +25,18 @@
       </ul>
     {% endif %}
   {% endfor %}
-  <hr />
-  {% if individu.oeuvres.all %}
-    Oeuvres :
-    <ul>
-      {% for oeuvre in individu.oeuvres.all %}
-        <li>
-          {{ oeuvre }}
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+  {% for oeuvre in individu.oeuvres.all %}
+    {% if forloop.first %}
+      <hr />
+      <h4>Oeuvres :</h4>
+      <ul>
+    {% endif %}
+    <li>
+      {{ oeuvre }}
+    </li>
+    {% if forloop.last %}
+      </ul>
+    {% endif %}
+  {% endfor %}
 {% endblock %}
 

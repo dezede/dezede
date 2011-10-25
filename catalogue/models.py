@@ -31,9 +31,10 @@ class Lieu(Model):
 
 class Individu(Model):
     nom = CharField(max_length=200)
-    prenoms = CharField(max_length=200, verbose_name='prénoms')
-    naissance = CharField(max_length=100)
-    mort = CharField(max_length=100)
+    prenoms = CharField(max_length=200, verbose_name='prénoms', blank=True)
+    surnom = CharField(max_length=200, blank=True)
+    naissance = CharField(max_length=100, blank=True)
+    mort = CharField(max_length=100, blank=True)
     profession = CharField(max_length=200)
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
     slug = SlugField(blank=True)
@@ -44,7 +45,12 @@ class Individu(Model):
             self.slug = autoslugify(Individu, self.__unicode__())
         super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
-        return self.prenoms + ' ' + self.nom
+        out = self.nom
+        if self.prenoms:
+            out = self.prenoms + ' ' + out
+        if self.surnom:
+            out += ', dit ' + self.surnom
+        return out
 
 class Oeuvre(Model):
     titre = CharField(max_length=200)
