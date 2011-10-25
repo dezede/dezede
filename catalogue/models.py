@@ -38,7 +38,8 @@ class Individu(Model):
     class Meta:
         ordering = ['nom']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Individu, self.__unicode__())
+        if self.slug == '':
+            self.slug = autoslugify(Individu, self.__unicode__())
         super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.prenoms + ' ' + self.nom
@@ -49,7 +50,8 @@ class Oeuvre(Model):
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True)
     slug = SlugField(blank=True)
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Oeuvre, self.nom)
+        if self.slug == '':
+            self.slug = autoslugify(Oeuvre, self.nom)
         super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.nom
