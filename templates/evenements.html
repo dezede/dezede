@@ -18,7 +18,8 @@
         {% if evenement.lieu.parent %}{{ evenement.lieu.parent.nom }},{% endif %}
         <a href="/{% trans "lieux" %}/{{ evenement.lieu.slug }}">
           {{ evenement.lieu.nom }}</a><br />
-        {% if evenement.circonstance %}Circonstance : {{ evenement.circonstance }}<br />
+        {% if evenement.circonstance %}Circonstance : {{ evenement.circonstance }}<br />{% endif %}
+        {% if evenement.heure %}Horaire : {{ evenement.heure }}<br />{% endif %}
         <ol>
           {% for oeuvre in evenement.programme.oeuvres.all %}
             <li>
