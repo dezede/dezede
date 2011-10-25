@@ -12,7 +12,7 @@ def index_evenements(request, lieu_slug=None, annee=None, mois=None, jour=None):
     if(jour): evenements = evenements.filter(date__day=int(jour))
     datalist = []
     for evenement in evenements.all():
-        types = TypedeSource.objects.filter(sources__evenement=evenement).distinct()
+        types = TypedeSource.objects.filter(sources__evenements=evenement).distinct()
         datalist.append([evenement, types])
     return render_to_response('evenements.html', {'datalist': datalist})
 

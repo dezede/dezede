@@ -116,6 +116,8 @@ LOCALE_PATHS = (
 
 DATE_FORMAT = 'l j F Y'
 
+TIME_FORMAT = 'H:i'
+
 TINYMCE_DEFAULT_CONFIG = {
     'mode' : 'textareas',
     'theme' : 'advanced',

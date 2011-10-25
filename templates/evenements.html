@@ -19,7 +19,7 @@
         <a href="/{% trans "lieux" %}/{{ evenement.lieu.slug }}">
           {{ evenement.lieu.nom }}</a><br />
         {% if evenement.circonstance %}Circonstance : {{ evenement.circonstance }}<br />{% endif %}
-        {% if evenement.heure %}Horaire : {{ evenement.heure }}<br />{% endif %}
+        {% if evenement.heure %}Horaire : {{ evenement.heure|time }}<br />{% endif %}
         <ol>
           {% for oeuvre in evenement.programme.oeuvres.all %}
             <li>
@@ -38,7 +38,7 @@
             {% if source.type == type %}
               <div style="text-align: justify;">
                 {{ source.contenu|replace|safe }}<br />
-                (<em>{{ source.nom }}</em> n° {{ source.numero }} du {{ source.date|date }}, p. {{ source.page }})
+                (<em>{{ source.nom }}</em> {% if source.numero %}n° {{ source.numero }}{% endif %} du {{ source.date|date }}{% if source.page %}, p. {{ source.page }}{% endif %})
               </div>
             {% endif %}
           {% endfor %}

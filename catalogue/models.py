@@ -83,8 +83,6 @@ class Evenement(Model):
         ordering = ['date', 'heure', 'lieu']
     def __unicode__(self):
         out = self.lieu.nom + ' le ' + self.date.__str__()
-        if self.heure:
-            out += ' à ' + self.heure
         return out
 
 class TypedeSource(Model):
@@ -100,7 +98,7 @@ class TypedeSource(Model):
 class Source(Model):
     nom = CharField(max_length=200)
     numero = CharField(max_length=50, blank=True)
-    date = CharField(max_length=200)
+    date = DateField()
     page = CharField(max_length=50, blank=True)
     type = ForeignKey(TypedeSource, related_name='sources')
     contenu = HTMLField()
