@@ -71,18 +71,15 @@ class Programme(Model):
         return disp_str
 
 class Evenement(Model):
-    nom = CharField(max_length=500, blank=True)
     date = DateField()
     lieu = ForeignKey(Lieu, related_name='evenements')
+    circonstance = CharField(max_length=500, blank=True)
     programme = ForeignKey(Programme, related_name='evenements')
     class Meta:
         verbose_name = 'événement'
         ordering = ['date', 'lieu']
     def __unicode__(self):
-        if self.nom:
-            return self.nom
-        else:
-            return self.lieu.nom + ' le ' + self.date.__str__()
+        return self.lieu.nom + ' le ' + self.date.__str__()
 
 class TypedeSource(Model):
     nom = CharField(max_length=200)
