@@ -92,11 +92,15 @@ class TypedeSource(Model):
         return self.nom
 
 class Source(Model):
-    evenement = ForeignKey(Evenement, related_name='sources', verbose_name='événement')
+    nom = CharField(max_length=200)
+    numero = CharField(max_length=50, blank=True)
+    date = CharField(max_length=200)
+    page = CharField(max_length=50, blank=True)
     type = ForeignKey(TypedeSource, related_name='sources')
     contenu = HTMLField()
+    evenements = ManyToManyField(Evenement, related_name='sources', verbose_name='événements')
     class Meta:
-        ordering = ['evenement']
+        ordering = ['date']
     def __unicode__(self):
         return self.pk.__str__()
 
