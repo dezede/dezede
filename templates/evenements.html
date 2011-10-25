@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load extras %}
 
 {% block title %}
   {% for element in datalist %}
@@ -21,7 +22,7 @@
           {% for oeuvre in evenement.programme.oeuvres.all %}
             <li>
             {% for auteur in oeuvre.auteurs.all %}
-              {% blocktrans with auteur.slug as slug and auteur.nom as nom and auteur.prenoms as prenoms and auteur.profession as profession %}
+              {% blocktrans with auteur.slug as slug and auteur.nom as nom and auteur.prenoms|abbreviate:0 as prenoms and auteur.profession|abbreviate:1 as profession %}
                 <a href="/individus/{{ slug }}/">
                 <span style="font-variant: small-caps;">{{ nom }}</span> ({{ prenoms }})</a> [{{ profession }}],
               {% endblocktrans %}
@@ -33,7 +34,7 @@
           <h4 style="text-align: center; font-style: italic;">{{ type.pluriel|capfirst }}</h4>
           {% for source in evenement.sources.all %}
             {% if source.type == type %}
-              <div style="text-align: justify;">{{ source.contenu|safe }}</div>
+              <div style="text-align: justify;">{{ source.contenu|replace|safe }}</div>
             {% endif %}
           {% endfor %}
         {% endfor %}
