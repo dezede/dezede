@@ -15,12 +15,14 @@ def autoslugify(Mod, nom):
 class Lieu(Model):
     nom = CharField(max_length=200)
     parent = ForeignKey('self', related_name='enfants', null=True, blank=True)
+    historique = HTMLField(blank=True)
     slug = SlugField(blank=True)
     class Meta:
         verbose_name_plural = 'lieux'
         ordering = ['nom']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Lieu, self.nom)
+        if self.slug == '':
+            self.slug = autoslugify(Lieu, self.nom)
         super(Lieu, self).save(*args, **kwargs)
     def __unicode__(self):
         if self.parent:

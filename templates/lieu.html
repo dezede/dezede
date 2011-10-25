@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load extras %}
 
 {% block title %}
   {{ lieu }}
@@ -9,11 +10,11 @@
   <h3>
     {{ lieu.nom }}{% if lieu.parent %}, <a href="../{{ lieu.parent.slug }}">{{ lieu.parent.nom }}</a>{% endif %}
   </h3>
-  <ul>
-    {% for enfant in lieu.enfants.all %}
-      <li><a href="/{% trans "lieux" %}/{{ enfant.slug }}">{{ enfant.nom }}</a></li>
-    {% endfor %}
-  </ul>
+  {% for enfant in lieu.enfants.all %}
+    {% if forloop.first %}Lieux contenus dans {{ lieu.nom }} :<ul>{% endif %}
+    <li><a href="/{% trans "lieux" %}/{{ enfant.slug }}">{{ enfant.nom }}</a></li>
+    {% if forloop.last %}</ul>{% endif %}
+  {% endfor %}
   {% for evenement in lieu.evenements.all %}
     {% if forloop.first %}
       <a href="/evenements/{{ lieu.slug }}">Sources :</a>
@@ -32,8 +33,13 @@
     {% endif %}
   {% empty %}
     {% if not lieu.enfants.all %}
-      Aucun événement référencé pour ce lieu.
+      Aucun événement référencé pour ce lieu.<br />
     {% endif %}
   {% endfor %}
+  <br />
+  {% if lieu.historique %}
+    <h4>Historique :</h4>
+    {{ lieu.historique|replace|safe }}
+  {% endif %}
 {% endblock %}
 
