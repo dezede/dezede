@@ -37,7 +37,7 @@
           {% for source in evenement.sources.all %}
             {% if source.type == type %}
               <div style="text-align: justify;">
-                {{ source.contenu|replace|safe }}<br />
+                {{ source.contenu|replace|safe }}
                 (<em>{{ source.nom }}</em> {% if source.numero %}n° {{ source.numero }}{% endif %} du {{ source.date|date }}{% if source.page %}, p. {{ source.page }}{% endif %})
               </div>
             {% endif %}
