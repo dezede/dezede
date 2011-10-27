@@ -59,6 +59,7 @@ class Oeuvre(Model):
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
     genre = CharField(max_length=400)
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True)
+    referenced = BooleanField(verbose_name='référencé')
     verified = BooleanField(verbose_name='vérifié')
     slug = SlugField(blank=True)
     def save(self, *args, **kwargs):
