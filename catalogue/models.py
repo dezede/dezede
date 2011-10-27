@@ -55,6 +55,15 @@ class Lieu(Model):
             return self.nom + ', ' + self.parent.nom
         return self.nom
 
+class Saison(Model):
+    lieu = ForeignKey(Lieu, related_name='saisons')
+    debut = DateField(verbose_name='début')
+    fin = DateField()
+    class Meta:
+        ordering = ['lieu', 'debut']
+    def __unicode__(self):
+        return self.lieu.__unicode__() + ', ' + self.debut.year.__str__() + '-' + self.fin.year.__str__()
+
 class Individu(Model):
     nom = CharField(max_length=200)
     nom_jeunesse = CharField(max_length=200, verbose_name='nom de jeunesse', blank=True)
