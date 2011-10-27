@@ -74,8 +74,8 @@ class Oeuvre(Model):
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
     genre = CharField(max_length=400)
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True)
-    referenced = BooleanField(verbose_name='référencé')
-    verified = BooleanField(verbose_name='vérifié')
+    referenced = BooleanField(verbose_name='référencée')
+    verified = BooleanField(verbose_name='vérifiée')
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     class Meta:
@@ -134,7 +134,7 @@ class Source(Model):
     type = ForeignKey(TypedeSource, related_name='sources')
     contenu = HTMLField()
     evenements = ManyToManyField(Evenement, related_name='sources', verbose_name='événements')
-    verified = BooleanField(verbose_name='vérifié')
+    verified = BooleanField(verbose_name='vérifiée')
     notes = HTMLField(blank=True)
     class Meta:
         ordering = ['date', 'nom']
