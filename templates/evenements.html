@@ -21,7 +21,7 @@
         {% if evenement.circonstance %}Circonstance : {{ evenement.circonstance }}<br />{% endif %}
         {% if evenement.heure %}Horaire : {{ evenement.heure|time }}<br />{% endif %}
         <ol>
-          {% for oeuvre in evenement.programme.oeuvres.all %}
+          {% for oeuvre in evenement.representations.oeuvres.all %}
             <li>
             {% for auteur in oeuvre.auteurs.all %}
               {% blocktrans with auteur.slug as slug and auteur.nom as nom and auteur.prenoms|abbreviate:0 as prenoms and auteur.profession|abbreviate:1 as profession %}

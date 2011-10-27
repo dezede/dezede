@@ -4,13 +4,24 @@ from tinymce.models import *
 import datetime
 from django.template.defaultfilters import slugify
 
-def autoslugify(Mod, nom):
+def autoslugify(Mod, nom, slug):
+    if slug != '':
+        return slug
     nom_slug = slug_orig = slugify(nom)
     n = 0
     while Mod.objects.filter(slug=nom_slug).count():
         n += 1;
         nom_slug = slug_orig + str(n)
     return nom_slug
+
+class Statut(Model):
+    nom = CharField(max_length=200)
+    slug = SlugField(blank=True)
+    def save(self, *args, **kwargs):
+        self.slug = autoslugify(Statut, self.nom, self.slug)
+        super(Statut, self).save(*args, **kwargs)
+    def __unicode__(self):
+        return self.nom
 
 class NaturedeLieu(Model):
     nom = CharField(max_length=400)
@@ -20,24 +31,24 @@ class NaturedeLieu(Model):
         verbose_name_plural = 'natures de lieu'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        if self.slug == '':
-            self.slug = autoslugify(NaturedeLieu, self.nom)
+        self.slug = autoslugify(NaturedeLieu, self.nom, self.slug)
         super(NaturedeLieu, self).save(*args, **kwargs)
+    def __unicode__(self):
+        return self.nom
 
 class Lieu(Model):
     nom = CharField(max_length=200)
     parent = ForeignKey('self', related_name='enfants', null=True, blank=True)
     nature = ForeignKey(NaturedeLieu, related_name='lieux')
     historique = HTMLField(blank=True)
-    verified = BooleanField(verbose_name='vérifié')
+    statut = ForeignKey(Statut, related_name='lieux', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     class Meta:
         verbose_name_plural = 'lieux'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        if self.slug == '':
-            self.slug = autoslugify(Lieu, self.nom)
+        self.slug = autoslugify(Lieu, self.nom, self.slug)
         super(Lieu, self).save(*args, **kwargs)
     def __unicode__(self):
         if self.parent:
@@ -53,14 +64,13 @@ class Individu(Model):
     mort = CharField(max_length=100, blank=True)
     profession = CharField(max_length=200)
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
-    verified = BooleanField(verbose_name='vérifié')
+    statut = ForeignKey(Statut, related_name='individus', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     class Meta:
         ordering = ['nom']
     def save(self, *args, **kwargs):
-        if self.slug == '':
-            self.slug = autoslugify(Individu, self.__unicode__())
+        self.slug = autoslugify(Individu, self.__unicode__(), self.slug)
         super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
         out = self.nom
@@ -75,15 +85,14 @@ class Oeuvre(Model):
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
     genre = CharField(max_length=400)
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True)
-    referenced = BooleanField(verbose_name='référencée')
-    verified = BooleanField(verbose_name='vérifiée')
+    referenced = BooleanField(default=True, verbose_name='référencée')
+    statut = ForeignKey(Statut, related_name='oeuvres', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     class Meta:
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        if self.slug == '':
-            self.slug = autoslugify(Oeuvre, self.titre)
+        self.slug = autoslugify(Oeuvre, self.titre, self.slug)
         super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
         if self.soustitre and Oeuvre.objects.filter(titre=self.titre).count() > 1:
@@ -91,15 +100,21 @@ class Oeuvre(Model):
         else:
             return self.titre
 
-class Programme(Model):
-    oeuvres = ManyToManyField(Oeuvre, related_name='programmes', verbose_name='œuvres')
-    verified = BooleanField(verbose_name='vérifié')
+class Representation(Model):
+    oeuvres = ManyToManyField(Oeuvre, related_name='representations', verbose_name='œuvres')
+    premiere_relative = BooleanField(verbose_name='première relative')
+    premiere_absolue = BooleanField(verbose_name='première absolue')
+    statut = ForeignKey(Statut, related_name='representations', null=True, blank=True)
+    class Meta:
+        verbose_name = 'Représentation'
     def __unicode__(self):
         disp_str = ''
         for i, oeuvre in enumerate(self.oeuvres.all()):
             disp_str += oeuvre.titre
-            if i < len(self.oeuvres.all()) - 1:
-                disp_str += '  -  '
+            if i < len(self.oeuvres.all()) - 2:
+                disp_str += ', '
+            if i == len(self.oeuvres.all()) - 1:
+                disp_str += ' et '
         return disp_str
 
 class Evenement(Model):
@@ -107,8 +122,8 @@ class Evenement(Model):
     heure = TimeField(blank=True, null=True)
     lieu = ForeignKey(Lieu, related_name='evenements')
     circonstance = CharField(max_length=500, blank=True)
-    programme = ForeignKey(Programme, related_name='evenements')
-    verified = BooleanField(verbose_name='vérifié')
+    representations = ForeignKey(Representation, related_name='evenements')
+    statut = ForeignKey(Statut, related_name='evenements', null=True, blank=True)
     notes = HTMLField(blank=True)
     class Meta:
         verbose_name = 'événement'
@@ -135,7 +150,7 @@ class Source(Model):
     type = ForeignKey(TypedeSource, related_name='sources')
     contenu = HTMLField()
     evenements = ManyToManyField(Evenement, related_name='sources', verbose_name='événements')
-    verified = BooleanField(verbose_name='vérifiée')
+    statut = ForeignKey(Statut, related_name='sources', null=True, blank=True)
     notes = HTMLField(blank=True)
     class Meta:
         ordering = ['date', 'nom']
