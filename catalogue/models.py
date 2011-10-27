@@ -16,6 +16,7 @@ class Lieu(Model):
     nom = CharField(max_length=200)
     parent = ForeignKey('self', related_name='enfants', null=True, blank=True)
     historique = HTMLField(blank=True)
+    verified = BooleanField(verbose_name='vérifié')
     slug = SlugField(blank=True)
     class Meta:
         verbose_name_plural = 'lieux'
@@ -37,6 +38,7 @@ class Individu(Model):
     mort = CharField(max_length=100, blank=True)
     profession = CharField(max_length=200)
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
+    verified = BooleanField(verbose_name='vérifié')
     slug = SlugField(blank=True)
     class Meta:
         ordering = ['nom']
@@ -57,6 +59,7 @@ class Oeuvre(Model):
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
     genre = CharField(max_length=400)
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True)
+    verified = BooleanField(verbose_name='vérifié')
     slug = SlugField(blank=True)
     def save(self, *args, **kwargs):
         if self.slug == '':
@@ -70,6 +73,7 @@ class Oeuvre(Model):
 
 class Programme(Model):
     oeuvres = ManyToManyField(Oeuvre, related_name='programmes', verbose_name='œuvres')
+    verified = BooleanField(verbose_name='vérifié')
     def __unicode__(self):
         disp_str = ''
         for i, oeuvre in enumerate(self.oeuvres.all()):
@@ -84,6 +88,7 @@ class Evenement(Model):
     lieu = ForeignKey(Lieu, related_name='evenements')
     circonstance = CharField(max_length=500, blank=True)
     programme = ForeignKey(Programme, related_name='evenements')
+    verified = BooleanField(verbose_name='vérifié')
     class Meta:
         verbose_name = 'événement'
         ordering = ['date', 'heure', 'lieu']
@@ -109,6 +114,7 @@ class Source(Model):
     type = ForeignKey(TypedeSource, related_name='sources')
     contenu = HTMLField()
     evenements = ManyToManyField(Evenement, related_name='sources', verbose_name='événements')
+    verified = BooleanField(verbose_name='vérifié')
     class Meta:
         ordering = ['date']
     def __unicode__(self):
