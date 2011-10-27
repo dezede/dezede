@@ -122,7 +122,7 @@ class Representation(Model):
             disp_str += oeuvre.titre
             if i < len(self.oeuvres.all()) - 2:
                 disp_str += ', '
-            if i == len(self.oeuvres.all()) - 1:
+            if i == len(self.oeuvres.all()) - 2:
                 disp_str += ' et '
         return disp_str
 
