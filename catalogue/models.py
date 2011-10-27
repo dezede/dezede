@@ -57,7 +57,7 @@ class Lieu(Model):
 
 class Individu(Model):
     nom = CharField(max_length=200)
-    nom_jeunesse = CharField(max_length=200, verbose_name='nom de jeunesse')
+    nom_jeunesse = CharField(max_length=200, verbose_name='nom de jeunesse', blank=True)
     prenoms = CharField(max_length=200, verbose_name='prénoms', blank=True)
     surnom = CharField(max_length=200, blank=True)
     naissance = CharField(max_length=100, blank=True)
