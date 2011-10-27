@@ -1,6 +1,9 @@
 from musicologie.catalogue.models import *
 from django.contrib import admin
 
+class NaturedeLieuAdmin(admin.ModelAdmin):
+    exclude = ['slug']
+
 class LieuAdmin(admin.ModelAdmin):
     exclude = ['slug']
 
@@ -19,5 +22,6 @@ admin.site.register(Oeuvre, OeuvreAdmin)
 admin.site.register(Programme)
 admin.site.register(TypedeSource, TypedeSourceAdmin)
 admin.site.register(Evenement)
+admin.site.register(NaturedeLieu, NaturedeLieuAdmin)
 admin.site.register(Lieu, LieuAdmin)
 

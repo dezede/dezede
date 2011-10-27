@@ -12,15 +12,29 @@ def autoslugify(Mod, nom):
         nom_slug = slug_orig + str(n)
     return nom_slug
 
+class NaturedeLieu(Model):
+    nom = CharField(max_length=400)
+    slug = SlugField(blank=True)
+    class Meta:
+        verbose_name = 'nature de lieu'
+        verbose_name_plural = 'natures de lieu'
+        ordering = ['slug']
+    def save(self, *args, **kwargs):
+        if self.slug == '':
+            self.slug = autoslugify(NaturedeLieu, self.nom)
+        super(NaturedeLieu, self).save(*args, **kwargs)
+
 class Lieu(Model):
     nom = CharField(max_length=200)
     parent = ForeignKey('self', related_name='enfants', null=True, blank=True)
+    nature = ForeignKey(NaturedeLieu, related_name='lieux')
     historique = HTMLField(blank=True)
     verified = BooleanField(verbose_name='vérifié')
+    notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     class Meta:
         verbose_name_plural = 'lieux'
-        ordering = ['nom']
+        ordering = ['slug']
     def save(self, *args, **kwargs):
         if self.slug == '':
             self.slug = autoslugify(Lieu, self.nom)
@@ -39,6 +53,7 @@ class Individu(Model):
     profession = CharField(max_length=200)
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
     verified = BooleanField(verbose_name='vérifié')
+    notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     class Meta:
         ordering = ['nom']
@@ -61,7 +76,10 @@ class Oeuvre(Model):
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True)
     referenced = BooleanField(verbose_name='référencé')
     verified = BooleanField(verbose_name='vérifié')
+    notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
+    class Meta:
+        ordering = ['slug']
     def save(self, *args, **kwargs):
         if self.slug == '':
             self.slug = autoslugify(Oeuvre, self.titre)
@@ -90,6 +108,7 @@ class Evenement(Model):
     circonstance = CharField(max_length=500, blank=True)
     programme = ForeignKey(Programme, related_name='evenements')
     verified = BooleanField(verbose_name='vérifié')
+    notes = HTMLField(blank=True)
     class Meta:
         verbose_name = 'événement'
         ordering = ['date', 'heure', 'lieu']
@@ -116,8 +135,9 @@ class Source(Model):
     contenu = HTMLField()
     evenements = ManyToManyField(Evenement, related_name='sources', verbose_name='événements')
     verified = BooleanField(verbose_name='vérifié')
+    notes = HTMLField(blank=True)
     class Meta:
-        ordering = ['date']
+        ordering = ['date', 'nom']
     def __unicode__(self):
         return self.pk.__str__()
 
