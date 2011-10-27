@@ -10,8 +10,8 @@
     {% if forloop.first %}
       <ul>
     {% endif %}
-     <li>
-      <a href="{{ lieu.slug }}">{{ lieu.nom }}</a>
+    <li>
+      <a href="{{ lieu.slug }}">{{ lieu.nom }}</a>{% if lieu.parent %} ({{ lieu.parent.nom }}){% endif %}
     </li>
     {% if forloop.last %}
       </ul>

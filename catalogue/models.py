@@ -80,7 +80,7 @@ class Programme(Model):
 
 class Evenement(Model):
     date = DateField()
-    heure = TimeField(blank=True)
+    heure = TimeField(blank=True, null=True)
     lieu = ForeignKey(Lieu, related_name='evenements')
     circonstance = CharField(max_length=500, blank=True)
     programme = ForeignKey(Programme, related_name='evenements')
