@@ -3,6 +3,7 @@ from django.db.models import *
 from tinymce.models import *
 import datetime
 from django.template.defaultfilters import slugify
+from filebrowser.fields import FileBrowseField
 
 def autoslugify(Mod, nom, slug):
     if slug != '':
@@ -13,6 +14,17 @@ def autoslugify(Mod, nom, slug):
         n += 1;
         nom_slug = slug_orig + str(n)
     return nom_slug
+
+class Illustration(Model):
+    nom = CharField(max_length=300, blank=True)
+    image = FileBrowseField('Image', max_length=400, directory='images/')
+    description = HTMLField(blank=True)
+    class Meta:
+        ordering = ['image']
+    def __unicode__(self):
+        if self.nom:
+            return self.nom
+        return self.image.__unicode__()
 
 class Statut(Model):
     nom = CharField(max_length=200)
@@ -41,6 +53,7 @@ class Lieu(Model):
     parent = ForeignKey('self', related_name='enfants', null=True, blank=True)
     nature = ForeignKey(NaturedeLieu, related_name='lieux')
     historique = HTMLField(blank=True)
+    illustrations = ManyToManyField(Illustration, related_name='lieux', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='lieux', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
@@ -73,6 +86,7 @@ class Individu(Model):
     mort = CharField(max_length=100, blank=True)
     profession = CharField(max_length=200)
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
+    illustrations = ManyToManyField(Illustration, related_name='individus', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='individus', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
@@ -95,10 +109,12 @@ class Oeuvre(Model):
     genre = CharField(max_length=400)
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True)
     referenced = BooleanField(default=True, verbose_name='référencée')
+    illustrations = ManyToManyField(Illustration, related_name='oeuvres', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='oeuvres', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     class Meta:
+        verbose_name='œuvre'
         ordering = ['slug']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(Oeuvre, self.titre, self.slug)
@@ -113,6 +129,7 @@ class Representation(Model):
     oeuvres = ManyToManyField(Oeuvre, related_name='representations', verbose_name='œuvres')
     premiere_relative = BooleanField(verbose_name='première relative')
     premiere_absolue = BooleanField(verbose_name='première absolue')
+    illustrations = ManyToManyField(Illustration, related_name='representations', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='representations', null=True, blank=True)
     class Meta:
         verbose_name = 'Représentation'
@@ -135,6 +152,7 @@ class Evenement(Model):
     relache = BooleanField(verbose_name='relâche')
     circonstance = CharField(max_length=500, blank=True)
     representations = ForeignKey(Representation, related_name='evenements', verbose_name='représentations', blank=True, null=True)
+    illustrations = ManyToManyField(Illustration, related_name='evenements', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='evenements', null=True, blank=True)
     notes = HTMLField(blank=True)
     class Meta:
@@ -162,6 +180,7 @@ class Source(Model):
     type = ForeignKey(TypedeSource, related_name='sources')
     contenu = HTMLField()
     evenements = ManyToManyField(Evenement, related_name='sources', verbose_name='événements')
+    illustrations = ManyToManyField(Illustration, related_name='sources', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='sources', null=True, blank=True)
     notes = HTMLField(blank=True)
     class Meta:

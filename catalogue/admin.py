@@ -19,6 +19,7 @@ class OeuvreAdmin(admin.ModelAdmin):
 class TypedeSourceAdmin(admin.ModelAdmin):
     prepopulated_fields = {'pluriel': ('nom',)}
 
+admin.site.register(Illustration)
 admin.site.register(Statut, StatutAdmin)
 admin.site.register(NaturedeLieu, NaturedeLieuAdmin)
 admin.site.register(Lieu, LieuAdmin)
