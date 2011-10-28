@@ -26,6 +26,8 @@ urlpatterns = patterns('',
     (r'^'+_('lieux')+'/$', 'catalogue.views.index_lieux'),
     (r'^'+_('lieux')+'/(?P<lieu_slug>[-\w]+)/$', 'catalogue.views.detail_lieu'),
     (r'^tinymce/', include('tinymce.urls')),
+    (r'^grappelli/', include('grappelli.urls')),
+    (r'^admin/filebrowser/', include('filebrowser.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

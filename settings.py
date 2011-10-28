@@ -95,7 +95,7 @@ STATICFILES_DIRS = (
     'templates/static',
 )
 
-ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
+ADMIN_MEDIA_PREFIX = STATIC_URL + "grappelli/"
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -105,6 +105,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tinymce',
+    'grappelli',
+    'filebrowser',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'musicologie.catalogue',
