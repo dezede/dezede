@@ -127,16 +127,19 @@ class Representation(Model):
         return disp_str
 
 class Evenement(Model):
-    date = DateField()
-    heure = TimeField(blank=True, null=True)
+    date_debut = DateField()
+    heure_debut = TimeField(blank=True, null=True)
+    date_fin = DateField(blank=True, null=True, help_text='À ne préciser que si l\'événement dure plusieurs jours.')
+    heure_fin = TimeField(blank=True, null=True)
     lieu = ForeignKey(Lieu, related_name='evenements')
+    relache = BooleanField(verbose_name='relâche')
     circonstance = CharField(max_length=500, blank=True)
-    representations = ForeignKey(Representation, related_name='evenements')
+    representations = ForeignKey(Representation, related_name='evenements', verbose_name='représentations', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='evenements', null=True, blank=True)
     notes = HTMLField(blank=True)
     class Meta:
         verbose_name = 'événement'
-        ordering = ['date', 'heure', 'lieu']
+        ordering = ['date_debut', 'heure_debut', 'lieu']
     def __unicode__(self):
         out = self.lieu.nom + ' le ' + self.date.__str__()
         return out

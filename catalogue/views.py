@@ -7,9 +7,9 @@ from datetime import date
 def index_evenements(request, lieu_slug=None, annee=None, mois=None, jour=None):
     evenements = Evenement.objects
     if(lieu_slug): evenements = evenements.filter(lieu__slug=lieu_slug)
-    if(annee): evenements = evenements.filter(date__year=int(annee))
-    if(mois): evenements = evenements.filter(date__month=int(mois))
-    if(jour): evenements = evenements.filter(date__day=int(jour))
+    if(annee): evenements = evenements.filter(date_debut__year=int(annee))
+    if(mois): evenements = evenements.filter(date_debut__month=int(mois))
+    if(jour): evenements = evenements.filter(date_debut__day=int(jour))
     datalist = []
     for evenement in evenements.all():
         types = TypedeSource.objects.filter(sources__evenements=evenement).distinct()
