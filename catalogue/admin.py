@@ -10,6 +10,9 @@ class NaturedeLieuAdmin(admin.ModelAdmin):
 class LieuAdmin(admin.ModelAdmin):
     exclude = ['slug']
 
+class ProfessionAdmin(admin.ModelAdmin):
+    exclude = ['slug']
+
 class IndividuAdmin(admin.ModelAdmin):
     exclude = ['slug']
 
@@ -17,13 +20,14 @@ class OeuvreAdmin(admin.ModelAdmin):
     exclude = ['slug']
 
 class TypedeSourceAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'pluriel': ('nom',)}
+    exclude = ['slug']
 
 admin.site.register(Illustration)
 admin.site.register(Statut, StatutAdmin)
 admin.site.register(NaturedeLieu, NaturedeLieuAdmin)
 admin.site.register(Lieu, LieuAdmin)
 admin.site.register(Saison)
+admin.site.register(Profession, ProfessionAdmin)
 admin.site.register(Individu, IndividuAdmin)
 admin.site.register(Oeuvre, OeuvreAdmin)
 admin.site.register(Representation)

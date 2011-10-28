@@ -28,6 +28,7 @@ class Illustration(Model):
 
 class Statut(Model):
     nom = CharField(max_length=200)
+    nom_pluriel = CharField(max_length=230, blank=True, verbose_name='nom (au pluriel)')
     slug = SlugField(blank=True)
     class Meta:
         ordering = ['nom']
@@ -39,6 +40,7 @@ class Statut(Model):
 
 class NaturedeLieu(Model):
     nom = CharField(max_length=400)
+    nom_pluriel = CharField(max_length=430, blank=True, verbose_name='nom (au pluriel)')
     slug = SlugField(blank=True)
     class Meta:
         verbose_name = 'nature de lieu'
@@ -79,6 +81,18 @@ class Saison(Model):
     def __unicode__(self):
         return self.lieu.__unicode__() + ', ' + self.debut.year.__str__() + '-' + self.fin.year.__str__()
 
+class Profession(Model):
+    nom = CharField(max_length=200)
+    nom_pluriel = CharField(max_length=230, blank=True, verbose_name='nom (au pluriel)')
+    slug = SlugField(blank=True)
+    class Meta:
+        ordering = ['slug']
+    def save(self, *args, **kwargs):
+        self.slug = autoslugify(Profession, self.__unicode__(), self.slug)
+        super(Profession, self).save(*args, **kwargs)
+    def __unicode__(self):
+        return self.nom
+
 class Individu(Model):
     nom = CharField(max_length=200)
     nom_jeunesse = CharField(max_length=200, verbose_name='nom de jeunesse', blank=True)
@@ -106,7 +120,7 @@ class Individu(Model):
     lieu_approx = CharField(max_length=200, blank=True,
                             verbose_name='lieu approximatif',
                             help_text='Ne remplir que si aucun champ de lieu ci-dessus ne convient.')
-    profession = CharField(max_length=200)
+    professions = ManyToManyField(Profession, related_name='individus')
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
     illustrations = ManyToManyField(Illustration, related_name='individus', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='individus', null=True, blank=True)
@@ -181,16 +195,19 @@ class Evenement(Model):
         verbose_name = 'événement'
         ordering = ['date_debut', 'heure_debut', 'lieu']
     def __unicode__(self):
-        out = self.lieu.nom + ' le ' + self.date.__str__()
-        return out
+        return self.lieu.nom + ' le ' + self.date_debut.__str__()
 
 class TypedeSource(Model):
     nom = CharField(max_length=200)
-    pluriel = CharField(max_length=230)
+    nom_pluriel = CharField(max_length=230, blank=True, verbose_name='nom (au pluriel)')
+    slug = SlugField(blank=True)
     class Meta:
         verbose_name = 'type de source'
         verbose_name_plural = 'types de source'
-        ordering = ['nom']
+        ordering = ['slug']
+    def save(self, *args, **kwargs):
+        self.slug = autoslugify(Oeuvre, self.titre, self.slug)
+        super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.nom
 
