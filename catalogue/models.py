@@ -15,6 +15,17 @@ def autoslugify(Mod, nom, slug):
         nom_slug = slug_orig + str(n)
     return nom_slug
 
+class Document(Model):
+    nom = CharField(max_length=300, blank=True)
+    document = FileBrowseField('Document', max_length=400, directory='documents/')
+    description = HTMLField(blank=True)
+    class Meta:
+        ordering = ['document']
+    def __unicode__(self):
+        if self.nom:
+            return self.nom
+        return self.document.__unicode__()
+
 class Illustration(Model):
     nom = CharField(max_length=300, blank=True)
     image = FileBrowseField('Image', max_length=400, directory='images/')
@@ -58,6 +69,7 @@ class Lieu(Model):
     nature = ForeignKey(NaturedeLieu, related_name='lieux')
     historique = HTMLField(blank=True)
     illustrations = ManyToManyField(Illustration, related_name='lieux', blank=True, null=True)
+    documents = ManyToManyField(Document, related_name='lieux', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='lieux', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
@@ -124,6 +136,7 @@ class Individu(Model):
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
     biographie = HTMLField(blank=True)
     illustrations = ManyToManyField(Illustration, related_name='individus', blank=True, null=True)
+    documents = ManyToManyField(Document, related_name='individus', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='individus', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
@@ -146,6 +159,7 @@ class Livret(Model):
     auteurs = ManyToManyField(Individu, related_name='livrets', blank=True)
     description = HTMLField(blank=True)
     parents = ManyToManyField('Livret', related_name='enfants', blank=True)
+    documents = ManyToManyField(Document, related_name='livrets', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='livrets', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='livrets', null=True, blank=True)
     notes = HTMLField(blank=True)
@@ -170,6 +184,7 @@ class Oeuvre(Model):
     description = HTMLField(blank=True)
     parents = ManyToManyField('Oeuvre', related_name='enfants', blank=True, null=True)
     referenced = BooleanField(default=True, verbose_name='référencée')
+    documents = ManyToManyField(Document, related_name='oeuvres', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='oeuvres', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='oeuvres', null=True, blank=True)
     notes = HTMLField(blank=True)
@@ -191,6 +206,7 @@ class Representation(Model):
     premiere_relative = BooleanField(verbose_name='première relative')
     premiere_absolue = BooleanField(verbose_name='première absolue')
     illustrations = ManyToManyField(Illustration, related_name='representations', blank=True, null=True)
+    documents = ManyToManyField(Document, related_name='representations', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='representations', null=True, blank=True)
     class Meta:
         verbose_name = 'Représentation'
@@ -213,6 +229,7 @@ class Evenement(Model):
     relache = BooleanField(verbose_name='relâche')
     circonstance = CharField(max_length=500, blank=True)
     representations = ForeignKey(Representation, related_name='evenements', verbose_name='représentations', blank=True, null=True)
+    documents = ManyToManyField(Document, related_name='evenements', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='evenements', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='evenements', null=True, blank=True)
     notes = HTMLField(blank=True)
@@ -244,6 +261,7 @@ class Source(Model):
     type = ForeignKey(TypedeSource, related_name='sources')
     contenu = HTMLField()
     evenements = ManyToManyField(Evenement, related_name='sources', verbose_name='événements')
+    documents = ManyToManyField(Document, related_name='sources', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='sources', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='sources', null=True, blank=True)
     notes = HTMLField(blank=True)

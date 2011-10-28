@@ -25,6 +25,7 @@ class OeuvreAdmin(admin.ModelAdmin):
 class TypedeSourceAdmin(admin.ModelAdmin):
     exclude = ['slug']
 
+admin.site.register(Document)
 admin.site.register(Illustration)
 admin.site.register(Statut, StatutAdmin)
 admin.site.register(NaturedeLieu, NaturedeLieuAdmin)
