@@ -1,6 +1,7 @@
 # coding: utf-8
 import re
 import unicodedata
+from django.template.defaultfilters import date
 
 from django import template
 register = template.Library()
@@ -23,7 +24,7 @@ def is_vowel(string):
     return remove_diacritics(string.lower()) in list('aeiouy')
 
 @register.filter
-def abbreviate(string, limit):
+def abbreviate(string, limit=0):
     out = ''
     for i, sub in enumerate(re.split('-', string)): # TODO: créer un catalogue de ponctuations de séparation.
         tmp_limit = limit
@@ -47,5 +48,35 @@ def abbreviate(string, limit):
         if i > 0:
             out += '-'
         out += sub
+    return out
+
+@register.filter
+def naissance(obj):
+    out = ''
+    if obj.date_naissance:
+        out += date(obj.date_naissance, 'SHORT_DATE_FORMAT').encode('utf-8')
+    elif obj.date_naissance_approx:
+        out += obj.date_naissance_approx
+    else:
+        return None
+    if obj.lieu_naissance:
+        out += ', ' + obj.lieu_naissance.nom.encode('utf-8')
+    elif obj.lieu_naissance_approx:
+        out += ', ' + obj.lieu_naissance_approx
+    return out
+
+@register.filter
+def mort(obj):
+    out = ''
+    if obj.date_mort:
+        out += date(obj.date_mort, 'SHORT_DATE_FORMAT').encode('utf-8')
+    elif obj.date_mort_approx:
+        out += obj.date_mort_approx
+    else:
+        return None
+    if obj.lieu_mort:
+        out += ', ' + obj.lieu_mort.nom.encode('utf-8')
+    elif obj.lieu_naissance_approx:
+        out += ', ' + obj.lieu_mort_approx
     return out
 

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load extras %}
 
 {% block title %}
   {{ individu }}
@@ -9,8 +10,10 @@
   <h3>
     {{ individu }}
   </h3>
-  Naissance : {% if individu.naissance %}{{ individu.naissance }}{% else %}?{% endif %}<br />
-  Mort : {% if individu.mort %}{{ individu.mort }}{% else %}?{% endif %}<br />
+  {% if individu|naissance %}Naissance : {{ individu|naissance }}<br />{% endif %}
+  {% if individu|mort %}Mort : {{ individu|mort }}<br />{% endif %}
+  {% if individu.epoque %}Époque : {{ individu.epoque }}<br />{% endif %}
+  {% if individu.lieu_approx %}Lieu : {{ individu.lieu_approx }}<br />{% endif %}
   {% if individu.surnom %}Surnom : {{ individu.surnom }}<br />{% endif %}
   {% for parent in individu.parents.all %}{% if forloop.first %}Parents : {% endif %}<a href="../{{ parent.slug }}">{{ parent }}</a>{% if not forloop.last %},{% else %}<br />{% endif %}{% endfor %}
   Profession : {{ individu.profession }}<br />

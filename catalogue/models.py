@@ -29,6 +29,8 @@ class Illustration(Model):
 class Statut(Model):
     nom = CharField(max_length=200)
     slug = SlugField(blank=True)
+    class Meta:
+        ordering = ['nom']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(Statut, self.nom, self.slug)
         super(Statut, self).save(*args, **kwargs)
@@ -82,8 +84,28 @@ class Individu(Model):
     nom_jeunesse = CharField(max_length=200, verbose_name='nom de jeunesse', blank=True)
     prenoms = CharField(max_length=200, verbose_name='prénoms', blank=True)
     surnom = CharField(max_length=200, blank=True)
-    naissance = CharField(max_length=100, blank=True)
-    mort = CharField(max_length=100, blank=True)
+    date_naissance = DateField(blank=True, null=True, verbose_name='date de naissance')
+    lieu_naissance = ForeignKey(Lieu, related_name='individus_nes', blank=True, null=True, verbose_name='lieu de naissance')
+    date_naissance_approx = CharField(max_length=200, blank=True,
+                                      verbose_name='date approximative de naissance',
+                                      help_text='Ne remplir que si la date de naissance est imprécise.')
+    lieu_naissance_approx = CharField(max_length=200, blank=True,
+                                      verbose_name='lieu approximatif de naissance',
+                                      help_text='Ne remplir que si le lieu de naissance est imprécis.')
+    date_mort = DateField(blank=True, null=True, verbose_name='date de décès')
+    lieu_mort = ForeignKey(Lieu, related_name='individus_morts', blank=True, null=True, verbose_name='lieu de décès')
+    date_mort_approx = CharField(max_length=200, blank=True,
+                                 verbose_name='date approximative de décès',
+                                 help_text='Ne remplir que si la date de décès est imprécise.')
+    lieu_mort_approx = CharField(max_length=200, blank=True,
+                                 verbose_name='lieu approximatif de décès',
+                                 help_text='Ne remplir que si le lieu de décès est imprécis.')
+    epoque = CharField(max_length=200, blank=True,
+                       verbose_name='époque approximative',
+                       help_text='Ne remplir que si aucun champ de date ci-dessus ne convient.')
+    lieu_approx = CharField(max_length=200, blank=True,
+                            verbose_name='lieu approximatif',
+                            help_text='Ne remplir que si aucun champ de lieu ci-dessus ne convient.')
     profession = CharField(max_length=200)
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
     illustrations = ManyToManyField(Illustration, related_name='individus', blank=True, null=True)

@@ -2,7 +2,6 @@ from django.shortcuts import render_to_response, redirect
 from django.template import Context, RequestContext
 from musicologie.catalogue.models import *
 from musicologie.catalogue.forms import *
-from datetime import date
 
 def index_evenements(request, lieu_slug=None, annee=None, mois=None, jour=None):
     evenements = Evenement.objects
