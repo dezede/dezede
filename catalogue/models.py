@@ -5,6 +5,8 @@ import datetime
 from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
 
+PLURAL_MSG = 'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».'
+
 def autoslugify(Mod, nom, slug):
     if slug != '':
         return slug
@@ -39,7 +41,9 @@ class Illustration(Model):
 
 class Statut(Model):
     nom = CharField(max_length=200)
-    nom_pluriel = CharField(max_length=230, blank=True, verbose_name='nom (au pluriel)')
+    nom_pluriel = CharField(max_length=230, blank=True,
+                            verbose_name='nom (au pluriel)',
+                            help_text=PLURAL_MSG)
     slug = SlugField(blank=True)
     class Meta:
         ordering = ['slug']
@@ -51,7 +55,9 @@ class Statut(Model):
 
 class NaturedeLieu(Model):
     nom = CharField(max_length=400)
-    nom_pluriel = CharField(max_length=430, blank=True, verbose_name='nom (au pluriel)')
+    nom_pluriel = CharField(max_length=430, blank=True,
+                            verbose_name='nom (au pluriel)',
+                            help_text=PLURAL_MSG)
     slug = SlugField(blank=True)
     class Meta:
         verbose_name = 'nature de lieu'
@@ -95,7 +101,9 @@ class Saison(Model):
 
 class Profession(Model):
     nom = CharField(max_length=200)
-    nom_pluriel = CharField(max_length=230, blank=True, verbose_name='nom (au pluriel)')
+    nom_pluriel = CharField(max_length=230, blank=True,
+                            verbose_name='nom (au pluriel)',
+                            help_text=PLURAL_MSG)
     slug = SlugField(blank=True)
     class Meta:
         ordering = ['slug']
@@ -241,7 +249,9 @@ class Evenement(Model):
 
 class TypedeSource(Model):
     nom = CharField(max_length=200)
-    nom_pluriel = CharField(max_length=230, blank=True, verbose_name='nom (au pluriel)')
+    nom_pluriel = CharField(max_length=230, blank=True,
+                            verbose_name='nom (au pluriel)',
+                            help_text=PLURAL_MSG)
     slug = SlugField(blank=True)
     class Meta:
         verbose_name = 'type de source'
