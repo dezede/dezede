@@ -122,6 +122,7 @@ class Individu(Model):
                             help_text='Ne remplir que si aucun champ de lieu ci-dessus ne convient.')
     professions = ManyToManyField(Profession, related_name='individus')
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
+    biographie = HTMLField(blank=True)
     illustrations = ManyToManyField(Illustration, related_name='individus', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='individus', null=True, blank=True)
     notes = HTMLField(blank=True)
