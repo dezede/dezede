@@ -42,7 +42,7 @@ class Statut(Model):
     nom_pluriel = CharField(max_length=230, blank=True, verbose_name='nom (au pluriel)')
     slug = SlugField(blank=True)
     class Meta:
-        ordering = ['nom']
+        ordering = ['slug']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(Statut, self.nom, self.slug)
         super(Statut, self).save(*args, **kwargs)
