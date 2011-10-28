@@ -54,7 +54,7 @@ class NaturedeLieu(Model):
 
 class Lieu(Model):
     nom = CharField(max_length=200)
-    parent = ForeignKey('self', related_name='enfants', null=True, blank=True)
+    parent = ForeignKey('Lieu', related_name='enfants', null=True, blank=True)
     nature = ForeignKey(NaturedeLieu, related_name='lieux')
     historique = HTMLField(blank=True)
     illustrations = ManyToManyField(Illustration, related_name='lieux', blank=True, null=True)
@@ -140,11 +140,35 @@ class Individu(Model):
             out += ', dit ' + self.surnom
         return out
 
+class Livret(Model):
+    titre = CharField(max_length=200)
+    soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
+    auteurs = ManyToManyField(Individu, related_name='livrets', blank=True)
+    description = HTMLField(blank=True)
+    parents = ManyToManyField('Livret', related_name='enfants', blank=True)
+    illustrations = ManyToManyField(Illustration, related_name='livrets', blank=True, null=True)
+    statut = ForeignKey(Statut, related_name='livrets', null=True, blank=True)
+    notes = HTMLField(blank=True)
+    slug = SlugField(blank=True)
+    class Meta:
+        ordering = ['slug']
+    def save(self, *args, **kwargs):
+        self.slug = autoslugify(Livret, self.titre, self.slug)
+        super(Livret, self).save(*args, **kwargs)
+    def __unicode__(self):
+        if self.soustitre and Livret.objects.filter(titre=self.titre).count() > 1:
+            return self.titre + ' / ' + self.soustitre
+        else:
+            return self.titre
+
 class Oeuvre(Model):
     titre = CharField(max_length=200)
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
     genre = CharField(max_length=400)
-    auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True)
+    livret = ForeignKey(Livret, related_name='oeuvres', blank=True, null=True)
+    auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True, null=True)
+    description = HTMLField(blank=True)
+    parents = ManyToManyField('Oeuvre', related_name='enfants', blank=True, null=True)
     referenced = BooleanField(default=True, verbose_name='référencée')
     illustrations = ManyToManyField(Illustration, related_name='oeuvres', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='oeuvres', null=True, blank=True)

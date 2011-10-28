@@ -16,6 +16,9 @@ class ProfessionAdmin(admin.ModelAdmin):
 class IndividuAdmin(admin.ModelAdmin):
     exclude = ['slug']
 
+class LivretAdmin(admin.ModelAdmin):
+    exclude = ['slug']
+
 class OeuvreAdmin(admin.ModelAdmin):
     exclude = ['slug']
 
@@ -29,6 +32,7 @@ admin.site.register(Lieu, LieuAdmin)
 admin.site.register(Saison)
 admin.site.register(Profession, ProfessionAdmin)
 admin.site.register(Individu, IndividuAdmin)
+admin.site.register(Livret, LivretAdmin)
 admin.site.register(Oeuvre, OeuvreAdmin)
 admin.site.register(Representation)
 admin.site.register(Evenement)
