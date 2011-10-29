@@ -9,21 +9,34 @@ class NaturedeLieuAdmin(admin.ModelAdmin):
 
 class LieuAdmin(admin.ModelAdmin):
     exclude = ['slug']
+    filter_horizontal = ['illustrations', 'documents']
 
 class ProfessionAdmin(admin.ModelAdmin):
     exclude = ['slug']
 
 class IndividuAdmin(admin.ModelAdmin):
     exclude = ['slug']
+    filter_horizontal = ['professions', 'parents', 'illustrations', 'documents']
 
 class LivretAdmin(admin.ModelAdmin):
     exclude = ['slug']
+    filter_horizontal = ['auteurs', 'parents', 'documents', 'illustrations']
 
 class OeuvreAdmin(admin.ModelAdmin):
     exclude = ['slug']
+    filter_horizontal = ['auteurs', 'parents', 'documents', 'illustrations']
+
+class RepresentationAdmin(admin.ModelAdmin):
+    filter_horizontal = ['illustrations', 'documents']
+
+class EvenementAdmin(admin.ModelAdmin):
+    filter_horizontal = ['documents', 'illustrations']
 
 class TypedeSourceAdmin(admin.ModelAdmin):
     exclude = ['slug']
+
+class SourceAdmin(admin.ModelAdmin):
+    filter_horizontal = ['documents', 'illustrations']
 
 admin.site.register(Document)
 admin.site.register(Illustration)
@@ -35,8 +48,8 @@ admin.site.register(Profession, ProfessionAdmin)
 admin.site.register(Individu, IndividuAdmin)
 admin.site.register(Livret, LivretAdmin)
 admin.site.register(Oeuvre, OeuvreAdmin)
-admin.site.register(Representation)
-admin.site.register(Evenement)
+admin.site.register(Representation, RepresentationAdmin)
+admin.site.register(Evenement, EvenementAdmin)
 admin.site.register(TypedeSource, TypedeSourceAdmin)
-admin.site.register(Source)
+admin.site.register(Source, SourceAdmin)
 
