@@ -80,3 +80,15 @@ def mort(obj):
         out += ', ' + obj.lieu_mort_approx
     return out
 
+@register.filter
+def professions(obj):
+    out = ''
+    professions = obj.professions.all()
+    for i, profession in enumerate(professions):
+        if i == len(professions) - 1 > 0:
+            out += ' et '
+        elif i > 0:
+            out += ', '
+        out += profession.nom
+    return out
+

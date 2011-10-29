@@ -16,7 +16,7 @@
           <td>Surnom</td>
           <td>Naissance</td>
           <td>Décès</td>
-          <td>Profession</td>
+          <td>Professions</td>
         </thead>
         <tbody>
     {% endif %}
@@ -26,7 +26,8 @@
       <td>{% if individu.surnom %}{{ individu.surnom }}{% else %}aucun{% endif %}</td>
       <td>{% if individu|naissance %}{{ individu|naissance }}{% else %}?{% endif %}</td>
       <td>{% if individu|mort %}{{ individu|mort }}{% else %}?{% endif %}</td>
-      <td>{{ individu.profession }}</td>
+      <td>
+        {{ individu|professions }}</td>
     </tr>
     {% if forloop.last %}
       </tbody>

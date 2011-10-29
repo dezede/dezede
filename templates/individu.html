@@ -16,7 +16,7 @@
   {% if individu.lieu_approx %}Lieu : {{ individu.lieu_approx }}<br />{% endif %}
   {% if individu.surnom %}Surnom : {{ individu.surnom }}<br />{% endif %}
   {% for parent in individu.parents.all %}{% if forloop.first %}Parents : {% endif %}<a href="../{{ parent.slug }}">{{ parent }}</a>{% if not forloop.last %},{% else %}<br />{% endif %}{% endfor %}
-  Profession : {{ individu.profession }}<br />
+  Profession{{ individu.professions.all|pluralize }} : {{ individu|professions }}<br />
 
   {% for enfant in individu.enfants.all %}
     {% if forloop.first %}
