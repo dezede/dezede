@@ -1,7 +1,6 @@
 # coding: utf-8
 from django.db.models import *
-from tinymce.models import *
-import datetime
+from tinymce.models import HTMLField
 from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
 
