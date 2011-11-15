@@ -235,7 +235,7 @@ class Evenement(Model):
     lieu = ForeignKey(Lieu, related_name='evenements')
     relache = BooleanField(verbose_name='relâche')
     circonstance = CharField(max_length=500, blank=True)
-    representations = ForeignKey(Representation, related_name='evenements', verbose_name='représentations', blank=True, null=True)
+    representations = ManyToManyField(Representation, related_name='evenements', verbose_name='représentations', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='evenements', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='evenements', blank=True, null=True)
     statut = ForeignKey(Statut, related_name='evenements', null=True, blank=True)

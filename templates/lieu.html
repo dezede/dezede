@@ -22,10 +22,10 @@
       <ul>
     {% endif %}
     <li>
-      <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}/{{ evenement.date.year }}/{{ evenement.date.month }}/{{ evenement.date.day }}">
-        {{ evenement.date }} :
+      <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}/{{ evenement.date_debut.year }}/{{ evenement.date_debut.month }}/{{ evenement.date_debut.day }}">
+        {{ evenement.date_debut }} :
         <ul>
-          {% for oeuvre in evenement.representations.oeuvres.all %}<li>{{ oeuvre }}</li>{% endfor %}
+          {% for oeuvre in evenement.representations.oeuvres.all %}<li>a{{ oeuvre }}</li>{% endfor %}
         </ul>
       </a>
     </li>
