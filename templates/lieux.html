@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load url from future %}
 
 {% block title %}
   {% trans "lieux"|capfirst %}
@@ -11,7 +12,7 @@
       <ul>
     {% endif %}
     <li>
-      <a href="{{ lieu.slug }}">{{ lieu.nom }}</a>{% if lieu.parent %} ({{ lieu.parent.nom }}){% endif %}
+      <a href="{% url 'catalogue.views.index_lieux' %}{{ lieu.slug }}">{{ lieu.nom }}</a>{% if lieu.parent %} ({{ lieu.parent.nom }}){% endif %}
     </li>
     {% if forloop.last %}
       </ul>

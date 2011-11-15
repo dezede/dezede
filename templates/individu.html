@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load extras %}
+{% load url from future %}
 
 {% block title %}
   {{ individu }}
@@ -15,7 +16,7 @@
   {% if individu.epoque %}Époque : {{ individu.epoque }}<br />{% endif %}
   {% if individu.lieu_approx %}Lieu : {{ individu.lieu_approx }}<br />{% endif %}
   {% if individu.surnom %}Surnom : {{ individu.surnom }}<br />{% endif %}
-  {% for parent in individu.parents.all %}{% if forloop.first %}Parents : {% endif %}<a href="../{{ parent.slug }}">{{ parent }}</a>{% if not forloop.last %},{% else %}<br />{% endif %}{% endfor %}
+  {% for parent in individu.parents.all %}{% if forloop.first %}Parents : {% endif %}<a href="{% url 'catalogue.views.index_individus' %}{{ parent.slug }}">{{ parent }}</a>{% if not forloop.last %},{% else %}<br />{% endif %}{% endfor %}
   Profession{{ individu.professions.all|pluralize }} : {{ individu|professions }}<br />
 
   {% for enfant in individu.enfants.all %}
@@ -23,7 +24,7 @@
       <h4>Enfants :</h4>
       <ul>
     {% endif %}
-      <li><a href="/individus/{{ enfant.slug }}">{{ enfant }}</a></li>
+      <li><a href="{% url 'catalogue.views.index_individus' %}{{ enfant.slug }}">{{ enfant }}</a></li>
     {% if forloop.last %}
       </ul>
     {% endif %}

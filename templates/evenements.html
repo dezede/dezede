@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load extras %}
+{% load url from future %}
 
 {% block title %}
   {% for element in datalist %}
@@ -16,7 +17,7 @@
       <div style="border: 1.5px solid; border-radius: 15px; padding: 20px; margin-bottom: 30px;">
         <h3 style="text-align: center;">{{ evenement.date_debut|date|capfirst }}</h3>
         {% if evenement.lieu.parent %}{{ evenement.lieu.parent.nom }},{% endif %}
-        <a href="/{% trans "lieux" %}/{{ evenement.lieu.slug }}">
+        <a href="{% url 'catalogue.views.index_lieux' %}{{ evenement.lieu.slug }}">
           {{ evenement.lieu.nom }}</a><br />
         {% if evenement.circonstance %}Circonstance : {{ evenement.circonstance }}<br />{% endif %}
         {% if evenement.heure %}Horaire : {{ evenement.heure|time }}<br />{% endif %}
@@ -24,8 +25,8 @@
           {% for oeuvre in evenement.representations.oeuvres.all %}
             <li>
             {% for auteur in oeuvre.auteurs.all %}
-              {% blocktrans with auteur.slug as slug and auteur.nom as nom and auteur.prenoms|abbreviate:0 as prenoms and auteur.profession|abbreviate:1 as profession %}
-                <a href="/individus/{{ slug }}/">
+              
+                <a href="{% url 'catalogue.views.index_individus' %}{% blocktrans with auteur.slug as slug and auteur.nom as nom and auteur.prenoms|abbreviate:0 as prenoms and auteur.profession|abbreviate:1 as profession %}{{ slug }}/">
                 <span style="font-variant: small-caps;">{{ nom }}</span> ({{ prenoms }})</a> [{{ profession }}],
               {% endblocktrans %}
             {% endfor %}<i>{{ oeuvre }}</i>, {{ oeuvre.genre }}</li>

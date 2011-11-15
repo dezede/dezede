@@ -257,8 +257,8 @@ class TypedeSource(Model):
         verbose_name_plural = 'types de source'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Oeuvre, self.titre, self.slug)
-        super(Oeuvre, self).save(*args, **kwargs)
+        self.slug = autoslugify(TypedeSource, self.nom, self.slug)
+        super(TypedeSource, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.nom
 

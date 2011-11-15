@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load extras %}
+{% load url from future %}
 
 {% block title %}
   {{ lieu }}
@@ -8,20 +9,20 @@
 
 {% block body %}
   <h3>
-    {{ lieu.nom }}{% if lieu.parent %}, <a href="../{{ lieu.parent.slug }}">{{ lieu.parent.nom }}</a>{% endif %}
+    {{ lieu.nom }}{% if lieu.parent %}, <a href="{% url 'catalogue.views.index_lieux' %}{{ lieu.parent.slug }}">{{ lieu.parent.nom }}</a>{% endif %}
   </h3>
   {% for enfant in lieu.enfants.all %}
     {% if forloop.first %}Lieux contenus dans {{ lieu.nom }} :<ul>{% endif %}
-    <li><a href="/{% trans "lieux" %}/{{ enfant.slug }}">{{ enfant.nom }}</a></li>
+    <li><a href="{% url 'catalogue.views.index_lieux' %}{{ enfant.slug }}">{{ enfant.nom }}</a></li>
     {% if forloop.last %}</ul>{% endif %}
   {% endfor %}
   {% for evenement in lieu.evenements.all %}
     {% if forloop.first %}
-      <a href="/evenements/{{ lieu.slug }}">Sources :</a>
+      <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}">Sources :</a>
       <ul>
     {% endif %}
     <li>
-      <a href="/evenements/{{ lieu.slug }}/{{ evenement.date.year }}/{{ evenement.date.month }}/{{ evenement.date.day }}">
+      <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}/{{ evenement.date.year }}/{{ evenement.date.month }}/{{ evenement.date.day }}">
         {{ evenement.date }} :
         <ul>
           {% for oeuvre in evenement.representations.oeuvres.all %}<li>{{ oeuvre }}</li>{% endfor %}

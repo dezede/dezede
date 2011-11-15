@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load url from future %}
 
 {% block head %}
   {{ form.media }}
@@ -15,7 +16,7 @@
     <strong>Modifier une source :</strong>
     <ul>
       {% for elt in sources %}
-        <li><a href="/saisie/source/{{ elt.pk }}/">{{ elt }}</a></li>
+        <li><a href="{% url 'catalogue.views.saisie_source' %}{{ elt.pk }}/">{{ elt }}</a></li>
       {% endfor %}
     </ul>
     <hr />

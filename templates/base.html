@@ -1,17 +1,18 @@
 {% load i18n %}
+{% load url from future %}
 <!DOCTYPE HTML>
 <html>
   <head>
     <title>{% block title %}{% endblock %}</title>
     {% block head %}{% endblock %}
-    <link rel="stylesheet" type="text/css" href="/static/styles.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles.css" />
   </head>
   <body>
     <div id="navbar">
-      <a href="/lieux/">Lieux</a>
-      <a href="/evenements/">Événements</a>
-      <a href="/individus/">Individus</a>
-      <a href="/saisie/source">Saisie de source</a>
+      <a href="{% url 'catalogue.views.index_lieux' %}">Lieux</a>
+      <a href="{% url 'catalogue.views.index_evenements' %}">Événements</a>
+      <a href="{% url 'catalogue.views.index_individus' %}">Individus</a>
+      <a href="{% url 'catalogue.views.saisie_source' %}">Saisie de source</a>
       <a href="/admin/">Administration</a>
     </div>
     <div style="width: 50%; margin-left: 25%;">

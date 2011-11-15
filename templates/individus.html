@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load extras %}
+{% load url from future %}
 
 {% block title %}
   {% trans "individus"|capfirst %}
@@ -20,7 +21,7 @@
         </thead>
         <tbody>
     {% endif %}
-    <tr onclick="document.location = '/individus/{{ individu.slug }}';" title="Ouvrir l'autorité">
+    <tr onclick="document.location = '{% url 'catalogue.views.index_individus' %}{{ individu.slug }}';" title="Ouvrir l'autorité">
       <td>{{ individu.nom }}</td>
       <td>{% if individu.prenoms %}{{ individu.prenoms }}{% else %}?{% endif %}</td>
       <td>{% if individu.surnom %}{{ individu.surnom }}{% else %}aucun{% endif %}</td>
