@@ -13,7 +13,7 @@
       <a href="{% url 'catalogue.views.index_evenements' %}">Événements</a>
       <a href="{% url 'catalogue.views.index_individus' %}">Individus</a>
       <a href="{% url 'catalogue.views.saisie_source' %}">Saisie de source</a>
-      <a href="/admin/">Administration</a>
+      <a href="{% url 'admin:index' %}">Administration</a>
     </div>
     <div style="width: 50%; margin-left: 25%;">
       {% block body %} {% endblock %}
