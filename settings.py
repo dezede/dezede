@@ -6,6 +6,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.abspath(os.path.dirname(__file__))
+SITE_URL = '/'
 
 ADMINS = (
     ('Bertrand Bordage', 'bordage.bertrand@gmail.com'),
@@ -54,12 +55,15 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
+if DEBUG:
+    MEDIA_ROOT = os.path.join(SITE_ROOT, 'media/')
+else:
+    MEDIA_ROOT = os.path.join('/var/www', SITE_URL, 'media/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/'
+MEDIA_URL = SITE_URL + 'media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = ''
@@ -88,11 +92,14 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
-STATIC_URL = '/static/'
+if DEBUG:
+    STATIC_ROOT = os.path.join(SITE_ROOT, 'static/')
+else:
+    STATIC_ROOT = os.path.join('/var/www', SITE_URL, 'static/')
+STATIC_URL = SITE_URL + 'static/'
 
 STATICFILES_DIRS = (
-    'templates/static',
+    os.path.join(SITE_ROOT, 'templates/static'),
 )
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + "grappelli/"
