@@ -21,20 +21,24 @@
           {{ evenement.lieu.nom }}</a><br />
         {% if evenement.circonstance %}Circonstance : {{ evenement.circonstance }}<br />{% endif %}
         {% if evenement.heure %}Horaire : {{ evenement.heure|time }}<br />{% endif %}
-        <ol>
-          {% for oeuvre in evenement.representations.oeuvres.all %}
+        {% for representation in evenement.representations.all %}
+          {% for oeuvre in representation.oeuvres.all %}
+            {% if forloop.first %}
+              <ol>
+            {% endif %}
             <li>
             {% for auteur in oeuvre.auteurs.all %}
-              
-                <a href="{% url 'catalogue.views.index_individus' %}{% blocktrans with auteur.slug as slug and auteur.nom as nom and auteur.prenoms|abbreviate:0 as prenoms and auteur.profession|abbreviate:1 as profession %}{{ slug }}/">
-                <span style="font-variant: small-caps;">{{ nom }}</span> ({{ prenoms }})</a> [{{ profession }}],
-              {% endblocktrans %}
+              <a href="{% url 'catalogue.views.index_individus' %}{{ auteur.slug }}/">
+              <span style="font-variant: small-caps;">{{ auteur.nom }}</span> ({{ auteur.prenoms|abbreviate:0 }})</a> [{% for profession in auteur.professions.all %}{{ profession.nom|abbreviate:1 }}{% if not forloop.last %}, {% endif %}{% endfor %}],
             {% endfor %}<i>{{ oeuvre }}</i>, {{ oeuvre.genre }}</li>
+            {% if forloop.last %}
+              </ol>
+            {% endif %}
           {% endfor %}
-        </ol>
+        {% endfor %}
         <br />
         {% for type in types %}
-          <h4 style="text-align: center; font-style: italic;">{{ type.pluriel|capfirst }}</h4>
+          <h4 style="text-align: center; font-style: italic;">{% if type.pluriel %}{{ type.pluriel|capfirst }}{% else %}{{ type|capfirst }}s{% endif %}</h4>
           {% for source in evenement.sources.all %}
             {% if source.type == type %}
               <div style="text-align: justify;">
