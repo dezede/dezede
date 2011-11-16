@@ -58,7 +58,7 @@ USE_L10N = True
 if DEBUG:
     MEDIA_ROOT = os.path.join(SITE_ROOT, 'media/')
 else:
-    MEDIA_ROOT = os.path.join('/var/www', SITE_URL, 'media/')
+    MEDIA_ROOT = '/var/www' + SITE_URL + 'media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -95,7 +95,7 @@ TEMPLATE_DIRS = (
 if DEBUG:
     STATIC_ROOT = os.path.join(SITE_ROOT, 'static/')
 else:
-    STATIC_ROOT = os.path.join('/var/www', SITE_URL, 'static/')
+    STATIC_ROOT = '/var/www' + SITE_URL + 'static/'
 STATIC_URL = SITE_URL + 'static/'
 
 STATICFILES_DIRS = (
