@@ -1,8 +1,8 @@
 from musicologie.catalogue.models import *
-from django.contrib import admin
+from django.contrib.admin import site
 from reversion import VersionAdmin
 
-class StatutAdmin(VersionAdmin):
+class EtatAdmin(VersionAdmin):
     exclude = ['slug']
 
 class NaturedeLieuAdmin(VersionAdmin):
@@ -19,9 +19,14 @@ class IndividuAdmin(VersionAdmin):
     exclude = ['slug']
     filter_horizontal = ['professions', 'parents', 'illustrations', 'documents']
 
-class LivretAdmin(VersionAdmin):
+class EngagementAdmin(VersionAdmin):
+    filter_horizontal = ['individus']
+
+class PersonnelAdmin(VersionAdmin):
+    filter_horizontal = ['engagements']
+
+class NaturedOeuvreAdmin(VersionAdmin):
     exclude = ['slug']
-    filter_horizontal = ['auteurs', 'parents', 'documents', 'illustrations']
 
 class OeuvreAdmin(VersionAdmin):
     exclude = ['slug']
@@ -39,18 +44,21 @@ class TypedeSourceAdmin(VersionAdmin):
 class SourceAdmin(VersionAdmin):
     filter_horizontal = ['documents', 'illustrations']
 
-admin.site.register(Document)
-admin.site.register(Illustration)
-admin.site.register(Statut, StatutAdmin)
-admin.site.register(NaturedeLieu, NaturedeLieuAdmin)
-admin.site.register(Lieu, LieuAdmin)
-admin.site.register(Saison)
-admin.site.register(Profession, ProfessionAdmin)
-admin.site.register(Individu, IndividuAdmin)
-admin.site.register(Livret, LivretAdmin)
-admin.site.register(Oeuvre, OeuvreAdmin)
-admin.site.register(Representation, RepresentationAdmin)
-admin.site.register(Evenement, EvenementAdmin)
-admin.site.register(TypedeSource, TypedeSourceAdmin)
-admin.site.register(Source, SourceAdmin)
+site.register(Document)
+site.register(Illustration)
+site.register(Etat, EtatAdmin)
+site.register(NaturedeLieu, NaturedeLieuAdmin)
+site.register(Lieu, LieuAdmin)
+site.register(Saison)
+site.register(Profession, ProfessionAdmin)
+site.register(Individu, IndividuAdmin)
+site.register(Devise)
+site.register(Engagement, EngagementAdmin)
+site.register(Personnel, PersonnelAdmin)
+site.register(NaturedOeuvre, NaturedOeuvreAdmin)
+site.register(Oeuvre, OeuvreAdmin)
+site.register(Representation, RepresentationAdmin)
+site.register(Evenement, EvenementAdmin)
+site.register(TypedeSource, TypedeSourceAdmin)
+site.register(Source, SourceAdmin)
 
