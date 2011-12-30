@@ -4,12 +4,18 @@
     django 1.3.1 (sudo pip install django==1.3.1)
     django-tinymce 1.5.1 (sudo pip install django-tinymce==1.5.1)
     python-docutils 0.7
+    django-reversion
+    django-filebrowser
+    django-grappelli
 
 
-** Lancement **
+** Lancement du serveur de développement **
 
   Préparation des bases de données :
     python manage.py syncdb
+
+  Création des révisions initiales :
+    python manage.py createinitialrevisions
 
   Collecte des fichiers statiques :
     python manage.py collectstatic -l
@@ -19,3 +25,4 @@
 
   Lancement du serveur de développement :
     python manage.py runserver
+

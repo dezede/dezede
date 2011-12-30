@@ -1,41 +1,42 @@
 from musicologie.catalogue.models import *
 from django.contrib import admin
+from reversion import VersionAdmin
 
-class StatutAdmin(admin.ModelAdmin):
+class StatutAdmin(VersionAdmin):
     exclude = ['slug']
 
-class NaturedeLieuAdmin(admin.ModelAdmin):
+class NaturedeLieuAdmin(VersionAdmin):
     exclude = ['slug']
 
-class LieuAdmin(admin.ModelAdmin):
+class LieuAdmin(VersionAdmin):
     exclude = ['slug']
     filter_horizontal = ['illustrations', 'documents']
 
-class ProfessionAdmin(admin.ModelAdmin):
+class ProfessionAdmin(VersionAdmin):
     exclude = ['slug']
 
-class IndividuAdmin(admin.ModelAdmin):
+class IndividuAdmin(VersionAdmin):
     exclude = ['slug']
     filter_horizontal = ['professions', 'parents', 'illustrations', 'documents']
 
-class LivretAdmin(admin.ModelAdmin):
+class LivretAdmin(VersionAdmin):
     exclude = ['slug']
     filter_horizontal = ['auteurs', 'parents', 'documents', 'illustrations']
 
-class OeuvreAdmin(admin.ModelAdmin):
+class OeuvreAdmin(VersionAdmin):
     exclude = ['slug']
     filter_horizontal = ['auteurs', 'parents', 'documents', 'illustrations']
 
-class RepresentationAdmin(admin.ModelAdmin):
+class RepresentationAdmin(VersionAdmin):
     filter_horizontal = ['illustrations', 'documents']
 
-class EvenementAdmin(admin.ModelAdmin):
+class EvenementAdmin(VersionAdmin):
     filter_horizontal = ['documents', 'illustrations']
 
-class TypedeSourceAdmin(admin.ModelAdmin):
+class TypedeSourceAdmin(VersionAdmin):
     exclude = ['slug']
 
-class SourceAdmin(admin.ModelAdmin):
+class SourceAdmin(VersionAdmin):
     filter_horizontal = ['documents', 'illustrations']
 
 admin.site.register(Document)

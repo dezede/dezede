@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     'tinymce',
     'grappelli',
     'filebrowser',
+    'reversion',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'musicologie.catalogue',
