@@ -111,13 +111,13 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'musicologie.catalogue',
     'tinymce',
     'grappelli',
     'filebrowser',
     'reversion',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'musicologie.catalogue',
 )
 
 LOCALE_PATHS = (
@@ -143,4 +143,10 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_resizing' : 'true',
     'theme_advanced_resizing_max_width' : '650',
 }
+
+FILEBROWSER_VERSIONS = {
+    'admin_thumbnail': {'verbose_name': 'Admin Thumbnail', 'width': 60, 'height': 60, 'opts': 'crop'},
+}
+
+FILEBROWSER_ADMIN_VERSIONS = []
 
