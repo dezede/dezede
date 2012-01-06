@@ -33,7 +33,7 @@ class OeuvreAdmin(VersionAdmin):
     filter_horizontal = ['auteurs', 'parents', 'documents', 'illustrations']
 
 class ElementdeProgrammeAdmin(VersionAdmin):
-    filter_horizontal = ['illustrations', 'documents']
+    filter_horizontal = ['distribution', 'illustrations', 'documents']
 
 class EvenementAdmin(VersionAdmin):
     filter_horizontal = ['programme', 'documents', 'illustrations']

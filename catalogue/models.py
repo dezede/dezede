@@ -4,7 +4,7 @@ from tinymce.models import HTMLField
 from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
 
-PLURAL_MSG = 'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».'
+PLURAL_MSG = u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».'
 
 def autoslugify(Mod, nom, slug):
     if slug != '':
@@ -28,7 +28,7 @@ class Document(Model):
         return self.document.__unicode__()
 
 class Illustration(Model):
-    legende = CharField(max_length=300, blank=True, verbose_name='légende')
+    legende = CharField(max_length=300, blank=True, verbose_name=u'légende')
     image = FileBrowseField('Image', max_length=400, directory='images/')
     commentaire = HTMLField(blank=True)
     class Meta:
@@ -44,10 +44,10 @@ class Etat(Model):
                             verbose_name='nom (au pluriel)',
                             help_text=PLURAL_MSG)
     message = CharField(max_length=300, blank=True,
-                        help_text='Message à afficher dans la partie consultation.')
+                        help_text=u'Message à afficher dans la partie consultation.')
     slug = SlugField(blank=True)
     class Meta:
-        verbose_name = 'état'
+        verbose_name = u'état'
         ordering = ['slug']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(Etat, self.nom, self.slug)
@@ -94,7 +94,7 @@ class Lieu(Model):
 
 class Saison(Model):
     lieu = ForeignKey(Lieu, related_name='saisons')
-    debut = DateField(verbose_name='début')
+    debut = DateField(verbose_name=u'début')
     fin = DateField()
     class Meta:
         ordering = ['lieu', 'debut']
@@ -119,31 +119,36 @@ class Profession(Model):
 class Individu(Model):
     nom = CharField(max_length=200)
     nom_naissance = CharField(max_length=200, verbose_name='nom de naissance', blank=True)
-    prenoms = CharField(max_length=200, verbose_name='prénoms', blank=True)
+    prenoms = CharField(max_length=200, verbose_name=u'prénoms', blank=True)
     pseudonyme = CharField(max_length=200, blank=True)
+    SEXES = (
+        ('M', 'Masculin'),
+        ('F', 'Féminin'),
+    )
+    sexe = CharField(max_length=1, choices=SEXES, blank=True)
     date_naissance = DateField(blank=True, null=True, verbose_name='date de naissance')
     lieu_naissance = ForeignKey(Lieu, related_name='individus_nes', blank=True, null=True, verbose_name='lieu de naissance')
     date_naissance_approx = CharField(max_length=200, blank=True,
                                       verbose_name='date approximative de naissance',
-                                      help_text='Ne remplir que si la date de naissance est imprécise.')
+                                      help_text=u'Ne remplir que si la date de naissance est imprécise.')
     lieu_naissance_approx = CharField(max_length=200, blank=True,
                                       verbose_name='lieu approximatif de naissance',
-                                      help_text='Ne remplir que si le lieu de naissance est imprécis.')
-    date_mort = DateField(blank=True, null=True, verbose_name='date de décès')
-    lieu_mort = ForeignKey(Lieu, related_name='individus_morts', blank=True, null=True, verbose_name='lieu de décès')
+                                      help_text=u'Ne remplir que si le lieu de naissance est imprécis.')
+    date_mort = DateField(blank=True, null=True, verbose_name=u'date de décès')
+    lieu_mort = ForeignKey(Lieu, related_name='individus_morts', blank=True, null=True, verbose_name=u'lieu de décès')
     date_mort_approx = CharField(max_length=200, blank=True,
-                                 verbose_name='date approximative de décès',
-                                 help_text='Ne remplir que si la date de décès est imprécise.')
+                                 verbose_name=u'date approximative de décès',
+                                 help_text=u'Ne remplir que si la date de décès est imprécise.')
     lieu_mort_approx = CharField(max_length=200, blank=True,
-                                 verbose_name='lieu approximatif de décès',
-                                 help_text='Ne remplir que si le lieu de décès est imprécis.')
+                                 verbose_name=u'lieu approximatif de décès',
+                                 help_text=u'Ne remplir que si le lieu de décès est imprécis.')
     epoque = CharField(max_length=200, blank=True,
-                       verbose_name='époque approximative',
+                       verbose_name=u'époque approximative',
                        help_text='Ne remplir que si aucun champ de date ci-dessus ne convient.')
     lieu_approx = CharField(max_length=200, blank=True,
                             verbose_name='lieu approximatif',
                             help_text='Ne remplir que si aucun champ de lieu ci-dessus ne convient.')
-    professions = ManyToManyField(Profession, related_name='individus')
+    professions = ManyToManyField(Profession, related_name='individus', blank=True, null=True)
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
     biographie = HTMLField(blank=True)
     illustrations = ManyToManyField(Illustration, related_name='individus', blank=True, null=True)
@@ -185,8 +190,8 @@ class NaturedOeuvre(Model):
                             help_text=PLURAL_MSG)
     slug = SlugField(blank=True)
     class Meta:
-        verbose_name="nature d'œuvre"
-        verbose_name_plural="natures d'œuvre"
+        verbose_name=u"nature d'œuvre"
+        verbose_name_plural=u"natures d'œuvre"
         ordering = ['slug']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(NaturedOeuvre, self.nom, self.slug)
@@ -198,82 +203,90 @@ class Role(Model):
     nom = CharField(max_length=200)
     importance = FloatField()
     class Meta:
-        verbose_name = 'rôle'
+        verbose_name = u'rôle'
         ordering = ['importance']
     def __unicode__(self):
         return self.nom
 
 class Pupitre(Model):
-    role = ForeignKey(Role, related_name='pupitres', verbose_name='rôle')
-    quantite_min = IntegerField(default=1, verbose_name='quantité minimale')
-    quantite_max = IntegerField(default=1, verbose_name='quantité maximale')
+    role = ForeignKey(Role, related_name='pupitres', verbose_name=u'rôle')
+    quantite_min = IntegerField(default=1, verbose_name=u'quantité minimale')
+    quantite_max = IntegerField(default=1, verbose_name=u'quantité maximale')
     def __unicode__(self):
         out = str(self.quantite_min)
         if self.quantite_min != self.quantite_max:
-            out += ' à %d' % self.quantite_max
-        out += self.role
+            out += u' à %d' % self.quantite_max
+        out += ' ' + str(self.role)
         return out
 
 class Oeuvre(Model):
-    prefixe = CharField(max_length=20, blank=True, verbose_name='préfixe')
+    prefixe = CharField(max_length=20, blank=True, verbose_name=u'préfixe')
     titre = CharField(max_length=200)
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
     nature = ForeignKey(NaturedOeuvre, related_name='oeuvres')
-    caracteristique = CharField(max_length=400, verbose_name='caractéristique', blank=True)
+    caracteristique = CharField(max_length=400, verbose_name=u'caractéristique', blank=True)
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True, null=True)
     description = HTMLField(blank=True)
     pupitres = ManyToManyField(Role, related_name='oeuvres', blank=True, null=True)
     parents = ManyToManyField('Oeuvre', related_name='enfants', blank=True, null=True)
-    referenced = BooleanField(default=True, verbose_name='référencée')
+    referenced = BooleanField(default=True, verbose_name=u'référencée')
     documents = ManyToManyField(Document, related_name='oeuvres', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='oeuvres', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='oeuvres', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     class Meta:
-        verbose_name = 'œuvre'
+        verbose_name = u'œuvre'
         ordering = ['slug']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(Oeuvre, self.titre, self.slug)
         super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
+        out = u''
+        if self.prefixe:
+            out += self.prefixe + u' '
+        out += self.titre
         if self.soustitre and Oeuvre.objects.filter(titre=self.titre).count() > 1:
-            return self.titre + ' / ' + self.soustitre
-        else:
-            return self.titre
+            out += u' / ' + self.soustitre
+        return out
 
 class AttributiondeRole(Model):
     pupitre = ForeignKey(Pupitre, related_name='attributions_de_role')
     individus = ManyToManyField(Individu, related_name='attributions_de_role')
     class Meta:
-        verbose_name = 'attribution de rôle'
+        verbose_name = u'attribution de rôle'
     def __unicode__(self):
-        return self.pupitre
+        return str(self.pupitre)
 
 class ElementdeProgramme(Model):
-    oeuvre = ForeignKey(Oeuvre, related_name='elements_de_programme', verbose_name='œuvre', blank=True, null=True)
-    autre = HTMLField(blank=True)
-    premiere_relative = BooleanField(verbose_name='première relative')
-    premiere_absolue = BooleanField(verbose_name='première absolue')
+    oeuvre = ForeignKey(Oeuvre, related_name='elements_de_programme', verbose_name=u'œuvre', blank=True, null=True)
+    autre = CharField(max_length=500, blank=True)
+    premiere_relative = BooleanField(verbose_name=u'première relative')
+    premiere_absolue = BooleanField(verbose_name=u'première absolue')
     classement = FloatField()
     distribution = ManyToManyField(AttributiondeRole, related_name='elements_de_programme', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='representations', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='representations', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='elements_de_programme', null=True, blank=True)
     class Meta:
-        verbose_name = 'élément de programme'
-        verbose_name_plural = 'éléments de programme'
+        verbose_name = u'élément de programme'
+        verbose_name_plural = u'éléments de programme'
         ordering = ['classement']
     def __unicode__(self):
-        return self.oeuvre
+        if self.oeuvre:
+            return self.oeuvre.__unicode__()
+        elif self.autre:
+            return self.autre
+        else:
+            return str(self.classement)
 
 class Evenement(Model):
     date_debut = DateField()
     heure_debut = TimeField(blank=True, null=True)
-    date_fin = DateField(blank=True, null=True, help_text='À ne préciser que si l\'événement dure plusieurs jours.')
+    date_fin = DateField(blank=True, null=True, help_text=u'À ne préciser que si l\'événement dure plusieurs jours.')
     heure_fin = TimeField(blank=True, null=True)
     lieu = ForeignKey(Lieu, related_name='evenements')
-    relache = BooleanField(verbose_name='relâche')
+    relache = BooleanField(verbose_name=u'relâche')
     circonstance = CharField(max_length=500, blank=True)
     programme = ManyToManyField(ElementdeProgramme, related_name='evenements', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='evenements', blank=True, null=True)
@@ -281,7 +294,7 @@ class Evenement(Model):
     etat = ForeignKey(Etat, related_name='evenements', null=True, blank=True)
     notes = HTMLField(blank=True)
     class Meta:
-        verbose_name = 'événement'
+        verbose_name = u'événement'
         ordering = ['date_debut', 'heure_debut', 'lieu']
     def __unicode__(self):
         return self.lieu.nom + ' le ' + self.date_debut.__str__()

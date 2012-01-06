@@ -25,10 +25,8 @@
       <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}/{{ evenement.date_debut.year }}/{{ evenement.date_debut.month }}/{{ evenement.date_debut.day }}">
         {{ evenement.date_debut }} :
         <ul>
-          {% for representation in evenement.representations.all %}
-            {% for oeuvre in representation.oeuvres.all %}
-              <li>{{ oeuvre }}</li>
-            {% endfor %}
+          {% for element in evenement.programme.all %}
+            <li>{{ element }}</li>
           {% endfor %}
         </ul>
       </a>
