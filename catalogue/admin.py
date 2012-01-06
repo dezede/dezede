@@ -32,17 +32,17 @@ class OeuvreAdmin(VersionAdmin):
     exclude = ['slug']
     filter_horizontal = ['auteurs', 'parents', 'documents', 'illustrations']
 
-class RepresentationAdmin(VersionAdmin):
+class ElementdeProgrammeAdmin(VersionAdmin):
     filter_horizontal = ['illustrations', 'documents']
 
 class EvenementAdmin(VersionAdmin):
-    filter_horizontal = ['documents', 'illustrations']
+    filter_horizontal = ['programme', 'documents', 'illustrations']
 
 class TypedeSourceAdmin(VersionAdmin):
     exclude = ['slug']
 
 class SourceAdmin(VersionAdmin):
-    filter_horizontal = ['documents', 'illustrations']
+    filter_horizontal = ['evenements', 'documents', 'illustrations']
 
 site.register(Document)
 site.register(Illustration)
@@ -56,8 +56,11 @@ site.register(Devise)
 site.register(Engagement, EngagementAdmin)
 site.register(Personnel, PersonnelAdmin)
 site.register(NaturedOeuvre, NaturedOeuvreAdmin)
+site.register(Role)
+site.register(Pupitre)
 site.register(Oeuvre, OeuvreAdmin)
-site.register(Representation, RepresentationAdmin)
+site.register(AttributiondeRole)
+site.register(ElementdeProgramme, ElementdeProgrammeAdmin)
 site.register(Evenement, EvenementAdmin)
 site.register(TypedeSource, TypedeSourceAdmin)
 site.register(Source, SourceAdmin)

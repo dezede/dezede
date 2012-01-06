@@ -194,14 +194,35 @@ class NaturedOeuvre(Model):
     def __unicode__(self):
         return self.nom
 
+class Role(Model):
+    nom = CharField(max_length=200)
+    importance = FloatField()
+    class Meta:
+        verbose_name = 'rôle'
+        ordering = ['importance']
+    def __unicode__(self):
+        return self.nom
+
+class Pupitre(Model):
+    role = ForeignKey(Role, related_name='pupitres', verbose_name='rôle')
+    quantite_min = IntegerField(default=1, verbose_name='quantité minimale')
+    quantite_max = IntegerField(default=1, verbose_name='quantité maximale')
+    def __unicode__(self):
+        out = str(self.quantite_min)
+        if self.quantite_min != self.quantite_max:
+            out += ' à %d' % self.quantite_max
+        out += self.role
+        return out
+
 class Oeuvre(Model):
     prefixe = CharField(max_length=20, blank=True, verbose_name='préfixe')
     titre = CharField(max_length=200)
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
     nature = ForeignKey(NaturedOeuvre, related_name='oeuvres')
-    genre = CharField(max_length=400)
+    caracteristique = CharField(max_length=400, verbose_name='caractéristique', blank=True)
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True, null=True)
     description = HTMLField(blank=True)
+    pupitres = ManyToManyField(Role, related_name='oeuvres', blank=True, null=True)
     parents = ManyToManyField('Oeuvre', related_name='enfants', blank=True, null=True)
     referenced = BooleanField(default=True, verbose_name='référencée')
     documents = ManyToManyField(Document, related_name='oeuvres', blank=True, null=True)
@@ -210,7 +231,7 @@ class Oeuvre(Model):
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     class Meta:
-        verbose_name='œuvre'
+        verbose_name = 'œuvre'
         ordering = ['slug']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(Oeuvre, self.titre, self.slug)
@@ -221,24 +242,30 @@ class Oeuvre(Model):
         else:
             return self.titre
 
-class Representation(Model):
-    oeuvres = ManyToManyField(Oeuvre, related_name='representations', verbose_name='œuvres')
+class AttributiondeRole(Model):
+    pupitre = ForeignKey(Pupitre, related_name='attributions_de_role')
+    individus = ManyToManyField(Individu, related_name='attributions_de_role')
+    class Meta:
+        verbose_name = 'attribution de rôle'
+    def __unicode__(self):
+        return self.pupitre
+
+class ElementdeProgramme(Model):
+    oeuvre = ForeignKey(Oeuvre, related_name='elements_de_programme', verbose_name='œuvre', blank=True, null=True)
+    autre = HTMLField(blank=True)
     premiere_relative = BooleanField(verbose_name='première relative')
     premiere_absolue = BooleanField(verbose_name='première absolue')
+    classement = FloatField()
+    distribution = ManyToManyField(AttributiondeRole, related_name='elements_de_programme', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='representations', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='representations', blank=True, null=True)
-    etat = ForeignKey(Etat, related_name='representations', null=True, blank=True)
+    etat = ForeignKey(Etat, related_name='elements_de_programme', null=True, blank=True)
     class Meta:
-        verbose_name = 'Représentation'
+        verbose_name = 'élément de programme'
+        verbose_name_plural = 'éléments de programme'
+        ordering = ['classement']
     def __unicode__(self):
-        disp_str = ''
-        for i, oeuvre in enumerate(self.oeuvres.all()):
-            disp_str += oeuvre.titre
-            if i < len(self.oeuvres.all()) - 2:
-                disp_str += ', '
-            if i == len(self.oeuvres.all()) - 2:
-                disp_str += ' et '
-        return disp_str
+        return self.oeuvre
 
 class Evenement(Model):
     date_debut = DateField()
@@ -248,7 +275,7 @@ class Evenement(Model):
     lieu = ForeignKey(Lieu, related_name='evenements')
     relache = BooleanField(verbose_name='relâche')
     circonstance = CharField(max_length=500, blank=True)
-    representations = ManyToManyField(Representation, related_name='evenements', verbose_name='représentations', blank=True, null=True)
+    programme = ManyToManyField(ElementdeProgramme, related_name='evenements', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='evenements', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='evenements', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='evenements', null=True, blank=True)
@@ -281,8 +308,8 @@ class Source(Model):
     date = DateField()
     page = CharField(max_length=50, blank=True)
     type = ForeignKey(TypedeSource, related_name='sources')
-    contenu = HTMLField()
-    evenements = ManyToManyField(Evenement, related_name='sources', verbose_name='événements')
+    contenu = HTMLField(blank=True)
+    evenements = ManyToManyField(Evenement, related_name='sources', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='sources', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='sources', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='sources', null=True, blank=True)
