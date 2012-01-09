@@ -25,7 +25,7 @@ class EngagementAdmin(VersionAdmin):
 class PersonnelAdmin(VersionAdmin):
     filter_horizontal = ['engagements']
 
-class NatureDOeuvreAdmin(VersionAdmin):
+class GenreDOeuvreAdmin(VersionAdmin):
     exclude = ['slug']
 
 class OeuvreAdmin(VersionAdmin):
@@ -55,7 +55,7 @@ site.register(Individu, IndividuAdmin)
 site.register(Devise)
 site.register(Engagement, EngagementAdmin)
 site.register(Personnel, PersonnelAdmin)
-site.register(NatureDOeuvre, NatureDOeuvreAdmin)
+site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(Role)
 site.register(Pupitre)
 site.register(Oeuvre, OeuvreAdmin)

@@ -183,19 +183,19 @@ class Personnel(Model):
     saison = ForeignKey(Saison, related_name='personnels')
     engagements = ManyToManyField(Engagement, related_name='personnels')
 
-class NatureDOeuvre(Model):
+class GenreDOeuvre(Model):
     nom = CharField(max_length=400)
     nom_pluriel = CharField(max_length=430, blank=True,
                             verbose_name='nom (au pluriel)',
                             help_text=PLURAL_MSG)
     slug = SlugField(blank=True)
     class Meta:
-        verbose_name=u"nature d'œuvre"
-        verbose_name_plural=u"natures d'œuvre"
+        verbose_name=u"genre d'œuvre"
+        verbose_name_plural=u"genres d'œuvre"
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(NatureDOeuvre, self.nom, self.slug)
-        super(NatureDOeuvre, self).save(*args, **kwargs)
+        self.slug = autoslugify(GenreDOeuvre, self.nom, self.slug)
+        super(GenreDOeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.nom
 
@@ -223,7 +223,7 @@ class Oeuvre(Model):
     prefixe = CharField(max_length=20, blank=True, verbose_name=u'préfixe')
     titre = CharField(max_length=200)
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
-    nature = ForeignKey(NatureDOeuvre, related_name='oeuvres')
+    genre = ForeignKey(GenreDOeuvre, related_name='oeuvres')
     caracteristique = CharField(max_length=400, verbose_name=u'caractéristique', blank=True)
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True, null=True)
     description = HTMLField(blank=True)
