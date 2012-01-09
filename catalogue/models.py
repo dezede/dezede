@@ -55,7 +55,7 @@ class Etat(Model):
     def __unicode__(self):
         return self.nom
 
-class NaturedeLieu(Model):
+class NatureDeLieu(Model):
     nom = CharField(max_length=400)
     nom_pluriel = CharField(max_length=430, blank=True,
                             verbose_name='nom (au pluriel)',
@@ -66,15 +66,15 @@ class NaturedeLieu(Model):
         verbose_name_plural = 'natures de lieu'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(NaturedeLieu, self.nom, self.slug)
-        super(NaturedeLieu, self).save(*args, **kwargs)
+        self.slug = autoslugify(NatureDeLieu, self.nom, self.slug)
+        super(NatureDeLieu, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.nom
 
 class Lieu(Model):
     nom = CharField(max_length=200)
     parent = ForeignKey('Lieu', related_name='enfants', null=True, blank=True)
-    nature = ForeignKey(NaturedeLieu, related_name='lieux')
+    nature = ForeignKey(NatureDeLieu, related_name='lieux')
     historique = HTMLField(blank=True)
     illustrations = ManyToManyField(Illustration, related_name='lieux', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='lieux', blank=True, null=True)
@@ -183,7 +183,7 @@ class Personnel(Model):
     saison = ForeignKey(Saison, related_name='personnels')
     engagements = ManyToManyField(Engagement, related_name='personnels')
 
-class NaturedOeuvre(Model):
+class NatureDOeuvre(Model):
     nom = CharField(max_length=400)
     nom_pluriel = CharField(max_length=430, blank=True,
                             verbose_name='nom (au pluriel)',
@@ -194,8 +194,8 @@ class NaturedOeuvre(Model):
         verbose_name_plural=u"natures d'œuvre"
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(NaturedOeuvre, self.nom, self.slug)
-        super(NaturedOeuvre, self).save(*args, **kwargs)
+        self.slug = autoslugify(NatureDOeuvre, self.nom, self.slug)
+        super(NatureDOeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.nom
 
@@ -223,7 +223,7 @@ class Oeuvre(Model):
     prefixe = CharField(max_length=20, blank=True, verbose_name=u'préfixe')
     titre = CharField(max_length=200)
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
-    nature = ForeignKey(NaturedOeuvre, related_name='oeuvres')
+    nature = ForeignKey(NatureDOeuvre, related_name='oeuvres')
     caracteristique = CharField(max_length=400, verbose_name=u'caractéristique', blank=True)
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True, null=True)
     description = HTMLField(blank=True)
@@ -246,11 +246,11 @@ class Oeuvre(Model):
         if self.prefixe:
             out += self.prefixe + u' '
         out += self.titre
-        if self.soustitre and Oeuvre.objects.filter(titre=self.titre).count() > 1:
-            out += u' / ' + self.soustitre
+        if self.soustitre:
+            out += u', ou ' + self.soustitre
         return out
 
-class AttributiondeRole(Model):
+class AttributionDeRole(Model):
     pupitre = ForeignKey(Pupitre, related_name='attributions_de_role')
     individus = ManyToManyField(Individu, related_name='attributions_de_role')
     class Meta:
@@ -258,13 +258,13 @@ class AttributiondeRole(Model):
     def __unicode__(self):
         return str(self.pupitre)
 
-class ElementdeProgramme(Model):
+class ElementDeProgramme(Model):
     oeuvre = ForeignKey(Oeuvre, related_name='elements_de_programme', verbose_name=u'œuvre', blank=True, null=True)
     autre = CharField(max_length=500, blank=True)
     premiere_relative = BooleanField(verbose_name=u'première relative')
     premiere_absolue = BooleanField(verbose_name=u'première absolue')
     classement = FloatField()
-    distribution = ManyToManyField(AttributiondeRole, related_name='elements_de_programme', blank=True, null=True)
+    distribution = ManyToManyField(AttributionDeRole, related_name='elements_de_programme', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='representations', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='representations', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='elements_de_programme', null=True, blank=True)
@@ -288,7 +288,7 @@ class Evenement(Model):
     lieu = ForeignKey(Lieu, related_name='evenements')
     relache = BooleanField(verbose_name=u'relâche')
     circonstance = CharField(max_length=500, blank=True)
-    programme = ManyToManyField(ElementdeProgramme, related_name='evenements', blank=True, null=True)
+    programme = ManyToManyField(ElementDeProgramme, related_name='evenements', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='evenements', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='evenements', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='evenements', null=True, blank=True)
@@ -299,7 +299,7 @@ class Evenement(Model):
     def __unicode__(self):
         return self.lieu.nom + ' le ' + self.date_debut.__str__()
 
-class TypedeSource(Model):
+class TypeDeSource(Model):
     nom = CharField(max_length=200)
     nom_pluriel = CharField(max_length=230, blank=True,
                             verbose_name='nom (au pluriel)',
@@ -310,8 +310,8 @@ class TypedeSource(Model):
         verbose_name_plural = 'types de source'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(TypedeSource, self.nom, self.slug)
-        super(TypedeSource, self).save(*args, **kwargs)
+        self.slug = autoslugify(TypeDeSource, self.nom, self.slug)
+        super(TypeDeSource, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.nom
 
@@ -320,7 +320,7 @@ class Source(Model):
     numero = CharField(max_length=50, blank=True)
     date = DateField()
     page = CharField(max_length=50, blank=True)
-    type = ForeignKey(TypedeSource, related_name='sources')
+    type = ForeignKey(TypeDeSource, related_name='sources')
     contenu = HTMLField(blank=True)
     evenements = ManyToManyField(Evenement, related_name='sources', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='sources', blank=True, null=True)

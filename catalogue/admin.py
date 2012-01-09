@@ -5,7 +5,7 @@ from reversion import VersionAdmin
 class EtatAdmin(VersionAdmin):
     exclude = ['slug']
 
-class NaturedeLieuAdmin(VersionAdmin):
+class NatureDeLieuAdmin(VersionAdmin):
     exclude = ['slug']
 
 class LieuAdmin(VersionAdmin):
@@ -25,20 +25,20 @@ class EngagementAdmin(VersionAdmin):
 class PersonnelAdmin(VersionAdmin):
     filter_horizontal = ['engagements']
 
-class NaturedOeuvreAdmin(VersionAdmin):
+class NatureDOeuvreAdmin(VersionAdmin):
     exclude = ['slug']
 
 class OeuvreAdmin(VersionAdmin):
     exclude = ['slug']
-    filter_horizontal = ['auteurs', 'parents', 'documents', 'illustrations']
+    filter_horizontal = ['pupitres', 'auteurs', 'parents', 'documents', 'illustrations']
 
-class ElementdeProgrammeAdmin(VersionAdmin):
+class ElementDeProgrammeAdmin(VersionAdmin):
     filter_horizontal = ['distribution', 'illustrations', 'documents']
 
 class EvenementAdmin(VersionAdmin):
     filter_horizontal = ['programme', 'documents', 'illustrations']
 
-class TypedeSourceAdmin(VersionAdmin):
+class TypeDeSourceAdmin(VersionAdmin):
     exclude = ['slug']
 
 class SourceAdmin(VersionAdmin):
@@ -47,7 +47,7 @@ class SourceAdmin(VersionAdmin):
 site.register(Document)
 site.register(Illustration)
 site.register(Etat, EtatAdmin)
-site.register(NaturedeLieu, NaturedeLieuAdmin)
+site.register(NatureDeLieu, NatureDeLieuAdmin)
 site.register(Lieu, LieuAdmin)
 site.register(Saison)
 site.register(Profession, ProfessionAdmin)
@@ -55,13 +55,13 @@ site.register(Individu, IndividuAdmin)
 site.register(Devise)
 site.register(Engagement, EngagementAdmin)
 site.register(Personnel, PersonnelAdmin)
-site.register(NaturedOeuvre, NaturedOeuvreAdmin)
+site.register(NatureDOeuvre, NatureDOeuvreAdmin)
 site.register(Role)
 site.register(Pupitre)
 site.register(Oeuvre, OeuvreAdmin)
-site.register(AttributiondeRole)
-site.register(ElementdeProgramme, ElementdeProgrammeAdmin)
+site.register(AttributionDeRole)
+site.register(ElementDeProgramme, ElementDeProgrammeAdmin)
 site.register(Evenement, EvenementAdmin)
-site.register(TypedeSource, TypedeSourceAdmin)
+site.register(TypeDeSource, TypeDeSourceAdmin)
 site.register(Source, SourceAdmin)
 
