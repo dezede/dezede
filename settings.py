@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     'reversion',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django_extensions'
 )
 
 LOCALE_PATHS = (

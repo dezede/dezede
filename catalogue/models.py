@@ -199,6 +199,27 @@ class GenreDOeuvre(Model):
     def __unicode__(self):
         return self.nom
 
+class TypeDeCaracteristiqueDOeuvre(Model):
+    nom = CharField(max_length=200, help_text=u'Exemple : « tonalité » (sans taper les guillemets)')
+    importance = FloatField(help_text=u"Exemple : pour l'ordre « œuvre, découpage, tonalité », on donne une importance plus grande au découpage.")
+    class Meta:
+        verbose_name = u"type de caractéristique d'œuvre"
+        verbose_name_plural = u"types de caracteristique d'œuvre"
+        ordering = ['-importance']
+    def __unicode__(self):
+        return self.nom
+
+class CaracteristiqueDOeuvre(Model):
+    type = ForeignKey(TypeDeCaracteristiqueDOeuvre, related_name='caracteristiques_d_oeuvre')
+    valeur = CharField(max_length=400, help_text=u'Exemple : « en trois actes » (sans taper les guillemets)')
+    classement = FloatField(help_text=u"Par exemple, on peut choisir de classer les découpages par nombre d'actes.")
+    class Meta:
+        verbose_name = u"caractéristique d'œuvre"
+        verbose_name_plural = u"caractéristiques d'œuvre"
+        ordering = ['type', 'classement']
+    def __unicode__(self):
+        return self.type.__unicode__() + ' : ' + self.valeur
+
 class Role(Model):
     nom = CharField(max_length=200)
     importance = FloatField()
@@ -224,7 +245,7 @@ class Oeuvre(Model):
     titre = CharField(max_length=200)
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
     genre = ForeignKey(GenreDOeuvre, related_name='oeuvres')
-    caracteristique = CharField(max_length=400, verbose_name=u'caractéristique', blank=True)
+    caracteristiques = ManyToManyField(CaracteristiqueDOeuvre, verbose_name=u'caractéristiques', blank=True, null=True)
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True, null=True)
     description = HTMLField(blank=True)
     pupitres = ManyToManyField(Role, related_name='oeuvres', blank=True, null=True)
