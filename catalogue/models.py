@@ -41,10 +41,9 @@ class Illustration(Model):
 class Etat(Model):
     nom = CharField(max_length=200)
     nom_pluriel = CharField(max_length=230, blank=True,
-                            verbose_name='nom (au pluriel)',
-                            help_text=PLURAL_MSG)
+        verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
     message = CharField(max_length=300, blank=True,
-                        help_text=u'Message à afficher dans la partie consultation.')
+        help_text=u'Message à afficher dans la partie consultation.')
     slug = SlugField(blank=True)
     class Meta:
         verbose_name = u'état'
@@ -104,9 +103,9 @@ class Saison(Model):
 class Profession(Model):
     nom = CharField(max_length=200)
     nom_pluriel = CharField(max_length=230, blank=True,
-                            verbose_name='nom (au pluriel)',
-                            help_text=PLURAL_MSG)
-    parente = ForeignKey('Profession', blank=True, null=True, related_name='enfant')
+        verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
+    parente = ForeignKey('Profession', blank=True, null=True,
+        related_name='enfant')
     slug = SlugField(blank=True)
     class Meta:
         ordering = ['slug']
@@ -116,9 +115,40 @@ class Profession(Model):
     def __unicode__(self):
         return self.nom
 
+class AncrageSpatioTemporel(Model):
+    date = DateField(blank=True, null=True)
+    lieu = ForeignKey(Lieu, related_name='ancrages', blank=True, null=True)
+    date_approx = CharField(max_length=200, blank=True,
+        verbose_name=u'date approximative',
+        help_text=u'Ne remplir que si la date est imprécise.')
+    lieu_approx = CharField(max_length=200, blank=True,
+        verbose_name=u'lieu approximatif',
+        help_text=u'Ne remplir que si le lieu est imprécis.')
+    class Meta:
+        verbose_name = 'ancrage spatio-temporel'
+        verbose_name_plural = 'ancrages spatio-temporels'
+    def __unicode__(self):
+        out = ''
+        pre = ''
+        post = ''
+        if self.date:
+            pre = self.date.__str__()
+        else:
+            pre = self.date_approx
+        if self.lieu:
+            post = self.lieu.nom
+        else:
+            post = self.lieu_approx
+        if pre != '':
+            out = 'le ' + pre + ' '
+        if post != '':
+            out += 'à ' + post
+        return out
+
 class Individu(Model):
     nom = CharField(max_length=200)
-    nom_naissance = CharField(max_length=200, verbose_name='nom de naissance', blank=True)
+    nom_naissance = CharField(max_length=200, blank=True,
+        verbose_name='nom de naissance')
     prenoms = CharField(max_length=200, verbose_name=u'prénoms', blank=True)
     pseudonyme = CharField(max_length=200, blank=True)
     SEXES = (
@@ -126,28 +156,13 @@ class Individu(Model):
         ('F', 'Féminin'),
     )
     sexe = CharField(max_length=1, choices=SEXES, blank=True)
-    date_naissance = DateField(blank=True, null=True, verbose_name='date de naissance')
-    lieu_naissance = ForeignKey(Lieu, related_name='individus_nes', blank=True, null=True, verbose_name='lieu de naissance')
-    date_naissance_approx = CharField(max_length=200, blank=True,
-                                      verbose_name='date approximative de naissance',
-                                      help_text=u'Ne remplir que si la date de naissance est imprécise.')
-    lieu_naissance_approx = CharField(max_length=200, blank=True,
-                                      verbose_name='lieu approximatif de naissance',
-                                      help_text=u'Ne remplir que si le lieu de naissance est imprécis.')
-    date_mort = DateField(blank=True, null=True, verbose_name=u'date de décès')
-    lieu_mort = ForeignKey(Lieu, related_name='individus_morts', blank=True, null=True, verbose_name=u'lieu de décès')
-    date_mort_approx = CharField(max_length=200, blank=True,
-                                 verbose_name=u'date approximative de décès',
-                                 help_text=u'Ne remplir que si la date de décès est imprécise.')
-    lieu_mort_approx = CharField(max_length=200, blank=True,
-                                 verbose_name=u'lieu approximatif de décès',
-                                 help_text=u'Ne remplir que si le lieu de décès est imprécis.')
-    epoque = CharField(max_length=200, blank=True,
-                       verbose_name=u'époque approximative',
-                       help_text='Ne remplir que si aucun champ de date ci-dessus ne convient.')
-    lieu_approx = CharField(max_length=200, blank=True,
-                            verbose_name='lieu approximatif',
-                            help_text='Ne remplir que si aucun champ de lieu ci-dessus ne convient.')
+    ancrage_naissance = ForeignKey(AncrageSpatioTemporel, blank=True, null=True,
+        verbose_name=u'ancrage de naissance')
+    ancrage_deces = ForeignKey(AncrageSpatioTemporel, blank=True, null=True,
+        verbose_name=u'ancrage du décès')
+    ancrage_approx = ForeignKey(AncrageSpatioTemporel, blank=True, null=True,
+        verbose_name=u'ancrage approximatif',
+        help_text=u'Ne remplir que si on ne connaît aucune date précise.')
     professions = ManyToManyField(Profession, related_name='individus', blank=True, null=True)
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
     biographie = HTMLField(blank=True)
@@ -323,8 +338,8 @@ class Evenement(Model):
 class TypeDeSource(Model):
     nom = CharField(max_length=200)
     nom_pluriel = CharField(max_length=230, blank=True,
-                            verbose_name='nom (au pluriel)',
-                            help_text=PLURAL_MSG)
+        verbose_name='nom (au pluriel)',
+        help_text=PLURAL_MSG)
     slug = SlugField(blank=True)
     class Meta:
         verbose_name = 'type de source'
