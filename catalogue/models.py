@@ -174,7 +174,7 @@ class TypeDeParenteDIndividus(Model):
     class Meta:
         verbose_name = u"type de parenté d'individus"
         verbose_name_plural = u"types de parenté d'individus"
-        ordering = ['importance']
+        ordering = ['-importance']
     def pluriel(self):
         return calc_pluriel(self)
     def __unicode__(self):
@@ -303,11 +303,16 @@ class GenreDOeuvre(Model):
 
 class TypeDeCaracteristiqueDOeuvre(Model):
     nom = CharField(max_length=200, help_text=u'Exemple : « tonalité » (sans taper les guillemets)')
+    nom_pluriel = CharField(max_length=430, blank=True,
+        verbose_name='nom (au pluriel)',
+        help_text=PLURAL_MSG)
     importance = FloatField(help_text=u"Exemple : pour l'ordre « œuvre, découpage, tonalité », on donne une importance plus grande au découpage.")
     class Meta:
         verbose_name = u"type de caractéristique d'œuvre"
         verbose_name_plural = u"types de caracteristique d'œuvre"
         ordering = ['-importance']
+    def pluriel(self):
+        return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
 
@@ -327,7 +332,7 @@ class Role(Model):
     importance = FloatField()
     class Meta:
         verbose_name = u'rôle'
-        ordering = ['importance']
+        ordering = ['-importance']
     def __unicode__(self):
         return self.nom
 
@@ -340,6 +345,40 @@ class Pupitre(Model):
         if self.quantite_min != self.quantite_max:
             out += u' à %d' % self.quantite_max
         out += ' ' + str(self.role)
+        return out
+
+class TypeDeParenteDOeuvres(Model):
+    nom = CharField(max_length=100)
+    nom_pluriel = CharField(max_length=130, blank=True,
+        verbose_name='nom (au pluriel)',
+        help_text=PLURAL_MSG)
+    importance = FloatField()
+    class Meta:
+        verbose_name = u"type de parenté d'œuvres"
+        verbose_name_plural = u"types de parentés d'œuvres"
+        ordering = ['-importance']
+    def pluriel(self):
+        return calc_pluriel(self)
+    def __unicode__(self):
+        return self.nom
+
+class ParenteDOeuvres(Model):
+    type = ForeignKey(TypeDeParenteDOeuvres, related_name='parentes')
+    oeuvres_cibles = ManyToManyField('Oeuvre',
+        related_name='parentes_cibles', verbose_name='œuvres cibles')
+    class Meta:
+        verbose_name = u"parenté d'œuvres"
+        verbose_name_plural = u"parentés d'œuvres"
+        ordering = ['type']
+    def __unicode__(self):
+        out = self.type.nom
+        if len(self.oeuvres_cibles.all()) > 1:
+            out = self.type.pluriel()
+        out += ' :'
+        for i, oeuvre in enumerate(self.oeuvres_cibles.all()):
+            out += ' ' + oeuvre.__unicode__()
+            if i < len(self.oeuvres_cibles.all()) - 1:
+                out += ' ;'
         return out
 
 class Oeuvre(Model):
@@ -358,8 +397,8 @@ class Oeuvre(Model):
     description = HTMLField(blank=True)
     pupitres = ManyToManyField(Role, related_name='oeuvres', blank=True,
         null=True)
-    parents = ManyToManyField('Oeuvre', related_name='enfants', blank=True,
-        null=True)
+    parentes = ManyToManyField(ParenteDOeuvres, related_name='oeuvres',
+        blank=True, null=True, verbose_name=u'parentés')
     referenced = BooleanField(default=True, verbose_name=u'référencée')
     documents = ManyToManyField(Document, related_name='oeuvres', blank=True,
         null=True)
