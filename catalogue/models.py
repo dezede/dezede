@@ -270,16 +270,35 @@ class Individu(Model):
 class Devise(Model):
     nom = CharField(max_length=200, blank=True)
     symbole = CharField(max_length=10)
+    def __unicode__(self):
+        if self.nom:
+            return self.nom
+        else:
+            return self.symbole
 
 class Engagement(Model):
     individus = ManyToManyField(Individu, related_name='engagements')
     fonction = ForeignKey(Profession, related_name='engagements')
     salaire = FloatField(blank=True)
     devise = ForeignKey(Devise, blank=True, null=True, related_name='engagements')
+    def __unicode__(self):
+        return self.fonction.nom
+
+class TypeDePersonnel(Model):
+    nom = CharField(max_length=100)
+    class Meta:
+        verbose_name = 'type de personnel'
+        verbose_name_plural = 'types de personnel'
+        ordering = ['nom']
+    def __unicode__(self):
+        return self.nom
 
 class Personnel(Model):
+    type = ForeignKey(TypeDePersonnel, related_name='personnels')
     saison = ForeignKey(Saison, related_name='personnels')
     engagements = ManyToManyField(Engagement, related_name='personnels')
+    def __unicode__(self):
+        return self.type.__unicode__() + self.saison.__unicode__()
 
 class GenreDOeuvre(Model):
     nom = CharField(max_length=400)
