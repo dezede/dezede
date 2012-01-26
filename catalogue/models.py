@@ -304,8 +304,7 @@ class GenreDOeuvre(Model):
 class TypeDeCaracteristiqueDOeuvre(Model):
     nom = CharField(max_length=200, help_text=u'Exemple : « tonalité » (sans taper les guillemets)')
     nom_pluriel = CharField(max_length=430, blank=True,
-        verbose_name='nom (au pluriel)',
-        help_text=PLURAL_MSG)
+        verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
     importance = FloatField(help_text=u"Exemple : pour l'ordre « œuvre, découpage, tonalité », on donne une importance plus grande au découpage.")
     class Meta:
         verbose_name = u"type de caractéristique d'œuvre"
@@ -435,11 +434,26 @@ class AttributionDeRole(Model):
     def __unicode__(self):
         return str(self.pupitre)
 
+class CaracteristiqueDElementDeProgramme(Model):
+    nom = CharField(max_length=100)
+    nom_pluriel = CharField(max_length=110, blank=True,
+        verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
+    importance = FloatField()
+    def pluriel(self):
+        return calc_pluriel(self)
+    class Meta:
+        verbose_name = u"caractéristique d'élément de programme"
+        verbose_name_plural = u"caractéristiques d'élément de programme"
+        ordering = ['nom']
+    def __unicode__(self):
+        return self.nom
+
 class ElementDeProgramme(Model):
     oeuvre = ForeignKey(Oeuvre, related_name='elements_de_programme', verbose_name=u'œuvre', blank=True, null=True)
     autre = CharField(max_length=500, blank=True)
-    premiere_relative = BooleanField(verbose_name=u'première relative')
-    premiere_absolue = BooleanField(verbose_name=u'première absolue')
+    caracteristiques = ManyToManyField(CaracteristiqueDElementDeProgramme,
+        related_name='elements_de_programme', blank=True, null=True,
+        verbose_name=u'caractéristiques')
     classement = FloatField()
     distribution = ManyToManyField(AttributionDeRole, related_name='elements_de_programme', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='representations', blank=True, null=True)

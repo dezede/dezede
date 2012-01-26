@@ -33,7 +33,7 @@ class OeuvreAdmin(VersionAdmin):
     filter_horizontal = ['caracteristiques', 'pupitres', 'auteurs', 'parents', 'documents', 'illustrations']
 
 class ElementDeProgrammeAdmin(VersionAdmin):
-    filter_horizontal = ['distribution', 'illustrations', 'documents']
+    filter_horizontal = ['caracteristiques', 'distribution', 'illustrations', 'documents']
 
 class EvenementAdmin(VersionAdmin):
     filter_horizontal = ['programme', 'documents', 'illustrations']
@@ -68,6 +68,7 @@ site.register(TypeDeParenteDOeuvres)
 site.register(ParenteDOeuvres)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(AttributionDeRole)
+site.register(CaracteristiqueDElementDeProgramme)
 site.register(ElementDeProgramme, ElementDeProgrammeAdmin)
 site.register(Evenement, EvenementAdmin)
 site.register(TypeDeSource, TypeDeSourceAdmin)
