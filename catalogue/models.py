@@ -16,6 +16,12 @@ def autoslugify(Mod, nom, slug):
         nom_slug = slug_orig + str(n)
     return nom_slug
 
+def calc_pluriel(object):
+        if object.nom_pluriel:
+            return object.nom_pluriel
+        else:
+            return object.nom + 's'
+
 class Document(Model):
     nom = CharField(max_length=300, blank=True)
     document = FileBrowseField('Document', max_length=400, directory='documents/')
@@ -51,6 +57,8 @@ class Etat(Model):
     def save(self, *args, **kwargs):
         self.slug = autoslugify(Etat, self.nom, self.slug)
         super(Etat, self).save(*args, **kwargs)
+    def pluriel(self):
+        return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
 
@@ -67,6 +75,8 @@ class NatureDeLieu(Model):
     def save(self, *args, **kwargs):
         self.slug = autoslugify(NatureDeLieu, self.nom, self.slug)
         super(NatureDeLieu, self).save(*args, **kwargs)
+    def pluriel(self):
+        return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
 
@@ -112,6 +122,8 @@ class Profession(Model):
     def save(self, *args, **kwargs):
         self.slug = autoslugify(Profession, self.__unicode__(), self.slug)
         super(Profession, self).save(*args, **kwargs)
+    def pluriel(self):
+        return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
 
@@ -164,10 +176,7 @@ class TypeDeParenteDIndividus(Model):
         verbose_name_plural = u"types de parenté d'individus"
         ordering = ['importance']
     def pluriel(self):
-        if self.nom_pluriel:
-            return self.nom_pluriel
-        else:
-            return self.nom + 's'
+        return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
 
@@ -275,8 +284,10 @@ class Personnel(Model):
 class GenreDOeuvre(Model):
     nom = CharField(max_length=400)
     nom_pluriel = CharField(max_length=430, blank=True,
-                            verbose_name='nom (au pluriel)',
-                            help_text=PLURAL_MSG)
+        verbose_name='nom (au pluriel)',
+        help_text=PLURAL_MSG)
+    parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
+        blank=True, null=True)
     slug = SlugField(blank=True)
     class Meta:
         verbose_name=u"genre d'œuvre"
@@ -285,6 +296,8 @@ class GenreDOeuvre(Model):
     def save(self, *args, **kwargs):
         self.slug = autoslugify(GenreDOeuvre, self.nom, self.slug)
         super(GenreDOeuvre, self).save(*args, **kwargs)
+    def pluriel(self):
+        return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
 
@@ -437,6 +450,8 @@ class TypeDeSource(Model):
     def save(self, *args, **kwargs):
         self.slug = autoslugify(TypeDeSource, self.nom, self.slug)
         super(TypeDeSource, self).save(*args, **kwargs)
+    def pluriel(self):
+        return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
 
