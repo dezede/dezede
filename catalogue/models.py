@@ -125,8 +125,8 @@ class AncrageSpatioTemporel(Model):
         verbose_name=u'lieu approximatif',
         help_text=u'Ne remplir que si le lieu est imprécis.')
     class Meta:
-        verbose_name = 'ancrage spatio-temporel'
-        verbose_name_plural = 'ancrages spatio-temporels'
+        verbose_name = u'ancrage spatio-temporel'
+        verbose_name_plural = u'ancrages spatio-temporels'
     def __unicode__(self):
         out = ''
         pre = ''
@@ -140,28 +140,46 @@ class AncrageSpatioTemporel(Model):
         else:
             post = self.lieu_approx
         if pre != '':
-            out = 'le ' + pre + ' '
+            out = u'le ' + pre + u' '
         if post != '':
-            out += 'à ' + post
+            out += u'à ' + post
         return out
+
+class Prenom(Model):
+    prenom = CharField(max_length=100, verbose_name=u'prénom')
+    classement = FloatField()
+    favori = BooleanField()
+    class Meta:
+        verbose_name = u'prénom'
+        ordering = ['classement']
+    def __unicode__(self):
+        return self.prenom
 
 class Individu(Model):
     nom = CharField(max_length=200)
     nom_naissance = CharField(max_length=200, blank=True,
         verbose_name='nom de naissance')
-    prenoms = CharField(max_length=200, verbose_name=u'prénoms', blank=True)
+    prenoms = ManyToManyField(Prenom, related_name='individus', blank=True,
+        null=True, verbose_name=u'prénoms')
     pseudonyme = CharField(max_length=200, blank=True)
+    DESIGNATIONS = (
+        ('S', 'Standard (nom et prénoms)'),
+        ('P', 'Pseudonyme'),
+        ('L', 'Nom de famille'),
+        ('F', 'Prénom(s) favori(s)'),
+    )
+    designation = CharField(max_length=1, choices=DESIGNATIONS, default='S')
     SEXES = (
         ('M', 'Masculin'),
         ('F', 'Féminin'),
     )
     sexe = CharField(max_length=1, choices=SEXES, blank=True)
     ancrage_naissance = ForeignKey(AncrageSpatioTemporel, blank=True, null=True,
-        verbose_name=u'ancrage de naissance')
+        related_name='individus_nes', verbose_name=u'ancrage de naissance')
     ancrage_deces = ForeignKey(AncrageSpatioTemporel, blank=True, null=True,
-        verbose_name=u'ancrage du décès')
+        related_name='individus_decedes', verbose_name=u'ancrage du décès')
     ancrage_approx = ForeignKey(AncrageSpatioTemporel, blank=True, null=True,
-        verbose_name=u'ancrage approximatif',
+        related_name='individus', verbose_name=u'ancrage approximatif',
         help_text=u'Ne remplir que si on ne connaît aucune date précise.')
     professions = ManyToManyField(Profession, related_name='individus', blank=True, null=True)
     parents = ManyToManyField('Individu', related_name='enfants', blank=True)
@@ -256,18 +274,28 @@ class Pupitre(Model):
         return out
 
 class Oeuvre(Model):
-    prefixe = CharField(max_length=20, blank=True, verbose_name=u'préfixe')
-    titre = CharField(max_length=200)
+    prefixe_titre = CharField(max_length=20, blank=True,
+        verbose_name=u'préfixe du titre')
+    titre = CharField(max_length=200, blank=True)
+    liaison = CharField(max_length=20, blank=True)
+    prefixe_soustitre = CharField(max_length=20, blank=True,
+        verbose_name=u'préfixe du sous-titre')
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
     genre = ForeignKey(GenreDOeuvre, related_name='oeuvres')
-    caracteristiques = ManyToManyField(CaracteristiqueDOeuvre, verbose_name=u'caractéristiques', blank=True, null=True)
-    auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True, null=True)
+    caracteristiques = ManyToManyField(CaracteristiqueDOeuvre, blank=True,
+        null=True, verbose_name=u'caractéristiques')
+    auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True,
+        null=True)
     description = HTMLField(blank=True)
-    pupitres = ManyToManyField(Role, related_name='oeuvres', blank=True, null=True)
-    parents = ManyToManyField('Oeuvre', related_name='enfants', blank=True, null=True)
+    pupitres = ManyToManyField(Role, related_name='oeuvres', blank=True,
+        null=True)
+    parents = ManyToManyField('Oeuvre', related_name='enfants', blank=True,
+        null=True)
     referenced = BooleanField(default=True, verbose_name=u'référencée')
-    documents = ManyToManyField(Document, related_name='oeuvres', blank=True, null=True)
-    illustrations = ManyToManyField(Illustration, related_name='oeuvres', blank=True, null=True)
+    documents = ManyToManyField(Document, related_name='oeuvres', blank=True,
+        null=True)
+    illustrations = ManyToManyField(Illustration, related_name='oeuvres',
+        blank=True, null=True)
     etat = ForeignKey(Etat, related_name='oeuvres', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
@@ -279,11 +307,16 @@ class Oeuvre(Model):
         super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
         out = u''
-        if self.prefixe:
-            out += self.prefixe + u' '
-        out += self.titre
-        if self.soustitre:
-            out += u', ou ' + self.soustitre
+        if self.titre:
+            if self.prefixe:
+                out = self.prefixe + u' '
+            out += self.titre
+            if self.soustitre:
+                out += u', ou ' + self.soustitre
+        else:
+            out = self.genre.nom
+            for caracteristique in self.caracteristiques:
+                out += ', ' + caracteristique.valeur
         return out
 
 class AttributionDeRole(Model):
