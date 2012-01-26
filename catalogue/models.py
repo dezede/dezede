@@ -155,15 +155,50 @@ class Prenom(Model):
     def __unicode__(self):
         return self.prenom
 
+class TypeDeParenteDIndividus(Model):
+    nom = CharField(max_length=50)
+    nom_pluriel = CharField(max_length=55, blank=True, help_text=PLURAL_MSG)
+    importance = FloatField()
+    class Meta:
+        verbose_name = u"type de parenté d'individus"
+        verbose_name_plural = u"types de parenté d'individus"
+        ordering = ['importance']
+    def pluriel(self):
+        if self.nom_pluriel:
+            return self.nom_pluriel
+        else:
+            return self.nom + 's'
+    def __unicode__(self):
+        return self.nom
+
+class ParenteDIndividus(Model):
+    type = ForeignKey(TypeDeParenteDIndividus, related_name='parentes')
+    individus_cibles = ManyToManyField('Individu',
+        related_name='parentes_cibles', verbose_name='individus cibles')
+    class Meta:
+        verbose_name = u"parenté d'individus"
+        verbose_name_plural = u"parentés d'individus"
+        ordering = ['type']
+    def __unicode__(self):
+        out = self.type.nom
+        if len(self.individus_cibles.all()) > 1:
+            out = self.type.pluriel()
+        out += ' :'
+        for i, individu in enumerate(self.individus_cibles.all()):
+            out += ' ' + individu.__unicode__()
+            if i < len(self.individus_cibles.all()) - 1:
+                out += ' ;'
+        return out
+
 class Individu(Model):
     nom = CharField(max_length=200)
     nom_naissance = CharField(max_length=200, blank=True,
-        verbose_name='nom de naissance')
+        verbose_name=u'nom de naissance')
     prenoms = ManyToManyField(Prenom, related_name='individus', blank=True,
         null=True, verbose_name=u'prénoms')
     pseudonyme = CharField(max_length=200, blank=True)
     DESIGNATIONS = (
-        ('S', 'Standard (nom et prénoms)'),
+        ('S', 'Standard (nom, prénoms et pseudonyme)'),
         ('P', 'Pseudonyme'),
         ('L', 'Nom de famille'),
         ('F', 'Prénom(s) favori(s)'),
@@ -181,25 +216,46 @@ class Individu(Model):
     ancrage_approx = ForeignKey(AncrageSpatioTemporel, blank=True, null=True,
         related_name='individus', verbose_name=u'ancrage approximatif',
         help_text=u'Ne remplir que si on ne connaît aucune date précise.')
-    professions = ManyToManyField(Profession, related_name='individus', blank=True, null=True)
-    parents = ManyToManyField('Individu', related_name='enfants', blank=True)
+    professions = ManyToManyField(Profession, related_name='individus',
+        blank=True, null=True)
+    parentes = ManyToManyField(ParenteDIndividus, related_name='individus_orig',
+        blank=True, null=True, verbose_name='parentés')
     biographie = HTMLField(blank=True)
-    illustrations = ManyToManyField(Illustration, related_name='individus', blank=True, null=True)
-    documents = ManyToManyField(Document, related_name='individus', blank=True, null=True)
+    illustrations = ManyToManyField(Illustration, related_name='individus',
+        blank=True, null=True)
+    documents = ManyToManyField(Document, related_name='individus',blank=True,
+        null=True)
     etat = ForeignKey(Etat, related_name='individus', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     class Meta:
         ordering = ['nom']
     def save(self, *args, **kwargs):
+        super(Individu, self).save(*args, **kwargs)
         self.slug = autoslugify(Individu, self.__unicode__(), self.slug)
         super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
-        out = self.nom
-        if self.prenoms:
-            out = self.prenoms + ' ' + out
-        if self.pseudonyme:
-            out += ', dit ' + self.pseudonyme
+        out = ''
+        prenoms = ''
+        nom = ''
+        pseudonyme = ''
+        if self.prenoms and (self.designation == 'S' or self.designation == 'F'):
+            for i, prenom in enumerate(self.prenoms.all()):
+                prenoms += prenom.__unicode__()
+                if i < len(self.prenoms.all()) - 1:
+                    prenoms += ' '
+        if self.designation == 'S' or self.designation == 'L':
+            nom = self.nom
+        if self.pseudonyme and (self.designation == 'S' or self.designation == 'P'):
+                pseudonyme = self.pseudonyme
+        if self.designation == 'S':
+            if prenoms != '':
+                out = prenoms + u' '
+            out += nom
+            if pseudonyme != '':
+                out += u', dit ' + pseudonyme
+        else:
+            out = prenoms + nom + pseudonyme
         return out
 
 class Devise(Model):

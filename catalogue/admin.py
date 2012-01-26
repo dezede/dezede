@@ -17,7 +17,7 @@ class ProfessionAdmin(VersionAdmin):
 
 class IndividuAdmin(VersionAdmin):
     exclude = ['slug']
-    filter_horizontal = ['professions', 'parents', 'illustrations', 'documents']
+    filter_horizontal = ['prenoms', 'professions', 'parentes', 'illustrations', 'documents']
 
 class EngagementAdmin(VersionAdmin):
     filter_horizontal = ['individus']
@@ -53,6 +53,8 @@ site.register(Saison)
 site.register(Profession, ProfessionAdmin)
 site.register(AncrageSpatioTemporel)
 site.register(Prenom)
+site.register(TypeDeParenteDIndividus)
+site.register(ParenteDIndividus)
 site.register(Individu, IndividuAdmin)
 site.register(Devise)
 site.register(Engagement, EngagementAdmin)
