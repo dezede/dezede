@@ -624,10 +624,11 @@ class ElementDeProgramme(Model):
     documents = ManyToManyField(Document, related_name='representations', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='elements_de_programme', null=True, blank=True)
     def html(self):
-        out = self.oeuvre.html()
-        out += '.&mdash; '
+        out = self.oeuvre.html() + '.'
         distribution = self.distribution.all()
         maxi = len(distribution) - 1
+        if distribution:
+            out += '&mdash; '
         for i, attribution in enumerate(distribution):
             individus = attribution.individus.all()
             maxj = len(individus) - 1

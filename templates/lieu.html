@@ -18,7 +18,7 @@
   {% endfor %}
   {% for evenement in lieu.evenements %}
     {% if forloop.first %}
-      <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}">Sources :</a>
+      <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}">Événements :</a>
       <ul>
     {% endif %}
     <li>
