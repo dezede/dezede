@@ -16,14 +16,14 @@
     <li><a href="{% url 'catalogue.views.index_lieux' %}{{ enfant.slug }}">{{ enfant.nom }}</a></li>
     {% if forloop.last %}</ul>{% endif %}
   {% endfor %}
-  {% for evenement in lieu.evenements.all %}
+  {% for evenement in lieu.evenements %}
     {% if forloop.first %}
       <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}">Sources :</a>
       <ul>
     {% endif %}
     <li>
-      <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}/{{ evenement.date_debut.year }}/{{ evenement.date_debut.month }}/{{ evenement.date_debut.day }}">
-        {{ evenement.date_debut }} :
+      <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}/{{ evenement.ancrage_debut.year }}/{{ evenement.ancrage_debut.month }}/{{ evenement.ancrage_debut.day }}">
+        {{ evenement.ancrage_debut.calc_moment|capfirst }} :
         <ul>
           {% for element in evenement.programme.all %}
             <li>{{ element }}</li>

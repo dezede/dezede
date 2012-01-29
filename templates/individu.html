@@ -8,6 +8,11 @@
 {% endblock %}
 
 {% block body %}
+
+  {% with individu.etat as etat %}
+    {% include 'etat.html' %}
+  {% endwith %}
+
   <h3>
     {{ individu }}
   </h3>

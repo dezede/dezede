@@ -55,3 +55,9 @@ a:hover
   border-collapse: collapse;
 }
 
+.warning
+{
+  background-color: #FF6666;
+  border: 1px solid black;
+}
+

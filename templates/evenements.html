@@ -6,7 +6,7 @@
 {% block title %}
   {% for element in datalist %}
     {% with element|first as evenement %}
-      {{ evenement.lieu }}, {{ evenement.date_debut }}{% if not forloop.last %} &ndash;{% endif %}
+      {{ evenement.ancrage_debut }}{% if not forloop.last %} &ndash;{% endif %}
     {% endwith %}
   {% endfor %}
 {% endblock %}

@@ -5,6 +5,7 @@ from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
 from django.template.defaultfilters import date, time, capfirst
 
+LOWER_MSG = u'En minuscules.'
 PLURAL_MSG = u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».'
 
 def autoslugify(Mod, nom, slug):
@@ -45,10 +46,10 @@ class Illustration(Model):
         return self.image.__unicode__()
 
 class Etat(Model):
-    nom = CharField(max_length=200)
+    nom = CharField(max_length=200, help_text=LOWER_MSG)
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
-    message = CharField(max_length=300, blank=True,
+    message = HTMLField(blank=True,
         help_text=u'Message à afficher dans la partie consultation.')
     slug = SlugField(blank=True)
     class Meta:
@@ -63,7 +64,7 @@ class Etat(Model):
         return self.nom
 
 class NatureDeLieu(Model):
-    nom = CharField(max_length=400)
+    nom = CharField(max_length=400, help_text=LOWER_MSG)
     nom_pluriel = CharField(max_length=430, blank=True,
                             verbose_name='nom (au pluriel)',
                             help_text=PLURAL_MSG)
@@ -90,6 +91,8 @@ class Lieu(Model):
     etat = ForeignKey(Etat, related_name='lieux', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
+    def evenements(self):
+        return Evenement.objects.filter(ancrage_debut__lieu=self)
     class Meta:
         verbose_name_plural = 'lieux'
         ordering = ['slug']
@@ -111,7 +114,7 @@ class Saison(Model):
         return self.lieu.__unicode__() + ', ' + self.debut.year.__str__() + '-' + self.fin.year.__str__()
 
 class Profession(Model):
-    nom = CharField(max_length=200)
+    nom = CharField(max_length=200, help_text=LOWER_MSG)
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
     parente = ForeignKey('Profession', blank=True, null=True,
@@ -140,6 +143,18 @@ class AncrageSpatioTemporel(Model):
     lieu_approx = CharField(max_length=200, blank=True,
         verbose_name=u'lieu approximatif',
         help_text=u'Ne remplir que si le lieu est imprécis.')
+    def year(self):
+        if self.date:
+            return self.date.year
+        return None
+    def month(self):
+        if self.date:
+            return self.date.month
+        return None
+    def day(self):
+        if self.date:
+            return self.date.day
+        return None
     def calc_date(self):
         if self.date:
             return date(self.date, 'SHORT_DATE_FORMAT')
@@ -152,6 +167,21 @@ class AncrageSpatioTemporel(Model):
         elif self.heure_approx:
             return self.heure_approx
         return ''
+    def calc_moment(self):
+        out = ''
+        date = self.calc_date()
+        heure = self.calc_heure()
+        if date != '':
+            if self.date:
+                out += u'le '
+            out += date
+            if heure != '':
+                out += ' '
+        if heure != '':
+            if self.heure:
+                out += u'à '
+            out += heure
+        return out
     def calc_lieu(self):
         if self.lieu:
             return self.lieu.nom
@@ -165,22 +195,11 @@ class AncrageSpatioTemporel(Model):
     def __unicode__(self):
         out = ''
         lieu = self.calc_lieu()
-        date = self.calc_date()
-        heure = self.calc_heure()
         if lieu != '':
             out = lieu
             if date != '' or heure != '':
                 out += ', '
-        if date != '':
-            if self.date:
-                out += u'le '
-            out += date
-            if heure != '':
-                out += ' '
-        if heure != '':
-            if self.heure:
-                out += u'à '
-            out += heure
+        out += self.calc_moment()
         out = capfirst(out)
         return out
 
@@ -195,9 +214,9 @@ class Prenom(Model):
         return self.prenom
 
 class TypeDeParenteDIndividus(Model):
-    nom = CharField(max_length=50)
+    nom = CharField(max_length=50, help_text=LOWER_MSG)
     nom_pluriel = CharField(max_length=55, blank=True, help_text=PLURAL_MSG)
-    importance = FloatField()
+    importance = FloatField(default=10)
     class Meta:
         verbose_name = u"type de parenté d'individus"
         verbose_name_plural = u"types de parenté d'individus"
@@ -367,7 +386,7 @@ class Personnel(Model):
         return self.type.__unicode__() + self.saison.__unicode__()
 
 class GenreDOeuvre(Model):
-    nom = CharField(max_length=400)
+    nom = CharField(max_length=400, help_text=LOWER_MSG)
     nom_pluriel = CharField(max_length=430, blank=True,
         verbose_name='nom (au pluriel)',
         help_text=PLURAL_MSG)
@@ -390,7 +409,8 @@ class TypeDeCaracteristiqueDOeuvre(Model):
     nom = CharField(max_length=200, help_text=u'Exemple : « tonalité » (sans taper les guillemets)')
     nom_pluriel = CharField(max_length=430, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
-    importance = FloatField(help_text=u"Exemple : pour l'ordre « œuvre, découpage, tonalité », on donne une importance plus grande au découpage.")
+    importance = FloatField(default=10,
+        help_text=u"Exemple : pour l'ordre « œuvre, découpage, tonalité », on donne une importance plus grande au découpage.")
     class Meta:
         verbose_name = u"type de caractéristique d'œuvre"
         verbose_name_plural = u"types de caracteristique d'œuvre"
@@ -403,7 +423,8 @@ class TypeDeCaracteristiqueDOeuvre(Model):
 class CaracteristiqueDOeuvre(Model):
     type = ForeignKey(TypeDeCaracteristiqueDOeuvre, related_name='caracteristiques_d_oeuvre')
     valeur = CharField(max_length=400, help_text=u'Exemple : « en trois actes » (sans taper les guillemets)')
-    classement = FloatField(help_text=u"Par exemple, on peut choisir de classer les découpages par nombre d'actes.")
+    classement = FloatField(default=0,
+        help_text=u"Par exemple, on peut choisir de classer les découpages par nombre d'actes.")
     class Meta:
         verbose_name = u"caractéristique d'œuvre"
         verbose_name_plural = u"caractéristiques d'œuvre"
@@ -413,7 +434,7 @@ class CaracteristiqueDOeuvre(Model):
 
 class Role(Model):
     nom = CharField(max_length=200)
-    importance = FloatField()
+    importance = FloatField(default=10)
     class Meta:
         verbose_name = u'rôle'
         ordering = ['-importance']
@@ -432,11 +453,11 @@ class Pupitre(Model):
         return out
 
 class TypeDeParenteDOeuvres(Model):
-    nom = CharField(max_length=100)
+    nom = CharField(max_length=100, help_text=LOWER_MSG)
     nom_pluriel = CharField(max_length=130, blank=True,
         verbose_name='nom (au pluriel)',
         help_text=PLURAL_MSG)
-    importance = FloatField()
+    importance = FloatField(default=10)
     class Meta:
         verbose_name = u"type de parenté d'œuvres"
         verbose_name_plural = u"types de parentés d'œuvres"
@@ -527,10 +548,10 @@ class AttributionDeRole(Model):
         return str(self.pupitre)
 
 class CaracteristiqueDElementDeProgramme(Model):
-    nom = CharField(max_length=100)
+    nom = CharField(max_length=100, help_text=LOWER_MSG)
     nom_pluriel = CharField(max_length=110, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
-    importance = FloatField()
+    importance = FloatField(default=10)
     def pluriel(self):
         return calc_pluriel(self)
     class Meta:
@@ -546,7 +567,7 @@ class ElementDeProgramme(Model):
     caracteristiques = ManyToManyField(CaracteristiqueDElementDeProgramme,
         related_name='elements_de_programme', blank=True, null=True,
         verbose_name=u'caractéristiques')
-    classement = FloatField()
+    classement = FloatField(default=0)
     distribution = ManyToManyField(AttributionDeRole, related_name='elements_de_programme', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='representations', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='representations', blank=True, null=True)
@@ -583,7 +604,7 @@ class Evenement(Model):
         return self.ancrage_debut.calc_lieu() + ' le ' + self.ancrage_debut.calc_date()
 
 class TypeDeSource(Model):
-    nom = CharField(max_length=200)
+    nom = CharField(max_length=200, help_text=LOWER_MSG)
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name='nom (au pluriel)',
         help_text=PLURAL_MSG)
@@ -601,11 +622,12 @@ class TypeDeSource(Model):
         return self.nom
 
 class Source(Model):
-    nom = CharField(max_length=200)
+    nom = CharField(max_length=200, help_text='Exemple : « Le Journal de Rouen »')
     numero = CharField(max_length=50, blank=True)
-    date = DateField()
+    date = DateField(blank=True, null=True)
     page = CharField(max_length=50, blank=True)
-    type = ForeignKey(TypeDeSource, related_name='sources')
+    type = ForeignKey(TypeDeSource, related_name='sources',
+        help_text='Exemple : « annonce » ou « compte rendu »')
     contenu = HTMLField(blank=True)
     evenements = ManyToManyField(Evenement, related_name='sources', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='sources', blank=True, null=True)
