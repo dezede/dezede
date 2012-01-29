@@ -32,6 +32,9 @@ class OeuvreAdmin(VersionAdmin):
     exclude = ['slug']
     filter_horizontal = ['caracteristiques', 'pupitres', 'auteurs', 'parentes', 'documents', 'illustrations']
 
+class AttributionDeRoleAdmin(VersionAdmin):
+    filter_horizontal = ['individus']
+
 class ElementDeProgrammeAdmin(VersionAdmin):
     filter_horizontal = ['caracteristiques', 'distribution', 'illustrations', 'documents']
 
@@ -68,7 +71,7 @@ site.register(Pupitre)
 site.register(TypeDeParenteDOeuvres)
 site.register(ParenteDOeuvres)
 site.register(Oeuvre, OeuvreAdmin)
-site.register(AttributionDeRole)
+site.register(AttributionDeRole, AttributionDeRoleAdmin)
 site.register(CaracteristiqueDElementDeProgramme)
 site.register(ElementDeProgramme, ElementDeProgrammeAdmin)
 site.register(Evenement, EvenementAdmin)

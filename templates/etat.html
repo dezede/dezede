@@ -1,0 +1,8 @@
+{% if etat.message %}
+  <div class="warning">
+    <h4>
+      ¡ Attention !
+    </h4>
+    {{ etat.message|safe }}
+  </div>
+{% endif %}

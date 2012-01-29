@@ -330,21 +330,29 @@ class Individu(Model):
                     out += ', '
             return out
         return ''
-    def html(self):
+    def html(self, auteur=None):
+        designation = self.designation
+        prenoms = self.calc_fav_prenoms()
         url = reverse('musicologie.catalogue.views.detail_individu',
             args=[self.slug])
         out = '<a href="' + url + '">'
         out += '<span style="font-variant: small-caps;">'
-        out += self.nom
+        if designation == 'F':
+            out += prenoms
+        elif designation == 'P':
+            out += self.pseudonyme
+        else:
+            out += self.nom
         out += '</span>'
-        prenoms = self.calc_fav_prenoms()
-        if prenoms:
+        if designation == 'S' and prenoms:
             out += ' (' + abbreviate(prenoms) + ')'
         professions = self.professions.all()
-        if professions:
+        if auteur and professions:
             out += ' [' + abbreviate(professions[0].__unicode__(), 1) + ']'
         out += '</a>'
         return out
+    def html_auteur(self):
+        return self.html(True)
     class Meta:
         ordering = ['nom']
     def save(self, *args, **kwargs):
@@ -465,7 +473,7 @@ class Pupitre(Model):
     quantite_min = IntegerField(default=1, verbose_name=u'quantité minimale')
     quantite_max = IntegerField(default=1, verbose_name=u'quantité maximale')
     def __unicode__(self):
-        out = self.quantite_min.__unicode__()
+        out = str(self.quantite_min)
         if self.quantite_min != self.quantite_max:
             out += u' à %d' % self.quantite_max
         out += ' ' + self.role.__unicode__()
@@ -550,7 +558,7 @@ class Oeuvre(Model):
         auteurs = self.auteurs.all()
         maxi = len(auteurs) - 1
         for i, auteur in enumerate(auteurs):
-            out += auteur.html() + ', '
+            out += auteur.html_auteur() + ', '
         out += '<em>' + self.__unicode__() + '</em>'
         if self.genre or self.caracteristiques:
             out += ', '
@@ -615,6 +623,22 @@ class ElementDeProgramme(Model):
     illustrations = ManyToManyField(Illustration, related_name='representations', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='representations', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='elements_de_programme', null=True, blank=True)
+    def html(self):
+        out = self.oeuvre.html()
+        out += '.&mdash; '
+        distribution = self.distribution.all()
+        maxi = len(distribution) - 1
+        for i, attribution in enumerate(distribution):
+            individus = attribution.individus.all()
+            maxj = len(individus) - 1
+            for j, individu in enumerate(individus):
+                out += individu.html()
+                if j < maxj:
+                    out += ', '
+            out += ' (' + attribution.pupitre.role.__unicode__() + ')'
+            if i < maxi:
+                out += ', '
+        return out
     class Meta:
         verbose_name = u'élément de programme'
         verbose_name_plural = u'éléments de programme'
