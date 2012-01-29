@@ -13,7 +13,7 @@
       <table class="liste">
         <thead>
           <td>Nom</td>
-          <td>Prénoms</td>
+          <td>Prénom(s)</td>
           <td>Pseudonyme</td>
           <td>Naissance</td>
           <td>Décès</td>
@@ -23,12 +23,12 @@
     {% endif %}
     <tr onclick="document.location = '{% url 'catalogue.views.index_individus' %}{{ individu.slug }}';" title="Ouvrir l'autorité">
       <td>{{ individu.nom }}</td>
-      <td>{% if individu.prenoms %}{{ individu.prenoms }}{% else %}?{% endif %}</td>
-      <td>{% if individu.pseudonyme %}{{ individu.pseudonyme }}{% else %}aucun{% endif %}</td>
-      <td>{% if individu|naissance %}{{ individu|naissance }}{% else %}?{% endif %}</td>
-      <td>{% if individu|mort %}{{ individu|mort }}{% else %}?{% endif %}</td>
+      <td>{{ individu.calc_prenoms }}</td>
+      <td>{{ individu.calc_pseudonyme }}</td>
+      <td>{{ individu.naissance }}</td>
+      <td>{{ individu.deces }}</td>
       <td>
-        {{ individu|professions }}</td>
+        {{ individu.calc_professions }}</td>
     </tr>
     {% if forloop.last %}
       </tbody>

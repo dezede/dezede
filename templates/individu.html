@@ -12,13 +12,12 @@
     {{ individu }}
   </h3>
   {% if individu.nom_naissance %}Nom de naissance : {{ individu.nom_naissance }}<br />{% endif %}
-  {% if individu|naissance %}Naissance : {{ individu|naissance }}<br />{% endif %}
-  {% if individu|mort %}Mort : {{ individu|mort }}<br />{% endif %}
-  {% if individu.epoque %}Époque : {{ individu.epoque }}<br />{% endif %}
-  {% if individu.lieu_approx %}Lieu : {{ individu.lieu_approx }}<br />{% endif %}
+  {% if individu.naissance != '?' %}Naissance : {{ individu.naissance }}<br />{% endif %}
+  {% if individu.deces != '?' %}Décès : {{ individu.deces }}<br />{% endif %}
+  {% if individu.ancrage != '?' %}Ancrage spatio-temporel : {{ individu.ancrage }}<br />{% endif %}
   {% if individu.pseudonyme %}Pseudonyme : {{ individu.pseudonyme }}<br />{% endif %}
   {% for parent in individu.parents.all %}{% if forloop.first %}Parents : {% endif %}<a href="{% url 'catalogue.views.index_individus' %}{{ parent.slug }}">{{ parent }}</a>{% if not forloop.last %},{% else %}<br />{% endif %}{% endfor %}
-  Profession{{ individu.professions.all|pluralize }} : {{ individu|professions }}<br />
+  Profession{{ individu.professions.all|pluralize }} : {{ individu.calc_professions }}<br />
 
   {% for enfant in individu.enfants.all %}
     {% if forloop.first %}

@@ -30,7 +30,7 @@ class GenreDOeuvreAdmin(VersionAdmin):
 
 class OeuvreAdmin(VersionAdmin):
     exclude = ['slug']
-    filter_horizontal = ['caracteristiques', 'pupitres', 'auteurs', 'parents', 'documents', 'illustrations']
+    filter_horizontal = ['caracteristiques', 'pupitres', 'auteurs', 'parentes', 'documents', 'illustrations']
 
 class ElementDeProgrammeAdmin(VersionAdmin):
     filter_horizontal = ['caracteristiques', 'distribution', 'illustrations', 'documents']

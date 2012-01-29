@@ -3,6 +3,7 @@ from django.db.models import *
 from tinymce.models import HTMLField
 from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
+from django.template.defaultfilters import date, time, capfirst
 
 PLURAL_MSG = u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».'
 
@@ -19,8 +20,7 @@ def autoslugify(Mod, nom, slug):
 def calc_pluriel(object):
         if object.nom_pluriel:
             return object.nom_pluriel
-        else:
-            return object.nom + 's'
+        return object.nom + 's'
 
 class Document(Model):
     nom = CharField(max_length=300, blank=True)
@@ -142,50 +142,52 @@ class AncrageSpatioTemporel(Model):
         help_text=u'Ne remplir que si le lieu est imprécis.')
     def calc_date(self):
         if self.date:
-            return self.date.__str__()
+            return date(self.date, 'SHORT_DATE_FORMAT')
         elif self.date_approx:
             return self.date_approx
-        else:
-            raise Warning("aucune date, précise ou approximative, n'a été entrée.")
+        return ''
     def calc_heure(self):
         if self.heure:
-            return self.heure.__str__()
+            return time(self.heure, 'H\hi')
         elif self.heure_approx:
             return self.heure_approx
-        else:
-            raise Warning("aucune heure, précise ou approximative, n'a été entrée.")
+        return ''
     def calc_lieu(self):
         if self.lieu:
             return self.lieu.nom
         elif self.lieu_approx:
             return self.lieu_approx
-        else:
-            raise Warning("aucune lieu, précise ou approximative, n'a été entrée.")
+        return ''
     class Meta:
         verbose_name = u'ancrage spatio-temporel'
         verbose_name_plural = u'ancrages spatio-temporels'
+        ordering = ['lieu', 'date', 'heure', 'lieu_approx', 'date_approx', 'heure_approx']
     def __unicode__(self):
         out = ''
-        pre = ''
-        post = ''
-        if self.date:
-            pre = self.date.__str__()
-        else:
-            pre = self.date_approx
-        if self.lieu:
-            post = self.lieu.nom
-        else:
-            post = self.lieu_approx
-        if pre != '':
-            out = u'le ' + pre + u' '
-        if post != '':
-            out += u'à ' + post
+        lieu = self.calc_lieu()
+        date = self.calc_date()
+        heure = self.calc_heure()
+        if lieu != '':
+            out = lieu
+            if date != '' or heure != '':
+                out += ', '
+        if date != '':
+            if self.date:
+                out += u'le '
+            out += date
+            if heure != '':
+                out += ' '
+        if heure != '':
+            if self.heure:
+                out += u'à '
+            out += heure
+        out = capfirst(out)
         return out
 
 class Prenom(Model):
     prenom = CharField(max_length=100, verbose_name=u'prénom')
-    classement = FloatField()
-    favori = BooleanField()
+    classement = FloatField(default=0)
+    favori = BooleanField(default=True)
     class Meta:
         verbose_name = u'prénom'
         ordering = ['classement']
@@ -218,9 +220,11 @@ class ParenteDIndividus(Model):
         if len(self.individus_cibles.all()) > 1:
             out = self.type.pluriel()
         out += ' :'
-        for i, individu in enumerate(self.individus_cibles.all()):
+        cibles = self.individus_cibles.all()
+        maxi = len(cibles) - 1
+        for i, individu in enumerate(cibles):
             out += ' ' + individu.__unicode__()
-            if i < len(self.individus_cibles.all()) - 1:
+            if i < maxi:
                 out += ' ;'
         return out
 
@@ -262,6 +266,47 @@ class Individu(Model):
     etat = ForeignKey(Etat, related_name='individus', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
+    def calc_prenoms_methode(self, fav):
+        out = ''
+        prenoms = self.prenoms.all()
+        maxi = len(prenoms) - 1
+        for i, prenom in enumerate(prenoms):
+            if prenom.favori or not fav:
+                out += prenom.__unicode__()
+                if i < maxi:
+                    out += ' '
+        return out
+    def calc_prenoms(self):
+        return self.calc_prenoms_methode(False)
+    def calc_fav_prenoms(self):
+        return self.calc_prenoms_methode(True)
+    def calc_pseudonyme(self):
+        if self.pseudonyme:
+            return self.pseudonyme
+        return 'Aucun'
+    def naissance(self):
+        if self.ancrage_naissance:
+            return self.ancrage_naissance.__unicode__()
+        return '?'
+    def deces(self):
+        if self.ancrage_deces:
+            return self.ancrage_deces.__unicode__()
+        return '?'
+    def ancrage(self):
+        if self.ancrage_approx:
+            return self.ancrage_approx.__unicode__()
+        return '?'
+    def calc_professions(self):
+        professions = self.professions.all()
+        if professions:
+            out = ''
+            maxi = len(professions) - 1
+            for i, profession in enumerate(professions):
+                out += profession.__unicode__()
+                if i < maxi:
+                    out += ', '
+            return out
+        return '?'
     class Meta:
         ordering = ['nom']
     def save(self, *args, **kwargs):
@@ -274,10 +319,7 @@ class Individu(Model):
         nom = ''
         pseudonyme = ''
         if self.prenoms and (self.designation == 'S' or self.designation == 'F'):
-            for i, prenom in enumerate(self.prenoms.all()):
-                prenoms += prenom.__unicode__()
-                if i < len(self.prenoms.all()) - 1:
-                    prenoms += ' '
+            prenoms = self.calc_prenoms()
         if self.designation == 'S' or self.designation == 'L':
             nom = self.nom
         if self.pseudonyme and (self.designation == 'S' or self.designation == 'P'):
@@ -298,8 +340,7 @@ class Devise(Model):
     def __unicode__(self):
         if self.nom:
             return self.nom
-        else:
-            return self.symbole
+        return self.symbole
 
 class Engagement(Model):
     individus = ManyToManyField(Individu, related_name='engagements')
@@ -418,9 +459,11 @@ class ParenteDOeuvres(Model):
         if len(self.oeuvres_cibles.all()) > 1:
             out = self.type.pluriel()
         out += ' :'
-        for i, oeuvre in enumerate(self.oeuvres_cibles.all()):
+        cibles = self.oeuvres_cibles.all()
+        maxi = len(cibles) - 1
+        for i, oeuvre in enumerate(cibles):
             out += ' ' + oeuvre.__unicode__()
-            if i < len(self.oeuvres_cibles.all()) - 1:
+            if i < maxi:
                 out += ' ;'
         return out
 
@@ -432,7 +475,8 @@ class Oeuvre(Model):
     prefixe_soustitre = CharField(max_length=20, blank=True,
         verbose_name=u'préfixe du sous-titre')
     soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
-    genre = ForeignKey(GenreDOeuvre, related_name='oeuvres')
+    genre = ForeignKey(GenreDOeuvre, related_name='oeuvres', blank=True,
+        null=True)
     caracteristiques = ManyToManyField(CaracteristiqueDOeuvre, blank=True,
         null=True, verbose_name=u'caractéristiques')
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True,
@@ -459,11 +503,15 @@ class Oeuvre(Model):
     def __unicode__(self):
         out = u''
         if self.titre:
-            if self.prefixe:
-                out = self.prefixe + u' '
+            if self.prefixe_titre:
+                out = self.prefixe_titre
             out += self.titre
             if self.soustitre:
-                out += u', ou ' + self.soustitre
+                if self.liaison:
+                    out += self.liaison
+                if self.prefixe_soustitre:
+                    out += self.prefixe_soustitre
+                out += self.soustitre
         else:
             out = self.genre.nom
             for caracteristique in self.caracteristiques:
@@ -512,15 +560,15 @@ class ElementDeProgramme(Model):
             return self.oeuvre.__unicode__()
         elif self.autre:
             return self.autre
-        else:
-            return str(self.classement)
+        return str(self.classement)
 
 class Evenement(Model):
-    date_debut = DateField()
-    heure_debut = TimeField(blank=True, null=True)
-    date_fin = DateField(blank=True, null=True, help_text=u'À ne préciser que si l\'événement dure plusieurs jours.')
-    heure_fin = TimeField(blank=True, null=True)
-    lieu = ForeignKey(Lieu, related_name='evenements')
+    ancrage_debut = ForeignKey(AncrageSpatioTemporel,
+        related_name='evenements_debuts')
+    ancrage_fin = ForeignKey(AncrageSpatioTemporel,
+        related_name='evenements_fins', blank=True, null=True)
+    date_fin = DateField(blank=True, null=True,
+        help_text=u'À ne préciser que si l\'événement dure plusieurs jours.')
     relache = BooleanField(verbose_name=u'relâche')
     circonstance = CharField(max_length=500, blank=True)
     programme = ManyToManyField(ElementDeProgramme, related_name='evenements', blank=True, null=True)
@@ -530,9 +578,9 @@ class Evenement(Model):
     notes = HTMLField(blank=True)
     class Meta:
         verbose_name = u'événement'
-        ordering = ['date_debut', 'heure_debut', 'lieu']
+        ordering = ['ancrage_debut']
     def __unicode__(self):
-        return self.lieu.nom + ' le ' + self.date_debut.__str__()
+        return self.ancrage_debut.calc_lieu() + ' le ' + self.ancrage_debut.calc_date()
 
 class TypeDeSource(Model):
     nom = CharField(max_length=200)
