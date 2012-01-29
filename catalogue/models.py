@@ -95,6 +95,15 @@ class Lieu(Model):
     slug = SlugField(blank=True)
     def evenements(self):
         return Evenement.objects.filter(ancrage_debut__lieu=self)
+    def html(self):
+        url = reverse('musicologie.catalogue.views.detail_lieu',
+            args=[self.slug])
+        out = '<a href="' + url + '">'
+        parent = self.parent
+        if parent:
+            out += parent.nom + ', '
+        out += self.nom + '</a>'
+        return out
     class Meta:
         verbose_name_plural = 'lieux'
         ordering = ['slug']

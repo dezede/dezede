@@ -15,10 +15,8 @@
   {% for element in datalist %}
     {% with element|first as evenement %}{% with element|last as types %}
       <div style="border: 1.5px solid; border-radius: 15px; padding: 20px; margin-bottom: 30px;">
-        <h3 style="text-align: center;">{{ evenement.date_debut|date|capfirst }}</h3>
-        {% if evenement.lieu.parent %}{{ evenement.lieu.parent.nom }},{% endif %}
-        <a href="{% url 'catalogue.views.index_lieux' %}{{ evenement.lieu.slug }}">
-          {{ evenement.lieu.nom }}</a><br />
+        <h3 style="text-align: center;">{{ evenement.ancrage_debut.calc_date }}</h3>
+        {{ evenement.ancrage_debut.lieu.html|safe }}<br />
         {% if evenement.circonstance %}Circonstance : {{ evenement.circonstance }}<br />{% endif %}
         {% if evenement.ancrage_debut.heure %}Horaire : {{ evenement.ancrage_debut.calc_heure }}<br />{% endif %}
         <h4>Programme :</h4>
