@@ -24,11 +24,11 @@
     <li>
       <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}/{{ evenement.ancrage_debut.year }}/{{ evenement.ancrage_debut.month }}/{{ evenement.ancrage_debut.day }}">
         {{ evenement.ancrage_debut.calc_moment|capfirst }} :
-        <ul>
+        <ol>
           {% for element in evenement.programme.all %}
             <li>{{ element }}</li>
           {% endfor %}
-        </ul>
+        </ol>
       </a>
     </li>
     {% if forloop.last %}
