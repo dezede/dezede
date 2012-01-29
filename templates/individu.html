@@ -17,10 +17,14 @@
     {{ individu }}
   </h3>
   {% if individu.nom_naissance %}Nom de naissance : {{ individu.nom_naissance }}<br />{% endif %}
-  {% if individu.naissance != '?' %}Naissance : {{ individu.naissance }}<br />{% endif %}
-  {% if individu.deces != '?' %}Décès : {{ individu.deces }}<br />{% endif %}
-  {% if individu.ancrage != '?' %}Ancrage spatio-temporel : {{ individu.ancrage }}<br />{% endif %}
+  {% if not individu.naissance and not individu.deces %}
+    Ancrage spatio-temporel : {{ individu.ancrage|default:'?' }}<br />
+  {% else %}
+    Naissance : {{ individu.naissance|default:'?' }}<br />
+    Décès : {{ individu.deces|default:'?' }}<br />
+  {% endif %}
   {% if individu.pseudonyme %}Pseudonyme : {{ individu.pseudonyme }}<br />{% endif %}
+  Sexe : {{ individu.get_sexe_display|default:'?' }}<br />
   {% for parent in individu.parents.all %}{% if forloop.first %}Parents : {% endif %}<a href="{% url 'catalogue.views.index_individus' %}{{ parent.slug }}">{{ parent }}</a>{% if not forloop.last %},{% else %}<br />{% endif %}{% endfor %}
   Profession{{ individu.professions.all|pluralize }} : {{ individu.calc_professions }}<br />
 

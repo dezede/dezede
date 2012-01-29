@@ -4,6 +4,8 @@ from tinymce.models import HTMLField
 from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
 from django.template.defaultfilters import date, time, capfirst
+from musicologie.catalogue.templatetags.extras import abbreviate
+from django.core.urlresolvers import reverse
 
 LOWER_MSG = u'En minuscules.'
 PLURAL_MSG = u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».'
@@ -111,7 +113,7 @@ class Saison(Model):
     class Meta:
         ordering = ['lieu', 'debut']
     def __unicode__(self):
-        return self.lieu.__unicode__() + ', ' + self.debut.year.__str__() + '-' + self.fin.year.__str__()
+        return self.lieu.__unicode__() + ', ' + str(self.debut.year) + '-' + str(self.fin.year)
 
 class Profession(Model):
     nom = CharField(max_length=200, help_text=LOWER_MSG)
@@ -286,15 +288,17 @@ class Individu(Model):
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     def calc_prenoms_methode(self, fav):
-        out = ''
         prenoms = self.prenoms.all()
         maxi = len(prenoms) - 1
-        for i, prenom in enumerate(prenoms):
-            if prenom.favori or not fav:
-                out += prenom.__unicode__()
-                if i < maxi:
-                    out += ' '
-        return out
+        if prenoms:
+            out = ''
+            for i, prenom in enumerate(prenoms):
+                if prenom.favori or not fav:
+                    out += prenom.__unicode__()
+                    if i < maxi:
+                        out += ' '
+            return out
+        return ''
     def calc_prenoms(self):
         return self.calc_prenoms_methode(False)
     def calc_fav_prenoms(self):
@@ -306,15 +310,15 @@ class Individu(Model):
     def naissance(self):
         if self.ancrage_naissance:
             return self.ancrage_naissance.__unicode__()
-        return '?'
+        return ''
     def deces(self):
         if self.ancrage_deces:
             return self.ancrage_deces.__unicode__()
-        return '?'
+        return ''
     def ancrage(self):
         if self.ancrage_approx:
             return self.ancrage_approx.__unicode__()
-        return '?'
+        return ''
     def calc_professions(self):
         professions = self.professions.all()
         if professions:
@@ -325,7 +329,22 @@ class Individu(Model):
                 if i < maxi:
                     out += ', '
             return out
-        return '?'
+        return ''
+    def html(self):
+        url = reverse('musicologie.catalogue.views.detail_individu',
+            args=[self.slug])
+        out = '<a href="' + url + '">'
+        out += '<span style="font-variant: small-caps;">'
+        out += self.nom
+        out += '</span>'
+        prenoms = self.calc_fav_prenoms()
+        if prenoms:
+            out += ' (' + abbreviate(prenoms) + ')'
+        professions = self.professions.all()
+        if professions:
+            out += ' [' + abbreviate(professions[0].__unicode__(), 1) + ']'
+        out += '</a>'
+        return out
     class Meta:
         ordering = ['nom']
     def save(self, *args, **kwargs):
@@ -446,10 +465,10 @@ class Pupitre(Model):
     quantite_min = IntegerField(default=1, verbose_name=u'quantité minimale')
     quantite_max = IntegerField(default=1, verbose_name=u'quantité maximale')
     def __unicode__(self):
-        out = str(self.quantite_min)
+        out = self.quantite_min.__unicode__()
         if self.quantite_min != self.quantite_max:
             out += u' à %d' % self.quantite_max
-        out += ' ' + str(self.role)
+        out += ' ' + self.role.__unicode__()
         return out
 
 class TypeDeParenteDOeuvres(Model):
@@ -515,6 +534,30 @@ class Oeuvre(Model):
     etat = ForeignKey(Etat, related_name='oeuvres', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
+    def calc_caracteristiques(self):
+        caracteristiques = self.caracteristiques.all()
+        maxi = len(caracteristiques) - 1
+        if caracteristiques:
+            out = ''
+            for i, caracteristique in enumerate(caracteristiques):
+                out += caracteristique.valeur
+                if i < maxi:
+                    out += ', '
+            return out
+        return ''
+    def html(self):
+        out = ''
+        auteurs = self.auteurs.all()
+        maxi = len(auteurs) - 1
+        for i, auteur in enumerate(auteurs):
+            out += auteur.html() + ', '
+        out += '<em>' + self.__unicode__() + '</em>'
+        if self.genre or self.caracteristiques:
+            out += ', '
+        out += self.genre.__unicode__()
+        if self.calc_caracteristiques:
+            out += ' ' + self.calc_caracteristiques()
+        return out
     class Meta:
         verbose_name = u'œuvre'
         ordering = ['slug']
@@ -545,7 +588,7 @@ class AttributionDeRole(Model):
     class Meta:
         verbose_name = u'attribution de rôle'
     def __unicode__(self):
-        return str(self.pupitre)
+        return self.pupitre.__unicode__()
 
 class CaracteristiqueDElementDeProgramme(Model):
     nom = CharField(max_length=100, help_text=LOWER_MSG)
@@ -581,7 +624,7 @@ class ElementDeProgramme(Model):
             return self.oeuvre.__unicode__()
         elif self.autre:
             return self.autre
-        return str(self.classement)
+        return self.classement.__unicode__()
 
 class Evenement(Model):
     ancrage_debut = ForeignKey(AncrageSpatioTemporel,
@@ -637,5 +680,5 @@ class Source(Model):
     class Meta:
         ordering = ['date', 'nom']
     def __unicode__(self):
-        return self.pk.__str__()
+        return str(self.pk)
 

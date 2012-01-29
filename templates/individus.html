@@ -23,7 +23,7 @@
     {% endif %}
     <tr onclick="document.location = '{% url 'catalogue.views.index_individus' %}{{ individu.slug }}';" title="Ouvrir l'autorité">
       <td>{{ individu.nom }}</td>
-      <td>{{ individu.calc_prenoms }}</td>
+      <td>{{ individu.calc_prenoms|default:'?' }}</td>
       <td>{{ individu.calc_pseudonyme }}</td>
       <td>{{ individu.naissance }}</td>
       <td>{{ individu.deces }}</td>

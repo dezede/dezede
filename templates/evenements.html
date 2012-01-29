@@ -20,25 +20,18 @@
         <a href="{% url 'catalogue.views.index_lieux' %}{{ evenement.lieu.slug }}">
           {{ evenement.lieu.nom }}</a><br />
         {% if evenement.circonstance %}Circonstance : {{ evenement.circonstance }}<br />{% endif %}
-        {% if evenement.heure %}Horaire : {{ evenement.heure|time }}<br />{% endif %}
+        {% if evenement.ancrage_debut.heure %}Horaire : {{ evenement.ancrage_debut.calc_heure }}<br />{% endif %}
+        <h4>Programme :</h4>
         {% for element in evenement.programme.all %}
-          {% with element.oeuvre as oeuvre %}
-            {% if forloop.first %}
-              <ol>
-            {% endif %}
-            <li>
-            {% if oeuvre %}
-              {% for auteur in oeuvre.auteurs.all %}
-                <a href="{% url 'catalogue.views.index_individus' %}{{ auteur.slug }}/">
-                <span style="font-variant: small-caps;">{{ auteur.nom }}</span> ({{ auteur.prenoms|abbreviate:0 }})</a> [{% for profession in auteur.professions.all %}{{ profession.nom|abbreviate:1 }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-              {% endfor %}<i>{{ oeuvre }}</i>, {{ oeuvre.nature }} {{ oeuvre.caracteristique }}</li>
-            {% else %}
-              {{ element }}
-            {% endif %}
-            {% if forloop.last %}
-              </ol>
-            {% endif %}
-          {% endwith %}
+          {% if forloop.first %}
+            <ol>
+          {% endif %}
+          <li>
+            {{ element.oeuvre.html|safe }}
+          </li>
+          {% if forloop.last %}
+            </ol>
+          {% endif %}
         {% endfor %}
         <br />
         {% for type in types %}
