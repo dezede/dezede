@@ -129,13 +129,38 @@ class Profession(Model):
 
 class AncrageSpatioTemporel(Model):
     date = DateField(blank=True, null=True)
+    heure = TimeField(blank=True, null=True)
     lieu = ForeignKey(Lieu, related_name='ancrages', blank=True, null=True)
     date_approx = CharField(max_length=200, blank=True,
         verbose_name=u'date approximative',
         help_text=u'Ne remplir que si la date est imprécise.')
+    heure_approx = CharField(max_length=200, blank=True,
+        verbose_name=u'heure approximative',
+        help_text=u"Ne remplir que si l'heure est imprécise.")
     lieu_approx = CharField(max_length=200, blank=True,
         verbose_name=u'lieu approximatif',
         help_text=u'Ne remplir que si le lieu est imprécis.')
+    def calc_date(self):
+        if self.date:
+            return self.date.__str__()
+        elif self.date_approx:
+            return self.date_approx
+        else:
+            raise Warning("aucune date, précise ou approximative, n'a été entrée.")
+    def calc_heure(self):
+        if self.heure:
+            return self.heure.__str__()
+        elif self.heure_approx:
+            return self.heure_approx
+        else:
+            raise Warning("aucune heure, précise ou approximative, n'a été entrée.")
+    def calc_lieu(self):
+        if self.lieu:
+            return self.lieu.nom
+        elif self.lieu_approx:
+            return self.lieu_approx
+        else:
+            raise Warning("aucune lieu, précise ou approximative, n'a été entrée.")
     class Meta:
         verbose_name = u'ancrage spatio-temporel'
         verbose_name_plural = u'ancrages spatio-temporels'
