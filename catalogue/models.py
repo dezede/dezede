@@ -278,7 +278,7 @@ class Individu(Model):
     professions = ManyToManyField(Profession, related_name='individus',
         blank=True, null=True)
     parentes = ManyToManyField(ParenteDIndividus, related_name='individus_orig',
-        blank=True, null=True, verbose_name='parentés')
+        blank=True, null=True, verbose_name='parentes')
     biographie = HTMLField(blank=True)
     illustrations = ManyToManyField(Illustration, related_name='individus',
         blank=True, null=True)
@@ -533,7 +533,7 @@ class Oeuvre(Model):
     pupitres = ManyToManyField(Role, related_name='oeuvres', blank=True,
         null=True)
     parentes = ManyToManyField(ParenteDOeuvres, related_name='oeuvres',
-        blank=True, null=True, verbose_name=u'parentés')
+        blank=True, null=True, verbose_name=u'parentes')
     referenced = BooleanField(default=True, verbose_name=u'référencée')
     documents = ManyToManyField(Document, related_name='oeuvres', blank=True,
         null=True)
