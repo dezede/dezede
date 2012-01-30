@@ -1,0 +1,19 @@
+{% load url from future %}
+
+{% for lieu in lieux %}
+  {% if forloop.first %}
+    <ul>
+  {% endif %}
+  <li>
+    <a href="{% url 'catalogue.views.index_lieux' %}{{ lieu.slug }}">{{ lieu.nom }}</a>
+    {% with 'lieux-item.html' as file %}
+      {% with lieu.enfants.all as lieux %}
+        {% include file %}
+      {% endwith %}
+    {% endwith %}
+  </li>
+  {% if forloop.last %}
+    </ul>
+  {% endif %}
+{% endfor %}
+

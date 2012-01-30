@@ -23,7 +23,8 @@ def detail_source(request, lieu_slug, annee, mois, jour):
     return render_to_response('source.html', c)
 
 def index_lieux(request):
-    c = RequestContext(request, {'lieux': Lieu.objects.all()})
+    lieux = Lieu.objects.filter(parent=None)
+    c = RequestContext(request, {'lieux': lieux})
     return render_to_response('lieux.html', c)
 
 def detail_lieu(request, lieu_slug):

@@ -7,18 +7,10 @@
 {% endblock %}
 
 {% block body %}
-  {% for lieu in lieux %}
-    {% if forloop.first %}
-      <ul>
-    {% endif %}
-    <li>
-      <a href="{% url 'catalogue.views.index_lieux' %}{{ lieu.slug }}">{{ lieu.nom }}</a>{% if lieu.parent %} ({{ lieu.parent.nom }}){% endif %}
-    </li>
-    {% if forloop.last %}
-      </ul>
-    {% endif %}
-  {% empty %}
+  {% if lieux %}
+    {% include 'lieux-item.html' %}
+  {% else %}
     {% trans "Aucun lieu ne figure dans la base de données." %}
-  {% endfor %}
+  {% endif %}
 {% endblock %}
 
