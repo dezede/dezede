@@ -33,7 +33,7 @@
         {% endfor %}
         <br />
         {% for type in types %}
-          <h4 style="text-align: center; font-style: italic;">{% if type.pluriel %}{{ type.pluriel|capfirst }}{% else %}{{ type|capfirst }}s{% endif %}</h4>
+          <h4 style="text-align: center; font-style: italic;">{{ type.pluriel|capfirst }}</h4>
           {% for source in evenement.sources.all %}
             {% if source.type == type %}
               <div style="text-align: justify;">
