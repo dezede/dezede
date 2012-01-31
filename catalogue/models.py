@@ -585,17 +585,20 @@ class Oeuvre(Model):
                     out += ', '
             return out
         return ''
-    def calc_auteurs(self):
+    def calc_auteurs(self, html=False):
         out = ''
         auteurs = self.auteurs.all()
         maxi = len(auteurs) - 1
         for i, auteur in enumerate(auteurs):
-            out += auteur.calc_designation()
-            if i < maxi:
-                out += ', '
+            if html:
+                out += auteur.html_auteur() + ', '
+            else:
+                out += auteur.calc_designation()
+                if i < maxi:
+                    out += ', '
         return out
     def html(self):
-        out = self.calc_auteurs()
+        out = self.calc_auteurs(True)
         out += '<em>' + self.__unicode__() + '</em>'
         if self.genre or self.caracteristiques:
             out += ', '
