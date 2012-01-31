@@ -316,6 +316,25 @@ class Individu(Model):
         if self.pseudonyme:
             return self.pseudonyme
         return 'Aucun'
+    def calc_designation(self):
+        out = ''
+        designation = self.designation
+        prenoms = self.calc_fav_prenoms()
+        nom = self.nom
+        pseudonyme = self.pseudonyme
+        if designation == 'F' or designation == 'S':
+            out += prenoms
+            if designation == 'S':
+                out += ' '
+        if nom and (designation == 'L' or designation == 'S'):
+            out += nom
+            if designation == 'S':
+                out += ' '
+        if pseudonyme and (designation == 'P' or designation == 'S'):
+            if designation == 'S':
+                out += ', dit '
+            out += pseudonyme
+        return out
     def naissance(self):
         if self.ancrage_naissance:
             return self.ancrage_naissance.__unicode__()
@@ -538,11 +557,15 @@ class Oeuvre(Model):
         null=True, verbose_name=u'caractéristiques')
     auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True,
         null=True)
-    description = HTMLField(blank=True)
+    ancrage_composition = ForeignKey(AncrageSpatioTemporel,
+        related_name='oeuvres', blank=True, null=True,
+        verbose_name=u'ancrage spatio-temporel de composition')
     pupitres = ManyToManyField(Role, related_name='oeuvres', blank=True,
         null=True)
     parentes = ManyToManyField(ParenteDOeuvres, related_name='oeuvres',
         blank=True, null=True, verbose_name=u'parentes')
+    lilypond = TextField(blank=True, verbose_name='LilyPond')
+    description = HTMLField(blank=True)
     referenced = BooleanField(default=True, verbose_name=u'référencée')
     documents = ManyToManyField(Document, related_name='oeuvres', blank=True,
         null=True)
@@ -562,12 +585,17 @@ class Oeuvre(Model):
                     out += ', '
             return out
         return ''
-    def html(self):
+    def calc_auteurs(self):
         out = ''
         auteurs = self.auteurs.all()
         maxi = len(auteurs) - 1
         for i, auteur in enumerate(auteurs):
-            out += auteur.html_auteur() + ', '
+            out += auteur.calc_designation()
+            if i < maxi:
+                out += ', '
+        return out
+    def html(self):
+        out = self.calc_auteurs()
         out += '<em>' + self.__unicode__() + '</em>'
         if self.genre or self.caracteristiques:
             out += ', '
@@ -665,8 +693,6 @@ class Evenement(Model):
         related_name='evenements_debuts')
     ancrage_fin = ForeignKey(AncrageSpatioTemporel,
         related_name='evenements_fins', blank=True, null=True)
-    date_fin = DateField(blank=True, null=True,
-        help_text=u'À ne préciser que si l\'événement dure plusieurs jours.')
     relache = BooleanField(verbose_name=u'relâche')
     circonstance = CharField(max_length=500, blank=True)
     programme = ManyToManyField(ElementDeProgramme, related_name='evenements', blank=True, null=True)
