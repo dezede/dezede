@@ -7,6 +7,10 @@ from django.template.defaultfilters import date, time, capfirst
 from musicologie.catalogue.templatetags.extras import abbreviate
 from django.core.urlresolvers import reverse
 
+#
+# Définitions globales du fichier
+#
+
 LOWER_MSG = u'En minuscules.'
 PLURAL_MSG = u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».'
 
@@ -24,6 +28,13 @@ def calc_pluriel(object):
         if object.nom_pluriel:
             return object.nom_pluriel
         return object.nom + 's'
+
+def ex(str):
+    return u'Exemple : « '+ str + u' »'
+
+# 
+# Modélisation
+#
 
 class Document(Model):
     nom = CharField(max_length=300, blank=True)
@@ -106,7 +117,7 @@ class Lieu(Model):
         return out
     class Meta:
         verbose_name_plural = 'lieux'
-        ordering = ['slug']
+        ordering = ['nom']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(Lieu, self.nom, self.slug)
         super(Lieu, self).save(*args, **kwargs)
@@ -168,16 +179,20 @@ class AncrageSpatioTemporel(Model):
         return None
     def calc_date(self):
         if self.date:
-            return date(self.date, 'SHORT_DATE_FORMAT')
+            return date(self.date, 'DATE_FORMAT')
         elif self.date_approx:
             return self.date_approx
         return ''
+    calc_date.short_description = 'Date'
+    calc_date.admin_order_field = 'date'
     def calc_heure(self):
         if self.heure:
             return time(self.heure, 'H\hi')
         elif self.heure_approx:
             return self.heure_approx
         return ''
+    calc_heure.short_description = 'Heure'
+    calc_heure.admin_order_field = 'heure'
     def calc_moment(self):
         out = ''
         date = self.calc_date()
@@ -199,6 +214,8 @@ class AncrageSpatioTemporel(Model):
         elif self.lieu_approx:
             return self.lieu_approx
         return ''
+    calc_lieu.short_description = 'Lieu'
+    calc_lieu.admin_order_field = 'lieu'
     class Meta:
         verbose_name = u'ancrage spatio-temporel'
         verbose_name_plural = u'ancrages spatio-temporels'
@@ -310,6 +327,7 @@ class Individu(Model):
         return ''
     def calc_prenoms(self):
         return self.calc_prenoms_methode(False)
+    calc_prenoms.short_description = u'prénoms'
     def calc_fav_prenoms(self):
         return self.calc_prenoms_methode(True)
     def calc_pseudonyme(self):
@@ -358,6 +376,7 @@ class Individu(Model):
                     out += ', '
             return out
         return ''
+    calc_professions.short_description = 'professions'
     def html(self, auteur=None):
         designation = self.designation
         prenoms = self.calc_fav_prenoms()
@@ -388,29 +407,14 @@ class Individu(Model):
         self.slug = autoslugify(Individu, self.__unicode__(), self.slug)
         super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
-        out = ''
-        prenoms = ''
-        nom = ''
-        pseudonyme = ''
-        if self.prenoms and (self.designation == 'S' or self.designation == 'F'):
-            prenoms = self.calc_prenoms()
-        if self.designation == 'S' or self.designation == 'L':
-            nom = self.nom
-        if self.pseudonyme and (self.designation == 'S' or self.designation == 'P'):
-                pseudonyme = self.pseudonyme
-        if self.designation == 'S':
-            if prenoms != '':
-                out = prenoms + u' '
-            out += nom
-            if pseudonyme != '':
-                out += u', dit ' + pseudonyme
-        else:
-            out = prenoms + nom + pseudonyme
-        return out
+        return self.calc_designation()
 
 class Devise(Model):
-    nom = CharField(max_length=200, blank=True)
-    symbole = CharField(max_length=10)
+    '''
+    Modélisation naïve d'une unité monétaire.
+    '''
+    nom = CharField(max_length=200, blank=True, help_text=ex('euro'))
+    symbole = CharField(max_length=10, help_text=ex(u'€'))
     def __unicode__(self):
         if self.nom:
             return self.nom
@@ -461,7 +465,7 @@ class GenreDOeuvre(Model):
         return self.nom
 
 class TypeDeCaracteristiqueDOeuvre(Model):
-    nom = CharField(max_length=200, help_text=u'Exemple : « tonalité » (sans taper les guillemets)')
+    nom = CharField(max_length=200, help_text=ex(u'tonalité'))
     nom_pluriel = CharField(max_length=430, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
     importance = FloatField(default=10,
@@ -477,7 +481,7 @@ class TypeDeCaracteristiqueDOeuvre(Model):
 
 class CaracteristiqueDOeuvre(Model):
     type = ForeignKey(TypeDeCaracteristiqueDOeuvre, related_name='caracteristiques_d_oeuvre')
-    valeur = CharField(max_length=400, help_text=u'Exemple : « en trois actes » (sans taper les guillemets)')
+    valeur = CharField(max_length=400, help_text=ex(u'en trois actes'))
     classement = FloatField(default=0,
         help_text=u"Par exemple, on peut choisir de classer les découpages par nombre d'actes.")
     class Meta:
@@ -728,20 +732,23 @@ class TypeDeSource(Model):
         return self.nom
 
 class Source(Model):
-    nom = CharField(max_length=200, help_text='Exemple : « Le Journal de Rouen »')
+    nom = CharField(max_length=200, help_text=ex('Le Journal de Rouen'))
     numero = CharField(max_length=50, blank=True)
     date = DateField(blank=True, null=True)
     page = CharField(max_length=50, blank=True)
     type = ForeignKey(TypeDeSource, related_name='sources',
-        help_text='Exemple : « annonce » ou « compte rendu »')
+        help_text=ex('compte rendu'))
     contenu = HTMLField(blank=True)
-    evenements = ManyToManyField(Evenement, related_name='sources', blank=True, null=True)
-    documents = ManyToManyField(Document, related_name='sources', blank=True, null=True)
-    illustrations = ManyToManyField(Illustration, related_name='sources', blank=True, null=True)
+    evenements = ManyToManyField(Evenement, related_name='sources', blank=True,
+        null=True)
+    documents = ManyToManyField(Document, related_name='sources', blank=True,
+        null=True)
+    illustrations = ManyToManyField(Illustration, related_name='sources',
+        blank=True, null=True)
     etat = ForeignKey(Etat, related_name='sources', null=True, blank=True)
     notes = HTMLField(blank=True)
     class Meta:
-        ordering = ['date', 'nom']
+        ordering = ['nom', 'date', 'numero', 'page', 'type']
     def __unicode__(self):
         return str(self.pk)
 
