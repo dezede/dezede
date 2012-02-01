@@ -5,7 +5,9 @@
     <ul>
   {% endif %}
   <li>
-    <a href="{% url 'catalogue.views.index_lieux' %}{{ lieu.slug }}">{{ lieu.nom }}</a>
+    <a href="{% url 'catalogue.views.detail_lieu' lieu.slug %}">
+      {{ lieu.nom }}
+    </a>
     {% with 'lieux-item.html' as file %}
       {% with lieu.enfants.all as lieux %}
         {% include file %}

@@ -9,8 +9,9 @@
 
 {% block body %}
   <h3>
-    {{ lieu.nom }}{% if lieu.parent %}, <a href="{% url 'catalogue.views.index_lieux' %}{{ lieu.parent.slug }}">{{ lieu.parent.nom }}</a>{% endif %}
+    {{ lieu.nom }}{% if lieu.parent %}, <a href="{% url 'catalogue.views.detail_lieu' lieu.parent.slug %}">{{ lieu.parent.nom }}</a>{% endif %}
   </h3>
+  Nature : {{ lieu.nature|capfirst }}<br />
   {% for enfant in lieu.enfants.all %}
     {% if forloop.first %}Lieux contenus dans {{ lieu.nom }} :<ul>{% endif %}
     <li><a href="{% url 'catalogue.views.index_lieux' %}{{ enfant.slug }}">{{ enfant.nom }}</a></li>
