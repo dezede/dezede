@@ -41,6 +41,8 @@ class Document(Model):
     nom = CharField(max_length=300, blank=True)
     document = FileBrowseField('Document', max_length=400, directory='documents/')
     description = HTMLField(blank=True)
+    auteurs = ManyToManyField('Auteur', related_name='documents', blank=True,
+        null=True)
     class Meta:
         ordering = ['document']
     def __unicode__(self):
@@ -52,6 +54,8 @@ class Illustration(Model):
     legende = CharField(max_length=300, blank=True, verbose_name=u'légende')
     image = FileBrowseField('Image', max_length=400, directory='images/')
     commentaire = HTMLField(blank=True)
+    auteurs = ManyToManyField('Auteur', related_name='illustrations', blank=True,
+        null=True)
     class Meta:
         ordering = ['image']
     def __unicode__(self):
@@ -545,8 +549,8 @@ class ParenteDOeuvres(Model):
         return out
 
 class Auteur(Model):
-    profession = ForeignKey(Profession, related_name='auteur_d_oeuvre')
-    individus = ManyToManyField(Individu, related_name='auteurs_d_oeuvre')
+    profession = ForeignKey(Profession, related_name='auteur')
+    individus = ManyToManyField(Individu, related_name='auteurs')
     def individus_html(self):
         out = ''
         individus = self.individus.all()
