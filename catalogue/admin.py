@@ -97,6 +97,9 @@ class PersonnelAdmin(VersionAdmin):
 class GenreDOeuvreAdmin(VersionAdmin):
     exclude = ('slug',)
 
+class CaracteristiqueDOeuvreAdmin(VersionAdmin):
+    list_display = ('__unicode__', 'type', 'valeur', 'classement')
+
 class OeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'titre', 'soustitre', 'genre', 'calc_caracteristiques',
         'calc_auteurs', 'ancrage_composition',)
@@ -184,7 +187,7 @@ site.register(TypeDePersonnel)
 site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(TypeDeCaracteristiqueDOeuvre)
-site.register(CaracteristiqueDOeuvre)
+site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
 site.register(Partie)
 site.register(Pupitre)
 site.register(TypeDeParenteDOeuvres)

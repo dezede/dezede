@@ -663,9 +663,8 @@ class Oeuvre(Model):
                 out += self.soustitre
         elif self.genre and not titre_seul:
             out = self.genre.nom
-            if saved:
-                for caracteristique in self.caracteristiques.all():
-                    out += ', ' + caracteristique.valeur
+            if saved and self.caracteristiques:
+                out += ' ' + self.calc_caracteristiques()
         elif titre_seul:
             out += ''
         else:
@@ -789,6 +788,11 @@ class Source(Model):
     notes = HTMLField(blank=True)
     class Meta:
         ordering = ['nom', 'date', 'numero', 'page', 'type']
+    def save(self, *args, **kwargs):
+        contenu = self.contenu
+        if contenu[:3] == '<p>' and contenu[-4:] == '</p>' and contenu[3:10] != '&laquo;':
+            self.contenu = u'<p>&laquo; ' + contenu[3:-4] + u' &raquo;</p>'
+        super(Source, self).save(*args, **kwargs)
     def __unicode__(self):
         return str(self.pk)
 
