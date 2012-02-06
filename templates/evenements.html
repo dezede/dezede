@@ -16,9 +16,9 @@
       {{ evenement.ancrage_debut.lieu.html|safe }}<br />
       {% if evenement.circonstance %}Circonstance : {{ evenement.circonstance }}<br />{% endif %}
       {% if evenement.ancrage_debut.heure %}Horaire : {{ evenement.ancrage_debut.calc_heure }}<br />{% endif %}
-      <h4>Programme</h4>
       {% for element in evenement.programme.all %}
         {% if forloop.first %}
+          <h4>Programme</h4>
           <ol>
         {% endif %}
         <li>
@@ -27,8 +27,6 @@
         {% if forloop.last %}
           </ol>
         {% endif %}
-      {% empty %}
-        Aucun élément de programme
       {% endfor %}
       <br />
       {% for type, sources in sources_list.items %}
@@ -40,11 +38,13 @@
           {% endif %}
         </h4>
         {% for source in sources %}
-          <div style="text-align: justify;">
+          <div class="source">
             {{ source.contenu|replace|safe }}
-            <a href="{{ source.illustrations.all.0.image.url }}">
-              (<em>{{ source.nom }}</em> {% if source.numero %}n° {{ source.numero }}{% endif %} du {{ source.date|date }}{% if source.page %}, p. {{ source.page }}{% endif %})
-            </a>
+            <div class="source-ref">
+              (<em>{{ source.nom }}</em>
+              {% if source.numero %}n° {{ source.numero }}{% endif %}
+              du {{ source.date|date }}{% if source.page %}, p. {{ source.page }}{% endif %})
+            </div>
           </div>
         {% endfor %}
       {% endfor %}

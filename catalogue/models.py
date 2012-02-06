@@ -220,7 +220,7 @@ class AncrageSpatioTemporel(Model):
     class Meta:
         verbose_name = u'ancrage spatio-temporel'
         verbose_name_plural = u'ancrages spatio-temporels'
-        ordering = ['lieu', 'date', 'heure', 'lieu_approx', 'date_approx', 'heure_approx']
+        ordering = ['date', 'heure', 'lieu', 'date_approx', 'heure_approx', 'lieu_approx']
     def __unicode__(self):
         out = ''
         lieu = self.calc_lieu()

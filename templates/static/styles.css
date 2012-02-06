@@ -61,3 +61,14 @@ a:hover
   border: 1px solid black;
 }
 
+.source p
+{
+  text-align: justify;
+  margin: .5em 0;
+}
+
+.source-ref
+{
+  text-align: right;
+}
+
