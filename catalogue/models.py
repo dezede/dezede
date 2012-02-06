@@ -70,7 +70,7 @@ class Etat(Model):
         verbose_name = u'état'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Etat, self.nom, self.slug)
+        self.slug = autoslugify(Etat, self.__unicode__(), self.slug)
         super(Etat, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
@@ -88,7 +88,7 @@ class NatureDeLieu(Model):
         verbose_name_plural = 'natures de lieu'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(NatureDeLieu, self.nom, self.slug)
+        self.slug = autoslugify(NatureDeLieu, self.__unicode__(), self.slug)
         super(NatureDeLieu, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
@@ -120,7 +120,7 @@ class Lieu(Model):
         verbose_name_plural = 'lieux'
         ordering = ['nom']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Lieu, self.nom, self.slug)
+        self.slug = autoslugify(Lieu, self.__unicode__(), self.slug)
         super(Lieu, self).save(*args, **kwargs)
     def __unicode__(self):
         if self.parent:
@@ -459,7 +459,7 @@ class GenreDOeuvre(Model):
         verbose_name_plural=u"genres d'œuvre"
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(GenreDOeuvre, self.nom, self.slug)
+        self.slug = autoslugify(GenreDOeuvre, self.__unicode__(), self.slug)
         super(GenreDOeuvre, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
@@ -492,24 +492,23 @@ class CaracteristiqueDOeuvre(Model):
     def __unicode__(self):
         return self.type.__unicode__() + ' : ' + self.valeur
 
-class Role(Model):
+class Partie(Model):
     nom = CharField(max_length=200)
     classement = FloatField(default=1.0)
     class Meta:
-        verbose_name = u'rôle'
         ordering = ['classement']
     def __unicode__(self):
         return self.nom
 
 class Pupitre(Model):
-    role = ForeignKey(Role, related_name='pupitres', verbose_name=u'rôle')
+    partie = ForeignKey(Partie, related_name='pupitres')
     quantite_min = IntegerField(default=1, verbose_name=u'quantité minimale')
     quantite_max = IntegerField(default=1, verbose_name=u'quantité maximale')
     def __unicode__(self):
         out = str(self.quantite_min)
         if self.quantite_min != self.quantite_max:
             out += u' à %d' % self.quantite_max
-        out += ' ' + self.role.__unicode__()
+        out += ' ' + self.partie.__unicode__()
         return out
 
 class TypeDeParenteDOeuvres(Model):
@@ -565,7 +564,7 @@ class Oeuvre(Model):
     ancrage_composition = ForeignKey(AncrageSpatioTemporel,
         related_name='oeuvres', blank=True, null=True,
         verbose_name=u'ancrage spatio-temporel de composition')
-    pupitres = ManyToManyField(Role, related_name='oeuvres', blank=True,
+    pupitres = ManyToManyField(Partie, related_name='oeuvres', blank=True,
         null=True)
     parentes = ManyToManyField(ParenteDOeuvres, related_name='oeuvres',
         blank=True, null=True, verbose_name=u'parentes')
@@ -617,7 +616,7 @@ class Oeuvre(Model):
         verbose_name = u'œuvre'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Oeuvre, self.titre, self.slug)
+        self.slug = autoslugify(Oeuvre, self.__unicode__(), self.slug)
         super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
         out = u''
@@ -631,17 +630,19 @@ class Oeuvre(Model):
                 if self.prefixe_soustitre:
                     out += self.prefixe_soustitre
                 out += self.soustitre
-        else:
+        elif self.genre:
             out = self.genre.nom
             for caracteristique in self.caracteristiques.all():
                 out += ', ' + caracteristique.valeur
+        else:
+            out = str(self.id)
         return out
 
-class AttributionDeRole(Model):
-    pupitre = ForeignKey(Pupitre, related_name='attributions_de_role')
-    individus = ManyToManyField(Individu, related_name='attributions_de_role')
+class AttributionDePupitre(Model):
+    pupitre = ForeignKey(Pupitre, related_name='attributions_de_pupitre')
+    individus = ManyToManyField(Individu, related_name='attributions_de_pupitre')
     class Meta:
-        verbose_name = u'attribution de rôle'
+        verbose_name = u'attribution de pupitre'
     def __unicode__(self):
         return self.pupitre.__unicode__()
 
@@ -666,7 +667,7 @@ class ElementDeProgramme(Model):
         related_name='elements_de_programme', blank=True, null=True,
         verbose_name=u'caractéristiques')
     classement = FloatField(default=1.0)
-    distribution = ManyToManyField(AttributionDeRole, related_name='elements_de_programme', blank=True, null=True)
+    distribution = ManyToManyField(AttributionDePupitre, related_name='elements_de_programme', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='representations', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='representations', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='elements_de_programme', null=True, blank=True)
@@ -683,7 +684,7 @@ class ElementDeProgramme(Model):
                 out += individu.html()
                 if j < maxj:
                     out += ', '
-            out += ' [' + attribution.pupitre.role.__unicode__() + ']'
+            out += ' [' + attribution.pupitre.partie.__unicode__() + ']'
             if i < maxi:
                 out += ', '
         return out
@@ -727,7 +728,7 @@ class TypeDeSource(Model):
         verbose_name_plural = 'types de source'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(TypeDeSource, self.nom, self.slug)
+        self.slug = autoslugify(TypeDeSource, self.__unicode__(), self.slug)
         super(TypeDeSource, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)

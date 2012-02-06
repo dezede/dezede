@@ -122,7 +122,7 @@ class OeuvreAdmin(VersionAdmin):
         }),
     )
 
-class AttributionDeRoleAdmin(VersionAdmin):
+class AttributionDePupitreAdmin(VersionAdmin):
     filter_horizontal = ('individus',)
 
 class ElementDeProgrammeAdmin(VersionAdmin):
@@ -185,12 +185,12 @@ site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(TypeDeCaracteristiqueDOeuvre)
 site.register(CaracteristiqueDOeuvre)
-site.register(Role)
+site.register(Partie)
 site.register(Pupitre)
 site.register(TypeDeParenteDOeuvres)
 site.register(ParenteDOeuvres)
 site.register(Oeuvre, OeuvreAdmin)
-site.register(AttributionDeRole, AttributionDeRoleAdmin)
+site.register(AttributionDePupitre, AttributionDePupitreAdmin)
 site.register(CaracteristiqueDElementDeProgramme)
 site.register(ElementDeProgramme, ElementDeProgrammeAdmin)
 site.register(Evenement, EvenementAdmin)
