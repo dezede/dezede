@@ -14,8 +14,7 @@ def multiwordReplace(text, wordDic):
 
 @register.filter
 def replace(string):
-    return multiwordReplace(string, {' / ': '<br />',
-                                     '\'': '&rsquo;',})
+    return multiwordReplace(string, {'\'': '&rsquo;',})
 
 def remove_diacritics(string):
     return unicodedata.normalize('NFKD', string).encode('ASCII', 'ignore')

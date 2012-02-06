@@ -234,7 +234,7 @@ class AncrageSpatioTemporel(Model):
 
 class Prenom(Model):
     prenom = CharField(max_length=100, verbose_name=u'prénom')
-    classement = FloatField(default=0)
+    classement = FloatField(default=1.0)
     favori = BooleanField(default=True)
     class Meta:
         verbose_name = u'prénom'
@@ -245,11 +245,11 @@ class Prenom(Model):
 class TypeDeParenteDIndividus(Model):
     nom = CharField(max_length=50, help_text=LOWER_MSG)
     nom_pluriel = CharField(max_length=55, blank=True, help_text=PLURAL_MSG)
-    importance = FloatField(default=10)
+    classement = FloatField(default=1.0)
     class Meta:
         verbose_name = u"type de parenté d'individus"
         verbose_name_plural = u"types de parenté d'individus"
-        ordering = ['-importance']
+        ordering = ['classement']
     def pluriel(self):
         return calc_pluriel(self)
     def __unicode__(self):
@@ -470,12 +470,11 @@ class TypeDeCaracteristiqueDOeuvre(Model):
     nom = CharField(max_length=200, help_text=ex(u'tonalité'))
     nom_pluriel = CharField(max_length=430, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
-    importance = FloatField(default=10,
-        help_text=u"Exemple : pour l'ordre « œuvre, découpage, tonalité », on donne une importance plus grande au découpage.")
+    classement = FloatField(default=1.0)
     class Meta:
         verbose_name = u"type de caractéristique d'œuvre"
         verbose_name_plural = u"types de caracteristique d'œuvre"
-        ordering = ['-importance']
+        ordering = ['classement']
     def pluriel(self):
         return calc_pluriel(self)
     def __unicode__(self):
@@ -484,7 +483,7 @@ class TypeDeCaracteristiqueDOeuvre(Model):
 class CaracteristiqueDOeuvre(Model):
     type = ForeignKey(TypeDeCaracteristiqueDOeuvre, related_name='caracteristiques_d_oeuvre')
     valeur = CharField(max_length=400, help_text=ex(u'en trois actes'))
-    classement = FloatField(default=0,
+    classement = FloatField(default=1.0,
         help_text=u"Par exemple, on peut choisir de classer les découpages par nombre d'actes.")
     class Meta:
         verbose_name = u"caractéristique d'œuvre"
@@ -495,10 +494,10 @@ class CaracteristiqueDOeuvre(Model):
 
 class Role(Model):
     nom = CharField(max_length=200)
-    importance = FloatField(default=10)
+    classement = FloatField(default=1.0)
     class Meta:
         verbose_name = u'rôle'
-        ordering = ['-importance']
+        ordering = ['classement']
     def __unicode__(self):
         return self.nom
 
@@ -518,11 +517,11 @@ class TypeDeParenteDOeuvres(Model):
     nom_pluriel = CharField(max_length=130, blank=True,
         verbose_name='nom (au pluriel)',
         help_text=PLURAL_MSG)
-    importance = FloatField(default=10)
+    classement = FloatField(default=1.0)
     class Meta:
         verbose_name = u"type de parenté d'œuvres"
         verbose_name_plural = u"types de parentés d'œuvres"
-        ordering = ['-importance']
+        ordering = ['classement']
     def pluriel(self):
         return calc_pluriel(self)
     def __unicode__(self):
@@ -650,7 +649,7 @@ class CaracteristiqueDElementDeProgramme(Model):
     nom = CharField(max_length=100, help_text=LOWER_MSG)
     nom_pluriel = CharField(max_length=110, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
-    importance = FloatField(default=10)
+    classement = FloatField(default=1.0)
     def pluriel(self):
         return calc_pluriel(self)
     class Meta:
@@ -666,7 +665,7 @@ class ElementDeProgramme(Model):
     caracteristiques = ManyToManyField(CaracteristiqueDElementDeProgramme,
         related_name='elements_de_programme', blank=True, null=True,
         verbose_name=u'caractéristiques')
-    classement = FloatField(default=0)
+    classement = FloatField(default=1.0)
     distribution = ManyToManyField(AttributionDeRole, related_name='elements_de_programme', blank=True, null=True)
     illustrations = ManyToManyField(Illustration, related_name='representations', blank=True, null=True)
     documents = ManyToManyField(Document, related_name='representations', blank=True, null=True)
@@ -738,7 +737,7 @@ class TypeDeSource(Model):
 class Source(Model):
     nom = CharField(max_length=200, help_text=ex('Le Journal de Rouen'))
     numero = CharField(max_length=50, blank=True)
-    date = DateField(blank=True, null=True)
+    date = DateField()
     page = CharField(max_length=50, blank=True)
     type = ForeignKey(TypeDeSource, related_name='sources',
         help_text=ex('compte rendu'))
