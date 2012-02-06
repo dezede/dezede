@@ -6,6 +6,7 @@ from filebrowser.fields import FileBrowseField
 from django.template.defaultfilters import date, time, capfirst
 from musicologie.catalogue.templatetags.extras import abbreviate
 from django.core.urlresolvers import reverse
+from musicologie.settings import DATE_FORMAT
 
 #
 # Définitions globales du fichier
@@ -54,8 +55,8 @@ class Illustration(Model):
     class Meta:
         ordering = ['image']
     def __unicode__(self):
-        if self.nom:
-            return self.nom
+        if self.legende:
+            return self.legende
         return self.image.__unicode__()
 
 class Etat(Model):
@@ -179,7 +180,7 @@ class AncrageSpatioTemporel(Model):
         return None
     def calc_date(self):
         if self.date:
-            return date(self.date, 'DATE_FORMAT')
+            return date(self.date, DATE_FORMAT)
         elif self.date_approx:
             return self.date_approx
         return ''
@@ -424,7 +425,8 @@ class Engagement(Model):
     individus = ManyToManyField(Individu, related_name='engagements')
     fonction = ForeignKey(Profession, related_name='engagements')
     salaire = FloatField(blank=True)
-    devise = ForeignKey(Devise, blank=True, null=True, related_name='engagements')
+    devise = ForeignKey(Devise, blank=True, null=True,
+        related_name='engagements')
     def __unicode__(self):
         return self.fonction.nom
 
@@ -591,7 +593,7 @@ class Oeuvre(Model):
         return ''
     def calc_auteurs(self, html=False):
         out = ''
-        auteurs = self.auteurs.all()
+        auteurs = self.auteurs.all().order_by('professions')
         maxi = len(auteurs) - 1
         for i, auteur in enumerate(auteurs):
             if html:
@@ -604,11 +606,13 @@ class Oeuvre(Model):
     def html(self):
         out = self.calc_auteurs(True)
         out += '<em>' + self.__unicode__() + '</em>'
-        if self.genre or self.caracteristiques:
+        caracteristiques = self.calc_caracteristiques()
+        if self.genre or caracteristiques:
             out += ', '
-        out += self.genre.__unicode__()
-        if self.calc_caracteristiques:
-            out += ' ' + self.calc_caracteristiques()
+        if self.genre:
+            out += self.genre.__unicode__()
+        if caracteristiques:
+            out += ' ' + caracteristiques
         return out
     class Meta:
         verbose_name = u'œuvre'
@@ -630,7 +634,7 @@ class Oeuvre(Model):
                 out += self.soustitre
         else:
             out = self.genre.nom
-            for caracteristique in self.caracteristiques:
+            for caracteristique in self.caracteristiques.all():
                 out += ', ' + caracteristique.valeur
         return out
 
@@ -668,11 +672,11 @@ class ElementDeProgramme(Model):
     documents = ManyToManyField(Document, related_name='representations', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='elements_de_programme', null=True, blank=True)
     def html(self):
-        out = self.oeuvre.html() + '.'
+        out = self.oeuvre.html()
         distribution = self.distribution.all()
         maxi = len(distribution) - 1
         if distribution:
-            out += '&mdash; '
+            out += '. &mdash; '
         for i, attribution in enumerate(distribution):
             individus = attribution.individus.all()
             maxj = len(individus) - 1
@@ -680,7 +684,7 @@ class ElementDeProgramme(Model):
                 out += individu.html()
                 if j < maxj:
                     out += ', '
-            out += ' (' + attribution.pupitre.role.__unicode__() + ')'
+            out += ' [' + attribution.pupitre.role.__unicode__() + ']'
             if i < maxi:
                 out += ', '
         return out
