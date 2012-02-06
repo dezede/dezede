@@ -16,7 +16,9 @@
       <a href="{% url 'admin:index' %}">Administration</a>
     </div>
     <div style="width: 50%; margin-left: 25%;">
-      {% block body %} {% endblock %}
+      {% autoescape off %}
+        {% block body %} {% endblock %}
+      {% endautoescape %}
     </div>
   </body>
 </html>

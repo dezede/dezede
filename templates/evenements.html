@@ -13,7 +13,7 @@
   {% for evenement, sources_list in datadict.items %}
     <div style="border: 1.5px solid; border-radius: 15px; padding: 20px; margin-bottom: 30px;">
       <h3 style="text-align: center;">{{ evenement.ancrage_debut.calc_date|capfirst }}</h3>
-      {{ evenement.ancrage_debut.lieu.html|safe }}<br />
+      {{ evenement.ancrage_debut.lieu.html }}<br />
       {% if evenement.circonstance %}Circonstance : {{ evenement.circonstance }}<br />{% endif %}
       {% if evenement.ancrage_debut.heure %}Horaire : {{ evenement.ancrage_debut.calc_heure }}<br />{% endif %}
       {% for element in evenement.programme.all %}
@@ -22,7 +22,7 @@
           <ol>
         {% endif %}
         <li>
-          {{ element.html|replace|safe }}
+          {{ element.html|replace }}
         </li>
         {% if forloop.last %}
           </ol>
@@ -39,7 +39,7 @@
         </h4>
         {% for source in sources %}
           <div class="source">
-            {{ source.contenu|replace|safe }}
+            {{ source.contenu|replace }}
             <div class="source-ref">
               (<em>{{ source.nom }}</em>
               {% if source.numero %}n° {{ source.numero }}{% endif %}

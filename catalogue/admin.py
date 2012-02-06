@@ -98,7 +98,7 @@ class GenreDOeuvreAdmin(VersionAdmin):
     exclude = ('slug',)
 
 class OeuvreAdmin(VersionAdmin):
-    list_display = ('titre', 'soustitre', 'genre', 'calc_caracteristiques',
+    list_display = ('__unicode__', 'titre', 'soustitre', 'genre', 'calc_caracteristiques',
         'calc_auteurs', 'ancrage_composition',)
     search_fields = ('titre', 'soustitre', 'genre__nom',)
     list_filter = ('genre__nom',)
@@ -189,6 +189,7 @@ site.register(Partie)
 site.register(Pupitre)
 site.register(TypeDeParenteDOeuvres)
 site.register(ParenteDOeuvres)
+site.register(Auteur)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(AttributionDePupitre, AttributionDePupitreAdmin)
 site.register(CaracteristiqueDElementDeProgramme)

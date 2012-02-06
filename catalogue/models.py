@@ -378,7 +378,7 @@ class Individu(Model):
             return out
         return ''
     calc_professions.short_description = 'professions'
-    def html(self, auteur=None):
+    def html(self):
         designation = self.designation
         prenoms = self.calc_fav_prenoms()
         url = reverse('musicologie.catalogue.views.detail_individu',
@@ -394,13 +394,8 @@ class Individu(Model):
         out += '</span>'
         if designation == 'S' and prenoms:
             out += ' (' + abbreviate(prenoms) + ')'
-        professions = self.professions.all()
-        if auteur and professions:
-            out += ' [' + abbreviate(professions[0].__unicode__(), 1) + ']'
         out += '</a>'
         return out
-    def html_auteur(self):
-        return self.html(True)
     class Meta:
         ordering = ['nom']
     def save(self, *args, **kwargs):
@@ -491,9 +486,11 @@ class CaracteristiqueDOeuvre(Model):
         ordering = ['type', 'classement']
     def __unicode__(self):
         return self.type.__unicode__() + ' : ' + self.valeur
+    __unicode__.allow_tags = True
 
 class Partie(Model):
-    nom = CharField(max_length=200)
+    nom = CharField(max_length=200,
+        help_text="Le nom d'une partie de la partition, instrumentale ou vocale.")
     classement = FloatField(default=1.0)
     class Meta:
         ordering = ['classement']
@@ -547,6 +544,34 @@ class ParenteDOeuvres(Model):
                 out += ' ;'
         return out
 
+class Auteur(Model):
+    profession = ForeignKey(Profession, related_name='auteur_d_oeuvre')
+    individus = ManyToManyField(Individu, related_name='auteurs_d_oeuvre')
+    def individus_html(self):
+        out = ''
+        individus = self.individus.all()
+        maxi = len(individus) - 1
+        for i, individu in enumerate(individus):
+            out += individu.html()
+            if i < maxi:
+                out += ', '
+        return out
+    def html(self):
+        out = self.individus_html()
+        out += ' [' + abbreviate(self.profession.__unicode__(), 1) + ']'
+        return out
+    class Meta:
+        ordering = ['profession']
+    def save(self, *args, **kwargs):
+        for individu in self.individus.all():
+            individu.professions.add(self.profession)
+        super(Auteur, self).save(*args, **kwargs)
+    def __unicode__(self):
+        out = self.profession.__unicode__() + ' : '
+        for individu in self.individus.all():
+            out += individu.__unicode__()
+        return out
+
 class Oeuvre(Model):
     prefixe_titre = CharField(max_length=20, blank=True,
         verbose_name=u'préfixe du titre')
@@ -559,7 +584,7 @@ class Oeuvre(Model):
         null=True)
     caracteristiques = ManyToManyField(CaracteristiqueDOeuvre, blank=True,
         null=True, verbose_name=u'caractéristiques')
-    auteurs = ManyToManyField(Individu, related_name='oeuvres', blank=True,
+    auteurs = ManyToManyField(Auteur, related_name='oeuvres', blank=True,
         null=True)
     ancrage_composition = ForeignKey(AncrageSpatioTemporel,
         related_name='oeuvres', blank=True, null=True,
@@ -589,36 +614,38 @@ class Oeuvre(Model):
                     out += ', '
             return out
         return ''
+    calc_caracteristiques.allow_tags = True
     def calc_auteurs(self, html=False):
         out = ''
-        auteurs = self.auteurs.all().order_by('professions')
+        auteurs = self.auteurs.all()
         maxi = len(auteurs) - 1
         for i, auteur in enumerate(auteurs):
             if html:
-                out += auteur.html_auteur() + ', '
+                out += auteur.html() + ', '
             else:
-                out += auteur.calc_designation()
+                out += auteur.__unicode__()
                 if i < maxi:
                     out += ', '
         return out
     def html(self):
         out = self.calc_auteurs(True)
-        out += '<em>' + self.__unicode__() + '</em>'
+        out += '<em>' + self.__unicode__(True) + '</em>'
         caracteristiques = self.calc_caracteristiques()
-        if self.genre or caracteristiques:
+        if self.__unicode__(True) and (self.genre or caracteristiques):
             out += ', '
         if self.genre:
             out += self.genre.__unicode__()
         if caracteristiques:
             out += ' ' + caracteristiques
         return out
+    html.allow_tags = True
     class Meta:
         verbose_name = u'œuvre'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Oeuvre, self.__unicode__(), self.slug)
+        self.slug = autoslugify(Oeuvre, self.__unicode__(False, False), self.slug)
         super(Oeuvre, self).save(*args, **kwargs)
-    def __unicode__(self):
+    def __unicode__(self, titre_seul=False, saved=True):
         out = u''
         if self.titre:
             if self.prefixe_titre:
@@ -630,13 +657,17 @@ class Oeuvre(Model):
                 if self.prefixe_soustitre:
                     out += self.prefixe_soustitre
                 out += self.soustitre
-        elif self.genre:
+        elif self.genre and not titre_seul:
             out = self.genre.nom
-            for caracteristique in self.caracteristiques.all():
-                out += ', ' + caracteristique.valeur
+            if saved:
+                for caracteristique in self.caracteristiques.all():
+                    out += ', ' + caracteristique.valeur
+        elif titre_seul:
+            out += ''
         else:
             out = str(self.id)
         return out
+    __unicode__.allow_tags = True
 
 class AttributionDePupitre(Model):
     pupitre = ForeignKey(Pupitre, related_name='attributions_de_pupitre')
@@ -688,6 +719,7 @@ class ElementDeProgramme(Model):
             if i < maxi:
                 out += ', '
         return out
+    html.allow_tags = True
     class Meta:
         verbose_name = u'élément de programme'
         verbose_name_plural = u'éléments de programme'
