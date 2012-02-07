@@ -27,7 +27,7 @@
         {{ evenement.ancrage_debut.calc_moment|capfirst }} :
         <ol>
           {% for element in evenement.programme.all %}
-            <li>{{ element }}</li>
+            <li>{{ element.html }}</li>
           {% endfor %}
         </ol>
       </a>
