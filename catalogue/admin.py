@@ -97,6 +97,7 @@ class PersonnelAdmin(VersionAdmin):
 
 class GenreDOeuvreAdmin(VersionAdmin):
     exclude = ('slug',)
+    filter_horizontal = ('parents',)
 
 class CaracteristiqueDOeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'type', 'valeur', 'classement')

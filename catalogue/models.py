@@ -64,7 +64,7 @@ class Illustration(Model):
         return self.image.__unicode__()
 
 class Etat(Model):
-    nom = CharField(max_length=200, help_text=LOWER_MSG)
+    nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
     message = HTMLField(blank=True,
@@ -82,7 +82,7 @@ class Etat(Model):
         return self.nom
 
 class NatureDeLieu(Model):
-    nom = CharField(max_length=400, help_text=LOWER_MSG)
+    nom = CharField(max_length=400, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=430, blank=True,
                             verbose_name='nom (au pluriel)',
                             help_text=PLURAL_MSG)
@@ -141,7 +141,7 @@ class Saison(Model):
         return self.lieu.__unicode__() + ', ' + str(self.debut.year) + '-' + str(self.fin.year)
 
 class Profession(Model):
-    nom = CharField(max_length=200, help_text=LOWER_MSG)
+    nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
     parente = ForeignKey('Profession', blank=True, null=True,
@@ -247,7 +247,7 @@ class Prenom(Model):
         return self.prenom
 
 class TypeDeParenteDIndividus(Model):
-    nom = CharField(max_length=50, help_text=LOWER_MSG)
+    nom = CharField(max_length=50, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=55, blank=True, help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
     class Meta:
@@ -413,8 +413,8 @@ class Devise(Model):
     '''
     Modélisation naïve d'une unité monétaire.
     '''
-    nom = CharField(max_length=200, blank=True, help_text=ex('euro'))
-    symbole = CharField(max_length=10, help_text=ex(u'€'))
+    nom = CharField(max_length=200, blank=True, help_text=ex('euro'), unique=True)
+    symbole = CharField(max_length=10, help_text=ex(u'€'), unique=True)
     def __unicode__(self):
         if self.nom:
             return self.nom
@@ -430,7 +430,7 @@ class Engagement(Model):
         return self.profession.nom
 
 class TypeDePersonnel(Model):
-    nom = CharField(max_length=100)
+    nom = CharField(max_length=100, unique=True)
     class Meta:
         verbose_name = 'type de personnel'
         verbose_name_plural = 'types de personnel'
@@ -446,7 +446,7 @@ class Personnel(Model):
         return self.type.__unicode__() + self.saison.__unicode__()
 
 class GenreDOeuvre(Model):
-    nom = CharField(max_length=400, help_text=LOWER_MSG)
+    nom = CharField(max_length=400, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=430, blank=True,
         verbose_name='nom (au pluriel)',
         help_text=PLURAL_MSG)
@@ -466,7 +466,7 @@ class GenreDOeuvre(Model):
         return self.nom
 
 class TypeDeCaracteristiqueDOeuvre(Model):
-    nom = CharField(max_length=200, help_text=ex(u'tonalité'))
+    nom = CharField(max_length=200, help_text=ex(u'tonalité'), unique=True)
     nom_pluriel = CharField(max_length=430, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
@@ -520,7 +520,7 @@ class Pupitre(Model):
         return out
 
 class TypeDeParenteDOeuvres(Model):
-    nom = CharField(max_length=100, help_text=LOWER_MSG)
+    nom = CharField(max_length=100, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=130, blank=True,
         verbose_name='nom (au pluriel)',
         help_text=PLURAL_MSG)
@@ -615,17 +615,29 @@ class Oeuvre(Model):
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     def calc_caracteristiques(self):
+        out = ''
         caracteristiques = self.caracteristiques.all()
-        maxi = len(caracteristiques) - 1
         if caracteristiques:
-            out = ''
+            maxi = len(caracteristiques) - 1
             for i, caracteristique in enumerate(caracteristiques):
                 out += caracteristique.valeur
                 if i < maxi:
                     out += ', '
-            return out
-        return ''
+        return out
     calc_caracteristiques.allow_tags = True
+    def calc_pupitres(self):
+        out = ''
+        pupitres = self.pupitres.all()
+        if pupitres:
+            maxi = len(pupitres) - 1
+            out += 'pour '
+            for i, pupitre in enumerate(pupitres):
+                out += pupitre.__unicode__()
+                if i < maxi-1:
+                    out += ', '
+                elif i < maxi:
+                    out += ' et '
+        return out
     def calc_auteurs(self, html=False):
         out = ''
         auteurs = self.auteurs.all()
@@ -640,14 +652,22 @@ class Oeuvre(Model):
         return out
     def html(self):
         out = self.calc_auteurs(True)
-        out += '<em>' + self.__unicode__(True) + '</em>'
+        titre_complet = self.__unicode__(True)
+        if titre_complet:
+            out += '<em>' + titre_complet + '</em>'
+        genre = self.genre
         caracteristiques = self.calc_caracteristiques()
-        if self.__unicode__(True) and (self.genre or caracteristiques):
+        if titre_complet and (genre or caracteristiques):
             out += ', '
-        if self.genre:
-            out += self.genre.__unicode__()
-        if caracteristiques:
-            out += ' ' + caracteristiques
+        if genre:
+            out += genre.__unicode__()
+            if not titre_complet:
+                out = out.capitalize()
+            pupitres = self.calc_pupitres()
+            if pupitres and not titre_complet:
+                out += ' ' + pupitres
+            if caracteristiques:
+                out += ' ' + caracteristiques
         return out
     html.allow_tags = True
     class Meta:
@@ -695,7 +715,7 @@ class AttributionDePupitre(Model):
         return out
 
 class CaracteristiqueDElementDeProgramme(Model):
-    nom = CharField(max_length=100, help_text=LOWER_MSG)
+    nom = CharField(max_length=100, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=110, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
@@ -727,7 +747,12 @@ class ElementDeProgramme(Model):
     etat = ForeignKey(Etat, related_name='elements_de_programme', null=True,
         blank=True)
     def html(self):
-        out = self.oeuvre.html()
+        out = ''
+        oeuvre = self.oeuvre
+        if oeuvre:
+            out += oeuvre.html()
+        else:
+            out += self.autre
         distribution = self.distribution.all()
         maxi = len(distribution) - 1
         if distribution:
@@ -774,7 +799,7 @@ class Evenement(Model):
         return self.ancrage_debut.calc_lieu() + ' le ' + self.ancrage_debut.calc_date()
 
 class TypeDeSource(Model):
-    nom = CharField(max_length=200, help_text=LOWER_MSG)
+    nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name='nom (au pluriel)',
         help_text=PLURAL_MSG)
