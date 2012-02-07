@@ -47,7 +47,7 @@ class LieuAdmin(VersionAdmin):
     )
 
 class SaisonAdmin(VersionAdmin):
-    list_display = ('lieu', 'debut', 'fin',)
+    list_display = ('__unicode__', 'lieu', 'debut', 'fin',)
 
 class ProfessionAdmin(VersionAdmin):
     exclude = ('slug',)
@@ -89,6 +89,7 @@ class IndividuAdmin(VersionAdmin):
     )
 
 class EngagementAdmin(VersionAdmin):
+    list_display = ('__unicode__', 'profession', 'salaire', 'devise',)
     filter_horizontal = ('individus',)
 
 class PersonnelAdmin(VersionAdmin):
@@ -99,6 +100,10 @@ class GenreDOeuvreAdmin(VersionAdmin):
 
 class CaracteristiqueDOeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'type', 'valeur', 'classement')
+
+class PartieAdmin(VersionAdmin):
+    list_display = ('__unicode__', 'nom', 'parente', 'classement')
+    filter_horizontal = ('professions',)
 
 class OeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'titre', 'soustitre', 'genre', 'calc_caracteristiques',
@@ -130,8 +135,8 @@ class AttributionDePupitreAdmin(VersionAdmin):
 
 class ElementDeProgrammeAdmin(VersionAdmin):
     list_display = ('oeuvre', 'autre', 'classement',)
-    filter_horizontal = ('caracteristiques', 'distribution', 'illustrations',
-        'documents',)
+    filter_horizontal = ('caracteristiques', 'distribution', 'personnels',
+        'illustrations', 'documents',)
 
 class EvenementAdmin(VersionAdmin):
     list_display = ('__unicode__', 'relache', 'circonstance',)
@@ -188,7 +193,7 @@ site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(TypeDeCaracteristiqueDOeuvre)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
-site.register(Partie)
+site.register(Partie, PartieAdmin)
 site.register(Pupitre)
 site.register(TypeDeParenteDOeuvres)
 site.register(ParenteDOeuvres)

@@ -422,12 +422,12 @@ class Devise(Model):
 
 class Engagement(Model):
     individus = ManyToManyField(Individu, related_name='engagements')
-    fonction = ForeignKey(Profession, related_name='engagements')
+    profession = ForeignKey(Profession, related_name='engagements')
     salaire = FloatField(blank=True)
     devise = ForeignKey(Devise, blank=True, null=True,
         related_name='engagements')
     def __unicode__(self):
-        return self.fonction.nom
+        return self.profession.nom
 
 class TypeDePersonnel(Model):
     nom = CharField(max_length=100)
@@ -495,6 +495,9 @@ class CaracteristiqueDOeuvre(Model):
 class Partie(Model):
     nom = CharField(max_length=200,
         help_text="Le nom d'une partie de la partition, instrumentale ou vocale.")
+    professions = ManyToManyField(Profession, related_name='parties',
+        help_text=u"La ou les profession(s) permettant d'assurer cette partie.")
+    parente = ForeignKey('Partie', related_name='enfant', blank=True, null=True)
     classement = FloatField(default=1.0)
     class Meta:
         ordering = ['classement']
@@ -506,10 +509,14 @@ class Pupitre(Model):
     quantite_min = IntegerField(default=1, verbose_name=u'quantité minimale')
     quantite_max = IntegerField(default=1, verbose_name=u'quantité maximale')
     def __unicode__(self):
-        out = str(self.quantite_min)
-        if self.quantite_min != self.quantite_max:
-            out += u' à %d' % self.quantite_max
-        out += ' ' + self.partie.__unicode__()
+        out = ''
+        mi = self.quantite_min
+        ma = self.quantite_max
+        if mi > 1:
+            out += str(mi) + ' '
+        if mi != ma:
+            out = u'%d à %d ' % (mi, ma)
+        out += self.partie.__unicode__()
         return out
 
 class TypeDeParenteDOeuvres(Model):
@@ -593,7 +600,7 @@ class Oeuvre(Model):
     ancrage_composition = ForeignKey(AncrageSpatioTemporel,
         related_name='oeuvres', blank=True, null=True,
         verbose_name=u'ancrage spatio-temporel de composition')
-    pupitres = ManyToManyField(Partie, related_name='oeuvres', blank=True,
+    pupitres = ManyToManyField(Pupitre, related_name='oeuvres', blank=True,
         null=True)
     parentes = ManyToManyField(ParenteDOeuvres, related_name='oeuvres',
         blank=True, null=True, verbose_name=u'parentes')
@@ -678,7 +685,14 @@ class AttributionDePupitre(Model):
     class Meta:
         verbose_name = u'attribution de pupitre'
     def __unicode__(self):
-        return self.pupitre.__unicode__()
+        out = self.pupitre.partie.__unicode__() + ' : '
+        individus = self.individus.all()
+        maxi = len(individus) - 1
+        for i, individu in enumerate(individus):
+            out += individu.__unicode__()
+            if i < maxi:
+                out += ', '
+        return out
 
 class CaracteristiqueDElementDeProgramme(Model):
     nom = CharField(max_length=100, help_text=LOWER_MSG)
@@ -695,16 +709,23 @@ class CaracteristiqueDElementDeProgramme(Model):
         return self.nom
 
 class ElementDeProgramme(Model):
-    oeuvre = ForeignKey(Oeuvre, related_name='elements_de_programme', verbose_name=u'œuvre', blank=True, null=True)
+    oeuvre = ForeignKey(Oeuvre, related_name='elements_de_programme',
+        verbose_name=u'œuvre', blank=True, null=True)
     autre = CharField(max_length=500, blank=True)
     caracteristiques = ManyToManyField(CaracteristiqueDElementDeProgramme,
         related_name='elements_de_programme', blank=True, null=True,
         verbose_name=u'caractéristiques')
     classement = FloatField(default=1.0)
-    distribution = ManyToManyField(AttributionDePupitre, related_name='elements_de_programme', blank=True, null=True)
-    illustrations = ManyToManyField(Illustration, related_name='representations', blank=True, null=True)
-    documents = ManyToManyField(Document, related_name='representations', blank=True, null=True)
-    etat = ForeignKey(Etat, related_name='elements_de_programme', null=True, blank=True)
+    distribution = ManyToManyField(AttributionDePupitre,
+        related_name='elements_de_programme', blank=True, null=True)
+    personnels = ManyToManyField(Personnel,
+        related_name='elements_de_programme', blank=True, null=True)
+    illustrations = ManyToManyField(Illustration,
+        related_name='representations', blank=True, null=True)
+    documents = ManyToManyField(Document, related_name='representations',
+        blank=True, null=True)
+    etat = ForeignKey(Etat, related_name='elements_de_programme', null=True,
+        blank=True)
     def html(self):
         out = self.oeuvre.html()
         distribution = self.distribution.all()
