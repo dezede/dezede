@@ -126,8 +126,8 @@ class OeuvreAdmin(VersionAdmin):
         }),
         ('Champs avancés', {
             'classes': ('collapse closed',),
-            'fields': ('lilypond', 'description', 'referenced', 'documents',
-                        'illustrations', 'etat', 'notes',),
+            'fields': ('lilypond', 'description', 'documents', 'illustrations',
+                        'etat', 'notes',),
         }),
     )
 
