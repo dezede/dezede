@@ -299,11 +299,11 @@ class Individu(Model):
         ('F', 'Féminin'),
     )
     sexe = CharField(max_length=1, choices=SEXES, blank=True)
-    ancrage_naissance = ForeignKey(AncrageSpatioTemporel, blank=True, null=True,
+    ancrage_naissance = OneToOneField(AncrageSpatioTemporel, blank=True, null=True,
         related_name='individus_nes', verbose_name=u'ancrage de naissance')
-    ancrage_deces = ForeignKey(AncrageSpatioTemporel, blank=True, null=True,
+    ancrage_deces = OneToOneField(AncrageSpatioTemporel, blank=True, null=True,
         related_name='individus_decedes', verbose_name=u'ancrage du décès')
-    ancrage_approx = ForeignKey(AncrageSpatioTemporel, blank=True, null=True,
+    ancrage_approx = OneToOneField(AncrageSpatioTemporel, blank=True, null=True,
         related_name='individus', verbose_name=u'ancrage approximatif',
         help_text=u'Ne remplir que si on ne connaît aucune date précise.')
     professions = ManyToManyField(Profession, related_name='individus',
@@ -597,7 +597,7 @@ class Oeuvre(Model):
         null=True, verbose_name=u'caractéristiques')
     auteurs = ManyToManyField(Auteur, related_name='oeuvres', blank=True,
         null=True)
-    ancrage_composition = ForeignKey(AncrageSpatioTemporel,
+    ancrage_composition = OneToOneField(AncrageSpatioTemporel,
         related_name='oeuvres', blank=True, null=True,
         verbose_name=u'ancrage spatio-temporel de composition')
     pupitres = ManyToManyField(Pupitre, related_name='oeuvres', blank=True,
@@ -756,9 +756,9 @@ class ElementDeProgramme(Model):
         return self.classement.__unicode__()
 
 class Evenement(Model):
-    ancrage_debut = ForeignKey(AncrageSpatioTemporel,
+    ancrage_debut = OneToOneField(AncrageSpatioTemporel,
         related_name='evenements_debuts')
-    ancrage_fin = ForeignKey(AncrageSpatioTemporel,
+    ancrage_fin = OneToOneField(AncrageSpatioTemporel,
         related_name='evenements_fins', blank=True, null=True)
     relache = BooleanField(verbose_name=u'relâche')
     circonstance = CharField(max_length=500, blank=True)
