@@ -574,9 +574,9 @@ class Auteur(Model):
     class Meta:
         ordering = ['profession']
     def save(self, *args, **kwargs):
+	super(Auteur, self).save(*args, **kwargs)
         for individu in self.individus.all():
             individu.professions.add(self.profession)
-        super(Auteur, self).save(*args, **kwargs)
     def __unicode__(self):
         out = self.profession.__unicode__() + ' : '
         for individu in self.individus.all():

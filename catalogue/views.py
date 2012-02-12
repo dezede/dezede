@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template import Context, RequestContext
 from musicologie.catalogue.models import *
 from musicologie.catalogue.forms import *
+from collections import OrderedDict
 
 def index_evenements(request, lieu_slug=None, annee=None, mois=None, jour=None):
     evenements = Evenement.objects
@@ -9,7 +10,7 @@ def index_evenements(request, lieu_slug=None, annee=None, mois=None, jour=None):
     if(annee): evenements = evenements.filter(ancrage_debut__date__year=int(annee))
     if(mois): evenements = evenements.filter(ancrage_debut__date__month=int(mois))
     if(jour): evenements = evenements.filter(ancrage_debut__date__day=int(jour))
-    datadict = {}
+    datadict = OrderedDict()
     for evenement in evenements.all():
         types = TypeDeSource.objects.filter(sources__evenements=evenement).distinct()
         sources_dict = {}
