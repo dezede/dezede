@@ -69,6 +69,7 @@ class Etat(Model):
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
     message = HTMLField(blank=True,
         help_text=u'Message à afficher dans la partie consultation.')
+    publie = BooleanField(default=True, verbose_name=u'publié')
     slug = SlugField(blank=True)
     class Meta:
         verbose_name = u'état'
@@ -606,7 +607,6 @@ class Oeuvre(Model):
         blank=True, null=True, verbose_name=u'parentes')
     lilypond = TextField(blank=True, verbose_name='LilyPond')
     description = HTMLField(blank=True)
-    referenced = BooleanField(default=True, verbose_name=u'référencée')
     documents = ManyToManyField(Document, related_name='oeuvres', blank=True,
         null=True)
     illustrations = ManyToManyField(Illustration, related_name='oeuvres',
