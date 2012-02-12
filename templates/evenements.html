@@ -16,7 +16,8 @@
         {{ evenement.ancrage_debut.calc_date|capfirst }}
       </h3>
       {{ evenement.ancrage_debut.lieu.html }}{% if evenement.ancrage_debut.heure %},
-      {{ evenement.ancrage_debut.calc_heure }}{% endif %}
+      {{ evenement.ancrage_debut.calc_heure }}{% endif %}{% if evenement.relache %},
+      Relâche{% endif%}
       <br />
       {% if evenement.circonstance %}
         Circonstance : {{ evenement.circonstance }}<br />
@@ -51,6 +52,9 @@
               du {{ source.date|date }}{% if source.page %}, p. {{ source.page }}{% endif %})
             </div>
           </div>
+          {% if not forloop.last %}
+            <hr />
+          {% endif %}
         {% endfor %}
       {% endfor %}
     </div>
