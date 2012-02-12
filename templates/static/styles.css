@@ -37,6 +37,16 @@ a:hover
   text-decoration: underline;
 }
 
+h3
+{
+  margin: 0.5em 0 1em 0;
+}
+
+h4
+{
+  margin: 0.25em 0 0.75em 0;
+}
+
 .liste td
 {
   border: 1px solid black;
