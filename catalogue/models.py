@@ -82,7 +82,7 @@ class Etat(Model):
         return self.nom
 
 class NatureDeLieu(Model):
-    nom = CharField(max_length=400, help_text=LOWER_MSG, unique=True)
+    nom = CharField(max_length=255, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=430, blank=True,
                             verbose_name='nom (au pluriel)',
                             help_text=PLURAL_MSG)
@@ -446,7 +446,7 @@ class Personnel(Model):
         return self.type.__unicode__() + self.saison.__unicode__()
 
 class GenreDOeuvre(Model):
-    nom = CharField(max_length=400, help_text=LOWER_MSG, unique=True)
+    nom = CharField(max_length=255, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=430, blank=True,
         verbose_name='nom (au pluriel)',
         help_text=PLURAL_MSG)
