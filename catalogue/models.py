@@ -833,7 +833,7 @@ class Source(Model):
     etat = ForeignKey(Etat, related_name='sources', null=True, blank=True)
     notes = HTMLField(blank=True)
     class Meta:
-        ordering = ['nom', 'date', 'numero', 'page', 'type']
+        ordering = ['date', 'nom', 'numero', 'page', 'type']
     def save(self, *args, **kwargs):
         contenu = self.contenu
         if contenu[:3] == '<p>' and contenu[-4:] == '</p>' and contenu[3:10] != '&laquo;':
