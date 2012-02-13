@@ -25,27 +25,31 @@ def is_vowel(string):
 @register.filter
 def abbreviate(string, limit=0):
     out = ''
-    for i, sub in enumerate(re.split('-', string)): # TODO: créer un catalogue de ponctuations de séparation.
-        tmp_limit = limit
-        for j in range(len(sub)):
-            try:
-                if is_vowel(sub[j]):
-                    if tmp_limit == 0:
-                        if j == 0:
-                            sub = sub[:1]
-                        else:
-                            sub = sub[:j]
-                        sub += '.'
-                        break
-                    try:
-                        if not is_vowel(sub[j+1]):
+    for i, sub in enumerate(re.split('(-|\.|\s)', string)): # TODO: créer un catalogue COMPLET de ponctuations de séparation.
+        if not i % 2:
+            tmp_limit = limit
+            for j in range(len(sub)):
+                try:
+                    if is_vowel(sub[j]):
+                        if tmp_limit == 0:
+                            if j == 0:
+                                sub = sub[:1]
+                            else:
+                                sub = sub[:j]
+                            sub += '.'
+                            break
+                        try:
+                            if not is_vowel(sub[j+1]):
+                                tmp_limit -= 1
+                        except:
                             tmp_limit -= 1
-                    except:
-                        tmp_limit -= 1
-            except:
-                ''
-        if i > 0:
-            out += '-'
+                except:
+                    ''
         out += sub
     return out
+
+if __name__ == '__main__':
+    print abbreviate(u'autéeur dramatique de la tour de babel', 1)
+    print abbreviate(u'jeanöõ-françois du puy du fou', 1)
+    print abbreviate(u'amélie')
 
