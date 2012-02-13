@@ -34,8 +34,8 @@
           </ol>
         {% endif %}
       {% endfor %}
-      <br />
       {% for type, sources in sources_list.items %}
+        <br />
         <h4 style="text-align: center; font-style: italic;">
           {% if sources|length > 1 %}
             {{ type.pluriel|capfirst }}
