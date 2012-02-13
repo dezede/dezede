@@ -26,6 +26,7 @@ def is_vowel(string):
 def abbreviate(string, limit=0):
     out = ''
     for i, sub in enumerate(re.split('(-|\.|\s)', string)): # TODO: créer un catalogue COMPLET de ponctuations de séparation.
+        init_sub = sub
         if not i % 2:
             tmp_limit = limit
             for j in range(len(sub)):
@@ -37,6 +38,8 @@ def abbreviate(string, limit=0):
                             else:
                                 sub = sub[:j]
                             sub += '.'
+                            if len(sub) == len(init_sub):
+                                sub = init_sub
                             break
                         try:
                             if not is_vowel(sub[j+1]):
@@ -44,12 +47,12 @@ def abbreviate(string, limit=0):
                         except:
                             tmp_limit -= 1
                 except:
-                    ''
+                    pass
         out += sub
     return out
 
 if __name__ == '__main__':
     print abbreviate(u'autéeur dramatique de la tour de babel', 1)
-    print abbreviate(u'jeanöõ-françois du puy du fou', 1)
+    print abbreviate(u'jeanöõ-françois du puy du fou', 0)
     print abbreviate(u'amélie')
 
