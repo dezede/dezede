@@ -3,6 +3,9 @@ from musicologie.catalogue.models import *
 from django.contrib.admin import site, TabularInline, StackedInline
 from reversion import VersionAdmin
 
+TabularInline.extra = 1
+StackedInline.extra = 1
+
 class AncrageSpatioTemporelInline(TabularInline):
     model = AncrageSpatioTemporel
     classes = ('collapse closed',)

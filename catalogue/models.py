@@ -16,12 +16,11 @@ LOWER_MSG = u'En minuscules.'
 PLURAL_MSG = u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».'
 DATE_MSG = u'Ex. : « 6/6/1944 » pour le 6 juin 1944.'
 
-def autoslugify(Mod, nom, slug):
-    if slug != '':
-        return slug
+def autoslugify(self, nom):
     nom_slug = slug_orig = slugify(nom)
     n = 0
-    while Mod.objects.filter(slug=nom_slug).count():
+    objects = self.__class__.objects
+    while objects.filter(slug=nom_slug).count() and nom_slug != self.slug:
         n += 1;
         nom_slug = slug_orig + str(n)
     return nom_slug
@@ -50,6 +49,8 @@ def save(self, *args, **kwargs):
 
 Model._old_save = Model.save
 Model.save = save
+
+SlugField.unique = True
 
 class Document(Model):
     nom = CharField(max_length=300, blank=True)
@@ -89,7 +90,7 @@ class Etat(Model):
         verbose_name = u'état'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Etat, self.__unicode__(), self.slug)
+        self.slug = autoslugify(Etat, self.__unicode__())
         super(Etat, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
@@ -107,7 +108,7 @@ class NatureDeLieu(Model):
         verbose_name_plural = 'natures de lieu'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(NatureDeLieu, self.__unicode__(), self.slug)
+        self.slug = autoslugify(NatureDeLieu, self.__unicode__())
         super(NatureDeLieu, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
@@ -139,7 +140,12 @@ class Lieu(Model):
         verbose_name_plural = 'lieux'
         ordering = ['nom']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Lieu, self.__unicode__(), self.slug)
+        new_slug = slugify(self.nom)
+        lieux = Lieu.objects.filter(slug=new_slug)
+        if lieux.count() == lieux.filter(pk=self.pk).count():
+            self.slug = new_slug
+        else:
+            self.slug = autoslugify(self, self.__unicode__())
         super(Lieu, self).save(*args, **kwargs)
     def __unicode__(self):
         if self.parent:
@@ -165,7 +171,7 @@ class Profession(Model):
     class Meta:
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Profession, self.__unicode__(), self.slug)
+        self.slug = autoslugify(self, self.__unicode__())
         super(Profession, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
@@ -439,7 +445,7 @@ class Individu(Model):
         ordering = ['nom']
     def save(self, *args, **kwargs):
         super(Individu, self).save(*args, **kwargs)
-        self.slug = autoslugify(Individu, self.__unicode__(), self.slug)
+        self.slug = autoslugify(self, self.__unicode__())
         super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.calc_designation()
@@ -494,7 +500,7 @@ class GenreDOeuvre(Model):
         verbose_name_plural=u"genres d'œuvre"
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(GenreDOeuvre, self.__unicode__(), self.slug)
+        self.slug = autoslugify(self, self.__unicode__())
         super(GenreDOeuvre, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
@@ -711,7 +717,7 @@ class Oeuvre(Model):
         verbose_name = u'œuvre'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Oeuvre, self.__unicode__(False, False), self.slug)
+        self.slug = autoslugify(self, self.__unicode__(False, False))
         super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self, titre_seul=False, saved=True):
         out = u''
@@ -846,7 +852,7 @@ class TypeDeSource(Model):
         verbose_name_plural = 'types de source'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(TypeDeSource, self.__unicode__(), self.slug)
+        self.slug = autoslugify(self, self.__unicode__())
         super(TypeDeSource, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
