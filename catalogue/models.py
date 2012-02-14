@@ -416,15 +416,15 @@ class Individu(Model):
         url = reverse('musicologie.catalogue.views.detail_individu',
             args=[self.slug])
         out = '<a href="' + url + '">'
+        if designation == 'S' and nom and not prenoms and self.sexe:
+                titre = self.calc_titre()
+                out += titre + ' '
         out += '<span style="font-variant: small-caps;">'
         if designation == 'F':
             out += prenoms
         elif designation == 'P':
             out += self.pseudonyme
         else:
-            if nom and not prenoms and self.sexe:
-                titre = self.calc_titre()
-                out += titre + ' '
             out += nom
         out += '</span>'
         if designation == 'S' and prenoms:
