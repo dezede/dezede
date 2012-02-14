@@ -16,7 +16,9 @@ def multiwordReplace(text, wordDic):
 def replace(string):
     return multiwordReplace(string, {"'": '&rsquo;', ' :': '&nbsp;:',
                                      ' ;': '&nbsp;;', ' !': '&#x202F;!',
-                                     ' ?': '&#x202F;?',})
+                                     ' ?': '&#x202F;?', u'« ': '&laquo;&nbsp;',
+                                     u' »': '&nbsp;&raquo;', '&laquo; ': '&laquo;&nbsp;',
+                                     ' &raquo;': '&nbsp;&raquo;',})
 
 def remove_diacritics(string):
     return unicodedata.normalize('NFKD', string).encode('ASCII', 'ignore')
