@@ -230,7 +230,7 @@ class AncrageSpatioTemporel(Model):
         return out
     def calc_lieu(self):
         if self.lieu:
-            return self.lieu.nom
+            return self.lieu.html()
         elif self.lieu_approx:
             return self.lieu_approx
         return ''
