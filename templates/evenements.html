@@ -4,9 +4,7 @@
 {% load url from future %}
 
 {% block title %}
-  {% for evenement in datadict %}
-    {{ evenement.ancrage_debut }}{% if not forloop.last %} &ndash;{% endif %}
-  {% endfor %}
+  Événements
 {% endblock %}
 
 {% block body %}
