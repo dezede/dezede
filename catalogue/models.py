@@ -297,7 +297,8 @@ class ParenteDIndividus(Model):
 class Individu(Model):
     nom = CharField(max_length=200)
     nom_naissance = CharField(max_length=200, blank=True,
-        verbose_name=u'nom de naissance')
+        verbose_name=u'nom de naissance', help_text='''
+        Ne remplir que s'il est différent du nom d'usage.''')
     prenoms = ManyToManyField(Prenom, related_name='individus', blank=True,
         null=True, verbose_name=u'prénoms')
     pseudonyme = CharField(max_length=200, blank=True)
@@ -310,7 +311,8 @@ class Individu(Model):
     designation = CharField(max_length=1, choices=DESIGNATIONS, default='S')
     SEXES = (
         ('M', 'Masculin'),
-        ('F', 'Féminin'),
+        ('J', 'Féminin (Mlle)'), # J pour Jouvencelle
+        ('F', 'Féminin (Mme)'),
     )
     sexe = CharField(max_length=1, choices=SEXES, blank=True)
     ancrage_naissance = OneToOneField(AncrageSpatioTemporel, blank=True, null=True,
