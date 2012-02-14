@@ -355,15 +355,25 @@ class Individu(Model):
         if self.pseudonyme:
             return self.pseudonyme
         return 'Aucun'
+    def calc_titre(self):
+        titres = {'M': 'M.', 'J': 'M<sup>lle</sup>', 'F': 'M<sup>me</sup>',}
+        if self.sexe:
+            return titres[self.sexe]
+        return ''
     def calc_designation(self):
         out = ''
         designation = self.designation
         prenoms = self.calc_fav_prenoms()
         nom = self.nom
         pseudonyme = self.pseudonyme
-        if designation == 'F' or designation == 'S':
+        sexe = self.sexe
+        if prenoms and (designation == 'F' or designation == 'S'):
             out += prenoms
-            if designation == 'S':
+            if nom and designation == 'S':
+                out += ' '
+        elif sexe and not prenoms and designation == 'S':
+            out += self.calc_titre()
+            if nom:
                 out += ' '
         if nom and (designation == 'L' or designation == 'S'):
             out += nom
@@ -401,6 +411,7 @@ class Individu(Model):
     def html(self):
         designation = self.designation
         prenoms = self.calc_fav_prenoms()
+        nom = self.nom
         url = reverse('musicologie.catalogue.views.detail_individu',
             args=[self.slug])
         out = '<a href="' + url + '">'
@@ -410,7 +421,10 @@ class Individu(Model):
         elif designation == 'P':
             out += self.pseudonyme
         else:
-            out += self.nom
+            if nom and not prenoms and self.sexe:
+                titre = self.calc_titre()
+                out += titre + ' '
+            out += nom
         out += '</span>'
         if designation == 'S' and prenoms:
             out += ' (' + abbreviate(prenoms) + ')'
@@ -424,6 +438,7 @@ class Individu(Model):
         super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.calc_designation()
+    __unicode__.allow_tags = True
 
 class Devise(Model):
     '''
