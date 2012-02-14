@@ -47,6 +47,11 @@ h4
   margin: 0.25em 0 0.75em 0;
 }
 
+ol
+{
+  margin: 0;
+}
+
 .liste td
 {
   border: 1px solid black;
@@ -80,5 +85,10 @@ h4
 .source-ref
 {
   text-align: right;
+}
+
+.programme_titre
+{
+  margin: 0.75em 0 0.5em 0;
 }
 

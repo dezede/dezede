@@ -619,10 +619,10 @@ class Oeuvre(Model):
     prefixe_titre = CharField(max_length=20, blank=True,
         verbose_name=u'préfixe du titre')
     titre = CharField(max_length=200, blank=True)
-    liaison = CharField(max_length=20, blank=True)
+    liaison = CharField(max_length=20, blank=True, verbose_name='coordination')
     prefixe_soustitre = CharField(max_length=20, blank=True,
-        verbose_name=u'préfixe du sous-titre')
-    soustitre = CharField(max_length=200, blank=True, verbose_name='sous-titre')
+        verbose_name=u'préfixe du titre secondaire')
+    soustitre = CharField(max_length=200, blank=True, verbose_name='titre secondaire')
     genre = ForeignKey(GenreDOeuvre, related_name='oeuvres', blank=True,
         null=True)
     caracteristiques = ManyToManyField(CaracteristiqueDOeuvre, blank=True,
