@@ -228,21 +228,24 @@ class AncrageSpatioTemporel(Model):
                 out += u'à '
             out += heure
         return out
-    def calc_lieu(self):
-        if self.lieu:
+    def calc_lieu(self, html=True):
+        if self.lieu and html:
             return self.lieu.html()
+        elif self.lieu:
+            return self.lieu.nom
         elif self.lieu_approx:
             return self.lieu_approx
         return ''
     calc_lieu.short_description = 'Lieu'
     calc_lieu.admin_order_field = 'lieu'
+    calc_lieu.allow_tags = True
     class Meta:
         verbose_name = u'ancrage spatio-temporel'
         verbose_name_plural = u'ancrages spatio-temporels'
         ordering = ['date', 'heure', 'lieu', 'date_approx', 'heure_approx', 'lieu_approx']
     def __unicode__(self):
         out = ''
-        lieu = self.calc_lieu()
+        lieu = self.calc_lieu(False)
         if lieu != '':
             out = lieu
             if date != '' or heure != '':
@@ -250,6 +253,7 @@ class AncrageSpatioTemporel(Model):
         out += self.calc_moment()
         out = capfirst(out)
         return out
+    __unicode__.allow_tags = True
 
 class Prenom(Model):
     prenom = CharField(max_length=100, verbose_name=u'prénom')
