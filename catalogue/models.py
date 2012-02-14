@@ -575,7 +575,7 @@ class Auteur(Model):
     class Meta:
         ordering = ['profession']
     def save(self, *args, **kwargs):
-	super(Auteur, self).save(*args, **kwargs)
+        super(Auteur, self).save(*args, **kwargs)
         for individu in self.individus.all():
             individu.professions.add(self.profession)
     def __unicode__(self):
