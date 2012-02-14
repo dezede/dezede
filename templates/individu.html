@@ -44,15 +44,17 @@
       </ul>
     {% endif %}
   {% endfor %}
-  {% for oeuvre in individu.oeuvres.all %}
+  {% for auteur in individu.auteurs.all %}
     {% if forloop.first %}
       <hr />
       <h4>Oeuvres :</h4>
       <ul>
     {% endif %}
-    <li>
-      {{ oeuvre }}
-    </li>
+    {% for oeuvre in auteur.oeuvres.all %}
+      <li>
+        {{ oeuvre }}
+      </li>
+    {% endfor %}
     {% if forloop.last %}
       </ul>
     {% endif %}

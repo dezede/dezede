@@ -592,7 +592,7 @@ class ParenteDOeuvres(Model):
         return out
 
 class Auteur(Model):
-    profession = ForeignKey(Profession, related_name='auteur')
+    profession = ForeignKey(Profession, related_name='auteurs')
     individus = ManyToManyField(Individu, related_name='auteurs')
     def individus_html(self):
         out = ''
