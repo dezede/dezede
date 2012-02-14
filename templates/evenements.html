@@ -15,13 +15,11 @@
       <h3 style="text-align: center;">
         {{ evenement.ancrage_debut.calc_date|capfirst }}
       </h3>
-      {{ evenement.ancrage_debut.lieu.html }}{% if evenement.ancrage_debut.heure %},
+      {{ evenement.ancrage_debut.lieu.html }}{% if evenement.circonstance %},
+      {{ evenement.circonstance }}{% endif %}{% if evenement.ancrage_debut.heure %},
       {{ evenement.ancrage_debut.calc_heure }}{% endif %}{% if evenement.relache %},
       Relâche{% endif%}
       <br />
-      {% if evenement.circonstance %}
-        Circonstance : {{ evenement.circonstance }}<br />
-      {% endif %}
       {% for element in evenement.programme.all %}
         {% if forloop.first %}
           <h4>Programme</h4>
