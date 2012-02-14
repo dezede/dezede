@@ -133,7 +133,7 @@ class Lieu(Model):
         if parent:
             out += parent.nom + ', '
         out += self.nom + '</a>'
-        return out
+        return replace(out)
     class Meta:
         verbose_name_plural = 'lieux'
         ordering = ['nom']
@@ -415,7 +415,7 @@ class Individu(Model):
         if designation == 'S' and prenoms:
             out += ' (' + abbreviate(prenoms) + ')'
         out += '</a>'
-        return out
+        return replace(out)
     class Meta:
         ordering = ['nom']
     def save(self, *args, **kwargs):
@@ -586,7 +586,7 @@ class Auteur(Model):
     def html(self):
         out = self.individus_html()
         out += ' [' + abbreviate(self.profession.__unicode__(), 1) + ']'
-        return out
+        return replace(out)
     class Meta:
         ordering = ['profession']
     def save(self, *args, **kwargs):
@@ -685,7 +685,7 @@ class Oeuvre(Model):
                 out += ' ' + pupitres
             if caracteristiques:
                 out += ' ' + caracteristiques
-        return out
+        return replace(out)
     html.allow_tags = True
     class Meta:
         verbose_name = u'œuvre'
@@ -784,7 +784,7 @@ class ElementDeProgramme(Model):
             out += ' [' + attribution.pupitre.partie.__unicode__() + ']'
             if i < maxi:
                 out += ', '
-        return out
+        return replace(out)
     html.allow_tags = True
     class Meta:
         verbose_name = u'élément de programme'
