@@ -837,7 +837,7 @@ class Source(Model):
     def save(self, *args, **kwargs):
         contenu = self.contenu
         if contenu[:3] == '<p>' and contenu[-4:] == '</p>' and contenu[3:10] != '&laquo;':
-            self.contenu = u'<p>&laquo; ' + contenu[3:-4] + u' &raquo;</p>'
+            self.contenu = u'<p>&laquo;&nbsp;' + contenu[3:-4] + u'&nbsp;&raquo;</p>'
         super(Source, self).save(*args, **kwargs)
     def __unicode__(self):
         return str(self.pk)
