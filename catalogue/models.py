@@ -638,6 +638,7 @@ class Oeuvre(Model):
                     out += ', '
         return out
     calc_caracteristiques.allow_tags = True
+    calc_caracteristiques.short_description = u'caractéristiques'
     def calc_pupitres(self):
         out = ''
         pupitres = self.pupitres.all()
@@ -663,6 +664,7 @@ class Oeuvre(Model):
                 if i < maxi:
                     out += ', '
         return out
+    calc_auteurs.short_description = 'auteurs'
     def html(self):
         out = self.calc_auteurs(True)
         titre_complet = self.__unicode__(True)
@@ -845,6 +847,10 @@ class Source(Model):
         blank=True, null=True)
     etat = ForeignKey(Etat, related_name='sources', null=True, blank=True)
     notes = HTMLField(blank=True)
+    def disp_contenu(self):
+        return self.contenu[:200] + u'[...]' + self.contenu[-50:]
+    disp_contenu.short_description = 'contenu'
+    disp_contenu.allow_tags = True
     class Meta:
         ordering = ['date', 'nom', 'numero', 'page', 'type']
     def save(self, *args, **kwargs):

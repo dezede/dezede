@@ -160,7 +160,7 @@ class TypeDeSourceAdmin(VersionAdmin):
     inlines = (SourceInline,)
 
 class SourceAdmin(VersionAdmin):
-    list_display = ('nom', 'numero', 'date', 'page', 'type',)
+    list_display = ('nom', 'numero', 'date', 'page', 'type', 'disp_contenu',)
     search_fields = ('nom', 'numero', 'type__nom',)
     list_filter = ('type__nom',)
     filter_horizontal = ('evenements', 'documents', 'illustrations',)
