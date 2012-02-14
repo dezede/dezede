@@ -28,7 +28,7 @@
           <ol>
         {% endif %}
         <li>
-          {{ element.html|replace }}
+          {{ element.html }}
         </li>
         {% if forloop.last %}
           </ol>
@@ -45,7 +45,7 @@
         </h4>
         {% for source in sources %}
           <div class="source">
-            {{ source.contenu|replace }}
+            {{ source.contenu }}
             <div class="source-ref">
               (<em>{{ source.nom }}</em>
               {% if source.numero %}n° {{ source.numero }}{% endif %}

@@ -4,7 +4,7 @@ from tinymce.models import HTMLField
 from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
 from django.template.defaultfilters import date, time, capfirst
-from musicologie.catalogue.templatetags.extras import abbreviate
+from musicologie.catalogue.templatetags.extras import replace, abbreviate
 from django.core.urlresolvers import reverse
 from musicologie.settings import DATE_FORMAT
 
@@ -36,6 +36,19 @@ def ex(str):
 # 
 # Modélisation
 #
+
+def save(self, *args, **kwargs):
+    try:
+        for field in self._meta.fields:
+            if field.__class__.__name__ == 'HTMLField':
+                value = replace(getattr(self, field.attname))
+                setattr(self, field.attname, value)
+    except:
+        pass
+    self._old_save(*args, **kwargs)
+
+Model._old_save = Model.save
+Model.save = save
 
 class Document(Model):
     nom = CharField(max_length=300, blank=True)
