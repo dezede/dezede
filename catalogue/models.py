@@ -14,6 +14,7 @@ from musicologie.settings import DATE_FORMAT
 
 LOWER_MSG = u'En minuscules.'
 PLURAL_MSG = u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».'
+DATE_MSG = u'Ex. : « 6/6/1944 » pour le 6 juin 1944.'
 
 def autoslugify(Mod, nom, slug):
     if slug != '':
@@ -147,7 +148,7 @@ class Lieu(Model):
 
 class Saison(Model):
     lieu = ForeignKey(Lieu, related_name='saisons')
-    debut = DateField(verbose_name=u'début')
+    debut = DateField(verbose_name=u'début', help_text=DATE_MSG)
     fin = DateField()
     class Meta:
         ordering = ['lieu', 'debut']
@@ -172,7 +173,7 @@ class Profession(Model):
         return self.nom
 
 class AncrageSpatioTemporel(Model):
-    date = DateField(blank=True, null=True)
+    date = DateField(blank=True, null=True, help_text=DATE_MSG)
     heure = TimeField(blank=True, null=True)
     lieu = ForeignKey(Lieu, related_name='ancrages', blank=True, null=True)
     date_approx = CharField(max_length=200, blank=True,
@@ -851,7 +852,7 @@ class TypeDeSource(Model):
 class Source(Model):
     nom = CharField(max_length=200, help_text=ex('Le Journal de Rouen'))
     numero = CharField(max_length=50, blank=True)
-    date = DateField()
+    date = DateField(help_text=DATE_MSG)
     page = CharField(max_length=50, blank=True)
     type = ForeignKey(TypeDeSource, related_name='sources',
         help_text=ex('compte rendu'))

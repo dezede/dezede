@@ -61,7 +61,7 @@ class AncrageSpatioTemporelAdmin(VersionAdmin):
             'fields': ('date', 'heure', 'lieu',),
         }),
         ('Champs avancés', {
-            'classes': ('collapse closed',),
+            'classes': ('collapse open',),
             'fields': ('date_approx', 'heure_approx', 'lieu_approx',),
         }),
     )
