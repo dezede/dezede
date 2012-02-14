@@ -66,6 +66,9 @@ class AncrageSpatioTemporelAdmin(VersionAdmin):
         }),
     )
 
+class PrenomAdmin(VersionAdmin):
+    list_display = ('__unicode__', 'prenom', 'classement', 'favori',)
+
 class IndividuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'nom_naissance', 'calc_prenoms',
         'pseudonyme', 'sexe', 'ancrage_naissance', 'ancrage_deces',
@@ -183,7 +186,7 @@ site.register(Lieu, LieuAdmin)
 site.register(Saison, SaisonAdmin)
 site.register(Profession, ProfessionAdmin)
 site.register(AncrageSpatioTemporel, AncrageSpatioTemporelAdmin)
-site.register(Prenom)
+site.register(Prenom, PrenomAdmin)
 site.register(TypeDeParenteDIndividus)
 site.register(ParenteDIndividus)
 site.register(Individu, IndividuAdmin)

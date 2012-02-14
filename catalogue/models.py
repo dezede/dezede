@@ -257,7 +257,7 @@ class Prenom(Model):
     favori = BooleanField(default=True)
     class Meta:
         verbose_name = u'prénom'
-        ordering = ['classement']
+        ordering = ['prenom', 'classement']
     def __unicode__(self):
         return self.prenom
 
@@ -336,7 +336,7 @@ class Individu(Model):
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     def calc_prenoms_methode(self, fav):
-        prenoms = self.prenoms.all()
+        prenoms = self.prenoms.all().order_by('classement', 'prenom')
         maxi = len(prenoms) - 1
         if prenoms:
             out = ''
