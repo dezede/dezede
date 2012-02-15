@@ -445,7 +445,12 @@ class Individu(Model):
         ordering = ['nom']
     def save(self, *args, **kwargs):
         super(Individu, self).save(*args, **kwargs)
-        self.slug = autoslugify(self, self.__unicode__())
+        new_slug = slugify(self.nom)
+        individus = Individu.objects.filter(slug=new_slug)
+        if individus.count() == individus.filter(pk=self.pk).count():
+            self.slug = new_slug
+        else:
+            self.slug = autoslugify(self, self.__unicode__())
         super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.calc_designation()
