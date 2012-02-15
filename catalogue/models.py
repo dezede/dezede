@@ -840,6 +840,13 @@ class Evenement(Model):
     illustrations = ManyToManyField(Illustration, related_name='evenements', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='evenements', null=True, blank=True)
     notes = HTMLField(blank=True)
+    def html(self):
+        relache = ''
+        if self.relache:
+            relache = 'Relâche'
+        l = [self.ancrage_debut.calc_lieu(), self.circonstance,
+             self.ancrage_debut.calc_heure(), relache]
+        return ', '.join(filter(bool, l))
     class Meta:
         verbose_name = u'événement'
         ordering = ['ancrage_debut']
