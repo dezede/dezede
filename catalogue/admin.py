@@ -112,6 +112,9 @@ class PartieAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'parente', 'classement')
     filter_horizontal = ('professions',)
 
+class AuteurAdmin(VersionAdmin):
+    filter_horizontal = ('individus',)
+
 class OeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'titre', 'soustitre', 'genre', 'calc_caracteristiques',
         'calc_auteurs', 'ancrage_composition',)
@@ -204,7 +207,7 @@ site.register(Partie, PartieAdmin)
 site.register(Pupitre)
 site.register(TypeDeParenteDOeuvres)
 site.register(ParenteDOeuvres)
-site.register(Auteur)
+site.register(Auteur, AuteurAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(AttributionDePupitre, AttributionDePupitreAdmin)
 site.register(CaracteristiqueDElementDeProgramme)
