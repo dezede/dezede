@@ -297,12 +297,8 @@ class ParenteDIndividus(Model):
         if len(self.individus_cibles.all()) > 1:
             out = self.type.pluriel()
         out += ' :'
-        cibles = self.individus_cibles.all()
-        maxi = len(cibles) - 1
-        for i, individu in enumerate(cibles):
-            out += ' ' + individu.__unicode__()
-            if i < maxi:
-                out += ' ;'
+        cs = self.individus_cibles.all()
+        out += ' ;'.join(filter(bool, [c.__unicode__() for c in cs]))
         return out
 
 class Individu(Model):
@@ -408,16 +404,8 @@ class Individu(Model):
             return self.ancrage_approx.__unicode__()
         return ''
     def calc_professions(self):
-        professions = self.professions.all()
-        if professions:
-            out = ''
-            maxi = len(professions) - 1
-            for i, profession in enumerate(professions):
-                out += profession.__unicode__()
-                if i < maxi:
-                    out += ', '
-            return out
-        return ''
+        ps = self.professions.all()
+        return ', '.join(filter(bool, [p.__unicode__() for p in ps]))
     calc_professions.short_description = 'professions'
     def html(self):
         designation = self.designation
@@ -595,25 +583,15 @@ class ParenteDOeuvres(Model):
             out = self.type.pluriel()
         out += ' :'
         cibles = self.oeuvres_cibles.all()
-        maxi = len(cibles) - 1
-        for i, oeuvre in enumerate(cibles):
-            out += ' ' + oeuvre.__unicode__()
-            if i < maxi:
-                out += ' ;'
+        out += ' ;'.join(filter(bool, [c.__unicode__() for c in cs]))
         return out
 
 class Auteur(Model):
     profession = ForeignKey(Profession, related_name='auteurs')
     individus = ManyToManyField(Individu, related_name='auteurs')
     def individus_html(self):
-        out = ''
-        individus = self.individus.all()
-        maxi = len(individus) - 1
-        for i, individu in enumerate(individus):
-            out += individu.html()
-            if i < maxi:
-                out += ', '
-        return out
+        ins = self.individus.all()
+        return ', '.join(filter(bool, [i.html() for i in ins]))
     def html(self):
         out = self.individus_html()
         out += ' [' + abbreviate(self.profession.__unicode__(), 1) + ']'
@@ -661,15 +639,8 @@ class Oeuvre(Model):
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
     def calc_caracteristiques(self):
-        out = ''
-        caracteristiques = self.caracteristiques.all()
-        if caracteristiques:
-            maxi = len(caracteristiques) - 1
-            for i, caracteristique in enumerate(caracteristiques):
-                out += caracteristique.valeur
-                if i < maxi:
-                    out += ', '
-        return out
+        cs = self.caracteristiques.all()
+        return ', '.join(filter(bool, [c.valeur for c in cs]))
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = u'caractéristiques'
     def calc_pupitres(self):
@@ -754,12 +725,8 @@ class AttributionDePupitre(Model):
         verbose_name = u'attribution de pupitre'
     def __unicode__(self):
         out = self.pupitre.partie.__unicode__() + ' : '
-        individus = self.individus.all()
-        maxi = len(individus) - 1
-        for i, individu in enumerate(individus):
-            out += individu.__unicode__()
-            if i < maxi:
-                out += ', '
+        ins = self.individus.all()
+        out += ', '.join(filter(bool, [i.__unicode__() for i in ins]))
         return out
 
 class CaracteristiqueDElementDeProgramme(Model):
