@@ -579,10 +579,10 @@ class ParenteDOeuvres(Model):
         ordering = ['type']
     def __unicode__(self):
         out = self.type.nom
-        if len(self.oeuvres_cibles.all()) > 1:
+        cs = self.oeuvres_cibles.all()
+        if len(cs) > 1:
             out = self.type.pluriel()
         out += ' :'
-        cibles = self.oeuvres_cibles.all()
         out += ' ;'.join(filter(bool, [c.__unicode__() for c in cs]))
         return out
 
