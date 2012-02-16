@@ -810,7 +810,7 @@ class Evenement(Model):
     def html(self):
         relache = ''
         if self.relache:
-            relache = 'Relâche'
+            relache = u'Relâche'
         l = [self.ancrage_debut.calc_lieu(), self.circonstance,
              self.ancrage_debut.calc_heure(), relache]
         return ', '.join(filter(bool, l))
