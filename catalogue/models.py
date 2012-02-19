@@ -681,7 +681,7 @@ class Oeuvre(Model):
         if genre:
             out += genre.__unicode__()
             if not titre_complet:
-                out = out.capitalize()
+                out = out[0].upper() + out[1:]
             pupitres = self.calc_pupitres()
             if pupitres and not titre_complet:
                 out += ' ' + pupitres
