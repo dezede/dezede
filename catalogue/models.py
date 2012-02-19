@@ -17,7 +17,7 @@ PLURAL_MSG = u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  
 DATE_MSG = u'Ex. : « 6/6/1944 » pour le 6 juin 1944.'
 
 def autoslugify(self, nom):
-    nom_slug = slug_orig = slugify(nom)
+    nom_slug = slug_orig = slugify(nom[:50])
     n = 0
     objects = self.__class__.objects
     while objects.filter(slug=nom_slug).count() and nom_slug != self.slug:
