@@ -127,14 +127,18 @@ class Lieu(Model):
     slug = SlugField(blank=True)
     def evenements(self):
         return Evenement.objects.filter(ancrage_debut__lieu=self)
-    def html(self):
+    def html(self, tags=True):
         url = reverse('musicologie.catalogue.views.detail_lieu',
             args=[self.slug])
-        out = '<a href="' + url + '">'
+        out = ''
+        if tags:
+            out += '<a href="' + url + '">'
         parent = self.parent
         if parent:
             out += parent.nom + ', '
-        out += self.nom + '</a>'
+        out += self.nom
+        if tags:
+            out += '</a>'
         return replace(out)
     class Meta:
         verbose_name_plural = 'lieux'
@@ -234,11 +238,9 @@ class AncrageSpatioTemporel(Model):
                 out += u'à '
             out += heure
         return out
-    def calc_lieu(self, html=True):
-        if self.lieu and html:
-            return self.lieu.html()
-        elif self.lieu:
-            return self.lieu.nom
+    def calc_lieu(self, tags=True):
+        if self.lieu:
+            return self.lieu.html(tags)
         elif self.lieu_approx:
             return self.lieu_approx
         return ''
@@ -810,18 +812,18 @@ class Evenement(Model):
     illustrations = ManyToManyField(Illustration, related_name='evenements', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='evenements', null=True, blank=True)
     notes = HTMLField(blank=True)
-    def html(self):
+    def html(self, tags=True):
         relache = ''
         if self.relache:
             relache = u'Relâche'
-        l = [self.ancrage_debut.calc_lieu(), self.circonstance,
+        l = [self.ancrage_debut.calc_lieu(tags), self.circonstance,
              self.ancrage_debut.calc_heure(), relache]
         return ', '.join(filter(bool, l))
     class Meta:
         verbose_name = u'événement'
         ordering = ['ancrage_debut']
     def __unicode__(self):
-        return self.ancrage_debut.calc_lieu() + ' le ' + self.ancrage_debut.calc_date()
+        return self.html(False)
 
 class TypeDeSource(Model):
     nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
