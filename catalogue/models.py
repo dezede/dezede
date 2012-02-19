@@ -90,7 +90,7 @@ class Etat(Model):
         verbose_name = u'état'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(Etat, self.__unicode__())
+        self.slug = autoslugify(self, self.__unicode__())
         super(Etat, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
@@ -108,7 +108,7 @@ class NatureDeLieu(Model):
         verbose_name_plural = 'natures de lieu'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(NatureDeLieu, self.__unicode__())
+        self.slug = autoslugify(self, self.__unicode__())
         super(NatureDeLieu, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
