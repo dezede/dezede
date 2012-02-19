@@ -535,7 +535,7 @@ class Partie(Model):
     parente = ForeignKey('Partie', related_name='enfant', blank=True, null=True)
     classement = FloatField(default=1.0)
     class Meta:
-        ordering = ['classement']
+        ordering = ['nom']
     def __unicode__(self):
         return self.nom
 
@@ -543,6 +543,8 @@ class Pupitre(Model):
     partie = ForeignKey(Partie, related_name='pupitres')
     quantite_min = IntegerField(default=1, verbose_name=u'quantité minimale')
     quantite_max = IntegerField(default=1, verbose_name=u'quantité maximale')
+    class Meta:
+        ordering = ['partie']
     def __unicode__(self):
         out = ''
         mi = self.quantite_min
@@ -723,6 +725,7 @@ class AttributionDePupitre(Model):
     individus = ManyToManyField(Individu, related_name='attributions_de_pupitre')
     class Meta:
         verbose_name = u'attribution de pupitre'
+        ordering = ['pupitre']
     def __unicode__(self):
         out = self.pupitre.partie.__unicode__() + ' : '
         ins = self.individus.all()
