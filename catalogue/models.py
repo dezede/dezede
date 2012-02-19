@@ -678,7 +678,8 @@ class Oeuvre(Model):
     calc_auteurs.short_description = 'auteurs'
     def html(self):
         out = self.calc_auteurs(True)
-        out += ', '
+        if out:
+            out += ', '
         titre_complet = self.__unicode__(True)
         if titre_complet:
             out += '<em>' + titre_complet + '</em>'
