@@ -364,8 +364,12 @@ class Individu(Model):
         if self.pseudonyme:
             return self.pseudonyme
         return 'Aucun'
-    def calc_titre(self):
-        titres = {'M': 'M.', 'J': 'M<sup>lle</sup>', 'F': 'M<sup>me</sup>',}
+    def calc_titre(self, tags=True):
+        titres = {}
+        if tags:
+            titres = {'M': 'M.', 'J': 'M<sup>lle</sup>', 'F': 'M<sup>me</sup>',}
+        else:
+            titres = {'M': 'M.', 'J': 'Mlle', 'F': 'Mme',}
         if self.sexe:
             return titres[self.sexe]
         return ''
@@ -409,27 +413,32 @@ class Individu(Model):
         ps = self.professions.all()
         return ', '.join(filter(bool, [p.__unicode__() for p in ps]))
     calc_professions.short_description = 'professions'
-    def html(self):
+    def html(self, tags=True):
         designation = self.designation
         prenoms = self.calc_fav_prenoms()
         nom = self.nom
         url = reverse('musicologie.catalogue.views.detail_individu',
             args=[self.slug])
-        out = '<a href="' + url + '">'
+        out = ''
+        if tags:
+            out += '<a href="' + url + '">'
         if designation == 'S' and nom and not prenoms and self.sexe:
-                titre = self.calc_titre()
+                titre = self.calc_titre(tags)
                 out += titre + ' '
-        out += '<span style="font-variant: small-caps;">'
+        if tags:
+            out += '<span style="font-variant: small-caps;">'
         if designation == 'F':
             out += prenoms
         elif designation == 'P':
             out += self.pseudonyme
         else:
             out += nom
-        out += '</span>'
+        if tags:
+            out += '</span>'
         if designation == 'S' and prenoms:
             out += ' (' + abbreviate(prenoms) + ')'
-        out += '</a>'
+        if tags:
+            out += '</a>'
         return replace(out)
     class Meta:
         ordering = ['nom']
@@ -443,7 +452,7 @@ class Individu(Model):
             self.slug = autoslugify(self, self.__unicode__())
         super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
-        return self.calc_designation()
+        return self.html(False)
     __unicode__.allow_tags = True
 
 class Devise(Model):
@@ -593,11 +602,11 @@ class ParenteDOeuvres(Model):
 class Auteur(Model):
     profession = ForeignKey(Profession, related_name='auteurs')
     individus = ManyToManyField(Individu, related_name='auteurs')
-    def individus_html(self):
+    def individus_html(self, tags=True):
         ins = self.individus.all()
-        return ', '.join(filter(bool, [i.html() for i in ins]))
-    def html(self):
-        out = self.individus_html()
+        return ', '.join(filter(bool, [i.html(tags) for i in ins]))
+    def html(self, tags=True):
+        out = self.individus_html(tags=True)
         out += ' [' + abbreviate(self.profession.__unicode__(), 1) + ']'
         return replace(out)
     class Meta:
@@ -607,10 +616,7 @@ class Auteur(Model):
         for individu in self.individus.all():
             individu.professions.add(self.profession)
     def __unicode__(self):
-        out = self.profession.__unicode__() + ' : '
-        for individu in self.individus.all():
-            out += individu.__unicode__()
-        return out
+        return self.html(False)
 
 class Oeuvre(Model):
     prefixe_titre = CharField(max_length=20, blank=True,
@@ -660,21 +666,19 @@ class Oeuvre(Model):
                 elif i < maxi:
                     out += ' et '
         return out
-    def calc_auteurs(self, html=False):
+    def calc_auteurs(self, tags=False):
         out = ''
         auteurs = self.auteurs.all()
         maxi = len(auteurs) - 1
         for i, auteur in enumerate(auteurs):
-            if html:
-                out += auteur.html() + ', '
-            else:
-                out += auteur.__unicode__()
-                if i < maxi:
-                    out += ', '
+            out += auteur.html(tags)
+            if i < maxi:
+                out += ', '
         return out
     calc_auteurs.short_description = 'auteurs'
     def html(self):
         out = self.calc_auteurs(True)
+        out += ', '
         titre_complet = self.__unicode__(True)
         if titre_complet:
             out += '<em>' + titre_complet + '</em>'
