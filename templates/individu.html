@@ -33,6 +33,7 @@
   Sexe : {{ individu.get_sexe_display|default:'?' }}<br />
   {% for parent in individu.parents.all %}{% if forloop.first %}Parents : {% endif %}<a href="{% url 'catalogue.views.index_individus' %}{{ parent.slug }}">{{ parent }}</a>{% if not forloop.last %},{% else %}<br />{% endif %}{% endfor %}
   Profession{{ individu.professions.all|pluralize }} : {{ individu.calc_professions|default:'?' }}<br />
+  {{ individu.biographie }}
 
   {% for enfant in individu.enfants.all %}
     {% if forloop.first %}
