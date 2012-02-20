@@ -149,7 +149,7 @@ class ElementDeProgrammeAdmin(VersionAdmin):
         'illustrations', 'documents',)
 
 class EvenementAdmin(VersionAdmin):
-    list_display = ('__unicode__', 'relache', 'circonstance',)
+    list_display = ('ancrage_debut', 'relache', 'circonstance',)
     search_fields = ('circonstance',)
     list_filter = ('relache',)
     filter_horizontal = ('programme', 'documents', 'illustrations',)
