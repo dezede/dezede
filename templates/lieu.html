@@ -45,5 +45,8 @@
     <h4>Historique :</h4>
     {{ lieu.historique }}
   {% endif %}
+  <a href="{% url 'admin:catalogue_lieu_change' lieu.pk %}">
+    [Modifier]
+  </a>
 {% endblock %}
 
