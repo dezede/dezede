@@ -417,10 +417,10 @@ class Individu(Model):
         designation = self.designation
         prenoms = self.calc_fav_prenoms()
         nom = self.nom
-        url = reverse('musicologie.catalogue.views.detail_individu',
-            args=[self.slug])
         out = ''
         if tags:
+            url = reverse('musicologie.catalogue.views.detail_individu',
+            args=[self.slug])
             out += '<a href="' + url + '">'
         if designation == 'S' and nom and not prenoms and self.sexe:
                 titre = self.calc_titre(tags)
