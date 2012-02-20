@@ -60,5 +60,8 @@
       </ul>
     {% endif %}
   {% endfor %}
+  <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">
+    [Modifier]
+  </a>
 {% endblock %}
 

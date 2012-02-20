@@ -2,7 +2,7 @@
 # coding: utf-8
 import os
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.abspath(os.path.dirname(__file__))
