@@ -615,6 +615,7 @@ class Auteur(Model):
         super(Auteur, self).save(*args, **kwargs)
         for individu in self.individus.all():
             individu.professions.add(self.profession)
+            super(Individu, individu).save()
     def __unicode__(self):
         return self.html(False)
 
@@ -828,7 +829,8 @@ class Evenement(Model):
         verbose_name = u'événement'
         ordering = ['ancrage_debut']
     def __unicode__(self):
-        return self.html(False)
+        out = self.ancrage_debut.calc_date()
+        return out + ' ' + self.html(False)
 
 class TypeDeSource(Model):
     nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
