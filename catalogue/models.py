@@ -606,7 +606,7 @@ class Auteur(Model):
         ins = self.individus.all()
         return ', '.join(filter(bool, [i.html(tags) for i in ins]))
     def html(self, tags=True):
-        out = self.individus_html(tags=True)
+        out = self.individus_html(tags)
         out += ' [' + abbreviate(self.profession.__unicode__(), 1) + ']'
         return replace(out)
     class Meta:
