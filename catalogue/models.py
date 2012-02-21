@@ -684,12 +684,16 @@ class Oeuvre(Model):
         if titre_complet and (genre or caracteristiques):
             out += ', '
         if genre:
-            out += genre.__unicode__()
-            if not titre_complet:
-                out = out[0].upper() + out[1:]
+            genre = genre.__unicode__()
             pupitres = self.calc_pupitres()
+            if not titre_complet:
+                out += '<em>' + genre[0].upper() + genre[1:]
+                if not pupitres:
+                    out += '</em>'
+            else:
+                out += genre
             if pupitres and not titre_complet:
-                out += ' ' + pupitres
+                out += ' ' + pupitres + '</em>'
             if caracteristiques:
                 out += ' ' + caracteristiques
         return replace(out)
