@@ -40,6 +40,11 @@
           <div class="source">
             {{ source.contenu }}
             <div class="source-ref">
+              {% if source.illustrations.all %}
+                {% for illustration in source.illustrations.all %}
+                  <a href="{{ illustration.image.url }}">[Facsimile]</a>
+                {% endfor %}
+              {% endif %}
               (<em>{{ source.nom }}</em>
               {% if source.numero %}n° {{ source.numero }}{% endif %}
               du {{ source.date|date }}{% if source.page %}, p. {{ source.page }}{% endif %})
