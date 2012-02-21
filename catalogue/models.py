@@ -846,7 +846,7 @@ class TypeDeSource(Model):
         return self.nom
 
 class Source(Model):
-    nom = CharField(max_length=200, help_text=ex('Le Journal de Rouen'))
+    nom = CharField(max_length=200, help_text=ex('Journal de Rouen'))
     numero = CharField(max_length=50, blank=True)
     date = DateField(help_text=DATE_MSG)
     page = CharField(max_length=50, blank=True)
