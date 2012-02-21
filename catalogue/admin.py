@@ -117,6 +117,10 @@ class ParenteDOeuvresAdmin(VersionAdmin):
 
 class AuteurAdmin(VersionAdmin):
     filter_horizontal = ('individus',)
+    def save_model(self, request, obj, form, change):
+        obj.save()
+        for individu in form.cleaned_data['individus']:
+            individu.professions.add(obj.profession)
 
 class OeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'titre', 'soustitre', 'genre', 'calc_caracteristiques',

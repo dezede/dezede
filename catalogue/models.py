@@ -611,11 +611,6 @@ class Auteur(Model):
         return replace(out)
     class Meta:
         ordering = ['profession']
-    def save(self, *args, **kwargs):
-        super(Auteur, self).save(*args, **kwargs)
-        for individu in self.individus.all():
-            individu.professions.add(self.profession)
-            super(Individu, individu).save()
     def __unicode__(self):
         return self.html(False)
 
