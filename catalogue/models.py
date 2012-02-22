@@ -692,15 +692,12 @@ class Oeuvre(Model):
                     out += self.prefixe_soustitre
                 out += self.soustitre
         return out
-    def html(self, tags=True, auteurs=True, pars=True, descr=True):
+    def html(self, tags=True, auteurs=True, descr=True):
         out = u''
-        if auteurs:
-            auts = self.calc_auteurs(tags)
-            if auts:
-                out += auts + ', '
-        parentes = ''
-        if pars:
-            parentes = self.calc_parentes(tags)
+        auts = self.calc_auteurs(tags)
+        if auteurs and auts:
+            out += auts + ', '
+        parentes = self.calc_parentes(tags)
         out += parentes
         titre_complet = self.titre_complet()
         if titre_complet:
@@ -744,10 +741,11 @@ class Oeuvre(Model):
         verbose_name = u'œuvre'
         ordering = ['slug']
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, self.__unicode__(False))
         super(Oeuvre, self).save(*args, **kwargs)
-    def __unicode__(self, parentes=True):
-        return self.html(False, False, parentes, False)
+        self.slug = autoslugify(self, self.__unicode__())
+        super(Oeuvre, self).save(*args, **kwargs)
+    def __unicode__(self):
+        return self.html(False, False, False)
     __unicode__.allow_tags = True
 
 class AttributionDePupitre(Model):
