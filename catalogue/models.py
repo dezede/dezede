@@ -697,7 +697,8 @@ class Oeuvre(Model):
         auts = self.calc_auteurs(tags)
         if auteurs and auts:
             out += auts + ', '
-        out += self.calc_parentes(tags)
+        parentes = self.calc_parentes(tags)
+        out += parentes
         titre_complet = self.titre_complet()
         if titre_complet:
             if tags:
@@ -714,16 +715,22 @@ class Oeuvre(Model):
             pupitres = self.calc_pupitres()
             if not titre_complet:
                 if tags:
-                    out += '<a href="%s"><em>' % self.get_absolute_url()
+                    out += '<a href="%s">' % self.get_absolute_url()
+                    if not parentes:
+                        out += '<em>'
                 out += genre[0].upper() + genre[1:]
                 if not pupitres and tags:
-                    out += '</em></a>'
+                    if not parentes:
+                        out += '</em>'
+                    out += '</a>'
             elif descr:
                 out += genre
             if pupitres and not titre_complet:
                 out += ' ' + pupitres
                 if tags:
-                    out += '</em></a>'
+                    if not parentes:
+                        out += '</em>'
+                    out += '</a>'
             if descr and caracteristiques:
                 out += ' ' + caracteristiques
         return replace(out)
