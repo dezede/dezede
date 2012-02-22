@@ -585,7 +585,7 @@ class TypeDeParenteDOeuvres(Model):
 class ParenteDOeuvres(Model):
     type = ForeignKey(TypeDeParenteDOeuvres, related_name='parentes')
     oeuvres_cibles = ManyToManyField('Oeuvre',
-        related_name='parentes_cibles', verbose_name='œuvres cibles')
+        related_name='parentes_cibles', verbose_name='oeuvres cibles')
     class Meta:
         verbose_name = u"parenté d'œuvres"
         verbose_name_plural = u"parentés d'œuvres"
@@ -694,9 +694,10 @@ class Oeuvre(Model):
         return out
     def html(self, tags=True, auteurs=True, descr=True):
         out = u''
-        auts = self.calc_auteurs(tags)
-        if auteurs and auts:
-            out += auts + ', '
+        if auteurs:
+            auts = self.calc_auteurs(tags)
+            if auts:
+                out += auts + ', '
         parentes = self.calc_parentes(tags)
         out += parentes
         titre_complet = self.titre_complet()
