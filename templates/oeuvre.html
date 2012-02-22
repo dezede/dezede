@@ -27,7 +27,7 @@
   {% for element in oeuvre.elements_de_programme.all %}
     {% if forloop.first %}
       <hr />
-      <h4>Événement{{ oeuvre.elements.count|pluralize }} :</h4>
+      <h4>Événement(s) :</h4>
       <ul>
     {% endif %}
     {% for evenement in element.evenements.all %}
