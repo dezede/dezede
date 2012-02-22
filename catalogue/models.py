@@ -708,7 +708,7 @@ class Oeuvre(Model):
                 out += '</em></a>'
         genre = self.genre
         caracteristiques = self.calc_caracteristiques()
-        if descr and titre_complet and (genre or caracteristiques):
+        if descr and titre_complet and genre and caracteristiques:
             out += ', '
         if genre:
             genre = genre.__unicode__()
@@ -731,8 +731,8 @@ class Oeuvre(Model):
                     if not parentes:
                         out += '</em>'
                     out += '</a>'
-            if descr and caracteristiques:
-                out += ' ' + caracteristiques
+        if descr and caracteristiques:
+            out += ' ' + caracteristiques
         if tags:
             out = replace(out)
         return out
