@@ -39,4 +39,7 @@
       </ul>
     {% endif %}
   {% endfor %}
+  <a href="{% url 'admin:catalogue_oeuvre_change' oeuvre.pk %}">
+    [Modifier]
+  </a>
 {% endblock %}
