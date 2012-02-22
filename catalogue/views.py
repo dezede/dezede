@@ -47,6 +47,11 @@ def detail_individu(request, individu_slug):
     c = RequestContext(request, {'individu': individu})
     return render_to_response('individu.html', c)
 
+def detail_oeuvre(request, oeuvre_slug):
+    oeuvre = Oeuvre.objects.get(slug=oeuvre_slug)
+    c = RequestContext(request, {'oeuvre': oeuvre})
+    return render_to_response('oeuvre.html', c)
+
 def saisie_source(request, source_id=None):
     if source_id != None:
         source = Source.objects.get(pk=source_id)

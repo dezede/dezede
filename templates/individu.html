@@ -53,7 +53,7 @@
     {% endif %}
     {% for oeuvre in auteur.oeuvres.all %}
       <li>
-        {{ oeuvre }}
+        {{ oeuvre.link }}
       </li>
     {% endfor %}
     {% if forloop.last %}

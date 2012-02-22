@@ -595,8 +595,8 @@ class ParenteDOeuvres(Model):
         cs = self.oeuvres_cibles.all()
         if len(cs) > 1:
             out = self.type.pluriel()
-        out += ' :'
-        out += ' ;'.join(filter(bool, [c.__unicode__() for c in cs]))
+        out += ' : '
+        out += ' ; '.join(filter(bool, [c.__unicode__() for c in cs]))
         return out
 
 class Auteur(Model):
@@ -644,6 +644,11 @@ class Oeuvre(Model):
     etat = ForeignKey(Etat, related_name='oeuvres', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
+    @permalink
+    def get_absolute_url(self):
+        return ('musicologie.catalogue.views.detail_oeuvre', [self.slug])
+    def link(self):
+        return self.html(True, False, True)
     def calc_caracteristiques(self):
         cs = self.caracteristiques.all()
         return ', '.join(filter(bool, [c.valeur for c in cs]))
@@ -662,51 +667,19 @@ class Oeuvre(Model):
                 elif i < maxi:
                     out += ' et '
         return out
-    def calc_auteurs(self, tags=False):
+    def calc_auteurs(self, tags=True):
         auteurs = self.auteurs.all()
         return ', '.join(filter(bool, [a.html(tags) for a in auteurs]))
     calc_auteurs.short_description = 'auteurs'
-    def calc_parentes(self):
+    calc_auteurs.allow_tags = True
+    def calc_parentes(self, tags=True):
         out = ''
         ps = self.parentes.all()
         for p in ps:
-            out += ', '.join(filter(bool, [oe.html() for oe in p.oeuvres_cibles.all()]))
+            out += ', '.join(filter(bool, [oe.html(tags) for oe in p.oeuvres_cibles.all()]))
             out += ', '
         return out
-    def html(self):
-        out = self.calc_auteurs(True)
-        if out:
-            out += ', '
-        out += self.calc_parentes()
-        titre_complet = self.__unicode__(True)
-        if titre_complet:
-            out += '<em>' + titre_complet + '</em>'
-        genre = self.genre
-        caracteristiques = self.calc_caracteristiques()
-        if titre_complet and (genre or caracteristiques):
-            out += ', '
-        if genre:
-            genre = genre.__unicode__()
-            pupitres = self.calc_pupitres()
-            if not titre_complet:
-                out += '<em>' + genre[0].upper() + genre[1:]
-                if not pupitres:
-                    out += '</em>'
-            else:
-                out += genre
-            if pupitres and not titre_complet:
-                out += ' ' + pupitres + '</em>'
-            if caracteristiques:
-                out += ' ' + caracteristiques
-        return replace(out)
-    html.allow_tags = True
-    class Meta:
-        verbose_name = u'œuvre'
-        ordering = ['slug']
-    def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, self.__unicode__(False, False))
-        super(Oeuvre, self).save(*args, **kwargs)
-    def __unicode__(self, titre_seul=False, saved=True):
+    def titre_complet(self):
         out = u''
         if self.titre:
             if self.prefixe_titre:
@@ -718,15 +691,51 @@ class Oeuvre(Model):
                 if self.prefixe_soustitre:
                     out += self.prefixe_soustitre
                 out += self.soustitre
-        elif self.genre and not titre_seul:
-            out = self.genre.nom
-            if saved and self.caracteristiques:
-                out += ' ' + self.calc_caracteristiques()
-        elif titre_seul:
-            out += ''
-        else:
-            out = str(self.id)
         return out
+    def html(self, tags=True, auteurs=True, descr=True):
+        out = u''
+        auts = self.calc_auteurs(tags)
+        if auteurs and auts:
+            out += auts + ', '
+        out += self.calc_parentes(tags)
+        titre_complet = self.titre_complet()
+        if titre_complet:
+            if tags:
+                out += '<a href="%s"><em>' % self.get_absolute_url()
+            out += titre_complet
+            if tags:
+                out += '</em></a>'
+        genre = self.genre
+        caracteristiques = self.calc_caracteristiques()
+        if descr and titre_complet and (genre or caracteristiques):
+            out += ', '
+        if genre:
+            genre = genre.__unicode__()
+            pupitres = self.calc_pupitres()
+            if not titre_complet:
+                if tags:
+                    out += '<a href="%s"><em>' % self.get_absolute_url()
+                out += genre[0].upper() + genre[1:]
+                if not pupitres and tags:
+                    out += '</em></a>'
+            elif descr:
+                out += genre
+            if pupitres and not titre_complet:
+                out += ' ' + pupitres
+                if tags:
+                    out += '</em></a>'
+            if descr and caracteristiques:
+                out += ' ' + caracteristiques
+        return replace(out)
+    html.allow_tags = True
+    class Meta:
+        verbose_name = u'œuvre'
+        ordering = ['slug']
+    def save(self, *args, **kwargs):
+        self.slug = autoslugify(self, self.__unicode__())
+        super(Oeuvre, self).save(*args, **kwargs)
+    def __unicode__(self):
+        return self.html(False, False, False)
     __unicode__.allow_tags = True
 
 class AttributionDePupitre(Model):
@@ -819,6 +828,13 @@ class Evenement(Model):
     illustrations = ManyToManyField(Illustration, related_name='evenements', blank=True, null=True)
     etat = ForeignKey(Etat, related_name='evenements', null=True, blank=True)
     notes = HTMLField(blank=True)
+    @permalink
+    def get_absolute_url(self):
+        return ('musicologie.catalogue.views.index_evenements',
+                [self.ancrage_debut.lieu.slug, self.ancrage_debut.date.year,
+                 self.ancrage_debut.date.month, self.ancrage_debut.date.day])
+    def link(self):
+        return '<a href="%s">%s</a>' % (self.get_absolute_url(), self.__unicode__())
     def html(self, tags=True):
         relache = ''
         if self.relache:
@@ -831,6 +847,7 @@ class Evenement(Model):
         ordering = ['ancrage_debut']
     def __unicode__(self):
         out = self.ancrage_debut.calc_date()
+        out = out[0].upper() + out[1:]
         return out + ' ' + self.html(False)
 
 class TypeDeSource(Model):

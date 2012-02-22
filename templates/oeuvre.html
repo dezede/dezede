@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load extras %}
+{% load url from future %}
+
+{% block title %}
+  {{ oeuvre }}
+{% endblock %}
+
+{% block body %}
+  <h2>
+    {{ oeuvre }}
+  </h2>
+  {% if oeuvre.calc_auteurs %}
+    Auteur{{ oeuvre.auteurs.count|pluralize }} : {{ oeuvre.calc_auteurs }}<br />
+  {% endif %}
+  Genre : {{ oeuvre.genre }}<br />
+  {% if oeuvre.calc_caracteristiques %}
+    Caractéristique{{ oeuvre.caracteristiques.count|pluralize }} : {{ oeuvre.calc_caracteristiques }}
+  {% endif %}
+  {% if oeuvre.calc_pupitres %}
+    Parties : {{ oeuvre.calc_pupitres }}<br />
+  {% endif %}
+  {% if oeuvre.ancrage_composition %}
+    Composition : {{ oeuvre.ancrage_composition }}<br />
+  {% endif %}
+  {% for element in oeuvre.elements_de_programme.all %}
+    {% if forloop.first %}
+      <hr />
+      <h4>Événement{{ oeuvre.elements.count|pluralize }} :</h4>
+      <ul>
+    {% endif %}
+    {% for evenement in element.evenements.all %}
+      <li>
+        {{ evenement.link }}
+      </li>
+    {% endfor %}
+    {% if forloop.last %}
+      </ul>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
