@@ -13,9 +13,9 @@
     {% include 'etat.html' %}
   {% endwith %}
 
-  <h3>
+  <h2>
     {{ individu }}
-  </h3>
+  </h2>
   Nom : {{ individu.nom|default:'?' }}<br />
   {% if individu.nom_naissance %}
     Nom de naissance : {{ individu.nom_naissance }}<br />
