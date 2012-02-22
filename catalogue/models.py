@@ -663,14 +663,8 @@ class Oeuvre(Model):
                     out += ' et '
         return out
     def calc_auteurs(self, tags=False):
-        out = ''
         auteurs = self.auteurs.all()
-        maxi = len(auteurs) - 1
-        for i, auteur in enumerate(auteurs):
-            out += auteur.html(tags)
-            if i < maxi:
-                out += ', '
-        return out
+        return ', '.join(filter(bool, [a.html(tags) for a in auteurs]))
     calc_auteurs.short_description = 'auteurs'
     def html(self):
         out = self.calc_auteurs(True)
