@@ -676,7 +676,7 @@ class Oeuvre(Model):
         out = ''
         ps = self.parentes.all()
         for p in ps:
-            out += ', '.join(filter(bool, [oe.html(tags) for oe in p.oeuvres_cibles.all()]))
+            out += ', '.join(filter(bool, [oe.html(tags, False, False) for oe in p.oeuvres_cibles.all()]))
             out += ', '
         return out
     def titre_complet(self):
