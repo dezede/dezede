@@ -733,7 +733,9 @@ class Oeuvre(Model):
                     out += '</a>'
             if descr and caracteristiques:
                 out += ' ' + caracteristiques
-        return replace(out)
+        if tags:
+            out = replace(out)
+        return out
     html.allow_tags = True
     class Meta:
         verbose_name = u'œuvre'
