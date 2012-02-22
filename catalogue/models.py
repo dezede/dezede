@@ -666,10 +666,18 @@ class Oeuvre(Model):
         auteurs = self.auteurs.all()
         return ', '.join(filter(bool, [a.html(tags) for a in auteurs]))
     calc_auteurs.short_description = 'auteurs'
+    def calc_parentes(self):
+        out = ''
+        ps = self.parentes.all()
+        for p in ps:
+            out += ', '.join(filter(bool, [oe.html() for oe in p.oeuvres_cibles.all()]))
+            out += ', '
+        return out
     def html(self):
         out = self.calc_auteurs(True)
         if out:
             out += ', '
+        out += self.calc_parentes()
         titre_complet = self.__unicode__(True)
         if titre_complet:
             out += '<em>' + titre_complet + '</em>'
