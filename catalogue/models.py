@@ -145,18 +145,25 @@ class Lieu(Model):
     etat = ForeignKey(Etat, related_name='lieux', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
+    @permalink
+    def get_absolute_url(self):
+        return ('musicologie.catalogue.views.detail_lieu', [self.slug])
+    def link(self):
+        return self.html()
+    link.short_description = 'permalien'
+    link.allow_tags = True
     def evenements(self):
         return Evenement.objects.filter(ancrage_debut__lieu=self)
     def html(self, tags=True):
-        url = reverse('musicologie.catalogue.views.detail_lieu',
-            args=[self.slug])
         nom = ''
         parent = self.parent
         if parent:
             nom += parent.nom + ', '
         nom += self.nom
-        out = href(url, nom, tags)
+        out = href(self.get_absolute_url(), nom, tags)
         return replace(out, tags)
+    html.short_description = 'rendu HTML'
+    html.allow_tags = True
     class Meta:
         verbose_name_plural = 'lieux'
         ordering = ['nom']
@@ -169,9 +176,7 @@ class Lieu(Model):
             self.slug = autoslugify(self, self.__unicode__())
         super(Lieu, self).save(*args, **kwargs)
     def __unicode__(self):
-        if self.parent:
-            return self.nom + ', ' + self.parent.nom
-        return self.nom
+        return self.html(False)
 
 class Saison(Model):
     lieu = ForeignKey(Lieu, related_name='saisons')
@@ -362,8 +367,7 @@ class Individu(Model):
     slug = SlugField(blank=True)
     @permalink
     def get_absolute_url(self):
-        return ('musicologie.catalogue.views.detail_individu',
-                [self.slug])
+        return ('musicologie.catalogue.views.detail_individu', [self.slug])
     def link(self):
         return self.html()
     link.short_description = 'permalien'
@@ -458,6 +462,7 @@ class Individu(Model):
             out += ' (%s)' % abbreviate(prenoms)
         out = href(self.get_absolute_url(), out, tags)
         return replace(out, tags)
+    html.short_description = 'rendu HTML'
     html.allow_tags = True
     class Meta:
         ordering = ['nom']
@@ -647,7 +652,9 @@ class Auteur(Model):
     def html(self, tags=True):
         out = self.individus_html(tags)
         out += ' [' + abbreviate(self.profession.__unicode__(), 1) + ']'
-        return replace(out)
+        return replace(out, tags)
+    html.short_description = 'rendu HTML'
+    html.allow_tags = True
     class Meta:
         ordering = ['profession']
     def __unicode__(self):
@@ -761,9 +768,8 @@ class Oeuvre(Model):
                 out += genre
         if descr and caracteristiques:
             out += ' ' + caracteristiques
-        if tags:
-            out = replace(out)
-        return out
+        return replace(out, tags)
+    html.short_description = 'rendu HTML'
     html.allow_tags = True
     class Meta:
         verbose_name = u'œuvre'
@@ -820,7 +826,7 @@ class ElementDeProgramme(Model):
         blank=True, null=True)
     etat = ForeignKey(Etat, related_name='elements_de_programme', null=True,
         blank=True)
-    def html(self):
+    def html(self, tags=True):
         out = ''
         oeuvre = self.oeuvre
         if oeuvre:
@@ -830,7 +836,10 @@ class ElementDeProgramme(Model):
         distribution = self.distribution.all()
         maxi = len(distribution) - 1
         if distribution:
-            out += '. &mdash; '
+            if tags:
+                out += '. &mdash; '
+            else:
+                out += u'. — '
         for i, attribution in enumerate(distribution):
             individus = attribution.individus.all()
             maxj = len(individus) - 1
@@ -841,7 +850,8 @@ class ElementDeProgramme(Model):
             out += ' [' + attribution.pupitre.partie.__unicode__() + ']'
             if i < maxi:
                 out += ', '
-        return replace(out)
+        return replace(out, tags)
+    html.short_description = 'rendu HTML'
     html.allow_tags = True
     class Meta:
         verbose_name = u'élément de programme'
@@ -881,7 +891,8 @@ class Evenement(Model):
             relache = u'Relâche'
         l = [self.ancrage_debut.calc_lieu(tags), self.circonstance,
              self.ancrage_debut.calc_heure(), relache]
-        return ', '.join(filter(bool, l))
+        out = ', '.join(filter(bool, l))
+        return replace(out, tags)
     html.short_description = 'rendu HTML'
     html.allow_tags = True
     class Meta:
@@ -935,7 +946,8 @@ class Source(Model):
         l.append('du %s' % date(self.date))
         if self.page:
             l.append('p. %s' % str(self.page))
-        return ' '.join(l)
+        out = ' '.join(l)
+        return replace(out, tags)
     html.short_description = 'rendu HTML'
     html.allow_tags = True
     def disp_contenu(self):

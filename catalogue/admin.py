@@ -33,11 +33,12 @@ class NatureDeLieuAdmin(VersionAdmin):
     exclude = ('slug',)
 
 class LieuAdmin(VersionAdmin):
-    list_display = ('__unicode__', 'nom', 'parent', 'nature',)
+    list_display = ('__unicode__', 'nom', 'parent', 'nature', 'link',)
     search_fields = ('nom', 'parent__nom',)
     list_filter = ('nature__nom',)
     exclude = ('slug',)
     filter_horizontal = ('illustrations', 'documents',)
+    readonly_fields = ('__unicode__', 'html', 'link',)
     inlines = (AncrageSpatioTemporelInline,)
     fieldsets = (
         ('Champs courants', {
@@ -46,6 +47,10 @@ class LieuAdmin(VersionAdmin):
         ('Champs avancés', {
             'classes': ('collapse closed',),
             'fields': ('illustrations', 'documents', 'etat', 'notes',),
+        }),
+        ('Champs générés (Méthodes)', {
+            'classes': ('collapse closed',),
+            'fields': ('__unicode__', 'html', 'link',),
         }),
     )
 
