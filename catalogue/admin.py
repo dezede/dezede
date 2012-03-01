@@ -128,9 +128,9 @@ class AuteurAdmin(VersionAdmin):
             individu.professions.add(obj.profession)
 
 class OeuvreAdmin(VersionAdmin):
-    list_display = ('__unicode__', 'titre', 'soustitre', 'genre', 'calc_caracteristiques',
+    list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre', 'calc_caracteristiques',
         'calc_auteurs', 'ancrage_composition', 'link',)
-    search_fields = ('titre', 'soustitre', 'genre__nom',)
+    search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
     exclude = ('slug',)
     filter_horizontal = ['caracteristiques', 'pupitres', 'auteurs', 'parentes',
@@ -139,8 +139,8 @@ class OeuvreAdmin(VersionAdmin):
     inlines = (ElementDeProgrammeInline,)
     fieldsets = (
         ('Titre', {
-            'fields': ('prefixe_titre', 'titre', 'liaison',
-                        'prefixe_soustitre', 'soustitre',),
+            'fields': ('prefixe_titre', 'titre', 'coordination',
+                        'prefixe_titre_secondaire', 'titre_secondaire',),
         }),
         ('Autres champs courants', {
             'fields': ('genre', 'caracteristiques', 'auteurs',

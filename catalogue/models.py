@@ -657,10 +657,10 @@ class Oeuvre(Model):
     prefixe_titre = CharField(max_length=20, blank=True,
         verbose_name=u'préfixe du titre')
     titre = CharField(max_length=200, blank=True)
-    liaison = CharField(max_length=20, blank=True, verbose_name='coordination')
-    prefixe_soustitre = CharField(max_length=20, blank=True,
+    coordination = CharField(max_length=20, blank=True, verbose_name='coordination')
+    prefixe_titre_secondaire = CharField(max_length=20, blank=True,
         verbose_name=u'préfixe du titre secondaire')
-    soustitre = CharField(max_length=200, blank=True, verbose_name='titre secondaire')
+    titre_secondaire = CharField(max_length=200, blank=True, verbose_name='titre secondaire')
     genre = ForeignKey(GenreDOeuvre, related_name='oeuvres', blank=True,
         null=True)
     caracteristiques = ManyToManyField(CaracteristiqueDOeuvre, blank=True,
@@ -726,12 +726,12 @@ class Oeuvre(Model):
             if self.prefixe_titre:
                 out = self.prefixe_titre
             out += self.titre
-            if self.soustitre:
-                if self.liaison:
-                    out += self.liaison
-                if self.prefixe_soustitre:
-                    out += self.prefixe_soustitre
-                out += self.soustitre
+            if self.titre_secondaire:
+                if self.coordination:
+                    out += self.coordination
+                if self.prefixe_titre_secondaire:
+                    out += self.prefixe_titre_secondaire
+                out += self.titre_secondaire
         return out
     def html(self, tags=True, auteurs=True, descr=True):
         out = u''
