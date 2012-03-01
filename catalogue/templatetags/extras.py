@@ -13,7 +13,9 @@ def multiwordReplace(text, wordDic):
     return rc.sub(translate, text)
 
 @register.filter
-def replace(string):
+def replace(string, tags=True):
+    if not tags:
+        return string
     return multiwordReplace(string, {"'": '&rsquo;', ' :': '&nbsp;:',
                                      ' ;': '&nbsp;;', ' !': '&#x202F;!',
                                      ' ?': '&#x202F;?', u'« ': '&laquo;&nbsp;',

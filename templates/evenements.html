@@ -45,9 +45,7 @@
                   <a href="{{ illustration.image.url }}">[Fac-similé]</a>
                 {% endfor %}
               {% endif %}
-              (<em>{{ source.nom }}</em>
-              {% if source.numero %}n° {{ source.numero }}{% endif %}
-              du {{ source.date|date }}{% if source.page %}, p. {{ source.page }}{% endif %})
+              ({{ source.html }})
             </div>
           </div>
           {% if not forloop.last %}

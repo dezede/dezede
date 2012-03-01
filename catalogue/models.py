@@ -31,7 +31,27 @@ def calc_pluriel(object):
         return object.nom + 's'
 
 def ex(str):
-    return u'Exemple : « '+ str + u' »'
+    return u'Exemple : « ' + str + u' »'
+
+def em(str, tags=True):
+    if tags:
+        return u'<em>%s</em>' % str
+    return str
+
+def no(str, tags=True):
+    if tags:
+        return u'n°&nbsp;%s' % str
+    return u'n° %s' % str
+
+def href(url, str, tags=True):
+    if tags:
+        return u'<a href="%s">%s</a>' % (url, str)
+    return str
+
+def sc(str, tags=True):
+    if tags:
+        return '<span style="font-variant: small-caps;">%s</span>' % str
+    return str
 
 # 
 # Modélisation
@@ -130,16 +150,13 @@ class Lieu(Model):
     def html(self, tags=True):
         url = reverse('musicologie.catalogue.views.detail_lieu',
             args=[self.slug])
-        out = ''
-        if tags:
-            out += '<a href="' + url + '">'
+        nom = ''
         parent = self.parent
         if parent:
-            out += parent.nom + ', '
-        out += self.nom
-        if tags:
-            out += '</a>'
-        return replace(out)
+            nom += parent.nom + ', '
+        nom += self.nom
+        out = href(url, nom, tags)
+        return replace(out, tags)
     class Meta:
         verbose_name_plural = 'lieux'
         ordering = ['nom']
@@ -343,6 +360,14 @@ class Individu(Model):
     etat = ForeignKey(Etat, related_name='individus', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = SlugField(blank=True)
+    @permalink
+    def get_absolute_url(self):
+        return ('musicologie.catalogue.views.detail_individu',
+                [self.slug])
+    def link(self):
+        return self.html()
+    link.short_description = 'permalien'
+    link.allow_tags = True
     def calc_prenoms_methode(self, fav):
         prenoms = self.prenoms.all().order_by('classement', 'prenom')
         maxi = len(prenoms) - 1
@@ -418,28 +443,22 @@ class Individu(Model):
         prenoms = self.calc_fav_prenoms()
         nom = self.nom
         out = ''
-        if tags:
-            url = reverse('musicologie.catalogue.views.detail_individu',
-            args=[self.slug])
-            out += '<a href="' + url + '">'
         if designation == 'S' and nom and not prenoms and self.sexe:
-                titre = self.calc_titre(tags)
-                out += titre + ' '
-        if tags:
-            out += '<span style="font-variant: small-caps;">'
+            titre = self.calc_titre(tags)
+            out += titre + ' '
+        out_des = ''
         if designation == 'F':
-            out += prenoms
+            out_des += prenoms
         elif designation == 'P':
-            out += self.pseudonyme
+            out_des += self.pseudonyme
         else:
-            out += nom
-        if tags:
-            out += '</span>'
+            out_des += nom
+        out += sc(out_des, tags)
         if designation == 'S' and prenoms:
-            out += ' (' + abbreviate(prenoms) + ')'
-        if tags:
-            out += '</a>'
-        return replace(out)
+            out += ' (%s)' % abbreviate(prenoms)
+        out = href(self.get_absolute_url(), out, tags)
+        return replace(out, tags)
+    html.allow_tags = True
     class Meta:
         ordering = ['nom']
     def save(self, *args, **kwargs):
@@ -513,7 +532,7 @@ class GenreDOeuvre(Model):
 
 class TypeDeCaracteristiqueDOeuvre(Model):
     nom = CharField(max_length=200, help_text=ex(u'tonalité'), unique=True)
-    nom_pluriel = CharField(max_length=430, blank=True,
+    nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
     class Meta:
@@ -541,12 +560,16 @@ class CaracteristiqueDOeuvre(Model):
 class Partie(Model):
     nom = CharField(max_length=200,
         help_text="Le nom d'une partie de la partition, instrumentale ou vocale.")
+    nom_pluriel = CharField(max_length=230, blank=True,
+        verbose_name='nom (au pluriel)', help_text=PLURAL_MSG)
     professions = ManyToManyField(Profession, related_name='parties',
         help_text=u"La ou les profession(s) permettant d'assurer cette partie.")
     parente = ForeignKey('Partie', related_name='enfant', blank=True, null=True)
     classement = FloatField(default=1.0)
     class Meta:
         ordering = ['nom']
+    def pluriel(self):
+        return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
 
@@ -558,13 +581,29 @@ class Pupitre(Model):
         ordering = ['partie']
     def __unicode__(self):
         out = ''
+        partie = self.partie
         mi = self.quantite_min
         ma = self.quantite_max
-        if mi > 1:
-            out += str(mi) + ' '
+        # TODO: implémenter ce qui suit plus intelligemment.
+        nb_words = {2:'deux', 3:'trois', 4:'quatre', 5:'cinq', 6:'six',
+                    7:'sept', 8:'huit', 9:'neuf', 10:'dix', 11:'onze',
+                    12:'douze', 13:'treize', 14:'quatorze', 15:'quinze',
+                    16:'seize', 20:'vingt'}
+        if ma > 1:
+            partie = partie.pluriel()
+        else:
+            partie = partie.__unicode__()
+        try:
+            mi_str = nb_words[mi]
+            ma_str = nb_words[ma]
+        except:
+            mi_str = str(mi)
+            ma_str = str(ma)
         if mi != ma:
-            out = u'%d à %d ' % (mi, ma)
-        out += self.partie.__unicode__()
+            out += u'%d à %d ' % (mi_str, ma_str)
+        elif mi > 1:
+            out += mi_str + ' '
+        out += partie
         return out
 
 class TypeDeParenteDOeuvres(Model):
@@ -649,6 +688,8 @@ class Oeuvre(Model):
         return ('musicologie.catalogue.views.detail_oeuvre', [self.slug])
     def link(self):
         return self.html(True, False, True)
+    link.short_description = 'permalien'
+    link.allow_tags = True
     def calc_caracteristiques(self):
         cs = self.caracteristiques.all()
         return ', '.join(filter(bool, [c.valeur for c in cs]))
@@ -701,11 +742,7 @@ class Oeuvre(Model):
         out += parentes
         titre_complet = self.titre_complet()
         if titre_complet:
-            if tags:
-                out += '<a href="%s"><em>' % self.get_absolute_url()
-            out += titre_complet
-            if tags:
-                out += '</em></a>'
+            out += href(self.get_absolute_url(), em(titre_complet, tags), tags)
         genre = self.genre
         caracteristiques = self.calc_caracteristiques()
         if descr and titre_complet and genre and caracteristiques:
@@ -714,23 +751,14 @@ class Oeuvre(Model):
             genre = genre.__unicode__()
             pupitres = self.calc_pupitres()
             if not titre_complet:
-                if tags:
-                    out += '<a href="%s">' % self.get_absolute_url()
-                    if not parentes:
-                        out += '<em>'
-                out += genre[0].upper() + genre[1:]
-                if not pupitres and tags:
-                    if not parentes:
-                        out += '</em>'
-                    out += '</a>'
+                titre_complet = genre[0].upper() + genre[1:]
+                if pupitres:
+                    titre_complet += ' ' + pupitres
+                if not parentes:
+                    titre_complet = em(titre_complet, tags)
+                out += href(self.get_absolute_url(), titre_complet, tags)
             elif descr:
                 out += genre
-            if pupitres and not titre_complet:
-                out += ' ' + pupitres
-                if tags:
-                    if not parentes:
-                        out += '</em>'
-                    out += '</a>'
         if descr and caracteristiques:
             out += ' ' + caracteristiques
         if tags:
@@ -844,7 +872,9 @@ class Evenement(Model):
                 [self.ancrage_debut.lieu.slug, self.ancrage_debut.date.year,
                  self.ancrage_debut.date.month, self.ancrage_debut.date.day])
     def link(self):
-        return '<a href="%s">%s</a>' % (self.get_absolute_url(), self.__unicode__())
+        return href(self.get_absolute_url(), self.__unicode__())
+    link.short_description = 'permalien'
+    link.allow_tags = True
     def html(self, tags=True):
         relache = ''
         if self.relache:
@@ -852,6 +882,8 @@ class Evenement(Model):
         l = [self.ancrage_debut.calc_lieu(tags), self.circonstance,
              self.ancrage_debut.calc_heure(), relache]
         return ', '.join(filter(bool, l))
+    html.short_description = 'rendu HTML'
+    html.allow_tags = True
     class Meta:
         verbose_name = u'événement'
         ordering = ['ancrage_debut']
@@ -859,6 +891,7 @@ class Evenement(Model):
         out = self.ancrage_debut.calc_date()
         out = out[0].upper() + out[1:]
         return out + ' ' + self.html(False)
+    __unicode__.allow_tags = True
 
 class TypeDeSource(Model):
     nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
@@ -894,6 +927,17 @@ class Source(Model):
         blank=True, null=True)
     etat = ForeignKey(Etat, related_name='sources', null=True, blank=True)
     notes = HTMLField(blank=True)
+    def html(self, tags=True):
+        l = []
+        l.append('%s' % em(self.nom, tags))
+        if self.numero:
+            l.append(no(self.numero, tags))
+        l.append('du %s' % date(self.date))
+        if self.page:
+            l.append('p. %s' % str(self.page))
+        return ' '.join(l)
+    html.short_description = 'rendu HTML'
+    html.allow_tags = True
     def disp_contenu(self):
         return self.contenu[:200] + u'[...]' + self.contenu[-50:]
     disp_contenu.short_description = 'contenu'
@@ -906,5 +950,5 @@ class Source(Model):
             self.contenu = u'<p>&laquo;&nbsp;' + contenu[3:-4] + u'&nbsp;&raquo;</p>'
         super(Source, self).save(*args, **kwargs)
     def __unicode__(self):
-        return str(self.pk)
+        return self.html(False)
 

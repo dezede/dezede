@@ -75,12 +75,13 @@ class PrenomAdmin(VersionAdmin):
 class IndividuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'nom_naissance', 'calc_prenoms',
         'pseudonyme', 'sexe', 'ancrage_naissance', 'ancrage_deces',
-        'calc_professions',)
+        'calc_professions', 'link',)
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',)
     list_filter = ('sexe',)
     exclude = ('slug',)
     filter_horizontal = ('prenoms', 'professions', 'parentes', 'illustrations',
         'documents',)
+    readonly_fields = ('__unicode__', 'html', 'link',)
     fieldsets = (
         ('Champs courants', {
             'fields': ('nom', 'nom_naissance', 'prenoms', 'pseudonyme',
@@ -91,6 +92,10 @@ class IndividuAdmin(VersionAdmin):
             'classes': ('collapse closed',),
             'fields': ('ancrage_approx', 'biographie', 'illustrations',
             'documents', 'etat', 'notes',),
+        }),
+        ('Champs générés (Méthodes)', {
+            'classes': ('collapse closed',),
+            'fields': ('__unicode__', 'html', 'link',),
         }),
     )
 
@@ -124,12 +129,13 @@ class AuteurAdmin(VersionAdmin):
 
 class OeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'titre', 'soustitre', 'genre', 'calc_caracteristiques',
-        'calc_auteurs', 'ancrage_composition',)
+        'calc_auteurs', 'ancrage_composition', 'link',)
     search_fields = ('titre', 'soustitre', 'genre__nom',)
     list_filter = ('genre__nom',)
     exclude = ('slug',)
     filter_horizontal = ['caracteristiques', 'pupitres', 'auteurs', 'parentes',
         'documents', 'illustrations']
+    readonly_fields = ('__unicode__', 'html', 'link',)
     inlines = (ElementDeProgrammeInline,)
     fieldsets = (
         ('Titre', {
@@ -145,6 +151,10 @@ class OeuvreAdmin(VersionAdmin):
             'fields': ('lilypond', 'description', 'documents', 'illustrations',
                         'etat', 'notes',),
         }),
+        ('Champs générés (Méthodes)', {
+            'classes': ('collapse closed',),
+            'fields': ('__unicode__', 'html', 'link',),
+        }),
     )
 
 class AttributionDePupitreAdmin(VersionAdmin):
@@ -156,10 +166,11 @@ class ElementDeProgrammeAdmin(VersionAdmin):
         'illustrations', 'documents',)
 
 class EvenementAdmin(VersionAdmin):
-    list_display = ('__unicode__', 'relache', 'circonstance',)
+    list_display = ('__unicode__', 'relache', 'circonstance', 'link',)
     search_fields = ('circonstance',)
     list_filter = ('relache',)
     filter_horizontal = ('programme', 'documents', 'illustrations',)
+    readonly_fields = ('__unicode__', 'html', 'link',)
     fieldsets = (
         ('Champs courants', {
             'fields': ('ancrage_debut', 'ancrage_fin', 'relache',
@@ -169,6 +180,10 @@ class EvenementAdmin(VersionAdmin):
             'classes': ('collapse closed',),
             'fields': ('documents', 'illustrations', 'etat', 'notes',),
         }),
+        ('Champs générés (Méthodes)', {
+            'classes': ('collapse closed',),
+            'fields': ('__unicode__', 'html', 'link',),
+        }),
     )
 
 class TypeDeSourceAdmin(VersionAdmin):
@@ -176,10 +191,11 @@ class TypeDeSourceAdmin(VersionAdmin):
     inlines = (SourceInline,)
 
 class SourceAdmin(VersionAdmin):
-    list_display = ('nom', 'numero', 'date', 'page', 'type', 'disp_contenu',)
+    list_display = ('__unicode__', 'nom', 'numero', 'date', 'page', 'type', 'disp_contenu',)
     search_fields = ('nom', 'numero', 'type__nom',)
     list_filter = ('type__nom',)
     filter_horizontal = ('evenements', 'documents', 'illustrations',)
+    readonly_fields = ('__unicode__', 'html',)
     fieldsets = (
         ('Champs courants', {
             'fields': ('nom', 'numero', 'date', 'page', 'type', 'contenu',
@@ -188,6 +204,10 @@ class SourceAdmin(VersionAdmin):
         ('Champs avancés', {
             'classes': ('collapse closed',),
             'fields': ('documents', 'illustrations', 'etat', 'notes',),
+        }),
+        ('Champs générés (Méthodes)', {
+            'classes': ('collapse closed',),
+            'fields': ('__unicode__', 'html',),
         }),
     )
 
