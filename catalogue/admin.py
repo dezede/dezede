@@ -25,11 +25,11 @@ class SourceInline(StackedInline):
     classes = ('collapse closed',)
 
 class DocumentAdmin(VersionAdmin):
-    list_display = ('nom', 'document',)
+    list_display = ('__unicode__', 'nom', 'document',)
     search_fields = ('nom',)
 
 class IllustrationAdmin(VersionAdmin):
-    list_display = ('legende', 'image',)
+    list_display = ('__unicode__', 'legende', 'image',)
     search_fields = ('legende',)
 
 class EtatAdmin(VersionAdmin):
@@ -42,9 +42,10 @@ class LieuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'parent', 'nature', 'link',)
     search_fields = ('nom', 'parent__nom',)
     list_filter = ('nature__nom',)
-    raw_id_fields = ('parent', 'nature', 'etat',)
+    raw_id_fields = ('parent', 'illustrations', 'documents',)
     autocomplete_lookup_fields = {
-        'fk': ['parent', 'nature', 'etat'],
+        'fk': ['parent'],
+        'm2m': ['illustrations', 'documents'],
     }
     filter_horizontal = ('illustrations', 'documents',)
     readonly_fields = ('__unicode__', 'html', 'link',)
@@ -110,10 +111,13 @@ class IndividuAdmin(VersionAdmin):
         'calc_professions', 'link',)
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',)
     list_filter = ('sexe',)
-    filter_horizontal = ('prenoms', 'parentes', 'illustrations', 'documents',)
-    raw_id_fields = ('professions',)
+    raw_id_fields = ('prenoms', 'ancrage_naissance', 'ancrage_deces',
+                     'professions', 'parentes', 'ancrage_approx',
+                     'illustrations', 'documents',)
     autocomplete_lookup_fields = {
-        'm2m': ['professions'],
+        'fk': ['ancrage_naissance', 'ancrage_deces', 'ancrage_approx'],
+        'm2m': ['prenoms', 'professions', 'parentes', 'illustrations',
+                'documents'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
     fieldsets = (
@@ -152,7 +156,10 @@ class PersonnelAdmin(VersionAdmin):
 
 class GenreDOeuvreAdmin(VersionAdmin):
     exclude = ('slug',)
-    filter_horizontal = ('parents',)
+    raw_id_fields = ('parents',)
+    autocomplete_lookup_fields = {
+        'm2m': ['parents'],
+    }
 
 class TypeDeCaracteristiqueDOeuvreAdmin(VersionAdmin):
     list_display = ('nom', 'nom_pluriel', 'classement',)

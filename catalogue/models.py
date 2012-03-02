@@ -84,6 +84,10 @@ class Document(Model):
         if self.nom:
             return self.nom
         return self.document.__unicode__()
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('nom__icontains', 'document__icontains',
+                'description__icontains', 'auteurs__individus__nom',)
 
 class Illustration(Model):
     legende = CharField(max_length=300, blank=True, verbose_name=u'légende')
@@ -97,6 +101,10 @@ class Illustration(Model):
         if self.legende:
             return self.legende
         return self.image.__unicode__()
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('legende__icontains', 'image__icontains',
+                'commentaire__icontains', 'auteurs__individus__nom',)
 
 class Etat(Model):
     nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
@@ -293,6 +301,11 @@ class AncrageSpatioTemporel(Model):
         out = capfirst(out)
         return out
     __unicode__.allow_tags = True
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('lieu__nom__icontains', 'lieu__parent__nom__icontains',
+                'date__icontains', 'heure__icontains', 'lieu_approx__icontains',
+                'date_approx__icontains', 'heure_approx__icontains',)
 
 class Prenom(Model):
     prenom = CharField(max_length=100, verbose_name=u'prénom')
@@ -303,6 +316,9 @@ class Prenom(Model):
         ordering = ['prenom', 'classement']
     def __unicode__(self):
         return self.prenom
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('prenom__icontains',)
 
 class TypeDeParenteDIndividus(Model):
     nom = CharField(max_length=50, help_text=LOWER_MSG, unique=True)
@@ -547,6 +563,9 @@ class GenreDOeuvre(Model):
         return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('nom__icontains', 'nom_pluriel__icontains',)
 
 class TypeDeCaracteristiqueDOeuvre(Model):
     nom = CharField(max_length=200, help_text=ex(u'tonalité'), unique=True)
