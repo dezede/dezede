@@ -53,7 +53,7 @@ def sc(str, tags=True):
         return '<span style="font-variant: small-caps;">%s</span>' % str
     return str
 
-# 
+#
 # Modélisation
 #
 
