@@ -82,6 +82,13 @@ class AncrageSpatioTemporelAdmin(VersionAdmin):
 class PrenomAdmin(VersionAdmin):
     list_display = ('__unicode__', 'prenom', 'classement', 'favori',)
 
+class TypeDeParenteDIndividusAdmin(VersionAdmin):
+    list_display = ('nom', 'nom_pluriel', 'classement',)
+
+class ParenteDIndividusAdmin(VersionAdmin):
+    list_display = ('__unicode__',)
+    filter_horizontal = ('individus_cibles',)
+
 class IndividuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'nom_naissance', 'calc_prenoms',
         'pseudonyme', 'sexe', 'ancrage_naissance', 'ancrage_deces',
@@ -108,9 +115,15 @@ class IndividuAdmin(VersionAdmin):
         }),
     )
 
+class DeviseAdmin(VersionAdmin):
+    list_display = ('nom', 'symbole',)
+
 class EngagementAdmin(VersionAdmin):
     list_display = ('__unicode__', 'profession', 'salaire', 'devise',)
     filter_horizontal = ('individus',)
+
+class TypeDePersonnelAdmin(VersionAdmin):
+    list_display = ('nom',)
 
 class PersonnelAdmin(VersionAdmin):
     filter_horizontal = ('engagements',)
@@ -119,12 +132,21 @@ class GenreDOeuvreAdmin(VersionAdmin):
     exclude = ('slug',)
     filter_horizontal = ('parents',)
 
+class TypeDeCaracteristiqueDOeuvreAdmin(VersionAdmin):
+    list_display = ('nom', 'nom_pluriel', 'classement',)
+
 class CaracteristiqueDOeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'type', 'valeur', 'classement')
 
 class PartieAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'parente', 'classement')
     filter_horizontal = ('professions',)
+
+class PupitreAdmin(VersionAdmin):
+    list_display = ('partie', 'quantite_min', 'quantite_max',)
+
+class TypeDeParenteDOeuvresAdmin(VersionAdmin):
+    list_display = ('nom', 'nom_pluriel', 'classement',)
 
 class ParenteDOeuvresAdmin(VersionAdmin):
     filter_horizontal = ('oeuvres_cibles',)
@@ -167,6 +189,9 @@ class OeuvreAdmin(VersionAdmin):
 
 class AttributionDePupitreAdmin(VersionAdmin):
     filter_horizontal = ('individus',)
+
+class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin):
+    list_display = ('nom', 'nom_pluriel', 'classement',)
 
 class ElementDeProgrammeAdmin(VersionAdmin):
     list_display = ('oeuvre', 'autre', 'classement',)
@@ -229,24 +254,24 @@ site.register(Saison, SaisonAdmin)
 site.register(Profession, ProfessionAdmin)
 site.register(AncrageSpatioTemporel, AncrageSpatioTemporelAdmin)
 site.register(Prenom, PrenomAdmin)
-site.register(TypeDeParenteDIndividus)
-site.register(ParenteDIndividus)
+site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
+site.register(ParenteDIndividus, ParenteDIndividusAdmin)
 site.register(Individu, IndividuAdmin)
-site.register(Devise)
+site.register(Devise, DeviseAdmin)
 site.register(Engagement, EngagementAdmin)
-site.register(TypeDePersonnel)
+site.register(TypeDePersonnel, TypeDePersonnelAdmin)
 site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
-site.register(TypeDeCaracteristiqueDOeuvre)
+site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
 site.register(Partie, PartieAdmin)
-site.register(Pupitre)
-site.register(TypeDeParenteDOeuvres)
+site.register(Pupitre, PupitreAdmin)
+site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(ParenteDOeuvres, ParenteDOeuvresAdmin)
 site.register(Auteur, AuteurAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(AttributionDePupitre, AttributionDePupitreAdmin)
-site.register(CaracteristiqueDElementDeProgramme)
+site.register(CaracteristiqueDElementDeProgramme, CaracteristiqueDElementDeProgrammeAdmin)
 site.register(ElementDeProgramme, ElementDeProgrammeAdmin)
 site.register(Evenement, EvenementAdmin)
 site.register(TypeDeSource, TypeDeSourceAdmin)
