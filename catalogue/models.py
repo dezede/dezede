@@ -697,9 +697,13 @@ class Oeuvre(Model):
         return self.html(True, False, True)
     link.short_description = 'permalien'
     link.allow_tags = True
-    def calc_caracteristiques(self):
+    def calc_caracteristiques(self, limite=0):
         cs = self.caracteristiques.all()
-        return ', '.join(filter(bool, [c.valeur for c in cs]))
+        out2 = ', '.join(filter(bool, [c.valeur for c in cs[limite:]]))
+        if limite:
+            out1 = ', '.join(filter(bool, [c.valeur for c in cs[:limite]]))
+            return out1, out2
+        return out2
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = u'caractéristiques'
     def calc_pupitres(self):
@@ -758,12 +762,19 @@ class Oeuvre(Model):
             genre = genre.__unicode__()
             pupitres = self.calc_pupitres()
             if not titre_complet:
+                cs= None
                 titre_complet = genre[0].upper() + genre[1:]
                 if pupitres:
                     titre_complet += ' ' + pupitres
+                elif caracteristiques:
+                    cs = self.calc_caracteristiques(1)
+                    titre_complet += ' ' + cs[0]
+                    caracteristiques = cs[1]
                 if not parentes:
                     titre_complet = em(titre_complet, tags)
                 out += href(self.get_absolute_url(), titre_complet, tags)
+                if descr and cs and cs[1]:
+                    out += ','
             elif descr:
                 out += genre
         if descr and caracteristiques:
