@@ -113,12 +113,20 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'musicologie.catalogue',
     'tinymce',
+    'grappelli.dashboard',
     'grappelli',
     'filebrowser',
     'reversion',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django_extensions'
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
+    'django.core.context_processors.i18n',
+    'django.contrib.messages.context_processors.messages',
 )
 
 LOCALE_PATHS = (
@@ -128,6 +136,8 @@ LOCALE_PATHS = (
 DATE_FORMAT = 'l j F Y'
 
 TIME_FORMAT = 'H:i'
+
+GRAPPELLI_INDEX_DASHBOARD = 'musicologie.dashboard.CustomIndexDashboard'
 
 TINYMCE_DEFAULT_CONFIG = {
     'mode' : 'textareas',
