@@ -65,6 +65,10 @@ class LieuAdmin(VersionAdmin):
 
 class SaisonAdmin(VersionAdmin):
     list_display = ('__unicode__', 'lieu', 'debut', 'fin',)
+    raw_id_fields = ('lieu',)
+    autocomplete_lookup_fields = {
+        'fk': ['lieu'],
+    }
 
 class ProfessionAdmin(VersionAdmin):
     exclude = ('slug',)
@@ -73,6 +77,10 @@ class AncrageSpatioTemporelAdmin(VersionAdmin):
     list_display = ('__unicode__', 'calc_date', 'calc_heure', 'calc_lieu',)
     search_fields = ('lieu__nom', 'lieu_approx', 'date_approx',
         'lieu__parent__nom', 'heure_approx',)
+    raw_id_fields = ('lieu',)
+    autocomplete_lookup_fields = {
+        'fk': ['lieu'],
+    }
     fieldsets = (
         ('Champs courants', {
             'fields': ('date', 'heure', 'lieu',),
@@ -91,7 +99,10 @@ class TypeDeParenteDIndividusAdmin(VersionAdmin):
 
 class ParenteDIndividusAdmin(VersionAdmin):
     list_display = ('__unicode__',)
-    filter_horizontal = ('individus_cibles',)
+    raw_id_fields = ('individus_cibles',)
+    autocomplete_lookup_fields = {
+        'm2m': ['individus_cibles'],
+    }
 
 class IndividuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'nom_naissance', 'calc_prenoms',
@@ -99,8 +110,11 @@ class IndividuAdmin(VersionAdmin):
         'calc_professions', 'link',)
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',)
     list_filter = ('sexe',)
-    filter_horizontal = ('prenoms', 'professions', 'parentes', 'illustrations',
-        'documents',)
+    filter_horizontal = ('prenoms', 'parentes', 'illustrations', 'documents',)
+    raw_id_fields = ('professions',)
+    autocomplete_lookup_fields = {
+        'm2m': ['professions'],
+    }
     readonly_fields = ('__unicode__', 'html', 'link',)
     fieldsets = (
         ('Champs courants', {
@@ -124,7 +138,11 @@ class DeviseAdmin(VersionAdmin):
 
 class EngagementAdmin(VersionAdmin):
     list_display = ('__unicode__', 'profession', 'salaire', 'devise',)
-    filter_horizontal = ('individus',)
+    raw_id_fields = ('profession', 'individus',)
+    autocomplete_lookup_fields = {
+        'fk': ['profession'],
+        'm2m': ['individus'],
+    }
 
 class TypeDePersonnelAdmin(VersionAdmin):
     list_display = ('nom',)
@@ -144,10 +162,17 @@ class CaracteristiqueDOeuvreAdmin(VersionAdmin):
 
 class PartieAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'parente', 'classement')
-    filter_horizontal = ('professions',)
+    raw_id_fields = ('professions',)
+    autocomplete_lookup_fields = {
+        'm2m': ['professions'],
+    }
 
 class PupitreAdmin(VersionAdmin):
     list_display = ('partie', 'quantite_min', 'quantite_max',)
+    raw_id_fields = ('partie',)
+    autocomplete_lookup_fields = {
+        'fk': ['partie'],
+    }
 
 class TypeDeParenteDOeuvresAdmin(VersionAdmin):
     list_display = ('nom', 'nom_pluriel', 'classement',)
@@ -172,8 +197,12 @@ class OeuvreAdmin(VersionAdmin):
         'calc_auteurs', 'ancrage_composition', 'link',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
-    filter_horizontal = ['caracteristiques', 'pupitres', 'auteurs', 'parentes',
-        'documents', 'illustrations']
+    filter_horizontal = ['caracteristiques', 'auteurs', 'parentes', 'documents',
+        'illustrations']
+    raw_id_fields = ('pupitres',)
+    autocomplete_lookup_fields = {
+        'm2m': ['pupitres'],
+    }
     readonly_fields = ('__unicode__', 'html', 'link',)
     inlines = (ElementDeProgrammeInline,)
     fieldsets = (
