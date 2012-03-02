@@ -651,7 +651,7 @@ class Auteur(Model):
         return ', '.join(filter(bool, [i.html(tags) for i in ins]))
     def html(self, tags=True):
         out = self.individus_html(tags)
-        out += ' [' + abbreviate(self.profession.__unicode__(), 1) + ']'
+        out += ' [%s]' % abbreviate(self.profession.__unicode__(), 1)
         return replace(out, tags)
     html.short_description = 'rendu HTML'
     html.allow_tags = True
@@ -826,6 +826,11 @@ class ElementDeProgramme(Model):
         blank=True, null=True)
     etat = ForeignKey(Etat, related_name='elements_de_programme', null=True,
         blank=True)
+    def calc_caracteristiques(self):
+        cs = self.caracteristiques.all()
+        return ', '.join(filter(bool, [c.__unicode__() for c in cs]))
+    calc_caracteristiques.allow_tags = True
+    calc_caracteristiques.short_description = u'caractéristiques'
     def html(self, tags=True):
         out = ''
         oeuvre = self.oeuvre
@@ -833,6 +838,9 @@ class ElementDeProgramme(Model):
             out += oeuvre.html()
         else:
             out += self.autre
+        cs = self.calc_caracteristiques()
+        if cs:
+            out += ' [%s]' % cs
         distribution = self.distribution.all()
         maxi = len(distribution) - 1
         if distribution:
@@ -847,7 +855,7 @@ class ElementDeProgramme(Model):
                 out += individu.html()
                 if j < maxj:
                     out += ', '
-            out += ' [' + attribution.pupitre.partie.__unicode__() + ']'
+            out += ' [%s]' % attribution.pupitre.partie.__unicode__()
             if i < maxi:
                 out += ', '
         return replace(out, tags)
@@ -856,7 +864,7 @@ class ElementDeProgramme(Model):
     class Meta:
         verbose_name = u'élément de programme'
         verbose_name_plural = u'éléments de programme'
-        ordering = ['classement']
+        ordering = ['classement', 'oeuvre']
     def __unicode__(self):
         if self.oeuvre:
             return self.oeuvre.__unicode__()
@@ -945,7 +953,7 @@ class Source(Model):
             l.append(no(self.numero, tags))
         l.append('du %s' % date(self.date))
         if self.page:
-            l.append('p. %s' % str(self.page))
+            l.append('p. %s' % self.page)
         out = ' '.join(l)
         return replace(out, tags)
     html.short_description = 'rendu HTML'

@@ -14,6 +14,12 @@ class ElementDeProgrammeInline(StackedInline):
     model = ElementDeProgramme
     classes = ('collapse closed',)
 
+class EvenementInline(StackedInline):
+    verbose_name = Evenement._meta.verbose_name
+    verbose_name_plural = Evenement._meta.verbose_name_plural
+    model = Evenement.programme.through
+    classes = ('collapse closed',)
+
 class SourceInline(StackedInline):
     model = Source
     classes = ('collapse closed',)
@@ -36,7 +42,6 @@ class LieuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'parent', 'nature', 'link',)
     search_fields = ('nom', 'parent__nom',)
     list_filter = ('nature__nom',)
-    exclude = ('slug',)
     filter_horizontal = ('illustrations', 'documents',)
     readonly_fields = ('__unicode__', 'html', 'link',)
     inlines = (AncrageSpatioTemporelInline,)
@@ -83,7 +88,6 @@ class IndividuAdmin(VersionAdmin):
         'calc_professions', 'link',)
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',)
     list_filter = ('sexe',)
-    exclude = ('slug',)
     filter_horizontal = ('prenoms', 'professions', 'parentes', 'illustrations',
         'documents',)
     readonly_fields = ('__unicode__', 'html', 'link',)
@@ -137,7 +141,6 @@ class OeuvreAdmin(VersionAdmin):
         'calc_auteurs', 'ancrage_composition', 'link',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
-    exclude = ('slug',)
     filter_horizontal = ['caracteristiques', 'pupitres', 'auteurs', 'parentes',
         'documents', 'illustrations']
     readonly_fields = ('__unicode__', 'html', 'link',)
@@ -169,6 +172,7 @@ class ElementDeProgrammeAdmin(VersionAdmin):
     list_display = ('oeuvre', 'autre', 'classement',)
     filter_horizontal = ('caracteristiques', 'distribution', 'personnels',
         'illustrations', 'documents',)
+    inlines = (EvenementInline,)
 
 class EvenementAdmin(VersionAdmin):
     list_display = ('__unicode__', 'relache', 'circonstance', 'link',)
