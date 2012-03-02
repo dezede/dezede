@@ -42,6 +42,10 @@ class LieuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'parent', 'nature', 'link',)
     search_fields = ('nom', 'parent__nom',)
     list_filter = ('nature__nom',)
+    raw_id_fields = ('parent', 'nature', 'etat',)
+    autocomplete_lookup_fields = {
+        'fk': ['parent', 'nature', 'etat'],
+    }
     filter_horizontal = ('illustrations', 'documents',)
     readonly_fields = ('__unicode__', 'html', 'link',)
     inlines = (AncrageSpatioTemporelInline,)
@@ -153,6 +157,11 @@ class ParenteDOeuvresAdmin(VersionAdmin):
 
 class AuteurAdmin(VersionAdmin):
     filter_horizontal = ('individus',)
+    raw_id_fields = ('profession', 'individus',)
+    autocomplete_lookup_fields = {
+        'fk': ['profession'],
+        'm2m': ['individus'],
+    }
     def save_model(self, request, obj, form, change):
         obj.save()
         for individu in form.cleaned_data['individus']:
@@ -188,7 +197,11 @@ class OeuvreAdmin(VersionAdmin):
     )
 
 class AttributionDePupitreAdmin(VersionAdmin):
-    filter_horizontal = ('individus',)
+    raw_id_fields = ('pupitre', 'individus',)
+    autocomplete_lookup_fields = {
+        'fk': ['pupitre'],
+        'm2m': ['individus'],
+    }
 
 class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin):
     list_display = ('nom', 'nom_pluriel', 'classement',)

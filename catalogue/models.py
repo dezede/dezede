@@ -134,6 +134,9 @@ class NatureDeLieu(Model):
         return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('nom__icontains',)
 
 class Lieu(Model):
     nom = CharField(max_length=200)
@@ -177,6 +180,9 @@ class Lieu(Model):
         super(Lieu, self).save(*args, **kwargs)
     def __unicode__(self):
         return self.html(False)
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('nom__icontains',)
 
 class Saison(Model):
     lieu = ForeignKey(Lieu, related_name='saisons')
@@ -203,6 +209,9 @@ class Profession(Model):
         return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('nom__icontains', 'nom_pluriel__icontains',)
 
 class AncrageSpatioTemporel(Model):
     date = DateField(blank=True, null=True, help_text=DATE_MSG)
@@ -478,6 +487,10 @@ class Individu(Model):
     def __unicode__(self):
         return self.html(False)
     __unicode__.allow_tags = True
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('nom__icontains', 'nom_naissance__icontains',
+                'pseudonyme__icontains', 'prenoms__prenom__icontains',)
 
 class Devise(Model):
     '''
@@ -577,6 +590,11 @@ class Partie(Model):
         return calc_pluriel(self)
     def __unicode__(self):
         return self.nom
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('nom__icontains', 'nom_pluriel__icontains',
+                'professions__nom__icontains',
+                'professions__nom_pluriel__icontains',)
 
 class Pupitre(Model):
     partie = ForeignKey(Partie, related_name='pupitres')
@@ -610,6 +628,12 @@ class Pupitre(Model):
             out += mi_str + ' '
         out += partie
         return out
+    @staticmethod
+    def autocomplete_search_fields():
+        l = ['partie__%s' % p for p in Partie.autocomplete_search_fields()]
+        return ('partie__nom__icontains', 'partie__nom_pluriel__icontains',
+                'partie__professions__nom__icontains',
+                'partie__professions__nom_pluriel__icontains',)
 
 class TypeDeParenteDOeuvres(Model):
     nom = CharField(max_length=100, help_text=LOWER_MSG, unique=True)

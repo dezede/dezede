@@ -49,8 +49,8 @@ Sommaire :
       django-tinymce       1.5.1a2
         sudo pip install django-tinymce==1.5.1a2
 
-      django-grappelli     2.3.4
-        sudo pip install django-grappelli==2.3.4
+      django-grappelli     2.3.7
+        sudo pip install django-grappelli==2.3.7
 
       django-filebrowser   3.3.0
         sudo pip install django-filebrowser==3.3.0
