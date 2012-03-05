@@ -58,6 +58,8 @@ Sommaire :
       le paquet python-imaging ou :
         sudo pip install pil
 
+      django-extensions (pour les graphs de développement)
+        sudo pip install django-extensions
 
 
 ****** 2. Lancement du serveur de développement ******
@@ -140,6 +142,9 @@ Sommaire :
       sudo chgrp -R www-data /var/www/media/
       sudo chmod -R 0774 /var/www/media/
 
+  * Autoriser apache à utiliser le dossier où se trouve le projet (en remplaçant ce qui est balisé ainsi : {{ quelque_chose }}) :
+      sudo chgrp -R www-data {{ /chemin/vers/le/repertoire/parent/de/celui/du/projet }}
+      sudo chmod -R 0774 {{ /chemin/vers/le/repertoire/parent/de/celui/du/projet }}
 
   * Création d'un site dans Apache :
       sudo nano /etc/apache2/sites-available/musicologie
