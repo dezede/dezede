@@ -12,6 +12,8 @@ ADMINS = (
     ('Bertrand Bordage', 'bordage.bertrand@gmail.com'),
 )
 
+SEND_BROKEN_LINK_EMAILS = True
+
 MANAGERS = ADMINS
 
 DATABASES = {

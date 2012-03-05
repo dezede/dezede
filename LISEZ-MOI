@@ -36,7 +36,7 @@ Sommaire :
 
   * Paquets supplémentaires requis pour le déploiement :
       apache2                 2.2
-      libapache2-mod-python   3.3.1
+      libapache2-mod-wsgi     3.3
 
 
   * Installations :
@@ -129,7 +129,7 @@ Sommaire :
 
 
   * Collecte des fichiers statiques :
-      sudo python manage.py collectstatic
+      sudo python manage.py collectstatic -l
 
 
   * Préparation du dossier d'upload :
@@ -147,36 +147,37 @@ Sommaire :
 
   * Copier ceci dans ce dernier (en remplaçant ce qui est balisé ainsi : {{ quelque_chose }}) :
       <VirtualHost *:80>
-        DocumentRoot /var/www
 
-        <Location "/">
-          SetHandler python-program
-          PythonHandler django.core.handlers.modpython
-          PythonDebug Off
-          PythonPath "['{{ /chemin/vers/le/repertoire/parent/de/celui/du/projet }}', '/var/www'] + sys.path"
-          SetEnv DJANGO_SETTINGS_MODULE musicologie.settings
-        </Location>
+        Alias /media/ /var/www/media/
+        Alias /static/ /var/www/static/
 
-        <Location "/media/">
-          SetHandler None
-        </Location>
+        <Directory /var/www/media>
+          Order deny,allow
+          Allow from all
+          Options FollowSymLinks
+        </Directory>
 
-        <Location "/static/">
-          SetHandler None
-        </Location>
+        <Directory /var/www/static>
+          Order deny,allow
+          Allow from all
+          Options FollowSymLinks
+        </Directory>
 
-        <Location "/icons/">
-          SetHandler None
-        </Location>
+        WSGIScriptAlias / {{ /chemin/du/projet }}/apache/django.wsgi
+
+        <Directory {{ /chemin/du/projet }}/apache>
+          Order deny,allow
+          Allow from all
+        </Directory>
 
       </VirtualHost>
 
 
-  * On peut ajouter le paramètre « MaxRequestsPerChild 1 » avant <VirtualHost ...> pour éviter d'avoir à relancer le serveur à chaque modification.
+  * On peut ajouter le paramètre « MaxRequestsPerChild 1 » avant <VirtualHost ...> pour éviter d’avoir à relancer le serveur à chaque modification.
 
 
-  * Ajouter le nom de serveur à /etc/apache2/httpd.conf :
-      ServerName {{ nom_du_serveur }}
+  * Ajouter l’adresse de serveur à /etc/apache2/httpd.conf :
+      ServerName {{ ip_du_serveur }}
 
 
   * Activer le site et désactiver le site par défaut :
