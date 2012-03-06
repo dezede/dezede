@@ -386,7 +386,7 @@ class Individu(Model):
     professions = ManyToManyField(Profession, related_name='individus',
         blank=True, null=True)
     parentes = ManyToManyField(ParenteDIndividus, related_name='individus_orig',
-        blank=True, null=True, verbose_name='parentes')
+        blank=True, null=True, verbose_name=u'parentés')
     biographie = HTMLField(blank=True)
     illustrations = ManyToManyField(Illustration, related_name='individus',
         blank=True, null=True)
@@ -561,13 +561,16 @@ class GenreDOeuvre(Model):
         verbose_name=u"genre d'œuvre"
         verbose_name_plural=u"genres d'œuvre"
         ordering = ['slug']
+    def html(self, tags=True, pluriel=False):
+        nom = self.pluriel() if pluriel else self.nom
+        return hlp('genre', nom, tags)
     def save(self, *args, **kwargs):
         self.slug = autoslugify(self, self.__unicode__())
         super(GenreDOeuvre, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
     def __unicode__(self):
-        return self.nom
+        return html(False)
     @staticmethod
     def autocomplete_search_fields():
         return ('nom__icontains', 'nom_pluriel__icontains',)
@@ -734,7 +737,7 @@ class Oeuvre(Model):
     pupitres = ManyToManyField(Pupitre, related_name='oeuvres', blank=True,
         null=True)
     parentes = ManyToManyField(ParenteDOeuvres, related_name='oeuvres',
-        blank=True, null=True, verbose_name=u'parentes')
+        blank=True, null=True, verbose_name=u'parentés')
     lilypond = TextField(blank=True, verbose_name='LilyPond')
     description = HTMLField(blank=True)
     documents = ManyToManyField(Document, related_name='oeuvres', blank=True,
@@ -815,7 +818,7 @@ class Oeuvre(Model):
         if descr and titre_complet and genre and caracteristiques:
             out += ', '
         if genre:
-            genre = genre.__unicode__()
+            genre = genre.html(tags)
             pupitres = self.calc_pupitres()
             if not titre_complet:
                 cs= None
