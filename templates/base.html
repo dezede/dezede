@@ -8,15 +8,19 @@
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles.css" />
   </head>
   <body>
-    <div id="navbar">
-      <a href="{% url 'catalogue.views.index_lieux' %}">Lieux</a>
-      <a href="{% url 'catalogue.views.index_evenements' %}">Événements</a>
-      <a href="{% url 'catalogue.views.index_individus' %}">Individus</a>
-      <a href="{% url 'catalogue.views.saisie_source' %}">Saisie de source</a>
+    <nav id="navbar">
+      <a href="{% url 'catalogue.views.index_lieux' %}">Lieux</a> |
+      <a href="{% url 'catalogue.views.index_evenements' %}">Événements</a> |
+      <a href="{% url 'catalogue.views.index_individus' %}">Individus</a> |
+      <a href="{% url 'catalogue.views.saisie_source' %}">Saisie de source</a> |
       <a href="{% url 'admin:index' %}">Administration</a>
-    </div>
+    </nav>
     <div style="width: 50%; margin-left: 25%;">
       {% autoescape off %}
+        <noscript>
+          Votre navigateur ne peut pas lancer javascript.
+          Certaines fonctionnalités peuvent ne pas fonctionner.
+        </noscript>
         {% block body %} {% endblock %}
       {% endautoescape %}
     </div>

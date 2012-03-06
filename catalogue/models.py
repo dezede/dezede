@@ -50,8 +50,13 @@ def href(url, str, tags=True):
 
 def sc(str, tags=True):
     if tags:
-        return '<span style="font-variant: small-caps;">%s</span>' % str
+        return u'<span style="font-variant: small-caps;">%s</span>' % str
     return str
+
+def hlp(text, title, tags=True):
+    if tags:
+        return u'<span title="%s">%s</span>' % (text, title)
+    return text
 
 #
 # Modélisation
@@ -590,6 +595,9 @@ class CaracteristiqueDOeuvre(Model):
         verbose_name = u"caractéristique d'œuvre"
         verbose_name_plural = u"caractéristiques d'œuvre"
         ordering = ['type', 'classement']
+    def html(self, tags=True):
+        return hlp(self.type, self.valeur, tags)
+    html.allow_tags = True
     def __unicode__(self):
         return self.type.__unicode__() + ' : ' + self.valeur
     __unicode__.allow_tags = True
@@ -743,11 +751,13 @@ class Oeuvre(Model):
         return self.html(True, False, True)
     link.short_description = 'permalien'
     link.allow_tags = True
-    def calc_caracteristiques(self, limite=0):
+    def calc_caracteristiques(self, limite=0, tags=True):
         cs = self.caracteristiques.all()
-        out2 = ', '.join(filter(bool, [c.valeur for c in cs[limite:]]))
+        def clist(cs):
+            return ', '.join(filter(bool, [c.html() for c in cs]))
+        out2 = clist(cs[limite:])
         if limite:
-            out1 = ', '.join(filter(bool, [c.valeur for c in cs[:limite]]))
+            out1 = clist(cs[:limite])
             return out1, out2
         return out2
     calc_caracteristiques.allow_tags = True
