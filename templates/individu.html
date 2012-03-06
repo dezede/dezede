@@ -16,23 +16,39 @@
   <h2>
     {{ individu }}
   </h2>
-  Nom : {{ individu.nom|default:'?' }}<br />
-  {% if individu.nom_naissance %}
-    Nom de naissance : {{ individu.nom_naissance }}<br />
-  {% endif %}
-  Prénom{{ individu.prenoms.all|pluralize }} : {{ individu.calc_prenoms|default:'?' }}<br />
-  {% if individu.pseudonyme %}
-    Pseudonyme : {{ individu.pseudonyme }}<br />
-  {% endif %}
-  {% if not individu.naissance and not individu.deces %}
-    Ancrage spatio-temporel : {{ individu.ancrage|default:'?' }}<br />
-  {% else %}
-    Naissance : {{ individu.naissance|default:'?' }}<br />
-    Décès : {{ individu.deces|default:'?' }}<br />
-  {% endif %}
-  Sexe : {{ individu.get_sexe_display|default:'?' }}<br />
-  {% for parent in individu.parents.all %}{% if forloop.first %}Parents : {% endif %}<a href="{% url 'catalogue.views.index_individus' %}{{ parent.slug }}">{{ parent }}</a>{% if not forloop.last %},{% else %}<br />{% endif %}{% endfor %}
-  Profession{{ individu.professions.all|pluralize }} : {{ individu.calc_professions|default:'?' }}<br />
+  <dl>
+    <dt>Nom</dt>
+    <dd>{{ individu.nom|default:'?' }}</dd>
+    {% if individu.nom_naissance %}
+      <dt>Nom de naissance</dt>
+      <dd>{{ individu.nom_naissance }}</dd>
+    {% endif %}
+    <dt>Prénom{{ individu.prenoms.all|pluralize }}</dt>
+    <dd>{{ individu.calc_prenoms|default:'?' }}</dd>
+    {% if individu.pseudonyme %}
+      <dt>Pseudonyme</dt>
+      <dd>{{ individu.pseudonyme }}</dd>
+    {% endif %}
+    {% if not individu.naissance and not individu.deces %}
+      <dt>Ancrage spatio-temporel</dt>
+      <dd>{{ individu.ancrage|default:'?' }}</dd>
+    {% else %}
+      <dt>Naissance</dt>
+      <dd>{{ individu.naissance|default:'?' }}</dd>
+      <dt>Décès</dt>
+      <dd>{{ individu.deces|default:'?' }}</dd>
+    {% endif %}
+    <dt>Sexe</dt>
+    <dd>{{ individu.get_sexe_display|default:'?' }}</dd>
+    {% for parent in individu.parents.all %}
+      {% if forloop.first %}
+        <dt>Parents</dt>
+      {% endif %}
+      <dd>{{ parent.link }}</dd>
+    {% endfor %}
+    <dt>Profession{{ individu.professions.all|pluralize }}</dt>
+    <dd>{{ individu.calc_professions|default:'?' }}</dd>
+  </dl>
   {{ individu.biographie }}
 
   {% for enfant in individu.enfants.all %}

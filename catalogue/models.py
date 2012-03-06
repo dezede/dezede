@@ -55,7 +55,7 @@ def sc(str, tags=True):
 
 def hlp(text, title, tags=True):
     if tags:
-        return u'<span title="%s">%s</span>' % (text, title)
+        return u'<span title="%s">%s</span>' % (title, text)
     return text
 
 #
@@ -563,14 +563,14 @@ class GenreDOeuvre(Model):
         ordering = ['slug']
     def html(self, tags=True, pluriel=False):
         nom = self.pluriel() if pluriel else self.nom
-        return hlp('genre', nom, tags)
+        return hlp(nom, 'genre', tags)
     def save(self, *args, **kwargs):
         self.slug = autoslugify(self, self.__unicode__())
         super(GenreDOeuvre, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
     def __unicode__(self):
-        return html(False)
+        return self.html(False)
     @staticmethod
     def autocomplete_search_fields():
         return ('nom__icontains', 'nom_pluriel__icontains',)
@@ -599,7 +599,7 @@ class CaracteristiqueDOeuvre(Model):
         verbose_name_plural = u"caractéristiques d'œuvre"
         ordering = ['type', 'classement']
     def html(self, tags=True):
-        return hlp(self.type, self.valeur, tags)
+        return hlp(self.valeur, self.type, tags)
     html.allow_tags = True
     def __unicode__(self):
         return self.type.__unicode__() + ' : ' + self.valeur
