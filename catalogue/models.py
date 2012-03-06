@@ -561,8 +561,10 @@ class GenreDOeuvre(Model):
         verbose_name=u"genre d'œuvre"
         verbose_name_plural=u"genres d'œuvre"
         ordering = ['slug']
-    def html(self, tags=True, pluriel=False):
+    def html(self, tags=True, caps=False, pluriel=False):
         nom = self.pluriel() if pluriel else self.nom
+        if caps:
+            nom = nom[0].upper() + nom[1:]
         return hlp(nom, 'genre', tags)
     def save(self, *args, **kwargs):
         self.slug = autoslugify(self, self.__unicode__())
@@ -822,7 +824,7 @@ class Oeuvre(Model):
             pupitres = self.calc_pupitres()
             if not titre_complet:
                 cs= None
-                titre_complet = genre[0].upper() + genre[1:]
+                titre_complet = self.genre.html(tags, caps=True)
                 if pupitres:
                     titre_complet += ' ' + pupitres
                 elif caracteristiques:
