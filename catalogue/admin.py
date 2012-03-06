@@ -3,11 +3,17 @@ from musicologie.catalogue.models import *
 from django.contrib.admin import site, TabularInline, StackedInline
 from reversion import VersionAdmin
 
-TabularInline.extra = 1
-StackedInline.extra = 1
+TabularInline.extra = 0
+StackedInline.extra = 0
 
 class AncrageSpatioTemporelInline(TabularInline):
     model = AncrageSpatioTemporel
+    classes = ('collapse closed',)
+
+class AuteurInline(TabularInline):
+    verbose_name = Auteur._meta.verbose_name
+    verbose_name_plural = Auteur._meta.verbose_name_plural
+    model = Auteur.individus.through
     classes = ('collapse closed',)
 
 class ElementDeProgrammeInline(StackedInline):
@@ -54,9 +60,13 @@ class LieuAdmin(VersionAdmin):
         ('Champs courants', {
             'fields': ('nom', 'parent', 'nature', 'historique',),
         }),
+        ('Fichiers', {
+            'classes': ('collapse closed',),
+            'fields': ('illustrations', 'documents',),
+        }),
         ('Champs avancés', {
             'classes': ('collapse closed',),
-            'fields': ('illustrations', 'documents', 'etat', 'notes',),
+            'fields': ('etat', 'notes',),
         }),
         ('Champs générés (Méthodes)', {
             'classes': ('collapse closed',),
@@ -73,6 +83,7 @@ class SaisonAdmin(VersionAdmin):
 
 class ProfessionAdmin(VersionAdmin):
     exclude = ('slug',)
+#    inlines = (AuteurInline,)
 
 class AncrageSpatioTemporelAdmin(VersionAdmin):
     list_display = ('__unicode__', 'calc_date', 'calc_heure', 'calc_lieu',)
@@ -83,12 +94,9 @@ class AncrageSpatioTemporelAdmin(VersionAdmin):
         'fk': ['lieu'],
     }
     fieldsets = (
-        ('Champs courants', {
-            'fields': ('date', 'heure', 'lieu',),
-        }),
-        ('Champs avancés', {
-            'classes': ('collapse open',),
-            'fields': ('date_approx', 'heure_approx', 'lieu_approx',),
+        (None, {
+            'fields': (('date', 'date_approx',), ('heure', 'heure_approx',),
+                       ('lieu', 'lieu_approx',),),
         }),
     )
 
@@ -120,16 +128,20 @@ class IndividuAdmin(VersionAdmin):
                 'documents'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
+    inlines = (AuteurInline,)
     fieldsets = (
         ('Champs courants', {
-            'fields': ('nom', 'nom_naissance', 'prenoms', 'pseudonyme',
-                        'designation', 'sexe', 'ancrage_naissance',
-                        'ancrage_deces', 'professions', 'parentes',),
+            'fields': (('sexe', 'prenoms', 'nom',), ('pseudonyme',
+                        'nom_naissance',), 'designation', ('ancrage_naissance',
+                        'ancrage_deces',), 'professions', 'parentes',),
+        }),
+        ('Fichiers', {
+            'classes': ('collapse closed',),
+            'fields': ('illustrations', 'documents',),
         }),
         ('Champs avancés', {
             'classes': ('collapse closed',),
-            'fields': ('ancrage_approx', 'biographie', 'illustrations',
-            'documents', 'etat', 'notes',),
+            'fields': ('ancrage_approx', 'biographie', 'etat', 'notes',),
         }),
         ('Champs générés (Méthodes)', {
             'classes': ('collapse closed',),
@@ -185,7 +197,10 @@ class TypeDeParenteDOeuvresAdmin(VersionAdmin):
     list_display = ('nom', 'nom_pluriel', 'classement',)
 
 class ParenteDOeuvresAdmin(VersionAdmin):
-    filter_horizontal = ('oeuvres_cibles',)
+    raw_id_fields = ('oeuvres_cibles',)
+    autocomplete_lookup_fields = {
+        'm2m': ['oeuvres_cibles'],
+    }
 
 class AuteurAdmin(VersionAdmin):
     filter_horizontal = ('individus',)
@@ -200,31 +215,36 @@ class AuteurAdmin(VersionAdmin):
             individu.professions.add(obj.profession)
 
 class OeuvreAdmin(VersionAdmin):
-    list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre', 'calc_caracteristiques',
-        'calc_auteurs', 'ancrage_composition', 'link',)
+    list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre',
+        'calc_caracteristiques', 'calc_auteurs', 'ancrage_composition', 'link',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
-    filter_horizontal = ['caracteristiques', 'auteurs', 'parentes', 'documents',
-        'illustrations']
-    raw_id_fields = ('pupitres',)
+    filter_horizontal = ('auteurs', 'parentes', 'documents',
+        'illustrations')
+    raw_id_fields = ('caracteristiques', 'ancrage_composition', 'pupitres', 'documents',
+        'illustrations',)
     autocomplete_lookup_fields = {
-        'm2m': ['pupitres'],
+        'fk': ['ancrage_composition'],
+        'm2m': ['caracteristiques', 'pupitres', 'documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
     inlines = (ElementDeProgrammeInline,)
     fieldsets = (
         ('Titre', {
-            'fields': ('prefixe_titre', 'titre', 'coordination',
-                        'prefixe_titre_secondaire', 'titre_secondaire',),
+            'fields': (('prefixe_titre', 'titre',), 'coordination',
+                        ('prefixe_titre_secondaire', 'titre_secondaire',),),
         }),
         ('Autres champs courants', {
             'fields': ('genre', 'caracteristiques', 'auteurs',
                         'ancrage_composition', 'pupitres', 'parentes',),
         }),
-        ('Champs avancés', {
+        ('Fichiers', {
             'classes': ('collapse closed',),
-            'fields': ('lilypond', 'description', 'documents', 'illustrations',
-                        'etat', 'notes',),
+            'fields': ('documents', 'illustrations',),
+        }),
+        ('Champs avancés', {
+            'classes': ('collapse closed', 'wide',),
+            'fields': ('lilypond', 'description', 'etat', 'notes',),
         }),
         ('Champs générés (Méthodes)', {
             'classes': ('collapse closed',),
@@ -252,16 +272,25 @@ class EvenementAdmin(VersionAdmin):
     list_display = ('__unicode__', 'relache', 'circonstance', 'link',)
     search_fields = ('circonstance',)
     list_filter = ('relache',)
-    filter_horizontal = ('programme', 'documents', 'illustrations',)
+    raw_id_fields = ('programme', 'ancrage_debut', 'ancrage_fin', 'documents',
+        'illustrations',)
+    autocomplete_lookup_fields = {
+        'fk': ['ancrage_debut', 'ancrage_fin'],
+        'm2m': ['programme', 'documents', 'illustrations'],
+    }
     readonly_fields = ('__unicode__', 'html', 'link',)
     fieldsets = (
         ('Champs courants', {
             'fields': ('ancrage_debut', 'ancrage_fin', 'relache',
                         'circonstance', 'programme',),
         }),
+        ('Fichiers', {
+            'classes': ('collapse closed',),
+            'fields': ('documents', 'illustrations',),
+        }),
         ('Champs avancés', {
             'classes': ('collapse closed',),
-            'fields': ('documents', 'illustrations', 'etat', 'notes',),
+            'fields': ('etat', 'notes',),
         }),
         ('Champs générés (Méthodes)', {
             'classes': ('collapse closed',),
@@ -274,19 +303,27 @@ class TypeDeSourceAdmin(VersionAdmin):
     inlines = (SourceInline,)
 
 class SourceAdmin(VersionAdmin):
-    list_display = ('__unicode__', 'nom', 'numero', 'date', 'page', 'type', 'disp_contenu',)
+    list_display = ('__unicode__', 'nom', 'numero', 'date', 'page', 'type',
+        'disp_contenu',)
     search_fields = ('nom', 'numero', 'type__nom',)
     list_filter = ('type__nom',)
-    filter_horizontal = ('evenements', 'documents', 'illustrations',)
+    raw_id_fields = ('evenements', 'documents', 'illustrations',)
+    autocomplete_lookup_fields = {
+        'm2m': ['evenements', 'documents', 'illustrations'],
+    }
     readonly_fields = ('__unicode__', 'html',)
     fieldsets = (
         ('Champs courants', {
             'fields': ('nom', 'numero', 'date', 'page', 'type', 'contenu',
                         'evenements',),
         }),
+        ('Fichiers', {
+            'classes': ('collapse closed',),
+            'fields': ('documents', 'illustrations',),
+        }),
         ('Champs avancés', {
             'classes': ('collapse closed',),
-            'fields': ('documents', 'illustrations', 'etat', 'notes',),
+            'fields': ('etat', 'notes',),
         }),
         ('Champs générés (Méthodes)', {
             'classes': ('collapse closed',),

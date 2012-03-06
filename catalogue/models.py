@@ -366,9 +366,9 @@ class Individu(Model):
     )
     designation = CharField(max_length=1, choices=DESIGNATIONS, default='S')
     SEXES = (
-        ('M', 'Masculin'),
-        ('J', 'Féminin (Mlle)'), # J pour Jouvencelle
-        ('F', 'Féminin (Mme)'),
+        ('M', 'M.'),
+        ('J', 'Mlle'), # J pour Jouvencelle
+        ('F', 'Mme'),
     )
     sexe = CharField(max_length=1, choices=SEXES, blank=True)
     ancrage_naissance = OneToOneField(AncrageSpatioTemporel, blank=True, null=True,
@@ -593,6 +593,9 @@ class CaracteristiqueDOeuvre(Model):
     def __unicode__(self):
         return self.type.__unicode__() + ' : ' + self.valeur
     __unicode__.allow_tags = True
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('type__nom__icontains', 'valeur__icontains',)
 
 class Partie(Model):
     nom = CharField(max_length=200,
@@ -835,6 +838,11 @@ class Oeuvre(Model):
     def __unicode__(self):
         return self.html(False, False, False)
     __unicode__.allow_tags = True
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('prefixe_titre__icontains', 'titre__icontains',
+                'prefixe_titre_secondaire__icontains',
+                'titre_secondaire__icontains', 'genre__nom__icontains',)
 
 class AttributionDePupitre(Model):
     pupitre = ForeignKey(Pupitre, related_name='attributions_de_pupitre')
@@ -925,6 +933,12 @@ class ElementDeProgramme(Model):
         elif self.autre:
             return self.autre
         return self.classement.__unicode__()
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('oeuvre__prefixe_titre__icontains', 'oeuvre__titre__icontains',
+                'oeuvre__prefixe_titre_secondaire__icontains',
+                'oeuvre__titre_secondaire__icontains',
+                'oeuvre__genre__nom__icontains',)
 
 class Evenement(Model):
     ancrage_debut = OneToOneField(AncrageSpatioTemporel,
@@ -933,9 +947,12 @@ class Evenement(Model):
         related_name='evenements_fins', blank=True, null=True)
     relache = BooleanField(verbose_name=u'relâche')
     circonstance = CharField(max_length=500, blank=True)
-    programme = ManyToManyField(ElementDeProgramme, related_name='evenements', blank=True, null=True)
-    documents = ManyToManyField(Document, related_name='evenements', blank=True, null=True)
-    illustrations = ManyToManyField(Illustration, related_name='evenements', blank=True, null=True)
+    programme = ManyToManyField(ElementDeProgramme, related_name='evenements',
+        blank=True, null=True)
+    documents = ManyToManyField(Document, related_name='evenements', blank=True,
+        null=True)
+    illustrations = ManyToManyField(Illustration, related_name='evenements',
+        blank=True, null=True)
     etat = ForeignKey(Etat, related_name='evenements', null=True, blank=True)
     notes = HTMLField(blank=True)
     @permalink
@@ -965,6 +982,15 @@ class Evenement(Model):
         out = out[0].upper() + out[1:]
         return out + ' ' + self.html(False)
     __unicode__.allow_tags = True
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('circonstace__icontains', 'ancrage_debut__lieu__nom__icontains',
+                'ancrage_debut__lieu__parent__nom__icontains',
+                'ancrage_debut__date__icontains',
+                'ancrage_debut__heure__icontains',
+                'ancrage_debut__lieu_approx__icontains',
+                'ancrage_debut__date_approx__icontains',
+                'ancrage_debut__heure_approx__icontains',)
 
 class TypeDeSource(Model):
     nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
