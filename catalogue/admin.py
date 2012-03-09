@@ -128,11 +128,11 @@ class IndividuAdmin(VersionAdmin):
                 'documents'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
-    inlines = (AuteurInline,)
+#    inlines = (AuteurInline,)
     fieldsets = (
         ('Champs courants', {
-            'fields': (('sexe', 'prenoms', 'nom',), ('pseudonyme',
-                        'nom_naissance',), 'designation', ('ancrage_naissance',
+            'fields': (('prenoms', 'nom',), ('pseudonyme', 'nom_naissance',),
+                       ('sexe', 'designation',), ('ancrage_naissance',
                         'ancrage_deces',), 'professions', 'parentes',),
         }),
         ('Fichiers', {

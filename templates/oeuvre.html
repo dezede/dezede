@@ -11,19 +11,19 @@
   <h2>
     {{ oeuvre }}
   </h2>
-  {% if oeuvre.calc_auteurs %}
-    Auteur{{ oeuvre.auteurs.count|pluralize }} : {{ oeuvre.calc_auteurs }}<br />
-  {% endif %}
-  Genre : {{ oeuvre.genre }}<br />
-  {% if oeuvre.calc_caracteristiques %}
-    Caractéristique{{ oeuvre.caracteristiques.count|pluralize }} : {{ oeuvre.calc_caracteristiques }}
-  {% endif %}
-  {% if oeuvre.calc_pupitres %}
-    Parties : {{ oeuvre.calc_pupitres }}<br />
-  {% endif %}
-  {% if oeuvre.ancrage_composition %}
-    Composition : {{ oeuvre.ancrage_composition }}<br />
-  {% endif %}
+  <h3>
+    {{ oeuvre.calc_description }}
+  </h3>
+  <dl>
+    {% if oeuvre.calc_auteurs %}
+      <dt>Auteur{{ oeuvre.auteurs.count|pluralize }}</dt>
+      <dd>{{ oeuvre.calc_auteurs }}</dd>
+    {% endif %}
+    {% if oeuvre.ancrage_composition %}
+      <dt>Composition</dt>
+      <dd>{{ oeuvre.ancrage_composition }}</dd>
+    {% endif %}
+  </dl>
   {% for element in oeuvre.elements_de_programme.all %}
     {% if forloop.first %}
       <hr />

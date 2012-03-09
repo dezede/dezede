@@ -16,47 +16,57 @@ LOWER_MSG = u'En minuscules.'
 PLURAL_MSG = u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».'
 DATE_MSG = u'Ex. : « 6/6/1944 » pour le 6 juin 1944.'
 
-def autoslugify(self, nom):
+def autoslugify(obj, nom):
     nom_slug = slug_orig = slugify(nom[:50])
     n = 0
-    objects = self.__class__.objects
-    while objects.filter(slug=nom_slug).count() and nom_slug != self.slug:
+    objects = obj.__class__.objects
+    while objects.filter(slug=nom_slug).count() and nom_slug != obj.slug:
         n += 1;
         nom_slug = slug_orig + str(n)
     return nom_slug
 
-def calc_pluriel(object):
-        if object.nom_pluriel:
-            return object.nom_pluriel
-        return object.nom + 's'
+def calc_pluriel(obj):
+    try:
+        if obj.nom_pluriel:
+            return obj.nom_pluriel
+        return obj.nom + 's'
+    except:
+        return unicode(obj)
 
-def ex(str):
-    return u'Exemple : « ' + str + u' »'
+def ex(txt):
+    return u'Exemple : « %s »' % txt
 
-def em(str, tags=True):
+# Fonctions HTML
+
+def em(txt, tags=True):
     if tags:
-        return u'<em>%s</em>' % str
-    return str
+        return u'<em>%s</em>' % txt
+    return txt
 
-def no(str, tags=True):
+def no(txt, tags=True):
     if tags:
-        return u'n°&nbsp;%s' % str
-    return u'n° %s' % str
+        return u'n°&nbsp;%s' % txt
+    return u'n° %s' % txt
 
-def href(url, str, tags=True):
+def href(url, txt, tags=True):
     if tags:
-        return u'<a href="%s">%s</a>' % (url, str)
-    return str
+        return u'<a href="%s">%s</a>' % (url, txt)
+    return txt
 
-def sc(str, tags=True):
+def sc(txt, tags=True):
     if tags:
-        return u'<span style="font-variant: small-caps;">%s</span>' % str
-    return str
+        return u'<span style="font-variant: small-caps;">%s</span>' % txt
+    return txt
 
-def hlp(text, title, tags=True):
+def hlp(txt, title, tags=True):
     if tags:
-        return u'<span title="%s">%s</span>' % (title, text)
-    return text
+        return u'<span title="%s">%s</span>' % (title, txt)
+    return txt
+
+def small(txt, tags=True):
+    if tags:
+        return u'<small>%s</small>' % txt
+    return txt
 
 #
 # Modélisation
@@ -376,8 +386,9 @@ class Individu(Model):
         ('F', 'Mme'),
     )
     sexe = CharField(max_length=1, choices=SEXES, blank=True)
-    ancrage_naissance = OneToOneField(AncrageSpatioTemporel, blank=True, null=True,
-        related_name='individus_nes', verbose_name=u'ancrage de naissance')
+    ancrage_naissance = OneToOneField(AncrageSpatioTemporel, blank=True,
+        null=True, related_name='individus_nes',
+        verbose_name=u'ancrage de naissance')
     ancrage_deces = OneToOneField(AncrageSpatioTemporel, blank=True, null=True,
         related_name='individus_decedes', verbose_name=u'ancrage du décès')
     ancrage_approx = OneToOneField(AncrageSpatioTemporel, blank=True, null=True,
@@ -397,23 +408,16 @@ class Individu(Model):
     slug = SlugField(blank=True)
     @permalink
     def get_absolute_url(self):
-        return ('musicologie.catalogue.views.detail_individu', [self.slug])
+        return ('musicologie.catalogue.views.detail_individu', [self.slug],)
     def link(self):
         return self.html()
     link.short_description = 'permalien'
     link.allow_tags = True
     def calc_prenoms_methode(self, fav):
         prenoms = self.prenoms.all().order_by('classement', 'prenom')
-        maxi = len(prenoms) - 1
-        if prenoms:
-            out = ''
-            for i, prenom in enumerate(prenoms):
-                if prenom.favori or not fav:
-                    out += prenom.__unicode__()
-                    if i < maxi:
-                        out += ' '
-            return out
-        return ''
+        if fav:
+            prenoms = filter(lambda p: p.favori, prenoms)
+        return ' '.join([p.__unicode__() for p in prenoms])
     def calc_prenoms(self):
         return self.calc_prenoms_methode(False)
     calc_prenoms.short_description = u'prénoms'
@@ -428,9 +432,9 @@ class Individu(Model):
         if tags:
             titres = {'M': 'M.', 'J': 'M<sup>lle</sup>', 'F': 'M<sup>me</sup>',}
         else:
-            titres = {'M': 'M.', 'J': 'Mlle', 'F': 'Mme',}
+            titres = {'M': 'Monsieur', 'J': 'Mademoiselle', 'F': 'Madame',}
         if self.sexe:
-            return titres[self.sexe]
+            return small(titres[self.sexe], tags)
         return ''
     def calc_designation(self):
         out = ''
@@ -472,12 +476,17 @@ class Individu(Model):
         ps = self.professions.all()
         return ', '.join(filter(bool, [p.__unicode__() for p in ps]))
     calc_professions.short_description = 'professions'
-    def html(self, tags=True):
+    def html(self, tags=True, lon=False, prenoms_fav=True):
         designation = self.designation
-        prenoms = self.calc_fav_prenoms()
+        titre = ''
+        prenoms = None
+        if prenoms_fav:
+            prenoms = self.calc_fav_prenoms()
+        else:
+            prenoms = self.calc_prenoms()
         nom = self.nom
         out = ''
-        if designation == 'S' and nom and not prenoms and self.sexe:
+        if designation == 'S' and (lon or nom and not prenoms) and self.sexe:
             titre = self.calc_titre(tags)
             out += titre + ' '
         out_des = ''
@@ -487,13 +496,22 @@ class Individu(Model):
             out_des += self.pseudonyme
         else:
             out_des += nom
-        out += sc(out_des, tags)
+        out_des = sc(out_des, tags)
+        out += out_des
         if designation == 'S' and prenoms:
-            out += ' (%s)' % abbreviate(prenoms)
-        out = href(self.get_absolute_url(), out, tags)
+            if lon:
+                out = ' '.join(filter(bool, [titre, small(prenoms, tags), out_des]))
+            else:
+                out += ' (%s)' % abbreviate(prenoms)
+        url = ''
+        if tags:
+            url = self.get_absolute_url()
+        out = href(url, out, tags)
         return replace(out, tags)
     html.short_description = 'rendu HTML'
     html.allow_tags = True
+    def nom_complet(self, tags=True, prenoms_fav=True):
+        return self.html(tags, True, prenoms_fav)
     class Meta:
         ordering = ['nom']
     def save(self, *args, **kwargs):
@@ -564,7 +582,7 @@ class GenreDOeuvre(Model):
     def html(self, tags=True, caps=False, pluriel=False):
         nom = self.pluriel() if pluriel else self.nom
         if caps:
-            nom = nom[0].upper() + nom[1:]
+            nom = capfirst(nom)
         return hlp(nom, 'genre', tags)
     def save(self, *args, **kwargs):
         self.slug = autoslugify(self, self.__unicode__())
@@ -753,7 +771,7 @@ class Oeuvre(Model):
     def get_absolute_url(self):
         return ('musicologie.catalogue.views.detail_oeuvre', [self.slug])
     def link(self):
-        return self.html(True, False, True)
+        return self.html(True, False, True, True)
     link.short_description = 'permalien'
     link.allow_tags = True
     def calc_caracteristiques(self, limite=0, tags=True):
@@ -789,7 +807,7 @@ class Oeuvre(Model):
         out = ''
         ps = self.parentes.all()
         for p in ps:
-            out += ', '.join(filter(bool, [oe.html(tags, False, False) for oe in p.oeuvres_cibles.all()]))
+            out += ', '.join(filter(bool, [oe.html(tags, False, True, False) for oe in p.oeuvres_cibles.all()]))
             out += ', '
         return out
     def titre_complet(self):
@@ -805,7 +823,7 @@ class Oeuvre(Model):
                     out += self.prefixe_titre_secondaire
                 out += self.titre_secondaire
         return out
-    def html(self, tags=True, auteurs=True, descr=True):
+    def html(self, tags=True, auteurs=True, titre=True, descr=True):
         out = u''
         auts = self.calc_auteurs(tags)
         if auteurs and auts:
@@ -813,11 +831,11 @@ class Oeuvre(Model):
         parentes = self.calc_parentes(tags)
         out += parentes
         titre_complet = self.titre_complet()
-        if titre_complet:
+        if titre and titre_complet:
             out += href(self.get_absolute_url(), em(titre_complet, tags), tags)
         genre = self.genre
         caracteristiques = self.calc_caracteristiques()
-        if descr and titre_complet and genre and caracteristiques:
+        if titre and descr and titre_complet and genre and caracteristiques:
             out += ', '
         if genre:
             genre = genre.html(tags)
@@ -833,16 +851,24 @@ class Oeuvre(Model):
                     caracteristiques = cs[1]
                 if not parentes:
                     titre_complet = em(titre_complet, tags)
-                out += href(self.get_absolute_url(), titre_complet, tags)
-                if descr and cs and cs[1]:
-                    out += ','
+                if titre:
+                    out += href(self.get_absolute_url(), titre_complet, tags)
+                    if descr and cs and cs[1]:
+                        out += ','
             elif descr:
                 out += genre
         if descr and caracteristiques:
-            out += ' ' + caracteristiques
+            if out:
+                if tags:
+                    out += '&#32;'
+                else:
+                    out += ' '
+            out += caracteristiques
         return replace(out, tags)
     html.short_description = 'rendu HTML'
     html.allow_tags = True
+    def calc_description(self, tags=True):
+        return self.html(tags, False, False, True)
     class Meta:
         verbose_name = u'œuvre'
         ordering = ['slug']
@@ -851,7 +877,7 @@ class Oeuvre(Model):
         self.slug = autoslugify(self, self.__unicode__())
         super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
-        return self.html(False, False, False)
+        return self.html(False, False, True, False)
     __unicode__.allow_tags = True
     @staticmethod
     def autocomplete_search_fields():
@@ -994,7 +1020,7 @@ class Evenement(Model):
         ordering = ['ancrage_debut']
     def __unicode__(self):
         out = self.ancrage_debut.calc_date()
-        out = out[0].upper() + out[1:]
+        out = capfirst(out)
         return out + ' ' + self.html(False)
     __unicode__.allow_tags = True
     @staticmethod

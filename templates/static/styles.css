@@ -92,3 +92,44 @@ ol
   margin: 0.75em 0 0.5em 0;
 }
 
+dt, .dt
+{
+  color: grey;
+  font-size: 14px;
+}
+
+.right
+{
+  text-align: right;
+}
+
+table
+{
+  text-align: left;
+  border-collapse: collapse;
+}
+
+table th
+{
+  font-weight: normal;
+}
+
+table td
+{
+  border-right: 1px solid lightGrey;
+  padding: 0 3px;
+}
+
+table th:first-child,
+table td:first-child
+{
+  padding-left: 0;
+}
+
+table th:last-child,
+table td:last-child
+{
+  border-right: none;
+  padding-right: 0;
+}
+
