@@ -11,10 +11,10 @@
   </head>
   <body>
     <nav id="navbar">
+      <a href="{% url 'haystack_search' %}">Recherche</a> |
       <a href="{% url 'catalogue.views.index_lieux' %}">Lieux</a> |
       <a href="{% url 'catalogue.views.index_evenements' %}">Événements</a> |
       <a href="{% url 'catalogue.views.index_individus' %}">Individus</a> |
-      <a href="{% url 'catalogue.views.saisie_source' %}">Saisie de source</a> |
       <a href="{% url 'admin:index' %}">Administration</a>
     </nav>
     <div style="width: 50%; margin-left: 25%;">
