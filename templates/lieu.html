@@ -8,9 +8,9 @@
 {% endblock %}
 
 {% block body %}
-  <h3>
+  <h2>
     {{ lieu.nom }}{% if lieu.parent %}, <a href="{% url 'catalogue.views.detail_lieu' lieu.parent.slug %}">{{ lieu.parent.nom }}</a>{% endif %}
-  </h3>
+  </h2>
   Nature : {{ lieu.nature|capfirst }}<br />
   {% for enfant in lieu.enfants.all %}
     {% if forloop.first %}Lieux contenus dans {{ lieu.nom }} :<ul>{% endif %}
@@ -19,11 +19,11 @@
   {% endfor %}
   {% for evenement in lieu.evenements %}
     {% if forloop.first %}
-      <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}">Événements :</a>
+      <a href="{% url 'catalogue.views.index_evenements' lieu.slug %}">Événements :</a>
       <ul>
     {% endif %}
     <li>
-      <a href="{% url 'catalogue.views.index_evenements' %}{{ lieu.slug }}/{{ evenement.ancrage_debut.year }}/{{ evenement.ancrage_debut.month }}/{{ evenement.ancrage_debut.day }}">
+      <a href="{% url 'catalogue.views.index_evenements' lieu.slug evenement.ancrage_debut.year evenement.ancrage_debut.month evenement.ancrage_debut.day %}">
         {{ evenement.ancrage_debut.calc_moment|capfirst }} :
         <ol>
           {% for element in evenement.programme.all %}

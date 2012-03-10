@@ -431,7 +431,7 @@ class Individu(Model):
         else:
             titres = {'M': 'Monsieur', 'J': 'Mademoiselle', 'F': 'Madame',}
         if self.sexe:
-            return small(titres[self.sexe], tags)
+            return titres[self.sexe]
         return ''
     def naissance(self):
         if self.ancrage_naissance:
@@ -617,7 +617,7 @@ class Partie(Model):
     parente = ForeignKey('Partie', related_name='enfant', blank=True, null=True)
     classement = FloatField(default=1.0)
     class Meta:
-        ordering = ['nom']
+        ordering = ['classement']
     def pluriel(self):
         return calc_pluriel(self)
     def __unicode__(self):
@@ -987,10 +987,12 @@ class Evenement(Model):
     link.short_description = 'permalien'
     link.allow_tags = True
     def html(self, tags=True):
-        relache = ''
+        relache, circonstance = '', ''
+        if self.circonstance:
+            circonstance = hlp(self.circonstance, u'circonstance', tags)
         if self.relache:
             relache = u'Relâche'
-        l = [self.ancrage_debut.calc_lieu(tags), self.circonstance,
+        l = [self.ancrage_debut.calc_lieu(tags), circonstance,
              self.ancrage_debut.calc_heure(), relache]
         out = ', '.join(filter(bool, l))
         return replace(out, tags)

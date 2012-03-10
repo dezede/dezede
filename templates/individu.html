@@ -16,6 +16,25 @@
   <h2>
     {{ individu.nom_complet }}
   </h2>
+  <h3 title="profession{{ individu.professions.all|pluralize }}">
+    {{ individu.calc_professions|capfirst|default:'Profession inconnue' }}
+  </h3>
+  <h4>
+    {% if not individu.naissance and not individu.deces %}
+      <span title="ancrage spatio-temporel">
+        {{ individu.ancrage|default:'Époque inconnue' }}
+      </span>
+    {% else %}
+      <span title="naissance">
+        {{ individu.naissance|default:'?' }}
+      </span>
+      &ndash;
+      <span title="décès">
+        {{ individu.deces|default:'?' }}
+      </span>
+    {% endif %}
+  </h4>
+  <br />
   <table>
     <thead>
       <tr class="dt">
@@ -39,15 +58,6 @@
       <dt>Pseudonyme</dt>
       <dd>{{ individu.pseudonyme }}</dd>
     {% endif %}
-    {% if not individu.naissance and not individu.deces %}
-      <dt>Ancrage spatio-temporel</dt>
-      <dd>{{ individu.ancrage|default:'?' }}</dd>
-    {% else %}
-      <dt>Naissance</dt>
-      <dd>{{ individu.naissance|default:'?' }}</dd>
-      <dt>Décès</dt>
-      <dd>{{ individu.deces|default:'?' }}</dd>
-    {% endif %}
     <dt>Sexe</dt>
     <dd>{{ individu.get_sexe_display|default:'?' }}</dd>
     {% for parent in individu.parents.all %}
@@ -56,8 +66,6 @@
       {% endif %}
       <dd>{{ parent.link }}</dd>
     {% endfor %}
-    <dt>Profession{{ individu.professions.all|pluralize }}</dt>
-    <dd>{{ individu.calc_professions|default:'?' }}</dd>
   </dl>
   {{ individu.biographie }}
 
