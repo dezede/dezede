@@ -6,7 +6,6 @@ from filebrowser.fields import FileBrowseField
 from django.template.defaultfilters import date, time, capfirst
 from musicologie.catalogue.templatetags.extras import replace, abbreviate
 from django.core.urlresolvers import reverse
-from musicologie.settings import DATE_FORMAT
 from django.utils.html import strip_tags
 
 #
@@ -272,9 +271,17 @@ class AncrageSpatioTemporel(Model):
         if self.date:
             return self.date.day
         return None
-    def calc_date(self):
+    def calc_date(self, tags=True):
         if self.date:
-            return date(self.date, DATE_FORMAT)
+            pre = date(self.date, 'l')
+            post = date(self.date, 'F Y')
+            j = date(self.date, 'j')
+            if j == '1':
+                k = 'er'
+                if tags:
+                    k = '<sup>%s</sup>' % k
+                j += k
+            return '%s %s %s' % (pre, j, post)
         elif self.date_approx:
             return self.date_approx
         return ''
@@ -288,9 +295,9 @@ class AncrageSpatioTemporel(Model):
         return ''
     calc_heure.short_description = 'Heure'
     calc_heure.admin_order_field = 'heure'
-    def calc_moment(self):
+    def calc_moment(self, tags=True):
         out = ''
-        date = self.calc_date()
+        date = self.calc_date(True)
         heure = self.calc_heure()
         if date != '':
             if self.date:
@@ -323,7 +330,7 @@ class AncrageSpatioTemporel(Model):
             out = lieu
             if date != '' or heure != '':
                 out += ', '
-        out += self.calc_moment()
+        out += self.calc_moment(False)
         out = capfirst(out)
         return strip_tags(out)
     @staticmethod
@@ -1002,7 +1009,7 @@ class Evenement(Model):
         verbose_name = u'événement'
         ordering = ['ancrage_debut']
     def __unicode__(self):
-        out = self.ancrage_debut.calc_date()
+        out = self.ancrage_debut.calc_date(False)
         out = capfirst(out)
         out += ' ' + self.html(False)
         return strip_tags(out)
