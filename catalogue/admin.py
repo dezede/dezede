@@ -263,7 +263,7 @@ class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin):
     list_display = ('nom', 'nom_pluriel', 'classement',)
 
 class ElementDeProgrammeAdmin(VersionAdmin):
-    list_display = ('oeuvre', 'autre', 'classement',)
+    list_display = ('oeuvre', 'autre', 'classement', 'html',)
     filter_horizontal = ('caracteristiques', 'distribution', 'personnels',
         'illustrations', 'documents',)
     inlines = (EvenementInline,)

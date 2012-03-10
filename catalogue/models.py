@@ -7,6 +7,7 @@ from django.template.defaultfilters import date, time, capfirst
 from musicologie.catalogue.templatetags.extras import replace, abbreviate
 from django.core.urlresolvers import reverse
 from musicologie.settings import DATE_FORMAT
+from django.utils.html import strip_tags
 
 #
 # Définitions globales du fichier
@@ -24,6 +25,16 @@ def autoslugify(obj, nom):
         n += 1;
         nom_slug = slug_orig + str(n)
     return nom_slug
+
+def str_list(l, infix=', ', last_infix=None):
+    l = filter(bool, l)
+    suffix = ''
+    if len(l) > 1 and last_infix:
+        suffix = last_infix + l.pop()
+    return infix.join(l) + suffix
+
+def str_list_w_last(l, infix=', ', last_infix=' et '):
+    return str_list(l, infix, last_infix)
 
 def calc_pluriel(obj):
     try:
@@ -202,7 +213,7 @@ class Lieu(Model):
             self.slug = autoslugify(self, self.__unicode__())
         super(Lieu, self).save(*args, **kwargs)
     def __unicode__(self):
-        return self.html(False)
+        return strip_tags(self.html(False))
     @staticmethod
     def autocomplete_search_fields():
         return ('nom__icontains',)
@@ -314,8 +325,7 @@ class AncrageSpatioTemporel(Model):
                 out += ', '
         out += self.calc_moment()
         out = capfirst(out)
-        return out
-    __unicode__.allow_tags = True
+        return strip_tags(out)
     @staticmethod
     def autocomplete_search_fields():
         return ('lieu__nom__icontains', 'lieu__parent__nom__icontains',
@@ -362,7 +372,7 @@ class ParenteDIndividus(Model):
             out = self.type.pluriel()
         out += ' :'
         cs = self.individus_cibles.all()
-        out += ' ;'.join(filter(bool, [c.__unicode__() for c in cs]))
+        out += str_list([c.__unicode__() for c in cs], ' ; ')
         return out
 
 class Individu(Model):
@@ -447,7 +457,7 @@ class Individu(Model):
         return ''
     def calc_professions(self):
         ps = self.professions.all()
-        return ', '.join(filter(bool, [p.__unicode__() for p in ps]))
+        return str_list_w_last([p.__unicode__() for p in ps])
     calc_professions.short_description = 'professions'
     def html(self, tags=True, lon=False, prenoms_fav=True):
         designation = self.designation
@@ -469,7 +479,7 @@ class Individu(Model):
                     l.insert(max(len(l)-1, 0), prenoms)
                 else:
                     l.append(u'(%s)' % abbreviate(prenoms))
-            out = ' '.join(filter(bool, l))
+            out = str_list(l, ' ')
             if pseudonyme:
                 out += u', dit%s %s' % ('' if sexe == 'M' else 'e', pseudonyme)
             return out
@@ -503,8 +513,7 @@ class Individu(Model):
             self.slug = autoslugify(self, self.__unicode__())
         super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
-        return self.html(False)
-    __unicode__.allow_tags = True
+        return strip_tags(self.html(False))
     @staticmethod
     def autocomplete_search_fields():
         return ('nom__icontains', 'nom_naissance__icontains',
@@ -569,7 +578,7 @@ class GenreDOeuvre(Model):
     def pluriel(self):
         return calc_pluriel(self)
     def __unicode__(self):
-        return self.html(False)
+        return strip_tags(self.html(False))
     @staticmethod
     def autocomplete_search_fields():
         return ('nom__icontains', 'nom_pluriel__icontains',)
@@ -601,8 +610,7 @@ class CaracteristiqueDOeuvre(Model):
         return hlp(self.valeur, self.type, tags)
     html.allow_tags = True
     def __unicode__(self):
-        return self.type.__unicode__() + ' : ' + self.valeur
-    __unicode__.allow_tags = True
+        return self.type.__unicode__() + ' : ' + strip_tags(self.valeur)
     @staticmethod
     def autocomplete_search_fields():
         return ('type__nom__icontains', 'valeur__icontains',)
@@ -617,7 +625,7 @@ class Partie(Model):
     parente = ForeignKey('Partie', related_name='enfant', blank=True, null=True)
     classement = FloatField(default=1.0)
     class Meta:
-        ordering = ['classement']
+        ordering = ['classement', 'nom']
     def pluriel(self):
         return calc_pluriel(self)
     def __unicode__(self):
@@ -696,7 +704,7 @@ class ParenteDOeuvres(Model):
         if len(cs) > 1:
             out = self.type.pluriel()
         out += ' : '
-        out += ' ; '.join(filter(bool, [c.__unicode__() for c in cs]))
+        out += str_list([c.__unicode__() for c in cs], ' ; ')
         return out
 
 class Auteur(Model):
@@ -704,17 +712,18 @@ class Auteur(Model):
     individus = ManyToManyField(Individu, related_name='auteurs')
     def individus_html(self, tags=True):
         ins = self.individus.all()
-        return ', '.join(filter(bool, [i.html(tags) for i in ins]))
+        return str_list_w_last([i.html(tags) for i in ins])
     def html(self, tags=True):
-        out = self.individus_html(tags)
-        out += ' [%s]' % abbreviate(self.profession.__unicode__(), 1)
+        individus = self.individus_html(tags)
+        prof = abbreviate(self.profession.__unicode__(), 1)
+        out = '%s [%s]' % (individus, prof)
         return replace(out, tags)
     html.short_description = 'rendu HTML'
     html.allow_tags = True
     class Meta:
         ordering = ['profession']
     def __unicode__(self):
-        return self.html(False)
+        return strip_tags(self.html(False))
 
 class Oeuvre(Model):
     prefixe_titre = CharField(max_length=20, blank=True,
@@ -756,7 +765,7 @@ class Oeuvre(Model):
     def calc_caracteristiques(self, limite=0, tags=True):
         cs = self.caracteristiques.all()
         def clist(cs):
-            return ', '.join(filter(bool, [c.html() for c in cs]))
+            return str_list([c.html(tags) for c in cs])
         out2 = clist(cs[limite:])
         if limite:
             out1 = clist(cs[:limite])
@@ -766,27 +775,21 @@ class Oeuvre(Model):
     calc_caracteristiques.short_description = u'caractéristiques'
     def calc_pupitres(self):
         out = ''
-        pupitres = self.pupitres.all()
-        if pupitres:
-            maxi = len(pupitres) - 1
+        ps = self.pupitres.all()
+        if ps:
             out += 'pour '
-            for i, pupitre in enumerate(pupitres):
-                out += pupitre.__unicode__()
-                if i < maxi-1:
-                    out += ', '
-                elif i < maxi:
-                    out += ' et '
+            out += str_list_w_last([p.__unicode__() for p in ps])
         return out
     def calc_auteurs(self, tags=True):
         auteurs = self.auteurs.all()
-        return ', '.join(filter(bool, [a.html(tags) for a in auteurs]))
+        return str_list([a.html(tags) for a in auteurs])
     calc_auteurs.short_description = 'auteurs'
     calc_auteurs.allow_tags = True
     def calc_parentes(self, tags=True):
         out = ''
         ps = self.parentes.all()
         for p in ps:
-            out += ', '.join(filter(bool, [oe.html(tags, False, True, False) for oe in p.oeuvres_cibles.all()]))
+            out += str_list_w_last([oe.html(tags, False, True, False) for oe in p.oeuvres_cibles.all()])
             out += ', '
         return out
     def titre_complet(self):
@@ -813,19 +816,19 @@ class Oeuvre(Model):
         if titre and titre_complet:
             out += href(self.get_absolute_url(), em(titre_complet, tags), tags)
         genre = self.genre
-        caracteristiques = self.calc_caracteristiques()
+        caracteristiques = self.calc_caracteristiques(tags=tags)
         if titre and descr and titre_complet and genre and caracteristiques:
             out += ', '
         if genre:
             genre = genre.html(tags)
             pupitres = self.calc_pupitres()
             if not titre_complet:
-                cs= None
+                cs = None
                 titre_complet = self.genre.html(tags, caps=True)
                 if pupitres:
                     titre_complet += ' ' + pupitres
                 elif caracteristiques:
-                    cs = self.calc_caracteristiques(1)
+                    cs = self.calc_caracteristiques(1, tags)
                     titre_complet += ' ' + cs[0]
                     caracteristiques = cs[1]
                 if not parentes:
@@ -858,8 +861,7 @@ class Oeuvre(Model):
         self.slug = autoslugify(self, self.__unicode__())
         super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
-        return self.titre_html(False)
-    __unicode__.allow_tags = True
+        return strip_tags(self.titre_html(False))
     @staticmethod
     def autocomplete_search_fields():
         return ('prefixe_titre__icontains', 'titre__icontains',
@@ -875,7 +877,7 @@ class AttributionDePupitre(Model):
     def __unicode__(self):
         out = self.pupitre.partie.__unicode__() + ' : '
         ins = self.individus.all()
-        out += ', '.join(filter(bool, [i.__unicode__() for i in ins]))
+        out += str_list_w_last([i.__unicode__() for i in ins])
         return out
 
 class CaracteristiqueDElementDeProgramme(Model):
@@ -912,14 +914,14 @@ class ElementDeProgramme(Model):
         blank=True)
     def calc_caracteristiques(self):
         cs = self.caracteristiques.all()
-        return ', '.join(filter(bool, [c.__unicode__() for c in cs]))
+        return str_list([c.__unicode__() for c in cs])
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = u'caractéristiques'
     def html(self, tags=True):
         out = ''
         oeuvre = self.oeuvre
         if oeuvre:
-            out += oeuvre.html()
+            out += oeuvre.html(tags)
         else:
             out += self.autre
         cs = self.calc_caracteristiques()
@@ -936,7 +938,7 @@ class ElementDeProgramme(Model):
             individus = attribution.individus.all()
             maxj = len(individus) - 1
             for j, individu in enumerate(individus):
-                out += individu.html()
+                out += individu.html(tags)
                 if j < maxj:
                     out += ', '
             out += ' [%s]' % attribution.pupitre.partie.__unicode__()
@@ -950,11 +952,7 @@ class ElementDeProgramme(Model):
         verbose_name_plural = u'éléments de programme'
         ordering = ['classement', 'oeuvre']
     def __unicode__(self):
-        if self.oeuvre:
-            return self.oeuvre.__unicode__()
-        elif self.autre:
-            return self.autre
-        return self.classement.__unicode__()
+        return strip_tags(self.html(False))
     @staticmethod
     def autocomplete_search_fields():
         return ('oeuvre__prefixe_titre__icontains', 'oeuvre__titre__icontains',
@@ -994,7 +992,7 @@ class Evenement(Model):
             relache = u'Relâche'
         l = [self.ancrage_debut.calc_lieu(tags), circonstance,
              self.ancrage_debut.calc_heure(), relache]
-        out = ', '.join(filter(bool, l))
+        out = str_list(l)
         return replace(out, tags)
     html.short_description = 'rendu HTML'
     html.allow_tags = True
@@ -1004,8 +1002,8 @@ class Evenement(Model):
     def __unicode__(self):
         out = self.ancrage_debut.calc_date()
         out = capfirst(out)
-        return out + ' ' + self.html(False)
-    __unicode__.allow_tags = True
+        out += ' ' + self.html(False)
+        return strip_tags(out)
     @staticmethod
     def autocomplete_search_fields():
         return ('circonstace__icontains', 'ancrage_debut__lieu__nom__icontains',
@@ -1074,5 +1072,5 @@ class Source(Model):
             self.contenu = u'<p>&laquo;&nbsp;' + contenu[3:-4] + u'&nbsp;&raquo;</p>'
         super(Source, self).save(*args, **kwargs)
     def __unicode__(self):
-        return self.html(False)
+        return strip_tags(self.html(False))
 
