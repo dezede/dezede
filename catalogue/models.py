@@ -17,6 +17,12 @@ LOWER_MSG = u'En minuscules.'
 PLURAL_MSG = u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».'
 DATE_MSG = u'Ex. : « 6/6/1944 » pour le 6 juin 1944.'
 
+@classmethod
+def verbose_name(cls):
+    return unicode(cls._meta.verbose_name)
+
+Model.verbose_name = verbose_name
+
 def autoslugify(obj, nom):
     nom_slug = slug_orig = slugify(nom[:50])
     n = 0

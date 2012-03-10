@@ -113,6 +113,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'haystack',
     'musicologie.catalogue',
     'tinymce',
     'grappelli.dashboard',
@@ -165,4 +166,9 @@ FILEBROWSER_VERSIONS = {
 }
 
 FILEBROWSER_ADMIN_VERSIONS = []
+
+HAYSTACK_SITECONF = 'musicologie.search_sites'
+HAYSTACK_SEARCH_ENGINE = 'whoosh'
+HAYSTACK_WHOOSH_PATH = os.path.join(os.path.dirname(__file__), 'whoosh_index')
+HAYSTACK_CUSTOM_HIGHLIGHTER = 'musicologie.catalogue.utils.CustomHighlighter'
 
