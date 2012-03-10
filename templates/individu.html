@@ -23,10 +23,12 @@
         <th class="right">Nom</th>
       </tr>
     </thead>
-    <tr>
-      <td>{{ individu.calc_prenoms|default:'?' }}</td>
-      <td class="right">{{ individu.nom|default:'?' }}</td>
-    </tr>
+    <tbody>
+      <tr>
+        <td>{{ individu.calc_prenoms|default:'?' }}</td>
+        <td class="right">{{ individu.nom|default:'?' }}</td>
+      </tr>
+    </tbody>
   </table>
   <dl>
     {% if individu.nom_naissance %}

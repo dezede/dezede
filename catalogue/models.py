@@ -375,9 +375,10 @@ class Individu(Model):
     pseudonyme = CharField(max_length=200, blank=True)
     DESIGNATIONS = (
         ('S', 'Standard (nom, prénoms et pseudonyme)'),
-        ('P', 'Pseudonyme'),
-        ('L', 'Nom de famille'),
-        ('F', 'Prénom(s) favori(s)'),
+        ('P', 'Pseudonyme (uniquement)'),
+        ('L', 'Nom de famille (uniquement)'), # L pour Last name
+        ('B', 'Nom de naissance (standard)'), # B pour Birth name
+        ('F', 'Prénom(s) favori(s) (uniquement)'), # F pour First name
     )
     designation = CharField(max_length=1, choices=DESIGNATIONS, default='S')
     SEXES = (
@@ -423,10 +424,6 @@ class Individu(Model):
     calc_prenoms.short_description = u'prénoms'
     def calc_fav_prenoms(self):
         return self.calc_prenoms_methode(True)
-    def calc_pseudonyme(self):
-        if self.pseudonyme:
-            return self.pseudonyme
-        return 'Aucun'
     def calc_titre(self, tags=True):
         titres = {}
         if tags:
@@ -436,30 +433,6 @@ class Individu(Model):
         if self.sexe:
             return small(titres[self.sexe], tags)
         return ''
-    def calc_designation(self):
-        out = ''
-        designation = self.designation
-        prenoms = self.calc_fav_prenoms()
-        nom = self.nom
-        pseudonyme = self.pseudonyme
-        sexe = self.sexe
-        if prenoms and (designation == 'F' or designation == 'S'):
-            out += prenoms
-            if nom and designation == 'S':
-                out += ' '
-        elif sexe and not prenoms and designation == 'S':
-            out += self.calc_titre()
-            if nom:
-                out += ' '
-        if nom and (designation == 'L' or designation == 'S'):
-            out += nom
-            if designation == 'S':
-                out += ' '
-        if pseudonyme and (designation == 'P' or designation == 'S'):
-            if designation == 'S':
-                out += ', dit '
-            out += pseudonyme
-        return out
     def naissance(self):
         if self.ancrage_naissance:
             return self.ancrage_naissance.__unicode__()
@@ -478,31 +451,37 @@ class Individu(Model):
     calc_professions.short_description = 'professions'
     def html(self, tags=True, lon=False, prenoms_fav=True):
         designation = self.designation
-        titre = ''
-        prenoms = None
-        if prenoms_fav:
-            prenoms = self.calc_fav_prenoms()
-        else:
-            prenoms = self.calc_prenoms()
+        sexe = self.sexe
+        titre = self.calc_titre(tags)
+        prenoms = self.calc_prenoms_methode(prenoms_fav)
         nom = self.nom
-        out = ''
-        if designation == 'S' and (lon or nom and not prenoms) and self.sexe:
-            titre = self.calc_titre(tags)
-            out += titre + ' '
-        out_des = ''
-        if designation == 'F':
-            out_des += prenoms
-        elif designation == 'P':
-            out_des += self.pseudonyme
-        else:
-            out_des += nom
-        out_des = sc(out_des, tags)
-        out += out_des
-        if designation == 'S' and prenoms:
-            if lon:
-                out = ' '.join(filter(bool, [titre, small(prenoms, tags), out_des]))
-            else:
-                out += ' (%s)' % abbreviate(prenoms)
+        pseudonyme = self.pseudonyme
+        nom_naissance = self.nom_naissance
+        def main_style(s):
+            return sc(s, tags)
+        def standard(main):
+            l, out = [], ''
+            if nom and not prenoms or lon:
+                l.append(titre)
+            l.append(main)
+            if prenoms:
+                if lon:
+                    l.insert(max(len(l)-1, 0), prenoms)
+                else:
+                    l.append(u'(%s)' % abbreviate(prenoms))
+            out = ' '.join(filter(bool, l))
+            if pseudonyme:
+                out += u', dit%s %s' % ('' if sexe == 'M' else 'e', pseudonyme)
+            return out
+        main_choices = {
+          'S': nom,
+          'F': prenoms,
+          'L': nom,
+          'P': pseudonyme,
+          'B': nom_naissance,
+        }
+        main = main_style(main_choices[designation])
+        out = standard(main) if designation in ('S', 'B',) else main
         url = ''
         if tags:
             url = self.get_absolute_url()
@@ -867,7 +846,9 @@ class Oeuvre(Model):
         return replace(out, tags)
     html.short_description = 'rendu HTML'
     html.allow_tags = True
-    def calc_description(self, tags=True):
+    def titre_html(self, tags=True):
+        return self.html(tags, False, True, False)
+    def description_html(self, tags=True):
         return self.html(tags, False, False, True)
     class Meta:
         verbose_name = u'œuvre'
@@ -877,7 +858,7 @@ class Oeuvre(Model):
         self.slug = autoslugify(self, self.__unicode__())
         super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
-        return self.html(False, False, True, False)
+        return self.titre_html(False)
     __unicode__.allow_tags = True
     @staticmethod
     def autocomplete_search_fields():

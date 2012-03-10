@@ -9,10 +9,10 @@
 
 {% block body %}
   <h2>
-    {{ oeuvre }}
+    {{ oeuvre.titre_html }}
   </h2>
   <h3>
-    {{ oeuvre.calc_description }}
+    {{ oeuvre.description_html }}
   </h3>
   <dl>
     {% if oeuvre.calc_auteurs %}

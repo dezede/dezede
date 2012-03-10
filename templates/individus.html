@@ -12,19 +12,19 @@
     {% if forloop.first %}
       <table class="liste">
         <thead>
-          <td>Nom</td>
-          <td>Prénom(s)</td>
-          <td>Pseudonyme</td>
-          <td>Naissance</td>
-          <td>Décès</td>
-          <td>Professions</td>
+          <th class="right">Prénom(s)</th>
+          <th>Nom</th>
+          <th>Pseudonyme</th>
+          <th>Naissance</th>
+          <th>Décès</th>
+          <th>Professions</th>
         </thead>
         <tbody>
     {% endif %}
-    <tr onclick="document.location = '{% url 'catalogue.views.index_individus' %}{{ individu.slug }}';" title="Ouvrir l'autorité">
+    <tr onclick="document.location = '{{ individu.get_absolute_url }}';" title="Ouvrir l'autorité">
+      <td class="right">{{ individu.calc_prenoms|default:'?' }}</td>
       <td>{{ individu.nom }}</td>
-      <td>{{ individu.calc_prenoms|default:'?' }}</td>
-      <td>{{ individu.calc_pseudonyme }}</td>
+      <td>{{ individu.pseudonyme }}</td>
       <td>{{ individu.naissance }}</td>
       <td>{{ individu.deces }}</td>
       <td>

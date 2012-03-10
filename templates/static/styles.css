@@ -52,9 +52,14 @@ ol
   margin: 0;
 }
 
-.liste td
+.liste th
 {
-  border: 1px solid black;
+  border-bottom: 1px solid black;
+  font-weight: bold;
+}
+
+.liste td, .liste th
+{
   padding: 2px 5px;
   padding-right: 10px;
 }
@@ -63,11 +68,6 @@ ol
 {
   cursor: pointer;
   background-color: lightgrey;
-}
-
-.liste
-{
-  border-collapse: collapse;
 }
 
 .warning
