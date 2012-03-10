@@ -806,12 +806,14 @@ class Oeuvre(Model):
                 out += self.titre_secondaire
         return out
     def html(self, tags=True, auteurs=True, titre=True, descr=True):
+        # TODO: Nettoyer cette horreur
         out = u''
         auts = self.calc_auteurs(tags)
         if auteurs and auts:
             out += auts + ', '
         parentes = self.calc_parentes(tags)
-        out += parentes
+        if titre:
+            out += parentes
         titre_complet = self.titre_complet()
         if titre and titre_complet:
             out += href(self.get_absolute_url(), em(titre_complet, tags), tags)
