@@ -58,8 +58,10 @@
       <dt>Pseudonyme</dt>
       <dd>{{ individu.pseudonyme }}</dd>
     {% endif %}
-    <dt>Sexe</dt>
-    <dd>{{ individu.get_sexe_display|default:'?' }}</dd>
+    {% if individu.designation == 'P' %}
+      <dt>Sexe</dt>
+      <dd>{{ individu.get_sexe_display|default:'?' }}</dd>
+    {% endif %}
     {% for parent in individu.parents.all %}
       {% if forloop.first %}
         <dt>Parents</dt>
