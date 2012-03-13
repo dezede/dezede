@@ -75,19 +75,18 @@
 
     {% for enfant in individu.enfants.all %}
       {% if forloop.first %}
-        <dt>Enfant(s)</dt>
+        <dt>Enfant{{ individu.enfants.all|pluralize }}</dt>
       {% endif %}
         <dd>{{ enfant.link }}</dd>
     {% endfor %}
-    {% for auteur in individu.auteurs.all %}
+    {% for oeuvre in individu.oeuvres.all %}
       {% if forloop.first %}
-        <dt>Oeuvre(s)</dt>
+        <dt>Oeuvre{{ individu.oeuvres.all|pluralize }}</dt>
       {% endif %}
-      {% for oeuvre in auteur.oeuvres.all %}
-        <dd>{{ oeuvre.link }}</dd>
-      {% endfor %}
+      <dd>{{ oeuvre.link }}</dd>
     {% endfor %}
   </dl>
+  <br />
   <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">
     [Modifier]
   </a>

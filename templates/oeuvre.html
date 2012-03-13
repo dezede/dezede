@@ -14,9 +14,10 @@
   <h3>
     {{ oeuvre.description_html }}
   </h3>
+  <br />
   <dl>
-    {% if oeuvre.calc_auteurs %}
-      <dt>Auteur(s)</dt>
+    {% if oeuvre.auteurs.all %}
+      <dt>Auteur{{ oeuvre.individus_auteurs.all|pluralize }}</dt>
       <dd>{{ oeuvre.calc_auteurs }}</dd>
     {% endif %}
     {% if oeuvre.ancrage_composition %}
@@ -24,16 +25,16 @@
       <dd>{{ oeuvre.ancrage_composition }}</dd>
     {% endif %}
 
-    {% for element in oeuvre.elements_de_programme.all %}
+    {% for evenement in oeuvre.evenements.all %}
       {% if forloop.first %}
-        <dt>Événement(s)</dt>
+        <dt>Événement{{ oeuvre.evenements.all|pluralize }}</dt>
       {% endif %}
-      {% for evenement in element.evenements.all %}
-        <dd>{{ evenement.link }}</dd>
-      {% endfor %}
+    <dd>{{ evenement.link }}</dd>
     {% endfor %}
   </dl>
+  <br />
   <a href="{% url 'admin:catalogue_oeuvre_change' oeuvre.pk %}">
     [Modifier]
   </a>
 {% endblock %}
+

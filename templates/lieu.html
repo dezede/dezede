@@ -17,14 +17,14 @@
   <dl>
     {% for enfant in lieu.enfants.all %}
       {% if forloop.first %}
-        <dt>Lieux contenus dans {{ lieu.nom }}</dt>
+        <dt>Lieu{{ lieu.enfants.all|pluralize:"x" }} contenus dans {{ lieu.nom }}</dt>
       {% endif %}
       <dd><a href="{% url 'catalogue.views.index_lieux' %}{{ enfant.slug }}">{{ enfant.nom }}</a></dd>
     {% endfor %}
-    {% for evenement in lieu.evenements %}
+    {% for evenement in lieu.evenements.all %}
       {% if forloop.first %}
         <dt>
-          Événement(s)
+          Événement{{ lieu.evenements.all|pluralize }}
           <a href="{% url 'catalogue.views.index_evenements' lieu.slug %}">
             (afficher tous)
           </a>

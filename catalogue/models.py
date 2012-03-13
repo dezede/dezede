@@ -422,6 +422,11 @@ class Individu(Model):
         return self.html()
     link.short_description = 'permalien'
     link.allow_tags = True
+    def oeuvres(self):
+        q = Oeuvre.objects.none()
+        for auteur in self.auteurs.all():
+            q |= auteur.oeuvres.all()
+        return q
     def calc_prenoms_methode(self, fav):
         prenoms = self.prenoms.all().order_by('classement', 'prenom')
         if fav:
@@ -760,6 +765,16 @@ class Oeuvre(Model):
         return self.html(True, False, True, True)
     link.short_description = 'permalien'
     link.allow_tags = True
+    def individus_auteurs(self):
+        q = Individu.objects.none()
+        for auteur in self.auteurs.all():
+            q |= auteur.individus.all()
+        return q
+    def evenements(self):
+        q = Evenement.objects.none()
+        for element in self.elements_de_programme.all():
+            q |= element.evenements.all()
+        return q
     def calc_caracteristiques(self, limite=0, tags=True):
         cs = self.caracteristiques.all()
         def clist(cs):
