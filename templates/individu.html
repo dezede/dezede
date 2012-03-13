@@ -85,6 +85,12 @@
       {% endif %}
       <dd>{{ oeuvre.link }}</dd>
     {% endfor %}
+    {% for evenement in individu.apparitions.all %}
+      {% if forloop.first %}
+        <dt>Apparition{{ individu.apparitions.all|pluralize }}</dt>
+      {% endif %}
+      <dd>{{ evenement.link }}</dd>
+    {% endfor %}
   </dl>
   <br />
   <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">

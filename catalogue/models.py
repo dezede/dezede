@@ -426,7 +426,15 @@ class Individu(Model):
         q = Oeuvre.objects.none()
         for auteur in self.auteurs.all():
             q |= auteur.oeuvres.all()
-        return q
+        return q.distinct()
+    def apparitions(self):
+        q = Evenement.objects.none()
+        els = ElementDeProgramme.objects.none()
+        for attribution in self.attributions_de_pupitre.all():
+            els |= attribution.elements_de_programme.all()
+        for el in els.distinct():
+            q |= el.evenements.all()
+        return q.distinct()
     def calc_prenoms_methode(self, fav):
         prenoms = self.prenoms.all().order_by('classement', 'prenom')
         if fav:
@@ -770,12 +778,12 @@ class Oeuvre(Model):
         q = Individu.objects.none()
         for auteur in self.auteurs.all():
             q |= auteur.individus.all()
-        return q
+        return q.distinct()
     def evenements(self):
         q = Evenement.objects.none()
         for element in self.elements_de_programme.all():
             q |= element.evenements.all()
-        return q
+        return q.distinct()
     def calc_caracteristiques(self, limite=0, tags=True):
         cs = self.caracteristiques.all()
         def clist(cs):
