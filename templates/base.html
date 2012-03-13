@@ -3,6 +3,9 @@
 <!DOCTYPE HTML>
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="musicologie, base de données, database" />
+    <meta name="author" content="Bertrand Bordage" />
     <title>
       {% block title %}{% endblock %}
     </title>
@@ -10,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles.css" />
   </head>
   <body>
-    <nav id="navbar">
+    <nav>
       <a href="{% url 'catalogue.views.index_lieux' %}">Lieux</a> |
       <a href="{% url 'catalogue.views.index_evenements' %}">Événements</a> |
       <a href="{% url 'catalogue.views.index_individus' %}">Individus</a> |
@@ -21,9 +24,9 @@
       {% autoescape off %}
         <noscript>
           Votre navigateur ne peut pas lancer javascript.
-          Certaines fonctionnalités peuvent ne pas fonctionner.
+          Attendez-vous à des défauts de fonctionnement.
         </noscript>
-        {% block body %} {% endblock %}
+        {% block body %}{% endblock %}
       {% endautoescape %}
     </div>
   </body>

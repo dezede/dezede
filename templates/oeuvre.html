@@ -16,29 +16,23 @@
   </h3>
   <dl>
     {% if oeuvre.calc_auteurs %}
-      <dt>Auteur{{ oeuvre.auteurs.count|pluralize }}</dt>
+      <dt>Auteur(s)</dt>
       <dd>{{ oeuvre.calc_auteurs }}</dd>
     {% endif %}
     {% if oeuvre.ancrage_composition %}
       <dt>Composition</dt>
       <dd>{{ oeuvre.ancrage_composition }}</dd>
     {% endif %}
-  </dl>
-  {% for element in oeuvre.elements_de_programme.all %}
-    {% if forloop.first %}
-      <hr />
-      <h4>Événement(s) :</h4>
-      <ul>
-    {% endif %}
-    {% for evenement in element.evenements.all %}
-      <li>
-        {{ evenement.link }}
-      </li>
+
+    {% for element in oeuvre.elements_de_programme.all %}
+      {% if forloop.first %}
+        <dt>Événement(s)</dt>
+      {% endif %}
+      {% for evenement in element.evenements.all %}
+        <dd>{{ evenement.link }}</dd>
+      {% endfor %}
     {% endfor %}
-    {% if forloop.last %}
-      </ul>
-    {% endif %}
-  {% endfor %}
+  </dl>
   <a href="{% url 'admin:catalogue_oeuvre_change' oeuvre.pk %}">
     [Modifier]
   </a>

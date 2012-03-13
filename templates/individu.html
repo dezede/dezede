@@ -66,34 +66,26 @@
       {% endif %}
       <dd>{{ parent.link }}</dd>
     {% endfor %}
-  </dl>
-  {{ individu.biographie }}
+    {% if individu.biographie %}
+      <dt>Biographie</dt>
+      <dd>{{ individu.biographie }}</dd>
+    {% endif %}
 
-  {% for enfant in individu.enfants.all %}
-    {% if forloop.first %}
-      <h4>Enfants :</h4>
-      <ul>
-    {% endif %}
-      <li><a href="{% url 'catalogue.views.index_individus' %}{{ enfant.slug }}">{{ enfant }}</a></li>
-    {% if forloop.last %}
-      </ul>
-    {% endif %}
-  {% endfor %}
-  {% for auteur in individu.auteurs.all %}
-    {% if forloop.first %}
-      <hr />
-      <h4>Oeuvres :</h4>
-      <ul>
-    {% endif %}
-    {% for oeuvre in auteur.oeuvres.all %}
-      <li>
-        {{ oeuvre.link }}
-      </li>
+    {% for enfant in individu.enfants.all %}
+      {% if forloop.first %}
+        <dt>Enfant(s)</dt>
+      {% endif %}
+        <dd>{{ enfant.link }}</dd>
     {% endfor %}
-    {% if forloop.last %}
-      </ul>
-    {% endif %}
-  {% endfor %}
+    {% for auteur in individu.auteurs.all %}
+      {% if forloop.first %}
+        <dt>Oeuvre(s)</dt>
+      {% endif %}
+      {% for oeuvre in auteur.oeuvres.all %}
+        <dd>{{ oeuvre.link }}</dd>
+      {% endfor %}
+    {% endfor %}
+  </dl>
   <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">
     [Modifier]
   </a>

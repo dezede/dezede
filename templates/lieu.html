@@ -11,40 +11,43 @@
   <h2>
     {{ lieu.nom }}{% if lieu.parent %}, <a href="{% url 'catalogue.views.detail_lieu' lieu.parent.slug %}">{{ lieu.parent.nom }}</a>{% endif %}
   </h2>
-  Nature : {{ lieu.nature|capfirst }}<br />
-  {% for enfant in lieu.enfants.all %}
-    {% if forloop.first %}Lieux contenus dans {{ lieu.nom }} :<ul>{% endif %}
-    <li><a href="{% url 'catalogue.views.index_lieux' %}{{ enfant.slug }}">{{ enfant.nom }}</a></li>
-    {% if forloop.last %}</ul>{% endif %}
-  {% endfor %}
-  {% for evenement in lieu.evenements %}
-    {% if forloop.first %}
-      <a href="{% url 'catalogue.views.index_evenements' lieu.slug %}">Événements :</a>
-      <ul>
+  <h3 title="nature">
+    {{ lieu.nature|capfirst }}
+  </h3>
+  <dl>
+    {% for enfant in lieu.enfants.all %}
+      {% if forloop.first %}
+        <dt>Lieux contenus dans {{ lieu.nom }}</dt>
+      {% endif %}
+      <dd><a href="{% url 'catalogue.views.index_lieux' %}{{ enfant.slug }}">{{ enfant.nom }}</a></dd>
+    {% endfor %}
+    {% for evenement in lieu.evenements %}
+      {% if forloop.first %}
+        <dt>
+          Événement(s)
+          <a href="{% url 'catalogue.views.index_evenements' lieu.slug %}">
+            (afficher tous)
+          </a>
+        </dt>
+      {% endif %}
+      <dd>
+        {% with evenement.ancrage_debut as date %}
+          <a href="{% url 'catalogue.views.index_evenements' lieu.slug date.year date.month date.day %}">
+            {{ date.calc_moment|capfirst }}
+          </a>
+        {% endwith %}
+      </dd>
+    {% empty %}
+      {% if not lieu.enfants.all %}
+        Aucun événement référencé pour ce lieu.<br />
+      {% endif %}
+    {% endfor %}
+    <br />
+    {% if lieu.historique %}
+      <dt>Historique</dt>
+      <dd>{{ lieu.historique }}</dd>
     {% endif %}
-    <li>
-      <a href="{% url 'catalogue.views.index_evenements' lieu.slug evenement.ancrage_debut.year evenement.ancrage_debut.month evenement.ancrage_debut.day %}">
-        {{ evenement.ancrage_debut.calc_moment|capfirst }} :
-        <ol>
-          {% for element in evenement.programme.all %}
-            <li>{{ element.html }}</li>
-          {% endfor %}
-        </ol>
-      </a>
-    </li>
-    {% if forloop.last %}
-      </ul>
-    {% endif %}
-  {% empty %}
-    {% if not lieu.enfants.all %}
-      Aucun événement référencé pour ce lieu.<br />
-    {% endif %}
-  {% endfor %}
-  <br />
-  {% if lieu.historique %}
-    <h4>Historique :</h4>
-    {{ lieu.historique }}
-  {% endif %}
+  </dl>
   <a href="{% url 'admin:catalogue_lieu_change' lieu.pk %}">
     [Modifier]
   </a>

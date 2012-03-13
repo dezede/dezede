@@ -3,7 +3,7 @@ body
   margin: 0px;
 }
 
-#navbar
+nav
 {
   width: 768px;
   margin: 0px auto;
@@ -13,28 +13,32 @@ body
   border-top: none;
 }
 
-#navbar a
-{
-  display: inline-block;
-  padding: 4px 8px;
-  text-decoration: none;
-  font-weight: bold;
-}
-
 a
 {
   color: black;
   text-decoration: none;
-  transition: color 0.3s ease;
-  -moz-transition: color 0.3s ease;
-  -webkit-transition: color 0.3s ease;
-  -o-transition: color 0.3s ease;
+  transition: color 0.3s ease-out 0s;
+  -moz-transition: color 0.3s ease-out 0s;
+  -webkit-transition: color 0.3s ease-out 0s;
+  -o-transition: color 0.3s ease-out 0s;
 }
 
 a:hover
 {
   color: red;
   text-decoration: underline;
+}
+
+nav>a
+{
+  display: inline-block;
+  padding: 4px 8px;
+  font-weight: bold;
+}
+
+nav>a:hover
+{
+  text-decoration: none;
 }
 
 h1, h2, h3, h4, h5, h6
@@ -77,7 +81,7 @@ ol
 .liste tbody tr:hover
 {
   cursor: pointer;
-  background-color: lightgrey;
+  background-color: lightGrey;
 }
 
 .warning

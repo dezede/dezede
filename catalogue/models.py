@@ -296,20 +296,14 @@ class AncrageSpatioTemporel(Model):
     calc_heure.short_description = 'Heure'
     calc_heure.admin_order_field = 'heure'
     def calc_moment(self, tags=True):
-        out = ''
+        l = []
         date = self.calc_date(True)
         heure = self.calc_heure()
-        if date != '':
-            if self.date:
-                out += u'le '
-            out += date
-            if heure != '':
-                out += ' '
-        if heure != '':
-            if self.heure:
-                out += u'à '
-            out += heure
-        return out
+        pat_date = u'le %s' if self.date else u'%s'
+        pat_heure = u'à %s' if self.heure else u'%s'
+        l.append(pat_date % date)
+        l.append(pat_heure % heure)
+        return str_list(l, ' ')
     def calc_lieu(self, tags=True):
         if self.lieu:
             return self.lieu.html(tags)
@@ -324,13 +318,10 @@ class AncrageSpatioTemporel(Model):
         verbose_name_plural = u'ancrages spatio-temporels'
         ordering = ['date', 'heure', 'lieu', 'date_approx', 'heure_approx', 'lieu_approx']
     def __unicode__(self):
-        out = ''
-        lieu = self.calc_lieu(False)
-        if lieu != '':
-            out = lieu
-            if date != '' or heure != '':
-                out += ', '
-        out += self.calc_moment(False)
+        l = []
+        l.append(self.calc_lieu(False))
+        l.append(self.calc_moment(False))
+        out = str_list(l)
         out = capfirst(out)
         return strip_tags(out)
     @staticmethod
@@ -864,7 +855,7 @@ class Oeuvre(Model):
         return self.html(tags, False, False, True)
     class Meta:
         verbose_name = u'œuvre'
-        ordering = ['slug']
+        ordering = ['genre', 'slug']
     def save(self, *args, **kwargs):
         super(Oeuvre, self).save(*args, **kwargs)
         self.slug = autoslugify(self, self.__unicode__())
@@ -939,10 +930,7 @@ class ElementDeProgramme(Model):
         distribution = self.distribution.all()
         maxi = len(distribution) - 1
         if distribution:
-            if tags:
-                out += '. &mdash; '
-            else:
-                out += u'. — '
+            out += '. &mdash; ' if tags else u'. — '
         for i, attribution in enumerate(distribution):
             individus = attribution.individus.all()
             maxj = len(individus) - 1
