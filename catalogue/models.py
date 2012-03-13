@@ -374,7 +374,7 @@ class ParenteDIndividus(Model):
         return out
 
 class Individu(Model):
-    nom = CharField(max_length=200)
+    nom = CharField(max_length=200) # TODO: rendre ce champ "blank"
     nom_naissance = CharField(max_length=200, blank=True,
         verbose_name=u'nom de naissance', help_text='''
         Ne remplir que s'il est différent du nom d'usage.''')
@@ -508,10 +508,11 @@ class Individu(Model):
         ordering = ['nom']
     def save(self, *args, **kwargs):
         super(Individu, self).save(*args, **kwargs)
-        new_slug = slugify(self.nom)
-        individus = Individu.objects.filter(slug=new_slug)
-        if individus.count() == individus.filter(pk=self.pk).count():
-            self.slug = new_slug
+        if self.nom:
+            new_slug = slugify(self.nom)
+            individus = Individu.objects.filter(slug=new_slug)
+            if individus.count() == individus.filter(pk=self.pk).count():
+                self.slug = new_slug
         else:
             self.slug = autoslugify(self, self.__unicode__())
         super(Individu, self).save(*args, **kwargs)

@@ -14,6 +14,7 @@
   <h3 title="nature">
     {{ lieu.nature|capfirst }}
   </h3>
+  <br />
   <dl>
     {% for enfant in lieu.enfants.all %}
       {% if forloop.first %}
@@ -47,6 +48,7 @@
       <dd>{{ lieu.historique }}</dd>
     {% endif %}
   </dl>
+  <br />
   <a href="{% url 'admin:catalogue_lieu_change' lieu.pk %}">
     [Modifier]
   </a>
