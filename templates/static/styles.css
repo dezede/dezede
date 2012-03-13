@@ -106,10 +106,25 @@ ol
   margin: 0.75em 0 0.5em 0;
 }
 
+dl
+{
+  margin: 0;
+}
+
 dt, .dt
 {
   color: grey;
   font-size: 14px;
+}
+
+dd p:first-child
+{
+  margin-top: 0;
+}
+
+dd p:last-child
+{
+  margin-bottom: 0;
 }
 
 .right
