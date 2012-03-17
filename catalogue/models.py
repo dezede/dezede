@@ -355,7 +355,7 @@ class TypeDeParenteDIndividus(Model):
 class ParenteDIndividus(Model):
     type = ForeignKey(TypeDeParenteDIndividus, related_name='parentes')
     individus_cibles = ManyToManyField('Individu',
-        related_name='parentes_cibles', verbose_name='individus cibles')
+        related_name='enfances_cibles', verbose_name='individus cibles')
     class Meta:
         verbose_name = u"parenté d'individus"
         verbose_name_plural = u"parentés d'individus"
@@ -701,7 +701,7 @@ class TypeDeParenteDOeuvres(Model):
 class ParenteDOeuvres(Model):
     type = ForeignKey(TypeDeParenteDOeuvres, related_name='parentes')
     oeuvres_cibles = ManyToManyField('Oeuvre',
-        related_name='parentes_cibles', verbose_name='oeuvres cibles')
+        related_name='enfances_cibles', verbose_name='oeuvres cibles')
     class Meta:
         verbose_name = u"parenté d'œuvres"
         verbose_name_plural = u"parentés d'œuvres"
@@ -827,18 +827,18 @@ class Oeuvre(Model):
         # TODO: Nettoyer cette horreur
         out = u''
         auts = self.calc_auteurs(tags)
-        if auteurs and auts:
-            out += auts + ', '
         parentes = self.calc_parentes(tags)
-        if titre:
-            out += parentes
         titre_complet = self.titre_complet()
-        if titre and titre_complet:
-            out += href(self.get_absolute_url(), em(titre_complet, tags), tags)
         genre = self.genre
         caracteristiques = self.calc_caracteristiques(tags=tags)
-        if titre and descr and titre_complet and genre and caracteristiques:
-            out += ', '
+        if auteurs and auts:
+            out += auts + ', '
+        if titre:
+            out += parentes
+            if titre_complet:
+                out += href(self.get_absolute_url(), em(titre_complet, tags), tags)
+                if descr and genre:
+                    out += ', '
         if genre:
             genre = genre.html(tags)
             pupitres = self.calc_pupitres()
