@@ -1,3 +1,13 @@
+html:lang(fr)
+{
+  quotes: "« " " »" "“ " " ”";
+}
+
+html:lang(en)
+{
+  quotes: "“ " " ”" "‘ " " ’";
+}
+
 body
 {
   margin: 0px;
@@ -90,10 +100,30 @@ ol
   border: 1px solid black;
 }
 
-.source p
+.source>p
 {
   text-align: justify;
-  margin: .5em 0 0 0;
+  margin: .5em 0;
+}
+
+.source>p:first-of-type
+{
+  margin-top: 0;
+}
+
+.source>p:last-of-type
+{
+  margin-bottom: 0;
+}
+
+.source>p:first-child:before
+{
+  content: open-quote;
+}
+
+.source>p:last-of-type:after
+{
+  content: close-quote;
 }
 
 .source-ref
@@ -117,12 +147,12 @@ dt, .dt
   font-size: 14px;
 }
 
-dd p:first-child
+dd>p:first-child
 {
   margin-top: 0;
 }
 
-dd p:last-child
+dd>p:last-child
 {
   margin-bottom: 0;
 }

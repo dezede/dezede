@@ -57,17 +57,15 @@ def calc_pluriel(obj):
 def ex(txt):
     return u'Exemple : « %s »' % txt
 
+def no(txt):
+    return u'n°\u00A0%s' % txt
+
 # Fonctions HTML
 
 def em(txt, tags=True):
     if tags:
         return u'<em>%s</em>' % txt
     return txt
-
-def no(txt, tags=True):
-    if tags:
-        return u'n°&nbsp;%s' % txt
-    return u'n° %s' % txt
 
 def href(url, txt, tags=True):
     if tags:
@@ -96,7 +94,7 @@ def small(txt, tags=True):
 def save(self, *args, **kwargs):
     try:
         for field in self._meta.fields:
-            if field.__class__.__name__ == 'HTMLField':
+            if field.__class__.__name__ in ['CharField', 'HTMLField']:
                 value = replace(getattr(self, field.attname))
                 setattr(self, field.attname, value)
     except:
@@ -208,7 +206,7 @@ class Lieu(Model):
             nom += parent.nom + ', '
         nom += self.nom
         out = href(self.get_absolute_url(), nom, tags)
-        return replace(out, tags)
+        return out
     html.short_description = 'rendu HTML'
     html.allow_tags = True
     class Meta:
@@ -505,7 +503,7 @@ class Individu(Model):
         if tags:
             url = self.get_absolute_url()
         out = href(url, out, tags)
-        return replace(out, tags)
+        return out
     html.short_description = 'rendu HTML'
     html.allow_tags = True
     def nom_complet(self, tags=True, prenoms_fav=True):
@@ -727,7 +725,7 @@ class Auteur(Model):
         individus = self.individus_html(tags)
         prof = abbreviate(self.profession.__unicode__(), 1)
         out = '%s [%s]' % (individus, prof)
-        return replace(out, tags)
+        return out
     html.short_description = 'rendu HTML'
     html.allow_tags = True
     class Meta:
@@ -863,12 +861,14 @@ class Oeuvre(Model):
                 out += genre
         if descr and caracteristiques:
             if out:
+                # TODO: BUG : le validateur HTML supprime l'espace qu'on ajoute
+                #       ci-dessous si on ne le met pas en syntaxe HTML
                 if tags:
                     out += '&#32;'
                 else:
                     out += ' '
             out += caracteristiques
-        return replace(out, tags)
+        return out
     html.short_description = 'rendu HTML'
     html.allow_tags = True
     def titre_html(self, tags=True):
@@ -952,7 +952,7 @@ class ElementDeProgramme(Model):
         distribution = self.distribution.all()
         maxi = len(distribution) - 1
         if distribution:
-            out += '. &mdash; ' if tags else u'. — '
+            out += u'. — '
         for i, attribution in enumerate(distribution):
             individus = attribution.individus.all()
             maxj = len(individus) - 1
@@ -963,7 +963,7 @@ class ElementDeProgramme(Model):
             out += ' [%s]' % attribution.pupitre.partie.__unicode__()
             if i < maxi:
                 out += ', '
-        return replace(out, tags)
+        return out
     html.short_description = 'rendu HTML'
     html.allow_tags = True
     class Meta:
@@ -1012,7 +1012,7 @@ class Evenement(Model):
         l = [self.ancrage_debut.calc_lieu(tags), circonstance,
              self.ancrage_debut.calc_heure(), relache]
         out = str_list(l)
-        return replace(out, tags)
+        return out
     html.short_description = 'rendu HTML'
     html.allow_tags = True
     class Meta:
@@ -1071,12 +1071,12 @@ class Source(Model):
         l = []
         l.append('%s' % em(self.nom, tags))
         if self.numero:
-            l.append(no(self.numero, tags))
+            l.append(no(self.numero))
         l.append('du %s' % date_html(self.date, tags))
         if self.page:
             l.append('p. %s' % self.page)
         out = ' '.join(l)
-        return replace(out, tags)
+        return out
     html.short_description = 'rendu HTML'
     html.allow_tags = True
     def disp_contenu(self):
@@ -1085,11 +1085,6 @@ class Source(Model):
     disp_contenu.allow_tags = True
     class Meta:
         ordering = ['date', 'nom', 'numero', 'page', 'type']
-    def save(self, *args, **kwargs):
-        contenu = self.contenu
-        if contenu[:3] == '<p>' and contenu[-4:] == '</p>' and contenu[3:10] != '&laquo;':
-            self.contenu = u'<p>&laquo;&nbsp;' + contenu[3:-4] + u'&nbsp;&raquo;</p>'
-        super(Source, self).save(*args, **kwargs)
     def __unicode__(self):
         return strip_tags(self.html(False))
 
