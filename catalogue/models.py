@@ -25,6 +25,17 @@ def autoslugify(obj, nom):
         nom_slug = slug_orig + str(n)
     return nom_slug
 
+def date_html(d, tags=True):
+    pre = date(d, 'l')
+    post = date(d, 'F Y')
+    j = date(d, 'j')
+    if j == '1':
+        k = 'er'
+        if tags:
+            k = '<sup>%s</sup>' % k
+        j += k
+    return '%s %s %s' % (pre, j, post)
+
 def str_list(l, infix=', ', last_infix=None):
     l = filter(bool, l)
     suffix = ''
@@ -273,31 +284,19 @@ class AncrageSpatioTemporel(Model):
         return None
     def calc_date(self, tags=True):
         if self.date:
-            pre = date(self.date, 'l')
-            post = date(self.date, 'F Y')
-            j = date(self.date, 'j')
-            if j == '1':
-                k = 'er'
-                if tags:
-                    k = '<sup>%s</sup>' % k
-                j += k
-            return '%s %s %s' % (pre, j, post)
-        elif self.date_approx:
-            return self.date_approx
-        return ''
+            return date_html(self.date, tags)
+        return self.date_approx
     calc_date.short_description = 'Date'
     calc_date.admin_order_field = 'date'
     def calc_heure(self):
         if self.heure:
             return time(self.heure, 'H\hi')
-        elif self.heure_approx:
-            return self.heure_approx
-        return ''
+        return self.heure_approx
     calc_heure.short_description = 'Heure'
     calc_heure.admin_order_field = 'heure'
     def calc_moment(self, tags=True):
         l = []
-        date = self.calc_date(True)
+        date = self.calc_date(tags)
         heure = self.calc_heure()
         pat_date = u'le %s' if self.date else u'%s'
         pat_heure = u'à %s' if self.heure else u'%s'
@@ -307,23 +306,22 @@ class AncrageSpatioTemporel(Model):
     def calc_lieu(self, tags=True):
         if self.lieu:
             return self.lieu.html(tags)
-        elif self.lieu_approx:
-            return self.lieu_approx
-        return ''
+        return self.lieu_approx
     calc_lieu.short_description = 'Lieu'
     calc_lieu.admin_order_field = 'lieu'
     calc_lieu.allow_tags = True
+    def html(self, tags=True):
+        l = []
+        l.append(self.calc_lieu(tags))
+        l.append(self.calc_moment(tags))
+        out = str_list(l)
+        return capfirst(out)
     class Meta:
         verbose_name = u'ancrage spatio-temporel'
         verbose_name_plural = u'ancrages spatio-temporels'
         ordering = ['date', 'heure', 'lieu', 'date_approx', 'heure_approx', 'lieu_approx']
     def __unicode__(self):
-        l = []
-        l.append(self.calc_lieu(False))
-        l.append(self.calc_moment(False))
-        out = str_list(l)
-        out = capfirst(out)
-        return strip_tags(out)
+        return strip_tags(self.html(False))
     @staticmethod
     def autocomplete_search_fields():
         return ('lieu__nom__icontains', 'lieu__parent__nom__icontains',
@@ -1074,7 +1072,7 @@ class Source(Model):
         l.append('%s' % em(self.nom, tags))
         if self.numero:
             l.append(no(self.numero, tags))
-        l.append('du %s' % date(self.date))
+        l.append('du %s' % date_html(self.date, tags))
         if self.page:
             l.append('p. %s' % self.page)
         out = ' '.join(l)
