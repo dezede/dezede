@@ -1,6 +1,7 @@
 # Django settings for musicologie project.
 # coding: utf-8
 import os
+ugettext = lambda s: s
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -41,8 +42,8 @@ TIME_ZONE = 'Europe/Paris'
 LANGUAGE_CODE = 'fr'
 
 LANGUAGES = (
-    ('fr', u'Français'),
-    ('en', 'English'),
+    ('fr', ugettext(u'Français')),
+    ('en', ugettext('English')),
 )
 
 SITE_ID = 1

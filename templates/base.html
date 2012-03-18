@@ -23,7 +23,7 @@
         <form action="/i18n/setlang/" method="POST">
           {% csrf_token %}
           <input type="hidden" name="language" value="{{lang.0}}" />
-          <input type="submit" value="{{ lang.1 }}" />
+          <input type="submit" value="{% trans lang.1 %}" />
         </form>
       {% endfor %}
     </nav>

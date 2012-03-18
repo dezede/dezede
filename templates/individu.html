@@ -81,7 +81,7 @@
     {% endfor %}
     {% for oeuvre in individu.oeuvres.all %}
       {% if forloop.first %}
-        <dt>Oeuvre{{ individu.oeuvres.all|pluralize }}</dt>
+        <dt>{% trans "œuvre"|capfirst %}{{ individu.oeuvres.all|pluralize }}</dt>
       {% endif %}
       <dd>{{ oeuvre.link }}</dd>
     {% endfor %}
