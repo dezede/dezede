@@ -108,7 +108,7 @@ class CustomIndexDashboard(Dashboard):
         ))
         
         self.children.append(modules.RecentActions(
-            _('Actions récentes'),
+            _(u'Actions récentes'),
             limit=8,
             collapsible=False,
             column=3,

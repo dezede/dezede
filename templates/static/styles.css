@@ -13,16 +13,6 @@ body
   margin: 0px;
 }
 
-nav
-{
-  width: 768px;
-  margin: 0px auto;
-  margin-bottom: 10px;
-  text-align: center;
-  border: 1px solid black;
-  border-top: none;
-}
-
 a
 {
   color: black;
@@ -39,9 +29,23 @@ a:hover
   text-decoration: underline;
 }
 
-nav>a
+nav
+{
+  width: 768px;
+  margin: 0px auto;
+  margin-bottom: 10px;
+  text-align: center;
+  border: 1px solid black;
+  border-top: none;
+}
+
+nav>*
 {
   display: inline-block;
+}
+
+nav>a
+{
   padding: 4px 8px;
   font-weight: bold;
 }
