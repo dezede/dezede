@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-18 02:09+0100\n"
+"POT-Creation-Date: 2012-03-18 02:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,23 +69,6 @@ msgstr ""
 #: dashboard.py:111
 msgid "Actions récentes"
 msgstr ""
-
-#: urls.py:17 urls.py:18 urls.py:19 urls.py:20 urls.py:21
-msgid "evenements"
-msgstr "events"
-
-#: urls.py:22 urls.py:23 templates/base.html:19 templates/individus.html:7
-msgid "individus"
-msgstr ""
-
-#: urls.py:24
-msgid "oeuvres"
-msgstr ""
-
-#: urls.py:27 urls.py:28 catalogue/models.py:216 templates/base.html:17
-#: templates/lieux.html:6
-msgid "lieux"
-msgstr "places"
 
 #: catalogue/admin.py:61 catalogue/admin.py:134 catalogue/admin.py:284
 #: catalogue/admin.py:317
@@ -178,6 +161,10 @@ msgstr "permalink"
 #: catalogue/models.py:1086
 msgid "rendu HTML"
 msgstr ""
+
+#: catalogue/models.py:216 templates/base.html:17 templates/lieux.html:6
+msgid "lieux"
+msgstr "places"
 
 #: catalogue/models.py:234
 msgid "début"
@@ -618,6 +605,10 @@ msgstr ""
 #: templates/base.html:18 templates/evenements.html:7
 msgid "événements"
 msgstr "events"
+
+#: templates/base.html:19 templates/individus.html:7
+msgid "individus"
+msgstr ""
 
 #: templates/base.html:21
 msgid "Administration"
