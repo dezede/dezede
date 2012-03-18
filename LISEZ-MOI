@@ -5,6 +5,7 @@ Sommaire :
   1. Dépendances
   2. Lancement du serveur de développement
   3. Déploiement
+  4. Localisation
 
 
 
@@ -28,6 +29,7 @@ Sommaire :
 
   * Paquets requis :
       nano
+      gettext
       mysql-server      5.1
       python-mysqldb    1.2.3
       python-pip        1.0
@@ -101,6 +103,10 @@ Sommaire :
       mkdir -p media/uploads/
 
 
+  * Compiler les fichiers de langues :
+      python manage.py compilemessages
+
+
   * Lancement du serveur de développement :
       python manage.py runserver
 
@@ -142,9 +148,14 @@ Sommaire :
       sudo chgrp -R www-data /var/www/media/
       sudo chmod -R 0774 /var/www/media/
 
+
+  * Compiler les fichiers de langues :
+      python manage.py compilemessages
+
+
   * Autoriser apache à utiliser le dossier où se trouve le projet (en remplaçant ce qui est balisé ainsi : {{ quelque_chose }}) :
       sudo chgrp -R www-data {{ /chemin/vers/le/repertoire/parent/de/celui/du/projet }}
-      sudo chmod -R 0774 {{ /chemin/vers/le/repertoire/parent/de/celui/du/projet }}
+
 
   * Création d'un site dans Apache :
       sudo nano /etc/apache2/sites-available/musicologie
@@ -192,4 +203,22 @@ Sommaire :
 
   * Relancer le serveur avec :
       sudo service apache2 restart
+
+
+
+
+****** 4. Localisation ******
+
+  * Ajouter (éventuellement) la langue désirée à LANGUAGES du fichier settings.py
+
+  * Créer ou mettre à jour le fichier de langue désirée :
+      sudo python manage.py makemessages -l [langue (ex : de)]
+
+  * Éditer le fichier de langue :
+      gedit locale/[langue]/LC_MESSAGES/django.po
+
+  * Compiler les fichiers de langues :
+      python manage.py compilemessages
+
+  * Relancer le serveur (voir 2. ou 3. selon le serveur choisi)
 
