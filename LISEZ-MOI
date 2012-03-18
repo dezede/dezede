@@ -153,15 +153,15 @@ Sommaire :
       python manage.py compilemessages
 
 
-  * Autoriser apache à utiliser le dossier où se trouve le projet (en remplaçant ce qui est balisé ainsi : {{ quelque_chose }}) :
-      sudo chgrp -R www-data {{ /chemin/vers/le/repertoire/parent/de/celui/du/projet }}
+  * Autoriser apache à utiliser le dossier où se trouve le projet :
+      sudo chgrp -R www-data [/chemin/vers/le/repertoire/parent/de/celui/du/projet]
 
 
   * Création d'un site dans Apache :
       sudo nano /etc/apache2/sites-available/musicologie
 
 
-  * Copier ceci dans ce dernier (en remplaçant ce qui est balisé ainsi : {{ quelque_chose }}) :
+  * Copier ceci dans ce dernier (en remplaçant ce qui est balisé ainsi : [quelque_chose]) :
       <VirtualHost *:80>
 
         Alias /media/ /var/www/media/
@@ -179,9 +179,9 @@ Sommaire :
           Options FollowSymLinks
         </Directory>
 
-        WSGIScriptAlias / {{ /chemin/du/projet }}/apache/django.wsgi
+        WSGIScriptAlias / [/chemin/du/projet]/apache/django.wsgi
 
-        <Directory {{ /chemin/du/projet }}/apache>
+        <Directory [/chemin/du/projet]/apache>
           Order deny,allow
           Allow from all
         </Directory>
@@ -193,7 +193,7 @@ Sommaire :
 
 
   * Ajouter l’adresse de serveur à /etc/apache2/httpd.conf :
-      ServerName {{ ip_du_serveur }}
+      ServerName [ip_du_serveur]
 
 
   * Activer le site et désactiver le site par défaut :
