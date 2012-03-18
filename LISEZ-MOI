@@ -60,6 +60,9 @@ Sommaire :
       django-rosetta
         sudo pip install django-rosetta
 
+      django-rosetta-grappelli
+        sudo pip install django-rosetta-grappelli
+
       le paquet python-imaging ou :
         sudo pip install pil
 
