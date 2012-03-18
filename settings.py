@@ -122,7 +122,8 @@ INSTALLED_APPS = (
     'reversion',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django_extensions'
+    'django_extensions',
+    'rosetta',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

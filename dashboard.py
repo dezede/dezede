@@ -85,6 +85,19 @@ class CustomIndexDashboard(Dashboard):
         ))
         
         self.children.append(modules.LinkList(
+            _('Traduction'),
+            column=2,
+            css_classes=('collapse open',),
+            children=[
+                {
+                    'title': _('Rosetta'),
+                    'url': '/rosetta/pick/',
+                    'external': False,
+                },
+            ]
+        ))
+        
+        self.children.append(modules.LinkList(
             _('Support'),
             column=2,
             css_classes=('collapse closed',),

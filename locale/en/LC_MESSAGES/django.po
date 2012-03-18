@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-18 02:20+0100\n"
+"POT-Creation-Date: 2012-03-18 02:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,22 +51,30 @@ msgid "Utilisateurs et groupes"
 msgstr ""
 
 #: dashboard.py:88
-msgid "Support"
+msgid "Traduction"
 msgstr ""
 
 #: dashboard.py:93
+msgid "Rosetta"
+msgstr ""
+
+#: dashboard.py:101
+msgid "Support"
+msgstr ""
+
+#: dashboard.py:106
 msgid "Documentation de Django"
 msgstr ""
 
-#: dashboard.py:98
+#: dashboard.py:111
 msgid "Documentation de Grappelli"
 msgstr ""
 
-#: dashboard.py:103
+#: dashboard.py:116
 msgid "Grappelli sur Google-Code"
 msgstr ""
 
-#: dashboard.py:111
+#: dashboard.py:124
 msgid "Actions récentes"
 msgstr ""
 

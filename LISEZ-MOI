@@ -57,6 +57,9 @@ Sommaire :
       django-filebrowser   3.3.0
         sudo pip install django-filebrowser==3.3.0
 
+      django-rosetta
+        sudo pip install django-rosetta
+
       le paquet python-imaging ou :
         sudo pip install pil
 
