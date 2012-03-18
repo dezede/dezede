@@ -17,11 +17,11 @@
   <br />
   <dl>
     {% if oeuvre.auteurs.all %}
-      <dt>Auteur{{ oeuvre.individus_auteurs.all|pluralize }}</dt>
+      <dt>{% trans "auteur"|capfirst %}{{ oeuvre.individus_auteurs.all|pluralize }}</dt>
       <dd>{{ oeuvre.calc_auteurs }}</dd>
     {% endif %}
     {% if oeuvre.ancrage_composition %}
-      <dt>Composition</dt>
+      <dt>{% trans "composition"|capfirst %}</dt>
       <dd>{{ oeuvre.ancrage_composition }}</dd>
     {% endif %}
 
@@ -33,14 +33,14 @@
     {% endfor %}
     {% for evenement in oeuvre.evenements.all %}
       {% if forloop.first %}
-        <dt>Événement{{ oeuvre.evenements.all|pluralize }}</dt>
+        <dt>{% trans "événement"|capfirst %}{{ oeuvre.evenements.all|pluralize }}</dt>
       {% endif %}
       <dd>{{ evenement.link }}</dd>
     {% endfor %}
   </dl>
   <br />
   <a href="{% url 'admin:catalogue_oeuvre_change' oeuvre.pk %}">
-    [Modifier]
+    {% trans "[Modifier]" %}
   </a>
 {% endblock %}
 

@@ -11,7 +11,7 @@
   <h2>
     {{ lieu.nom }}{% if lieu.parent %}, <a href="{% url 'catalogue.views.detail_lieu' lieu.parent.slug %}">{{ lieu.parent.nom }}</a>{% endif %}
   </h2>
-  <h3 title="nature">
+  <h3 title="{% trans "nature" %}">
     {{ lieu.nature|capfirst }}
   </h3>
   <br />
@@ -25,9 +25,9 @@
     {% for evenement in lieu.evenements.all %}
       {% if forloop.first %}
         <dt>
-          Événement{{ lieu.evenements.all|pluralize }}
+          {% trans "événement"|capfirst %}{{ lieu.evenements.all|pluralize }}
           <a href="{% url 'catalogue.views.index_evenements' lieu.slug %}">
-            (afficher tous)
+            {% trans "(afficher tous)" %}
           </a>
         </dt>
       {% endif %}
@@ -40,17 +40,17 @@
       </dd>
     {% empty %}
       {% if not lieu.enfants.all %}
-        Aucun événement référencé pour ce lieu.<br />
+        {% trans "Aucun événement référencé pour ce lieu."|capfirst %}<br />
       {% endif %}
     {% endfor %}
     {% if lieu.historique %}
-      <dt>Historique</dt>
+      <dt>{% trans "historique"|capfirst %}</dt>
       <dd>{{ lieu.historique }}</dd>
     {% endif %}
   </dl>
   <br />
   <a href="{% url 'admin:catalogue_lieu_change' lieu.pk %}">
-    [Modifier]
+    {% trans "[Modifier]" %}
   </a>
 {% endblock %}
 

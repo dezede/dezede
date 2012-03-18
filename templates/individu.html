@@ -25,11 +25,11 @@
         {{ individu.ancrage|default:'Époque inconnue' }}
       </span>
     {% else %}
-      <span title="naissance">
+      <span title="{% trans "naissance" %}">
         {{ individu.naissance|default:'?' }}
       </span>
       &ndash;
-      <span title="décès">
+      <span title="{% trans "décès" %}">
         {{ individu.deces|default:'?' }}
       </span>
     {% endif %}
@@ -38,8 +38,8 @@
   <table>
     <thead>
       <tr class="dt">
-        <th>Prénom{{ individu.prenoms.all|pluralize }}</th>
-        <th class="right">Nom</th>
+        <th>{% trans "prénom"|capfirst %}{{ individu.prenoms.all|pluralize }}</th>
+        <th class="right">{% trans "nom"|capfirst %}</th>
       </tr>
     </thead>
     <tbody>
@@ -51,25 +51,25 @@
   </table>
   <dl>
     {% if individu.nom_naissance %}
-      <dt>Nom de naissance</dt>
+      <dt>{% trans "nom de naissance"|capfirst %}</dt>
       <dd>{{ individu.nom_naissance }}</dd>
     {% endif %}
     {% if individu.pseudonyme %}
-      <dt>Pseudonyme</dt>
+      <dt>{% trans "pseudonyme"|capfirst %}</dt>
       <dd>{{ individu.pseudonyme }}</dd>
     {% endif %}
     {% if individu.designation == 'P' %}
-      <dt>Sexe</dt>
+      <dt>{% trans "sexe"|capfirst %}</dt>
       <dd>{{ individu.get_sexe_display|default:'?' }}</dd>
     {% endif %}
     {% for parent in individu.parents.all %}
       {% if forloop.first %}
-        <dt>Parents</dt>
+        <dt>{% trans "parents"|capfirst %}</dt>
       {% endif %}
       <dd>{{ parent.link }}</dd>
     {% endfor %}
     {% if individu.biographie %}
-      <dt>Biographie</dt>
+      <dt>{% trans "biographie"|capfirst %}</dt>
       <dd>{{ individu.biographie }}</dd>
     {% endif %}
 
@@ -94,7 +94,7 @@
   </dl>
   <br />
   <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">
-    [Modifier]
+    {% trans "[Modifier]" %}
   </a>
 {% endblock %}
 
