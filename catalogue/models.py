@@ -1102,6 +1102,8 @@ class Source(Model):
     type = ForeignKey(TypeDeSource, related_name='sources',
         help_text=ex(_('compte rendu')))
     contenu = HTMLField(blank=True)
+    auteurs = ManyToManyField(Auteur, related_name='sources', blank=True,
+        null=True)
     evenements = ManyToManyField(Evenement, related_name='sources', blank=True,
         null=True)
     documents = ManyToManyField(Document, related_name='sources', blank=True,

@@ -220,8 +220,7 @@ class OeuvreAdmin(VersionAdmin):
         'calc_caracteristiques', 'calc_auteurs', 'ancrage_composition', 'link',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
-    filter_horizontal = ('auteurs', 'parentes', 'documents',
-        'illustrations')
+    filter_horizontal = ('auteurs', 'parentes',)
     raw_id_fields = ('caracteristiques', 'ancrage_composition', 'pupitres', 'documents',
         'illustrations',)
     autocomplete_lookup_fields = {
@@ -308,6 +307,7 @@ class SourceAdmin(VersionAdmin):
         'disp_contenu',)
     search_fields = ('nom', 'numero', 'type__nom',)
     list_filter = ('type__nom',)
+    filter_horizontal = ('auteurs',)
     raw_id_fields = ('evenements', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
         'm2m': ['evenements', 'documents', 'illustrations'],
@@ -316,7 +316,7 @@ class SourceAdmin(VersionAdmin):
     fieldsets = (
         (_('Champs courants'), {
             'fields': ('nom', 'numero', 'date', 'page', 'type', 'contenu',
-                        'evenements',),
+                       'auteurs', 'evenements',),
         }),
         (_('Fichiers'), {
             'classes': ('collapse closed',),

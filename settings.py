@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'rosetta-grappelli',
     'rosetta',
+    'south',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
