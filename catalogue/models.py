@@ -252,6 +252,9 @@ class Profession(Model):
     nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name=_('nom (au pluriel)'), help_text=PLURAL_MSG)
+    nom_feminin = CharField(max_length=230, blank=True,
+        verbose_name=_(u'nom (au féminin)'),
+        help_text=_(u'Ne préciser que s’il est différent du nom.'))
     parente = ForeignKey('Profession', blank=True, null=True,
         related_name='enfant')
     slug = SlugField(blank=True)
@@ -264,6 +267,11 @@ class Profession(Model):
         super(Profession, self).save(*args, **kwargs)
     def pluriel(self):
         return calc_pluriel(self)
+    def feminin(self):
+        f = self.nom_feminin
+        return f if f else self.nom
+    def gendered(self, sexe='M'):
+        return self.nom if sexe == 'M' else self.feminin()
     def __unicode__(self):
         return self.nom
     @staticmethod
@@ -479,7 +487,8 @@ class Individu(Model):
         return ''
     def calc_professions(self):
         ps = self.professions.all()
-        return str_list_w_last([p.__unicode__() for p in ps])
+        sexe = self.sexe
+        return str_list_w_last([p.gendered(sexe) for p in ps])
     calc_professions.short_description = _('professions')
     def html(self, tags=True, lon=False, prenoms_fav=True):
         designation = self.designation
