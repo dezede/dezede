@@ -85,22 +85,35 @@ class CustomIndexDashboard(Dashboard):
         ))
         
         self.children.append(modules.LinkList(
+            _('Traduction'),
+            column=2,
+            css_classes=('collapse open',),
+            children=[
+                {
+                    'title': _('Rosetta'),
+                    'url': '/rosetta/pick/',
+                    'external': False,
+                },
+            ]
+        ))
+        
+        self.children.append(modules.LinkList(
             _('Support'),
             column=2,
             css_classes=('collapse closed',),
             children=[
                 {
-                    'title': _('Django Documentation'),
+                    'title': _('Documentation de Django'),
                     'url': 'http://docs.djangoproject.com/',
                     'external': True,
                 },
                 {
-                    'title': _('Grappelli Documentation'),
+                    'title': _('Documentation de Grappelli'),
                     'url': 'http://packages.python.org/django-grappelli/',
                     'external': True,
                 },
                 {
-                    'title': _('Grappelli Google-Code'),
+                    'title': _('Grappelli sur Google-Code'),
                     'url': 'http://code.google.com/p/django-grappelli/',
                     'external': True,
                 },
@@ -108,7 +121,7 @@ class CustomIndexDashboard(Dashboard):
         ))
         
         self.children.append(modules.RecentActions(
-            _('Recent Actions'),
+            _(u'Actions récentes'),
             limit=8,
             collapsible=False,
             column=3,

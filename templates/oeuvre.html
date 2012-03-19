@@ -14,32 +14,33 @@
   <h3>
     {{ oeuvre.description_html }}
   </h3>
+  <br />
   <dl>
-    {% if oeuvre.calc_auteurs %}
-      <dt>Auteur{{ oeuvre.auteurs.count|pluralize }}</dt>
+    {% if oeuvre.auteurs.all %}
+      <dt>{% trans "auteur"|capfirst %}{{ oeuvre.individus_auteurs.all|pluralize }}</dt>
       <dd>{{ oeuvre.calc_auteurs }}</dd>
     {% endif %}
     {% if oeuvre.ancrage_composition %}
-      <dt>Composition</dt>
+      <dt>{% trans "composition"|capfirst %}</dt>
       <dd>{{ oeuvre.ancrage_composition }}</dd>
     {% endif %}
-  </dl>
-  {% for element in oeuvre.elements_de_programme.all %}
-    {% if forloop.first %}
-      <hr />
-      <h4>Événement(s) :</h4>
-      <ul>
-    {% endif %}
-    {% for evenement in element.evenements.all %}
-      <li>
-        {{ evenement.link }}
-      </li>
+
+    {% for enfance in oeuvre.enfances_cibles.all %}
+      {% if forloop.first %}
+        <dt>Enfant(s)</dt>
+      {% endif %}
+      <dd>{{ enfance.type }}&nbsp;: {% for enfant in enfance.oeuvres.all %}{{ enfant.link }} {% endfor %}</dd>
     {% endfor %}
-    {% if forloop.last %}
-      </ul>
-    {% endif %}
-  {% endfor %}
+    {% for evenement in oeuvre.evenements.all %}
+      {% if forloop.first %}
+        <dt>{% trans "événement"|capfirst %}{{ oeuvre.evenements.all|pluralize }}</dt>
+      {% endif %}
+      <dd>{{ evenement.link }}</dd>
+    {% endfor %}
+  </dl>
+  <br />
   <a href="{% url 'admin:catalogue_oeuvre_change' oeuvre.pk %}">
-    [Modifier]
+    {% trans "[Modifier]" %}
   </a>
 {% endblock %}
+

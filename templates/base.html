@@ -1,8 +1,11 @@
 {% load i18n %}
 {% load url from future %}
 <!DOCTYPE HTML>
-<html>
+<html lang="{{ LANGUAGE_CODE }}">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="{% trans "musicologie, base de données" %}" />
+    <meta name="author" content="Bertrand Bordage" />
     <title>
       {% block title %}{% endblock %}
     </title>
@@ -10,20 +13,30 @@
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles.css" />
   </head>
   <body>
-    <nav id="navbar">
-      <a href="{% url 'haystack_search' %}">Recherche</a> |
-      <a href="{% url 'catalogue.views.index_lieux' %}">Lieux</a> |
-      <a href="{% url 'catalogue.views.index_evenements' %}">Événements</a> |
-      <a href="{% url 'catalogue.views.index_individus' %}">Individus</a> |
-      <a href="{% url 'admin:index' %}">Administration</a>
+    <nav>
+      <a href="{% url 'haystack_search' %}">{% trans "recherche"|capfirst %}</a> |
+      <a href="{% url 'catalogue.views.index_lieux' %}">{% trans "lieux"|capfirst %}</a> |
+      <a href="{% url 'catalogue.views.index_evenements' %}">{% trans "événements"|capfirst %}</a> |
+      <a href="{% url 'catalogue.views.index_individus' %}">{% trans "individus"|capfirst %}</a> |
+      <a href="{% url 'catalogue.views.saisie_source' %}">Saisie de source</a> |
+      <a href="{% url 'admin:index' %}">{% trans "Administration" %}</a>
+      {% for lang in LANGUAGES %}
+        <form action="/i18n/setlang/" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="language" value="{{lang.0}}" />
+          <input type="submit" value="{% trans lang.1 %}" />
+        </form>
+      {% endfor %}
     </nav>
     <div style="width: 50%; margin-left: 25%;">
       {% autoescape off %}
         <noscript>
-          Votre navigateur ne peut pas lancer javascript.
-          Certaines fonctionnalités peuvent ne pas fonctionner.
+          {% blocktrans %}
+            Votre navigateur ne peut pas lancer javascript.
+            Attendez-vous à des défauts de fonctionnement.
+          {% endblocktrans %}
         </noscript>
-        {% block body %} {% endblock %}
+        {% block body %}{% endblock %}
       {% endautoescape %}
     </div>
   </body>

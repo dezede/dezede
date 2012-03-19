@@ -1,6 +1,7 @@
 # Django settings for musicologie project.
 # coding: utf-8
 import os
+ugettext = lambda s: s
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -41,8 +42,8 @@ TIME_ZONE = 'Europe/Paris'
 LANGUAGE_CODE = 'fr'
 
 LANGUAGES = (
-    ('fr', 'Francais'),
-    ('en', 'English'),
+    ('fr', ugettext(u'Français')),
+    ('en', ugettext('English')),
 )
 
 SITE_ID = 1
@@ -80,6 +81,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -122,7 +124,10 @@ INSTALLED_APPS = (
     'reversion',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django_extensions'
+    'django_extensions',
+    'rosetta-grappelli',
+    'rosetta',
+    'south',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

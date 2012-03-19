@@ -2,6 +2,7 @@
 from musicologie.catalogue.models import *
 from django.contrib.admin import site, TabularInline, StackedInline
 from reversion import VersionAdmin
+from django.utils.translation import ugettext as _
 
 TabularInline.extra = 0
 StackedInline.extra = 0
@@ -57,18 +58,18 @@ class LieuAdmin(VersionAdmin):
     readonly_fields = ('__unicode__', 'html', 'link',)
     inlines = (AncrageSpatioTemporelInline,)
     fieldsets = (
-        ('Champs courants', {
+        (_('Champs courants'), {
             'fields': ('nom', 'parent', 'nature', 'historique',),
         }),
-        ('Fichiers', {
+        (_('Fichiers'), {
             'classes': ('collapse closed',),
             'fields': ('illustrations', 'documents',),
         }),
-        ('Champs avancés', {
+        (_(u'Champs avancés'), {
             'classes': ('collapse closed',),
             'fields': ('etat', 'notes',),
         }),
-        ('Champs générés (Méthodes)', {
+        (_(u'Champs générés (Méthodes)'), {
             'classes': ('collapse closed',),
             'fields': ('__unicode__', 'html', 'link',),
         }),
@@ -130,20 +131,20 @@ class IndividuAdmin(VersionAdmin):
     readonly_fields = ('__unicode__', 'html', 'link',)
 #    inlines = (AuteurInline,)
     fieldsets = (
-        ('Champs courants', {
+        (_('Champs courants'), {
             'fields': (('prenoms', 'nom',), ('pseudonyme', 'nom_naissance',),
                        ('sexe', 'designation',), ('ancrage_naissance',
                         'ancrage_deces',), 'professions', 'parentes',),
         }),
-        ('Fichiers', {
+        (_('Fichiers'), {
             'classes': ('collapse closed',),
             'fields': ('illustrations', 'documents',),
         }),
-        ('Champs avancés', {
+        (_(u'Champs avancés'), {
             'classes': ('collapse closed',),
             'fields': ('ancrage_approx', 'biographie', 'etat', 'notes',),
         }),
-        ('Champs générés (Méthodes)', {
+        (_(u'Champs générés (Méthodes)'), {
             'classes': ('collapse closed',),
             'fields': ('__unicode__', 'html', 'link',),
         }),
@@ -219,8 +220,7 @@ class OeuvreAdmin(VersionAdmin):
         'calc_caracteristiques', 'calc_auteurs', 'ancrage_composition', 'link',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
-    filter_horizontal = ('auteurs', 'parentes', 'documents',
-        'illustrations')
+    filter_horizontal = ('auteurs', 'parentes',)
     raw_id_fields = ('caracteristiques', 'ancrage_composition', 'pupitres', 'documents',
         'illustrations',)
     autocomplete_lookup_fields = {
@@ -230,23 +230,23 @@ class OeuvreAdmin(VersionAdmin):
     readonly_fields = ('__unicode__', 'html', 'link',)
     inlines = (ElementDeProgrammeInline,)
     fieldsets = (
-        ('Titre', {
+        (_('Titre'), {
             'fields': (('prefixe_titre', 'titre',), 'coordination',
                         ('prefixe_titre_secondaire', 'titre_secondaire',),),
         }),
-        ('Autres champs courants', {
+        (_('Autres champs courants'), {
             'fields': ('genre', 'caracteristiques', 'auteurs',
                         'ancrage_composition', 'pupitres', 'parentes',),
         }),
-        ('Fichiers', {
+        (_('Fichiers'), {
             'classes': ('collapse closed',),
             'fields': ('documents', 'illustrations',),
         }),
-        ('Champs avancés', {
+        (_(u'Champs avancés'), {
             'classes': ('collapse closed', 'wide',),
             'fields': ('lilypond', 'description', 'etat', 'notes',),
         }),
-        ('Champs générés (Méthodes)', {
+        (_(u'Champs générés (Méthodes)'), {
             'classes': ('collapse closed',),
             'fields': ('__unicode__', 'html', 'link',),
         }),
@@ -280,19 +280,19 @@ class EvenementAdmin(VersionAdmin):
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
     fieldsets = (
-        ('Champs courants', {
+        (_('Champs courants'), {
             'fields': ('ancrage_debut', 'ancrage_fin', 'relache',
                         'circonstance', 'programme',),
         }),
-        ('Fichiers', {
+        (_('Fichiers'), {
             'classes': ('collapse closed',),
             'fields': ('documents', 'illustrations',),
         }),
-        ('Champs avancés', {
+        (_(u'Champs avancés'), {
             'classes': ('collapse closed',),
             'fields': ('etat', 'notes',),
         }),
-        ('Champs générés (Méthodes)', {
+        (_(u'Champs générés (Méthodes)'), {
             'classes': ('collapse closed',),
             'fields': ('__unicode__', 'html', 'link',),
         }),
@@ -307,25 +307,26 @@ class SourceAdmin(VersionAdmin):
         'disp_contenu',)
     search_fields = ('nom', 'numero', 'type__nom',)
     list_filter = ('type__nom',)
+    filter_horizontal = ('auteurs',)
     raw_id_fields = ('evenements', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
         'm2m': ['evenements', 'documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html',)
     fieldsets = (
-        ('Champs courants', {
+        (_('Champs courants'), {
             'fields': ('nom', 'numero', 'date', 'page', 'type', 'contenu',
-                        'evenements',),
+                       'auteurs', 'evenements',),
         }),
-        ('Fichiers', {
+        (_('Fichiers'), {
             'classes': ('collapse closed',),
             'fields': ('documents', 'illustrations',),
         }),
-        ('Champs avancés', {
+        (_(u'Champs avancés'), {
             'classes': ('collapse closed',),
             'fields': ('etat', 'notes',),
         }),
-        ('Champs générés (Méthodes)', {
+        (_(u'Champs générés (Méthodes)'), {
             'classes': ('collapse closed',),
             'fields': ('__unicode__', 'html',),
         }),

@@ -4,7 +4,7 @@
 {% load url from future %}
 
 {% block title %}
-  Événements
+  {% trans "événements"|capfirst %}
 {% endblock %}
 
 {% block body %}
@@ -18,7 +18,7 @@
       <br />
       {% for element in evenement.programme.all %}
         {% if forloop.first %}
-          <h3 class="programme_titre">Programme</h3>
+          <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
           <ol>
         {% endif %}
         <li>
@@ -40,6 +40,7 @@
         {% for source in sources %}
           <div class="source">
             {{ source.contenu }}
+            {{ source.calc_auteurs }}
             <div class="source-ref">
               {% if source.illustrations.all %}
                 {% for illustration in source.illustrations.all %}

@@ -18,14 +18,15 @@ def multiwordReplace(text, wordDic):
     return rc.sub(translate, text)
 
 @register.filter
-def replace(string, tags=True):
-    if not tags:
-        return string
-    return multiwordReplace(string, {"'": '&rsquo;', ' :': '&nbsp;:',
-                                     ' ;': '&nbsp;;', ' !': '&#x202F;!',
-                                     ' ?': '&#x202F;?', u'« ': '&laquo;&nbsp;',
-                                     u' »': '&nbsp;&raquo;', '&laquo; ': '&laquo;&nbsp;',
-                                     ' &raquo;': '&nbsp;&raquo;',})
+def replace(string):
+    return multiwordReplace(string, {"'": u'’', ' :': u'\u00A0:',
+                                     ' ;': u'\u00A0;', ' !': u'\u202F!',
+                                     ' ?': u'\u202F?', u'« ': u'«\u00A0',
+                                     u' »': u'\u00A0»', u'“ ': u'“\u00A0',
+                                     u' ”': u'\u00A0”', '&laquo; ': u'«\u00A0',
+                                     ' &raquo;': u'\u00A0»',
+                                     '&ldquo; ': u'“\u00A0',
+                                     ' &rdquo;': u'\u00A0”',})
 
 def remove_diacritics(string):
     return unicodedata.normalize('NFKD', string).encode('ASCII', 'ignore')

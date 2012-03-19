@@ -25,11 +25,11 @@
         {{ individu.ancrage|default:'Époque inconnue' }}
       </span>
     {% else %}
-      <span title="naissance">
+      <span title="{% trans "naissance" %}">
         {{ individu.naissance|default:'?' }}
       </span>
       &ndash;
-      <span title="décès">
+      <span title="{% trans "décès" %}">
         {{ individu.deces|default:'?' }}
       </span>
     {% endif %}
@@ -38,8 +38,8 @@
   <table>
     <thead>
       <tr class="dt">
-        <th>Prénom{{ individu.prenoms.all|pluralize }}</th>
-        <th class="right">Nom</th>
+        <th>{% trans "prénom"|capfirst %}{{ individu.prenoms.all|pluralize }}</th>
+        <th class="right">{% trans "nom"|capfirst %}</th>
       </tr>
     </thead>
     <tbody>
@@ -51,51 +51,50 @@
   </table>
   <dl>
     {% if individu.nom_naissance %}
-      <dt>Nom de naissance</dt>
+      <dt>{% trans "nom de naissance"|capfirst %}</dt>
       <dd>{{ individu.nom_naissance }}</dd>
     {% endif %}
     {% if individu.pseudonyme %}
-      <dt>Pseudonyme</dt>
+      <dt>{% trans "pseudonyme"|capfirst %}</dt>
       <dd>{{ individu.pseudonyme }}</dd>
     {% endif %}
-    <dt>Sexe</dt>
-    <dd>{{ individu.get_sexe_display|default:'?' }}</dd>
+    {% if individu.designation == 'P' %}
+      <dt>{% trans "sexe"|capfirst %}</dt>
+      <dd>{{ individu.get_sexe_display|default:'?' }}</dd>
+    {% endif %}
     {% for parent in individu.parents.all %}
       {% if forloop.first %}
-        <dt>Parents</dt>
+        <dt>{% trans "parents"|capfirst %}</dt>
       {% endif %}
       <dd>{{ parent.link }}</dd>
     {% endfor %}
-  </dl>
-  {{ individu.biographie }}
+    {% if individu.biographie %}
+      <dt>{% trans "biographie"|capfirst %}</dt>
+      <dd>{{ individu.biographie }}</dd>
+    {% endif %}
 
-  {% for enfant in individu.enfants.all %}
-    {% if forloop.first %}
-      <h4>Enfants :</h4>
-      <ul>
-    {% endif %}
-      <li><a href="{% url 'catalogue.views.index_individus' %}{{ enfant.slug }}">{{ enfant }}</a></li>
-    {% if forloop.last %}
-      </ul>
-    {% endif %}
-  {% endfor %}
-  {% for auteur in individu.auteurs.all %}
-    {% if forloop.first %}
-      <hr />
-      <h4>Oeuvres :</h4>
-      <ul>
-    {% endif %}
-    {% for oeuvre in auteur.oeuvres.all %}
-      <li>
-        {{ oeuvre.link }}
-      </li>
+    {% for enfant in individu.enfants.all %}
+      {% if forloop.first %}
+        <dt>Enfant{{ individu.enfants.all|pluralize }}</dt>
+      {% endif %}
+        <dd>{{ enfant.link }}</dd>
     {% endfor %}
-    {% if forloop.last %}
-      </ul>
-    {% endif %}
-  {% endfor %}
+    {% for oeuvre in individu.oeuvres.all %}
+      {% if forloop.first %}
+        <dt>{% trans "œuvre"|capfirst %}{{ individu.oeuvres.all|pluralize }}</dt>
+      {% endif %}
+      <dd>{{ oeuvre.link }}</dd>
+    {% endfor %}
+    {% for evenement in individu.apparitions.all %}
+      {% if forloop.first %}
+        <dt>Apparition{{ individu.apparitions.all|pluralize }}</dt>
+      {% endif %}
+      <dd>{{ evenement.link }}</dd>
+    {% endfor %}
+  </dl>
+  <br />
   <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">
-    [Modifier]
+    {% trans "[Modifier]" %}
   </a>
 {% endblock %}
 

@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import Context, RequestContext
 from musicologie.catalogue.models import *
 from musicologie.catalogue.forms import *
@@ -23,8 +23,8 @@ def index_evenements(request, lieu_slug=None, annee=None, mois=None, jour=None):
     return render_to_response('evenements.html', c)
 
 def detail_source(request, lieu_slug, annee, mois, jour):
-    lieu = Lieu.objects.get(slug=lieu_slug)
-    source = Source.objects.get(date__year=int(annee), date__month=int(mois), )
+    lieu = get_object_or_404(Lieu, slug=lieu_slug)
+    source = get_object_or_404(Source, date__year=int(annee), date__month=int(mois), )
     c = RequestContext(request, {'source': source})
     return render_to_response('source.html', c)
 
@@ -34,7 +34,7 @@ def index_lieux(request):
     return render_to_response('lieux.html', c)
 
 def detail_lieu(request, lieu_slug):
-    lieu = Lieu.objects.get(slug=lieu_slug)
+    lieu = get_object_or_404(Lieu, slug=lieu_slug)
     c = RequestContext(request, {'lieu': lieu})
     return render_to_response('lieu.html', c)
 
@@ -43,18 +43,18 @@ def index_individus(request):
     return render_to_response('individus.html', c)
 
 def detail_individu(request, individu_slug):
-    individu = Individu.objects.get(slug=individu_slug)
+    individu = get_object_or_404(Individu, slug=individu_slug)
     c = RequestContext(request, {'individu': individu})
     return render_to_response('individu.html', c)
 
 def detail_oeuvre(request, oeuvre_slug):
-    oeuvre = Oeuvre.objects.get(slug=oeuvre_slug)
+    oeuvre = get_object_or_404(Oeuvre, slug=oeuvre_slug)
     c = RequestContext(request, {'oeuvre': oeuvre})
     return render_to_response('oeuvre.html', c)
 
 def saisie_source(request, source_id=None):
     if source_id != None:
-        source = Source.objects.get(pk=source_id)
+        source = get_object_or_404(Source, pk=source_id)
     else:
         source = None
     if request.method == 'POST':
