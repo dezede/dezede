@@ -880,12 +880,13 @@ class Oeuvre(Model):
         titre_complet = self.titre_complet()
         genre = self.genre
         caracteristiques = self.calc_caracteristiques(tags=tags)
+        url = '' if not self.slug else self.get_absolute_url()
         if auteurs and auts:
             out += auts + ', '
         if titre:
             out += parentes
             if titre_complet:
-                out += href(self.get_absolute_url(), em(titre_complet, tags), tags)
+                out += href(url, em(titre_complet, tags), tags)
                 if descr and genre:
                     out += ', '
         if genre:
@@ -903,7 +904,7 @@ class Oeuvre(Model):
                 if not parentes:
                     titre_complet = em(titre_complet, tags)
                 if titre:
-                    out += href(self.get_absolute_url(), titre_complet, tags)
+                    out += href(url, titre_complet, tags)
                     if descr and cs and cs[1]:
                         out += ','
             elif descr:
@@ -931,7 +932,7 @@ class Oeuvre(Model):
     def save(self, *args, **kwargs):
         super(Oeuvre, self).save(*args, **kwargs)
         self.slug = autoslugify(self, self.__unicode__())
-        super(Oeuvre, self).save(*args, **kwargs)
+        self._old_save(*args, **kwargs)
     def __unicode__(self):
         return strip_tags(self.titre_html(False))
     @staticmethod
@@ -1121,6 +1122,9 @@ class Source(Model):
         blank=True, null=True)
     etat = ForeignKey(Etat, related_name='sources', null=True, blank=True)
     notes = HTMLField(blank=True)
+    def calc_auteurs(self, tags=True):
+        auteurs = self.auteurs.all()
+        return str_list([a.html(tags) for a in auteurs])
     def html(self, tags=True):
         l = []
         l.append('%s' % em(self.nom, tags))

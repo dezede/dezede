@@ -40,6 +40,7 @@
         {% for source in sources %}
           <div class="source">
             {{ source.contenu }}
+            {{ source.calc_auteurs }}
             <div class="source-ref">
               {% if source.illustrations.all %}
                 {% for illustration in source.illustrations.all %}
