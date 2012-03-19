@@ -48,8 +48,8 @@ Sommaire :
       django-reversion               1.5.1
         sudo pip install django-reversion==1.5.1
 
-      django-tinymce       1.5.1b2
-        sudo pip install django-tinymce==1.5.1b2
+      django-tinymce       1.5.1a2
+        sudo pip install django-tinymce==1.5.1a2
 
       django-grappelli     2.3.7
         sudo pip install django-grappelli==2.3.7
