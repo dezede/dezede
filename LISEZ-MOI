@@ -48,8 +48,8 @@ Sommaire :
       django-reversion               1.5.1
         sudo pip install django-reversion==1.5.1
 
-      django-tinymce       1.5.1a2
-        sudo pip install django-tinymce==1.5.1a2
+      django-tinymce       1.5.1b2
+        sudo pip install django-tinymce==1.5.1b2
 
       django-grappelli     2.3.7
         sudo pip install django-grappelli==2.3.7
@@ -62,6 +62,9 @@ Sommaire :
 
       django-rosetta-grappelli
         sudo pip install django-rosetta-grappelli
+
+      south (pour les migrations)
+        sudo pip install south
 
       le paquet python-imaging ou :
         sudo pip install pil
