@@ -270,8 +270,8 @@ class Profession(Model):
     def feminin(self):
         f = self.nom_feminin
         return f if f else self.nom
-    def gendered(self, sexe='M'):
-        return self.nom if sexe == 'M' else self.feminin()
+    def gendered(self, titre='M'):
+        return self.nom if titre == 'M' else self.feminin()
     def __unicode__(self):
         return self.nom
     @staticmethod
@@ -408,12 +408,12 @@ class Individu(Model):
         ('F', _(u'Prénom(s) favori(s) (uniquement)')), # F pour First name
     )
     designation = CharField(max_length=1, choices=DESIGNATIONS, default='S')
-    SEXES = (
+    TITRES = (
         ('M', _('M.')),
         ('J', _('Mlle')), # J pour Jouvencelle
         ('F', _('Mme')),
     )
-    sexe = CharField(max_length=1, choices=SEXES, blank=True)
+    titre = CharField(max_length=1, choices=TITRES, blank=True)
     ancrage_naissance = OneToOneField(AncrageSpatioTemporel, blank=True,
         null=True, related_name='individus_nes',
         verbose_name=_(u'ancrage de naissance'))
@@ -464,14 +464,14 @@ class Individu(Model):
     calc_prenoms.short_description = _(u'prénoms')
     def calc_fav_prenoms(self):
         return self.calc_prenoms_methode(True)
-    def calc_titre(self, tags=True):
+    def calc_titre(self, tags=False):
         titres = {}
         if tags:
             titres = {'M': ugettext('M.'), 'J': ugettext('M<sup>lle</sup>'), 'F': ugettext('M<sup>me</sup>'),}
         else:
             titres = {'M': ugettext('Monsieur'), 'J': ugettext('Mademoiselle'), 'F': ugettext('Madame'),}
-        if self.sexe:
-            return titres[self.sexe]
+        if self.titre:
+            return titres[self.titre]
         return ''
     def naissance(self):
         if self.ancrage_naissance:
@@ -487,12 +487,12 @@ class Individu(Model):
         return ''
     def calc_professions(self):
         ps = self.professions.all()
-        sexe = self.sexe
-        return str_list_w_last([p.gendered(sexe) for p in ps])
+        titre = self.titre
+        return str_list_w_last([p.gendered(titre) for p in ps])
     calc_professions.short_description = _('professions')
     def html(self, tags=True, lon=False, prenoms_fav=True):
         designation = self.designation
-        sexe = self.sexe
+        titre = self.titre
         titre = self.calc_titre(tags)
         prenoms = self.calc_prenoms_methode(prenoms_fav)
         nom = self.nom
@@ -502,7 +502,7 @@ class Individu(Model):
             return sc(s, tags)
         def standard(main):
             l, out = [], ''
-            if nom and not prenoms or lon:
+            if nom and not prenoms:
                 l.append(titre)
             l.append(main)
             if prenoms:
@@ -513,7 +513,7 @@ class Individu(Model):
             out = str_list(l, ' ')
             if pseudonyme:
                 out += ugettext(u', dit%(feminin)s %(pseudonyme)s') % \
-                    {'feminin': '' if sexe == 'M' else 'e',
+                    {'feminin': '' if titre == 'M' else 'e',
                      'pseudonyme': pseudonyme}
             return out
         main_choices = {
@@ -872,7 +872,7 @@ class Oeuvre(Model):
                     out += self.prefixe_titre_secondaire
                 out += self.titre_secondaire
         return out
-    def html(self, tags=True, auteurs=True, titre=True, descr=True):
+    def html(self, tags=True, auteurs=True, titre=True, descr=True, caps_genre=False):
         # TODO: Nettoyer cette horreur
         out = u''
         auts = self.calc_auteurs(tags)
@@ -890,7 +890,7 @@ class Oeuvre(Model):
                 if descr and genre:
                     out += ', '
         if genre:
-            genre = genre.html(tags)
+            genre = genre.html(tags, caps=caps_genre)
             pupitres = self.calc_pupitres()
             if not titre_complet:
                 cs = None
@@ -924,7 +924,7 @@ class Oeuvre(Model):
     def titre_html(self, tags=True):
         return self.html(tags, False, True, False)
     def description_html(self, tags=True):
-        return self.html(tags, False, False, True)
+        return self.html(tags, False, False, True, caps_genre=True)
     class Meta:
         verbose_name = _(u'œuvre')
         verbose_name_plural = _(u'œuvres')

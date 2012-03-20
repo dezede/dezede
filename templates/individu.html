@@ -16,10 +16,7 @@
   <h2>
     {{ individu.nom_complet }}
   </h2>
-  <h3 title="profession{{ individu.professions.all|pluralize }}">
-    {{ individu.calc_professions|capfirst|default:'Profession inconnue' }}
-  </h3>
-  <h4>
+  <h3>
     {% if not individu.naissance and not individu.deces %}
       <span title="ancrage spatio-temporel">
         {{ individu.ancrage|default:'Époque inconnue' }}
@@ -33,6 +30,9 @@
         {{ individu.deces|default:'?' }}
       </span>
     {% endif %}
+  </h3>
+  <h4 title="profession{{ individu.professions.all|pluralize }}">
+    {{ individu.calc_professions|capfirst|default:'Profession inconnue' }}
   </h4>
   <br />
   <table>
@@ -58,10 +58,8 @@
       <dt>{% trans "pseudonyme"|capfirst %}</dt>
       <dd>{{ individu.pseudonyme }}</dd>
     {% endif %}
-    {% if individu.designation == 'P' %}
-      <dt>{% trans "sexe"|capfirst %}</dt>
-      <dd>{{ individu.get_sexe_display|default:'?' }}</dd>
-    {% endif %}
+    <dt>{% trans "titre"|capfirst %}</dt>
+    <dd>{{ individu.calc_titre|default:'?' }}</dd>
     {% for parent in individu.parents.all %}
       {% if forloop.first %}
         <dt>{% trans "parents"|capfirst %}</dt>

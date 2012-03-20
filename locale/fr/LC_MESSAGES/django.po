@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-19 02:32+0100\n"
+"POT-Creation-Date: 2012-03-21 00:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -160,7 +160,7 @@ msgstr ""
 
 #: catalogue/models.py:153 catalogue/models.py:173 catalogue/models.py:254
 #: catalogue/models.py:606 catalogue/models.py:634 catalogue/models.py:667
-#: catalogue/models.py:733 catalogue/models.py:959 catalogue/models.py:1091
+#: catalogue/models.py:733 catalogue/models.py:960 catalogue/models.py:1092
 msgid "nom (au pluriel)"
 msgstr ""
 
@@ -189,13 +189,13 @@ msgid "natures de lieu"
 msgstr ""
 
 #: catalogue/models.py:208 catalogue/models.py:442 catalogue/models.py:819
-#: catalogue/models.py:1055
+#: catalogue/models.py:1056
 msgid "permalien"
 msgstr ""
 
 #: catalogue/models.py:220 catalogue/models.py:533 catalogue/models.py:773
-#: catalogue/models.py:921 catalogue/models.py:1018 catalogue/models.py:1067
-#: catalogue/models.py:1134
+#: catalogue/models.py:922 catalogue/models.py:1019 catalogue/models.py:1068
+#: catalogue/models.py:1138
 msgid "rendu HTML"
 msgstr ""
 
@@ -641,8 +641,8 @@ msgstr ""
 msgid "titre secondaire"
 msgstr ""
 
-#: catalogue/models.py:795 catalogue/models.py:841 catalogue/models.py:976
-#: catalogue/models.py:992
+#: catalogue/models.py:795 catalogue/models.py:841 catalogue/models.py:977
+#: catalogue/models.py:993
 msgid "caractéristiques"
 msgstr ""
 
@@ -654,79 +654,79 @@ msgstr ""
 msgid "pour "
 msgstr ""
 
-#: catalogue/models.py:928 catalogue/models.py:972 templates/individu.html:84
+#: catalogue/models.py:929 catalogue/models.py:973 templates/individu.html:82
 msgid "œuvre"
 msgstr ""
 
-#: catalogue/models.py:929
+#: catalogue/models.py:930
 msgid "œuvres"
 msgstr ""
 
-#: catalogue/models.py:947
+#: catalogue/models.py:948
 msgid "attribution de pupitre"
 msgstr ""
 
-#: catalogue/models.py:948
+#: catalogue/models.py:949
 msgid "attributions de pupitre"
 msgstr ""
 
-#: catalogue/models.py:964
+#: catalogue/models.py:965
 msgid "caractéristique d’élément de programme"
 msgstr ""
 
-#: catalogue/models.py:965
+#: catalogue/models.py:966
 msgid "caractéristiques d’élément de programme"
 msgstr ""
 
-#: catalogue/models.py:1021
+#: catalogue/models.py:1022
 msgid "élément de programme"
 msgstr ""
 
-#: catalogue/models.py:1022
+#: catalogue/models.py:1023
 msgid "éléments de programme"
 msgstr ""
 
-#: catalogue/models.py:1060
+#: catalogue/models.py:1061
 msgid "circonstance"
 msgstr ""
 
-#: catalogue/models.py:1062
+#: catalogue/models.py:1063
 msgid "Relâche"
 msgstr ""
 
-#: catalogue/models.py:1070 templates/lieu.html:28 templates/oeuvre.html:36
+#: catalogue/models.py:1071 templates/lieu.html:28 templates/oeuvre.html:36
 msgid "événement"
 msgstr ""
 
-#: catalogue/models.py:1071 templates/base.html:18 templates/evenements.html:7
+#: catalogue/models.py:1072 templates/base.html:18 templates/evenements.html:7
 msgid "événements"
 msgstr ""
 
-#: catalogue/models.py:1095
+#: catalogue/models.py:1096
 msgid "type de source"
 msgstr ""
 
-#: catalogue/models.py:1096
+#: catalogue/models.py:1097
 msgid "types de source"
 msgstr ""
 
-#: catalogue/models.py:1107
+#: catalogue/models.py:1108
 msgid "Journal de Rouen"
 msgstr ""
 
-#: catalogue/models.py:1112
+#: catalogue/models.py:1113
 msgid "compte rendu"
 msgstr ""
 
-#: catalogue/models.py:1138
+#: catalogue/models.py:1142
 msgid "contenu"
 msgstr ""
 
-#: catalogue/models.py:1141
+#: catalogue/models.py:1145
 msgid "source"
 msgstr ""
 
-#: catalogue/models.py:1142
+#: catalogue/models.py:1146
 msgid "sources"
 msgstr ""
 
@@ -750,15 +750,15 @@ msgstr ""
 msgid "programme"
 msgstr ""
 
-#: templates/evenements.html:60
+#: templates/evenements.html:61
 msgid "Aucun événement n'a été trouvée selon ces critères."
 msgstr ""
 
-#: templates/individu.html:28
+#: templates/individu.html:25
 msgid "naissance"
 msgstr ""
 
-#: templates/individu.html:32
+#: templates/individu.html:29
 msgid "décès"
 msgstr ""
 
@@ -770,19 +770,19 @@ msgstr ""
 msgid "pseudonyme"
 msgstr ""
 
-#: templates/individu.html:62
-msgid "sexe"
+#: templates/individu.html:61
+msgid "titre"
 msgstr ""
 
-#: templates/individu.html:67
+#: templates/individu.html:65
 msgid "parents"
 msgstr ""
 
-#: templates/individu.html:72
+#: templates/individu.html:70
 msgid "biographie"
 msgstr ""
 
-#: templates/individu.html:97 templates/lieu.html:53 templates/oeuvre.html:43
+#: templates/individu.html:95 templates/lieu.html:53 templates/oeuvre.html:43
 msgid "[Modifier]"
 msgstr ""
 

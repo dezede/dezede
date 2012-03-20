@@ -116,10 +116,10 @@ class ParenteDIndividusAdmin(VersionAdmin):
 
 class IndividuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'nom_naissance', 'calc_prenoms',
-        'pseudonyme', 'sexe', 'ancrage_naissance', 'ancrage_deces',
+        'pseudonyme', 'titre', 'ancrage_naissance', 'ancrage_deces',
         'calc_professions', 'link',)
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',)
-    list_filter = ('sexe',)
+    list_filter = ('titre',)
     raw_id_fields = ('prenoms', 'ancrage_naissance', 'ancrage_deces',
                      'professions', 'parentes', 'ancrage_approx',
                      'illustrations', 'documents',)
@@ -133,7 +133,7 @@ class IndividuAdmin(VersionAdmin):
     fieldsets = (
         (_('Champs courants'), {
             'fields': (('prenoms', 'nom',), ('pseudonyme', 'nom_naissance',),
-                       ('sexe', 'designation',), ('ancrage_naissance',
+                       ('titre', 'designation',), ('ancrage_naissance',
                         'ancrage_deces',), 'professions', 'parentes',),
         }),
         (_('Fichiers'), {
