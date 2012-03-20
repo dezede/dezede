@@ -1,13 +1,3 @@
-html:lang(fr)
-{
-  quotes: "« " " »" "“ " " ”";
-}
-
-html:lang(en)
-{
-  quotes: "“ " " ”" "‘ " " ’";
-}
-
 body
 {
   margin: 0px;
@@ -120,14 +110,24 @@ ol
   margin-bottom: 0;
 }
 
-.source>p:first-child:before
+.source>p:lang(fr):first-child:before
 {
-  content: open-quote;
+  content: "« ";
 }
 
-.source>p:last-of-type:after
+.source>p:lang(fr):last-of-type:after
 {
-  content: close-quote;
+  content: " »";
+}
+
+.source>p:lang(en):first-child:before
+{
+  content: "“ ";
+}
+
+.source>p:lang(en):last-of-type:after
+{
+  content: " ”";
 }
 
 .source-ref
