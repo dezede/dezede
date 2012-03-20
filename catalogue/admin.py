@@ -132,7 +132,8 @@ class IndividuAdmin(VersionAdmin):
 #    inlines = (AuteurInline,)
     fieldsets = (
         (_('Champs courants'), {
-            'fields': (('prenoms', 'nom',), ('pseudonyme', 'nom_naissance',),
+            'fields': (('particule_nom', 'nom',), ('prenoms', 'pseudonyme',),
+                       ('particule_nom_naissance', 'nom_naissance',),
                        ('titre', 'designation',), ('ancrage_naissance',
                         'ancrage_deces',), 'professions', 'parentes',),
         }),

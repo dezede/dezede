@@ -400,7 +400,11 @@ class ParenteDIndividus(Model):
         return out
 
 class Individu(Model):
-    nom = CharField(max_length=200) # TODO: rendre ce champ 'blank'
+    particule_nom = CharField(max_length=10, blank=True,
+        verbose_name=_(u'particule du nom d’usage'))
+    nom = CharField(max_length=200, verbose_name=_(u'nom d’usage')) # TODO: rendre ce champ 'blank'
+    particule_nom_naissance = CharField(max_length=10, blank=True,
+        verbose_name=_('particule du nom de naissance'))
     nom_naissance = CharField(max_length=200, blank=True,
         verbose_name=_('nom de naissance'), help_text=_(u'Ne remplir que s’il est différent du nom d’usage.'))
     prenoms = ManyToManyField(Prenom, related_name='individus', blank=True,
@@ -501,9 +505,9 @@ class Individu(Model):
         titre = self.titre
         titre = self.calc_titre(tags)
         prenoms = self.calc_prenoms_methode(prenoms_fav)
-        nom = self.nom
+        nom = self.particule_nom + self.nom
         pseudonyme = self.pseudonyme
-        nom_naissance = self.nom_naissance
+        nom_naissance = self.particule_nom_naissance + self.nom_naissance
         def main_style(s):
             return sc(s, tags)
         def standard(main):
