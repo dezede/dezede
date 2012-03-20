@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     (r'^tinymce/', include('tinymce.urls')),
     (r'^grappelli/', include('grappelli.urls')),
     (r'^admin/filebrowser/', include('filebrowser.urls')),
+    (r'^recherche/', include('haystack.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

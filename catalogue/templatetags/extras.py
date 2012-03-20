@@ -1,10 +1,15 @@
 # coding: utf-8
 import re
 import unicodedata
+from BeautifulSoup import BeautifulStoneSoup
 from django.template.defaultfilters import date
 
 from django import template
 register = template.Library()
+
+@register.filter
+def stripchars(text):
+    return unicode(BeautifulStoneSoup(text,convertEntities=BeautifulStoneSoup.HTML_ENTITIES))
 
 def multiwordReplace(text, wordDic):
     rc = re.compile('|'.join(map(re.escape, wordDic)))
