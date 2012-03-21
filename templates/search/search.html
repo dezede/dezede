@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load highlight %}
 {% load extras %}
+{% load humanize %}
 
 {% block title %}
   Recherche
 {% endblock %}
 
 {% block body %}
-  <h2>Recherche</h2>
+  <h2>{% trans "recherche"|capfirst %}</h2>
 
   <form method="get" action=".">
     <table>
@@ -21,11 +23,11 @@
     </table>
 
     {% if query %}
-      <h3>Résultats</h3>
+      <h3>{{ paginator.object_list.count|apnumber|capfirst }} {% trans "résultat" %}{{ paginator.object_list|pluralize }}</h3>
 
       {% if suggestion %}
         <p>
-          Essayez aussi :
+          {% trans "Essayez aussi :" %}
           <a href="?q={{ suggestion }}">{{ suggestion }}</a>
         </p>
       {% endif %}
@@ -36,7 +38,7 @@
 
       {% for result in page.object_list %}
         <div class="result {{ result.model.class_name.lower }}">
-          <h3>{{ result.model.verbose_name|capfirst }}</h3>
+          <h3>{{ result.verbose_name|capfirst }}</h3>
           {% if result.object.link %}
             {{ result.object.link }}<br />
           {% else %}
@@ -46,8 +48,6 @@
             {% highlight result.object.html with query html_tag 'mark' %}
           </small>
         </div>
-      {% empty %}
-        <p>Aucun résultat trouvé.</p>
       {% endfor %}
 
       {% if page.has_previous %}<a href="?{{ request.GET.urlencode }}&page={{ page.previous_page_number }}">« Précédents</a>{% endif %}

@@ -3,12 +3,13 @@ from django.db.models import *
 from tinymce.models import HTMLField
 from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
-from django.template.defaultfilters import date, time, capfirst
 from musicologie.catalogue.templatetags.extras import replace, abbreviate
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils.functional import allow_lazy
+from django.template.defaultfilters import date, time, capfirst
+from django.contrib.humanize.templatetags.humanize import apnumber
 
 #
 # Définitions globales du fichier
@@ -22,11 +23,6 @@ DATE_MSG = _(u'Ex. : « 6/6/1944 » pour le 6 juin 1944.')
 def class_name(cls):
     return unicode(cls.__name__)
 Model.class_name = class_name
-
-@classmethod
-def verbose_name(cls):
-    return unicode(cls._meta.verbose_name)
-Model.verbose_name = verbose_name
 
 def autoslugify(obj, nom):
     nom_slug = slug_orig = slugify(nom[:50])
@@ -715,27 +711,14 @@ class Pupitre(Model):
         partie = self.partie
         mi = self.quantite_min
         ma = self.quantite_max
-        # TODO: implémenter ce qui suit plus intelligemment.
-        nb_words = {2:ugettext('deux'), 3:ugettext('trois'),
-                    4:ugettext('quatre'), 5:ugettext('cinq'),
-                    6:ugettext('six'), 7:ugettext('sept'),
-                    8:ugettext('huit'), 9:ugettext('neuf'),
-                    10:ugettext('dix'), 11:ugettext('onze'),
-                    12:ugettext('douze'), 13:ugettext('treize'),
-                    14:ugettext('quatorze'), 15:ugettext('quinze'),
-                    16:ugettext('seize'), 20:ugettext('vingt')}
         if ma > 1:
             partie = partie.pluriel()
         else:
             partie = partie.__unicode__()
-        try:
-            mi_str = nb_words[mi]
-            ma_str = nb_words[ma]
-        except:
-            mi_str = str(mi)
-            ma_str = str(ma)
+        mi_str = apnumber(mi)
+        ma_str = apnumber(ma)
         if mi != ma:
-            out += ugettext(u'%(min)d à %(max)d ') % {'min': mi_str, 'max': ma_str}
+            out += ugettext(u'%(min)s à %(max)s ') % {'min': mi_str, 'max': ma_str}
         elif mi > 1:
             out += mi_str + ' '
         out += partie
