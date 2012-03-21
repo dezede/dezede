@@ -85,9 +85,15 @@
     {% endfor %}
     {% for evenement in individu.apparitions.all %}
       {% if forloop.first %}
-        <dt>Apparition{{ individu.apparitions.all|pluralize }}</dt>
+        <dt>{% trans "apparition"|capfirst %}{{ individu.apparitions.all|pluralize }}</dt>
       {% endif %}
       <dd>{{ evenement.link }}</dd>
+    {% endfor %}
+    {% for publication in individu.publications.all %}
+      {% if forloop.first %}
+        <dt>{% trans "publication"|capfirst %}{{ individu.publications.all|pluralize }}</dt>
+      {% endif %}
+      <dd>{{ publication.html }}</dd>
     {% endfor %}
   </dl>
   <br />

@@ -460,6 +460,11 @@ class Individu(Model):
         for auteur in self.auteurs.all():
             q |= auteur.oeuvres.all()
         return q.distinct()
+    def publications(self):
+        q = Source.objects.none()
+        for auteur in self.auteurs.all():
+            q |= auteur.sources.all()
+        return q.distinct()
     def apparitions(self):
         q = Evenement.objects.none()
         els = ElementDeProgramme.objects.none()
