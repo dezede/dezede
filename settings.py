@@ -176,4 +176,6 @@ HAYSTACK_SITECONF = 'musicologie.search_sites'
 HAYSTACK_SEARCH_ENGINE = 'whoosh'
 HAYSTACK_WHOOSH_PATH = os.path.join(os.path.dirname(__file__), 'whoosh_index')
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'musicologie.catalogue.utils.CustomHighlighter'
+HAYSTACK_INCLUDE_SPELLING = True
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 

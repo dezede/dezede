@@ -23,6 +23,13 @@
     {% if query %}
       <h3>Résultats</h3>
 
+      {% if suggestion %}
+        <p>
+          Essayez aussi :
+          <a href="?q={{ suggestion }}">{{ suggestion }}</a>
+        </p>
+      {% endif %}
+
       {% if page.has_previous %}<a href="?{{ request.GET.urlencode }}&page={{ page.previous_page_number }}">« Précédents</a>{% endif %}
       {% if page.has_previous and page.has_next %}|{% endif %}
       {% if page.has_next %}<a href="?{{ request.GET.urlencode }}&page={{ page.next_page_number }}">Suivants »</a>{% endif %}
