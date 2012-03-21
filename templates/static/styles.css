@@ -16,11 +16,12 @@ body
 
 nav
 {
-  background-color: #99EB99;
-  margin-bottom: 10px;
+  position: fixed;
+  min-width: 768px;
+  max-width: 1024px;
+  width: 100%;
   text-align: center;
   border-bottom: 1px solid grey;
-  padding: 3px;
   line-height: 25px;
   background-image: url("/static/papier.png");
 }
@@ -46,6 +47,7 @@ nav>a:hover
 #content
 {
   padding: 15px;
+  padding-top: 54px;
 }
 
 a
