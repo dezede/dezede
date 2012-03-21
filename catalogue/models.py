@@ -19,9 +19,13 @@ PLURAL_MSG = _(u'À remplir si le pluriel n\'est pas un simple ajout de « s ».
 DATE_MSG = _(u'Ex. : « 6/6/1944 » pour le 6 juin 1944.')
 
 @classmethod
+def class_name(cls):
+    return unicode(cls.__name__)
+Model.class_name = class_name
+
+@classmethod
 def verbose_name(cls):
     return unicode(cls._meta.verbose_name)
-
 Model.verbose_name = verbose_name
 
 def autoslugify(obj, nom):

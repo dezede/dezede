@@ -1,0 +1,8 @@
+{% load extras %}
+
+{{ object.nom }}
+{{ object.pseudonyme }}
+{{ object.calc_prenoms }}
+{{ object.calc_professions }}
+{{ object }}
+

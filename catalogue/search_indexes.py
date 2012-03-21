@@ -25,3 +25,36 @@ class SourceIndex(indexes.RealTimeSearchIndex):
         return self.get_model().objects.all()
 site.register(Source, SourceIndex)
 
+class IndividuIndex(indexes.RealTimeSearchIndex):
+    text = indexes.CharField(document=True, use_template=True)
+
+    def get_model(self):
+        return Individu
+
+    def index_queryset(self):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+site.register(Individu, IndividuIndex)
+
+class LieuIndex(indexes.RealTimeSearchIndex):
+    text = indexes.CharField(document=True, use_template=True)
+
+    def get_model(self):
+        return Lieu
+
+    def index_queryset(self):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+site.register(Lieu, LieuIndex)
+
+class EvenementIndex(indexes.RealTimeSearchIndex):
+    text = indexes.CharField(document=True, use_template=True)
+
+    def get_model(self):
+        return Evenement
+
+    def index_queryset(self):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+site.register(Evenement, EvenementIndex)
+

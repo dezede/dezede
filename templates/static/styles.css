@@ -1,6 +1,51 @@
+html
+{
+  background-color: lightGrey;
+}
+
 body
 {
-  margin: 0px;
+  min-width: 768px;
+  max-width: 1024px;
+  min-height: 500px;
+  margin: 0px auto 10px auto;
+  background-color: white;
+  border: 2px solid grey;
+  border-top: none;
+}
+
+nav
+{
+  background-color: #99EB99;
+  margin-bottom: 10px;
+  text-align: center;
+  border-bottom: 1px solid grey;
+  padding: 3px;
+  line-height: 25px;
+  background-image: url("/static/papier.png");
+}
+
+nav>*
+{
+  display: inline-block;
+  padding: 4px 8px;
+}
+
+nav>a
+{
+  color: #D63030;
+  text-shadow: #E57A7A 0px 1px 2px;
+  font-weight: bold;
+}
+
+nav>a:hover
+{
+  text-decoration: none;
+}
+
+#content
+{
+  padding: 15px;
 }
 
 a
@@ -19,35 +64,10 @@ a:hover
   text-decoration: underline;
 }
 
-nav
-{
-  width: 768px;
-  margin: 0px auto;
-  margin-bottom: 10px;
-  text-align: center;
-  border: 1px solid black;
-  border-top: none;
-}
-
-nav>*
-{
-  display: inline-block;
-}
-
-nav>a
-{
-  padding: 4px 8px;
-  font-weight: bold;
-}
-
-nav>a:hover
-{
-  text-decoration: none;
-}
-
 h1, h2, h3, h4, h5, h6
 {
   font-weight: normal;
+  text-shadow: grey 0px 1px 2px;
 }
 
 h2
@@ -92,6 +112,57 @@ ol
 {
   background-color: #FF6666;
   border: 1px solid black;
+}
+
+.result
+{
+  border: 1.5px solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.result:last-of-type
+{
+  margin-bottom: 0;
+}
+
+.result.evenement
+{
+  background-color: #FFB894;
+}
+
+.result.individu
+{
+  background-color: #E88585;
+}
+
+.result.lieu
+{
+  background-color: #9DBDFF;
+}
+
+.result.oeuvre
+{
+  background-color: #FFBDFF;
+}
+
+.result.source
+{
+  background-color: #9BF09B;
+}
+
+.content_part
+{
+  border: 1.5px solid;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 30px;
+}
+
+.content_part:last-of-type
+{
+  margin-bottom: 0px;
 }
 
 .source>p

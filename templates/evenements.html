@@ -9,7 +9,7 @@
 
 {% block body %}
   {% for evenement, sources_list in datadict.items %}
-    <div style="border: 1.5px solid; border-radius: 15px; padding: 20px; margin-bottom: 30px;">
+    <div class="content_part">
       <h2 style="text-align: center;">
         {{ evenement.ancrage_debut.calc_date|capfirst }}
       </h2>

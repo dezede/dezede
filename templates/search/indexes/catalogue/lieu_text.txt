@@ -1,0 +1,8 @@
+{% load extras %}
+
+{{ object.nom }}
+{{ object.nature }}
+{{ object.parent }}
+{{ object.html }}
+{{ object.historique }}
+

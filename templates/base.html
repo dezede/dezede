@@ -18,17 +18,17 @@
       <a href="{% url 'catalogue.views.index_lieux' %}">{% trans "lieux"|capfirst %}</a> |
       <a href="{% url 'catalogue.views.index_evenements' %}">{% trans "événements"|capfirst %}</a> |
       <a href="{% url 'catalogue.views.index_individus' %}">{% trans "individus"|capfirst %}</a> |
-      <a href="{% url 'catalogue.views.saisie_source' %}">Saisie de source</a> |
+      {#<a href="{% url 'catalogue.views.saisie_source' %}">Saisie de source</a> |#}
       <a href="{% url 'admin:index' %}">{% trans "Administration" %}</a>
       {% for lang in LANGUAGES %}
-        <form action="/i18n/setlang/" method="POST">
+        <form action="/i18n/setlang/" method="POST" style="float: right;">
           {% csrf_token %}
           <input type="hidden" name="language" value="{{lang.0}}" />
           <input type="submit" value="{% trans lang.1 %}" />
         </form>
       {% endfor %}
     </nav>
-    <div style="width: 50%; margin-left: 25%;">
+    <div id="content">
       {% autoescape off %}
         <noscript>
           {% blocktrans %}

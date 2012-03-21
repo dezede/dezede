@@ -23,25 +23,33 @@
     {% if query %}
       <h3>Résultats</h3>
 
+      <div>
+        {% if page.has_previous %}<a href="?{{ request.GET.urlencode }}&page={{ page.previous_page_number }}">« Précédents</a>{% endif %}
+        {% if page.has_previous and page.has_next %}|{% endif %}
+        {% if page.has_next %}<a href="?{{ request.GET.urlencode }}&page={{ page.next_page_number }}">Suivants »</a>{% endif %}
+      </div>
+
       {% for result in page.object_list %}
-        <p>
+        <div class="result {{ result.model.class_name.lower }}">
           <h3>{{ result.model.verbose_name|capfirst }}</h3>
-          {{ result.object.html }}<br />
+          {% if result.object.link %}
+            {{ result.object.link }}<br />
+          {% else %}
+            {{ result.object.html }}<br />
+          {% endif %}
           <small>
             {% highlight result.object.html with query html_tag 'mark' %}
           </small>
-        </p>
+        </div>
       {% empty %}
         <p>Aucun résultat trouvé.</p>
       {% endfor %}
 
-      {% if page.has_previous or page.has_next %}
-        <div>
-          {% if page.has_previous %}<a href="?q={{ query }}&amp;models={{ request.GET.models }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Précédent{% if page.has_previous %}</a>{% endif %}
-          |
-          {% if page.has_next %}<a href="?q={{ query }}&amp;models={{ request.GET.models }}&amp;page={{ page.next_page_number }}">{% endif %}Suivant &raquo;{% if page.has_next %}</a>{% endif %}
-        </div>
-      {% endif %}
+      <div>
+        {% if page.has_previous %}<a href="?{{ request.GET.urlencode }}&page={{ page.previous_page_number }}">« Précédents</a>{% endif %}
+        {% if page.has_previous and page.has_next %}|{% endif %}
+        {% if page.has_next %}<a href="?{{ request.GET.urlencode }}&page={{ page.next_page_number }}">Suivants »</a>{% endif %}
+      </div>
     {% else %}
       {# Show some example queries to run, maybe query syntax, something else? #}
     {% endif %}
