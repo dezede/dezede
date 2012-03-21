@@ -32,9 +32,9 @@
         </p>
       {% endif %}
 
-      {% if page.has_previous %}<a href="?{{ request.GET.urlencode }}&page={{ page.previous_page_number }}">« Précédents</a>{% endif %}
+      {% if page.has_previous %}<a href="?{{ request|GET_add_page:page.previous_page_number }}">« Précédents</a>{% endif %}
       {% if page.has_previous and page.has_next %}|{% endif %}
-      {% if page.has_next %}<a href="?{{ request.GET.urlencode }}&page={{ page.next_page_number }}">Suivants »</a>{% endif %}
+      {% if page.has_next %}<a href="?{{ request|GET_add_page:page.next_page_number }}">Suivants »</a>{% endif %}
 
       {% for result in page.object_list %}
         <div class="result {{ result.model.class_name.lower }}">
@@ -50,9 +50,9 @@
         </div>
       {% endfor %}
 
-      {% if page.has_previous %}<a href="?{{ request.GET.urlencode }}&page={{ page.previous_page_number }}">« Précédents</a>{% endif %}
+      {% if page.has_previous %}<a href="?{{ request|GET_add_page:page.previous_page_number }}">« Précédents</a>{% endif %}
       {% if page.has_previous and page.has_next %}|{% endif %}
-      {% if page.has_next %}<a href="?{{ request.GET.urlencode }}&page={{ page.next_page_number }}">Suivants »</a>{% endif %}
+      {% if page.has_next %}<a href="?{{ request|GET_add_page:page.next_page_number }}">Suivants »</a>{% endif %}
     {% else %}
       <p>Tapez par exemple « chanteuse », « Molière », « opéra » ou encore « théâtre ».</p>
     {% endif %}

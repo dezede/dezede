@@ -63,6 +63,12 @@ def abbreviate(string, limit=0):
         out += sub
     return out
 
+@register.filter
+def GET_add_page(request, page_number):
+    answer = request.GET.copy()
+    answer['page'] = page_number
+    return answer.urlencode()
+
 if __name__ == '__main__':
     print abbreviate(u'autéeur dramatique de la tour de babel', 1)
     print abbreviate(u'jeanöõ-françois du puy du fou', 0)
