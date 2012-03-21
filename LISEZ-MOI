@@ -175,6 +175,7 @@ Sommaire :
 
   * Autoriser apache à utiliser le dossier où se trouve le projet :
       sudo chgrp -R www-data [/chemin/vers/le/repertoire/parent/de/celui/du/projet]
+      sudo chmod -R 0774 [/chemin/vers/le/repertoire/parent/de/celui/du/projet]
 
 
   * Création d'un site dans Apache :
