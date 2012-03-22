@@ -35,31 +35,31 @@
     {{ individu.calc_professions|capfirst|default:'Profession inconnue' }}
   </h4>
   <br />
-  <table>
-    <thead>
-      <tr class="dt">
-        <th>{% trans "prénom"|capfirst %}{{ individu.prenoms.all|pluralize }}</th>
-        <th class="right">{% trans "nom"|capfirst %}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{{ individu.calc_prenoms|default:'?' }}</td>
-        <td class="right">{{ individu.nom|default:'?' }}</td>
-      </tr>
-    </tbody>
-  </table>
+  {% if individu.designation == 'P' %}
+    <table>
+      <thead>
+        <tr class="dt">
+          <th>{% trans "prénom"|capfirst %}{{ individu.prenoms.all|pluralize }}</th>
+          <th class="right">{% trans "nom"|capfirst %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ individu.calc_prenoms|default:'?' }}</td>
+          <td class="right">{{ individu.nom|default:'?' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  {% endif %}
   <dl>
     {% if individu.nom_naissance %}
       <dt>{% trans "nom de naissance"|capfirst %}</dt>
       <dd>{{ individu.nom_naissance }}</dd>
     {% endif %}
-    {% if individu.pseudonyme %}
+    {% if individu.designation == 'P' %}
       <dt>{% trans "pseudonyme"|capfirst %}</dt>
       <dd>{{ individu.pseudonyme }}</dd>
     {% endif %}
-    <dt>{% trans "titre"|capfirst %}</dt>
-    <dd>{{ individu.calc_titre|default:'?' }}</dd>
     {% for parent in individu.parents.all %}
       {% if forloop.first %}
         <dt>{% trans "parents"|capfirst %}</dt>

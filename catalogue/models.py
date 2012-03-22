@@ -455,7 +455,7 @@ class Individu(Model):
         q = Oeuvre.objects.none()
         for auteur in self.auteurs.all():
             q |= auteur.oeuvres.all()
-        return q.distinct()
+        return q.distinct().order_by('titre')
     def publications(self):
         q = Source.objects.none()
         for auteur in self.auteurs.all():
@@ -507,7 +507,6 @@ class Individu(Model):
     calc_professions.short_description = _('professions')
     def html(self, tags=True, lon=False, prenoms_fav=True):
         designation = self.designation
-        titre = self.titre
         titre = self.calc_titre(tags)
         prenoms = self.calc_prenoms_methode(prenoms_fav)
         nom = self.particule_nom + self.nom
@@ -528,7 +527,7 @@ class Individu(Model):
             out = str_list(l, ' ')
             if pseudonyme:
                 out += ugettext(u', dit%(feminin)s %(pseudonyme)s') % \
-                    {'feminin': '' if titre == 'M' else 'e',
+                    {'feminin': '' if self.titre == 'M' else 'e',
                      'pseudonyme': pseudonyme}
             return out
         main_choices = {
