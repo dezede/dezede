@@ -1,7 +1,8 @@
 html
 {
   background-color: #B82819;
-  background-image: url("/static/damasse.png")
+  background-image: url("/static/damasse.png");
+  background-attachment: fixed;
 }
 
 body
