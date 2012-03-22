@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-22 01:31+0100\n"
+"POT-Creation-Date: 2012-03-22 03:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -203,7 +203,7 @@ msgstr ""
 msgid "lieu"
 msgstr ""
 
-#: catalogue/models.py:230 templates/base.html:19 templates/lieux.html:6
+#: catalogue/models.py:230 templates/base.html:20 templates/lieux.html:6
 msgid "lieux"
 msgstr ""
 
@@ -227,7 +227,7 @@ msgstr ""
 msgid "Ne préciser que s’il est différent du nom."
 msgstr ""
 
-#: catalogue/models.py:268
+#: catalogue/models.py:268 templates/individus.html:20
 msgid "profession"
 msgstr ""
 
@@ -295,6 +295,7 @@ msgid "ancrages spatio-temporels"
 msgstr ""
 
 #: catalogue/models.py:359 catalogue/models.py:363 templates/individu.html:42
+#: templates/individus.html:15
 msgid "prénom"
 msgstr ""
 
@@ -423,7 +424,7 @@ msgstr ""
 msgid "individu"
 msgstr ""
 
-#: catalogue/models.py:553 templates/base.html:21 templates/individus.html:7
+#: catalogue/models.py:553 templates/base.html:22 templates/individus.html:7
 msgid "individus"
 msgstr ""
 
@@ -646,7 +647,7 @@ msgstr ""
 msgid "événement"
 msgstr ""
 
-#: catalogue/models.py:1073 templates/base.html:20 templates/evenements.html:7
+#: catalogue/models.py:1073 templates/base.html:21 templates/evenements.html:7
 msgid "événements"
 msgstr ""
 
@@ -682,15 +683,15 @@ msgstr ""
 msgid "musicologie, base de données"
 msgstr ""
 
-#: templates/base.html:18 templates/search/search.html:12
+#: templates/base.html:19 templates/search/search.html:12
 msgid "recherche"
 msgstr ""
 
-#: templates/base.html:23
+#: templates/base.html:24
 msgid "Administration"
 msgstr ""
 
-#: templates/base.html:36
+#: templates/base.html:37
 msgid ""
 "\n"
 "            Votre navigateur ne peut pas lancer javascript.\n"
@@ -706,19 +707,19 @@ msgstr ""
 msgid "Aucun événement n'a été trouvée selon ces critères."
 msgstr ""
 
-#: templates/individu.html:25
+#: templates/individu.html:25 templates/individus.html:18
 msgid "naissance"
 msgstr ""
 
-#: templates/individu.html:29
+#: templates/individu.html:29 templates/individus.html:19
 msgid "décès"
 msgstr ""
 
-#: templates/individu.html:43
+#: templates/individu.html:43 templates/individus.html:16
 msgid "nom"
 msgstr ""
 
-#: templates/individu.html:60
+#: templates/individu.html:60 templates/individus.html:17
 msgid "pseudonyme"
 msgstr ""
 

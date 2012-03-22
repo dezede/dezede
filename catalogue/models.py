@@ -71,9 +71,9 @@ def no(txt):
 
 # Fonctions HTML
 
-def em(txt, tags=True):
+def cite(txt, tags=True):
     if tags:
-        return u'<em>%s</em>' % txt
+        return u'<cite>%s</cite>' % txt
     return txt
 
 def href(url, txt, tags=True):
@@ -83,7 +83,7 @@ def href(url, txt, tags=True):
 
 def sc(txt, tags=True):
     if tags:
-        return u'<span style="font-variant: small-caps;">%s</span>' % txt
+        return u'<span class="sc">%s</span>' % txt
     return txt
 
 def hlp(txt, title, tags=True):
@@ -887,7 +887,7 @@ class Oeuvre(Model):
         if titre:
             out += parentes
             if titre_complet:
-                out += href(url, em(titre_complet, tags), tags)
+                out += href(url, cite(titre_complet, tags), tags)
                 if descr and genre:
                     out += ', '
         if genre:
@@ -903,7 +903,7 @@ class Oeuvre(Model):
                     titre_complet += ' ' + cs[0]
                     caracteristiques = cs[1]
                 if not parentes:
-                    titre_complet = em(titre_complet, tags)
+                    titre_complet = cite(titre_complet, tags)
                 if titre:
                     out += href(url, titre_complet, tags)
                     if descr and cs and cs[1]:
@@ -1128,7 +1128,7 @@ class Source(Model):
         return str_list([a.html(tags) for a in auteurs])
     def html(self, tags=True):
         l = []
-        l.append('%s' % em(self.nom, tags))
+        l.append('%s' % cite(self.nom, tags))
         if self.numero:
             l.append(no(self.numero))
         l.append('du %s' % date_html(self.date, tags))

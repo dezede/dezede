@@ -12,12 +12,12 @@
     {% if forloop.first %}
       <table class="liste">
         <thead>
-          <th class="right">Prénom(s)</th>
-          <th>Nom</th>
-          <th>Pseudonyme</th>
-          <th>Naissance</th>
-          <th>Décès</th>
-          <th>Professions</th>
+          <th class="right">{% trans "prénom"|capfirst %}(s)</th>
+          <th>{% trans "nom"|capfirst %}</th>
+          <th>{% trans "pseudonyme"|capfirst %}</th>
+          <th>{% trans "naissance"|capfirst %}</th>
+          <th>{% trans "décès"|capfirst %}</th>
+          <th>{% trans "profession"|capfirst %}s</th>
         </thead>
         <tbody>
     {% endif %}

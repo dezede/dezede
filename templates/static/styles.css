@@ -26,6 +26,7 @@ body
   background-color: white;
   border: 2px solid grey;
   border-top: none;
+  font-family: 'Gentium Basic', serif;
 }
 
 nav
@@ -34,9 +35,11 @@ nav
   min-width: 768px;
   max-width: 1024px;
   width: 100%;
+  height: 38px;
   text-align: center;
+  vertical-align: middle;
   border-bottom: 1px solid grey;
-  line-height: 25px;
+  line-height: 30px;
   background-image: url("/static/papier.png");
 }
 
@@ -44,12 +47,15 @@ nav>*
 {
   display: inline-block;
   padding: 4px 8px;
+  font-size: 18px;
 }
 
 nav>a
 {
   color: #D63030;
-  text-shadow: #E57A7A 0px 1px 2px;
+  text-shadow: none;
+  font-variant: small-caps;
+  font-size: 22px;
   font-weight: bold;
 }
 
@@ -68,22 +74,22 @@ a
 {
   color: black;
   text-decoration: none;
-  transition: color 0.3s ease-out 0s;
-  -moz-transition: color 0.3s ease-out 0s;
-  -webkit-transition: color 0.3s ease-out 0s;
-  -o-transition: color 0.3s ease-out 0s;
+  text-shadow: lightGrey 1px 2px 2px;
+  transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -webkit-transition: text-shadow 0.3s;
+  -o-transition: all 0.3s;
 }
 
 a:hover
 {
   color: red;
-  text-decoration: underline;
+  text-shadow: white 0px 0px 0px;
 }
 
 h1, h2, h3, h4, h5, h6
 {
-  font-weight: normal;
-  text-shadow: grey 0px 1px 2px;
+  font-weight: bold;
 }
 
 h2
@@ -99,6 +105,18 @@ h3
 h4
 {
   margin: 0.25em 0;
+}
+
+.sc
+{
+  font-variant: small-caps;
+  font-size: 125%;
+}
+
+sup
+{
+  font-size: 60%;
+  vertical-align: 50%;
 }
 
 ol
@@ -236,6 +254,16 @@ dt, .dt
 {
   color: grey;
   font-size: 14px;
+}
+
+dd
+{
+  margin-bottom: 8px;
+}
+
+dd:last-of-type
+{
+  margin-bottom: 0;
 }
 
 dd>p:first-child
