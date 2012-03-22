@@ -1,20 +1,7 @@
 html
 {
-  background-color: white;
-  background-repeat: no-repeat;
-  background-image: linear-gradient(bottom, #FFFFFF 2%, #D3D3D3 51%);
-  background-image: -o-linear-gradient(bottom, #FFFFFF 2%, #D3D3D3 51%);
-  background-image: -moz-linear-gradient(bottom, #FFFFFF 2%, #D3D3D3 51%);
-  background-image: -webkit-linear-gradient(bottom, #FFFFFF 2%, #D3D3D3 51%);
-  background-image: -ms-linear-gradient(bottom, #FFFFFF 2%, #D3D3D3 51%);
-
-  background-image: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0.02, #FFFFFF),
-    color-stop(0.51, #D3D3D3)
-  );
+  background-color: #B82819;
+  background-image: url("/static/damasse.png")
 }
 
 body
@@ -22,11 +9,12 @@ body
   min-width: 768px;
   max-width: 1024px;
   min-height: 500px;
-  margin: 0px auto 10px auto;
-  background-color: white;
+  margin: 0px auto 20px auto;
   border: 2px solid grey;
   border-top: none;
   font-family: 'Gentium Basic', serif;
+  background-color: #FFF9D9;
+  box-shadow: 0px 5px 30px black;
 }
 
 nav
@@ -41,6 +29,7 @@ nav
   border-bottom: 1px solid grey;
   line-height: 30px;
   background-image: url("/static/papier.png");
+  box-shadow: 0px 2px 10px grey;
 }
 
 nav>*
@@ -67,7 +56,7 @@ nav>a:hover
 #content
 {
   padding: 15px;
-  padding-top: 54px;
+  padding-top: 68px; /* 38px (nav) + 30px */
 }
 
 a
