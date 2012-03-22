@@ -110,13 +110,23 @@ h4
 .sc
 {
   font-variant: small-caps;
-  font-size: 125%;
+  font-size: 120%;
 }
 
 sup
 {
   font-size: 60%;
   vertical-align: 50%;
+}
+
+cite
+{
+  font-size: 110%;
+}
+
+em
+{
+  font-size: 105%;
 }
 
 ol
