@@ -8,53 +8,66 @@
   Recherche
 {% endblock %}
 
+{% block head %}
+  <script>
+    $(function() {
+      $("#criteria").buttonset();
+    });
+  </script>
+{% endblock %}
+
 {% block body %}
   <h2>{% trans "recherche"|capfirst %}</h2>
 
   <form method="get" action=".">
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td>&nbsp;</td>
-        <td>
-          <input type="submit" value="Chercher">
-        </td>
-      </tr>
-    </table>
-
-    {% if query %}
-      <h3>{{ paginator.object_list.count|apnumber|capfirst }} {% trans "résultat" %}{{ paginator.object_list|pluralize }}</h3>
-
-      {% if suggestion %}
-        <p>
-          {% trans "Essayez aussi :" %}
-          <a href="?q={{ suggestion }}">{{ suggestion }}</a>
-        </p>
-      {% endif %}
-
-      {% if page.has_previous %}<a href="?{{ request|GET_add_page:page.previous_page_number }}">« Précédents</a>{% endif %}
-      {% if page.has_previous and page.has_next %}|{% endif %}
-      {% if page.has_next %}<a href="?{{ request|GET_add_page:page.next_page_number }}">Suivants »</a>{% endif %}
-
-      {% for result in page.object_list %}
-        <div class="result {{ result.model.class_name.lower }}">
-          <h3>{{ result.verbose_name|capfirst }}</h3>
-          {% if result.object.link %}
-            {{ result.object.link }}<br />
-          {% else %}
-            {{ result.object.html }}<br />
+    <formset>
+      {{ form.q }}
+      <div id="criteria">
+        {% for choice in form.models.field.choices %}
+          <input type="checkbox" name="models" value="{{ choice.0 }}"
+          {% if choice.0 in form.models.data %}
+            checked="checked"
           {% endif %}
-          <small>
-            {% highlight result.object.html with query html_tag 'mark' %}
-          </small>
-        </div>
-      {% endfor %}
-
-      {% if page.has_previous %}<a href="?{{ request|GET_add_page:page.previous_page_number }}">« Précédents</a>{% endif %}
-      {% if page.has_previous and page.has_next %}|{% endif %}
-      {% if page.has_next %}<a href="?{{ request|GET_add_page:page.next_page_number }}">Suivants »</a>{% endif %}
-    {% else %}
-      <p>Tapez par exemple « chanteuse », « Molière », « opéra » ou encore « théâtre ».</p>
-    {% endif %}
+          id="id_models_{{ forloop.counter0 }}" />
+          <label for="id_models_{{ forloop.counter0 }}">{{ choice.1 }}</label>
+        {% endfor %}
+      </div>
+      <input type="submit" value="Chercher">
+    </formset>
   </form>
+
+  {% if query %}
+    <h3>{{ paginator.object_list.count|apnumber|capfirst }} {% trans "résultat" %}{{ paginator.object_list|pluralize }}</h3>
+
+    {% if suggestion %}
+      <p>
+        {% trans "Essayez aussi :" %}
+        <a href="?q={{ suggestion }}">{{ suggestion }}</a>
+      </p>
+    {% endif %}
+
+    {% if page.has_previous %}<a href="?{{ request|GET_add_page:page.previous_page_number }}">« Précédents</a>{% endif %}
+    {% if page.has_previous and page.has_next %}|{% endif %}
+    {% if page.has_next %}<a href="?{{ request|GET_add_page:page.next_page_number }}">Suivants »</a>{% endif %}
+
+    {% for result in page.object_list %}
+      <div class="result {{ result.model.class_name.lower }}">
+        <h3>{{ result.verbose_name|capfirst }}</h3>
+        {% if result.object.link %}
+          {{ result.object.link }}<br />
+        {% else %}
+          {{ result.object.html }}<br />
+        {% endif %}
+        <small>
+          {% highlight result.object.html with query html_tag 'mark' %}
+        </small>
+      </div>
+    {% endfor %}
+
+    {% if page.has_previous %}<a href="?{{ request|GET_add_page:page.previous_page_number }}">« Précédents</a>{% endif %}
+    {% if page.has_previous and page.has_next %}|{% endif %}
+    {% if page.has_next %}<a href="?{{ request|GET_add_page:page.next_page_number }}">Suivants »</a>{% endif %}
+  {% else %}
+    <p>Tapez par exemple « chanteuse », « Molière », « opéra » ou encore « théâtre ».</p>
+  {% endif %}
 {% endblock %}
