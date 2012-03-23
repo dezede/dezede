@@ -283,3 +283,19 @@ table
   border-collapse: collapse;
 }
 
+#criteria
+{
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+#criteria>.ui-widget
+{
+  font-family: 'Gentium Basic', serif;
+}
+
+#criteria .ui-button-text
+{
+  padding: .2em .5em;
+}
+
