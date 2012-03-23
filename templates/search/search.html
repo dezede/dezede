@@ -12,6 +12,7 @@
   <script>
     $(function() {
       $("#criteria").buttonset();
+      $("#criteria").disableSelection();
     });
   </script>
 {% endblock %}
@@ -21,9 +22,10 @@
 
   <form method="get" action=".">
     <formset>
-      <input type="text" name="q" value="{{ form.q.data }}" id="id_q" autofocus="autofocus" />
+      <input type="text" name="q" value="{{ form.q.data|default:"" }}" id="id_q" autofocus="autofocus" />
       <input type="submit" value="Chercher" />
       <div id="criteria">
+        Filtres :
         {% for choice in form.models.field.choices %}
           <input type="checkbox" name="models" value="{{ choice.0 }}"
           {% if choice.0 in form.models.data %}

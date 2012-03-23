@@ -31,6 +31,7 @@ nav
   line-height: 30px;
   background-image: url("/static/papier.png");
   box-shadow: 0px 2px 10px grey;
+  z-index: 1000;
 }
 
 nav>*
@@ -287,6 +288,7 @@ table
 {
   font-size: 14px;
   margin-top: 10px;
+  cursor: default;
 }
 
 #criteria>.ui-widget
