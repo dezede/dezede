@@ -26,11 +26,13 @@
         {#<a href="{% url 'catalogue.views.saisie_source' %}">Saisie de source</a>#}
         <a href="{% url 'admin:index' %}">{% trans "Administration" %}</a>
         {% for lang in LANGUAGES %}
-          <form action="/i18n/setlang/" method="POST" style="float: right;">
-            {% csrf_token %}
-            <input type="hidden" name="language" value="{{lang.0}}" />
-            <input type="submit" value="{% trans lang.1 %}" />
-          </form>
+          {% if lang.0 != LANGUAGE_CODE %}
+            <form action="/i18n/setlang/" method="POST" style="float: right;">
+              {% csrf_token %}
+              <input type="hidden" name="language" value="{{ lang.0 }}" />
+              <input type="submit" value="{{ lang.1 }}" />
+            </form>
+          {% endif %}
         {% endfor %}
       </nav>
     </header>
