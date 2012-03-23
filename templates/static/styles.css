@@ -283,27 +283,3 @@ table
   border-collapse: collapse;
 }
 
-table th
-{
-  font-weight: normal;
-}
-
-table td
-{
-  border-right: 1px solid lightGrey;
-  padding: 0 3px;
-}
-
-table th:first-child,
-table td:first-child
-{
-  padding-left: 0;
-}
-
-table th:last-child,
-table td:last-child
-{
-  border-right: none;
-  padding-right: 0;
-}
-

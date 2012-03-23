@@ -505,7 +505,7 @@ class Individu(Model):
         titre = self.titre
         return str_list_w_last([p.gendered(titre) for p in ps])
     calc_professions.short_description = _('professions')
-    def html(self, tags=True, lon=False, prenoms_fav=True):
+    def html(self, tags=True, lon=False, prenoms_fav=True, force_standard=False):
         designation = self.designation
         titre = self.calc_titre(tags)
         prenoms = self.calc_prenoms_methode(prenoms_fav)
@@ -537,8 +537,8 @@ class Individu(Model):
           'P': pseudonyme,
           'B': nom_naissance,
         }
-        main = main_style(main_choices[designation])
-        out = standard(main) if designation in ('S', 'B',) else main
+        main = main_style(main_choices['S' if force_standard else designation])
+        out = standard(main) if designation in ('S', 'B',) or force_standard else main
         url = ''
         if tags:
             url = self.get_absolute_url()
@@ -546,8 +546,8 @@ class Individu(Model):
         return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
-    def nom_complet(self, tags=True, prenoms_fav=True):
-        return self.html(tags, True, prenoms_fav)
+    def nom_complet(self, tags=True, prenoms_fav=True, force_standard=True):
+        return self.html(tags, True, prenoms_fav, force_standard)
     class Meta:
         verbose_name = _('individu')
         verbose_name_plural = _('individus')
