@@ -8,58 +8,12 @@
 {% endblock %}
 
 {% block body %}
-  {% for evenement, sources_list in datadict.items %}
+  {% for evenement in evenements %}
     <div class="content_part">
-      <h2 style="text-align: center;">
-        {{ evenement.ancrage_debut.calc_date|capfirst }}
-      </h2>
-      <br />
-      {{ evenement.html }}
-      <br />
-      {% for element in evenement.programme.all %}
-        {% if forloop.first %}
-          <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
-          <ol>
-        {% endif %}
-        <li>
-          {{ element.html }}
-        </li>
-        {% if forloop.last %}
-          </ol>
-        {% endif %}
-      {% endfor %}
-      {% for type, sources in sources_list.items %}
-        <br />
-        <h3 style="text-align: center; font-style: italic;">
-          {% if sources|length > 1 %}
-            {{ type.pluriel|capfirst }}
-          {% else %}
-            {{ type|capfirst }}
-          {% endif %}
-        </h3>
-        {% for source in sources %}
-          <div class="source">
-            {{ source.contenu }}
-            {{ source.calc_auteurs }}
-            <div class="source-ref">
-              {% if source.illustrations.all %}
-                {% for illustration in source.illustrations.all %}
-                  <a href="{{ illustration.image.url }}">[Fac-similé]</a>
-                {% endfor %}
-              {% endif %}
-              ({{ source.html }})
-            </div>
-          </div>
-          {% if not forloop.last %}
-            <hr />
-          {% endif %}
-        {% endfor %}
-      {% endfor %}
+      {% include "evenement.html" %}
     </div>
   {% empty %}
-    <div style="text-align: center;">
-      {% trans "Aucun événement n'a été trouvée selon ces critères." %}
-    </div>
+    {% trans "Aucun événement n'a été trouvée selon ces critères." %}
   {% endfor %}
 {% endblock %}
 

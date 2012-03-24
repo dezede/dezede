@@ -16,37 +16,68 @@
   </h3>
   <br />
   <dl>
-    {% for enfant in lieu.enfants.all %}
-      {% if forloop.first %}
-        <dt>Lieu{{ lieu.enfants.all|pluralize:"x" }} contenus dans {{ lieu.nom }}</dt>
-      {% endif %}
-      <dd><a href="{% url 'catalogue.views.index_lieux' %}{{ enfant.slug }}">{{ enfant.nom }}</a></dd>
-    {% endfor %}
-    {% for evenement in lieu.evenements.all %}
-      {% if forloop.first %}
-        <dt>
-          {% trans "événement"|capfirst %}{{ lieu.evenements.all|pluralize }}
-          <a href="{% url 'catalogue.views.index_evenements' lieu.slug %}">
-            {% trans "(afficher tous)" %}
-          </a>
-        </dt>
-      {% endif %}
-      <dd>
-        {% with evenement.ancrage_debut as date %}
-          <a href="{% url 'catalogue.views.index_evenements' lieu.slug date.year date.month date.day %}">
-            {{ date.calc_moment|capfirst }}
-          </a>
-        {% endwith %}
-      </dd>
-    {% empty %}
-      {% if not lieu.enfants.all %}
-        {% trans "Aucun événement référencé pour ce lieu."|capfirst %}<br />
-      {% endif %}
-    {% endfor %}
     {% if lieu.historique %}
       <dt>{% trans "historique"|capfirst %}</dt>
       <dd>{{ lieu.historique }}</dd>
     {% endif %}
+    {% with lieu.enfants.all as enfants %}
+      {% for enfant in enfants %}
+        {% if forloop.first %}
+          <dt>
+            {% blocktrans with parent=lieu.nom count counter=enfants|length %}
+              Lieu contenu dans {{ parent }}
+            {% plural %}
+              Lieux contenus dans {{ parent }}
+            {% endblocktrans %}
+          </dt>
+        {% endif %}
+        <dd>{{ enfant.short_link }}</dd>
+      {% endfor %}
+    {% endwith %}
+    {% include "evenements.def" with evenements=lieu.evenements.all %}
+    {% with lieu.individus_nes.all as individus %}
+      {% for individu in individus %}
+        {% if forloop.first %}
+          <dt>
+            {% blocktrans count counter=individus|length %}
+              Individu né ici
+            {% plural %}
+              Individus nés ici
+            {% endblocktrans %}
+          </dt>
+        {% endif %}
+        <dd>{{ individu.link }}</dd>
+      {% endfor %}
+    {% endwith %}
+    {% with lieu.individus_decedes.all as individus %}
+      {% for individu in individus %}
+        {% if forloop.first %}
+          <dt>
+            {% blocktrans count counter=individus|length %}
+              Individu décédé ici
+            {% plural %}
+              Individus décédés ici
+            {% endblocktrans %}
+          </dt>
+        {% endif %}
+        <dd>{{ individu.link }}</dd>
+      {% endfor %}
+    {% endwith %}
+    {% with lieu.oeuvres_composees.all as oeuvres %}
+      {% for oeuvre in oeuvres %}
+        {% if forloop.first %}
+          <dt>
+            {% blocktrans count counter=oeuvres %}
+              Œuvre composée ici
+            {% plural %}
+              Œuvres composées ici
+            {% endblocktrans %}
+          </dt>
+        {% endif %}
+        <dd>{{ oeuvre.link }}</dd>
+      {% endfor %}
+    {% endwith %}
+    {% include "notes.def" with notes=lieu.notes %}
   </dl>
   <br />
   <a href="{% url 'admin:catalogue_lieu_change' lieu.pk %}">

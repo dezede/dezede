@@ -211,14 +211,22 @@ class Lieu(Model):
         return ('musicologie.catalogue.views.detail_lieu', [self.slug])
     def link(self):
         return self.html()
+    def short_link(self):
+        return self.html(short=True)
     link.short_description = _('permalien')
     link.allow_tags = True
-    def evenements(self):
+    def evenements(self): # TODO: gérer les fins d'événements.
         return Evenement.objects.filter(ancrage_debut__lieu=self)
-    def html(self, tags=True):
+    def individus_nes(self):
+        return Individu.objects.filter(ancrage_naissance__lieu=self)
+    def individus_decedes(self):
+        return Individu.objects.filter(ancrage_deces__lieu=self)
+    def oeuvres_composees(self):
+        return Oeuvre.objects.filter(ancrage_composition__lieu=self)
+    def html(self, tags=True, short=False):
         nom = ''
         parent = self.parent
-        if parent:
+        if parent and not short:
             nom += parent.nom + ', '
         nom += self.nom
         out = href(self.get_absolute_url(), nom, tags)
@@ -469,6 +477,16 @@ class Individu(Model):
         for el in els.distinct():
             q |= el.evenements.all()
         return q.distinct()
+    def parents(self):
+        q = Individu.objects.none()
+        for parente in self.parentes.all():
+            q |= parente.individus_cibles.all()
+        return q.distinct().order_by('nom')
+    def enfants(self):
+        q = Individu.objects.none()
+        for enfance in self.enfances_cibles.all():
+            q |= enfance.individus_orig.all()
+        return q.distinct().order_by('nom')
     def calc_prenoms_methode(self, fav):
         prenoms = self.prenoms.all().order_by('classement', 'prenom')
         if fav:
@@ -554,13 +572,12 @@ class Individu(Model):
         ordering = ['nom']
     def save(self, *args, **kwargs):
         super(Individu, self).save(*args, **kwargs)
+        self.slug = autoslugify(self, self.__unicode__())
         if self.nom:
             new_slug = slugify(self.nom)
             individus = Individu.objects.filter(slug=new_slug)
-            if individus.count() == individus.filter(pk=self.pk).count():
+            if not individus:
                 self.slug = new_slug
-        else:
-            self.slug = autoslugify(self, self.__unicode__())
         super(Individu, self).save(*args, **kwargs)
     def __unicode__(self):
         return strip_tags(self.html(False))
@@ -824,6 +841,11 @@ class Oeuvre(Model):
         for auteur in self.auteurs.all():
             q |= auteur.individus.all()
         return q.distinct()
+    def enfants(self):
+        q = Oeuvre.objects.none()
+        for enfance in self.enfances_cibles.all():
+            q |= enfance.oeuvres.all()
+        return q.distinct()
     def evenements(self):
         q = Evenement.objects.none()
         for element in self.elements_de_programme.all():
@@ -1049,13 +1071,21 @@ class Evenement(Model):
     notes = HTMLField(blank=True)
     @permalink
     def get_absolute_url(self):
-        return ('musicologie.catalogue.views.index_evenements',
+        return ('evenement_jour',
                 [self.ancrage_debut.lieu.slug, self.ancrage_debut.date.year,
                  self.ancrage_debut.date.month, self.ancrage_debut.date.day])
     def link(self):
         return href(self.get_absolute_url(), self.__unicode__())
     link.short_description = _('permalien')
     link.allow_tags = True
+    def sources_dict(self):
+        types = TypeDeSource.objects.filter(sources__evenements=self).distinct()
+        d = {}
+        for type in types:
+            sources = self.sources.filter(type=type)
+            if sources:
+                d[type] = sources
+        return d
     def html(self, tags=True):
         relache, circonstance = '', ''
         if self.circonstance:
@@ -1075,7 +1105,7 @@ class Evenement(Model):
     def __unicode__(self):
         out = self.ancrage_debut.calc_date(False)
         out = capfirst(out)
-        out += ' ' + self.html(False)
+        out += u'\u00A0; ' + self.html(False)
         return strip_tags(out)
     @staticmethod
     def autocomplete_search_fields():

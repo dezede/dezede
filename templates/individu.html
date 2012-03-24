@@ -31,7 +31,8 @@
       </span>
     {% endif %}
   </h3>
-  <h4 title="profession{{ individu.professions.all|pluralize }}">
+  <h4 title="
+        {% blocktrans count counter=individu.professions.all|length %}profession{% plural %}professions{% endblocktrans %}">
     {{ individu.calc_professions|capfirst|default:'Profession inconnue' }}
   </h4>
   <br />
@@ -40,41 +41,82 @@
       <dt>{% trans "nom de naissance"|capfirst %}</dt>
       <dd>{{ individu.nom_naissance }}</dd>
     {% endif %}
-    {% for parent in individu.parents.all %}
-      {% if forloop.first %}
-        <dt>{% trans "parents"|capfirst %}</dt>
-      {% endif %}
-      <dd>{{ parent.link }}</dd>
-    {% endfor %}
     {% if individu.biographie %}
       <dt>{% trans "biographie"|capfirst %}</dt>
       <dd>{{ individu.biographie }}</dd>
     {% endif %}
 
-    {% for enfant in individu.enfants.all %}
-      {% if forloop.first %}
-        <dt>Enfant{{ individu.enfants.all|pluralize }}</dt>
-      {% endif %}
+    {% with individu.oeuvres.all as oeuvres %}
+      {% for oeuvre in oeuvres %}
+        {% if forloop.first %}
+          <dt>
+            {% blocktrans count counter=oeuvres|length %}
+              Œuvre
+            {% plural %}
+              Œuvres
+            {% endblocktrans %}
+          </dt>
+        {% endif %}
+        <dd>{{ oeuvre.link }}</dd>
+      {% endfor %}
+    {% endwith %}
+    {% with individu.apparitions.all as apparitions %}
+      {% for evenement in apparitions %}
+        {% if forloop.first %}
+          <dt>
+            {% blocktrans count counter=apparitions|length %}
+              Apparition
+            {% plural %}
+              Apparitions
+            {% endblocktrans %}
+          </dt>
+        {% endif %}
+        <dd>{{ evenement.link }}</dd>
+      {% endfor %}
+    {% endwith %}
+    {% with individu.publications.all as publications %}
+      {% for publication in publications %}
+        {% if forloop.first %}
+          <dt>
+            {% blocktrans count counter=apparitions|length %}
+              Publication
+            {% plural %}
+              Publications
+            {% endblocktrans %}
+          </dt>
+        {% endif %}
+        <dd>{{ publication.html }}</dd>
+      {% endfor %}
+    {% endwith %}
+    {% with individu.parents.all as parents %}
+      {% for parent in parents %}
+        {% if forloop.first %}
+          <dt>
+            {% blocktrans count counter=parents|length %}
+              Parent
+            {% plural %}
+              Parents
+            {% endblocktrans %}
+          </dt>
+        {% endif %}
+        <dd>{{ parent.link }}</dd>
+      {% endfor %}
+    {% endwith %}
+    {% with individu.enfants.all as enfants %}
+      {% for enfant in enfants %}
+        {% if forloop.first %}
+          <dt>
+            {% blocktrans count counter=enfants|length %}
+              Enfant
+            {% plural %}
+              Enfants
+            {% endblocktrans %}
+          </dt>
+        {% endif %}
         <dd>{{ enfant.link }}</dd>
-    {% endfor %}
-    {% for oeuvre in individu.oeuvres.all %}
-      {% if forloop.first %}
-        <dt>{% trans "œuvre"|capfirst %}{{ individu.oeuvres.all|pluralize }}</dt>
-      {% endif %}
-      <dd>{{ oeuvre.link }}</dd>
-    {% endfor %}
-    {% for evenement in individu.apparitions.all %}
-      {% if forloop.first %}
-        <dt>{% trans "apparition"|capfirst %}{{ individu.apparitions.all|pluralize }}</dt>
-      {% endif %}
-      <dd>{{ evenement.link }}</dd>
-    {% endfor %}
-    {% for publication in individu.publications.all %}
-      {% if forloop.first %}
-        <dt>{% trans "publication"|capfirst %}{{ individu.publications.all|pluralize }}</dt>
-      {% endif %}
-      <dd>{{ publication.html }}</dd>
-    {% endfor %}
+      {% endfor %}
+    {% endwith %}
+    {% include "notes.def" with notes=individu.notes %}
   </dl>
   <br />
   <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">

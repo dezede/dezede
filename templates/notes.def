@@ -1,0 +1,6 @@
+{% load i18n %}
+{% if notes %}
+  <dt>{% trans "notes"|capfirst %}</dt>
+  <dd>{{ notes }}</dd>
+{% endif %}
+

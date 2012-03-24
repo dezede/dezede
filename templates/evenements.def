@@ -1,0 +1,22 @@
+{% load i18n %}
+{% for evenement in evenements %}
+  {% if forloop.first %}
+    <dt>
+      {% blocktrans count counter=evenements|length %}
+        Événement
+      {% plural %}
+        Événements
+      {% endblocktrans %}
+    </dt>
+  {% endif %}
+  <dd>
+    {% if lieu %}{# TODO: trouver un truc plus propre #}
+      <a href="{{ evenement.get_absolute_url }}">
+        {{ evenement.ancrage_debut.calc_moment|capfirst }}
+      </a>
+    {% else %}
+      {{ evenement.link }}
+    {% endif %}
+  </dd>
+{% endfor %}
+
