@@ -208,7 +208,7 @@ class Lieu(Model):
     slug = SlugField(blank=True)
     @permalink
     def get_absolute_url(self):
-        return ('musicologie.catalogue.views.detail_lieu', [self.slug])
+        return ('lieu', [self.slug])
     def link(self):
         return self.html()
     def short_link(self):
@@ -454,7 +454,7 @@ class Individu(Model):
     slug = SlugField(blank=True)
     @permalink
     def get_absolute_url(self):
-        return ('musicologie.catalogue.views.detail_individu', [self.slug],)
+        return ('individu', [self.slug],)
     def link(self):
         return self.html()
     link.short_description = _('permalien')
@@ -831,7 +831,7 @@ class Oeuvre(Model):
     slug = SlugField(blank=True)
     @permalink
     def get_absolute_url(self):
-        return ('musicologie.catalogue.views.detail_oeuvre', [self.slug])
+        return ('oeuvre', [self.slug])
     def link(self):
         return self.html(True, False, True, True)
     link.short_description = _('permalien')

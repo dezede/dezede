@@ -50,11 +50,7 @@
       {% for oeuvre in oeuvres %}
         {% if forloop.first %}
           <dt>
-            {% blocktrans count counter=oeuvres|length %}
-              Œuvre
-            {% plural %}
-              Œuvres
-            {% endblocktrans %}
+            {% blocktrans count counter=oeuvres|length %}Œuvre{% plural %}Œuvres{% endblocktrans %}
           </dt>
         {% endif %}
         <dd>{{ oeuvre.link }}</dd>
@@ -64,11 +60,7 @@
       {% for evenement in apparitions %}
         {% if forloop.first %}
           <dt>
-            {% blocktrans count counter=apparitions|length %}
-              Apparition
-            {% plural %}
-              Apparitions
-            {% endblocktrans %}
+            {% blocktrans count counter=apparitions|length %}Apparition{% plural %}Apparitions{% endblocktrans %}
           </dt>
         {% endif %}
         <dd>{{ evenement.link }}</dd>
@@ -78,11 +70,7 @@
       {% for publication in publications %}
         {% if forloop.first %}
           <dt>
-            {% blocktrans count counter=apparitions|length %}
-              Publication
-            {% plural %}
-              Publications
-            {% endblocktrans %}
+            {% blocktrans count counter=apparitions|length %}Publication{% plural %}Publications{% endblocktrans %}
           </dt>
         {% endif %}
         <dd>{{ publication.html }}</dd>
@@ -92,11 +80,7 @@
       {% for parent in parents %}
         {% if forloop.first %}
           <dt>
-            {% blocktrans count counter=parents|length %}
-              Parent
-            {% plural %}
-              Parents
-            {% endblocktrans %}
+            {% blocktrans count counter=parents|length %}Parent{% plural %}Parents{% endblocktrans %}
           </dt>
         {% endif %}
         <dd>{{ parent.link }}</dd>
@@ -106,11 +90,7 @@
       {% for enfant in enfants %}
         {% if forloop.first %}
           <dt>
-            {% blocktrans count counter=enfants|length %}
-              Enfant
-            {% plural %}
-              Enfants
-            {% endblocktrans %}
+            {% blocktrans count counter=enfants|length %}Enfant{% plural %}Enfants{% endblocktrans %}
           </dt>
         {% endif %}
         <dd>{{ enfant.link }}</dd>

@@ -52,7 +52,7 @@ def saisie_source(request, source_id=None):
         form = SourceForm(request.POST, instance=source)
         if form.is_valid():
             form.save()
-            return redirect('musicologie.catalogue.views.saisie_source')
+            return redirect('saisie_sources')
     else:
         form = SourceForm(instance=source)
     c = RequestContext(request, {'form': form, 'sources': Source.objects.all(), 'source': source,})

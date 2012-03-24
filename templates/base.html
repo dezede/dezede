@@ -39,10 +39,7 @@
     <div id="content">
       {% autoescape off %}
         <noscript>
-          {% blocktrans %}
-            Votre navigateur ne peut pas lancer javascript.
-            Attendez-vous à des défauts de fonctionnement.
-          {% endblocktrans %}
+          {% blocktrans %}Votre navigateur ne peut pas lancer javascript. Attendez-vous à des défauts de fonctionnement.{% endblocktrans %}
         </noscript>
         {% block body %}{% endblock %}
       {% endautoescape %}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-24 23:23+0100\n"
+"POT-Creation-Date: 2012-03-24 23:39+0100\n"
 "PO-Revision-Date: 2012-03-18 03:39\n"
 "Last-Translator: <bordage.bertrand@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -332,9 +332,8 @@ msgid "nom d’usage"
 msgstr ""
 
 #: catalogue/models.py:415
-#, fuzzy
 msgid "particule du nom de naissance"
-msgstr "birth name"
+msgstr ""
 
 #: catalogue/models.py:417 templates/individu.html:41
 msgid "nom de naissance"
@@ -695,10 +694,8 @@ msgstr ""
 
 #: templates/base.html:42
 msgid ""
-"\n"
-"            Votre navigateur ne peut pas lancer javascript.\n"
-"            Attendez-vous à des défauts de fonctionnement.\n"
-"          "
+"Votre navigateur ne peut pas lancer javascript. Attendez-vous à des défauts "
+"de fonctionnement."
 msgstr ""
 
 #: templates/evenement.html:10
@@ -722,66 +719,36 @@ msgid "biographie"
 msgstr "biography"
 
 #: templates/individu.html:53
-msgid ""
-"\n"
-"              Œuvre\n"
-"            "
-msgid_plural ""
-"\n"
-"              Œuvres\n"
-"            "
+msgid "Œuvre"
+msgid_plural "Œuvres"
+msgstr[0] "Work"
+msgstr[1] "Works"
+
+#: templates/individu.html:63
+msgid "Apparition"
+msgid_plural "Apparitions"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/individu.html:67
-msgid ""
-"\n"
-"              Apparition\n"
-"            "
-msgid_plural ""
-"\n"
-"              Apparitions\n"
-"            "
+#: templates/individu.html:73
+msgid "Publication"
+msgid_plural "Publications"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/individu.html:81
-msgid ""
-"\n"
-"              Publication\n"
-"            "
-msgid_plural ""
-"\n"
-"              Publications\n"
-"            "
+#: templates/individu.html:83
+msgid "Parent"
+msgid_plural "Parents"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/individu.html:95
-msgid ""
-"\n"
-"              Parent\n"
-"            "
-msgid_plural ""
-"\n"
-"              Parents\n"
-"            "
+#: templates/individu.html:93 templates/oeuvre.html:35
+msgid "Enfant"
+msgid_plural "Enfants"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/individu.html:109
-msgid ""
-"\n"
-"              Enfant\n"
-"            "
-msgid_plural ""
-"\n"
-"              Enfants\n"
-"            "
-msgstr[0] ""
-msgstr[1] ""
-
-#: templates/individu.html:123 templates/lieu.html:84 templates/oeuvre.html:53
+#: templates/individu.html:103 templates/lieu.html:68 templates/oeuvre.html:45
 msgid "[Modifier]"
 msgstr "[Modify]"
 
@@ -807,50 +774,26 @@ msgstr "history"
 
 #: templates/lieu.html:27
 #, python-format
-msgid ""
-"\n"
-"              Lieu contenu dans %(parent)s\n"
-"            "
-msgid_plural ""
-"\n"
-"              Lieux contenus dans %(parent)s\n"
-"            "
+msgid "Lieu contenu dans %(parent)s"
+msgid_plural "Lieux contenus dans %(parent)s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/lieu.html:42
-msgid ""
-"\n"
-"              Individu né ici\n"
-"            "
-msgid_plural ""
-"\n"
-"              Individus nés ici\n"
-"            "
+#: templates/lieu.html:38
+msgid "Individu né ici"
+msgid_plural "Individus nés ici"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/lieu.html:56
-msgid ""
-"\n"
-"              Individu décédé ici\n"
-"            "
-msgid_plural ""
-"\n"
-"              Individus décédés ici\n"
-"            "
+#: templates/lieu.html:48
+msgid "Individu décédé ici"
+msgid_plural "Individus décédés ici"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/lieu.html:70
-msgid ""
-"\n"
-"              Œuvre composée ici\n"
-"            "
-msgid_plural ""
-"\n"
-"              Œuvres composées ici\n"
-"            "
+#: templates/lieu.html:58
+msgid "Œuvre composée ici"
+msgid_plural "Œuvres composées ici"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -859,32 +802,14 @@ msgid "Aucun lieu ne figure dans la base de données."
 msgstr ""
 
 #: templates/oeuvre.html:22
-msgid ""
-"\n"
-"            Auteur\n"
-"          "
-msgid_plural ""
-"\n"
-"            Auteurs\n"
-"          "
-msgstr[0] ""
-msgstr[1] ""
+msgid "Auteur"
+msgid_plural "Auteurs"
+msgstr[0] "Author"
+msgstr[1] "Authors"
 
-#: templates/oeuvre.html:32
+#: templates/oeuvre.html:28
 msgid "composition"
 msgstr ""
-
-#: templates/oeuvre.html:39
-msgid ""
-"\n"
-"            Enfant\n"
-"          "
-msgid_plural ""
-"\n"
-"            Enfants\n"
-"          "
-msgstr[0] ""
-msgstr[1] ""
 
 #: templates/search/search.html:42
 msgid "résultat"
@@ -893,6 +818,3 @@ msgstr ""
 #: templates/search/search.html:46
 msgid "Essayez aussi :"
 msgstr ""
-
-#~ msgid "(afficher tous)"
-#~ msgstr "(show all)"

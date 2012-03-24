@@ -3,7 +3,7 @@
 import os
 ugettext = lambda s: s
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.abspath(os.path.dirname(__file__))

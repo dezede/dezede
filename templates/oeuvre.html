@@ -19,11 +19,7 @@
     {% with oeuvre.individus_auteurs.all as auteurs %}
       {% if auteurs %}
         <dt>
-          {% blocktrans count counter=auteurs|length %}
-            Auteur
-          {% plural %}
-            Auteurs
-          {% endblocktrans %}
+          {% blocktrans count counter=auteurs|length %}Auteur{% plural %}Auteurs{% endblocktrans %}
         </dt>
         <dd>{{ oeuvre.calc_auteurs }}</dd>
       {% endif %}
@@ -36,11 +32,7 @@
     {% for enfance in oeuvre.enfances_cibles.all %}
       {% if forloop.first %}
         <dt>
-          {% blocktrans count counter=oeuvre.enfants.all|length %}
-            Enfant
-          {% plural %}
-            Enfants
-          {% endblocktrans %}
+          {% blocktrans count counter=oeuvre.enfants.all|length %}Enfant{% plural %}Enfants{% endblocktrans %}
         </dt>
       {% endif %}
       <dd>{{ enfance.type }}&nbsp;: {% for enfant in enfance.oeuvres.all %}{{ enfant.link }}&nbsp;; {% endfor %}</dd>
