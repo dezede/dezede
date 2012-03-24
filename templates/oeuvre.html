@@ -37,8 +37,8 @@
       {% endif %}
       <dd>{{ enfance.type }}&nbsp;: {% for enfant in enfance.oeuvres.all %}{{ enfant.link }}&nbsp;; {% endfor %}</dd>
     {% endfor %}
-    {% include "evenements.def" with evenements=oeuvre.evenements.all %}
-    {% include "notes.def" with notes=oeuvre.notes %}
+    {% include "evenements-def.html" with evenements=oeuvre.evenements.all %}
+    {% include "notes-def.html" with notes=oeuvre.notes %}
   </dl>
   <br />
   <a href="{% url 'admin:catalogue_oeuvre_change' oeuvre.pk %}">

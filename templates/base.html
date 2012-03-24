@@ -19,10 +19,10 @@
   <body>
     <header>
       <nav>
-        <a href="{% url 'haystack_search' %}">{% trans "recherche"|capfirst %}</a>
-        <a href="{% url 'catalogue.views.index_lieux' %}">{% trans "lieux"|capfirst %}</a>
-        <a href="{% url 'catalogue.views.index_evenements' %}">{% trans "événements"|capfirst %}</a>
-        <a href="{% url 'catalogue.views.index_individus' %}">{% trans "individus"|capfirst %}</a>
+        <a href="{% url 'haystack_search' %}">{% trans "Recherche" %}</a>
+        <a href="{% url 'catalogue.views.index_lieux' %}">{% trans "Lieux" %}</a>
+        <a href="{% url 'catalogue.views.index_evenements' %}">{% trans "Événements" %}</a>
+        <a href="{% url 'catalogue.views.index_individus' %}">{% trans "Individus" %}</a>
         {#<a href="{% url 'catalogue.views.saisie_source' %}">Saisie de source</a>#}
         <a href="{% url 'admin:index' %}">{% trans "Administration" %}</a>
         {% for lang in LANGUAGES %}

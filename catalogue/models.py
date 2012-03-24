@@ -6,7 +6,7 @@ from filebrowser.fields import FileBrowseField
 from musicologie.catalogue.templatetags.extras import replace, abbreviate
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import ungettext, ungettext_lazy, ugettext, ugettext_lazy as _
 from django.utils.functional import allow_lazy
 from django.template.defaultfilters import date, time, capfirst
 from django.contrib.humanize.templatetags.humanize import apnumber
@@ -122,8 +122,8 @@ class Document(Model):
     auteurs = ManyToManyField('Auteur', related_name='documents', blank=True,
         null=True)
     class Meta:
-        verbose_name = _('document')
-        verbose_name_plural = _('documents')
+        verbose_name = ungettext_lazy('document', 'documents', 0)
+        verbose_name_plural = ungettext_lazy('document', 'documents', 1)
         ordering = ['document']
     def __unicode__(self):
         if self.nom:
@@ -141,8 +141,8 @@ class Illustration(Model):
     auteurs = ManyToManyField('Auteur', related_name='illustrations',
         blank=True, null=True)
     class Meta:
-        verbose_name = _('illustration')
-        verbose_name_plural = _('illustrations')
+        verbose_name = ungettext_lazy('illustration', 'illustrations', 0)
+        verbose_name_plural = ungettext_lazy('illustration', 'illustrations', 1)
         ordering = ['image']
     def __unicode__(self):
         if self.legende:
@@ -162,8 +162,8 @@ class Etat(Model):
     publie = BooleanField(default=True, verbose_name=_(u'publié'))
     slug = SlugField(blank=True)
     class Meta:
-        verbose_name = _(u'état')
-        verbose_name_plural = _(u'états')
+        verbose_name = ungettext_lazy(u'état', u'états', 0)
+        verbose_name_plural = ungettext_lazy(u'état', u'états', 1)
         ordering = ['slug']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(self, self.__unicode__())
@@ -180,8 +180,8 @@ class NatureDeLieu(Model):
                             help_text=PLURAL_MSG)
     slug = SlugField(blank=True)
     class Meta:
-        verbose_name = _('nature de lieu')
-        verbose_name_plural = _('natures de lieu')
+        verbose_name = ungettext_lazy('nature de lieu', 'natures de lieu', 0)
+        verbose_name_plural = ungettext_lazy('nature de lieu', 'natures de lieu', 1)
         ordering = ['slug']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(self, self.__unicode__())
@@ -234,8 +234,8 @@ class Lieu(Model):
     html.short_description = _('rendu HTML')
     html.allow_tags = True
     class Meta:
-        verbose_name = _('lieu')
-        verbose_name_plural = _('lieux')
+        verbose_name = ungettext_lazy('lieu', 'lieux', 0)
+        verbose_name_plural = ungettext_lazy('lieu', 'lieux', 1)
         ordering = ['nom']
     def save(self, *args, **kwargs):
         new_slug = slugify(self.nom)
@@ -256,8 +256,8 @@ class Saison(Model):
     debut = DateField(verbose_name=_(u'début'), help_text=DATE_MSG)
     fin = DateField()
     class Meta:
-        verbose_name = _('saison')
-        verbose_name_plural = _('saisons')
+        verbose_name = ungettext_lazy('saison', 'saisons', 0)
+        verbose_name_plural = ungettext_lazy('saison', 'saisons', 1)
         ordering = ['lieu', 'debut']
     def __unicode__(self):
         return self.lieu.__unicode__() + ', ' + str(self.debut.year) + '-' + str(self.fin.year)
@@ -273,8 +273,8 @@ class Profession(Model):
         related_name='enfant')
     slug = SlugField(blank=True)
     class Meta:
-        verbose_name = _('profession')
-        verbose_name_plural = _('professions')
+        verbose_name = ungettext_lazy('profession', 'professions', 0)
+        verbose_name_plural = ungettext_lazy('profession', 'professions', 1)
         ordering = ['slug']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(self, self.__unicode__())
@@ -352,8 +352,8 @@ class AncrageSpatioTemporel(Model):
         out = str_list(l)
         return capfirst(out)
     class Meta:
-        verbose_name = _('ancrage spatio-temporel')
-        verbose_name_plural = _('ancrages spatio-temporels')
+        verbose_name = ungettext_lazy('ancrage spatio-temporel', 'ancrages spatio-temporels', 0)
+        verbose_name_plural = ungettext_lazy('ancrage spatio-temporel', 'ancrages spatio-temporels', 1)
         ordering = ['date', 'heure', 'lieu', 'date_approx', 'heure_approx', 'lieu_approx']
     def __unicode__(self):
         return strip_tags(self.html(False))
@@ -368,8 +368,8 @@ class Prenom(Model):
     classement = FloatField(default=1.0)
     favori = BooleanField(default=True)
     class Meta:
-        verbose_name = _(u'prénom')
-        verbose_name_plural = _(u'prénoms')
+        verbose_name = ungettext_lazy(u'prénom', u'prénoms', 0)
+        verbose_name_plural = ungettext_lazy(u'prénom', u'prénoms', 1)
         ordering = ['prenom', 'classement']
     def __unicode__(self):
         return self.prenom
@@ -382,8 +382,8 @@ class TypeDeParenteDIndividus(Model):
     nom_pluriel = CharField(max_length=55, blank=True, help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
     class Meta:
-        verbose_name = _(u'type de parenté d’individus')
-        verbose_name_plural = _(u'types de parenté d’individus')
+        verbose_name = ungettext_lazy(u'type de parenté d’individus', u'types de parenté d’individus', 0)
+        verbose_name_plural = ungettext_lazy(u'type de parenté d’individus', u'types de parenté d’individus', 1)
         ordering = ['classement']
     def pluriel(self):
         return calc_pluriel(self)
@@ -395,8 +395,8 @@ class ParenteDIndividus(Model):
     individus_cibles = ManyToManyField('Individu',
         related_name='enfances_cibles', verbose_name=_('individus cibles'))
     class Meta:
-        verbose_name = _(u'parenté d’individus')
-        verbose_name_plural = _(u'parentés d’individus')
+        verbose_name = ungettext_lazy(u'parenté d’individus', u'parentés d’individus', 0)
+        verbose_name_plural = ungettext_lazy(u'parenté d’individus', u'parentés d’individus', 1)
         ordering = ['type']
     def __unicode__(self):
         out = self.type.nom
@@ -567,8 +567,8 @@ class Individu(Model):
     def nom_complet(self, tags=True, prenoms_fav=True, force_standard=True):
         return self.html(tags, True, prenoms_fav, force_standard)
     class Meta:
-        verbose_name = _('individu')
-        verbose_name_plural = _('individus')
+        verbose_name = ungettext_lazy('individu', 'individus', 0)
+        verbose_name_plural = ungettext_lazy('individu', 'individus', 1)
         ordering = ['nom']
     def save(self, *args, **kwargs):
         super(Individu, self).save(*args, **kwargs)
@@ -593,8 +593,8 @@ class Devise(Model):
     nom = CharField(max_length=200, blank=True, help_text=ex(_('euro')), unique=True)
     symbole = CharField(max_length=10, help_text=ex(_(u'€')), unique=True)
     class Meta:
-        verbose_name = _('devise')
-        verbose_name_plural = _('devises')
+        verbose_name = ungettext_lazy('devise', 'devises', 0)
+        verbose_name_plural = ungettext_lazy('devise', 'devises', 1)
     def __unicode__(self):
         if self.nom:
             return self.nom
@@ -607,16 +607,16 @@ class Engagement(Model):
     devise = ForeignKey(Devise, blank=True, null=True,
         related_name='engagements')
     class Meta:
-        verbose_name = _('engagement')
-        verbose_name_plural = _('engagements')
+        verbose_name = ungettext_lazy('engagement', 'engagements', 0)
+        verbose_name_plural = ungettext_lazy('engagement', 'engagements', 1)
     def __unicode__(self):
         return self.profession.nom
 
 class TypeDePersonnel(Model):
     nom = CharField(max_length=100, unique=True)
     class Meta:
-        verbose_name = _('type de personnel')
-        verbose_name_plural = _('types de personnel')
+        verbose_name = ungettext_lazy('type de personnel', 'types de personnel', 0)
+        verbose_name_plural = ungettext_lazy('type de personnel', 'types de personnel', 1)
         ordering = ['nom']
     def __unicode__(self):
         return self.nom
@@ -626,8 +626,8 @@ class Personnel(Model):
     saison = ForeignKey(Saison, related_name='personnels')
     engagements = ManyToManyField(Engagement, related_name='personnels')
     class Meta:
-        verbose_name = _('personnel')
-        verbose_name_plural = _('personnels')
+        verbose_name = ungettext_lazy('personnel', 'personnels', 0)
+        verbose_name_plural = ungettext_lazy('personnel', 'personnels', 1)
     def __unicode__(self):
         return self.type.__unicode__() + self.saison.__unicode__()
 
@@ -640,8 +640,8 @@ class GenreDOeuvre(Model):
         blank=True, null=True)
     slug = SlugField(blank=True)
     class Meta:
-        verbose_name=_(u'genre d’œuvre')
-        verbose_name_plural=_(u'genres d’œuvre')
+        verbose_name = ungettext_lazy(u'genre d’œuvre', u'genres d’œuvre', 0)
+        verbose_name_plural = ungettext_lazy(u'genre d’œuvre', u'genres d’œuvre', 1)
         ordering = ['slug']
     def html(self, tags=True, caps=False, pluriel=False):
         nom = self.pluriel() if pluriel else self.nom
@@ -665,8 +665,8 @@ class TypeDeCaracteristiqueDOeuvre(Model):
         verbose_name=_('nom (au pluriel)'), help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
     class Meta:
-        verbose_name = _(u'type de caractéristique d’œuvre')
-        verbose_name_plural = _(u'types de caracteristique d’œuvre')
+        verbose_name = ungettext_lazy(u'type de caractéristique d’œuvre', u'types de caracteristique d’œuvre', 0)
+        verbose_name_plural = ungettext_lazy(u'type de caractéristique d’œuvre', u'types de caracteristique d’œuvre', 1)
         ordering = ['classement']
     def pluriel(self):
         return calc_pluriel(self)
@@ -679,8 +679,8 @@ class CaracteristiqueDOeuvre(Model):
     classement = FloatField(default=1.0,
         help_text=_(u'Par exemple, on peut choisir de classer les découpages par nombre d’actes.'))
     class Meta:
-        verbose_name = _(u'caractéristique d’œuvre')
-        verbose_name_plural = _(u'caractéristiques d’œuvre')
+        verbose_name = ungettext_lazy(u'caractéristique d’œuvre', u'caractéristiques d’œuvre', 0)
+        verbose_name_plural = ungettext_lazy(u'caractéristique d’œuvre', u'caractéristiques d’œuvre', 1)
         ordering = ['type', 'classement']
     def html(self, tags=True):
         return hlp(self.valeur, self.type, tags)
@@ -701,8 +701,8 @@ class Partie(Model):
     parente = ForeignKey('Partie', related_name='enfant', blank=True, null=True)
     classement = FloatField(default=1.0)
     class Meta:
-        verbose_name = _('partie')
-        verbose_name_plural = _('parties')
+        verbose_name = ungettext_lazy('partie', 'parties', 0)
+        verbose_name_plural = ungettext_lazy('partie', 'parties', 1)
         ordering = ['classement', 'nom']
     def pluriel(self):
         return calc_pluriel(self)
@@ -719,8 +719,8 @@ class Pupitre(Model):
     quantite_min = IntegerField(default=1, verbose_name=_(u'quantité minimale'))
     quantite_max = IntegerField(default=1, verbose_name=_(u'quantité maximale'))
     class Meta:
-        verbose_name = _('pupitre')
-        verbose_name_plural = _('pupitres')
+        verbose_name = ungettext_lazy('pupitre', 'pupitres', 0)
+        verbose_name_plural = ungettext_lazy('pupitre', 'pupitres', 1)
         ordering = ['partie']
     def __unicode__(self):
         out = ''
@@ -752,8 +752,8 @@ class TypeDeParenteDOeuvres(Model):
         help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
     class Meta:
-        verbose_name = _(u'type de parenté d’œuvres')
-        verbose_name_plural = _(u'types de parentés d’œuvres')
+        verbose_name = ungettext_lazy(u'type de parenté d’œuvres', u'types de parentés d’œuvres', 0)
+        verbose_name_plural = ungettext_lazy(u'type de parenté d’œuvres', u'types de parentés d’œuvres', 1)
         ordering = ['classement']
     def pluriel(self):
         return calc_pluriel(self)
@@ -765,8 +765,8 @@ class ParenteDOeuvres(Model):
     oeuvres_cibles = ManyToManyField('Oeuvre',
         related_name='enfances_cibles', verbose_name=_(u'œuvres cibles'))
     class Meta:
-        verbose_name = _(u'parenté d’œuvres')
-        verbose_name_plural = _(u'parentés d’œuvres')
+        verbose_name = ungettext_lazy(u'parenté d’œuvres', u'parentés d’œuvres', 0)
+        verbose_name_plural = ungettext_lazy(u'parenté d’œuvres', u'parentés d’œuvres', 1)
         ordering = ['type']
     def __unicode__(self):
         out = self.type.nom
@@ -791,8 +791,8 @@ class Auteur(Model):
     html.short_description = _('rendu HTML')
     html.allow_tags = True
     class Meta:
-        verbose_name = _('auteur')
-        verbose_name_plural = _('auteurs')
+        verbose_name = ungettext_lazy('auteur', 'auteurs', 0)
+        verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 1)
         ordering = ['profession']
     def __unicode__(self):
         return strip_tags(self.html(False))
@@ -949,8 +949,8 @@ class Oeuvre(Model):
     def description_html(self, tags=True):
         return self.html(tags, False, False, True, caps_genre=True)
     class Meta:
-        verbose_name = _(u'œuvre')
-        verbose_name_plural = _(u'œuvres')
+        verbose_name = ungettext_lazy(u'œuvre', u'œuvres', 0)
+        verbose_name_plural = ungettext_lazy(u'œuvre', u'œuvres', 1)
         ordering = ['genre', 'slug']
     def save(self, *args, **kwargs):
         super(Oeuvre, self).save(*args, **kwargs)
@@ -968,8 +968,8 @@ class AttributionDePupitre(Model):
     pupitre = ForeignKey(Pupitre, related_name='attributions_de_pupitre')
     individus = ManyToManyField(Individu, related_name='attributions_de_pupitre')
     class Meta:
-        verbose_name = _('attribution de pupitre')
-        verbose_name_plural = _('attributions de pupitre')
+        verbose_name = ungettext_lazy('attribution de pupitre', 'attributions de pupitre', 0)
+        verbose_name_plural = ungettext_lazy('attribution de pupitre', 'attributions de pupitre', 1)
         ordering = ['pupitre']
     def __unicode__(self):
         out = self.pupitre.partie.__unicode__() + ' : '
@@ -985,8 +985,8 @@ class CaracteristiqueDElementDeProgramme(Model):
     def pluriel(self):
         return calc_pluriel(self)
     class Meta:
-        verbose_name = _(u'caractéristique d’élément de programme')
-        verbose_name_plural = _(u'caractéristiques d’élément de programme')
+        verbose_name = ungettext_lazy(u'caractéristique d’élément de programme', u'caractéristiques d’élément de programme', 0)
+        verbose_name_plural = ungettext_lazy(u'caractéristique d’élément de programme', u'caractéristiques d’élément de programme', 1)
         ordering = ['nom']
     def __unicode__(self):
         return self.nom
@@ -1042,8 +1042,8 @@ class ElementDeProgramme(Model):
     html.short_description = _('rendu HTML')
     html.allow_tags = True
     class Meta:
-        verbose_name = _(u'élément de programme')
-        verbose_name_plural = _(u'éléments de programme')
+        verbose_name = ungettext_lazy(u'élément de programme', u'éléments de programme', 0)
+        verbose_name_plural =  ungettext_lazy(u'élément de programme', u'éléments de programme', 1)
         ordering = ['classement', 'oeuvre']
     def __unicode__(self):
         return strip_tags(self.html(False))
@@ -1099,8 +1099,8 @@ class Evenement(Model):
     html.short_description = _('rendu HTML')
     html.allow_tags = True
     class Meta:
-        verbose_name = _(u'événement')
-        verbose_name_plural = _(u'événements')
+        verbose_name = ungettext_lazy(u'événement', u'événements', 0)
+        verbose_name_plural = ungettext_lazy(u'événement', u'événements', 1)
         ordering = ['ancrage_debut']
     def __unicode__(self):
         out = self.ancrage_debut.calc_date(False)
@@ -1124,8 +1124,8 @@ class TypeDeSource(Model):
         help_text=PLURAL_MSG)
     slug = SlugField(blank=True)
     class Meta:
-        verbose_name = _('type de source')
-        verbose_name_plural = _('types de source')
+        verbose_name = ungettext_lazy('type de source', 'types de source', 0)
+        verbose_name_plural = ungettext_lazy('type de source', 'types de source', 1)
         ordering = ['slug']
     def save(self, *args, **kwargs):
         self.slug = autoslugify(self, self.__unicode__())
@@ -1173,8 +1173,8 @@ class Source(Model):
     disp_contenu.short_description = _('contenu')
     disp_contenu.allow_tags = True
     class Meta:
-        verbose_name = _('source')
-        verbose_name_plural = _('sources')
+        verbose_name = ungettext_lazy('source', 'sources', 0)
+        verbose_name_plural = ungettext_lazy('source', 'sources', 1)
         ordering = ['date', 'nom', 'numero', 'page', 'type']
     def __unicode__(self):
         return strip_tags(self.html(False))

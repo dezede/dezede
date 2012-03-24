@@ -19,21 +19,21 @@
   <h3>
     {% if not individu.naissance and not individu.deces %}
       <span title="ancrage spatio-temporel">
-        {{ individu.ancrage|default:'Époque inconnue' }}
+        {{ individu.ancrage|default:_('Époque inconnue') }}
       </span>
     {% else %}
       <span title="{% trans "naissance" %}">
-        {{ individu.naissance|default:'?' }}
+        {{ individu.naissance|default:_('?') }}
       </span>
       &ndash;
       <span title="{% trans "décès" %}">
-        {{ individu.deces|default:'?' }}
+        {{ individu.deces|default:_('?') }}
       </span>
     {% endif %}
   </h3>
   <h4 title="
         {% blocktrans count counter=individu.professions.all|length %}profession{% plural %}professions{% endblocktrans %}">
-    {{ individu.calc_professions|capfirst|default:'Profession inconnue' }}
+    {{ individu.calc_professions|capfirst|default:_('Profession inconnue') }}
   </h4>
   <br />
   <dl>
@@ -96,7 +96,7 @@
         <dd>{{ enfant.link }}</dd>
       {% endfor %}
     {% endwith %}
-    {% include "notes.def" with notes=individu.notes %}
+    {% include "notes-def.html" with notes=individu.notes %}
   </dl>
   <br />
   <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">

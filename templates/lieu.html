@@ -30,7 +30,7 @@
         <dd>{{ enfant.short_link }}</dd>
       {% endfor %}
     {% endwith %}
-    {% include "evenements.def" with evenements=lieu.evenements.all %}
+    {% include "evenements-def.html" with evenements=lieu.evenements.all %}
     {% with lieu.individus_nes.all as individus %}
       {% for individu in individus %}
         {% if forloop.first %}
@@ -61,7 +61,7 @@
         <dd>{{ oeuvre.link }}</dd>
       {% endfor %}
     {% endwith %}
-    {% include "notes.def" with notes=lieu.notes %}
+    {% include "notes-def.html" with notes=lieu.notes %}
   </dl>
   <br />
   <a href="{% url 'admin:catalogue_lieu_change' lieu.pk %}">

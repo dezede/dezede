@@ -5,7 +5,7 @@
 {% load humanize %}
 
 {% block title %}
-  Recherche
+  {% trans "Recherche" %}
 {% endblock %}
 
 {% block head %}
@@ -18,14 +18,14 @@
 {% endblock %}
 
 {% block body %}
-  <h2>{% trans "recherche"|capfirst %}</h2>
+  <h2>{% trans "Recherche" %}</h2>
 
   <form method="get" action=".">
     <formset>
       <input type="text" name="q" value="{{ form.q.data|default:"" }}" id="id_q" autofocus="autofocus" />
       <input type="submit" value="Chercher" />
       <div id="criteria">
-        Filtres :
+        {% trans "Filtres :" %}
         {% for choice in form.models.field.choices %}
           <input type="checkbox" name="models" value="{{ choice.0 }}"
           {% if choice.0 in form.models.data %}
@@ -39,7 +39,10 @@
   </form>
 
   {% if query %}
-    <h3>{{ paginator.object_list.count|apnumber|capfirst }} {% trans "résultat" %}{{ paginator.object_list|pluralize }}</h3>
+    <h3>
+      {{ paginator.object_list.count|apnumber|capfirst }}
+      {% blocktrans count counter=paginator.object_list|length %}résultat{% plural %}résultats{% endblocktrans %}
+    </h3>
 
     {% if suggestion %}
       <p>
