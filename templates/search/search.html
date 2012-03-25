@@ -8,15 +8,6 @@
   {% trans "Recherche" %}
 {% endblock %}
 
-{% block head %}
-  <script>
-    $(function() {
-      $("#criteria").buttonset();
-      $("#criteria").disableSelection();
-    });
-  </script>
-{% endblock %}
-
 {% block body %}
   <h2>{% trans "Recherche" %}</h2>
 
@@ -24,6 +15,12 @@
     <formset>
       <input type="text" name="q" value="{{ form.q.data|default:"" }}" id="id_q" autofocus="autofocus" />
       <input type="submit" value="Chercher" />
+      <script>
+        $(function() {
+          $("#criteria").buttonset();
+          $("#criteria").disableSelection();
+        });
+      </script>
       <div id="criteria">
         {% trans "Filtres :" %}
         {% for choice in form.models.field.choices %}
