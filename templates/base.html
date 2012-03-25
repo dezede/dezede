@@ -20,9 +20,9 @@
     <header>
       <nav>
         <a href="{% url 'haystack_search' %}">{% trans "Recherche" %}</a>
-        <a href="{% url 'lieux' %}">{% trans "Lieux" %}</a>
-        <a href="{% url 'evenements' %}">{% trans "Événements" %}</a>
-        <a href="{% url 'individus' %}">{% trans "Individus" %}</a>
+        <a href="{% url 'lieux' %}">{% trans "lieux"|capfirst %}</a>
+        <a href="{% url 'evenements' %}">{% trans "événements"|capfirst %}</a>
+        <a href="{% url 'individus' %}">{% trans "individus"|capfirst %}</a>
         {#<a href="{% url 'saisie_sources' %}">Saisie de source</a>#}
         <a href="{% url 'admin:index' %}">{% trans "Administration" %}</a>
         {% for lang in LANGUAGES %}

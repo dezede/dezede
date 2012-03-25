@@ -1171,9 +1171,10 @@ class Source(Model):
         l.append('%s' % cite(self.nom, tags))
         if self.numero:
             l.append(no(self.numero))
-        l.append('du %s' % date_html(self.date, tags))
+        date = ugettext('du %(date)s') % {'date': date_html(self.date, tags),}
+        l.append(date)
         if self.page:
-            l.append('p. %s' % self.page)
+            l.append(ugettext('p. %s') % self.page)
         out = ' '.join(l)
         return out
     html.short_description = _('rendu HTML')

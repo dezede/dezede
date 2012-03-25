@@ -62,7 +62,7 @@ class CustomIndexDashboard(Dashboard):
                     collapsible=False,
                     children=[
                         {
-                            'title': _('FileBrowser'),
+                            'title': 'FileBrowser',
                             'url': '/admin/filebrowser/browse/',
                             'external': False,
                         },
@@ -90,7 +90,7 @@ class CustomIndexDashboard(Dashboard):
             css_classes=('collapse open',),
             children=[
                 {
-                    'title': _('Rosetta'),
+                    'title': 'Rosetta',
                     'url': '/rosetta/pick/',
                     'external': False,
                 },

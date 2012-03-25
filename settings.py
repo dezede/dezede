@@ -43,7 +43,7 @@ LANGUAGE_CODE = 'fr'
 
 LANGUAGES = (
     ('fr', ugettext(u'Français')),
-    ('en', ugettext('Anglais')),
+    ('en', ugettext('English')),
 )
 
 SITE_ID = 1

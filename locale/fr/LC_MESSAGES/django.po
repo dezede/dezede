@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-25 03:31+0200\n"
+"POT-Creation-Date: 2012-03-25 04:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,10 +39,6 @@ msgstr ""
 msgid "Gestionnaire de fichiers bruts"
 msgstr ""
 
-#: dashboard.py:65
-msgid "FileBrowser"
-msgstr ""
-
 #: dashboard.py:72
 msgid "Intégration à la base de données"
 msgstr ""
@@ -53,10 +49,6 @@ msgstr ""
 
 #: dashboard.py:88
 msgid "Traduction"
-msgstr ""
-
-#: dashboard.py:93
-msgid "Rosetta"
 msgstr ""
 
 #: dashboard.py:101
@@ -84,7 +76,7 @@ msgid "Français"
 msgstr ""
 
 #: settings.py:46
-msgid "Anglais"
+msgid "English"
 msgstr ""
 
 #: catalogue/admin.py:61 catalogue/admin.py:134 catalogue/admin.py:284
@@ -208,7 +200,7 @@ msgid_plural "natures de lieu"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:204
+#: catalogue/models.py:204 templates/individu.html:82
 msgid "parent"
 msgstr ""
 
@@ -249,7 +241,7 @@ msgstr ""
 
 #: catalogue/models.py:243 catalogue/models.py:575 catalogue/models.py:801
 #: catalogue/models.py:955 catalogue/models.py:1052 catalogue/models.py:1109
-#: catalogue/models.py:1179
+#: catalogue/models.py:1180
 msgid "rendu HTML"
 msgstr ""
 
@@ -286,8 +278,7 @@ msgstr ""
 msgid "parente"
 msgstr ""
 
-#: catalogue/models.py:284 catalogue/models.py:285 templates/individu.html:35
-#: templates/individus.html:20
+#: catalogue/models.py:284 catalogue/models.py:285 templates/individu.html:34
 msgid "profession"
 msgid_plural "professions"
 msgstr[0] ""
@@ -361,7 +352,7 @@ msgstr ""
 msgid "%(heure)s"
 msgstr ""
 
-#: catalogue/models.py:362 catalogue/models.py:363
+#: catalogue/models.py:362 catalogue/models.py:363 templates/individu.html:21
 msgid "ancrage spatio-temporel"
 msgid_plural "ancrages spatio-temporels"
 msgstr[0] ""
@@ -414,7 +405,7 @@ msgstr ""
 msgid "particule du nom de naissance"
 msgstr ""
 
-#: catalogue/models.py:425 templates/individu.html:41
+#: catalogue/models.py:425 templates/individu.html:40
 msgid "nom de naissance"
 msgstr ""
 
@@ -487,7 +478,7 @@ msgstr ""
 msgid "Ne remplir que si on ne connaît aucune date précise."
 msgstr ""
 
-#: catalogue/models.py:454 catalogue/models.py:536
+#: catalogue/models.py:454 catalogue/models.py:536 templates/individus.html:20
 msgid "professions"
 msgstr ""
 
@@ -495,7 +486,7 @@ msgstr ""
 msgid "parentés"
 msgstr ""
 
-#: catalogue/models.py:457 templates/individu.html:45
+#: catalogue/models.py:457 templates/individu.html:44
 msgid "biographie"
 msgstr ""
 
@@ -654,7 +645,7 @@ msgid_plural "parentés d’œuvres"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:804 catalogue/models.py:805
+#: catalogue/models.py:804 catalogue/models.py:805 templates/oeuvre.html:22
 msgid "auteur"
 msgid_plural "auteurs"
 msgstr[0] ""
@@ -690,6 +681,7 @@ msgid "pour "
 msgstr ""
 
 #: catalogue/models.py:962 catalogue/models.py:963 catalogue/models.py:1006
+#: templates/individu.html:52
 msgid "œuvre"
 msgid_plural "œuvres"
 msgstr[0] ""
@@ -722,6 +714,7 @@ msgid "Relâche"
 msgstr ""
 
 #: catalogue/models.py:1112 catalogue/models.py:1113
+#: templates/evenements-def.html:5
 msgid "événement"
 msgid_plural "événements"
 msgstr[0] ""
@@ -741,11 +734,21 @@ msgstr ""
 msgid "compte rendu"
 msgstr ""
 
-#: catalogue/models.py:1183
+#: catalogue/models.py:1174
+#, python-format
+msgid "du %(date)s"
+msgstr ""
+
+#: catalogue/models.py:1177
+#, python-format
+msgid "p. %s"
+msgstr ""
+
+#: catalogue/models.py:1184
 msgid "contenu"
 msgstr ""
 
-#: catalogue/models.py:1186 catalogue/models.py:1187
+#: catalogue/models.py:1187 catalogue/models.py:1188
 msgid "source"
 msgid_plural "sources"
 msgstr[0] ""
@@ -760,16 +763,16 @@ msgstr ""
 msgid "Recherche"
 msgstr ""
 
-#: templates/base.html:23
-msgid "Lieux"
+#: templates/base.html:23 templates/lieux.html:6
+msgid "lieux"
 msgstr ""
 
-#: templates/base.html:24
-msgid "Événements"
+#: templates/base.html:24 templates/evenements.html:7
+msgid "événements"
 msgstr ""
 
-#: templates/base.html:25
-msgid "Individus"
+#: templates/base.html:25 templates/individus.html:7
+msgid "individus"
 msgstr ""
 
 #: templates/base.html:27
@@ -786,14 +789,8 @@ msgstr ""
 msgid "programme"
 msgstr ""
 
-#: templates/evenements-def.html:5
-msgid "Événement"
-msgid_plural "Événements"
-msgstr[0] ""
-msgstr[1] ""
-
-#: templates/evenements.html:7
-msgid "événements"
+#: templates/evenement.html:36
+msgid "[Fac-similé]"
 msgstr ""
 
 #: templates/evenements.html:16
@@ -816,46 +813,34 @@ msgstr ""
 msgid "décès"
 msgstr ""
 
-#: templates/individu.html:36
+#: templates/individu.html:35
 msgid "Profession inconnue"
 msgstr ""
 
-#: templates/individu.html:53
-msgid "Œuvre"
-msgid_plural "Œuvres"
+#: templates/individu.html:62
+msgid "apparition"
+msgid_plural "apparitions"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/individu.html:63
-msgid "Apparition"
-msgid_plural "Apparitions"
+#: templates/individu.html:72
+msgid "publication"
+msgid_plural "publications"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/individu.html:73
-msgid "Publication"
-msgid_plural "Publications"
+#: templates/individu.html:92 templates/oeuvre.html:35
+msgid "enfant"
+msgid_plural "enfants"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/individu.html:83
-msgid "Parent"
-msgid_plural "Parents"
-msgstr[0] ""
-msgstr[1] ""
-
-#: templates/individu.html:93 templates/oeuvre.html:35
-msgid "Enfant"
-msgid_plural "Enfants"
-msgstr[0] ""
-msgstr[1] ""
-
-#: templates/individu.html:103 templates/lieu.html:68 templates/oeuvre.html:45
+#: templates/individu.html:102 templates/lieu.html:68 templates/oeuvre.html:45
 msgid "[Modifier]"
 msgstr ""
 
-#: templates/individus.html:7
-msgid "individus"
+#: templates/individus.html:24
+msgid "Ouvrir l'autorité"
 msgstr ""
 
 #: templates/individus.html:38
@@ -887,19 +872,9 @@ msgid_plural "Œuvres composées ici"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/lieux.html:6
-msgid "lieux"
-msgstr ""
-
 #: templates/lieux.html:13
 msgid "Aucun lieu ne figure dans la base de données."
 msgstr ""
-
-#: templates/oeuvre.html:22
-msgid "Auteur"
-msgid_plural "Auteurs"
-msgstr[0] ""
-msgstr[1] ""
 
 #: templates/oeuvre.html:28
 msgid "composition"
@@ -917,4 +892,18 @@ msgstr[1] ""
 
 #: templates/search/search.html:46
 msgid "Essayez aussi :"
+msgstr ""
+
+#: templates/search/search.html:51 templates/search/search.html.py:69
+msgid "« Précédents"
+msgstr ""
+
+#: templates/search/search.html:53 templates/search/search.html.py:71
+msgid "Suivants »"
+msgstr ""
+
+#: templates/search/search.html:73
+msgid ""
+"Tapez par exemple « chanteuse », « Molière », « opéra » ou encore "
+"« théâtre »."
 msgstr ""

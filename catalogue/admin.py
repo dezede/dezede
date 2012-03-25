@@ -2,7 +2,7 @@
 from musicologie.catalogue.models import *
 from django.contrib.admin import site, TabularInline, StackedInline
 from reversion import VersionAdmin
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 TabularInline.extra = 0
 StackedInline.extra = 0

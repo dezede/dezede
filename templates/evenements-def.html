@@ -2,7 +2,7 @@
 {% for evenement in evenements %}
   {% if forloop.first %}
     <dt>
-      {% blocktrans count counter=evenements|length %}Événement{% plural %}Événements{% endblocktrans %}
+      {% filter capfirst %}{% blocktrans count counter=evenements|length %}événement{% plural %}événements{% endblocktrans %}{% endfilter %}
     </dt>
   {% endif %}
   <dd>

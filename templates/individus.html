@@ -17,11 +17,11 @@
           <th>{% trans "pseudonyme"|capfirst %}</th>
           <th>{% trans "naissance"|capfirst %}</th>
           <th>{% trans "décès"|capfirst %}</th>
-          <th>{% trans "profession"|capfirst %}s</th>
+          <th>{% trans "professions"|capfirst %}</th>
         </thead>
         <tbody>
     {% endif %}
-    <tr onclick="document.location = '{{ individu.get_absolute_url }}';" title="Ouvrir l'autorité">
+    <tr onclick="document.location = '{{ individu.get_absolute_url }}';" title="{% trans "Ouvrir l'autorité" %}">
       <td class="right">{{ individu.calc_prenoms|default:'?' }}</td>
       <td>{{ individu.nom }}</td>
       <td>{{ individu.pseudonyme }}</td>
@@ -31,7 +31,7 @@
         {{ individu.calc_professions }}</td>
     </tr>
     {% if forloop.last %}
-      </tbody>
+        </tbody>
       </table>
     {% endif %}
   {% empty %}

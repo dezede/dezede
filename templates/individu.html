@@ -18,7 +18,7 @@
   </h2>
   <h3>
     {% if not individu.naissance and not individu.deces %}
-      <span title="ancrage spatio-temporel">
+      <span title="{% trans "ancrage spatio-temporel" %}">
         {{ individu.ancrage|default:_('Époque inconnue') }}
       </span>
     {% else %}
@@ -31,8 +31,7 @@
       </span>
     {% endif %}
   </h3>
-  <h4 title="
-        {% blocktrans count counter=individu.professions.all|length %}profession{% plural %}professions{% endblocktrans %}">
+  <h4 title="{% blocktrans count counter=individu.professions.all|length %}profession{% plural %}professions{% endblocktrans %}">
     {{ individu.calc_professions|capfirst|default:_('Profession inconnue') }}
   </h4>
   <br />
@@ -50,7 +49,7 @@
       {% for oeuvre in oeuvres %}
         {% if forloop.first %}
           <dt>
-            {% blocktrans count counter=oeuvres|length %}Œuvre{% plural %}Œuvres{% endblocktrans %}
+            {% filter capfirst %}{% blocktrans count counter=oeuvres|length %}œuvre{% plural %}œuvres{% endblocktrans %}{% endfilter %}
           </dt>
         {% endif %}
         <dd>{{ oeuvre.link }}</dd>
@@ -60,7 +59,7 @@
       {% for evenement in apparitions %}
         {% if forloop.first %}
           <dt>
-            {% blocktrans count counter=apparitions|length %}Apparition{% plural %}Apparitions{% endblocktrans %}
+            {% filter capfirst %}{% blocktrans count counter=apparitions|length %}apparition{% plural %}apparitions{% endblocktrans %}{% endfilter %}
           </dt>
         {% endif %}
         <dd>{{ evenement.link }}</dd>
@@ -70,7 +69,7 @@
       {% for publication in publications %}
         {% if forloop.first %}
           <dt>
-            {% blocktrans count counter=apparitions|length %}Publication{% plural %}Publications{% endblocktrans %}
+            {% filter capfirst %}{% blocktrans count counter=apparitions|length %}publication{% plural %}publications{% endblocktrans %}{% endfilter %}
           </dt>
         {% endif %}
         <dd>{{ publication.html }}</dd>
@@ -80,7 +79,7 @@
       {% for parent in parents %}
         {% if forloop.first %}
           <dt>
-            {% blocktrans count counter=parents|length %}Parent{% plural %}Parents{% endblocktrans %}
+            {% filter capfirst %}{% blocktrans count counter=parents|length %}parent{% plural %}parents{% endblocktrans %}{% endfilter %}
           </dt>
         {% endif %}
         <dd>{{ parent.link }}</dd>
@@ -90,7 +89,7 @@
       {% for enfant in enfants %}
         {% if forloop.first %}
           <dt>
-            {% blocktrans count counter=enfants|length %}Enfant{% plural %}Enfants{% endblocktrans %}
+            {% filter capfirst %}{% blocktrans count counter=enfants|length %}enfant{% plural %}enfants{% endblocktrans %}{% endfilter %}
           </dt>
         {% endif %}
         <dd>{{ enfant.link }}</dd>

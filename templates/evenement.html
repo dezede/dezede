@@ -33,7 +33,7 @@
       <div class="source-ref">
         {% if source.illustrations.all %}
           {% for illustration in source.illustrations.all %}
-            <a href="{{ illustration.image.url }}">[Fac-similé]</a>
+            <a href="{{ illustration.image.url }}">{% trans "[Fac-similé]" %}</a>
           {% endfor %}
         {% endif %}
         ({{ source.html }})
