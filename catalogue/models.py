@@ -555,7 +555,7 @@ class Individu(Model):
                     l.append(u'(%s)' % abbreviate(prenoms))
             out = str_list(l, ' ')
             if pseudonyme:
-                alias = ugettext('dit') if self.titre == 'M' else ugettext('dite')
+                alias = ugettext('dite') if self.titre in ('J', 'F',) else ugettext('dit')
                 out += ugettext(u', %(alias)s %(pseudonyme)s') % \
                     {'alias': alias,
                      'pseudonyme': pseudonyme}

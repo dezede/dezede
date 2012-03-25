@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-25 04:35+0200\n"
+"POT-Creation-Date: 2012-03-25 16:49+0200\n"
 "PO-Revision-Date: 2012-03-18 03:39\n"
 "Last-Translator: <bordage.bertrand@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -512,12 +512,12 @@ msgid "Madame"
 msgstr "Missus"
 
 #: catalogue/models.py:558
-msgid "dit"
-msgstr "known by his stage name"
-
-#: catalogue/models.py:558
 msgid "dite"
 msgstr "known by her stage name"
+
+#: catalogue/models.py:558
+msgid "dit"
+msgstr "known by his stage name"
 
 #: catalogue/models.py:559
 #, python-format
