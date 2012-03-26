@@ -50,7 +50,8 @@ def date_html(d, tags=True):
     return '%s %s %s' % (pre, j, post)
 
 def str_list(l, infix=None, last_infix=None):
-    infix = ugettext(', ')
+    if not infix:
+        infix = ugettext(', ')
     l = filter(bool, l)
     suffix = ''
     if len(l) > 1 and last_infix:
@@ -59,7 +60,10 @@ def str_list(l, infix=None, last_infix=None):
 
 
 def str_list_w_last(l, infix=None, last_infix=None):
-    infix, last_infix = ugettext(', '), ugettext(' et ')
+    if not infix:
+        infix = ugettext(', ')
+    if not last_infix:
+        last_infix = ugettext(' et ')
     return str_list(l, infix, last_infix)
 
 def calc_pluriel(obj):
