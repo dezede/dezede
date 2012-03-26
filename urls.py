@@ -2,6 +2,8 @@ from django.conf.urls.defaults import *
 from django.utils.translation import ugettext as _
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from musicologie import settings
+from musicologie.catalogue.models import Individu, Lieu
+from musicologie.catalogue.views import *
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -14,18 +16,19 @@ urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
     (r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^evenements/$', 'musicologie.catalogue.views.index_evenements', name='evenements'),
-    url(r'^evenements/(?P<lieu_slug>[-\w]+)/$', 'musicologie.catalogue.views.index_evenements', name='evenement_lieu'),
-    url(r'^evenements/(?P<lieu_slug>[-\w]+)/(?P<annee>\d+)/$', 'musicologie.catalogue.views.index_evenements', name='evenement_annee'),
-    url(r'^evenements/(?P<lieu_slug>[-\w]+)/(?P<annee>\d+)/(?P<mois>\d+)/$', 'musicologie.catalogue.views.index_evenements', name='evenement_mois'),
-    url(r'^evenements/(?P<lieu_slug>[-\w]+)/(?P<annee>\d+)/(?P<mois>\d+)/(?P<jour>\d+)/$', 'musicologie.catalogue.views.index_evenements', name='evenement_jour'),
-    url(r'^individus/$', 'musicologie.catalogue.views.index_individus', name='individus'),
-    url(r'^individus/(?P<individu_slug>[-\w]+)/$', 'musicologie.catalogue.views.detail_individu', name='individu'),
-    url(r'^oeuvres/(?P<oeuvre_slug>[-\w]+)/$', 'musicologie.catalogue.views.detail_oeuvre', name='oeuvre'),
+    url(r'^sources/(?P<pk>\d+)/$', SourceDetailView.as_view(), name='source'),
+    url(r'''^evenements'''
+        r'''(?:\/(?P<lieu_slug>[-\w]+))?'''
+        r'''(?:\/(?P<year>\d+))?'''
+        r'''(?:\/(?P<month>\d+))?'''
+        r'''(?:\/(?P<day>\d+))?/$''', EvenementListView.as_view(), name='evenements'),
+    url(r'^individus/$', IndividuListView.as_view(), name='individus'),
+    url(r'^individus/(?P<slug>[-\w]+)/$', IndividuDetailView.as_view(), name='individu'),
+    url(r'^oeuvres/(?P<slug>[-\w]+)/$', OeuvreDetailView.as_view(), name='oeuvre'),
     url(r'^saisie/source/$', 'musicologie.catalogue.views.saisie_source', name='saisie_sources'),
     url(r'^saisie/source/(?P<source_id>\d+)/$', 'musicologie.catalogue.views.saisie_source', name='saisie_source'),
-    url(r'^lieux/$', 'musicologie.catalogue.views.index_lieux', name='lieux'),
-    url(r'^lieux/(?P<lieu_slug>[-\w]+)/$', 'musicologie.catalogue.views.detail_lieu', name='lieu'),
+    url(r'^lieux/$', LieuListView.as_view(), name='lieux'),
+    url(r'^lieux/(?P<slug>[-\w]+)/$', LieuDetailView.as_view(), name='lieu'),
     (r'^tinymce/', include('tinymce.urls')),
     (r'^grappelli/', include('grappelli.urls')),
     (r'^admin/filebrowser/', include('filebrowser.urls')),

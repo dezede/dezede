@@ -5,13 +5,12 @@
     <ul>
   {% endif %}
   <li>
-    <a href="{% url 'catalogue.views.detail_lieu' lieu.slug %}">
+    <a href="{% url 'lieu' lieu.slug %}">
       {{ lieu.nom }}
     </a>
-    {% with 'lieux-item.html' as file %}
-      {% with lieu.enfants.all as lieux %}
-        {% include file %}
-      {% endwith %}
+    {# TODO: trouver un solution au workaround qui suit #}
+    {% with 'catalogue/lieu_list_item.html' as file %}
+      {% include file with lieux=lieu.enfants.all %}
     {% endwith %}
   </li>
   {% if forloop.last %}

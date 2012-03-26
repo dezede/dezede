@@ -49,14 +49,17 @@ def date_html(d, tags=True):
         j += k
     return '%s %s %s' % (pre, j, post)
 
-def str_list(l, infix=', ', last_infix=None):
+def str_list(l, infix=None, last_infix=None):
+    infix = ugettext(', ')
     l = filter(bool, l)
     suffix = ''
     if len(l) > 1 and last_infix:
         suffix = last_infix + l.pop()
     return infix.join(l) + suffix
 
-def str_list_w_last(l, infix=', ', last_infix=' et '):
+
+def str_list_w_last(l, infix=None, last_infix=None):
+    infix, last_infix = ugettext(', '), ugettext(' et ')
     return str_list(l, infix, last_infix)
 
 def calc_pluriel(obj):
@@ -1081,7 +1084,7 @@ class Evenement(Model):
     notes = HTMLField(blank=True)
     @permalink
     def get_absolute_url(self):
-        return ('evenement_jour',
+        return ('evenements',
                 [self.ancrage_debut.lieu.slug, self.ancrage_debut.date.year,
                  self.ancrage_debut.date.month, self.ancrage_debut.date.day])
     def link(self):
@@ -1163,10 +1166,21 @@ class Source(Model):
         blank=True, null=True)
     etat = ForeignKey(Etat, related_name='sources', null=True, blank=True)
     notes = HTMLField(blank=True)
+    @permalink
+    def get_absolute_url(self):
+        return ('source', [self.pk])
+    def link(self):
+        return self.html()
+    def individus_auteurs(self):
+        q = Individu.objects.none()
+        for auteur in self.auteurs.all():
+            q |= auteur.individus.all()
+        return q.distinct()
     def calc_auteurs(self, tags=True):
         auteurs = self.auteurs.all()
         return str_list([a.html(tags) for a in auteurs])
     def html(self, tags=True):
+        url = None if not tags else self.get_absolute_url()
         l = []
         l.append('%s' % cite(self.nom, tags))
         if self.numero:
@@ -1176,7 +1190,7 @@ class Source(Model):
         if self.page:
             l.append(ugettext('p. %s') % self.page)
         out = ' '.join(l)
-        return out
+        return href(url, out, tags)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
     def disp_contenu(self):

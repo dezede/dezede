@@ -1,47 +1,50 @@
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import Context, RequestContext
+from django.views.generic import ListView, DetailView
 from musicologie.catalogue.models import *
 from musicologie.catalogue.forms import *
 from collections import OrderedDict
 
-def index_evenements(request, lieu_slug=None, annee=None, mois=None, jour=None):
-    evenements = Evenement.objects
-    if(lieu_slug): evenements = evenements.filter(ancrage_debut__lieu__slug=lieu_slug)
-    if(annee): evenements = evenements.filter(ancrage_debut__date__year=int(annee))
-    if(mois): evenements = evenements.filter(ancrage_debut__date__month=int(mois))
-    if(jour): evenements = evenements.filter(ancrage_debut__date__day=int(jour))
-    c = RequestContext(request, {'evenements': evenements.all()})
-    return render_to_response('evenements.html', c)
+class SourceDetailView(DetailView):
+    model = Source
+    context_object_name = 'source'
 
-def detail_source(request, lieu_slug, annee, mois, jour):
-    lieu = get_object_or_404(Lieu, slug=lieu_slug)
-    source = get_object_or_404(Source, date__year=int(annee), date__month=int(mois), )
-    c = RequestContext(request, {'source': source})
-    return render_to_response('source.html', c)
+class EvenementListView(ListView):
+    model = Evenement
+    context_object_name = 'evenements'
+    def get_queryset(self):
+        q = {}
+        bindings = {
+          'lieu_slug': 'ancrage_debut__lieu__slug',
+          'year': 'ancrage_debut__date__year',
+          'month': 'ancrage_debut__date__month',
+          'day': 'ancrage_debut__date__day',
+        }
+        for key, value in self.kwargs.items():
+            if value:
+                q[bindings[key]] = value
+        return Evenement.objects.filter(**q)
 
-def index_lieux(request):
-    lieux = Lieu.objects.filter(parent=None)
-    c = RequestContext(request, {'lieux': lieux})
-    return render_to_response('lieux.html', c)
+class LieuListView(ListView):
+    model = Lieu
+    queryset = Lieu.objects.filter(parent=None)
+    context_object_name = 'lieux'
 
-def detail_lieu(request, lieu_slug):
-    lieu = get_object_or_404(Lieu, slug=lieu_slug)
-    c = RequestContext(request, {'lieu': lieu})
-    return render_to_response('lieu.html', c)
+class LieuDetailView(DetailView):
+    model = Lieu
+    context_object_name = 'lieu'
 
-def index_individus(request):
-    c = RequestContext(request, {'individus': Individu.objects.all()})
-    return render_to_response('individus.html', c)
+class IndividuListView(ListView):
+    model = Individu
+    context_object_name = 'individus'
 
-def detail_individu(request, individu_slug):
-    individu = get_object_or_404(Individu, slug=individu_slug)
-    c = RequestContext(request, {'individu': individu})
-    return render_to_response('individu.html', c)
+class IndividuDetailView(DetailView):
+    model = Individu
+    context_object_name = 'individu'
 
-def detail_oeuvre(request, oeuvre_slug):
-    oeuvre = get_object_or_404(Oeuvre, slug=oeuvre_slug)
-    c = RequestContext(request, {'oeuvre': oeuvre})
-    return render_to_response('oeuvre.html', c)
+class OeuvreDetailView(DetailView):
+    model = Oeuvre
+    context_object_name = 'oeuvre'
 
 def saisie_source(request, source_id=None):
     if source_id != None:
@@ -56,5 +59,5 @@ def saisie_source(request, source_id=None):
     else:
         form = SourceForm(instance=source)
     c = RequestContext(request, {'form': form, 'sources': Source.objects.all(), 'source': source,})
-    return render_to_response('saisie-source.html', c)
+    return render_to_response('saisie_source.html', c)
 

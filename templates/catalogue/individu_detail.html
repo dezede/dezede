@@ -9,9 +9,7 @@
 
 {% block body %}
 
-  {% with individu.etat as etat %}
-    {% include 'etat.html' %}
-  {% endwith %}
+  {% include "catalogue/etat.html" with etat=individu.etat %}
 
   <h2>
     {{ individu.nom_complet }}
@@ -95,7 +93,7 @@
         <dd>{{ enfant.link }}</dd>
       {% endfor %}
     {% endwith %}
-    {% include "notes-def.html" with notes=individu.notes %}
+    {% include "catalogue/notes_def.html" with notes=individu.notes %}
   </dl>
   <br />
   <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">

@@ -8,6 +8,9 @@
 {% endblock %}
 
 {% block body %}
+
+  {% include "catalogue/etat.html" with etat=oeuvre.etat %}
+
   <h2>
     {{ oeuvre.titre_html }}
   </h2>
@@ -37,8 +40,8 @@
       {% endif %}
       <dd>{{ enfance.type }}&nbsp;: {% for enfant in enfance.oeuvres.all %}{{ enfant.link }}&nbsp;; {% endfor %}</dd>
     {% endfor %}
-    {% include "evenements-def.html" with evenements=oeuvre.evenements.all %}
-    {% include "notes-def.html" with notes=oeuvre.notes %}
+    {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements.all %}
+    {% include "catalogue/notes_def.html" with notes=oeuvre.notes %}
   </dl>
   <br />
   <a href="{% url 'admin:catalogue_oeuvre_change' oeuvre.pk %}">

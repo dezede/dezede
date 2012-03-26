@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load extras %}
+{% load url from future %}
+
+{% block title %}
+  {{ source }}
+{% endblock %}
+
+{% block body %}
+
+  {% include "catalogue/etat.html" with etat=source.etat %}
+
+  <h2>
+    {{ source.html }}
+  </h2>
+  <br />
+  <div class="source">
+    {{ source.contenu }}
+  </div>
+  <dl>
+    {% with source.illustrations.all as illustrations %}
+      {% if illustrations %}
+        <dt>
+          {% filter capfirst %}{% blocktrans count counter=illustrations|length %}illustration{% plural %}illustrations{% endblocktrans %}{% endfilter %}
+        </dt>
+        {% for illustration in illustrations %}
+          <dd>
+            <a href="{{ illustration.image.url }}">
+              {{ illustration }}
+            </a>
+          </dd>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% with source.individus_auteurs.all as auteurs %}
+      {% if auteurs %}
+        <dt>
+          {% filter capfirst %}{% blocktrans count counter=auteurs|length %}auteur{% plural %}auteurs{% endblocktrans %}{% endfilter %}
+        </dt>
+        <dd>
+          {{ source.calc_auteurs }}
+        </dd>
+      {% endif %}
+    {% endwith %}
+    {% include "catalogue/notes_def.html" with notes=source.notes %}
+  </dl>
+  <br />
+  <a href="{% url 'admin:catalogue_source_change' source.pk %}">
+    {% trans "[Modifier]" %}
+  </a>
+{% endblock %}
+
