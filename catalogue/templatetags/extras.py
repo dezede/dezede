@@ -36,6 +36,16 @@ def is_vowel(string):
 
 @register.filter
 def abbreviate(string, limit=0):
+    '''
+    Abrègre les mots avec une limite de longueur (par défaut 0).
+
+    >>> abbreviate(u'amélie')
+    u'a.'
+    >>> abbreviate(u'jeanöõ-françois du puy du fou')
+    u'j.-fr. du p. du f.'
+    >>> abbreviate(u'autéeur dramatique de la tour de babel', 1)
+    u'aut. dram. de la tour de bab.'
+    '''
     out = ''
     for i, sub in enumerate(re.split('(-|\.|\s)', string)): # TODO: créer un catalogue COMPLET de ponctuations de séparation.
         init_sub = sub
@@ -68,9 +78,4 @@ def GET_add_page(request, page_number):
     answer = request.GET.copy()
     answer['page'] = page_number
     return answer.urlencode()
-
-if __name__ == '__main__':
-    print abbreviate(u'autéeur dramatique de la tour de babel', 1)
-    print abbreviate(u'jeanöõ-françois du puy du fou', 0)
-    print abbreviate(u'amélie')
 

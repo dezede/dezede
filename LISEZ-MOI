@@ -6,6 +6,7 @@ Sommaire :
   2. Lancement du serveur de développement
   3. Déploiement
   4. Localisation
+  5. Tests de régression
 
 
 
@@ -250,4 +251,12 @@ Sommaire :
       ./manage.py compilemessages
 
   * Relancer le serveur (voir 2. ou 3. selon le serveur choisi)
+
+
+
+
+****** 5. Tests de régression ******
+
+  Une suite de tests a été créée pour l’application catalogue.  Pour la lancer, exécuter :
+      sudo ./manage.py test catalogue
 

@@ -4,7 +4,6 @@ from tinymce.models import HTMLField
 from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
 from musicologie.catalogue.templatetags.extras import replace, abbreviate
-from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext, ungettext_lazy, ugettext, ugettext_lazy as _
 from django.utils.functional import allow_lazy
@@ -39,6 +38,18 @@ def autoslugify(obj, nom):
     return nom_slug
 
 def date_html(d, tags=True):
+    u'''
+    Rendu HTML d’une date.
+
+    >>> from django.utils.translation import activate
+    >>> from musicologie.settings import LANGUAGE_CODE
+    >>> activate(LANGUAGE_CODE)
+    >>> from datetime import date
+    >>> date_html(date(1828, 1, 15))
+    u'mardi 15 janvier 1828'
+    >>> date_html(date(1828, 1, 1), False)
+    u'mardi 1er janvier 1828'
+    '''
     pre = date(d, 'l')
     post = date(d, 'F Y')
     j = date(d, 'j')
@@ -50,6 +61,13 @@ def date_html(d, tags=True):
     return '%s %s %s' % (pre, j, post)
 
 def str_list(l, infix=None, last_infix=None):
+    u'''
+    Concatène une liste de chaîne de caractères avec des virgules.
+
+    >>> l = ['Jeanne', 'Lola', 'Perrine', 'Marion']
+    >>> str_list(l)
+    u'Jeanne, Lola, Perrine, Marion'
+    '''
     if not infix:
         infix = ugettext(', ')
     l = filter(bool, l)
@@ -60,6 +78,16 @@ def str_list(l, infix=None, last_infix=None):
 
 
 def str_list_w_last(l, infix=None, last_infix=None):
+    u'''
+    Concatène une liste de chaîne de caractères avec des virgules et un «\u00A0et\u00A0» final.
+
+    >>> from django.utils.translation import activate
+    >>> from musicologie.settings import LANGUAGE_CODE
+    >>> activate(LANGUAGE_CODE)
+    >>> l = ['Jeanne', 'Lola', 'Perrine', 'Marion']
+    >>> str_list_w_last(l)
+    u'Jeanne, Lola, Perrine et Marion'
+    '''
     if not infix:
         infix = ugettext(', ')
     if not last_infix:
@@ -692,7 +720,7 @@ class TypeDeCaracteristiqueDOeuvre(Model):
 
 class CaracteristiqueDOeuvre(Model):
     type = ForeignKey(TypeDeCaracteristiqueDOeuvre, related_name='caracteristiques_d_oeuvre')
-    valeur = CharField(max_length=400, help_text=ex(_(u'en trois actes')))
+    valeur = CharField(max_length=400, help_text=ex(_(u'en trois actes'))) # TODO: Changer valeur en nom ?
     classement = FloatField(default=1.0,
         help_text=_(u'Par exemple, on peut choisir de classer les découpages par nombre d’actes.'))
     class Meta:
