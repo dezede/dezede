@@ -145,6 +145,8 @@ LOCALE_PATHS = (
     'locale',
 )
 
+TEST_RUNNER = 'musicologie.catalogue.tests.SuiteRunner'
+
 DATE_FORMAT = 'l j F Y'
 
 TIME_FORMAT = 'H:i'

@@ -4,10 +4,10 @@ from tinymce.models import HTMLField
 from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
 from musicologie.catalogue.templatetags.extras import replace, abbreviate
+from musicologie.catalogue.functions import *
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext, ungettext_lazy, ugettext, ugettext_lazy as _
-from django.utils.functional import allow_lazy
-from django.template.defaultfilters import date, time, capfirst
+from django.template.defaultfilters import time, capfirst
 from django.contrib.humanize.templatetags.humanize import apnumber
 
 #
@@ -37,63 +37,6 @@ def autoslugify(obj, nom):
         nom_slug = slug_orig + str(n)
     return nom_slug
 
-def date_html(d, tags=True):
-    u'''
-    Rendu HTML d’une date.
-
-    >>> from django.utils.translation import activate
-    >>> from musicologie.settings import LANGUAGE_CODE
-    >>> activate(LANGUAGE_CODE)
-    >>> from datetime import date
-    >>> date_html(date(1828, 1, 15))
-    u'mardi 15 janvier 1828'
-    >>> date_html(date(1828, 1, 1), False)
-    u'mardi 1er janvier 1828'
-    '''
-    pre = date(d, 'l')
-    post = date(d, 'F Y')
-    j = date(d, 'j')
-    if j == '1':
-        k = ugettext('er')
-        if tags:
-            k = '<sup>%s</sup>' % k
-        j += k
-    return '%s %s %s' % (pre, j, post)
-
-def str_list(l, infix=None, last_infix=None):
-    u'''
-    Concatène une liste de chaîne de caractères avec des virgules.
-
-    >>> l = ['Jeanne', 'Lola', 'Perrine', 'Marion']
-    >>> str_list(l)
-    u'Jeanne, Lola, Perrine, Marion'
-    '''
-    if not infix:
-        infix = ugettext(', ')
-    l = filter(bool, l)
-    suffix = ''
-    if len(l) > 1 and last_infix:
-        suffix = last_infix + l.pop()
-    return infix.join(l) + suffix
-
-
-def str_list_w_last(l, infix=None, last_infix=None):
-    u'''
-    Concatène une liste de chaîne de caractères avec des virgules et un «\u00A0et\u00A0» final.
-
-    >>> from django.utils.translation import activate
-    >>> from musicologie.settings import LANGUAGE_CODE
-    >>> activate(LANGUAGE_CODE)
-    >>> l = ['Jeanne', 'Lola', 'Perrine', 'Marion']
-    >>> str_list_w_last(l)
-    u'Jeanne, Lola, Perrine et Marion'
-    '''
-    if not infix:
-        infix = ugettext(', ')
-    if not last_infix:
-        last_infix = ugettext(' et ')
-    return str_list(l, infix, last_infix)
-
 def calc_pluriel(obj):
     try:
         if obj.nom_pluriel:
@@ -101,40 +44,6 @@ def calc_pluriel(obj):
         return obj.nom + 's'
     except:
         return unicode(obj)
-
-def ex(txt):
-    return _(u'Exemple : « %s »') % txt
-ex = allow_lazy(ex, unicode)
-
-def no(txt):
-    return _(u'n°\u00A0%s') % txt
-
-# Fonctions HTML
-
-def cite(txt, tags=True):
-    if tags:
-        return u'<cite>%s</cite>' % txt
-    return txt
-
-def href(url, txt, tags=True):
-    if tags:
-        return u'<a href="%s">%s</a>' % (url, txt)
-    return txt
-
-def sc(txt, tags=True):
-    if tags:
-        return u'<span class="sc">%s</span>' % txt
-    return txt
-
-def hlp(txt, title, tags=True):
-    if tags:
-        return u'<span title="%s">%s</span>' % (title, txt)
-    return txt
-
-def small(txt, tags=True):
-    if tags:
-        return u'<small>%s</small>' % txt
-    return txt
 
 #
 # Modélisation
