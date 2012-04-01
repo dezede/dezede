@@ -72,8 +72,6 @@ class SourceTestCase(TestCase):
         self.assertEqual(self.journal.__unicode__(),
                          'Journal de Rouen du mardi 15 janvier 1828')
 
-FunctionsSuite = DocTestSuite(functions)
-
 class SuiteRunner(DjangoTestSuiteRunner):
     verbosity = 1
     interactive = True
@@ -84,6 +82,6 @@ class SuiteRunner(DjangoTestSuiteRunner):
         return super(SuiteRunner, self).build_suite(test_labels, extra_tests, **kwargs)
     def run_suite(self, suite, **kwargs):
         activate(LANGUAGE_CODE)
-        suite.addTest(FunctionsSuite)
+        suite.addTest(DocTestSuite(functions))
         return super(SuiteRunner, self).run_suite(suite, **kwargs)
 
