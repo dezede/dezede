@@ -230,7 +230,11 @@ class Saison(CustomModel):
         verbose_name_plural = ungettext_lazy('saison', 'saisons', 2)
         ordering = ['lieu', 'debut']
     def __unicode__(self):
-        return self.lieu.__unicode__() + ', ' + str(self.debut.year) + '-' + str(self.fin.year)
+        d = {'lieu': self.lieu.__unicode__(),
+             'debut': self.debut.year,
+             'fin': self.fin.year,}
+        return pgettext("saison : pattern d'affichage",
+                        u'%(lieu)s, %(debut)d–%(fin)d') % d
 
 class Profession(CustomModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)

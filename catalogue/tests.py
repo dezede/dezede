@@ -14,6 +14,20 @@ def new(model, **kwargs):
         obj.save()
     return obj
 
+class SaisonTestCase(TestCase):
+    def setUp(self):
+        theatre = new(NatureDeLieu, nom=u'théâtre')
+        ville = new(NatureDeLieu, nom='ville')
+        rouen = new(Lieu, nom='Rouen', nature=ville)
+        theatre_des_arts = new(Lieu,
+            nom=u'Théâtre des Arts', nature=theatre, parent=rouen)
+        self.saison = new(Saison,
+            lieu=theatre_des_arts, debut=date(2011, 9, 1),
+            fin=date(2012, 8, 31))
+    def testComputedNames(self):
+        self.assertEqual(self.saison.__unicode__(),
+                    u'Rouen, Théâtre des Arts, 2011–2012')
+
 class IndividuTestCase(TestCase):
     def setUp(self):
         jb = new(Prenom, prenom='Jean-Baptiste', favori=True, classement=1.0)
@@ -135,8 +149,9 @@ class SuiteRunner(DjangoTestSuiteRunner):
         self.failfast = False
     def build_suite(self, test_labels, extra_tests=None, **kwargs):
         test_labels = (
-            'catalogue.OeuvreTestCase',
+            'catalogue.SaisonTestCase',
             'catalogue.IndividuTestCase',
+            'catalogue.OeuvreTestCase',
             'catalogue.SourceTestCase',
         )
         return super(SuiteRunner, self).build_suite(test_labels, extra_tests, **kwargs)
