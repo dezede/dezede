@@ -1,5 +1,6 @@
 # coding: utf-8
 from django.db.models import *
+from django.db.models.query import QuerySet
 from tinymce.models import HTMLField
 from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
@@ -18,15 +19,6 @@ LOWER_MSG = _(u'En minuscules.')
 PLURAL_MSG = _(u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».')
 DATE_MSG = _(u'Ex. : « 6/6/1944 » pour le 6 juin 1944.')
 
-@classmethod
-def class_name(cls):
-    return unicode(cls.__name__)
-Model.class_name = class_name
-
-@classmethod
-def meta(self):
-    return self._meta
-Model.meta = meta
 
 def autoslugify(obj, nom):
     nom_slug = slug_orig = slugify(nom[:50])
@@ -49,22 +41,47 @@ def calc_pluriel(obj):
 # Modélisation
 #
 
-def save(self, *args, **kwargs):
-    try:
-        for field in self._meta.fields:
-            if field.__class__.__name__ in ['CharField', 'HTMLField']:
-                value = replace(getattr(self, field.attname))
-                setattr(self, field.attname, value)
-    except:
-        pass
-    self._old_save(*args, **kwargs)
+# Champs dans lesquels effectuer les remplacements typographiques.
+REPLACE_FIELDS = (CharField, HTMLField,)
 
-Model._old_save = Model.save
-Model.save = save
+def replace_in_kwargs(obj, **kwargs):
+    fields = obj._meta.fields
+    fields = filter(lambda x: x.__class__ in REPLACE_FIELDS, fields)
+    for field in fields:
+        key = field.attname
+        if key in kwargs:
+            kwargs[key] = replace(kwargs[key])
+    return kwargs
+
+class CustomQuerySet(QuerySet):
+    def get(self, *args, **kwargs):
+        kwargs = replace_in_kwargs(self.model, **kwargs)
+        return super(CustomQuerySet, self).get(*args, **kwargs)
+
+class CustomManager(Manager):
+    def get_query_set(self):
+        return CustomQuerySet(self.model, using=self._db)
+
+class CustomModel(Model):
+    objects = CustomManager()
+    class Meta:
+        abstract = True
+    def __init__(self, *args, **kwargs):
+        kwargs = replace_in_kwargs(self, **kwargs)
+        super(CustomModel, self).__init__(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        kwargs = replace_in_kwargs(self, **kwargs)
+        super(CustomModel, self).save(*args, **kwargs)
+    @classmethod
+    def class_name(cls):
+        return unicode(cls.__name__)
+    @classmethod
+    def meta(self):
+        return self._meta
 
 SlugField.unique = True
 
-class Document(Model):
+class Document(CustomModel):
     nom = CharField(_('nom'), max_length=300, blank=True)
     document = FileBrowseField(_('document'), max_length=400, directory='documents/')
     description = HTMLField(_('description'), blank=True)
@@ -83,7 +100,7 @@ class Document(Model):
         return ('nom__icontains', 'document__icontains',
                 'description__icontains', 'auteurs__individus__nom',)
 
-class Illustration(Model):
+class Illustration(CustomModel):
     legende = CharField(_(u'légende'), max_length=300, blank=True)
     image = FileBrowseField(_('image'), max_length=400, directory='images/')
     commentaire = HTMLField(_('commentaire'), blank=True)
@@ -102,7 +119,7 @@ class Illustration(Model):
         return ('legende__icontains', 'image__icontains',
                 'commentaire__icontains', 'auteurs__individus__nom',)
 
-class Etat(Model):
+class Etat(CustomModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
@@ -122,7 +139,7 @@ class Etat(Model):
     def __unicode__(self):
         return self.nom
 
-class NatureDeLieu(Model):
+class NatureDeLieu(CustomModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
                             help_text=PLURAL_MSG)
@@ -142,7 +159,7 @@ class NatureDeLieu(Model):
     def autocomplete_search_fields():
         return ('nom__icontains',)
 
-class Lieu(Model):
+class Lieu(CustomModel):
     nom = CharField(_('nom'), max_length=200)
     parent = ForeignKey('Lieu', related_name='enfants', null=True, blank=True,
         verbose_name=_('parent'))
@@ -204,7 +221,7 @@ class Lieu(Model):
     def autocomplete_search_fields():
         return ('nom__icontains',)
 
-class Saison(Model):
+class Saison(CustomModel):
     lieu = ForeignKey(Lieu, related_name='saisons', verbose_name=_('lieu'))
     debut = DateField(_(u'début'), help_text=DATE_MSG)
     fin = DateField(_('fin'))
@@ -215,7 +232,7 @@ class Saison(Model):
     def __unicode__(self):
         return self.lieu.__unicode__() + ', ' + str(self.debut.year) + '-' + str(self.fin.year)
 
-class Profession(Model):
+class Profession(CustomModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
@@ -244,7 +261,7 @@ class Profession(Model):
     def autocomplete_search_fields():
         return ('nom__icontains', 'nom_pluriel__icontains',)
 
-class AncrageSpatioTemporel(Model):
+class AncrageSpatioTemporel(CustomModel):
     date = DateField(_(u'date (précise)'), blank=True, null=True,
         help_text=DATE_MSG)
     heure = TimeField(_(u'heure (précise)'), blank=True, null=True)
@@ -314,7 +331,7 @@ class AncrageSpatioTemporel(Model):
                 'date__icontains', 'heure__icontains', 'lieu_approx__icontains',
                 'date_approx__icontains', 'heure_approx__icontains',)
 
-class Prenom(Model):
+class Prenom(CustomModel):
     prenom = CharField(_(u'prénom'), max_length=100)
     classement = FloatField(_('classement'), default=1.0)
     favori = BooleanField(_('favori'), default=True)
@@ -328,7 +345,7 @@ class Prenom(Model):
     def autocomplete_search_fields():
         return ('prenom__icontains',)
 
-class TypeDeParenteDIndividus(Model):
+class TypeDeParenteDIndividus(CustomModel):
     nom = CharField(_('nom'), max_length=50, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=55, blank=True,
         help_text=PLURAL_MSG)
@@ -342,7 +359,7 @@ class TypeDeParenteDIndividus(Model):
     def __unicode__(self):
         return self.nom
 
-class ParenteDIndividus(Model):
+class ParenteDIndividus(CustomModel):
     type = ForeignKey(TypeDeParenteDIndividus, related_name='parentes',
         verbose_name=_('type'))
     individus_cibles = ManyToManyField('Individu',
@@ -360,7 +377,7 @@ class ParenteDIndividus(Model):
         out += str_list([c.__unicode__() for c in cs], ' ; ')
         return out
 
-class Individu(Model):
+class Individu(CustomModel):
     particule_nom = CharField(_(u'particule du nom d’usage'), max_length=10,
         blank=True,)
     nom = CharField(_(u'nom d’usage'), max_length=200) # TODO: rendre ce champ 'blank'
@@ -443,6 +460,8 @@ class Individu(Model):
             q |= enfance.individus_orig.all()
         return q.distinct().order_by('nom')
     def calc_prenoms_methode(self, fav):
+        if not self.pk:
+            return ''
         prenoms = self.prenoms.all().order_by('classement', 'prenom')
         if fav:
             prenoms = filter(lambda p: p.favori, prenoms)
@@ -474,6 +493,8 @@ class Individu(Model):
             return self.ancrage_approx.__unicode__()
         return ''
     def calc_professions(self):
+        if not self.pk:
+            return ''
         ps = self.professions.all()
         titre = self.titre
         return str_list_w_last([p.gendered(titre) for p in ps])
@@ -518,14 +539,13 @@ class Individu(Model):
         return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
-    def nom_complet(self, tags=True, prenoms_fav=True, force_standard=True):
+    def nom_complet(self, tags=True, prenoms_fav=False, force_standard=True):
         return self.html(tags, True, prenoms_fav, force_standard)
     class Meta:
         verbose_name = ungettext_lazy('individu', 'individus', 1)
         verbose_name_plural = ungettext_lazy('individu', 'individus', 2)
         ordering = ['nom']
     def save(self, *args, **kwargs):
-        super(Individu, self).save(*args, **kwargs)
         self.slug = autoslugify(self, self.__unicode__())
         if self.nom:
             new_slug = slugify(self.nom)
@@ -540,7 +560,7 @@ class Individu(Model):
         return ('nom__icontains', 'nom_naissance__icontains',
                 'pseudonyme__icontains', 'prenoms__prenom__icontains',)
 
-class Devise(Model):
+class Devise(CustomModel):
     u'''
     Modélisation naïve d’une unité monétaire.
     '''
@@ -554,7 +574,7 @@ class Devise(Model):
             return self.nom
         return self.symbole
 
-class Engagement(Model):
+class Engagement(CustomModel):
     individus = ManyToManyField(Individu, related_name='engagements')
     profession = ForeignKey(Profession, related_name='engagements')
     salaire = FloatField(blank=True)
@@ -566,7 +586,7 @@ class Engagement(Model):
     def __unicode__(self):
         return self.profession.nom
 
-class TypeDePersonnel(Model):
+class TypeDePersonnel(CustomModel):
     nom = CharField(max_length=100, unique=True)
     class Meta:
         verbose_name = ungettext_lazy('type de personnel', 'types de personnel', 1)
@@ -575,7 +595,7 @@ class TypeDePersonnel(Model):
     def __unicode__(self):
         return self.nom
 
-class Personnel(Model):
+class Personnel(CustomModel):
     type = ForeignKey(TypeDePersonnel, related_name='personnels')
     saison = ForeignKey(Saison, related_name='personnels')
     engagements = ManyToManyField(Engagement, related_name='personnels')
@@ -585,7 +605,7 @@ class Personnel(Model):
     def __unicode__(self):
         return self.type.__unicode__() + self.saison.__unicode__()
 
-class GenreDOeuvre(Model):
+class GenreDOeuvre(CustomModel):
     nom = CharField(max_length=255, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=430, blank=True,
         verbose_name=_('nom (au pluriel)'),
@@ -613,7 +633,7 @@ class GenreDOeuvre(Model):
     def autocomplete_search_fields():
         return ('nom__icontains', 'nom_pluriel__icontains',)
 
-class TypeDeCaracteristiqueDOeuvre(Model):
+class TypeDeCaracteristiqueDOeuvre(CustomModel):
     nom = CharField(max_length=200, help_text=ex(_(u'tonalité')), unique=True)
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name=_('nom (au pluriel)'), help_text=PLURAL_MSG)
@@ -627,7 +647,7 @@ class TypeDeCaracteristiqueDOeuvre(Model):
     def __unicode__(self):
         return self.nom
 
-class CaracteristiqueDOeuvre(Model):
+class CaracteristiqueDOeuvre(CustomModel):
     type = ForeignKey(TypeDeCaracteristiqueDOeuvre, related_name='caracteristiques_d_oeuvre')
     valeur = CharField(max_length=400, help_text=ex(_(u'en trois actes'))) # TODO: Changer valeur en nom ?
     classement = FloatField(default=1.0,
@@ -645,7 +665,7 @@ class CaracteristiqueDOeuvre(Model):
     def autocomplete_search_fields():
         return ('type__nom__icontains', 'valeur__icontains',)
 
-class Partie(Model):
+class Partie(CustomModel):
     nom = CharField(max_length=200,
         help_text=_(u'Le nom d’une partie de la partition, instrumentale ou vocale.'))
     nom_pluriel = CharField(max_length=230, blank=True,
@@ -668,7 +688,7 @@ class Partie(Model):
                 'professions__nom__icontains',
                 'professions__nom_pluriel__icontains',)
 
-class Pupitre(Model):
+class Pupitre(CustomModel):
     partie = ForeignKey(Partie, related_name='pupitres')
     quantite_min = IntegerField(default=1, verbose_name=_(u'quantité minimale'))
     quantite_max = IntegerField(default=1, verbose_name=_(u'quantité maximale'))
@@ -699,7 +719,7 @@ class Pupitre(Model):
                 'partie__professions__nom__icontains',
                 'partie__professions__nom_pluriel__icontains',)
 
-class TypeDeParenteDOeuvres(Model):
+class TypeDeParenteDOeuvres(CustomModel):
     nom = CharField(max_length=100, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=130, blank=True,
         verbose_name=_('nom (au pluriel)'),
@@ -714,7 +734,7 @@ class TypeDeParenteDOeuvres(Model):
     def __unicode__(self):
         return self.nom
 
-class ParenteDOeuvres(Model):
+class ParenteDOeuvres(CustomModel):
     type = ForeignKey(TypeDeParenteDOeuvres, related_name='parentes')
     oeuvres_cibles = ManyToManyField('Oeuvre',
         related_name='enfances_cibles', verbose_name=_(u'œuvres cibles'))
@@ -731,7 +751,7 @@ class ParenteDOeuvres(Model):
         out += str_list([c.__unicode__() for c in cs], ' ; ')
         return out
 
-class Auteur(Model):
+class Auteur(CustomModel):
     profession = ForeignKey(Profession, related_name='auteurs')
     individus = ManyToManyField(Individu, related_name='auteurs')
     def individus_html(self, tags=True):
@@ -751,7 +771,7 @@ class Auteur(Model):
     def __unicode__(self):
         return strip_tags(self.html(False))
 
-class Oeuvre(Model):
+class Oeuvre(CustomModel):
     prefixe_titre = CharField(max_length=20, blank=True,
         verbose_name=_(u'préfixe du titre'))
     titre = CharField(max_length=200, blank=True)
@@ -806,6 +826,8 @@ class Oeuvre(Model):
             q |= element.evenements.all()
         return q.distinct()
     def calc_caracteristiques(self, limite=0, tags=True):
+        if not self.pk:
+            return ''
         cs = self.caracteristiques.all()
         def clist(cs):
             return str_list([c.html(tags) for c in cs])
@@ -817,6 +839,8 @@ class Oeuvre(Model):
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _(u'caractéristiques')
     def calc_pupitres(self):
+        if not self.pk:
+            return ''
         out = ''
         ps = self.pupitres.all()
         if ps:
@@ -824,11 +848,15 @@ class Oeuvre(Model):
             out += str_list_w_last([p.__unicode__() for p in ps])
         return out
     def calc_auteurs(self, tags=True):
+        if not self.pk:
+            return ''
         auteurs = self.auteurs.all()
         return str_list([a.html(tags) for a in auteurs])
     calc_auteurs.short_description = _('auteurs')
     calc_auteurs.allow_tags = True
     def calc_parentes(self, tags=True):
+        if not self.pk:
+            return ''
         out = ''
         ps = self.parentes.all()
         for p in ps:
@@ -837,7 +865,7 @@ class Oeuvre(Model):
             out += ', '
         return out
     def titre_complet(self):
-        out = u''
+        out = ''
         if self.titre:
             if self.prefixe_titre:
                 out = self.prefixe_titre
@@ -851,7 +879,7 @@ class Oeuvre(Model):
         return out
     def html(self, tags=True, auteurs=True, titre=True, descr=True, caps_genre=False):
         # TODO: Nettoyer cette horreur
-        out = u''
+        out = ''
         auts = self.calc_auteurs(tags)
         parentes = self.calc_parentes(tags)
         titre_complet = self.titre_complet()
@@ -907,9 +935,8 @@ class Oeuvre(Model):
         verbose_name_plural = ungettext_lazy(u'œuvre', u'œuvres', 2)
         ordering = ['genre', 'slug']
     def save(self, *args, **kwargs):
-        super(Oeuvre, self).save(*args, **kwargs)
         self.slug = autoslugify(self, self.__unicode__())
-        self._old_save(*args, **kwargs)
+        super(Oeuvre, self).save(*args, **kwargs)
     def __unicode__(self):
         return strip_tags(self.titre_html(False))
     @staticmethod
@@ -918,7 +945,7 @@ class Oeuvre(Model):
                 'prefixe_titre_secondaire__icontains',
                 'titre_secondaire__icontains', 'genre__nom__icontains',)
 
-class AttributionDePupitre(Model):
+class AttributionDePupitre(CustomModel):
     pupitre = ForeignKey(Pupitre, related_name='attributions_de_pupitre')
     individus = ManyToManyField(Individu, related_name='attributions_de_pupitre')
     class Meta:
@@ -931,7 +958,7 @@ class AttributionDePupitre(Model):
         out += str_list_w_last([i.__unicode__() for i in ins])
         return out
 
-class CaracteristiqueDElementDeProgramme(Model):
+class CaracteristiqueDElementDeProgramme(CustomModel):
     nom = CharField(max_length=100, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=110, blank=True,
         verbose_name=_('nom (au pluriel)'), help_text=PLURAL_MSG)
@@ -945,7 +972,7 @@ class CaracteristiqueDElementDeProgramme(Model):
     def __unicode__(self):
         return self.nom
 
-class ElementDeProgramme(Model):
+class ElementDeProgramme(CustomModel):
     oeuvre = ForeignKey(Oeuvre, related_name='elements_de_programme',
         verbose_name=_(u'œuvre'), blank=True, null=True)
     autre = CharField(max_length=500, blank=True)
@@ -1008,7 +1035,7 @@ class ElementDeProgramme(Model):
                 'oeuvre__titre_secondaire__icontains',
                 'oeuvre__genre__nom__icontains',)
 
-class Evenement(Model):
+class Evenement(CustomModel):
     ancrage_debut = OneToOneField(AncrageSpatioTemporel,
         related_name='evenements_debuts')
     ancrage_fin = OneToOneField(AncrageSpatioTemporel,
@@ -1071,7 +1098,7 @@ class Evenement(Model):
                 'ancrage_debut__date_approx__icontains',
                 'ancrage_debut__heure_approx__icontains',)
 
-class TypeDeSource(Model):
+class TypeDeSource(CustomModel):
     nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name=_('nom (au pluriel)'),
@@ -1089,7 +1116,7 @@ class TypeDeSource(Model):
     def __unicode__(self):
         return self.nom
 
-class Source(Model):
+class Source(CustomModel):
     nom = CharField(max_length=200, help_text=ex(_('Journal de Rouen')))
     numero = CharField(max_length=50, blank=True)
     date = DateField(help_text=DATE_MSG)
