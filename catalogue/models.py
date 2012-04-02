@@ -16,11 +16,35 @@ from django.contrib.humanize.templatetags.humanize import apnumber
 #
 
 LOWER_MSG = _(u'En minuscules.')
-PLURAL_MSG = _(u'À remplir si le pluriel n\'est pas un simple ajout de « s ».  Exemple : « animal » devient « animaux » et non « animals ».')
+PLURAL_MSG = _(u'''À remplir si le pluriel n\'est pas un simple '''
+               u'''ajout de « s ».  Exemple : « animal » devient « animaux » '''
+               u'''et non « animals ».''')
 DATE_MSG = _(u'Ex. : « 6/6/1944 » pour le 6 juin 1944.')
+# Champs dans lesquels effectuer les remplacements typographiques.
+REPLACE_FIELDS = (CharField, HTMLField,)
 
+def replace_in_kwargs(obj, **kwargs):
+    u'''
+    Renvoie kwargs avec remplacements typographiques.
+
+    Si une clé de kwargs est un nom de champ d'obj
+    et que la classe de ce champ est dans REPLACE_FIELDS,
+    effectue les remplacements dans la valeur du kwarg.
+    '''
+    fields = obj._meta.fields
+    fields = filter(lambda x: x.__class__ in REPLACE_FIELDS, fields)
+    for field in fields:
+        key = field.attname
+        if key in kwargs:
+            kwargs[key] = replace(kwargs[key])
+    return kwargs
 
 def autoslugify(obj, nom):
+    u'''
+    Crée automatiquement un slug à partir de nom
+    et des objets de la classe d'obj.
+    Si le slug est déjà pris par un autre objet, rajoute un nombre à la suite.
+    '''
     nom_slug = slug_orig = slugify(nom[:50])
     n = 0
     objects = obj.__class__.objects
@@ -30,6 +54,10 @@ def autoslugify(obj, nom):
     return nom_slug
 
 def calc_pluriel(obj):
+    '''
+    Renvoie le nom au pluriel d'obj, si possible.
+    Sinon renvoie unicode(obj).
+    '''
     try:
         if obj.nom_pluriel:
             return obj.nom_pluriel
@@ -41,31 +69,29 @@ def calc_pluriel(obj):
 # Modélisation
 #
 
-# Champs dans lesquels effectuer les remplacements typographiques.
-REPLACE_FIELDS = (CharField, HTMLField,)
-
-def replace_in_kwargs(obj, **kwargs):
-    fields = obj._meta.fields
-    fields = filter(lambda x: x.__class__ in REPLACE_FIELDS, fields)
-    for field in fields:
-        key = field.attname
-        if key in kwargs:
-            kwargs[key] = replace(kwargs[key])
-    return kwargs
-
 class CustomQuerySet(QuerySet):
+    '''
+    QuerySet personnalisé pour chercher
+    des objets avec remplacements typographiques.
+    '''
     def get(self, *args, **kwargs):
         kwargs = replace_in_kwargs(self.model, **kwargs)
         return super(CustomQuerySet, self).get(*args, **kwargs)
 
 class CustomManager(Manager):
+    '''
+    Manager personnalisé pour utiliser CustomQuerySet par défaut.
+    '''
     def get_query_set(self):
         return CustomQuerySet(self.model, using=self._db)
 
 class CustomModel(Model):
+    '''
+    Modèle personnalisé, essentiellement pour les remplacements typographiques.
+    '''
     objects = CustomManager()
     class Meta:
-        abstract = True
+        abstract = True # = prototype de modèle, et non un vrai modèle.
     def __init__(self, *args, **kwargs):
         kwargs = replace_in_kwargs(self, **kwargs)
         super(CustomModel, self).__init__(*args, **kwargs)
@@ -83,7 +109,8 @@ SlugField.unique = True
 
 class Document(CustomModel):
     nom = CharField(_('nom'), max_length=300, blank=True)
-    document = FileBrowseField(_('document'), max_length=400, directory='documents/')
+    document = FileBrowseField(_('document'), max_length=400,
+        directory='documents/')
     description = HTMLField(_('description'), blank=True)
     auteurs = ManyToManyField('Auteur', related_name='documents', blank=True,
         null=True, verbose_name=_('auteurs'))
@@ -326,7 +353,8 @@ class AncrageSpatioTemporel(CustomModel):
     class Meta:
         verbose_name = ungettext_lazy('ancrage spatio-temporel', 'ancrages spatio-temporels', 1)
         verbose_name_plural = ungettext_lazy('ancrage spatio-temporel', 'ancrages spatio-temporels', 2)
-        ordering = ['date', 'heure', 'lieu', 'date_approx', 'heure_approx', 'lieu_approx']
+        ordering = ['date', 'heure', 'lieu', 'date_approx',
+                    'heure_approx', 'lieu_approx']
     def __unicode__(self):
         return strip_tags(self.html(False))
     @staticmethod
@@ -399,7 +427,8 @@ class Individu(CustomModel):
         ('B', _('Nom de naissance (standard)')), # B pour Birth name
         ('F', _(u'Prénom(s) favori(s) (uniquement)')), # F pour First name
     )
-    designation = CharField(_(u'désignation'), max_length=1, choices=DESIGNATIONS, default='S')
+    designation = CharField(_(u'désignation'), max_length=1,
+        choices=DESIGNATIONS, default='S')
     TITRES = (
         ('M', _('M.')),
         ('J', _('Mlle')), # J pour Jouvencelle
@@ -478,9 +507,17 @@ class Individu(CustomModel):
     def calc_titre(self, tags=False):
         titres = {}
         if tags:
-            titres = {'M': ugettext('M.'), 'J': ugettext('M<sup>lle</sup>'), 'F': ugettext('M<sup>me</sup>'),}
+            titres = {
+                'M': ugettext('M.'),
+                'J': ugettext('M<sup>lle</sup>'),
+                'F': ugettext('M<sup>me</sup>'),
+            }
         else:
-            titres = {'M': ugettext('Monsieur'), 'J': ugettext('Mademoiselle'), 'F': ugettext('Madame'),}
+            titres = {
+                'M': ugettext('Monsieur'),
+                'J': ugettext('Mademoiselle'),
+                'F': ugettext('Madame'),
+            }
         if self.titre:
             return titres[self.titre]
         return ''
@@ -568,7 +605,8 @@ class Devise(CustomModel):
     u'''
     Modélisation naïve d’une unité monétaire.
     '''
-    nom = CharField(max_length=200, blank=True, help_text=ex(_('euro')), unique=True)
+    nom = CharField(max_length=200, blank=True, help_text=ex(_('euro')),
+        unique=True)
     symbole = CharField(max_length=10, help_text=ex(_(u'€')), unique=True)
     class Meta:
         verbose_name = ungettext_lazy('devise', 'devises', 1)
@@ -652,10 +690,12 @@ class TypeDeCaracteristiqueDOeuvre(CustomModel):
         return self.nom
 
 class CaracteristiqueDOeuvre(CustomModel):
-    type = ForeignKey(TypeDeCaracteristiqueDOeuvre, related_name='caracteristiques_d_oeuvre')
+    type = ForeignKey(TypeDeCaracteristiqueDOeuvre,
+        related_name='caracteristiques_d_oeuvre')
     valeur = CharField(max_length=400, help_text=ex(_(u'en trois actes'))) # TODO: Changer valeur en nom ?
     classement = FloatField(default=1.0,
-        help_text=_(u'Par exemple, on peut choisir de classer les découpages par nombre d’actes.'))
+        help_text=_(u'''Par exemple, on peut choisir de classer'''
+                    u'''les découpages par nombre d’actes.'''))
     class Meta:
         verbose_name = ungettext_lazy(u'caractéristique d’œuvre', u'caractéristiques d’œuvre', 1)
         verbose_name_plural = ungettext_lazy(u'caractéristique d’œuvre', u'caractéristiques d’œuvre', 2)
@@ -671,11 +711,13 @@ class CaracteristiqueDOeuvre(CustomModel):
 
 class Partie(CustomModel):
     nom = CharField(max_length=200,
-        help_text=_(u'Le nom d’une partie de la partition, instrumentale ou vocale.'))
+        help_text=_(u'''Le nom d’une partie de la partition, '''
+                    u'''instrumentale ou vocale.'''))
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name=_('nom (au pluriel)'), help_text=PLURAL_MSG)
     professions = ManyToManyField(Profession, related_name='parties',
-        help_text=_(u'La ou les profession(s) permettant d’assurer cette partie.'))
+        help_text=_(u'''La ou les profession(s) permettant '''
+                    u'''d’assurer cette partie.'''))
     parente = ForeignKey('Partie', related_name='enfant', blank=True, null=True)
     classement = FloatField(default=1.0)
     class Meta:
@@ -712,7 +754,8 @@ class Pupitre(CustomModel):
         mi_str = apnumber(mi)
         ma_str = apnumber(ma)
         if mi != ma:
-            out += ugettext(u'%(min)s à %(max)s ') % {'min': mi_str, 'max': ma_str}
+            d = {'min': mi_str, 'max': ma_str}
+            out += ugettext(u'%(min)s à %(max)s ') % d
         elif mi > 1:
             out += mi_str + ' '
         out += partie
@@ -951,7 +994,8 @@ class Oeuvre(CustomModel):
 
 class AttributionDePupitre(CustomModel):
     pupitre = ForeignKey(Pupitre, related_name='attributions_de_pupitre')
-    individus = ManyToManyField(Individu, related_name='attributions_de_pupitre')
+    individus = ManyToManyField(Individu,
+        related_name='attributions_de_pupitre')
     class Meta:
         verbose_name = ungettext_lazy('attribution de pupitre', 'attributions de pupitre', 1)
         verbose_name_plural = ungettext_lazy('attribution de pupitre', 'attributions de pupitre', 2)
@@ -1074,7 +1118,8 @@ class Evenement(CustomModel):
     def html(self, tags=True):
         relache, circonstance = '', ''
         if self.circonstance:
-            circonstance = hlp(self.circonstance, ugettext(u'circonstance'), tags)
+            circonstance = hlp(self.circonstance, ugettext(u'circonstance'),
+                               tags)
         if self.relache:
             relache = ugettext(u'Relâche')
         l = [self.ancrage_debut.calc_lieu(tags), circonstance,
