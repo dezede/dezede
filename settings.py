@@ -71,6 +71,8 @@ MEDIA_URL = SITE_URL + 'media/'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = ''
 
+INTERNAL_IPS = ('127.0.0.1',)
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -85,6 +87,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'musicologie.urls'
@@ -129,6 +133,7 @@ INSTALLED_APPS = (
     'rosetta-grappelli',
     'rosetta',
     'south',
+    'debug_toolbar',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

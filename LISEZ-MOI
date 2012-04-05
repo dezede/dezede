@@ -32,6 +32,7 @@ Sommaire :
       nano
       gettext
       mysql-server      5.1
+      python2.7         2.7.2
       python-mysqldb    1.2.3
       python-pip        1.0
       python-docutils   0.7 (pour la documentation de l'interface d'administration de django)
@@ -61,20 +62,24 @@ Sommaire :
       django-filebrowser   3.3.0
         sudo pip install django-filebrowser==3.3.0
 
-      django-rosetta
-        sudo pip install django-rosetta
-
-      django-rosetta-grappelli
-        sudo pip install django-rosetta-grappelli
-
-      south (pour les migrations)
-        sudo pip install south
-
       le paquet python-imaging ou :
         sudo pip install pil
 
-      django-extensions (pour les graphs de développement)
-        sudo pip install django-extensions
+      django-rosetta       0.6.5
+        sudo pip install django-rosetta==0.6.5
+
+      django-rosetta-grappelli
+        cloner et installer ce fork, et même ce commit précis :
+          https://github.com/jmacul2/django-rosetta-grappelli/commit/0e382426be56b7fef99624b90c9a2a72211cfff5
+
+      south                0.7.3
+        sudo pip install south==0.7.3
+
+      django-debug-toolbar 0.9.4
+        sudo pip install django-debug-toolbar==0.9.4
+
+      django-extensions    0.7.1 (pour les graphs de développement)
+        sudo pip install django-extensions==0.7.1
 
 
 ****** 2. Lancement du serveur de développement ******
