@@ -502,6 +502,7 @@ class Individu(CustomModel):
     def calc_prenoms(self):
         return self.calc_prenoms_methode(False)
     calc_prenoms.short_description = _(u'prénoms')
+    calc_prenoms.admin_order_field = 'prenoms__prenom'
     def calc_fav_prenoms(self):
         return self.calc_prenoms_methode(True)
     def calc_titre(self, tags=False):
@@ -540,6 +541,7 @@ class Individu(CustomModel):
         titre = self.titre
         return str_list_w_last([p.gendered(titre) for p in ps])
     calc_professions.short_description = _('professions')
+    calc_professions.admin_order_field = 'professions__nom'
     def html(self, tags=True, lon=False, prenoms_fav=True, force_standard=False):
         designation = self.designation
         titre = self.calc_titre(tags)
@@ -885,6 +887,7 @@ class Oeuvre(CustomModel):
         return out2
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _(u'caractéristiques')
+    calc_caracteristiques.admin_order_field = 'caracteristiques__valeur'
     def calc_pupitres(self):
         if not self.pk:
             return ''
@@ -901,6 +904,7 @@ class Oeuvre(CustomModel):
         return str_list([a.html(tags) for a in auteurs])
     calc_auteurs.short_description = _('auteurs')
     calc_auteurs.allow_tags = True
+    calc_auteurs.admin_order_field = 'auteurs__individus'
     def calc_parentes(self, tags=True):
         if not self.pk:
             return ''
