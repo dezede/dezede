@@ -14,6 +14,28 @@ def new(model, **kwargs):
         obj.save()
     return obj
 
+class EtatTestCase(TestCase):
+    def setUp(self):
+        self.brouillon = new(Etat, nom='brouillon', publie=False)
+        self.nouveau = new(Etat, nom='nouveau', nom_pluriel='nouveaux')
+    def testComputedNames(self):
+        self.assertEqual(self.brouillon.__unicode__(), 'brouillon')
+        self.assertEqual(self.brouillon.pluriel(), 'brouillons')
+        self.assertEqual(self.nouveau.__unicode__(), 'nouveau')
+        self.assertEqual(self.nouveau.pluriel(), 'nouveaux')
+
+class LieuTestCase(TestCase):
+    def setUp(self):
+        theatre = new(NatureDeLieu, nom=u'théâtre')
+        ville = new(NatureDeLieu, nom='ville')
+        self.rouen = new(Lieu, nom='Rouen', nature=ville)
+        self.theatre_des_arts = new(Lieu,
+            nom=u'Théâtre des Arts', nature=theatre, parent=self.rouen)
+    def testComputedNames(self):
+        self.assertEqual(self.rouen.__unicode__(), 'Rouen')
+        self.assertEqual(self.theatre_des_arts.__unicode__(),
+                         u'Rouen, Théâtre des Arts')
+
 class SaisonTestCase(TestCase):
     def setUp(self):
         theatre = new(NatureDeLieu, nom=u'théâtre')
@@ -147,14 +169,6 @@ class SuiteRunner(DjangoTestSuiteRunner):
         self.verbosity = 1
         self.interactive = False
         self.failfast = False
-    def build_suite(self, test_labels, extra_tests=None, **kwargs):
-        test_labels = (
-            'catalogue.SaisonTestCase',
-            'catalogue.IndividuTestCase',
-            'catalogue.OeuvreTestCase',
-            'catalogue.SourceTestCase',
-        )
-        return super(SuiteRunner, self).build_suite(test_labels, extra_tests, **kwargs)
     def run_suite(self, suite, **kwargs):
         activate(LANGUAGE_CODE)
         suite.addTest(DocTestSuite(functions))

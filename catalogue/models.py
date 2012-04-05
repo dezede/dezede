@@ -152,7 +152,7 @@ class Etat(CustomModel):
         help_text=PLURAL_MSG)
     message = HTMLField(_('message'), blank=True,
         help_text=_(u'Message à afficher dans la partie consultation.'))
-    publie = BooleanField(_(u'publié'), default=True)
+    publie = BooleanField(_(u'publié'), default=True) # TODO: publie -> public
     slug = SlugField(blank=True)
     class Meta:
         verbose_name = ungettext_lazy(u'état', u'états', 1)
