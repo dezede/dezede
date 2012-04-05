@@ -30,15 +30,19 @@
     {% endif %}
   </h3>
   {% for source in sources %}
+    {% if forloop.first %}
+      <div class="accordion">
+    {% endif %}
+    <h4>{{ source.html }}</h4>
     <div class="source">
       {{ source.contenu }}
-      {{ source.calc_auteurs }}
-      <div class="source-ref">
-        ({{ source.html }})
-      </div>
+      {{ source.calc_auteurs }}<br />
+      <a href="{{ source.permalien }}">
+        [{% trans "permalien"|capfirst %}]
+      </a>
     </div>
-    {% if not forloop.last %}
-      <hr />
+    {% if forloop.last %}
+      </div>
     {% endif %}
   {% endfor %}
 {% endfor %}

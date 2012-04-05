@@ -14,6 +14,7 @@ body
   border: 2px solid grey;
   border-top: none;
   font-family: 'Gentium Basic', serif;
+  font-size: 16px;
   background-color: #FFF9D9;
   box-shadow: 0px 5px 30px black;
 }
@@ -236,11 +237,6 @@ ol
   content: " ”";
 }
 
-.source-ref
-{
-  text-align: right;
-}
-
 .programme_titre
 {
   margin: 0.75em 0 0.5em 0;
@@ -291,14 +287,36 @@ table
   cursor: default;
 }
 
-#criteria>*
-{
-  vertical-align: middle;
-  font-family: 'Gentium Basic', serif;
-}
-
 #criteria .ui-button-text
 {
   padding: .2em .5em;
+}
+
+.ui-widget *
+{
+  font-family: 'Gentium Basic', serif;
+  line-height: normal;
+}
+
+.ui-accordion-content
+{
+  max-height: 300px;
+}
+
+.ui-accordion .ui-accordion-header a {
+  display: block;
+  font-size: 100%;
+  padding: 5px 5px 5px 7px;
+}
+
+.ui-accordion-icons .ui-accordion-header a {
+  padding-left: 1.8em;
+}
+
+.ui-helper-reset
+{
+  text-decoration: none;
+  font-size: 100%;
+  list-style: none;
 }
 

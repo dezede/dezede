@@ -7,6 +7,18 @@
   {% trans "événements"|capfirst %}
 {% endblock %}
 
+{% block head %}
+  <script>
+    $(function() {
+      $(".accordion").accordion({
+        autoHeight: false,
+        navigation: true,
+        collapsible: true,
+      });
+    });
+  </script>
+{% endblock %}
+
 {% block body %}
   {% for evenement in evenements %}
     <div class="content_part">

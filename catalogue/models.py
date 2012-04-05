@@ -206,7 +206,7 @@ class Lieu(CustomModel):
         return ('lieu', [self.slug])
     @permalink
     def permalien(self):
-        return ('lieu', [self.pk])
+        return ('lieu_pk', [self.pk])
     def link(self):
         return self.html()
     link.short_description = _('lien')
@@ -465,7 +465,7 @@ class Individu(CustomModel):
         return ('individu', [self.slug],)
     @permalink
     def permalien(self):
-        return ('individu', [self.pk])
+        return ('individu_pk', [self.pk])
     def link(self):
         return self.html()
     link.short_description = _('lien')
@@ -863,7 +863,7 @@ class Oeuvre(CustomModel):
         return ('oeuvre', [self.slug])
     @permalink
     def permalien(self):
-        return ('oeuvre', [self.pk])
+        return ('oeuvre_pk', [self.pk])
     def link(self):
         return self.html(True, False, True, True)
     link.short_description = _('lien')
@@ -1100,7 +1100,7 @@ class Evenement(CustomModel):
     notes = HTMLField(blank=True)
     @permalink
     def get_absolute_url(self):
-        return ('evenement', [self.pk])
+        return ('evenement_pk', [self.pk])
     @permalink
     def permalien(self):
         return self.get_absolute_url()
@@ -1186,7 +1186,7 @@ class Source(CustomModel):
     notes = HTMLField(blank=True)
     @permalink
     def get_absolute_url(self):
-        return ('source', [self.pk])
+        return ('source_pk', [self.pk])
     def permalien(self):
         return self.get_absolute_url()
     def link(self):
