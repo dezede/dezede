@@ -95,9 +95,16 @@
     {% endwith %}
     {% include "catalogue/notes_def.html" with notes=individu.notes %}
   </dl>
+
   <br />
-  <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">
-    {% trans "[Modifier]" %}
+
+  <a href="{{ individu.permalien }}">
+    [{% trans "permalien"|capfirst %}]
   </a>
+  {% if user.is_staff %}
+    <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">
+      [{% trans "modifier"|capfirst %}]
+    </a>
+  {% endif %}
 {% endblock %}
 

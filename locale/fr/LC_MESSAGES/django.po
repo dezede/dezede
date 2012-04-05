@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-05 14:56+0200\n"
+"POT-Creation-Date: 2012-04-05 23:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -146,7 +146,7 @@ msgid "Ex. : « 6/6/1944 » pour le 6 juin 1944."
 msgstr ""
 
 #: catalogue/models.py:111 catalogue/models.py:150 catalogue/models.py:170
-#: catalogue/models.py:190 catalogue/models.py:267 catalogue/models.py:381
+#: catalogue/models.py:190 catalogue/models.py:270 catalogue/models.py:384
 #: templates/catalogue/individu_list.html:16
 msgid "nom"
 msgstr ""
@@ -161,7 +161,7 @@ msgstr[1] ""
 msgid "description"
 msgstr ""
 
-#: catalogue/models.py:116 catalogue/models.py:135 catalogue/models.py:905
+#: catalogue/models.py:116 catalogue/models.py:135 catalogue/models.py:914
 msgid "auteurs"
 msgstr ""
 
@@ -184,10 +184,10 @@ msgid_plural "illustrations"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:151 catalogue/models.py:171 catalogue/models.py:268
-#: catalogue/models.py:382 catalogue/models.py:655 catalogue/models.py:683
-#: catalogue/models.py:719 catalogue/models.py:774 catalogue/models.py:1007
-#: catalogue/models.py:1144
+#: catalogue/models.py:151 catalogue/models.py:171 catalogue/models.py:271
+#: catalogue/models.py:385 catalogue/models.py:661 catalogue/models.py:689
+#: catalogue/models.py:725 catalogue/models.py:780 catalogue/models.py:1016
+#: catalogue/models.py:1154
 msgid "nom (au pluriel)"
 msgstr ""
 
@@ -204,7 +204,7 @@ msgid "publié"
 msgstr ""
 
 #: catalogue/models.py:158 catalogue/models.py:159 catalogue/models.py:201
-#: catalogue/models.py:457
+#: catalogue/models.py:460
 msgid "état"
 msgid_plural "états"
 msgstr[0] ""
@@ -228,450 +228,450 @@ msgstr ""
 msgid "historique"
 msgstr ""
 
-#: catalogue/models.py:197 catalogue/models.py:453
+#: catalogue/models.py:197 catalogue/models.py:456
 msgid "illustrations"
 msgstr ""
 
-#: catalogue/models.py:199 catalogue/models.py:455
+#: catalogue/models.py:199 catalogue/models.py:458
 msgid "documents"
 msgstr ""
 
-#: catalogue/models.py:202 catalogue/models.py:458
+#: catalogue/models.py:202 catalogue/models.py:461
 #: templates/catalogue/notes_def.html:3
 msgid "notes"
 msgstr ""
 
-#: catalogue/models.py:211 catalogue/models.py:465 catalogue/models.py:860
-#: catalogue/models.py:1099
-msgid "permalien"
+#: catalogue/models.py:212 catalogue/models.py:471 catalogue/models.py:869
+#: catalogue/models.py:1109
+msgid "lien"
 msgstr ""
 
-#: catalogue/models.py:222
+#: catalogue/models.py:225
 #, python-format
 msgid "%(lieu)s"
 msgstr ""
 
-#: catalogue/models.py:228
+#: catalogue/models.py:231
 #, python-format
 msgid "%(lieu_parent)s, %(lieu)s"
 msgstr ""
 
-#: catalogue/models.py:231 catalogue/models.py:583 catalogue/models.py:814
-#: catalogue/models.py:969 catalogue/models.py:1062 catalogue/models.py:1120
-#: catalogue/models.py:1202
+#: catalogue/models.py:234 catalogue/models.py:589 catalogue/models.py:820
+#: catalogue/models.py:978 catalogue/models.py:1071 catalogue/models.py:1130
+#: catalogue/models.py:1214
 msgid "rendu HTML"
 msgstr ""
 
-#: catalogue/models.py:234 catalogue/models.py:235 catalogue/models.py:252
-#: catalogue/models.py:344
+#: catalogue/models.py:237 catalogue/models.py:238 catalogue/models.py:255
+#: catalogue/models.py:347
 msgid "lieu"
 msgid_plural "lieux"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:253
+#: catalogue/models.py:256
 msgid "début"
 msgstr ""
 
-#: catalogue/models.py:254
+#: catalogue/models.py:257
 msgid "fin"
 msgstr ""
 
-#: catalogue/models.py:256 catalogue/models.py:257
+#: catalogue/models.py:259 catalogue/models.py:260
 msgid "saison"
 msgid_plural "saisons"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:264
+#: catalogue/models.py:267
 #, python-format
 msgctxt "saison : pattern d'affichage"
 msgid "%(lieu)s, %(debut)d–%(fin)d"
 msgstr ""
 
-#: catalogue/models.py:270
+#: catalogue/models.py:273
 msgid "nom (au féminin)"
 msgstr ""
 
-#: catalogue/models.py:271
+#: catalogue/models.py:274
 msgid "Ne préciser que s’il est différent du nom."
 msgstr ""
 
-#: catalogue/models.py:273
+#: catalogue/models.py:276
 msgid "parente"
 msgstr ""
 
-#: catalogue/models.py:276 catalogue/models.py:277
+#: catalogue/models.py:279 catalogue/models.py:280
 #: templates/catalogue/individu_detail.html:32
 msgid "profession"
 msgid_plural "professions"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:296
+#: catalogue/models.py:299
 msgid "date (précise)"
 msgstr ""
 
-#: catalogue/models.py:298
+#: catalogue/models.py:301
 msgid "heure (précise)"
 msgstr ""
 
-#: catalogue/models.py:300
+#: catalogue/models.py:303
 msgid "lieu (précis)"
 msgstr ""
 
-#: catalogue/models.py:301
+#: catalogue/models.py:304
 msgid "date (approximative)"
 msgstr ""
 
-#: catalogue/models.py:302
+#: catalogue/models.py:305
 msgid "Ne remplir que si la date est imprécise."
 msgstr ""
 
-#: catalogue/models.py:303
+#: catalogue/models.py:306
 msgid "heure (approximative)"
 msgstr ""
 
-#: catalogue/models.py:304
+#: catalogue/models.py:307
 msgid "Ne remplir que si l’heure est imprécise."
 msgstr ""
 
-#: catalogue/models.py:305
+#: catalogue/models.py:308
 msgid "lieu (approximatif)"
 msgstr ""
 
-#: catalogue/models.py:306
+#: catalogue/models.py:309
 msgid "Ne remplir que si le lieu est imprécis."
 msgstr ""
 
-#: catalogue/models.py:323
+#: catalogue/models.py:326
 msgid "date"
 msgstr ""
 
-#: catalogue/models.py:327
+#: catalogue/models.py:330
 msgid "H\\hi"
 msgstr ""
 
-#: catalogue/models.py:329
+#: catalogue/models.py:332
 msgid "heure"
 msgstr ""
 
-#: catalogue/models.py:335
+#: catalogue/models.py:338
 #, python-format
 msgid "le %(date)s"
 msgstr ""
 
-#: catalogue/models.py:335
+#: catalogue/models.py:338
 #, python-format
 msgid "%(date)s"
 msgstr ""
 
-#: catalogue/models.py:336
+#: catalogue/models.py:339
 #, python-format
 msgid "à %(heure)s"
 msgstr ""
 
-#: catalogue/models.py:336
+#: catalogue/models.py:339
 #, python-format
 msgid "%(heure)s"
 msgstr ""
 
-#: catalogue/models.py:354 catalogue/models.py:355
+#: catalogue/models.py:357 catalogue/models.py:358
 #: templates/catalogue/individu_detail.html:19
 msgid "ancrage spatio-temporel"
 msgid_plural "ancrages spatio-temporels"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:367 catalogue/models.py:371 catalogue/models.py:372
+#: catalogue/models.py:370 catalogue/models.py:374 catalogue/models.py:375
 msgid "prénom"
 msgid_plural "prénoms"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:368 catalogue/models.py:384
+#: catalogue/models.py:371 catalogue/models.py:387
 msgid "classement"
 msgstr ""
 
-#: catalogue/models.py:369
+#: catalogue/models.py:372
 msgid "favori"
 msgstr ""
 
-#: catalogue/models.py:386 catalogue/models.py:387
+#: catalogue/models.py:389 catalogue/models.py:390
 msgid "type de parenté d’individus"
 msgid_plural "types de parenté d’individus"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:396
+#: catalogue/models.py:399
 msgid "type"
 msgstr ""
 
-#: catalogue/models.py:398
+#: catalogue/models.py:401
 msgid "individus cibles"
 msgstr ""
 
-#: catalogue/models.py:400 catalogue/models.py:401
+#: catalogue/models.py:403 catalogue/models.py:404
 msgid "parenté d’individus"
 msgid_plural "parentés d’individus"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:413
+#: catalogue/models.py:416
 msgid "particule du nom d’usage"
 msgstr ""
 
-#: catalogue/models.py:415
+#: catalogue/models.py:418
 msgid "nom d’usage"
 msgstr ""
 
-#: catalogue/models.py:416
+#: catalogue/models.py:419
 msgid "particule du nom de naissance"
 msgstr ""
 
-#: catalogue/models.py:418 templates/catalogue/individu_detail.html:38
+#: catalogue/models.py:421 templates/catalogue/individu_detail.html:38
 msgid "nom de naissance"
 msgstr ""
 
-#: catalogue/models.py:419
+#: catalogue/models.py:422
 msgid "Ne remplir que s’il est différent du nom d’usage."
 msgstr ""
 
-#: catalogue/models.py:421 catalogue/models.py:504
+#: catalogue/models.py:424 catalogue/models.py:510
 #: templates/catalogue/individu_list.html:15
 msgid "prénoms"
 msgstr ""
 
-#: catalogue/models.py:422 templates/catalogue/individu_list.html:17
+#: catalogue/models.py:425 templates/catalogue/individu_list.html:17
 msgid "pseudonyme"
 msgstr ""
 
-#: catalogue/models.py:424
+#: catalogue/models.py:427
 msgid "Standard (nom, prénoms et pseudonyme)"
 msgstr ""
 
-#: catalogue/models.py:425
+#: catalogue/models.py:428
 msgid "Pseudonyme (uniquement)"
 msgstr ""
 
-#: catalogue/models.py:426
+#: catalogue/models.py:429
 msgid "Nom de famille (uniquement)"
 msgstr ""
 
-#: catalogue/models.py:427
+#: catalogue/models.py:430
 msgid "Nom de naissance (standard)"
 msgstr ""
 
-#: catalogue/models.py:428
+#: catalogue/models.py:431
 msgid "Prénom(s) favori(s) (uniquement)"
 msgstr ""
 
-#: catalogue/models.py:430
+#: catalogue/models.py:433
 msgid "désignation"
 msgstr ""
 
-#: catalogue/models.py:433 catalogue/models.py:512
+#: catalogue/models.py:436 catalogue/models.py:518
 msgid "M."
 msgstr ""
 
-#: catalogue/models.py:434
+#: catalogue/models.py:437
 msgid "Mlle"
 msgstr ""
 
-#: catalogue/models.py:435
+#: catalogue/models.py:438
 msgid "Mme"
 msgstr ""
 
-#: catalogue/models.py:437
+#: catalogue/models.py:440
 msgctxt "individu"
 msgid "titre"
 msgstr ""
 
-#: catalogue/models.py:441
+#: catalogue/models.py:444
 msgid "ancrage de naissance"
 msgstr ""
 
-#: catalogue/models.py:443
+#: catalogue/models.py:446
 msgid "ancrage du décès"
 msgstr ""
 
-#: catalogue/models.py:445
+#: catalogue/models.py:448
 msgid "ancrage approximatif"
 msgstr ""
 
-#: catalogue/models.py:446
+#: catalogue/models.py:449
 msgid "Ne remplir que si on ne connaît aucune date précise."
 msgstr ""
 
-#: catalogue/models.py:448 catalogue/models.py:543
+#: catalogue/models.py:451 catalogue/models.py:549
 #: templates/catalogue/individu_list.html:20
 msgid "professions"
 msgstr ""
 
-#: catalogue/models.py:450 catalogue/models.py:845
+#: catalogue/models.py:453 catalogue/models.py:851
 msgid "parentés"
 msgstr ""
 
-#: catalogue/models.py:451 templates/catalogue/individu_detail.html:42
+#: catalogue/models.py:454 templates/catalogue/individu_detail.html:42
 msgid "biographie"
 msgstr ""
 
-#: catalogue/models.py:513
+#: catalogue/models.py:519
 msgid "M<sup>lle</sup>"
 msgstr ""
 
-#: catalogue/models.py:514
+#: catalogue/models.py:520
 msgid "M<sup>me</sup>"
 msgstr ""
 
-#: catalogue/models.py:518
+#: catalogue/models.py:524
 msgid "Monsieur"
 msgstr ""
 
-#: catalogue/models.py:519
+#: catalogue/models.py:525
 msgid "Mademoiselle"
 msgstr ""
 
-#: catalogue/models.py:520
+#: catalogue/models.py:526
 msgid "Madame"
 msgstr ""
 
-#: catalogue/models.py:566
+#: catalogue/models.py:572
 msgid "dite"
 msgstr ""
 
-#: catalogue/models.py:566
+#: catalogue/models.py:572
 msgid "dit"
 msgstr ""
 
-#: catalogue/models.py:567
+#: catalogue/models.py:573
 #, python-format
 msgid ", %(alias)s %(pseudonyme)s"
 msgstr ""
 
-#: catalogue/models.py:588 catalogue/models.py:589
+#: catalogue/models.py:594 catalogue/models.py:595
 msgid "individu"
 msgid_plural "individus"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:610
+#: catalogue/models.py:616
 msgid "euro"
 msgstr ""
 
-#: catalogue/models.py:612
+#: catalogue/models.py:618
 msgid "€"
 msgstr ""
 
-#: catalogue/models.py:614 catalogue/models.py:615
+#: catalogue/models.py:620 catalogue/models.py:621
 msgid "devise"
 msgid_plural "devises"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:628 catalogue/models.py:629
+#: catalogue/models.py:634 catalogue/models.py:635
 msgid "engagement"
 msgid_plural "engagements"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:636 catalogue/models.py:637
+#: catalogue/models.py:642 catalogue/models.py:643
 msgid "type de personnel"
 msgid_plural "types de personnel"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:647 catalogue/models.py:648
+#: catalogue/models.py:653 catalogue/models.py:654
 msgid "personnel"
 msgid_plural "personnels"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:661 catalogue/models.py:662
+#: catalogue/models.py:667 catalogue/models.py:668
 msgid "genre d’œuvre"
 msgid_plural "genres d’œuvre"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:668
+#: catalogue/models.py:674
 msgid "genre"
 msgstr ""
 
-#: catalogue/models.py:681
+#: catalogue/models.py:687
 msgid "tonalité"
 msgstr ""
 
-#: catalogue/models.py:686 catalogue/models.py:687
+#: catalogue/models.py:692 catalogue/models.py:693
 msgid "type de caractéristique d’œuvre"
 msgid_plural "types de caracteristique d’œuvre"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:697
+#: catalogue/models.py:703
 msgid "en trois actes"
 msgstr ""
 
-#: catalogue/models.py:699
+#: catalogue/models.py:705
 msgid ""
 "Par exemple, on peut choisir de classerles découpages par nombre d’actes."
 msgstr ""
 
-#: catalogue/models.py:702 catalogue/models.py:703
+#: catalogue/models.py:708 catalogue/models.py:709
 msgid "caractéristique d’œuvre"
 msgid_plural "caractéristiques d’œuvre"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:716
+#: catalogue/models.py:722
 msgid "Le nom d’une partie de la partition, instrumentale ou vocale."
 msgstr ""
 
-#: catalogue/models.py:721
+#: catalogue/models.py:727
 msgid "La ou les profession(s) permettant d’assurer cette partie."
 msgstr ""
 
-#: catalogue/models.py:726 catalogue/models.py:727
+#: catalogue/models.py:732 catalogue/models.py:733
 msgid "partie"
 msgid_plural "parties"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:741
+#: catalogue/models.py:747
 msgid "quantité minimale"
 msgstr ""
 
-#: catalogue/models.py:742
+#: catalogue/models.py:748
 msgid "quantité maximale"
 msgstr ""
 
-#: catalogue/models.py:744 catalogue/models.py:745
+#: catalogue/models.py:750 catalogue/models.py:751
 msgid "pupitre"
 msgid_plural "pupitres"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:760
+#: catalogue/models.py:766
 #, python-format
 msgid "%(min)s à %(max)s "
 msgstr ""
 
-#: catalogue/models.py:778 catalogue/models.py:779
+#: catalogue/models.py:784 catalogue/models.py:785
 msgid "type de parenté d’œuvres"
 msgid_plural "types de parentés d’œuvres"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:789
+#: catalogue/models.py:795
 msgid "œuvres cibles"
 msgstr ""
 
-#: catalogue/models.py:791 catalogue/models.py:792
+#: catalogue/models.py:797 catalogue/models.py:798
 msgid "parenté d’œuvres"
 msgid_plural "parentés d’œuvres"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:817 catalogue/models.py:818
+#: catalogue/models.py:823 catalogue/models.py:824
 #: templates/catalogue/oeuvre_detail.html:25
 #: templates/catalogue/source_detail.html:39
 msgid "auteur"
@@ -679,104 +679,105 @@ msgid_plural "auteurs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:825
+#: catalogue/models.py:831
 msgid "préfixe du titre"
 msgstr ""
 
-#: catalogue/models.py:828
+#: catalogue/models.py:834
 msgid "coordination"
 msgstr ""
 
-#: catalogue/models.py:830
+#: catalogue/models.py:836
 msgid "préfixe du titre secondaire"
 msgstr ""
 
-#: catalogue/models.py:832
+#: catalogue/models.py:838
 msgid "titre secondaire"
 msgstr ""
 
-#: catalogue/models.py:836 catalogue/models.py:889 catalogue/models.py:1024
-#: catalogue/models.py:1040
+#: catalogue/models.py:842 catalogue/models.py:898 catalogue/models.py:1033
+#: catalogue/models.py:1049
 msgid "caractéristiques"
 msgstr ""
 
-#: catalogue/models.py:841
+#: catalogue/models.py:847
 msgid "ancrage spatio-temporel de composition"
 msgstr ""
 
-#: catalogue/models.py:897
+#: catalogue/models.py:906
 msgid "pour "
 msgstr ""
 
-#: catalogue/models.py:976 catalogue/models.py:977 catalogue/models.py:1020
+#: catalogue/models.py:985 catalogue/models.py:986 catalogue/models.py:1029
 #: templates/catalogue/individu_detail.html:50
 msgid "œuvre"
 msgid_plural "œuvres"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:995 catalogue/models.py:996
+#: catalogue/models.py:1004 catalogue/models.py:1005
 msgid "attribution de pupitre"
 msgid_plural "attributions de pupitre"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:1012 catalogue/models.py:1013
+#: catalogue/models.py:1021 catalogue/models.py:1022
 msgid "caractéristique d’élément de programme"
 msgid_plural "caractéristiques d’élément de programme"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:1065 catalogue/models.py:1066
+#: catalogue/models.py:1074 catalogue/models.py:1075
 msgid "élément de programme"
 msgid_plural "éléments de programme"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:1112
+#: catalogue/models.py:1122
 msgid "circonstance"
 msgstr ""
 
-#: catalogue/models.py:1115
+#: catalogue/models.py:1125
 msgid "Relâche"
 msgstr ""
 
-#: catalogue/models.py:1123 catalogue/models.py:1124
+#: catalogue/models.py:1133 catalogue/models.py:1134
+#: templates/catalogue/evenement_detail.html:7
 #: templates/catalogue/evenement_list_def.html:5
 msgid "événement"
 msgid_plural "événements"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:1148 catalogue/models.py:1149
+#: catalogue/models.py:1158 catalogue/models.py:1159
 msgid "type de source"
 msgid_plural "types de source"
 msgstr[0] ""
 msgstr[1] ""
 
-#: catalogue/models.py:1160
+#: catalogue/models.py:1170
 msgid "Journal de Rouen"
 msgstr ""
 
-#: catalogue/models.py:1165
+#: catalogue/models.py:1175
 msgid "compte rendu"
 msgstr ""
 
-#: catalogue/models.py:1196
+#: catalogue/models.py:1208
 #, python-format
 msgid "du %(date)s"
 msgstr ""
 
-#: catalogue/models.py:1199
+#: catalogue/models.py:1211
 #, python-format
 msgid "p. %s"
 msgstr ""
 
-#: catalogue/models.py:1206
+#: catalogue/models.py:1218
 msgid "contenu"
 msgstr ""
 
-#: catalogue/models.py:1209 catalogue/models.py:1210
+#: catalogue/models.py:1221 catalogue/models.py:1222
 msgid "source"
 msgid_plural "sources"
 msgstr[0] ""
@@ -813,7 +814,23 @@ msgid ""
 "de fonctionnement."
 msgstr ""
 
-#: templates/catalogue/evenement_detail.html:13
+#: templates/catalogue/evenement_detail.html:16
+#: templates/catalogue/individu_detail.html:102
+#: templates/catalogue/lieu_detail.html:73
+#: templates/catalogue/oeuvre_detail.html:50
+#: templates/catalogue/source_detail.html:52
+msgid "permalien"
+msgstr ""
+
+#: templates/catalogue/evenement_detail.html:20
+#: templates/catalogue/individu_detail.html:106
+#: templates/catalogue/lieu_detail.html:77
+#: templates/catalogue/oeuvre_detail.html:54
+#: templates/catalogue/source_detail.html:56
+msgid "modifier"
+msgstr ""
+
+#: templates/catalogue/evenement_item.html:13
 msgid "programme"
 msgstr ""
 
@@ -862,13 +879,6 @@ msgid "enfant"
 msgid_plural "enfants"
 msgstr[0] ""
 msgstr[1] ""
-
-#: templates/catalogue/individu_detail.html:100
-#: templates/catalogue/lieu_detail.html:71
-#: templates/catalogue/oeuvre_detail.html:48
-#: templates/catalogue/source_detail.html:50
-msgid "[Modifier]"
-msgstr ""
 
 #: templates/catalogue/individu_list.html:24
 msgid "Ouvrir l'autorité"

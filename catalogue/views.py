@@ -25,6 +25,9 @@ class EvenementListView(ListView):
                 q[bindings[key]] = value
         return Evenement.objects.filter(**q)
 
+class EvenementDetailView(DetailView):
+    model = Evenement
+
 class LieuListView(ListView):
     model = Lieu
     queryset = Lieu.objects.filter(parent=None)
@@ -59,5 +62,5 @@ def saisie_source(request, source_id=None):
     else:
         form = SourceForm(instance=source)
     c = RequestContext(request, {'form': form, 'sources': Source.objects.all(), 'source': source,})
-    return render_to_response('saisie_source.html', c)
+    return render_to_response('catalogue/saisie_source.html', c)
 

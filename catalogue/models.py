@@ -204,12 +204,15 @@ class Lieu(CustomModel):
     @permalink
     def get_absolute_url(self):
         return ('lieu', [self.slug])
+    @permalink
+    def permalien(self):
+        return ('lieu', [self.pk])
     def link(self):
         return self.html()
+    link.short_description = _('lien')
+    link.allow_tags = True
     def short_link(self):
         return self.html(short=True)
-    link.short_description = _('permalien')
-    link.allow_tags = True
     def evenements(self): # TODO: gérer les fins d'événements.
         return Evenement.objects.filter(ancrage_debut__lieu=self)
     def individus_nes(self):
@@ -460,9 +463,12 @@ class Individu(CustomModel):
     @permalink
     def get_absolute_url(self):
         return ('individu', [self.slug],)
+    @permalink
+    def permalien(self):
+        return ('individu', [self.pk])
     def link(self):
         return self.html()
-    link.short_description = _('permalien')
+    link.short_description = _('lien')
     link.allow_tags = True
     def oeuvres(self):
         q = Oeuvre.objects.none()
@@ -855,9 +861,12 @@ class Oeuvre(CustomModel):
     @permalink
     def get_absolute_url(self):
         return ('oeuvre', [self.slug])
+    @permalink
+    def permalien(self):
+        return ('oeuvre', [self.pk])
     def link(self):
         return self.html(True, False, True, True)
-    link.short_description = _('permalien')
+    link.short_description = _('lien')
     link.allow_tags = True
     def individus_auteurs(self):
         q = Individu.objects.none()
@@ -1091,12 +1100,13 @@ class Evenement(CustomModel):
     notes = HTMLField(blank=True)
     @permalink
     def get_absolute_url(self):
-        return ('evenements',
-                [self.ancrage_debut.lieu.slug, self.ancrage_debut.date.year,
-                 self.ancrage_debut.date.month, self.ancrage_debut.date.day])
+        return ('evenement', [self.pk])
+    @permalink
+    def permalien(self):
+        return self.get_absolute_url()
     def link(self):
         return href(self.get_absolute_url(), self.__unicode__())
-    link.short_description = _('permalien')
+    link.short_description = _('lien')
     link.allow_tags = True
     def sources_dict(self):
         types = TypeDeSource.objects.filter(sources__evenements=self).distinct()
@@ -1177,6 +1187,8 @@ class Source(CustomModel):
     @permalink
     def get_absolute_url(self):
         return ('source', [self.pk])
+    def permalien(self):
+        return self.get_absolute_url()
     def link(self):
         return self.html()
     def individus_auteurs(self):

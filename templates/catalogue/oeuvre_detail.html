@@ -43,9 +43,16 @@
     {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements.all %}
     {% include "catalogue/notes_def.html" with notes=oeuvre.notes %}
   </dl>
+
   <br />
-  <a href="{% url 'admin:catalogue_oeuvre_change' oeuvre.pk %}">
-    {% trans "[Modifier]" %}
+
+  <a href="{{ oeuvre.permalien }}">
+    [{% trans "permalien"|capfirst %}]
   </a>
+  {% if user.is_staff %}
+    <a href="{% url 'admin:catalogue_oeuvre_change' oeuvre.pk %}">
+      [{% trans "modifier"|capfirst %}]
+    </a>
+  {% endif %}
 {% endblock %}
 

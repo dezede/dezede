@@ -10,7 +10,7 @@
 {% block body %}
   {% for evenement in evenements %}
     <div class="content_part">
-      {% include "catalogue/evenement_detail.html" %}
+      {% include "catalogue/evenement_item.html" %}
     </div>
   {% empty %}
     {% trans "Aucun événement n'a été trouvée selon ces critères." %}

@@ -45,9 +45,16 @@
     {% endwith %}
     {% include "catalogue/notes_def.html" with notes=source.notes %}
   </dl>
+
   <br />
-  <a href="{% url 'admin:catalogue_source_change' source.pk %}">
-    {% trans "[Modifier]" %}
+
+  <a href="{{ oeuvre.permalien }}">
+    [{% trans "permalien"|capfirst %}]
   </a>
+  {% if user.is_staff %}
+    <a href="{% url 'admin:catalogue_source_change' source.pk %}">
+      [{% trans "modifier"|capfirst %}]
+    </a>
+  {% endif %}
 {% endblock %}
 
