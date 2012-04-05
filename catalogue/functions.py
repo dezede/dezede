@@ -1,6 +1,6 @@
 # coding: utf-8
 from django.template.defaultfilters import date
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
 from django.utils.functional import allow_lazy
 
 def date_html(d, tags=True):
@@ -31,8 +31,8 @@ def str_list(l, infix=None, last_infix=None):
     >>> print str_list(l)
     Jeanne, Lola, Perrine, Marion
     '''
-    if not infix:
-        infix = ugettext(', ')
+    if infix == None:
+        infix = pgettext(u'infix d’une liste', ', ')
     l = filter(bool, l)
     suffix = ''
     if len(l) > 1 and last_infix:
@@ -40,18 +40,29 @@ def str_list(l, infix=None, last_infix=None):
     return infix.join(l) + suffix
 
 
-def str_list_w_last(l, infix=None, last_infix=None):
+def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None, oxford_comma=True):
     u'''
-    Concatène une liste de chaîne de caractères avec des virgules et un «\u00A0et\u00A0» final.
+    Concatène une liste de chaîne de caractères avec des virgules
+    et un «,\u00A0et\u00A0» final («\u00A0et\u00A0» pour deux éléments).
+    Pour désactiver la virgule d’Oxford, passer oxford_comma=False en argument.
 
-    >>> l = ['Jeanne', 'Lola', 'Perrine', 'Marion']
+    >>> l = ['Jeanne', 'Marion', 'Lola', 'Perrine']
     >>> print str_list_w_last(l)
-    Jeanne, Lola, Perrine et Marion
+    Jeanne, Marion, Lola,\u00A0et\u00A0Perrine
+    >>> print str_list_w_last(l[:2])
+    Jeanne\u00A0et\u00A0Marion
     '''
-    if not infix:
-        infix = ugettext(', ')
-    if not last_infix:
-        last_infix = ugettext(' et ')
+    if infix == None:
+        infix = pgettext(u'infix d’une liste', ', ')
+    if last_infix == None:
+        last_infix = pgettext(u'dernier infix pour 2 éléments',
+                              u'\u00A0et\u00A0')
+    if oxford_comma and len(l) > 2:
+        if oxfordian_last_infix == None:
+            oxfordian_last_infix = \
+                pgettext(u'dernier infix pour plus de 2 éléments',
+                         u',\u00A0et\u00A0')
+        last_infix = oxfordian_last_infix
     return str_list(l, infix, last_infix)
 
 def calc_pluriel(obj):

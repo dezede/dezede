@@ -916,18 +916,9 @@ class Oeuvre(CustomModel):
             out += ', '
         return out
     def titre_complet(self):
-        out = ''
-        if self.titre:
-            if self.prefixe_titre:
-                out = self.prefixe_titre
-            out += self.titre
-            if self.titre_secondaire:
-                if self.coordination:
-                    out += self.coordination
-                if self.prefixe_titre_secondaire:
-                    out += self.prefixe_titre_secondaire
-                out += self.titre_secondaire
-        return out
+        l = [self.prefixe_titre, self.titre, self.coordination,
+             self.prefixe_titre_secondaire, self.titre_secondaire]
+        return str_list(l, infix='')
     def html(self, tags=True, auteurs=True, titre=True, descr=True, caps_genre=False):
         # TODO: Nettoyer cette horreur
         out = ''
@@ -1063,11 +1054,7 @@ class ElementDeProgramme(CustomModel):
             out += u'. — '
         for i, attribution in enumerate(distribution):
             individus = attribution.individus.all()
-            maxj = len(individus) - 1
-            for j, individu in enumerate(individus):
-                out += individu.html(tags)
-                if j < maxj:
-                    out += ', '
+            out += str_list([individu.html(tags) for individu in individus])
             out += ' [%s]' % attribution.pupitre.partie.__unicode__()
             if i < maxi:
                 out += ', '
