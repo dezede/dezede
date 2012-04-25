@@ -1,0 +1,291 @@
+*********************
+Projet de musicologie
+*********************
+
+:Auteur: Bertrand Bordage
+:Copyright: Bertrand Bordage © 2011-2012
+
+.. contents::
+
+
+Procédure d'installation
+========================
+
+.. note::
+    Toutes les commandes sont à exécuter dans le répertoire du projet.
+
+#. Vérifier la satisfaction des `dépendances`_.
+
+#. Choisir un mode de lancement :
+    - `Lancement du serveur de développement`_, ou
+    - `Déploiement`_.
+
+
+
+Dépendances
+===========
+
+:Système d'exploitation:
+  Ubuntu 11.10 « Oneiric Ocelot »
+
+Pour installer les dépendances qui suivent :
+  ``./dependances.sh``
+
+
+Paquets
+-------
+
+Nécessaires à l'exécution
+.........................
+
+=============== =======
+Paquet          Version
+=============== =======
+nano
+mysql-server    5.1
+python2.7       2.7.2
+python-mysqldb  1.2.3
+python-pip      1.0
+python-docutils 0.7
+=============== =======
+
+
+Nécessaires au déploiement
+..........................
+
+=================== =======
+Paquet              Version
+=================== =======
+apache2             2.2
+libapache2-mod-wsgi 3.3
+=================== =======
+
+
+Modules Python
+--------------
+
+Nécessaires à l'exécution
+.........................
+
+======================== =======
+Paquet                   Version
+======================== =======
+django                   1.3.1
+django-reversion         1.5.1
+django-haystack          1.2.6
+whoosh                   2.3.2
+django-tinymce           1.5.1a2
+django-grappelli         2.3.4
+django-filebrowser       3.3.0
+pil                      1.1.7
+django-rosetta           0.6.7
+django-rosetta-grappelli 1.0.1
+south                    0.7.3
+django-debug-toolbar     0.9.4
+django-extensions        0.7.1
+======================== =======
+
+
+
+Configuration de MySQL
+======================
+
+.. index::
+    MySQL
+
+#. Création de la base de données dans MySQL :
+    ``mysql -uroot -p``
+    ::
+
+      CREATE DATABASE criminocorpus;
+      exit;
+
+
+#. Paramétrer l'authentification de MySQL :
+
+    - Éditer le fichier de réglages :
+        ``nano settings.py``
+    - Les réglages à modifier sont dans ``DATABASES``.
+
+
+#. Création des tables de la base de données :
+    ``./manage.py syncdb``
+
+
+
+Lancement du serveur de développement
+=====================================
+
+#. Passer en mode ``DEBUG`` :
+    - Éditer le fichier de réglages :
+        ``nano settings.py``
+
+    - Remplacer la ligne ``DEBUG = False`` par :
+        ::
+
+          DEBUG = True
+
+
+#. `Configuration de MySQL`_
+
+
+#. Création des révisions initiales :
+    ``./manage.py createinitialrevisions``
+
+
+#. Collecte des fichiers statiques :
+    ``./manage.py collectstatic -l``
+
+
+#. Préparation du dossier d'upload :
+    ``mkdir -p media/uploads/``
+
+
+#. Compiler les fichiers de langues :
+    ``./manage.py compilemessages``
+
+
+#. Indexation des données :
+    ``./manage.py rebuild_index``
+
+
+#. Lancement du serveur de développement :
+    ``./manage.py runserver``
+
+
+
+Déploiement
+===========
+
+#. `Configuration de MySQL`_
+
+
+#. Création des révisions initiales :
+    ``./manage.py createinitialrevisions``
+
+
+#. Collecte des fichiers statiques :
+    ``sudo ./manage.py collectstatic``
+
+
+#. Préparation du dossier d'upload :
+    ``sudo mkdir -p /var/www/media/uploads/``
+
+
+#. Autoriser les uploads :
+    | ``sudo chgrp -R www-data /var/www/media/``
+    | ``sudo chmod -R 0774 /var/www/media/``
+
+
+#. Compiler les fichiers de langues :
+    ``./manage.py compilemessages``
+
+
+#. Indexation des données :
+    ``./manage.py rebuild_index``
+
+
+#. Autoriser apache à utiliser le dossier où se trouve le projet :
+    | ``sudo chgrp -R www-data
+        [/chemin/vers/le/repertoire/parent/de/celui/du/projet]``
+    | ``sudo chmod -R 0774
+        [/chemin/vers/le/repertoire/parent/de/celui/du/projet]``
+
+
+#. `Configuration d'Apache`_
+
+
+
+Configuration d'Apache
+======================
+
+.. index::
+    Apache
+
+#. Création d'un site dans Apache :
+    ``sudo nano /etc/apache2/sites-available/musicologie``
+
+
+#. Copier ceci dans ce dernier (en remplaçant ce qui est balisé ``[quelque_chose]``) :
+    ::
+
+      <VirtualHost *:80>
+
+        Alias /media/ /var/www/media/
+        Alias /static/ /var/www/static/
+
+        <Directory /var/www/media>
+          Order deny,allow
+          Allow from all
+          Options FollowSymLinks
+          ExpiresActive On
+          ExpiresDefault "access plus 2 days"
+        </Directory>
+
+        <Directory /var/www/static>
+          Order deny,allow
+          Allow from all
+          Options FollowSymLinks
+          ExpiresActive On
+          ExpiresDefault "access plus 2 days"
+        </Directory>
+
+        WSGIScriptAlias / [/chemin/du/projet]/apache/django.wsgi
+
+        <Directory [/chemin/du/projet]/apache>
+          Order deny,allow
+          Allow from all
+        </Directory>
+
+      </VirtualHost>
+
+    .. note::
+        On peut ajouter le paramètre ``MaxRequestsPerChild 1``
+        avant ``<VirtualHost ...>`` pour éviter d'avoir à relancer
+        le serveur à chaque modification.
+
+#. Ajouter le nom de serveur à ``/etc/apache2/httpd.conf`` :
+    ::
+
+      ServerName [ip_du_serveur]
+
+
+#. Activer le site et désactiver le site par défaut :
+    | ``sudo a2ensite musicologie``
+    | ``sudo a2dissite default``
+
+
+#. Activer l'expiration du cache :
+    ``sudo a2enmod expires``
+
+
+#. Relancer le serveur avec :
+    ``sudo service apache2 restart``
+
+
+
+Localisation
+============
+
+#. Ajouter (éventuellement) la langue désirée à LANGUAGES du fichier settings.py
+
+#. Créer ou mettre à jour le fichier de langue désirée :
+    ``sudo ./manage.py makemessages -l [langue (ex : de)]``
+
+#. Éditer le fichier de langue :
+    ``nano locale/[langue]/LC_MESSAGES/django.po``
+
+#. Compiler les fichiers de langues :
+    ``./manage.py compilemessages``
+
+#. Relancer le serveur
+
+
+
+Tests de régression
+===================
+
+Une suite de tests a été créée pour l’application catalogue.
+Pour la lancer, exécuter :
+
+  ``sudo ./manage.py test catalogue``
