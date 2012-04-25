@@ -152,7 +152,7 @@ class Etat(CustomModel):
         help_text=PLURAL_MSG)
     message = HTMLField(_('message'), blank=True,
         help_text=_(u'Message à afficher dans la partie consultation.'))
-    publie = BooleanField(_(u'publié'), default=True) # TODO: publie -> public
+    publie = BooleanField(_(u'publié'), default=True) # FIXME: publie -> public
     slug = SlugField(blank=True)
     class Meta:
         verbose_name = ungettext_lazy(u'état', u'états', 1)
@@ -929,7 +929,7 @@ class Oeuvre(CustomModel):
              self.prefixe_titre_secondaire, self.titre_secondaire]
         return str_list(l, infix='')
     def html(self, tags=True, auteurs=True, titre=True, descr=True, caps_genre=False):
-        # TODO: Nettoyer cette horreur
+        # FIXME: Nettoyer cette horreur
         out = ''
         auts = self.calc_auteurs(tags)
         parentes = self.calc_parentes(tags)

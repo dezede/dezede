@@ -62,6 +62,32 @@ nav>a:hover
   padding-top: 68px; /* 38px (nav) + 30px */
 }
 
+#footer
+{
+  margin-top: 20px;
+  height: 110px;
+  padding: 10px;
+  text-align: center;
+}
+
+#footer div
+{
+  display: inline-block;
+  margin-right: 30px;
+}
+
+#footer div:last-of-type
+{
+  margin-right: 0;
+}
+
+#footer img
+{
+  vertical-align: middle;
+  max-width: 150px;
+  max-height: 110px;
+}
+
 a
 {
   color: black;
