@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-05 23:52+0200\n"
+"POT-Creation-Date: 2012-04-26 12:40+0200\n"
 "PO-Revision-Date: 2012-03-18 03:39\n"
 "Last-Translator: <bordage.bertrand@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -815,7 +815,8 @@ msgid ""
 "de fonctionnement."
 msgstr ""
 
-#: templates/catalogue/evenement_detail.html:16
+#: templates/catalogue/evenement_detail.html:28
+#: templates/catalogue/evenement_item.html:41
 #: templates/catalogue/individu_detail.html:102
 #: templates/catalogue/lieu_detail.html:73
 #: templates/catalogue/oeuvre_detail.html:50
@@ -823,7 +824,7 @@ msgstr ""
 msgid "permalien"
 msgstr "permalink"
 
-#: templates/catalogue/evenement_detail.html:20
+#: templates/catalogue/evenement_detail.html:32
 #: templates/catalogue/individu_detail.html:106
 #: templates/catalogue/lieu_detail.html:77
 #: templates/catalogue/oeuvre_detail.html:54
@@ -835,7 +836,7 @@ msgstr "modify"
 msgid "programme"
 msgstr "program"
 
-#: templates/catalogue/evenement_list.html:16
+#: templates/catalogue/evenement_list.html:28
 msgid "Aucun événement n'a été trouvée selon ces critères."
 msgstr "No event found according to these criteria."
 
