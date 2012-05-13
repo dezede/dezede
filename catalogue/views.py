@@ -1,17 +1,19 @@
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from django.template import Context, RequestContext
+from django.template import RequestContext
 from django.views.generic import ListView, DetailView
 from musicologie.catalogue.models import *
 from musicologie.catalogue.forms import *
-from collections import OrderedDict
+
 
 class SourceDetailView(DetailView):
     model = Source
     context_object_name = 'source'
 
+
 class EvenementListView(ListView):
     model = Evenement
     context_object_name = 'evenements'
+
     def get_queryset(self):
         q = {}
         bindings = {
@@ -25,29 +27,36 @@ class EvenementListView(ListView):
                 q[bindings[key]] = value
         return Evenement.objects.filter(**q)
 
+
 class EvenementDetailView(DetailView):
     model = Evenement
+
 
 class LieuListView(ListView):
     model = Lieu
     queryset = Lieu.objects.filter(parent=None)
     context_object_name = 'lieux'
 
+
 class LieuDetailView(DetailView):
     model = Lieu
     context_object_name = 'lieu'
+
 
 class IndividuListView(ListView):
     model = Individu
     context_object_name = 'individus'
 
+
 class IndividuDetailView(DetailView):
     model = Individu
     context_object_name = 'individu'
 
+
 class OeuvreDetailView(DetailView):
     model = Oeuvre
     context_object_name = 'oeuvre'
+
 
 def saisie_source(request, source_id=None):
     if source_id != None:
@@ -61,6 +70,12 @@ def saisie_source(request, source_id=None):
             return redirect('saisie_sources')
     else:
         form = SourceForm(instance=source)
-    c = RequestContext(request, {'form': form, 'sources': Source.objects.all(), 'source': source,})
+    c = RequestContext(
+            request,
+            {
+                'form': form,
+                'sources': Source.objects.all(),
+                'source': source,
+            }
+        )
     return render_to_response('catalogue/saisie_source.html', c)
-
