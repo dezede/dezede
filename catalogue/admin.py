@@ -7,9 +7,11 @@ from django.utils.translation import ugettext_lazy as _
 TabularInline.extra = 0
 StackedInline.extra = 0
 
+
 class AncrageSpatioTemporelInline(TabularInline):
     model = AncrageSpatioTemporel
     classes = ('collapse closed',)
+
 
 class AuteurInline(TabularInline):
     verbose_name = Auteur._meta.verbose_name
@@ -17,9 +19,11 @@ class AuteurInline(TabularInline):
     model = Auteur.individus.through
     classes = ('collapse closed',)
 
+
 class ElementDeProgrammeInline(StackedInline):
     model = ElementDeProgramme
     classes = ('collapse closed',)
+
 
 class EvenementInline(StackedInline):
     verbose_name = Evenement._meta.verbose_name
@@ -27,23 +31,29 @@ class EvenementInline(StackedInline):
     model = Evenement.programme.through
     classes = ('collapse closed',)
 
+
 class SourceInline(StackedInline):
     model = Source
     classes = ('collapse closed',)
+
 
 class DocumentAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'document',)
     search_fields = ('nom',)
 
+
 class IllustrationAdmin(VersionAdmin):
     list_display = ('__unicode__', 'legende', 'image',)
     search_fields = ('legende',)
 
+
 class EtatAdmin(VersionAdmin):
     exclude = ('slug',)
 
+
 class NatureDeLieuAdmin(VersionAdmin):
     exclude = ('slug',)
+
 
 class LieuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'parent', 'nature', 'link',)
@@ -75,6 +85,7 @@ class LieuAdmin(VersionAdmin):
         }),
     )
 
+
 class SaisonAdmin(VersionAdmin):
     list_display = ('__unicode__', 'lieu', 'debut', 'fin',)
     raw_id_fields = ('lieu',)
@@ -82,9 +93,11 @@ class SaisonAdmin(VersionAdmin):
         'fk': ['lieu'],
     }
 
+
 class ProfessionAdmin(VersionAdmin):
     exclude = ('slug',)
 #    inlines = (AuteurInline,)
+
 
 class AncrageSpatioTemporelAdmin(VersionAdmin):
     list_display = ('__unicode__', 'calc_date', 'calc_heure', 'calc_lieu',)
@@ -101,11 +114,14 @@ class AncrageSpatioTemporelAdmin(VersionAdmin):
         }),
     )
 
+
 class PrenomAdmin(VersionAdmin):
     list_display = ('__unicode__', 'prenom', 'classement', 'favori',)
 
+
 class TypeDeParenteDIndividusAdmin(VersionAdmin):
     list_display = ('nom', 'nom_pluriel', 'classement',)
+
 
 class ParenteDIndividusAdmin(VersionAdmin):
     list_display = ('__unicode__',)
@@ -113,6 +129,7 @@ class ParenteDIndividusAdmin(VersionAdmin):
     autocomplete_lookup_fields = {
         'm2m': ['individus_cibles'],
     }
+
 
 class IndividuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'nom_naissance', 'calc_prenoms',
@@ -151,8 +168,10 @@ class IndividuAdmin(VersionAdmin):
         }),
     )
 
+
 class DeviseAdmin(VersionAdmin):
     list_display = ('nom', 'symbole',)
+
 
 class EngagementAdmin(VersionAdmin):
     list_display = ('__unicode__', 'profession', 'salaire', 'devise',)
@@ -162,11 +181,14 @@ class EngagementAdmin(VersionAdmin):
         'm2m': ['individus'],
     }
 
+
 class TypeDePersonnelAdmin(VersionAdmin):
     list_display = ('nom',)
 
+
 class PersonnelAdmin(VersionAdmin):
     filter_horizontal = ('engagements',)
+
 
 class GenreDOeuvreAdmin(VersionAdmin):
     exclude = ('slug',)
@@ -175,11 +197,14 @@ class GenreDOeuvreAdmin(VersionAdmin):
         'm2m': ['parents'],
     }
 
+
 class TypeDeCaracteristiqueDOeuvreAdmin(VersionAdmin):
     list_display = ('nom', 'nom_pluriel', 'classement',)
 
+
 class CaracteristiqueDOeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'type', 'valeur', 'classement')
+
 
 class PartieAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'parente', 'classement')
@@ -188,6 +213,7 @@ class PartieAdmin(VersionAdmin):
         'm2m': ['professions'],
     }
 
+
 class PupitreAdmin(VersionAdmin):
     list_display = ('partie', 'quantite_min', 'quantite_max',)
     raw_id_fields = ('partie',)
@@ -195,14 +221,17 @@ class PupitreAdmin(VersionAdmin):
         'fk': ['partie'],
     }
 
+
 class TypeDeParenteDOeuvresAdmin(VersionAdmin):
     list_display = ('nom', 'nom_pluriel', 'classement',)
+
 
 class ParenteDOeuvresAdmin(VersionAdmin):
     raw_id_fields = ('oeuvres_cibles',)
     autocomplete_lookup_fields = {
         'm2m': ['oeuvres_cibles'],
     }
+
 
 class AuteurAdmin(VersionAdmin):
     filter_horizontal = ('individus',)
@@ -211,19 +240,22 @@ class AuteurAdmin(VersionAdmin):
         'fk': ['profession'],
         'm2m': ['individus'],
     }
+
     def save_model(self, request, obj, form, change):
         obj.save()
         for individu in form.cleaned_data['individus']:
             individu.professions.add(obj.profession)
 
+
 class OeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre',
-        'calc_caracteristiques', 'calc_auteurs', 'ancrage_composition', 'link',)
+        'calc_caracteristiques', 'calc_auteurs', 'ancrage_composition',
+        'link',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
     filter_horizontal = ('auteurs', 'parentes',)
-    raw_id_fields = ('caracteristiques', 'ancrage_composition', 'pupitres', 'documents',
-        'illustrations',)
+    raw_id_fields = ('caracteristiques', 'ancrage_composition', 'pupitres',
+        'documents', 'illustrations',)
     autocomplete_lookup_fields = {
         'fk': ['ancrage_composition'],
         'm2m': ['caracteristiques', 'pupitres', 'documents', 'illustrations'],
@@ -253,6 +285,7 @@ class OeuvreAdmin(VersionAdmin):
         }),
     )
 
+
 class AttributionDePupitreAdmin(VersionAdmin):
     raw_id_fields = ('pupitre', 'individus',)
     autocomplete_lookup_fields = {
@@ -260,14 +293,17 @@ class AttributionDePupitreAdmin(VersionAdmin):
         'm2m': ['individus'],
     }
 
+
 class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin):
     list_display = ('nom', 'nom_pluriel', 'classement',)
+
 
 class ElementDeProgrammeAdmin(VersionAdmin):
     list_display = ('oeuvre', 'autre', 'classement', 'html',)
     filter_horizontal = ('caracteristiques', 'distribution', 'personnels',
         'illustrations', 'documents',)
     inlines = (EvenementInline,)
+
 
 class EvenementAdmin(VersionAdmin):
     list_display = ('__unicode__', 'relache', 'circonstance', 'link',)
@@ -299,9 +335,11 @@ class EvenementAdmin(VersionAdmin):
         }),
     )
 
+
 class TypeDeSourceAdmin(VersionAdmin):
     exclude = ('slug',)
     inlines = (SourceInline,)
+
 
 class SourceAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'numero', 'date', 'page', 'type',
@@ -359,9 +397,9 @@ site.register(ParenteDOeuvres, ParenteDOeuvresAdmin)
 site.register(Auteur, AuteurAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(AttributionDePupitre, AttributionDePupitreAdmin)
-site.register(CaracteristiqueDElementDeProgramme, CaracteristiqueDElementDeProgrammeAdmin)
+site.register(CaracteristiqueDElementDeProgramme,
+        CaracteristiqueDElementDeProgrammeAdmin)
 site.register(ElementDeProgramme, ElementDeProgrammeAdmin)
 site.register(Evenement, EvenementAdmin)
 site.register(TypeDeSource, TypeDeSourceAdmin)
 site.register(Source, SourceAdmin)
-
