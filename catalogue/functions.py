@@ -3,6 +3,7 @@ from django.template.defaultfilters import date
 from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
 from django.utils.functional import allow_lazy
 
+
 def date_html(d, tags=True):
     u'''
     Rendu HTML d’une date.
@@ -23,6 +24,7 @@ def date_html(d, tags=True):
         j += k
     return '%s %s %s' % (pre, j, post)
 
+
 def str_list(l, infix=None, last_infix=None):
     u'''
     Concatène une liste de chaîne de caractères avec des virgules.
@@ -40,7 +42,8 @@ def str_list(l, infix=None, last_infix=None):
     return infix.join(l) + suffix
 
 
-def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None, oxford_comma=True):
+def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
+        oxford_comma=True):
     u'''
     Concatène une liste de chaîne de caractères avec des virgules
     et un «,\u00A0et\u00A0» final («\u00A0et\u00A0» pour deux éléments).
@@ -65,6 +68,7 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None, o
         last_infix = oxfordian_last_infix
     return str_list(l, infix, last_infix)
 
+
 def calc_pluriel(obj):
     try:
         if obj.nom_pluriel:
@@ -72,6 +76,7 @@ def calc_pluriel(obj):
         return obj.nom + 's'
     except:
         return unicode(obj)
+
 
 def ex(txt):
     u'''
@@ -81,6 +86,7 @@ def ex(txt):
     return _(u'Exemple : « %s »') % txt
 ex = allow_lazy(ex, unicode)
 
+
 def no(txt):
     u'''
     >>> print no('13')
@@ -88,7 +94,11 @@ def no(txt):
     '''
     return _(u'n°\u00A0%s') % txt
 
+
+#
 # Fonctions HTML
+#
+
 
 def cite(txt, tags=True):
     '''
@@ -101,6 +111,7 @@ def cite(txt, tags=True):
         return u'<cite>%s</cite>' % txt
     return txt
 
+
 def href(url, txt, tags=True):
     '''
     >>> print href('truc.machin/bidule', 'Cliquez ici')
@@ -111,6 +122,7 @@ def href(url, txt, tags=True):
     if tags:
         return u'<a href="%s">%s</a>' % (url, txt)
     return txt
+
 
 def sc(txt, tags=True):
     '''
@@ -123,6 +135,7 @@ def sc(txt, tags=True):
         return u'<span class="sc">%s</span>' % txt
     return txt
 
+
 def hlp(txt, title, tags=True):
     '''
     >>> print hlp('two years', 'period')
@@ -134,6 +147,7 @@ def hlp(txt, title, tags=True):
         return u'<span title="%s">%s</span>' % (title, txt)
     return txt
 
+
 def small(txt, tags=True):
     '''
     >>> print small('I feel tiny')
@@ -144,4 +158,3 @@ def small(txt, tags=True):
     if tags:
         return u'<small>%s</small>' % txt
     return txt
-
