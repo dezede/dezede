@@ -1,38 +1,54 @@
 # coding: utf-8
 import re
-import unicodedata
+from unicodedata import normalize
 from BeautifulSoup import BeautifulStoneSoup
-from django.template.defaultfilters import date
 
 from django import template
 register = template.Library()
 
+
 @register.filter
 def stripchars(text):
-    return unicode(BeautifulStoneSoup(text,convertEntities=BeautifulStoneSoup.HTML_ENTITIES))
+    return unicode(
+            BeautifulStoneSoup(
+                text,
+                convertEntities=BeautifulStoneSoup.HTML_ENTITIES
+                )
+            )
+
 
 def multiwordReplace(text, wordDic):
     rc = re.compile('|'.join(map(re.escape, wordDic)))
+
     def translate(match):
         return wordDic[match.group(0)]
+
     return rc.sub(translate, text)
+
 
 @register.filter
 def replace(string):
-    return multiwordReplace(string, {"'": u'’', ' :': u'\u00A0:',
-                                     ' ;': u'\u00A0;', ' !': u'\u202F!',
-                                     ' ?': u'\u202F?', u'« ': u'«\u00A0',
-                                     u' »': u'\u00A0»', u'“ ': u'“\u00A0',
-                                     u' ”': u'\u00A0”', '&laquo; ': u'«\u00A0',
-                                     ' &raquo;': u'\u00A0»',
-                                     '&ldquo; ': u'“\u00A0',
-                                     ' &rdquo;': u'\u00A0”',})
+    return multiwordReplace(
+            string,
+            {"'": u'’', ' :': u'\u00A0:',
+             ' ;': u'\u00A0;', ' !': u'\u202F!',
+             ' ?': u'\u202F?', u'« ': u'«\u00A0',
+             u' »': u'\u00A0»', u'“ ': u'“\u00A0',
+             u' ”': u'\u00A0”', '&laquo; ': u'«\u00A0',
+             ' &raquo;': u'\u00A0»',
+             '&ldquo; ': u'“\u00A0',
+             ' &rdquo;': u'\u00A0”',
+            }
+        )
+
 
 def remove_diacritics(string):
-    return unicodedata.normalize('NFKD', string).encode('ASCII', 'ignore')
+    return normalize('NFKD', string).encode('ASCII', 'ignore')
+
 
 def is_vowel(string):
-    return remove_diacritics(string.lower()) in list('aeiouy')
+    return remove_diacritics(string) in 'AEIOUYaeiouy'
+
 
 @register.filter
 def abbreviate(string, limit=0):
@@ -47,35 +63,26 @@ def abbreviate(string, limit=0):
     u'aut. dram. de la tour de bab.'
     '''
     out = ''
-    for i, sub in enumerate(re.split('(-|\.|\s)', string)): # TODO: créer un catalogue COMPLET de ponctuations de séparation.
-        init_sub = sub
+    # TODO: créer un catalogue COMPLET de ponctuations de séparation.
+    for i, sub in enumerate(re.split('(-|\.|\s)', string)):
         if not i % 2:
+            init_len = len(sub)
             tmp_limit = limit
-            for j in range(len(sub)):
-                try:
-                    if is_vowel(sub[j]):
-                        if tmp_limit == 0:
-                            if j == 0:
-                                sub = sub[:1]
-                            else:
-                                sub = sub[:j]
-                            sub += '.'
-                            if len(sub) == len(init_sub):
-                                sub = init_sub
-                            break
-                        try:
-                            if not is_vowel(sub[j+1]):
-                                tmp_limit -= 1
-                        except:
-                            tmp_limit -= 1
-                except:
-                    pass
+            for j in xrange(init_len):
+                if is_vowel(sub[j]):
+                    if not tmp_limit:
+                        l = j if j else 1
+                        if l + 1 < init_len:
+                            sub = sub[:l] + '.'
+                        break
+                    if j + 1 < init_len and not is_vowel(sub[j + 1]):
+                        tmp_limit -= 1
         out += sub
     return out
+
 
 @register.filter
 def GET_add_page(request, page_number):
     answer = request.GET.copy()
     answer['page'] = page_number
     return answer.urlencode()
-
