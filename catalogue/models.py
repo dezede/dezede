@@ -613,7 +613,7 @@ class Individu(CustomModel):
         prenoms = self.prenoms.all().order_by('classement', 'prenom')
         if fav:
             prenoms = filter(lambda p: p.favori, prenoms)
-        return ' '.join([p.__unicode__() for p in prenoms])
+        return ' '.join((p.__unicode__() for p in prenoms))
 
     def calc_prenoms(self):
         return self.calc_prenoms_methode(False)
