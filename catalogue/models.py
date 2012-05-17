@@ -136,7 +136,7 @@ class Document(CustomModel):
     def __unicode__(self):
         if self.nom:
             return self.nom
-        return self.document.__unicode__()
+        return unicode(self.document)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -160,7 +160,7 @@ class Illustration(CustomModel):
     def __unicode__(self):
         if self.legende:
             return self.legende
-        return self.image.__unicode__()
+        return unicode(self.image)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -184,7 +184,7 @@ class Etat(CustomModel):
         ordering = ['slug']
 
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, self.__unicode__())
+        self.slug = autoslugify(self, unicode(self))
         super(Etat, self).save(*args, **kwargs)
 
     def pluriel(self):
@@ -207,7 +207,7 @@ class NatureDeLieu(CustomModel):
         ordering = ['slug']
 
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, self.__unicode__())
+        self.slug = autoslugify(self, unicode(self))
         super(NatureDeLieu, self).save(*args, **kwargs)
 
     def pluriel(self):
@@ -289,7 +289,7 @@ class Lieu(CustomModel):
         if lieux.count() == lieux.filter(pk=self.pk).count():
             self.slug = new_slug
         else:
-            self.slug = autoslugify(self, self.__unicode__())
+            self.slug = autoslugify(self, unicode(self))
         super(Lieu, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -312,7 +312,7 @@ class Saison(CustomModel):
 
     def __unicode__(self):
         d = {
-                'lieu': self.lieu.__unicode__(),
+                'lieu': unicode(self.lieu),
                 'debut': self.debut.year,
                 'fin': self.fin.year
             }
@@ -336,7 +336,7 @@ class Profession(CustomModel):
         ordering = ['slug']
 
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, self.__unicode__())
+        self.slug = autoslugify(self, unicode(self))
         super(Profession, self).save(*args, **kwargs)
 
     def pluriel(self):
@@ -504,7 +504,7 @@ class ParenteDIndividus(CustomModel):
             out = self.type.pluriel()
         out += ' :'
         cs = self.individus_cibles.all()
-        out += str_list([c.__unicode__() for c in cs], ' ; ')
+        out += str_list([unicode(c) for c in cs], ' ; ')
         return out
 
 
@@ -613,7 +613,7 @@ class Individu(CustomModel):
         prenoms = self.prenoms.all().order_by('classement', 'prenom')
         if fav:
             prenoms = filter(lambda p: p.favori, prenoms)
-        return ' '.join((p.__unicode__() for p in prenoms))
+        return ' '.join((unicode(p) for p in prenoms))
 
     def calc_prenoms(self):
         return self.calc_prenoms_methode(False)
@@ -643,17 +643,17 @@ class Individu(CustomModel):
 
     def naissance(self):
         if self.ancrage_naissance:
-            return self.ancrage_naissance.__unicode__()
+            return unicode(self.ancrage_naissance)
         return ''
 
     def deces(self):
         if self.ancrage_deces:
-            return self.ancrage_deces.__unicode__()
+            return unicode(self.ancrage_deces)
         return ''
 
     def ancrage(self):
         if self.ancrage_approx:
-            return self.ancrage_approx.__unicode__()
+            return unicode(self.ancrage_approx)
         return ''
 
     def calc_professions(self):
@@ -720,7 +720,7 @@ class Individu(CustomModel):
         ordering = ['nom']
 
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, self.__unicode__())
+        self.slug = autoslugify(self, unicode(self))
         if self.nom:
             new_slug = slugify(self.nom)
             individus = Individu.objects.filter(slug=new_slug)
@@ -794,7 +794,7 @@ class Personnel(CustomModel):
         verbose_name_plural = ungettext_lazy('personnel', 'personnels', 2)
 
     def __unicode__(self):
-        return self.type.__unicode__() + self.saison.__unicode__()
+        return unicode(self.type) + unicode(self.saison)
 
 
 class GenreDOeuvre(CustomModel):
@@ -819,7 +819,7 @@ class GenreDOeuvre(CustomModel):
         return hlp(nom, ugettext('genre'), tags)
 
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, self.__unicode__())
+        self.slug = autoslugify(self, unicode(self))
         super(GenreDOeuvre, self).save(*args, **kwargs)
 
     def pluriel(self):
@@ -876,7 +876,7 @@ class CaracteristiqueDOeuvre(CustomModel):
     html.allow_tags = True
 
     def __unicode__(self):
-        return self.type.__unicode__() + ' : ' + strip_tags(self.valeur)
+        return unicode(self.type) + ' : ' + strip_tags(self.valeur)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -989,7 +989,7 @@ class ParenteDOeuvres(CustomModel):
         if len(cs) > 1:
             out = self.type.pluriel()
         out += ' : '
-        out += str_list([c.__unicode__() for c in cs], ' ; ')
+        out += str_list([unicode(c) for c in cs], ' ; ')
         return out
 
 
@@ -1003,7 +1003,7 @@ class Auteur(CustomModel):
 
     def html(self, tags=True):
         individus = self.individus_html(tags)
-        prof = abbreviate(self.profession.__unicode__(), 1)
+        prof = abbreviate(unicode(self.profession), 1)
         out = '%s [%s]' % (individus, prof)
         return out
     html.short_description = _('rendu HTML')
@@ -1105,7 +1105,7 @@ class Oeuvre(CustomModel):
         ps = self.pupitres.all()
         if ps:
             out += ugettext('pour ')
-            out += str_list_w_last([p.__unicode__() for p in ps])
+            out += str_list_w_last([unicode(p) for p in ps])
         return out
 
     def calc_auteurs(self, tags=True):
@@ -1197,7 +1197,7 @@ class Oeuvre(CustomModel):
         ordering = ['genre', 'slug']
 
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, self.__unicode__())
+        self.slug = autoslugify(self, unicode(self))
         super(Oeuvre, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -1274,7 +1274,7 @@ class ElementDeProgramme(CustomModel):
 
     def calc_caracteristiques(self):
         cs = self.caracteristiques.all()
-        return str_list([c.__unicode__() for c in cs])
+        return str_list([unicode(c) for c in cs])
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _(u'caractéristiques')
 
@@ -1295,7 +1295,7 @@ class ElementDeProgramme(CustomModel):
         for i, attribution in enumerate(distribution):
             individus = attribution.individus.all()
             out += str_list([individu.html(tags) for individu in individus])
-            out += ' [%s]' % attribution.pupitre.partie.__unicode__()
+            out += ' [%s]' % unicode(attribution.pupitre.partie)
             if i < maxi:
                 out += ', '
         return out
@@ -1345,7 +1345,7 @@ class Evenement(CustomModel):
         return self.get_absolute_url()
 
     def link(self):
-        return href(self.get_absolute_url(), self.__unicode__())
+        return href(self.get_absolute_url(), unicode(self))
     link.short_description = _('lien')
     link.allow_tags = True
 
@@ -1410,7 +1410,7 @@ class TypeDeSource(CustomModel):
         ordering = ['slug']
 
     def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, self.__unicode__())
+        self.slug = autoslugify(self, unicode(self))
         super(TypeDeSource, self).save(*args, **kwargs)
 
     def pluriel(self):
