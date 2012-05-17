@@ -3,8 +3,8 @@ import re
 from unicodedata import normalize
 from BeautifulSoup import BeautifulStoneSoup
 
-from django import template
-register = template.Library()
+from django.template import Library
+register = Library()
 
 
 @register.filter
