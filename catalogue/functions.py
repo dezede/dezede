@@ -1,4 +1,5 @@
 # coding: utf-8
+
 from django.template.defaultfilters import date
 from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
 from django.utils.functional import allow_lazy

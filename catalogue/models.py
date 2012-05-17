@@ -1,4 +1,5 @@
 # coding: utf-8
+
 from django.db.models import *
 from django.db.models.query import QuerySet
 from tinymce.models import HTMLField

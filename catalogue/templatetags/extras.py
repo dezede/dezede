@@ -1,9 +1,10 @@
 # coding: utf-8
+
 import re
 from unicodedata import normalize
 from BeautifulSoup import BeautifulStoneSoup
-
 from django.template import Library
+
 register = Library()
 
 
