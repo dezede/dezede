@@ -65,7 +65,7 @@ def calc_pluriel(obj):
     try:
         if obj.nom_pluriel:
             return obj.nom_pluriel
-        return obj.nom + 's'
+        return '%ss' % obj.nom
     except:
         return unicode(obj)
 
@@ -347,7 +347,7 @@ class Profession(CustomModel):
         return f if f else self.nom
 
     def gendered(self, titre='M'):
-        return self.nom if titre == 'M' else self.feminin()
+        return self.nom if titre is 'M' else self.feminin()
 
     def __unicode__(self):
         return self.nom
@@ -405,7 +405,7 @@ class AncrageSpatioTemporel(CustomModel):
         heure = self.calc_heure()
         pat_date = ugettext('le %(date)s') if self.date \
               else ugettext('%(date)s')
-        pat_heure = ugettext('à %(heure)s') if self.heure \
+        pat_heure = ugettext(u'à %(heure)s') if self.heure \
                else ugettext('%(heure)s')
         l.append(pat_date % {'date': date})
         l.append(pat_heure % {'heure': heure})
@@ -887,8 +887,8 @@ class Partie(CustomModel):
     nom = CharField(max_length=200,
         help_text=_(u'''Le nom d’une partie de la partition, '''
                     u'''instrumentale ou vocale.'''))
-    nom_pluriel = CharField(max_length=230, blank=True,
-        verbose_name=_('nom (au pluriel)'), help_text=PLURAL_MSG)
+    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
+        help_text=PLURAL_MSG)
     professions = ManyToManyField(Profession, related_name='parties',
         help_text=_(u'''La ou les profession(s) permettant '''
                     u'''d’assurer cette partie.'''))
@@ -932,7 +932,7 @@ class Pupitre(CustomModel):
         if ma > 1:
             partie = partie.pluriel()
         else:
-            partie = partie.__unicode__()
+            partie = unicode(partie)
         mi_str = apnumber(mi)
         ma_str = apnumber(ma)
         if mi != ma:
@@ -1223,9 +1223,9 @@ class AttributionDePupitre(CustomModel):
         ordering = ['pupitre']
 
     def __unicode__(self):
-        out = self.pupitre.partie.__unicode__() + ' : '
+        out = unicode(self.pupitre.partie) + ' : '
         ins = self.individus.all()
-        out += str_list_w_last([i.__unicode__() for i in ins])
+        out += str_list_w_last([unicode(i) for i in ins])
         return out
 
 

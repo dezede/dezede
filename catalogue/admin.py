@@ -25,25 +25,22 @@ class ElementDeProgrammeInline(StackedInline):
     classes = ('collapse closed',)
 
 
-class EvenementInline(StackedInline):
+class EvenementInline(TabularInline):
     verbose_name = Evenement._meta.verbose_name
     verbose_name_plural = Evenement._meta.verbose_name_plural
     model = Evenement.programme.through
     classes = ('collapse closed',)
 
 
-class SourceInline(StackedInline):
-    model = Source
-    classes = ('collapse closed',)
-
-
 class DocumentAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'document',)
+    list_editable = ('nom', 'document',)
     search_fields = ('nom',)
 
 
 class IllustrationAdmin(VersionAdmin):
     list_display = ('__unicode__', 'legende', 'image',)
+    list_editable = ('legende', 'image',)
     search_fields = ('legende',)
 
 
@@ -52,11 +49,14 @@ class EtatAdmin(VersionAdmin):
 
 
 class NatureDeLieuAdmin(VersionAdmin):
+    list_display = ('__unicode__', 'nom', 'nom_pluriel',)
+    list_editable = ('nom', 'nom_pluriel',)
     exclude = ('slug',)
 
 
 class LieuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'parent', 'nature', 'link',)
+    list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom', 'parent__nom',)
     list_filter = ('nature__nom',)
     raw_id_fields = ('parent', 'illustrations', 'documents',)
@@ -95,8 +95,14 @@ class SaisonAdmin(VersionAdmin):
 
 
 class ProfessionAdmin(VersionAdmin):
+    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'nom_feminin',
+        'parente',)
+    list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parente',)
+    raw_id_fields = ('parente',)
+    autocomplete_lookup_fields = {
+        'fk': ['parente']
+    }
     exclude = ('slug',)
-#    inlines = (AuteurInline,)
 
 
 class AncrageSpatioTemporelAdmin(VersionAdmin):
@@ -110,13 +116,14 @@ class AncrageSpatioTemporelAdmin(VersionAdmin):
     fieldsets = (
         (None, {
             'fields': (('date', 'date_approx',), ('heure', 'heure_approx',),
-                       ('lieu', 'lieu_approx',),),
+                       ('lieu', 'lieu_approx',))
         }),
     )
 
 
 class PrenomAdmin(VersionAdmin):
     list_display = ('__unicode__', 'prenom', 'classement', 'favori',)
+    list_editable = ('prenom', 'classement', 'favori',)
 
 
 class TypeDeParenteDIndividusAdmin(VersionAdmin):
@@ -135,6 +142,7 @@ class IndividuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'nom_naissance', 'calc_prenoms',
         'pseudonyme', 'titre', 'ancrage_naissance', 'ancrage_deces',
         'calc_professions', 'link',)
+    list_editable = ('nom', 'titre',)
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',)
     list_filter = ('titre',)
     raw_id_fields = ('prenoms', 'ancrage_naissance', 'ancrage_deces',
@@ -146,7 +154,7 @@ class IndividuAdmin(VersionAdmin):
                 'documents'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
-#    inlines = (AuteurInline,)
+    inlines = (AuteurInline,)
     fieldsets = (
         (_('Champs courants'), {
             'fields': (('particule_nom', 'nom',), ('prenoms', 'pseudonyme',),
@@ -170,7 +178,8 @@ class IndividuAdmin(VersionAdmin):
 
 
 class DeviseAdmin(VersionAdmin):
-    list_display = ('nom', 'symbole',)
+    list_display = ('__unicode__', 'nom', 'symbole',)
+    list_editable = ('nom', 'symbole',)
 
 
 class EngagementAdmin(VersionAdmin):
@@ -191,6 +200,8 @@ class PersonnelAdmin(VersionAdmin):
 
 
 class GenreDOeuvreAdmin(VersionAdmin):
+    list_display = ('__unicode__', 'nom', 'nom_pluriel',)
+    list_editable = ('nom', 'nom_pluriel',)
     exclude = ('slug',)
     raw_id_fields = ('parents',)
     autocomplete_lookup_fields = {
@@ -199,15 +210,18 @@ class GenreDOeuvreAdmin(VersionAdmin):
 
 
 class TypeDeCaracteristiqueDOeuvreAdmin(VersionAdmin):
-    list_display = ('nom', 'nom_pluriel', 'classement',)
+    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'classement',)
+    list_editable = ('nom', 'nom_pluriel', 'classement',)
 
 
 class CaracteristiqueDOeuvreAdmin(VersionAdmin):
-    list_display = ('__unicode__', 'type', 'valeur', 'classement')
+    list_display = ('__unicode__', 'type', 'valeur', 'classement',)
+    list_editable = ('type', 'valeur', 'classement',)
 
 
 class PartieAdmin(VersionAdmin):
-    list_display = ('__unicode__', 'nom', 'parente', 'classement')
+    list_display = ('__unicode__', 'nom', 'parente', 'classement',)
+    list_editable = ('nom', 'parente', 'classement',)
     raw_id_fields = ('professions',)
     autocomplete_lookup_fields = {
         'm2m': ['professions'],
@@ -215,7 +229,8 @@ class PartieAdmin(VersionAdmin):
 
 
 class PupitreAdmin(VersionAdmin):
-    list_display = ('partie', 'quantite_min', 'quantite_max',)
+    list_display = ('__unicode__', 'partie', 'quantite_min', 'quantite_max',)
+    list_editable = ('partie', 'quantite_min', 'quantite_max',)
     raw_id_fields = ('partie',)
     autocomplete_lookup_fields = {
         'fk': ['partie'],
@@ -223,10 +238,13 @@ class PupitreAdmin(VersionAdmin):
 
 
 class TypeDeParenteDOeuvresAdmin(VersionAdmin):
-    list_display = ('nom', 'nom_pluriel', 'classement',)
+    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'classement',)
+    list_editable = ('nom', 'nom_pluriel', 'classement',)
 
 
 class ParenteDOeuvresAdmin(VersionAdmin):
+    list_display = ('__unicode__', 'type',)
+    list_editable = ('type',)
     raw_id_fields = ('oeuvres_cibles',)
     autocomplete_lookup_fields = {
         'm2m': ['oeuvres_cibles'],
@@ -234,6 +252,8 @@ class ParenteDOeuvresAdmin(VersionAdmin):
 
 
 class AuteurAdmin(VersionAdmin):
+    list_display = ('__unicode__', 'profession',)
+    list_editable = ('profession',)
     filter_horizontal = ('individus',)
     raw_id_fields = ('profession', 'individus',)
     autocomplete_lookup_fields = {
@@ -251,6 +271,7 @@ class OeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre',
         'calc_caracteristiques', 'calc_auteurs', 'ancrage_composition',
         'link',)
+    list_editable = ('genre',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
     filter_horizontal = ('auteurs', 'parentes',)
@@ -287,6 +308,8 @@ class OeuvreAdmin(VersionAdmin):
 
 
 class AttributionDePupitreAdmin(VersionAdmin):
+    list_display = ('__unicode__', 'pupitre',)
+    list_editable = ('pupitre',)
     raw_id_fields = ('pupitre', 'individus',)
     autocomplete_lookup_fields = {
         'fk': ['pupitre'],
@@ -295,18 +318,28 @@ class AttributionDePupitreAdmin(VersionAdmin):
 
 
 class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin):
-    list_display = ('nom', 'nom_pluriel', 'classement',)
+    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'classement',)
+    list_editable = ('nom', 'nom_pluriel', 'classement',)
 
 
 class ElementDeProgrammeAdmin(VersionAdmin):
     list_display = ('oeuvre', 'autre', 'classement', 'html',)
+    list_editable = ('classement',)
     filter_horizontal = ('caracteristiques', 'distribution', 'personnels',
         'illustrations', 'documents',)
+    raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
+        'personnels', 'documents', 'illustrations',)
+    autocomplete_lookup_fields = {
+        'fk': ['oeuvre'],
+        'm2m': ['caracteristiques', 'distribution', 'personnels',
+                'documents', 'illustrations'],
+    }
     inlines = (EvenementInline,)
 
 
 class EvenementAdmin(VersionAdmin):
     list_display = ('__unicode__', 'relache', 'circonstance', 'link',)
+    list_editable = ('relache', 'circonstance',)
     search_fields = ('circonstance',)
     list_filter = ('relache',)
     raw_id_fields = ('programme', 'ancrage_debut', 'ancrage_fin', 'documents',
@@ -337,13 +370,15 @@ class EvenementAdmin(VersionAdmin):
 
 
 class TypeDeSourceAdmin(VersionAdmin):
+    list_display = ('__unicode__', 'nom', 'nom_pluriel',)
+    list_editable = ('nom', 'nom_pluriel',)
     exclude = ('slug',)
-    inlines = (SourceInline,)
 
 
 class SourceAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'numero', 'date', 'page', 'type',
         'disp_contenu',)
+    list_editable = ('type', 'date',)
     search_fields = ('nom', 'numero', 'type__nom',)
     list_filter = ('type__nom',)
     filter_horizontal = ('auteurs',)

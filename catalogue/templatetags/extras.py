@@ -30,14 +30,12 @@ def multiwordReplace(text, wordDic):
 def replace(string):
     return multiwordReplace(
             string,
-            {"'": u'’', ' :': u'\u00A0:',
-             ' ;': u'\u00A0;', ' !': u'\u202F!',
-             ' ?': u'\u202F?', u'« ': u'«\u00A0',
-             u' »': u'\u00A0»', u'“ ': u'“\u00A0',
-             u' ”': u'\u00A0”', '&laquo; ': u'«\u00A0',
-             ' &raquo;': u'\u00A0»',
-             '&ldquo; ': u'“\u00A0',
-             ' &rdquo;': u'\u00A0”',
+            {
+                u"'": u'’',        u' :': u'\u00A0:', u' ;': u'\u00A0;',
+                u' !': u'\u202F!', u' ?': u'\u202F?', u'« ': u'«\u00A0',
+                u' »': u'\u00A0»', u'“ ': u'“\u00A0', u' ”': u'\u00A0”',
+                u'&laquo; ': u'«\u00A0', u' &raquo;': u'\u00A0»',
+                u'&ldquo; ': u'“\u00A0', u' &rdquo;': u'\u00A0”',
             }
         )
 
