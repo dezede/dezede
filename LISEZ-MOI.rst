@@ -26,7 +26,7 @@ Dépendances
 ===========
 
 :Système d'exploitation:
-  Ubuntu 11.10 « Oneiric Ocelot »
+  Ubuntu 12.04 « Oneiric Ocelot »
 
 Pour installer les dépendances qui suivent :
   ``./dependances.sh``
@@ -67,23 +67,7 @@ Modules Python
 Nécessaires à l'exécution
 .........................
 
-======================== =======
-Paquet                   Version
-======================== =======
-django                   1.3.1
-django-reversion         1.5.1
-django-haystack          1.2.6
-whoosh                   2.3.2
-django-tinymce           1.5.1a2
-django-grappelli         2.3.4
-django-filebrowser       3.3.0
-pil                      1.1.7
-django-rosetta           0.6.7
-django-rosetta-grappelli 1.0.1
-south                    0.7.3
-django-debug-toolbar     0.9.4
-django-extensions        0.7.1
-======================== =======
+Voir le fichier `requirements.txt`.
 
 
 
