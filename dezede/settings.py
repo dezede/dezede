@@ -1,4 +1,4 @@
-# Django settings for musicologie project.
+# Django settings for the dezede project.
 # coding: utf-8
 import os
 ugettext = lambda s: s
@@ -6,7 +6,7 @@ ugettext = lambda s: s
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-SITE_ROOT = os.path.abspath(os.path.dirname(__file__))
+SITE_ROOT = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 SITE_URL = '/'
 
 ADMINS = (
@@ -91,10 +91,10 @@ MIDDLEWARE_CLASSES = (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
-ROOT_URLCONF = 'musicologie.urls'
+ROOT_URLCONF = 'dezede.urls'
 
 TEMPLATE_DIRS = (
-    os.path.join(SITE_ROOT, 'templates'),
+    os.path.join(SITE_ROOT, 'dezede/templates'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -107,7 +107,7 @@ else:
 STATIC_URL = SITE_URL + 'static/'
 
 STATICFILES_DIRS = (
-    os.path.join(SITE_ROOT, 'templates/static'),
+    os.path.join(SITE_ROOT, 'dezede/static'),
 )
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + "grappelli/"
@@ -121,7 +121,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'haystack',
-    'musicologie.catalogue',
+    'catalogue',
     'tinymce',
     'grappelli.dashboard',
     'grappelli',
@@ -150,13 +150,13 @@ LOCALE_PATHS = (
     'locale',
 )
 
-TEST_RUNNER = 'musicologie.catalogue.tests.SuiteRunner'
+TEST_RUNNER = 'catalogue.tests.SuiteRunner'
 
 DATE_FORMAT = 'l j F Y'
 
 TIME_FORMAT = 'H:i'
 
-GRAPPELLI_INDEX_DASHBOARD = 'musicologie.dashboard.CustomIndexDashboard'
+GRAPPELLI_INDEX_DASHBOARD = 'dezede.dashboard.CustomIndexDashboard'
 
 TINYMCE_DEFAULT_CONFIG = {
     'mode' : 'textareas',
@@ -180,9 +180,9 @@ FILEBROWSER_VERSIONS = {
 
 FILEBROWSER_ADMIN_VERSIONS = []
 
-HAYSTACK_SITECONF = 'musicologie.search_sites'
+HAYSTACK_SITECONF = 'dezede.search_sites'
 HAYSTACK_SEARCH_ENGINE = 'whoosh'
 HAYSTACK_WHOOSH_PATH = os.path.join(os.path.dirname(__file__), 'whoosh_index')
-HAYSTACK_CUSTOM_HIGHLIGHTER = 'musicologie.catalogue.utils.CustomHighlighter'
+HAYSTACK_CUSTOM_HIGHLIGHTER = 'catalogue.utils.CustomHighlighter'
 HAYSTACK_INCLUDE_SPELLING = True
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10

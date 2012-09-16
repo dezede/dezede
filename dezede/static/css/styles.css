@@ -1,0 +1,348 @@
+html
+{
+  background-color: #B82819;
+  background-image: url("/static/damasse.png");
+  background-attachment: fixed;
+}
+
+body
+{
+  min-width: 600px;
+  max-width: 900px;
+  min-height: 500px;
+  margin: 0px auto 20px auto;
+  border: 2px solid grey;
+  border-top: none;
+  font-family: 'Gentium Basic', serif;
+  font-size: 16px;
+  background-color: #FFF9D9;
+  box-shadow: 0px 5px 30px black;
+}
+
+nav
+{
+  position: fixed;
+  min-width: 600px;
+  max-width: 900px;
+  width: 100%;
+  height: 38px;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid grey;
+  line-height: 30px;
+  background-image: url("/static/papier.png");
+  box-shadow: 0px 2px 10px grey;
+  z-index: 1000;
+}
+
+nav>*
+{
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 18px;
+}
+
+nav>a
+{
+  color: #D63030;
+  text-shadow: none;
+  font-variant: small-caps;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+nav>a:hover
+{
+  text-decoration: none;
+}
+
+#content
+{
+  padding: 15px;
+  padding-top: 68px; /* 38px (nav) + 30px */
+}
+
+#footer
+{
+  margin-top: 20px;
+  height: 110px;
+  padding: 10px;
+  text-align: center;
+}
+
+#footer div
+{
+  display: inline-block;
+  margin-right: 30px;
+}
+
+#footer div:last-of-type
+{
+  margin-right: 0;
+}
+
+#footer img
+{
+  vertical-align: middle;
+  max-width: 150px;
+  max-height: 110px;
+}
+
+a
+{
+  color: black;
+  text-decoration: none;
+  text-shadow: lightGrey 1px 2px 2px;
+  transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -webkit-transition: text-shadow 0.3s;
+  -o-transition: all 0.3s;
+}
+
+a:hover
+{
+  color: red;
+  text-shadow: white 0px 0px 0px;
+}
+
+h1, h2, h3, h4, h5, h6
+{
+  font-weight: bold;
+}
+
+h2
+{
+  margin: 0.35em 0;
+}
+
+h3
+{
+  margin: 0.3em 0;
+}
+
+h4
+{
+  margin: 0.25em 0;
+}
+
+.sc
+{
+  font-variant: small-caps;
+  font-size: 120%;
+}
+
+sup
+{
+  font-size: 60%;
+  vertical-align: 50%;
+}
+
+cite
+{
+  font-size: 110%;
+}
+
+em
+{
+  font-size: 105%;
+}
+
+ol
+{
+  margin: 0;
+}
+
+.liste th
+{
+  border-bottom: 1px solid black;
+  font-weight: bold;
+}
+
+.liste td, .liste th
+{
+  padding: 2px 5px;
+  padding-right: 10px;
+}
+
+.liste tbody tr:hover
+{
+  cursor: pointer;
+  background-color: lightGrey;
+}
+
+.warning
+{
+  background-color: #FF6666;
+  border: 1px solid black;
+}
+
+.result
+{
+  border: 1.5px solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.result:last-of-type
+{
+  margin-bottom: 0;
+}
+
+.result.evenement
+{
+  background-color: #FFB894;
+}
+
+.result.individu
+{
+  background-color: #FFD040;
+}
+
+.result.lieu
+{
+  background-color: #9DBDFF;
+}
+
+.result.oeuvre
+{
+  background-color: #FFBDFF;
+}
+
+.result.source
+{
+  background-color: #9BF09B;
+}
+
+.content_part
+{
+  border: 1.5px solid;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 30px;
+}
+
+.content_part:last-of-type
+{
+  margin-bottom: 0px;
+}
+
+.source>p
+{
+  text-align: justify;
+  margin: .5em 0;
+}
+
+.source>p:first-of-type
+{
+  margin-top: 0;
+}
+
+.source>p:last-of-type
+{
+  margin-bottom: 0;
+}
+
+.source>p:lang(fr):first-child:before
+{
+  content: "« ";
+}
+
+.source>p:lang(fr):last-of-type:after
+{
+  content: " »";
+}
+
+.source>p:lang(en):first-child:before
+{
+  content: "“ ";
+}
+
+.source>p:lang(en):last-of-type:after
+{
+  content: " ”";
+}
+
+.programme_titre
+{
+  margin: 0.75em 0 0.5em 0;
+}
+
+dl
+{
+  margin: 0;
+}
+
+dt, .dt
+{
+  color: grey;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+dt:first-of-type, .dt:first-of-type
+{
+  margin-top: 0;
+}
+
+dd>p:first-child
+{
+  margin-top: 0;
+}
+
+dd>p:last-child
+{
+  margin-bottom: 0;
+}
+
+.right
+{
+  text-align: right;
+}
+
+table
+{
+  text-align: left;
+  border-collapse: collapse;
+}
+
+#criteria
+{
+  font-size: 14px;
+  margin-top: 10px;
+  cursor: default;
+}
+
+#criteria .ui-button-text
+{
+  padding: .2em .5em;
+}
+
+.ui-widget *
+{
+  font-family: 'Gentium Basic', serif;
+  line-height: normal;
+}
+
+.ui-accordion-content
+{
+  max-height: 300px;
+}
+
+.ui-accordion .ui-accordion-header a {
+  display: block;
+  font-size: 100%;
+  padding: 5px 5px 5px 7px;
+}
+
+.ui-accordion-icons .ui-accordion-header a {
+  padding-left: 1.8em;
+}
+
+.ui-helper-reset
+{
+  text-decoration: none;
+  font-size: 100%;
+  list-style: none;
+}
+

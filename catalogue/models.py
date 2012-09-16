@@ -1270,27 +1270,28 @@ class ElementDeProgramme(CustomModel):
     calc_caracteristiques.short_description = _(u'caractéristiques')
 
     def html(self, tags=True):
-        out = ''
+        out = []
+        out__append = out.append
         oeuvre = self.oeuvre
         if oeuvre:
-            out += oeuvre.html(tags)
+            out__append(oeuvre.html(tags))
         else:
-            out += self.autre
+            out__append(self.autre)
         cs = self.calc_caracteristiques()
         if cs:
-            out += ' [%s]' % cs
+            out__append(' [' + cs + ']')
         distribution = self.distribution
-        distribution_count = distribution.count()
-        maxi = distribution_count - 1
-        if distribution_count:
-            out += u'. — '
+        if distribution.exists():
+            out__append(u'. — ')
+            maxi = distribution.count() - 1
         for i, attribution in enumerate(distribution.iterator()):
             individus = attribution.individus.iterator()
-            out += str_list([individu.html(tags) for individu in individus])
-            out += ' [%s]' % unicode(attribution.pupitre.partie)
+            out__append(str_list([individu.html(tags)
+                                                   for individu in individus]))
+            out__append(' [' + unicode(attribution.pupitre.partie) + ']')
             if i < maxi:
-                out += ', '
-        return out
+                out__append(', ')
+        return ''.join(out)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 

@@ -1,0 +1,49 @@
+{% load i18n %}
+{% load url from future %}
+<!DOCTYPE HTML>
+<html lang="{{ LANGUAGE_CODE }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="{% trans "musicologie, base de données" %}" />
+    <meta name="author" content="Bertrand Bordage" />
+    <title>
+      {% block title %}{% endblock %}
+    </title>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.18.custom.min.js"></script>
+    {% block head %}{% endblock %}
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Gentium+Basic:400,700,400italic,700italic" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.8.18.custom.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="{% url 'haystack_search' %}">{% trans "Recherche" %}</a>
+        <a href="{% url 'lieux' %}">{% trans "lieux"|capfirst %}</a>
+        <a href="{% url 'evenements' %}">{% trans "événements"|capfirst %}</a>
+        <a href="{% url 'individus' %}">{% trans "individus"|capfirst %}</a>
+        {#<a href="{% url 'saisie_sources' %}">Saisie de source</a>#}
+        <a href="{% url 'admin:index' %}">{% trans "Administration" %}</a>
+        {% for lang in LANGUAGES %}
+          {% if lang.0 != LANGUAGE_CODE %}
+            <form action="/i18n/setlang/" method="POST" style="float: right;">
+              {% csrf_token %}
+              <input type="hidden" name="language" value="{{ lang.0 }}" />
+              <input type="submit" value="{{ lang.1 }}" />
+            </form>
+          {% endif %}
+        {% endfor %}
+      </nav>
+    </header>
+    <div id="content">
+      {% autoescape off %}
+        <noscript>
+          {% blocktrans %}Votre navigateur ne peut pas lancer javascript. Attendez-vous à des défauts de fonctionnement.{% endblocktrans %}
+        </noscript>
+        {% block body %}{% endblock %}
+      {% endautoescape %}
+    </div>
+  </body>
+</html>
+
