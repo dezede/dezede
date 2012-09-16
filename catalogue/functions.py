@@ -36,7 +36,7 @@ def str_list(l, infix=None, last_infix=None):
     '''
     if infix == None:
         infix = pgettext(u'infix d’une liste', ', ')
-    l = filter(bool, l)
+    l = [e for e in l if e]
     suffix = ''
     if len(l) > 1 and last_infix:
         suffix = last_infix + l.pop()
@@ -109,7 +109,7 @@ def cite(txt, tags=True):
     The pillars of the earth
     '''
     if tags:
-        return u'<cite>%s</cite>' % txt
+        return u'<cite>' + txt + '</cite>'
     return txt
 
 
@@ -133,7 +133,7 @@ def sc(txt, tags=True):
     I wish I could be in small caps
     '''
     if tags:
-        return u'<span class="sc">%s</span>' % txt
+        return u'<span class="sc">' + txt + '</span>'
     return txt
 
 
@@ -157,5 +157,5 @@ def small(txt, tags=True):
     In a website I would be small...
     '''
     if tags:
-        return u'<small>%s</small>' % txt
+        return u'<small>' + txt + '</small>'
     return txt

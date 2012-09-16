@@ -52,7 +52,7 @@ def autoslugify(obj, nom):
     nom_slug = slug_orig = slugify(nom[:50])
     n = 0
     objects = obj.__class__.objects
-    while objects.filter(slug=nom_slug).count() and nom_slug != obj.slug:
+    while objects.filter(slug=nom_slug).exists() and nom_slug != obj.slug:
         n += 1
         nom_slug = slug_orig + str(n)
     return nom_slug
@@ -501,10 +501,10 @@ class ParenteDIndividus(CustomModel):
 
     def __unicode__(self):
         out = self.type.nom
-        if len(self.individus_cibles.all()) > 1:
+        if self.individus_cibles.count() > 1:
             out = self.type.pluriel()
         out += ' :'
-        cs = self.individus_cibles.all()
+        cs = self.individus_cibles.iterator()
         out += str_list([unicode(c) for c in cs], ' ; ')
         return out
 
@@ -576,45 +576,40 @@ class Individu(CustomModel):
     link.allow_tags = True
 
     def oeuvres(self):
-        q = Oeuvre.objects.none()
-        for auteur in self.auteurs.all():
-            q |= auteur.oeuvres.all()
-        return q.distinct().order_by('titre')
+        pk_list = self.auteurs.values_list('oeuvres', flat=True) \
+                                                             .order_by('titre')
+        return Oeuvre.objects.in_bulk(pk_list).values()
 
     def publications(self):
-        q = Source.objects.none()
-        for auteur in self.auteurs.all():
-            q |= auteur.sources.all()
-        return q.distinct()
+        pk_list = self.auteurs.values_list('sources', flat=True)
+        return Source.objects.in_bulk(pk_list).values()
 
     def apparitions(self):
         q = Evenement.objects.none()
         els = ElementDeProgramme.objects.none()
-        for attribution in self.attributions_de_pupitre.all():
+        for attribution in self.attributions_de_pupitre.iterator():
             els |= attribution.elements_de_programme.all()
         for el in els.distinct():
             q |= el.evenements.all()
         return q.distinct()
 
     def parents(self):
-        q = Individu.objects.none()
-        for parente in self.parentes.all():
-            q |= parente.individus_cibles.all()
-        return q.distinct().order_by('nom')
+        pk_list = self.parentes.values_list('individus_cibles', flat=True) \
+                                                               .order_by('nom')
+        return Individu.objects.in_bulk(pk_list).values()
 
     def enfants(self):
-        q = Individu.objects.none()
-        for enfance in self.enfances_cibles.all():
-            q |= enfance.individus_orig.all()
-        return q.distinct().order_by('nom')
+        pk_list = self.enfances_cibles.values_list('individus_orig',
+                                                   flat=True).order_by('nom')
+        return Individu.objects.in_bulk(pk_list).values()
 
     def calc_prenoms_methode(self, fav):
         if not self.pk:
             return ''
-        prenoms = self.prenoms.all().order_by('classement', 'prenom')
+        prenoms = self.prenoms.order_by('classement', 'prenom')
         if fav:
-            prenoms = filter(lambda p: p.favori, prenoms)
-        return ' '.join((unicode(p) for p in prenoms))
+            prenoms = (p for p in prenoms if p.favori)
+        return ' '.join(unicode(p) for p in prenoms)
 
     def calc_prenoms(self):
         return self.calc_prenoms_methode(False)
@@ -660,7 +655,7 @@ class Individu(CustomModel):
     def calc_professions(self):
         if not self.pk:
             return ''
-        ps = self.professions.all()
+        ps = self.professions.iterator()
         titre = self.titre
         return str_list_w_last([p.gendered(titre) for p in ps])
     calc_professions.short_description = _('professions')
@@ -986,11 +981,11 @@ class ParenteDOeuvres(CustomModel):
 
     def __unicode__(self):
         out = self.type.nom
-        cs = self.oeuvres_cibles.all()
-        if len(cs) > 1:
+        cs = self.oeuvres_cibles
+        if cs.count() > 1:
             out = self.type.pluriel()
         out += ' : '
-        out += str_list([unicode(c) for c in cs], ' ; ')
+        out += str_list([unicode(c) for c in cs.iterator()], ' ; ')
         return out
 
 
@@ -999,7 +994,7 @@ class Auteur(CustomModel):
     individus = ManyToManyField(Individu, related_name='auteurs')
 
     def individus_html(self, tags=True):
-        ins = self.individus.all()
+        ins = self.individus.iterator()
         return str_list_w_last([i.html(tags) for i in ins])
 
     def html(self, tags=True):
@@ -1066,22 +1061,17 @@ class Oeuvre(CustomModel):
     link.allow_tags = True
 
     def individus_auteurs(self):
-        q = Individu.objects.none()
-        for auteur in self.auteurs.all():
-            q |= auteur.individus.all()
-        return q.distinct()
+        pk_list = self.auteurs.values_list('individus', flat=True)
+        return Individu.objects.in_bulk(pk_list).values()
 
     def enfants(self):
-        q = Oeuvre.objects.none()
-        for enfance in self.enfances_cibles.all():
-            q |= enfance.oeuvres.all()
-        return q.distinct()
+        pk_list = self.enfances_cibles.values_list('oeuvres', flat=True)
+        return Oeuvre.objects.in_bulk(pk_list).values()
 
     def evenements(self):
-        q = Evenement.objects.none()
-        for element in self.elements_de_programme.all():
-            q |= element.evenements.all()
-        return q.distinct()
+        pk_list = self.elements_de_programme.values_list('evenements',
+                                                         flat=True)
+        return Evenement.objects.in_bulk(pk_list).values()
 
     def calc_caracteristiques(self, limite=0, tags=True):
         if not self.pk:
@@ -1103,16 +1093,16 @@ class Oeuvre(CustomModel):
         if not self.pk:
             return ''
         out = ''
-        ps = self.pupitres.all()
-        if ps:
+        ps = self.pupitres
+        if ps.exists():
             out += ugettext('pour ')
-            out += str_list_w_last([unicode(p) for p in ps])
+            out += str_list_w_last([unicode(p) for p in ps.iterator()])
         return out
 
     def calc_auteurs(self, tags=True):
         if not self.pk:
             return ''
-        auteurs = self.auteurs.all()
+        auteurs = self.auteurs.iterator()
         return str_list([a.html(tags) for a in auteurs])
     calc_auteurs.short_description = _('auteurs')
     calc_auteurs.allow_tags = True
@@ -1122,10 +1112,10 @@ class Oeuvre(CustomModel):
         if not self.pk:
             return ''
         out = ''
-        ps = self.parentes.all()
+        ps = self.parentes.iterator()
         for p in ps:
             l = [oe.html(tags, False, True, False) \
-                 for oe in p.oeuvres_cibles.all()]
+                 for oe in p.oeuvres_cibles.iterator()]
             out += str_list_w_last(l)
             out += ', '
         return out
@@ -1225,7 +1215,7 @@ class AttributionDePupitre(CustomModel):
 
     def __unicode__(self):
         out = unicode(self.pupitre.partie) + ' : '
-        ins = self.individus.all()
+        ins = self.individus.iterator()
         out += str_list_w_last([unicode(i) for i in ins])
         return out
 
@@ -1274,7 +1264,7 @@ class ElementDeProgramme(CustomModel):
         blank=True)
 
     def calc_caracteristiques(self):
-        cs = self.caracteristiques.all()
+        cs = self.caracteristiques.iterator()
         return str_list([unicode(c) for c in cs])
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _(u'caractéristiques')
@@ -1289,12 +1279,13 @@ class ElementDeProgramme(CustomModel):
         cs = self.calc_caracteristiques()
         if cs:
             out += ' [%s]' % cs
-        distribution = self.distribution.all()
-        maxi = len(distribution) - 1
-        if distribution:
+        distribution = self.distribution
+        distribution_count = distribution.count()
+        maxi = distribution_count - 1
+        if distribution_count:
             out += u'. — '
-        for i, attribution in enumerate(distribution):
-            individus = attribution.individus.all()
+        for i, attribution in enumerate(distribution.iterator()):
+            individus = attribution.individus.iterator()
             out += str_list([individu.html(tags) for individu in individus])
             out += ' [%s]' % unicode(attribution.pupitre.partie)
             if i < maxi:
@@ -1451,13 +1442,11 @@ class Source(CustomModel):
         return self.html()
 
     def individus_auteurs(self):
-        q = Individu.objects.none()
-        for auteur in self.auteurs.all():
-            q |= auteur.individus.all()
-        return q.distinct()
+        pk_list = self.auteurs.values_list('individus', flat=True)
+        return Individu.objects.in_bulk(pk_list).values()
 
     def calc_auteurs(self, tags=True):
-        auteurs = self.auteurs.all()
+        auteurs = self.auteurs.iterator()
         return str_list([a.html(tags) for a in auteurs])
 
     def html(self, tags=True):
