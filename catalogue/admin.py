@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from musicologie.catalogue.models import *
+from .models import *
 from django.contrib.admin import site, TabularInline, StackedInline
 from reversion import VersionAdmin
 from django.utils.translation import ugettext_lazy as _

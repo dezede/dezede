@@ -18,7 +18,7 @@ def date_html(d, tags=True):
     pre = date(d, 'l')
     post = date(d, 'F Y')
     j = date(d, 'j')
-    if j is '1':
+    if j == '1':
         k = ugettext('er')
         if tags:
             k = '<sup>%s</sup>' % k

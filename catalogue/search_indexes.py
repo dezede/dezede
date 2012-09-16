@@ -1,6 +1,6 @@
 import datetime
 from haystack import indexes, site
-from musicologie.catalogue.models import *
+from .models import *
 
 class OeuvreIndex(indexes.RealTimeSearchIndex):
     text = indexes.CharField(document=True, use_template=True)

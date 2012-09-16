@@ -3,9 +3,9 @@
 from django.utils.unittest import TestCase
 from django.test.simple import DjangoTestSuiteRunner
 from doctest import DocTestSuite
-from musicologie.catalogue.models import *
-from musicologie.settings import LANGUAGE_CODE
-from musicologie.catalogue import functions
+from .models import *
+from django.conf import settings
+from . import functions
 from datetime import date
 from django.utils.translation import activate
 
@@ -190,6 +190,6 @@ class SuiteRunner(DjangoTestSuiteRunner):
         self.failfast = False
 
     def run_suite(self, suite, **kwargs):
-        activate(LANGUAGE_CODE)
+        activate(settings.LANGUAGE_CODE)
         suite.addTest(DocTestSuite(functions))
         return super(SuiteRunner, self).run_suite(suite, **kwargs)

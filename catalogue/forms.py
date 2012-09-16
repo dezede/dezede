@@ -1,5 +1,5 @@
 from django import forms
-from musicologie.catalogue.models import *
+from .models import *
 
 
 class SourceForm(forms.ModelForm):

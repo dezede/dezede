@@ -5,8 +5,8 @@ from django.db.models.query import QuerySet
 from tinymce.models import HTMLField
 from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
-from musicologie.catalogue.templatetags.extras import replace, abbreviate
-from musicologie.catalogue.functions import *
+from .templatetags.extras import replace, abbreviate
+from .functions import *
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
@@ -35,9 +35,9 @@ def replace_in_kwargs(obj, **kwargs):
     effectue les remplacements dans la valeur du kwarg.
     '''
     fields = obj._meta.fields
-    fields = filter(lambda x: x.__class__ in REPLACE_FIELDS, fields)
-    for field in fields:
-        key = field.attname
+    keys = (field.attname for field in fields
+                          if field.__class__ in REPLACE_FIELDS)
+    for key in keys:
         if key in kwargs:
             kwargs[key] = replace(kwargs[key])
     return kwargs
@@ -66,7 +66,7 @@ def calc_pluriel(obj):
     try:
         if obj.nom_pluriel:
             return obj.nom_pluriel
-        return '%ss' % obj.nom
+        return obj.nom + 's'
     except:
         return unicode(obj)
 
@@ -107,7 +107,7 @@ class CustomModel(Model):
         super(CustomModel, self).__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        kwargs = replace_in_kwargs(self, **kwargs)
+        self.__dict__ = replace_in_kwargs(self, **self.__dict__)
         super(CustomModel, self).save(*args, **kwargs)
 
     @classmethod

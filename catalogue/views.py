@@ -1,8 +1,8 @@
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.views.generic import ListView, DetailView
-from musicologie.catalogue.models import *
-from musicologie.catalogue.forms import *
+from .models import *
+from .forms import *
 
 
 class SourceDetailView(DetailView):
