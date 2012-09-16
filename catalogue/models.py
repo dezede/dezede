@@ -348,7 +348,7 @@ class Profession(CustomModel):
         return f if f else self.nom
 
     def gendered(self, titre='M'):
-        return self.nom if titre is 'M' else self.feminin()
+        return self.nom if titre == 'M' else self.feminin()
 
     def __unicode__(self):
         return self.nom
