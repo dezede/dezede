@@ -1,6 +1,6 @@
-*********************
-Projet de musicologie
-*********************
+*************
+Projet Dezède
+*************
 
 :Auteur: Bertrand Bordage
 :Copyright: Bertrand Bordage © 2011-2012
@@ -26,10 +26,10 @@ Dépendances
 ===========
 
 :Système d'exploitation:
-  Ubuntu 12.04 « Oneiric Ocelot »
+  Ubuntu 12.04 « Precise Pangolin »
 
 Pour installer les dépendances qui suivent :
-  ``./dependances.sh``
+  ``sudo ./dependances.sh``
 
 
 Paquets
@@ -47,6 +47,7 @@ python2.7       2.7.2
 python-mysqldb  1.2.3
 python-pip      1.0
 python-docutils 0.7
+memcached       1.4.13
 =============== =======
 
 
@@ -149,16 +150,16 @@ Déploiement
 
 
 #. Collecte des fichiers statiques :
-    ``sudo ./manage.py collectstatic``
+    ``./manage.py collectstatic``
 
 
 #. Préparation du dossier d'upload :
-    ``sudo mkdir -p /var/www/media/uploads/``
+    ``mkdir -p media/uploads/``
 
 
 #. Autoriser les uploads :
-    | ``sudo chgrp -R www-data /var/www/media/``
-    | ``sudo chmod -R 0774 /var/www/media/``
+    | ``sudo chgrp -R www-data /media/``
+    | ``sudo chmod -R 0774 /media/``
 
 
 #. Compiler les fichiers de langues :
@@ -187,7 +188,7 @@ Configuration d'Apache
     Apache
 
 #. Création d'un site dans Apache :
-    ``sudo nano /etc/apache2/sites-available/musicologie``
+    ``sudo nano /etc/apache2/sites-available/dezede``
 
 
 #. Copier ceci dans ce dernier (en remplaçant ce qui est balisé ``[quelque_chose]``) :
@@ -195,10 +196,10 @@ Configuration d'Apache
 
       <VirtualHost *:80>
 
-        Alias /media/ /var/www/media/
-        Alias /static/ /var/www/static/
+        Alias /media/ [/chemin/du/projet]/media/
+        Alias /static/ [/chemin/du/projet]/static/
 
-        <Directory /var/www/media>
+        <Directory [/chemin/du/projet]/media>
           Order deny,allow
           Allow from all
           Options FollowSymLinks
@@ -206,7 +207,7 @@ Configuration d'Apache
           ExpiresDefault "access plus 2 days"
         </Directory>
 
-        <Directory /var/www/static>
+        <Directory [/chemin/du/projet]/static>
           Order deny,allow
           Allow from all
           Options FollowSymLinks
@@ -235,7 +236,7 @@ Configuration d'Apache
 
 
 #. Activer le site et désactiver le site par défaut :
-    | ``sudo a2ensite musicologie``
+    | ``sudo a2ensite dezede``
     | ``sudo a2dissite default``
 
 
