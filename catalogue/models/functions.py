@@ -34,11 +34,11 @@ def str_list(l, infix=None, last_infix=None):
     >>> print str_list(l)
     Jeanne, Lola, Perrine, Marion
     '''
-    if infix == None:
+    if infix is None:
         infix = pgettext(u'infix d’une liste', ', ')
     l = [e for e in l if e]
     suffix = ''
-    if len(l) > 1 and last_infix:
+    if last_infix and len(l) > 1:
         suffix = last_infix + l.pop()
     return infix.join(l) + suffix
 
@@ -57,13 +57,13 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
     Jeanne\u00A0et\u00A0Marion
     '''
     l = tuple(l)
-    if infix == None:
+    if infix is None:
         infix = pgettext(u'infix d’une liste', ', ')
-    if last_infix == None:
+    if last_infix is None:
         last_infix = pgettext(u'dernier infix pour 2 éléments',
                               u'\u00A0et\u00A0')
     if oxford_comma and len(l) > 2:
-        if oxfordian_last_infix == None:
+        if oxfordian_last_infix is None:
             oxfordian_last_infix = \
                 pgettext(u'dernier infix pour plus de 2 éléments',
                          u',\u00A0et\u00A0')
