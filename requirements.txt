@@ -3,6 +3,7 @@ django-reversion==1.5.1
 django-haystack==1.2.6
 whoosh==2.3.2
 django-tinymce==1.5.1a2
+django-autoslug==1.5.0
 django-grappelli==2.3.7
 django-filebrowser==3.3.0
 pil==1.1.7

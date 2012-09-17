@@ -1,21 +1,16 @@
 # coding: utf-8
 
-from .common import CustomModel, Document, Illustration, Etat, \
-                    LOWER_MSG, PLURAL_MSG, autoslugify, calc_pluriel
 from .functions import str_list, str_list_w_last, href, sc
 from django.db.models import CharField, FloatField, BooleanField, ForeignKey, \
-                             ManyToManyField, OneToOneField, SlugField, \
-                             permalink
-from . import *
-from .oeuvre import Oeuvre
-from .evenement import Evenement, ElementDeProgramme
-from .source import Source
+                             ManyToManyField, OneToOneField, permalink, \
+                             get_model
 from tinymce.models import HTMLField
-from django.template.defaultfilters import slugify
 from ..templatetags.extras import abbreviate
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
+from autoslug import AutoSlugField
+from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
 
 
 class Prenom(CustomModel):
@@ -61,7 +56,7 @@ class TypeDeParenteDIndividus(CustomModel):
 
 
 class ParenteDIndividus(CustomModel):
-    type = ForeignKey(TypeDeParenteDIndividus, related_name='parentes',
+    type = ForeignKey('TypeDeParenteDIndividus', related_name='parentes',
         verbose_name=_('type'))
     individus_cibles = ManyToManyField('Individu',
         related_name='enfances_cibles', verbose_name=_('individus cibles'))
@@ -94,7 +89,7 @@ class Individu(CustomModel):
     nom_naissance = CharField(_('nom de naissance'), max_length=200,
         blank=True,
         help_text=_(u'Ne remplir que s’il est différent du nom d’usage.'))
-    prenoms = ManyToManyField(Prenom, related_name='individus', blank=True,
+    prenoms = ManyToManyField('Prenom', related_name='individus', blank=True,
         null=True, verbose_name=_(u'prénoms'))
     pseudonyme = CharField(_('pseudonyme'), max_length=200, blank=True)
     DESIGNATIONS = (
@@ -116,26 +111,28 @@ class Individu(CustomModel):
     ancrage_naissance = OneToOneField('AncrageSpatioTemporel', blank=True,
         null=True, related_name='individus_nes',
         verbose_name=_(u'ancrage de naissance'))
-    ancrage_deces = OneToOneField('AncrageSpatioTemporel', blank=True, null=True,
-        related_name='individus_decedes', verbose_name=_(u'ancrage du décès'))
+    ancrage_deces = OneToOneField('AncrageSpatioTemporel', blank=True,
+        null=True, related_name='individus_decedes',
+        verbose_name=_(u'ancrage du décès'))
     ancrage_approx = OneToOneField('AncrageSpatioTemporel',
         blank=True, null=True,
         related_name='individus', verbose_name=_(u'ancrage approximatif'),
         help_text=_(u'Ne remplir que si on ne connaît aucune date précise.'))
     professions = ManyToManyField('Profession', related_name='individus',
         blank=True, null=True, verbose_name=_('professions'))
-    parentes = ManyToManyField(ParenteDIndividus,
+    parentes = ManyToManyField('ParenteDIndividus',
         related_name='individus_orig', blank=True, null=True,
         verbose_name=_(u'parentés'))
     biographie = HTMLField(_('biographie'), blank=True)
     illustrations = ManyToManyField('Illustration', related_name='individus',
         blank=True, null=True, verbose_name=_('illustrations'))
-    documents = ManyToManyField('Document', related_name='individus', blank=True,
-        null=True, verbose_name=_('documents'))
+    documents = ManyToManyField('Document', related_name='individus',
+        blank=True, null=True, verbose_name=_('documents'))
     etat = ForeignKey('Etat', related_name='individus', null=True, blank=True,
         verbose_name=_(u'état'))
     notes = HTMLField(_('notes'), blank=True)
-    slug = SlugField(blank=True)
+    slug = AutoSlugField(populate_from=lambda s: unicode(s)
+                                                       if not s.nom else s.nom)
 
     @permalink
     def get_absolute_url(self):
@@ -154,16 +151,16 @@ class Individu(CustomModel):
         pk_list = self.auteurs.values_list('oeuvres', flat=True) \
                                                     .order_by('oeuvres__titre')
         if pk_list:
-            return Oeuvre.objects.in_bulk(tuple(pk_list)).values()
+            return get_model('Oeuvre').objects.in_bulk(tuple(pk_list)).values()
 
     def publications(self):
         pk_list = self.auteurs.values_list('sources', flat=True)
         if pk_list:
-            return Source.objects.in_bulk(tuple(pk_list)).values()
+            return get_model('Source').objects.in_bulk(tuple(pk_list)).values()
 
     def apparitions(self):
-        q = Evenement.objects.none()
-        els = ElementDeProgramme.objects.none()
+        q = get_model('Evenement').objects.none()
+        els = get_model('ElementDeProgramme').objects.none()
         for attribution in self.attributions_de_pupitre.iterator():
             els |= attribution.elements_de_programme.all()
         for el in els.distinct():
@@ -295,15 +292,6 @@ class Individu(CustomModel):
         verbose_name_plural = ungettext_lazy('individu', 'individus', 2)
         ordering = ['nom']
         app_label = 'catalogue'
-
-    def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, unicode(self))
-        if self.nom:
-            new_slug = slugify(self.nom)
-            individus = Individu.objects.filter(slug=new_slug)
-            if not individus:
-                self.slug = new_slug
-        super(Individu, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return strip_tags(self.html(False))

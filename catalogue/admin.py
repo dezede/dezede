@@ -46,13 +46,12 @@ class IllustrationAdmin(VersionAdmin):
 
 
 class EtatAdmin(VersionAdmin):
-    exclude = ('slug',)
+    pass
 
 
 class NatureDeLieuAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
-    exclude = ('slug',)
 
 
 class LieuAdmin(VersionAdmin):
@@ -103,7 +102,6 @@ class ProfessionAdmin(VersionAdmin):
     autocomplete_lookup_fields = {
         'fk': ['parente']
     }
-    exclude = ('slug',)
 
 
 class AncrageSpatioTemporelAdmin(VersionAdmin):
@@ -203,7 +201,6 @@ class PersonnelAdmin(VersionAdmin):
 class GenreDOeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
-    exclude = ('slug',)
     raw_id_fields = ('parents',)
     autocomplete_lookup_fields = {
         'm2m': ['parents'],
@@ -373,7 +370,6 @@ class EvenementAdmin(VersionAdmin):
 class TypeDeSourceAdmin(VersionAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
-    exclude = ('slug',)
 
 
 class SourceAdmin(VersionAdmin):

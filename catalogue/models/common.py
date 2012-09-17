@@ -4,10 +4,10 @@ from django.db.models import Model, Manager, CharField, SlugField, \
                              BooleanField, ManyToManyField
 from django.db.models.query import QuerySet
 from tinymce.models import HTMLField
-from django.template.defaultfilters import slugify
 from filebrowser.fields import FileBrowseField
 from ..templatetags.extras import replace
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from autoslug import AutoSlugField
 
 #
 # Définitions globales du fichier
@@ -37,21 +37,6 @@ def replace_in_kwargs(obj, **kwargs):
         if key in kwargs:
             kwargs[key] = replace(kwargs[key])
     return kwargs
-
-
-def autoslugify(obj, nom):
-    u'''
-    Crée automatiquement un slug à partir de nom
-    et des objets de la classe d'obj.
-    Si le slug est déjà pris par un autre objet, rajoute un nombre à la suite.
-    '''
-    nom_slug = slug_orig = slugify(nom[:50])
-    n = 0
-    objects = obj.__class__.objects
-    while objects.filter(slug=nom_slug).exists() and nom_slug != obj.slug:
-        n += 1
-        nom_slug = slug_orig + str(n)
-    return nom_slug
 
 
 def calc_pluriel(obj):
@@ -175,17 +160,13 @@ class Etat(CustomModel):
         help_text=_(u'Message à afficher dans la partie consultation.'))
     # FIXME: publie -> public
     publie = BooleanField(_(u'publié'), default=True)
-    slug = SlugField(blank=True)
+    slug = AutoSlugField(populate_from='nom')
 
     class Meta:
         verbose_name = ungettext_lazy(u'état', u'états', 1)
         verbose_name_plural = ungettext_lazy(u'état', u'états', 2)
         ordering = ['slug']
         app_label = 'catalogue'
-
-    def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, unicode(self))
-        super(Etat, self).save(*args, **kwargs)
 
     def pluriel(self):
         return calc_pluriel(self)

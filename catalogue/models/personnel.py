@@ -1,12 +1,10 @@
 # coding: utf-8
 
-from .common import CustomModel, LOWER_MSG, PLURAL_MSG, autoslugify, \
-                    calc_pluriel
 from .functions import ex
-from django.db.models import CharField, SlugField, ForeignKey, \
-                             ManyToManyField, FloatField
-from . import *
+from django.db.models import CharField, ForeignKey, ManyToManyField, FloatField
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from autoslug import AutoSlugField
+from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
 
 
 class Profession(CustomModel):
@@ -17,17 +15,13 @@ class Profession(CustomModel):
         help_text=_(u'Ne préciser que s’il est différent du nom.'))
     parente = ForeignKey('Profession', blank=True, null=True,
         related_name='enfant', verbose_name=_('parente'))
-    slug = SlugField(blank=True)
+    slug = AutoSlugField(populate_from='nom')
 
     class Meta:
         verbose_name = ungettext_lazy('profession', 'professions', 1)
         verbose_name_plural = ungettext_lazy('profession', 'professions', 2)
         ordering = ['slug']
         app_label = 'catalogue'
-
-    def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, unicode(self))
-        super(Profession, self).save(*args, **kwargs)
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -68,9 +62,9 @@ class Devise(CustomModel):
 
 class Engagement(CustomModel):
     individus = ManyToManyField('Individu', related_name='engagements')
-    profession = ForeignKey(Profession, related_name='engagements')
+    profession = ForeignKey('Profession', related_name='engagements')
     salaire = FloatField(blank=True)
-    devise = ForeignKey(Devise, blank=True, null=True,
+    devise = ForeignKey('Devise', blank=True, null=True,
         related_name='engagements')
 
     class Meta:
@@ -98,9 +92,9 @@ class TypeDePersonnel(CustomModel):
 
 
 class Personnel(CustomModel):
-    type = ForeignKey(TypeDePersonnel, related_name='personnels')
+    type = ForeignKey('TypeDePersonnel', related_name='personnels')
     saison = ForeignKey('Saison', related_name='personnels')
-    engagements = ManyToManyField(Engagement, related_name='personnels')
+    engagements = ManyToManyField('Engagement', related_name='personnels')
 
     class Meta:
         verbose_name = ungettext_lazy('personnel', 'personnels', 1)

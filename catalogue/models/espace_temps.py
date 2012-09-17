@@ -1,25 +1,22 @@
 # coding: utf-8
 
-from .common import CustomModel, Document, Illustration, Etat, \
-                    LOWER_MSG, PLURAL_MSG, DATE_MSG, autoslugify, \
-                    calc_pluriel
 from .functions import href, date_html, str_list
-from django.db.models import CharField, SlugField, ForeignKey, \
-                             ManyToManyField, DateField, TimeField, permalink
+from django.db.models import CharField, ForeignKey, ManyToManyField, \
+                             DateField, TimeField, permalink, get_model
 from tinymce.models import HTMLField
-from . import *
-from django.template.defaultfilters import slugify
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
 from django.template.defaultfilters import time, capfirst
+from autoslug import AutoSlugField
+from .common import CustomModel, LOWER_MSG, PLURAL_MSG, DATE_MSG, calc_pluriel
 
 
 class NatureDeLieu(CustomModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
                             help_text=PLURAL_MSG)
-    slug = SlugField(blank=True)
+    slug = AutoSlugField(populate_from='nom')
 
     class Meta:
         verbose_name = ungettext_lazy('nature de lieu', 'natures de lieu', 1)
@@ -27,10 +24,6 @@ class NatureDeLieu(CustomModel):
                                              'natures de lieu', 2)
         ordering = ['slug']
         app_label = 'catalogue'
-
-    def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, unicode(self))
-        super(NatureDeLieu, self).save(*args, **kwargs)
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -50,14 +43,14 @@ class Lieu(CustomModel):
     nature = ForeignKey(NatureDeLieu, related_name='lieux',
         verbose_name=_('nature'))
     historique = HTMLField(_('historique'), blank=True)
-    illustrations = ManyToManyField(Illustration, related_name='lieux',
+    illustrations = ManyToManyField('Illustration', related_name='lieux',
         blank=True, null=True, verbose_name=_('illustrations'))
-    documents = ManyToManyField(Document, related_name='lieux', blank=True,
+    documents = ManyToManyField('Document', related_name='lieux', blank=True,
         null=True, verbose_name=_('documents'))
-    etat = ForeignKey(Etat, related_name='lieux', null=True, blank=True,
+    etat = ForeignKey('Etat', related_name='lieux', null=True, blank=True,
         verbose_name=_('état'))
     notes = HTMLField(_('notes'), blank=True)
-    slug = SlugField(blank=True)
+    slug = AutoSlugField(populate_from='nom')
 
     @permalink
     def get_absolute_url(self):
@@ -76,16 +69,18 @@ class Lieu(CustomModel):
         return self.html(short=True)
 
     def evenements(self):  # TODO: gérer les fins d'événements.
-        return Evenement.objects.filter(ancrage_debut__lieu=self)
+        return get_model('Evenement').objects.filter(ancrage_debut__lieu=self)
 
     def individus_nes(self):
-        return Individu.objects.filter(ancrage_naissance__lieu=self)
+        return get_model('Individu').objects \
+                                    .filter(ancrage_naissance__lieu=self)
 
     def individus_decedes(self):
-        return Individu.objects.filter(ancrage_deces__lieu=self)
+        return get_model('Individu').objects.filter(ancrage_deces__lieu=self)
 
     def oeuvres_composees(self):
-        return Oeuvre.objects.filter(ancrage_composition__lieu=self)
+        return get_model('Oeuvre').objects \
+                                  .filter(ancrage_composition__lieu=self)
 
     def html(self, tags=True, short=False):
         pat = ugettext('%(lieu)s')
@@ -106,15 +101,6 @@ class Lieu(CustomModel):
         ordering = ['nom']
         app_label = 'catalogue'
 
-    def save(self, *args, **kwargs):
-        new_slug = slugify(self.nom)
-        lieux = Lieu.objects.filter(slug=new_slug)
-        if lieux.count() == lieux.filter(pk=self.pk).count():
-            self.slug = new_slug
-        else:
-            self.slug = autoslugify(self, unicode(self))
-        super(Lieu, self).save(*args, **kwargs)
-
     def __unicode__(self):
         return strip_tags(self.html(False))
 
@@ -124,7 +110,7 @@ class Lieu(CustomModel):
 
 
 class Saison(CustomModel):
-    lieu = ForeignKey(Lieu, related_name='saisons', verbose_name=_('lieu'))
+    lieu = ForeignKey('Lieu', related_name='saisons', verbose_name=_('lieu'))
     debut = DateField(_(u'début'), help_text=DATE_MSG)
     fin = DateField(_('fin'))
 
@@ -148,7 +134,7 @@ class AncrageSpatioTemporel(CustomModel):
     date = DateField(_(u'date (précise)'), blank=True, null=True,
         help_text=DATE_MSG)
     heure = TimeField(_(u'heure (précise)'), blank=True, null=True)
-    lieu = ForeignKey(Lieu, related_name='ancrages', blank=True, null=True,
+    lieu = ForeignKey('Lieu', related_name='ancrages', blank=True, null=True,
         verbose_name=_(u'lieu (précis)'))
     date_approx = CharField(_('date (approximative)'), max_length=200,
         blank=True, help_text=_(u'Ne remplir que si la date est imprécise.'))

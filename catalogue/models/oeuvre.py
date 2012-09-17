@@ -1,12 +1,9 @@
 # coding: utf-8
 
-from .common import CustomModel, Document, Illustration, Etat, \
-                    LOWER_MSG, PLURAL_MSG, calc_pluriel, autoslugify
 from .functions import ex, hlp, str_list, str_list_w_last, href, cite
-from django.db.models import CharField, ManyToManyField, SlugField, \
+from django.db.models import CharField, ManyToManyField, \
                              FloatField, ForeignKey, OneToOneField, \
-                             IntegerField, TextField, permalink
-from . import *
+                             IntegerField, TextField, permalink, get_model
 from tinymce.models import HTMLField
 from ..templatetags.extras import abbreviate
 from django.utils.html import strip_tags
@@ -14,6 +11,8 @@ from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from django.template.defaultfilters import capfirst
 from django.contrib.humanize.templatetags.humanize import apnumber
+from autoslug import AutoSlugField
+from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
 
 
 class GenreDOeuvre(CustomModel):
@@ -23,7 +22,7 @@ class GenreDOeuvre(CustomModel):
         help_text=PLURAL_MSG)
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
         blank=True, null=True)
-    slug = SlugField(blank=True)
+    slug = AutoSlugField(populate_from=unicode)
 
     class Meta:
         verbose_name = ungettext_lazy(u'genre d’œuvre', u'genres d’œuvre', 1)
@@ -37,10 +36,6 @@ class GenreDOeuvre(CustomModel):
         if caps:
             nom = capfirst(nom)
         return hlp(nom, ugettext('genre'), tags)
-
-    def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, unicode(self))
-        super(GenreDOeuvre, self).save(*args, **kwargs)
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -77,7 +72,7 @@ class TypeDeCaracteristiqueDOeuvre(CustomModel):
 
 
 class CaracteristiqueDOeuvre(CustomModel):
-    type = ForeignKey(TypeDeCaracteristiqueDOeuvre,
+    type = ForeignKey('TypeDeCaracteristiqueDOeuvre',
         related_name='caracteristiques_d_oeuvre')
     # TODO: Changer valeur en nom ?
     valeur = CharField(max_length=400, help_text=ex(_(u'en trois actes')))
@@ -138,7 +133,7 @@ class Partie(CustomModel):
 
 
 class Pupitre(CustomModel):
-    partie = ForeignKey(Partie, related_name='pupitres')
+    partie = ForeignKey('Partie', related_name='pupitres')
     quantite_min = IntegerField(_(u'quantité minimale'), default=1)
     quantite_max = IntegerField(_(u'quantité maximale'), default=1)
 
@@ -197,7 +192,7 @@ class TypeDeParenteDOeuvres(CustomModel):
 
 
 class ParenteDOeuvres(CustomModel):
-    type = ForeignKey(TypeDeParenteDOeuvres, related_name='parentes')
+    type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes')
     oeuvres_cibles = ManyToManyField('Oeuvre',
         related_name='enfances_cibles', verbose_name=_(u'œuvres cibles'))
 
@@ -255,18 +250,18 @@ class Oeuvre(CustomModel):
         verbose_name=_(u'préfixe du titre secondaire'))
     titre_secondaire = CharField(max_length=200, blank=True,
         verbose_name=_('titre secondaire'))
-    genre = ForeignKey(GenreDOeuvre, related_name='oeuvres', blank=True,
+    genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True,
         null=True)
-    caracteristiques = ManyToManyField(CaracteristiqueDOeuvre, blank=True,
+    caracteristiques = ManyToManyField('CaracteristiqueDOeuvre', blank=True,
         null=True, verbose_name=_(u'caractéristiques'))
-    auteurs = ManyToManyField(Auteur, related_name='oeuvres', blank=True,
+    auteurs = ManyToManyField('Auteur', related_name='oeuvres', blank=True,
         null=True)
     ancrage_composition = OneToOneField('AncrageSpatioTemporel',
         related_name='oeuvres', blank=True, null=True,
         verbose_name=_(u'ancrage spatio-temporel de composition'))
-    pupitres = ManyToManyField(Pupitre, related_name='oeuvres', blank=True,
+    pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
         null=True)
-    parentes = ManyToManyField(ParenteDOeuvres, related_name='oeuvres',
+    parentes = ManyToManyField('ParenteDOeuvres', related_name='oeuvres',
         blank=True, null=True, verbose_name=_(u'parentés'))
     lilypond = TextField(blank=True, verbose_name='LilyPond')
     description = HTMLField(blank=True)
@@ -276,7 +271,7 @@ class Oeuvre(CustomModel):
         blank=True, null=True)
     etat = ForeignKey('Etat', related_name='oeuvres', null=True, blank=True)
     notes = HTMLField(blank=True)
-    slug = SlugField(blank=True)
+    slug = AutoSlugField(populate_from=unicode)
 
     @permalink
     def get_absolute_url(self):
@@ -293,7 +288,7 @@ class Oeuvre(CustomModel):
 
     def individus_auteurs(self):
         pk_list = self.auteurs.values_list('individus', flat=True)
-        return Individu.objects.in_bulk(pk_list).values()
+        return get_model('Individu').objects.in_bulk(pk_list).values()
 
     def enfants(self):
         pk_list = self.enfances_cibles.values_list('oeuvres', flat=True)
@@ -302,7 +297,7 @@ class Oeuvre(CustomModel):
     def evenements(self):
         pk_list = self.elements_de_programme.values_list('evenements',
                                                          flat=True)
-        return Evenement.objects.in_bulk(pk_list).values()
+        return get_model('Evenement').objects.in_bulk(pk_list).values()
 
     def calc_caracteristiques(self, limite=0, tags=True):
         if not self.pk:
@@ -418,10 +413,6 @@ class Oeuvre(CustomModel):
         verbose_name_plural = ungettext_lazy(u'œuvre', u'œuvres', 2)
         ordering = ['genre', 'slug']
         app_label = 'catalogue'
-
-    def save(self, *args, **kwargs):
-        self.slug = autoslugify(self, unicode(self))
-        super(Oeuvre, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return strip_tags(self.titre_html(False))

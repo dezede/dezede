@@ -1,17 +1,15 @@
 # coding: utf-8
 
-from .common import CustomModel, Document, Illustration, Etat, \
-                    LOWER_MSG, PLURAL_MSG, calc_pluriel
 from .functions import str_list, str_list_w_last, href, hlp
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
-                             FloatField, OneToOneField, BooleanField, permalink
+                             FloatField, OneToOneField, BooleanField, \
+                             permalink, get_model
 from tinymce.models import HTMLField
-from . import *
-from .source import TypeDeSource
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from django.template.defaultfilters import capfirst
+from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
 
 
 class AttributionDePupitre(CustomModel):
@@ -130,19 +128,19 @@ class ElementDeProgramme(CustomModel):
 
 
 class Evenement(CustomModel):
-    ancrage_debut = OneToOneField(AncrageSpatioTemporel,
+    ancrage_debut = OneToOneField('AncrageSpatioTemporel',
         related_name='evenements_debuts')
-    ancrage_fin = OneToOneField(AncrageSpatioTemporel,
+    ancrage_fin = OneToOneField('AncrageSpatioTemporel',
         related_name='evenements_fins', blank=True, null=True)
     relache = BooleanField(verbose_name=u'relâche')
     circonstance = CharField(max_length=500, blank=True)
-    programme = ManyToManyField(ElementDeProgramme, related_name='evenements',
+    programme = ManyToManyField('ElementDeProgramme',
+        related_name='evenements', blank=True, null=True)
+    documents = ManyToManyField('Document', related_name='evenements',
         blank=True, null=True)
-    documents = ManyToManyField(Document, related_name='evenements',
+    illustrations = ManyToManyField('Illustration', related_name='evenements',
         blank=True, null=True)
-    illustrations = ManyToManyField(Illustration, related_name='evenements',
-        blank=True, null=True)
-    etat = ForeignKey(Etat, related_name='evenements', null=True, blank=True)
+    etat = ForeignKey('Etat', related_name='evenements', null=True, blank=True)
     notes = HTMLField(blank=True)
 
     @permalink
@@ -159,7 +157,8 @@ class Evenement(CustomModel):
     link.allow_tags = True
 
     def sources_dict(self):
-        types = TypeDeSource.objects.filter(sources__evenements=self)
+        types = get_model('TypeDeSource').objects \
+                                         .filter(sources__evenements=self)
         types = types.distinct()
         d = {}
         for type in types:
