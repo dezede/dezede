@@ -5,7 +5,7 @@ from django.test.simple import DjangoTestSuiteRunner
 from doctest import DocTestSuite
 from .models import *
 from django.conf import settings
-from . import functions
+from .models import functions
 from datetime import date
 from django.utils.translation import activate
 
@@ -84,24 +84,24 @@ class IndividuTestCase(TestCase):
     def testHTMLRenders(self):
         moliere_url = self.moliere.get_absolute_url()
         self.assertEqual(self.moliere.html(),
-                         u'''<a href="%(url)s">'''
-                         u'''<span class="sc">Molière</span></a>'''
+                         u'<a href="%(url)s">'
+                         u'<span class="sc">Molière</span></a>'
                            % {'url': moliere_url})
         self.assertEqual(self.moliere.nom_complet(),
-                         u'''<a href="%(url)s">Jean-Baptiste '''
-                         u'''<span class="sc">Poquelin</span>, '''
-                         u'''dit Molière</a>'''
+                         u'<a href="%(url)s">Jean-Baptiste '
+                         u'<span class="sc">Poquelin</span>, '
+                         u'dit Molière</a>'
                            % {'url': moliere_url})
         piaf_url = self.piaf.get_absolute_url()
         self.assertEqual(self.piaf.html(),
-                         u'''<a href="%(url)s">'''
-                         u'''<span class="sc">Gassion</span> (É.), '''
-                         u'''dite La Môme Piaf</a>'''
+                         u'<a href="%(url)s">'
+                         u'<span class="sc">Gassion</span> (É.), '
+                         u'dite La Môme Piaf</a>'
                            % {'url': piaf_url})
         self.assertEqual(self.piaf.nom_complet(),
-                         u'''<a href="%(url)s">Édith Giovanna '''
-                         u'''<span class="sc">Gassion</span>, '''
-                         u'''dite La Môme Piaf</a>'''
+                         u'<a href="%(url)s">Édith Giovanna '
+                         u'<span class="sc">Gassion</span>, '
+                         u'dite La Môme Piaf</a>'
                            % {'url': piaf_url})
 
 
@@ -137,37 +137,37 @@ class OeuvreTestCase(TestCase):
     def testHTMLRenders(self):
         carmen_url = self.carmen.get_absolute_url()
         self.assertEqual(self.carmen.titre_html(),
-                         u'''<a href="%(url)s"><cite>Carmen</cite></a>'''
+                         u'<a href="%(url)s"><cite>Carmen</cite></a>'
                              % {'url': carmen_url})
         self.assertEqual(self.carmen.description_html(),
-                         u'''<span title="genre">Opéra</span>''')
+                         u'<span title="genre">Opéra</span>')
         self.assertEqual(self.carmen.html(),
-                         u'''<a href="%(url)s"><cite>Carmen</cite></a>, '''
-                         u'''<span title="genre">opéra</span>'''
+                         u'<a href="%(url)s"><cite>Carmen</cite></a>, '
+                         u'<span title="genre">opéra</span>'
                              % {'url': carmen_url})
         symphonie_url = self.symphonie.get_absolute_url()
         self.assertEqual(self.symphonie.titre_html(),
-                         u'''<a href="%(url)s"><cite><span title="genre">'''
-                         u'''Symphonie</span> <span title="numéro">n°\u00A05'''
-                         u'''</span></cite></a>'''
+                         u'<a href="%(url)s"><cite><span title="genre">'
+                         u'Symphonie</span> <span title="numéro">n°\u00A05'
+                         u'</span></cite></a>'
                              % {'url': symphonie_url})
         self.assertEqual(self.symphonie.description_html(),
-                         u'''<span title="opus">op.\u00A0107</span>''')
+                         u'<span title="opus">op.\u00A0107</span>')
         self.assertEqual(self.symphonie.html(),
-                         u'''<a href="%(url)s"><cite><span title="genre">'''
-                         u'''Symphonie</span> <span title="numéro">n°\u00A05'''
-                         u'''</span></cite></a>,&#32;<span title="opus">'''
-                         u'''op.\u00A0107</span>'''
+                         u'<a href="%(url)s"><cite><span title="genre">'
+                         u'Symphonie</span> <span title="numéro">n°\u00A05'
+                         u'</span></cite></a>,&#32;<span title="opus">'
+                         u'op.\u00A0107</span>'
                             % {'url': symphonie_url})
         tartuffe_url = self.tartuffe.get_absolute_url()
         self.assertEqual(self.tartuffe.titre_html(),
-                         u'''<a href="%(url)s"><cite>Le Tartuffe, ou '''
-                         u'''l’Imposteur</cite></a>'''
+                         u'<a href="%(url)s"><cite>Le Tartuffe, ou '
+                         u'l’Imposteur</cite></a>'
                              % {'url': tartuffe_url})
         self.assertEqual(self.tartuffe.description_html(),
-                         u'''<span title="genre">Comédie</span>&#32;'''
-                         u'''<span title="découpage">'''
-                         u'''en cinq actes et en vers</span>''')
+                         u'<span title="genre">Comédie</span>&#32;'
+                         u'<span title="découpage">'
+                         u'en cinq actes et en vers</span>')
 
 
 class SourceTestCase(TestCase):

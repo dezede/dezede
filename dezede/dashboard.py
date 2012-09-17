@@ -18,10 +18,10 @@ class CustomIndexDashboard(Dashboard):
     """
     Custom index dashboard for www.
     """
-    
+
     def init_with_context(self, context):
         site_name = get_admin_site_name(context)
-        
+
         self.children.append(modules.Group(
             _(u'Base de données'),
             column=1,
@@ -30,26 +30,26 @@ class CustomIndexDashboard(Dashboard):
                 modules.ModelList(
                     _('Saisie courante'),
                     column=1,
-                    models=('musicologie.catalogue.models.Source',
-                            'musicologie.catalogue.models.Evenement',
-                            'musicologie.catalogue.models.Oeuvre',
-                            'musicologie.catalogue.models.Individu',
-                            'musicologie.catalogue.models.Lieu',),
+                    models=('catalogue.models.Source',
+                            'catalogue.models.Evenement',
+                            'catalogue.models.Oeuvre',
+                            'catalogue.models.Individu',
+                            'catalogue.models.Lieu',),
                 ),
                 modules.ModelList(
                     _('Saisie occasionnelle'),
                     column=1,
                     css_classes=('collapse closed',),
                     exclude=('django.contrib.*',
-                             'musicologie.catalogue.models.Source',
-                             'musicologie.catalogue.models.Evenement',
-                             'musicologie.catalogue.models.Oeuvre',
-                             'musicologie.catalogue.models.Individu',
-                             'musicologie.catalogue.models.Lieu',),
+                             'catalogue.models.Source',
+                             'catalogue.models.Evenement',
+                             'catalogue.models.Oeuvre',
+                             'catalogue.models.Individu',
+                             'catalogue.models.Lieu',),
                 )
             ]
         ))
-        
+
         self.children.append(modules.Group(
             _('Fichiers'),
             column=1,
@@ -70,19 +70,19 @@ class CustomIndexDashboard(Dashboard):
                 modules.ModelList(
                     _(u'Intégration à la base de données'),
                     collapsible=False,
-                    models=('musicologie.catalogue.models.Document',
-                            'musicologie.catalogue.models.Illustration',),
+                    models=('catalogue.models.Document',
+                            'catalogue.models.Illustration',),
                 )
             ]
         ))
-        
+
         self.children.append(modules.AppList(
             _('Utilisateurs et groupes'),
             column=2,
             css_classes=('collapse closed',),
             models=('django.contrib.*',),
         ))
-        
+
         self.children.append(modules.LinkList(
             _('Traduction'),
             column=2,
@@ -95,7 +95,7 @@ class CustomIndexDashboard(Dashboard):
                 },
             ]
         ))
-        
+
         self.children.append(modules.LinkList(
             _('Support'),
             column=2,
@@ -118,11 +118,10 @@ class CustomIndexDashboard(Dashboard):
                 },
             ]
         ))
-        
+
         self.children.append(modules.RecentActions(
             _(u'Actions récentes'),
             limit=8,
             collapsible=False,
             column=3,
         ))
-
