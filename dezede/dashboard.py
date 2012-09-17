@@ -30,16 +30,16 @@ class CustomIndexDashboard(Dashboard):
                 modules.ModelList(
                     _('Saisie courante'),
                     column=1,
-                    models=('catalogue.models.Source',
-                            'catalogue.models.Evenement',
-                            'catalogue.models.Oeuvre',
-                            'catalogue.models.Individu',
-                            'catalogue.models.Lieu',),
+                    models=('catalogue.models.source.Source',
+                            'catalogue.models.evenement.Evenement',
+                            'catalogue.models.oeuvre.Oeuvre',
+                            'catalogue.models.individu.Individu',
+                            'catalogue.models.lieu.Lieu',),
                 ),
                 modules.ModelList(
                     _('Saisie occasionnelle'),
                     column=1,
-                    css_classes=('collapse closed',),
+                    css_classes=('grp-collapse grp-closed',),
                     exclude=('django.contrib.*',
                              'catalogue.models.Source',
                              'catalogue.models.Evenement',
@@ -70,8 +70,8 @@ class CustomIndexDashboard(Dashboard):
                 modules.ModelList(
                     _(u'Intégration à la base de données'),
                     collapsible=False,
-                    models=('catalogue.models.Document',
-                            'catalogue.models.Illustration',),
+                    models=('catalogue.models.common.Document',
+                            'catalogue.models.common.Illustration',),
                 )
             ]
         ))
@@ -79,14 +79,14 @@ class CustomIndexDashboard(Dashboard):
         self.children.append(modules.AppList(
             _('Utilisateurs et groupes'),
             column=2,
-            css_classes=('collapse closed',),
+            css_classes=('grp-collapse grp-closed',),
             models=('django.contrib.*',),
         ))
 
         self.children.append(modules.LinkList(
             _('Traduction'),
             column=2,
-            css_classes=('collapse open',),
+            css_classes=('grp-collapse grp-open',),
             children=[
                 {
                     'title': 'Rosetta',
@@ -99,7 +99,7 @@ class CustomIndexDashboard(Dashboard):
         self.children.append(modules.LinkList(
             _('Support'),
             column=2,
-            css_classes=('collapse closed',),
+            css_classes=('grp-collapse grp-closed',),
             children=[
                 {
                     'title': _('Documentation de Django'),

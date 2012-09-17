@@ -2,6 +2,7 @@
 from django.conf.urls.defaults import *
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
+from filebrowser.sites import site
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -15,7 +16,7 @@ urlpatterns = patterns('',
     (r'^i18n/', include('django.conf.urls.i18n')),
     (r'^tinymce/', include('tinymce.urls')),
     (r'^grappelli/', include('grappelli.urls')),
-    (r'^admin/filebrowser/', include('filebrowser.urls')),
+    url(r'^admin/filebrowser/', include(site.urls)),
     (r'^recherche/', include('haystack.urls')),
 )
 

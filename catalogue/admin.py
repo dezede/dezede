@@ -11,26 +11,26 @@ StackedInline.extra = 0
 
 class AncrageSpatioTemporelInline(TabularInline):
     model = AncrageSpatioTemporel
-    classes = ('collapse closed',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class AuteurInline(TabularInline):
     verbose_name = Auteur._meta.verbose_name
     verbose_name_plural = Auteur._meta.verbose_name_plural
     model = Auteur.individus.through
-    classes = ('collapse closed',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class ElementDeProgrammeInline(StackedInline):
     model = ElementDeProgramme
-    classes = ('collapse closed',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class EvenementInline(TabularInline):
     verbose_name = Evenement._meta.verbose_name
     verbose_name_plural = Evenement._meta.verbose_name_plural
     model = Evenement.programme.through
-    classes = ('collapse closed',)
+    classes = ('grp-collapse grp-closed',)
 
 
 class DocumentAdmin(VersionAdmin):
@@ -72,15 +72,15 @@ class LieuAdmin(VersionAdmin):
             'fields': ('nom', 'parent', 'nature', 'historique',),
         }),
         (_('Fichiers'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('illustrations', 'documents',),
         }),
         (_(u'Champs avancés'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('etat', 'notes',),
         }),
         (_(u'Champs générés (Méthodes)'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('__unicode__', 'html', 'link',),
         }),
     )
@@ -162,15 +162,15 @@ class IndividuAdmin(VersionAdmin):
                         'ancrage_deces',), 'professions', 'parentes',),
         }),
         (_('Fichiers'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('illustrations', 'documents',),
         }),
         (_(u'Champs avancés'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('ancrage_approx', 'biographie', 'etat', 'notes',),
         }),
         (_(u'Champs générés (Méthodes)'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('__unicode__', 'html', 'link',),
         }),
     )
@@ -291,15 +291,15 @@ class OeuvreAdmin(VersionAdmin):
                         'ancrage_composition', 'pupitres', 'parentes',),
         }),
         (_('Fichiers'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('documents', 'illustrations',),
         }),
         (_(u'Champs avancés'), {
-            'classes': ('collapse closed', 'wide',),
+            'classes': ('grp-collapse grp-closed', 'wide',),
             'fields': ('lilypond', 'description', 'etat', 'notes',),
         }),
         (_(u'Champs générés (Méthodes)'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('__unicode__', 'html', 'link',),
         }),
     )
@@ -353,15 +353,15 @@ class EvenementAdmin(VersionAdmin):
                         'circonstance', 'programme',),
         }),
         (_('Fichiers'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('documents', 'illustrations',),
         }),
         (_(u'Champs avancés'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('etat', 'notes',),
         }),
         (_(u'Champs générés (Méthodes)'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('__unicode__', 'html', 'link',),
         }),
     )
@@ -377,7 +377,7 @@ class SourceAdmin(VersionAdmin):
         'disp_contenu',)
     list_editable = ('type', 'date',)
     search_fields = ('nom', 'numero', 'type__nom',)
-    list_filter = ('type__nom',)
+    list_filter = ('type',)
     filter_horizontal = ('auteurs',)
     raw_id_fields = ('evenements', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
@@ -390,15 +390,15 @@ class SourceAdmin(VersionAdmin):
                        'auteurs', 'evenements',),
         }),
         (_('Fichiers'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('documents', 'illustrations',),
         }),
         (_(u'Champs avancés'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('etat', 'notes',),
         }),
         (_(u'Champs générés (Méthodes)'), {
-            'classes': ('collapse closed',),
+            'classes': ('grp-collapse grp-closed',),
             'fields': ('__unicode__', 'html',),
         }),
     )

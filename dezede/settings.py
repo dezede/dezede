@@ -58,10 +58,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/"
-if DEBUG:
-    MEDIA_ROOT = os.path.join(SITE_ROOT, 'media/')
-else:
-    MEDIA_ROOT = '/var/www' + SITE_URL + 'media/'
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'media/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -102,10 +99,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-if DEBUG:
-    STATIC_ROOT = os.path.join(SITE_ROOT, 'static/')
-else:
-    STATIC_ROOT = '/var/www' + SITE_URL + 'static/'
+STATIC_ROOT = os.path.join(SITE_ROOT, 'static/')
 STATIC_URL = SITE_URL + 'static/'
 
 STATICFILES_DIRS = (
