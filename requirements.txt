@@ -7,6 +7,7 @@ django-autoslug==1.5.0
 django-grappelli==2.3.7
 django-filebrowser==3.3.0
 pil==1.1.7
+johnny-cache==1.4
 south==0.7.3
 django-debug-toolbar==0.9.4
 django-extensions==0.7.1

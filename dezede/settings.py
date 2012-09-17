@@ -3,7 +3,7 @@
 import os
 ugettext = lambda s: s
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
@@ -81,6 +81,8 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -186,3 +188,11 @@ HAYSTACK_WHOOSH_PATH = os.path.join(os.path.dirname(__file__), 'whoosh_index')
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'catalogue.utils.CustomHighlighter'
 HAYSTACK_INCLUDE_SPELLING = True
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
+
+CACHES = {
+    'default' : {
+        'BACKEND': 'johnny.backends.memcached.MemcachedCache',
+        'LOCATION': ['127.0.0.1:11211'],
+        'JOHNNY_CACHE': True,
+    }
+}
