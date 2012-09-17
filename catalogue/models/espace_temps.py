@@ -207,10 +207,7 @@ class AncrageSpatioTemporel(CustomModel):
     calc_lieu.allow_tags = True
 
     def html(self, tags=True):
-        l = []
-        l.append(self.calc_lieu(tags))
-        l.append(self.calc_moment(tags))
-        out = str_list(l)
+        out = str_list((self.calc_lieu(tags), self.calc_moment(tags)))
         return capfirst(out)
 
     class Meta:

@@ -30,7 +30,7 @@ class AttributionDePupitre(CustomModel):
     def __unicode__(self):
         out = unicode(self.pupitre.partie) + ' : '
         ins = self.individus.iterator()
-        out += str_list_w_last([unicode(i) for i in ins])
+        out += str_list_w_last(unicode(i) for i in ins)
         return out
 
 
@@ -80,7 +80,7 @@ class ElementDeProgramme(CustomModel):
 
     def calc_caracteristiques(self):
         cs = self.caracteristiques.iterator()
-        return str_list([unicode(c) for c in cs])
+        return str_list(unicode(c) for c in cs)
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _(u'caractéristiques')
 
@@ -101,8 +101,8 @@ class ElementDeProgramme(CustomModel):
             maxi = distribution.count() - 1
         for i, attribution in enumerate(distribution.iterator()):
             individus = attribution.individus.iterator()
-            out__append(str_list([individu.html(tags)
-                                                   for individu in individus]))
+            out__append(str_list(individu.html(tags)
+                                                    for individu in individus))
             out__append(' [' + unicode(attribution.pupitre.partie) + ']')
             if i < maxi:
                 out__append(', ')
@@ -175,8 +175,8 @@ class Evenement(CustomModel):
                                tags)
         if self.relache:
             relache = ugettext(u'Relâche')
-        l = [self.ancrage_debut.calc_lieu(tags), circonstance,
-             self.ancrage_debut.calc_heure(), relache]
+        l = (self.ancrage_debut.calc_lieu(tags), circonstance,
+             self.ancrage_debut.calc_heure(), relache)
         out = str_list(l)
         return out
     html.short_description = _('rendu HTML')

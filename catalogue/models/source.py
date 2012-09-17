@@ -72,7 +72,7 @@ class Source(CustomModel):
 
     def calc_auteurs(self, tags=True):
         auteurs = self.auteurs.iterator()
-        return str_list([a.html(tags) for a in auteurs])
+        return str_list(a.html(tags) for a in auteurs)
 
     def html(self, tags=True):
         url = None if not tags else self.get_absolute_url()

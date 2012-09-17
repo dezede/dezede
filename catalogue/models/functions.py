@@ -56,6 +56,7 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
     >>> print str_list_w_last(l[:2])
     Jeanne\u00A0et\u00A0Marion
     '''
+    l = tuple(l)
     if infix == None:
         infix = pgettext(u'infix d’une liste', ', ')
     if last_infix == None:

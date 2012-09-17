@@ -215,7 +215,7 @@ class ParenteDOeuvres(CustomModel):
         if cs.count() > 1:
             out = self.type.pluriel()
         out += ' : '
-        out += str_list([unicode(c) for c in cs.iterator()], ' ; ')
+        out += str_list((unicode(c) for c in cs.iterator()), ' ; ')
         return out
 
 
@@ -225,7 +225,7 @@ class Auteur(CustomModel):
 
     def individus_html(self, tags=True):
         ins = self.individus.iterator()
-        return str_list_w_last([i.html(tags) for i in ins])
+        return str_list_w_last(i.html(tags) for i in ins)
 
     def html(self, tags=True):
         individus = self.individus_html(tags)
@@ -310,7 +310,7 @@ class Oeuvre(CustomModel):
         cs = self.caracteristiques.all()
 
         def clist(cs):
-            return str_list([c.html(tags) for c in cs])
+            return str_list(c.html(tags) for c in cs)
         out2 = clist(cs[limite:])
         if limite:
             out1 = clist(cs[:limite])
@@ -327,14 +327,14 @@ class Oeuvre(CustomModel):
         ps = self.pupitres
         if ps.exists():
             out += ugettext('pour ')
-            out += str_list_w_last([unicode(p) for p in ps.iterator()])
+            out += str_list_w_last(unicode(p) for p in ps.iterator())
         return out
 
     def calc_auteurs(self, tags=True):
         if not self.pk:
             return ''
         auteurs = self.auteurs.iterator()
-        return str_list([a.html(tags) for a in auteurs])
+        return str_list(a.html(tags) for a in auteurs)
     calc_auteurs.short_description = _('auteurs')
     calc_auteurs.allow_tags = True
     calc_auteurs.admin_order_field = 'auteurs__individus'
@@ -345,15 +345,15 @@ class Oeuvre(CustomModel):
         out = ''
         ps = self.parentes.iterator()
         for p in ps:
-            l = [oe.html(tags, False, True, False) \
-                 for oe in p.oeuvres_cibles.iterator()]
+            l = (oe.html(tags, False, True, False)
+                                         for oe in p.oeuvres_cibles.iterator())
             out += str_list_w_last(l)
             out += ', '
         return out
 
     def titre_complet(self):
-        l = [self.prefixe_titre, self.titre, self.coordination,
-             self.prefixe_titre_secondaire, self.titre_secondaire]
+        l = (self.prefixe_titre, self.titre, self.coordination,
+             self.prefixe_titre_secondaire, self.titre_secondaire)
         return str_list(l, infix='')
 
     def html(self, tags=True, auteurs=True, titre=True,

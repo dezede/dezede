@@ -80,7 +80,7 @@ class ParenteDIndividus(CustomModel):
             out = self.type.pluriel()
         out += ' :'
         cs = self.individus_cibles.iterator()
-        out += str_list([unicode(c) for c in cs], ' ; ')
+        out += str_list((unicode(c) for c in cs), ' ; ')
         return out
 
 
@@ -236,7 +236,7 @@ class Individu(CustomModel):
             return ''
         ps = self.professions.iterator()
         titre = self.titre
-        return str_list_w_last([p.gendered(titre) for p in ps])
+        return str_list_w_last(p.gendered(titre) for p in ps)
     calc_professions.short_description = _('professions')
     calc_professions.admin_order_field = 'professions__nom'
 
@@ -253,7 +253,8 @@ class Individu(CustomModel):
             return sc(s, tags)
 
         def standard(main):
-            l, out = [], ''
+            l = []
+            out = ''
             if nom and not prenoms:
                 l.append(titre)
             l.append(main)
@@ -279,7 +280,7 @@ class Individu(CustomModel):
         }
         main = main_style(main_choices['S' if force_standard else designation])
         out = standard(main) if designation in ('S', 'B',) or force_standard \
-         else main
+              else main
         url = None if not tags else self.get_absolute_url()
         out = href(url, out, tags)
         return out
