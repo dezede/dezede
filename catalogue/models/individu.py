@@ -8,6 +8,8 @@ from django.db.models import CharField, FloatField, BooleanField, ForeignKey, \
                              permalink
 from . import *
 from .oeuvre import Oeuvre
+from .evenement import Evenement, ElementDeProgramme
+from .source import Source
 from tinymce.models import HTMLField
 from django.template.defaultfilters import slugify
 from ..templatetags.extras import abbreviate
@@ -150,12 +152,14 @@ class Individu(CustomModel):
 
     def oeuvres(self):
         pk_list = self.auteurs.values_list('oeuvres', flat=True) \
-                                                             .order_by('titre')
-        return Oeuvre.objects.in_bulk(pk_list).values()
+                                                    .order_by('oeuvres__titre')
+        if pk_list:
+            return Oeuvre.objects.in_bulk(tuple(pk_list)).values()
 
     def publications(self):
         pk_list = self.auteurs.values_list('sources', flat=True)
-        return Source.objects.in_bulk(pk_list).values()
+        if pk_list:
+            return Source.objects.in_bulk(tuple(pk_list)).values()
 
     def apparitions(self):
         q = Evenement.objects.none()
@@ -168,13 +172,15 @@ class Individu(CustomModel):
 
     def parents(self):
         pk_list = self.parentes.values_list('individus_cibles', flat=True) \
-                                                               .order_by('nom')
-        return Individu.objects.in_bulk(pk_list).values()
+                                             .order_by('individus_cibles__nom')
+        if pk_list:
+            return Individu.objects.in_bulk(tuple(pk_list)).values()
 
     def enfants(self):
         pk_list = self.enfances_cibles.values_list('individus_orig',
-                                                   flat=True).order_by('nom')
-        return Individu.objects.in_bulk(pk_list).values()
+                                     flat=True).order_by('individus_orig__nom')
+        if pk_list:
+            return Individu.objects.in_bulk(tuple(pk_list)).values()
 
     def calc_prenoms_methode(self, fav):
         if not self.pk:
