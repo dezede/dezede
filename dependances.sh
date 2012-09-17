@@ -1,6 +1,6 @@
 #!/bin/sh
 
-apt-get install nano mysql-server python2.7 python-mysqldb python-pip python-docutils python-dev apache2 libapache2-mod-wsgi
+apt-get install nano mysql-server python2.7 python-mysqldb python-pip python-docutils python-dev apache2 libapache2-mod-wsgi memcached
 
 pip install -r requirements.txt
 
