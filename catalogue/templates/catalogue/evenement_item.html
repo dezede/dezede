@@ -3,18 +3,18 @@
 {% include "catalogue/etat.html" with etat=evenement.etat %}
 
 <h2 style="text-align: center;">
-  {{ evenement.ancrage_debut.calc_date|capfirst }}
+  {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
 </h2>
 <br />
-{{ evenement.html }}
+{{ evenement.html|safe }}
 <br />
-{% for element in evenement.programme.all %}
+{% for element in evenement.programme.iterator %}
   {% if forloop.first %}
     <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
     <ol>
   {% endif %}
   <li>
-    {{ element.html }}
+    {{ element.html|safe }}
   </li>
   {% if forloop.last %}
     </ol>

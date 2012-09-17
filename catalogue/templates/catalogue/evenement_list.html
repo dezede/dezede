@@ -1,13 +1,13 @@
-{% extends "base.html" %}
-{% load i18n %}
-{% load extras %}
+{% extends 'base.html' %}
+{% load i18n static %}
 {% load url from future %}
 
 {% block title %}
-  {% trans "événements"|capfirst %}
+  {% trans 'événements'|capfirst %}
 {% endblock %}
 
 {% block head %}
+{{ block.super }}
   <script>
     $(function() {
       $(".accordion").accordion({
@@ -17,14 +17,13 @@
       });
     });
   </script>
+  <script src="{% static 'endless_pagination/js/endless.js' %}" type="text/javascript" charset="utf-8"></script>
+  <script src="{% static 'endless_pagination/js/endless_on_scroll.js' %}" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    var endless_on_scroll_margin = 200;
+  </script>
 {% endblock %}
 
 {% block body %}
-  {% for evenement in evenements %}
-    <div class="content_part">
-      {% include "catalogue/evenement_item.html" %}
-    </div>
-  {% empty %}
-    {% trans "Aucun événement n'a été trouvée selon ces critères." %}
-  {% endfor %}
+  {% include page_template %}
 {% endblock %}

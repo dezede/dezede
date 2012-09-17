@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.views.generic import ListView, DetailView
+from endless_pagination.views import AjaxListView
 from .models import *
 from .forms import *
 
@@ -10,7 +11,7 @@ class SourceDetailView(DetailView):
     context_object_name = 'source'
 
 
-class EvenementListView(ListView):
+class EvenementListView(AjaxListView):
     model = Evenement
     context_object_name = 'evenements'
 

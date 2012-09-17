@@ -1,0 +1,11 @@
+{% load i18n extras endless %}
+
+{% paginate 5 evenements %}
+{% for evenement in evenements %}
+  <div class="content_part">
+    {% include 'catalogue/evenement_item.html' %}
+  </div>
+{% empty %}
+  {% trans "Aucun événement n'a été trouvée selon ces critères." %}
+{% endfor %}
+{% show_more %}

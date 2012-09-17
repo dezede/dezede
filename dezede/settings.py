@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'haystack',
     'catalogue',
+    'endless_pagination',
     'tinymce',
     'grappelli.dashboard',
     'grappelli',
