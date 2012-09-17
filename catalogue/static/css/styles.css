@@ -62,30 +62,22 @@ nav>a:hover
   padding-top: 68px; /* 38px (nav) + 30px */
 }
 
-#footer
+footer
 {
   margin-top: 20px;
-  height: 110px;
+  height: 90px;
   padding: 10px;
   text-align: center;
 }
 
-#footer div
+footer a+a
 {
-  display: inline-block;
-  margin-right: 30px;
+  margin-left: 20px;
 }
 
-#footer div:last-of-type
-{
-  margin-right: 0;
-}
-
-#footer img
+footer img
 {
   vertical-align: middle;
-  max-width: 150px;
-  max-height: 110px;
 }
 
 a
