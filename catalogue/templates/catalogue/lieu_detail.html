@@ -33,8 +33,8 @@
         <dd>{{ enfant.short_link }}</dd>
       {% endfor %}
     {% endwith %}
-    {% include "catalogue/evenement_list_def.html" with evenements=lieu.evenements.all %}
-    {% with lieu.individus_nes.all as individus %}
+    {% include "catalogue/evenement_list_def.html" with evenements=lieu.evenements %}
+    {% with lieu.individus_nes as individus %}
       {% for individu in individus %}
         {% if forloop.first %}
           <dt>
@@ -44,7 +44,7 @@
         <dd>{{ individu.link }}</dd>
       {% endfor %}
     {% endwith %}
-    {% with lieu.individus_decedes.all as individus %}
+    {% with lieu.individus_decedes as individus %}
       {% for individu in individus %}
         {% if forloop.first %}
           <dt>
@@ -54,7 +54,7 @@
         <dd>{{ individu.link }}</dd>
       {% endfor %}
     {% endwith %}
-    {% with lieu.oeuvres_composees.all as oeuvres %}
+    {% with lieu.oeuvres_composees as oeuvres %}
       {% for oeuvre in oeuvres %}
         {% if forloop.first %}
           <dt>

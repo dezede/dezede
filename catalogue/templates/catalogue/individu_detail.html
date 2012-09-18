@@ -43,7 +43,7 @@
       <dd>{{ individu.biographie }}</dd>
     {% endif %}
 
-    {% with individu.oeuvres.all as oeuvres %}
+    {% with individu.oeuvres as oeuvres %}
       {% for oeuvre in oeuvres %}
         {% if forloop.first %}
           <dt>
@@ -53,7 +53,7 @@
         <dd>{{ oeuvre.link }}</dd>
       {% endfor %}
     {% endwith %}
-    {% with individu.apparitions.all as apparitions %}
+    {% with individu.apparitions as apparitions %}
       {% for evenement in apparitions %}
         {% if forloop.first %}
           <dt>
@@ -63,7 +63,7 @@
         <dd>{{ evenement.link }}</dd>
       {% endfor %}
     {% endwith %}
-    {% with individu.publications.all as publications %}
+    {% with individu.publications as publications %}
       {% for publication in publications %}
         {% if forloop.first %}
           <dt>
@@ -73,7 +73,7 @@
         <dd>{{ publication.html }}</dd>
       {% endfor %}
     {% endwith %}
-    {% with individu.parents.all as parents %}
+    {% with individu.parents as parents %}
       {% for parent in parents %}
         {% if forloop.first %}
           <dt>
@@ -83,7 +83,7 @@
         <dd>{{ parent.link }}</dd>
       {% endfor %}
     {% endwith %}
-    {% with individu.enfants.all as enfants %}
+    {% with individu.enfants as enfants %}
       {% for enfant in enfants %}
         {% if forloop.first %}
           <dt>

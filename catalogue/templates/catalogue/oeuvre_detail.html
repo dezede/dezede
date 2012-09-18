@@ -19,7 +19,7 @@
   </h3>
   <br />
   <dl>
-    {% with oeuvre.individus_auteurs.all as auteurs %}
+    {% with oeuvre.individus_auteurs as auteurs %}
       {% if auteurs %}
         <dt>
           {% filter capfirst %}{% blocktrans count counter=auteurs|length %}auteur{% plural %}auteurs{% endblocktrans %}{% endfilter %}
@@ -35,12 +35,12 @@
     {% for enfance in oeuvre.enfances_cibles.all %}
       {% if forloop.first %}
         <dt>
-          {% filter capfirst %}{% blocktrans count counter=oeuvre.enfants.all|length %}enfant{% plural %}enfants{% endblocktrans %}{% endfilter %}
+          {% filter capfirst %}{% blocktrans count counter=oeuvre.enfants|length %}enfant{% plural %}enfants{% endblocktrans %}{% endfilter %}
         </dt>
       {% endif %}
       <dd>{{ enfance.type }}&nbsp;: {% for enfant in enfance.oeuvres.all %}{{ enfant.link }}&nbsp;; {% endfor %}</dd>
     {% endfor %}
-    {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements.all %}
+    {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements %}
     {% include "catalogue/notes_def.html" with notes=oeuvre.notes %}
   </dl>
 
