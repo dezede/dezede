@@ -1,5 +1,6 @@
 Django==1.4.1
 django-endless-pagination==1.1
+django-tables2==0.11.0
 django-reversion==1.6.3
 django-haystack==1.2.7
 whoosh==2.4.1

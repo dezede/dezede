@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     'haystack',
     'catalogue',
     'endless_pagination',
+    'django_tables2',
     'tinymce',
     'grappelli.dashboard',
     'grappelli',

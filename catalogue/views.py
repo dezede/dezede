@@ -4,6 +4,8 @@ from django.views.generic import ListView, DetailView
 from endless_pagination.views import AjaxListView
 from .models import *
 from .forms import *
+from .tables import IndividuTable
+from django_tables2 import RequestConfig
 
 
 class SourceDetailView(DetailView):
@@ -47,6 +49,13 @@ class LieuDetailView(DetailView):
 class IndividuListView(ListView):
     model = Individu
     context_object_name = 'individus'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndividuListView, self).get_context_data(**kwargs)
+        table = IndividuTable(context['individus'])
+        RequestConfig(self.request).configure(table)
+        context['table'] = table
+        return context
 
 
 class IndividuDetailView(DetailView):

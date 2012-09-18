@@ -1,40 +1,15 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% load extras %}
+{% load i18n extras static django_tables2 %}
 {% load url from future %}
 
 {% block title %}
   {% trans "individus"|capfirst %}
 {% endblock %}
 
+{% block head %}
+  <link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+{% endblock %}
+
 {% block body %}
-  {% for individu in individus %}
-    {% if forloop.first %}
-      <table class="liste">
-        <thead>
-          <th class="right">{% trans "prénoms"|capfirst %}</th>
-          <th>{% trans "nom"|capfirst %}</th>
-          <th>{% trans "pseudonyme"|capfirst %}</th>
-          <th>{% trans "naissance"|capfirst %}</th>
-          <th>{% trans "décès"|capfirst %}</th>
-          <th>{% trans "professions"|capfirst %}</th>
-        </thead>
-        <tbody>
-    {% endif %}
-    <tr onclick="document.location = '{{ individu.get_absolute_url }}';" title="{% trans "Ouvrir l'autorité" %}">
-      <td class="right">{{ individu.calc_prenoms|default:'?' }}</td>
-      <td>{{ individu.nom }}</td>
-      <td>{{ individu.pseudonyme }}</td>
-      <td>{{ individu.naissance }}</td>
-      <td>{{ individu.deces }}</td>
-      <td>
-        {{ individu.calc_professions }}</td>
-    </tr>
-    {% if forloop.last %}
-        </tbody>
-      </table>
-    {% endif %}
-  {% empty %}
-    {% trans "Aucun individu ne figure dans la base de données." %}
-  {% endfor %}
+  {% render_table table %}
 {% endblock %}
