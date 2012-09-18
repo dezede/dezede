@@ -69,17 +69,21 @@ class Lieu(CustomModel):
         return self.html(short=True)
 
     def evenements(self):  # TODO: gérer les fins d'événements.
-        return get_model('Evenement').objects.filter(ancrage_debut__lieu=self)
+        return get_model('catalogue',
+                         'Evenement').objects.filter(ancrage_debut__lieu=self)
 
     def individus_nes(self):
-        return get_model('Individu').objects \
+        return get_model('catalogue',
+                         'Individu').objects \
                                     .filter(ancrage_naissance__lieu=self)
 
     def individus_decedes(self):
-        return get_model('Individu').objects.filter(ancrage_deces__lieu=self)
+        return get_model('catalogue',
+                         'Individu').objects.filter(ancrage_deces__lieu=self)
 
     def oeuvres_composees(self):
-        return get_model('Oeuvre').objects \
+        return get_model('catalogue',
+                         'Oeuvre').objects \
                                   .filter(ancrage_composition__lieu=self)
 
     def html(self, tags=True, short=False):

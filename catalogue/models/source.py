@@ -63,7 +63,8 @@ class Source(CustomModel):
 
     def individus_auteurs(self):
         pk_list = self.auteurs.values_list('individus', flat=True)
-        return get_model('Individu').objects.in_bulk(pk_list).values()
+        return get_model('catalogue',
+                         'Individu').objects.in_bulk(pk_list).values()
 
     def calc_auteurs(self, tags=True):
         auteurs = self.auteurs.iterator()

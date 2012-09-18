@@ -288,7 +288,8 @@ class Oeuvre(CustomModel):
 
     def individus_auteurs(self):
         pk_list = self.auteurs.values_list('individus', flat=True)
-        return get_model('Individu').objects.in_bulk(pk_list).values()
+        return get_model('catalogue',
+                         'Individu').objects.in_bulk(pk_list).values()
 
     def enfants(self):
         pk_list = self.enfances_cibles.values_list('oeuvres', flat=True)
@@ -297,7 +298,8 @@ class Oeuvre(CustomModel):
     def evenements(self):
         pk_list = self.elements_de_programme.values_list('evenements',
                                                          flat=True)
-        return get_model('Evenement').objects.in_bulk(pk_list).values()
+        return get_model('catalogue',
+                         'Evenement').objects.in_bulk(pk_list).values()
 
     def calc_caracteristiques(self, limite=0, tags=True):
         if not self.pk:

@@ -157,7 +157,8 @@ class Evenement(CustomModel):
     link.allow_tags = True
 
     def sources_dict(self):
-        types = get_model('TypeDeSource').objects \
+        types = get_model('catalogue',
+                          'TypeDeSource').objects \
                                          .filter(sources__evenements=self)
         types = types.distinct()
         d = {}

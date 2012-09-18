@@ -151,16 +151,18 @@ class Individu(CustomModel):
         pk_list = self.auteurs.values_list('oeuvres', flat=True) \
                                                     .order_by('oeuvres__titre')
         if pk_list:
-            return get_model('Oeuvre').objects.in_bulk(tuple(pk_list)).values()
+            return get_model('catalogue',
+                             'Oeuvre').objects.in_bulk(tuple(pk_list)).values()
 
     def publications(self):
         pk_list = self.auteurs.values_list('sources', flat=True)
         if pk_list:
-            return get_model('Source').objects.in_bulk(tuple(pk_list)).values()
+            return get_model('catalogue',
+                             'Source').objects.in_bulk(tuple(pk_list)).values()
 
     def apparitions(self):
-        q = get_model('Evenement').objects.none()
-        els = get_model('ElementDeProgramme').objects.none()
+        q = get_model('catalogue', 'Evenement').objects.none()
+        els = get_model('catalogue', 'ElementDeProgramme').objects.none()
         for attribution in self.attributions_de_pupitre.iterator():
             els |= attribution.elements_de_programme.all()
         for el in els.distinct():
