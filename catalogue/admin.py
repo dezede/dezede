@@ -377,7 +377,7 @@ class SourceAdmin(VersionAdmin):
         'disp_contenu',)
     list_editable = ('type', 'date',)
     search_fields = ('nom', 'numero', 'type__nom',)
-    list_filter = ('type',)
+    list_filter = ('type', 'nom',)
     filter_horizontal = ('auteurs',)
     raw_id_fields = ('evenements', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {

@@ -34,18 +34,18 @@ class CustomIndexDashboard(Dashboard):
                             'catalogue.models.evenement.Evenement',
                             'catalogue.models.oeuvre.Oeuvre',
                             'catalogue.models.individu.Individu',
-                            'catalogue.models.lieu.Lieu',),
+                            'catalogue.models.espace_temps.Lieu',),
                 ),
                 modules.ModelList(
                     _('Saisie occasionnelle'),
                     column=1,
                     css_classes=('grp-collapse grp-closed',),
                     exclude=('django.contrib.*',
-                             'catalogue.models.Source',
-                             'catalogue.models.Evenement',
-                             'catalogue.models.Oeuvre',
-                             'catalogue.models.Individu',
-                             'catalogue.models.Lieu',),
+                             'catalogue.models.source.Source',
+                             'catalogue.models.evenement.Evenement',
+                             'catalogue.models.oeuvre.Oeuvre',
+                             'catalogue.models.individu.Individu',
+                             'catalogue.models.espace_temps.Lieu',),
                 )
             ]
         ))
