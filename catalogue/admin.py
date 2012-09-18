@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from .models import *
-from django.contrib.admin import site, TabularInline, StackedInline
+from django.contrib.admin import ModelAdmin, site, TabularInline, StackedInline
 from reversion import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
 
@@ -137,7 +137,7 @@ class ParenteDIndividusAdmin(VersionAdmin):
     }
 
 
-class IndividuAdmin(VersionAdmin):
+class IndividuAdmin(ModelAdmin):  # TODO: Réactiver le VersionAdmin ici.
     list_display = ('__unicode__', 'nom', 'nom_naissance', 'calc_prenoms',
         'pseudonyme', 'titre', 'ancrage_naissance', 'ancrage_deces',
         'calc_professions', 'link',)
