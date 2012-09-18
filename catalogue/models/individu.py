@@ -240,7 +240,7 @@ class Individu(CustomModel):
     calc_professions.admin_order_field = 'professions__nom'
 
     def html(self, tags=True, lon=False, prenoms_fav=True,
-             force_standard=False):
+             force_standard=False, show_prenoms=True):
         designation = self.designation
         titre = self.calc_titre(tags)
         prenoms = self.calc_prenoms_methode(prenoms_fav)
@@ -257,7 +257,7 @@ class Individu(CustomModel):
             if nom and not prenoms:
                 l.append(titre)
             l.append(main)
-            if prenoms:
+            if show_prenoms and prenoms:
                 if lon:
                     l.insert(max(len(l) - 1, 0), prenoms)
                 else:
@@ -285,6 +285,9 @@ class Individu(CustomModel):
         return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
+
+    def nom_seul(self, tags=False):
+        return self.html(tags, False, show_prenoms=False)
 
     def nom_complet(self, tags=True, prenoms_fav=False, force_standard=True):
         return self.html(tags, True, prenoms_fav, force_standard)
