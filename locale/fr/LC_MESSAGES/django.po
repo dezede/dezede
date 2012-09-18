@@ -119,7 +119,7 @@ msgstr ""
 #: catalogue/functions.py:64
 msgctxt "dernier infix pour plus de 2 éléments"
 msgid ", et "
-msgstr ""
+msgstr " et "
 
 #: catalogue/functions.py:81
 #, python-format
