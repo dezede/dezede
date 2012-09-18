@@ -1,0 +1,856 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-18 04:10+0200\n"
+"PO-Revision-Date: 2012-03-18 03:39\n"
+"Last-Translator: <bordage.bertrand@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Translated-Using: django-rosetta 0.6.5\n"
+
+#: admin.py:71 admin.py:158 admin.py:351 admin.py:388
+msgid "Champs courants"
+msgstr "Common fields"
+
+#: admin.py:74 admin.py:164 admin.py:293 admin.py:355 admin.py:392
+msgid "Fichiers"
+msgstr "Files"
+
+#: admin.py:78 admin.py:168 admin.py:297 admin.py:359 admin.py:396
+msgid "Champs avancés"
+msgstr "Advanced fields"
+
+#: admin.py:82 admin.py:172 admin.py:301 admin.py:363 admin.py:400
+msgid "Champs générés (Méthodes)"
+msgstr "Generated fields (Methods)"
+
+#: admin.py:285
+msgid "Titre"
+msgstr "Title"
+
+#: admin.py:289
+msgid "Autres champs courants"
+msgstr "Other common fields"
+
+#: models/common.py:16
+msgid "En minuscules."
+msgstr "In lowercase."
+
+#: models/common.py:17
+msgid ""
+"À remplir si le pluriel n'est pas un simple ajout de « s ». Exemple : « "
+"animal » devient « animaux » et non « animals »."
+msgstr ""
+
+#: models/common.py:20
+msgid "Ex. : « 6/6/1944 » pour le 6 juin 1944."
+msgstr ""
+
+#: models/common.py:106 models/common.py:156 models/espace_temps.py:16
+#: models/espace_temps.py:40 models/individu.py:36 models/personnel.py:11
+msgid "nom"
+msgstr "name"
+
+#: models/common.py:107 models/common.py:114 models/common.py:115
+msgid "document"
+msgid_plural "documents"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/common.py:109
+msgid "description"
+msgstr ""
+
+#: models/common.py:111 models/common.py:135 models/oeuvre.py:335
+msgid "auteurs"
+msgstr "authors"
+
+#: models/common.py:131
+msgid "légende"
+msgstr "caption"
+
+#: models/common.py:132
+msgid "image"
+msgstr "image"
+
+#: models/common.py:133
+msgid "commentaire"
+msgstr ""
+
+#: models/common.py:138 models/common.py:139
+#: templates/catalogue/source_detail.html:25
+msgid "illustration"
+msgid_plural "illustrations"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/common.py:157 models/espace_temps.py:17 models/evenement.py:38
+#: models/individu.py:37 models/oeuvre.py:21 models/oeuvre.py:54
+#: models/oeuvre.py:107 models/oeuvre.py:175 models/personnel.py:12
+#: models/source.py:17
+msgid "nom (au pluriel)"
+msgstr "name (plural)"
+
+#: models/common.py:159
+msgid "message"
+msgstr ""
+
+#: models/common.py:160
+msgid "Message à afficher dans la partie consultation."
+msgstr ""
+
+#: models/common.py:162
+msgid "publié"
+msgstr "published"
+
+#: models/common.py:166 models/common.py:167 models/espace_temps.py:51
+#: models/individu.py:132
+msgid "état"
+msgid_plural "états"
+msgstr[0] "status"
+msgstr[1] "statuses"
+
+#: models/espace_temps.py:22 models/espace_temps.py:23
+msgid "nature de lieu"
+msgid_plural "natures de lieu"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/espace_temps.py:42 templates/catalogue/individu_detail.html:80
+msgid "parent"
+msgstr ""
+
+#: models/espace_temps.py:44 templates/catalogue/lieu_detail.html:17
+msgid "nature"
+msgstr ""
+
+#: models/espace_temps.py:45 templates/catalogue/lieu_detail.html:23
+msgid "historique"
+msgstr "history"
+
+#: models/espace_temps.py:47 models/individu.py:128
+msgid "illustrations"
+msgstr ""
+
+#: models/espace_temps.py:49 models/individu.py:130
+msgid "documents"
+msgstr ""
+
+#: models/espace_temps.py:52 models/individu.py:133
+#: templates/catalogue/notes_def.html:3
+msgid "notes"
+msgstr ""
+
+#: models/espace_temps.py:65 models/evenement.py:156 models/individu.py:147
+#: models/oeuvre.py:286
+msgid "lien"
+msgstr "link"
+
+#: models/espace_temps.py:90
+#, python-format
+msgid "%(lieu)s"
+msgstr ""
+
+#: models/espace_temps.py:96
+#, python-format
+msgid "%(lieu_parent)s, %(lieu)s"
+msgstr ""
+
+#: models/espace_temps.py:99 models/evenement.py:108 models/evenement.py:182
+#: models/individu.py:286 models/oeuvre.py:230 models/oeuvre.py:404
+#: models/source.py:85
+msgid "rendu HTML"
+msgstr ""
+
+#: models/espace_temps.py:103 models/espace_temps.py:104
+#: models/espace_temps.py:117 models/espace_temps.py:195
+msgid "lieu"
+msgid_plural "lieux"
+msgstr[0] "place"
+msgstr[1] "places"
+
+#: models/espace_temps.py:118
+msgid "début"
+msgstr ""
+
+#: models/espace_temps.py:119
+msgid "fin"
+msgstr ""
+
+#: models/espace_temps.py:122 models/espace_temps.py:123
+msgid "saison"
+msgid_plural "saisons"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/espace_temps.py:134
+#, python-format
+msgctxt "saison : pattern d'affichage"
+msgid "%(lieu)s, %(debut)d–%(fin)d"
+msgstr ""
+
+#: models/espace_temps.py:138
+msgid "date (précise)"
+msgstr ""
+
+#: models/espace_temps.py:140
+msgid "heure (précise)"
+msgstr ""
+
+#: models/espace_temps.py:142
+msgid "lieu (précis)"
+msgstr ""
+
+#: models/espace_temps.py:143
+msgid "date (approximative)"
+msgstr ""
+
+#: models/espace_temps.py:144
+msgid "Ne remplir que si la date est imprécise."
+msgstr ""
+
+#: models/espace_temps.py:145
+msgid "heure (approximative)"
+msgstr ""
+
+#: models/espace_temps.py:146
+msgid "Ne remplir que si l’heure est imprécise."
+msgstr ""
+
+#: models/espace_temps.py:147
+msgid "lieu (approximatif)"
+msgstr ""
+
+#: models/espace_temps.py:148
+msgid "Ne remplir que si le lieu est imprécis."
+msgstr ""
+
+#: models/espace_temps.py:169
+msgid "date"
+msgstr "date"
+
+#: models/espace_temps.py:174
+msgid "H\\hi"
+msgstr "H:i"
+
+#: models/espace_temps.py:176
+msgid "heure"
+msgstr ""
+
+#: models/espace_temps.py:183
+#, python-format
+msgid "le %(date)s"
+msgstr "%(date)s"
+
+#: models/espace_temps.py:184
+#, python-format
+msgid "%(date)s"
+msgstr ""
+
+#: models/espace_temps.py:185
+#, python-format
+msgid "à %(heure)s"
+msgstr "%(heure)s"
+
+#: models/espace_temps.py:186
+#, python-format
+msgid "%(heure)s"
+msgstr ""
+
+#: models/espace_temps.py:204 models/espace_temps.py:206
+#: templates/catalogue/individu_detail.html:19
+msgid "ancrage spatio-temporel"
+msgid_plural "ancrages spatio-temporels"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/evenement.py:21 models/evenement.py:23
+msgid "attribution de pupitre"
+msgid_plural "attributions de pupitre"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/evenement.py:46 models/evenement.py:50
+msgid "caractéristique d’élément de programme"
+msgid_plural "caractéristiques d’élément de programme"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/evenement.py:62 models/oeuvre.py:414 models/oeuvre.py:415
+#: templates/catalogue/individu_detail.html:50
+msgid "œuvre"
+msgstr "work"
+
+#: models/evenement.py:66 models/evenement.py:83 models/oeuvre.py:256
+#: models/oeuvre.py:317
+msgid "caractéristiques"
+msgstr ""
+
+#: models/evenement.py:112 models/evenement.py:114
+msgid "élément de programme"
+msgid_plural "éléments de programme"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/evenement.py:174
+msgid "circonstance"
+msgstr ""
+
+#: models/evenement.py:177
+msgid "Relâche"
+msgstr "Respite"
+
+#: models/evenement.py:186 models/evenement.py:187
+#: templates/catalogue/evenement_detail.html:7
+#: templates/catalogue/evenement_list_def.html:5
+msgid "événement"
+msgid_plural "événements"
+msgstr[0] "event"
+msgstr[1] "events"
+
+#: models/functions.py:22
+msgid "er"
+msgstr "st"
+
+#: models/functions.py:38 models/functions.py:61
+msgctxt "infix d’une liste"
+msgid ", "
+msgstr ", "
+
+#: models/functions.py:64
+msgctxt "dernier infix pour 2 éléments"
+msgid " et "
+msgstr " and "
+
+#: models/functions.py:69
+msgctxt "dernier infix pour plus de 2 éléments"
+msgid ", et "
+msgstr ", and "
+
+#: models/functions.py:88
+#, python-format
+msgid "Exemple : « %s »"
+msgstr "Example : “ %s ”"
+
+#: models/functions.py:97
+#, python-format
+msgid "n° %s"
+msgstr "# %s"
+
+#: models/individu.py:17 models/individu.py:22 models/individu.py:23
+msgid "prénom"
+msgid_plural "prénoms"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/individu.py:18 models/individu.py:39
+msgid "classement"
+msgstr "ranking"
+
+#: models/individu.py:19
+msgid "favori"
+msgstr "favorite"
+
+#: models/individu.py:42 models/individu.py:45
+msgid "type de parenté d’individus"
+msgid_plural "types de parenté d’individus"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/individu.py:60
+msgid "type"
+msgstr ""
+
+#: models/individu.py:62
+msgid "individus cibles"
+msgstr ""
+
+#: models/individu.py:65 models/individu.py:67
+msgid "parenté d’individus"
+msgid_plural "parentés d’individus"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/individu.py:83
+msgid "particule du nom d’usage"
+msgstr ""
+
+#: models/individu.py:86
+msgid "nom d’usage"
+msgstr "last name"
+
+#: models/individu.py:87
+msgid "particule du nom de naissance"
+msgstr ""
+
+#: models/individu.py:89 templates/catalogue/individu_detail.html:38
+msgid "nom de naissance"
+msgstr "birth name"
+
+#: models/individu.py:91
+msgid "Ne remplir que s’il est différent du nom d’usage."
+msgstr ""
+
+#: models/individu.py:93 models/individu.py:194
+msgid "prénoms"
+msgstr "first names"
+
+#: models/individu.py:94
+msgid "pseudonyme"
+msgstr "pseudonym"
+
+# TODO: inverser prénoms et nom
+#: models/individu.py:96
+msgid "Standard (nom, prénoms et pseudonyme)"
+msgstr "Standard (first names, last name, and pseudonym)"
+
+#: models/individu.py:97
+msgid "Pseudonyme (uniquement)"
+msgstr "Pseudonym (only)"
+
+#: models/individu.py:98
+msgid "Nom de famille (uniquement)"
+msgstr "Last name (only)"
+
+#: models/individu.py:99
+msgid "Nom de naissance (standard)"
+msgstr "Birth Name (standard)"
+
+#: models/individu.py:100
+msgid "Prénom(s) favori(s) (uniquement)"
+msgstr "Favorite last name(s) (only)"
+
+#: models/individu.py:102
+msgid "désignation"
+msgstr ""
+
+#: models/individu.py:105 models/individu.py:204
+msgid "M."
+msgstr "Mr"
+
+#: models/individu.py:106
+msgid "Mlle"
+msgstr "Ms."
+
+#: models/individu.py:107
+msgid "Mme"
+msgstr "Mrs."
+
+#: models/individu.py:109
+msgctxt "individu"
+msgid "titre"
+msgstr ""
+
+#: models/individu.py:113
+msgid "ancrage de naissance"
+msgstr ""
+
+#: models/individu.py:116
+msgid "ancrage du décès"
+msgstr ""
+
+#: models/individu.py:119
+msgid "ancrage approximatif"
+msgstr ""
+
+#: models/individu.py:120
+msgid "Ne remplir que si on ne connaît aucune date précise."
+msgstr ""
+
+#: models/individu.py:122 models/individu.py:239
+msgid "professions"
+msgstr "occupations"
+
+#: models/individu.py:125 models/oeuvre.py:265
+msgid "parentés"
+msgstr ""
+
+#: models/individu.py:126 templates/catalogue/individu_detail.html:42
+msgid "biographie"
+msgstr "biography"
+
+#: models/individu.py:205
+msgid "M<sup>lle</sup>"
+msgstr "Ms."
+
+#: models/individu.py:206
+msgid "M<sup>me</sup>"
+msgstr "Mrs."
+
+#: models/individu.py:210
+msgid "Monsieur"
+msgstr "Mister"
+
+#: models/individu.py:211
+msgid "Mademoiselle"
+msgstr "Miss"
+
+#: models/individu.py:212
+msgid "Madame"
+msgstr "Missus"
+
+#: models/individu.py:267
+msgid "dite"
+msgstr "known by her stage name"
+
+#: models/individu.py:268
+msgid "dit"
+msgstr "known by his stage name"
+
+#: models/individu.py:269
+#, python-format
+msgid ", %(alias)s %(pseudonyme)s"
+msgstr ", %(alias)s %(pseudonyme)s"
+
+#: models/individu.py:293 models/individu.py:294
+msgid "individu"
+msgid_plural "individus"
+msgstr[0] "person"
+msgstr[1] "people"
+
+#: models/oeuvre.py:28 models/oeuvre.py:29
+msgid "genre d’œuvre"
+msgid_plural "genres d’œuvre"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/oeuvre.py:38
+msgid "genre"
+msgstr "genre"
+
+#: models/oeuvre.py:52
+msgid "tonalité"
+msgstr "tonality"
+
+#: models/oeuvre.py:58 models/oeuvre.py:61
+msgid "type de caractéristique d’œuvre"
+msgid_plural "types de caracteristique d’œuvre"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/oeuvre.py:78
+msgid "en trois actes"
+msgstr ""
+
+#: models/oeuvre.py:80
+msgid ""
+"Par exemple, on peut choisir de classerles découpages par nombre d’actes."
+msgstr ""
+
+#: models/oeuvre.py:84 models/oeuvre.py:86
+msgid "caractéristique d’œuvre"
+msgid_plural "caractéristiques d’œuvre"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/oeuvre.py:105
+msgid "Le nom d’une partie de la partition, instrumentale ou vocale."
+msgstr ""
+
+#: models/oeuvre.py:110
+msgid "La ou les profession(s) permettant d’assurer cette partie."
+msgstr ""
+
+#: models/oeuvre.py:117 models/oeuvre.py:118
+msgid "partie"
+msgid_plural "parties"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/oeuvre.py:137
+msgid "quantité minimale"
+msgstr ""
+
+#: models/oeuvre.py:138
+msgid "quantité maximale"
+msgstr ""
+
+#: models/oeuvre.py:141 models/oeuvre.py:142
+msgid "pupitre"
+msgid_plural "pupitres"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/oeuvre.py:159
+#, python-format
+msgid "%(min)s à %(max)s "
+msgstr "%(min)s to %(max)s "
+
+#: models/oeuvre.py:180 models/oeuvre.py:182
+msgid "type de parenté d’œuvres"
+msgid_plural "types de parentés d’œuvres"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/oeuvre.py:197
+msgid "œuvres cibles"
+msgstr ""
+
+#: models/oeuvre.py:200 models/oeuvre.py:202
+msgid "parenté d’œuvres"
+msgid_plural "parentés d’œuvres"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/oeuvre.py:234 models/oeuvre.py:235
+#: templates/catalogue/oeuvre_detail.html:25
+#: templates/catalogue/source_detail.html:39
+msgid "auteur"
+msgid_plural "auteurs"
+msgstr[0] "author"
+msgstr[1] "authors"
+
+#: models/oeuvre.py:245
+msgid "préfixe du titre"
+msgstr ""
+
+#: models/oeuvre.py:248
+msgid "coordination"
+msgstr ""
+
+#: models/oeuvre.py:250
+msgid "préfixe du titre secondaire"
+msgstr ""
+
+#: models/oeuvre.py:252
+msgid "titre secondaire"
+msgstr ""
+
+#: models/oeuvre.py:261
+msgid "ancrage spatio-temporel de composition"
+msgstr ""
+
+#: models/oeuvre.py:326
+msgid "pour "
+msgstr "for "
+
+#: models/personnel.py:14
+msgid "nom (au féminin)"
+msgstr ""
+
+#: models/personnel.py:15
+msgid "Ne préciser que s’il est différent du nom."
+msgstr ""
+
+#: models/personnel.py:17
+msgid "parente"
+msgstr ""
+
+#: models/personnel.py:21 models/personnel.py:22
+#: templates/catalogue/individu_detail.html:32
+msgid "profession"
+msgid_plural "professions"
+msgstr[0] "occupation"
+msgstr[1] "occupations"
+
+#: models/personnel.py:48
+msgid "euro"
+msgstr "pound sterling"
+
+#: models/personnel.py:50
+msgid "€"
+msgstr "£"
+
+#: models/personnel.py:53 models/personnel.py:54
+msgid "devise"
+msgid_plural "devises"
+msgstr[0] "currency"
+msgstr[1] "currencies"
+
+#: models/personnel.py:71 models/personnel.py:72
+msgid "engagement"
+msgid_plural "engagements"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/personnel.py:83 models/personnel.py:85
+msgid "type de personnel"
+msgid_plural "types de personnel"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/personnel.py:100 models/personnel.py:101
+msgid "personnel"
+msgid_plural "personnels"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/source.py:22 models/source.py:23
+msgid "type de source"
+msgid_plural "types de source"
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/source.py:36
+msgid "Journal de Rouen"
+msgstr ""
+
+#: models/source.py:41
+msgid "compte rendu"
+msgstr "report"
+
+#: models/source.py:79
+#, python-format
+msgid "du %(date)s"
+msgstr "of %(date)s"
+
+#: models/source.py:82
+#, python-format
+msgid "p. %s"
+msgstr ""
+
+#: models/source.py:90
+msgid "contenu"
+msgstr "content"
+
+#: models/source.py:94 models/source.py:95
+msgid "source"
+msgid_plural "sources"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/base.html:7
+msgid "musicologie, base de données"
+msgstr "musicology, database"
+
+#: templates/base.html:22
+msgid "Recherche"
+msgstr "Search"
+
+#: templates/base.html:23 templates/catalogue/lieu_list.html:6
+msgid "lieux"
+msgstr "places"
+
+#: templates/base.html:24 templates/catalogue/evenement_list.html:6
+msgid "événements"
+msgstr "events"
+
+#: templates/base.html:25 templates/catalogue/individu_list.html:6
+msgid "individus"
+msgstr "people"
+
+#: templates/base.html:27
+msgid "Administration"
+msgstr ""
+
+#: templates/base.html:42
+msgid ""
+"Votre navigateur ne peut pas lancer javascript. Attendez-vous à des défauts "
+"de fonctionnement."
+msgstr ""
+
+#: templates/catalogue/evenement_detail.html:28
+#: templates/catalogue/evenement_item.html:41
+#: templates/catalogue/individu_detail.html:102
+#: templates/catalogue/lieu_detail.html:73
+#: templates/catalogue/oeuvre_detail.html:50
+#: templates/catalogue/source_detail.html:52
+msgid "permalien"
+msgstr "permalink"
+
+#: templates/catalogue/evenement_detail.html:32
+#: templates/catalogue/individu_detail.html:106
+#: templates/catalogue/lieu_detail.html:77
+#: templates/catalogue/oeuvre_detail.html:54
+#: templates/catalogue/source_detail.html:56
+msgid "modifier"
+msgstr "modify"
+
+#: templates/catalogue/evenement_item.html:13
+msgid "programme"
+msgstr "program"
+
+#: templates/catalogue/evenement_list_page.html:9
+msgid "Aucun événement n'a été trouvée selon ces critères."
+msgstr "No event found according to these criteria."
+
+#: templates/catalogue/individu_detail.html:20
+msgid "Époque inconnue"
+msgstr ""
+
+#: templates/catalogue/individu_detail.html:23
+msgid "naissance"
+msgstr "birth"
+
+#: templates/catalogue/individu_detail.html:24
+#: templates/catalogue/individu_detail.html:28
+msgid "?"
+msgstr ""
+
+#: templates/catalogue/individu_detail.html:27
+msgid "décès"
+msgstr "death"
+
+#: templates/catalogue/individu_detail.html:33
+msgid "Profession inconnue"
+msgstr "Unknown occupation"
+
+#: templates/catalogue/individu_detail.html:60
+msgid "apparition"
+msgid_plural "apparitions"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/catalogue/individu_detail.html:70
+msgid "publication"
+msgid_plural "publications"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/catalogue/individu_detail.html:90
+#: templates/catalogue/oeuvre_detail.html:38
+msgid "enfant"
+msgid_plural "enfants"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/catalogue/lieu_detail.html:30
+#, python-format
+msgid "Lieu contenu dans %(parent)s"
+msgid_plural "Lieux contenus dans %(parent)s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/catalogue/lieu_detail.html:41
+msgid "Individu né ici"
+msgid_plural "Individus nés ici"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/catalogue/lieu_detail.html:51
+msgid "Individu décédé ici"
+msgid_plural "Individus décédés ici"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/catalogue/lieu_detail.html:61
+msgid "Œuvre composée ici"
+msgid_plural "Œuvres composées ici"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/catalogue/lieu_list.html:13
+msgid "Aucun lieu ne figure dans la base de données."
+msgstr ""
+
+#: templates/catalogue/oeuvre_detail.html:31
+msgid "composition"
+msgstr ""
+
+#: templates/endless/show_more.html:4
+msgid "more"
+msgstr ""
+
+#: templates/endless/show_more.html:5
+msgid "Chargement…"
+msgstr ""

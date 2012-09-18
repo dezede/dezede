@@ -1,0 +1,138 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-18 04:11+0200\n"
+"PO-Revision-Date: 2012-03-18 03:39\n"
+"Last-Translator: <bordage.bertrand@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Translated-Using: django-rosetta 0.6.5\n"
+
+#: dashboard.py:26
+msgid "Base de données"
+msgstr "Database"
+
+#: dashboard.py:31
+msgid "Saisie courante"
+msgstr "Everyday input"
+
+#: dashboard.py:40
+msgid "Saisie occasionnelle"
+msgstr "Casual input"
+
+#: dashboard.py:54
+msgid "Fichiers"
+msgstr "Files"
+
+#: dashboard.py:59
+msgid "Gestionnaire de fichiers bruts"
+msgstr "Raw file manager"
+
+#: dashboard.py:71
+msgid "Intégration à la base de données"
+msgstr ""
+
+#: dashboard.py:80
+msgid "Utilisateurs et groupes"
+msgstr "Users and groups"
+
+#: dashboard.py:87
+msgid "Traduction"
+msgstr "Translation"
+
+#: dashboard.py:100
+msgid "Support"
+msgstr ""
+
+#: dashboard.py:105
+msgid "Documentation de Django"
+msgstr "Django documentation"
+
+#: dashboard.py:110
+msgid "Documentation de Grappelli"
+msgstr "Grappelli Documentation"
+
+#: dashboard.py:115
+msgid "Grappelli sur Google-Code"
+msgstr "Grappelli on Google-Code"
+
+#: dashboard.py:123
+msgid "Actions récentes"
+msgstr "Recent actions"
+
+#: settings.py:45
+msgid "Français"
+msgstr "French"
+
+#: settings.py:46
+msgid "English"
+msgstr "English"
+
+#: templates/base.html:7
+msgid "musicologie, base de données"
+msgstr "musicology, database"
+
+#: templates/base.html:22 templates/search/search.html:8
+#: templates/search/search.html.py:12
+msgid "Recherche"
+msgstr "Search"
+
+#: templates/base.html:23
+msgid "lieux"
+msgstr "places"
+
+#: templates/base.html:24
+msgid "événements"
+msgstr "events"
+
+#: templates/base.html:25
+msgid "individus"
+msgstr "people"
+
+#: templates/base.html:27
+msgid "Administration"
+msgstr ""
+
+#: templates/base.html:42
+msgid ""
+"Votre navigateur ne peut pas lancer javascript. Attendez-vous à des défauts "
+"de fonctionnement."
+msgstr ""
+
+#: templates/search/search.html:25
+msgid "Filtres :"
+msgstr ""
+
+#: templates/search/search.html:41
+msgid "résultat"
+msgid_plural "résultats"
+msgstr[0] "result"
+msgstr[1] "results"
+
+#: templates/search/search.html:46
+msgid "Essayez aussi :"
+msgstr "Try also:"
+
+#: templates/search/search.html:51 templates/search/search.html.py:69
+msgid "« Précédents"
+msgstr "« Previous"
+
+#: templates/search/search.html:53 templates/search/search.html.py:71
+msgid "Suivants »"
+msgstr "Next »"
+
+#: templates/search/search.html:73
+msgid ""
+"Tapez par exemple « chanteuse », « Molière », « opéra » ou encore "
+"« théâtre »."
+msgstr ""
