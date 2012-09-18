@@ -20,7 +20,7 @@
     </ol>
   {% endif %}
 {% endfor %}
-{% for type, sources in evenement.sources_dict.items %}
+{% for type, sources in evenement.sources_dict.iteritems %}
   <br />
   <h3 style="text-align: center; font-style: italic;">
     {% if sources|length > 1 %}
@@ -33,10 +33,10 @@
     {% if forloop.first %}
       <div class="accordion">
     {% endif %}
-    <h4>{{ source.html }}</h4>
+    <h4>{{ source.html|safe }}</h4>
     <div class="source">
-      {{ source.contenu }}
-      {{ source.calc_auteurs }}<br />
+      {{ source.contenu|safe }}
+      {{ source.calc_auteurs|safe }}<br />
       <a href="{{ source.permalien }}">
         [{% trans "permalien"|capfirst %}]
       </a>
