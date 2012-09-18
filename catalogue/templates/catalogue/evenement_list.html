@@ -7,16 +7,7 @@
 {% endblock %}
 
 {% block head %}
-{{ block.super }}
-  <script>
-    $(function() {
-      $(".accordion").accordion({
-        autoHeight: false,
-        navigation: true,
-        collapsible: true,
-      });
-    });
-  </script>
+  {{ block.super }}
   <script src="{% static 'endless_pagination/js/endless.js' %}" type="text/javascript" charset="utf-8"></script>
   <script src="{% static 'endless_pagination/js/endless_on_scroll.js' %}" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
