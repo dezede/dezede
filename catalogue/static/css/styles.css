@@ -17,6 +17,8 @@ body
   font-size: 16px;
   background-color: #FFF9D9;
   box-shadow: 0px 5px 30px black;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
 nav
