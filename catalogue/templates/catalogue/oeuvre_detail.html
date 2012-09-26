@@ -27,10 +27,7 @@
         <dd>{{ oeuvre.calc_auteurs }}</dd>
       {% endif %}
     {% endwith %}
-    {% if oeuvre.ancrage_composition %}
-      <dt>{% trans "composition"|capfirst %}</dt>
-      <dd>{{ oeuvre.ancrage_composition }}</dd>
-    {% endif %}
+    {% attr_in_dl 'ancrage_composition' %}
 
     {% for enfance in oeuvre.enfances_cibles.all %}
       {% if forloop.first %}

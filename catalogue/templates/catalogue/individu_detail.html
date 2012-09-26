@@ -34,14 +34,8 @@
   </h4>
   <br />
   <dl>
-    {% if individu.nom_naissance %}
-      <dt>{% trans "nom de naissance"|capfirst %}</dt>
-      <dd>{{ individu.nom_naissance }}</dd>
-    {% endif %}
-    {% if individu.biographie %}
-      <dt>{% trans "biographie"|capfirst %}</dt>
-      <dd>{{ individu.biographie }}</dd>
-    {% endif %}
+    {% attr_in_dl 'nom_naissance' %}
+    {% attr_in_dl 'biographie' %}
 
     {% list_in_dl individu.oeuvres %}
     {% list_in_dl individu.apparitions %}

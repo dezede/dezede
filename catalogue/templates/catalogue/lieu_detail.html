@@ -19,10 +19,7 @@
   </h3>
   <br />
   <dl>
-    {% if lieu.historique %}
-      <dt>{% trans "historique"|capfirst %}</dt>
-      <dd>{{ lieu.historique }}</dd>
-    {% endif %}
+    {% attr_in_dl 'historique' %}
     {% list_in_dl lieu.enfants.all 'short_link' 'lieu contenu' 'lieux contenus' %}
     {% include "catalogue/evenement_list_def.html" with evenements=lieu.evenements %}
     {% list_in_dl lieu.individus_nes verbose_name='individu né ici' verbose_name_plural='individus nés ici' %}
