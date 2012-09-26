@@ -17,6 +17,7 @@
   <dl>
     {% list_in_dl partie.professions.all '__unicode__' %}
     {% list_in_dl partie.interpretes verbose_name='interprète' verbose_name_plural='interprètes' %}
+    {% attr_in_dl 'parente.link' 'partie parente' %}
     {% include "catalogue/notes_def.html" with notes=partie.notes %}
   </dl>
 

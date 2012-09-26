@@ -39,6 +39,27 @@ def frontend_admin(context, object=None):
     return render_to_string('routines/front-end_admin.html', c)
 
 
+@register.simple_tag(takes_context=True)
+def attr_in_dl(context, attr, verbose_name=None):
+    object = context['object']
+    value = object
+    for attr_part in attr.split('.'):
+        if value is None:
+            break
+        value = getattr(value, attr_part)
+        if callable(value):
+            value = value()
+    if not value:
+        return ''
+    if verbose_name is None:
+        verbose_name = object._meta.get_field(attr).verbose_name
+    c = {
+        'verbose_name': verbose_name,
+        'value': value,
+    }
+    return render_to_string('routines/attr_in_dl.html', c)
+
+
 @register.simple_tag
 def list_in_dl(object_list, property_name='link', verbose_name=None,
                                                   verbose_name_plural=None):

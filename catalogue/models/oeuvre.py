@@ -102,15 +102,15 @@ class CaracteristiqueDOeuvre(CustomModel):
 
 class Partie(CustomModel):
     nom = CharField(max_length=200,
-        help_text=_(u'''Le nom d’une partie de la partition, '''
-                    u'''instrumentale ou vocale.'''))
+        help_text=_(u'Le nom d’une partie de la partition, '
+                    u'instrumentale ou vocale.'))
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
     professions = ManyToManyField('Profession', related_name='parties',
-        help_text=_(u'''La ou les profession(s) permettant '''
-                    u'''d’assurer cette partie.'''))
-    parente = ForeignKey('Partie',
-        related_name='enfant', blank=True, null=True)
+        help_text=_(u'La ou les profession(s) permettant '
+                    u'd’assurer cette partie.'))
+    parente = ForeignKey('Partie', related_name='enfant', blank=True,
+                         null=True, verbose_name=_('parente'))
     classement = FloatField(default=1.0)
 
     class Meta:
@@ -120,7 +120,8 @@ class Partie(CustomModel):
         app_label = 'catalogue'
 
     def interpretes(self):
-        return get_model('catalogue', 'Individu').objects.filter(attributions_de_pupitre__pupitre__partie=self)
+        return get_model('catalogue', 'Individu').objects.filter(
+                                 attributions_de_pupitre__pupitre__partie=self)
 
     def pluriel(self):
         return calc_pluriel(self)

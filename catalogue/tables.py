@@ -23,7 +23,7 @@ class IndividuTable(Table):
 
 
 class PartieTable(Table):
-    nom = Column(verbose_name=_('nom'))
+    nom = LinkColumn('partie_pk', args=(A('pk'),), verbose_name=_('nom'))
 
     class Meta:
         attrs = {"class": "paleblue"}
