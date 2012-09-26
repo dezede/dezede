@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load extras admin %}
+{% load extras routines %}
 {% load url from future %}
 
 {% block title %}
@@ -43,56 +43,11 @@
       <dd>{{ individu.biographie }}</dd>
     {% endif %}
 
-    {% with individu.oeuvres as oeuvres %}
-      {% for oeuvre in oeuvres %}
-        {% if forloop.first %}
-          <dt>
-            {% filter capfirst %}{% blocktrans count counter=oeuvres|length %}œuvre{% plural %}œuvres{% endblocktrans %}{% endfilter %}
-          </dt>
-        {% endif %}
-        <dd>{{ oeuvre.link }}</dd>
-      {% endfor %}
-    {% endwith %}
-    {% with individu.apparitions as apparitions %}
-      {% for evenement in apparitions %}
-        {% if forloop.first %}
-          <dt>
-            {% filter capfirst %}{% blocktrans count counter=apparitions|length %}apparition{% plural %}apparitions{% endblocktrans %}{% endfilter %}
-          </dt>
-        {% endif %}
-        <dd>{{ evenement.link }}</dd>
-      {% endfor %}
-    {% endwith %}
-    {% with individu.publications as publications %}
-      {% for publication in publications %}
-        {% if forloop.first %}
-          <dt>
-            {% filter capfirst %}{% blocktrans count counter=apparitions|length %}publication{% plural %}publications{% endblocktrans %}{% endfilter %}
-          </dt>
-        {% endif %}
-        <dd>{{ publication.html }}</dd>
-      {% endfor %}
-    {% endwith %}
-    {% with individu.parents as parents %}
-      {% for parent in parents %}
-        {% if forloop.first %}
-          <dt>
-            {% filter capfirst %}{% blocktrans count counter=parents|length %}parent{% plural %}parents{% endblocktrans %}{% endfilter %}
-          </dt>
-        {% endif %}
-        <dd>{{ parent.link }}</dd>
-      {% endfor %}
-    {% endwith %}
-    {% with individu.enfants as enfants %}
-      {% for enfant in enfants %}
-        {% if forloop.first %}
-          <dt>
-            {% filter capfirst %}{% blocktrans count counter=enfants|length %}enfant{% plural %}enfants{% endblocktrans %}{% endfilter %}
-          </dt>
-        {% endif %}
-        <dd>{{ enfant.link }}</dd>
-      {% endfor %}
-    {% endwith %}
+    {% list_in_dl individu.oeuvres %}
+    {% list_in_dl individu.apparitions %}
+    {% list_in_dl individu.publications 'html' %}
+    {% list_in_dl individu.parents %}
+    {% list_in_dl individu.enfants %}
     {% include "catalogue/notes_def.html" with notes=individu.notes %}
   </dl>
 

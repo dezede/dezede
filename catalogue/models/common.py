@@ -8,6 +8,7 @@ from filebrowser.fields import FileBrowseField
 from ..templatetags.extras import replace
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from autoslug import AutoSlugField
+from .functions import href
 
 #
 # Définitions globales du fichier
@@ -145,6 +146,9 @@ class Illustration(CustomModel):
         if self.legende:
             return self.legende
         return unicode(self.image)
+
+    def link(self):
+        return href(self.image.url, unicode(self))
 
     @staticmethod
     def autocomplete_search_fields():

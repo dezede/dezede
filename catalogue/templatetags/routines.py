@@ -20,4 +20,20 @@ def frontend_admin(context, object):
         'admin_change': admin_change,
         'pk': pk,
     }
-    return render_to_string('catalogue/front-end_admin.html', c)
+    return render_to_string('routines/front-end_admin.html', c)
+
+
+@register.simple_tag
+def list_in_dl(object_list, property_name='link'):
+    if not object_list:
+        return ''
+    Model = object_list[0].__class__
+    verbose_name = Model._meta.verbose_name
+    verbose_name_plural = Model._meta.verbose_name_plural
+    display_list = [getattr(o, property_name)() for o in object_list]
+    c = {
+        'display_list': display_list,
+        'verbose_name': verbose_name,
+        'verbose_name_plural': verbose_name_plural,
+    }
+    return render_to_string('routines/list_in_dl.html', c)

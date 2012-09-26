@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load extras admin %}
+{% load extras routines %}
 {% load url from future %}
 
 {% block title %}
@@ -19,42 +19,10 @@
     {{ source.contenu }}
   </div>
   <dl>
-    {% with source.illustrations.all as illustrations %}
-      {% if illustrations %}
-        <dt>
-          {% filter capfirst %}{% blocktrans count counter=illustrations|length %}illustration{% plural %}illustrations{% endblocktrans %}{% endfilter %}
-        </dt>
-        {% for illustration in illustrations %}
-          <dd>
-            <a href="{{ illustration.image.url }}">
-              {{ illustration }}
-            </a>
-          </dd>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-    {% with source.individus_auteurs.all as auteurs %}
-      {% if auteurs %}
-        <dt>
-          {% filter capfirst %}{% blocktrans count counter=auteurs|length %}auteur{% plural %}auteurs{% endblocktrans %}{% endfilter %}
-        </dt>
-        <dd>
-          {{ source.calc_auteurs }}
-        </dd>
-      {% endif %}
-    {% endwith %}
-    {% with source.evenements.all as evenements %}
-      {% for evenement in evenements %}
-        {% if forloop.first %}
-          <dt>
-            {% filter capfirst %}{% blocktrans count counter=evenements|length %}événement{% plural %}événements{% endblocktrans %}{% endfilter %}
-          </dt>
-        {% endif %}
-        <dd>
-          {{ evenement.link }}
-        </dd>
-      {% endfor %}
-    {% endwith %}
+    {% list_in_dl source.illustrations.all %}
+    {% list_in_dl source.individus_auteurs %}
+    {% list_in_dl source.evenements.all %}
+
     {% include "catalogue/notes_def.html" with notes=source.notes %}
   </dl>
 

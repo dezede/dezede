@@ -1,0 +1,11 @@
+<dt>
+  {% if display_list|length == 1 %}
+    {{ verbose_name|capfirst }}
+  {% else %}
+    {{ verbose_name_plural|capfirst }}
+  {% endif %}
+</dt>
+
+{% for display in display_list %}
+  <dd>{{ display|safe }}</dd>
+{% endfor %}
