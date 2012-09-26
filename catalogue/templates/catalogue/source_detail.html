@@ -43,6 +43,18 @@
         </dd>
       {% endif %}
     {% endwith %}
+    {% with source.evenements.all as evenements %}
+      {% for evenement in evenements %}
+        {% if forloop.first %}
+          <dt>
+            {% filter capfirst %}{% blocktrans count counter=evenements|length %}événement{% plural %}événements{% endblocktrans %}{% endfilter %}
+          </dt>
+        {% endif %}
+        <dd>
+          {{ evenement.link }}
+        </dd>
+      {% endfor %}
+    {% endwith %}
     {% include "catalogue/notes_def.html" with notes=source.notes %}
   </dl>
 
