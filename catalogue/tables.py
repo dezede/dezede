@@ -3,7 +3,7 @@
 from django_tables2 import Table
 from django_tables2.columns import Column, LinkColumn
 from django_tables2.utils import A
-from .models import Individu
+from .models import Individu, Partie
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -17,5 +17,13 @@ class IndividuTable(Table):
     naissance = Column(verbose_name=_('naissance'),
                        order_by=('ancrage_naissance'))
     deces = Column(verbose_name=_(u'décès'), order_by=('ancrage_deces'))
+
+    class Meta:
+        attrs = {"class": "paleblue"}
+
+
+class PartieTable(Table):
+    nom = Column(verbose_name=_('nom'))
+
     class Meta:
         attrs = {"class": "paleblue"}

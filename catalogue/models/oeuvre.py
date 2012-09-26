@@ -119,8 +119,18 @@ class Partie(CustomModel):
         ordering = ['classement', 'nom']
         app_label = 'catalogue'
 
+    def interpretes(self):
+        return get_model('catalogue', 'Individu').objects.filter(attributions_de_pupitre__pupitre__partie=self)
+
     def pluriel(self):
         return calc_pluriel(self)
+
+    @permalink
+    def permalien(self):
+        return 'partie_pk', (self.pk,)
+
+    def link(self):
+        return href(self.permalien(), unicode(self))
 
     def __unicode__(self):
         return self.nom

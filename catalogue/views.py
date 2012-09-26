@@ -4,7 +4,7 @@ from django.views.generic import ListView, DetailView
 from endless_pagination.views import AjaxListView
 from .models import *
 from .forms import *
-from .tables import IndividuTable
+from .tables import IndividuTable, PartieTable
 from django_tables2 import RequestConfig
 
 
@@ -35,10 +35,26 @@ class EvenementDetailView(DetailView):
     model = Evenement
 
 
+class PartieDetailView(DetailView):
+    model = Partie
+
+
 class LieuListView(ListView):
     model = Lieu
     queryset = Lieu.objects.filter(parent=None)
     context_object_name = 'lieux'
+
+
+class PartieListView(ListView):
+    model = Partie
+    context_object_name = 'parties'
+
+    def get_context_data(self, **kwargs):
+        context = super(PartieListView, self).get_context_data(**kwargs)
+        table = PartieTable(context['parties'])
+        RequestConfig(self.request).configure(table)
+        context['table'] = table
+        return context
 
 
 class LieuDetailView(DetailView):

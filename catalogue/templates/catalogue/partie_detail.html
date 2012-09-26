@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load extras routines %}
+{% load url from future %}
+
+{% block title %}
+  {{ partie|capfirst }}
+{% endblock %}
+
+{% block body %}
+
+  {% include "catalogue/etat.html" with etat=partie.etat %}
+
+  <h2>
+    {{ partie|capfirst }}
+  </h2>
+  <dl>
+    {% list_in_dl partie.professions.all '__unicode__' %}
+    {% list_in_dl partie.interpretes verbose_name='interprète' verbose_name_plural='interprètes' %}
+    {% include "catalogue/notes_def.html" with notes=partie.notes %}
+  </dl>
+
+  <br />
+
+  {% frontend_admin %}
+{% endblock %}

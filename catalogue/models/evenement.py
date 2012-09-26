@@ -101,7 +101,7 @@ class ElementDeProgramme(CustomModel):
             individus = attribution.individus.iterator()
             out__append(str_list(individu.html(tags)
                                                     for individu in individus))
-            out__append(' [' + unicode(attribution.pupitre.partie) + ']')
+            out__append(' [' + attribution.pupitre.partie.link() + ']')
             if i < maxi:
                 out__append(', ')
         return ''.join(out)

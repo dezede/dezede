@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n extras static django_tables2 %}
+{% load url from future %}
+
+{% block title %}
+  {% trans "parties"|capfirst %}
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+{% endblock %}
+
+{% block body %}
+  {% render_table table %}
+{% endblock %}

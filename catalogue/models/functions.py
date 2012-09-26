@@ -3,6 +3,7 @@
 from django.template.defaultfilters import date
 from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
 from django.utils.functional import allow_lazy
+from django.utils.safestring import mark_safe
 
 
 def date_html(d, tags=True):
@@ -110,7 +111,7 @@ def cite(txt, tags=True):
     The pillars of the earth
     '''
     if tags:
-        return u'<cite>' + txt + '</cite>'
+        return mark_safe(u'<cite>' + txt + '</cite>')
     return txt
 
 
@@ -122,7 +123,7 @@ def href(url, txt, tags=True):
     It's a trap!
     '''
     if tags:
-        return u'<a href="%s">%s</a>' % (url, txt)
+        return mark_safe(u'<a href="%s">%s</a>' % (url, txt))
     return txt
 
 
@@ -134,7 +135,7 @@ def sc(txt, tags=True):
     I wish I could be in small caps
     '''
     if tags:
-        return u'<span class="sc">' + txt + '</span>'
+        return mark_safe(u'<span class="sc">' + txt + '</span>')
     return txt
 
 
@@ -146,7 +147,7 @@ def hlp(txt, title, tags=True):
     G minor
     '''
     if tags:
-        return u'<span title="%s">%s</span>' % (title, txt)
+        return mark_safe(u'<span title="%s">%s</span>' % (title, txt))
     return txt
 
 
@@ -158,5 +159,5 @@ def small(txt, tags=True):
     In a website I would be small...
     '''
     if tags:
-        return u'<small>' + txt + '</small>'
+        return mark_safe(u'<small>' + txt + '</small>')
     return txt
