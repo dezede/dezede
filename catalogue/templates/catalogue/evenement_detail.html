@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load extras %}
+{% load extras admin %}
 {% load url from future %}
 
 {% block title %}
@@ -24,12 +24,5 @@
     {% include "catalogue/evenement_item.html" %}
   </div>
 
-  <a href="{{ evenement.permalien }}">
-    [{% trans "permalien"|capfirst %}]
-  </a>
-  {% if user.is_staff %}
-    <a href="{% url 'admin:catalogue_evenement_change' evenement.pk %}">
-      [{% trans "modifier"|capfirst %}]
-    </a>
-  {% endif %}
+  {% frontend_admin evenement %}
 {% endblock %}

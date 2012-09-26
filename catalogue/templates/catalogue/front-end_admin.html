@@ -1,0 +1,11 @@
+{% load i18n %}
+{% load url from future %}
+
+<a href="{{ object.permalien }}">
+  [{% trans "permalien"|capfirst %}]
+</a>
+{% if has_change_permission %}
+  <a href="{% url admin_change pk %}">
+    [{% trans "modifier"|capfirst %}]
+  </a>
+{% endif %}

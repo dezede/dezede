@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load extras %}
+{% load extras admin %}
 {% load url from future %}
 
 {% block title %}
@@ -98,12 +98,5 @@
 
   <br />
 
-  <a href="{{ individu.permalien }}">
-    [{% trans "permalien"|capfirst %}]
-  </a>
-  {% if user.is_staff %}
-    <a href="{% url 'admin:catalogue_individu_change' individu.pk %}">
-      [{% trans "modifier"|capfirst %}]
-    </a>
-  {% endif %}
+  {% frontend_admin individu %}
 {% endblock %}
