@@ -1,3 +1,4 @@
+MySQL-python==1.2.3
 Django==1.4.1
 django-endless-pagination==1.1
 django-tables2==0.11.0
@@ -10,6 +11,8 @@ django-grappelli==2.4.1
 django-filebrowser==3.5.0
 pil==1.1.7
 johnny-cache==1.4
+python-memcached==1.48
 South==0.7.6
 django-debug-toolbar==0.9.4
 django-extensions==0.9
+BeautifulSoup==3.2.1

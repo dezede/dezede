@@ -9,11 +9,11 @@ cd django-rosetta
 git checkout e1c0fc1b18a9c406d60ea1103fadd25f21b1cef0
 python setup.py install
 cd ..
-rm -r django-rosetta
+rm -rf django-rosetta
 
 git clone git://github.com/jmacul2/django-rosetta-grappelli.git
 cd django-rosetta-grappelli
 git checkout 7e715c3de31b8db4396d331816d11c1bb5746020
 python setup.py install
 cd ..
-rm -r django-rosetta-grappelli
+rm -rf django-rosetta-grappelli
