@@ -11,11 +11,11 @@ register = Library()
 @register.filter
 def stripchars(text):
     return unicode(
-            BeautifulStoneSoup(
-                text,
-                convertEntities=BeautifulStoneSoup.HTML_ENTITIES
-                )
-            )
+        BeautifulStoneSoup(
+            text,
+            convertEntities=BeautifulStoneSoup.HTML_ENTITIES
+        )
+    )
 
 
 def multiwordReplace(text, wordDic):
@@ -30,15 +30,14 @@ def multiwordReplace(text, wordDic):
 @register.filter
 def replace(string):
     return multiwordReplace(
-            string,
-            {
-                u"'": u'’',        u' :': u'\u00A0:', u' ;': u'\u00A0;',
-                u' !': u'\u202F!', u' ?': u'\u202F?', u'« ': u'«\u00A0',
-                u' »': u'\u00A0»', u'“ ': u'“\u00A0', u' ”': u'\u00A0”',
-                u'&laquo; ': u'«\u00A0', u' &raquo;': u'\u00A0»',
-                u'&ldquo; ': u'“\u00A0', u' &rdquo;': u'\u00A0”',
-            }
-        )
+        string, {
+            u"'": u'’',        u' :': u'\u00A0:', u' ;': u'\u00A0;',
+            u' !': u'\u202F!', u' ?': u'\u202F?', u'« ': u'«\u00A0',
+            u' »': u'\u00A0»', u'“ ': u'“\u00A0', u' ”': u'\u00A0”',
+            u'&laquo; ': u'«\u00A0', u' &raquo;': u'\u00A0»',
+            u'&ldquo; ': u'“\u00A0', u' &rdquo;': u'\u00A0”',
+        }
+    )
 
 
 def remove_diacritics(string):

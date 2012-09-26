@@ -126,10 +126,10 @@ class Saison(CustomModel):
 
     def __unicode__(self):
         d = {
-                'lieu': unicode(self.lieu),
-                'debut': self.debut.year,
-                'fin': self.fin.year
-            }
+            'lieu': unicode(self.lieu),
+            'debut': self.debut.year,
+            'fin': self.fin.year
+        }
         return pgettext("saison : pattern d'affichage",
                         u'%(lieu)s, %(debut)d–%(fin)d') % d
 
@@ -150,17 +150,14 @@ class AncrageSpatioTemporel(CustomModel):
     def year(self):
         if self.date:
             return self.date.year
-        return None
 
     def month(self):
         if self.date:
             return self.date.month
-        return None
 
     def day(self):
         if self.date:
             return self.date.day
-        return None
 
     def calc_date(self, tags=True):
         if self.date:
@@ -214,7 +211,9 @@ class AncrageSpatioTemporel(CustomModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('lieu__nom__icontains', 'lieu__parent__nom__icontains',
-                'date__icontains', 'heure__icontains',
-                'lieu_approx__icontains', 'date_approx__icontains',
-                'heure_approx__icontains',)
+        return (
+            'lieu__nom__icontains', 'lieu__parent__nom__icontains',
+            'date__icontains', 'heure__icontains',
+            'lieu_approx__icontains', 'date_approx__icontains',
+            'heure_approx__icontains',
+        )

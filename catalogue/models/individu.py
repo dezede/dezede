@@ -303,5 +303,9 @@ class Individu(CustomModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('nom__icontains', 'nom_naissance__icontains',
-                'pseudonyme__icontains', 'prenoms__prenom__icontains',)
+        return (
+            'nom__icontains',
+            'nom_naissance__icontains',
+            'pseudonyme__icontains',
+            'prenoms__prenom__icontains',
+        )

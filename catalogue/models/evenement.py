@@ -15,7 +15,7 @@ from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
 class AttributionDePupitre(CustomModel):
     pupitre = ForeignKey('Pupitre', related_name='attributions_de_pupitre')
     individus = ManyToManyField('Individu',
-        related_name='attributions_de_pupitre')
+                                related_name='attributions_de_pupitre')
 
     class Meta:
         verbose_name = ungettext_lazy('attribution de pupitre',
@@ -121,10 +121,12 @@ class ElementDeProgramme(CustomModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('oeuvre__prefixe_titre__icontains', 'oeuvre__titre__icontains',
-                'oeuvre__prefixe_titre_secondaire__icontains',
-                'oeuvre__titre_secondaire__icontains',
-                'oeuvre__genre__nom__icontains',)
+        return (
+            'oeuvre__prefixe_titre__icontains', 'oeuvre__titre__icontains',
+            'oeuvre__prefixe_titre_secondaire__icontains',
+            'oeuvre__titre_secondaire__icontains',
+            'oeuvre__genre__nom__icontains',
+        )
 
 
 class Evenement(CustomModel):
@@ -196,11 +198,13 @@ class Evenement(CustomModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('circonstace__icontains',
-                'ancrage_debut__lieu__nom__icontains',
-                'ancrage_debut__lieu__parent__nom__icontains',
-                'ancrage_debut__date__icontains',
-                'ancrage_debut__heure__icontains',
-                'ancrage_debut__lieu_approx__icontains',
-                'ancrage_debut__date_approx__icontains',
-                'ancrage_debut__heure_approx__icontains',)
+        return (
+            'circonstace__icontains',
+            'ancrage_debut__lieu__nom__icontains',
+            'ancrage_debut__lieu__parent__nom__icontains',
+            'ancrage_debut__date__icontains',
+            'ancrage_debut__heure__icontains',
+            'ancrage_debut__lieu_approx__icontains',
+            'ancrage_debut__date_approx__icontains',
+            'ancrage_debut__heure_approx__icontains',
+        )
