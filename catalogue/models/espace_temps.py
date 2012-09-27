@@ -177,7 +177,7 @@ class AncrageSpatioTemporel(CustomModel):
         l = []
         date = self.calc_date(tags)
         heure = self.calc_heure()
-        pat_date = ugettext('le %(date)s') if self.date \
+        pat_date = ugettext('%(date)s') if self.date \
               else ugettext('%(date)s')
         pat_heure = ugettext(u'à %(heure)s') if self.heure \
                else ugettext('%(heure)s')

@@ -386,7 +386,7 @@ class SourceAdmin(VersionAdmin):
     readonly_fields = ('__unicode__', 'html',)
     fieldsets = (
         (_('Champs courants'), {
-            'fields': ('nom', 'numero', 'date', 'page', 'type', 'contenu',
+            'fields': ('nom', ('numero', 'page',), ('date', 'type',), 'contenu',
                        'auteurs', 'evenements',),
         }),
         (_('Fichiers'), {

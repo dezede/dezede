@@ -241,12 +241,25 @@ class Individu(CustomModel):
 
     def html(self, tags=True, lon=False, prenoms_fav=True,
              force_standard=False, show_prenoms=True):
+        def add_particule(particule, nom, prenoms, lon, correct_designation):
+            if lon:
+                if particule != u'' and particule[-1] not in ("'", u'’'):
+                    particule += ' '
+                nom = particule + nom
+            elif correct_designation:
+                prenoms += ' ' + particule
+            return nom, prenoms
+
         designation = self.designation
         titre = self.calc_titre(tags)
         prenoms = self.calc_prenoms_methode(prenoms_fav)
-        nom = self.particule_nom + self.nom
+        nom = self.nom
+        nom, prenoms = add_particule(self.particule_nom, nom, prenoms, lon,
+                                     designation != 'B')
         pseudonyme = self.pseudonyme
         nom_naissance = self.particule_nom_naissance + self.nom_naissance
+        nom_naissance, prenoms = add_particule(self.particule_nom_naissance,
+                               nom_naissance, prenoms, lon, designation == 'B')
 
         def main_style(s):
             return sc(s, tags)

@@ -12,7 +12,9 @@
   {% include "catalogue/etat.html" with etat=partie.etat %}
 
   <h2>
-    {{ partie|capfirst }}
+    <a href="{{ partie.get_absolute_url }}">
+      {{ partie|capfirst }}
+    </a>
   </h2>
   <dl>
     {% list_in_dl partie.professions.all '__unicode__' %}
