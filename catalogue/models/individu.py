@@ -246,7 +246,7 @@ class Individu(CustomModel):
                 if particule != u'' and particule[-1] not in ("'", u'’'):
                     particule += ' '
                 nom = particule + nom
-            elif correct_designation:
+            elif particule != u'' and correct_designation:
                 prenoms += ' ' + particule
             return nom, prenoms
 
