@@ -7,18 +7,6 @@
   {% trans "événement"|capfirst %}
 {% endblock %}
 
-{% block head %}
-  <script>
-    $(function() {
-      $(".accordion").accordion({
-        autoHeight: false,
-        navigation: true,
-        collapsible: true,
-      });
-    });
-  </script>
-{% endblock %}
-
 {% block body %}
   <div class="content_part">
     {% include "catalogue/evenement_item.html" %}
