@@ -110,6 +110,8 @@ def cite(txt, tags=True):
     >>> print cite('The pillars of the earth', False)
     The pillars of the earth
     '''
+    if not txt:
+        return ''
     if tags:
         return mark_safe(u'<cite>' + txt + '</cite>')
     return txt
@@ -122,6 +124,8 @@ def href(url, txt, tags=True):
     >>> print href('a.b/c', "It's a trap!", tags=False)
     It's a trap!
     '''
+    if not txt:
+        return ''
     if tags:
         return mark_safe(u'<a href="%s">%s</a>' % (url, txt))
     return txt
@@ -134,6 +138,8 @@ def sc(txt, tags=True):
     >>> print sc('I wish I could be in small caps', tags=False)
     I wish I could be in small caps
     '''
+    if not txt:
+        return ''
     if tags:
         return mark_safe(u'<span class="sc">' + txt + '</span>')
     return txt
@@ -146,6 +152,8 @@ def hlp(txt, title, tags=True):
     >>> print hlp('G minor', 'tonality', tags=False)
     G minor
     '''
+    if not txt:
+        return ''
     if tags:
         return mark_safe(u'<span title="%s">%s</span>' % (title, txt))
     return txt
@@ -158,6 +166,8 @@ def small(txt, tags=True):
     >>> print small('In a website I would be small...', tags=False)
     In a website I would be small...
     '''
+    if not txt:
+        return ''
     if tags:
         return mark_safe(u'<small>' + txt + '</small>')
     return txt
