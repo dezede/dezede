@@ -10,18 +10,28 @@
 <br />
 {{ evenement.html|safe }}
 <br />
-{% for element in evenement.programme.iterator %}
-  {% if forloop.first %}
-    <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
-    <ol>
-  {% endif %}
-  <li>
-    {{ element.html|safe }}
-  </li>
-  {% if forloop.last %}
-    </ol>
-  {% endif %}
-{% endfor %}
+{% with elements=evenement.programme.all %}
+  {% for element in elements %}
+    {% if forloop.first %}
+      <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
+      {% if elements.count > 1 %}
+        <ol>
+      {% endif %}
+    {% endif %}
+    {% if elements.count > 1 %}
+      <li>
+        {{ element.html|safe }}
+      </li>
+    {% else %}
+      {{ element.html|safe }}
+    {% endif %}
+    {% if forloop.last %}
+      {% if elements.count > 1 %}
+        </ol>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endwith %}
 {% for type, sources in evenement.sources_dict.iteritems %}
   <br />
   <h3 style="text-align: center; font-style: italic;">

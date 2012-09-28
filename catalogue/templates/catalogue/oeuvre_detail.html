@@ -17,16 +17,11 @@
   <h3>
     {{ oeuvre.description_html }}
   </h3>
+  <h3>
+    {{ oeuvre.calc_auteurs }}
+  </h3>
   <br />
   <dl>
-    {% with oeuvre.individus_auteurs as auteurs %}
-      {% if auteurs %}
-        <dt>
-          {% filter capfirst %}{% blocktrans count counter=auteurs|length %}auteur{% plural %}auteurs{% endblocktrans %}{% endfilter %}
-        </dt>
-        <dd>{{ oeuvre.calc_auteurs }}</dd>
-      {% endif %}
-    {% endwith %}
     {% attr_in_dl 'ancrage_composition' %}
 
     {% for enfance in oeuvre.enfances_cibles.all %}
