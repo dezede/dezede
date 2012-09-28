@@ -197,7 +197,6 @@ class Evenement(CustomModel):
     @staticmethod
     @receiver(post_save)
     def clear_all_cache(sender, **kwargs):
-        print 'test'
         for e in Evenement.objects.all():
             e.clear_cache()
 
