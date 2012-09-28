@@ -267,9 +267,9 @@ class Oeuvre(CustomModel):
         null=True, verbose_name=_(u'caractéristiques'))
     auteurs = ManyToManyField('Auteur', related_name='oeuvres', blank=True,
         null=True)
-    ancrage_composition = OneToOneField('AncrageSpatioTemporel',
-        related_name='oeuvres', blank=True, null=True,
-        verbose_name=_(u'ancrage spatio-temporel de composition'))
+    ancrage_creation = OneToOneField('AncrageSpatioTemporel',
+        related_name='oeuvres_creees', blank=True, null=True,
+        verbose_name=_(u'ancrage spatio-temporel de création'))
     pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
         null=True)
     parentes = ManyToManyField('ParenteDOeuvres', related_name='oeuvres',

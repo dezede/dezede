@@ -81,10 +81,10 @@ class Lieu(CustomModel):
         return get_model('catalogue',
                          'Individu').objects.filter(ancrage_deces__lieu=self)
 
-    def oeuvres_composees(self):
+    def oeuvres_creees(self):
         return get_model('catalogue',
                          'Oeuvre').objects \
-                                  .filter(ancrage_composition__lieu=self)
+                                  .filter(ancrage_creation__lieu=self)
 
     def html(self, tags=True, short=False):
         pat = ugettext('%(lieu)s')

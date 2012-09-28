@@ -267,16 +267,16 @@ class AuteurAdmin(VersionAdmin):
 
 class OeuvreAdmin(VersionAdmin):
     list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre',
-        'calc_caracteristiques', 'calc_auteurs', 'ancrage_composition',
+        'calc_caracteristiques', 'calc_auteurs', 'ancrage_creation',
         'link',)
     list_editable = ('genre',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
     filter_horizontal = ('auteurs', 'parentes',)
-    raw_id_fields = ('caracteristiques', 'ancrage_composition', 'pupitres',
+    raw_id_fields = ('caracteristiques', 'ancrage_creation', 'pupitres',
         'documents', 'illustrations',)
     autocomplete_lookup_fields = {
-        'fk': ['ancrage_composition'],
+        'fk': ['ancrage_creation'],
         'm2m': ['caracteristiques', 'pupitres', 'documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
@@ -288,7 +288,7 @@ class OeuvreAdmin(VersionAdmin):
         }),
         (_('Autres champs courants'), {
             'fields': ('genre', 'caracteristiques', 'auteurs',
-                        'ancrage_composition', 'pupitres', 'parentes',),
+                        'ancrage_creation', 'pupitres', 'parentes',),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),
