@@ -20,10 +20,11 @@
   <h3>
     {{ oeuvre.calc_auteurs }}
   </h3>
+  <h3>
+    {{ oeuvre.ancrage_creation }}
+  </h3>
   <br />
   <dl>
-    {% attr_in_dl 'ancrage_creation' %}
-
     {% for enfance in oeuvre.enfances_cibles.all %}
       {% if forloop.first %}
         <dt>
