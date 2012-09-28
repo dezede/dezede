@@ -10,6 +10,11 @@ from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from django.template.defaultfilters import capfirst
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
+import hashlib
+from django.utils.http import urlquote
+from django.core.cache import cache
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class AttributionDePupitre(CustomModel):
@@ -183,6 +188,19 @@ class Evenement(CustomModel):
         return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
+
+    def clear_cache(self):
+        args = hashlib.md5(str(self.pk))
+        cache_key = 'template.cache.%s.%s' % ('evenement', args.hexdigest())
+        cache.delete(cache_key)
+
+    @staticmethod
+    @receiver(post_save)
+    def clear_all_cache(sender, **kwargs):
+        print 'test'
+        for e in Evenement.objects.all():
+            e.clear_cache()
+
 
     class Meta:
         verbose_name = ungettext_lazy(u'événement', u'événements', 1)

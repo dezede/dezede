@@ -1,71 +1,73 @@
-{% load i18n %}
+{% load i18n cache %}
 
-{% include "catalogue/etat.html" with etat=evenement.etat %}
+{% cache 3600 evenement evenement.pk %}
+  {% include "catalogue/etat.html" with etat=evenement.etat %}
 
-<h2 style="text-align: center;">
-  <a href="{{ evenement.get_absolute_url }}">
-    {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
-  </a>
-</h2>
-<br />
-{{ evenement.html|safe }}
-<br />
-{% with elements=evenement.programme.all %}
-  {% for element in elements %}
-    {% if forloop.first %}
-      <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
-      {% if elements.count > 1 %}
-        <ol>
-      {% endif %}
-    {% endif %}
-    {% if elements.count > 1 %}
-      <li>
-        {{ element.html|safe }}
-      </li>
-    {% else %}
-      {{ element.html|safe }}
-    {% endif %}
-    {% if forloop.last %}
-      {% if elements.count > 1 %}
-        </ol>
-      {% endif %}
-    {% endif %}
-  {% endfor %}
-{% endwith %}
-{% for type, sources in evenement.sources_dict.iteritems %}
+  <h2 style="text-align: center;">
+    <a href="{{ evenement.get_absolute_url }}">
+      {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
+    </a>
+  </h2>
   <br />
-  <h3 style="text-align: center; font-style: italic;">
-    {% if sources|length > 1 %}
-      {{ type.pluriel|capfirst }}
-    {% else %}
-      {{ type|capfirst }}
-    {% endif %}
-  </h3>
-  {% for source in sources %}
-    {% if forloop.first %}
-      <div class="accordion">
-    {% endif %}
-    <h4>{{ source.html|safe }}</h4>
-    <div class="source">
-      {{ source.contenu|safe }}
-      {{ source.calc_auteurs|safe }}<br />
-      <a href="{{ source.permalien }}">
-        [{% trans "permalien"|capfirst %}]
-      </a>
-    </div>
-    {% if forloop.last %}
+  {{ evenement.html|safe }}
+  <br />
+  {% with elements=evenement.programme.all %}
+    {% for element in elements %}
+      {% if forloop.first %}
+        <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
+        {% if elements.count > 1 %}
+          <ol>
+        {% endif %}
+      {% endif %}
+      {% if elements.count > 1 %}
+        <li>
+          {{ element.html|safe }}
+        </li>
+      {% else %}
+        {{ element.html|safe }}
+      {% endif %}
+      {% if forloop.last %}
+        {% if elements.count > 1 %}
+          </ol>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endwith %}
+  {% for type, sources in evenement.sources_dict.iteritems %}
+    <br />
+    <h3 style="text-align: center; font-style: italic;">
+      {% if sources|length > 1 %}
+        {{ type.pluriel|capfirst }}
+      {% else %}
+        {{ type|capfirst }}
+      {% endif %}
+    </h3>
+    {% for source in sources %}
+      {% if forloop.first %}
+        <div class="accordion">
+      {% endif %}
+      <h4>{{ source.html|safe }}</h4>
+      <div class="source">
+        {{ source.contenu|safe }}
+        {{ source.calc_auteurs|safe }}<br />
+        <a href="{{ source.permalien }}">
+          [{% trans "permalien"|capfirst %}]
+        </a>
       </div>
-    {% endif %}
+      {% if forloop.last %}
+        </div>
+      {% endif %}
+    {% endfor %}
   {% endfor %}
-{% endfor %}
 
-<script>
-  $(function() {
-    $(".accordion").accordion({
-      autoHeight: false,
-      navigation: true,
-      collapsible: true,
-      active: false
+  <script>
+    $(function() {
+      $(".accordion").accordion({
+        autoHeight: false,
+        navigation: true,
+        collapsible: true,
+        active: false
+      });
     });
-  });
-</script>
+  </script>
+{% endcache %}
