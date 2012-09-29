@@ -104,6 +104,7 @@ class Lieu(CustomModel):
         verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
         ordering = ['nom']
         app_label = 'catalogue'
+        unique_together = ('nom', 'parent',)
 
     def __unicode__(self):
         return strip_tags(self.html(False))
