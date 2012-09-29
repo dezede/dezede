@@ -14,6 +14,13 @@ class AncrageSpatioTemporelInline(TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
+class OeuvreLieesInline(StackedInline):
+    verbose_name = Oeuvre._meta.verbose_name
+    verbose_name_plural = Oeuvre._meta.verbose_name_plural
+    model = Oeuvre.parentes.through
+    classes = ('grp-collapse grp-closed',)
+
+
 class AuteurInline(TabularInline):
     verbose_name = Auteur._meta.verbose_name
     verbose_name_plural = Auteur._meta.verbose_name_plural
@@ -249,6 +256,7 @@ class ParenteDOeuvresAdmin(VersionAdmin):
     autocomplete_lookup_fields = {
         'm2m': ['oeuvres_cibles'],
     }
+    inlines = (OeuvreLieesInline,)
 
 
 class AuteurAdmin(VersionAdmin):
@@ -274,12 +282,12 @@ class OeuvreAdmin(VersionAdmin):
     list_editable = ('genre',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
-    filter_horizontal = ('auteurs', 'parentes',)
-    raw_id_fields = ('caracteristiques', 'ancrage_creation', 'pupitres',
-        'documents', 'illustrations',)
+    raw_id_fields = ('caracteristiques', 'auteurs', 'ancrage_creation',
+        'pupitres', 'parentes', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
         'fk': ['ancrage_creation'],
-        'm2m': ['caracteristiques', 'pupitres', 'documents', 'illustrations'],
+        'm2m': ['caracteristiques', 'auteurs', 'pupitres', 'parentes',
+                'documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
     inlines = (ElementDeProgrammeInline,)
