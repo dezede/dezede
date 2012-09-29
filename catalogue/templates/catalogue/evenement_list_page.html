@@ -1,6 +1,7 @@
 {% load i18n extras endless %}
 
 {% paginate 5 evenements %}
+{% show_pages %}
 {% for evenement in evenements %}
   <div class="content_part">
     {% include 'catalogue/evenement_item.html' %}
@@ -9,3 +10,8 @@
   {% trans "Aucun événement n'a été trouvée selon ces critères." %}
 {% endfor %}
 {% show_more %}
+
+{% show_current_number as page_number %}
+<script type="text/javascript">
+  window.history.pushState({},"", "{{ request.path }}{% if page_number > 1 %}?page={{ page_number }}{% endif %}");
+</script>
