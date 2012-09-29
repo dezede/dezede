@@ -236,8 +236,10 @@ class PupitreAdmin(VersionAdmin):
 
 
 class TypeDeParenteDOeuvresAdmin(VersionAdmin):
-    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'classement',)
-    list_editable = ('nom', 'nom_pluriel', 'classement',)
+    list_display = ('__unicode__', 'nom', 'nom_relatif', 'nom_relatif_pluriel',
+                    'classement',)
+    list_editable = ('nom', 'nom_relatif', 'nom_relatif_pluriel',
+                     'classement',)
 
 
 class ParenteDOeuvresAdmin(VersionAdmin):

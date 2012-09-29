@@ -40,15 +40,16 @@ def replace_in_kwargs(obj, **kwargs):
     return kwargs
 
 
-def calc_pluriel(obj):
+def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
     '''
     Renvoie le nom au pluriel d'obj, si possible.
     Sinon renvoie unicode(obj).
     '''
     try:
-        if obj.nom_pluriel:
-            return obj.nom_pluriel
-        return obj.nom + 's'
+        pluriel = getattr(obj, attr_base + attr_suffix)
+        if pluriel:
+            return pluriel
+        return getattr(obj, attr_base) + 's'
     except:
         return unicode(obj)
 

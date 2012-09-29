@@ -182,9 +182,9 @@ class Pupitre(CustomModel):
 
 class TypeDeParenteDOeuvres(CustomModel):
     nom = CharField(max_length=100, help_text=LOWER_MSG, unique=True)
-    nom_pluriel = CharField(max_length=130, blank=True,
-        verbose_name=_('nom (au pluriel)'),
-        help_text=PLURAL_MSG)
+    nom_relatif = CharField(max_length=100, help_text=LOWER_MSG, unique=True)
+    nom_relatif_pluriel = CharField(max_length=130, blank=True,
+        verbose_name=_('nom relatif (au pluriel)'), help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
 
     class Meta:
@@ -195,8 +195,8 @@ class TypeDeParenteDOeuvres(CustomModel):
         ordering = ['classement']
         app_label = 'catalogue'
 
-    def pluriel(self):
-        return calc_pluriel(self)
+    def relatif_pluriel(self):
+        return calc_pluriel(self, attr_base='nom_relatif')
 
     def __unicode__(self):
         return self.nom
@@ -293,7 +293,8 @@ class Oeuvre(CustomModel):
         return ('oeuvre_pk', [self.pk])
 
     def link(self):
-        return self.html(True, False, True, True)
+        return self.html(tags=True, auteurs=False, titre=True, descr=True,
+                         parentes=True)
     link.short_description = _('lien')
     link.allow_tags = True
 
@@ -353,7 +354,7 @@ class Oeuvre(CustomModel):
         out = ''
         ps = self.parentes.iterator()
         for p in ps:
-            l = (oe.html(tags, False, True, False)
+            l = (oe.html(tags, auteurs=False, titre=True, descr=False)
                                          for oe in p.oeuvres_cibles.iterator())
             out += str_list_w_last(l)
             out += ', '
@@ -365,11 +366,11 @@ class Oeuvre(CustomModel):
         return str_list(l, infix='')
 
     def html(self, tags=True, auteurs=True, titre=True,
-             descr=True, caps_genre=False):
+             descr=True, caps_genre=False, parentes=True):
         # FIXME: Nettoyer cette horreur
         out = ''
         auts = self.calc_auteurs(tags)
-        parentes = self.calc_parentes(tags)
+        pars = self.calc_parentes(tags)
         titre_complet = self.titre_complet()
         genre = self.genre
         caracteristiques = self.calc_caracteristiques(tags=tags)
@@ -377,7 +378,8 @@ class Oeuvre(CustomModel):
         if auteurs and auts:
             out += auts + ', '
         if titre:
-            out += parentes
+            if parentes:
+                out += pars
             if titre_complet:
                 out += href(url, cite(titre_complet, tags), tags)
                 if descr and genre:
@@ -416,10 +418,16 @@ class Oeuvre(CustomModel):
     html.allow_tags = True
 
     def titre_html(self, tags=True):
-        return self.html(tags, False, True, False)
+        return self.html(tags, auteurs=False, titre=True, descr=False,
+                         parentes=False)
+
+    def titre_descr_html(self, tags=True):
+        return self.html(tags, auteurs=False, titre=True, descr=True,
+                         parentes=False)
 
     def description_html(self, tags=True):
-        return self.html(tags, False, False, True, caps_genre=True)
+        return self.html(tags, auteurs=False, titre=False, descr=True,
+                         caps_genre=True)
 
     class Meta:
         verbose_name = ungettext_lazy(u'œuvre', u'œuvres', 1)

@@ -21,17 +21,32 @@
     {{ oeuvre.calc_auteurs }}
   </h3>
   <h3>
-    {{ oeuvre.ancrage_creation }}
+    {{ oeuvre.ancrage_creation|default:'' }}
   </h3>
+  {% for parente in oeuvre.parentes.all %}
+    <h4>
+      {{ parente.type|capfirst }}&nbsp;:
+      {% for parent in parente.oeuvres_cibles.all %}
+        {{ parent.titre_descr_html }}{% if not forloop.last and forloop.counter != 1 %}&nbsp;;{% endif %}
+      {% endfor %}
+    </h4>
+  {% endfor %}
   <br />
   <dl>
     {% for enfance in oeuvre.enfances_cibles.all %}
       {% if forloop.first %}
         <dt>
-          {% filter capfirst %}{% blocktrans count counter=oeuvre.enfants|length %}enfant{% plural %}enfants{% endblocktrans %}{% endfilter %}
+          {% filter capfirst %}{% blocktrans count counter=oeuvre.enfants.count %}enfant{% plural %}enfants{% endblocktrans %}{% endfilter %}
         </dt>
       {% endif %}
-      <dd>{{ enfance.type }}&nbsp;: {% for enfant in enfance.oeuvres.all %}{{ enfant.link }}&nbsp;; {% endfor %}</dd>
+      <dd>
+        {% with enfants=enfance.oeuvres.all %}
+          {% if enfants.count == 1 %}{{ enfance.type.nom_relatif|capfirst }}{% else %}{{ enfance.type.relatif_pluriel|capfirst }}{% endif %}&nbsp;:
+          {% for enfant in enfants %}
+            {{ enfant.titre_descr_html }}{% if not forloop.last and forloop.counter != 1 %}&nbsp;;{% endif %}
+          {% endfor %}
+        {% endwith %}
+      </dd>
     {% endfor %}
     {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements %}
     {% include "catalogue/notes_def.html" with notes=oeuvre.notes %}

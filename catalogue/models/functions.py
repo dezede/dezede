@@ -72,15 +72,6 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
     return str_list(l, infix, last_infix)
 
 
-def calc_pluriel(obj):
-    try:
-        if obj.nom_pluriel:
-            return obj.nom_pluriel
-        return obj.nom + 's'
-    except:
-        return unicode(obj)
-
-
 def ex(txt):
     u'''
     >>> print ex('30/01/1989')

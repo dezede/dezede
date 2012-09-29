@@ -210,7 +210,7 @@ class Evenement(CustomModel):
     def __unicode__(self):
         out = self.ancrage_debut.calc_date(False)
         out = capfirst(out)
-        out += u'\u00A0; ' + self.html(False)
+        out += u'\u00A0> ' + self.html(False)
         return strip_tags(out)
 
     @staticmethod
