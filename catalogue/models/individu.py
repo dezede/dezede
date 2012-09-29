@@ -227,9 +227,19 @@ class Individu(CustomModel):
             return unicode(self.ancrage_naissance)
         return ''
 
+    def naissance_html(self, tags=True):
+        if self.ancrage_naissance:
+            return self.ancrage_naissance.short_html(tags)
+        return ''
+
     def deces(self):
         if self.ancrage_deces:
             return unicode(self.ancrage_deces)
+        return ''
+
+    def deces_html(self, tags=True):
+        if self.ancrage_deces:
+            return self.ancrage_deces.short_html(tags)
         return ''
 
     def ancrage(self):

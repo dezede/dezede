@@ -21,11 +21,11 @@
       </span>
     {% else %}
       <span title="{% trans "naissance" %}">
-        {{ individu.naissance|default:_('?') }}
+        {{ individu.naissance_html|default:_('?') }}
       </span>
       &ndash;
       <span title="{% trans "décès" %}">
-        {{ individu.deces|default:_('?') }}
+        {{ individu.deces_html|default:_('?') }}
       </span>
     {% endif %}
   </h3>

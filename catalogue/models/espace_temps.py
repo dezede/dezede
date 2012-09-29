@@ -160,9 +160,9 @@ class AncrageSpatioTemporel(CustomModel):
         if self.date:
             return self.date.day
 
-    def calc_date(self, tags=True):
+    def calc_date(self, tags=True, short=False):
         if self.date:
-            return date_html(self.date, tags)
+            return date_html(self.date, tags, short)
         return self.date_approx
     calc_date.short_description = _('date')
     calc_date.admin_order_field = 'date'
@@ -174,9 +174,9 @@ class AncrageSpatioTemporel(CustomModel):
     calc_heure.short_description = _('heure')
     calc_heure.admin_order_field = 'heure'
 
-    def calc_moment(self, tags=True):
+    def calc_moment(self, tags=True, short=False):
         l = []
-        date = self.calc_date(tags)
+        date = self.calc_date(tags, short)
         heure = self.calc_heure()
         pat_date = ugettext('%(date)s') if self.date \
               else ugettext('%(date)s')
@@ -186,17 +186,21 @@ class AncrageSpatioTemporel(CustomModel):
         l.append(pat_heure % {'heure': heure})
         return str_list(l, ' ')
 
-    def calc_lieu(self, tags=True):
+    def calc_lieu(self, tags=True, short=False):
         if self.lieu:
-            return self.lieu.html(tags)
+            return self.lieu.html(tags, short)
         return self.lieu_approx
     calc_lieu.short_description = _('lieu')
     calc_lieu.admin_order_field = 'lieu'
     calc_lieu.allow_tags = True
 
-    def html(self, tags=True):
-        out = str_list((self.calc_lieu(tags), self.calc_moment(tags)))
+    def html(self, tags=True, short=False):
+        out = str_list((self.calc_lieu(tags, short),
+                        self.calc_moment(tags, short)))
         return capfirst(out)
+
+    def short_html(self, tags=True):
+        return self.html(tags, short=True)
 
     class Meta:
         verbose_name = ungettext_lazy('ancrage spatio-temporel',

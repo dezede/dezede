@@ -4,9 +4,10 @@ from django.template.defaultfilters import date
 from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
 from django.utils.functional import allow_lazy
 from django.utils.safestring import mark_safe
+from django.utils.formats import get_format
 
 
-def date_html(d, tags=True):
+def date_html(d, tags=True, short=False):
     u'''
     Rendu HTML d’une date.
 
@@ -16,6 +17,8 @@ def date_html(d, tags=True):
     >>> print date_html(date(1828, 1, 1), False)
     mardi 1er janvier 1828
     '''
+    if short:
+        return date(d, get_format('SHORT_DATE_FORMAT'))
     pre = date(d, 'l')
     post = date(d, 'F Y')
     j = date(d, 'j')
