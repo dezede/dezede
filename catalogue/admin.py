@@ -40,28 +40,32 @@ class EvenementInline(TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class DocumentAdmin(VersionAdmin):
+class CustomAdmin(VersionAdmin):
+    list_per_page = 20
+
+
+class DocumentAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'document',)
     list_editable = ('nom', 'document',)
     search_fields = ('nom',)
 
 
-class IllustrationAdmin(VersionAdmin):
+class IllustrationAdmin(CustomAdmin):
     list_display = ('__unicode__', 'legende', 'image',)
     list_editable = ('legende', 'image',)
     search_fields = ('legende',)
 
 
-class EtatAdmin(VersionAdmin):
+class EtatAdmin(CustomAdmin):
     pass
 
 
-class NatureDeLieuAdmin(VersionAdmin):
+class NatureDeLieuAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
 
 
-class LieuAdmin(VersionAdmin):
+class LieuAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom', 'parent__nom',)
@@ -93,7 +97,7 @@ class LieuAdmin(VersionAdmin):
     )
 
 
-class SaisonAdmin(VersionAdmin):
+class SaisonAdmin(CustomAdmin):
     list_display = ('__unicode__', 'lieu', 'debut', 'fin',)
     raw_id_fields = ('lieu',)
     autocomplete_lookup_fields = {
@@ -101,7 +105,7 @@ class SaisonAdmin(VersionAdmin):
     }
 
 
-class ProfessionAdmin(VersionAdmin):
+class ProfessionAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel', 'nom_feminin',
         'parente',)
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parente',)
@@ -111,7 +115,7 @@ class ProfessionAdmin(VersionAdmin):
     }
 
 
-class AncrageSpatioTemporelAdmin(VersionAdmin):
+class AncrageSpatioTemporelAdmin(CustomAdmin):
     list_display = ('__unicode__', 'calc_date', 'calc_heure', 'calc_lieu',)
     search_fields = ('lieu__nom', 'lieu_approx', 'date_approx',
         'lieu__parent__nom', 'heure_approx',)
@@ -127,16 +131,16 @@ class AncrageSpatioTemporelAdmin(VersionAdmin):
     )
 
 
-class PrenomAdmin(VersionAdmin):
+class PrenomAdmin(CustomAdmin):
     list_display = ('__unicode__', 'prenom', 'classement', 'favori',)
     list_editable = ('prenom', 'classement', 'favori',)
 
 
-class TypeDeParenteDIndividusAdmin(VersionAdmin):
+class TypeDeParenteDIndividusAdmin(CustomAdmin):
     list_display = ('nom', 'nom_pluriel', 'classement',)
 
 
-class ParenteDIndividusAdmin(VersionAdmin):
+class ParenteDIndividusAdmin(CustomAdmin):
     list_display = ('__unicode__',)
     raw_id_fields = ('individus_cibles',)
     autocomplete_lookup_fields = {
@@ -144,7 +148,8 @@ class ParenteDIndividusAdmin(VersionAdmin):
     }
 
 
-class IndividuAdmin(ModelAdmin):  # TODO: Réactiver le VersionAdmin ici.
+class IndividuAdmin(ModelAdmin):  # TODO: Réactiver le CustomAdmin ici.
+    list_per_page = 20
     list_display = ('__unicode__', 'nom', 'nom_naissance', 'calc_prenoms',
         'pseudonyme', 'titre', 'ancrage_naissance', 'ancrage_deces',
         'calc_professions', 'link',)
@@ -183,12 +188,12 @@ class IndividuAdmin(ModelAdmin):  # TODO: Réactiver le VersionAdmin ici.
     )
 
 
-class DeviseAdmin(VersionAdmin):
+class DeviseAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'symbole',)
     list_editable = ('nom', 'symbole',)
 
 
-class EngagementAdmin(VersionAdmin):
+class EngagementAdmin(CustomAdmin):
     list_display = ('__unicode__', 'profession', 'salaire', 'devise',)
     raw_id_fields = ('profession', 'individus',)
     autocomplete_lookup_fields = {
@@ -197,15 +202,15 @@ class EngagementAdmin(VersionAdmin):
     }
 
 
-class TypeDePersonnelAdmin(VersionAdmin):
+class TypeDePersonnelAdmin(CustomAdmin):
     list_display = ('nom',)
 
 
-class PersonnelAdmin(VersionAdmin):
+class PersonnelAdmin(CustomAdmin):
     filter_horizontal = ('engagements',)
 
 
-class GenreDOeuvreAdmin(VersionAdmin):
+class GenreDOeuvreAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
     raw_id_fields = ('parents',)
@@ -214,17 +219,17 @@ class GenreDOeuvreAdmin(VersionAdmin):
     }
 
 
-class TypeDeCaracteristiqueDOeuvreAdmin(VersionAdmin):
+class TypeDeCaracteristiqueDOeuvreAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
 
 
-class CaracteristiqueDOeuvreAdmin(VersionAdmin):
+class CaracteristiqueDOeuvreAdmin(CustomAdmin):
     list_display = ('__unicode__', 'type', 'valeur', 'classement',)
     list_editable = ('type', 'valeur', 'classement',)
 
 
-class PartieAdmin(VersionAdmin):
+class PartieAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'parente', 'classement',)
     list_editable = ('nom', 'parente', 'classement',)
     raw_id_fields = ('professions',)
@@ -233,7 +238,7 @@ class PartieAdmin(VersionAdmin):
     }
 
 
-class PupitreAdmin(VersionAdmin):
+class PupitreAdmin(CustomAdmin):
     list_display = ('__unicode__', 'partie', 'quantite_min', 'quantite_max',)
     list_editable = ('partie', 'quantite_min', 'quantite_max',)
     raw_id_fields = ('partie',)
@@ -242,14 +247,14 @@ class PupitreAdmin(VersionAdmin):
     }
 
 
-class TypeDeParenteDOeuvresAdmin(VersionAdmin):
+class TypeDeParenteDOeuvresAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_relatif', 'nom_relatif_pluriel',
                     'classement',)
     list_editable = ('nom', 'nom_relatif', 'nom_relatif_pluriel',
                      'classement',)
 
 
-class ParenteDOeuvresAdmin(VersionAdmin):
+class ParenteDOeuvresAdmin(CustomAdmin):
     list_display = ('__unicode__', 'type',)
     list_editable = ('type',)
     raw_id_fields = ('oeuvres_cibles',)
@@ -259,7 +264,7 @@ class ParenteDOeuvresAdmin(VersionAdmin):
 #    inlines = (OeuvreLieesInline,)
 
 
-class AuteurAdmin(VersionAdmin):
+class AuteurAdmin(CustomAdmin):
     list_display = ('__unicode__', 'profession',)
     list_editable = ('profession',)
     filter_horizontal = ('individus',)
@@ -275,7 +280,7 @@ class AuteurAdmin(VersionAdmin):
             individu.professions.add(obj.profession)
 
 
-class OeuvreAdmin(VersionAdmin):
+class OeuvreAdmin(CustomAdmin):
     list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre',
         'calc_caracteristiques', 'calc_auteurs', 'ancrage_creation',
         'link',)
@@ -315,7 +320,7 @@ class OeuvreAdmin(VersionAdmin):
     )
 
 
-class AttributionDePupitreAdmin(VersionAdmin):
+class AttributionDePupitreAdmin(CustomAdmin):
     list_display = ('__unicode__', 'pupitre',)
     list_editable = ('pupitre',)
     raw_id_fields = ('pupitre', 'individus',)
@@ -325,12 +330,12 @@ class AttributionDePupitreAdmin(VersionAdmin):
     }
 
 
-class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin):
+class CaracteristiqueDElementDeProgrammeAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
 
 
-class ElementDeProgrammeAdmin(VersionAdmin):
+class ElementDeProgrammeAdmin(CustomAdmin):
     list_display = ('oeuvre', 'autre', 'classement', 'html',)
     list_editable = ('classement',)
     filter_horizontal = ('caracteristiques', 'distribution', 'personnels',
@@ -345,7 +350,7 @@ class ElementDeProgrammeAdmin(VersionAdmin):
 #    inlines = (EvenementInline,)
 
 
-class EvenementAdmin(VersionAdmin):
+class EvenementAdmin(CustomAdmin):
     list_display = ('__unicode__', 'relache', 'circonstance', 'link',)
     list_editable = ('relache', 'circonstance',)
     search_fields = ('circonstance',)
@@ -377,12 +382,12 @@ class EvenementAdmin(VersionAdmin):
     )
 
 
-class TypeDeSourceAdmin(VersionAdmin):
+class TypeDeSourceAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
 
 
-class SourceAdmin(VersionAdmin):
+class SourceAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'numero', 'date', 'page', 'type',)
         #'disp_contenu',)
     list_editable = ('type', 'date',)
