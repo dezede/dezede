@@ -48,7 +48,7 @@ class Lieu(CustomModel):
     documents = ManyToManyField('Document', related_name='lieux', blank=True,
         null=True, verbose_name=_('documents'))
     etat = ForeignKey('Etat', related_name='lieux', null=True, blank=True,
-        verbose_name=_('état'))
+        verbose_name=_(u'état'))
     notes = HTMLField(_('notes'), blank=True)
     slug = AutoSlugField(populate_from='nom')
 
