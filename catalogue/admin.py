@@ -14,10 +14,34 @@ class AncrageSpatioTemporelInline(TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
+class OeuvreMereInline(TabularInline):
+    verbose_name = ParenteDOeuvres._meta.get_field_by_name('mere')[0].verbose_name
+    verbose_name_plural = _(u'œuvres mères')
+    model = ParenteDOeuvres
+    fk_name = 'fille'
+    raw_id_fields = ('mere',)
+    autocomplete_lookup_fields = {
+        'fk': ['mere'],
+    }
+    classes = ('grp-collapse grp-closed',)
+
+
+class OeuvreFilleInline(TabularInline):
+    verbose_name = ParenteDOeuvres._meta.get_field_by_name('fille')[0].verbose_name
+    verbose_name_plural = _(u'œuvres filles')
+    model = ParenteDOeuvres
+    fk_name = 'mere'
+    raw_id_fields = ('fille',)
+    autocomplete_lookup_fields = {
+        'fk': ['fille'],
+    }
+    classes = ('grp-collapse grp-closed',)
+
+
 class OeuvreLieesInline(StackedInline):
     verbose_name = Oeuvre._meta.verbose_name
     verbose_name_plural = Oeuvre._meta.verbose_name_plural
-    model = Oeuvre.parentes.through
+    model = Oeuvre
     classes = ('grp-collapse grp-closed',)
 
 
@@ -255,13 +279,12 @@ class TypeDeParenteDOeuvresAdmin(CustomAdmin):
 
 
 class ParenteDOeuvresAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'type',)
-    list_editable = ('type',)
-    raw_id_fields = ('oeuvres_cibles',)
+    list_display = ('__unicode__', 'fille', 'type', 'mere',)
+    list_editable = ('type', 'fille', 'mere',)
+    raw_id_fields = ('fille', 'mere',)
     autocomplete_lookup_fields = {
-        'm2m': ['oeuvres_cibles'],
+        'fk': ['fille', 'mere'],
     }
-#    inlines = (OeuvreLieesInline,)
 
 
 class AuteurAdmin(CustomAdmin):
@@ -287,14 +310,15 @@ class OeuvreAdmin(CustomAdmin):
     list_editable = ('genre',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
-    raw_id_fields = ('caracteristiques', 'auteurs', 'ancrage_creation',
-        'pupitres', 'parentes', 'documents', 'illustrations',)
+    raw_id_fields = ('genre', 'caracteristiques', 'auteurs',
+                 'ancrage_creation', 'pupitres', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
-        'fk': ['ancrage_creation'],
-        'm2m': ['caracteristiques', 'auteurs', 'pupitres', 'parentes',
+        'fk': ['genre', 'ancrage_creation'],
+        'm2m': ['caracteristiques', 'auteurs', 'pupitres',
                 'documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
+    inlines = (OeuvreMereInline, OeuvreFilleInline,)
 #    inlines = (ElementDeProgrammeInline,)
     fieldsets = (
         (_('Titre'), {
@@ -303,7 +327,7 @@ class OeuvreAdmin(CustomAdmin):
         }),
         (_('Autres champs courants'), {
             'fields': ('genre', 'caracteristiques', 'auteurs',
-                        'ancrage_creation', 'pupitres', 'parentes',),
+                        'ancrage_creation', 'pupitres',),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),

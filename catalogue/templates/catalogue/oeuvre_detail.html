@@ -23,24 +23,12 @@
   <h3>
     {{ oeuvre.ancrage_creation|default:'' }}
   </h3>
-  {% for parente in oeuvre.parentes.all %}
-    <h4>
-      {{ parente.type|capfirst }}&nbsp;:
-      {% for parent in parente.oeuvres_cibles.all %}
-        {{ parent.titre_descr_html }}{% if not forloop.last and forloop.counter != 1 %}&nbsp;;{% endif %}
-      {% endfor %}
-    </h4>
-  {% endfor %}
-  {% for enfance in oeuvre.enfances_cibles.all %}
-    <h4>
-      {% with enfants=enfance.oeuvres.all %}
-        {% if enfants.count == 1 %}{{ enfance.type.nom_relatif|capfirst }}{% else %}{{ enfance.type.relatif_pluriel|capfirst }}{% endif %}&nbsp;:
-        {% for enfant in enfants %}
-          {{ enfant.titre_descr_html }}{% if not forloop.last and forloop.counter != 1 %}&nbsp;;{% endif %}
-        {% endfor %}
-      {% endwith %}
-    </h4>
-  {% endfor %}
+  <h4>
+    {{ oeuvre.meres_html }}
+  </h4>
+  <h4>
+    {{ oeuvre.filles_html }}
+  </h4>
   <br />
   <dl>
     {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements %}

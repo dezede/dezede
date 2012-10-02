@@ -14,6 +14,7 @@ from django.contrib.humanize.templatetags.humanize import apnumber
 from autoslug import AutoSlugField
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
 from django.core.exceptions import ValidationError
+from collections import defaultdict
 
 
 class GenreDOeuvre(CustomModel):
@@ -200,13 +201,15 @@ class TypeDeParenteDOeuvres(CustomModel):
         return calc_pluriel(self, attr_base='nom_relatif')
 
     def __unicode__(self):
-        return self.nom
+        return '->%s-> <-%s<-' % (self.nom, self.nom_relatif)
 
 
 class ParenteDOeuvres(CustomModel):
     type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes')
-    oeuvres_cibles = ManyToManyField('Oeuvre',
-        related_name='enfances_cibles', verbose_name=_(u'œuvres cibles'))
+    mere = ForeignKey('Oeuvre', related_name='parentes_filles',
+                      verbose_name=_(u'œuvre mère'))
+    fille = ForeignKey('Oeuvre', related_name='parentes_meres',
+                       verbose_name=_(u'œuvre fille'))
 
     class Meta:
         verbose_name = ungettext_lazy(u'parenté d’œuvres',
@@ -215,15 +218,23 @@ class ParenteDOeuvres(CustomModel):
                                              u'parentés d’œuvres', 2)
         ordering = ['type']
         app_label = 'catalogue'
+        unique_together = ('type', 'mere', 'fille',)
 
     def __unicode__(self):
-        out = self.type.nom
-        cs = self.oeuvres_cibles
-        if cs.count() > 1:
-            out = self.type.pluriel()
-        out += ' : '
-        out += str_list((unicode(c) for c in cs.iterator()), ' ; ')
-        return out
+        return u'%s %s %s' % (self.fille, self.type.nom, self.mere)
+
+    def clean(self):
+        try:
+            type, mere, fille = self.type, self.mere, self.fille
+            if mere == fille:
+                raise ValidationError(_(u'Les deux champs de parenté ne '
+                                        u'peuvent pas être identiques'))
+            if ParenteDOeuvres.objects.filter(mere=fille,
+                                              fille=mere).exists():
+                raise ValidationError(_(u'Une relation entre ces deux objets '
+                                        u'existe déjà dans le sens inverse'))
+        except Oeuvre.DoesNotExist:
+            pass
 
 
 class Auteur(CustomModel):
@@ -273,8 +284,8 @@ class Oeuvre(CustomModel):
         verbose_name=_(u'ancrage spatio-temporel de création'))
     pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
         null=True)
-    parentes = ManyToManyField('ParenteDOeuvres', related_name='oeuvres',
-        blank=True, null=True, verbose_name=_(u'parentés'))
+    filles = ManyToManyField('Oeuvre', through='ParenteDOeuvres',
+                             related_name='meres', symmetrical=False)
     lilypond = TextField(blank=True, verbose_name='LilyPond')
     description = HTMLField(blank=True)
     documents = ManyToManyField('Document', related_name='oeuvres', blank=True,
@@ -303,10 +314,6 @@ class Oeuvre(CustomModel):
         pk_list = self.auteurs.values_list('individus', flat=True)
         return get_model('catalogue',
                          'Individu').objects.in_bulk(pk_list).values()
-
-    def enfants(self):
-        pk_list = self.enfances_cibles.values_list('oeuvres', flat=True)
-        return Oeuvre.objects.in_bulk(pk_list).values()
 
     def evenements(self):
         pk_list = self.elements_de_programme.values_list('evenements',
@@ -350,16 +357,30 @@ class Oeuvre(CustomModel):
     calc_auteurs.admin_order_field = 'auteurs__individus'
 
     def calc_parentes(self, tags=True):
-        if not self.pk:
-            return ''
-        out = ''
-        ps = self.parentes.iterator()
-        for p in ps:
-            l = (oe.html(tags, auteurs=False, titre=True, descr=False)
-                                         for oe in p.oeuvres_cibles.iterator())
-            out += str_list_w_last(l)
-            out += ', '
-        return out
+        return str_list_w_last(unicode(m) for m in self.meres.all())
+
+    def __parentes_html(self, tags=True, relation='mere',
+                        type_select='type__nom'):
+        d = defaultdict(list)
+        parentes = getattr(self, 'parentes_' + relation + 's')
+        for k, v in parentes.values_list(type_select, relation):
+            d[k].append(v)
+        l = []
+        for type, id_list in d.items():
+            oeuvres = Oeuvre.objects.in_bulk(id_list).values()
+            pre = capfirst(type) + ' : '
+            l.append(pre + ', '.join(o.titre_descr_html(tags)
+                                                             for o in oeuvres))
+        infix = '<br />' if tags else '\n'
+        return infix.join(l)
+
+    def meres_html(self, tags=True):
+        return self.__parentes_html(tags, relation='mere',
+                                    type_select='type__nom')
+
+    def filles_html(self, tags=True):
+        return self.__parentes_html(tags, relation='fille',
+                                    type_select='type__nom_relatif')
 
     def titre_complet(self):
         l = (self.prefixe_titre, self.titre, self.coordination,
@@ -379,8 +400,8 @@ class Oeuvre(CustomModel):
         if auteurs and auts:
             out += auts + ', '
         if titre:
-            if parentes:
-                out += pars
+            if parentes and pars:
+                out += pars + ', '
             if titre_complet:
                 out += href(url, cite(titre_complet, tags), tags)
                 if descr and genre:
@@ -430,12 +451,6 @@ class Oeuvre(CustomModel):
         return self.html(tags, auteurs=False, titre=False, descr=True,
                          caps_genre=True)
 
-    def clean(self):
-        for p in self.parentes.all():
-            if self in p.oeuvres.all():
-                raise ValidationError(_(u'L’œuvre a une parenté avec '
-                                        u'elle-même.'))
-
     class Meta:
         verbose_name = ungettext_lazy(u'œuvre', u'œuvres', 1)
         verbose_name_plural = ungettext_lazy(u'œuvre', u'œuvres', 2)
@@ -443,7 +458,8 @@ class Oeuvre(CustomModel):
         app_label = 'catalogue'
 
     def __unicode__(self):
-        return strip_tags(self.titre_html(False))
+        return strip_tags(self.titre_html(False))  # strip_tags car on autorise
+                         # les rédacteurs à mettre des tags dans les CharFields
 
     @staticmethod
     def autocomplete_search_fields():
