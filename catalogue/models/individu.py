@@ -11,6 +11,7 @@ from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
 from autoslug import AutoSlugField
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
+from django.core.exceptions import ValidationError
 
 
 class Prenom(CustomModel):
@@ -322,6 +323,11 @@ class Individu(CustomModel):
     def nom_complet(self, tags=True, prenoms_fav=False, force_standard=True):
         return self.html(tags, True, prenoms_fav, force_standard)
 
+    def clean(self):
+        for p in self.parentes.all():
+            if self in p.individus_cibles.all():
+                raise ValidationError(_(u'L’individu a une parenté avec '
+                                        u'lui-même.'))
     class Meta:
         verbose_name = ungettext_lazy('individu', 'individus', 1)
         verbose_name_plural = ungettext_lazy('individu', 'individus', 2)

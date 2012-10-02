@@ -10,6 +10,7 @@ from django.utils.translation import pgettext, ungettext_lazy, \
 from django.template.defaultfilters import time, capfirst
 from autoslug import AutoSlugField
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, DATE_MSG, calc_pluriel
+from django.core.exceptions import ValidationError
 
 
 class NatureDeLieu(CustomModel):
@@ -98,6 +99,10 @@ class Lieu(CustomModel):
         return href(url, out, tags)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
+
+    def clean(self):
+        if self.parent == self:
+            raise ValidationError(_(u'Le lieu a une parenté avec lui-même.'))
 
     class Meta:
         verbose_name = ungettext_lazy('lieu', 'lieux', 1)
