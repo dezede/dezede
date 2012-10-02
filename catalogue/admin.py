@@ -73,7 +73,7 @@ class LieuAdmin(VersionAdmin):
     }
     filter_horizontal = ('illustrations', 'documents',)
     readonly_fields = ('__unicode__', 'html', 'link',)
-    inlines = (AncrageSpatioTemporelInline,)
+#    inlines = (AncrageSpatioTemporelInline,)
     fieldsets = (
         (_('Champs courants'), {
             'fields': ('nom', 'parent', 'nature', 'historique',),
@@ -160,7 +160,7 @@ class IndividuAdmin(ModelAdmin):  # TODO: Réactiver le VersionAdmin ici.
                 'documents'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
-    inlines = (AuteurInline,)
+#    inlines = (AuteurInline,)
     fieldsets = (
         (_('Champs courants'), {
             'fields': (('particule_nom', 'nom',), ('prenoms', 'pseudonyme',),
@@ -256,7 +256,7 @@ class ParenteDOeuvresAdmin(VersionAdmin):
     autocomplete_lookup_fields = {
         'm2m': ['oeuvres_cibles'],
     }
-    inlines = (OeuvreLieesInline,)
+#    inlines = (OeuvreLieesInline,)
 
 
 class AuteurAdmin(VersionAdmin):
@@ -290,7 +290,7 @@ class OeuvreAdmin(VersionAdmin):
                 'documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
-    inlines = (ElementDeProgrammeInline,)
+#    inlines = (ElementDeProgrammeInline,)
     fieldsets = (
         (_('Titre'), {
             'fields': (('prefixe_titre', 'titre',), 'coordination',
@@ -342,7 +342,7 @@ class ElementDeProgrammeAdmin(VersionAdmin):
         'm2m': ['caracteristiques', 'distribution', 'personnels',
                 'documents', 'illustrations'],
     }
-    inlines = (EvenementInline,)
+#    inlines = (EvenementInline,)
 
 
 class EvenementAdmin(VersionAdmin):
@@ -383,8 +383,8 @@ class TypeDeSourceAdmin(VersionAdmin):
 
 
 class SourceAdmin(VersionAdmin):
-    list_display = ('__unicode__', 'nom', 'numero', 'date', 'page', 'type',
-        'disp_contenu',)
+    list_display = ('__unicode__', 'nom', 'numero', 'date', 'page', 'type',)
+        #'disp_contenu',)
     list_editable = ('type', 'date',)
     search_fields = ('nom', 'numero', 'type__nom',)
     list_filter = ('type', 'nom',)
