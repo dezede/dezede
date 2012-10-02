@@ -201,7 +201,7 @@ class TypeDeParenteDOeuvres(CustomModel):
         return calc_pluriel(self, attr_base='nom_relatif')
 
     def __unicode__(self):
-        return '->%s-> <-%s<-' % (self.nom, self.nom_relatif)
+        return '-> %s -> <- %s <-' % (self.nom, self.nom_relatif)
 
 
 class ParenteDOeuvres(CustomModel):
