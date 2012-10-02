@@ -13,6 +13,7 @@ from django.template.defaultfilters import capfirst
 from django.contrib.humanize.templatetags.humanize import apnumber
 from autoslug import AutoSlugField
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
+from django.core.exceptions import ValidationError
 
 
 class GenreDOeuvre(CustomModel):
@@ -428,6 +429,12 @@ class Oeuvre(CustomModel):
     def description_html(self, tags=True):
         return self.html(tags, auteurs=False, titre=False, descr=True,
                          caps_genre=True)
+
+    def clean(self):
+        for p in self.parentes.all():
+            if self in p.oeuvres.all():
+                raise ValidationError(_(u'L’œuvre a une parenté avec '
+                                        u'elle-même.'))
 
     class Meta:
         verbose_name = ungettext_lazy(u'œuvre', u'œuvres', 1)
