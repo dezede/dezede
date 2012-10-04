@@ -451,6 +451,11 @@ class Oeuvre(CustomModel):
         return self.html(tags, auteurs=False, titre=False, descr=True,
                          genre_caps=True)
 
+    def clean(self):
+        if not self.titre and not self.genre:
+            raise ValidationError(_(u'Un titre ou un genre doit au moins '
+                                    u'être précisé.'))
+
     class Meta:
         verbose_name = ungettext_lazy(u'œuvre', u'œuvres', 1)
         verbose_name_plural = ungettext_lazy(u'œuvre', u'œuvres', 2)
