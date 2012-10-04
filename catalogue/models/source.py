@@ -90,6 +90,21 @@ class Source(CustomModel):
     disp_contenu.short_description = _('contenu')
     disp_contenu.allow_tags = True
 
+    def has_events(self):
+        return self.evenements.exists()
+    has_events.short_description = _(u'Événements')
+    has_events.boolean = True
+
+    def has_program(self):
+        events = self.evenements
+        if events.exists():
+            for e in events.all():
+                if e.programme.exists():
+                    return True
+        return False
+    has_program.short_description = _('Programme')
+    has_program.boolean = True
+
     class Meta:
         verbose_name = ungettext_lazy('source', 'sources', 1)
         verbose_name_plural = ungettext_lazy('source', 'sources', 2)

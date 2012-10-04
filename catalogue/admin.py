@@ -412,7 +412,8 @@ class TypeDeSourceAdmin(CustomAdmin):
 
 
 class SourceAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'numero', 'date', 'page', 'type',)
+    list_display = ('__unicode__', 'has_events', 'has_program', 'nom',
+                    'numero', 'date', 'page', 'type',)
         #'disp_contenu',)
     list_editable = ('type', 'date',)
     search_fields = ('nom', 'numero', 'type__nom',)
@@ -425,8 +426,8 @@ class SourceAdmin(CustomAdmin):
     readonly_fields = ('__unicode__', 'html',)
     fieldsets = (
         (_('Champs courants'), {
-            'fields': ('nom', ('numero', 'page',), ('date', 'type',), 'contenu',
-                       'auteurs', 'evenements',),
+            'fields': ('nom', ('numero', 'page',), ('date', 'type',),
+                       'contenu', 'auteurs', 'evenements',),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),
