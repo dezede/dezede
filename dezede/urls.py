@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     (r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/filebrowser/', include(site.urls)),
     (r'^recherche/', include('haystack.urls')),
+    (r'^accounts/', include('registration.backends.default.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

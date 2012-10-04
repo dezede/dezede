@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block body %}
+  <h1>{% trans "En attente d’activation" %}</h1>
+  <p>
+    {% blocktrans %}
+      Votre compte a bien été créé mais demande une vérification de votre part.
+      Un courriel contenant un lien d’activation vous a été envoyé.
+    {% endblocktrans %}
+  </p>
+{% endblock %}

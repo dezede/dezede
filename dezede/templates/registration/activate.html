@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block body %}
+  <h1>{% trans "Erreur d’activation" %}</h1>
+  <p>
+    {% blocktrans %}
+      L’activation de la clé {{ activation_key }} a échoué.
+    {% endblocktrans %}
+  </p>
+{% endblock %}

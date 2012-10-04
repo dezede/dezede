@@ -123,6 +123,8 @@ INSTALLED_APPS = (
     'tinymce',
     'grappelli.dashboard',
     'grappelli',
+    'registration',
+    'crispy_forms',
     'filebrowser',
     'reversion',
     'django.contrib.admin',
@@ -156,6 +158,8 @@ TIME_FORMAT = 'H:i'
 
 GRAPPELLI_INDEX_DASHBOARD = 'dezede.dashboard.CustomIndexDashboard'
 GRAPPELLI_ADMIN_TITLE = u'<a href="/">Dezède</a>'
+
+ACCOUNT_ACTIVATION_DAYS = 7
 
 TINYMCE_DEFAULT_CONFIG = {
     'mode' : 'textareas',
@@ -197,3 +201,9 @@ CACHES = {
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
 }
+
+EMAIL_HOST = 'smtp.webfaction.com'
+EMAIL_HOST_USER = 'dezede'
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'noreply@dezede.org'
+SERVER_EMAIL = 'noreply@dezede.org'
