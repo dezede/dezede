@@ -1,8 +1,9 @@
 # coding: utf-8
 
 from django.db.models import Model, Manager, CharField, SlugField, \
-                             BooleanField, ManyToManyField
+                             BooleanField, ManyToManyField, ForeignKey
 from django.db.models.query import QuerySet
+from django.contrib.auth.models import User
 from tinymce.models import HTMLField
 from filebrowser.fields import FileBrowseField
 from ..templatetags.extras import replace
@@ -80,6 +81,7 @@ class CustomModel(Model):
     '''
     Modèle personnalisé, essentiellement pour les remplacements typographiques.
     '''
+    author = ForeignKey(User, null=True, blank=True)
     objects = CustomManager()
 
     class Meta:

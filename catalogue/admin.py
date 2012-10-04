@@ -5,6 +5,12 @@ from django.contrib.admin import ModelAdmin, site, TabularInline, StackedInline
 from reversion import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
 
+
+#
+# Inlines
+#
+
+
 TabularInline.extra = 0
 StackedInline.extra = 0
 
@@ -64,8 +70,48 @@ class EvenementInline(TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
+#
+# ModelAdmins
+#
+
+
 class CustomAdmin(VersionAdmin):
     list_per_page = 20
+    exclude = ('author',)
+
+    def check_user_ownership(self, request, obj, has_class_permission):
+        if not has_class_permission:
+            return False
+        user = request.user
+        if obj is not None and not user.is_superuser and user != obj.author:
+            return False
+        return True
+
+    def has_change_permission(self, request, obj=None):
+        has_class_permission = super(CustomAdmin,
+                                     self).has_change_permission(request, obj)
+        return self.check_user_ownership(request, obj, has_class_permission)
+
+    def has_delete_permission(self, request, obj=None):
+        # FIXME: À cause d'un bug dans
+        # django.contrib.admin.actions.delete_selected, cette action autorise
+        # un utilisateur restreint à supprimer des objets pour lesquels il n'a
+        # pas le droit.
+        has_class_permission = super(CustomAdmin,
+                                     self).has_delete_permission(request, obj)
+        return self.check_user_ownership(request, obj, has_class_permission)
+
+    def queryset(self, request):
+        user = request.user
+        objects = self.model.objects.all()
+        if not user.is_superuser:
+            objects = objects.filter(author=user)
+        return objects
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'author') is None:
+            obj.author = request.user
+        obj.save()
 
 
 class DocumentAdmin(CustomAdmin):
