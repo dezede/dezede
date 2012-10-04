@@ -14,7 +14,7 @@
   <h2>
     {{ lieu.nom }}{% if lieu.parent %}, <a href="{{ lieu.parent.get_absolute_url }}">{{ lieu.parent.nom }}</a>{% endif %}
   </h2>
-  <h3 title="{% trans "nature" %}">
+  <h3 title="{% trans "nature"|capfirst %}">
     {{ lieu.nature|capfirst }}
   </h3>
   <br />

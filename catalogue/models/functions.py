@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from django.template.defaultfilters import date
+from django.template.defaultfilters import date, capfirst
 from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
 from django.utils.functional import allow_lazy
 from django.utils.safestring import mark_safe
@@ -149,7 +149,8 @@ def hlp(txt, title, tags=True):
     if not txt:
         return ''
     if tags:
-        return mark_safe(u'<span title="%s">%s</span>' % (title, txt))
+        return mark_safe(u'<span title="%s">%s</span>' % (capfirst(title),
+                                                          txt))
     return txt
 
 

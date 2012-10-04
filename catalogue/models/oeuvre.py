@@ -37,7 +37,7 @@ class GenreDOeuvre(CustomModel):
         nom = self.pluriel() if pluriel else self.nom
         if caps:
             nom = capfirst(nom)
-        return hlp(nom, ugettext('Genre'), tags)
+        return hlp(nom, ugettext('genre'), tags)
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -91,7 +91,7 @@ class CaracteristiqueDOeuvre(CustomModel):
         app_label = 'catalogue'
 
     def html(self, tags=True):
-        return hlp(self.valeur, capfirst(self.type), tags)
+        return hlp(self.valeur, self.type, tags)
     html.allow_tags = True
 
     def __unicode__(self):
