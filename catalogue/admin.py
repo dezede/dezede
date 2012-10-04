@@ -418,16 +418,15 @@ class SourceAdmin(CustomAdmin):
     list_editable = ('type', 'date',)
     search_fields = ('nom', 'numero', 'type__nom',)
     list_filter = ('type', 'nom',)
-    filter_horizontal = ('auteurs',)
-    raw_id_fields = ('evenements', 'documents', 'illustrations',)
+    raw_id_fields = ('auteurs', 'evenements', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
-        'm2m': ['evenements', 'documents', 'illustrations'],
+        'm2m': ['auteurs', 'evenements', 'documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html',)
     fieldsets = (
         (_('Champs courants'), {
             'fields': ('nom', ('numero', 'page',), ('date', 'type',),
-                       'contenu', 'auteurs', 'evenements',),
+                       'contenu', 'evenements', 'auteurs',),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),
