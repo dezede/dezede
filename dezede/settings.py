@@ -155,6 +155,7 @@ DATE_FORMAT = 'l j F Y'
 TIME_FORMAT = 'H:i'
 
 GRAPPELLI_INDEX_DASHBOARD = 'dezede.dashboard.CustomIndexDashboard'
+GRAPPELLI_ADMIN_TITLE = u'<a href="/">Dezède</a>'
 
 TINYMCE_DEFAULT_CONFIG = {
     'mode' : 'textareas',
