@@ -20,8 +20,8 @@
   <h3>
     {{ oeuvre.calc_auteurs }}
   </h3>
-  <h3>
-    {{ oeuvre.ancrage_creation|default:'' }}
+  <h3 title="Création">
+    {{ oeuvre.ancrage_creation.html|default:'' }}
   </h3>
   <h4>
     {{ oeuvre.meres_html }}
