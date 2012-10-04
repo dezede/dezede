@@ -37,7 +37,7 @@ class GenreDOeuvre(CustomModel):
         nom = self.pluriel() if pluriel else self.nom
         if caps:
             nom = capfirst(nom)
-        return hlp(nom, ugettext('genre'), tags)
+        return hlp(nom, ugettext('Genre'), tags)
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -91,7 +91,7 @@ class CaracteristiqueDOeuvre(CustomModel):
         app_label = 'catalogue'
 
     def html(self, tags=True):
-        return hlp(self.valeur, self.type, tags)
+        return hlp(self.valeur, capfirst(self.type), tags)
     html.allow_tags = True
 
     def __unicode__(self):
@@ -388,7 +388,7 @@ class Oeuvre(CustomModel):
         return str_list(l, infix='')
 
     def html(self, tags=True, auteurs=True, titre=True,
-             descr=True, caps_genre=False, parentes=True):
+             descr=True, genre_caps=True, parentes=True):
         # FIXME: Nettoyer cette horreur
         out = ''
         auts = self.calc_auteurs(tags)
@@ -407,7 +407,7 @@ class Oeuvre(CustomModel):
                 if descr and genre:
                     out += ', '
         if genre:
-            genre = genre.html(tags, caps=caps_genre)
+            genre = genre.html(tags, caps=genre_caps)
             pupitres = self.calc_pupitres()
             if not titre_complet:
                 cs = None
@@ -449,7 +449,7 @@ class Oeuvre(CustomModel):
 
     def description_html(self, tags=True):
         return self.html(tags, auteurs=False, titre=False, descr=True,
-                         caps_genre=True)
+                         genre_caps=True)
 
     class Meta:
         verbose_name = ungettext_lazy(u'œuvre', u'œuvres', 1)
