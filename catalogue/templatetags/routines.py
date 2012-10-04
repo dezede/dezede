@@ -28,13 +28,12 @@ def frontend_admin(context, object=None):
     has_delete_perm = user.has_perm(delete_perm)
     admin_change = build_admin_view_name(change_perm)
     admin_delete = build_admin_view_name(delete_perm)
-    pk = object.pk
     c = {
         'has_change_perm': has_change_perm,
         'has_delete_perm': has_delete_perm,
         'admin_change': admin_change,
         'admin_delete': admin_delete,
-        'pk': pk,
+        'object': object,
     }
     return render_to_string('routines/front-end_admin.html', c)
 
