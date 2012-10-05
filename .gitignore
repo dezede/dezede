@@ -1,0 +1,9 @@
+*~
+.*
+*.pyc
+apache-solr*
+/static/
+/stats/
+/profile/
+*.log
+*.mo
