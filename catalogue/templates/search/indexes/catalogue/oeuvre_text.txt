@@ -1,9 +1,6 @@
-{% load extras %}
-
 {{ object.titre }}
 {{ object.titre_secondaire }}
 {{ object.genre }}
 {{ object.calc_caracteristiques }}
 {{ object.html|striptags }}
 {{ object.auteurs.individus.nom_complet }}
-

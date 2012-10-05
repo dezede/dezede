@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from .models import *
-from django.contrib.admin import ModelAdmin, site, TabularInline, StackedInline
+from django.contrib.admin import site, TabularInline, StackedInline
 from django.contrib.admin.options import BaseModelAdmin
 from reversion import VersionAdmin
 from django.utils.translation import ugettext_lazy as _

@@ -1,7 +1,4 @@
-{% load extras %}
-
 {{ object.circonstance }}
 {{ object.ancrage_debut }}
 {{ object.ancrage_fin }}
 {{ object.html }}
-

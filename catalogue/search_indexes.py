@@ -1,6 +1,6 @@
-import datetime
 from haystack import indexes, site
 from .models import *
+
 
 class OeuvreIndex(indexes.RealTimeSearchIndex):
     text = indexes.CharField(document=True, use_template=True)
@@ -12,6 +12,7 @@ class OeuvreIndex(indexes.RealTimeSearchIndex):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
 site.register(Oeuvre, OeuvreIndex)
+
 
 class SourceIndex(indexes.RealTimeSearchIndex):
     text = indexes.CharField(document=True, use_template=True)
@@ -25,6 +26,7 @@ class SourceIndex(indexes.RealTimeSearchIndex):
         return self.get_model().objects.all()
 site.register(Source, SourceIndex)
 
+
 class IndividuIndex(indexes.RealTimeSearchIndex):
     text = indexes.CharField(document=True, use_template=True)
 
@@ -36,6 +38,7 @@ class IndividuIndex(indexes.RealTimeSearchIndex):
         return self.get_model().objects.all()
 site.register(Individu, IndividuIndex)
 
+
 class LieuIndex(indexes.RealTimeSearchIndex):
     text = indexes.CharField(document=True, use_template=True)
 
@@ -46,6 +49,7 @@ class LieuIndex(indexes.RealTimeSearchIndex):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
 site.register(Lieu, LieuIndex)
+
 
 class EvenementIndex(indexes.RealTimeSearchIndex):
     text = indexes.CharField(document=True, use_template=True)
