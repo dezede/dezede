@@ -377,11 +377,12 @@ class OeuvreAdmin(CustomAdmin):
     list_editable = ('genre',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
-    raw_id_fields = ('genre', 'caracteristiques', 'auteurs',
+    filter_horizontal = ('auteurs',)
+    raw_id_fields = ('genre', 'caracteristiques',
                  'ancrage_creation', 'pupitres', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
         'fk': ['genre', 'ancrage_creation'],
-        'm2m': ['caracteristiques', 'auteurs', 'pupitres',
+        'm2m': ['caracteristiques', 'pupitres',
                 'documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
@@ -485,9 +486,10 @@ class SourceAdmin(CustomAdmin):
     list_editable = ('type', 'date',)
     search_fields = ('nom', 'numero', 'type__nom',)
     list_filter = ('type', 'nom',)
-    raw_id_fields = ('auteurs', 'evenements', 'documents', 'illustrations',)
+    filter_horizontal = ('auteurs',)
+    raw_id_fields = ('evenements', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
-        'm2m': ['auteurs', 'evenements', 'documents', 'illustrations'],
+        'm2m': ['evenements', 'documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html',)
     fieldsets = (
