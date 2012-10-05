@@ -13,7 +13,7 @@
 
   <form method="get" action=".">
     <formset>
-      <input type="text" name="q" value="{{ form.q.data|default:"" }}" id="id_q" autofocus="autofocus" />
+      <input type="text" name="q" value="{{ form.q.data|default:""|escape }}" id="id_q" autofocus="autofocus" />
       <input type="submit" value="Chercher" />
       <script>
         $(function() {
@@ -44,7 +44,7 @@
     {% if suggestion %}
       <p>
         {% trans "Essayez aussi :" %}
-        <a href="?q={{ suggestion }}">{{ suggestion }}</a>
+        <a href="?q={{ suggestion|escape }}">{{ suggestion }}</a>
       </p>
     {% endif %}
 
