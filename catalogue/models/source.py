@@ -96,12 +96,12 @@ class Source(CustomModel):
     has_events.boolean = True
 
     def has_program(self):
-        events = self.evenements
-        if events.exists():
-            for e in events.all():
-                if e.has_program():
-                    return True
-        return False
+        if not self.has_events():
+            return False
+        for e in self.evenements.all():
+            if not e.has_program():
+                return False
+        return True
     has_program.short_description = _('Programme')
     has_program.boolean = True
 
