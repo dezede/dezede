@@ -25,13 +25,13 @@ REPLACE_FIELDS = (CharField, HTMLField,)
 
 
 def replace_in_kwargs(obj, **kwargs):
-    u'''
+    u"""
     Renvoie kwargs avec remplacements typographiques.
 
     Si une clé de kwargs est un nom de champ d'obj
     et que la classe de ce champ est dans REPLACE_FIELDS,
     effectue les remplacements dans la valeur du kwarg.
-    '''
+    """
     fields = obj._meta.fields
     keys = (field.attname for field in fields
                           if field.__class__ in REPLACE_FIELDS)
@@ -42,16 +42,16 @@ def replace_in_kwargs(obj, **kwargs):
 
 
 def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
-    '''
+    """
     Renvoie le nom au pluriel d'obj, si possible.
     Sinon renvoie unicode(obj).
-    '''
+    """
     try:
         pluriel = getattr(obj, attr_base + attr_suffix)
         if pluriel:
             return pluriel
         return getattr(obj, attr_base) + 's'
-    except:
+    except (AttributeError, TypeError):
         return unicode(obj)
 
 
@@ -60,27 +60,27 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
 #
 
 class CustomQuerySet(QuerySet):
-    '''
+    """
     QuerySet personnalisé pour chercher
     des objets avec remplacements typographiques.
-    '''
+    """
     def get(self, *args, **kwargs):
         kwargs = replace_in_kwargs(self.model, **kwargs)
         return super(CustomQuerySet, self).get(*args, **kwargs)
 
 
 class CustomManager(Manager):
-    '''
+    """
     Manager personnalisé pour utiliser CustomQuerySet par défaut.
-    '''
+    """
     def get_query_set(self):
         return CustomQuerySet(self.model, using=self._db)
 
 
 class CustomModel(Model):
-    '''
+    """
     Modèle personnalisé, essentiellement pour les remplacements typographiques.
-    '''
+    """
     author = ForeignKey(User, null=True, blank=True)
     objects = CustomManager()
 
@@ -100,8 +100,8 @@ class CustomModel(Model):
         return unicode(cls.__name__)
 
     @classmethod
-    def meta(self):
-        return self._meta
+    def meta(cls):
+        return cls._meta
 
 SlugField.unique = True
 

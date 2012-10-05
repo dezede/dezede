@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 import os
 import tarfile
 
@@ -22,5 +22,5 @@ class Command(BaseCommand):
             print 'Fichier %s trouvé.' % filename
 
         print 'Extraction en cours...'
-        tar = tarfile.open(filename, 'r')
+        tar = tarfile.open(filename)
         tar.extractall()

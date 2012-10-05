@@ -34,7 +34,7 @@ class NatureDeLieu(CustomModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('nom__icontains',)
+        return 'nom__icontains',
 
 
 class Lieu(CustomModel):
@@ -55,11 +55,11 @@ class Lieu(CustomModel):
 
     @permalink
     def get_absolute_url(self):
-        return ('lieu', [self.slug])
+        return 'lieu', [self.slug]
 
     @permalink
     def permalien(self):
-        return ('lieu_pk', [self.pk])
+        return 'lieu_pk', [self.pk]
 
     def link(self):
         return self.html()
@@ -116,7 +116,7 @@ class Lieu(CustomModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('nom__icontains',)
+        return 'nom__icontains',
 
 
 class Saison(CustomModel):

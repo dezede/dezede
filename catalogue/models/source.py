@@ -53,7 +53,7 @@ class Source(CustomModel):
 
     @permalink
     def get_absolute_url(self):
-        return ('source_pk', [self.pk])
+        return 'source_pk', [self.pk]
 
     def permalien(self):
         return self.get_absolute_url()
@@ -72,8 +72,7 @@ class Source(CustomModel):
 
     def html(self, tags=True):
         url = None if not tags else self.get_absolute_url()
-        l = []
-        l.append('%s' % cite(self.nom, tags))
+        l = [cite(self.nom, tags)]
         if self.numero:
             l.append(no(self.numero))
         date = ugettext('du %(date)s') % {'date': date_html(self.date, tags)}

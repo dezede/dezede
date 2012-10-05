@@ -3,7 +3,6 @@
 from django_tables2 import Table
 from django_tables2.columns import Column, LinkColumn
 from django_tables2.utils import A
-from .models import Individu, Partie
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -15,8 +14,8 @@ class IndividuTable(Table):
     calc_professions = Column(verbose_name=_('professions'),
                               order_by=('professions__nom',))
     naissance = Column(verbose_name=_('naissance'),
-                       order_by=('ancrage_naissance'))
-    deces = Column(verbose_name=_(u'décès'), order_by=('ancrage_deces'))
+                       order_by='ancrage_naissance')
+    deces = Column(verbose_name=_(u'décès'), order_by='ancrage_deces')
 
     class Meta:
         attrs = {"class": "paleblue"}

@@ -50,7 +50,7 @@ def is_vowel(string):
 
 @register.filter
 def abbreviate(string, limit=0):
-    '''
+    """
     Abrègre les mots avec une limite de longueur (par défaut 0).
 
     >>> abbreviate(u'amélie')
@@ -59,7 +59,7 @@ def abbreviate(string, limit=0):
     u'j.-fr. du p. du f.'
     >>> abbreviate(u'autéeur dramatique de la tour de babel', 1)
     u'aut. dram. de la tour de bab.'
-    '''
+    """
     out = ''
     # TODO: créer un catalogue COMPLET de ponctuations de séparation.
     for i, sub in enumerate(re.split('(-|\.|\s)', string)):

@@ -30,7 +30,7 @@ class Prenom(CustomModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('prenom__icontains',)
+        return 'prenom__icontains',
 
 
 class TypeDeParenteDIndividus(CustomModel):
@@ -137,11 +137,11 @@ class Individu(CustomModel):
 
     @permalink
     def get_absolute_url(self):
-        return ('individu', [self.slug],)
+        return 'individu', [self.slug],
 
     @permalink
     def permalien(self):
-        return ('individu_pk', [self.pk])
+        return 'individu_pk', [self.pk]
 
     def link(self):
         return self.html()
@@ -199,7 +199,6 @@ class Individu(CustomModel):
         return self.calc_prenoms_methode(True)
 
     def calc_titre(self, tags=False):
-        titres = {}
         if tags:
             titres = {
                 'M': ugettext('M.'),
@@ -259,7 +258,7 @@ class Individu(CustomModel):
 
     def html(self, tags=True, lon=False, prenoms_fav=True,
              force_standard=False, show_prenoms=True):
-        def add_particule(nom, lon, correct_designation, naissance=False):
+        def add_particule(nom, lon, naissance=False):
             particule = self.get_particule(naissance)
             if lon:
                 nom = particule + nom
@@ -269,11 +268,10 @@ class Individu(CustomModel):
         titre = self.calc_titre(tags)
         prenoms = self.calc_prenoms_methode(prenoms_fav)
         nom = self.nom
-        nom = add_particule(nom, lon, designation != 'B')
+        nom = add_particule(nom, lon)
         pseudonyme = self.pseudonyme
         nom_naissance = self.nom_naissance
-        nom_naissance = add_particule(nom_naissance, lon,
-                                            designation == 'B', naissance=True)
+        nom_naissance = add_particule(nom_naissance, lon, naissance=True)
         particule = self.get_particule(naissance=(designation == 'B'), lon=lon)
 
         def main_style(s):
@@ -281,7 +279,6 @@ class Individu(CustomModel):
 
         def standard(main):
             l = []
-            out = ''
             if nom and not prenoms:
                 l.append(titre)
             l.append(main)

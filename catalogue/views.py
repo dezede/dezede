@@ -85,7 +85,7 @@ class OeuvreDetailView(DetailView):
 
 
 def saisie_source(request, source_id=None):
-    if source_id != None:
+    if source_id is not None:
         source = get_object_or_404(Source, pk=source_id)
     else:
         source = None

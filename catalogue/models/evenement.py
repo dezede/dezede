@@ -11,7 +11,6 @@ from django.utils.translation import ungettext_lazy, ugettext, \
 from django.template.defaultfilters import capfirst
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
 import hashlib
-from django.utils.http import urlquote
 from django.core.cache import cache
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -152,7 +151,7 @@ class Evenement(CustomModel):
 
     @permalink
     def get_absolute_url(self):
-        return ('evenement_pk', [self.pk])
+        return 'evenement_pk', [self.pk]
 
     @permalink
     def permalien(self):

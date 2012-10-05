@@ -18,7 +18,7 @@ class CustomHighlighter(Highlighter):
         if self.css_class:
             hl_start = '<%s class="%s">' % (self.html_tag, self.css_class)
         else:
-            hl_start = '<%s>' % (self.html_tag)
+            hl_start = '<%s>' % self.html_tag
 
         hl_end = '</%s>' % self.html_tag
         highlight_length = len(hl_start + hl_end)

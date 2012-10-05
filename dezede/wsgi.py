@@ -1,5 +1,4 @@
 import os
-import sys
 from .solr import start_solr
 from django.core.handlers.wsgi import WSGIHandler
 

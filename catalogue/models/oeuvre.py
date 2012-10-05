@@ -47,7 +47,7 @@ class GenreDOeuvre(CustomModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('nom__icontains', 'nom_pluriel__icontains',)
+        return 'nom__icontains', 'nom_pluriel__icontains',
 
 
 class TypeDeCaracteristiqueDOeuvre(CustomModel):
@@ -99,7 +99,7 @@ class CaracteristiqueDOeuvre(CustomModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('type__nom__icontains', 'valeur__icontains',)
+        return 'type__nom__icontains', 'valeur__icontains',
 
 
 class Partie(CustomModel):
@@ -298,11 +298,11 @@ class Oeuvre(CustomModel):
 
     @permalink
     def get_absolute_url(self):
-        return ('oeuvre', [self.slug])
+        return 'oeuvre', [self.slug]
 
     @permalink
     def permalien(self):
-        return ('oeuvre_pk', [self.pk])
+        return 'oeuvre_pk', [self.pk]
 
     def link(self):
         return self.html(tags=True, auteurs=False, titre=True, descr=True,

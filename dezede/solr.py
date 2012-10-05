@@ -1,4 +1,4 @@
-'Lance solr dans un sous-processus.'
+"""Lance solr dans un sous-processus."""
 import os
 import subprocess
 

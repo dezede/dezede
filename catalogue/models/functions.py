@@ -8,7 +8,7 @@ from django.utils.formats import get_format
 
 
 def date_html(d, tags=True, short=False):
-    u'''
+    u"""
     Rendu HTML d’une date.
 
     >>> from datetime import date
@@ -16,7 +16,7 @@ def date_html(d, tags=True, short=False):
     mardi 15 janvier 1828
     >>> print date_html(date(1828, 1, 1), False)
     mardi 1er janvier 1828
-    '''
+    """
     if short:
         return date(d, get_format('SHORT_DATE_FORMAT'))
     pre = date(d, 'l')
@@ -31,13 +31,13 @@ def date_html(d, tags=True, short=False):
 
 
 def str_list(l, infix=None, last_infix=None):
-    u'''
+    u"""
     Concatène une liste de chaîne de caractères avec des virgules.
 
     >>> l = ['Jeanne', 'Lola', 'Perrine', 'Marion']
     >>> print str_list(l)
     Jeanne, Lola, Perrine, Marion
-    '''
+    """
     if infix is None:
         infix = pgettext(u'infix d’une liste', ', ')
     l = [e for e in l if e]
@@ -49,7 +49,7 @@ def str_list(l, infix=None, last_infix=None):
 
 def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
         oxford_comma=True):
-    u'''
+    u"""
     Concatène une liste de chaîne de caractères avec des virgules
     et un «,\u00A0et\u00A0» final («\u00A0et\u00A0» pour deux éléments).
     Pour désactiver la virgule d’Oxford, passer oxford_comma=False en argument.
@@ -59,7 +59,7 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
     Jeanne, Marion, Lola,\u00A0et\u00A0Perrine
     >>> print str_list_w_last(l[:2])
     Jeanne\u00A0et\u00A0Marion
-    '''
+    """
     l = tuple(l)
     if infix is None:
         infix = pgettext(u'infix d’une liste', ', ')
@@ -76,19 +76,19 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
 
 
 def ex(txt):
-    u'''
+    u"""
     >>> print ex('30/01/1989')
     Exemple : « 30/01/1989 »
-    '''
+    """
     return _(u'Exemple : « %s »') % txt
 ex = allow_lazy(ex, unicode)
 
 
 def no(txt):
-    u'''
+    u"""
     >>> print no('13')
     n°\u00A013
-    '''
+    """
     return _(u'n°\u00A0%s') % txt
 
 
@@ -98,12 +98,12 @@ def no(txt):
 
 
 def cite(txt, tags=True):
-    '''
+    """
     >>> print cite('Le Cid')
     <cite>Le Cid</cite>
     >>> print cite('The pillars of the earth', False)
     The pillars of the earth
-    '''
+    """
     if not txt:
         return ''
     if tags:
@@ -112,12 +112,12 @@ def cite(txt, tags=True):
 
 
 def href(url, txt, tags=True):
-    '''
+    """
     >>> print href('truc.machin/bidule', 'Cliquez ici')
     <a href="truc.machin/bidule">Cliquez ici</a>
     >>> print href('a.b/c', "It's a trap!", tags=False)
     It's a trap!
-    '''
+    """
     if not txt:
         return ''
     if tags:
@@ -126,12 +126,12 @@ def href(url, txt, tags=True):
 
 
 def sc(txt, tags=True):
-    '''
+    """
     >>> print sc('gentle shout')
     <span class="sc">gentle shout</span>
     >>> print sc('I wish I could be in small caps', tags=False)
     I wish I could be in small caps
-    '''
+    """
     if not txt:
         return ''
     if tags:
@@ -140,12 +140,12 @@ def sc(txt, tags=True):
 
 
 def hlp(txt, title, tags=True):
-    '''
+    """
     >>> print hlp('two years', 'period')
     <span title="period">two years</span>
     >>> print hlp('G minor', 'tonality', tags=False)
     G minor
-    '''
+    """
     if not txt:
         return ''
     if tags:
@@ -155,12 +155,12 @@ def hlp(txt, title, tags=True):
 
 
 def small(txt, tags=True):
-    '''
+    """
     >>> print small('I feel tiny')
     <small>I feel tiny</small>
     >>> print small('In a website I would be small...', tags=False)
     In a website I would be small...
-    '''
+    """
     if not txt:
         return ''
     if tags:

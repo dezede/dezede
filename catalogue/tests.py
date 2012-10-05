@@ -73,7 +73,6 @@ class IndividuTestCase(TestCase):
 
     def testComputedNames(self):
         self.assertEqual(self.moliere.__unicode__(), u'Molière')
-        moliere_url = self.moliere.get_absolute_url()
         self.assertEqual(self.moliere.nom_complet(tags=False),
                          u'Jean-Baptiste Poquelin, dit Molière')
         self.assertEqual(self.piaf.__unicode__(),

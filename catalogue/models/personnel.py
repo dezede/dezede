@@ -38,13 +38,13 @@ class Profession(CustomModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('nom__icontains', 'nom_pluriel__icontains',)
+        return 'nom__icontains', 'nom_pluriel__icontains',
 
 
 class Devise(CustomModel):
-    u'''
+    u"""
     Modélisation naïve d’une unité monétaire.
-    '''
+    """
     nom = CharField(max_length=200, blank=True, help_text=ex(_('euro')),
         unique=True)
     symbole = CharField(max_length=10, help_text=ex(_(u'€')), unique=True)
