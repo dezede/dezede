@@ -2,8 +2,47 @@
 
 from .models import *
 from django.contrib.admin import ModelAdmin, site, TabularInline, StackedInline
+from django.contrib.admin.options import BaseModelAdmin
 from reversion import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
+
+
+#
+# Common
+#
+
+
+class CustomBaseModel(BaseModelAdmin):
+    exclude = ('author',)
+
+    def check_user_ownership(self, request, obj, has_class_permission):
+        if not has_class_permission:
+            return False
+        user = request.user
+        if obj is not None and not user.is_superuser and user != obj.author:
+            return False
+        return True
+
+    def has_change_permission(self, request, obj=None):
+        has_class_permission = super(CustomBaseModel,
+                                     self).has_change_permission(request, obj)
+        return self.check_user_ownership(request, obj, has_class_permission)
+
+    def has_delete_permission(self, request, obj=None):
+        # FIXME: À cause d'un bug dans
+        # django.contrib.admin.actions.delete_selected, cette action autorise
+        # un utilisateur restreint à supprimer des objets pour lesquels il n'a
+        # pas le droit.
+        has_class_permission = super(CustomBaseModel,
+                                     self).has_delete_permission(request, obj)
+        return self.check_user_ownership(request, obj, has_class_permission)
+
+    def queryset(self, request):
+        user = request.user
+        objects = self.model.objects.all()
+        if not user.is_superuser:
+            objects = objects.filter(author=user)
+        return objects
 
 
 #
@@ -11,16 +50,20 @@ from django.utils.translation import ugettext_lazy as _
 #
 
 
-TabularInline.extra = 0
-StackedInline.extra = 0
+TabularInline.extra = 2
+StackedInline.extra = 2
 
 
-class AncrageSpatioTemporelInline(TabularInline):
+class CustomTabularInline(TabularInline, CustomBaseModel):
+    pass
+
+
+class AncrageSpatioTemporelInline(CustomTabularInline):
     model = AncrageSpatioTemporel
     classes = ('grp-collapse grp-closed',)
 
 
-class OeuvreMereInline(TabularInline):
+class OeuvreMereInline(CustomTabularInline):
     verbose_name = ParenteDOeuvres._meta.get_field_by_name('mere')[0].verbose_name
     verbose_name_plural = _(u'œuvres mères')
     model = ParenteDOeuvres
@@ -32,7 +75,7 @@ class OeuvreMereInline(TabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class OeuvreFilleInline(TabularInline):
+class OeuvreFilleInline(CustomTabularInline):
     verbose_name = ParenteDOeuvres._meta.get_field_by_name('fille')[0].verbose_name
     verbose_name_plural = _(u'œuvres filles')
     model = ParenteDOeuvres
@@ -51,7 +94,7 @@ class OeuvreLieesInline(StackedInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class AuteurInline(TabularInline):
+class AuteurInline(CustomTabularInline):
     verbose_name = Auteur._meta.verbose_name
     verbose_name_plural = Auteur._meta.verbose_name_plural
     model = Auteur.individus.through
@@ -63,7 +106,7 @@ class ElementDeProgrammeInline(StackedInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class EvenementInline(TabularInline):
+class EvenementInline(CustomTabularInline):
     verbose_name = Evenement._meta.verbose_name
     verbose_name_plural = Evenement._meta.verbose_name_plural
     model = Evenement.programme.through
@@ -75,43 +118,21 @@ class EvenementInline(TabularInline):
 #
 
 
-class CustomAdmin(VersionAdmin):
+class CustomAdmin(VersionAdmin, CustomBaseModel):
     list_per_page = 20
-    exclude = ('author',)
-
-    def check_user_ownership(self, request, obj, has_class_permission):
-        if not has_class_permission:
-            return False
-        user = request.user
-        if obj is not None and not user.is_superuser and user != obj.author:
-            return False
-        return True
-
-    def has_change_permission(self, request, obj=None):
-        has_class_permission = super(CustomAdmin,
-                                     self).has_change_permission(request, obj)
-        return self.check_user_ownership(request, obj, has_class_permission)
-
-    def has_delete_permission(self, request, obj=None):
-        # FIXME: À cause d'un bug dans
-        # django.contrib.admin.actions.delete_selected, cette action autorise
-        # un utilisateur restreint à supprimer des objets pour lesquels il n'a
-        # pas le droit.
-        has_class_permission = super(CustomAdmin,
-                                     self).has_delete_permission(request, obj)
-        return self.check_user_ownership(request, obj, has_class_permission)
-
-    def queryset(self, request):
-        user = request.user
-        objects = self.model.objects.all()
-        if not user.is_superuser:
-            objects = objects.filter(author=user)
-        return objects
 
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'author') is None:
             obj.author = request.user
         obj.save()
+
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for instance in instances:
+            if not instance.pk:
+                instance.author = request.user
+            instance.save()
+        formset.save_m2m()
 
 
 class DocumentAdmin(CustomAdmin):

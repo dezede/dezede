@@ -357,6 +357,8 @@ class Oeuvre(CustomModel):
     calc_auteurs.admin_order_field = 'auteurs__individus'
 
     def calc_parentes(self, tags=True):
+        if not self.pk:
+            return ''
         return str_list_w_last(unicode(m) for m in self.meres.all())
 
     def __parentes_html(self, tags=True, relation='mere',
