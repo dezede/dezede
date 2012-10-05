@@ -68,6 +68,8 @@ MEDIA_URL = SITE_URL + 'media/'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = ''
 
+WSGI_APPLICATION = 'dezede.wsgi.application'
+
 INTERNAL_IPS = ('127.0.0.1',)
 
 # List of callables that know how to import templates from various sources.
