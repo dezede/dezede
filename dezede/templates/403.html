@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %}
-  Erreur 403
+  {% trans "Erreur 403" %}
 {% endblock %}
 
 {% block body %}
-  Vous n’avez pas l’autorisation d’accéder à cette page.
+  {% trans "Vous n’avez pas l’autorisation d’accéder à cette page." %}
 {% endblock %}
 

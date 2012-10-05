@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %}
-  Erreur 500
+  {% trans "Erreur 500" %}
 {% endblock %}
 
 {% block body %}
-  Le serveur ne parvient pas à répondre correctement à votre requête.
+  {% trans "Le serveur ne parvient pas à répondre correctement à votre requête." %}
 {% endblock %}
 
