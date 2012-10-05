@@ -324,6 +324,8 @@ class Individu(CustomModel):
         return self.html(tags, True, prenoms_fav, force_standard)
 
     def clean(self):
+        if not self.pk:
+            return
         for p in self.parentes.all():
             if self in p.individus_cibles.all():
                 raise ValidationError(_(u'L’individu a une parenté avec '

@@ -239,7 +239,7 @@ class ParenteDIndividusAdmin(CustomAdmin):
     }
 
 
-class IndividuAdmin(ModelAdmin):  # TODO: Réactiver le CustomAdmin ici.
+class IndividuAdmin(CustomAdmin):
     list_per_page = 20
     list_display = ('__unicode__', 'nom', 'nom_naissance', 'calc_prenoms',
         'pseudonyme', 'titre', 'ancrage_naissance', 'ancrage_deces',
