@@ -1,3 +1,5 @@
+{% load extras %}
+
 {{ object.nom }}
 {{ object.calc_date }}
 {{ object|striptags }}

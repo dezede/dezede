@@ -1,3 +1,5 @@
+{% load extras %}
+
 {{ object.titre }}
 {{ object.titre_secondaire }}
 {{ object.genre }}
