@@ -116,6 +116,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'dezede',
     'haystack',
     'catalogue',
     'endless_pagination',
@@ -188,8 +189,8 @@ FILEBROWSER_VERSIONS = {
 FILEBROWSER_ADMIN_VERSIONS = []
 
 HAYSTACK_SITECONF = 'dezede.search_sites'
-HAYSTACK_SEARCH_ENGINE = 'whoosh'
-HAYSTACK_WHOOSH_PATH = os.path.join(os.path.dirname(__file__), 'whoosh_index')
+HAYSTACK_SEARCH_ENGINE = 'solr'
+HAYSTACK_SOLR_URL = 'http://127.0.0.1:15031/solr'
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'catalogue.utils.CustomHighlighter'
 HAYSTACK_INCLUDE_SPELLING = True
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
