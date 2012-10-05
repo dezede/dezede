@@ -1,12 +1,10 @@
 {% load url from future %}
 {% load i18n %}
-
 {% blocktrans %}
 Pour que votre compte fonctionne, vous devez l’activer.
 Voici le lien d’activation :
 {% endblocktrans %}
 http://{{ site }}{% url 'registration_activate' activation_key %}
-
 {% blocktrans %}
 Vous disposez d’un délai de {{ expiration_days }} jours pour activer ce compte.
 {% endblocktrans %}

@@ -7,16 +7,23 @@
 
 {% block body %}
   <h1>{% trans "Connexion" %}</h1>
-  <form method="POST">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <input type="submit" value="{% trans 'Se connecter' %}" />
-  </form>
-  <p>
-    {% url registration_register as url %}
+  {% if user.is_authenticated %}
+    {% url auth_logout as url %}
     {% blocktrans %}
-      Pas de compte utilisateur ?
-      Vous pouvez <a href="{{ url }}">en creer un.</a>
+      Vous êtes déjà connecté.  Souhaitez-vous <a href="{{ url }}">vous déconnecter</a> ?
     {% endblocktrans %}
-  </p>
+  {% else %}
+    <form method="POST">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <input type="submit" value="{% trans 'Se connecter' %}" />
+    </form>
+    <p>
+      {% url registration_register as url %}
+      {% blocktrans %}
+        Pas de compte utilisateur ?
+        Vous pouvez <a href="{{ url }}">en creer un.</a>
+      {% endblocktrans %}
+    </p>
+  {% endif %}
 {% endblock %}
