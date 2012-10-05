@@ -99,7 +99,7 @@ class Source(CustomModel):
         events = self.evenements
         if events.exists():
             for e in events.all():
-                if e.programme.exists():
+                if e.has_program():
                     return True
         return False
     has_program.short_description = _('Programme')

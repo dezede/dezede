@@ -189,6 +189,9 @@ class Evenement(CustomModel):
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
+    def has_program(self):
+        return self.relache or self.programme.exists()
+
     def clear_cache(self):
         args = hashlib.md5(str(self.pk))
         cache_key = 'template.cache.%s.%s' % ('evenement', args.hexdigest())
@@ -199,7 +202,6 @@ class Evenement(CustomModel):
     def clear_all_cache(sender, **kwargs):
         for e in Evenement.objects.all():
             e.clear_cache()
-
 
     class Meta:
         verbose_name = ungettext_lazy(u'événement', u'événements', 1)
