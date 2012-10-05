@@ -163,6 +163,7 @@ GRAPPELLI_ADMIN_TITLE = u'<a href="/">Dezède</a>'
 
 ACCOUNT_ACTIVATION_DAYS = 7
 AUTH_PROFILE_MODULE = 'accounts.StudentProfile'
+LOGIN_REDIRECT_URL = '/profiles/'
 
 TINYMCE_DEFAULT_CONFIG = {
     'mode' : 'textareas',
