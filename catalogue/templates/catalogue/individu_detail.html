@@ -4,48 +4,49 @@
 {% load url from future %}
 
 {% block title %}
-  {{ individu }}
+    {{ individu }}
 {% endblock %}
 
 {% block body %}
 
-  {% include "catalogue/etat.html" with etat=individu.etat %}
+    {% include "catalogue/etat.html" with etat=individu.etat %}
 
-  <h2>
-    {{ individu.nom_complet }}
-  </h2>
-  <h3>
-    {% if not individu.naissance and not individu.deces %}
-      <span title="{% trans "ancrage spatio-temporel" %}">
+    <h2>
+        {{ individu.nom_complet }}
+    </h2>
+    <h3>
+        {% if not individu.naissance and not individu.deces %}
+            <span title="{% trans "ancrage spatio-temporel"|capfirst %}">
         {{ individu.ancrage|default:_('Époque inconnue') }}
       </span>
-    {% else %}
-      <span title="{% trans "naissance" %}">
+        {% else %}
+            <span title="{% trans "naissance"|capfirst %}">
         {{ individu.naissance_html|default:_('?') }}
       </span>
-      &ndash;
-      <span title="{% trans "décès" %}">
+            &ndash;
+            <span title="{% trans "décès"|capfirst %}">
         {{ individu.deces_html|default:_('?') }}
       </span>
-    {% endif %}
-  </h3>
-  <h4 title="{% blocktrans count counter=individu.professions.all|length %}profession{% plural %}professions{% endblocktrans %}">
-    {{ individu.calc_professions|capfirst|default:_('Profession inconnue') }}
-  </h4>
-  <br />
-  <dl>
-    {% attr_in_dl 'nom_naissance' %}
-    {% attr_in_dl 'biographie' %}
+        {% endif %}
+    </h3>
+    <h4 title="
+            {% filter capfirst %}{% blocktrans count counter=individu.professions.all|length %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
+        {{ individu.calc_professions|capfirst|default:_('Profession inconnue') }}
+    </h4>
+    <br/>
+    <dl>
+        {% attr_in_dl 'nom_naissance' %}
+        {% attr_in_dl 'biographie' %}
 
-    {% list_in_dl individu.oeuvres %}
-    {% list_in_dl individu.apparitions %}
-    {% list_in_dl individu.publications 'html' %}
-    {% list_in_dl individu.parents %}
-    {% list_in_dl individu.enfants %}
-    {% include "catalogue/notes_def.html" with notes=individu.notes %}
-  </dl>
+        {% list_in_dl individu.oeuvres %}
+        {% list_in_dl individu.apparitions %}
+        {% list_in_dl individu.publications 'html' %}
+        {% list_in_dl individu.parents %}
+        {% list_in_dl individu.enfants %}
+        {% include "catalogue/notes_def.html" with notes=individu.notes %}
+    </dl>
 
-  <br />
+    <br/>
 
-  {% frontend_admin %}
+    {% frontend_admin %}
 {% endblock %}
