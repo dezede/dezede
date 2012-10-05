@@ -2,14 +2,14 @@
 {% load crispy_forms_tags i18n %}
 
 {% block title %}
-  {% trans "Créer un nouveau compte" %}
+  {% trans "Créer un profil utilisateur" %}
 {% endblock %}
 
 {% block body %}
-  <h1>{% trans "Créer un nouveau compte" %}</h1>
+  <h1>{% trans "Créer un profil utilisateur" %}</h1>
   <form method="POST">
     {% csrf_token %}
     {{ form|crispy }}
-    <input type="submit" value="{% trans 'S’enregistrer' %}" />
+    <input type="submit" value="{% trans 'Valider' %}" />
   </form>
 {% endblock %}

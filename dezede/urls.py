@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^admin/filebrowser/', include(site.urls)),
     (r'^recherche/', include('haystack.urls')),
     (r'^accounts/', include('registration.backends.default.urls')),
+    (r'^profiles/', include('profiles.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

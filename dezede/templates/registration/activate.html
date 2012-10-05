@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
+{% block title %}
+  {% trans "Erreur d’activation" %}
+{% endblock %}
+
 {% block body %}
   <h1>{% trans "Erreur d’activation" %}</h1>
   <p>

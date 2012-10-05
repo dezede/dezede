@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}
+  {{ user.get_full_name|default:user }}
+{% endblock %}
+
+{% block body %}
+  <h1>{% trans "Profil de" %} {{ user.get_full_name|default:user }}</h1>
+  <dl>
+    <dt>Professeur référent</dt>
+    <dd>
+      {% with professor=profile.professor %}
+        {{ professor.get_full_name|default:professor }}
+      {% endwith %}
+    </dd>
+    <dt>Sources transcrites</dt>
+    <dd>{{ user.source_set.count }}</dd>
+  </dl>
+  <a href="{% url profiles_edit_profile %}">[{% trans "Modifier" %}]</a>
+{% endblock %}

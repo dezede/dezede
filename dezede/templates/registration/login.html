@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags i18n %}
 
+{% block title %}
+  {% trans "Connexion" %}
+{% endblock %}
+
 {% block body %}
   <h1>{% trans "Connexion" %}</h1>
   <form method="POST">
@@ -8,4 +12,11 @@
     {{ form|crispy }}
     <input type="submit" value="{% trans 'Se connecter' %}" />
   </form>
+  <p>
+    {% url registration_register as url %}
+    {% blocktrans %}
+      Pas de compte utilisateur ?
+      Vous pouvez <a href="{{ url }}">en creer un.</a>
+    {% endblocktrans %}
+  </p>
 {% endblock %}
