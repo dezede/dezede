@@ -9,3 +9,6 @@ def start():
     print 'Lancement de Solr...'
     return subprocess.Popen(args=solr_args,
                             stdout=devnull, stderr=devnull, shell=True)
+
+if __name__ == '__main__':
+    start()
