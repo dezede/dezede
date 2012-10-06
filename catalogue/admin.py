@@ -68,11 +68,11 @@ def build_boolean_list_filter(class_title, class_parameter_name, filter=None,
             if self.value() == '1':
                 query = getattr(queryset, 'filter' if filter is not None
                                      else 'exclude')
-                return query(filter if filter is not None else exclude)
+                return query(filter if filter is not None else exclude).distinct()
             if self.value() == '0':
                 query = getattr(queryset, 'filter' if exclude is not None
                                      else 'exclude')
-                return query(exclude if exclude is not None else filter)
+                return query(exclude if exclude is not None else filter).distinct()
 
     return HasEventsListFilter
 
