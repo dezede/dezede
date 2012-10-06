@@ -88,6 +88,7 @@ class Source(CustomModel):
         return self.evenements.exists()
     has_events.short_description = _(u'Événements')
     has_events.boolean = True
+    has_events.admin_order_field = 'evenements'
 
     def has_program(self):
         if not self.has_events():
@@ -98,6 +99,7 @@ class Source(CustomModel):
         return True
     has_program.short_description = _('Programme')
     has_program.boolean = True
+    has_program.admin_order_field = 'evenements__programme'
 
     class Meta:
         verbose_name = ungettext_lazy('source', 'sources', 1)

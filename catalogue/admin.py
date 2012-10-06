@@ -522,8 +522,8 @@ class TypeDeSourceAdmin(CustomAdmin):
 
 
 class SourceAdmin(CustomAdmin):
-    list_display = ('nom', 'has_events', 'has_program',
-                    'date', 'type', 'author')
+    list_display = ('nom', 'date', 'type', 'has_events', 'has_program',
+                    'author')
     list_editable = ('type', 'date')
     search_fields = ('nom', 'numero', 'type__nom',)
     list_filter = ('type', 'nom', HasEventsListFilter, HasProgramListFilter)
