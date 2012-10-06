@@ -1,8 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
-{% load highlight %}
-{% load extras %}
-{% load humanize %}
+{% load i18n highlight humanize %}
 
 {% block title %}
   {% trans "Recherche" %}
@@ -49,27 +46,8 @@
       </p>
     {% endif %}
 
-    {% if page.has_previous %}<a href="?{{ request|GET_add_page:page.previous_page_number }}">{% trans "« Précédents" %}</a>{% endif %}
-    {% if page.has_previous and page.has_next %}|{% endif %}
-    {% if page.has_next %}<a href="?{{ request|GET_add_page:page.next_page_number }}">{% trans "Suivants »" %}</a>{% endif %}
+    {% include 'search/search_page.html' with object_list=paginator.object_list %}
 
-    {% for result in page.object_list %}
-      <div class="result {{ result.model.class_name.lower }}">
-        <h3>{{ result.verbose_name|capfirst }}</h3>
-        {% if result.object.link %}
-          {{ result.object.link }}<br />
-        {% else %}
-          {{ result.object.html }}<br />
-        {% endif %}
-        <small>
-          {% highlight result.object.html with query html_tag 'mark' %}
-        </small>
-      </div>
-    {% endfor %}
-
-    {% if page.has_previous %}<a href="?{{ request|GET_add_page:page.previous_page_number }}">{% trans "« Précédents" %}</a>{% endif %}
-    {% if page.has_previous and page.has_next %}|{% endif %}
-    {% if page.has_next %}<a href="?{{ request|GET_add_page:page.next_page_number }}">{% trans "Suivants »" %}</a>{% endif %}
   {% else %}
     <p>{% trans "Tapez par exemple « chanteuse », « Molière », « opéra » ou encore « théâtre »." %}</p>
   {% endif %}

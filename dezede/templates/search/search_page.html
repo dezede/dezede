@@ -1,0 +1,21 @@
+{% load i18n highlight endless %}
+
+{% paginate 10 object_list %} {# FIXME: Utiliser HAYSTACK_SEARCH_RESULTS_PER_PAGE #}
+
+{% show_pages %}
+
+{% for result in object_list %}
+  <div class="result {{ result.model.class_name.lower }}">
+    <h3>{{ result.verbose_name|capfirst }}</h3>
+    {% if result.object.link %}
+      {{ result.object.link }}<br />
+    {% else %}
+      {{ result.object.html }}<br />
+    {% endif %}
+    <small>
+      {% highlight result.object.html with query html_tag 'mark' %}
+    </small>
+  </div>
+{% endfor %}
+
+{% show_pages %}
