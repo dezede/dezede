@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n extras %}
 
 {% with counter=evenements|length %}{# Remplacer ce length par un count quand Oeuvre.evenements sera un RelatedManager #}
   {% if counter %}
@@ -20,7 +20,8 @@
           </a>
         {% else %}
           <a href="{% url evenements lieu_slug=lieu_slug year=year.grouper %}">
-            {{ year.grouper }} ({{ year.list|length }})
+            {{ year.grouper }} ({{ year.list|length }}
+            {% filter abbreviate:2 %}{% trans 'événements' %}{% endfilter %})
           </a>
         {% endif %}
       </dd>
