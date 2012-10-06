@@ -1,4 +1,10 @@
-{{ object.circonstance }}
-{{ object.ancrage_debut }}
-{{ object.ancrage_fin }}
-{{ object.html }}
+{% load extras %}
+
+{% filter stripchars|striptags %}
+  {% autoescape off %}
+    {{ object.circonstance }}
+    {{ object.ancrage_debut }}
+    {{ object.ancrage_fin }}
+    {{ object.html }}
+  {% endautoescape %}
+{% endfilter %}

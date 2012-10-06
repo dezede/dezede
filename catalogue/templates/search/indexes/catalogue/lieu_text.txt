@@ -1,5 +1,11 @@
-{{ object.nom }}
-{{ object.nature }}
-{{ object.parent }}
-{{ object.html }}
-{{ object.historique }}
+{% load extras %}
+
+{% filter stripchars|striptags %}
+  {% autoescape off %}
+    {{ object.nom }}
+    {{ object.nature }}
+    {{ object.parent }}
+    {{ object.html }}
+    {{ object.historique }}
+  {% endautoescape %}
+{% endfilter %}

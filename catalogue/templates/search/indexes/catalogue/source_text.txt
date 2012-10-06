@@ -1,6 +1,10 @@
 {% load extras %}
 
-{{ object.nom }}
-{{ object.calc_date }}
-{{ object|striptags }}
-{{ object.contenu|stripchars }}
+{% filter stripchars|striptags %}
+  {% autoescape off %}
+    {{ object.nom }}
+    {{ object.calc_date }}
+    {{ object }}
+    {{ object.contenu }}
+  {% endautoescape %}
+{% endfilter %}

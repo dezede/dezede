@@ -1,8 +1,12 @@
 {% load extras %}
 
-{{ object.titre }}
-{{ object.titre_secondaire }}
-{{ object.genre }}
-{{ object.calc_caracteristiques }}
-{{ object.html|striptags }}
-{{ object.auteurs.individus.nom_complet }}
+{% filter stripchars|striptags %}
+  {% autoescape off %}
+    {{ object.titre }}
+    {{ object.titre_secondaire }}
+    {{ object.genre }}
+    {{ object.calc_caracteristiques }}
+    {{ object.html }}
+    {{ object.auteurs.individus.nom_complet }}
+  {% endautoescape %}
+{% endfilter %}

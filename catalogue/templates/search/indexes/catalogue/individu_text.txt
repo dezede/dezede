@@ -1,5 +1,11 @@
-{{ object.nom }}
-{{ object.pseudonyme }}
-{{ object.calc_prenoms }}
-{{ object.calc_professions }}
-{{ object }}
+{% load extras %}
+
+{% filter stripchars|striptags %}
+  {% autoescape off %}
+    {{ object.nom }}
+    {{ object.pseudonyme }}
+    {{ object.calc_prenoms }}
+    {{ object.calc_professions }}
+    {{ object }}
+  {% endautoescape %}
+{% endfilter %}
