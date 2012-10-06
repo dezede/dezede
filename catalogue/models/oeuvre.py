@@ -135,8 +135,11 @@ class Partie(CustomModel):
     def link(self):
         return href(self.permalien(), unicode(self))
 
+    def html(self):
+        return unicode(self)
+
     def __unicode__(self):
-        return self.nom
+        return capfirst(self.nom)
 
     @staticmethod
     def autocomplete_search_fields():

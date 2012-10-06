@@ -1,0 +1,11 @@
+{% load extras %}
+
+{% filter stripchars|striptags %}
+  {% autoescape off %}
+    {{ object.nom }}
+    {{ object.parent }}
+    {{ object.nom_pluriel }}
+    {{ object.professions.all|join:' ' }}
+    {{ object.interpretes|join:' ' }}
+  {% endautoescape %}
+{% endfilter %}

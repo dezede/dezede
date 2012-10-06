@@ -1,5 +1,5 @@
 from haystack import indexes, site
-from .models import *
+from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie
 
 
 class OeuvreIndex(indexes.RealTimeSearchIndex):
@@ -92,3 +92,20 @@ class EvenementIndex(indexes.RealTimeSearchIndex):
         return prepared_data
 site.register(Evenement, EvenementIndex)
 
+
+class PartieIndex(indexes.RealTimeSearchIndex):
+    text = indexes.CharField(document=True, use_template=True)
+    suggestions = indexes.CharField()
+
+    def get_model(self):
+        return Partie
+
+    def index_queryset(self):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+
+    def prepare(self, obj):
+        prepared_data = super(PartieIndex, self).prepare(obj)
+        prepared_data['suggestions'] = prepared_data['text']
+        return prepared_data
+site.register(Partie, PartieIndex)
