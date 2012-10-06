@@ -34,8 +34,3 @@ if settings.DEBUG:
                                 serve,
                                 {'document_root': settings.MEDIA_ROOT}))
     del(_media_url, serve)
-
-if 'rosetta' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-        url(r'^rosetta/', include('rosetta.urls')),
-    )

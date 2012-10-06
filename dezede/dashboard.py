@@ -89,9 +89,9 @@ class CustomIndexDashboard(Dashboard):
             css_classes=('grp-collapse grp-open',),
             children=[
                 {
-                    'title': 'Rosetta',
-                    'url': '/rosetta/pick/',
-                    'external': False,
+                    'title': 'Transifex',
+                    'url': 'https://www.transifex.com/projects/p/dezede/',
+                    'external': True,
                 },
             ]
         ))
