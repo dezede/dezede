@@ -9,8 +9,9 @@
     <title>
       {% block title %}{% endblock %}
     </title>
-    <script type="text/javascript" src="{% static 'js/jquery-1.7.1.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jquery-ui-1.8.18.custom.min.js' %}"></script>
+    <script src="{% static 'js/jquery-1.7.1.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui-1.8.18.custom.min.js' %}"></script>
+    <script src="{% static 'js/jquery.jstree.js' %}"></script>
     {% block head %}{% endblock %}
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Gentium+Basic:400,700,400italic,700italic" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/smoothness/jquery-ui-1.8.18.custom.css' %}" />
@@ -85,4 +86,3 @@
     </div>
   </body>
 </html>
-
