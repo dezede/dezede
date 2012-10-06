@@ -20,11 +20,18 @@
   <br />
   <dl>
     {% attr_in_dl 'historique' %}
-    {% list_in_dl lieu.enfants.all 'short_link' 'lieu contenu' 'lieux contenus' %}
+    {% list_in_dl lieu.enfants.all 'short_link' _('lieu contenu') _('lieux contenus') %}
     {% include "catalogue/evenement_list_def.html" with evenements=lieu.evenements %}
-    {% list_in_dl lieu.individus_nes verbose_name='individu né ici' verbose_name_plural='individus nés ici' %}
-    {% list_in_dl lieu.individus_decedes verbose_name='individu décédé ici' verbose_name_plural='individus décédés ici' %}
-    {% list_in_dl lieu.oeuvres_composees verbose_name='œuvre composée ici' verbose_name_plural='œuvres composées ici' %}
+    <dd>
+      {% if lieu.evenements.exists %}
+        <a href="{% url 'evenements' lieu_slug=lieu.slug %}">
+          <strong>{% trans "Afficher tous les événements" %}</strong>
+        </a>
+      {% endif %}
+    </dd>
+    {% list_in_dl lieu.individus_nes verbose_name=_('individu né ici') verbose_name_plural=_('individus nés ici') %}
+    {% list_in_dl lieu.individus_decedes verbose_name=_('individu décédé ici') verbose_name_plural=_('individus décédés ici') %}
+    {% list_in_dl lieu.oeuvres_composees verbose_name=_('œuvre composée ici') verbose_name_plural=_('œuvres composées ici') %}
     {% include "catalogue/notes_def.html" with notes=lieu.notes %}
   </dl>
 
