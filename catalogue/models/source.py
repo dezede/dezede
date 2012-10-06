@@ -99,7 +99,6 @@ class Source(CustomModel):
         return True
     has_program.short_description = _('Programme')
     has_program.boolean = True
-    has_program.admin_order_field = 'evenements__programme'
 
     class Meta:
         verbose_name = ungettext_lazy('source', 'sources', 1)
