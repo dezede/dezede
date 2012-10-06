@@ -190,6 +190,14 @@ class Evenement(CustomModel):
 
     def has_program(self):
         return self.relache or self.programme.exists()
+    has_program.short_description = _('programme')
+    has_program.boolean = True
+
+    def has_source(self):
+        return self.sources.exists()
+    has_source.short_description = _('source')
+    has_source.boolean = True
+    has_source.admin_order_field = 'sources'
 
     def clear_cache(self):
         args = hashlib.md5(str(self.pk))

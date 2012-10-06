@@ -77,11 +77,19 @@ def build_boolean_list_filter(class_title, class_parameter_name, filter=None,
     return HasEventsListFilter
 
 
-HasEventsListFilter = build_boolean_list_filter(
+EventHasSourceListFilter = build_boolean_list_filter(_('source'), 'has_source',
+                                                     exclude=Q(sources=None))
+
+
+EventHasProgramListFilter = build_boolean_list_filter(_('programme'),
+                   'has_program', Q(programme__isnull=False) | Q(relache=True))
+
+
+SourceHasEventsListFilter = build_boolean_list_filter(
                    _(u'événements'), 'has_events', exclude=Q(evenements=None))
 
 
-HasProgramListFilter = build_boolean_list_filter(
+SourceHasProgramListFilter = build_boolean_list_filter(
     _('programme'), 'has_program', Q(evenements__programme__isnull=False)
                                    | Q(evenements__relache=True))
 
@@ -484,10 +492,12 @@ class ElementDeProgrammeAdmin(CustomAdmin):
 
 
 class EvenementAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'relache', 'circonstance', 'link',)
+    list_display = ('__unicode__', 'relache', 'circonstance',
+                    'has_source', 'has_program', 'link',)
     list_editable = ('relache', 'circonstance',)
     search_fields = ('circonstance',)
-    list_filter = ('relache',)
+    list_filter = ('relache', EventHasSourceListFilter,
+                   EventHasProgramListFilter)
     raw_id_fields = ('programme', 'ancrage_debut', 'ancrage_fin', 'documents',
         'illustrations',)
     autocomplete_lookup_fields = {
@@ -525,7 +535,8 @@ class SourceAdmin(CustomAdmin):
                     'author')
     list_editable = ('type', 'date')
     search_fields = ('nom', 'numero', 'type__nom',)
-    list_filter = ('type', 'nom', HasEventsListFilter, HasProgramListFilter)
+    list_filter = ('type', 'nom', SourceHasEventsListFilter,
+                   SourceHasProgramListFilter)
     filter_horizontal = ('auteurs',)
     raw_id_fields = ('evenements', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
