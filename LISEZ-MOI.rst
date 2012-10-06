@@ -87,6 +87,36 @@ Installation du moteur de recherche
     ``./manage.py build_solr_schema > apache-solr-[version]/example/solr/conf/schema.xml``
 
 
+#. Dans ce shéma, remplacer le fieldtype "text" par tout ceci :
+
+    ::
+
+      <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
+        <analyzer>
+          <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+          <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt" />
+          <filter class="solr.PatternReplaceFilterFactory" pattern="^(\p{Punct}*)(.*?)(\p{Punct}*)$" replacement="$2"/>
+          <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_fr.txt"/>
+          <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0"/>
+          <filter class="solr.LowerCaseFilterFactory"/>
+          <filter class="solr.SnowballPorterFilterFactory" language="French"/>
+        </analyzer>
+      </fieldType>
+
+      <fieldType name="textSpell" class="solr.TextField" positionIncrementGap="100">
+        <analyzer>
+          <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+          <filter class="solr.PatternReplaceFilterFactory" pattern="^(\p{Punct}*)(.*?)(\p{Punct}*)$" replacement="$2"/>
+          <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_fr.txt"/>
+          <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+        </analyzer>
+      </fieldType>
+
+
+#. Remplacer ``<field name="suggestions" type="text"`` par
+   ``<field name="suggestions" type="textSpell"``
+
+
 #. Changer le port dans le fichier `apache-sorl-[version]/example/etc/jetty.xml`
 
 
@@ -115,6 +145,11 @@ Installation du moteur de recherche
       <arr name="last-components">
         <str>spellcheck</str>
       </arr>
+
+
+#. Pour lancer Solr, lancer :
+
+    ``python dezede/solr.py``
 
 
 
