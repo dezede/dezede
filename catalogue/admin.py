@@ -206,8 +206,8 @@ class NatureDeLieuAdmin(CustomAdmin):
 
 
 class LieuAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'parent', 'nature', 'link',)
-    list_editable = ('nom', 'parent', 'nature',)
+    list_display = ('__unicode__', 'nom', 'parent', 'nature', 'etat', 'link',)
+    list_editable = ('nom', 'parent', 'nature', 'etat',)
     search_fields = ('nom', 'parent__nom',)
     list_filter = ('nature__nom',)
     raw_id_fields = ('parent', 'illustrations', 'documents',)
@@ -290,10 +290,10 @@ class ParenteDIndividusAdmin(CustomAdmin):
 
 class IndividuAdmin(CustomAdmin):
     list_per_page = 20
-    list_display = ('__unicode__', 'nom', 'nom_naissance', 'calc_prenoms',
+    list_display = ('__unicode__', 'nom', 'calc_prenoms',
         'pseudonyme', 'titre', 'ancrage_naissance', 'ancrage_deces',
-        'calc_professions', 'link',)
-    list_editable = ('nom', 'titre',)
+        'calc_professions', 'etat', 'link',)
+    list_editable = ('nom', 'titre', 'etat')
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',)
     list_filter = ('titre',)
     raw_id_fields = ('prenoms', 'ancrage_naissance', 'ancrage_deces',
@@ -422,8 +422,8 @@ class AuteurAdmin(CustomAdmin):
 class OeuvreAdmin(CustomAdmin):
     list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre',
         'calc_caracteristiques', 'calc_auteurs', 'ancrage_creation',
-        'link',)
-    list_editable = ('genre',)
+        'etat', 'link',)
+    list_editable = ('genre', 'etat')
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
     filter_horizontal = ('auteurs',)
@@ -477,8 +477,8 @@ class CaracteristiqueDElementDeProgrammeAdmin(CustomAdmin):
 
 
 class ElementDeProgrammeAdmin(CustomAdmin):
-    list_display = ('oeuvre', 'autre', 'classement', 'html',)
-    list_editable = ('classement',)
+    list_display = ('oeuvre', 'autre', 'classement', 'html', 'etat')
+    list_editable = ('classement', 'etat')
     filter_horizontal = ('caracteristiques', 'distribution', 'personnels',
         'illustrations', 'documents',)
     raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
@@ -493,8 +493,8 @@ class ElementDeProgrammeAdmin(CustomAdmin):
 
 class EvenementAdmin(CustomAdmin):
     list_display = ('__unicode__', 'relache', 'circonstance',
-                    'has_source', 'has_program', 'link',)
-    list_editable = ('relache', 'circonstance',)
+                    'has_source', 'has_program', 'etat', 'link',)
+    list_editable = ('relache', 'circonstance', 'etat')
     search_fields = ('circonstance',)
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
@@ -532,8 +532,8 @@ class TypeDeSourceAdmin(CustomAdmin):
 
 class SourceAdmin(CustomAdmin):
     list_display = ('nom', 'date', 'type', 'has_events', 'has_program',
-                    'author')
-    list_editable = ('type', 'date')
+                    'author', 'etat', 'link')
+    list_editable = ('type', 'date', 'etat')
     search_fields = ('nom', 'numero', 'type__nom',)
     list_filter = ('type', 'nom', SourceHasEventsListFilter,
                    SourceHasProgramListFilter)

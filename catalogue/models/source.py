@@ -9,6 +9,7 @@ from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from autoslug import AutoSlugField
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, DATE_MSG, calc_pluriel
+from django.utils.safestring import mark_safe
 
 
 class TypeDeSource(CustomModel):
@@ -60,6 +61,7 @@ class Source(CustomModel):
 
     def link(self):
         return self.html()
+    link.allow_tags = True
 
     def individus_auteurs(self):
         pk_list = self.auteurs.values_list('individus', flat=True)
@@ -80,7 +82,7 @@ class Source(CustomModel):
         if self.page:
             l.append(ugettext('p. %s') % self.page)
         out = ' '.join(l)
-        return href(url, out, tags)
+        return mark_safe(href(url, out, tags))
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
