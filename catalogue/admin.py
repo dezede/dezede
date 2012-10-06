@@ -5,6 +5,8 @@ from django.contrib.admin import site, TabularInline, StackedInline
 from django.contrib.admin.options import BaseModelAdmin
 from reversion import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.admin import SimpleListFilter
+from django.db.models import Q
 
 
 #
@@ -43,6 +45,46 @@ class CustomBaseModel(BaseModelAdmin):
         if not user.is_superuser:
             objects = objects.filter(author=user)
         return objects
+
+
+#
+# Filters
+#
+
+
+def build_boolean_list_filter(class_title, class_parameter_name, filter=None,
+                              exclude=None):
+    class HasEventsListFilter(SimpleListFilter):
+        title = class_title
+        parameter_name = class_parameter_name
+
+        def lookups(self, request, model_admin):
+            return (
+                ('1', _('Yes')),
+                ('0', _('No')),
+            )
+
+        def queryset(self, request, queryset):
+            if self.value() == '1':
+                query = getattr(queryset, 'filter' if filter is not None
+                                     else 'exclude')
+                return query(filter if filter is not None else exclude)
+            if self.value() == '0':
+                query = getattr(queryset, 'filter' if exclude is not None
+                                     else 'exclude')
+                return query(exclude if exclude is not None else filter)
+
+    return HasEventsListFilter
+
+
+HasEventsListFilter = build_boolean_list_filter(
+                   _(u'événements'), 'has_events', Q(evenements__isnull=False),
+                                                   exclude=Q(evenements=None))
+
+
+HasProgramListFilter = build_boolean_list_filter(
+    _('programme'), 'has_program', Q(evenements__programme__isnull=False)
+                                   | Q(evenements__relache=True))
 
 
 #
@@ -480,12 +522,11 @@ class TypeDeSourceAdmin(CustomAdmin):
 
 
 class SourceAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'has_events', 'has_program', 'nom',
-                    'numero', 'date', 'page', 'type',)
-        #'disp_contenu',)
-    list_editable = ('type', 'date',)
+    list_display = ('nom', 'has_events', 'has_program',
+                    'date', 'type', 'author')
+    list_editable = ('type', 'date')
     search_fields = ('nom', 'numero', 'type__nom',)
-    list_filter = ('type', 'nom',)
+    list_filter = ('type', 'nom', HasEventsListFilter, HasProgramListFilter)
     filter_horizontal = ('auteurs',)
     raw_id_fields = ('evenements', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {

@@ -81,7 +81,8 @@ class CustomModel(Model):
     """
     Modèle personnalisé, essentiellement pour les remplacements typographiques.
     """
-    author = ForeignKey(User, null=True, blank=True)
+    author = ForeignKey(User, null=True, blank=True,
+                                               verbose_name=_('transcripteur'))
     objects = CustomManager()
 
     class Meta:

@@ -84,11 +84,6 @@ class Source(CustomModel):
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
-    def disp_contenu(self):
-        return self.contenu[:200] + u'[...]' + self.contenu[-50:]
-    disp_contenu.short_description = _('contenu')
-    disp_contenu.allow_tags = True
-
     def has_events(self):
         return self.evenements.exists()
     has_events.short_description = _(u'Événements')

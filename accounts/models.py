@@ -5,7 +5,7 @@ from django.utils.translation import pgettext, ungettext_lazy, \
 
 
 class StudentProfile(Model):
-    user = OneToOneField(User)
+    user = OneToOneField(User, related_name='student_profile')
     professor = ForeignKey(User, related_name='students',
         verbose_name=_('professeur'), limit_choices_to={'is_superuser': True})
 
