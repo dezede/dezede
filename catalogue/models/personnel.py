@@ -5,6 +5,7 @@ from django.db.models import CharField, ForeignKey, ManyToManyField, FloatField
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from autoslug import AutoSlugField
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
+from django.template.defaultfilters import capfirst
 
 
 class Profession(CustomModel):
@@ -28,13 +29,13 @@ class Profession(CustomModel):
 
     def feminin(self):
         f = self.nom_feminin
-        return f if f else self.nom
+        return f or self.nom
 
     def gendered(self, titre='M'):
         return self.nom if titre == 'M' else self.feminin()
 
     def __unicode__(self):
-        return self.nom
+        return capfirst(self.nom)
 
     @staticmethod
     def autocomplete_search_fields():
