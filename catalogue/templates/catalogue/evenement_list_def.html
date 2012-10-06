@@ -16,7 +16,7 @@
       <dd>
         {% if year.list|length_is:1 %}
           <a href="{% url evenements lieu_slug=lieu_slug year=year.grouper %}">
-              {{ year.list.0 }}
+              {{ year.list.0.ancrage_debut.calc_moment|capfirst }}
           </a>
         {% else %}
           <a href="{% url evenements lieu_slug=lieu_slug year=year.grouper %}">
