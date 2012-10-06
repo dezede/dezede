@@ -50,9 +50,7 @@
       <div class="source">
         {{ source.contenu|safe }}
         {{ source.calc_auteurs|safe }}<br />
-        <a href="{{ source.permalien }}">
           {% frontend_admin source %}
-        </a>
       </div>
       {% if forloop.last %}
         </div>
