@@ -178,7 +178,7 @@ class CustomAdmin(VersionAdmin, CustomBaseModel):
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
-            if not instance.pk:
+            if getattr(instance, 'author') is None:
                 instance.author = request.user
             instance.save()
         formset.save_m2m()
