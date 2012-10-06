@@ -1,19 +1,49 @@
 {% load i18n %}
-{% for evenement in evenements %}
-  {% if forloop.first %}
+
+{% with counter=evenements|length %}{# Remplacer ce length par un count quand Oeuvre.evenements sera un RelatedManager #}
+  {% if counter %}
     <dt>
-      {% filter capfirst %}
-        {% blocktrans count counter=evenements.count %}événement{% plural %}événements{% endblocktrans %}
-      {% endfilter %}
+      {% filter capfirst %}{% blocktrans count counter=counter %}événement{% plural %}événements{% endblocktrans %}{% endfilter %}
     </dt>
   {% endif %}
-  <dd>
-    {% if lieu %}{# TODO: trouver un truc plus propre #}
-      <a href="{{ evenement.get_absolute_url }}">
-        {{ evenement.ancrage_debut.calc_moment|capfirst }}
-      </a>
-    {% else %}
-      {{ evenement.link }}
-    {% endif %}
-  </dd>
-{% endfor %}
+{% endwith %}
+
+{% if lieu %}
+
+  {% regroup evenements by ancrage_debut.date.year as year_list %}
+  {% with lieu_slug=lieu.slug %}
+    {% for year in year_list %}
+      <dd>
+        {% if year.list|length_is:1 %}
+          <a href="{% url evenements lieu_slug=lieu_slug year=year.grouper %}">
+              {{ year.list.0 }}
+          </a>
+        {% else %}
+          <a href="{% url evenements lieu_slug=lieu_slug year=year.grouper %}">
+            {{ year.grouper }} ({{ year.list|length }})
+          </a>
+        {% endif %}
+      </dd>
+    {% endfor %}
+  {% endwith %}
+
+{% else %}
+
+  {% regroup evenements by ancrage_debut.lieu as place_list %}
+  {% for place in place_list %}
+    <dd>
+      {% if place.list|length_is:1 %}
+        <a href="{% url evenements lieu_slug=place.grouper.slug %}">
+          {{ place.list.0 }}
+        </a>
+      {% else %}
+        <a href="{% url evenements lieu_slug=place.grouper.slug %}">
+          {{ place.grouper }} ({{ place.list|length }})
+        </a>
+      {% endif %}
+    </dd>
+  {% endfor %}
+
+{% endif %}
+
+
