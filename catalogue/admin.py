@@ -78,8 +78,7 @@ def build_boolean_list_filter(class_title, class_parameter_name, filter=None,
 
 
 HasEventsListFilter = build_boolean_list_filter(
-                   _(u'événements'), 'has_events', Q(evenements__isnull=False),
-                                                   exclude=Q(evenements=None))
+                   _(u'événements'), 'has_events', exclude=Q(evenements=None))
 
 
 HasProgramListFilter = build_boolean_list_filter(
