@@ -61,6 +61,7 @@ class Source(CustomModel):
 
     def link(self):
         return self.html()
+    link.short_description = _('Lien')
     link.allow_tags = True
 
     def individus_auteurs(self):
