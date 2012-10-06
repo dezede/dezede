@@ -1,22 +1,21 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
+# 
+# Translators:
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-18 04:11+0200\n"
-"PO-Revision-Date: 2012-03-18 03:39\n"
-"Last-Translator: <bordage.bertrand@gmail.com>\n"
+"POT-Creation-Date: 2012-10-06 20:57+0200\n"
+"PO-Revision-Date: 2012-10-06 19:07+0000\n"
+"Last-Translator: Bertrand Bordage <bordage.bertrand@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Translated-Using: django-rosetta 0.6.5\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: dashboard.py:26
 msgid "Base de données"
@@ -78,35 +77,212 @@ msgstr "French"
 msgid "English"
 msgstr "English"
 
+#: templates/403.html:5
+msgid "Erreur 403"
+msgstr ""
+
+#: templates/403.html:9
+msgid "Vous n’avez pas l’autorisation d’accéder à cette page."
+msgstr ""
+
+#: templates/404.html:5
+msgid "Erreur 404"
+msgstr ""
+
+#: templates/404.html:9
+msgid "La page n'a pu être trouvée."
+msgstr ""
+
+#: templates/500.html:5
+msgid "Erreur 500"
+msgstr ""
+
+#: templates/500.html:9
+msgid "Le serveur ne parvient pas à répondre correctement à votre requête."
+msgstr ""
+
 #: templates/base.html:7
 msgid "musicologie, base de données"
 msgstr "musicology, database"
 
-#: templates/base.html:22 templates/search/search.html:8
+#: templates/base.html:23 templates/search/search.html:8
 #: templates/search/search.html.py:12
 msgid "Recherche"
 msgstr "Search"
 
-#: templates/base.html:23
+#: templates/base.html:24
 msgid "lieux"
 msgstr "places"
 
-#: templates/base.html:24
+#: templates/base.html:25
 msgid "événements"
 msgstr "events"
 
-#: templates/base.html:25
+#: templates/base.html:26
 msgid "individus"
 msgstr "people"
 
 #: templates/base.html:27
+msgid "parties"
+msgstr ""
+
+#: templates/base.html:29
 msgid "Administration"
 msgstr ""
 
-#: templates/base.html:42
+#: templates/base.html:44
 msgid ""
 "Votre navigateur ne peut pas lancer javascript. Attendez-vous à des défauts "
 "de fonctionnement."
+msgstr ""
+
+#: templates/profiles/create_profile.html:5
+#: templates/profiles/create_profile.html:9
+msgid "Créer un profil utilisateur"
+msgstr ""
+
+#: templates/profiles/create_profile.html:13
+#: templates/profiles/edit_profile.html:13
+msgid "Valider"
+msgstr ""
+
+#: templates/profiles/edit_profile.html:5
+#: templates/profiles/edit_profile.html:9
+msgid "Modification de votre profil"
+msgstr ""
+
+#: templates/profiles/profile_detail.html:9
+msgid "Profil de"
+msgstr ""
+
+#: templates/profiles/profile_detail.html:20
+msgid "Modifier"
+msgstr ""
+
+#: templates/profiles/profile_list.html:5
+#: templates/profiles/profile_list.html:9
+msgid "Profils utilisateur"
+msgstr ""
+
+#: templates/profiles/profile_list.html:15
+msgid "Créer son profil"
+msgstr ""
+
+#: templates/registration/activate.html:5
+#: templates/registration/activate.html:9
+msgid "Erreur d’activation"
+msgstr ""
+
+#: templates/registration/activate.html:11
+#, python-format
+msgid ""
+"\n"
+"      L’activation de la clé %(activation_key)s a échoué.\n"
+"    "
+msgstr ""
+
+#: templates/registration/activation_complete.html:5
+#: templates/registration/activation_complete.html:9
+msgid "Bienvenue"
+msgstr ""
+
+#: templates/registration/activation_complete.html:12
+#, python-format
+msgid ""
+"\n"
+"      La création et l’activation de votre compte ont été un succès !\n"
+"      Veuillez maintenant vous <a href=\"%(url)s\">créer un profil</a>.\n"
+"    "
+msgstr ""
+
+#: templates/registration/activation_email.txt:3
+msgid ""
+"\n"
+"Pour que votre compte fonctionne, vous devez l’activer.\n"
+"Voici le lien d’activation :\n"
+msgstr ""
+
+#: templates/registration/activation_email.txt:8
+#, python-format
+msgid ""
+"\n"
+"Vous disposez d’un délai de %(expiration_days)s jours pour activer ce compte.\n"
+msgstr ""
+
+#: templates/registration/login.html:5 templates/registration/login.html:9
+msgid "Connexion"
+msgstr ""
+
+#: templates/registration/login.html:12
+#, python-format
+msgid ""
+"\n"
+"      Vous êtes déjà connecté.  Souhaitez-vous <a href=\"%(url)s\">vous déconnecter</a> ?\n"
+"    "
+msgstr ""
+
+#: templates/registration/login.html:19
+msgid "Se connecter"
+msgstr ""
+
+#: templates/registration/login.html:23
+#, python-format
+msgid ""
+"\n"
+"        Pas de compte utilisateur ?\n"
+"        Vous pouvez <a href=\"%(url)s\">en creer un.</a>\n"
+"      "
+msgstr ""
+
+#: templates/registration/logout.html:5 templates/registration/logout.html:9
+msgid "Déconnexion"
+msgstr ""
+
+#: templates/registration/logout.html:12
+#, python-format
+msgid ""
+"\n"
+"      Vous venez de vous déconnecter avec succès.\n"
+"      <a href=\"%(url)s\">Se connecter à nouveau</a> ?\n"
+"    "
+msgstr ""
+
+#: templates/registration/registration_closed.html:5
+#: templates/registration/registration_closed.html:9
+msgid "Enregistrement désactivé"
+msgstr ""
+
+#: templates/registration/registration_closed.html:11
+msgid ""
+"\n"
+"      La création de nouveaux comptes utilisateur a été momentanément\n"
+"      désactivée.\n"
+"    "
+msgstr ""
+
+#: templates/registration/registration_complete.html:5
+#: templates/registration/registration_complete.html:9
+msgid "En attente d’activation"
+msgstr ""
+
+#: templates/registration/registration_complete.html:12
+#, python-format
+msgid ""
+"\n"
+"      Votre compte a bien été créé mais demande une vérification de votre part.\n"
+"      Un courriel contenant un lien d’activation vous a été envoyé.\n"
+"      Une fois votre compte activé, vous pourrez aller\n"
+"      <a href=\"%(url)s\">créer un profil</a>.\n"
+"    "
+msgstr ""
+
+#: templates/registration/registration_form.html:5
+#: templates/registration/registration_form.html:9
+msgid "Créer un nouveau compte"
+msgstr ""
+
+#: templates/registration/registration_form.html:13
+msgid "S’enregistrer"
 msgstr ""
 
 #: templates/search/search.html:25
@@ -133,6 +309,6 @@ msgstr "Next »"
 
 #: templates/search/search.html:73
 msgid ""
-"Tapez par exemple « chanteuse », « Molière », « opéra » ou encore "
-"« théâtre »."
+"Tapez par exemple « chanteuse », « Molière », « opéra » ou encore « théâtre "
+"»."
 msgstr ""

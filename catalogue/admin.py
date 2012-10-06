@@ -60,8 +60,8 @@ def build_boolean_list_filter(class_title, class_parameter_name, filter=None,
 
         def lookups(self, request, model_admin):
             return (
-                ('1', _('Yes')),
-                ('0', _('No')),
+                ('1', _('Oui')),
+                ('0', _('Non')),
             )
 
         def queryset(self, request, queryset):
