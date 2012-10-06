@@ -29,18 +29,11 @@
 
 {% else %}
 
-  {% regroup evenements by ancrage_debut.lieu as place_list %}
-  {% for place in place_list %}
+  {% for evenement in evenements %}
     <dd>
-      {% if place.list|length_is:1 %}
-        <a href="{% url evenements lieu_slug=place.grouper.slug %}">
-          {{ place.list.0 }}
-        </a>
-      {% else %}
-        <a href="{% url evenements lieu_slug=place.grouper.slug %}">
-          {{ place.grouper }} ({{ place.list|length }})
-        </a>
-      {% endif %}
+      <a href="{% url evenement_pk evenement.pk %}">
+        {{ evenement.link }}
+      </a>
     </dd>
   {% endfor %}
 
