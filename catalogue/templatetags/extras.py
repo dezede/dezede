@@ -77,10 +77,3 @@ def abbreviate(string, limit=0):
                         tmp_limit -= 1
         out += sub
     return out
-
-
-@register.filter
-def GET_add_page(request, page_number):
-    answer = request.GET.copy()
-    answer['page'] = page_number
-    return answer.urlencode()
