@@ -250,7 +250,7 @@ class Auteur(CustomModel):
 
     def html(self, tags=True):
         individus = self.individus_html(tags)
-        prof = abbreviate(unicode(self.profession), 1)
+        prof = abbreviate(unicode(self.profession.nom), 1)
         out = '%s [%s]' % (individus, prof)
         return out
     html.short_description = _('rendu HTML')
