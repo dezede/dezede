@@ -552,7 +552,7 @@ class SourceAdmin(CustomAdmin):
     list_display = ('nom', 'date', 'type', 'has_events', 'has_program',
                     'author', 'etat', 'link')
     list_editable = ('type', 'date', 'etat')
-    search_fields = ('nom', 'numero', 'type__nom',)
+    search_fields = ('nom', 'date', 'type__nom', 'numero', 'contenu')
     list_filter = ('type', 'nom', SourceHasEventsListFilter,
                    SourceHasProgramListFilter)
     filter_horizontal = ('auteurs',)
