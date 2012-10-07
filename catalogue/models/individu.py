@@ -149,26 +149,19 @@ class Individu(CustomModel):
     link.allow_tags = True
 
     def oeuvres(self):
-        pk_list = self.auteurs.values_list('oeuvres', flat=True) \
-                                                    .order_by('oeuvres__titre')
-        if pk_list:
-            return get_model('catalogue',
-                             'Oeuvre').objects.in_bulk(tuple(pk_list)).values()
+        # FIXME: Pas sûr que la condition soit logique.
+        return get_model('catalogue', 'Oeuvre').objects.filter(
+                          auteurs__individus=self).distinct().order_by('titre')
 
     def publications(self):
-        pk_list = self.auteurs.values_list('sources', flat=True)
-        if pk_list:
-            return get_model('catalogue',
-                             'Source').objects.in_bulk(tuple(pk_list)).values()
+        # FIXME: Pas sûr que la condition soit logique.
+        return get_model('catalogue', 'Source').objects.filter(
+                                            auteurs__individus=self).distinct()
 
     def apparitions(self):
-        q = get_model('catalogue', 'Evenement').objects.none()
-        els = get_model('catalogue', 'ElementDeProgramme').objects.none()
-        for attribution in self.attributions_de_pupitre.iterator():
-            els |= attribution.elements_de_programme.all()
-        for el in els.distinct():
-            q |= el.evenements.all()
-        return q.distinct()
+        # FIXME: Pas sûr que la condition soit logique.
+        return get_model('catalogue', 'Evenement').objects.filter(
+                            programme__distribution__individus=self).distinct()
 
     def parents(self):
         pk_list = self.parentes.values_list('individus_cibles', flat=True) \
