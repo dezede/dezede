@@ -259,7 +259,7 @@ class Auteur(CustomModel):
     class Meta:
         verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
         verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
-        ordering = ['profession']
+        ordering = ['profession', 'individus__nom']
         app_label = 'catalogue'
 
     def __unicode__(self):
