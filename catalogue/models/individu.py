@@ -164,12 +164,14 @@ class Individu(CustomModel):
                             programme__distribution__individus=self).distinct()
 
     def parents(self):
+        # FIXME: À simplifier
         pk_list = self.parentes.values_list('individus_cibles', flat=True) \
                                              .order_by('individus_cibles__nom')
         if pk_list:
             return Individu.objects.in_bulk(tuple(pk_list)).values()
 
     def enfants(self):
+        # FIXME: À simplifier
         pk_list = self.enfances_cibles.values_list('individus_orig',
                                      flat=True).order_by('individus_orig__nom')
         if pk_list:

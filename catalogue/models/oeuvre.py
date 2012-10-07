@@ -133,10 +133,10 @@ class Partie(CustomModel):
         return 'partie_pk', (self.pk,)
 
     def link(self):
-        return href(self.permalien(), unicode(self))
+        return href(self.permalien(), self.html())
 
     def html(self):
-        return unicode(self)
+        return self.nom
 
     def __unicode__(self):
         return capfirst(self.nom)
@@ -316,9 +316,8 @@ class Oeuvre(CustomModel):
     link.allow_tags = True
 
     def individus_auteurs(self):
-        pk_list = self.auteurs.values_list('individus', flat=True)
-        return get_model('catalogue',
-                         'Individu').objects.in_bulk(pk_list).values()
+        return get_model('catalogue', 'Individu').objects.filter(
+                                              auteurs__oeuvres=self).distinct()
 
     def calc_caracteristiques(self, limite=0, tags=True):
         if not self.pk:

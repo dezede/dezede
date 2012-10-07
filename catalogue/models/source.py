@@ -65,9 +65,8 @@ class Source(CustomModel):
     link.allow_tags = True
 
     def individus_auteurs(self):
-        pk_list = self.auteurs.values_list('individus', flat=True)
-        return get_model('catalogue',
-                         'Individu').objects.in_bulk(pk_list).values()
+        return get_model('catalogue', 'Individu').objects.filter(
+                                              auteurs__sources=self).distinct()
 
     def calc_auteurs(self, tags=True):
         auteurs = self.auteurs.iterator()
