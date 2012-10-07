@@ -3,7 +3,7 @@
 from .functions import str_list, str_list_w_last, href, hlp
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, OneToOneField, BooleanField, \
-                             permalink, get_model
+                             PositiveSmallIntegerField, permalink, get_model
 from tinymce.models import HTMLField
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
@@ -62,13 +62,15 @@ class CaracteristiqueDElementDeProgramme(CustomModel):
 
 
 class ElementDeProgramme(CustomModel):
+    evenement = ForeignKey('Evenement', related_name='programme',
+                            verbose_name=_('événement'))
     oeuvre = ForeignKey('Oeuvre', related_name='elements_de_programme',
         verbose_name=_(u'œuvre'), blank=True, null=True)
     autre = CharField(max_length=500, blank=True)
     caracteristiques = ManyToManyField(CaracteristiqueDElementDeProgramme,
         related_name='elements_de_programme', blank=True, null=True,
         verbose_name=_(u'caractéristiques'))
-    classement = FloatField(default=1.0)
+    position = PositiveSmallIntegerField(_("Position"))
     distribution = ManyToManyField(AttributionDePupitre,
         related_name='elements_de_programme', blank=True, null=True)
     personnels = ManyToManyField('Personnel',
@@ -117,7 +119,7 @@ class ElementDeProgramme(CustomModel):
                 u'éléments de programme', 1)
         verbose_name_plural = ungettext_lazy(u'élément de programme',
                 u'éléments de programme', 2)
-        ordering = ['classement', 'oeuvre']
+        ordering = ['position', 'oeuvre']
         app_label = 'catalogue'
 
     def __unicode__(self):
@@ -140,8 +142,6 @@ class Evenement(CustomModel):
         related_name='evenements_fins', blank=True, null=True)
     relache = BooleanField(verbose_name=u'relâche')
     circonstance = CharField(max_length=500, blank=True)
-    programme = ManyToManyField('ElementDeProgramme',
-        related_name='evenements', blank=True, null=True)
     documents = ManyToManyField('Document', related_name='evenements',
         blank=True, null=True)
     illustrations = ManyToManyField('Illustration', related_name='evenements',

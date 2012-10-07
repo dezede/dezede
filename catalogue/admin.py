@@ -99,12 +99,12 @@ SourceHasProgramListFilter = build_boolean_list_filter(
 #
 
 
-TabularInline.extra = 2
-StackedInline.extra = 2
-
-
 class CustomTabularInline(TabularInline, CustomBaseModel):
-    pass
+    extra = 2
+
+
+class CustomStackedInline(StackedInline, CustomBaseModel):
+    extra = 0
 
 
 class AncrageSpatioTemporelInline(CustomTabularInline):
@@ -150,16 +150,31 @@ class AuteurInline(CustomTabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class ElementDeProgrammeInline(StackedInline):
+class ElementDeProgrammeInline(CustomStackedInline):
+    fieldsets = (
+        (_('Champs courants'), {
+            'fields': (('oeuvre', 'autre',), 'caracteristiques',
+                       'distribution',),
+        }),
+        (_('Fichiers'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': ('illustrations', 'documents',),
+        }),
+        (_(u'Champs avancés'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': ('personnels', 'etat', 'position',),
+        }),
+    )
     model = ElementDeProgramme
-    classes = ('grp-collapse grp-closed',)
-
-
-class EvenementInline(CustomTabularInline):
-    verbose_name = Evenement._meta.verbose_name
-    verbose_name_plural = Evenement._meta.verbose_name_plural
-    model = Evenement.programme.through
-    classes = ('grp-collapse grp-closed',)
+    sortable_field_name = 'position'
+    raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
+                     'personnels', 'illustrations', 'documents')
+    autocomplete_lookup_fields = {
+        'fk': ['oeuvre'],
+        'm2m': ['caracteristiques', 'distribution',
+                'personnels', 'illustrations', 'documents'],
+        }
+    classes = ('grp-collapse grp-open',)
 
 
 #
@@ -477,8 +492,8 @@ class CaracteristiqueDElementDeProgrammeAdmin(CustomAdmin):
 
 
 class ElementDeProgrammeAdmin(CustomAdmin):
-    list_display = ('oeuvre', 'autre', 'classement', 'html', 'etat')
-    list_editable = ('classement', 'etat')
+    list_display = ('oeuvre', 'autre', 'position', 'html', 'etat')
+    list_editable = ('position', 'etat')
     filter_horizontal = ('caracteristiques', 'distribution', 'personnels',
         'illustrations', 'documents',)
     raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
@@ -488,7 +503,6 @@ class ElementDeProgrammeAdmin(CustomAdmin):
         'm2m': ['caracteristiques', 'distribution', 'personnels',
                 'documents', 'illustrations'],
     }
-#    inlines = (EvenementInline,)
 
 
 class EvenementAdmin(CustomAdmin):
@@ -498,17 +512,18 @@ class EvenementAdmin(CustomAdmin):
     search_fields = ('circonstance',)
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
-    raw_id_fields = ('programme', 'ancrage_debut', 'ancrage_fin', 'documents',
+    raw_id_fields = ('ancrage_debut', 'ancrage_fin', 'documents',
         'illustrations',)
     autocomplete_lookup_fields = {
         'fk': ['ancrage_debut', 'ancrage_fin'],
-        'm2m': ['programme', 'documents', 'illustrations'],
+        'm2m': ['documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
+    inlines = (ElementDeProgrammeInline,)
     fieldsets = (
         (_('Champs courants'), {
-            'fields': ('ancrage_debut', 'ancrage_fin', 'relache',
-                        'circonstance', 'programme',),
+            'fields': (('ancrage_debut', 'ancrage_fin',),
+                       ('circonstance', 'relache',),),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),

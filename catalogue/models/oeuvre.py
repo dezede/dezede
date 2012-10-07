@@ -295,6 +295,8 @@ class Oeuvre(CustomModel):
         null=True)
     illustrations = ManyToManyField('Illustration', related_name='oeuvres',
         blank=True, null=True)
+    evenements = ManyToManyField('Evenement', through='ElementDeProgramme',
+                                 related_name='oeuvres')
     etat = ForeignKey('Etat', related_name='oeuvres', null=True, blank=True)
     notes = HTMLField(blank=True)
     slug = AutoSlugField(populate_from=unicode)
@@ -317,12 +319,6 @@ class Oeuvre(CustomModel):
         pk_list = self.auteurs.values_list('individus', flat=True)
         return get_model('catalogue',
                          'Individu').objects.in_bulk(pk_list).values()
-
-    def evenements(self):
-        pk_list = self.elements_de_programme.values_list('evenements',
-                                                         flat=True)
-        return get_model('catalogue',
-                         'Evenement').objects.in_bulk(pk_list).values()
 
     def calc_caracteristiques(self, limite=0, tags=True):
         if not self.pk:
