@@ -19,3 +19,4 @@ South==0.7.6
 django-debug-toolbar==0.9.4
 django-extensions==0.9
 BeautifulSoup==3.2.1
+Pygments==1.5
