@@ -100,7 +100,7 @@ SourceHasProgramListFilter = build_boolean_list_filter(
 
 
 class CustomTabularInline(TabularInline, CustomBaseModel):
-    extra = 2
+    extra = 0
 
 
 class CustomStackedInline(StackedInline, CustomBaseModel):
@@ -121,6 +121,7 @@ class OeuvreMereInline(CustomTabularInline):
     autocomplete_lookup_fields = {
         'fk': ['mere'],
     }
+    fields = ('mere', 'type',)
     classes = ('grp-collapse grp-closed',)
 
 
@@ -133,6 +134,7 @@ class OeuvreFilleInline(CustomTabularInline):
     autocomplete_lookup_fields = {
         'fk': ['fille'],
     }
+    fields = ('type', 'fille')
     classes = ('grp-collapse grp-closed',)
 
 
@@ -410,8 +412,9 @@ class TypeDeParenteDOeuvresAdmin(CustomAdmin):
 
 
 class ParenteDOeuvresAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'fille', 'type', 'mere',)
-    list_editable = ('type', 'fille', 'mere',)
+    fields = ('mere', 'type', 'fille',)
+    list_display = ('__unicode__', 'mere', 'type', 'fille',)
+    list_editable = ('mere', 'type', 'fille',)
     raw_id_fields = ('fille', 'mere',)
     autocomplete_lookup_fields = {
         'fk': ['fille', 'mere'],
