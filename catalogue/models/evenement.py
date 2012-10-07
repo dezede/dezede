@@ -12,7 +12,7 @@ from django.template.defaultfilters import capfirst
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
 import hashlib
 from django.core.cache import cache
-from django.db.models.signals import post_save
+from reversion.models import post_revision_commit
 from django.dispatch import receiver
 
 
@@ -83,10 +83,30 @@ class ElementDeProgramme(CustomModel):
         blank=True)
 
     def calc_caracteristiques(self):
+        if self.pk is None:
+            return ''
         cs = self.caracteristiques.iterator()
         return str_list(unicode(c) for c in cs)
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _(u'caractéristiques')
+
+    def calc_distribution(self, tags=True):
+        if self.pk is None:
+            return ''
+        out = []
+        out__append = out.append
+        distribution = self.distribution
+        if distribution.exists():
+            out__append(u'. — ')
+            maxi = distribution.count() - 1
+        for i, attribution in enumerate(distribution.iterator()):
+            individus = attribution.individus.iterator()
+            out__append(str_list(individu.html(tags)
+                for individu in individus))
+            out__append(' [' + attribution.pupitre.partie.link() + ']')
+            if i < maxi:
+                out__append(', ')
+        return ''.join(out)
 
     def html(self, tags=True):
         out = []
@@ -99,17 +119,7 @@ class ElementDeProgramme(CustomModel):
         cs = self.calc_caracteristiques()
         if cs:
             out__append(' [' + cs + ']')
-        distribution = self.distribution
-        if distribution.exists():
-            out__append(u'. — ')
-            maxi = distribution.count() - 1
-        for i, attribution in enumerate(distribution.iterator()):
-            individus = attribution.individus.iterator()
-            out__append(str_list(individu.html(tags)
-                                                    for individu in individus))
-            out__append(' [' + attribution.pupitre.partie.link() + ']')
-            if i < maxi:
-                out__append(', ')
+        out__append(self.calc_distribution(tags))
         return ''.join(out)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
@@ -199,17 +209,6 @@ class Evenement(CustomModel):
     has_source.boolean = True
     has_source.admin_order_field = 'sources'
 
-    def clear_cache(self):
-        args = hashlib.md5(str(self.pk))
-        cache_key = 'template.cache.%s.%s' % ('evenement', args.hexdigest())
-        cache.delete(cache_key)
-
-    @staticmethod
-    @receiver(post_save)
-    def clear_all_cache(sender, **kwargs):
-        for e in Evenement.objects.all():
-            e.clear_cache()
-
     class Meta:
         verbose_name = ungettext_lazy(u'événement', u'événements', 1)
         verbose_name_plural = ungettext_lazy(u'événement', u'événements', 2)
@@ -234,3 +233,9 @@ class Evenement(CustomModel):
             'ancrage_debut__date_approx__icontains',
             'ancrage_debut__heure_approx__icontains',
         )
+
+
+@receiver(post_revision_commit)
+def clear_all_cache(sender, **kwargs):
+    u"On vide le cache pour les templates d'événements."
+    cache.clear()
