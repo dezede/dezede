@@ -18,7 +18,7 @@ def date_html(d, tags=True, short=False):
     mardi 1er janvier 1828
     """
     if short:
-        return date(d, get_format('SHORT_DATE_FORMAT'))
+        return date(d, get_format('DATE_FORMAT'))
     pre = date(d, 'l')
     post = date(d, 'F Y')
     j = date(d, 'j')
