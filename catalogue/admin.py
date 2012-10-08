@@ -247,10 +247,10 @@ class LieuAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('etat', 'notes',),
         }),
-        (_(u'Champs générés (Méthodes)'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('__unicode__', 'html', 'link',),
-        }),
+#        (_(u'Champs générés (Méthodes)'), {
+#            'classes': ('grp-collapse grp-closed',),
+#            'fields': ('__unicode__', 'html', 'link',),
+#        }),
     )
 
 
@@ -339,10 +339,10 @@ class IndividuAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('ancrage_approx', 'biographie', 'etat', 'notes',),
         }),
-        (_(u'Champs générés (Méthodes)'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('__unicode__', 'html', 'link',),
-        }),
+#        (_(u'Champs générés (Méthodes)'), {
+#            'classes': ('grp-collapse grp-closed',),
+#            'fields': ('__unicode__', 'html', 'link',),
+#        }),
     )
 
 
@@ -473,10 +473,10 @@ class OeuvreAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed', 'wide',),
             'fields': ('lilypond', 'description', 'etat', 'notes',),
         }),
-        (_(u'Champs générés (Méthodes)'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('__unicode__', 'html', 'link',),
-        }),
+#        (_(u'Champs générés (Méthodes)'), {
+#            'classes': ('grp-collapse grp-closed',),
+#            'fields': ('__unicode__', 'html', 'link',),
+#        }),
     )
 
 
@@ -537,10 +537,10 @@ class EvenementAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('etat', 'notes',),
         }),
-        (_(u'Champs générés (Méthodes)'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('__unicode__', 'html', 'link',),
-        }),
+#        (_(u'Champs générés (Méthodes)'), {
+#            'classes': ('grp-collapse grp-closed',),
+#            'fields': ('__unicode__', 'html', 'link',),
+#        }),
     )
 
 
@@ -577,10 +577,10 @@ class SourceAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('etat', 'notes',),
         }),
-        (_(u'Champs générés (Méthodes)'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('__unicode__', 'html',),
-        }),
+#        (_(u'Champs générés (Méthodes)'), {
+#            'classes': ('grp-collapse grp-closed',),
+#            'fields': ('__unicode__', 'html',),
+#        }),
     )
 
 site.register(Document, DocumentAdmin)
