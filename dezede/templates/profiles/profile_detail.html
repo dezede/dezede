@@ -8,13 +8,13 @@
 {% block body %}
   <h1>{% trans "Profil de" %} {{ profile.user.get_full_name|default:profile.user }}</h1>
   <dl>
-    <dt>Professeur référent</dt>
+    <dt>{% trans "Professeur référent" %}</dt>
     <dd>
       {% with professor=profile.professor %}
         {{ professor.get_full_name|default:professor }}
       {% endwith %}
     </dd>
-    <dt>Sources transcrites</dt>
+    <dt>{% trans "Sources transcrites" %}</dt>
     <dd>{{ profile.user.source_set.count }}</dd>
   </dl>
   <a href="{% url profiles_edit_profile %}">[{% trans "Modifier" %}]</a>
