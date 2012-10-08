@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from django.db.models import Model, Manager, CharField, SlugField, \
+from django.db.models import Model, Manager, CharField, \
                              BooleanField, ManyToManyField, ForeignKey
 from django.db.models.query import QuerySet
 from django.contrib.auth.models import User
@@ -104,7 +104,9 @@ class CustomModel(Model):
     def meta(cls):
         return cls._meta
 
-SlugField.unique = True
+    @property
+    def related_label(self):
+        return unicode(self)
 
 
 class Document(CustomModel):
