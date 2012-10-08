@@ -35,6 +35,14 @@ class AttributionDePupitre(CustomModel):
         out += str_list_w_last(unicode(i) for i in ins)
         return out
 
+    @staticmethod
+    def autocomplete_search_fields():
+        return (
+            'pupitre__partie__nom__icontains',
+            'individus__nom__icontains',
+            'individus__pseudonyme__icontains',
+            )
+
 
 class CaracteristiqueDElementDeProgramme(CustomModel):
     nom = CharField(max_length=100, help_text=LOWER_MSG, unique=True)
@@ -63,8 +71,8 @@ class CaracteristiqueDElementDeProgramme(CustomModel):
     @staticmethod
     def autocomplete_search_fields():
         return (
-            'nom',
-            'nom_pluriel',
+            'nom__icontains',
+            'nom_pluriel__icontains',
         )
 
 
