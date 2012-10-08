@@ -10,7 +10,6 @@ from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from django.template.defaultfilters import capfirst
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
-import hashlib
 from django.core.cache import cache
 from reversion.models import post_revision_commit
 from django.dispatch import receiver

@@ -22,42 +22,29 @@ class CustomIndexDashboard(Dashboard):
     def init_with_context(self, context):
         site_name = get_admin_site_name(context)
 
-        self.children.append(modules.Group(
-            _(u'Base de données'),
-            column=1,
-            collapsible=False,
-            children=[
-                modules.ModelList(
-                    _('Saisie courante'),
-                    column=1,
-                    models=('catalogue.models.source.Source',
-                            'catalogue.models.evenement.Evenement',
-                            'catalogue.models.oeuvre.Oeuvre',
-                            'catalogue.models.individu.Individu',
-                            'catalogue.models.espace_temps.Lieu',),
-                ),
-                modules.ModelList(
-                    _('Saisie occasionnelle'),
-                    column=1,
-                    css_classes=('grp-collapse grp-closed',),
-                    exclude=('django.contrib.*',
-                             'catalogue.models.source.Source',
-                             'catalogue.models.evenement.Evenement',
-                             'catalogue.models.oeuvre.Oeuvre',
-                             'catalogue.models.individu.Individu',
-                             'catalogue.models.espace_temps.Lieu',),
-                )
-            ]
-        ))
+        self.children.append(
+            modules.ModelList(
+                _('Saisie courante'),
+                column=1,
+                collapsible=False,
+                css_classes=('grp-open',),
+                models=('catalogue.models.source.Source',
+                        'catalogue.models.evenement.Evenement',
+                        'catalogue.models.oeuvre.Oeuvre',
+                        'catalogue.models.individu.Individu',
+                        'catalogue.models.espace_temps.Lieu',),
+            )
+        )
 
         self.children.append(modules.Group(
             _('Fichiers'),
             column=1,
-            collapsible=False,
+            collapsible=True,
+            css_classes=('grp-collapse grp-closed',),
             children=[
                 modules.LinkList(
                     _('Gestionnaire de fichiers bruts'),
-                    column=2,
+                    column=1,
                     collapsible=False,
                     children=[
                         {
@@ -76,17 +63,25 @@ class CustomIndexDashboard(Dashboard):
             ]
         ))
 
+        self.children.append(modules.RecentActions(
+            _(u'Actions récentes'),
+            limit=5,
+            collapsible=False,
+            column=2,
+        ))
+
         self.children.append(modules.AppList(
             _('Utilisateurs et groupes'),
-            column=2,
+            column=3,
             css_classes=('grp-collapse grp-closed',),
             models=('django.contrib.*', 'registration.*',),
         ))
 
         self.children.append(modules.LinkList(
             _('Traduction'),
-            column=2,
-            css_classes=('grp-collapse grp-open',),
+            column=3,
+            collapsible=False,
+            css_classes=('grp-open',),
             children=[
                 {
                     'title': 'Transifex',
@@ -98,7 +93,7 @@ class CustomIndexDashboard(Dashboard):
 
         self.children.append(modules.LinkList(
             _('Support'),
-            column=2,
+            column=3,
             css_classes=('grp-collapse grp-closed',),
             children=[
                 {
@@ -117,11 +112,4 @@ class CustomIndexDashboard(Dashboard):
                     'external': True,
                 },
             ]
-        ))
-
-        self.children.append(modules.RecentActions(
-            _(u'Actions récentes'),
-            limit=8,
-            collapsible=False,
-            column=3,
         ))
