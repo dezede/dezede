@@ -25,6 +25,11 @@ class Prenom(CustomModel):
         ordering = ['prenom', 'classement']
         app_label = 'catalogue'
 
+    def has_individu(self):
+        return self.individus.exists()
+    has_individu.short_description = _(u'individu(s) lié(s)')
+    has_individu.boolean = True
+
     def __unicode__(self):
         return self.prenom
 

@@ -289,7 +289,8 @@ class AncrageSpatioTemporelAdmin(CustomAdmin):
 
 
 class PrenomAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'prenom', 'classement', 'favori',)
+    list_display = ('__unicode__', 'prenom', 'classement', 'favori',
+                    'has_individu')
     list_editable = ('prenom', 'classement', 'favori',)
 
 
@@ -552,7 +553,9 @@ class SourceAdmin(CustomAdmin):
     list_display = ('nom', 'date', 'type', 'has_events', 'has_program',
                     'author', 'etat', 'link')
     list_editable = ('type', 'date', 'etat')
-    search_fields = ('nom', 'date', 'type__nom', 'numero', 'contenu')
+    search_fields = ('nom', 'date', 'type__nom', 'numero', 'contenu',
+                     'author__username', 'author__first_name',
+                     'author__last_name')
     list_filter = ('type', 'nom', SourceHasEventsListFilter,
                    SourceHasProgramListFilter)
     filter_horizontal = ('auteurs',)
