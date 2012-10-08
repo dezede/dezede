@@ -60,6 +60,13 @@ class CaracteristiqueDElementDeProgramme(CustomModel):
     def __unicode__(self):
         return self.nom
 
+    @staticmethod
+    def autocomplete_search_fields():
+        return (
+            'nom',
+            'nom_pluriel',
+        )
+
 
 class ElementDeProgramme(CustomModel):
     evenement = ForeignKey('Evenement', related_name='programme',
