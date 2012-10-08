@@ -77,11 +77,10 @@ class Source(CustomModel):
         l = [cite(self.nom, tags)]
         if self.numero:
             l.append(no(self.numero))
-        date = ugettext('du %(date)s') % {'date': date_html(self.date, tags)}
-        l.append(date)
+        l.append(date_html(self.date, tags))
         if self.page:
             l.append(ugettext('p. %s') % self.page)
-        out = ' '.join(l)
+        out = ', '.join(l)
         return mark_safe(href(url, out, tags))
     html.short_description = _('rendu HTML')
     html.allow_tags = True
