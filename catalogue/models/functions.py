@@ -25,7 +25,7 @@ def date_html(d, tags=True, short=False):
         if tags:
             k = '<sup>%s</sup>' % k
         j += k
-    return '%s %s %s' % (pre, j, post)
+    return ' '.join(s for s in (pre, j, post) if s)
 
 
 def str_list(l, infix=None, last_infix=None):
