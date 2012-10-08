@@ -17,9 +17,7 @@ def date_html(d, tags=True, short=False):
     >>> print date_html(date(1828, 1, 1), False)
     mardi 1er janvier 1828
     """
-    if short:
-        return date(d, get_format('DATE_FORMAT'))
-    pre = date(d, 'l')
+    pre = '' if short else date(d, 'l')
     post = date(d, 'F Y')
     j = date(d, 'j')
     if j == '1':

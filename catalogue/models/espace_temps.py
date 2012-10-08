@@ -217,7 +217,7 @@ class AncrageSpatioTemporel(CustomModel):
         app_label = 'catalogue'
 
     def __unicode__(self):
-        return strip_tags(self.html(False))
+        return strip_tags(self.html(tags=False, short=True))
 
     @staticmethod
     def autocomplete_search_fields():
