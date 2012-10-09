@@ -321,6 +321,11 @@ class Individu(AutoriteModel):
             if self in p.individus_cibles.all():
                 raise ValidationError(_(u'L’individu a une parenté avec '
                                         u'lui-même.'))
+        naissance = self.ancrage_naissance
+        deces = self.ancrage_deces
+        if naissance and deces and deces.date < naissance.date:
+            raise ValidationError(_(u'Le décès ne peut précéder '
+                                    u'la naissance.'))
     class Meta:
         verbose_name = ungettext_lazy('individu', 'individus', 1)
         verbose_name_plural = ungettext_lazy('individu', 'individus', 2)

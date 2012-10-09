@@ -211,6 +211,12 @@ class AncrageSpatioTemporel(CustomModel):
     def short_html(self, tags=True):
         return self.html(tags, short=True)
 
+    def clean(self):
+        if not (self.date or self.date_approx or self.lieu
+                                              or self.lieu_approx):
+            raise ValidationError(_(u'Il faut au moins une date ou un lieu '
+                                    u'(ils peuvent n’être qu’approximatifs)'))
+
     class Meta:
         verbose_name = ungettext_lazy('ancrage spatio-temporel',
                                       'ancrages spatio-temporels', 1)
