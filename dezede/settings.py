@@ -181,6 +181,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_resizing': 'true',
     'theme_advanced_resizing_max_width': '650',
 
+    'content_css': STATIC_URL + 'css/styles.css',
     'formats': {
         'smallcaps': {'inline' : 'span', 'styles': {'font-variant': 'small-caps'}}
     },
