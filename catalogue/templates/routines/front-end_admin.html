@@ -1,9 +1,9 @@
 {% load i18n %}
 {% load url from future %}
 
-{% with author=object.author %}
-  {% if author %}
-    Transcripteur : {{ author.get_full_name|default:author }}
+{% with owner=object.owner %}
+  {% if owner %}
+    Transcripteur : {{ owner.get_full_name|default:owner }}
   {% endif %}
 {% endwith%}
 

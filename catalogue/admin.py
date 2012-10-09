@@ -15,13 +15,13 @@ from django.db.models import Q
 
 
 class CustomBaseModel(BaseModelAdmin):
-    exclude = ('author',)
+    exclude = ('owner',)
 
     def check_user_ownership(self, request, obj, has_class_permission):
         if not has_class_permission:
             return False
         user = request.user
-        if obj is not None and not user.is_superuser and user != obj.author:
+        if obj is not None and not user.is_superuser and user != obj.owner:
             return False
         return True
 
@@ -43,7 +43,7 @@ class CustomBaseModel(BaseModelAdmin):
         user = request.user
         objects = self.model.objects.all()
         if not user.is_superuser:
-            objects = objects.filter(author=user)
+            objects = objects.filter(owner=user)
         return objects
 
 
@@ -188,15 +188,15 @@ class CustomAdmin(VersionAdmin, CustomBaseModel):
     list_per_page = 20
 
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'author') is None:
-            obj.author = request.user
+        if getattr(obj, 'owner') is None:
+            obj.owner = request.user
         obj.save()
 
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
-            if getattr(instance, 'author') is None:
-                instance.author = request.user
+            if getattr(instance, 'owner') is None:
+                instance.owner = request.user
             instance.save()
         formset.save_m2m()
 
@@ -551,11 +551,11 @@ class TypeDeSourceAdmin(CustomAdmin):
 
 class SourceAdmin(CustomAdmin):
     list_display = ('nom', 'date', 'type', 'has_events', 'has_program',
-                    'author', 'etat', 'link')
+                    'owner', 'etat', 'link')
     list_editable = ('type', 'date', 'etat')
     search_fields = ('nom', 'date', 'type__nom', 'numero', 'contenu',
-                     'author__username', 'author__first_name',
-                     'author__last_name')
+                     'owner__username', 'owner__first_name',
+                     'owner__last_name')
     list_filter = ('type', 'nom', SourceHasEventsListFilter,
                    SourceHasProgramListFilter)
     filter_horizontal = ('auteurs',)

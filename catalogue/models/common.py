@@ -81,7 +81,7 @@ class CustomModel(Model):
     """
     Modèle personnalisé, essentiellement pour les remplacements typographiques.
     """
-    author = ForeignKey(User, null=True, blank=True,
+    owner = ForeignKey(User, null=True, blank=True,
                                                verbose_name=_('transcripteur'))
     objects = CustomManager()
 
@@ -111,7 +111,7 @@ class CustomModel(Model):
 
 class AutoriteManager(CustomManager):
     def published(self):
-        return self.get_query_set().filter(etat__publie=True)
+        return self.get_query_set().filter(etat__public=True)
 
 
 class AutoriteModel(CustomModel):
@@ -184,8 +184,7 @@ class Etat(CustomModel):
         help_text=PLURAL_MSG)
     message = HTMLField(_('message'), blank=True,
         help_text=_(u'Message à afficher dans la partie consultation.'))
-    # FIXME: publie -> public
-    publie = BooleanField(_(u'publié'), default=True)
+    public = BooleanField(_(u'publié'), default=True)
     slug = AutoSlugField(populate_from='nom')
 
     class Meta:
