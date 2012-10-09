@@ -583,6 +583,12 @@ class SourceAdmin(CustomAdmin):
 #        }),
     )
 
+    class Media:
+        js = [
+            '/static/tinymce_setup/tinymce_setup.js',
+            '/static/tiny_mce/tiny_mce.js',
+        ]
+
 site.register(Document, DocumentAdmin)
 site.register(Illustration, IllustrationAdmin)
 site.register(Etat, EtatAdmin)
