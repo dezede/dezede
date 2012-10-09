@@ -288,3 +288,6 @@ table {
   list-style: none;
 }
 
+body.mceContentBody {
+  min-height: 0;
+}
