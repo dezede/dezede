@@ -109,11 +109,17 @@ class CustomModel(Model):
         return unicode(self)
 
 
+class AutoriteManager(CustomManager):
+    def published(self):
+        return self.get_query_set().filter(etat__publie=True)
+
+
 class AutoriteModel(CustomModel):
     etat = ForeignKey('Etat', null=True, blank=True, verbose_name=_(u'état'))
     documents = ManyToManyField('Document', blank=True, null=True)
     illustrations = ManyToManyField('Illustration', blank=True, null=True)
     notes = HTMLField(blank=True)
+    objects = AutoriteManager()
 
     class Meta:
         abstract = True
