@@ -290,4 +290,6 @@ table {
 
 body.mceContentBody {
   min-height: 0;
+  min-width: 0;
+  padding: 15px;
 }
