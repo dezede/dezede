@@ -10,8 +10,10 @@ from django.utils.translation import pgettext, ungettext_lazy, \
 from django.template.defaultfilters import time, capfirst
 from autoslug import AutoSlugField
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    DATE_MSG, calc_pluriel
+                    AutoriteManager, DATE_MSG, calc_pluriel
 from django.core.exceptions import ValidationError
+from mptt.models import MPTTModel, TreeForeignKey
+from mptt.managers import TreeManager
 
 
 class NatureDeLieu(CustomModel):
@@ -38,14 +40,19 @@ class NatureDeLieu(CustomModel):
         return 'nom__icontains',
 
 
-class Lieu(AutoriteModel):
+class LieuManager(TreeManager, AutoriteManager):
+    pass
+
+
+class Lieu(MPTTModel, AutoriteModel):
     nom = CharField(_('nom'), max_length=200)
-    parent = ForeignKey('Lieu', related_name='enfants', null=True, blank=True,
-        verbose_name=_('parent'))
+    parent = TreeForeignKey('self', null=True,
+                            blank=True, verbose_name=_('parent'))
     nature = ForeignKey(NatureDeLieu, related_name='lieux',
         verbose_name=_('nature'))
     historique = HTMLField(_('historique'), blank=True)
     slug = AutoSlugField(populate_from='nom')
+    objects = LieuManager()
 
     @permalink
     def get_absolute_url(self):
@@ -97,6 +104,9 @@ class Lieu(AutoriteModel):
     def clean(self):
         if self.parent == self:
             raise ValidationError(_(u'Le lieu a une parenté avec lui-même.'))
+
+    class MPTTMeta:
+        order_insertion_by = ['nom']
 
     class Meta:
         verbose_name = ungettext_lazy('lieu', 'lieux', 1)

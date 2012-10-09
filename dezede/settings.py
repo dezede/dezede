@@ -121,6 +121,7 @@ INSTALLED_APPS = (
     'dezede',
     'haystack',
     'catalogue',
+    'mptt',
     'endless_pagination',
     'django_tables2',
     'tinymce',

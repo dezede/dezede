@@ -1,19 +1,37 @@
 {% load url from future %}
+{% load mptt_tags %}
 
-{% for lieu in lieux %}
-  {% if forloop.first %}
-    <ul>
-  {% endif %}
-  <li>
-    <a href="{% url 'lieu' lieu.slug %}">
-      {{ lieu.nom }}
-    </a>
-    {# TODO: trouver un solution au workaround qui suit #}
-    {% with 'catalogue/lieu_list_item.html' as file %}
-      {% include file with lieux=lieu.enfants.all %}
-    {% endwith %}
-  </li>
-  {% if forloop.last %}
+<div id="lieux">
+  {% if lieux %}
+    <ul class="root">
+      {% recursetree lieux %}
+        <li>
+          <a href="{% url 'lieu' node.slug %}">
+            {{ node.nom }}
+          </a>
+          {% if not node.is_leaf_node %}
+            <ul class="children">
+              {{ children }}
+            </ul>
+          {% endif %}
+        </li>
+      {% endrecursetree %}
     </ul>
   {% endif %}
-{% endfor %}
+</div>
+
+<script>
+  $(function () {
+    $("#lieux").jstree({
+      core: {
+        'html_titles': true
+      },
+      plugins: ["themes", "html_data"],
+      themes: {
+        theme: "classic",
+        icons: false,
+        dots: false
+      }
+    });
+  });
+</script>

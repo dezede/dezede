@@ -20,7 +20,7 @@
   <br />
   <dl>
     {% attr_in_dl 'historique' %}
-    {% list_in_dl lieu.enfants.all 'short_link' _('lieu contenu') _('lieux contenus') %}
+    {% include 'catalogue/lieu_list_item.html' with lieux=lieu.get_descendants %}
     {% include "catalogue/evenement_list_def.html" with evenements=lieu.evenements %}
     <dd>
       {% if lieu.evenements.exists %}

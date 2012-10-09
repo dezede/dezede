@@ -9,24 +9,7 @@
 {% block body %}
   <h1>{% trans 'lieux'|capfirst %}</h1>
   {% if lieux %}
-    <div id="lieux">
-      {% include 'catalogue/lieu_list_item.html' %}
-    </div>
-    <script>
-      $(function () {
-        $("#lieux").jstree({
-          core: {
-            'html_titles': true
-          },
-          plugins: ["themes", "html_data"],
-          themes: {
-            theme: "classic",
-            icons: false,
-            dots: false
-          }
-        });
-      });
-    </script>
+    {% include 'catalogue/lieu_list_item.html' %}
   {% else %}
     {% trans "Aucun lieu ne figure dans la base de données." %}
   {% endif %}

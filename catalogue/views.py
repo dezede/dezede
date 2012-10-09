@@ -41,7 +41,6 @@ class PartieDetailView(DetailView):
 
 class LieuListView(ListView):
     model = Lieu
-    queryset = Lieu.objects.filter(parent=None)
     context_object_name = 'lieux'
 
 
