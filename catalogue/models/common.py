@@ -109,6 +109,16 @@ class CustomModel(Model):
         return unicode(self)
 
 
+class AutoriteModel(CustomModel):
+    etat = ForeignKey('Etat', null=True, blank=True, verbose_name=_(u'état'))
+    documents = ManyToManyField('Document', blank=True, null=True)
+    illustrations = ManyToManyField('Illustration', blank=True, null=True)
+    notes = HTMLField(blank=True)
+
+    class Meta:
+        abstract = True
+
+
 class Document(CustomModel):
     nom = CharField(_('nom'), max_length=300, blank=True)
     document = FileBrowseField(_('document'), max_length=400,

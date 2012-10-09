@@ -9,7 +9,8 @@ from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
 from django.template.defaultfilters import time, capfirst
 from autoslug import AutoSlugField
-from .common import CustomModel, LOWER_MSG, PLURAL_MSG, DATE_MSG, calc_pluriel
+from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+                    DATE_MSG, calc_pluriel
 from django.core.exceptions import ValidationError
 
 
@@ -37,20 +38,13 @@ class NatureDeLieu(CustomModel):
         return 'nom__icontains',
 
 
-class Lieu(CustomModel):
+class Lieu(AutoriteModel):
     nom = CharField(_('nom'), max_length=200)
     parent = ForeignKey('Lieu', related_name='enfants', null=True, blank=True,
         verbose_name=_('parent'))
     nature = ForeignKey(NatureDeLieu, related_name='lieux',
         verbose_name=_('nature'))
     historique = HTMLField(_('historique'), blank=True)
-    illustrations = ManyToManyField('Illustration', related_name='lieux',
-        blank=True, null=True, verbose_name=_('illustrations'))
-    documents = ManyToManyField('Document', related_name='lieux', blank=True,
-        null=True, verbose_name=_('documents'))
-    etat = ForeignKey('Etat', related_name='lieux', null=True, blank=True,
-        verbose_name=_(u'état'))
-    notes = HTMLField(_('notes'), blank=True)
     slug = AutoSlugField(populate_from='nom')
 
     @permalink

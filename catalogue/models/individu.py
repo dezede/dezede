@@ -10,7 +10,8 @@ from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
 from autoslug import AutoSlugField
-from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
+from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+                    calc_pluriel
 from django.core.exceptions import ValidationError
 
 
@@ -85,7 +86,7 @@ class ParenteDIndividus(CustomModel):
         return out
 
 
-class Individu(CustomModel):
+class Individu(AutoriteModel):
     particule_nom = CharField(_(u'particule du nom d’usage'), max_length=10,
         blank=True,)
     # TODO: rendre le champ nom 'blank'
@@ -130,13 +131,6 @@ class Individu(CustomModel):
         related_name='individus_orig', blank=True, null=True,
         verbose_name=_(u'parentés'))
     biographie = HTMLField(_('biographie'), blank=True)
-    illustrations = ManyToManyField('Illustration', related_name='individus',
-        blank=True, null=True, verbose_name=_('illustrations'))
-    documents = ManyToManyField('Document', related_name='individus',
-        blank=True, null=True, verbose_name=_('documents'))
-    etat = ForeignKey('Etat', related_name='individus', null=True, blank=True,
-        verbose_name=_(u'état'))
-    notes = HTMLField(_('notes'), blank=True)
     slug = AutoSlugField(populate_from=lambda s: unicode(s)
                                                        if not s.nom else s.nom)
 

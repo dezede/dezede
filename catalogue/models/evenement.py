@@ -4,12 +4,12 @@ from .functions import str_list, str_list_w_last, href, hlp
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, OneToOneField, BooleanField, \
                              PositiveSmallIntegerField, permalink, get_model
-from tinymce.models import HTMLField
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from django.template.defaultfilters import capfirst
-from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
+from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+                    calc_pluriel
 from django.core.cache import cache
 from reversion.models import post_revision_commit
 from django.dispatch import receiver
@@ -75,7 +75,7 @@ class CaracteristiqueDElementDeProgramme(CustomModel):
         )
 
 
-class ElementDeProgramme(CustomModel):
+class ElementDeProgramme(AutoriteModel):
     evenement = ForeignKey('Evenement', related_name='programme',
                             verbose_name=_('événement'))
     oeuvre = ForeignKey('Oeuvre', related_name='elements_de_programme',
@@ -89,12 +89,6 @@ class ElementDeProgramme(CustomModel):
         related_name='elements_de_programme', blank=True, null=True)
     personnels = ManyToManyField('Personnel',
         related_name='elements_de_programme', blank=True, null=True)
-    illustrations = ManyToManyField('Illustration',
-        related_name='representations', blank=True, null=True)
-    documents = ManyToManyField('Document', related_name='representations',
-        blank=True, null=True)
-    etat = ForeignKey('Etat', related_name='elements_de_programme', null=True,
-        blank=True)
 
     def calc_caracteristiques(self):
         if self.pk is None:
@@ -159,19 +153,13 @@ class ElementDeProgramme(CustomModel):
         )
 
 
-class Evenement(CustomModel):
+class Evenement(AutoriteModel):
     ancrage_debut = OneToOneField('AncrageSpatioTemporel',
         related_name='evenements_debuts')
     ancrage_fin = OneToOneField('AncrageSpatioTemporel',
         related_name='evenements_fins', blank=True, null=True)
     relache = BooleanField(verbose_name=u'relâche')
     circonstance = CharField(max_length=500, blank=True)
-    documents = ManyToManyField('Document', related_name='evenements',
-        blank=True, null=True)
-    illustrations = ManyToManyField('Illustration', related_name='evenements',
-        blank=True, null=True)
-    etat = ForeignKey('Etat', related_name='evenements', null=True, blank=True)
-    notes = HTMLField(blank=True)
 
     @permalink
     def get_absolute_url(self):

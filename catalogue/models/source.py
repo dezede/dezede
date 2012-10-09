@@ -8,7 +8,8 @@ from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from autoslug import AutoSlugField
-from .common import CustomModel, LOWER_MSG, PLURAL_MSG, DATE_MSG, calc_pluriel
+from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+                    DATE_MSG, calc_pluriel
 from django.utils.safestring import mark_safe
 
 
@@ -33,7 +34,7 @@ class TypeDeSource(CustomModel):
         return self.nom
 
 
-class Source(CustomModel):
+class Source(AutoriteModel):
     nom = CharField(max_length=200, help_text=ex(_('Journal de Rouen')))
     numero = CharField(max_length=50, blank=True)
     date = DateField(help_text=DATE_MSG)
@@ -45,12 +46,6 @@ class Source(CustomModel):
         null=True)
     evenements = ManyToManyField('Evenement', related_name='sources',
         blank=True, null=True)
-    documents = ManyToManyField('Document', related_name='sources', blank=True,
-        null=True)
-    illustrations = ManyToManyField('Illustration', related_name='sources',
-        blank=True, null=True)
-    etat = ForeignKey('Etat', related_name='sources', null=True, blank=True)
-    notes = HTMLField(blank=True)
 
     @permalink
     def get_absolute_url(self):

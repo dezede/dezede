@@ -12,7 +12,8 @@ from django.utils.translation import ungettext_lazy, ugettext, \
 from django.template.defaultfilters import capfirst
 from django.contrib.humanize.templatetags.humanize import apnumber
 from autoslug import AutoSlugField
-from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
+from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+                    calc_pluriel
 from django.core.exceptions import ValidationError
 from collections import defaultdict
 
@@ -266,7 +267,7 @@ class Auteur(CustomModel):
         return strip_tags(self.html(False))
 
 
-class Oeuvre(CustomModel):
+class Oeuvre(AutoriteModel):
     prefixe_titre = CharField(max_length=20, blank=True,
         verbose_name=_(u'préfixe du titre'))
     titre = CharField(max_length=200, blank=True)
@@ -291,14 +292,8 @@ class Oeuvre(CustomModel):
                              related_name='meres', symmetrical=False)
     lilypond = TextField(blank=True, verbose_name='LilyPond')
     description = HTMLField(blank=True)
-    documents = ManyToManyField('Document', related_name='oeuvres', blank=True,
-        null=True)
-    illustrations = ManyToManyField('Illustration', related_name='oeuvres',
-        blank=True, null=True)
     evenements = ManyToManyField('Evenement', through='ElementDeProgramme',
                                  related_name='oeuvres')
-    etat = ForeignKey('Etat', related_name='oeuvres', null=True, blank=True)
-    notes = HTMLField(blank=True)
     slug = AutoSlugField(populate_from=unicode)
 
     @permalink
