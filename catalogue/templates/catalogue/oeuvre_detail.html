@@ -31,7 +31,7 @@
   </h4>
   <br />
   <dl>
-    {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements.all %}
+    {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
     {% include "catalogue/notes_def.html" with notes=oeuvre.notes %}
   </dl>
 
