@@ -226,7 +226,7 @@ class Evenement(AutoriteModel):
     @staticmethod
     def autocomplete_search_fields():
         return (
-            'circonstace__icontains',
+            'circonstance__icontains',
             'ancrage_debut__lieu__nom__icontains',
             'ancrage_debut__lieu__parent__nom__icontains',
             'ancrage_debut__date__icontains',

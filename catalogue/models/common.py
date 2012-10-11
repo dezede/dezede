@@ -104,7 +104,6 @@ class CustomModel(Model):
     def meta(cls):
         return cls._meta
 
-    @property
     def related_label(self):
         return unicode(self)
 
