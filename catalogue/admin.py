@@ -526,6 +526,10 @@ class EvenementAdmin(CustomAdmin):
     inlines = (ElementDeProgrammeInline,)
     fieldsets = (
         (_('Champs courants'), {
+            'description': _(
+                u'Commencez par <strong>saisir ces quelques champs</strong> '
+                u'avant d’ajouter des <em>éléments de programme</em> '
+                u'plus bas.'),
             'fields': (('ancrage_debut', 'ancrage_fin',),
                        ('circonstance', 'relache',),),
         }),
