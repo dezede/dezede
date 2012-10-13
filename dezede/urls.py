@@ -9,17 +9,17 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^', include('catalogue.urls')),
+    url(r'^', include('catalogue.urls')),
 
-    (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    (r'^admin/', include(admin.site.urls)),
-    (r'^i18n/', include('django.conf.urls.i18n')),
-    (r'^tinymce/', include('tinymce.urls')),
-    (r'^grappelli/', include('grappelli.urls')),
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^tinymce/', include('tinymce.urls')),
+    url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/filebrowser/', include(site.urls)),
-    (r'^recherche/', include('haystack.urls')),
-    (r'^accounts/', include('registration.backends.default.urls')),
-    (r'^profiles/', include('profiles.urls')),
+    url(r'^recherche/', include('haystack.urls')),
+    url(r'^comptes/', include('accounts.urls')),
+    url(r'^profils/', include('profiles.urls')
 )
 
 urlpatterns += staticfiles_urlpatterns()

@@ -218,3 +218,5 @@ EMAIL_HOST_USER = 'dezede'
 EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'noreply@dezede.org'
 SERVER_EMAIL = 'noreply@dezede.org'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap'
