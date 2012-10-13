@@ -8,19 +8,18 @@ from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
 from django.template.defaultfilters import time, capfirst
-from autoslug import AutoSlugField
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    AutoriteManager, DATE_MSG, calc_pluriel
+                    AutoriteManager, DATE_MSG, calc_pluriel, SlugModel, \
+                    UniqueSlugModel
 from django.core.exceptions import ValidationError
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.managers import TreeManager
 
 
-class NatureDeLieu(CustomModel):
+class NatureDeLieu(CustomModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
                             help_text=PLURAL_MSG)
-    slug = AutoSlugField(populate_from='nom')
 
     class Meta:
         verbose_name = ungettext_lazy('nature de lieu', 'natures de lieu', 1)
@@ -44,14 +43,13 @@ class LieuManager(TreeManager, AutoriteManager):
     pass
 
 
-class Lieu(MPTTModel, AutoriteModel):
+class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200)
     parent = TreeForeignKey('self', null=True,
                             blank=True, verbose_name=_('parent'))
     nature = ForeignKey(NatureDeLieu, related_name='lieux',
         verbose_name=_('nature'))
     historique = HTMLField(_('historique'), blank=True)
-    slug = AutoSlugField(populate_from='nom')
     objects = LieuManager()
 
     @permalink
@@ -66,6 +64,9 @@ class Lieu(MPTTModel, AutoriteModel):
         return self.html()
     link.short_description = _('lien')
     link.allow_tags = True
+
+    def get_slug(self):
+        return self.nom
 
     def short_link(self):
         return self.html(short=True)

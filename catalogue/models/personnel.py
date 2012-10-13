@@ -3,12 +3,12 @@
 from .functions import ex
 from django.db.models import CharField, ForeignKey, ManyToManyField, FloatField
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from autoslug import AutoSlugField
-from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel
+from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, \
+                    SlugModel
 from django.template.defaultfilters import capfirst
 
 
-class Profession(CustomModel):
+class Profession(CustomModel, SlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
@@ -16,7 +16,6 @@ class Profession(CustomModel):
         help_text=_(u'Ne préciser que s’il est différent du nom.'))
     parente = ForeignKey('Profession', blank=True, null=True,
         related_name='enfant', verbose_name=_('parente'))
-    slug = AutoSlugField(populate_from='nom')
 
     class Meta:
         verbose_name = ungettext_lazy('profession', 'professions', 1)

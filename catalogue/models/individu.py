@@ -9,9 +9,8 @@ from ..templatetags.extras import abbreviate
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
-from autoslug import AutoSlugField
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    calc_pluriel
+                    calc_pluriel, UniqueSlugModel
 from django.core.exceptions import ValidationError
 
 
@@ -86,9 +85,9 @@ class ParenteDIndividus(CustomModel):
         return out
 
 
-class Individu(AutoriteModel):
+class Individu(AutoriteModel, UniqueSlugModel):
     particule_nom = CharField(_(u'particule du nom d’usage'), max_length=10,
-        blank=True,)
+        blank=True)
     # TODO: rendre le champ nom 'blank'
     nom = CharField(_(u'nom d’usage'), max_length=200)
     particule_nom_naissance = CharField(_('particule du nom de naissance'),
@@ -131,8 +130,9 @@ class Individu(AutoriteModel):
         related_name='individus_orig', blank=True, null=True,
         verbose_name=_(u'parentés'))
     biographie = HTMLField(_('biographie'), blank=True)
-    slug = AutoSlugField(populate_from=lambda s: unicode(s)
-                                                       if not s.nom else s.nom)
+
+    def get_slug(self):
+        return self.nom or unicode(self)
 
     @permalink
     def get_absolute_url(self):

@@ -124,6 +124,26 @@ class AutoriteModel(CustomModel):
         abstract = True
 
 
+class SlugModel(Model):
+    slug = AutoSlugField(populate_from=lambda o: o.get_slug())
+
+    class Meta:
+        abstract = True
+
+    def get_slug(self):
+        return unicode(self)
+
+
+class UniqueSlugModel(Model):
+   slug = AutoSlugField(populate_from=lambda o: o.get_slug(), unique=True)
+
+   class Meta:
+       abstract = True
+
+   def get_slug(self):
+       return unicode(self)
+
+
 class Document(CustomModel):
     nom = CharField(_('nom'), max_length=300, blank=True)
     document = FileBrowseField(_('document'), max_length=400,

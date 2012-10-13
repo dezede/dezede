@@ -7,18 +7,16 @@ from tinymce.models import HTMLField
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
-from autoslug import AutoSlugField
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    DATE_MSG, calc_pluriel
+                    DATE_MSG, calc_pluriel, SlugModel
 from django.utils.safestring import mark_safe
 
 
-class TypeDeSource(CustomModel):
+class TypeDeSource(CustomModel, SlugModel):
     nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name=_('nom (au pluriel)'),
         help_text=PLURAL_MSG)
-    slug = AutoSlugField(populate_from='nom')
 
     class Meta:
         verbose_name = ungettext_lazy('type de source', 'types de source', 1)

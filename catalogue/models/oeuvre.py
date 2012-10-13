@@ -11,21 +11,19 @@ from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from django.template.defaultfilters import capfirst
 from django.contrib.humanize.templatetags.humanize import apnumber
-from autoslug import AutoSlugField
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    calc_pluriel
+                    calc_pluriel, SlugModel, UniqueSlugModel
 from django.core.exceptions import ValidationError
 from collections import defaultdict
 
 
-class GenreDOeuvre(CustomModel):
+class GenreDOeuvre(CustomModel, SlugModel):
     nom = CharField(max_length=255, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(max_length=430, blank=True,
         verbose_name=_('nom (au pluriel)'),
         help_text=PLURAL_MSG)
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
         blank=True, null=True)
-    slug = AutoSlugField(populate_from=unicode)
 
     class Meta:
         verbose_name = ungettext_lazy(u'genre d’œuvre', u'genres d’œuvre', 1)
@@ -267,7 +265,7 @@ class Auteur(CustomModel):
         return strip_tags(self.html(False))
 
 
-class Oeuvre(AutoriteModel):
+class Oeuvre(AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(max_length=20, blank=True,
         verbose_name=_(u'préfixe du titre'))
     titre = CharField(max_length=200, blank=True)
@@ -294,7 +292,6 @@ class Oeuvre(AutoriteModel):
     description = HTMLField(blank=True)
     evenements = ManyToManyField('Evenement', through='ElementDeProgramme',
                                  related_name='oeuvres')
-    slug = AutoSlugField(populate_from=unicode)
 
     @permalink
     def get_absolute_url(self):
