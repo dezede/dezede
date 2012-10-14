@@ -6,7 +6,8 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 
 
 class StudentProfile(Model):
-    user = OneToOneField(User, related_name='student_profile')
+    user = OneToOneField(User, related_name='student_profile',
+                         verbose_name=_('Utilisateur'))
     professor = ForeignKey(User, related_name='students',
                            verbose_name=_('professeur'))
 
@@ -20,6 +21,12 @@ class StudentProfile(Model):
         user = self.user
         full_name = user.get_full_name()
         return full_name if full_name else user.username
+    __unicode__.admin_order_field = 'user'
+
+    def professor_name(self):
+        return self.professor.get_full_name() or unicode(self.professor)
+    professor_name.short_description = _('professeur')
+    professor_name.admin_order_field = 'professor'
 
     @permalink
     def get_absolute_url(self):

@@ -74,7 +74,7 @@ class CustomIndexDashboard(Dashboard):
             _('Utilisateurs et groupes'),
             column=3,
             css_classes=('grp-collapse grp-closed',),
-            models=('django.contrib.*', 'registration.*',),
+            models=('django.contrib.*', 'accounts.*',),
         ))
 
         self.children.append(modules.LinkList(
