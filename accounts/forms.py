@@ -62,23 +62,25 @@ class UserRegistrationForm(RegistrationFormUniqueEmail):
 
     def save(self, profile_callback=None):
         data = self.cleaned_data
+
         new_user = RegistrationProfile.objects.create_inactive_user(
             username=data['username'],
             password=data['password1'],
-            email=data['email'],
-            first_name=data['first_name'],
-            last_name=data['last_name'])
+            email=data['email'])
+        new_user.first_name = data['first_name']
+        new_user.last_name = data['last_name']
+        new_user.save()
+
         professor = data['professor']
         new_profile = StudentProfile(
             user=new_user,
-            professor=professor,
-            groups=data['groups'])
+            professor=professor)
         new_profile.save()
+        new_profile.groups = data['groups']
 
         site_url = 'http://' + get_current_site(self.request).domain
         email_content = render_to_string(
             'accounts/grant_to_admin_demand_email.txt',
             {'user': new_profile.user, 'site_url': site_url})
-
         professor.email_user(_(u'Demande d’accès étudiant'),
             email_content)
