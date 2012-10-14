@@ -10,6 +10,8 @@ from django.contrib.auth.models import User, Group
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset
 from crispy_forms.bootstrap import PrependedText, FormActions
+from django.contrib.sites.models import get_current_site
+from django.template.loader import render_to_string
 
 
 def get_professors():
@@ -71,6 +73,12 @@ class UserRegistrationForm(RegistrationFormUniqueEmail):
             user=new_user,
             professor=professor,
             groups=data['groups'])
-        professor.email_user()
         new_profile.save()
-        return new_user
+
+        site_url = 'http://' + get_current_site(self.request).domain
+        email_content = render_to_string(
+            'accounts/grant_to_admin_demand_email.txt',
+            {'user': new_profile.user, 'site_url': site_url})
+
+        professor.email_user(_(u'Demande d’accès étudiant'),
+            email_content)

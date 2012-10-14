@@ -8,10 +8,8 @@
 {% block body %}
   <h1>{% trans "Bienvenue" %}</h1>
   <p>
-    {% url profiles_create_profile as url %}
     {% blocktrans %}
       La création et l’activation de votre compte ont été un succès !
-      Veuillez maintenant vous <a href="{{ url }}">créer un profil</a>.
     {% endblocktrans %}
   </p>
 {% endblock %}

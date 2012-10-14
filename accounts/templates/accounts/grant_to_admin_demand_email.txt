@@ -1,0 +1,3 @@
+L’utilisateur {{ user.get_full_name }} vous demande à faire partie de l’équipe.
+Si vous souhaitez l’accepter et ainsi lui autoriser à accéder à l’interface d’administration, cliquez sur ce lien :
+{{ site_url }}{% url grant_to_admin user.pk %}

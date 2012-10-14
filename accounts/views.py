@@ -20,7 +20,7 @@ class GrantToAdmin(DetailView):
             user.save()
             site_url = 'http://' + get_current_site(self.request).domain
             email_content = render_to_string(
-                'accounts/grant_to_admin_email.txt',
+                'accounts/granted_to_admin_email.txt',
                 {'user': user, 'site_url': site_url})
             user.email_user(u'[Dezède] Accès autorisé à l’administration',
                             email_content)

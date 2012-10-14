@@ -8,12 +8,9 @@
 {% block body %}
   <h1>{% trans "En attente d’activation" %}</h1>
   <p>
-    {% url profiles_create_profile as url %}
     {% blocktrans %}
       Votre compte a bien été créé mais demande une vérification de votre part.
       Un courriel contenant un lien d’activation vous a été envoyé.
-      Une fois votre compte activé, vous pourrez aller
-      <a href="{{ url }}">créer un profil</a>.
     {% endblocktrans %}
   </p>
 {% endblock %}
