@@ -8,29 +8,30 @@
 {% block body %}
   <h1>{% trans "Recherche" %}</h1>
 
-  <form method="get" action=".">
-    <formset>
-      <input type="text" name="q" value="{{ form.q.data|default:""|escape }}" id="id_q" autofocus="autofocus" />
-      <input type="submit" value="Chercher" />
-      <script>
-        $(function() {
-          criteria = $("#criteria")
-          criteria.buttonset();
-          criteria.disableSelection();
-        });
-      </script>
-      <div id="criteria">
-        {% trans "Filtres :" %}
-        {% for choice in form.models.field.choices %}
-          <input type="checkbox" name="models" value="{{ choice.0 }}"
-          {% if choice.0 in form.models.data %}
-            checked="checked"
-          {% endif %}
-          id="id_models_{{ forloop.counter0 }}" />
-          <label for="id_models_{{ forloop.counter0 }}">{{ choice.1 }}</label>
-        {% endfor %}
-      </div>
-    </formset>
+  <form method="get" action="." class="form-search">
+    <div class="input-prepend">
+      <button type="submit" class="btn"><i class="icon-search"></i></button>
+      <input type="text" name="q" value="{{ form.q.data|default:""|escape }}"
+             id="id_q" autofocus="autofocus" placeholder="Tapez ici" class="search-query" />
+    </div>
+    <script>
+      $(function() {
+        criteria = $("#criteria")
+        criteria.buttonset();
+        criteria.disableSelection();
+      });
+    </script>
+    <div id="criteria">
+      {% trans "Filtres :" %}
+      {% for choice in form.models.field.choices %}
+        <input type="checkbox" name="models" value="{{ choice.0 }}"
+        {% if choice.0 in form.models.data %}
+          checked="checked"
+        {% endif %}
+        id="id_models_{{ forloop.counter0 }}" />
+        <label for="id_models_{{ forloop.counter0 }}">{{ choice.1 }}</label>
+      {% endfor %}
+    </div>
   </form>
 
   {% if query %}

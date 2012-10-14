@@ -2,6 +2,7 @@
 
 from django.template import Library
 from django.template.loader import render_to_string
+from django.contrib.sites.models import get_current_site
 
 register = Library()
 
@@ -16,6 +17,7 @@ def build_admin_view_name(perm):
 
 @register.simple_tag(takes_context=True)
 def frontend_admin(context, object=None):
+    request = context['request']
     if object is None:
         object = context['object']
     Model = object.__class__
@@ -23,16 +25,18 @@ def frontend_admin(context, object=None):
     model_slug = Model.__name__.lower()
     change_perm = build_permission(app_label, model_slug, 'change')
     delete_perm = build_permission(app_label, model_slug, 'delete')
-    user = context['request'].user
+    user = request.user
     has_change_perm = user.has_perm(change_perm)
     has_delete_perm = user.has_perm(delete_perm)
     admin_change = build_admin_view_name(change_perm)
     admin_delete = build_admin_view_name(delete_perm)
+    domain = get_current_site(request)
     c = {
         'has_change_perm': has_change_perm,
         'has_delete_perm': has_delete_perm,
         'admin_change': admin_change,
         'admin_delete': admin_delete,
+        'domain': domain,
         'object': object,
     }
     return render_to_string('routines/front-end_admin.html', c)

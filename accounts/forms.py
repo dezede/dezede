@@ -41,11 +41,11 @@ class UserRegistrationForm(RegistrationFormUniqueEmail):
             Fieldset(
                 _(u'Général'),
                 Field('first_name', 'last_name', css_class='input-xlarge'),
-                PrependedText('email', '@', active=True),
+                PrependedText('email', '<i class="icon-envelope"></i>', active=True),
             ),
             Fieldset(
                 _('Utilisateur'),
-                'username',
+                PrependedText('username', '<i class="icon-user"></i>', active=True),
                 'password1', 'password2',
             ),
             Fieldset(
