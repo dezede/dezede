@@ -5,7 +5,6 @@ from django.forms.widgets import CheckboxSelectMultiple
 from registration.forms import RegistrationFormUniqueEmail
 from django.utils.translation import ugettext_lazy as _
 from .models import StudentProfile
-from registration.models import RegistrationProfile
 from django.contrib.auth.models import User, Group
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset
@@ -66,13 +65,14 @@ class UserRegistrationForm(RegistrationFormUniqueEmail):
 
         user.first_name = data['first_name']
         user.last_name = data['last_name']
+        user.groups = data['groups']
         user.save()
 
         professor = data['professor']
         profile = StudentProfile.objects.create(
             user=user,
             professor=professor)
-        profile.groups = data['groups']
+        profile.save()
 
         site_url = 'http://' + get_current_site(request).domain
         email_content = render_to_string(
