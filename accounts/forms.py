@@ -66,7 +66,6 @@ class UserRegistrationForm(RegistrationFormUniqueEmail):
 
         user.first_name = data['first_name']
         user.last_name = data['last_name']
-        user.is_staff = False
         user.save()
 
         professor = data['professor']

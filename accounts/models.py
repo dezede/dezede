@@ -21,8 +21,3 @@ class StudentProfile(Model):
     def get_absolute_url(self):
         return ('profiles_profile_detail',
                                           (), {'username': self.user.username})
-
-    def save(self, *args, **kwargs):
-        super(StudentProfile, self).save(*args, **kwargs)
-        self.user.is_staff = True
-        self.user.save()
