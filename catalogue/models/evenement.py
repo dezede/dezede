@@ -165,7 +165,6 @@ class Evenement(AutoriteModel):
     def get_absolute_url(self):
         return 'evenement_pk', [self.pk]
 
-    @permalink
     def permalien(self):
         return self.get_absolute_url()
 
