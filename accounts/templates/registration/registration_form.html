@@ -7,5 +7,7 @@
 
 {% block body %}
   <h1>{% trans "Créer un nouveau compte étudiant" %}</h1>
-  {%  crispy form %}
+  <div class="well">
+    {% crispy form %}
+  </div>
 {% endblock %}

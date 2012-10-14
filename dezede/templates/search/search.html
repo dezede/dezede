@@ -8,7 +8,7 @@
 {% block body %}
   <h1>{% trans "Recherche" %}</h1>
 
-  <form method="get" action="." class="form-search">
+  <form method="get" action="." class="form-search well">
     <div class="input-prepend">
       <button type="submit" class="btn"><i class="icon-search"></i></button>
       <input type="text" name="q" value="{{ form.q.data|default:""|escape }}"
