@@ -9,10 +9,10 @@
   <h1>{% trans "Recherche" %}</h1>
 
   <form method="get" action="." class="form-search well">
-    <div class="input-prepend">
-      <button type="submit" class="btn"><i class="icon-search"></i></button>
+    <div class="input-append">
       <input type="text" name="q" value="{{ form.q.data|default:""|escape }}"
              id="id_q" autofocus="autofocus" placeholder="Tapez ici" class="search-query" />
+      <button type="submit" class="btn"><i class="icon-search"></i></button>
     </div>
     <script>
       $(function() {

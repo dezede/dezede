@@ -13,17 +13,19 @@
       Vous êtes déjà connecté.  Souhaitez-vous <a href="{{ url }}">vous déconnecter</a> ?
     {% endblocktrans %}
   {% else %}
-    <form method="POST" class="well">
+    <form method="POST" class="well form-horizontal">
       {% csrf_token %}
       {{ form|crispy }}
-      <input type="submit" value="{% trans 'Se connecter' %}" class="btn" />
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{% trans 'Se connecter' %}</button>
+        <p>
+          {% url registration_register as url %}
+          {% blocktrans %}
+            Pas de compte utilisateur ?
+            Vous pouvez <a href="{{ url }}">en creer un.</a>
+          {% endblocktrans %}
+        </p>
+      </div>
     </form>
-    <p>
-      {% url registration_register as url %}
-      {% blocktrans %}
-        Pas de compte utilisateur ?
-        Vous pouvez <a href="{{ url }}">en creer un.</a>
-      {% endblocktrans %}
-    </p>
   {% endif %}
 {% endblock %}

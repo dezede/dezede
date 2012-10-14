@@ -32,3 +32,6 @@ class StudentProfile(Model):
     def get_absolute_url(self):
         return ('profiles_profile_detail',
                 (), {'username': self.user.username})
+
+    def permalien(self):
+        return self.get_absolute_url()

@@ -1,21 +1,19 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n routines %}
 
 {% block title %}
   {{ profile.user.get_full_name|default:profile.user }}
 {% endblock %}
 
 {% block body %}
-  <h1>{% trans "Profil de" %} {{ profile.user.get_full_name|default:profile.user }}</h1>
-  <dl>
-    <dt>{% trans "Professeur référent" %}</dt>
-    <dd>
-      {% with professor=profile.professor %}
-        {{ professor.get_full_name|default:professor }}
-      {% endwith %}
-    </dd>
-    <dt>{% trans "Sources transcrites" %}</dt>
-    <dd>{{ profile.user.source_set.count }}</dd>
-  </dl>
-  <a href="{% url profiles_edit_profile %}">[{% trans "Modifier" %}]</a>
+  {% with profile_user=profile.user %}
+    <h1>{% trans "Profil de" %} {{ profile_user.get_full_name|default:profile_user }}</h1>
+    <dl>
+      {% attr_in_dl 'professor_name' _('professeur référent') profile %}
+      {% list_in_dl profile_user.groups.all '__unicode__' %}
+      <dt>{% trans "Sources transcrites" %}</dt>
+      <dd>{{ profile_user.source_set.count }}</dd>
+    </dl>
+    {% frontend_admin profile %}
+  {% endwith %}
 {% endblock %}

@@ -21,7 +21,17 @@
   <body>
     <header>
       <nav>
-        <a href="{% url 'haystack_search' %}">{% trans "Recherche" %}</a>
+        <form method="get" action="{% url 'haystack_search' %}" class="form-search">
+          <div class="input-append">
+            <input type="text" name="q"
+                   value="{{ form.q.data|default:""|escape }}" id="id_q"
+                   placeholder="{% trans "Rechercher…" %}"
+                   class="search-query span2" />
+            <button type="submit" class="btn">
+              <i class="icon-search"></i>
+            </button>
+          </div>
+        </form>
         <a href="{% url 'lieux' %}">{% trans "lieux"|capfirst %}</a>
         <a href="{% url 'evenements' %}">{% trans "événements"|capfirst %}</a>
         <a href="{% url 'individus' %}">{% trans "individus"|capfirst %}</a>
@@ -33,7 +43,7 @@
             <form action="/i18n/setlang/" method="POST" style="float: right;">
               {% csrf_token %}
               <input type="hidden" name="language" value="{{ lang.0 }}" />
-              <input type="submit" value="{{ lang.1 }}" />
+              <button type="submit" class="btn btn-mini">{{ lang.1 }}</button>
             </form>
           {% endif %}
         {% endfor %}

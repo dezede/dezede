@@ -43,8 +43,9 @@ def frontend_admin(context, object=None):
 
 
 @register.simple_tag(takes_context=True)
-def attr_in_dl(context, attr, verbose_name=None):
-    object = context['object']
+def attr_in_dl(context, attr, verbose_name=None, object=None):
+    if object is None:
+        object = context['object']
     value = object
     for attr_part in attr.split('.'):
         if value is None:
