@@ -61,19 +61,21 @@ class UserRegistrationForm(RegistrationFormUniqueEmail):
         )
         super(UserRegistrationForm, self).__init__(*args, **kwargs)
 
-    def save(self, user):
+    def save(self, request, user):
         data = self.cleaned_data
 
         user.first_name = data['first_name']
         user.last_name = data['last_name']
+        user.is_staff = False
+        user.save()
 
         professor = data['professor']
-        StudentProfile.objects.create(
+        profile = StudentProfile.objects.create(
             user=user,
-            professor=professor,
-            groups=data['groups'])
+            professor=professor)
+        profile.groups = data['groups']
 
-        site_url = 'http://' + get_current_site(self.request).domain
+        site_url = 'http://' + get_current_site(request).domain
         email_content = render_to_string(
             'accounts/grant_to_admin_demand_email.txt',
             {'user': user, 'site_url': site_url})
