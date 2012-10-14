@@ -72,15 +72,15 @@ class UserRegistrationForm(RegistrationFormUniqueEmail):
         new_user.save()
 
         professor = data['professor']
-        new_profile = StudentProfile(
+        new_profile = StudentProfile.objects.create(
             user=new_user,
             professor=professor)
-        new_profile.save()
         new_profile.groups = data['groups']
+        new_profile.save()
 
         site_url = 'http://' + get_current_site(self.request).domain
         email_content = render_to_string(
             'accounts/grant_to_admin_demand_email.txt',
-            {'user': new_profile.user, 'site_url': site_url})
+            {'user': new_user, 'site_url': site_url})
         professor.email_user(_(u'Demande d’accès étudiant'),
             email_content)
