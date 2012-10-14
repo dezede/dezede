@@ -2,8 +2,8 @@
 from django.conf.urls import patterns, url, include
 from .forms import UserRegistrationForm
 from django.views.generic.simple import direct_to_template
-from registration.views import register, activate
-from .views import GrantToAdmin
+from registration.views import activate
+from .views import register, GrantToAdmin
 
 
 urlpatterns = patterns('',

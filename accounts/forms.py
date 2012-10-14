@@ -14,6 +14,7 @@ from django.contrib.sites.models import get_current_site
 from django.template.loader import render_to_string
 
 
+
 def get_professors():
     return User.objects.filter(is_superuser=True)
 
@@ -60,27 +61,21 @@ class UserRegistrationForm(RegistrationFormUniqueEmail):
         )
         super(UserRegistrationForm, self).__init__(*args, **kwargs)
 
-    def save(self, profile_callback=None):
+    def save(self, user):
         data = self.cleaned_data
 
-        new_user = RegistrationProfile.objects.create_inactive_user(
-            username=data['username'],
-            password=data['password1'],
-            email=data['email'])
-        new_user.first_name = data['first_name']
-        new_user.last_name = data['last_name']
-        new_user.save()
+        user.first_name = data['first_name']
+        user.last_name = data['last_name']
 
         professor = data['professor']
-        new_profile = StudentProfile.objects.create(
-            user=new_user,
-            professor=professor)
-        new_profile.groups = data['groups']
-        new_profile.save()
+        StudentProfile.objects.create(
+            user=user,
+            professor=professor,
+            groups=data['groups'])
 
         site_url = 'http://' + get_current_site(self.request).domain
         email_content = render_to_string(
             'accounts/grant_to_admin_demand_email.txt',
-            {'user': new_user, 'site_url': site_url})
+            {'user': user, 'site_url': site_url})
         professor.email_user(_(u'Demande d’accès étudiant'),
             email_content)
