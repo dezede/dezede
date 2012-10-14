@@ -13,10 +13,10 @@
       Vous êtes déjà connecté.  Souhaitez-vous <a href="{{ url }}">vous déconnecter</a> ?
     {% endblocktrans %}
   {% else %}
-    <form method="POST">
+    <form method="POST" class="well">
       {% csrf_token %}
       {{ form|crispy }}
-      <input type="submit" value="{% trans 'Se connecter' %}" />
+      <input type="submit" value="{% trans 'Se connecter' %}" class="btn" />
     </form>
     <p>
       {% url registration_register as url %}
