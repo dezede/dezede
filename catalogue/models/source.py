@@ -33,16 +33,16 @@ class TypeDeSource(CustomModel, SlugModel):
 
 
 class Source(AutoriteModel):
-    nom = CharField(max_length=200, help_text=ex(_('Journal de Rouen')),
-                    verbose_name=_('nom'))
-    numero = CharField(max_length=50, blank=True, verbose_name=_(u'numéro'),
+    nom = CharField(_('nom'), max_length=200,
+                    help_text=ex(_('Journal de Rouen')))
+    numero = CharField(_(u'numéro'), max_length=50, blank=True,
                        help_text=_(u'Sans « № »') + '. ' + ex('52'))
-    date = DateField(help_text=DATE_MSG, verbose_name=_('date'))
-    page = CharField(max_length=50, blank=True, verbose_name=_('page'),
+    date = DateField(_('date'), help_text=DATE_MSG)
+    page = CharField(_('page'), max_length=50, blank=True,
                      help_text=_(u'Sans « p. »') + '. ' + ex('3'))
     type = ForeignKey('TypeDeSource', related_name='sources',
         help_text=ex(_('compte rendu')), verbose_name=_('type'))
-    contenu = HTMLField(blank=True, verbose_name=_('contenu'),
+    contenu = HTMLField(_('contenu'), blank=True,
         help_text=_(u'Recopié tel quel, avec les fautes d’orthographe suivies '
                     u'de « [sic] » le cas échéant.'))
     auteurs = ManyToManyField('Auteur', related_name='sources', blank=True,
