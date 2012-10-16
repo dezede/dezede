@@ -1,8 +1,8 @@
 # coding: utf-8
 
-from .functions import href, date_html, str_list
-from django.db.models import CharField, ForeignKey, ManyToManyField, \
-                             DateField, TimeField, permalink, get_model
+from .functions import href, date_html, str_list, ex
+from django.db.models import CharField, ForeignKey, BooleanField, \
+                             DateField, TimeField, permalink, get_model, Q
 from tinymce.models import HTMLField
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
@@ -20,6 +20,15 @@ class NatureDeLieu(CustomModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
                             help_text=PLURAL_MSG)
+    referent = BooleanField(_(u'référent'), default=False,
+        help_text=_(u'L’affichage d’un lieu remonte jusqu’au lieu référent.') \
+        + ' ' \
+        + ex(unicode(_('ville, institution, salle')),
+             pre=unicode(_(u'dans une architecture de pays, villes, théâtres, '
+                           u'etc, ')),
+             post=unicode(_(u' sera affiché car on remonte jusqu’à un lieu '
+                            u'référent, ici choisi comme étant ceux de nature '
+                            u'« ville »'))))
 
     class Meta:
         verbose_name = ungettext_lazy('nature de lieu', 'natures de lieu', 1)
@@ -45,8 +54,8 @@ class LieuManager(TreeManager, AutoriteManager):
 
 class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200)
-    parent = TreeForeignKey('self', null=True,
-                            blank=True, verbose_name=_('parent'))
+    parent = TreeForeignKey('self', null=True, blank=True,
+                            related_name='enfant', verbose_name=_('parent'))
     nature = ForeignKey(NatureDeLieu, related_name='lieux',
         verbose_name=_('nature'))
     historique = HTMLField(_('historique'), blank=True)
@@ -89,15 +98,19 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
                          'Oeuvre').objects \
                                   .filter(ancrage_creation__lieu=self)
 
+    def __repr__(self):
+        return self.nom
+
     def html(self, tags=True, short=False):
-        pat = ugettext('%(lieu)s')
         url = None if not tags else self.get_absolute_url()
-        d = {'lieu': self.nom}
-        parent = self.parent
-        if parent and not short:
-            d['lieu_parent'] = parent.nom
-            pat = ugettext('%(lieu_parent)s, %(lieu)s')
-        out = pat % d
+        if short or self.parent is None or self.nature.referent:
+            out = self.nom
+        else:
+            ancestors = self.get_ancestors(include_self=True)
+            ancestors = ancestors.filter(Q(nature__referent=False)
+                | Q(nature__referent=True,
+                    enfant__nature__referent=False)).distinct()
+            out = ', '.join(a.nom for a in ancestors)
         return href(url, out, tags)
     html.short_description = _('rendu HTML')
     html.allow_tags = True

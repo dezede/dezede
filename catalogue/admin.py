@@ -218,8 +218,8 @@ class EtatAdmin(CustomAdmin):
 
 
 class NatureDeLieuAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'nom_pluriel',)
-    list_editable = ('nom', 'nom_pluriel',)
+    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'referent',)
+    list_editable = ('nom', 'nom_pluriel', 'referent',)
 
 
 class LieuAdmin(CustomAdmin):

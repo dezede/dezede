@@ -73,12 +73,14 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
     return str_list(l, infix, last_infix)
 
 
-def ex(txt):
+def ex(txt, pre='', post=''):
     u"""
     >>> print ex('30/01/1989')
     Exemple : « 30/01/1989 ».
     """
-    return _(u'Exemple : « %s ».') % txt
+    return _(u'Exemple : %(pre)s« %(txt)s »%(post)s.') % {'pre': pre,
+                                                          'txt': txt,
+                                                          'post': post}
 ex = allow_lazy(ex, unicode)
 
 
