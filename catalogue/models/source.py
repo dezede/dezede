@@ -33,17 +33,22 @@ class TypeDeSource(CustomModel, SlugModel):
 
 
 class Source(AutoriteModel):
-    nom = CharField(max_length=200, help_text=ex(_('Journal de Rouen')))
-    numero = CharField(max_length=50, blank=True)
-    date = DateField(help_text=DATE_MSG)
-    page = CharField(max_length=50, blank=True)
+    nom = CharField(max_length=200, help_text=ex(_('Journal de Rouen')),
+                    verbose_name=_('nom'))
+    numero = CharField(max_length=50, blank=True, verbose_name=_(u'numéro'),
+                       help_text=_(u'Sans « № »') + '. ' + ex('52'))
+    date = DateField(help_text=DATE_MSG, verbose_name=_('date'))
+    page = CharField(max_length=50, blank=True, verbose_name=_('page'),
+                     help_text=_(u'Sans « p. »') + '. ' + ex('3'))
     type = ForeignKey('TypeDeSource', related_name='sources',
-        help_text=ex(_('compte rendu')))
-    contenu = HTMLField(blank=True)
+        help_text=ex(_('compte rendu')), verbose_name=_('type'))
+    contenu = HTMLField(blank=True, verbose_name=_('contenu'),
+        help_text=_(u'Recopié tel quel, avec les fautes d’orthographe suivies '
+                    u'de « [sic] » le cas échéant.'))
     auteurs = ManyToManyField('Auteur', related_name='sources', blank=True,
-        null=True)
+        null=True, verbose_name=_('auteurs'))
     evenements = ManyToManyField('Evenement', related_name='sources',
-        blank=True, null=True)
+        blank=True, null=True, verbose_name=_(u'événements'))
 
     @permalink
     def get_absolute_url(self):

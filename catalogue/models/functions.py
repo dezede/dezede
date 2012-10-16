@@ -76,9 +76,9 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
 def ex(txt):
     u"""
     >>> print ex('30/01/1989')
-    Exemple : « 30/01/1989 »
+    Exemple : « 30/01/1989 ».
     """
-    return _(u'Exemple : « %s »') % txt
+    return _(u'Exemple : « %s ».') % txt
 ex = allow_lazy(ex, unicode)
 
 

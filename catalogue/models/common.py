@@ -19,7 +19,7 @@ LOWER_MSG = _(u'En minuscules.')
 PLURAL_MSG = _(u'À remplir si le pluriel n’est pas un simple '
                u'ajout de « s ». Exemple : « animal » devient « animaux » '
                u'et non « animals ».')
-DATE_MSG = _(u'Ex. : « 6/6/1944 » pour le 6 juin 1944.')
+DATE_MSG = _(u'Exemple : « 6/6/1944 » pour le 6 juin 1944.')
 # Champs dans lesquels effectuer les remplacements typographiques.
 REPLACE_FIELDS = (CharField, HTMLField,)
 
