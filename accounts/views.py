@@ -8,6 +8,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from registration.backends import get_backend
+from django.core.exceptions import PermissionDenied
 
 
 
@@ -17,6 +18,9 @@ class GrantToAdmin(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(GrantToAdmin, self).get_context_data(**kwargs)
+        current_user = self.request.user
+        if not current_user.is_superuser:
+            raise PermissionDenied
         user = self.object
         if user.is_staff:
             context['already_staff'] = True
