@@ -39,11 +39,6 @@ class PartieDetailView(DetailView):
     model = Partie
 
 
-class LieuListView(ListView):
-    model = Lieu
-    context_object_name = 'lieux'
-
-
 class PartieListView(ListView):
     model = Partie
     context_object_name = 'parties'
@@ -54,6 +49,16 @@ class PartieListView(ListView):
         RequestConfig(self.request).configure(table)
         context['table'] = table
         return context
+
+
+class ProfessionDetailView(DetailView):
+    model = Profession
+    context_object_name = 'profession'
+
+
+class LieuListView(ListView):
+    model = Lieu
+    context_object_name = 'lieux'
 
 
 class LieuDetailView(DetailView):

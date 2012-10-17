@@ -1,7 +1,8 @@
 # coding: utf-8
 
-from .functions import ex
-from django.db.models import CharField, ForeignKey, ManyToManyField, FloatField
+from .functions import ex, href
+from django.db.models import CharField, ForeignKey, ManyToManyField, \
+                             FloatField, permalink
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, \
                     SlugModel
@@ -24,6 +25,22 @@ class Profession(CustomModel, SlugModel):
         ordering = ['slug']
         app_label = 'catalogue'
 
+    @permalink
+    def get_absolute_url(self):
+        return 'profession_pk', [self.pk]
+
+    def permalien(self):
+        return self.get_absolute_url()
+
+    def pretty_link(self):
+        return self.html(caps=True)
+
+    def link(self):
+        return self.html()
+
+    def short_link(self):
+        return self.short_html()
+
     def pluriel(self):
         return calc_pluriel(self)
 
@@ -31,13 +48,20 @@ class Profession(CustomModel, SlugModel):
         f = self.nom_feminin
         return f or self.nom
 
-    def gendered(self, titre='M'):
-        return self.nom if titre == 'M' else self.feminin()
+    def pretty_gendered(self, titre='M', tags=True):
+        return self.gendered(titre=titre, tags=tags, caps=True)
 
-    def html(self, tags=True, short=False):
-        out = self.nom
+    def gendered(self, titre='M', tags=True, caps=False):
+        return self.html(tags, caps=caps, feminin=titre != 'M')
+
+    def html(self, tags=True, short=False, caps=False, feminin=False):
+        nom = self.feminin() if feminin else self.nom
+        if caps:
+            nom = capfirst(nom)
         if short:
-            return abbreviate(out, limit=1, min_len=4)
+            nom = abbreviate(nom, limit=1, min_len=4)
+        url = self.get_absolute_url()
+        out = href(url, nom, tags)
         return out
 
     def short_html(self, tags=True):

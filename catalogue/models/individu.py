@@ -237,12 +237,13 @@ class Individu(AutoriteModel, UniqueSlugModel):
             return unicode(self.ancrage_approx)
         return ''
 
-    def calc_professions(self):
+    def calc_professions(self, tags=True):
         if not self.pk:
             return ''
         ps = self.professions.iterator()
         titre = self.titre
-        return str_list_w_last(p.gendered(titre) for p in ps)
+        return str_list_w_last(p.gendered(titre, tags, caps=i == 0)
+                                                     for i, p in enumerate(ps))
     calc_professions.short_description = _('professions')
     calc_professions.admin_order_field = 'professions__nom'
 

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load extras routines %}
+{% load url from future %}
+
+{% block title %}
+  {{ profession|capfirst }}
+{% endblock %}
+
+{% block body %}
+
+  {% include "catalogue/etat.html" with etat=profession.etat %}
+
+  <h2>
+    {{ profession.pretty_link }}
+  </h2>
+  <dl>
+    {% list_in_dl profession.parties.all %}
+    {% list_in_dl profession.individus.all %}
+    {% list_in_dl profession.auteurs.oeuvres %}
+    {% list_in_dl profession.auteurs.sources %}
+    {% attr_in_dl 'parente.link' _('profession parente') %}
+  </dl>
+
+  <br />
+
+  {% frontend_admin %}
+{% endblock %}
