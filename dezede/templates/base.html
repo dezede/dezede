@@ -38,14 +38,22 @@
             <li{% if request.path == evenements_url %} class="active"{% endif %}>
               <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
             </li>
-            <li{% if request.path == lieux_url %} class="active"{% endif %}>
-              <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
-            </li>
-            <li{% if request.path == individus_url %} class="active"{% endif %}>
-              <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
-            </li>
-            <li{% if request.path == parties_url %} class="active"{% endif %}>
-              <a href="{{ parties_url }}">{% trans 'parties'|capfirst %}</a>
+            <li class="dropdown">
+              <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">
+                Autres autorités
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <li{% if request.path == lieux_url %} class="active"{% endif %}>
+                  <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
+                </li>
+                <li{% if request.path == individus_url %} class="active"{% endif %}>
+                  <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
+                </li>
+                <li{% if request.path == parties_url %} class="active"{% endif %}>
+                  <a href="{{ parties_url }}">{% trans 'parties'|capfirst %}</a>
+                </li>
+              </ul>
             </li>
             {#<a href="{% url 'saisie_sources' %}">Saisie de source</a>#}
             <li class="divider-vertical"></li>
