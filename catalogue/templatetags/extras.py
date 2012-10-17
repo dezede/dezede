@@ -48,8 +48,19 @@ def is_vowel(string):
     return remove_diacritics(string) in 'AEIOUYaeiouy'
 
 
+def chars_iterator(str):
+   i0 = 0
+   c0 = str[0]
+   i1 = 1
+   for c1 in str[1:-1]:
+       yield i0, c0, i1, c1
+       i0 = i1
+       c0 = c1
+       i1 += 1
+
+
 @register.filter
-def abbreviate(string, limit=0, min_len=1):
+def abbreviate(string, min_vowels=0, min_len=1):
     """
     Abrègre les mots avec une limite de longueur (par défaut 0).
 
@@ -66,16 +77,19 @@ def abbreviate(string, limit=0, min_len=1):
     # TODO: créer un catalogue COMPLET de ponctuations de séparation.
     for i, sub in enumerate(re.split('(-|\.|\s)', string)):
         if not i % 2:
-            init_len = len(sub)
-            tmp_limit = limit
-            for j in xrange(init_len):
-                if is_vowel(sub[j]) and j - 1 == 0 or not is_vowel(sub[j - 1]):
-                    if tmp_limit <= 0:
-                        l = j or 1
-                        if min_len < l + 1 < init_len:
-                            sub = sub[:l] + '.'
+            vowels_count = min_vowels
+            vowel_first = is_vowel(sub[0])
+            if vowel_first:
+                vowels_count -= 1
+            for j0, c0, j1, c1 in chars_iterator(sub):
+                general_case = is_vowel(c1) and not is_vowel(c0)
+                particular_case = j0 == 0 and vowel_first
+                if general_case or particular_case:
+                    if vowels_count <= 0:
+                        if min_len <= j1:
+                            sub = sub[:j1] + '.'
                             break
-                    if j + 1 < init_len and not is_vowel(sub[j + 1]):
-                        tmp_limit -= 1
+                    if general_case:
+                        vowels_count -= 1
         out += sub
     return out
