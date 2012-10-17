@@ -69,7 +69,7 @@ def abbreviate(string, limit=0, min_len=1):
             init_len = len(sub)
             tmp_limit = limit
             for j in xrange(init_len):
-                if is_vowel(sub[j]):
+                if is_vowel(sub[j]) and j - 1 == 0 or not is_vowel(sub[j - 1]):
                     if tmp_limit <= 0:
                         l = j or 1
                         if min_len < l + 1 < init_len:
