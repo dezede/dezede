@@ -32,6 +32,7 @@
           <ul class="nav">
             {% url 'evenements' as evenements_url %}
             {% url 'lieux' as lieux_url %}
+            {% url 'oeuvres' as oeuvres_url %}
             {% url 'individus' as individus_url %}
             {% url 'parties' as parties_url %}
             {% url 'admin:index' as admin_url %}
@@ -46,6 +47,9 @@
               <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                 <li{% if request.path == lieux_url %} class="active"{% endif %}>
                   <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
+                </li>
+                <li{% if request.path == oeuvres_url %} class="active"{% endif %}>
+                  <a href="{{ oeuvres_url }}">{% trans "oeuvres"|capfirst %}</a>
                 </li>
                 <li{% if request.path == individus_url %} class="active"{% endif %}>
                   <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>

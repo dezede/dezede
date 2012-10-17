@@ -4,8 +4,8 @@ from django.views.generic import ListView, DetailView
 from endless_pagination.views import AjaxListView
 from .models import *
 from .forms import *
-from .tables import IndividuTable, PartieTable
-from django_tables2 import RequestConfig
+from .tables import IndividuTable, PartieTable, OeuvreTable
+from django_tables2 import SingleTableView
 
 
 class SourceDetailView(DetailView):
@@ -35,20 +35,14 @@ class EvenementDetailView(DetailView):
     model = Evenement
 
 
+class PartieListView(SingleTableView):
+    model = Partie
+    table_class = PartieTable
+    template_name = 'catalogue/tableau.html'
+
+
 class PartieDetailView(DetailView):
     model = Partie
-
-
-class PartieListView(ListView):
-    model = Partie
-    context_object_name = 'parties'
-
-    def get_context_data(self, **kwargs):
-        context = super(PartieListView, self).get_context_data(**kwargs)
-        table = PartieTable(context['parties'])
-        RequestConfig(self.request).configure(table)
-        context['table'] = table
-        return context
 
 
 class ProfessionDetailView(DetailView):
@@ -66,21 +60,21 @@ class LieuDetailView(DetailView):
     context_object_name = 'lieu'
 
 
-class IndividuListView(ListView):
+class IndividuListView(SingleTableView):
     model = Individu
-    context_object_name = 'individus'
-
-    def get_context_data(self, **kwargs):
-        context = super(IndividuListView, self).get_context_data(**kwargs)
-        table = IndividuTable(context['individus'])
-        RequestConfig(self.request).configure(table)
-        context['table'] = table
-        return context
+    table_class = IndividuTable
+    template_name = 'catalogue/tableau.html'
 
 
 class IndividuDetailView(DetailView):
     model = Individu
     context_object_name = 'individu'
+
+
+class OeuvreListView(SingleTableView):
+    model = Oeuvre
+    table_class = OeuvreTable
+    template_name = 'catalogue/tableau.html'
 
 
 class OeuvreDetailView(DetailView):

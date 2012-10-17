@@ -22,7 +22,18 @@ class IndividuTable(Table):
 
 
 class PartieTable(Table):
-    nom = LinkColumn('partie_pk', args=(A('pk'),), verbose_name=_('nom'))
+    nom = LinkColumn('partie', args=(A('slug'),), verbose_name=_('nom'))
+    interpretes_html = Column(verbose_name=_(u'interprètes'))
+
+    class Meta:
+        attrs = {"class": "paleblue"}
+
+
+class OeuvreTable(Table):
+    genre = Column()
+    titre = LinkColumn('oeuvre', args=(A('slug'),), verbose_name=_('titre'))
+    titre_secondaire = Column()
+    auteurs_html = Column(verbose_name=_('auteurs'))
 
     class Meta:
         attrs = {"class": "paleblue"}

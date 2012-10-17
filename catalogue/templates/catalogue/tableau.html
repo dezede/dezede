@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% load i18n extras static django_tables2 %}
+{% load i18n static django_tables2 %}
 {% load url from future %}
 
 {% block title %}
-  {% trans "parties"|capfirst %}
+  {{ object_list.0.meta.verbose_name_plural|capfirst }}
 {% endblock %}
 
 {% block head %}
@@ -11,6 +11,6 @@
 {% endblock %}
 
 {% block body %}
-  <h1>{% trans 'parties'|capfirst %}</h1>
+  <h1>{{ object_list.0.meta.verbose_name_plural|capfirst }}</h1>
   {% render_table table %}
 {% endblock %}

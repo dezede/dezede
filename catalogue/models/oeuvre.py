@@ -128,6 +128,9 @@ class Partie(CustomModel, SlugModel):
         return get_model('catalogue', 'Individu').objects.filter(
                                  attributions_de_pupitre__pupitre__partie=self)
 
+    def interpretes_html(self):
+        return str_list(i.html() for i in self.interpretes())
+
     def pluriel(self):
         return calc_pluriel(self)
 

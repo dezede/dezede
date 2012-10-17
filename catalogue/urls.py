@@ -14,6 +14,7 @@ urlpatterns = patterns('',
         name='individu_pk'),
     url(r'^individus/(?P<slug>[-\w]+)/$', IndividuDetailView.as_view(),
         name='individu'),
+    url(r'^oeuvres/$', OeuvreListView.as_view(), name='oeuvres'),
     # FIXME: réserver 'id' lors de la validation
     url(r'^oeuvres/id/(?P<pk>\d+)/$', OeuvreDetailView.as_view(),
         name='oeuvre_pk'),
