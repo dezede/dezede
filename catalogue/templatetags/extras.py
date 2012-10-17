@@ -4,6 +4,7 @@ import re
 from unicodedata import normalize
 from BeautifulSoup import BeautifulStoneSoup
 from django.template import Library
+from ..models.functions import hlp
 
 register = Library()
 
@@ -60,7 +61,7 @@ def chars_iterator(str):
 
 
 @register.filter
-def abbreviate(string, min_vowels=0, min_len=1):
+def abbreviate(string, min_vowels=0, min_len=1, tags=True):
     """
     Abrègre les mots avec une limite de longueur (par défaut 0).
 
@@ -94,4 +95,4 @@ def abbreviate(string, min_vowels=0, min_len=1):
                     if general_case:
                         vowels_count -= 1
         out += sub
-    return out
+    return hlp(out, string, tags)
