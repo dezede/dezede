@@ -2,19 +2,23 @@
 
 from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from django.db.models import CharField, ManyToManyField, \
-                             FloatField, ForeignKey, OneToOneField, \
-                             IntegerField, TextField, permalink, get_model
+                             PositiveIntegerField, FloatField, ForeignKey, \
+                             OneToOneField, IntegerField, TextField, \
+                             permalink, get_model
 from tinymce.models import HTMLField
-from ..templatetags.extras import abbreviate
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from django.template.defaultfilters import capfirst
 from django.contrib.humanize.templatetags.humanize import apnumber
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    calc_pluriel, SlugModel, UniqueSlugModel
+                    calc_pluriel, SlugModel, UniqueSlugModel, CustomManager, \
+                    CustomQuerySet
 from django.core.exceptions import ValidationError
 from collections import defaultdict
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.generic import GenericForeignKey
+from django.contrib.contenttypes.generic import GenericRelation
 
 
 class GenreDOeuvre(CustomModel, SlugModel):
@@ -239,30 +243,52 @@ class ParenteDOeuvres(CustomModel):
             pass
 
 
-class Auteur(CustomModel):
-    profession = ForeignKey('Profession', related_name='auteurs')
-    individus = ManyToManyField('Individu', related_name='auteurs')
+class AuteurQuerySet(CustomQuerySet):
+    def html(self, tags=True):
+        auteurs = self
+        d = defaultdict(list)
+        for auteur in auteurs:
+            d[auteur.profession].append(auteur.individu)
+        return str_list(
+            '%s [%s]' % (str_list_w_last(i.html(tags) for i in ins),
+                         p.short_html(tags))
+                for p, ins in d.iteritems())
 
-    def individus_html(self, tags=True):
-        ins = self.individus.iterator()
-        return str_list_w_last(i.html(tags) for i in ins)
+
+class AuteurManager(CustomManager):
+    """
+    Manager personnalisé pour utiliser CustomQuerySet par défaut.
+    """
+    def get_query_set(self):
+        return AuteurQuerySet(self.model, using=self._db)
+
+
+class Auteur(CustomModel):
+    content_type = ForeignKey(ContentType)
+    object_id = PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    individu = ForeignKey('Individu', related_name='auteurs',
+                          verbose_name=_('individu'))
+    profession = ForeignKey('Profession', related_name='auteurs',
+                            verbose_name=_('profession'))
+    objects = AuteurManager()
 
     def html(self, tags=True):
-        individus = self.individus_html(tags)
-        prof = abbreviate(unicode(self.profession.nom), 1)
-        out = '%s [%s]' % (individus, prof)
-        return out
+        return Auteur.objects.filter(pk=self.pk).html(tags)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
+
+    def clean(self):
+        self.individu.professions.add(self.profession)
 
     class Meta:
         verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
         verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
-        ordering = ['profession', 'individus__nom']
+        ordering = ['profession', 'individu__nom']
         app_label = 'catalogue'
 
     def __unicode__(self):
-        return strip_tags(self.html(False))
+        return self.html(tags=False)
 
 
 class Oeuvre(AutoriteModel, UniqueSlugModel):
@@ -279,8 +305,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         null=True)
     caracteristiques = ManyToManyField('CaracteristiqueDOeuvre', blank=True,
         null=True, verbose_name=_(u'caractéristiques'))
-    auteurs = ManyToManyField('Auteur', related_name='oeuvres', blank=True,
-        null=True)
+    auteurs = GenericRelation('Auteur', related_name='oeuvres')
     ancrage_creation = OneToOneField('AncrageSpatioTemporel',
         related_name='oeuvres_creees', blank=True, null=True,
         verbose_name=_(u'ancrage spatio-temporel de création'))
@@ -337,14 +362,11 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
             out += str_list_w_last(unicode(p) for p in ps.iterator())
         return out
 
-    def calc_auteurs(self, tags=True):
-        if not self.pk:
-            return ''
-        auteurs = self.auteurs.iterator()
-        return str_list(a.html(tags) for a in auteurs)
-    calc_auteurs.short_description = _('auteurs')
-    calc_auteurs.allow_tags = True
-    calc_auteurs.admin_order_field = 'auteurs__individus'
+    def auteurs_html(self, tags=True):
+        return self.auteurs.all().html(tags)
+    auteurs_html.short_description = _('auteurs')
+    auteurs_html.allow_tags = True
+    auteurs_html.admin_order_field = 'auteurs__individu'
 
     def calc_parentes(self, tags=True):
         if not self.pk:
@@ -383,7 +405,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
              descr=True, genre_caps=True, parentes=True):
         # FIXME: Nettoyer cette horreur
         out = ''
-        auts = self.calc_auteurs(tags)
+        auts = self.auteurs_html(tags)
         pars = self.calc_parentes(tags)
         titre_complet = self.titre_complet()
         genre = self.genre

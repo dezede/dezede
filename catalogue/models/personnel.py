@@ -6,6 +6,7 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, \
                     SlugModel
 from django.template.defaultfilters import capfirst
+from ..templatetags.extras import abbreviate
 
 
 class Profession(CustomModel, SlugModel):
@@ -33,8 +34,17 @@ class Profession(CustomModel, SlugModel):
     def gendered(self, titre='M'):
         return self.nom if titre == 'M' else self.feminin()
 
+    def html(self, tags=True):
+        return self.nom
+
+    def short_html(self, tags=True):
+        return abbreviate(self.html(tags), limit=1)
+
+    def __hash__(self):
+        return hash(self.nom)
+
     def __unicode__(self):
-        return capfirst(self.nom)
+        return capfirst(self.html(tags=False))
 
     @staticmethod
     def autocomplete_search_fields():

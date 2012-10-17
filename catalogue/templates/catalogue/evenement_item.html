@@ -49,7 +49,7 @@
       <h4>{{ source.html|safe }}</h4>
       <div class="source">
         {{ source.contenu|safe }}
-        {{ source.calc_auteurs|safe }}<br />
+        {{ source.auteurs_html|safe }}<br />
           {% frontend_admin source %}
       </div>
       {% if forloop.last %}

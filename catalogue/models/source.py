@@ -10,6 +10,7 @@ from django.utils.translation import ungettext_lazy, ugettext, \
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     DATE_MSG, calc_pluriel, SlugModel
 from django.utils.safestring import mark_safe
+from django.contrib.contenttypes.generic import GenericRelation
 
 
 class TypeDeSource(CustomModel, SlugModel):
@@ -45,8 +46,7 @@ class Source(AutoriteModel):
     contenu = HTMLField(_('contenu'), blank=True,
         help_text=_(u'Recopié tel quel, avec les fautes d’orthographe suivies '
                     u'de « [sic] » le cas échéant.'))
-    auteurs = ManyToManyField('Auteur', related_name='sources', blank=True,
-        null=True, verbose_name=_('auteurs'))
+    auteurs = GenericRelation('Auteur', related_name='sources')
     evenements = ManyToManyField('Evenement', related_name='sources',
         blank=True, null=True, verbose_name=_(u'événements'))
 
@@ -66,9 +66,8 @@ class Source(AutoriteModel):
         return get_model('catalogue', 'Individu').objects.filter(
                                               auteurs__sources=self).distinct()
 
-    def calc_auteurs(self, tags=True):
-        auteurs = self.auteurs.iterator()
-        return str_list(a.html(tags) for a in auteurs)
+    def auteurs_html(self, tags=True):
+        return self.auteurs.all().html(tags)
 
     def html(self, tags=True):
         url = None if not tags else self.get_absolute_url()

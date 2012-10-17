@@ -10,6 +10,7 @@ from ..templatetags.extras import replace
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from autoslug import AutoSlugField
 from .functions import href
+from django.contrib.contenttypes.generic import GenericRelation
 
 #
 # Définitions globales du fichier
@@ -149,8 +150,7 @@ class Document(CustomModel):
     document = FileBrowseField(_('document'), max_length=400,
         directory='documents/')
     description = HTMLField(_('description'), blank=True)
-    auteurs = ManyToManyField('Auteur', related_name='documents', blank=True,
-        null=True, verbose_name=_('auteurs'))
+    auteurs = GenericRelation('Auteur', related_name='documents')
 
     class Meta:
         verbose_name = ungettext_lazy('document', 'documents', 1)
@@ -166,15 +166,14 @@ class Document(CustomModel):
     @staticmethod
     def autocomplete_search_fields():
         return ('nom__icontains', 'document__icontains',
-                'description__icontains', 'auteurs__individus__nom',)
+                'description__icontains', 'auteurs__individu__nom',)
 
 
 class Illustration(CustomModel):
     legende = CharField(_(u'légende'), max_length=300, blank=True)
     image = FileBrowseField(_('image'), max_length=400, directory='images/')
     commentaire = HTMLField(_('commentaire'), blank=True)
-    auteurs = ManyToManyField('Auteur', related_name='illustrations',
-        blank=True, null=True, verbose_name=_('auteurs'))
+    GenericRelation('Auteur', related_name='illustrations')
 
     class Meta:
         verbose_name = ungettext_lazy('illustration', 'illustrations', 1)
@@ -194,7 +193,7 @@ class Illustration(CustomModel):
     @staticmethod
     def autocomplete_search_fields():
         return ('legende__icontains', 'image__icontains',
-                'commentaire__icontains', 'auteurs__individus__nom',)
+                'commentaire__icontains', 'auteurs__individu__nom',)
 
 
 class Etat(CustomModel):

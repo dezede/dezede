@@ -7,6 +7,7 @@ from reversion import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import SimpleListFilter
 from django.db.models import Q
+from django.contrib.contenttypes.generic import GenericStackedInline
 
 
 #
@@ -145,10 +146,14 @@ class OeuvreLieesInline(StackedInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class AuteurInline(CustomTabularInline):
+class AuteurInline(CustomTabularInline, GenericStackedInline):
     verbose_name = Auteur._meta.verbose_name
     verbose_name_plural = Auteur._meta.verbose_name_plural
-    model = Auteur.individus.through
+    model = Auteur
+    raw_id_fields = ('profession', 'individu',)
+    autocomplete_lookup_fields = {
+        'fk': ['profession', 'individu'],
+    }
     classes = ('grp-collapse grp-closed',)
 
 
@@ -422,30 +427,13 @@ class ParenteDOeuvresAdmin(CustomAdmin):
     }
 
 
-class AuteurAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'profession',)
-    list_editable = ('profession',)
-    filter_horizontal = ('individus',)
-    raw_id_fields = ('profession', 'individus',)
-    autocomplete_lookup_fields = {
-        'fk': ['profession'],
-        'm2m': ['individus'],
-    }
-
-    def save_model(self, request, obj, form, change):
-        obj.save()
-        for individu in form.cleaned_data['individus']:
-            individu.professions.add(obj.profession)
-
-
 class OeuvreAdmin(CustomAdmin):
     list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre',
-        'calc_caracteristiques', 'calc_auteurs', 'ancrage_creation',
+        'calc_caracteristiques', 'auteurs_html', 'ancrage_creation',
         'etat', 'link',)
     list_editable = ('genre', 'etat')
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
-    filter_horizontal = ('auteurs',)
     raw_id_fields = ('genre', 'caracteristiques',
                  'ancrage_creation', 'pupitres', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
@@ -454,7 +442,7 @@ class OeuvreAdmin(CustomAdmin):
                 'documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
-    inlines = (OeuvreMereInline, OeuvreFilleInline,)
+    inlines = (OeuvreMereInline, OeuvreFilleInline, AuteurInline,)
 #    inlines = (ElementDeProgrammeInline,)
     fieldsets = (
         (_('Titre'), {
@@ -462,7 +450,7 @@ class OeuvreAdmin(CustomAdmin):
                         ('prefixe_titre_secondaire', 'titre_secondaire',),),
         }),
         (_('Autres champs courants'), {
-            'fields': ('genre', 'caracteristiques', 'auteurs',
+            'fields': ('genre', 'caracteristiques',
                         'ancrage_creation', 'pupitres',),
         }),
         (_('Fichiers'), {
@@ -562,16 +550,16 @@ class SourceAdmin(CustomAdmin):
                      'owner__last_name')
     list_filter = ('type', 'nom', SourceHasEventsListFilter,
                    SourceHasProgramListFilter)
-    filter_horizontal = ('auteurs',)
     raw_id_fields = ('evenements', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
         'm2m': ['evenements', 'documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html',)
+    inlines = (AuteurInline,)
     fieldsets = (
         (_('Champs courants'), {
             'fields': ('nom', ('numero', 'page',), ('date', 'type',),
-                       'contenu', 'evenements', 'auteurs',),
+                       'contenu', 'evenements',),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),
@@ -616,7 +604,6 @@ site.register(Partie, PartieAdmin)
 site.register(Pupitre, PupitreAdmin)
 site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(ParenteDOeuvres, ParenteDOeuvresAdmin)
-site.register(Auteur, AuteurAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(AttributionDePupitre, AttributionDePupitreAdmin)
 site.register(CaracteristiqueDElementDeProgramme,
