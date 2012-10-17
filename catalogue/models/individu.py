@@ -319,8 +319,11 @@ class Individu(AutoriteModel, UniqueSlugModel):
             if self in p.individus_cibles.all():
                 raise ValidationError(_(u'L’individu a une parenté avec '
                                         u'lui-même.'))
-        naissance = getattr(self.ancrage_naissance, 'date')
-        deces = getattr(self.ancrage_deces, 'date')
+        try:
+            naissance = getattr(self.ancrage_naissance, 'date')
+            deces = getattr(self.ancrage_deces, 'date')
+        except AttributeError:
+            return
         if naissance and deces and deces < naissance:
             raise ValidationError(_(u'Le décès ne peut précéder '
                                     u'la naissance.'))
