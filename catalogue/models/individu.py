@@ -148,12 +148,10 @@ class Individu(AutoriteModel, UniqueSlugModel):
     link.allow_tags = True
 
     def oeuvres(self):
-        return get_model('catalogue', 'Oeuvre').objects.filter(
-                          auteurs__individu=self).distinct().order_by('titre')
+        return self.auteurs.oeuvres()
 
     def publications(self):
-        return get_model('catalogue', 'Source').objects.filter(
-                                            auteurs__individu=self).distinct()
+        return self.auteurs.sources()
 
     def apparitions(self):
         # FIXME: Pas sûr que la condition soit logique.

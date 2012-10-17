@@ -63,11 +63,10 @@ class Source(AutoriteModel):
     link.allow_tags = True
 
     def individus_auteurs(self):
-        return get_model('catalogue', 'Individu').objects.filter(
-                                              auteurs__sources=self).distinct()
+        return self.auteurs.individus()
 
     def auteurs_html(self, tags=True):
-        return self.auteurs.all().html(tags)
+        return self.auteurs.html(tags)
 
     def html(self, tags=True):
         url = None if not tags else self.get_absolute_url()

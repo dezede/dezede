@@ -244,6 +244,22 @@ class ParenteDOeuvres(CustomModel):
 
 
 class AuteurQuerySet(CustomQuerySet):
+    def individus(self):
+        return get_model('catalogue', 'Individu').objects.filter(
+                                                   auteurs__in=self).distinct()
+
+    def professions(self):
+        return get_model('catalogue', 'Profession').objects.filter(
+                                                   auteurs__in=self).distinct()
+
+    def oeuvres(self):
+        return get_model('catalogue', 'Oeuvre').objects.filter(
+                                                   auteurs__in=self).distinct()
+
+    def sources(self):
+        return get_model('catalogue', 'Source').objects.filter(
+                                                   auteurs__in=self).distinct()
+
     def html(self, tags=True):
         auteurs = self
         d = defaultdict(list)
@@ -256,11 +272,23 @@ class AuteurQuerySet(CustomQuerySet):
 
 
 class AuteurManager(CustomManager):
-    """
-    Manager personnalisé pour utiliser CustomQuerySet par défaut.
-    """
     def get_query_set(self):
         return AuteurQuerySet(self.model, using=self._db)
+
+    def individus(self):
+        return self.get_query_set().individus()
+
+    def professions(self):
+        return self.get_query_set().professions()
+
+    def oeuvres(self):
+        return self.get_query_set().oeuvres()
+
+    def sources(self):
+        return self.get_query_set().sources()
+
+    def html(self, tags=True):
+        return self.get_query_set().html(tags)
 
 
 class Auteur(CustomModel):
@@ -333,8 +361,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
     link.allow_tags = True
 
     def individus_auteurs(self):
-        return get_model('catalogue', 'Individu').objects.filter(
-                                              auteurs__oeuvres=self).distinct()
+        return self.auteurs.individus()
 
     def calc_caracteristiques(self, limite=0, tags=True):
         if not self.pk:
@@ -363,7 +390,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         return out
 
     def auteurs_html(self, tags=True):
-        return self.auteurs.all().html(tags)
+        return self.auteurs.html(tags)
     auteurs_html.short_description = _('auteurs')
     auteurs_html.allow_tags = True
     auteurs_html.admin_order_field = 'auteurs__individu'
