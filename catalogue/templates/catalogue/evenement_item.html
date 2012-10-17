@@ -56,7 +56,7 @@
         </div>
         <div id="source_{{ evenement.pk }}_{{ source.pk }}"
              class="accordion-body collapse">
-          <div class="accordion-inner">
+          <div class="accordion-inner source">
             {{ source.contenu|safe }}
             {{ source.auteurs_html|safe }}<br />
             {% frontend_admin source %}

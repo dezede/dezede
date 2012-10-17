@@ -54,6 +54,7 @@ a {
 
 a:hover {
   color: red;
+  text-decoration: none;
   text-shadow: white 0 0 0;
 }
 
