@@ -44,12 +44,12 @@
     </h3>
     {% for source in sources %}
       {% if forloop.first %}
-        <div class="accordion" id="{{ type.pluriel }}_{{ evenement.pk }}">
+        <div class="accordion" id="type_{{ evenement.pk }}_{{ type.pk }}">
       {% endif %}
       <div class="accordion-group">
         <div class="accordion-heading">
           <a class="accordion-toggle" data-toggle="collapse"
-             data-parent="#{{ type.pluriel }}_{{ evenement.pk }}"
+             data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
              href="#source_{{ evenement.pk }}_{{ source.pk }}">
             {{ source }}
           </a>
