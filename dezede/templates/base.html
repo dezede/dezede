@@ -30,16 +30,16 @@
                    class="search-query span2" />
           </form>
           <ul class="nav">
-            {% url 'lieux' as lieux_url %}
             {% url 'evenements' as evenements_url %}
+            {% url 'lieux' as lieux_url %}
             {% url 'individus' as individus_url %}
             {% url 'parties' as parties_url %}
             {% url 'admin:index' as admin_url %}
-            <li{% if request.path == lieux_url %} class="active"{% endif %}>
-              <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
-            </li>
             <li{% if request.path == evenements_url %} class="active"{% endif %}>
               <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
+            </li>
+            <li{% if request.path == lieux_url %} class="active"{% endif %}>
+              <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
             </li>
             <li{% if request.path == individus_url %} class="active"{% endif %}>
               <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
