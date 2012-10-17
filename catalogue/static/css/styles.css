@@ -1,3 +1,33 @@
+@CHARSET "UTF-8";
+
+@font-face {
+  font-family: 'Gentium Basic';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Gentium Basic'), local('GentiumBasic'), url(fonts/GentiumBasic.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Gentium Basic';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Gentium Basic Italic'), local('GentiumBasic-Italic'), url(fonts/GentiumBasic-Italic.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Gentium Basic';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Gentium Basic Bold'), local('GentiumBasic-Bold'), url(fonts/GentiumBasic-Bold.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Gentium Basic';
+  font-style: italic;
+  font-weight: 700;
+  src: local('Gentium Basic Bold Italic'), local('GentiumBasic-BoldItalic'), url(fonts/GentiumBasic-BoldItalic.woff) format('woff');
+}
+
 html {
   background: #B82819 url("/static/damasse.png") fixed;
 }
