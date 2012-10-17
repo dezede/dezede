@@ -44,28 +44,28 @@
     </h3>
     {% for source in sources %}
       {% if forloop.first %}
-        <div class="accordion">
+        <div class="accordion" id="{{ type.pluriel }}_{{ evenement.pk }}">
       {% endif %}
-      <h4>{{ source.html|safe }}</h4>
-      <div class="source">
-        {{ source.contenu|safe }}
-        {{ source.auteurs_html|safe }}<br />
-          {% frontend_admin source %}
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse"
+             data-parent="#{{ type.pluriel }}_{{ evenement.pk }}"
+             href="#source_{{ evenement.pk }}_{{ source.pk }}">
+            {{ source }}
+          </a>
+        </div>
+        <div id="source_{{ evenement.pk }}_{{ source.pk }}"
+             class="accordion-body collapse">
+          <div class="accordion-inner">
+            {{ source.contenu|safe }}
+            {{ source.auteurs_html|safe }}<br />
+            {% frontend_admin source %}
+          </div>
+        </div>
       </div>
       {% if forloop.last %}
         </div>
       {% endif %}
     {% endfor %}
   {% endfor %}
-
-  <script>
-    $(function() {
-      $(".accordion").accordion({
-        autoHeight: false,
-        navigation: true,
-        collapsible: true,
-        active: false
-      });
-    });
-  </script>
 {% endcache %}
