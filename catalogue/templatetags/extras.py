@@ -49,7 +49,7 @@ def is_vowel(string):
 
 
 @register.filter
-def abbreviate(string, limit=0):
+def abbreviate(string, limit=0, min_len=1):
     """
     Abrègre les mots avec une limite de longueur (par défaut 0).
 
@@ -59,6 +59,8 @@ def abbreviate(string, limit=0):
     u'j.-fr. du p. du f.'
     >>> abbreviate(u'autéeur dramatique de la tour de babel', 1)
     u'aut. dram. de la tour de bab.'
+    >>> abbreviate('adaptateur', 1, 4)
+    'adapt.'
     """
     out = ''
     # TODO: créer un catalogue COMPLET de ponctuations de séparation.
@@ -68,11 +70,11 @@ def abbreviate(string, limit=0):
             tmp_limit = limit
             for j in xrange(init_len):
                 if is_vowel(sub[j]):
-                    if not tmp_limit:
-                        l = j if j else 1
-                        if l + 1 < init_len:
+                    if tmp_limit <= 0:
+                        l = j or 1
+                        if min_len < l + 1 < init_len:
                             sub = sub[:l] + '.'
-                        break
+                            break
                     if j + 1 < init_len and not is_vowel(sub[j + 1]):
                         tmp_limit -= 1
         out += sub

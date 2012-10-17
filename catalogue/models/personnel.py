@@ -34,11 +34,14 @@ class Profession(CustomModel, SlugModel):
     def gendered(self, titre='M'):
         return self.nom if titre == 'M' else self.feminin()
 
-    def html(self, tags=True):
-        return self.nom
+    def html(self, tags=True, short=False):
+        out = self.nom
+        if short:
+            return abbreviate(out, limit=1, min_len=4)
+        return out
 
     def short_html(self, tags=True):
-        return abbreviate(self.html(tags), limit=1)
+        return self.html(tags, short=True)
 
     def __hash__(self):
         return hash(self.nom)
