@@ -51,7 +51,7 @@
           <a class="accordion-toggle" data-toggle="collapse"
              data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
              href="#source_{{ evenement.pk }}_{{ source.pk }}">
-            {{ source }}
+            {{ source.html|removetags:'a' }}
           </a>
         </div>
         <div id="source_{{ evenement.pk }}_{{ source.pk }}"

@@ -15,3 +15,6 @@
 <script type="text/javascript">
   window.history.pushState({},"", "{{ request.path }}{% if page_number > 1 %}?page={{ page_number }}{% endif %}");
 </script>
+<script>
+  $('*[title]').tooltip({placement: 'left'})
+</script>
