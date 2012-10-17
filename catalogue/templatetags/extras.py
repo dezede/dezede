@@ -77,6 +77,8 @@ def abbreviate(string, min_vowels=0, min_len=1):
     # TODO: créer un catalogue COMPLET de ponctuations de séparation.
     for i, sub in enumerate(re.split('(-|\.|\s)', string)):
         if not i % 2:
+            if not sub:
+                continue
             vowels_count = min_vowels
             vowel_first = is_vowel(sub[0])
             if vowel_first:
