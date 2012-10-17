@@ -13,7 +13,11 @@
       {{ result.object.html }}<br />
     {% endif %}
     <small>
-      {% highlight result.object.html with query html_tag 'mark' %}
+      {% if result.object.contenu %}
+        {% highlight result.object.contenu with query html_tag 'mark' %}
+      {% else %}
+        {% highlight result.object.html with query html_tag 'mark' %}
+      {% endif %}
     </small>
   </div>
 {% endfor %}
