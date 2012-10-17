@@ -20,33 +20,47 @@
   </head>
   <body>
     <header>
-      <nav>
-        <form method="get" action="{% url 'haystack_search' %}" class="form-search">
-          <div class="input-append">
+      <nav class="navbar">
+        <div class="navbar-inner">
+          <form method="get" action="{% url 'haystack_search' %}" class="navbar-search pull-left">
             <input type="text" name="q"
                    value="{{ form.q.data|default:""|escape }}" id="id_q"
                    placeholder="{% trans "Rechercher…" %}"
                    class="search-query span2" />
-            <button type="submit" class="btn">
-              <i class="icon-search"></i>
-            </button>
-          </div>
-        </form>
-        <a href="{% url 'lieux' %}">{% trans "lieux"|capfirst %}</a>
-        <a href="{% url 'evenements' %}">{% trans "événements"|capfirst %}</a>
-        <a href="{% url 'individus' %}">{% trans "individus"|capfirst %}</a>
-        <a href="{% url 'parties' %}">{% trans 'parties'|capfirst %}</a>
-        {#<a href="{% url 'saisie_sources' %}">Saisie de source</a>#}
-        <a href="{% url 'admin:index' %}">{% trans "Administration" %}</a>
-        {% for lang in LANGUAGES %}
-          {% if lang.0 != LANGUAGE_CODE %}
-            <form action="/i18n/setlang/" method="POST" style="float: right;">
-              {% csrf_token %}
-              <input type="hidden" name="language" value="{{ lang.0 }}" />
-              <button type="submit" class="btn btn-mini">{{ lang.1 }}</button>
-            </form>
-          {% endif %}
-        {% endfor %}
+          </form>
+          <ul class="nav">
+            {% url 'lieux' as lieux_url %}
+            {% url 'evenements' as evenements_url %}
+            {% url 'individus' as individus_url %}
+            {% url 'parties' as parties_url %}
+            {% url 'admin:index' as admin_url %}
+            <li{% if request.path == lieux_url %} class="active"{% endif %}>
+              <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
+            </li>
+            <li{% if request.path == evenements_url %} class="active"{% endif %}>
+              <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
+            </li>
+            <li{% if request.path == individus_url %} class="active"{% endif %}>
+              <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
+            </li>
+            <li{% if request.path == parties_url %} class="active"{% endif %}>
+              <a href="{{ parties_url }}">{% trans 'parties'|capfirst %}</a>
+            </li>
+            {#<a href="{% url 'saisie_sources' %}">Saisie de source</a>#}
+            <li{% if request.path == admin_url %} class="active"{% endif %}>
+              <a href="{{ admin_url }}">{% trans "Administration" %}</a>
+            </li>
+          </ul>
+          {% for lang in LANGUAGES %}
+            {% if lang.0 != LANGUAGE_CODE %}
+              <form action="/i18n/setlang/" method="POST" class="navbar-form pull-right">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="{{ lang.0 }}" />
+                <button type="submit" class="btn btn">{{ lang.1 }}</button>
+              </form>
+            {% endif %}
+          {% endfor %}
+        </div>
       </nav>
     </header>
     <div id="content">
