@@ -4,7 +4,7 @@ from django.views.generic import ListView, DetailView
 from endless_pagination.views import AjaxListView
 from .models import *
 from .forms import *
-from .tables import IndividuTable, PartieTable, OeuvreTable
+from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 from django_tables2 import SingleTableView
 
 
@@ -43,6 +43,12 @@ class PartieListView(SingleTableView):
 
 class PartieDetailView(DetailView):
     model = Partie
+
+
+class ProfessionListView(SingleTableView):
+    model = Profession
+    table_class = ProfessionTable
+    template_name = 'catalogue/tableau.html'
 
 
 class ProfessionDetailView(DetailView):

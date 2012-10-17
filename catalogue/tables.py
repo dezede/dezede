@@ -1,9 +1,19 @@
 # coding: utf-8
 
 from django_tables2 import Table
-from django_tables2.columns import Column, LinkColumn
+from django_tables2.columns import Column, LinkColumn, CheckBoxColumn
 from django_tables2.utils import A
 from django.utils.translation import ugettext_lazy as _
+
+
+class OeuvreTable(Table):
+    genre = Column()
+    titre = LinkColumn('oeuvre', args=(A('slug'),), verbose_name=_('titre'))
+    titre_secondaire = Column()
+    auteurs_html = Column(verbose_name=_('auteurs'))
+
+    class Meta:
+        attrs = {"class": "paleblue"}
 
 
 class IndividuTable(Table):
@@ -21,19 +31,17 @@ class IndividuTable(Table):
         attrs = {"class": "paleblue"}
 
 
-class PartieTable(Table):
-    nom = LinkColumn('partie', args=(A('slug'),), verbose_name=_('nom'))
-    interpretes_html = Column(verbose_name=_(u'interprètes'))
+class ProfessionTable(Table):
+    # selection = CheckBoxColumn(accessor='pk')
+    nom = LinkColumn('profession', args=(A('slug'),), verbose_name=_('nom'))
 
     class Meta:
         attrs = {"class": "paleblue"}
 
 
-class OeuvreTable(Table):
-    genre = Column()
-    titre = LinkColumn('oeuvre', args=(A('slug'),), verbose_name=_('titre'))
-    titre_secondaire = Column()
-    auteurs_html = Column(verbose_name=_('auteurs'))
+class PartieTable(Table):
+    nom = LinkColumn('partie', args=(A('slug'),), verbose_name=_('nom'))
+    interpretes_html = Column(verbose_name=_(u'interprètes'))
 
     class Meta:
         attrs = {"class": "paleblue"}

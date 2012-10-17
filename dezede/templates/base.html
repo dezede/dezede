@@ -34,6 +34,7 @@
             {% url 'lieux' as lieux_url %}
             {% url 'oeuvres' as oeuvres_url %}
             {% url 'individus' as individus_url %}
+            {% url 'professions' as professions_url %}
             {% url 'parties' as parties_url %}
             {% url 'admin:index' as admin_url %}
             <li{% if request.path == evenements_url %} class="active"{% endif %}>
@@ -53,6 +54,9 @@
                 </li>
                 <li{% if request.path == individus_url %} class="active"{% endif %}>
                   <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
+                </li>
+                <li{% if request.path == professions_url %} class="active"{% endif %}>
+                  <a href="{{ professions_url }}">{% trans 'professions'|capfirst %}</a>
                 </li>
                 <li{% if request.path == parties_url %} class="active"{% endif %}>
                   <a href="{{ parties_url }}">{% trans 'parties'|capfirst %}</a>
