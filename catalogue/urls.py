@@ -22,19 +22,23 @@ urlpatterns = patterns('',
     # FIXME: réserver 'id' lors de la validation
     url(r'''^evenements/id/(?P<pk>\d+)/$''', EvenementDetailView.as_view(),
         name='evenement_pk'),
-    url(r'''^evenements'''
-        r'''(?:\/(?P<lieu_slug>[-\w]+))?'''
-        r'''(?:\/(?P<year>\d+))?'''
-        r'''(?:\/(?P<month>\d+))?'''
-        r'''(?:\/(?P<day>\d+))?/$''',
+    url(r'^evenements'
+        r'(?:\/(?P<lieu_slug>[-\w]+))?'
+        r'(?:\/(?P<year>\d+))?'
+        r'(?:\/(?P<month>\d+))?'
+        r'(?:\/(?P<day>\d+))?/$',
         EvenementListView.as_view(),
         name='evenements'),
     url(r'^sources/(?P<pk>\d+)/$', SourceDetailView.as_view(),
         name='source_pk'),
     url(r'^parties/$', PartieListView.as_view(), name='parties'),
-    url(r'^parties/(?P<pk>\d+)/$', PartieDetailView.as_view(),
+    url(r'^parties/(?P<slug>[\w-]+)/$', PartieDetailView.as_view(),
+        name='partie'),
+    url(r'^parties/id/(?P<pk>\d+)/$', PartieDetailView.as_view(),
         name='partie_pk'),
-    url(r'^professions/(?P<pk>\d+)/$', ProfessionDetailView.as_view(),
+    url(r'^professions/(?P<slug>[\w-]+)/$', ProfessionDetailView.as_view(),
+        name='profession'),
+    url(r'^professions/id/(?P<pk>\d+)/$', ProfessionDetailView.as_view(),
         name='profession_pk'),
     #~ url(r'^saisie/source/$', saisie_source,
         #~ name='saisie_sources'),

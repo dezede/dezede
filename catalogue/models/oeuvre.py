@@ -105,7 +105,7 @@ class CaracteristiqueDOeuvre(CustomModel):
         return 'type__nom__icontains', 'valeur__icontains',
 
 
-class Partie(CustomModel):
+class Partie(CustomModel, SlugModel):
     nom = CharField(max_length=200,
         help_text=_(u'Le nom d’une partie de la partition, '
                     u'instrumentale ou vocale.'))
@@ -132,11 +132,15 @@ class Partie(CustomModel):
         return calc_pluriel(self)
 
     @permalink
+    def get_absolute_url(self):
+        return 'partie', (self.slug,)
+
+    @permalink
     def permalien(self):
         return 'partie_pk', (self.pk,)
 
     def link(self):
-        return href(self.permalien(), self.html())
+        return href(self.get_absolute_url(), self.html())
 
     def html(self):
         return self.nom

@@ -27,10 +27,11 @@ class Profession(CustomModel, SlugModel):
 
     @permalink
     def get_absolute_url(self):
-        return 'profession_pk', [self.pk]
+        return 'profession', [self.slug]
 
+    @permalink
     def permalien(self):
-        return self.get_absolute_url()
+        return 'profession_pk', [self.pk]
 
     def pretty_link(self):
         return self.html(caps=True)
