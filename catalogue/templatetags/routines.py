@@ -3,6 +3,7 @@
 from django.template import Library
 from django.template.loader import render_to_string
 from django.contrib.sites.models import get_current_site
+from copy import copy
 
 register = Library()
 
@@ -64,8 +65,8 @@ def attr_in_dl(context, attr, verbose_name=None, object=None):
     return render_to_string('routines/attr_in_dl.html', c)
 
 
-@register.simple_tag
-def list_in_dl(object_list, property_name='link', verbose_name=None,
+@register.simple_tag(takes_context=True)
+def list_in_dl(context, object_list, property_name='link', verbose_name=None,
                                                   verbose_name_plural=None):
     if not object_list:
         return ''
@@ -75,9 +76,10 @@ def list_in_dl(object_list, property_name='link', verbose_name=None,
     if verbose_name_plural is None:
         verbose_name_plural = Model._meta.verbose_name_plural
     display_list = [getattr(o, property_name)() for o in object_list]
-    c = {
+    c = copy(context)
+    c.update({
         'display_list': display_list,
         'verbose_name': verbose_name,
         'verbose_name_plural': verbose_name_plural,
-    }
+    })
     return render_to_string('routines/list_in_dl.html', c)

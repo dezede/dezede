@@ -1,3 +1,5 @@
+{% load endless %}
+
 <dt>
   {% if display_list|length == 1 %}
     {{ verbose_name|capfirst }}
@@ -6,6 +8,8 @@
   {% endif %}
 </dt>
 
+{% paginate 10 display_list %}
 {% for display in display_list %}
   <dd>{{ display|safe }}</dd>
 {% endfor %}
+<dd>{% show_more %}</dd>

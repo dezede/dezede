@@ -213,6 +213,8 @@ DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
 }
 
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.webfaction.com'
 EMAIL_HOST_USER = 'dezede'
 EMAIL_HOST_PASSWORD = ''
@@ -220,3 +222,6 @@ DEFAULT_FROM_EMAIL = 'noreply@dezede.org'
 SERVER_EMAIL = 'noreply@dezede.org'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap'
+
+ENDLESS_PAGINATION_PREVIOUS_LABEL = u'«'
+ENDLESS_PAGINATION_NEXT_LABEL = u'»'
