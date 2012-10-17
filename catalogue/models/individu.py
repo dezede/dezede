@@ -246,6 +246,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
                                                      for i, p in enumerate(ps))
     calc_professions.short_description = _('professions')
     calc_professions.admin_order_field = 'professions__nom'
+    calc_professions.allow_tags = True
 
     def html(self, tags=True, lon=False, prenoms_fav=True,
              force_standard=False, show_prenoms=True):
