@@ -126,7 +126,7 @@ class AutoriteModel(CustomModel):
 
 
 class SlugModel(Model):
-    slug = AutoSlugField(populate_from='get_slug')
+    slug = AutoSlugField(populate_from='get_slug', always_update=True)
 
     class Meta:
         abstract = True
@@ -136,7 +136,8 @@ class SlugModel(Model):
 
 
 class UniqueSlugModel(Model):
-   slug = AutoSlugField(populate_from='get_slug', unique=True)
+   slug = AutoSlugField(populate_from='get_slug', unique=True,
+                        always_update=True)
 
    class Meta:
        abstract = True
