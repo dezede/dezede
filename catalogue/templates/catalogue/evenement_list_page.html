@@ -13,7 +13,7 @@
 
 {% show_current_number as page_number %}
 <script type="text/javascript">
-  window.history.pushState({},"", "{{ request.path }}{% if page_number > 1 %}?page={{ page_number }}{% endif %}");
+  window.history.pushState({},"", $.query.set("page", {{ page_number }}).toString());
 </script>
 <script>
   $('*[title]').tooltip({placement: 'left'})

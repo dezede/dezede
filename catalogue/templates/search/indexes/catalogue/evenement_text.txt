@@ -6,5 +6,8 @@
     {{ object.ancrage_debut }}
     {{ object.ancrage_fin }}
     {{ object.html }}
+    {% for element in object.programme.all %}
+      {{ element.html|safe }}
+    {% endfor %}
   {% endautoescape %}
 {% endfilter %}

@@ -6,6 +6,8 @@ from .models import *
 from .forms import *
 from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 from django_tables2 import SingleTableView
+from haystack.query import SearchQuerySet
+from django.db.models import get_model
 
 
 class SourceDetailView(DetailView):
@@ -18,7 +20,15 @@ class EvenementListView(AjaxListView):
     context_object_name = 'evenements'
 
     def get_queryset(self):
+        Model = self.model
+        qs = Model.objects.all()
         q = {}
+        search_query = self.request.GET.get('q')
+        if search_query:
+            sqs = SearchQuerySet().models(Model)
+            sqs = sqs.auto_query(search_query)
+            pk_list = sqs.values_list('pk', flat=True)
+            qs = qs.filter(pk__in=pk_list)
         bindings = {
           'lieu_slug': 'ancrage_debut__lieu__slug',
           'year': 'ancrage_debut__date__year',
@@ -28,7 +38,7 @@ class EvenementListView(AjaxListView):
         for key, value in self.kwargs.items():
             if value:
                 q[bindings[key]] = value
-        return Evenement.objects.filter(**q)
+        return qs.filter(**q)
 
 
 class EvenementDetailView(DetailView):

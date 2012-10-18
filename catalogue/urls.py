@@ -23,13 +23,7 @@ urlpatterns = patterns('',
     # FIXME: réserver 'id' lors de la validation
     url(r'''^evenements/id/(?P<pk>\d+)/$''', EvenementDetailView.as_view(),
         name='evenement_pk'),
-    url(r'^evenements'
-        r'(?:\/(?P<lieu_slug>[-\w]+))?'
-        r'(?:\/(?P<year>\d+))?'
-        r'(?:\/(?P<month>\d+))?'
-        r'(?:\/(?P<day>\d+))?/$',
-        EvenementListView.as_view(),
-        name='evenements'),
+    url(r'^evenements/$', EvenementListView.as_view(), name='evenements'),
     url(r'^sources/(?P<pk>\d+)/$', SourceDetailView.as_view(),
         name='source_pk'),
     url(r'^parties/$', PartieListView.as_view(), name='parties'),

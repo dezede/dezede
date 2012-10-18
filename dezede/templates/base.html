@@ -16,6 +16,7 @@
     <script src="{% static 'js/jquery.jstree.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/jquery-ui-1.8.18.custom.min.js' %}"></script>
+    <script src="{% static 'js/jquery.query.js' %}"></script>
     {% block head %}{% endblock %}
   </head>
   <body>
@@ -41,7 +42,7 @@
             </li>
             <li class="dropdown">
               <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">
-                Autres autorités
+                {% trans "Autres autorités" %}
                 <b class="caret"></b>
               </a>
               <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
