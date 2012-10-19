@@ -34,6 +34,8 @@ class IndividuTable(Table):
 class ProfessionTable(Table):
     # selection = CheckBoxColumn(accessor='pk')
     nom = LinkColumn('profession', args=(A('slug'),), verbose_name=_('nom'))
+    individus_count = Column(accessor='individus.count', orderable=False,
+                             verbose_name=_(u'nombre d’individus'))
 
     class Meta:
         attrs = {"class": "paleblue"}
