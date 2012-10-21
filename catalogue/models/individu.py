@@ -278,7 +278,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
                 if lon:
                     l.insert(max(len(l) - 1, 0), prenoms)
                 else:
-                    s = str_list((abbreviate(prenoms), sc(particule, tags)),
+                    s = str_list((abbreviate(prenoms, tags=tags), sc(particule, tags)),
                                  ' ')
                     l.append(u'(%s)' % s)
             out = str_list(l, ' ')
