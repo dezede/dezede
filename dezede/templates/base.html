@@ -41,7 +41,7 @@
               <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
             </li>
             <li class="dropdown">
-              <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">
+              <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
                 {% trans "Autorités" %}
                 <b class="caret"></b>
               </a>
@@ -50,7 +50,7 @@
                   <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
                 </li>
                 <li{% if request.path == oeuvres_url %} class="active"{% endif %}>
-                  <a href="{{ oeuvres_url }}">{% trans "oeuvres"|capfirst %}</a>
+                  <a href="{{ oeuvres_url }}">{% trans "œuvres"|capfirst %}</a>
                 </li>
                 <li{% if request.path == individus_url %} class="active"{% endif %}>
                   <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
