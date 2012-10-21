@@ -10,7 +10,7 @@ class OeuvreTable(Table):
     genre = Column()
     titre = LinkColumn('oeuvre', args=(A('slug'),), verbose_name=_('titre'))
     titre_secondaire = Column()
-    auteurs_html = Column(verbose_name=_('auteurs'))
+    auteurs_html = Column(verbose_name=_('auteurs'), order_by='auteurs__individu__nom')
 
     class Meta:
         attrs = {"class": "paleblue"}
