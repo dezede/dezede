@@ -61,7 +61,7 @@ class Profession(CustomModel, SlugModel):
             nom = capfirst(nom)
         if short:
             nom = abbreviate(nom, min_vowels=1, min_len=4)
-        url = self.get_absolute_url()
+        url = '' if not tags else self.get_absolute_url()
         out = href(url, nom, tags)
         return out
 
