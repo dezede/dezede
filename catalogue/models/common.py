@@ -151,7 +151,7 @@ class Document(CustomModel):
     document = FileBrowseField(_('document'), max_length=400,
         directory='documents/')
     description = HTMLField(_('description'), blank=True)
-    auteurs = GenericRelation('Auteur', related_name='documents')
+    auteurs = GenericRelation('Auteur')
 
     class Meta:
         verbose_name = ungettext_lazy('document', 'documents', 1)
@@ -174,7 +174,7 @@ class Illustration(CustomModel):
     legende = CharField(_(u'légende'), max_length=300, blank=True)
     image = FileBrowseField(_('image'), max_length=400, directory='images/')
     commentaire = HTMLField(_('commentaire'), blank=True)
-    GenericRelation('Auteur', related_name='illustrations')
+    GenericRelation('Auteur')
 
     class Meta:
         verbose_name = ungettext_lazy('illustration', 'illustrations', 1)

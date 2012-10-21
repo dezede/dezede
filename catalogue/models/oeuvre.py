@@ -341,7 +341,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         null=True)
     caracteristiques = ManyToManyField('CaracteristiqueDOeuvre', blank=True,
         null=True, verbose_name=_(u'caractéristiques'))
-    auteurs = GenericRelation('Auteur', related_name='oeuvres')
+    auteurs = GenericRelation('Auteur')
     ancrage_creation = OneToOneField('AncrageSpatioTemporel',
         related_name='oeuvres_creees', blank=True, null=True,
         verbose_name=_(u'ancrage spatio-temporel de création'))
