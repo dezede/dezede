@@ -314,7 +314,7 @@ class Auteur(CustomModel):
     html.allow_tags = True
 
     def clean(self):
-        if self.individu and self.profession and self.individu.pk:
+        if self.individu and self.profession:
             self.individu.professions.add(self.profession)
 
     class Meta:
