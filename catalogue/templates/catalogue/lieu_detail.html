@@ -24,7 +24,7 @@
     {% include "catalogue/evenement_list_def.html" with evenements=lieu.evenements %}
     <dd>
       {% if lieu.evenements.exists %}
-        <a href="{% url 'evenements' lieu_slug=lieu.slug %}">
+        <a href="{% url 'evenements' %}?lieu={{ lieu.slug }}">
           <strong>{% trans "Afficher tous les événements" %}</strong>
         </a>
       {% endif %}

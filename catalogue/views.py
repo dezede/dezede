@@ -22,23 +22,24 @@ class EvenementListView(AjaxListView):
     def get_queryset(self):
         Model = self.model
         qs = Model.objects.all()
-        q = {}
-        search_query = self.request.GET.get('q')
+        GET = self.request.GET
+        search_query = GET.get('q')
         if search_query:
             sqs = SearchQuerySet().models(Model)
             sqs = sqs.auto_query(search_query)
             pk_list = sqs.values_list('pk', flat=True)
             qs = qs.filter(pk__in=pk_list)
         bindings = {
-          'lieu_slug': 'ancrage_debut__lieu__slug',
-          'year': 'ancrage_debut__date__year',
-          'month': 'ancrage_debut__date__month',
-          'day': 'ancrage_debut__date__day',
+          'lieu': 'ancrage_debut__lieu__slug',
+          'annee': 'ancrage_debut__date__year',
+          'mois': 'ancrage_debut__date__month',
+          'jour': 'ancrage_debut__date__day',
         }
-        for key, value in self.kwargs.items():
-            if value:
-                q[bindings[key]] = value
-        return qs.filter(**q)
+        filters = {}
+        for key, value in GET.iteritems():
+            if value and key in bindings:
+                filters[bindings[key]] = value
+        return qs.filter(**filters)
 
 
 class EvenementDetailView(DetailView):
