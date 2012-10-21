@@ -314,7 +314,8 @@ class Auteur(CustomModel):
     html.allow_tags = True
 
     def clean(self):
-        self.individu.professions.add(self.profession)
+        if self.individu and self.profession and self.individu.pk:
+            self.individu.professions.add(self.profession)
 
     class Meta:
         verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
