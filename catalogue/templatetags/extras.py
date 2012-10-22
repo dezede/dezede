@@ -35,6 +35,7 @@ def replace(string):
             u"'": u'’',        u' :': u'\u00A0:', u' ;': u'\u00A0;',
             u' !': u'\u202F!', u' ?': u'\u202F?', u'« ': u'«\u00A0',
             u' »': u'\u00A0»', u'“ ': u'“\u00A0', u' ”': u'\u00A0”',
+            u' /': u'\u00A0/',
             u'&laquo; ': u'«\u00A0', u' &raquo;': u'\u00A0»',
             u'&ldquo; ': u'“\u00A0', u' &rdquo;': u'\u00A0”',
         }
