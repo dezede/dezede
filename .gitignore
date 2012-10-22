@@ -7,3 +7,4 @@ apache-solr*
 /profile/
 *.log
 *.mo
+_*/
