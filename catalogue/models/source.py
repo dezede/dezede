@@ -45,7 +45,7 @@ class Source(AutoriteModel):
         help_text=ex(_('compte rendu')), verbose_name=_('type'))
     contenu = HTMLField(_('contenu'), blank=True,
         help_text=_(u'Recopié tel quel, avec les fautes d’orthographe suivies '
-                    u'de « [sic] » le cas échéant.'))
+                    u'de « [<em>sic</em>] » le cas échéant.'))
     auteurs = GenericRelation('Auteur')
     evenements = ManyToManyField('Evenement', related_name='sources',
         blank=True, null=True, verbose_name=_(u'événements'))
