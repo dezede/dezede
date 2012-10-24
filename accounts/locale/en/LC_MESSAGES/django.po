@@ -8,16 +8,209 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-06 20:58+0200\n"
-"PO-Revision-Date: 2012-10-06 19:07+0000\n"
+"POT-Creation-Date: 2012-10-25 00:40+0200\n"
+"PO-Revision-Date: 2012-10-24 22:45+0000\n"
 "Last-Translator: Bertrand Bordage <bordage.bertrand@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: English (http://www.transifex.com/projects/p/dezede/language/en/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: models.py:10
+#: forms.py:31
+msgid "Prénom(s)"
+msgstr ""
+
+#: forms.py:32
+msgid "Nom"
+msgstr ""
+
+#: forms.py:33
+msgid "Professeur"
+msgstr ""
+
+#: forms.py:35
+msgid "Groupes"
+msgstr ""
+
+#: forms.py:42
+msgid "Général"
+msgstr ""
+
+#: forms.py:47 models.py:10
+msgid "Utilisateur"
+msgstr ""
+
+#: forms.py:52
+msgid "Étudiant"
+msgstr ""
+
+#: forms.py:57
+msgid "Enregistrer"
+msgstr ""
+
+#: forms.py:58
+msgid "Réinitialiser"
+msgstr ""
+
+#: forms.py:81
+msgid "Demande d’accès étudiant"
+msgstr ""
+
+#: models.py:12 models.py:28
 msgid "professeur"
 msgstr "professor"
+
+#: models.py:15 models.py:17
+msgid "profil étudiant"
+msgid_plural "profils étudiants"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/profiles/create_profile.html:5
+#: templates/profiles/create_profile.html:9
+msgid "Créer un profil utilisateur"
+msgstr ""
+
+#: templates/profiles/create_profile.html:13
+#: templates/profiles/edit_profile.html:13
+msgid "Valider"
+msgstr ""
+
+#: templates/profiles/edit_profile.html:5
+#: templates/profiles/edit_profile.html:9
+msgid "Modification de votre profil"
+msgstr ""
+
+#: templates/profiles/profile_detail.html:10
+msgid "Profil de"
+msgstr ""
+
+#: templates/profiles/profile_detail.html:12
+msgid "professeur référent"
+msgstr ""
+
+#: templates/profiles/profile_detail.html:14
+msgid "Sources transcrites"
+msgstr ""
+
+#: templates/profiles/profile_list.html:5
+#: templates/profiles/profile_list.html:9
+msgid "Profils utilisateur"
+msgstr ""
+
+#: templates/profiles/profile_list.html:15
+msgid "Créer son profil"
+msgstr ""
+
+#: templates/registration/activate.html:5
+#: templates/registration/activate.html:9
+msgid "Erreur d’activation"
+msgstr ""
+
+#: templates/registration/activate.html:11
+#, python-format
+msgid ""
+"\n"
+"      L’activation de la clé %(activation_key)s a échoué.\n"
+"    "
+msgstr ""
+
+#: templates/registration/activation_complete.html:5
+#: templates/registration/activation_complete.html:9
+msgid "Bienvenue"
+msgstr ""
+
+#: templates/registration/activation_complete.html:11
+msgid ""
+"\n"
+"      La création et l’activation de votre compte ont été un succès !\n"
+"    "
+msgstr ""
+
+#: templates/registration/activation_email.txt:3
+msgid ""
+"\n"
+"Pour que votre compte fonctionne, vous devez l’activer.\n"
+"Voici le lien d’activation :\n"
+msgstr ""
+
+#: templates/registration/activation_email.txt:8
+#, python-format
+msgid ""
+"\n"
+"Vous disposez d’un délai de %(expiration_days)s jours pour activer ce compte.\n"
+msgstr ""
+
+#: templates/registration/login.html:5 templates/registration/login.html:9
+msgid "Connexion"
+msgstr ""
+
+#: templates/registration/login.html:12
+#, python-format
+msgid ""
+"\n"
+"      Vous êtes déjà connecté.  Souhaitez-vous <a href=\"%(url)s\">vous déconnecter</a> ?\n"
+"    "
+msgstr ""
+
+#: templates/registration/login.html:20
+msgid "Se connecter"
+msgstr ""
+
+#: templates/registration/login.html:23
+#, python-format
+msgid ""
+"\n"
+"            Pas de compte utilisateur ?\n"
+"            Vous pouvez <a href=\"%(url)s\">en creer un.</a>\n"
+"          "
+msgstr ""
+
+#: templates/registration/logout.html:5 templates/registration/logout.html:9
+msgid "Déconnexion"
+msgstr ""
+
+#: templates/registration/logout.html:12
+#, python-format
+msgid ""
+"\n"
+"      Vous venez de vous déconnecter avec succès.\n"
+"      <a href=\"%(url)s\">Se connecter à nouveau</a> ?\n"
+"    "
+msgstr ""
+
+#: templates/registration/registration_closed.html:5
+#: templates/registration/registration_closed.html:9
+msgid "Enregistrement désactivé"
+msgstr ""
+
+#: templates/registration/registration_closed.html:11
+msgid ""
+"\n"
+"      La création de nouveaux comptes utilisateur a été momentanément\n"
+"      désactivée.\n"
+"    "
+msgstr ""
+
+#: templates/registration/registration_complete.html:5
+#: templates/registration/registration_complete.html:9
+msgid "En attente d’activation"
+msgstr ""
+
+#: templates/registration/registration_complete.html:11
+msgid ""
+"\n"
+"      Votre compte a bien été créé mais demande une vérification de votre part.\n"
+"      Un courriel contenant un lien d’activation vous a été envoyé.\n"
+"    "
+msgstr ""
+
+#: templates/registration/registration_form.html:5
+msgid "Créer un nouveau compte"
+msgstr ""
+
+#: templates/registration/registration_form.html:9
+msgid "Créer un nouveau compte étudiant"
+msgstr ""
