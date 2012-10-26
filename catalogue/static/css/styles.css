@@ -34,23 +34,16 @@ html {
 }
 
 body {
-  width: 900px;
-  min-height: 500px;
   margin: 0 auto 20px auto;
   border: 2px solid grey;
   border-top: none;
   font-family: 'Gentium Basic', serif;
   font-size: 16px;
+  line-height: 22px;
   background-color: #FFF9D9;
   box-shadow: 0 5px 30px black;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
-}
-
-.navbar {
-  position: fixed;
-  width: 900px;
-  z-index: 1000;
 }
 
 #content {
@@ -74,12 +67,12 @@ footer img {
 }
 
 a {
-  color: black;
+  color: inherit;
   text-decoration: none;
-  text-shadow: lightGrey 1px 2px 2px;
+  text-shadow: rgba(255, 255, 255, 0.8) 1px 2px 2px;
   transition: all 0.3s;
   -moz-transition: all 0.3s;
-  -webkit-transition: text-shadow 0.3s;
+  -webkit-transition: all 0.3s;
   -o-transition: all 0.3s;
 }
 
@@ -87,22 +80,6 @@ a:hover {
   color: red;
   text-decoration: none;
   text-shadow: white 0 0 0;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-weight: bold;
-}
-
-h2 {
-  margin: 0.35em 0;
-}
-
-h3 {
-  margin: 0.3em 0;
-}
-
-h4 {
-  margin: 0.25em 0;
 }
 
 .sc {
@@ -117,14 +94,20 @@ sup {
 
 cite {
   font-size: 110%;
+  font-style: italic;
 }
 
 em {
   font-size: 105%;
 }
 
-ol {
-  margin: 0;
+dt, dd {
+  line-height: 22px;
+}
+
+dl.dl-horizontal dd+dt, dl.dl-horizontal dd+dt+dd {
+  margin-top: 5px;
+  padding-top: 5px;
 }
 
 .liste th {
@@ -224,28 +207,6 @@ ol {
 
 .programme_titre {
   margin: 0.75em 0 0.5em 0;
-}
-
-dl {
-  margin: 0;
-}
-
-dt, .dt {
-  color: grey;
-  font-size: 14px;
-  margin-top: 8px;
-}
-
-dt:first-of-type, .dt:first-of-type {
-  margin-top: 0;
-}
-
-dd>p:first-child {
-  margin-top: 0;
-}
-
-dd>p:last-child {
-  margin-bottom: 0;
 }
 
 .right {

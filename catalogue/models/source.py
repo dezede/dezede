@@ -68,14 +68,23 @@ class Source(AutoriteModel):
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
 
+    def date_html(self, tags=True):
+        return date_html(self.date, tags)
+
+    def no(self):
+        return no(self.numero)
+
+    def p(self):
+        return ugettext('p. %s') % self.page
+
     def html(self, tags=True):
         url = None if not tags else self.get_absolute_url()
         l = [cite(self.nom, tags)]
         if self.numero:
-            l.append(no(self.numero))
-        l.append(date_html(self.date, tags))
+            l.append(self.no())
+        l.append(self.date_html(tags))
         if self.page:
-            l.append(ugettext('p. %s') % self.page)
+            l.append(self.p())
         out = ', '.join(l)
         return mark_safe(href(url, out, tags))
     html.short_description = _('rendu HTML')

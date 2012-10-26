@@ -17,7 +17,7 @@ def build_admin_view_name(perm):
 
 
 @register.simple_tag(takes_context=True)
-def frontend_admin(context, object=None):
+def frontend_admin(context, object=None, autorite=False):
     request = context['request']
     if object is None:
         object = context['object']
@@ -40,7 +40,8 @@ def frontend_admin(context, object=None):
         'domain': domain,
         'object': object,
     }
-    return render_to_string('routines/front-end_admin.html', c)
+    t = 'routines/%sfront-end_admin.html' % ('autorite_' if autorite else '')
+    return render_to_string(t, c)
 
 
 @register.simple_tag(takes_context=True)

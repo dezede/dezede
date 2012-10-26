@@ -19,75 +19,103 @@
     <script src="{% static 'js/jquery.query.js' %}"></script>
     {% block head %}{% endblock %}
   </head>
-  <body>
+
+  <body class="container">
     <header>
-      <nav class="navbar">
+      <nav class="navbar navbar-fixed-top">
         <div class="navbar-inner">
-          <form method="get" action="{% url 'haystack_search' %}" class="navbar-search pull-left">
-            <input type="text" name="q"
-                   value="{{ form.q.data|default:""|escape }}" id="id_q"
-                   placeholder="{% trans "Rechercher…" %}"
-                   class="search-query span2" />
-          </form>
-          <ul class="nav">
-            {% url 'evenements' as evenements_url %}
-            {% url 'lieux' as lieux_url %}
-            {% url 'oeuvres' as oeuvres_url %}
-            {% url 'individus' as individus_url %}
-            {% url 'professions' as professions_url %}
-            {% url 'parties' as parties_url %}
-            {% url 'admin:index' as admin_url %}
-            <li{% if request.path == evenements_url %} class="active"{% endif %}>
-              <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
-            </li>
-            <li class="dropdown">
-              <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
-                {% trans "Autorités" %}
-                <b class="caret"></b>
-              </a>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                <li{% if request.path == lieux_url %} class="active"{% endif %}>
-                  <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
+          <div class="container">
+            <a href="" class="brand nav"><img src="{% static 'images/logo.svg' %}" style="width: 52px; height: 20px;" /></a>
+            <div class="nav-collapse">
+
+              <ul class="nav">
+                {% url 'evenements' as evenements_url %}
+                {% url 'lieux' as lieux_url %}
+                {% url 'oeuvres' as oeuvres_url %}
+                {% url 'individus' as individus_url %}
+                {% url 'professions' as professions_url %}
+                {% url 'parties' as parties_url %}
+                {% url 'admin:index' as admin_url %}
+                <li{% if request.path == evenements_url %} class="active"{% endif %}>
+                  <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
                 </li>
-                <li{% if request.path == oeuvres_url %} class="active"{% endif %}>
-                  <a href="{{ oeuvres_url }}">{% trans "œuvres"|capfirst %}</a>
+                <li class="dropdown">
+                  <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
+                    {% trans "Autorités" %}
+                    <b class="caret"></b>
+                  </a>
+                  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <li{% if request.path == lieux_url %} class="active"{% endif %}>
+                      <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
+                    </li>
+                    <li{% if request.path == oeuvres_url %} class="active"{% endif %}>
+                      <a href="{{ oeuvres_url }}">{% trans "œuvres"|capfirst %}</a>
+                    </li>
+                    <li{% if request.path == individus_url %} class="active"{% endif %}>
+                      <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
+                    </li>
+                    <li{% if request.path == professions_url %} class="active"{% endif %}>
+                      <a href="{{ professions_url }}">{% trans 'professions'|capfirst %}</a>
+                    </li>
+                    <li{% if request.path == parties_url %} class="active"{% endif %}>
+                      <a href="{{ parties_url }}">{% trans 'parties'|capfirst %}</a>
+                    </li>
+                  </ul>
                 </li>
-                <li{% if request.path == individus_url %} class="active"{% endif %}>
-                  <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
-                </li>
-                <li{% if request.path == professions_url %} class="active"{% endif %}>
-                  <a href="{{ professions_url }}">{% trans 'professions'|capfirst %}</a>
-                </li>
-                <li{% if request.path == parties_url %} class="active"{% endif %}>
-                  <a href="{{ parties_url }}">{% trans 'parties'|capfirst %}</a>
+                {#<a href="{% url 'saisie_sources' %}">Saisie de source</a>#}
+              </ul>
+              <form method="get" action="{% url 'haystack_search' %}" class="navbar-search pull-left">
+                <input type="text" name="q"
+                       value="{{ form.q.data|default:""|escape }}" id="id_q"
+                       placeholder="{% trans "Rechercher…" %}"
+                       class="search-query span2" />
+              </form>
+
+            </div>
+
+            <div class="nav-collapse pull-right">
+
+              <ul class="nav">
+                <li{% if request.path == admin_url %} class="active"{% endif %}>
+                  <a href="{{ admin_url }}">{% trans "Administration" %}</a>
                 </li>
               </ul>
-            </li>
-            {#<a href="{% url 'saisie_sources' %}">Saisie de source</a>#}
-            <li class="divider-vertical"></li>
-            <li{% if request.path == admin_url %} class="active"{% endif %}>
-              <a href="{{ admin_url }}">{% trans "Administration" %}</a>
-            </li>
-          </ul>
-          {% for lang in LANGUAGES %}
-            {% if lang.0 != LANGUAGE_CODE %}
-              <form action="/i18n/setlang/" method="POST" class="navbar-form pull-right">
-                {% csrf_token %}
-                <input type="hidden" name="language" value="{{ lang.0 }}" />
-                <button type="submit" class="btn btn">{{ lang.1 }}</button>
-              </form>
-            {% endif %}
-          {% endfor %}
+
+              {% for lang in LANGUAGES %}
+                {% if lang.0 != LANGUAGE_CODE %}
+                  <form action="/i18n/setlang/" method="POST" class="nav navbar-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="language" value="{{ lang.0 }}" />
+                    <button type="submit" class="btn btn">{{ lang.1 }}</button>
+                  </form>
+                {% endif %}
+              {% endfor %}
+
+            </div>
+
+          </div>
         </div>
       </nav>
     </header>
+
     <div id="content">
+
       {% autoescape off %}
+
         <noscript>
-          {% blocktrans %}Votre navigateur ne peut pas lancer javascript. Attendez-vous à des défauts de fonctionnement.{% endblocktrans %}
+          <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            {% blocktrans %}
+              Votre navigateur ne peut pas lancer javascript.
+              Attendez-vous à des défauts de fonctionnement.
+            {% endblocktrans %}
+          </div>
         </noscript>
+
         {% block body %}{% endblock %}
+
       {% endautoescape %}
+
       <footer>
         {# La surface de chaque logo est de 6000 px² #}
         <a href="http://www.univ-rouen.fr/" target="_blank"
@@ -126,9 +154,12 @@
                style="max-width: 77px; max-height: 78px;" />
         </a>
       </footer>
+
     </div>
+
     <script>
       $('*[title]').tooltip({placement: 'left'})
+      $('.alert').alert()
     </script>
   </body>
 </html>

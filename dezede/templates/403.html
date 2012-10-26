@@ -6,6 +6,11 @@
 {% endblock %}
 
 {% block body %}
-  {% trans "Vous n’avez pas l’autorisation d’accéder à cette page." %}
+  <h1>{% trans "Erreur 403" %}</h1>
+  {% url auth_login as login_url %}
+  {% blocktrans %}
+    Vous n’avez pas l’autorisation d’accéder à cette page.<br />
+    Souhaitez-vous <a href="{{ login_url }}">vous connecter</a> ?
+  {% endblocktrans %}
 {% endblock %}
 

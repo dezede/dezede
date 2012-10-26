@@ -3,28 +3,26 @@
 
 {% with owner=object.owner %}
   {% if owner %}
-    Transcripteur : {{ owner.get_full_name|default:owner }}
-    <br />
+    <a class="btn disabled" title="{% trans 'Transcripteur' %}">
+      {{ owner.get_full_name|default:owner }}
+    </a>
   {% endif %}
 {% endwith%}
 
-<div class="input-prepend">
-  <span class="add-on">
-    <a class="icon-barcode"></a>
-  </span>
-  <span class="input-xlarge uneditable-input" title="{% trans "adresse permanente"|capfirst %}">
-    http://{{ domain }}{{ object.permalien }}
-  </span>
-</div>
+{% include 'routines/permalink.html' %}
 
-{% if has_change_perm %}
-  <a href="{% url admin_change object.pk %}">
-    [{% trans "modifier"|capfirst %}]
-  </a>
-{% endif %}
+<span class="btn-group">
 
-{% if has_delete_perm %}
-  <a href="{% url admin_delete object.pk %}">
-    [{% trans "supprimer"|capfirst %}]
-  </a>
-{% endif %}
+  {% if has_change_perm %}
+    <a class="btn btn-primary" href="{% url admin_change object.pk %}">
+      <i class="icon-pencil icon-white"></i> {% trans "modifier"|capfirst %}
+    </a>
+  {% endif %}
+
+  {% if has_delete_perm %}
+    <a class="btn btn-danger" href="{% url admin_delete object.pk %}">
+      <i class="icon-trash icon-white"></i> {% trans "supprimer"|capfirst %}
+    </a>
+  {% endif %}
+
+</span>

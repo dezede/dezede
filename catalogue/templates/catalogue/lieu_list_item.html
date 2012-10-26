@@ -1,8 +1,10 @@
 {% load url from future %}
-{% load mptt_tags %}
+{% load mptt_tags i18n %}
 
-<div id="lieux">
-  {% if lieux %}
+
+{% if lieux %}
+
+  <div id="lieux">
     <ul class="root">
       {% recursetree lieux %}
         <li>
@@ -17,21 +19,22 @@
         </li>
       {% endrecursetree %}
     </ul>
-  {% endif %}
-</div>
+  </div>
 
-<script>
-  $(function () {
-    $("#lieux").jstree({
-      core: {
-        'html_titles': true
-      },
-      plugins: ["themes", "html_data"],
-      themes: {
-        theme: "classic",
-        icons: false,
-        dots: false
-      }
+  <script>
+    $(function () {
+      $("#lieux").jstree({
+        core: {
+          'html_titles': true
+        },
+        plugins: ["themes", "html_data"],
+        themes: {
+          theme: "classic",
+          icons: false,
+          dots: true
+        }
+      });
     });
-  });
-</script>
+  </script>
+
+{% endif %}

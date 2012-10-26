@@ -6,25 +6,28 @@
 {% endblock %}
 
 {% block body %}
-  <h1>{% trans "Connexion" %}</h1>
   {% if user.is_authenticated %}
+    <h1>{% trans "Déjà connecté" %}</h1>
     {% url auth_logout as url %}
     {% blocktrans %}
       Vous êtes déjà connecté.  Souhaitez-vous <a href="{{ url }}">vous déconnecter</a> ?
     {% endblocktrans %}
   {% else %}
-    <form method="POST" class="well form-horizontal">
+    <form method="POST" class="well well-small form-horizontal">
+      <legend>
+        {% trans "Connexion" %}
+        {% url registration_register as url %}
+        <small>
+          {% blocktrans %}
+            Pas de compte utilisateur ?
+            Vous pouvez <a href="{{ url }}">en creer un</a>.
+          {% endblocktrans %}
+        </small>
+      </legend>
       {% csrf_token %}
       {{ form|crispy }}
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">{% trans 'Se connecter' %}</button>
-        <p>
-          {% url registration_register as url %}
-          {% blocktrans %}
-            Pas de compte utilisateur ?
-            Vous pouvez <a href="{{ url }}">en creer un.</a>
-          {% endblocktrans %}
-        </p>
       </div>
     </form>
   {% endif %}

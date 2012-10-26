@@ -11,10 +11,14 @@
 
   {% include "catalogue/etat.html" with etat=profession.etat %}
 
-  <h2>
-    {{ profession.pretty_link }}
-  </h2>
-  <dl>
+  <div class="page-header">
+    {% frontend_admin autorite=1 %}
+    <h1>
+      {{ profession.pretty_link }}
+    </h1>
+  </div>
+
+  <dl class="dl-horizontal">
     {% list_in_dl profession.parties.all %}
     {% list_in_dl profession.individus.all %}
     {% list_in_dl profession.auteurs.oeuvres %}
@@ -22,7 +26,4 @@
     {% attr_in_dl 'parente.link' _('profession parente') %}
   </dl>
 
-  <br />
-
-  {% frontend_admin %}
 {% endblock %}

@@ -8,9 +8,11 @@
       {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
     </a>
   </h2>
-  <br />
-  {{ evenement.html|safe }}
-  <br />
+
+  <h4>
+    {{ evenement.html|safe }}
+  </h4>
+
   {% with elements=evenement.programme.all %}
     {% for element in elements %}
       {% if forloop.first %}
@@ -33,6 +35,7 @@
       {% endif %}
     {% endfor %}
   {% endwith %}
+
   {% for type, sources in evenement.sources_dict.iteritems %}
     <br />
     <h3 style="text-align: center; font-style: italic;">
@@ -56,10 +59,11 @@
         </div>
         <div id="source_{{ evenement.pk }}_{{ source.pk }}"
              class="accordion-body collapse">
-          <div class="accordion-inner source">
-            {{ source.contenu|safe }}
-            {{ source.auteurs_html|safe }}<br />
-            {% frontend_admin source %}
+          <div class="accordion-inner">
+            <div class="pull-right span">
+              {% include 'routines/permalink.html' with object=source %}
+            </div>
+            {% include 'catalogue/source_content.html' %}
           </div>
         </div>
       </div>

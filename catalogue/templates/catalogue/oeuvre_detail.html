@@ -11,31 +11,31 @@
 
   {% include "catalogue/etat.html" with etat=oeuvre.etat %}
 
-  <h2>
-    {{ oeuvre.titre_html }}
-  </h2>
-  <h3>
-    {{ oeuvre.description_html }}
-  </h3>
-  <h3>
-    {{ oeuvre.auteurs_html }}
-  </h3>
-  <h3 title="{% trans 'Création' %}">
-    {{ oeuvre.ancrage_creation.html|default:'' }}
-  </h3>
-  <h4>
-    {{ oeuvre.meres_html }}
-  </h4>
-  <h4>
-    {{ oeuvre.filles_html }}
-  </h4>
-  <br />
-  <dl>
+  <div class="page-header">
+    {% frontend_admin autorite=1 %}
+    <h1>
+      {{ oeuvre.titre_html }}
+    </h1>
+    <h2>
+      {{ oeuvre.description_html }}
+    </h2>
+    <h3>
+      {{ oeuvre.auteurs_html }}
+    </h3>
+    <h3 title="{% trans 'Création' %}">
+      {{ oeuvre.ancrage_creation.html|default:'' }}
+    </h3>
+    <h4>
+      {{ oeuvre.meres_html }}
+    </h4>
+    <h4>
+      {{ oeuvre.filles_html }}
+    </h4>
+  </div>
+
+  <dl class="dl-horizontal">
     {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
     {% include "catalogue/notes_def.html" with notes=oeuvre.notes %}
   </dl>
 
-  <br />
-
-  {% frontend_admin %}
 {% endblock %}

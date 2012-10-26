@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% load extras routines %}
+{% load i18n extras routines %}
 {% load url from future %}
 
 {% block title %}
@@ -11,25 +10,26 @@
 
   {% include "catalogue/etat.html" with etat=source.etat %}
 
-  <h2>
-    {{ source.html }}
-  </h2>
-  <h3>
-    {{ source.type|capfirst }}
-  </h3>
-  <br />
-  <div class="source">
-    {{ source.contenu }}
+  <div class="page-header">
+    {% frontend_admin autorite=1 %}
+    <h1>
+      {{ source.nom }}
+      <small>
+        {{ source.no }}, {{ source.date_html }}, {{ source.p }}
+      </small>
+    </h1>
+    <h3>
+      {{ source.type|capfirst }}
+    </h3>
   </div>
-  <dl>
+
+  {% include 'catalogue/source_content.html' %}
+
+  <dl class="dl-horizontal">
     {% list_in_dl source.illustrations.all %}
-    {% list_in_dl source.individus_auteurs %}
     {% list_in_dl source.evenements.all %}
 
     {% include "catalogue/notes_def.html" with notes=source.notes %}
   </dl>
 
-  <br />
-
-  {% frontend_admin %}
 {% endblock %}

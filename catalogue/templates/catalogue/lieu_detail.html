@@ -11,16 +11,26 @@
 
   {% include "catalogue/etat.html" with etat=lieu.etat %}
 
-  <h2>
-    {{ lieu.nom }}{% if lieu.parent %}, <a href="{{ lieu.parent.get_absolute_url }}">{{ lieu.parent.nom }}</a>{% endif %}
-  </h2>
-  <h3 title="{% trans "nature"|capfirst %}">
-    {{ lieu.nature|capfirst }}
-  </h3>
-  <br />
-  <dl>
+  <div class="page-header">
+    {% frontend_admin autorite=1 %}
+    <h1>
+      {{ lieu.nom }}{% if lieu.parent %}, <a href="{{ lieu.parent.get_absolute_url }}">{{ lieu.parent }}</a>{% endif %}
+    </h1>
+    <h2 title="{% trans "nature"|capfirst %}">
+      {{ lieu.nature|capfirst }}
+    </h2>
+  </div>
+
+  <dl class="dl-horizontal">
+    {% with lieux=lieu.get_descendants %}
+      {% if lieux %}
+        <dt>{% trans 'Lieux contenus' %}</dt>
+        <dd>
+          {% include 'catalogue/lieu_list_item.html' %}
+        </dd>
+      {% endif %}
+    {% endwith %}
     {% attr_in_dl 'historique' %}
-    {% include 'catalogue/lieu_list_item.html' with lieux=lieu.get_descendants %}
     {% include "catalogue/evenement_list_def.html" with evenements=lieu.evenements %}
     <dd>
       {% if lieu.evenements.exists %}
@@ -35,7 +45,4 @@
     {% include "catalogue/notes_def.html" with notes=lieu.notes %}
   </dl>
 
-  <br />
-
-  {% frontend_admin %}
 {% endblock %}

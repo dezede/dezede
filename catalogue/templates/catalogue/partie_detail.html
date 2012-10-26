@@ -11,18 +11,19 @@
 
   {% include "catalogue/etat.html" with etat=partie.etat %}
 
-  <h2>
-    <a href="{{ partie.get_absolute_url }}">
-      {{ partie|capfirst }}
-    </a>
-  </h2>
-  <dl>
+  <div class="page-header">
+    {% frontend_admin autorite=1 %}
+    <h1>
+      <a href="{{ partie.get_absolute_url }}">
+        {{ partie|capfirst }}
+      </a>
+    </h1>
+  </div>
+
+  <dl class="dl-horizontal">
     {% list_in_dl partie.professions.all %}
     {% list_in_dl partie.interpretes verbose_name=_('interprète') verbose_name_plural=_('interprètes') %}
     {% attr_in_dl 'parente.link' _('partie parente') %}
   </dl>
 
-  <br />
-
-  {% frontend_admin %}
 {% endblock %}

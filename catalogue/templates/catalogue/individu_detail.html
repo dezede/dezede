@@ -11,29 +11,32 @@
 
   {% include "catalogue/etat.html" with etat=individu.etat %}
 
-  <h2>
-    {{ individu.nom_complet }}
-  </h2>
-  <h3>
-    {% if not individu.naissance and not individu.deces %}
-      <span title="{% trans "ancrage spatio-temporel"|capfirst %}">
-        {{ individu.ancrage|default:_('Époque inconnue') }}
-      </span>
-    {% else %}
-      <span title="{% trans "naissance"|capfirst %}">
-        {{ individu.naissance_html|default:_('?') }}
-      </span>
-      &ndash;
-      <span title="{% trans "décès"|capfirst %}">
-        {{ individu.deces_html|default:_('?') }}
-      </span>
-    {% endif %}
-  </h3>
-  <h4 title="{% filter capfirst %}{% blocktrans count counter=individu.professions.all|length %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
-    {{ individu.calc_professions|capfirst|default:_('Profession inconnue') }}
-  </h4>
-  <br />
-  <dl>
+  <div class="page-header">
+    {% frontend_admin autorite=1 %}
+    <h1>
+      {{ individu.nom_complet }}
+      <small title="{% filter capfirst %}{% blocktrans count counter=individu.professions.all|length %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
+        {{ individu.calc_professions|capfirst|default:_('Profession inconnue') }}
+      </small>
+    </h1>
+    <h3>
+      {% if not individu.naissance and not individu.deces %}
+        <span title="{% trans "ancrage spatio-temporel"|capfirst %}">
+          {{ individu.ancrage|default:_('Époque inconnue') }}
+        </span>
+      {% else %}
+        <span title="{% trans "naissance"|capfirst %}">
+          {{ individu.naissance_html|default:_('?') }}
+        </span>
+        &ndash;
+        <span title="{% trans "décès"|capfirst %}">
+          {{ individu.deces_html|default:_('?') }}
+        </span>
+      {% endif %}
+    </h3>
+  </div>
+
+  <dl class="dl-horizontal">
     {% attr_in_dl 'nom_naissance' %}
     {% attr_in_dl 'biographie' %}
 
@@ -45,7 +48,4 @@
     {% include "catalogue/notes_def.html" with notes=individu.notes %}
   </dl>
 
-  <br />
-
-  {% frontend_admin %}
 {% endblock %}
