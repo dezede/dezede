@@ -10,30 +10,42 @@
     <h1>{% trans "Recherche" %}</h1>
   </div>
 
-  <form method="get" action="." class="form-search well">
-    <div class="input-append">
+  <form method="get" action="." class="form-search well form-horizontal">
+    <div class="control-group input-append">
       <input type="text" name="q" value="{{ form.q.data|default:""|escape }}"
              id="id_q" autofocus="autofocus" placeholder="Tapez ici" class="search-query" />
       <button type="submit" class="btn"><i class="icon-search"></i></button>
     </div>
-    <script>
-      $(function() {
-        criteria = $("#criteria")
-        criteria.buttonset();
-        criteria.disableSelection();
-      });
-    </script>
-    <div id="criteria">
-      {% trans "Filtres :" %}
-      {% for choice in form.models.field.choices %}
-        <input type="checkbox" name="models" value="{{ choice.0 }}"
-        {% if choice.0 in form.models.data %}
-          checked="checked"
-        {% endif %}
-        id="id_models_{{ forloop.counter0 }}" />
-        <label for="id_models_{{ forloop.counter0 }}">{{ choice.1 }}</label>
-      {% endfor %}
+    <div class="control-group">
+      <label>{% trans "Filtres :" %}</label>
+      <div class="btn-group" data-toggle="buttons-checkbox">
+        {% for choice in form.models.field.choices %}
+          <button type="button" value="{{ choice.0 }}"
+                  class="btn{% if choice.0 in form.models.data %}
+                         active{% endif %}">
+            <input type="hidden" name="models"
+                    {% if choice.0 in form.models.data %}
+                   value="{{ choice.0 }}"{% endif %}
+                   id="id_models_{{ forloop.counter0 }}" />
+            {{ choice.1 }}</button>
+        {% endfor %}
+      </div>
     </div>
+    <script>
+      handles_checkboxes = function() {
+        var self = $(this);
+        var prev = self.children();
+        if(self.hasClass('active')) {
+          prev.attr('value', '');
+          self.addClass('active');
+        } else {
+          prev.attr('value', self.attr('value'));
+        }
+      }
+      var buttons = $('.btn-group button');
+      buttons.ready(handles_checkboxes);
+      buttons.click(handles_checkboxes);
+    </script>
   </form>
 
   {% if query %}
