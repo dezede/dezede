@@ -20,28 +20,29 @@
       <label>{% trans "Filtres :" %}</label>
       <div class="btn-group" data-toggle="buttons-checkbox">
         {% for choice in form.models.field.choices %}
-          <button type="button" value="{{ choice.0 }}"
+          <button type="button"
                   class="btn{% if choice.0 in form.models.data %}
                          active{% endif %}">
             <input type="hidden" name="models"
-                    {% if choice.0 in form.models.data %}
-                   value="{{ choice.0 }}"{% endif %}
+                   {% if choice.0 not in form.models.data %}
+                   disabled="disabled"{% endif %}
+                   value="{{ choice.0 }}"
                    id="id_models_{{ forloop.counter0 }}" />
             {{ choice.1 }}</button>
         {% endfor %}
       </div>
     </div>
     <script>
-      handles_checkboxes = function() {
+      var handles_checkboxes = function() {
         var self = $(this);
         var prev = self.children();
         if(self.hasClass('active')) {
-          prev.attr('value', '');
+          prev.attr('disabled', 'disabled');
           self.addClass('active');
         } else {
-          prev.attr('value', self.attr('value'));
+          prev.removeAttr('disabled');
         }
-      }
+      };
       var buttons = $('.btn-group button');
       buttons.ready(handles_checkboxes);
       buttons.click(handles_checkboxes);
