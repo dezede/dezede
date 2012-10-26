@@ -6,11 +6,11 @@
   {% trans 'événements'|capfirst %}
 {% endblock %}
 
-{% block head %}
+{% block js %}
   {{ block.super }}
-  <script src="{% static 'endless_pagination/js/endless.js' %}" type="text/javascript" charset="utf-8"></script>
-  <script src="{% static 'endless_pagination/js/endless_on_scroll.js' %}" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
+  <script src="{% static 'endless_pagination/js/endless.js' %}" charset="utf-8"></script>
+  <script src="{% static 'endless_pagination/js/endless_on_scroll.js' %}" charset="utf-8"></script>
+  <script>
     var endless_on_scroll_margin = 200;
   </script>
 {% endblock %}
