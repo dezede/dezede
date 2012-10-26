@@ -13,10 +13,7 @@
   <div class="page-header">
     {% frontend_admin autorite=1 %}
     <h1>
-      {{ source.nom }}
-      <small>
-        {{ source.no }}, {{ source.date_html }}, {{ source.p }}
-      </small>
+      {{ source.pretty_title|removetags:'a' }}
     </h1>
     <h3>
       {{ source.type|capfirst }}

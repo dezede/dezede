@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from .functions import ex, str_list, cite, no, date_html, href
+from .functions import ex, str_list, cite, no, date_html, href, small
 from django.db.models import CharField, DateField, ForeignKey, \
                              ManyToManyField, permalink, get_model
 from tinymce.models import HTMLField
@@ -77,7 +77,7 @@ class Source(AutoriteModel):
     def p(self):
         return ugettext('p. %s') % self.page
 
-    def html(self, tags=True):
+    def html(self, tags=True, pretty_title=False):
         url = None if not tags else self.get_absolute_url()
         l = [cite(self.nom, tags)]
         if self.numero:
@@ -85,10 +85,14 @@ class Source(AutoriteModel):
         l.append(self.date_html(tags))
         if self.page:
             l.append(self.p())
+        l = (l[0], small(', '.join(l[1:]), tags=tags)) if pretty_title else l
         out = ', '.join(l)
         return mark_safe(href(url, out, tags))
     html.short_description = _('rendu HTML')
     html.allow_tags = True
+
+    def pretty_title(self):
+        return self.html(pretty_title=True)
 
     def has_events(self):
         return self.evenements.exists()
