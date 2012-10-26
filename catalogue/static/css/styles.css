@@ -258,3 +258,11 @@ body.mceContentBody {
 input, button {
   margin: 0;
 }
+
+.nav li {
+  line-height: 22px;
+}
+
+.nav form {
+  margin: 0;
+}

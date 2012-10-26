@@ -1,5 +1,4 @@
 {% load i18n static %}
-{% load url from future %}
 <!DOCTYPE HTML>
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
@@ -11,89 +10,13 @@
     </title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
-    <script src="{% static 'js/jquery-1.7.1.min.js' %}"></script>
-    <script src="{% static 'js/jquery.jstree.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/jquery.query.js' %}"></script>
     {% block head %}{% endblock %}
+    {% block css %}{% endblock %}
   </head>
 
   <body class="container">
     <header>
-      <nav class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-          <div class="container">
-            <a href="" class="brand nav"><img src="{% static 'images/logo.svg' %}" style="width: 52px; height: 20px;" /></a>
-            <div class="nav-collapse">
-
-              <ul class="nav">
-                {% url 'evenements' as evenements_url %}
-                {% url 'lieux' as lieux_url %}
-                {% url 'oeuvres' as oeuvres_url %}
-                {% url 'individus' as individus_url %}
-                {% url 'professions' as professions_url %}
-                {% url 'parties' as parties_url %}
-                {% url 'admin:index' as admin_url %}
-                <li{% if request.path == evenements_url %} class="active"{% endif %}>
-                  <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
-                </li>
-                <li class="dropdown">
-                  <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
-                    {% trans "Autorités" %}
-                    <b class="caret"></b>
-                  </a>
-                  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <li{% if request.path == lieux_url %} class="active"{% endif %}>
-                      <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
-                    </li>
-                    <li{% if request.path == oeuvres_url %} class="active"{% endif %}>
-                      <a href="{{ oeuvres_url }}">{% trans "œuvres"|capfirst %}</a>
-                    </li>
-                    <li{% if request.path == individus_url %} class="active"{% endif %}>
-                      <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
-                    </li>
-                    <li{% if request.path == professions_url %} class="active"{% endif %}>
-                      <a href="{{ professions_url }}">{% trans 'professions'|capfirst %}</a>
-                    </li>
-                    <li{% if request.path == parties_url %} class="active"{% endif %}>
-                      <a href="{{ parties_url }}">{% trans 'parties'|capfirst %}</a>
-                    </li>
-                  </ul>
-                </li>
-                {#<a href="{% url 'saisie_sources' %}">Saisie de source</a>#}
-              </ul>
-              <form method="get" action="{% url 'haystack_search' %}" class="navbar-search pull-left">
-                <input type="text" name="q"
-                       value="{{ form.q.data|default:""|escape }}" id="id_q"
-                       placeholder="{% trans "Rechercher…" %}"
-                       class="search-query span2" />
-              </form>
-
-            </div>
-
-            <div class="nav-collapse pull-right">
-
-              <ul class="nav">
-                <li{% if request.path == admin_url %} class="active"{% endif %}>
-                  <a href="{{ admin_url }}">{% trans "Administration" %}</a>
-                </li>
-              </ul>
-
-              {% for lang in LANGUAGES %}
-                {% if lang.0 != LANGUAGE_CODE %}
-                  <form action="/i18n/setlang/" method="POST" class="nav navbar-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="language" value="{{ lang.0 }}" />
-                    <button type="submit" class="btn btn">{{ lang.1 }}</button>
-                  </form>
-                {% endif %}
-              {% endfor %}
-
-            </div>
-
-          </div>
-        </div>
-      </nav>
+      {% include 'navbar.html' %}
     </header>
 
     <div id="content">
@@ -115,49 +38,19 @@
       {% endautoescape %}
 
       <footer>
-        {# La surface de chaque logo est de 6000 px² #}
-        <a href="http://www.univ-rouen.fr/" target="_blank"
-           title="Université de Rouen">
-          <img src="{% static 'images/univ_rouen.png' %}"
-               style="max-width: 130px; max-height: 47px;" />
-        </a>
-        <a href="http://www.grhis.fr/" target="_blank"
-           title="Groupe de Recherche d'HIStoire">
-          <img src="{% static 'images/grhis.png' %}"
-               style="max-width: 116px; max-height: 52px;" />
-        </a>
-        <a href="http://ceredi.labos.univ-rouen.fr/" target="_blank"
-           title="Centre d'Études et de Recherche Éditer/Interpréter">
-          <img src="{% static 'images/ceredi.png' %}"
-               style="max-width: 80px; max-height: 75px;" />
-        </a>
-        <a href="http://www.univ-rouen.fr/99535530/0/fiche___pagelibre/" target="_blank"
-           title="Institut de Recherche Inter-disciplinaire Homme Société">
-          <img src="{% static 'images/irihs.png' %}"
-               style="max-width: 78px; max-height: 77px;" />
-        </a>
-        <a href="http://www.hautenormandie.fr/" target="_blank"
-           title="Région Haute-Normandie">
-          <img src="{% static 'images/region_h-n.png' %}"
-               style="max-width: 59px; max-height: 102px;" />
-        </a>
-        <a href="http://www.univ-montp3.fr/" target="_blank"
-           title="Université Paul-Valéry - Montpellier 3">
-          <img src="{% static 'images/upv_montpellier.png' %}"
-               style="max-width: 105px; max-height: 58px;" />
-        </a>
-        <a href="http://www.ircl.cnrs.fr/" target="_blank"
-           title="Institut de Recherche sur la Renaissance, l'âge Classique et les Lumières">
-          <img src="{% static 'images/ircl.png' %}"
-               style="max-width: 77px; max-height: 78px;" />
-        </a>
+        {% include 'footer.html' %}
       </footer>
 
     </div>
 
+    <script src="{% static 'js/jquery-1.7.1.min.js' %}"></script>
+    <script src="{% static 'js/jquery.jstree.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.query.js' %}"></script>
+    <script src="{% static 'js/jquery.cookie.js' %}"></script>
+    {% block js %}{% endblock %}
     <script>
-      $('*[title]').tooltip({placement: 'left'})
-      $('.alert').alert()
+      {% include 'base.js' %}
     </script>
   </body>
 </html>

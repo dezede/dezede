@@ -1,0 +1,135 @@
+{% load static i18n %}
+{% load url from future %}
+
+<nav class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a href="" class="brand nav"><img src="{% static 'images/logo.svg' %}" style="width: 52px; height: 20px;" /></a>
+      <div class="nav-collapse">
+
+        <ul class="nav">
+          {% url 'evenements' as evenements_url %}
+          {% url 'lieux' as lieux_url %}
+          {% url 'oeuvres' as oeuvres_url %}
+          {% url 'individus' as individus_url %}
+          {% url 'professions' as professions_url %}
+          {% url 'parties' as parties_url %}
+          {% url 'admin:index' as admin_url %}
+          <li{% if request.path == evenements_url %} class="active"{% endif %}>
+            <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
+              {% trans "Autorités" %}
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+              <li{% if request.path == lieux_url %} class="active"{% endif %}>
+                <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
+              </li>
+              <li{% if request.path == oeuvres_url %} class="active"{% endif %}>
+                <a href="{{ oeuvres_url }}">{% trans "œuvres"|capfirst %}</a>
+              </li>
+              <li{% if request.path == individus_url %} class="active"{% endif %}>
+                <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
+              </li>
+              <li{% if request.path == professions_url %} class="active"{% endif %}>
+                <a href="{{ professions_url }}">{% trans 'professions'|capfirst %}</a>
+              </li>
+              <li{% if request.path == parties_url %} class="active"{% endif %}>
+                <a href="{{ parties_url }}">{% trans 'parties'|capfirst %}</a>
+              </li>
+            </ul>
+          </li>
+          {#<a href="{% url 'saisie_sources' %}">Saisie de source</a>#}
+        </ul>
+        <form method="get" action="{% url 'haystack_search' %}" class="navbar-search pull-left">
+          <input type="text" name="q"
+                 value="{{ form.q.data|default:""|escape }}" id="id_q"
+                 placeholder="{% trans "Rechercher…" %}"
+                 class="search-query span2" />
+        </form>
+
+      </div>
+
+      <div class="nav-collapse pull-right">
+
+        <ul class="nav">
+
+          <li class="dropdown">
+            <button class="btn dropdown-toggle" data-toggle="dropdown">
+              Options <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+              <li class="dropdown-submenu">
+                <a tabindex="-1" href="#">
+                  {% blocktrans %}
+                    Infobulles
+                  {% endblocktrans %}
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a tabindex="-1" href="javascript: tooltips_enable();">
+                      Activer (par défaut)
+                    </a>
+                  </li>
+                  <li>
+                    <a tabindex="-1" href="javascript: tooltips_disable();">
+                      Désactiver
+                    </a>
+                  </li>
+                  <li class="divider"></li>
+                  <li>
+                    <a tabindex="-1" href="javascript: tooltips_placement('left')">
+                      À gauche (par défaut)
+                    </a>
+                  </li>
+                  <li>
+                    <a tabindex="-1" href="javascript: tooltips_placement('right')">
+                      À droite
+                    </a>
+                  </li>
+                  <li>
+                    <a tabindex="-1" href="javascript: tooltips_placement('top')">
+                      Au-dessus
+                    </a>
+                  </li>
+                  <li>
+                    <a tabindex="-1" href="javascript: tooltips_placement('bottom')">
+                      Au-dessous
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="dropdown-submenu">
+                <a tabindex="-1" href="#">
+                  {% blocktrans %}
+                    Langue
+                  {% endblocktrans %}
+                </a>
+                <ul class="dropdown-menu">
+                  {% for lang in LANGUAGES %}
+                    {% if lang.0 != LANGUAGE_CODE %}
+                      <form action="/i18n/setlang/" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="language" value="{{ lang.0 }}" />
+                        <li><a tabindex="-1" href="#" onclick="submit();">{{ lang.1 }}</a></li>
+                      </form>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </li>
+            </ul>
+          </li>
+
+          <li{% if request.path == admin_url %} class="active"{% endif %}>
+            <a href="{{ admin_url }}">{% trans "Administration" %}</a>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+  </div>
+</nav>
