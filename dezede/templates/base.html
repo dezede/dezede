@@ -12,6 +12,15 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
     {% block head %}{% endblock %}
     {% block css %}{% endblock %}
+    <script src="{% static 'js/jquery-1.7.1.min.js' %}"></script>
+    <script src="{% static 'js/jquery.jstree.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.query.js' %}"></script>
+    <script src="{% static 'js/jquery.cookie.js' %}"></script>
+    {% block js %}{% endblock %}
+    <script>
+      {% include 'base.js' %}
+    </script>
   </head>
 
   <body class="container">
@@ -43,14 +52,5 @@
 
     </div>
 
-    <script src="{% static 'js/jquery-1.7.1.min.js' %}"></script>
-    <script src="{% static 'js/jquery.jstree.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/jquery.query.js' %}"></script>
-    <script src="{% static 'js/jquery.cookie.js' %}"></script>
-    {% block js %}{% endblock %}
-    <script>
-      {% include 'base.js' %}
-    </script>
   </body>
 </html>
