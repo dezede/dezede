@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n highlight humanize %}
+{% load i18n highlight humanize sekizai_tags %}
 
 {% block title %}
   {% trans "Recherche" %}
@@ -32,21 +32,23 @@
         {% endfor %}
       </div>
     </div>
-    <script>
-      var handles_checkboxes = function() {
-        var self = $(this);
-        var prev = self.children();
-        if(self.hasClass('active')) {
-          prev.attr('disabled', 'disabled');
-          self.addClass('active');
-        } else {
-          prev.removeAttr('disabled');
-        }
-      };
-      var buttons = $('.btn-group button');
-      buttons.ready(handles_checkboxes);
-      buttons.click(handles_checkboxes);
-    </script>
+    {% addtoblock 'js' %}
+      <script>
+        var handles_checkboxes = function() {
+          var self = $(this);
+          var prev = self.children();
+          if(self.hasClass('active')) {
+            prev.attr('disabled', 'disabled');
+            self.addClass('active');
+          } else {
+            prev.removeAttr('disabled');
+          }
+        };
+        var buttons = $('.btn-group button');
+        buttons.ready(handles_checkboxes);
+        buttons.click(handles_checkboxes);
+      </script>
+    {% endaddtoblock %}
   </form>
 
   {% if query %}
