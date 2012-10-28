@@ -62,6 +62,10 @@ footer a+a {
   margin-left: 20px;
 }
 
+footer a {
+  display: inline-block;
+}
+
 footer img {
   vertical-align: middle;
 }
