@@ -1,48 +1,52 @@
-{% load i18n %}
-{% load url from future %}
-{% load static %}
+{% load i18n static compress sekizai_tags %}
 <!DOCTYPE HTML>
 <html lang="{{ LANGUAGE_CODE }}">
+
   <head>
-    <meta charset="UTF-8" />
-    <meta name="keywords" content="{% trans "musicologie, base de données" %}" />
-    <meta name="author" content="Bertrand Bordage" />
+
+    <meta charset="UTF-8"/>
+    <meta name="keywords" content="{% trans "musicologie, base de données" %}"/>
+    <meta name="author" content="Bertrand Bordage"/>
     <title>
       {% block title %}{% endblock %}
     </title>
-    <script type="text/javascript" src="{% static 'js/jquery-1.7.1.min.js' %}"></script>
-    {% block head %}{% endblock %}
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Gentium+Basic:400,700,400italic,700italic" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
+
+    {% compress css %}
+      <link rel="stylesheet" type="text/css"
+            href="{% static 'css/bootstrap.min.css' %}"/>
+      <link rel="stylesheet" type="text/css"
+            href="{% static 'css/styles.css' %}"/>
+    {% endcompress %}
+
+    {% render_block 'css' postprocessor "dezede.postprocess_sekizai.compress" %}
+
   </head>
-  <body>
-    <header>
-      <nav>
-        <a href="{% url 'haystack_search' %}">{% trans "Recherche" %}</a>
-        <a href="{% url 'lieux' %}">{% trans "lieux"|capfirst %}</a>
-        <a href="{% url 'evenements' %}">{% trans "événements"|capfirst %}</a>
-        <a href="{% url 'individus' %}">{% trans "individus"|capfirst %}</a>
-        {#<a href="{% url 'saisie_sources' %}">Saisie de source</a>#}
-        <a href="{% url 'admin:index' %}">{% trans "Administration" %}</a>
-        {% for lang in LANGUAGES %}
-          {% if lang.0 != LANGUAGE_CODE %}
-            <form action="/i18n/setlang/" method="POST" style="float: right;">
-              {% csrf_token %}
-              <input type="hidden" name="language" value="{{ lang.0 }}" />
-              <input type="submit" value="{{ lang.1 }}" />
-            </form>
-          {% endif %}
-        {% endfor %}
-      </nav>
-    </header>
+
+
+  <body class="container">
+
     <div id="content">
+
       {% autoescape off %}
-        <noscript>
-          {% blocktrans %}Votre navigateur ne peut pas lancer javascript. Attendez-vous à des défauts de fonctionnement.{% endblocktrans %}
-        </noscript>
         {% block body %}{% endblock %}
       {% endautoescape %}
-    </div>
-  </body>
-</html>
 
+    </div>
+
+    {% compress js %}
+      <script src="{% static 'js/jquery-1.7.1.min.js' %}"></script>
+      <script src="{% static 'js/bootstrap.min.js' %}"></script>
+      <script src="{% static 'js/jquery.query.js' %}"></script>
+      <script src="{% static 'js/jquery.cookie.js' %}"></script>
+      <script>
+        {% include 'base.js' %}
+      </script>
+    {% endcompress %}
+    {# À part à cause d'une importation de CSS dans ce JS #}
+    <script src="{% static 'js/jquery.jstree.js' %}"></script>
+
+    {% render_block 'js' postprocessor "dezede.postprocess_sekizai.compress" %}
+
+  </body>
+
+</html>

@@ -12,9 +12,10 @@
 {% show_more %}
 
 {% show_current_number as page_number %}
-<script type="text/javascript">
-  window.history.pushState({},"", $.query.set("page", {{ page_number }}).toString());
-</script>
+
 <script>
-  $('*[title]').tooltip({placement: 'left'})
+  if(typeof jQuery != 'undefined') {
+    window.history.pushState({},"", $.query.set("page", {{ page_number }}).toString());
+    tooltips_reload();
+  }
 </script>

@@ -102,14 +102,18 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+
 STATIC_ROOT = os.path.join(SITE_ROOT, 'static/')
 STATIC_URL = SITE_URL + 'static/'
-
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
 STATICFILES_DIRS = (
     os.path.join(SITE_ROOT, 'dezede/static'),
 )
 
-ADMIN_MEDIA_PREFIX = STATIC_URL + "grappelli/"
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -136,6 +140,8 @@ INSTALLED_APPS = (
     'reversion',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'compressor',
+    'sekizai',
     'django_extensions',
     'south',
     'debug_toolbar',
@@ -149,6 +155,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.contrib.messages.context_processors.messages',
+    'sekizai.context_processors.sekizai',
 )
 
 LOCALE_PATHS = (
@@ -226,3 +233,5 @@ CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 ENDLESS_PAGINATION_PREVIOUS_LABEL = u'«'
 ENDLESS_PAGINATION_NEXT_LABEL = u'»'
+
+COMPRESS_OUTPUT_DIR = 'assets'

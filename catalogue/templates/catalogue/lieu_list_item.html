@@ -1,5 +1,5 @@
 {% load url from future %}
-{% load mptt_tags i18n %}
+{% load mptt_tags i18n sekizai_tags %}
 
 
 {% if lieux %}
@@ -21,20 +21,22 @@
     </ul>
   </div>
 
-  <script>
-    $(function () {
-      $("#lieux").jstree({
-        core: {
-          'html_titles': true
-        },
-        plugins: ["themes", "html_data"],
-        themes: {
-          theme: "classic",
-          icons: false,
-          dots: true
-        }
+  {% addtoblock 'js' %}
+    <script>
+      $(function () {
+        $("#lieux").jstree({
+          core: {
+            'html_titles': true
+          },
+          plugins: ["themes", "html_data"],
+          themes: {
+            theme: "classic",
+            icons: false,
+            dots: true
+          }
+        });
       });
-    });
-  </script>
+    </script>
+  {% endaddtoblock %}
 
 {% endif %}

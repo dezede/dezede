@@ -1,23 +1,32 @@
 {% extends 'base.html' %}
-{% load i18n static %}
+{% load i18n static sekizai_tags %}
 {% load url from future %}
+
 
 {% block title %}
   {% trans 'événements'|capfirst %}
 {% endblock %}
 
-{% block js %}
-  {{ block.super }}
-  <script src="{% static 'endless_pagination/js/endless.js' %}" charset="utf-8"></script>
-  <script src="{% static 'endless_pagination/js/endless_on_scroll.js' %}" charset="utf-8"></script>
-  <script>
-    var endless_on_scroll_margin = 200;
-  </script>
-{% endblock %}
 
 {% block body %}
+
   <div class="page-header">
     <h1>{% trans 'événements'|capfirst %}</h1>
   </div>
+
   {% include page_template %}
+
+
+  {% addtoblock 'js' %}
+    <script src="{% static 'endless_pagination/js/endless.js' %}" charset="utf-8"></script>
+  {% endaddtoblock %}
+  {% addtoblock 'js' %}
+    <script src="{% static 'endless_pagination/js/endless_on_scroll.js' %}" charset="utf-8"></script>
+  {% endaddtoblock %}
+  {% addtoblock 'js' %}
+    <script>
+      var endless_on_scroll_margin = 200;
+    </script>
+  {% endaddtoblock %}
+
 {% endblock %}

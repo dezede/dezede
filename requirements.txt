@@ -13,6 +13,8 @@ django-registration==0.8
 django-profiles==0.2
 django-crispy-forms==1.2.0
 django-filebrowser==3.5.0
+django-compressor==1.2
+django-sekizai==0.6.1
 pil==1.1.7
 johnny-cache==1.4
 python-memcached==1.48

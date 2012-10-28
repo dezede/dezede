@@ -1,15 +1,20 @@
 {% extends "base.html" %}
 {% load url from future %}
-
-{% block head %}
-  {{ form.media }}
-{% endblock %}
+{% load sekizai_tags %}
 
 {% block title %}
   Saisie de source
 {% endblock %}
 
 {% block body %}
+
+  {% addtoblock 'css' %}
+    {{ form.media.css }}
+  {% endaddtoblock %}
+  {% addtoblock 'js' %}
+    {{ form.media.js }}
+  {% endaddtoblock %}
+
   {% if source %}
     <strong>Modification de source :</strong>
   {% else %}

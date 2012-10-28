@@ -1,18 +1,21 @@
-{% extends "base.html" %}
-{% load i18n static django_tables2 %}
+{% extends 'base.html' %}
+{% load i18n static django_tables2 sekizai_tags %}
 {% load url from future %}
 
 {% block title %}
   {{ object_list.0.meta.verbose_name_plural|capfirst }}
 {% endblock %}
 
-{% block head %}
-  <link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
-{% endblock %}
-
 {% block body %}
+
+  {% addtoblock 'css' %}
+    <link rel="stylesheet"
+          href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+  {% endaddtoblock %}
+
   <div class="page-header">
     <h1>{{ object_list.0.meta.verbose_name_plural|capfirst }}</h1>
   </div>
   {% render_table table %}
+
 {% endblock %}
