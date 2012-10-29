@@ -36,6 +36,8 @@ class ProfessionTable(Table):
     nom = LinkColumn('profession', args=(A('slug'),), verbose_name=_('nom'))
     individus_count = Column(accessor='individus.count', orderable=False,
                              verbose_name=_(u'nombre d’individus'))
+    oeuvres_count = Column(accessor='auteurs.oeuvres.count', orderable=False,
+                             verbose_name=_(u'nombre d’œuvres'))
 
     class Meta:
         attrs = {"class": "paleblue"}

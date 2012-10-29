@@ -508,7 +508,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
     class Meta:
         verbose_name = ungettext_lazy(u'œuvre', u'œuvres', 1)
         verbose_name_plural = ungettext_lazy(u'œuvre', u'œuvres', 2)
-        ordering = ['genre', 'slug']
+        ordering = ['titre', 'genre', 'slug']
         app_label = 'catalogue'
 
     def __unicode__(self):
