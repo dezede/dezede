@@ -4,20 +4,20 @@
 
 
 {% block title %}
-  {% trans "lieux"|capfirst %}
+  {% trans "lieux et institutions"|capfirst %}
 {% endblock %}
 
 
 {% block body %}
 
   <div class="page-header">
-    <h1>{% trans 'lieux'|capfirst %}</h1>
+    <h1>{% trans 'lieux et institutions'|capfirst %}</h1>
   </div>
 
   {% if lieux %}
     {% include 'catalogue/lieu_list_item.html' %}
   {% else %}
-    {% trans "Aucun lieu ne figure dans la base de données." %}
+    {% trans "Aucun lieu ou institution ne figure dans la base de données." %}
   {% endif %}
 
 {% endblock %}

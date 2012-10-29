@@ -25,7 +25,7 @@
             </a>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
               <li{% if request.path == lieux_url %} class="active"{% endif %}>
-                <a href="{{ lieux_url }}">{% trans "lieux"|capfirst %}</a>
+                <a href="{{ lieux_url }}">{% trans "lieux et institutions"|capfirst %}</a>
               </li>
               <li{% if request.path == oeuvres_url %} class="active"{% endif %}>
                 <a href="{{ oeuvres_url }}">{% trans "œuvres"|capfirst %}</a>

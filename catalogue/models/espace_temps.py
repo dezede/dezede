@@ -123,7 +123,8 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
         order_insertion_by = ['nom']
 
     class Meta:
-        verbose_name = ungettext_lazy('lieu', 'lieux', 1)
+        verbose_name = ungettext_lazy('lieu ou institution',
+                                      'lieux ou institutions', 1)
         verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
         ordering = ['nom']
         app_label = 'catalogue'
@@ -138,7 +139,8 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
 
 
 class Saison(CustomModel):
-    lieu = ForeignKey('Lieu', related_name='saisons', verbose_name=_('lieu'))
+    lieu = ForeignKey('Lieu', related_name='saisons',
+                      verbose_name=_('lieu ou institution'))
     debut = DateField(_(u'début'), help_text=DATE_MSG)
     fin = DateField(_('fin'))
 
@@ -163,13 +165,15 @@ class AncrageSpatioTemporel(CustomModel):
         help_text=DATE_MSG)
     heure = TimeField(_(u'heure (précise)'), blank=True, null=True)
     lieu = ForeignKey('Lieu', related_name='ancrages', blank=True, null=True,
-        verbose_name=_(u'lieu (précis)'))
+        verbose_name=_(u'lieu ou institution (précis)'))
     date_approx = CharField(_('date (approximative)'), max_length=200,
         blank=True, help_text=_(u'Ne remplir que si la date est imprécise.'))
     heure_approx = CharField(_('heure (approximative)'), max_length=200,
         blank=True, help_text=_(u'Ne remplir que si l’heure est imprécise.'))
-    lieu_approx = CharField(_('lieu (approximatif)'), max_length=200,
-        blank=True, help_text=_(u'Ne remplir que si le lieu est imprécis.'))
+    lieu_approx = CharField(_('lieu ou institution (approximatif)'),
+                            max_length=200, blank=True,
+                    help_text=_(u'Ne remplir que si le lieu (ou institution) '
+                                u'est imprécis.'))
 
     def year(self):
         if self.date:
@@ -213,7 +217,7 @@ class AncrageSpatioTemporel(CustomModel):
         if self.lieu:
             return self.lieu.html(tags, short)
         return self.lieu_approx
-    calc_lieu.short_description = _('lieu')
+    calc_lieu.short_description = _('lieu ou institution')
     calc_lieu.admin_order_field = 'lieu'
     calc_lieu.allow_tags = True
 
