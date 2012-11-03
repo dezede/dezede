@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static sekizai_tags %}
+{% load i18n static sekizai_tags crispy_forms_tags %}
 {% load url from future %}
 
 
@@ -14,8 +14,28 @@
     <h1>{% trans 'événements'|capfirst %}</h1>
   </div>
 
-  {% include page_template %}
+  <div class="container-fluid">
+    <div class="row-fluid">
 
+      <div class="span3">
+        <div class="affix-top" data-spy="affix" data-offset-top="100">
+          {% crispy form %}
+        </div>
+      </div>
+
+      <div class="span9" style="min-height: 423px;">{% include page_template %}</div>
+
+    </div>
+  </div>
+
+
+  {% addtoblock 'css' %}
+    <style>
+      .affix {
+        top: 68px;
+      }
+    </style>
+  {% endaddtoblock %}
 
   {% addtoblock 'js' %}
     <script src="{% static 'endless_pagination/js/endless.js' %}" charset="utf-8"></script>

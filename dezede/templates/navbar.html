@@ -45,7 +45,7 @@
         </ul>
         <form method="get" action="{% url 'haystack_search' %}" class="navbar-search pull-left">
           <input type="text" name="q"
-                 value="{{ form.q.data|default:""|escape }}" id="id_q"
+                 id="id_q"
                  placeholder="{% trans "Rechercher…" %}"
                  class="search-query span2" />
         </form>
