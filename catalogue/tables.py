@@ -10,7 +10,8 @@ class OeuvreTable(Table):
     genre = Column()
     titre = LinkColumn('oeuvre', args=(A('slug'),), verbose_name=_('titre'))
     titre_secondaire = Column()
-    auteurs_html = Column(verbose_name=_('auteurs'), order_by='auteurs__individu__nom')
+    auteurs = Column(accessor='auteurs_html', verbose_name=_('auteurs'),
+                          order_by='auteurs__individu__nom')
 
     class Meta:
         attrs = {"class": "paleblue"}
@@ -21,8 +22,9 @@ class IndividuTable(Table):
                               order_by=('prenoms__prenom',))
     nom = LinkColumn('individu', args=(A('slug'),), accessor='nom_seul',
                      order_by=('pseudonyme', 'nom',))
-    calc_professions = Column(verbose_name=_('professions'),
-                              order_by=('professions__nom',))
+    professions = Column(accessor='calc_professions',
+                         verbose_name=_('professions'),
+                         order_by=('professions__nom',))
     naissance = Column(verbose_name=_('naissance'),
                        order_by='ancrage_naissance')
     deces = Column(verbose_name=_(u'décès'), order_by='ancrage_deces')
@@ -37,7 +39,7 @@ class ProfessionTable(Table):
     individus_count = Column(accessor='individus.count', orderable=False,
                              verbose_name=_(u'nombre d’individus'))
     oeuvres_count = Column(accessor='auteurs.oeuvres.count', orderable=False,
-                             verbose_name=_(u'nombre d’œuvres'))
+                           verbose_name=_(u'nombre d’œuvres'))
 
     class Meta:
         attrs = {"class": "paleblue"}
@@ -45,7 +47,9 @@ class ProfessionTable(Table):
 
 class PartieTable(Table):
     nom = LinkColumn('partie', args=(A('slug'),), verbose_name=_('nom'))
-    interpretes_html = Column(verbose_name=_(u'interprètes'))
+    interpretes = Column(accessor='interpretes_html',
+                         verbose_name=_(u'interprètes'),
+                         order_by='auteurs__individu__nom')
 
     class Meta:
         attrs = {"class": "paleblue"}
