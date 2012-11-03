@@ -1,4 +1,5 @@
 {% load i18n extras %}
+{% load url from future %}
 
 {% with counter=evenements|length %}{# Remplacer ce length par un count quand Oeuvre.evenements sera un RelatedManager #}
   {% if counter %}
@@ -8,36 +9,28 @@
   {% endif %}
 {% endwith %}
 
-{% if lieu %}
-
-  {% regroup evenements by ancrage_debut.date.year as year_list %}
-  {% with lieu_slug=lieu.slug %}
-    {% for year in year_list %}
-      <dd>
-        {% if year.list|length_is:1 %}
-          <a href="{% url evenements %}?lieu={{ lieu.slug }}&annee={{ year.grouper }}">
-              {{ year.list.0.ancrage_debut.calc_moment|capfirst }}
-          </a>
+{% regroup evenements by ancrage_debut.date.year as year_list %}
+{% for year in year_list %}
+  <dd>
+    <a href="{% url 'evenements' %}?{{ object.class_name|lower }}={{ object.slug }}&annee={{ year.grouper }}">
+      {% if year.list|length_is:1 %}
+        {% if lieu %}
+          {{ year.list.0.ancrage_debut.calc_moment|capfirst }}
         {% else %}
-          <a href="{% url evenements %}?lieu={{ lieu.slug }}&annee={{ year.grouper }}">
-            {{ year.grouper }} ({{ year.list|length }}
-            {% filter abbreviate:2 %}{% trans 'événements' %}{% endfilter %})
-          </a>
+          {{ year.list.0.ancrage_debut.html|removetags:'a' }}
         {% endif %}
-      </dd>
-    {% endfor %}
-  {% endwith %}
+      {% else %}
+        {{ year.grouper }} ({{ year.list|length }}
+        {% filter abbreviate:2 %}{% trans 'événements' %}{% endfilter %})
+      {% endif %}
+    </a>
+  </dd>
+{% endfor %}
 
-{% else %}
-
-  {% for evenement in evenements %}
-    <dd>
-      <a href="{% url evenement_pk evenement.pk %}">
-        {{ evenement.link }}
-      </a>
-    </dd>
-  {% endfor %}
-
+{% if evenements.count > 1 %}
+  <dd>
+    <a href="{% url 'evenements' %}?{{ object.class_name|lower }}={{ object.slug }}">
+      <strong>{% trans "Afficher tous les événements" %}</strong>
+    </a>
+  </dd>
 {% endif %}
-
-

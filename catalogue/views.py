@@ -34,12 +34,13 @@ class EvenementListView(AjaxListView):
           'annee': 'ancrage_debut__date__year',
           'mois': 'ancrage_debut__date__month',
           'jour': 'ancrage_debut__date__day',
+          'oeuvre': 'programme__oeuvre__slug',
         }
         filters = {}
         for key, value in GET.iteritems():
             if value and key in bindings:
                 filters[bindings[key]] = value
-        return qs.filter(**filters)
+        return qs.filter(**filters).distinct()
 
 
 class EvenementDetailView(DetailView):
