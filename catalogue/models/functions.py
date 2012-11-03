@@ -4,7 +4,6 @@ from django.template.defaultfilters import date, capfirst
 from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
 from django.utils.functional import allow_lazy
 from django.utils.safestring import mark_safe
-from django.utils.formats import get_format
 
 
 def date_html(d, tags=True, short=False):
@@ -97,18 +96,26 @@ def no(txt):
 #
 
 
-def cite(txt, tags=True):
+def html_decorator(function):
+    def wrapper(txt, tags):
+        if not txt:
+            return ''
+        if tags:
+            return mark_safe(function(txt))
+        return txt
+
+    return wrapper
+
+
+@html_decorator
+def cite(txt):
     """
     >>> print cite('Le Cid')
     <cite>Le Cid</cite>
     >>> print cite('The pillars of the earth', False)
     The pillars of the earth
     """
-    if not txt:
-        return ''
-    if tags:
-        return mark_safe(u'<cite>' + txt + '</cite>')
-    return txt
+    return '<cite>' + txt + '</cite>'
 
 
 def href(url, txt, tags=True):
@@ -125,18 +132,15 @@ def href(url, txt, tags=True):
     return txt
 
 
-def sc(txt, tags=True):
+@html_decorator
+def sc(txt):
     """
     >>> print sc('gentle shout')
     <span class="sc">gentle shout</span>
     >>> print sc('I wish I could be in small caps', tags=False)
     I wish I could be in small caps
     """
-    if not txt:
-        return ''
-    if tags:
-        return mark_safe(u'<span class="sc">' + txt + '</span>')
-    return txt
+    return '<span class="sc">' + txt + '</span>'
 
 
 def hlp(txt, title, tags=True):
@@ -154,15 +158,21 @@ def hlp(txt, title, tags=True):
     return txt
 
 
-def small(txt, tags=True):
+@html_decorator
+def small(txt):
     """
     >>> print small('I feel tiny')
     <small>I feel tiny</small>
     >>> print small('In a website I would be small...', tags=False)
     In a website I would be small...
     """
-    if not txt:
-        return ''
-    if tags:
-        return mark_safe(u'<small>' + txt + '</small>')
-    return txt
+    return '<small>' + txt + '</small>'
+
+
+@html_decorator
+def strong(txt):
+    """
+    >>> print strong('I are STROOoOONG!!!')
+    <strong>I are STROOoOONG!!!</strong>
+    """
+    return '<strong>' + txt + '</strong>'
