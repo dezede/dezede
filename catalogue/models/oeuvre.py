@@ -314,8 +314,11 @@ class Auteur(CustomModel):
     html.allow_tags = True
 
     def clean(self):
-        if hasattr(self, 'individu') and hasattr(self, 'profession'):
+        try:
             self.individu.professions.add(self.profession)
+        except (get_model('catalogue', 'Individu').DoesNotExist,
+                get_model('catalogue', 'Profession').DoesNotExist):
+            pass
 
     class Meta:
         verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
