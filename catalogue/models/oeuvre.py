@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from .functions import ex, hlp, str_list, str_list_w_last, href, cite
+from .functions import ex, hlp, str_list, str_list_w_last, href, cite, strong
 from django.db.models import CharField, ManyToManyField, \
                              PositiveIntegerField, FloatField, ForeignKey, \
                              OneToOneField, IntegerField, TextField, \
@@ -440,7 +440,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         return str_list(l, infix='')
 
     def html(self, tags=True, auteurs=True, titre=True,
-             descr=True, genre_caps=True, parentes=True):
+             descr=True, genre_caps=True, parentes=True, strong_title=False):
         # FIXME: Nettoyer cette horreur
         out = ''
         auts = self.auteurs_html(tags)
@@ -455,6 +455,8 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
             if parentes and pars:
                 out += pars + ', '
             if titre_complet:
+                if strong_title:
+                    titre_complet = strong(titre_complet, tags)
                 out += href(url, cite(titre_complet, tags), tags)
                 if descr and genre:
                     out += ', '

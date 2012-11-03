@@ -121,7 +121,7 @@ class ElementDeProgramme(AutoriteModel):
         out__append = out.append
         oeuvre = self.oeuvre
         if oeuvre:
-            out__append(oeuvre.html(tags))
+            out__append(oeuvre.html(tags, strong_title=True))
         else:
             out__append(self.autre)
         cs = self.calc_caracteristiques()
