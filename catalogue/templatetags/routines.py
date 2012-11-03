@@ -79,6 +79,7 @@ def list_in_dl(context, object_list, property_name='link', verbose_name=None,
     display_list = [getattr(o, property_name)() for o in object_list]
     c = copy(context)
     c.update({
+        'count': len(display_list),
         'display_list': display_list,
         'verbose_name': verbose_name,
         'verbose_name_plural': verbose_name_plural,

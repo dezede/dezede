@@ -1,8 +1,11 @@
+{% load humanize %}
+
 <dt>
-  {% if display_list|length == 1 %}
-    {{ verbose_name|capfirst }}
+  {{ count }}
+  {% if count == 1 %}
+    {{ verbose_name }}
   {% else %}
-    {{ verbose_name_plural|capfirst }}
+    {{ verbose_name_plural }}
   {% endif %}
 </dt>
 
