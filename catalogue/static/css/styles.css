@@ -110,7 +110,6 @@ dt, dd {
 }
 
 dl.dl-horizontal dd+dt, dl.dl-horizontal dd+dt+dd {
-  margin-top: 5px;
   padding-top: 5px;
 }
 
