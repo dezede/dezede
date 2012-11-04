@@ -169,8 +169,9 @@ dl.dl-horizontal dd+dt, dl.dl-horizontal dd+dt+dd {
 }
 
 .content_part {
-  border: 1.5px solid;
-  border-radius: 10px;
+  border: 1.5px solid #fff2b3;
+  border-radius: 6px;
+  background-color: #fff6cc;
   padding: 15px;
   margin-bottom: 30px;
 }
