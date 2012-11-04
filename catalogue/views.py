@@ -18,7 +18,7 @@ class SourceDetailView(DetailView):
 def cleaned_querydict(qd):
     new_qd = qd.copy()
     for k, v in new_qd.iteritems():
-        if not v:
+        if not v or v == '|':
             del new_qd[k]
     return new_qd
 
