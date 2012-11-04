@@ -275,6 +275,10 @@ input, button {
   margin: 0;
 }
 
+.navbar .brand {
+  padding: 5px 20px 5px;
+}
+
 ul.ui-autocomplete li a, .results_on_deck > div {
   overflow: hidden;
   text-overflow: ellipsis;
