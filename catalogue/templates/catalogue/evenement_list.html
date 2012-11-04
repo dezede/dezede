@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static sekizai_tags crispy_forms_tags %}
+{% load i18n static sekizai_tags crispy_forms_tags humanize %}
 {% load url from future %}
 
 
@@ -11,7 +11,15 @@
 {% block body %}
 
   <div class="page-header">
-    <h1>{% trans 'événements'|capfirst %}</h1>
+    <h1>
+      {% trans 'événements'|capfirst %}
+      {% if evenements.exists %}
+        {% with count=evenements.count %}
+          ({{ count|apnumber }}
+          {% blocktrans count counter=count %}résultat{% plural %}résultats{% endblocktrans %})
+        {% endwith %}
+      {% endif %}
+    </h1>
   </div>
 
   <div class="container-fluid">
