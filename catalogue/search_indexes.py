@@ -7,13 +7,12 @@ from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie
 class OeuvreIndex(RealTimeSearchIndex):
     text = CharField(document=True, use_template=True)
     suggestions = CharField()
-    content_auto = EdgeNgramField(model_attr='html')
+    content_auto = EdgeNgramField(model_attr='titre_html')
 
     def get_model(self):
         return Oeuvre
 
     def index_queryset(self):
-        """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
 
     def prepare(self, obj):
@@ -32,7 +31,6 @@ class SourceIndex(RealTimeSearchIndex):
         return Source
 
     def index_queryset(self):
-        """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
 
     def prepare(self, obj):
@@ -50,7 +48,6 @@ class IndividuIndex(RealTimeSearchIndex):
         return Individu
 
     def index_queryset(self):
-        """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
 
     def prepare(self, obj):
@@ -69,7 +66,6 @@ class LieuIndex(RealTimeSearchIndex):
         return Lieu
 
     def index_queryset(self):
-        """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
 
     def prepare(self, obj):
@@ -87,7 +83,6 @@ class EvenementIndex(RealTimeSearchIndex):
         return Evenement
 
     def index_queryset(self):
-        """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
 
     def prepare(self, obj):
@@ -105,7 +100,6 @@ class PartieIndex(RealTimeSearchIndex):
         return Partie
 
     def index_queryset(self):
-        """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
 
     def prepare(self, obj):
