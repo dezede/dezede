@@ -1,13 +1,12 @@
 # coding: utf-8
 
-from django.forms import ModelForm, Form, CharField, ModelChoiceField
-from mptt.forms import TreeNodeChoiceField
-from .models import Source, Lieu, Oeuvre
+from django.forms import ModelForm, Form, CharField
+from .models import Source
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset
 from crispy_forms.bootstrap import FormActions
 from django.utils.translation import ugettext_lazy as _
-from ajax_select.fields import AutoCompleteSelectField
+from ajax_select.fields import AutoCompleteSelectMultipleField
 
 
 class SourceForm(ModelForm):
@@ -17,10 +16,10 @@ class SourceForm(ModelForm):
 
 class EvenementListForm(Form):
     q = CharField(label=_('Recherche libre'), required=False)
-    lieu = AutoCompleteSelectField('lieu', label=_('Lieu'), required=False,
-                                   show_help_text=False)
-    oeuvre = AutoCompleteSelectField('oeuvre', required=False,
-                                     label=_(u'Œuvre'), show_help_text=False)
+    lieu = AutoCompleteSelectMultipleField('lieu', label=_('Lieu'),
+                                           required=False, help_text='')
+    oeuvre = AutoCompleteSelectMultipleField('oeuvre', required=False,
+                                             label=_(u'Œuvre'), help_text='')
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()

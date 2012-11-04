@@ -30,16 +30,19 @@ class EvenementListView(AjaxListView):
             pk_list = sqs.values_list('pk', flat=True)
             qs = qs.filter(pk__in=pk_list)
         bindings = {
-          'lieu': 'ancrage_debut__lieu__pk',
+          'lieu': 'ancrage_debut__lieu__pk__in',
           'annee': 'ancrage_debut__date__year',
           'mois': 'ancrage_debut__date__month',
           'jour': 'ancrage_debut__date__day',
-          'oeuvre': 'programme__oeuvre__pk',
+          'oeuvre': 'programme__oeuvre__pk__in',
         }
         filters = {}
         for key, value in data.iteritems():
             if value and key in bindings:
-                filters[bindings[key]] = value
+                if '|' in value:
+                    value = [int(pk) for pk in value.split('|') if pk]
+                if value:
+                    filters[bindings[key]] = value
         return qs.filter(**filters).distinct()
 
     def get_context_data(self, **kwargs):
