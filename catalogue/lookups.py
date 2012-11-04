@@ -21,6 +21,8 @@ class LieuLookup(LookupChannel):
     def format_match(self, obj):
         return removetags(obj.html(), 'a')
 
+    def check_auth(self,request):
+        pass
 
 
 class OeuvreLookup(LookupChannel):
@@ -32,3 +34,6 @@ class OeuvreLookup(LookupChannel):
 
     def format_match(self, obj):
         return removetags(obj.titre_html(), 'a')
+
+    def check_auth(self,request):
+        pass
