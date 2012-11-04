@@ -33,7 +33,6 @@ class EvenementListForm(Form):
             FormActions(
                 Submit('', _('Filtrer'),
                        css_class="btn-primary"),
-                Reset('', _(u'Réinitialiser')),
             ),
         )
         super(EvenementListForm, self).__init__(*args, **kwargs)

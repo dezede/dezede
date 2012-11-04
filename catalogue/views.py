@@ -7,11 +7,31 @@ from .forms import *
 from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 from django_tables2 import SingleTableView
 from haystack.query import SearchQuerySet
+from django.http import QueryDict
 
 
 class SourceDetailView(DetailView):
     model = Source
     context_object_name = 'source'
+
+
+def cleaned_querydict(qd):
+    new_qd = qd.copy()
+    for k, v in new_qd.iteritems():
+        if not v:
+            del new_qd[k]
+    return new_qd
+
+
+def get_filters(bindings, data):
+    filters = {}
+    for key, value in data.iteritems():
+        if value and key in bindings:
+            if '|' in value:
+                value = [int(pk) for pk in value.split('|') if pk]
+            if value:
+                filters[bindings[key]] = value
+    return filters
 
 
 class EvenementListView(AjaxListView):
@@ -22,33 +42,45 @@ class EvenementListView(AjaxListView):
         Model = self.model
         qs = Model.objects.all()
         data = self.request.GET
-        self.form = EvenementListForm(data)
-        search_query = data.get('q')
-        if search_query:
-            sqs = SearchQuerySet().models(Model)
-            sqs = sqs.auto_query(search_query)
-            pk_list = sqs.values_list('pk', flat=True)
-            qs = qs.filter(pk__in=pk_list)
-        bindings = {
-          'lieu': 'ancrage_debut__lieu__pk__in',
-          'annee': 'ancrage_debut__date__year',
-          'mois': 'ancrage_debut__date__month',
-          'jour': 'ancrage_debut__date__day',
-          'oeuvre': 'programme__oeuvre__pk__in',
-        }
-        filters = {}
-        for key, value in data.iteritems():
-            if value and key in bindings:
-                if '|' in value:
-                    value = [int(pk) for pk in value.split('|') if pk]
-                if value:
-                    filters[bindings[key]] = value
-        return qs.filter(**filters).distinct()
+        self.form = form = EvenementListForm(data)
+        try:
+            self.valid_form = form.is_valid()
+        except:
+            self.form = EvenementListForm()
+            self.valid_form = False
+            data = {}
+        if self.valid_form:
+            search_query = data.get('q')
+            if search_query:
+                sqs = SearchQuerySet().models(Model)
+                sqs = sqs.auto_query(search_query)
+                pk_list = sqs.values_list('pk', flat=True)
+                qs = qs.filter(pk__in=pk_list)
+            bindings = {
+              'lieu': 'ancrage_debut__lieu__pk__in',
+              'annee': 'ancrage_debut__date__year',
+              'mois': 'ancrage_debut__date__month',
+              'jour': 'ancrage_debut__date__day',
+              'oeuvre': 'programme__oeuvre__pk__in',
+            }
+            filters = get_filters(bindings, data)
+            return qs.filter(**filters).distinct()
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super(EvenementListView, self).get_context_data(**kwargs)
         context['form'] = self.form
         return context
+
+    def get(self, request, *args, **kwargs):
+        response = super(EvenementListView, self).get(request, *args, **kwargs)
+        data = self.request.GET
+        new_data = cleaned_querydict(data)
+        if new_data.dict() != data.dict() or not self.valid_form:
+            response = redirect('evenements')
+            if self.valid_form:
+                response['Location'] += '?' + new_data.urlencode(safe='|')
+        return response
 
 
 class EvenementDetailView(DetailView):
