@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     'profiles',
     'accounts',
     'crispy_forms',
+    'ajax_select',
     'filebrowser',
     'reversion',
     'django.contrib.admin',
@@ -235,3 +236,10 @@ ENDLESS_PAGINATION_PREVIOUS_LABEL = u'«'
 ENDLESS_PAGINATION_NEXT_LABEL = u'»'
 
 COMPRESS_OUTPUT_DIR = 'assets'
+
+AJAX_LOOKUP_CHANNELS = {
+    'lieu': ('catalogue.lookups', 'LieuLookup'),
+    'oeuvre': ('catalogue.lookups', 'OeuvreLookup'),
+}
+AJAX_SELECT_BOOTSTRAP = True
+AJAX_SELECT_INLINES = 'inline'

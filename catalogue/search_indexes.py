@@ -1,10 +1,13 @@
-from haystack import indexes, site
+from haystack .indexes import RealTimeSearchIndex, CharField, EdgeNgramField, \
+                              DateField
+from haystack import site
 from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie
 
 
-class OeuvreIndex(indexes.RealTimeSearchIndex):
-    text = indexes.CharField(document=True, use_template=True)
-    suggestions = indexes.CharField()
+class OeuvreIndex(RealTimeSearchIndex):
+    text = CharField(document=True, use_template=True)
+    suggestions = CharField()
+    content_auto = EdgeNgramField(model_attr='html')
 
     def get_model(self):
         return Oeuvre
@@ -20,10 +23,10 @@ class OeuvreIndex(indexes.RealTimeSearchIndex):
 site.register(Oeuvre, OeuvreIndex)
 
 
-class SourceIndex(indexes.RealTimeSearchIndex):
-    text = indexes.CharField(document=True, use_template=True)
-    date = indexes.DateField(model_attr='date')
-    suggestions = indexes.CharField()
+class SourceIndex(RealTimeSearchIndex):
+    text = CharField(document=True, use_template=True)
+    date = DateField(model_attr='date')
+    suggestions = CharField()
 
     def get_model(self):
         return Source
@@ -39,9 +42,9 @@ class SourceIndex(indexes.RealTimeSearchIndex):
 site.register(Source, SourceIndex)
 
 
-class IndividuIndex(indexes.RealTimeSearchIndex):
-    text = indexes.CharField(document=True, use_template=True)
-    suggestions = indexes.CharField()
+class IndividuIndex(RealTimeSearchIndex):
+    text = CharField(document=True, use_template=True)
+    suggestions = CharField()
 
     def get_model(self):
         return Individu
@@ -57,9 +60,10 @@ class IndividuIndex(indexes.RealTimeSearchIndex):
 site.register(Individu, IndividuIndex)
 
 
-class LieuIndex(indexes.RealTimeSearchIndex):
-    text = indexes.CharField(document=True, use_template=True)
-    suggestions = indexes.CharField()
+class LieuIndex(RealTimeSearchIndex):
+    text = CharField(document=True, use_template=True)
+    suggestions = CharField()
+    content_auto = EdgeNgramField(model_attr='html')
 
     def get_model(self):
         return Lieu
@@ -75,9 +79,9 @@ class LieuIndex(indexes.RealTimeSearchIndex):
 site.register(Lieu, LieuIndex)
 
 
-class EvenementIndex(indexes.RealTimeSearchIndex):
-    text = indexes.CharField(document=True, use_template=True)
-    suggestions = indexes.CharField()
+class EvenementIndex(RealTimeSearchIndex):
+    text = CharField(document=True, use_template=True)
+    suggestions = CharField()
 
     def get_model(self):
         return Evenement
@@ -93,9 +97,9 @@ class EvenementIndex(indexes.RealTimeSearchIndex):
 site.register(Evenement, EvenementIndex)
 
 
-class PartieIndex(indexes.RealTimeSearchIndex):
-    text = indexes.CharField(document=True, use_template=True)
-    suggestions = indexes.CharField()
+class PartieIndex(RealTimeSearchIndex):
+    text = CharField(document=True, use_template=True)
+    suggestions = CharField()
 
     def get_model(self):
         return Partie

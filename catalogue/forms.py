@@ -7,6 +7,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset
 from crispy_forms.bootstrap import FormActions
 from django.utils.translation import ugettext_lazy as _
+from ajax_select.fields import AutoCompleteSelectField
 
 
 class SourceForm(ModelForm):
@@ -16,10 +17,10 @@ class SourceForm(ModelForm):
 
 class EvenementListForm(Form):
     q = CharField(label=_('Recherche libre'), required=False)
-    lieu = TreeNodeChoiceField(queryset=Lieu.objects.all(), label=_('Lieu'),
-                               to_field_name='slug', required=False)
-    oeuvre = ModelChoiceField(queryset=Oeuvre.objects.all(), required=False,
-                                 label=_(u'Œuvre'), to_field_name='slug')
+    lieu = AutoCompleteSelectField('lieu', label=_('Lieu'), required=False,
+                                   show_help_text=False)
+    oeuvre = AutoCompleteSelectField('oeuvre', required=False,
+                                     label=_(u'Œuvre'), show_help_text=False)
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -37,4 +38,5 @@ class EvenementListForm(Form):
             ),
         )
         super(EvenementListForm, self).__init__(*args, **kwargs)
-        self.fields['q'].widget.attrs['placeholder'] = _(u'Tapez ici…')
+        for key in ('q', 'lieu', 'oeuvre'):
+            self.fields[key].widget.attrs['placeholder'] = _(u'Tapez ici…')

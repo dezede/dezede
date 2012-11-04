@@ -1,17 +1,20 @@
 # coding: utf-8
+
 from django.conf.urls import *
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 from filebrowser.sites import site
-
-# Uncomment the next two lines to enable the admin:
+from ajax_select import urls as ajax_select_urls
 from django.contrib import admin
+
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^', include('catalogue.urls')),
 
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^admin/lookups/', include(ajax_select_urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^tinymce/', include('tinymce.urls')),
