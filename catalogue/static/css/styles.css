@@ -109,6 +109,10 @@ dt, dd {
   line-height: 22px;
 }
 
+dd {
+  text-align: justify;
+}
+
 dl.dl-horizontal dd+dt, dl.dl-horizontal dd+dt+dd {
   padding-top: 5px;
 }
