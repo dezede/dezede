@@ -26,10 +26,30 @@
       {{ oeuvre.ancrage_creation.html|default:'' }}
     </h3>
     <h4>
-      {{ oeuvre.meres_html }}
-    </h4>
-    <h4>
-      {{ oeuvre.filles_html }}
+      {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
+      <dl class="dl-horizontal">
+        {% for parentes in parentes_list %}
+          <dt>{{ parentes.grouper.nom|capfirst }}</dt>
+          {% for parente in parentes.list %}
+            <dd>{{ parente.mere.html }}</dd>
+          {% endfor %}
+        {% endfor %}
+      </dl>
+      {% regroup oeuvre.parentes_filles.filles_en_ordre by type as parentes_list %}
+      <dl class="dl-horizontal">
+        {% for parentes in parentes_list %}
+          <dt>
+            {% if parentes.list|length_is:'1' %}
+              {{ parentes.grouper.nom_relatif|capfirst }}
+            {% else %}
+              {{ parentes.grouper.relatif_pluriel|capfirst }}
+            {% endif %}
+          </dt>
+          {% for parente in parentes.list %}
+            <dd>{{ parente.fille.html }}</dd>
+          {% endfor %}
+        {% endfor %}
+      </dl>
     </h4>
   </div>
 

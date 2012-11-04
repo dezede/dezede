@@ -217,12 +217,21 @@ class TypeDeParenteDOeuvres(CustomModel):
         return '< %s | %s >' % (self.nom, self.nom_relatif)
 
 
+class ParenteDOeuvresManager(CustomManager):
+    def meres_en_ordre(self):
+        return self.all().order_by('mere__ancrage_creation')
+
+    def filles_en_ordre(self):
+        return self.all().order_by('fille__ancrage_creation')
+
+
 class ParenteDOeuvres(CustomModel):
     type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes')
     mere = ForeignKey('Oeuvre', related_name='parentes_filles',
                       verbose_name=_(u'œuvre mère'))
     fille = ForeignKey('Oeuvre', related_name='parentes_meres',
                        verbose_name=_(u'œuvre fille'))
+    objects = ParenteDOeuvresManager()
 
     class Meta:
         verbose_name = ungettext_lazy(u'parenté d’œuvres',
@@ -406,33 +415,19 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
     auteurs_html.allow_tags = True
     auteurs_html.admin_order_field = 'auteurs__individu'
 
+    def parentes_in_order(self, relation):
+        return getattr(self, relation).order_by('ancrage_creation')
+
+    def meres_in_order(self):
+        return self.parentes_in_order('meres')
+
+    def filles_in_order(self):
+        return self.parentes_in_order('filles')
+
     def calc_parentes(self, tags=True):
         if not self.pk:
             return ''
-        return str_list_w_last(unicode(m) for m in self.meres.all())
-
-    def __parentes_html(self, tags=True, relation='mere',
-                        type_select='type__nom'):
-        d = defaultdict(list)
-        parentes = getattr(self, 'parentes_' + relation + 's')
-        for k, v in parentes.values_list(type_select, relation):
-            d[k].append(v)
-        l = []
-        for type, id_list in d.items():
-            oeuvres = Oeuvre.objects.in_bulk(id_list).values()
-            pre = capfirst(type) + ' : '
-            l.append(pre + ', '.join(o.titre_descr_html(tags)
-                                                             for o in oeuvres))
-        infix = '<br />' if tags else '\n'
-        return infix.join(l)
-
-    def meres_html(self, tags=True):
-        return self.__parentes_html(tags, relation='mere',
-                                    type_select='type__nom')
-
-    def filles_html(self, tags=True):
-        return self.__parentes_html(tags, relation='fille',
-                                    type_select='type__nom_relatif')
+        return str_list_w_last(unicode(m) for m in self.meres_in_order())
 
     def titre_complet(self):
         l = (self.prefixe_titre, self.titre, self.coordination,
