@@ -270,3 +270,10 @@ input, button {
 .nav form {
   margin: 0;
 }
+
+ul.ui-autocomplete li a, .results_on_deck > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 220px;
+  white-space: nowrap;
+}
