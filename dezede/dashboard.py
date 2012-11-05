@@ -74,8 +74,17 @@ class CustomIndexDashboard(Dashboard):
             _('Utilisateurs et groupes'),
             column=3,
             css_classes=('grp-collapse grp-closed',),
-            models=('django.contrib.*', 'accounts.*',),
+            models=('django.contrib.auth.*',
+                    'accounts.*',
+                    'django.contrib.sites.*',),
         ))
+
+        self.children.append(modules.AppList(
+            _(u'Rédaction'),
+            column=3,
+            css_classes=('grp-collapse grp-closed',),
+            models=('django.contrib.flatpages.*',),
+            ))
 
         self.children.append(modules.LinkList(
             _('Traduction'),
