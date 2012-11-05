@@ -7,7 +7,7 @@ from .views import register, GrantToAdmin
 
 
 urlpatterns = patterns('',
-    url(r'equipe/(?P<pk>\d+)', GrantToAdmin.as_view(), name='grant_to_admin'),
+    url(r'^equipe/(?P<pk>\d+)', GrantToAdmin.as_view(), name='grant_to_admin'),
     url(r'^activation/complete/$',
         direct_to_template,
         {'template': 'registration/activation_complete.html'},

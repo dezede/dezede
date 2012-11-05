@@ -91,6 +91,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
 ROOT_URLCONF = 'dezede.urls'
@@ -101,6 +102,9 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
+
+
+FLATPAGES_TEMPLATE_DIR = 'dezede/templates/flatpages'
 
 
 STATIC_ROOT = os.path.join(SITE_ROOT, 'static/')
@@ -126,10 +130,13 @@ INSTALLED_APPS = (
     'dezede',
     'haystack',
     'catalogue',
+    'django.contrib.flatpages',
+    'django.contrib.markup',
     'mptt',
     'endless_pagination',
     'django_tables2',
     'tinymce',
+    'flatpages_tinymce',
     'grappelli.dashboard',
     'grappelli',
     'registration',
@@ -181,7 +188,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
     'plugins': 'contextmenu,fullscreen,inlinepopups,nonbreaking,paste,preview,searchreplace,table,smallcaps',
     'theme_advanced_buttons1': 'fullscreen,preview,code,|,selectall,cut,copy,paste,pasteword,|,undo,redo,|,link,unlink,|,charmap,nonbreaking,|,search',
-    'theme_advanced_buttons2': 'removeformat,|,smallcaps,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justify,|,bullist,numlist,outdent,indent,|,sub,sup',
+    'theme_advanced_buttons2': 'removeformat,formatselect,|,smallcaps,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justify,|,bullist,numlist,outdent,indent,|,sub,sup',
     'theme_advanced_buttons3': 'tablecontrols',
     'theme_advanced_toolbar_location': 'top',
     'theme_advanced_toolbar_align': 'center',

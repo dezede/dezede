@@ -7,6 +7,8 @@ django-haystack==1.2.7
 pysolr==2.1.0-beta
 django-mptt==0.5.4
 django-tinymce==1.5.1a2
+django-flatpages-tinymce==0.1.1
+simplejson==2.6.2
 django-autoslug==1.5.0
 django-grappelli==2.4.2
 django-registration==0.8
