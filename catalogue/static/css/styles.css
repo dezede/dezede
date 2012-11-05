@@ -34,6 +34,7 @@ html {
 }
 
 body {
+  position: relative;
   margin: 0 auto 20px auto;
   border: 2px solid grey;
   border-top: none;
@@ -285,10 +286,10 @@ ul.ui-autocomplete li a, .results_on_deck > div {
 .affix-bottom {
   position: absolute;
   top: auto;
-  bottom: 0px;
+  bottom: 120px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1200px) {
   #content {
     padding: 15px;
     padding-top: 72px; /* 42px (nav) + 30px */
@@ -296,6 +297,40 @@ ul.ui-autocomplete li a, .results_on_deck > div {
 
   .side {
     width: 258px;
+  }
+
+  .affix {
+    top: 77px;
+  }
+}
+
+@media (min-width: 980px) and (max-width: 1200px) {
+  #content {
+    padding: 10px;
+    padding-top: 42px; /* 42px (nav) + 30px */
+  }
+
+  .side {
+    width: 210px;
+  }
+
+  .affix {
+    top: 47px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 980px) {
+  #content {
+    padding: 5px;
+  }
+
+  .side {
+    width: 166px;
+    margin-top: 20px;
+  }
+
+  .affix {
+    top: 80px;
   }
 }
 

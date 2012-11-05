@@ -26,7 +26,8 @@
     <div class="row-fluid">
 
       <div class="span3">
-        <div class="nav affix-top side" data-spy="affix" data-offset-top="100">
+        <div class="nav affix-top side" data-spy="affix"
+             data-offset-top="105" data-offset-bottom="160">
           {% crispy form %}
         </div>
       </div>
@@ -35,15 +36,6 @@
 
     </div>
   </div>
-
-
-  {% addtoblock 'css' %}
-    <style>
-      .affix {
-        top: 68px;
-      }
-    </style>
-  {% endaddtoblock %}
 
   {% addtoblock 'js' %}
     <script src="{% static 'endless_pagination/js/endless.js' %}" charset="utf-8"></script>
