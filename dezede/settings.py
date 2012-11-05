@@ -179,7 +179,7 @@ LOGIN_REDIRECT_URL = '/profils/'
 TINYMCE_DEFAULT_CONFIG = {
     'mode': 'textareas',
     'theme': 'advanced',
-    'plugins': 'contextmenu,fullscreen,inlinepopups,nonbreaking,paste,preview,searchreplace,table',
+    'plugins': 'contextmenu,fullscreen,inlinepopups,nonbreaking,paste,preview,searchreplace,table,smallcaps',
     'theme_advanced_buttons1': 'fullscreen,preview,code,|,selectall,cut,copy,paste,pasteword,|,undo,redo,|,link,unlink,|,charmap,nonbreaking,|,search',
     'theme_advanced_buttons2': 'removeformat,|,smallcaps,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justify,|,bullist,numlist,outdent,indent,|,sub,sup',
     'theme_advanced_buttons3': 'tablecontrols',
@@ -192,10 +192,6 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_resizing_max_width': '1024',
 
     'content_css': STATIC_URL + 'css/styles.css',
-    'formats': {
-        'smallcaps': {'inline' : 'span', 'styles': {'font-variant': 'small-caps'}}
-    },
-    'setup': 'add_small_caps'
 }
 TINYMCE_FILEBROWSER = False
 
