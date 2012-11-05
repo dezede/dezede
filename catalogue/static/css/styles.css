@@ -46,11 +46,6 @@ body {
   border-bottom-right-radius: 5px;
 }
 
-#content {
-  padding: 15px;
-  padding-top: 68px; /* 38px (nav) + 30px */
-}
-
 footer {
   margin-top: 20px;
   height: 90px;
@@ -58,12 +53,13 @@ footer {
   text-align: center;
 }
 
-footer a+a {
-  margin-left: 20px;
+footer a:first-child {
+  margin-left: 0;
 }
 
 footer a {
   display: inline-block;
+  margin-left: 10px;
 }
 
 footer img {
@@ -284,4 +280,27 @@ ul.ui-autocomplete li a, .results_on_deck > div {
   text-overflow: ellipsis;
   width: 220px;
   white-space: nowrap;
+}
+
+.affix-bottom {
+  position: absolute;
+  top: auto;
+  bottom: 0px;
+}
+
+@media (min-width: 768px) {
+  #content {
+    padding: 15px;
+    padding-top: 72px; /* 42px (nav) + 30px */
+  }
+
+  .side {
+    width: 258px;
+  }
+}
+
+@media (max-width: 767px) {
+  .side {
+    position: static;
+  }
 }

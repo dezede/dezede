@@ -24,15 +24,14 @@ class EvenementListForm(Form):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_method = 'GET'
-        self.helper.form_class = 'well well-small'
+        self.helper.form_class = 'well'
         self.helper.layout = Layout(
             Fieldset(
                 _('Filtres'),
-                Field('q', 'lieu', 'oeuvre'),
+                Field('q', 'lieu', 'oeuvre', css_class='span12'),
             ),
             FormActions(
-                Submit('', _('Filtrer'),
-                       css_class="btn-primary"),
+                Submit('', _('Filtrer'), css_class='btn-primary span12'),
             ),
         )
         super(EvenementListForm, self).__init__(*args, **kwargs)
