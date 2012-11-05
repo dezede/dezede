@@ -197,6 +197,7 @@ TINYMCE_DEFAULT_CONFIG = {
     },
     'setup': 'add_small_caps'
 }
+TINYMCE_FILEBROWSER = False
 
 FILEBROWSER_VERSIONS = {
     'admin_thumbnail': {'verbose_name': 'Admin Thumbnail', 'width': 60, 'height': 60, 'opts': 'crop'},

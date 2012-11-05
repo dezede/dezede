@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
     AncrageSpatioTemporel, GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
     CaracteristiqueDOeuvre
+from .routines import script_iterator
 
 
 CURRENT_PATH = os.path.dirname(__file__)
@@ -86,38 +87,43 @@ def build_auteurs(oeuvre_obj, individus_str, nom_profession,
         aut.clean()
 
 
+def import_oeuvre(i, oeuvre):
+    titre = oeuvre['Titres principaux']
+    particule, titre = split_titre(titre)
+    try:
+        titre2 = oeuvre['Titres secondaires']
+        particule2, titre2 = split_titre(titre2)
+        coordination = ', ou ' if titre2 else ''
+        oeuvre_obj, oeuvre_obj_is_new = Oeuvre.objects.get_or_create(
+            prefixe_titre=particule, titre=titre, coordination=coordination,
+            prefixe_titre_secondaire=particule2, titre_secondaire=titre2)
+        if not oeuvre_obj_is_new:
+            return
+            #    print oeuvre_obj
+        # TODO: Titres de la version originale à faire
+        compositeurs = oeuvre['Compositeurs']
+        build_auteurs(oeuvre_obj, compositeurs, 'compositeur')
+        librettistes = oeuvre['Librettistes']
+        build_auteurs(oeuvre_obj, librettistes, 'librettiste')
+        genre = GenreDOeuvre.objects.get_or_create(nom=oeuvre['Genres'])[0]
+        oeuvre_obj.genre = genre
+        decoupage = TypeDeCaracteristiqueDOeuvre.objects.get_or_create(
+            nom=u'découpage', nom_pluriel=u'découpages')[0]
+        actes = CaracteristiqueDOeuvre.objects.get_or_create(type=decoupage,
+                                                             valeur=oeuvre[
+                                                                    'Actes'])[
+                0]
+        oeuvre_obj.caracteristiques.add(actes)
+        oeuvre_obj.save()
+        print oeuvre_obj
+    except KeyboardInterrupt:
+        return
+    except:
+        print 'Exception sur la %se ligne (œuvre %s)' % (i, titre)
+
+
 def run():
     oeuvres = list(
         csv.DictReader(open(DATA_FILENAME)))
     for i, oeuvre in enumerate(oeuvres):
-        titre = oeuvre['Titres principaux']
-        particule, titre = split_titre(titre)
-        try:
-            titre2 = oeuvre['Titres secondaires']
-            particule2, titre2 = split_titre(titre2)
-            coordination = ', ou ' if titre2 else ''
-            oeuvre_obj, oeuvre_obj_is_new = Oeuvre.objects.get_or_create(
-                prefixe_titre=particule, titre=titre, coordination=coordination,
-                prefixe_titre_secondaire=particule2, titre_secondaire=titre2)
-            if not oeuvre_obj_is_new:
-                continue
-                #    print oeuvre_obj
-            # TODO: Titres de la version originale à faire
-            compositeurs = oeuvre['Compositeurs']
-            build_auteurs(oeuvre_obj, compositeurs, 'compositeur')
-            librettistes = oeuvre['Librettistes']
-            build_auteurs(oeuvre_obj, librettistes, 'librettiste')
-            genre = GenreDOeuvre.objects.get_or_create(nom=oeuvre['Genres'])[0]
-            oeuvre_obj.genre = genre
-            decoupage = TypeDeCaracteristiqueDOeuvre.objects.get_or_create(
-                nom=u'découpage', nom_pluriel=u'découpages')[0]
-            actes = CaracteristiqueDOeuvre.objects.get_or_create(type=decoupage,
-                                                                 valeur=oeuvre[
-                                                                        'Actes'])[0]
-            oeuvre_obj.caracteristiques.add(actes)
-            oeuvre_obj.save()
-            print oeuvre_obj
-        except KeyboardInterrupt:
-            return
-        except:
-            print 'Exception sur la %se ligne (œuvre %s)' % (i, titre)
+        import_oeuvre(i, oeuvre)
