@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from .models import *
-from .forms import SourceForm
+from .forms import OeuvreForm, SourceForm
 from django.contrib.admin import site, TabularInline, StackedInline
 from django.contrib.admin.options import BaseModelAdmin
 from reversion import VersionAdmin
@@ -429,6 +429,7 @@ class ParenteDOeuvresAdmin(CustomAdmin):
 
 
 class OeuvreAdmin(CustomAdmin):
+    form = OeuvreForm
     list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre',
         'calc_caracteristiques', 'auteurs_html', 'ancrage_creation',
         'etat', 'link',)

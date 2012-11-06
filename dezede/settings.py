@@ -244,7 +244,11 @@ COMPRESS_OUTPUT_DIR = 'assets'
 AJAX_LOOKUP_CHANNELS = {
     'lieu': ('catalogue.lookups', 'LieuLookup'),
     'oeuvre': ('catalogue.lookups', 'OeuvreLookup'),
-    'source': ('catalogue.lookups', 'SourceNomLookup'),
+    'oeuvre__prefixe_titre': ('catalogue.lookups', 'OeuvrePrefixeTitreLookup'),
+    'oeuvre__coordination': ('catalogue.lookups', 'OeuvreCoordinationLookup'),
+    'oeuvre__prefixe_titre_secondaire': ('catalogue.lookups',
+                                         'OeuvrePrefixeTitreSecondaireLookup'),
+    'source__nom': ('catalogue.lookups', 'SourceNomLookup'),
 }
 AJAX_SELECT_BOOTSTRAP = True
 AJAX_SELECT_INLINES = 'inline'

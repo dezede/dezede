@@ -52,3 +52,18 @@ class CharFieldLookupChannel(LookupChannel):
 class SourceNomLookup(CharFieldLookupChannel):
     model = Source
     attr = 'nom'
+
+
+class OeuvrePrefixeTitreLookup(CharFieldLookupChannel):
+    model = Oeuvre
+    attr = 'prefixe_titre'
+
+
+class OeuvreCoordinationLookup(CharFieldLookupChannel):
+    model = Oeuvre
+    attr = 'coordination'
+
+
+class OeuvrePrefixeTitreSecondaireLookup(CharFieldLookupChannel):
+    model = Oeuvre
+    attr = 'prefixe_titre_secondaire'

@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from django.forms import ModelForm, Form, CharField, TextInput
-from .models import Source
+from .models import Oeuvre, Source
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, Fieldset
 from crispy_forms.bootstrap import FormActions
@@ -10,11 +10,27 @@ from ajax_select.fields import AutoCompleteSelectMultipleField, \
                                AutoCompleteWidget
 
 
+class OeuvreForm(ModelForm):
+    class Meta:
+        model = Oeuvre
+        widgets = {
+            'prefixe_titre': AutoCompleteWidget('oeuvre__prefixe_titre',
+                                            attrs={'style': 'width: 50px;'}),
+            'coordination': AutoCompleteWidget('oeuvre__coordination',
+                                            attrs={'style': 'width: 70px;'}),
+
+            'prefixe_titre_secondaire': AutoCompleteWidget(
+                                         'oeuvre__prefixe_titre_secondaire',
+                                         attrs={'style': 'width: 50px;'}),
+
+        }
+
+
 class SourceForm(ModelForm):
     class Meta:
         model = Source
         widgets = {
-            'nom': AutoCompleteWidget('source', attrs={'style': 'width: 600px;'}),
+            'nom': AutoCompleteWidget('source__nom', attrs={'style': 'width: 600px;'}),
             'numero': TextInput(attrs={'cols': 10}),
             'page': TextInput(attrs={'cols': 10}),
         }
