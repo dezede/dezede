@@ -45,7 +45,10 @@
     {% list_in_dl individu.publications 'html' %}
     {% list_in_dl individu.parents %}
     {% list_in_dl individu.enfants %}
-    {% include "catalogue/notes_def.html" with notes=individu.notes %}
+    {% attr_in_dl 'notes' %}
+
+    {% list_in_dl source.illustrations.all %}
+    {% list_in_dl source.documents.all %}
   </dl>
 
 {% endblock %}

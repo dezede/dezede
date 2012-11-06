@@ -55,7 +55,10 @@
 
   <dl class="dl-horizontal">
     {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
-    {% include "catalogue/notes_def.html" with notes=oeuvre.notes %}
+    {% attr_in_dl 'notes' %}
+
+    {% list_in_dl source.illustrations.all %}
+    {% list_in_dl source.documents.all %}
   </dl>
 
 {% endblock %}
