@@ -164,6 +164,9 @@ class Document(CustomModel):
             return self.nom
         return unicode(self.document)
 
+    def link(self):
+        return href(self.document.url, unicode(self))
+
     @staticmethod
     def autocomplete_search_fields():
         return ('nom__icontains', 'document__icontains',
