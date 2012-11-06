@@ -2,7 +2,6 @@ from ajax_select import LookupChannel
 from django.template.defaultfilters import removetags
 from .models import *
 from haystack.query import SearchQuerySet
-from django.db.models import Count
 
 
 def search_in_model(Model, qs, search_query):
