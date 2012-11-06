@@ -503,7 +503,7 @@ class EvenementAdmin(CustomAdmin):
     list_display = ('__unicode__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'etat', 'link',)
     list_editable = ('relache', 'circonstance', 'etat')
-    search_fields = ('circonstance',)
+    search_fields = ('circonstance', 'ancrage_debut__lieu__nom')
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
     raw_id_fields = ('ancrage_debut', 'ancrage_fin', 'documents',
@@ -554,8 +554,11 @@ class SourceAdmin(CustomAdmin):
     list_filter = ('type', 'nom', SourceHasEventsListFilter,
                    SourceHasProgramListFilter)
     raw_id_fields = ('evenements', 'documents', 'illustrations',)
+    related_lookup_fields = {
+        'm2m': ['evenements'],
+    }
     autocomplete_lookup_fields = {
-        'm2m': ['evenements', 'documents', 'illustrations'],
+        'm2m': ['documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html',)
     inlines = (AuteurInline,)
