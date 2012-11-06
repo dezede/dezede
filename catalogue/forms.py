@@ -3,15 +3,18 @@
 from django.forms import ModelForm, Form, CharField
 from .models import Source
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset
+from crispy_forms.layout import Layout, Submit, Field, Fieldset
 from crispy_forms.bootstrap import FormActions
 from django.utils.translation import ugettext_lazy as _
 from ajax_select.fields import AutoCompleteSelectMultipleField
+from ajax_select import make_ajax_field
 
 
 class SourceForm(ModelForm):
     class Meta:
         model = Source
+
+    nom = make_ajax_field(Source, 'nom', 'source')
 
 
 class EvenementListForm(Form):

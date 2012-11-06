@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from .models import *
+from .forms import SourceForm
 from django.contrib.admin import site, TabularInline, StackedInline
 from django.contrib.admin.options import BaseModelAdmin
 from reversion import VersionAdmin
@@ -542,6 +543,7 @@ class TypeDeSourceAdmin(CustomAdmin):
 
 
 class SourceAdmin(CustomAdmin):
+    form = SourceForm
     list_display = ('nom', 'date', 'type', 'has_events', 'has_program',
                     'owner', 'etat', 'link')
     list_editable = ('type', 'date', 'etat')

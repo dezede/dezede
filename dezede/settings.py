@@ -244,6 +244,7 @@ COMPRESS_OUTPUT_DIR = 'assets'
 AJAX_LOOKUP_CHANNELS = {
     'lieu': ('catalogue.lookups', 'LieuLookup'),
     'oeuvre': ('catalogue.lookups', 'OeuvreLookup'),
+    'source': ('catalogue.lookups', 'SourceNomLookup'),
 }
 AJAX_SELECT_BOOTSTRAP = True
 AJAX_SELECT_INLINES = 'inline'

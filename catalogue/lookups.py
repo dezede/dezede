@@ -37,3 +37,18 @@ class OeuvreLookup(LookupChannel):
 
     def check_auth(self,request):
         pass
+
+
+class CharFieldLookupChannel(LookupChannel):
+    attr = None
+
+    def get_query(self, q,request):
+        Model = self.model
+        attr = self.attr
+        return Model.objects.filter(**{attr + '__istartswith': q}) \
+                        .values_list(attr, flat=True).distinct().order_by(attr)
+
+
+class SourceNomLookup(CharFieldLookupChannel):
+    model = Source
+    attr = 'nom'
