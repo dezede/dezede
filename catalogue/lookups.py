@@ -2,6 +2,7 @@ from ajax_select import LookupChannel
 from django.template.defaultfilters import removetags
 from .models import *
 from haystack.query import SearchQuerySet
+from django.db.models import Count
 
 
 def search_in_model(Model, qs, search_query):
@@ -45,8 +46,14 @@ class CharFieldLookupChannel(LookupChannel):
     def get_query(self, q,request):
         Model = self.model
         attr = self.attr
-        return Model.objects.filter(**{attr + '__istartswith': q}) \
-                        .values_list(attr, flat=True).distinct().order_by(attr)
+        filters = {attr + '__istartswith': q}
+        all_results = Model.objects.filter(**filters) \
+                                   .values_list(attr, flat=True) \
+                                   .distinct().order_by(attr)
+        results = sorted(all_results,
+                       key=lambda r: Model.objects.filter(**{attr: r}).count())
+        results.reverse()
+        return results[:7]
 
 
 class SourceNomLookup(CharFieldLookupChannel):
