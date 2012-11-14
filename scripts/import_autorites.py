@@ -5,8 +5,11 @@ from django.template.defaultfilters import title
 from django.contrib.contenttypes.models import ContentType
 from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
     AncrageSpatioTemporel, GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
-    CaracteristiqueDOeuvre
+    CaracteristiqueDOeuvre, Lieu, NatureDeLieu
 from django.utils.encoding import smart_unicode
+from datetime import datetime
+from catalogue.templatetags.extras import multiword_replace
+from .routines import colored_print
 
 
 TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+'
@@ -16,6 +19,7 @@ INDIVIDU_FULL_RE = re.compile(r'^(?P<nom>[^,]+),\s+'
                               r'\((?P<dates>[^\)]+)\)$')
 PSEUDONYME_RE = re.compile(r'^(?P<prenoms>[^,]+),?\s+'
                            r'dit\s+(?P<pseudonyme>[^\)]+)$')
+
 
 def split_titre(titre):
     particule = ''
@@ -39,10 +43,10 @@ def notify_send(msg):
 def ask_for_choice(object, k, v, new_v):
     intro = 'Deux possibilités pour le champ %s de %s.' % (k, object)
     notify_send(intro)
-    print intro
-    print '1. %s (valeur actuelle)' % v
-    print '2. %s (valeur importable)' % new_v
-    print '3. Créer un nouvel objet'
+    colored_print(intro, 'yellow')
+    colored_print('1. %s (valeur actuelle)' % v, 'yellow')
+    colored_print('2. %s (valeur importable)' % new_v, 'yellow')
+    colored_print('3. Créer un nouvel objet', 'yellow')
     return raw_input('Que faire ? (par défaut 2) ')
 
 
@@ -52,7 +56,8 @@ def update_or_create(Model, unique_keys, **kwargs):
         object = Model.objects.get(**unique_kwargs)
     except Model.DoesNotExist:
         return Model.objects.create(**kwargs)
-    changed_kwargs = {k: smart_unicode(v) if isinstance(v, str or unicode) else v for k, v in kwargs.items()
+    changed_kwargs = {k: smart_unicode(v) if isinstance(v, str or unicode)
+                                          else v for k, v in kwargs.items()
                       if smart_unicode(getattr(object, k)) != smart_unicode(v)}
     if not changed_kwargs:
         return object
@@ -95,7 +100,8 @@ def build_individu(individu_str):
         if i.exists():
             assert len(i) == 1
             return i[0]
-        ancrage_naissance = AncrageSpatioTemporel.objects.create(date_approx=naissance)
+        ancrage_naissance = AncrageSpatioTemporel.objects.create(
+                                                         date_approx=naissance)
         ancrage_deces = AncrageSpatioTemporel.objects.create(date_approx=deces)
         individu = update_or_create(Individu, ['nom'],
                                     nom=nom, pseudonyme=pseudonyme,
@@ -123,10 +129,36 @@ def build_auteurs(oeuvre_obj, individus_str, nom_profession,
     if not individus:
         return
     for individu in individus:
-        aut = Auteur.objects.create(profession=profession, individu=individu,
-                                    content_type=Oeuvre_cti,
-                                    object_id=oeuvre_obj.id)
+        aut = Auteur.objects.get_or_create(profession=profession,
+                                           individu=individu,
+                                           content_type=Oeuvre_cti,
+                                           object_id=oeuvre_obj.id)[0]
         aut.clean()
+
+
+def build_ancrage(str, bindings):
+    ancrage_re = bindings['creation'][1]
+    match = ancrage_re.match(str)
+    lieux = [l.strip() for l in match.group('lieux').split(',') if l]
+    assert 1 <= len(lieux) <= 3
+    nature_noms = ['ville', 'institution', 'salle']
+    natures = [NatureDeLieu.objects.get_or_create(nom=s)[0]
+                                                          for s in nature_noms]
+    lieu = None
+    for i, lieu_nom in enumerate(lieux):
+        lieu = update_or_create(Lieu, ['nom'], nom=lieu_nom, nature=natures[i],
+                                parent=lieu)
+    date_str = match.group('date')
+    try:
+        date = datetime.strptime(date_str, '%d/%I/%Y')
+    except ValueError:
+        date_str = multiword_replace(date_str, {
+            'janvier': 'January', 'février': 'February', 'mars': 'March',
+            'avril': 'April', 'mai': 'May', 'juin': 'June', 'juillet': 'July',
+            'août': 'August', 'septembre': 'September', 'octobre': 'October',
+            'novembre': 'November', 'décembre': 'December'})
+        date = datetime.strptime(date_str, '%d %B %Y')
+    return AncrageSpatioTemporel.objects.get_or_create(lieu=lieu, date=date)[0]
 
 
 exceptions = []
@@ -136,10 +168,11 @@ def print_exception(i, titre, e, notify=False):
     msg = 'Exception sur la %se ligne (œuvre %s) : %s' % (i, titre, e)
     if notify:
         notify_send(msg)
-    print msg
+    colored_print(msg)
 
 
 def import_oeuvre(i, oeuvre, bindings):
+    # Titre :
     titre = oeuvre[bindings['titre']]
     particule, titre = split_titre(titre)
     try:
@@ -150,21 +183,33 @@ def import_oeuvre(i, oeuvre, bindings):
             prefixe_titre=particule, titre=titre, coordination=coordination,
             prefixe_titre_secondaire=particule2, titre_secondaire=titre2)
         # TODO: Titres de la version originale à faire
+        # Auteurs :
         for profession, profession_pluriel, auteurs_key in bindings['auteurs']:
             auteurs = oeuvre[auteurs_key]
             build_auteurs(oeuvre_obj, auteurs, profession, profession_pluriel)
+        # Genre :
         genre = GenreDOeuvre.objects.get_or_create(
-                                              nom=oeuvre[bindings['genre']])[0]
+                                      nom=oeuvre[bindings['genre']].strip())[0]
         oeuvre_obj.genre = genre
+        # Caractéristiques :
         for type_nom, type_nom_pluriel, caracteristique_key \
                                                in bindings['caracteristiques']:
-            type = TypeDeCaracteristiqueDOeuvre.objects.get_or_create(
-                                 nom=type_nom, nom_pluriel=type_nom_pluriel)[0]
+            type = update_or_create(TypeDeCaracteristiqueDOeuvre, ['nom'],
+                                    nom=type_nom, nom_pluriel=type_nom_pluriel)
             caracteristique = CaracteristiqueDOeuvre.objects.get_or_create(
                               type=type, valeur=oeuvre[caracteristique_key])[0]
             oeuvre_obj.caracteristiques.add(caracteristique)
+        # Ancrage de création :
+        creation_str = oeuvre[bindings['creation'][0]]
+        if creation_str:
+            try:
+                oeuvre_obj.ancrage_creation = build_ancrage(creation_str, bindings)
+            except:
+                colored_print('Impossible de parser la création de « %s »'
+                              % oeuvre_obj)
+        # [Sauvegarde] :
         oeuvre_obj.save()
-        print oeuvre_obj
+        colored_print(oeuvre_obj, 'green')
     except KeyboardInterrupt:
         raise KeyboardInterrupt
     except:
@@ -183,7 +228,6 @@ def import_csv_file(csv_file, bindings):
 def import_from_data_module(data_module):
     for csv_file in data_module.csv_files:
         import_csv_file(csv_file, data_module.bindings)
-
 
 
 def run():

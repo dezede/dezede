@@ -19,7 +19,7 @@ def stripchars(text):
     )
 
 
-def multiwordReplace(text, wordDic):
+def multiword_replace(text, wordDic):
     rc = re.compile('|'.join(map(re.escape, wordDic)))
 
     def translate(match):
@@ -30,7 +30,7 @@ def multiwordReplace(text, wordDic):
 
 @register.filter
 def replace(string):
-    return multiwordReplace(
+    return multiword_replace(
         string, {
             u"'": u'’',        u' :': u'\u00A0:', u' ;': u'\u00A0;',
             u' !': u'\u202F!', u' ?': u'\u202F?', u'« ': u'«\u00A0',
