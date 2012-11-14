@@ -11,11 +11,11 @@ from .routines import script_iterator
 
 CURRENT_PATH = os.path.dirname(__file__)
 
-DATA_FILENAME = os.path.join(CURRENT_PATH, 'data/{# destroyed from git history #}.csv')
+DATA_PATH = os.path.join(CURRENT_PATH, 'data')
 
-TITRE_RE = re.compile(r'^(.+)\s+\((.+)\)$')
-INDIVIDU_FULL_RE = re.compile(r'^(.+),\s+(.+)\s+\((.+)\)$')
-PSEUDONYME_RE = re.compile(r'^(.+),?\s+dit\s+(.+)$')
+TITRE_RE = re.compile(r'^([^\(]+)\s+\(([^\)]+)\)$')
+INDIVIDU_FULL_RE = re.compile(r'^([^,]+),\s+([^\(]+)\s+\(([^\)]+)\)$')
+PSEUDONYME_RE = re.compile(r'^([^,]+),?\s+dit\s+([^\)]+)$')
 
 def split_titre(titre):
     particule = ''
@@ -87,11 +87,18 @@ def build_auteurs(oeuvre_obj, individus_str, nom_profession,
         aut.clean()
 
 
-def import_oeuvre(i, oeuvre):
-    titre = oeuvre['Titres principaux']
+exceptions = []
+
+
+def print_exception(i, titre):
+    print 'Exception sur la %se ligne (œuvre %s)' % (i, titre)
+
+
+def import_oeuvre(i, oeuvre, bindings):
+    titre = oeuvre[bindings['titre']]
     particule, titre = split_titre(titre)
     try:
-        titre2 = oeuvre['Titres secondaires']
+        titre2 = oeuvre[bindings['titre_secondaire']]
         particule2, titre2 = split_titre(titre2)
         coordination = ', ou ' if titre2 else ''
         oeuvre_obj, oeuvre_obj_is_new = Oeuvre.objects.get_or_create(
@@ -101,29 +108,61 @@ def import_oeuvre(i, oeuvre):
             return
             #    print oeuvre_obj
         # TODO: Titres de la version originale à faire
-        compositeurs = oeuvre['Compositeurs']
-        build_auteurs(oeuvre_obj, compositeurs, 'compositeur')
-        librettistes = oeuvre['Librettistes']
-        build_auteurs(oeuvre_obj, librettistes, 'librettiste')
-        genre = GenreDOeuvre.objects.get_or_create(nom=oeuvre['Genres'])[0]
+        for profession, profession_pluriel, auteurs_key in bindings['auteurs']:
+            auteurs = oeuvre[auteurs_key]
+            build_auteurs(oeuvre_obj, auteurs, profession, profession_pluriel)
+        genre = GenreDOeuvre.objects.get_or_create(
+                                              nom=oeuvre[bindings['genre']])[0]
         oeuvre_obj.genre = genre
-        decoupage = TypeDeCaracteristiqueDOeuvre.objects.get_or_create(
-            nom=u'découpage', nom_pluriel=u'découpages')[0]
-        actes = CaracteristiqueDOeuvre.objects.get_or_create(type=decoupage,
-                                                             valeur=oeuvre[
-                                                                    'Actes'])[
-                0]
-        oeuvre_obj.caracteristiques.add(actes)
+        for type_nom, type_nom_pluriel, caracteristique_key \
+                                               in bindings['caracteristiques']:
+            type = TypeDeCaracteristiqueDOeuvre.objects.get_or_create(
+                                 nom=type_nom, nom_pluriel=type_nom_pluriel)[0]
+            caracteristique = CaracteristiqueDOeuvre.objects.get_or_create(
+                              type=type, valeur=oeuvre[caracteristique_key])[0]
+            oeuvre_obj.caracteristiques.add(caracteristique)
         oeuvre_obj.save()
         print oeuvre_obj
     except KeyboardInterrupt:
-        return
+        raise KeyboardInterrupt
     except:
-        print 'Exception sur la %se ligne (œuvre %s)' % (i, titre)
+
+        exceptions.append([i, titre])
+
+
+def import_csv_file(csv_filename, bindings):
+    csv_file = open(os.path.join(DATA_PATH, csv_filename))
+    oeuvres = list(csv.DictReader(csv_file))
+    for i, oeuvre in enumerate(oeuvres):
+        import_oeuvre(i, oeuvre, bindings)
 
 
 def run():
-    oeuvres = list(
-        csv.DictReader(open(DATA_FILENAME)))
-    for i, oeuvre in enumerate(oeuvres):
-        import_oeuvre(i, oeuvre)
+    bindings = {
+        'titre': 'Titres principaux',
+        'titre_secondaire': 'Titres secondaires',
+        'auteurs': [['compositeur', 'compositeurs', 'Compositeurs'],
+                    ['librettiste', 'librettistes', 'Librettistes']],
+        'genre': 'Genres',
+        'caracteristiques': [['découpage', 'découpages', 'Actes']],
+    }
+    import_csv_file('{# destroyed from git history #}.csv', bindings)
+
+    bindings = {
+        'titre': 'TP',
+        'titre_secondaire': 'TS',
+        'auteurs': [['compositeur', 'compositeurs',
+                     'Compositeur'],
+                    ['librettiste', 'librettistes',
+                     'Librettiste'],
+                    ['auteur dramatique', 'auteurs dramatiques',
+                     'Auteur dramatique'],
+                    ['adaptateur', 'adaptateurs', 'Adaptateur']],
+        'genre': 'Genre',
+        'caracteristiques': [['découpage', 'découpages', 'Acte']],
+    }
+    import_csv_file('{# destroyed from git history #}.csv', bindings)
+
+    print '\nRécapitulatif des exceptions :'
+    for i, titre in exceptions:
+        print_exception(i, titre)
