@@ -6,7 +6,6 @@ from django.contrib.contenttypes.models import ContentType
 from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
     AncrageSpatioTemporel, GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
     CaracteristiqueDOeuvre
-from .routines import script_iterator
 
 
 CURRENT_PATH = os.path.dirname(__file__)
@@ -126,7 +125,7 @@ def import_oeuvre(i, oeuvre, bindings):
     except KeyboardInterrupt:
         raise KeyboardInterrupt
     except:
-
+        print_exception(i, titre)
         exceptions.append([i, titre])
 
 
