@@ -9,10 +9,6 @@ from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
 from django.utils.encoding import smart_unicode
 
 
-CURRENT_PATH = os.path.dirname(__file__)
-
-DATA_PATH = os.path.join(CURRENT_PATH, 'data')
-
 TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+'
                       r'\((?P<particule>[^\)]+)\)$')
 INDIVIDU_FULL_RE = re.compile(r'^(?P<nom>[^,]+),\s+'
@@ -178,39 +174,19 @@ def import_oeuvre(i, oeuvre, bindings):
         exceptions.append([i, titre, e])
 
 
-def import_csv_file(csv_filename, bindings):
-    csv_file = open(os.path.join(DATA_PATH, csv_filename))
+def import_csv_file(csv_file, bindings):
     oeuvres = list(csv.DictReader(csv_file))
     for i, oeuvre in enumerate(oeuvres):
         import_oeuvre(i, oeuvre, bindings)
 
 
+def import_from_data_module(data_module):
+    for csv_file in data_module.csv_files:
+        import_csv_file(csv_file, data_module.bindings)
+
+
+
 def run():
-    bindings = {
-        'titre': 'Titres principaux',
-        'titre_secondaire': 'Titres secondaires',
-        'auteurs': [['compositeur', 'compositeurs', 'Compositeurs'],
-                    ['librettiste', 'librettistes', 'Librettistes']],
-        'genre': 'Genres',
-        'caracteristiques': [['découpage', 'découpages', 'Actes']],
-    }
-    import_csv_file('{# destroyed from git history #}.csv', bindings)
-
-    bindings = {
-        'titre': 'TP',
-        'titre_secondaire': 'TS',
-        'auteurs': [['compositeur', 'compositeurs',
-                     'Compositeur'],
-                    ['librettiste', 'librettistes',
-                     'Librettiste'],
-                    ['auteur dramatique', 'auteurs dramatiques',
-                     'Auteur dramatique'],
-                    ['adaptateur', 'adaptateurs', 'Adaptateur']],
-        'genre': 'Genre',
-        'caracteristiques': [['découpage', 'découpages', 'Acte']],
-    }
-    import_csv_file('{# destroyed from git history #}.csv', bindings)
-
-    print '\nRécapitulatif des exceptions :'
-    for i, titre, e in exceptions:
-        print_exception(i, titre, e)
+    from .data import data_modules
+    for data_module in data_modules:
+        import_from_data_module(data_module)
