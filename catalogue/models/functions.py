@@ -4,6 +4,7 @@ from django.template.defaultfilters import date, capfirst
 from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
 from django.utils.functional import allow_lazy
 from django.utils.safestring import mark_safe
+from django.utils.encoding import smart_unicode
 
 
 def date_html(d, tags=True, short=False):
@@ -128,7 +129,7 @@ def href(url, txt, tags=True):
     if not txt:
         return ''
     if tags:
-        return mark_safe(u'<a href="%s">%s</a>' % (url, txt))
+        return mark_safe(smart_unicode('<a href="%s">%s</a>' % (url, txt)))
     return txt
 
 

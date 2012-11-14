@@ -1,11 +1,12 @@
 # coding: utf-8
 
-import csv, re, os.path
+import csv, re, os.path, os
 from django.template.defaultfilters import title
 from django.contrib.contenttypes.models import ContentType
 from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
     AncrageSpatioTemporel, GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
     CaracteristiqueDOeuvre
+from django.utils.encoding import smart_unicode
 
 
 CURRENT_PATH = os.path.dirname(__file__)
@@ -31,6 +32,45 @@ def split_individus(individus):
     return individus.split(' ; ')
 
 
+def notify(msg):
+    os.system('notify-send "%s"' % msg)
+
+
+def ask_for_choice(object, k, v, new_v):
+    intro = 'Deux possibilités pour le champ %s de %s.' % (k, object)
+    notify(intro)
+    print intro
+    print '1. %s (valeur actuelle)' % v
+    print '2. %s (valeur importable)' % new_v
+    return raw_input('Que choisir ? (par défaut 2) ')
+
+
+def update_or_create(Model, unique_keys, **kwargs):
+    unique_kwargs = {k: kwargs[k] for k in unique_keys}
+    try:
+        object = Model.objects.get(**unique_kwargs)
+    except Model.DoesNotExist:
+        return Model.objects.create(**kwargs)
+    changed_kwargs = {k: smart_unicode(v) for k, v in kwargs.items()
+                                    if getattr(object, k) != smart_unicode(v)}
+    if not changed_kwargs:
+        return object
+    for k, new_v in changed_kwargs.items():
+        v = getattr(object, k)
+        if v:
+            setattr(object, k, new_v)
+        else:
+            while True:
+                choice = ask_for_choice(object, k, v, new_v)
+                if choice in ('2', ''):
+                    setattr(object, k, new_v)
+                    break
+                elif choice == '1':
+                    break
+    object.save()
+    return object
+
+
 def build_individu(individu_str):
     match = INDIVIDU_FULL_RE.match(individu_str)
     if match:
@@ -54,10 +94,10 @@ def build_individu(individu_str):
             return i[0]
         naissance = AncrageSpatioTemporel.objects.create(date_approx=naissance)
         deces = AncrageSpatioTemporel.objects.create(date_approx=deces)
-        individu = Individu.objects.get_or_create(nom=nom,
-                                                  pseudonyme=pseudonyme,
-                                                  ancrage_naissance=naissance,
-                                                  ancrage_deces=deces)[0]
+        individu = update_or_create(Individu, ['nom', 'ancrage_naissance'],
+                                    nom=nom, pseudonyme=pseudonyme,
+                                    ancrage_naissance=naissance,
+                                    ancrage_deces=deces)
         individu.prenoms.add(prenom)
         individu.save()
         return individu
@@ -100,12 +140,9 @@ def import_oeuvre(i, oeuvre, bindings):
         titre2 = oeuvre[bindings['titre_secondaire']]
         particule2, titre2 = split_titre(titre2)
         coordination = ', ou ' if titre2 else ''
-        oeuvre_obj, oeuvre_obj_is_new = Oeuvre.objects.get_or_create(
+        oeuvre_obj = update_or_create(Oeuvre, ['titre', 'titre_secondaire'],
             prefixe_titre=particule, titre=titre, coordination=coordination,
             prefixe_titre_secondaire=particule2, titre_secondaire=titre2)
-        if not oeuvre_obj_is_new:
-            return
-            #    print oeuvre_obj
         # TODO: Titres de la version originale à faire
         for profession, profession_pluriel, auteurs_key in bindings['auteurs']:
             auteurs = oeuvre[auteurs_key]
