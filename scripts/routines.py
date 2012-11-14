@@ -52,3 +52,19 @@ PRINT_COLORS = {
 
 def colored_print(msg, color='red'):
     print PRINT_COLORS[color] + smart_unicode(msg) + PRINT_COLORS['normal']
+
+
+def print_error(msg):
+    colored_print(msg, color='red')
+
+
+def print_warning(msg):
+    colored_print(msg, color='yellow')
+
+
+def print_success(msg):
+    colored_print(msg, color='green')
+
+
+def print_info(msg):
+    colored_print(msg, color='blue')

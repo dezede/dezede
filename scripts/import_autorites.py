@@ -9,7 +9,7 @@ from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
 from django.utils.encoding import smart_unicode
 from datetime import datetime
 from catalogue.templatetags.extras import multiword_replace
-from .routines import colored_print
+from .routines import print_error, print_success, print_warning, print_info
 
 
 TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+'
@@ -43,10 +43,10 @@ def notify_send(msg):
 def ask_for_choice(object, k, v, new_v):
     intro = 'Deux possibilités pour le champ %s de %s.' % (k, object)
     notify_send(intro)
-    colored_print(intro, 'yellow')
-    colored_print('1. %s (valeur actuelle)' % v, 'yellow')
-    colored_print('2. %s (valeur importable)' % new_v, 'yellow')
-    colored_print('3. Créer un nouvel objet', 'yellow')
+    print_info(intro)
+    print_info('1. %s (valeur actuelle)' % v)
+    print_info('2. %s (valeur importable)' % new_v)
+    print_info('3. Créer un nouvel objet')
     return raw_input('Que faire ? (par défaut 2) ')
 
 
@@ -168,7 +168,7 @@ def print_exception(i, titre, e, notify=False):
     msg = 'Exception sur la %se ligne (œuvre %s) : %s' % (i, titre, e)
     if notify:
         notify_send(msg)
-    colored_print(msg)
+    print_error(msg)
 
 
 def import_oeuvre(i, oeuvre, bindings):
@@ -203,13 +203,14 @@ def import_oeuvre(i, oeuvre, bindings):
         creation_str = oeuvre[bindings['creation'][0]]
         if creation_str:
             try:
-                oeuvre_obj.ancrage_creation = build_ancrage(creation_str, bindings)
+                oeuvre_obj.ancrage_creation = build_ancrage(creation_str,
+                                                            bindings)
             except:
-                colored_print('Impossible de parser la création de « %s »'
+                print_warning('Impossible de parser la création de « %s »'
                               % oeuvre_obj)
         # [Sauvegarde] :
         oeuvre_obj.save()
-        colored_print(oeuvre_obj, 'green')
+        print_success(oeuvre_obj)
     except KeyboardInterrupt:
         raise KeyboardInterrupt
     except:
