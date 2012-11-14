@@ -13,9 +13,13 @@ CURRENT_PATH = os.path.dirname(__file__)
 
 DATA_PATH = os.path.join(CURRENT_PATH, 'data')
 
-TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+\((?P<particule>[^\)]+)\)$')
-INDIVIDU_FULL_RE = re.compile(r'^(?P<nom>[^,]+),\s+(?P<prenoms>[^\(]+)\s+\((?P<dates>[^\)]+)\)$')
-PSEUDONYME_RE = re.compile(r'^(?P<prenoms>[^,]+),?\s+dit\s+(?P<pseudonyme>[^\)]+)$')
+TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+'
+                      r'\((?P<particule>[^\)]+)\)$')
+INDIVIDU_FULL_RE = re.compile(r'^(?P<nom>[^,]+),\s+'
+                              r'(?P<prenoms>[^\(]+)\s+'
+                              r'\((?P<dates>[^\)]+)\)$')
+PSEUDONYME_RE = re.compile(r'^(?P<prenoms>[^,]+),?\s+'
+                           r'dit\s+(?P<pseudonyme>[^\)]+)$')
 
 def split_titre(titre):
     particule = ''
@@ -52,8 +56,8 @@ def update_or_create(Model, unique_keys, **kwargs):
         object = Model.objects.get(**unique_kwargs)
     except Model.DoesNotExist:
         return Model.objects.create(**kwargs)
-    changed_kwargs = {k: v for k, v in kwargs.items()
-                                    if smart_unicode(getattr(object, k)) != smart_unicode(v)}
+    changed_kwargs = {k: smart_unicode(v) if isinstance(v, str or unicode) else v for k, v in kwargs.items()
+                      if smart_unicode(getattr(object, k)) != smart_unicode(v)}
     if not changed_kwargs:
         return object
     for k, new_v in changed_kwargs.items():
