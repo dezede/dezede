@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import csv, re, os.path, os
+import csv, re, os.path, os, sys
 from django.template.defaultfilters import title
 from django.contrib.contenttypes.models import ContentType
 from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
@@ -32,17 +32,18 @@ def split_individus(individus):
     return individus.split(' ; ')
 
 
-def notify(msg):
+def notify_send(msg):
     os.system('notify-send "%s"' % msg)
 
 
 def ask_for_choice(object, k, v, new_v):
     intro = 'Deux possibilités pour le champ %s de %s.' % (k, object)
-    notify(intro)
+    notify_send(intro)
     print intro
     print '1. %s (valeur actuelle)' % v
     print '2. %s (valeur importable)' % new_v
-    return raw_input('Que choisir ? (par défaut 2) ')
+    print '3. Créer un nouvel objet'
+    return raw_input('Que faire ? (par défaut 2) ')
 
 
 def update_or_create(Model, unique_keys, **kwargs):
@@ -51,8 +52,8 @@ def update_or_create(Model, unique_keys, **kwargs):
         object = Model.objects.get(**unique_kwargs)
     except Model.DoesNotExist:
         return Model.objects.create(**kwargs)
-    changed_kwargs = {k: smart_unicode(v) for k, v in kwargs.items()
-                                    if getattr(object, k) != smart_unicode(v)}
+    changed_kwargs = {k: v for k, v in kwargs.items()
+                                    if smart_unicode(getattr(object, k)) != smart_unicode(v)}
     if not changed_kwargs:
         return object
     for k, new_v in changed_kwargs.items():
@@ -65,6 +66,8 @@ def update_or_create(Model, unique_keys, **kwargs):
                 if choice in ('2', ''):
                     setattr(object, k, new_v)
                     break
+                elif choice == '3':
+                    return Model.objects.create(**kwargs)
                 elif choice == '1':
                     break
     object.save()
@@ -92,12 +95,12 @@ def build_individu(individu_str):
         if i.exists():
             assert len(i) == 1
             return i[0]
-        naissance = AncrageSpatioTemporel.objects.create(date_approx=naissance)
-        deces = AncrageSpatioTemporel.objects.create(date_approx=deces)
-        individu = update_or_create(Individu, ['nom', 'ancrage_naissance'],
+        ancrage_naissance = AncrageSpatioTemporel.objects.create(date_approx=naissance)
+        ancrage_deces = AncrageSpatioTemporel.objects.create(date_approx=deces)
+        individu = update_or_create(Individu, ['nom'],
                                     nom=nom, pseudonyme=pseudonyme,
-                                    ancrage_naissance=naissance,
-                                    ancrage_deces=deces)
+                                    ancrage_naissance=ancrage_naissance,
+                                    ancrage_deces=ancrage_deces)
         individu.prenoms.add(prenom)
         individu.save()
         return individu
@@ -129,8 +132,11 @@ def build_auteurs(oeuvre_obj, individus_str, nom_profession,
 exceptions = []
 
 
-def print_exception(i, titre):
-    print 'Exception sur la %se ligne (œuvre %s)' % (i, titre)
+def print_exception(i, titre, e, notify=False):
+    msg = 'Exception sur la %se ligne (œuvre %s) : %s' % (i, titre, e)
+    if notify:
+        notify_send(msg)
+    print msg
 
 
 def import_oeuvre(i, oeuvre, bindings):
@@ -162,8 +168,10 @@ def import_oeuvre(i, oeuvre, bindings):
     except KeyboardInterrupt:
         raise KeyboardInterrupt
     except:
-        print_exception(i, titre)
-        exceptions.append([i, titre])
+        e = sys.exc_info()
+        sys.excepthook(*e)
+        print_exception(i, titre, e, notify=True)
+        exceptions.append([i, titre, e])
 
 
 def import_csv_file(csv_filename, bindings):
@@ -200,5 +208,5 @@ def run():
     import_csv_file('{# destroyed from git history #}.csv', bindings)
 
     print '\nRécapitulatif des exceptions :'
-    for i, titre in exceptions:
-        print_exception(i, titre)
+    for i, titre, e in exceptions:
+        print_exception(i, titre, e)
