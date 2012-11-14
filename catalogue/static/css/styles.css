@@ -279,7 +279,7 @@ input, button {
 ul.ui-autocomplete li a, .results_on_deck > div {
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 220px;
+  border: 1px solid transparent;
   white-space: nowrap;
 }
 
