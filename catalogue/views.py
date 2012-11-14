@@ -7,7 +7,7 @@ from .forms import *
 from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 from django_tables2 import SingleTableView
 from haystack.query import SearchQuerySet
-from django.http import QueryDict
+from django.db.models import get_model
 
 
 class SourceDetailView(DetailView):
@@ -28,7 +28,12 @@ def get_filters(bindings, data):
     for key, value in data.iteritems():
         if value and key in bindings:
             if '|' in value:
-                value = [int(pk) for pk in value.split('|') if pk]
+                Model = get_model('catalogue', key)
+                value = [Model.objects.get(pk=pk) for pk in value.split('|') if pk]
+                for object in value:
+                    get_descendants = getattr(object, 'get_descendants')
+                    if get_descendants:
+                        value.extend(get_descendants())
             if value:
                 filters[bindings[key]] = value
     return filters
@@ -57,11 +62,11 @@ class EvenementListView(AjaxListView):
                 pk_list = sqs.values_list('pk', flat=True)
                 qs = qs.filter(pk__in=pk_list)
             bindings = {
-              'lieu': 'ancrage_debut__lieu__pk__in',
+              'lieu': 'ancrage_debut__lieu__in',
               'annee': 'ancrage_debut__date__year',
               'mois': 'ancrage_debut__date__month',
               'jour': 'ancrage_debut__date__day',
-              'oeuvre': 'programme__oeuvre__pk__in',
+              'oeuvre': 'programme__oeuvre__in',
             }
             filters = get_filters(bindings, data)
             return qs.filter(**filters).distinct()
