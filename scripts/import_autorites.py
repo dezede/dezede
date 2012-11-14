@@ -13,16 +13,16 @@ CURRENT_PATH = os.path.dirname(__file__)
 
 DATA_PATH = os.path.join(CURRENT_PATH, 'data')
 
-TITRE_RE = re.compile(r'^([^\(]+)\s+\(([^\)]+)\)$')
-INDIVIDU_FULL_RE = re.compile(r'^([^,]+),\s+([^\(]+)\s+\(([^\)]+)\)$')
-PSEUDONYME_RE = re.compile(r'^([^,]+),?\s+dit\s+([^\)]+)$')
+TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+\((?P<particule>[^\)]+)\)$')
+INDIVIDU_FULL_RE = re.compile(r'^(?P<nom>[^,]+),\s+(?P<prenoms>[^\(]+)\s+\((?P<dates>[^\)]+)\)$')
+PSEUDONYME_RE = re.compile(r'^(?P<prenoms>[^,]+),?\s+dit\s+(?P<pseudonyme>[^\)]+)$')
 
 def split_titre(titre):
     particule = ''
     match = TITRE_RE.match(titre)
     if match:
-        particule = match.group(2)
-        titre = match.group(1)
+        particule = match.group('particule')
+        titre = match.group('titre')
         if particule[-1] not in "'’":
             particule += ' '
     return particule, titre
@@ -77,14 +77,14 @@ def update_or_create(Model, unique_keys, **kwargs):
 def build_individu(individu_str):
     match = INDIVIDU_FULL_RE.match(individu_str)
     if match:
-        nom = title(match.group(1))
+        nom = title(match.group('nom'))
         pseudonyme = ''
-        prenom = match.group(2)
-        dates = match.group(3)
+        prenom = match.group('prenoms')
+        dates = match.group('dates')
         match_pseudonyme = PSEUDONYME_RE.match(prenom)
         if match_pseudonyme:
-            prenom = match_pseudonyme.group(1)
-            pseudonyme = match_pseudonyme.group(2)
+            prenom = match_pseudonyme.group('prenoms')
+            pseudonyme = match_pseudonyme.group('pseudonyme')
         prenom = Prenom.objects.get_or_create(prenom=prenom)[0]
 
         naissance, deces = dates.split('-')
