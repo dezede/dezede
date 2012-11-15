@@ -31,9 +31,8 @@ def get_filters(bindings, data):
                 Model = get_model('catalogue', key)
                 value = [Model.objects.get(pk=pk) for pk in value.split('|') if pk]
                 for object in value:
-                    get_descendants = getattr(object, 'get_descendants')
-                    if get_descendants:
-                        value.extend(get_descendants())
+                    if hasattr(object, 'get_descendants'):
+                        value.extend(object.get_descendants())
             if value:
                 filters[bindings[key]] = value
     return filters
