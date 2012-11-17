@@ -8,6 +8,7 @@ from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 from django_tables2 import SingleTableView
 from haystack.query import SearchQuerySet
 from django.db.models import get_model
+from datetime import date
 
 
 class SourceDetailView(DetailView):
@@ -68,7 +69,13 @@ class EvenementListView(AjaxListView):
               'oeuvre': 'programme__oeuvre__in',
             }
             filters = get_filters(bindings, data)
-            return qs.filter(**filters).distinct()
+            qs = qs.filter(**filters).distinct()
+            try:
+                start, end = int(data.get('dates_0')), int(data.get('dates_1'))
+                qs = qs.filter(ancrage_debut__date__gte=date(start, 1, 1),
+                               ancrage_debut__date__lte=date(end, 12, 31))
+            except TypeError:
+                pass
         return qs
 
     def get_context_data(self, **kwargs):

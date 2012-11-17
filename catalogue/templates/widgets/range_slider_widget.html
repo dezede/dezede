@@ -1,0 +1,36 @@
+{% load static %}
+
+{#<link rel="stylesheet" type="text/css"#}
+{#      href="{% static 'css/custom-theme/jquery-ui-1.8.16.custom.css' %}">#}
+{#<script src="{% static 'js/jquery-1.6.2.min.js' %}"></script>#}
+{#<script src="{% static 'js/jquery-ui-1.8.16.custom.min.js' %}"></script>#}
+
+
+<div style="text-align: center;">
+<input type="text" name="{{ name }}_0" id="id_{{ name }}_0" value="{{ start }}" class="span3" />
+⁻
+<input type="text" name="{{ name }}_1" id="id_{{ name }}_1" value="{{ end }}" class="span3" />
+</div>
+<div id="id_{{ name }}_slider-range"></div>
+
+<script>
+  $(function() {
+    var slider_div = $("#id_{{ name }}_slider-range");
+    var slider_start = $("#id_{{ name }}_0");
+    var slider_end = $("#id_{{ name }}_1");
+    slider_div.slider({
+      range: true,
+      min: {{ min }},
+      max: {{ max }},
+      values: [{{ start }}, {{ end }}],
+      slide: function(event, ui) {
+        slider_start.val(ui.values[0]);
+        slider_end.val(ui.values[1]);
+      }
+    });
+    {% if not value %}
+      slider_start.val(slider_div.slider("values", 0));
+      slider_end.val(slider_div.slider("values", 1));
+    {% endif %}
+  });
+</script>

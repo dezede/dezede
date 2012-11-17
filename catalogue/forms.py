@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from django.forms import ModelForm, Form, CharField, TextInput
+from django.forms import ModelForm, Form, CharField, TextInput, MultiValueField, SplitDateTimeWidget, SplitDateTimeField
 from .models import Oeuvre, Source
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, Fieldset
@@ -8,6 +8,7 @@ from crispy_forms.bootstrap import FormActions
 from django.utils.translation import ugettext_lazy as _
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
                                AutoCompleteWidget
+from .fields import RangeSliderField
 
 
 class OeuvreForm(ModelForm):
@@ -38,6 +39,7 @@ class SourceForm(ModelForm):
 
 class EvenementListForm(Form):
     q = CharField(label=_('Recherche libre'), required=False)
+    dates = RangeSliderField(required=False)
     lieu = AutoCompleteSelectMultipleField('lieu', label=_('Lieu'),
                                            required=False, help_text='')
     oeuvre = AutoCompleteSelectMultipleField('oeuvre', required=False,
@@ -50,7 +52,7 @@ class EvenementListForm(Form):
         self.helper.layout = Layout(
             Fieldset(
                 _('Filtres'),
-                Field('q', 'lieu', 'oeuvre', css_class='span12'),
+                Field('q', 'dates', 'lieu', 'oeuvre', css_class='span12'),
             ),
             FormActions(
                 Submit('', _('Filtrer'), css_class='btn-primary span12'),
