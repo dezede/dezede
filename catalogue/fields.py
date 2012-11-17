@@ -16,7 +16,7 @@ class RangeSliderWidget(MultiWidget):
         else:
             min, max = 1600, 2012
         if value == [None, None]:
-            value = (1800, 1900)
+            value = (min, max)
         start, end = value
         t = 'widgets/range_slider_widget.html'
         return render_to_string(t, locals())
