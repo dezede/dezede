@@ -439,7 +439,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         # FIXME: Nettoyer cette horreur
         out = ''
         auts = self.auteurs_html(tags)
-        pars = self.calc_parentes(tags)
+#        pars = self.calc_parentes(tags)
         titre_complet = self.titre_complet()
         genre = self.genre
         caracteristiques = self.calc_caracteristiques(tags=tags)
