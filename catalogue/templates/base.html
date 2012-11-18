@@ -31,14 +31,12 @@
       <script src="{% static 'js/bootstrap.min.js' %}"></script>
       <script src="{% static 'js/jquery.query.js' %}"></script>
       <script src="{% static 'js/jquery.cookie.js' %}"></script>
-      <script>
-        {% include 'base.js' %}
-      </script>
     {% endcompress %}
     {# À part à cause d'une importation de CSS dans ce JS #}
     <script src="{% static 'js/jquery.jstree.js' %}"></script>
-
-    {% render_block 'js' postprocessor "dezede.postprocess_sekizai.compress" %}
+    <script>
+      {% include 'base.definitions.js' %}
+    </script>
 
   </head>
 
@@ -52,6 +50,11 @@
       {% endautoescape %}
 
     </div>
+
+    <script>
+      {% include 'base.execution.js' %}
+    </script>
+    {% render_block 'js' postprocessor "dezede.postprocess_sekizai.compress" %}
 
   </body>
 

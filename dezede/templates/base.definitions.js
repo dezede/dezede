@@ -26,7 +26,6 @@ tooltips_reload = function() {
     tooltips_disable();
   }
 };
-tooltips_reload();
 
 tooltips_reset = function() {tooltips_disable(); tooltips_enable();};
 tooltips_placement = function(dir) {
@@ -34,8 +33,3 @@ tooltips_placement = function(dir) {
   tooltips_reset();
 };
 {# Fin de la gestion des tooltips #}
-
-
-{# Gestion des cadres d’alerte #}
-$('.alert').alert();
-{# Fin de la gestion des cadres d’alerte #}
