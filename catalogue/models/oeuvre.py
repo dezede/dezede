@@ -447,8 +447,9 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         if auteurs and auts:
             out += auts + ', '
         if titre:
-            if parentes and pars:
-                out += pars + ', '
+#            FIXME: À restaurer quand le modèle d'œuvre sera récursif.
+#            if parentes and pars:
+#                out += pars + ', '
             if titre_complet:
                 out += href(url, cite(titre_complet, tags), tags)
                 if descr and genre:
