@@ -63,9 +63,6 @@ class EvenementListView(AjaxListView):
                 qs = qs.filter(pk__in=pk_list)
             bindings = {
               'lieu': 'ancrage_debut__lieu__in',
-              'annee': 'ancrage_debut__date__year',
-              'mois': 'ancrage_debut__date__month',
-              'jour': 'ancrage_debut__date__day',
               'oeuvre': 'programme__oeuvre__in',
             }
             filters = get_filters(bindings, data)

@@ -12,7 +12,7 @@
 {% regroup evenements by ancrage_debut.date.year as year_list %}
 {% for year in year_list %}
   <dd>
-    <a href="{% url 'evenements' %}?{{ object.class_name|lower }}=|{{ object.pk }}|&annee={{ year.grouper }}">
+    <a href="{% url 'evenements' %}?{{ object.class_name|lower }}=|{{ object.pk }}|&dates_0={{ year.grouper }}&dates_1={{ year.grouper }}">
       {% if year.list|length_is:1 %}
         {% if lieu %}
           {{ year.list.0.ancrage_debut.calc_moment|capfirst }}
