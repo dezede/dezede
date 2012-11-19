@@ -138,7 +138,8 @@ def import_oeuvre(i, oeuvre, bindings):
         creation_str = oeuvre[bindings['creation'][0]]
         if creation_str:
             try:
-                oeuvre_obj.ancrage_creation = build_ancrage(creation_str)
+                oeuvre_obj.ancrage_creation = build_ancrage(
+                                creation_str.split(bindings['creation'][1])[0])
             except:
                 print_warning('Impossible de parser la création de « %s »'
                               % oeuvre_obj)
