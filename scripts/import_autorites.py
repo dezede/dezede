@@ -141,7 +141,7 @@ def build_auteurs(oeuvre_obj, individus_str, nom_profession,
 
 def build_ancrage(str, bindings):
     ancrage_re = bindings['creation'][1]
-    match = ancrage_re.match(str)
+    match = ancrage_re.match(str.split(' // ')[0])
     lieux = [l.strip() for l in match.group('lieux').split(',') if l]
     assert 1 <= len(lieux) <= 3
     nature_noms = ['ville', 'institution', 'salle']
