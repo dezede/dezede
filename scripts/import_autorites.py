@@ -84,30 +84,33 @@ def build_individu(individu_str):
     if match:
         nom = title(match.group('nom'))
         pseudonyme = ''
-        prenom = match.group('prenoms')
+        prenom_str = match.group('prenoms')
         dates = match.group('dates')
-        match_pseudonyme = PSEUDONYME_RE.match(prenom)
+        match_pseudonyme = PSEUDONYME_RE.match(prenom_str)
         if match_pseudonyme:
-            prenom = match_pseudonyme.group('prenoms')
+            prenom_str = match_pseudonyme.group('prenoms')
             pseudonyme = match_pseudonyme.group('pseudonyme')
-        prenom = Prenom.objects.get_or_create(prenom=prenom)[0]
+        prenom_strs = [p for p in prenom_str.split() if p]
+        prenoms = [Prenom.objects.get_or_create(prenom=prenom_str)[0]
+                   for prenom_str in prenom_strs]
 
         naissance, deces = dates.split('-')
-        i = Individu.objects.filter(nom=nom, prenoms=prenom,
+        i = Individu.objects.filter(nom=nom, prenoms__in=prenoms,
                                     pseudonyme=pseudonyme,
                                     ancrage_naissance__date_approx=naissance,
-                                    ancrage_deces__date_approx=deces)
+                                    ancrage_deces__date_approx=deces).distinct()
         if i.exists():
-            assert len(i) == 1
+            assert i.count() == 1
             return i[0]
         ancrage_naissance = AncrageSpatioTemporel.objects.create(
                                                          date_approx=naissance)
         ancrage_deces = AncrageSpatioTemporel.objects.create(date_approx=deces)
-        individu = update_or_create(Individu, ['nom'],
+        individu = update_or_create(Individu, ['nom', 'ancrage_naissance',
+                                               'ancrage_deces'],
                                     nom=nom, pseudonyme=pseudonyme,
                                     ancrage_naissance=ancrage_naissance,
                                     ancrage_deces=ancrage_deces)
-        individu.prenoms.add(prenom)
+        individu.prenoms.add(*prenoms)
         individu.save()
         return individu
 
@@ -158,7 +161,7 @@ def build_ancrage(str, bindings):
             'août': 'August', 'septembre': 'September', 'octobre': 'October',
             'novembre': 'November', 'décembre': 'December'})
         date = datetime.strptime(date_str, '%d %B %Y')
-    return AncrageSpatioTemporel.objects.get_or_create(lieu=lieu, date=date)[0]
+    return AncrageSpatioTemporel.objects.create(lieu=lieu, date=date)
 
 
 exceptions = []
