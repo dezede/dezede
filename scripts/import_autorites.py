@@ -1,15 +1,15 @@
 # coding: utf-8
 
-import csv, re, os.path, os, sys
+import csv, re, sys
 from django.template.defaultfilters import title
 from django.contrib.contenttypes.models import ContentType
 from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
     AncrageSpatioTemporel, GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
-    CaracteristiqueDOeuvre, Lieu, NatureDeLieu
-from django.utils.encoding import smart_unicode
-from datetime import datetime
-from catalogue.templatetags.extras import multiword_replace
-from .routines import print_error, print_success, print_warning, print_info
+    CaracteristiqueDOeuvre
+from catalogue.api import build_ancrage
+from catalogue.api.models.utils import update_or_create
+from catalogue.api.utils import notify_send
+from .routines import print_error, print_success, print_warning
 
 
 TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+'
@@ -34,49 +34,6 @@ def split_titre(titre):
 
 def split_individus(individus):
     return individus.split(' ; ')
-
-
-def notify_send(msg):
-    os.system('notify-send "%s"' % msg)
-
-
-def ask_for_choice(object, k, v, new_v):
-    intro = 'Deux possibilités pour le champ %s de %s.' % (k, object)
-    notify_send(intro)
-    print_info(intro)
-    print_info('1. %s (valeur actuelle)' % v)
-    print_info('2. %s (valeur importable)' % new_v)
-    print_info('3. Créer un nouvel objet')
-    return raw_input('Que faire ? (par défaut 2) ')
-
-
-def update_or_create(Model, unique_keys, **kwargs):
-    unique_kwargs = {k: kwargs[k] for k in unique_keys}
-    try:
-        object = Model.objects.get(**unique_kwargs)
-    except Model.DoesNotExist:
-        return Model.objects.create(**kwargs)
-    changed_kwargs = {k: smart_unicode(v) if isinstance(v, str or unicode)
-                                          else v for k, v in kwargs.items()
-                      if smart_unicode(getattr(object, k)) != smart_unicode(v)}
-    if not changed_kwargs:
-        return object
-    for k, new_v in changed_kwargs.items():
-        v = getattr(object, k)
-        if v:
-            setattr(object, k, new_v)
-        else:
-            while True:
-                choice = ask_for_choice(object, k, v, new_v)
-                if choice in ('2', ''):
-                    setattr(object, k, new_v)
-                    break
-                elif choice == '3':
-                    return Model.objects.create(**kwargs)
-                elif choice == '1':
-                    break
-    object.save()
-    return object
 
 
 def build_individu(individu_str):
@@ -139,31 +96,6 @@ def build_auteurs(oeuvre_obj, individus_str, nom_profession,
         aut.clean()
 
 
-def build_ancrage(str, bindings):
-    ancrage_re = bindings['creation'][1]
-    match = ancrage_re.match(str.split(' // ')[0])
-    lieux = [l.strip() for l in match.group('lieux').split(',') if l]
-    assert 1 <= len(lieux) <= 3
-    nature_noms = ['ville', 'institution', 'salle']
-    natures = [NatureDeLieu.objects.get_or_create(nom=s)[0]
-                                                          for s in nature_noms]
-    lieu = None
-    for i, lieu_nom in enumerate(lieux):
-        lieu = update_or_create(Lieu, ['nom'], nom=lieu_nom, nature=natures[i],
-                                parent=lieu)
-    date_str = match.group('date')
-    try:
-        date = datetime.strptime(date_str, '%d/%I/%Y')
-    except ValueError:
-        date_str = multiword_replace(date_str, {
-            'janvier': 'January', 'février': 'February', 'mars': 'March',
-            'avril': 'April', 'mai': 'May', 'juin': 'June', 'juillet': 'July',
-            'août': 'August', 'septembre': 'September', 'octobre': 'October',
-            'novembre': 'November', 'décembre': 'December'})
-        date = datetime.strptime(date_str, '%d %B %Y')
-    return AncrageSpatioTemporel.objects.create(lieu=lieu, date=date)
-
-
 exceptions = []
 
 
@@ -206,8 +138,7 @@ def import_oeuvre(i, oeuvre, bindings):
         creation_str = oeuvre[bindings['creation'][0]]
         if creation_str:
             try:
-                oeuvre_obj.ancrage_creation = build_ancrage(creation_str,
-                                                            bindings)
+                oeuvre_obj.ancrage_creation = build_ancrage(creation_str)
             except:
                 print_warning('Impossible de parser la création de « %s »'
                               % oeuvre_obj)
