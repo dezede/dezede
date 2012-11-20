@@ -11,7 +11,8 @@
       </a>
       <a href="/" class="brand nav"><img src="{% static 'images/logo.svg' %}"
                                         style="width: 60px; height: 30px;"
-                                        alt="Dezède"/></a>
+                                        alt="Dezède"/>
+        <span style="font-size: 14px; vertical-align: middle;">βετα</span></a>
       <div class="nav-collapse">
 
         <ul class="nav">
@@ -26,7 +27,8 @@
             <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
           </li>
           <li class="dropdown">
-            <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="">
+            <a class="dropdown-toggle" id="dLabel" role="button"
+               data-toggle="dropdown" data-target="#" href="">
               {% trans "Autorités" %}
               <b class="caret"></b>
             </a>
