@@ -29,7 +29,7 @@
 }
 
 html {
-  background: #B82819 url("/static/damasse.png") fixed;
+  background: #B82819 url(images/damasse.png) fixed;
   overflow-y: scroll;
 }
 
