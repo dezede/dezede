@@ -50,14 +50,11 @@ class EvenementListForm(Form):
         self.helper.form_method = 'GET'
         self.helper.form_class = 'well'
         self.helper.layout = Layout(
-            Fieldset(
-                _('Filtres'),
-                Field('q', 'dates', 'lieu', 'oeuvre', css_class='span12'),
-            ),
-            FormActions(
-                Submit('', _('Filtrer'), css_class='btn-primary span12'),
-            ),
+            Field('q', 'dates', 'lieu', 'oeuvre', css_class='span12'),
+            Submit('', _('Filtrer'), css_class='btn-primary span12'),
         )
         super(EvenementListForm, self).__init__(*args, **kwargs)
         for key in ('q', 'lieu', 'oeuvre'):
-            self.fields[key].widget.attrs['placeholder'] = _(u'Tapez ici…')
+            field = self.fields[key]
+            field.widget.attrs['placeholder'] = field.label + '...'
+            field.label = ''
