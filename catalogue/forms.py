@@ -47,7 +47,7 @@ class EvenementListForm(Form):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_method = 'GET'
-        self.helper.form_class = 'well'
+        self.helper.form_class = 'well well-small'
         self.helper.layout = Layout(
             Field('q', 'dates', HTML('<hr/>'), 'lieu', 'oeuvre',
                   css_class='span12'),
