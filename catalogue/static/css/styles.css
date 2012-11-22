@@ -289,6 +289,14 @@ ul.ui-autocomplete li a, .results_on_deck > div {
   bottom: 120px;
 }
 
+form .results_on_deck {
+  padding: 0;
+}
+
+form .results_on_deck>div {
+  margin: 0;
+}
+
 .tooltip-inner {
   font-size: 16px;
   line-height: 22px;

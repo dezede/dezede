@@ -3,8 +3,7 @@
 from django.forms import ModelForm, Form, CharField, TextInput, MultiValueField, SplitDateTimeWidget, SplitDateTimeField
 from .models import Oeuvre, Source
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Field, Fieldset
-from crispy_forms.bootstrap import FormActions
+from crispy_forms.layout import Layout, Submit, Field, HTML
 from django.utils.translation import ugettext_lazy as _
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
                                AutoCompleteWidget
@@ -50,11 +49,13 @@ class EvenementListForm(Form):
         self.helper.form_method = 'GET'
         self.helper.form_class = 'well'
         self.helper.layout = Layout(
-            Field('q', 'dates', 'lieu', 'oeuvre', css_class='span12'),
+            Field('q', 'dates', HTML('<hr/>'), 'lieu', 'oeuvre',
+                  css_class='span12'),
+            HTML('<hr/>'),
             Submit('', _('Filtrer'), css_class='btn-primary span12'),
         )
         super(EvenementListForm, self).__init__(*args, **kwargs)
-        for key in ('q', 'lieu', 'oeuvre'):
-            field = self.fields[key]
-            field.widget.attrs['placeholder'] = field.label + '...'
+        for field in self.fields.itervalues():
+            field.widget.attrs['placeholder'] = (field.label or '') + '...'
             field.label = ''
+
