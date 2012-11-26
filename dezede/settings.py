@@ -36,7 +36,7 @@ DATABASES = {
 }
 
 default_database = environ.get('DJANGO_DATABASE', 'main')
-DATABASES['default'] = DATABASES[default_database]
+DATABASES = {'default': DATABASES[default_database]}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

@@ -54,7 +54,7 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
 
     >>> l = ['Jeanne', 'Marion', 'Lola', 'Perrine']
     >>> print str_list_w_last(l)
-    Jeanne, Marion, Lola,\u00A0et\u00A0Perrine
+    Jeanne, Marion, Lola\u00A0et\u00A0Perrine
     >>> print str_list_w_last(l[:2])
     Jeanne\u00A0et\u00A0Marion
     """
@@ -68,7 +68,7 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
         if oxfordian_last_infix is None:
             oxfordian_last_infix = \
                 pgettext(u'dernier infix pour plus de 2 éléments',
-                         u',\u00A0et\u00A0')
+                         u'\u00A0et\u00A0')
         last_infix = oxfordian_last_infix
     return str_list(l, infix, last_infix)
 
@@ -147,7 +147,7 @@ def sc(txt):
 def hlp(txt, title, tags=True):
     """
     >>> print hlp('two years', 'period')
-    <span title="period">two years</span>
+    <span title="Period">two years</span>
     >>> print hlp('G minor', 'tonality', tags=False)
     G minor
     """

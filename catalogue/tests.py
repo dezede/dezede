@@ -19,7 +19,7 @@ def new(model, **kwargs):
 
 class EtatTestCase(TestCase):
     def setUp(self):
-        self.brouillon = new(Etat, nom='brouillon', publie=False)
+        self.brouillon = new(Etat, nom='brouillon', public=False)
         self.nouveau = new(Etat, nom='nouveau', nom_pluriel='nouveaux')
 
     def testComputedNames(self):
@@ -94,7 +94,8 @@ class IndividuTestCase(TestCase):
         piaf_url = self.piaf.get_absolute_url()
         self.assertEqual(self.piaf.html(),
                          u'<a href="%(url)s">'
-                         u'<span class="sc">Gassion</span> (É.), '
+                         u'<span class="sc">Gassion</span> '
+                         u'(<span title="\xc9dith">\xc9.</span>), '
                          u'dite La Môme Piaf</a>'
                            % {'url': piaf_url})
         self.assertEqual(self.piaf.nom_complet(),
@@ -139,10 +140,10 @@ class OeuvreTestCase(TestCase):
                          u'<a href="%(url)s"><cite>Carmen</cite></a>'
                              % {'url': carmen_url})
         self.assertEqual(self.carmen.description_html(),
-                         u'<span title="genre">Opéra</span>')
+                         u'<span title="Genre">Opéra</span>')
         self.assertEqual(self.carmen.html(),
                          u'<a href="%(url)s"><cite>Carmen</cite></a>, '
-                         u'<span title="genre">opéra</span>'
+                         u'<span title="Genre">opéra</span>'
                              % {'url': carmen_url})
         symphonie_url = self.symphonie.get_absolute_url()
         self.assertEqual(self.symphonie.titre_html(),
@@ -179,7 +180,7 @@ class SourceTestCase(TestCase):
 
     def testComputedNames(self):
         self.assertEqual(self.journal.__unicode__(),
-                         'Journal de Rouen du mardi 15 janvier 1828')
+                         'Journal de Rouen, mardi 15 janvier 1828')
 
 
 class SuiteRunner(DjangoTestSuiteRunner):
