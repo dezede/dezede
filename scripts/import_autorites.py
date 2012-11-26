@@ -10,6 +10,7 @@ from catalogue.api import build_ancrage
 from catalogue.api.models.utils import update_or_create
 from catalogue.api.utils import notify_send
 from .routines import print_error, print_success, print_warning
+from django.utils.encoding import smart_unicode
 
 
 TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+'
@@ -52,22 +53,19 @@ def build_individu(individu_str):
                    for prenom_str in prenom_strs]
 
         naissance, deces = dates.split('-')
-        i = Individu.objects.filter(nom=nom, prenoms__in=prenoms,
-                                    pseudonyme=pseudonyme,
-                                    ancrage_naissance__date_approx=naissance,
-                                    ancrage_deces__date_approx=deces).distinct()
+        i = Individu.objects.filter(nom=nom, pseudonyme=pseudonyme,
+                                    prenoms__in=prenoms).distinct()
         if i.exists():
             assert i.count() == 1
             return i[0]
         ancrage_naissance = AncrageSpatioTemporel.objects.create(
                                                          date_approx=naissance)
         ancrage_deces = AncrageSpatioTemporel.objects.create(date_approx=deces)
-        individu = update_or_create(Individu, ['nom', 'ancrage_naissance',
-                                               'ancrage_deces'],
-                                    nom=nom, pseudonyme=pseudonyme,
+        individu = update_or_create(Individu, ['nom', 'prenoms'],
+                                    nom=nom, prenoms=prenoms,
+                                    pseudonyme=pseudonyme,
                                     ancrage_naissance=ancrage_naissance,
                                     ancrage_deces=ancrage_deces)
-        individu.prenoms.add(*prenoms)
         individu.save()
         return individu
 

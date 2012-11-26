@@ -76,8 +76,8 @@ def build_lieu(lieu_str):
                for s in NATURE_DE_LIEU_NOMS]
     lieu = None
     for i, lieu_nom in enumerate(lieux):
-        lieu = update_or_create(Lieu, ['nom'], nom=lieu_nom, nature=natures[i],
-                                parent=lieu)
+        lieu = update_or_create(Lieu, ['nom', 'parent'], nom=lieu_nom,
+                                nature=natures[i], parent=lieu)
     return lieu
 
 
