@@ -21,18 +21,6 @@ SEND_BROKEN_LINK_EMAILS = True
 MANAGERS = ADMINS
 
 DATABASES = {
-    'mysql': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'dezede',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    },
-    'importation': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(SITE_ROOT, 'importation.sql'),
-    },
     'postgresql': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'dezede',
@@ -40,8 +28,15 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
+        },
+    'importation': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dezede_importation',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     },
-
 }
 
 default_database = environ.get('DJANGO_DATABASE', 'postgresql')
@@ -169,6 +164,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'compressor',
+    'django_nose',
     'sekizai',
     'django_extensions',
     'south',
@@ -190,7 +186,8 @@ LOCALE_PATHS = (
     'locale',
 )
 
-TEST_RUNNER = 'catalogue.tests.SuiteRunner'
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = ['--with-doctest']
 
 DATE_FORMAT = 'l j F Y'
 

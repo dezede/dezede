@@ -67,14 +67,15 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True):
     """
     Abrègre les mots avec une limite de longueur (par défaut 0).
 
-    >>> abbreviate('amélie')
-    u'<span title="amélie">a.</span>'
-    >>> abbreviate('jeanöõ-françois du puy du fou', tags=False)
-    u'j.-fr. du p. du f.'
-    >>> abbreviate('autéeur dramatique de la tour de babel', 1, tags=False)
-    u'aut. dram. de la tour de bab.'
-    >>> abbreviate('adaptateur', 1, 4, tags=False)
-    u'adapt.'
+    >>> print(abbreviate('amélie'))
+    <span title="amélie">a.</span>
+    >>> print(abbreviate('jeanöõ-françois du puy du fou', tags=False))
+    j.-fr. du p. du f.
+    >>> print(abbreviate('autéeur dramatique de la tour de babel', 1,
+    ...                  tags=False))
+    aut. dram. de la tour de bab.
+    >>> print(abbreviate('adaptateur', 1, 4, tags=False))
+    adapt.
     """
     out = ''
     # TODO: créer un catalogue COMPLET de ponctuations de séparation.

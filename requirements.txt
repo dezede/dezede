@@ -16,9 +16,10 @@ django-profiles==0.2
 django-crispy-forms==1.2.0
 django-ajax-selects==1.2.5
 django-filebrowser==3.5.0
+django-nose==1.1
 django-compressor==1.2
 django-sekizai==0.6.1
-pil==1.1.7
+Pillow==1.7.8
 johnny-cache==1.4
 python-memcached==1.48
 South==0.7.6
