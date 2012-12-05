@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from .functions import ex, str_list, cite, no, date_html, href, small
 from django.db.models import CharField, DateField, ForeignKey, \
                              ManyToManyField, permalink, get_model
@@ -36,19 +37,19 @@ class TypeDeSource(CustomModel, SlugModel):
 class Source(AutoriteModel):
     nom = CharField(_('nom'), max_length=200,
                     help_text=ex(_('Journal de Rouen')))
-    numero = CharField(_(u'numéro'), max_length=50, blank=True,
-                       help_text=_(u'Sans « № »') + '. ' + ex('52'))
+    numero = CharField(_('numéro'), max_length=50, blank=True,
+                       help_text=_('Sans « № »') + '. ' + ex('52'))
     date = DateField(_('date'), help_text=DATE_MSG)
     page = CharField(_('page'), max_length=50, blank=True,
-                     help_text=_(u'Sans « p. »') + '. ' + ex('3'))
+                     help_text=_('Sans « p. »') + '. ' + ex('3'))
     type = ForeignKey('TypeDeSource', related_name='sources',
         help_text=ex(_('compte rendu')), verbose_name=_('type'))
     contenu = HTMLField(_('contenu'), blank=True,
-        help_text=_(u'Recopié tel quel, avec les fautes d’orthographe suivies '
-                    u'de « [<em>sic</em>] » le cas échéant.'))
+        help_text=_('Recopié tel quel, avec les fautes d’orthographe suivies '
+                    'de « [<em>sic</em>] » le cas échéant.'))
     auteurs = GenericRelation('Auteur')
     evenements = ManyToManyField('Evenement', related_name='sources',
-        blank=True, null=True, verbose_name=_(u'événements'))
+        blank=True, null=True, verbose_name=_('événements'))
 
     @permalink
     def get_absolute_url(self):
@@ -96,7 +97,7 @@ class Source(AutoriteModel):
 
     def has_events(self):
         return self.evenements.exists()
-    has_events.short_description = _(u'Événements')
+    has_events.short_description = _('Événements')
     has_events.boolean = True
     has_events.admin_order_field = 'evenements'
 

@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from .functions import str_list, str_list_w_last, href, hlp
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, OneToOneField, BooleanField, \
@@ -54,12 +55,12 @@ class CaracteristiqueDElementDeProgramme(CustomModel):
 
     class Meta:
         verbose_name = ungettext_lazy(
-                u'caractéristique d’élément de programme',
-                u'caractéristiques d’élément de programme',
+                'caractéristique d’élément de programme',
+                'caractéristiques d’élément de programme',
                 1)
         verbose_name_plural = ungettext_lazy(
-                u'caractéristique d’élément de programme',
-                u'caractéristiques d’élément de programme',
+                'caractéristique d’élément de programme',
+                'caractéristiques d’élément de programme',
                 2)
         ordering = ['nom']
         app_label = 'catalogue'
@@ -79,12 +80,12 @@ class ElementDeProgramme(AutoriteModel):
     evenement = ForeignKey('Evenement', related_name='programme',
                             verbose_name=_('événement'))
     oeuvre = ForeignKey('Oeuvre', related_name='elements_de_programme',
-        verbose_name=_(u'œuvre'), blank=True, null=True)
+        verbose_name=_('œuvre'), blank=True, null=True)
     autre = CharField(max_length=500, blank=True)
     caracteristiques = ManyToManyField(CaracteristiqueDElementDeProgramme,
         related_name='elements_de_programme', blank=True, null=True,
-        verbose_name=_(u'caractéristiques'))
-    position = PositiveSmallIntegerField(_("Position"))
+        verbose_name=_('caractéristiques'))
+    position = PositiveSmallIntegerField(_('Position'))
     distribution = ManyToManyField(AttributionDePupitre,
         related_name='elements_de_programme', blank=True, null=True)
     personnels = ManyToManyField('Personnel',
@@ -96,7 +97,7 @@ class ElementDeProgramme(AutoriteModel):
         cs = self.caracteristiques.iterator()
         return str_list(unicode(c) for c in cs)
     calc_caracteristiques.allow_tags = True
-    calc_caracteristiques.short_description = _(u'caractéristiques')
+    calc_caracteristiques.short_description = _('caractéristiques')
 
     def calc_distribution(self, tags=True):
         if self.pk is None:
@@ -105,7 +106,7 @@ class ElementDeProgramme(AutoriteModel):
         out__append = out.append
         distribution = self.distribution
         if distribution.exists():
-            out__append(u'. — ')
+            out__append('. — ')
             maxi = distribution.count() - 1
         for i, attribution in enumerate(distribution.iterator()):
             individus = attribution.individus.iterator()
@@ -133,10 +134,10 @@ class ElementDeProgramme(AutoriteModel):
     html.allow_tags = True
 
     class Meta:
-        verbose_name = ungettext_lazy(u'élément de programme',
-                u'éléments de programme', 1)
-        verbose_name_plural = ungettext_lazy(u'élément de programme',
-                u'éléments de programme', 2)
+        verbose_name = ungettext_lazy('élément de programme',
+                'éléments de programme', 1)
+        verbose_name_plural = ungettext_lazy('élément de programme',
+                'éléments de programme', 2)
         ordering = ['position', 'oeuvre']
         app_label = 'catalogue'
 
@@ -158,7 +159,7 @@ class Evenement(AutoriteModel):
         related_name='evenements_debuts')
     ancrage_fin = OneToOneField('AncrageSpatioTemporel',
         related_name='evenements_fins', blank=True, null=True)
-    relache = BooleanField(verbose_name=u'relâche')
+    relache = BooleanField(verbose_name='relâche')
     circonstance = CharField(max_length=500, blank=True)
 
     @permalink
@@ -188,10 +189,10 @@ class Evenement(AutoriteModel):
     def html(self, tags=True):
         relache, circonstance = '', ''
         if self.circonstance:
-            circonstance = hlp(self.circonstance, ugettext(u'circonstance'),
+            circonstance = hlp(self.circonstance, ugettext('circonstance'),
                                tags)
         if self.relache:
-            relache = ugettext(u'Relâche')
+            relache = ugettext('Relâche')
         l = (self.ancrage_debut.calc_lieu(tags), circonstance,
              self.ancrage_debut.calc_heure(), relache)
         out = str_list(l)
@@ -211,15 +212,15 @@ class Evenement(AutoriteModel):
     has_source.admin_order_field = 'sources'
 
     class Meta:
-        verbose_name = ungettext_lazy(u'événement', u'événements', 1)
-        verbose_name_plural = ungettext_lazy(u'événement', u'événements', 2)
+        verbose_name = ungettext_lazy('événement', 'événements', 1)
+        verbose_name_plural = ungettext_lazy('événement', 'événements', 2)
         ordering = ['ancrage_debut']
         app_label = 'catalogue'
 
     def __unicode__(self):
         out = self.ancrage_debut.calc_date(False)
         out = capfirst(out)
-        out += u'\u00A0> ' + self.html(False)
+        out += '\u00A0> ' + self.html(False)
         return strip_tags(out)
 
     @staticmethod
@@ -238,5 +239,5 @@ class Evenement(AutoriteModel):
 
 @receiver(post_revision_commit)
 def clear_all_cache(sender, **kwargs):
-    u"On vide le cache pour les templates d'événements."
+    "On vide le cache pour les templates d'événements."
     cache.clear()

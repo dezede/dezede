@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from .functions import ex, href
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, permalink
@@ -14,8 +15,8 @@ class Profession(CustomModel, SlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
-    nom_feminin = CharField(_(u'nom (au féminin)'), max_length=230, blank=True,
-        help_text=_(u'Ne préciser que s’il est différent du nom.'))
+    nom_feminin = CharField(_('nom (au féminin)'), max_length=230, blank=True,
+        help_text=_('Ne préciser que s’il est différent du nom.'))
     parente = ForeignKey('Profession', blank=True, null=True,
         related_name='enfant', verbose_name=_('parente'))
 
@@ -80,12 +81,12 @@ class Profession(CustomModel, SlugModel):
 
 
 class Devise(CustomModel):
-    u"""
+    """
     Modélisation naïve d’une unité monétaire.
     """
     nom = CharField(max_length=200, blank=True, help_text=ex(_('euro')),
         unique=True)
-    symbole = CharField(max_length=10, help_text=ex(_(u'€')), unique=True)
+    symbole = CharField(max_length=10, help_text=ex(_('€')), unique=True)
 
     class Meta:
         verbose_name = ungettext_lazy('devise', 'devises', 1)

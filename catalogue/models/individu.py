@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from .functions import str_list, str_list_w_last, href, sc
 from django.db.models import CharField, FloatField, BooleanField, ForeignKey, \
                              ManyToManyField, OneToOneField, permalink, \
@@ -15,19 +16,19 @@ from django.core.exceptions import ValidationError
 
 
 class Prenom(CustomModel):
-    prenom = CharField(_(u'prénom'), max_length=100)
+    prenom = CharField(_('prénom'), max_length=100)
     classement = FloatField(_('classement'), default=1.0)
     favori = BooleanField(_('favori'), default=True)
 
     class Meta:
-        verbose_name = ungettext_lazy(u'prénom', u'prénoms', 1)
-        verbose_name_plural = ungettext_lazy(u'prénom', u'prénoms', 2)
+        verbose_name = ungettext_lazy('prénom', 'prénoms', 1)
+        verbose_name_plural = ungettext_lazy('prénom', 'prénoms', 2)
         ordering = ['prenom', 'classement']
         app_label = 'catalogue'
 
     def has_individu(self):
         return self.individus.exists()
-    has_individu.short_description = _(u'individu(s) lié(s)')
+    has_individu.short_description = _('individu(s) lié(s)')
     has_individu.boolean = True
 
     def __unicode__(self):
@@ -45,11 +46,11 @@ class TypeDeParenteDIndividus(CustomModel):
     classement = FloatField(_('classement'), default=1.0)
 
     class Meta:
-        verbose_name = ungettext_lazy(u'type de parenté d’individus',
-                                      u'types de parenté d’individus', 1)
+        verbose_name = ungettext_lazy('type de parenté d’individus',
+                                      'types de parenté d’individus', 1)
         verbose_name_plural = ungettext_lazy(
-                u'type de parenté d’individus',
-                u'types de parenté d’individus',
+                'type de parenté d’individus',
+                'types de parenté d’individus',
                 2)
         ordering = ['classement']
         app_label = 'catalogue'
@@ -68,10 +69,10 @@ class ParenteDIndividus(CustomModel):
         related_name='enfances_cibles', verbose_name=_('individus cibles'))
 
     class Meta:
-        verbose_name = ungettext_lazy(u'parenté d’individus',
-                                      u'parentés d’individus', 1)
-        verbose_name_plural = ungettext_lazy(u'parenté d’individus',
-                                             u'parentés d’individus', 2)
+        verbose_name = ungettext_lazy('parenté d’individus',
+                                      'parentés d’individus', 1)
+        verbose_name_plural = ungettext_lazy('parenté d’individus',
+                                             'parentés d’individus', 2)
         ordering = ['type']
         app_label = 'catalogue'
 
@@ -86,26 +87,26 @@ class ParenteDIndividus(CustomModel):
 
 
 class Individu(AutoriteModel, UniqueSlugModel):
-    particule_nom = CharField(_(u'particule du nom d’usage'), max_length=10,
+    particule_nom = CharField(_('particule du nom d’usage'), max_length=10,
         blank=True)
     # TODO: rendre le champ nom 'blank'
-    nom = CharField(_(u'nom d’usage'), max_length=200)
+    nom = CharField(_('nom d’usage'), max_length=200)
     particule_nom_naissance = CharField(_('particule du nom de naissance'),
         max_length=10, blank=True)
     nom_naissance = CharField(_('nom de naissance'), max_length=200,
         blank=True,
-        help_text=_(u'Ne remplir que s’il est différent du nom d’usage.'))
+        help_text=_('Ne remplir que s’il est différent du nom d’usage.'))
     prenoms = ManyToManyField('Prenom', related_name='individus', blank=True,
-        null=True, verbose_name=_(u'prénoms'))
+        null=True, verbose_name=_('prénoms'))
     pseudonyme = CharField(_('pseudonyme'), max_length=200, blank=True)
     DESIGNATIONS = (
-        ('S', _(u'Standard (nom, prénoms et pseudonyme)')),
+        ('S', _('Standard (nom, prénoms et pseudonyme)')),
         ('P', _('Pseudonyme (uniquement)')),
         ('L', _('Nom de famille (uniquement)')),  # L pour Last name
         ('B', _('Nom de naissance (standard)')),  # B pour Birth name
-        ('F', _(u'Prénom(s) favori(s) (uniquement)')),  # F pour First name
+        ('F', _('Prénom(s) favori(s) (uniquement)')),  # F pour First name
     )
-    designation = CharField(_(u'désignation'), max_length=1,
+    designation = CharField(_('désignation'), max_length=1,
         choices=DESIGNATIONS, default='S')
     TITRES = (
         ('M', _('M.')),
@@ -116,19 +117,19 @@ class Individu(AutoriteModel, UniqueSlugModel):
         choices=TITRES, blank=True)
     ancrage_naissance = OneToOneField('AncrageSpatioTemporel', blank=True,
         null=True, related_name='individus_nes',
-        verbose_name=_(u'ancrage de naissance'))
+        verbose_name=_('ancrage de naissance'))
     ancrage_deces = OneToOneField('AncrageSpatioTemporel', blank=True,
         null=True, related_name='individus_decedes',
-        verbose_name=_(u'ancrage du décès'))
+        verbose_name=_('ancrage du décès'))
     ancrage_approx = OneToOneField('AncrageSpatioTemporel',
         blank=True, null=True,
-        related_name='individus', verbose_name=_(u'ancrage approximatif'),
-        help_text=_(u'Ne remplir que si on ne connaît aucune date précise.'))
+        related_name='individus', verbose_name=_('ancrage approximatif'),
+        help_text=_('Ne remplir que si on ne connaît aucune date précise.'))
     professions = ManyToManyField('Profession', related_name='individus',
         blank=True, null=True, verbose_name=_('professions'))
     parentes = ManyToManyField('ParenteDIndividus',
         related_name='individus_orig', blank=True, null=True,
-        verbose_name=_(u'parentés'))
+        verbose_name=_('parentés'))
     biographie = HTMLField(_('biographie'), blank=True)
 
     def get_slug(self):
@@ -182,7 +183,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def calc_prenoms(self):
         return self.calc_prenoms_methode(False)
-    calc_prenoms.short_description = _(u'prénoms')
+    calc_prenoms.short_description = _('prénoms')
     calc_prenoms.admin_order_field = 'prenoms__prenom'
 
     def calc_fav_prenoms(self):
@@ -208,7 +209,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     def get_particule(self, naissance=False, lon=True):
         particule = self.particule_nom_naissance if naissance \
                else self.particule_nom
-        if lon and particule != u'' and particule[-1] not in ("'", u'’'):
+        if lon and particule != '' and particule[-1] not in ("'", '’'):
             particule += ' '
         return particule
 
@@ -281,12 +282,12 @@ class Individu(AutoriteModel, UniqueSlugModel):
                     s = str_list((abbreviate(prenoms, tags=tags),
                                   sc(particule, tags)),
                                  ' ')
-                    l.append(u'(%s)' % s)
+                    l.append('(%s)' % s)
             out = str_list(l, ' ')
             if pseudonyme:
                 alias = ugettext('dite') if self.titre in ('J', 'F',) \
                    else ugettext('dit')
-                out += ugettext(u', %(alias)s %(pseudonyme)s') % \
+                out += ugettext(', %(alias)s %(pseudonyme)s') % \
                     {'alias': alias,
                      'pseudonyme': pseudonyme}
             return out
@@ -318,16 +319,16 @@ class Individu(AutoriteModel, UniqueSlugModel):
             return
         for p in self.parentes.all():
             if self in p.individus_cibles.all():
-                raise ValidationError(_(u'L’individu a une parenté avec '
-                                        u'lui-même.'))
+                raise ValidationError(_('L’individu a une parenté avec '
+                                        'lui-même.'))
         try:
             naissance = getattr(self.ancrage_naissance, 'date')
             deces = getattr(self.ancrage_deces, 'date')
         except AttributeError:
             return
         if naissance and deces and deces < naissance:
-            raise ValidationError(_(u'Le décès ne peut précéder '
-                                    u'la naissance.'))
+            raise ValidationError(_('Le décès ne peut précéder '
+                                    'la naissance.'))
     class Meta:
         verbose_name = ungettext_lazy('individu', 'individus', 1)
         verbose_name_plural = ungettext_lazy('individu', 'individus', 2)

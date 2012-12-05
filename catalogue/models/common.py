@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from django.db.models import Model, Manager, CharField, \
                              BooleanField, ManyToManyField, ForeignKey
 from django.db.models.query import QuerySet
@@ -16,17 +17,17 @@ from django.contrib.contenttypes.generic import GenericRelation
 # Définitions globales du fichier
 #
 
-LOWER_MSG = _(u'En minuscules.')
-PLURAL_MSG = _(u'À remplir si le pluriel n’est pas un simple '
-               u'ajout de « s ». Exemple : « animal » devient « animaux » '
-               u'et non « animals ».')
-DATE_MSG = _(u'Exemple : « 6/6/1944 » pour le 6 juin 1944.')
+LOWER_MSG = _('En minuscules.')
+PLURAL_MSG = _('À remplir si le pluriel n’est pas un simple '
+               'ajout de « s ». Exemple : « animal » devient « animaux » '
+               'et non « animals ».')
+DATE_MSG = _('Exemple : « 6/6/1944 » pour le 6 juin 1944.')
 # Champs dans lesquels effectuer les remplacements typographiques.
 REPLACE_FIELDS = (CharField, HTMLField,)
 
 
 def replace_in_kwargs(obj, **kwargs):
-    u"""
+    """
     Renvoie kwargs avec remplacements typographiques.
 
     Si une clé de kwargs est un nom de champ d'obj
@@ -115,7 +116,7 @@ class AutoriteManager(CustomManager):
 
 
 class AutoriteModel(CustomModel):
-    etat = ForeignKey('Etat', null=True, blank=True, verbose_name=_(u'état'))
+    etat = ForeignKey('Etat', null=True, blank=True, verbose_name=_('état'))
     documents = ManyToManyField('Document', blank=True, null=True)
     illustrations = ManyToManyField('Illustration', blank=True, null=True)
     notes = HTMLField(blank=True)
@@ -174,7 +175,7 @@ class Document(CustomModel):
 
 
 class Illustration(CustomModel):
-    legende = CharField(_(u'légende'), max_length=300, blank=True)
+    legende = CharField(_('légende'), max_length=300, blank=True)
     image = FileBrowseField(_('image'), max_length=400, directory='images/')
     commentaire = HTMLField(_('commentaire'), blank=True)
     GenericRelation('Auteur')
@@ -205,13 +206,13 @@ class Etat(CustomModel):
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
     message = HTMLField(_('message'), blank=True,
-        help_text=_(u'Message à afficher dans la partie consultation.'))
-    public = BooleanField(_(u'publié'), default=True)
+        help_text=_('Message à afficher dans la partie consultation.'))
+    public = BooleanField(_('publié'), default=True)
     slug = AutoSlugField(populate_from='nom')
 
     class Meta:
-        verbose_name = ungettext_lazy(u'état', u'états', 1)
-        verbose_name_plural = ungettext_lazy(u'état', u'états', 2)
+        verbose_name = ungettext_lazy('état', 'états', 1)
+        verbose_name_plural = ungettext_lazy('état', 'états', 2)
         ordering = ['slug']
         app_label = 'catalogue'
 

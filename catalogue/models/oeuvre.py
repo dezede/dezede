@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from django.db.models import CharField, ManyToManyField, \
                              PositiveIntegerField, FloatField, ForeignKey, \
@@ -30,9 +31,9 @@ class GenreDOeuvre(CustomModel, SlugModel):
         blank=True, null=True)
 
     class Meta:
-        verbose_name = ungettext_lazy(u'genre d’œuvre', u'genres d’œuvre', 1)
-        verbose_name_plural = ungettext_lazy(u'genre d’œuvre',
-                                             u'genres d’œuvre', 2)
+        verbose_name = ungettext_lazy('genre d’œuvre', 'genres d’œuvre', 1)
+        verbose_name_plural = ungettext_lazy('genre d’œuvre',
+                                             'genres d’œuvre', 2)
         ordering = ['slug']
         app_label = 'catalogue'
 
@@ -54,17 +55,17 @@ class GenreDOeuvre(CustomModel, SlugModel):
 
 
 class TypeDeCaracteristiqueDOeuvre(CustomModel):
-    nom = CharField(max_length=200, help_text=ex(_(u'tonalité')), unique=True)
+    nom = CharField(max_length=200, help_text=ex(_('tonalité')), unique=True)
     nom_pluriel = CharField(max_length=230, blank=True,
         verbose_name=_('nom (au pluriel)'), help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
 
     class Meta:
-        verbose_name = ungettext_lazy(u'type de caractéristique d’œuvre',
-                                      u'types de caracteristique d’œuvre', 1)
+        verbose_name = ungettext_lazy('type de caractéristique d’œuvre',
+                                      'types de caracteristique d’œuvre', 1)
         verbose_name_plural = ungettext_lazy(
-                u'type de caractéristique d’œuvre',
-                u'types de caracteristique d’œuvre',
+                'type de caractéristique d’œuvre',
+                'types de caracteristique d’œuvre',
                 2)
         ordering = ['classement']
         app_label = 'catalogue'
@@ -80,16 +81,16 @@ class CaracteristiqueDOeuvre(CustomModel):
     type = ForeignKey('TypeDeCaracteristiqueDOeuvre',
         related_name='caracteristiques_d_oeuvre')
     # TODO: Changer valeur en nom ?
-    valeur = CharField(max_length=400, help_text=ex(_(u'en trois actes')))
+    valeur = CharField(max_length=400, help_text=ex(_('en trois actes')))
     classement = FloatField(default=1.0,
-        help_text=_(u'''Par exemple, on peut choisir de classer'''
-                    u'''les découpages par nombre d’actes.'''))
+        help_text=_('Par exemple, on peut choisir de classer'
+                    'les découpages par nombre d’actes.'))
 
     class Meta:
-        verbose_name = ungettext_lazy(u'caractéristique d’œuvre',
-                                      u'caractéristiques d’œuvre', 1)
-        verbose_name_plural = ungettext_lazy(u'caractéristique d’œuvre',
-                                             u'caractéristiques d’œuvre', 2)
+        verbose_name = ungettext_lazy('caractéristique d’œuvre',
+                                      'caractéristiques d’œuvre', 1)
+        verbose_name_plural = ungettext_lazy('caractéristique d’œuvre',
+                                             'caractéristiques d’œuvre', 2)
         ordering = ['type', 'classement']
         app_label = 'catalogue'
 
@@ -107,13 +108,13 @@ class CaracteristiqueDOeuvre(CustomModel):
 
 class Partie(CustomModel, SlugModel):
     nom = CharField(max_length=200,
-        help_text=_(u'Le nom d’une partie de la partition, '
-                    u'instrumentale ou vocale.'))
+        help_text=_('Le nom d’une partie de la partition, '
+                    'instrumentale ou vocale.'))
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
     professions = ManyToManyField('Profession', related_name='parties',
-        help_text=_(u'La ou les profession(s) permettant '
-                    u'd’assurer cette partie.'))
+        help_text=_('La ou les profession(s) permettant '
+                    'd’assurer cette partie.'))
     parente = ForeignKey('Partie', related_name='enfant', blank=True,
                          null=True, verbose_name=_('parente'))
     classement = FloatField(default=1.0)
@@ -160,8 +161,8 @@ class Partie(CustomModel, SlugModel):
 
 class Pupitre(CustomModel):
     partie = ForeignKey('Partie', related_name='pupitres')
-    quantite_min = IntegerField(_(u'quantité minimale'), default=1)
-    quantite_max = IntegerField(_(u'quantité maximale'), default=1)
+    quantite_min = IntegerField(_('quantité minimale'), default=1)
+    quantite_max = IntegerField(_('quantité maximale'), default=1)
 
     class Meta:
         verbose_name = ungettext_lazy('pupitre', 'pupitres', 1)
@@ -182,7 +183,7 @@ class Pupitre(CustomModel):
         ma_str = apnumber(ma)
         if mi != ma:
             d = {'min': mi_str, 'max': ma_str}
-            out += ugettext(u'%(min)s à %(max)s ') % d
+            out += ugettext('%(min)s à %(max)s ') % d
         elif mi > 1:
             out += mi_str + ' '
         out += partie
@@ -203,10 +204,10 @@ class TypeDeParenteDOeuvres(CustomModel):
     classement = FloatField(default=1.0)
 
     class Meta:
-        verbose_name = ungettext_lazy(u'type de parenté d’œuvres',
-                                      u'types de parentés d’œuvres', 1)
-        verbose_name_plural = ungettext_lazy(u'type de parenté d’œuvres',
-                                             u'types de parentés d’œuvres', 2)
+        verbose_name = ungettext_lazy('type de parenté d’œuvres',
+                                      'types de parentés d’œuvres', 1)
+        verbose_name_plural = ungettext_lazy('type de parenté d’œuvres',
+                                             'types de parentés d’œuvres', 2)
         ordering = ['classement']
         app_label = 'catalogue'
 
@@ -228,33 +229,33 @@ class ParenteDOeuvresManager(CustomManager):
 class ParenteDOeuvres(CustomModel):
     type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes')
     mere = ForeignKey('Oeuvre', related_name='parentes_filles',
-                      verbose_name=_(u'œuvre mère'))
+                      verbose_name=_('œuvre mère'))
     fille = ForeignKey('Oeuvre', related_name='parentes_meres',
-                       verbose_name=_(u'œuvre fille'))
+                       verbose_name=_('œuvre fille'))
     objects = ParenteDOeuvresManager()
 
     class Meta:
-        verbose_name = ungettext_lazy(u'parenté d’œuvres',
-                                      u'parentés d’œuvres', 1)
-        verbose_name_plural = ungettext_lazy(u'parenté d’œuvres',
-                                             u'parentés d’œuvres', 2)
+        verbose_name = ungettext_lazy('parenté d’œuvres',
+                                      'parentés d’œuvres', 1)
+        verbose_name_plural = ungettext_lazy('parenté d’œuvres',
+                                             'parentés d’œuvres', 2)
         ordering = ['type']
         app_label = 'catalogue'
         unique_together = ('type', 'mere', 'fille',)
 
     def __unicode__(self):
-        return u'%s %s %s' % (self.fille, self.type.nom, self.mere)
+        return '%s %s %s' % (self.fille, self.type.nom, self.mere)
 
     def clean(self):
         try:
             type, mere, fille = self.type, self.mere, self.fille
             if mere == fille:
-                raise ValidationError(_(u'Les deux champs de parenté ne '
-                                        u'peuvent pas être identiques'))
+                raise ValidationError(_('Les deux champs de parenté ne '
+                                        'peuvent pas être identiques'))
             if ParenteDOeuvres.objects.filter(mere=fille,
                                               fille=mere).exists():
-                raise ValidationError(_(u'Une relation entre ces deux objets '
-                                        u'existe déjà dans le sens inverse'))
+                raise ValidationError(_('Une relation entre ces deux objets '
+                                        'existe déjà dans le sens inverse'))
         except Oeuvre.DoesNotExist:
             pass
 
@@ -341,22 +342,22 @@ class Auteur(CustomModel):
 
 class Oeuvre(AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(max_length=20, blank=True,
-        verbose_name=_(u'préfixe du titre'))
+        verbose_name=_('préfixe du titre'))
     titre = CharField(max_length=200, blank=True)
     coordination = CharField(max_length=20, blank=True,
         verbose_name=_('coordination'))
     prefixe_titre_secondaire = CharField(max_length=20, blank=True,
-        verbose_name=_(u'préfixe du titre secondaire'))
+        verbose_name=_('préfixe du titre secondaire'))
     titre_secondaire = CharField(max_length=200, blank=True,
         verbose_name=_('titre secondaire'))
     genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True,
         null=True)
     caracteristiques = ManyToManyField('CaracteristiqueDOeuvre', blank=True,
-        null=True, verbose_name=_(u'caractéristiques'))
+        null=True, verbose_name=_('caractéristiques'))
     auteurs = GenericRelation('Auteur')
     ancrage_creation = OneToOneField('AncrageSpatioTemporel',
         related_name='oeuvres_creees', blank=True, null=True,
-        verbose_name=_(u'ancrage spatio-temporel de création'))
+        verbose_name=_('ancrage spatio-temporel de création'))
     pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
         null=True)
     filles = ManyToManyField('Oeuvre', through='ParenteDOeuvres',
@@ -396,7 +397,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
             return out1, out2
         return out2
     calc_caracteristiques.allow_tags = True
-    calc_caracteristiques.short_description = _(u'caractéristiques')
+    calc_caracteristiques.short_description = _('caractéristiques')
     calc_caracteristiques.admin_order_field = 'caracteristiques__valeur'
 
     def calc_pupitres(self):
@@ -501,12 +502,12 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
 
     def clean(self):
         if not self.titre and not self.genre:
-            raise ValidationError(_(u'Un titre ou un genre doit au moins '
-                                    u'être précisé.'))
+            raise ValidationError(_('Un titre ou un genre doit au moins '
+                                    'être précisé.'))
 
     class Meta:
-        verbose_name = ungettext_lazy(u'œuvre', u'œuvres', 1)
-        verbose_name_plural = ungettext_lazy(u'œuvre', u'œuvres', 2)
+        verbose_name = ungettext_lazy('œuvre', 'œuvres', 1)
+        verbose_name_plural = ungettext_lazy('œuvre', 'œuvres', 2)
         ordering = ['titre', 'genre', 'slug']
         app_label = 'catalogue'
 

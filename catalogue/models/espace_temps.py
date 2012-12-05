@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from .functions import href, date_html, str_list, ex
 from django.db.models import CharField, ForeignKey, BooleanField, \
                              DateField, TimeField, permalink, get_model, Q
@@ -20,15 +21,15 @@ class NatureDeLieu(CustomModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
                             help_text=PLURAL_MSG)
-    referent = BooleanField(_(u'référent'), default=False,
-        help_text=_(u'L’affichage d’un lieu remonte jusqu’au lieu référent.') \
+    referent = BooleanField(_('référent'), default=False,
+        help_text=_('L’affichage d’un lieu remonte jusqu’au lieu référent.') \
         + ' ' \
         + ex(unicode(_('ville, institution, salle')),
-             pre=unicode(_(u'dans une architecture de pays, villes, théâtres, '
-                           u'etc, ')),
-             post=unicode(_(u' sera affiché car on remonte jusqu’à un lieu '
-                            u'référent, ici choisi comme étant ceux de nature '
-                            u'« ville »'))))
+             pre=unicode(_('dans une architecture de pays, villes, théâtres, '
+                           'etc, ')),
+             post=unicode(_(' sera affiché car on remonte jusqu’à un lieu '
+                            'référent, ici choisi comme étant ceux de nature '
+                            '« ville »'))))
 
     class Meta:
         verbose_name = ungettext_lazy('nature de lieu', 'natures de lieu', 1)
@@ -117,7 +118,7 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     def clean(self):
         if self.parent == self:
-            raise ValidationError(_(u'Le lieu a une parenté avec lui-même.'))
+            raise ValidationError(_('Le lieu a une parenté avec lui-même.'))
 
     class MPTTMeta:
         order_insertion_by = ['nom']
@@ -141,7 +142,7 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
 class Saison(CustomModel):
     lieu = ForeignKey('Lieu', related_name='saisons',
                       verbose_name=_('lieu ou institution'))
-    debut = DateField(_(u'début'), help_text=DATE_MSG)
+    debut = DateField(_('début'), help_text=DATE_MSG)
     fin = DateField(_('fin'))
 
     class Meta:
@@ -156,24 +157,24 @@ class Saison(CustomModel):
             'debut': self.debut.year,
             'fin': self.fin.year
         }
-        return pgettext("saison : pattern d'affichage",
-                        u'%(lieu)s, %(debut)d–%(fin)d') % d
+        return pgettext('saison : pattern d’affichage',
+                        '%(lieu)s, %(debut)d–%(fin)d') % d
 
 
 class AncrageSpatioTemporel(CustomModel):
-    date = DateField(_(u'date (précise)'), blank=True, null=True,
+    date = DateField(_('date (précise)'), blank=True, null=True,
         help_text=DATE_MSG)
-    heure = TimeField(_(u'heure (précise)'), blank=True, null=True)
+    heure = TimeField(_('heure (précise)'), blank=True, null=True)
     lieu = ForeignKey('Lieu', related_name='ancrages', blank=True, null=True,
-        verbose_name=_(u'lieu ou institution (précis)'))
+        verbose_name=_('lieu ou institution (précis)'))
     date_approx = CharField(_('date (approximative)'), max_length=200,
-        blank=True, help_text=_(u'Ne remplir que si la date est imprécise.'))
+        blank=True, help_text=_('Ne remplir que si la date est imprécise.'))
     heure_approx = CharField(_('heure (approximative)'), max_length=200,
-        blank=True, help_text=_(u'Ne remplir que si l’heure est imprécise.'))
+        blank=True, help_text=_('Ne remplir que si l’heure est imprécise.'))
     lieu_approx = CharField(_('lieu ou institution (approximatif)'),
                             max_length=200, blank=True,
-                    help_text=_(u'Ne remplir que si le lieu (ou institution) '
-                                u'est imprécis.'))
+                    help_text=_('Ne remplir que si le lieu (ou institution) '
+                                'est imprécis(e).'))
 
     def year(self):
         if self.date:
@@ -207,7 +208,7 @@ class AncrageSpatioTemporel(CustomModel):
         heure = self.calc_heure()
         pat_date = ugettext('%(date)s') if self.date \
               else ugettext('%(date)s')
-        pat_heure = ugettext(u'à %(heure)s') if self.heure \
+        pat_heure = ugettext('à %(heure)s') if self.heure \
                else ugettext('%(heure)s')
         l.append(pat_date % {'date': date})
         l.append(pat_heure % {'heure': heure})
@@ -232,8 +233,8 @@ class AncrageSpatioTemporel(CustomModel):
     def clean(self):
         if not (self.date or self.date_approx or self.lieu
                                               or self.lieu_approx):
-            raise ValidationError(_(u'Il faut au moins une date ou un lieu '
-                                    u'(ils peuvent n’être qu’approximatifs)'))
+            raise ValidationError(_('Il faut au moins une date ou un lieu '
+                                    '(ils peuvent n’être qu’approximatifs)'))
 
     class Meta:
         verbose_name = ungettext_lazy('ancrage spatio-temporel',
