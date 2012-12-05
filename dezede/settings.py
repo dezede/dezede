@@ -21,7 +21,7 @@ SEND_BROKEN_LINK_EMAILS = True
 MANAGERS = ADMINS
 
 DATABASES = {
-    'main': {
+    'mysql': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'dezede',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
@@ -33,10 +33,20 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(SITE_ROOT, 'importation.sql'),
     },
+    'postgresql': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dezede',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+    },
+
 }
 
-default_database = environ.get('DJANGO_DATABASE', 'main')
-DATABASES = {'default': DATABASES[default_database]}
+default_database = environ.get('DJANGO_DATABASE', 'postgresql')
+DATABASES['default'] = DATABASES[default_database]
+del DATABASES[default_database]
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
