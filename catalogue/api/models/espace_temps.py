@@ -112,7 +112,7 @@ def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern):
 def parse_ancrage(ancrage_str):
     """
     >>> parse_ancrage('Rouen, Théâtre des Arts, 1852')
-    {u'date_approx': '1852', u'lieu': <Lieu: Rouen, Théâtre des Arts>}
+    {u'date_approx': u'1852', u'lieu': <Lieu: Rouen, Théâtre des Arts>}
     """
     for ancrage_re, date_strp_pattern in ancrage_re_iterator():
         try:

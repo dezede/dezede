@@ -1,23 +1,25 @@
-from django.utils.encoding import smart_unicode
-import os
+# coding: utf-8
+
+from __future__ import unicode_literals
+import subprocess
 
 
 def notify_send(msg):
-    os.system('notify-send "%s"' % msg)
+    subprocess.call(['notify-send', msg])
 
 
 PRINT_COLORS = {
     'normal': '\033[0m',
-    'red': '\033[91m',
-    'green': '\033[92m',
+    'red':    '\033[91m',
+    'green':  '\033[92m',
     'yellow': '\033[93m',
-    'blue':'\033[94m',
+    'blue':   '\033[94m',
     'purple': '\033[95m',
 }
 
 
 def colored_print(msg, color='red'):
-    print PRINT_COLORS[color] + smart_unicode(msg) + PRINT_COLORS['normal']
+    print(PRINT_COLORS[color] + msg + PRINT_COLORS['normal'])
 
 
 def print_error(msg):

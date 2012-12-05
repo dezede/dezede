@@ -7,11 +7,11 @@ from django.db.models import ManyToManyField
 
 
 def ask_for_choice(object, k, v, new_v):
-    intro = 'Deux possibilités pour le champ %s de %s.' % (k, object)
+    intro = 'Deux possibilités pour le champ {0} de {1}'.format(k, object)
     notify_send(intro)
     print_info(intro)
-    print_info('1. %s (valeur actuelle)' % v)
-    print_info('2. %s (valeur importable)' % new_v)
+    print_info('1. {} (valeur actuelle)'.format(v))
+    print_info('2. {} (valeur importable)'.format(new_v))
     print_info('3. Créer un nouvel objet')
     return raw_input('Que faire ? (par défaut 2) ')
 
