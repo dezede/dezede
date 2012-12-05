@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from django.utils.unittest import TestCase
 from ...models import *
 from .utils import new

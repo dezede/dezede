@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from django.utils.encoding import smart_unicode
 from ..utils import notify_send, print_info
 from django.db.models import ManyToManyField

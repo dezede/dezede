@@ -58,4 +58,3 @@ class EvenementListForm(Form):
         for field in self.fields.itervalues():
             field.widget.attrs['placeholder'] = (field.label or '') + '...'
             field.label = ''
-

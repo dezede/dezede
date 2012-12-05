@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 import re
 from unicodedata import normalize
 from BeautifulSoup import BeautifulStoneSoup
@@ -32,12 +33,12 @@ def multiword_replace(text, wordDic):
 def replace(string):
     return multiword_replace(
         string, {
-            u"'": u'’',        u' :': u'\u00A0:', u' ;': u'\u00A0;',
-            u' !': u'\u202F!', u' ?': u'\u202F?', u'« ': u'«\u00A0',
-            u' »': u'\u00A0»', u'“ ': u'“\u00A0', u' ”': u'\u00A0”',
-            u' /': u'\u00A0/',
-            u'&laquo; ': u'«\u00A0', u' &raquo;': u'\u00A0»',
-            u'&ldquo; ': u'“\u00A0', u' &rdquo;': u'\u00A0”',
+            "'": '’',        ' :': '\u00A0:', ' ;': '\u00A0;',
+            ' !': '\u202F!', ' ?': '\u202F?', '« ': '«\u00A0',
+            ' »': '\u00A0»', '“ ': '“\u00A0', ' ”': '\u00A0”',
+            ' /': '\u00A0/',
+            '&laquo; ': '«\u00A0', ' &raquo;': '\u00A0»',
+            '&ldquo; ': '“\u00A0', ' &rdquo;': '\u00A0”',
         }
     )
 
@@ -66,14 +67,14 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True):
     """
     Abrègre les mots avec une limite de longueur (par défaut 0).
 
-    >>> abbreviate(u'amélie')
-    u'a.'
-    >>> abbreviate(u'jeanöõ-françois du puy du fou')
+    >>> abbreviate('amélie')
+    u'<span title="amélie">a.</span>'
+    >>> abbreviate('jeanöõ-françois du puy du fou', tags=False)
     u'j.-fr. du p. du f.'
-    >>> abbreviate(u'autéeur dramatique de la tour de babel', 1)
+    >>> abbreviate('autéeur dramatique de la tour de babel', 1, tags=False)
     u'aut. dram. de la tour de bab.'
-    >>> abbreviate('adaptateur', 1, 4)
-    'adapt.'
+    >>> abbreviate('adaptateur', 1, 4, tags=False)
+    u'adapt.'
     """
     out = ''
     # TODO: créer un catalogue COMPLET de ponctuations de séparation.

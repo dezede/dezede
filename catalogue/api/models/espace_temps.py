@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from ...models import NatureDeLieu, Lieu, AncrageSpatioTemporel
 from ...templatetags.extras import multiword_replace
 from ..exceptions import ParseError
