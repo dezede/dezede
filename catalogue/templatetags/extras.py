@@ -73,7 +73,7 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True):
     j.-fr. du p. du f.
     >>> print(abbreviate('autéeur dramatique de la tour de babel', 1,
     ...                  tags=False))
-    aut. dram. de la tour de bab.
+    a. dram. de la tour de bab.
     >>> print(abbreviate('adaptateur', 1, 4, tags=False))
     adapt.
     """
