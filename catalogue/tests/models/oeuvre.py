@@ -8,8 +8,10 @@ from .utils import new
 
 class OeuvreTestCase(TestCase):
     def setUp(self):
+        # Carmen
         opera = new(GenreDOeuvre, nom='opéra')
         self.carmen = new(Oeuvre, titre='Carmen', genre=opera)
+        # Symphonie n° 5
         symphonie = new(GenreDOeuvre, nom='symphonie')
         numero = new(TypeDeCaracteristiqueDOeuvre, nom='numéro',
                      classement=1.0)
@@ -18,6 +20,7 @@ class OeuvreTestCase(TestCase):
         op_107 = new(CaracteristiqueDOeuvre, valeur='op.\u00A0107', type=opus)
         self.symphonie = new(Oeuvre, genre=symphonie)
         self.symphonie.caracteristiques.add(n_5, op_107)
+        # Tartufe
         comedie = new(GenreDOeuvre, nom='comédie')
         decoupage = new(TypeDeCaracteristiqueDOeuvre, nom='découpage',
                         classement=1.0)
@@ -38,6 +41,7 @@ class OeuvreTestCase(TestCase):
                          'Le Tartuffe, ou l’Imposteur')
 
     def testHTMLRenders(self):
+        # Carmen
         carmen_url = self.carmen.get_absolute_url()
         self.assertEqual(self.carmen.titre_html(),
                          '<a href="%(url)s"><cite>Carmen</cite></a>'
@@ -48,26 +52,25 @@ class OeuvreTestCase(TestCase):
                          '<a href="%(url)s"><cite>Carmen</cite></a>, '
                          '<span title="Genre">opéra</span>'
                          % {'url': carmen_url})
+        # Symphonie n° 5
         symphonie_url = self.symphonie.get_absolute_url()
-        self.assertEqual(self.symphonie.titre_html(),
-                         '<a href="%(url)s"><cite><span title="genre">'
-                         'Symphonie</span> <span title="numéro">n°\u00A05'
-                         '</span></cite></a>'
-                         % {'url': symphonie_url})
+        symphonie_titre_html = '<a href="%(url)s"><cite><span title="Genre">'\
+                            'Symphonie</span> <span title="Numéro">n°\u00A05'\
+                            '</span></cite></a>' % {'url': symphonie_url}
+        self.assertEqual(self.symphonie.titre_html(), symphonie_titre_html)
+        symphonie_description_html = '<span title="Opus">op.\u00A0107</span>'
         self.assertEqual(self.symphonie.description_html(),
-                         '<span title="opus">op.\u00A0107</span>')
+                         symphonie_description_html)
         self.assertEqual(self.symphonie.html(),
-                         '<a href="%(url)s"><cite><span title="genre">'
-                         'Symphonie</span> <span title="numéro">n°\u00A05'
-                         '</span></cite></a>,&#32;<span title="opus">'
-                         'op.\u00A0107</span>'
-                         % {'url': symphonie_url})
+                         '%s,&#32;%s' % (symphonie_titre_html,
+                                         symphonie_description_html))
+        # Tartufe
         tartuffe_url = self.tartuffe.get_absolute_url()
         self.assertEqual(self.tartuffe.titre_html(),
                          '<a href="%(url)s"><cite>Le Tartuffe, ou '
                          'l’Imposteur</cite></a>'
                          % {'url': tartuffe_url})
         self.assertEqual(self.tartuffe.description_html(),
-                         '<span title="genre">Comédie</span>&#32;'
-                         '<span title="découpage">'
+                         '<span title="Genre">Comédie</span>&#32;'
+                         '<span title="Découpage">'
                          'en cinq actes et en vers</span>')

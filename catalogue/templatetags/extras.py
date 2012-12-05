@@ -68,7 +68,7 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True):
     Abrègre les mots avec une limite de longueur (par défaut 0).
 
     >>> print(abbreviate('amélie'))
-    <span title="amélie">a.</span>
+    <span title="Amélie">a.</span>
     >>> print(abbreviate('jeanöõ-françois du puy du fou', tags=False))
     j.-fr. du p. du f.
     >>> print(abbreviate('autéeur dramatique de la tour de babel', 1,

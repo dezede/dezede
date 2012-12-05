@@ -436,7 +436,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         return str_list(l, infix='')
 
     def html(self, tags=True, auteurs=True, titre=True,
-             descr=True, genre_caps=True, parentes=True):
+             descr=True, genre_caps=False, parentes=True):
         # FIXME: Nettoyer cette horreur
         out = ''
         auts = self.auteurs_html(tags)

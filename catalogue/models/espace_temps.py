@@ -99,9 +99,6 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
                          'Oeuvre').objects \
                                   .filter(ancrage_creation__lieu=self)
 
-    def __repr__(self):
-        return self.nom
-
     def html(self, tags=True, short=False):
         url = None if not tags else self.get_absolute_url()
         if short or self.parent is None or self.nature.referent:
