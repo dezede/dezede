@@ -467,14 +467,14 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
                     cs = self.calc_caracteristiques(1, tags)
                     titre_complet += ' ' + cs[0]
                     caracteristiques = cs[1]
-                if not parentes:
-                    titre_complet = cite(titre_complet, tags)
                 if titre:
-                    out += href(url, titre_complet, tags)
+                    out += href(url, titre_complet, tags=tags)
                     if descr and cs and cs[1]:
                         out += ','
             elif descr:
                 out += genre
+            else:
+                titre_complet = cite(titre_complet, tags=tags)
         if descr and caracteristiques:
             if out:
                 # TODO: BUG : le validateur HTML supprime l'espace qu'on ajoute
@@ -497,8 +497,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
                          parentes=False)
 
     def description_html(self, tags=True):
-        return self.html(tags, auteurs=False, titre=False, descr=True,
-                         genre_caps=True)
+        return self.html(tags, auteurs=False, titre=False, descr=True)
 
     def clean(self):
         if not self.titre and not self.genre:

@@ -43,20 +43,20 @@ class OeuvreTestCase(TestCase):
     def testHTMLRenders(self):
         # Carmen
         carmen_url = self.carmen.get_absolute_url()
-        self.assertEqual(self.carmen.titre_html(),
-                         '<a href="%(url)s"><cite>Carmen</cite></a>'
-                         % {'url': carmen_url})
+        carmen_titre_html = '<a href="%(url)s"><cite>Carmen</cite></a>'\
+                            % {'url': carmen_url}
+        self.assertEqual(self.carmen.titre_html(), carmen_titre_html)
+        carmen_description_html = '<span title="Genre">opéra</span>'
         self.assertEqual(self.carmen.description_html(),
-                         '<span title="Genre">Opéra</span>')
+                         carmen_description_html)
         self.assertEqual(self.carmen.html(),
-                         '<a href="%(url)s"><cite>Carmen</cite></a>, '
-                         '<span title="Genre">opéra</span>'
-                         % {'url': carmen_url})
+                         '%s, %s' % (carmen_titre_html,
+                                     carmen_description_html))
         # Symphonie n° 5
         symphonie_url = self.symphonie.get_absolute_url()
-        symphonie_titre_html = '<a href="%(url)s"><cite><span title="Genre">'\
+        symphonie_titre_html = '<a href="%(url)s"><span title="Genre">'\
                             'Symphonie</span> <span title="Numéro">n°\u00A05'\
-                            '</span></cite></a>' % {'url': symphonie_url}
+                            '</span></a>' % {'url': symphonie_url}
         self.assertEqual(self.symphonie.titre_html(), symphonie_titre_html)
         symphonie_description_html = '<span title="Opus">op.\u00A0107</span>'
         self.assertEqual(self.symphonie.description_html(),
@@ -71,6 +71,6 @@ class OeuvreTestCase(TestCase):
                          'l’Imposteur</cite></a>'
                          % {'url': tartuffe_url})
         self.assertEqual(self.tartuffe.description_html(),
-                         '<span title="Genre">Comédie</span>&#32;'
+                         '<span title="Genre">comédie</span>&#32;'
                          '<span title="Découpage">'
                          'en cinq actes et en vers</span>')
