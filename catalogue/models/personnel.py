@@ -102,7 +102,7 @@ class Devise(CustomModel):
 class Engagement(CustomModel):
     individus = ManyToManyField('Individu', related_name='engagements')
     profession = ForeignKey('Profession', related_name='engagements')
-    salaire = FloatField(blank=True)
+    salaire = FloatField(blank=True, null=True)
     devise = ForeignKey('Devise', blank=True, null=True,
         related_name='engagements')
 
