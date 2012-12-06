@@ -25,3 +25,8 @@ class EvenementTestCase(TestCase):
                          'L’arrivée du père Noël, ou Le Saint Nicolas vengeur')
         self.assertEqual(unicode(programme[4]),
                          'Distribution de pains d’épices')
+
+    def testRendering(self):
+        self.assertEqual(unicode(self.nicolas),
+                         'Jeudi 6 décembre 2012 > '
+                         'Rouen, Théâtre des Arts, Saint-Nicolas')
