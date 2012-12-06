@@ -4,13 +4,26 @@ from __future__ import unicode_literals
 from django.utils.unittest import TestCase
 from ...models import *
 from .utils import new
+from django.core.exceptions import ValidationError
 
 
 class OeuvreTestCase(TestCase):
     def setUp(self):
+        # Invalid
+        self.invalid = new(Oeuvre, titre_secondaire='l’essai infructeux')
         # Carmen
         opera = new(GenreDOeuvre, nom='opéra')
+        violon = new(Partie, nom='violon')
+        violons = new(Pupitre, partie=violon, quantite_min=2, quantite_max=2)
+        voix = new(Partie, nom='voix', nom_pluriel='voix')
+        choeur = new(Pupitre, partie=voix, quantite_min=4, quantite_max=8)
         self.carmen = new(Oeuvre, titre='Carmen', genre=opera)
+        self.carmen.pupitres.add(violons, choeur)
+        # Sonate
+        sonate = new(GenreDOeuvre, nom='sonate')
+        violon_solo = new(Pupitre, partie=violon, quantite_max=1)
+        self.sonate = new(Oeuvre, genre=sonate)
+        self.sonate.pupitres.add(violon_solo)
         # Symphonie n° 5
         symphonie = new(GenreDOeuvre, nom='symphonie')
         numero = new(TypeDeCaracteristiqueDOeuvre, nom='numéro',
@@ -34,9 +47,35 @@ class OeuvreTestCase(TestCase):
                             genre=comedie)
         self.tartuffe.caracteristiques.add(cinq_actes_vers)
 
+    def testCleanObject(self):
+        # Invalid
+        with self.assertRaises(ValidationError):
+            self.invalid.clean()
+        # Carmen
+        self.carmen.clean()
+        # Sonate
+        self.sonate.clean()
+        # Symphonie
+        self.symphonie.clean()
+        # Tartufe
+        self.tartuffe.clean()
+
     def testComputedNames(self):
+        # Carmen
         self.assertEqual(unicode(self.carmen), 'Carmen')
+        self.assertEqual(self.carmen.calc_pupitres(),
+                         'pour deux violons\xa0et\xa0quatre \xe0 huit voix')
+        # Sonate
+        self.assertEqual(unicode(self.sonate), 'Sonate pour violon')
+        # Symphonie n° 5
         self.assertEqual(unicode(self.symphonie), 'Symphonie n°\u00A05')
+        self.assertEqual(self.symphonie.titre_html(tags=False),
+                         'Symphonie n°\u00A05')
+        self.assertEqual(self.symphonie.titre_descr_html(tags=False),
+                         'Symphonie n°\xa05, op.\xa0107')
+        self.assertEqual(self.symphonie.description_html(tags=False),
+                         'op.\xa0107')
+        # Tartufe
         self.assertEqual(unicode(self.tartuffe),
                          'Le Tartuffe, ou l’Imposteur')
 

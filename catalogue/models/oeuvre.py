@@ -150,7 +150,7 @@ class Partie(CustomModel, SlugModel):
         return self.nom
 
     def __unicode__(self):
-        return capfirst(self.nom)
+        return self.html()
 
     @staticmethod
     def autocomplete_search_fields():
@@ -452,7 +452,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
 #            if parentes and pars:
 #                out += pars + ', '
             if titre_complet:
-                out += href(url, cite(titre_complet, tags), tags)
+                out += href(url, cite(titre_complet, tags=tags), tags)
                 if descr and genre:
                     out += ', '
         if genre:
@@ -473,8 +473,6 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
                         out += ','
             elif descr:
                 out += genre
-            else:
-                titre_complet = cite(titre_complet, tags=tags)
         if descr and caracteristiques:
             if out:
                 # TODO: BUG : le validateur HTML supprime l'espace qu'on ajoute

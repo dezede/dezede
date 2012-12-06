@@ -15,8 +15,12 @@ def date_html(d, tags=True, short=False):
     >>> from datetime import date
     >>> print date_html(date(1828, 1, 15))
     mardi 15 janvier 1828
-    >>> print date_html(date(1828, 1, 1), False)
+    >>> print date_html(date(1828, 1, 1), tags=False)
     mardi 1er janvier 1828
+    >>> print date_html(date(1828, 1, 1))
+    mardi 1<sup>er</sup> janvier 1828
+    >>> print date_html(date(1828, 1, 1), tags=False, short=True)
+    1er janvier 1828
     """
     pre = '' if short else date(d, 'l')
     post = date(d, 'F Y')
