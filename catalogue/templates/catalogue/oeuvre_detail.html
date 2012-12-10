@@ -54,7 +54,7 @@
   </div>
 
   <dl class="dl-horizontal">
-    {% list_in_dl evenement.effectif.all %}
+    {% list_in_dl evenement.pupitres.all %}
     {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
     {% attr_in_dl 'notes' %}
 
