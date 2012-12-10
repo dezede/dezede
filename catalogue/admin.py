@@ -396,9 +396,10 @@ class CaracteristiqueDOeuvreAdmin(CustomAdmin):
 class PartieAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'parente', 'classement',)
     list_editable = ('nom', 'parente', 'classement',)
-    raw_id_fields = ('professions',)
+    raw_id_fields = ('professions', 'parente',)
     autocomplete_lookup_fields = {
         'm2m': ['professions'],
+        'fk': ['parente'],
     }
 
 
@@ -488,6 +489,8 @@ class CaracteristiqueDElementDeProgrammeAdmin(CustomAdmin):
 class ElementDeProgrammeAdmin(CustomAdmin):
     list_display = ('oeuvre', 'autre', 'position', 'html', 'etat')
     list_editable = ('position', 'etat')
+    search_fields = ('oeuvre__titre', 'oeuvre__titre_secondaire',
+                     'autre')
     filter_horizontal = ('caracteristiques', 'distribution', 'personnels',
         'illustrations', 'documents',)
     raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
