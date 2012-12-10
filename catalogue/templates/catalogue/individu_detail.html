@@ -15,22 +15,24 @@
     {% frontend_admin autorite=1 %}
     <h1>
       {{ individu.nom_complet }}
-      <small title="{% filter capfirst %}{% blocktrans count counter=individu.professions.all|length %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
-        {{ individu.calc_professions|capfirst|default:_('Profession inconnue') }}
-      </small>
+      {% if individu.professions.exists %}
+        <small title="{% filter capfirst %}{% blocktrans count counter=individu.professions.all|length %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
+          {{ individu.calc_professions }}
+        </small>
+      {% endif %}
     </h1>
     <h3>
-      {% if not individu.naissance and not individu.deces %}
-        <span title="{% trans "ancrage spatio-temporel"|capfirst %}">
-          {{ individu.ancrage|default:_('Époque inconnue') }}
-        </span>
-      {% else %}
+      {% if individu.naissance or individu.deces %}
         <span title="{% trans "naissance"|capfirst %}">
-          {{ individu.naissance_html|default:_('?') }}
+          {{ individu.naissance_html }}
         </span>
         &ndash;
         <span title="{% trans "décès"|capfirst %}">
-          {{ individu.deces_html|default:_('?') }}
+          {{ individu.deces_html }}
+        </span>
+      {% elif individu.ancrage %}
+        <span title="{% trans "ancrage spatio-temporel"|capfirst %}">
+          {{ individu.ancrage }}
         </span>
       {% endif %}
     </h3>
