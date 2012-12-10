@@ -359,7 +359,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         related_name='oeuvres_creees', blank=True, null=True,
         verbose_name=_('ancrage spatio-temporel de création'))
     pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
-        null=True)
+                               null=True, verbose_name=_('effectif'))
     filles = ManyToManyField('Oeuvre', through='ParenteDOeuvres',
                              related_name='meres', symmetrical=False)
     lilypond = TextField(blank=True, verbose_name='LilyPond')
