@@ -474,6 +474,7 @@ class OeuvreAdmin(CustomAdmin):
 class AttributionDePupitreAdmin(CustomAdmin):
     list_display = ('__unicode__', 'pupitre',)
     list_editable = ('pupitre',)
+    search_fields = ('partie__nom', 'quantite_min', 'quantite_max')
     raw_id_fields = ('pupitre', 'individus',)
     autocomplete_lookup_fields = {
         'fk': ['pupitre'],
