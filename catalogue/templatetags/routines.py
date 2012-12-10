@@ -67,7 +67,7 @@ def attr_in_dl(context, attr, verbose_name=None, object=None):
 
 
 @register.simple_tag(takes_context=True)
-def list_in_dl(context, object_list, property_name='link', verbose_name=None,
+def list_in_dl(context, object_list, properties_name='link', verbose_name=None,
                                                   verbose_name_plural=None):
     if not object_list:
         return ''
@@ -76,7 +76,11 @@ def list_in_dl(context, object_list, property_name='link', verbose_name=None,
         verbose_name = Model._meta.verbose_name
     if verbose_name_plural is None:
         verbose_name_plural = Model._meta.verbose_name_plural
-    display_list = [getattr(o, property_name)() for o in object_list]
+    display_list = []
+    for object in object_list:
+        for property_name in properties_name.split('__'):
+            object = getattr(object, property_name)()
+        display_list.append(object)
     c = copy(context)
     c.update({
         'count': len(display_list),
