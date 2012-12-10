@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 import csv, re, sys
 from django.template.defaultfilters import title
 from django.contrib.contenttypes.models import ContentType
@@ -10,7 +11,6 @@ from catalogue.api import build_ancrage
 from catalogue.api.models.utils import update_or_create
 from catalogue.api.utils import notify_send
 from .routines import print_error, print_success, print_warning
-from django.utils.encoding import smart_unicode
 
 
 TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+'
@@ -112,9 +112,11 @@ def import_oeuvre(i, oeuvre, bindings):
         titre2 = oeuvre[bindings['titre_secondaire']]
         particule2, titre2 = split_titre(titre2)
         coordination = ', ou ' if titre2 else ''
+        notes = oeuvre.get(bindings['notes'], '')
         oeuvre_obj = update_or_create(Oeuvre, ['titre', 'titre_secondaire'],
             prefixe_titre=particule, titre=titre, coordination=coordination,
-            prefixe_titre_secondaire=particule2, titre_secondaire=titre2)
+            prefixe_titre_secondaire=particule2, titre_secondaire=titre2,
+            notes=notes)
         # TODO: Titres de la version originale à faire
         # Auteurs :
         for profession, profession_pluriel, auteurs_key in bindings['auteurs']:
@@ -156,6 +158,8 @@ def import_oeuvre(i, oeuvre, bindings):
 def import_csv_file(csv_file, bindings):
     oeuvres = list(csv.DictReader(csv_file))
     for i, oeuvre in enumerate(oeuvres):
+        oeuvre = {k.decode('utf-8'): v.decode('utf-8')
+                                                for k, v in oeuvre.iteritems()}
         import_oeuvre(i, oeuvre, bindings)
 
 

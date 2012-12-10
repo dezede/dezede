@@ -1,3 +1,6 @@
+# coding: utf-8
+
+from __future__ import unicode_literals
 import sys
 import json
 import os.path
