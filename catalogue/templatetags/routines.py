@@ -79,7 +79,9 @@ def list_in_dl(context, object_list, properties_name='link', verbose_name=None,
     display_list = []
     for object in object_list:
         for property_name in properties_name.split('__'):
-            object = getattr(object, property_name)()
+            object = getattr(object, property_name)
+            if callable(object):
+                object = object()
         display_list.append(object)
     c = copy(context)
     c.update({
