@@ -78,7 +78,7 @@ def list_in_dl(context, object_list, properties_name='link', verbose_name=None,
         verbose_name_plural = Model._meta.verbose_name_plural
     display_list = []
     for object in object_list:
-        for property_name in properties_name.split('__'):
+        for property_name in properties_name.split('.'):
             object = getattr(object, property_name)
             if callable(object):
                 object = object()
