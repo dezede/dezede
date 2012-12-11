@@ -85,12 +85,11 @@ class OeuvreTestCase(TestCase):
         carmen_titre_html = '<a href="%(url)s"><cite>Carmen</cite></a>'\
                             % {'url': carmen_url}
         self.assertEqual(self.carmen.titre_html(), carmen_titre_html)
-        carmen_description_html = '<span title="Genre">opéra</span>'
         self.assertEqual(self.carmen.description_html(),
-                         carmen_description_html)
+                         '<span title="Genre">Opéra</span>')
         self.assertEqual(self.carmen.html(),
                          '%s, %s' % (carmen_titre_html,
-                                     carmen_description_html))
+                                     '<span title="Genre">opéra</span>'))
         # Symphonie n° 5
         symphonie_url = self.symphonie.get_absolute_url()
         symphonie_titre_html = '<a href="%(url)s"><span title="Genre">'\
@@ -110,6 +109,6 @@ class OeuvreTestCase(TestCase):
                          'l’Imposteur</cite></a>'
                          % {'url': tartuffe_url})
         self.assertEqual(self.tartuffe.description_html(),
-                         '<span title="Genre">comédie</span>&#32;'
+                         '<span title="Genre">Comédie</span>&#32;'
                          '<span title="Découpage">'
                          'en cinq actes et en vers</span>')

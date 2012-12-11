@@ -495,7 +495,8 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
                          parentes=False)
 
     def description_html(self, tags=True):
-        return self.html(tags, auteurs=False, titre=False, descr=True)
+        return self.html(tags, auteurs=False, titre=False, descr=True,
+                         genre_caps=True)
 
     def clean(self):
         if not self.titre and not self.genre:
