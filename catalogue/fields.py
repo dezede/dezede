@@ -10,9 +10,13 @@ class RangeSliderWidget(MultiWidget):
         super(RangeSliderWidget, self).__init__(widgets, attrs=attrs)
 
     def render(self, name, value, attrs=None):
-        if Evenement.objects.exists():
-            min = Evenement.objects.order_by('ancrage_debut__date')[0].ancrage_debut.date.year
-            max = Evenement.objects.order_by('-ancrage_debut__date')[0].ancrage_debut.date.year
+        evenements = Evenement.objects.filter(
+                        ancrage_debut__date__isnull=False)
+        if evenements.exists():
+            min = evenements.order_by(
+                              'ancrage_debut__date')[0].ancrage_debut.date.year
+            max = evenements.order_by(
+                             '-ancrage_debut__date')[0].ancrage_debut.date.year
         else:
             min, max = 1600, 2012
         if value == [None, None]:
