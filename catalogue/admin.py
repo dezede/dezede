@@ -395,6 +395,7 @@ class TypeDeCaracteristiqueDOeuvreAdmin(CustomAdmin):
 class CaracteristiqueDOeuvreAdmin(CustomAdmin):
     list_display = ('__unicode__', 'type', 'valeur', 'classement',)
     list_editable = ('type', 'valeur', 'classement',)
+    search_fields = ('type__nom', 'valeur')
 
 
 class PartieAdmin(CustomAdmin):

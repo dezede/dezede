@@ -91,7 +91,7 @@ class CaracteristiqueDOeuvre(CustomModel):
                                       'caractéristiques d’œuvre', 1)
         verbose_name_plural = ungettext_lazy('caractéristique d’œuvre',
                                              'caractéristiques d’œuvre', 2)
-        ordering = ['type', 'classement']
+        ordering = ['type', 'classement', 'valeur']
         app_label = 'catalogue'
 
     def html(self, tags=True):
