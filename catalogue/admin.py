@@ -70,11 +70,13 @@ def build_boolean_list_filter(class_title, class_parameter_name, filter=None,
             if self.value() == '1':
                 query = getattr(queryset, 'filter' if filter is not None
                                      else 'exclude')
-                return query(filter if filter is not None else exclude).distinct()
+                return query(filter if filter is not None
+                                    else exclude).distinct()
             if self.value() == '0':
                 query = getattr(queryset, 'filter' if exclude is not None
                                      else 'exclude')
-                return query(exclude if exclude is not None else filter).distinct()
+                return query(exclude if exclude is not None
+                                     else filter).distinct()
 
     return HasEventsListFilter
 
@@ -115,7 +117,8 @@ class AncrageSpatioTemporelInline(CustomTabularInline):
 
 
 class OeuvreMereInline(CustomTabularInline):
-    verbose_name = ParenteDOeuvres._meta.get_field_by_name('mere')[0].verbose_name
+    verbose_name = ParenteDOeuvres._meta.get_field_by_name('mere')[0]\
+                                                                  .verbose_name
     verbose_name_plural = _(u'œuvres mères')
     model = ParenteDOeuvres
     fk_name = 'fille'
@@ -128,7 +131,8 @@ class OeuvreMereInline(CustomTabularInline):
 
 
 class OeuvreFilleInline(CustomTabularInline):
-    verbose_name = ParenteDOeuvres._meta.get_field_by_name('fille')[0].verbose_name
+    verbose_name = ParenteDOeuvres._meta.get_field_by_name('fille')[0]\
+                                                                  .verbose_name
     verbose_name_plural = _(u'œuvres filles')
     model = ParenteDOeuvres
     fk_name = 'mere'
@@ -396,6 +400,7 @@ class CaracteristiqueDOeuvreAdmin(CustomAdmin):
 class PartieAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'parente', 'classement',)
     list_editable = ('nom', 'parente', 'classement',)
+    search_fields = ('nom',)
     raw_id_fields = ('professions', 'parente',)
     autocomplete_lookup_fields = {
         'm2m': ['professions'],
