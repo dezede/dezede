@@ -54,7 +54,8 @@
   </div>
 
   <dl class="dl-horizontal">
-    {% list_in_dl oeuvre.pupitres.all 'partie.link' %}
+    {% attr_in_dl 'pupitres_html' _('effectif') %}
+
     {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
     {% attr_in_dl 'notes' %}
 

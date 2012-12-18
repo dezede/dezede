@@ -189,6 +189,12 @@ class Pupitre(CustomModel):
         out += partie
         return out
 
+    def get_absolute_url(self):
+        return self.partie.get_absolute_url()
+
+    def html(self, tags=True):
+        return href(self.get_absolute_url(), unicode(self), tags=tags)
+
     @staticmethod
     def autocomplete_search_fields():
         return ('partie__nom__icontains', 'partie__nom_pluriel__icontains',
@@ -400,15 +406,18 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
     calc_caracteristiques.short_description = _('caractéristiques')
     calc_caracteristiques.admin_order_field = 'caracteristiques__valeur'
 
-    def calc_pupitres(self):
+    def calc_pupitres(self, tags=False):
         if not self.pk:
             return ''
         out = ''
         ps = self.pupitres
         if ps.exists():
             out += ugettext('pour ')
-            out += str_list_w_last(unicode(p) for p in ps.iterator())
+            out += str_list_w_last(p.html(tags=tags) for p in ps.iterator())
         return out
+
+    def pupitres_html(self, tags=True):
+        return self.calc_pupitres(tags=tags)
 
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
