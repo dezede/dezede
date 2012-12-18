@@ -406,18 +406,16 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
     calc_caracteristiques.short_description = _('caractéristiques')
     calc_caracteristiques.admin_order_field = 'caracteristiques__valeur'
 
-    def calc_pupitres(self, tags=False):
-        if not self.pk:
-            return ''
-        out = ''
+    def calc_pupitres(self, prefix=True, tags=False):
         ps = self.pupitres
-        if ps.exists():
-            out += ugettext('pour ')
-            out += str_list_w_last(p.html(tags=tags) for p in ps.iterator())
+        if not self.pk or not ps.exists():
+            return ''
+        out = ugettext('pour ') if prefix else ''
+        out += str_list_w_last(p.html(tags=tags) for p in ps.iterator())
         return out
 
-    def pupitres_html(self, tags=True):
-        return self.calc_pupitres(tags=tags)
+    def pupitres_html(self, prefix=False, tags=True):
+        return self.calc_pupitres(prefix=prefix, tags=tags)
 
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
