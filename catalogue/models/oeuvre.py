@@ -262,7 +262,7 @@ class ParenteDOeuvres(CustomModel):
                                               fille=mere).exists():
                 raise ValidationError(_('Une relation entre ces deux objets '
                                         'existe déjà dans le sens inverse'))
-        except Oeuvre.DoesNotExist:
+        except (Oeuvre.DoesNotExist, TypeDeParenteDOeuvres.DoesNotExist):
             pass
 
 
