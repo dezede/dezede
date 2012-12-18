@@ -449,7 +449,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         # FIXME: Nettoyer cette horreur
         out = ''
         auts = self.auteurs_html(tags)
-#        pars = self.calc_parentes(tags)
+        pars = self.calc_parentes(tags)
         titre_complet = self.titre_complet()
         genre = self.genre
         caracteristiques = self.calc_caracteristiques(tags=tags)
@@ -458,8 +458,8 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
             out += auts + ', '
         if titre:
 #            FIXME: À restaurer quand le modèle d'œuvre sera récursif.
-#            if parentes and pars:
-#                out += pars + ', '
+            if parentes and pars:
+                out += pars + ', '
             if titre_complet:
                 out += href(url, cite(titre_complet, tags=tags), tags)
                 if descr and genre:
