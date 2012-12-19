@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.utils.safestring import mark_safe
 from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from django.db.models import CharField, ManyToManyField, \
                              PositiveIntegerField, FloatField, ForeignKey, \
@@ -448,7 +449,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return self.parentes_in_order('filles')
 
     def calc_referent_ancestors(self, links=False):
-        if not self.pk or self.contenu_dans is None or self.genre.referent:
+        if not self.pk or self.contenu_dans is None or (self.genre
+                                                     and  self.genre.referent):
             return ''
         return self.contenu_dans.titre_html(links=links)
 
@@ -471,7 +473,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         if auteurs and auts:
             out += auts + ', '
         if titre:
-#            FIXME: À restaurer quand le modèle d'œuvre sera récursif.
             if ancestors and pars:
                 out += pars + ', '
             if titre_complet:
@@ -505,9 +506,14 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                 else:
                     out += ' '
             out += caracteristiques
-        return out
+        return mark_safe(out)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
+
+    def short_html(self, tags=True, links=False):
+        return self.html(tags=tags, auteurs=False, titre=True, descr=False,
+                         ancestors=False, links=links)
+
 
     def titre_html(self, tags=True, links=True):
         return self.html(tags, auteurs=False, titre=True, descr=False,

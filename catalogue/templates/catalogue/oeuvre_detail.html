@@ -56,6 +56,15 @@
   <dl class="dl-horizontal">
     {% attr_in_dl 'pupitres_html' _('effectif') %}
 
+    {% with contenu=oeuvre.get_descendants %}
+      {% if contenu %}
+        <dt>{% trans 'Contenu' %}</dt>
+        <dd>
+          {% jstree contenu 'short_html' %}
+        </dd>
+      {% endif %}
+    {% endwith %}
+
     {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
     {% attr_in_dl 'notes' %}
 

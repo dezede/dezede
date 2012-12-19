@@ -22,11 +22,11 @@
   </div>
 
   <dl class="dl-horizontal">
-    {% with lieux=lieu.get_descendants %}
-      {% if lieux %}
+    {% with contenu=lieu.get_descendants %}
+      {% if contenu %}
         <dt>{% trans 'Lieux contenus' %}</dt>
         <dd>
-          {% include 'catalogue/lieu_list_item.html' %}
+          {% jstree contenu 'nom' %}
         </dd>
       {% endif %}
     {% endwith %}

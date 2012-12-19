@@ -1,0 +1,40 @@
+{% load url from future %}
+{% load mptt_tags routines %}
+
+
+{% if queryset %}
+
+  <div id="{{ id }}">
+    <ul class="root">
+      {% recursetree queryset %}
+        <li>
+          <a href="{{ node.get_absolute_url }}">
+            {{ node|get_property:properties_name }}
+          </a>
+          {% if not node.is_leaf_node %}
+            <ul class="children">
+              {{ children }}
+            </ul>
+          {% endif %}
+        </li>
+      {% endrecursetree %}
+    </ul>
+  </div>
+
+  <script>
+    $(function () {
+      $("#{{ id }}").jstree({
+        core: {
+          'html_titles': true
+        },
+        plugins: ["themes", "html_data"],
+        themes: {
+          theme: "classic",
+          icons: false,
+          dots: true
+        }
+      });
+    });
+  </script>
+
+{% endif %}

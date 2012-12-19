@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from django.template import Library
 from django.template.loader import render_to_string
 from django.contrib.sites.models import get_current_site
@@ -66,23 +67,42 @@ def attr_in_dl(context, attr, verbose_name=None, object=None):
     return render_to_string('routines/attr_in_dl.html', c)
 
 
-@register.simple_tag(takes_context=True)
-def list_in_dl(context, object_list, properties_name='link', verbose_name=None,
-                                                  verbose_name_plural=None):
-    if not object_list:
-        return ''
+def get_verbose_name_from_object_list(object_list, verbose_name=None,
+                                      verbose_name_plural=None):
     Model = object_list[0].__class__
     if verbose_name is None:
         verbose_name = Model._meta.verbose_name
     if verbose_name_plural is None:
         verbose_name_plural = Model._meta.verbose_name_plural
+    return verbose_name, verbose_name_plural
+
+
+@register.filter
+def get_property(object, properties_name):
+   for property_name in properties_name.split('.'):
+       object = getattr(object, property_name)
+       if callable(object):
+           object = object()
+   return object
+
+
+def build_display_list(object_list, properties_name):
     display_list = []
     for object in object_list:
-        for property_name in properties_name.split('.'):
-            object = getattr(object, property_name)
-            if callable(object):
-                object = object()
+        object = get_property(object, properties_name)
         display_list.append(object)
+    return display_list
+
+
+@register.simple_tag(takes_context=True)
+def list_in_dl(context, object_list, properties_name='link', verbose_name=None,
+                                                  verbose_name_plural=None):
+    if not object_list:
+        return ''
+    verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
+                                    object_list, verbose_name=verbose_name,
+                                    verbose_name_plural=verbose_name_plural)
+    display_list = build_display_list(object_list, properties_name)
     c = copy(context)
     c.update({
         'count': len(display_list),
@@ -91,3 +111,15 @@ def list_in_dl(context, object_list, properties_name='link', verbose_name=None,
         'verbose_name_plural': verbose_name_plural,
     })
     return render_to_string('routines/list_in_dl.html', c)
+
+
+@register.simple_tag()
+def jstree(queryset, properties_name='__unicode__', id=None):
+    if id is None:
+        id = queryset[0].__class__.__name__.lower()
+    c = {
+        'queryset': queryset,
+        'id': id,
+        'properties_name': properties_name,
+    }
+    return render_to_string('routines/jstree.html', c)

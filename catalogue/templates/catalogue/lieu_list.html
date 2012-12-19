@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n routines %}
 {% load url from future %}
 
 
@@ -15,7 +15,7 @@
   </div>
 
   {% if lieux %}
-    {% include 'catalogue/lieu_list_item.html' %}
+    {% jstree lieux 'nom' %}
   {% else %}
     {% trans "Aucun lieu ou institution ne figure dans la base de données." %}
   {% endif %}
