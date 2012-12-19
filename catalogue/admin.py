@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import SimpleListFilter
 from django.db.models import Q
 from django.contrib.contenttypes.generic import GenericStackedInline
+from mptt.admin import MPTTModelAdmin
 
 
 #
@@ -444,10 +445,10 @@ class OeuvreAdmin(CustomAdmin):
     list_editable = ('genre', 'etat')
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
-    raw_id_fields = ('genre', 'caracteristiques',
+    raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
                  'ancrage_creation', 'pupitres', 'documents', 'illustrations',)
     autocomplete_lookup_fields = {
-        'fk': ['genre', 'ancrage_creation'],
+        'fk': ['genre', 'ancrage_creation', 'contenu_dans'],
         'm2m': ['caracteristiques', 'pupitres',
                 'documents', 'illustrations'],
     }
@@ -461,7 +462,7 @@ class OeuvreAdmin(CustomAdmin):
         }),
         (_('Autres champs courants'), {
             'fields': ('genre', 'caracteristiques',
-                        'ancrage_creation', 'pupitres',),
+                        'ancrage_creation', 'pupitres', 'contenu_dans',),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),

@@ -5,7 +5,7 @@ from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from django.db.models import CharField, ManyToManyField, \
                              PositiveIntegerField, FloatField, ForeignKey, \
                              OneToOneField, IntegerField, TextField, \
-                             permalink, get_model
+                             BooleanField, permalink, get_model
 from tinymce.models import HTMLField
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
@@ -20,6 +20,7 @@ from collections import defaultdict
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.generic import GenericRelation
+from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 
 
 class GenreDOeuvre(CustomModel, SlugModel):
@@ -27,6 +28,15 @@ class GenreDOeuvre(CustomModel, SlugModel):
     nom_pluriel = CharField(max_length=430, blank=True,
         verbose_name=_('nom (au pluriel)'),
         help_text=PLURAL_MSG)
+    referent = BooleanField(_('référent'), default=False,
+        help_text=_('L’affichage d’une œuvre remonte jusqu’à l’œuvre '
+                    'référente la contenant.') \
+            + ' ' \
+            + ex(unicode(_('Le jeune Henri, acte 2, scène 3')),
+                 pre=unicode(_('le rendu d’une scène sera du type ')),
+                 post=unicode(_(' car on remonte jusqu’à l’œuvre référente, '
+                                'ici choisie comme étant celle de nature '
+                                '« opéra »'))))
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
         blank=True, null=True)
 
@@ -346,7 +356,7 @@ class Auteur(CustomModel):
         return self.html(tags=False)
 
 
-class Oeuvre(AutoriteModel, UniqueSlugModel):
+class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(max_length=20, blank=True,
         verbose_name=_('préfixe du titre'))
     titre = CharField(max_length=200, blank=True)
@@ -366,12 +376,17 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         verbose_name=_('ancrage spatio-temporel de création'))
     pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
                                null=True, verbose_name=_('effectif'))
-    filles = ManyToManyField('Oeuvre', through='ParenteDOeuvres',
+    contenu_dans = TreeForeignKey('self', null=True, blank=True,
+                                  related_name='enfants',
+                                  verbose_name=_('contenu dans'))
+    filles = ManyToManyField('self', through='ParenteDOeuvres',
                              related_name='meres', symmetrical=False)
     lilypond = TextField(blank=True, verbose_name='LilyPond')
     description = HTMLField(blank=True)
     evenements = ManyToManyField('Evenement', through='ElementDeProgramme',
                                  related_name='oeuvres')
+
+    objects = TreeManager()
 
     @permalink
     def get_absolute_url(self):
@@ -383,7 +398,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
 
     def link(self):
         return self.html(tags=True, auteurs=False, titre=True, descr=True,
-                         parentes=True)
+                         ancestors=True)
     link.short_description = _('lien')
     link.allow_tags = True
 
@@ -432,10 +447,10 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
     def filles_in_order(self):
         return self.parentes_in_order('filles')
 
-    def calc_parentes(self, tags=True):
-        if not self.pk:
+    def calc_referent_ancestors(self, links=False):
+        if not self.pk or self.contenu_dans is None or self.genre.referent:
             return ''
-        return str_list_w_last(unicode(m) for m in self.meres_in_order())
+        return self.contenu_dans.titre_html(links=links)
 
     def titre_complet(self):
         l = (self.prefixe_titre, self.titre, self.coordination,
@@ -443,11 +458,12 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         return str_list(l, infix='')
 
     def html(self, tags=True, auteurs=True, titre=True,
-             descr=True, genre_caps=False, parentes=True):
+             descr=True, genre_caps=False, ancestors=True,
+             ancestors_links=False, links=True):
         # FIXME: Nettoyer cette horreur
         out = ''
         auts = self.auteurs_html(tags)
-        pars = self.calc_parentes(tags)
+        pars = self.calc_referent_ancestors(links=ancestors_links)
         titre_complet = self.titre_complet()
         genre = self.genre
         caracteristiques = self.calc_caracteristiques(tags=tags)
@@ -456,10 +472,10 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
             out += auts + ', '
         if titre:
 #            FIXME: À restaurer quand le modèle d'œuvre sera récursif.
-            if parentes and pars:
+            if ancestors and pars:
                 out += pars + ', '
             if titre_complet:
-                out += href(url, cite(titre_complet, tags=tags), tags)
+                out += href(url, cite(titre_complet, tags=tags), tags & links)
                 if descr and genre:
                     out += ', '
         if genre:
@@ -475,7 +491,7 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
                     titre_complet += ' ' + cs[0]
                     caracteristiques = cs[1]
                 if titre:
-                    out += href(url, titre_complet, tags=tags)
+                    out += href(url, titre_complet, tags=tags & links)
                     if descr and cs and cs[1]:
                         out += ','
             elif descr:
@@ -493,13 +509,13 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
-    def titre_html(self, tags=True):
+    def titre_html(self, tags=True, links=True):
         return self.html(tags, auteurs=False, titre=True, descr=False,
-                         parentes=False)
+                         ancestors=True, ancestors_links=True, links=links)
 
     def titre_descr_html(self, tags=True):
         return self.html(tags, auteurs=False, titre=True, descr=True,
-                         parentes=False)
+                         ancestors=True)
 
     def description_html(self, tags=True):
         return self.html(tags, auteurs=False, titre=False, descr=True,
@@ -515,6 +531,9 @@ class Oeuvre(AutoriteModel, UniqueSlugModel):
         verbose_name_plural = ungettext_lazy('œuvre', 'œuvres', 2)
         ordering = ['titre', 'genre', 'slug']
         app_label = 'catalogue'
+
+    class MPTTMeta:
+        parent_attr = 'contenu_dans'
 
     def __unicode__(self):
         return strip_tags(self.titre_html(False))  # strip_tags car on autorise
