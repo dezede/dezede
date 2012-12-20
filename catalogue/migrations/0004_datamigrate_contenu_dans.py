@@ -10,7 +10,10 @@ class Migration(DataMigration):
         "Write your forwards methods here."
         TypeDeParenteDOeuvres = orm['catalogue.TypeDeParenteDOeuvres']
         ParenteDOeuvres = orm['catalogue.ParenteDOeuvres']
-        contenu_dans = TypeDeParenteDOeuvres.objects.get(nom='contenu dans', nom_relatif='contient')
+        try:
+            contenu_dans = TypeDeParenteDOeuvres.objects.get(nom='contenu dans', nom_relatif='contient')
+        except TypeDeParenteDOeuvres.DoesNotExist:
+            return
         for parente in ParenteDOeuvres.objects.filter(type=contenu_dans):
             fille = parente.fille
             fille.contenu_dans = parente.mere
