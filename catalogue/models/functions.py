@@ -128,8 +128,10 @@ def href(url, txt, tags=True):
     """
     >>> print href('truc.machin/bidule', 'Cliquez ici')
     <a href="truc.machin/bidule">Cliquez ici</a>
-    >>> print href('a.b/c', "It's a trap!", tags=False)
+    >>> print(href('a.b/c', "It's a trap!", tags=False))
     It's a trap!
+    >>> href('', '')
+    u''
     """
     if not txt:
         return ''
@@ -155,6 +157,8 @@ def hlp(txt, title, tags=True):
     <span title="Period">two years</span>
     >>> print hlp('G minor', 'tonality', tags=False)
     G minor
+    >>> hlp('', '')
+    u''
     """
     if not txt:
         return ''

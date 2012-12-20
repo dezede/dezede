@@ -1,13 +1,14 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.test import TestCase
+from django.test import TransactionTestCase
 from ...models import *
 
 
-class EvenementTestCase(TestCase):
+class EvenementTestCase(TransactionTestCase):
     fixtures = ['catalogue/tests/models/fixtures/auth.json',
                 'catalogue/tests/models/fixtures/evenement.json']
+    cleans_up_after_itself = True
 
     def setUp(self):
         self.nicolas = Evenement.objects.all()[0]

@@ -1,12 +1,14 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.utils.unittest import TestCase
+from django.test import Client, TransactionTestCase
 from ...models import *
-from .utils import new
+from .utils import new, log_as_superuser
 
 
-class IndividuTestCase(TestCase):
+class IndividuTestCase(TransactionTestCase):
+    cleans_up_after_itself = True
+
     def setUp(self):
         jb = new(Prenom, prenom='Jean-Baptiste', favori=True, classement=1.0)
         self.moliere = new(Individu, nom='Poquelin', pseudonyme='Molière',
@@ -17,6 +19,9 @@ class IndividuTestCase(TestCase):
         self.piaf = new(Individu, nom='Gassion', pseudonyme='La Môme Piaf',
                         designation='S', titre='F')
         self.piaf.prenoms.add(edith, giovanna)
+        # Test client
+        self.client = Client()
+        log_as_superuser(self)
 
     def testComputedNames(self):
         self.assertEqual(unicode(self.moliere), 'Molière')
@@ -50,3 +55,8 @@ class IndividuTestCase(TestCase):
                          '<span class="sc">Gassion</span>, '
                          'dite La Môme Piaf</a>'
                          % {'url': piaf_url})
+
+    def testTemplateRenders(self):
+        for individu in [self.moliere, self.piaf]:
+            response = self.client.get(individu.get_absolute_url())
+            self.assertEqual(response.status_code, 200)

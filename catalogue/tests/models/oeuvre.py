@@ -1,13 +1,16 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.utils.unittest import TestCase
+from django.core.urlresolvers import reverse
+from django.test import Client, TransactionTestCase
 from ...models import *
-from .utils import new
+from .utils import new, log_as_superuser
 from django.core.exceptions import ValidationError
 
 
-class OeuvreTestCase(TestCase):
+class OeuvreTestCase(TransactionTestCase):
+    cleans_up_after_itself = True
+
     def setUp(self):
         # Invalid
         self.invalid = new(Oeuvre, titre_secondaire='l’essai infructeux')
@@ -46,6 +49,9 @@ class OeuvreTestCase(TestCase):
                             titre_secondaire='Imposteur',
                             genre=comedie)
         self.tartuffe.caracteristiques.add(cinq_actes_vers)
+        # Test client
+        self.client = Client()
+        log_as_superuser(self)
 
     def testCleanObject(self):
         # Invalid
@@ -112,3 +118,31 @@ class OeuvreTestCase(TestCase):
                          '<span title="Genre">Comédie</span>&#32;'
                          '<span title="Découpage">'
                          'en cinq actes et en vers</span>')
+
+    def testTemplateRenders(self):
+        for oeuvre in [self.carmen, self.sonate,
+                       self.symphonie, self.tartuffe]:
+            response = self.client.get(oeuvre.get_absolute_url())
+            self.assertEqual(response.status_code, 200)
+
+    def testAdminRenders(self):
+        response = self.client.get(reverse('admin:catalogue_'
+                                           'oeuvre_changelist'))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('admin:catalogue_oeuvre_add'))
+        self.assertEqual(response.status_code, 200)
+        for oeuvre in [self.carmen, self.sonate,
+                       self.symphonie, self.tartuffe]:
+            response = self.client.get(reverse('admin:catalogue_'
+                                               'oeuvre_history',
+                                               args=[oeuvre.pk]))
+            self.assertEqual(response.status_code, 200)
+            response = self.client.get(reverse('admin:catalogue_'
+                                               'oeuvre_delete',
+                                               args=[oeuvre.pk]))
+            self.assertEqual(response.status_code, 200)
+            response = self.client.get(reverse('admin:catalogue_'
+                                               'oeuvre_change',
+                                               args=[oeuvre.pk]))
+            self.assertEqual(response.status_code, 200)
+
