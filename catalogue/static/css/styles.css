@@ -214,6 +214,10 @@ dl.dl-horizontal dd+dt, dl.dl-horizontal dd+dt+dd {
   margin: 0.75em 0 0.5em 0;
 }
 
+ol.programme li+li {
+  margin-top: 3px;
+}
+
 .right {
   text-align: right;
 }
@@ -274,6 +278,24 @@ input, button {
 
 .navbar .brand {
   padding: 5px 20px 5px;
+}
+
+#logos {
+  -moz-transform-origin: 75% 50%;
+  -webkit-transform-origin: 75% 50%;
+  -o-transform-origin: 75% 50%;
+  -moz-transform: rotate(-3deg);
+  -webkit-transform: rotate(-3deg);
+  -o-transform: rotate(-3deg);
+  -moz-transition: all 0.5s ease-out;
+  -webkit-transition: all 0.5s ease-out;
+  -o-transition: all 0.5s ease-out;
+}
+
+#logos:hover {
+  -moz-transform: rotate(0deg);
+  -webkit-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
 }
 
 ul.ui-autocomplete li a, .results_on_deck > div {
