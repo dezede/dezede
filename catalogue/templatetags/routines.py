@@ -79,11 +79,21 @@ def get_verbose_name_from_object_list(object_list, verbose_name=None,
 
 @register.filter
 def get_property(object, properties_name):
-   for property_name in properties_name.split('.'):
-       object = getattr(object, property_name)
-       if callable(object):
-           object = object()
-   return object
+    """
+    >>> get_property('a', 'split')
+    [u'a']
+    >>> get_property('abcd', '__len__')
+    4
+    >>> class Class(object):
+    ...     property = 8
+    >>> get_property(Class(), 'property')
+    8
+    """
+    for property_name in properties_name.split('.'):
+        object = getattr(object, property_name)
+        if callable(object):
+            object = object()
+    return object
 
 
 def build_display_list(object_list, properties_name):
