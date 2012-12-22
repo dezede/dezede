@@ -9,16 +9,19 @@ from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, \
                     SlugModel
 from django.template.defaultfilters import capfirst
 from ..templatetags.extras import abbreviate
+from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 
 
-class Profession(CustomModel, SlugModel):
+class Profession(MPTTModel, CustomModel, SlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
     nom_feminin = CharField(_('nom (au féminin)'), max_length=230, blank=True,
         help_text=_('Ne préciser que s’il est différent du nom.'))
-    parente = ForeignKey('Profession', blank=True, null=True,
-        related_name='enfant', verbose_name=_('parente'))
+    parent = TreeForeignKey('Profession', blank=True, null=True,
+                            related_name='enfant', verbose_name=_('parent'))
+
+    objects = TreeManager()
 
     class Meta:
         verbose_name = ungettext_lazy('profession', 'professions', 1)

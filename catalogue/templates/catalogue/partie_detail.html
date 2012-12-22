@@ -25,10 +25,10 @@
     {% list_in_dl partie.interpretes verbose_name=_('interprète') verbose_name_plural=_('interprètes') %}
     {% attr_in_dl 'parent.link' _('parent') %}
 
-    {% with descendants=partie.get_descendants  %}
-      {% if descendants %}
+    {% with contenu=partie.get_descendants  %}
+      {% if contenu %}
         <dt>{% trans 'Contenu' %}</dt>
-        <dd>{% jstree partie.get_descendants %}</dd>
+        <dd>{% jstree contenu %}</dd>
       {% endif %}
     {% endwith %}
 

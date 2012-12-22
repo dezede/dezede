@@ -275,11 +275,11 @@ class SaisonAdmin(CustomAdmin):
 
 class ProfessionAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel', 'nom_feminin',
-        'parente',)
-    list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parente',)
-    raw_id_fields = ('parente',)
+        'parent',)
+    list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',)
+    raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
-        'fk': ['parente']
+        'fk': ['parent']
     }
 
 

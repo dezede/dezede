@@ -19,11 +19,20 @@
   </div>
 
   <dl class="dl-horizontal">
+
     {% list_in_dl profession.parties.all %}
     {% list_in_dl profession.individus.all %}
     {% list_in_dl profession.auteurs.oeuvres %}
     {% list_in_dl profession.auteurs.sources %}
-    {% attr_in_dl 'parente.link' _('profession parente') %}
+    {% attr_in_dl 'parent.link' _('parent') %}
+
+    {% with contenu=profession.get_descendants  %}
+      {% if contenu %}
+        <dt>{% trans 'Contenu' %}</dt>
+        <dd>{% jstree contenu %}</dd>
+      {% endif %}
+    {% endwith %}
+
   </dl>
 
 {% endblock %}
