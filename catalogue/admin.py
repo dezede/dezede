@@ -400,13 +400,13 @@ class CaracteristiqueDOeuvreAdmin(CustomAdmin):
 
 
 class PartieAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'parente', 'classement',)
-    list_editable = ('nom', 'parente', 'classement',)
+    list_display = ('__unicode__', 'nom', 'parent', 'classement',)
+    list_editable = ('nom', 'parent', 'classement',)
     search_fields = ('nom',)
-    raw_id_fields = ('professions', 'parente',)
+    raw_id_fields = ('professions', 'parent',)
     autocomplete_lookup_fields = {
         'm2m': ['professions'],
-        'fk': ['parente'],
+        'fk': ['parent'],
     }
 
 

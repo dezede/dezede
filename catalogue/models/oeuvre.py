@@ -117,22 +117,33 @@ class CaracteristiqueDOeuvre(CustomModel):
         return 'type__nom__icontains', 'valeur__icontains',
 
 
-class Partie(CustomModel, SlugModel):
+class Partie(MPTTModel, CustomModel, SlugModel):
+    """
+    Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
+    une œuvre musicale.
+    Pour plus de compréhensibilité, on affiche « rôle ou instrument » au lieu
+    de « partie ».
+    """
     nom = CharField(max_length=200,
         help_text=_('Le nom d’une partie de la partition, '
                     'instrumentale ou vocale.'))
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
     professions = ManyToManyField('Profession', related_name='parties',
-        help_text=_('La ou les profession(s) permettant '
-                    'd’assurer cette partie.'))
-    parente = ForeignKey('Partie', related_name='enfant', blank=True,
-                         null=True, verbose_name=_('parente'))
+        help_text=_('La ou les profession(s) capable(s) '
+                    'de jouer ce rôle ou cet instrument.'))
+    parent = TreeForeignKey('Partie', related_name='enfant',
+                            blank=True, null=True,
+                            verbose_name=_('rôle ou instrument parent'))
     classement = FloatField(default=1.0)
 
+    objects = TreeManager()
+
     class Meta:
-        verbose_name = ungettext_lazy('partie', 'parties', 1)
-        verbose_name_plural = ungettext_lazy('partie', 'parties', 2)
+        verbose_name = ungettext_lazy('rôle ou instrument',
+                                      'rôles et instruments', 1)
+        verbose_name_plural = ungettext_lazy('rôle ou instrument',
+                                             'rôles et instruments', 2)
         ordering = ['classement', 'nom']
         app_label = 'catalogue'
 

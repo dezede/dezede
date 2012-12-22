@@ -125,6 +125,8 @@ def list_in_dl(context, object_list, properties_name='link', verbose_name=None,
 
 @register.simple_tag()
 def jstree(queryset, properties_name='__unicode__', id=None):
+    if not queryset:
+        return ''
     if id is None:
         id = queryset[0].__class__.__name__.lower()
     c = {
