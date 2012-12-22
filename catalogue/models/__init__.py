@@ -7,7 +7,7 @@ from .personnel import Profession, Devise, Engagement, TypeDePersonnel, \
 from .oeuvre import GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
                     CaracteristiqueDOeuvre, Partie, Pupitre, \
                     TypeDeParenteDOeuvres, ParenteDOeuvres, Auteur, Oeuvre
-from .evenement import AttributionDePupitre, \
+from .evenement import ElementDeDistribution, \
                        CaracteristiqueDElementDeProgramme, \
                        ElementDeProgramme, Evenement
 from .source import TypeDeSource, Source

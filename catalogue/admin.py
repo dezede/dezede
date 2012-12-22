@@ -479,7 +479,7 @@ class OeuvreAdmin(CustomAdmin):
     )
 
 
-class AttributionDePupitreAdmin(CustomAdmin):
+class ElementDeDistributionAdmin(CustomAdmin):
     list_display = ('__unicode__', 'pupitre',)
     list_editable = ('pupitre',)
     raw_id_fields = ('pupitre', 'individus',)
@@ -622,7 +622,7 @@ site.register(Pupitre, PupitreAdmin)
 site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(ParenteDOeuvres, ParenteDOeuvresAdmin)
 site.register(Oeuvre, OeuvreAdmin)
-site.register(AttributionDePupitre, AttributionDePupitreAdmin)
+site.register(ElementDeDistribution, ElementDeDistributionAdmin)
 site.register(CaracteristiqueDElementDeProgramme,
         CaracteristiqueDElementDeProgrammeAdmin)
 site.register(ElementDeProgramme, ElementDeProgrammeAdmin)

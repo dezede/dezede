@@ -16,16 +16,16 @@ from reversion.models import post_revision_commit
 from django.dispatch import receiver
 
 
-class AttributionDePupitre(CustomModel):
-    pupitre = ForeignKey('Pupitre', related_name='attributions_de_pupitre')
+class ElementDeDistribution(CustomModel):
+    pupitre = ForeignKey('Pupitre', related_name='elements_de_distribution')
     individus = ManyToManyField('Individu',
-                                related_name='attributions_de_pupitre')
+                                related_name='elements_de_distribution')
 
     class Meta:
-        verbose_name = ungettext_lazy('attribution de pupitre',
-                                      'attributions de pupitre', 1)
-        verbose_name_plural = ungettext_lazy('attribution de pupitre',
-                                             'attributions de pupitre', 2)
+        verbose_name = ungettext_lazy('élément de distribution',
+                                      'éléments de distribution', 1)
+        verbose_name_plural = ungettext_lazy('élément de distribution',
+                                             'éléments de distribution', 2)
         ordering = ['pupitre']
         app_label = 'catalogue'
 
@@ -86,7 +86,7 @@ class ElementDeProgramme(AutoriteModel):
         related_name='elements_de_programme', blank=True, null=True,
         verbose_name=_('caractéristiques'))
     position = PositiveSmallIntegerField(_('Position'))
-    distribution = ManyToManyField(AttributionDePupitre,
+    distribution = ManyToManyField(ElementDeDistribution,
         related_name='elements_de_programme', blank=True, null=True)
     personnels = ManyToManyField('Personnel',
         related_name='elements_de_programme', blank=True, null=True)
@@ -108,11 +108,11 @@ class ElementDeProgramme(AutoriteModel):
         if distribution.exists():
             out__append('. — ')
             maxi = distribution.count() - 1
-        for i, attribution in enumerate(distribution.iterator()):
-            individus = attribution.individus.iterator()
+        for i, element in enumerate(distribution.iterator()):
+            individus = element.individus.iterator()
             out__append(str_list(individu.html(tags)
                 for individu in individus))
-            out__append(' [' + attribution.pupitre.partie.link() + ']')
+            out__append(' [' + element.pupitre.partie.link() + ']')
             if i < maxi:
                 out__append(', ')
         return ''.join(out)

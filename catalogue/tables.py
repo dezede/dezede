@@ -48,8 +48,8 @@ class ProfessionTable(Table):
 class PartieTable(Table):
     nom = LinkColumn('partie', args=(A('slug'),), verbose_name=_('nom'))
     interpretes = Column(accessor='interpretes_html',
-                         verbose_name=_(u'interprètes'),
-                         order_by='pupitres__attributions_de_pupitre__individus__nom')
+                 verbose_name=_(u'interprètes'),
+                 order_by='pupitres__elements_de_distribution__individus__nom')
 
     class Meta:
         attrs = {"class": "paleblue"}

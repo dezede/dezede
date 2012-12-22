@@ -152,7 +152,7 @@ class Partie(MPTTModel, CustomModel, SlugModel):
 
     def interpretes(self):
         return get_model('catalogue', 'Individu').objects.filter(
-                                 attributions_de_pupitre__pupitre__partie=self)
+                                elements_de_distribution__pupitre__partie=self)
 
     def interpretes_html(self):
         return str_list(i.html() for i in self.interpretes())
