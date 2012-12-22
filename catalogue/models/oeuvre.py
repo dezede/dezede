@@ -147,6 +147,9 @@ class Partie(MPTTModel, CustomModel, SlugModel):
         ordering = ['classement', 'nom']
         app_label = 'catalogue'
 
+    class MPTTMeta:
+        order_insertion_by = ['classement', 'nom']
+
     def interpretes(self):
         return get_model('catalogue', 'Individu').objects.filter(
                                  attributions_de_pupitre__pupitre__partie=self)
