@@ -9,13 +9,21 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         db.rename_table('catalogue_attributiondepupitre', 'catalogue_elementdedistribution')
+        db.delete_unique('catalogue_attributiondepupitre_individus', ['attributiondepupitre_id', 'individu_id'])
         db.rename_table('catalogue_attributiondepupitre_individus', 'catalogue_elementdedistribution_individus')
+        db.rename_column('catalogue_elementdedistribution_individus', 'attributiondepupitre_id', 'elementdedistribution_id')
+        db.create_unique('catalogue_elementdedistribution_individus', ['elementdedistribution_id', 'individu_id'])
         db.rename_column('catalogue_elementdeprogramme_distribution', 'attributiondepupitre_id', 'elementdedistribution_id')
+        db.send_create_signal('catalogue', ['ElementDeDistribution'])
 
     def backwards(self, orm):
         db.rename_table('catalogue_elementdedistribution', 'catalogue_attributiondepupitre')
+        db.delete_unique('catalogue_elementdedistribution_individus', ['elementdedistribution_id', 'individu_id'])
         db.rename_table('catalogue_elementdedistribution_individus', 'catalogue_attributiondepupitre_individus')
+        db.rename_column('catalogue_attributiondepupitre_individus', 'elementdedistribution_id', 'attributiondepupitre_id')
+        db.create_unique('catalogue_attributiondepupitre_individus', ['attributiondepupitre_id', 'individu_id'])
         db.rename_column('catalogue_elementdeprogramme_distribution', 'elementdedistribution_id', 'attributiondepupitre_id')
+        db.send_create_signal('catalogue', ['AttributionDePupitre'])
 
     models = {
         'auth.group': {
