@@ -492,6 +492,7 @@ class ElementDeDistributionAdmin(CustomAdmin):
 class CaracteristiqueDElementDeProgrammeAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
+    search_fields = ('nom', 'nom_pluriel',)
 
 
 class ElementDeProgrammeAdmin(CustomAdmin):
