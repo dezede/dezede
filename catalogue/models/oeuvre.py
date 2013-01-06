@@ -451,7 +451,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return self.auteurs.html(tags)
     auteurs_html.short_description = _('auteurs')
     auteurs_html.allow_tags = True
-    auteurs_html.admin_order_field = 'auteurs__individu'
+    auteurs_html.admin_order_field = 'auteurs__individu__nom'
 
     def parentes_in_order(self, relation):
         return getattr(self, relation).order_by('ancrage_creation')
