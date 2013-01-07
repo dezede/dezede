@@ -563,4 +563,5 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def autocomplete_search_fields():
         return ('prefixe_titre__icontains', 'titre__icontains',
                 'prefixe_titre_secondaire__icontains',
-                'titre_secondaire__icontains', 'genre__nom__icontains',)
+                'titre_secondaire__icontains', 'genre__nom__icontains',
+                'auteurs__individu__nom__icontains')
