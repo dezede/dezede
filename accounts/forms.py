@@ -2,7 +2,9 @@
 
 from django.forms import CharField, ModelChoiceField, ModelMultipleChoiceField
 from django.forms.widgets import CheckboxSelectMultiple
-from registration.forms import RegistrationFormUniqueEmail
+# FIXME: Remplacer ceci par RegistrationFormUniqueEmail quand Joann aura fini
+# de faire mumuse.
+from registration.forms import RegistrationForm
 from django.utils.translation import ugettext_lazy as _
 from .models import StudentProfile
 from django.contrib.auth.models import User, Group
@@ -27,7 +29,7 @@ class UserField(ModelChoiceField):
         return obj.get_full_name() or unicode(u)
 
 
-class UserRegistrationForm(RegistrationFormUniqueEmail):
+class UserRegistrationForm(RegistrationForm):
     first_name = CharField(label=_(u'Prénom(s)'))
     last_name = CharField(label=_('Nom'))
     professor = UserField(queryset=get_professors(), label=_('Professeur'))
