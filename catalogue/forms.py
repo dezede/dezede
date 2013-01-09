@@ -1,13 +1,31 @@
 # coding: utf-8
 
-from django.forms import ModelForm, Form, CharField, TextInput, MultiValueField, SplitDateTimeWidget, SplitDateTimeField
-from .models import Oeuvre, Source
+from __future__ import unicode_literals
+from django.forms import ValidationError
+from django.forms import ModelForm, Form, CharField, TextInput
+from .models import Oeuvre, Source, Individu
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
 from django.utils.translation import ugettext_lazy as _
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
                                AutoCompleteWidget
 from .fields import RangeSliderField
+
+
+class IndividuForm(ModelForm):
+    class Meta:
+        model = Individu
+
+    def clean_designation(self):
+        # Anticipe si la désignation donnera un résultat nul.
+        data = self.cleaned_data
+        designation = data['designation']
+        if designation == 'P' and not data['pseudonyme'] \
+        or designation == 'B' and not data['nom_naissance'] \
+        or designation == 'F' and not data['prenoms']:
+            raise ValidationError(_('Il manque des données pour pouvoir '
+                                    'choisir cette désignation.'))
+        return designation
 
 
 class OeuvreForm(ModelForm):

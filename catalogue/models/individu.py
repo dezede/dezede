@@ -315,12 +315,11 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return self.html(tags, True, prenoms_fav, force_standard)
 
     def clean(self):
-        if not self.pk:
-            return
-        for p in self.parentes.all():
-            if self in p.individus_cibles.all():
-                raise ValidationError(_('L’individu a une parenté avec '
-                                        'lui-même.'))
+        if self.pk:
+            for p in self.parentes.all():
+                if self in p.individus_cibles.all():
+                    raise ValidationError(_('L’individu a une parenté avec '
+                                            'lui-même.'))
         try:
             naissance = getattr(self.ancrage_naissance, 'date')
             deces = getattr(self.ancrage_deces, 'date')
@@ -330,13 +329,6 @@ class Individu(AutoriteModel, UniqueSlugModel):
             if naissance and deces and deces < naissance:
                 raise ValidationError(_('Le décès ne peut précéder '
                                         'la naissance.'))
-        # Anticipe si la désignation donnera un résultat nul.
-        designation = self.designation
-        if designation == 'P' and not self.pseudonyme \
-        or designation == 'B' and not self.nom_naissance \
-        or designation == 'F' and not self.prenoms.exists():
-            raise ValidationError(_('Les données saisies ne permettent pas '
-                                    'de calculer la désignation demandée.'))
 
     class Meta:
         verbose_name = ungettext_lazy('individu', 'individus', 1)

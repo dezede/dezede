@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from .models import *
-from .forms import OeuvreForm, SourceForm
+from .forms import OeuvreForm, SourceForm, IndividuForm
 from django.contrib.admin import site, TabularInline, StackedInline
 from django.contrib.admin.options import BaseModelAdmin
 from reversion import VersionAdmin
@@ -325,6 +325,7 @@ class IndividuAdmin(CustomAdmin):
     list_editable = ('nom', 'titre', 'etat')
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',)
     list_filter = ('titre',)
+    form = IndividuForm
     raw_id_fields = ('prenoms', 'ancrage_naissance', 'ancrage_deces',
                      'professions', 'parentes', 'ancrage_approx',
                      'illustrations', 'documents',)
