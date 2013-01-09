@@ -102,7 +102,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     DESIGNATIONS = (
         ('S', _('Standard (nom, prénoms et pseudonyme)')),
         ('P', _('Pseudonyme (uniquement)')),
-        ('L', _('Nom de famille (uniquement)')),  # L pour Last name
+        ('L', _('Nom d’usage (uniquement)')),  # L pour Last name
         ('B', _('Nom de naissance (standard)')),  # B pour Birth name
         ('F', _('Prénom(s) favori(s) (uniquement)')),  # F pour First name
     )
