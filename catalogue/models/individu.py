@@ -325,10 +325,19 @@ class Individu(AutoriteModel, UniqueSlugModel):
             naissance = getattr(self.ancrage_naissance, 'date')
             deces = getattr(self.ancrage_deces, 'date')
         except AttributeError:
-            return
-        if naissance and deces and deces < naissance:
-            raise ValidationError(_('Le décès ne peut précéder '
-                                    'la naissance.'))
+            pass
+        else:
+            if naissance and deces and deces < naissance:
+                raise ValidationError(_('Le décès ne peut précéder '
+                                        'la naissance.'))
+        # Anticipe si la désignation donnera un résultat nul.
+        designation = self.designation
+        if designation == 'P' and not self.pseudonyme \
+        or designation == 'B' and not self.nom_naissance \
+        or designation == 'F' and not self.prenoms.exists():
+            raise ValidationError(_('Les données saisies ne permettent pas '
+                                    'de calculer la désignation demandée.'))
+
     class Meta:
         verbose_name = ungettext_lazy('individu', 'individus', 1)
         verbose_name_plural = ungettext_lazy('individu', 'individus', 2)
