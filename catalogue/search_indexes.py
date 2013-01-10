@@ -1,10 +1,10 @@
-from haystack .indexes import RealTimeSearchIndex, CharField, EdgeNgramField, \
+from haystack .indexes import SearchIndex, CharField, EdgeNgramField, \
                               DateField
 from haystack import site
 from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie
 
 
-class OeuvreIndex(RealTimeSearchIndex):
+class OeuvreIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
     suggestions = CharField()
     content_auto = EdgeNgramField(model_attr='titre_html')
@@ -22,7 +22,7 @@ class OeuvreIndex(RealTimeSearchIndex):
 site.register(Oeuvre, OeuvreIndex)
 
 
-class SourceIndex(RealTimeSearchIndex):
+class SourceIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
     date = DateField(model_attr='date')
     suggestions = CharField()
@@ -40,7 +40,7 @@ class SourceIndex(RealTimeSearchIndex):
 site.register(Source, SourceIndex)
 
 
-class IndividuIndex(RealTimeSearchIndex):
+class IndividuIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
     suggestions = CharField()
 
@@ -57,7 +57,7 @@ class IndividuIndex(RealTimeSearchIndex):
 site.register(Individu, IndividuIndex)
 
 
-class LieuIndex(RealTimeSearchIndex):
+class LieuIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
     suggestions = CharField()
     content_auto = EdgeNgramField(model_attr='html')
@@ -75,7 +75,7 @@ class LieuIndex(RealTimeSearchIndex):
 site.register(Lieu, LieuIndex)
 
 
-class EvenementIndex(RealTimeSearchIndex):
+class EvenementIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
     suggestions = CharField()
 
@@ -92,7 +92,7 @@ class EvenementIndex(RealTimeSearchIndex):
 site.register(Evenement, EvenementIndex)
 
 
-class PartieIndex(RealTimeSearchIndex):
+class PartieIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
     suggestions = CharField()
 
