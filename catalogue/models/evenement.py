@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.core.exceptions import ValidationError
 from .functions import str_list, str_list_w_last, href, hlp
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, OneToOneField, BooleanField, \
@@ -149,6 +150,11 @@ class ElementDeProgramme(AutoriteModel):
         return ''.join(out)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
+
+    def clean(self):
+        if not (self.oeuvre or self.autre):
+            raise ValidationError(_('Vous devez remplir au moins « Œuvre » ou '
+                                    '« Autre ».'))
 
     class Meta:
         verbose_name = ungettext_lazy('élément de programme',
