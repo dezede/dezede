@@ -4,7 +4,7 @@ django-tables2==0.13.0
 django-reversion==1.6.4
 django-haystack==1.2.7
 pysolr==2.1.0-beta
-django-mptt==0.5.4
+django-mptt==0.5.5
 django-tinymce==1.5.1a2
 django-flatpages-tinymce==0.1.1
 simplejson==2.6.2

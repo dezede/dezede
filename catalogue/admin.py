@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from .models import *
 from .forms import OeuvreForm, SourceForm, IndividuForm
 from django.contrib.admin import site, TabularInline, StackedInline
@@ -167,7 +168,7 @@ class ElementDeProgrammeInline(CustomStackedInline):
     fieldsets = (
         (_('Champs courants'), {
             'fields': (('oeuvre', 'autre',), 'caracteristiques',
-                       'distribution',),
+                       'distribution', 'numerotation',),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),

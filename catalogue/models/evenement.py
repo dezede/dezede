@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from .functions import str_list, str_list_w_last, href, hlp
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, OneToOneField, BooleanField, \
-                             PositiveSmallIntegerField, permalink, get_model
+                             PositiveSmallIntegerField, permalink, get_model, Q
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
@@ -85,6 +85,14 @@ class ElementDeProgramme(AutoriteModel):
     caracteristiques = ManyToManyField(CaracteristiqueDElementDeProgramme,
         related_name='elements_de_programme', blank=True, null=True,
         verbose_name=_('caractéristiques'))
+    NUMEROTATIONS = (
+        ('O', _('Numéros')),  # O pour Ordered
+        ('B', _('Numéros entre crochets (supposition)')),  # B pour Brackets
+        ('U', _('Puce')),  # U pour Unordered
+        ('E', _('Absente (entracte, etc)')),  # E pour Empty
+    )
+    numerotation = CharField(_('numérotation'), choices=NUMEROTATIONS,
+                             max_length=1, default='O')
     position = PositiveSmallIntegerField(_('Position'))
     distribution = ManyToManyField(ElementDeDistribution,
         related_name='elements_de_programme', blank=True, null=True)
@@ -102,20 +110,29 @@ class ElementDeProgramme(AutoriteModel):
     def calc_distribution(self, tags=True):
         if self.pk is None:
             return ''
+        distribution = self.distribution
+        if not distribution.exists():
+            return ''
         out = []
         out__append = out.append
-        distribution = self.distribution
-        if distribution.exists():
-            out__append('. — ')
-            maxi = distribution.count() - 1
+        out__append('. — ')
+        maxi = distribution.count() - 1
         for i, element in enumerate(distribution.iterator()):
             individus = element.individus.iterator()
             out__append(str_list(individu.html(tags)
-                for individu in individus))
+                                 for individu in individus))
             out__append(' [' + element.pupitre.partie.link() + ']')
             if i < maxi:
                 out__append(', ')
         return ''.join(out)
+
+    @property
+    def numero(self):
+        numerotations_exclues = ('U', 'E',)
+        if self.numerotation in numerotations_exclues:
+            return ''
+        return self.evenement.programme.exclude(Q(position__gt=self.position) |
+                             Q(numerotation__in=numerotations_exclues)).count()
 
     def html(self, tags=True):
         out = []
@@ -161,6 +178,11 @@ class Evenement(AutoriteModel):
         related_name='evenements_fins', blank=True, null=True)
     relache = BooleanField(verbose_name='relâche')
     circonstance = CharField(max_length=500, blank=True)
+    distribution = ManyToManyField(ElementDeDistribution,
+        related_name='evenements', blank=True, null=True,
+        help_text=_('Distribution commune à l’ensemble de l’événement. '
+                    'Une distribution plus précise peut être saisie avec le '
+                    'programme.'))
 
     @permalink
     def get_absolute_url(self):

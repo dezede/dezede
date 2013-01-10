@@ -250,14 +250,15 @@ class Individu(AutoriteModel, UniqueSlugModel):
     calc_professions.allow_tags = True
 
     def html(self, tags=True, lon=False, prenoms_fav=True,
-             force_standard=False, show_prenoms=True):
+             show_prenoms=True, designation=None):
         def add_particule(nom, lon, naissance=False):
             particule = self.get_particule(naissance)
             if lon:
                 nom = particule + nom
             return nom
 
-        designation = self.designation
+        if designation is None:
+            designation = self.designation
         titre = self.calc_titre(tags)
         prenoms = self.calc_prenoms_methode(prenoms_fav)
         nom = self.nom
@@ -299,9 +300,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
           'P': pseudonyme,
           'B': nom_naissance,
         }
-        main = main_style(main_choices['S' if force_standard else designation])
-        out = standard(main) if designation in ('S', 'B',) or force_standard \
-              else main
+        main = main_style(main_choices[designation])
+        out = standard(main) if designation in ('S', 'B',) else main
         url = None if not tags else self.get_absolute_url()
         out = href(url, out, tags)
         return out
@@ -309,10 +309,11 @@ class Individu(AutoriteModel, UniqueSlugModel):
     html.allow_tags = True
 
     def nom_seul(self, tags=False):
-        return self.html(tags, False, show_prenoms=False)
+        return self.html(tags=tags, lon=False, show_prenoms=False)
 
-    def nom_complet(self, tags=True, prenoms_fav=False, force_standard=True):
-        return self.html(tags, True, prenoms_fav, force_standard)
+    def nom_complet(self, tags=True, prenoms_fav=False, designation='S'):
+        return self.html(tags=tags, lon=True, prenoms_fav=prenoms_fav,
+                         designation=designation)
 
     def clean(self):
         if self.pk:

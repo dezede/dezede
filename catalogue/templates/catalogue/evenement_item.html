@@ -18,19 +18,28 @@
       {% if forloop.first %}
         <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
         {% if elements.count > 1 %}
-          <ol class="programme">
+          <table class="programme">
         {% endif %}
       {% endif %}
-      {% if elements.count > 1 %}
-        <li>
+      <tr>
+        <td>
+          {% if elements.count > 1 %}
+            {% if element.numerotation == 'O' %}
+              {{ element.numero }}.
+            {% elif element.numerotation == 'B' %}
+              [{{ element.numero }}.]
+            {% elif element.numerotation == 'U' %}
+              •&nbsp;
+            {% endif %}
+          {% endif %}
+        </td>
+        <td>
           {{ element.html|safe }}
-        </li>
-      {% else %}
-        {{ element.html|safe }}
-      {% endif %}
+        </td>
+      </tr>
       {% if forloop.last %}
         {% if elements.count > 1 %}
-          </ol>
+          </table>
         {% endif %}
       {% endif %}
     {% endfor %}

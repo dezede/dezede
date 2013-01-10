@@ -214,8 +214,17 @@ dl.dl-horizontal dd+dt, dl.dl-horizontal dd+dt+dd {
   margin: 0.75em 0 0.5em 0;
 }
 
-ol.programme li+li {
-  margin-top: 3px;
+table.programme tr+tr {
+  margin-top: 5px;
+}
+
+table.programme tr td {
+  vertical-align: baseline;
+}
+
+table.programme tr td:first-child {
+  text-align: right;
+  padding-right: 6px;
 }
 
 .right {
