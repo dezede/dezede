@@ -71,7 +71,7 @@ class EvenementListView(AjaxListView):
                 start, end = int(data.get('dates_0')), int(data.get('dates_1'))
                 qs = qs.filter(ancrage_debut__date__gte=date(start, 1, 1),
                                ancrage_debut__date__lte=date(end, 12, 31))
-            except TypeError:
+            except (TypeError, ValueError):
                 pass
         return qs
 

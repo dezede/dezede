@@ -19,7 +19,7 @@ class RangeSliderWidget(MultiWidget):
                              '-ancrage_debut__date')[0].ancrage_debut.date.year
         else:
             min, max = 1600, 2012
-        if value == [None, None]:
+        if type(value[0]) != int or type(value[1]) != int:
             value = (min, max)
         start, end = value
         t = 'widgets/range_slider_widget.html'
