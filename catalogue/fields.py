@@ -21,7 +21,7 @@ class RangeSliderWidget(MultiWidget):
             min, max = 1600, 2012
         try:
             int(value[0]), int(value[1])
-        except ValueError:
+        except (ValueError, TypeError):
             value = (min, max)
         start, end = value
         t = 'widgets/range_slider_widget.html'
