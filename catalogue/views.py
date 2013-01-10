@@ -1,3 +1,6 @@
+# coding: utf-8
+
+from __future__ import unicode_literals
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.views.generic import ListView, DetailView
@@ -29,11 +32,22 @@ def get_filters(bindings, data):
     for key, value in data.iteritems():
         if value and key in bindings:
             if '|' in value:
+                # Sépare les différents objets à partir d'une liste de pk.
                 Model = get_model('catalogue', key)
-                value = [Model.objects.get(pk=pk) for pk in value.split('|') if pk]
-                for object in value:
+                pk_list = value.split('|')
+                objects = []
+                for pk in pk_list:
+                    if pk:
+                        try:
+                            objects.append(Model.objects.get(pk=pk))
+                        except Model.DoesNotExist:
+                            continue
+                # Inclus tous les événements impliquant les descendants
+                # éventuels de chaque objet de value.
+                for object in objects:
                     if hasattr(object, 'get_descendants'):
-                        value.extend(object.get_descendants())
+                        objects.extend(object.get_descendants())
+                value = objects
             if value:
                 filters[bindings[key]] = value
     return filters
