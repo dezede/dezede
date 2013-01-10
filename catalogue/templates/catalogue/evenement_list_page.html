@@ -15,7 +15,10 @@
 
 <script>
   if(typeof jQuery != 'undefined') {
-    window.history.pushState({},"", $.query.set("page", {{ page_number }}).toString());
+    window.history.replaceState(
+            {},
+            "",  {# title, unused for now in any browser #}
+            $.query.set("page", {{ page_number }}).toString());
     tooltips_reload();
   }
 </script>
