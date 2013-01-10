@@ -28,7 +28,10 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
+        'OPTIONS': {
+            'autocommit': True,
         },
+    },
     'importation': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'dezede_importation',
@@ -36,6 +39,9 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
+        'OPTIONS': {
+            'autocommit': True,
+        },
     },
 }
 
