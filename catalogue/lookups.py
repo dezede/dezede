@@ -5,10 +5,10 @@ from haystack.query import SearchQuerySet
 
 
 def search_in_model(Model, qs, search_query):
-   sqs = SearchQuerySet().models(Model)
-   sqs = sqs.autocomplete(content_auto=search_query)
-   pk_list = sqs.values_list('pk', flat=True)
-   return qs.filter(pk__in=pk_list)
+    sqs = SearchQuerySet().models(Model)
+    sqs = sqs.autocomplete(content_auto=search_query)
+    pk_list = sqs.values_list('pk', flat=True)
+    return qs.filter(pk__in=pk_list)
 
 
 class LieuLookup(LookupChannel):
