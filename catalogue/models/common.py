@@ -12,6 +12,7 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from autoslug import AutoSlugField
 from .functions import href
 from django.contrib.contenttypes.generic import GenericRelation
+from collections import defaultdict
 
 #
 # Définitions globales du fichier
@@ -30,16 +31,17 @@ def replace_in_kwargs(obj, **kwargs):
     """
     Renvoie kwargs avec remplacements typographiques.
 
-    Si une clé de kwargs est un nom de champ d'obj
+    Si une clé de kwargs est un nom de champ d’obj
     et que la classe de ce champ est dans REPLACE_FIELDS,
     effectue les remplacements dans la valeur du kwarg.
     """
     fields = obj._meta.fields
-    keys = (field.attname for field in fields
+    field_names = (field.attname for field in fields
                           if field.__class__ in REPLACE_FIELDS)
-    for key in keys:
-        if key in kwargs:
-            kwargs[key] = replace(kwargs[key])
+    for k in kwargs:
+        if k.split('__')[0] in field_names:
+            kwargs[k] = replace(kwargs[k])
+
     return kwargs
 
 
@@ -66,6 +68,11 @@ class CustomQuerySet(QuerySet):
     QuerySet personnalisé pour chercher
     des objets avec remplacements typographiques.
     """
+
+    def filter(self, *args, **kwargs):
+        kwargs = replace_in_kwargs(self.model, **kwargs)
+        return super(CustomQuerySet, self).filter(*args, **kwargs)
+
     def get(self, *args, **kwargs):
         kwargs = replace_in_kwargs(self.model, **kwargs)
         return super(CustomQuerySet, self).get(*args, **kwargs)
@@ -75,6 +82,7 @@ class CustomManager(Manager):
     """
     Manager personnalisé pour utiliser CustomQuerySet par défaut.
     """
+
     def get_query_set(self):
         return CustomQuerySet(self.model, using=self._db)
 

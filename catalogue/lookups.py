@@ -42,7 +42,7 @@ class OeuvreLookup(LookupChannel):
 class CharFieldLookupChannel(LookupChannel):
     attr = None
 
-    def get_query(self, q,request):
+    def get_query(self, q, request):
         Model = self.model
         attr = self.attr
         filters = {attr + '__istartswith': q}
