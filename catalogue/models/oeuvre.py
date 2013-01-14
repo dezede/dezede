@@ -292,21 +292,22 @@ class ParenteDOeuvres(CustomModel):
 
 
 class AuteurQuerySet(CustomQuerySet):
+    def __get_related(self, model_name):
+        Model = get_model('catalogue', model_name)
+        qs = Model._default_manager.filter(auteurs__in=self)
+        return qs.distinct().order_by(*Model._meta.ordering)
+
     def individus(self):
-        return get_model('catalogue', 'Individu').objects.filter(
-                                                   auteurs__in=self).distinct()
+        return self.__get_related('Individu')
 
     def professions(self):
-        return get_model('catalogue', 'Profession').objects.filter(
-                                                   auteurs__in=self).distinct()
+        return self.__get_related('Profession')
 
     def oeuvres(self):
-        return get_model('catalogue', 'Oeuvre').objects.filter(
-                                                   auteurs__in=self).distinct()
+        return self.__get_related('Oeuvre')
 
     def sources(self):
-        return get_model('catalogue', 'Source').objects.filter(
-                                                   auteurs__in=self).distinct()
+        return self.__get_related('Source')
 
     def html(self, tags=True):
         auteurs = self
