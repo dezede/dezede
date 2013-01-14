@@ -384,6 +384,7 @@ class PersonnelAdmin(CustomAdmin):
 class GenreDOeuvreAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
+    search_fields = ('nom', 'nom_pluriel',)
     raw_id_fields = ('parents',)
     autocomplete_lookup_fields = {
         'm2m': ['parents'],
