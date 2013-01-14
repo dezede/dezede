@@ -6,7 +6,7 @@ from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from django.db.models import CharField, ManyToManyField, \
                              PositiveIntegerField, FloatField, ForeignKey, \
                              OneToOneField, IntegerField, TextField, \
-                             BooleanField, permalink, get_model
+                             BooleanField, permalink
 from tinymce.models import HTMLField
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
@@ -22,6 +22,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.generic import GenericRelation
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
+from .individu import Individu
+from .personnel import Profession
+from .source import Source
+
+
+__all__ = ('GenreDOeuvre', 'TypeDeCaracteristiqueDOeuvre',
+           'CaracteristiqueDOeuvre', 'Partie', 'Pupitre',
+           'TypeDeParenteDOeuvres', 'ParenteDOeuvres', 'Auteur', 'Oeuvre')
 
 
 class GenreDOeuvre(CustomModel, SlugModel):
@@ -151,7 +159,7 @@ class Partie(MPTTModel, CustomModel, SlugModel):
         order_insertion_by = ['classement', 'nom']
 
     def interpretes(self):
-        return get_model('catalogue', 'Individu').objects.filter(
+        return Individu.objects.filter(
                                 elements_de_distribution__pupitre__partie=self)
 
     def interpretes_html(self):
@@ -292,22 +300,21 @@ class ParenteDOeuvres(CustomModel):
 
 
 class AuteurQuerySet(CustomQuerySet):
-    def __get_related(self, model_name):
-        Model = get_model('catalogue', model_name)
+    def __get_related(self, Model):
         qs = Model._default_manager.filter(auteurs__in=self)
         return qs.distinct().order_by(*Model._meta.ordering)
 
     def individus(self):
-        return self.__get_related('Individu')
+        return self.__get_related(Individu)
 
     def professions(self):
-        return self.__get_related('Profession')
+        return self.__get_related(Profession)
 
     def oeuvres(self):
-        return self.__get_related('Oeuvre')
+        return self.__get_related(Oeuvre)
 
     def sources(self):
-        return self.__get_related('Source')
+        return self.__get_related(Source)
 
     def html(self, tags=True):
         auteurs = self
@@ -358,8 +365,8 @@ class Auteur(CustomModel):
     def clean(self):
         try:
             self.individu.professions.add(self.profession)
-        except (get_model('catalogue', 'Individu').DoesNotExist,
-                get_model('catalogue', 'Profession').DoesNotExist):
+        except (Individu.DoesNotExist,
+                Profession.DoesNotExist):
             pass
 
     class Meta:

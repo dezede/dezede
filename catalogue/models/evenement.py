@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from .functions import str_list, str_list_w_last, href, hlp
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, OneToOneField, BooleanField, \
-                             PositiveSmallIntegerField, permalink, get_model, Q
+                             PositiveSmallIntegerField, permalink, Q
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
@@ -15,6 +15,11 @@ from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
 from django.core.cache import cache
 from reversion.models import post_revision_commit
 from django.dispatch import receiver
+from .source import TypeDeSource
+
+
+__all__ = ('ElementDeDistribution', 'CaracteristiqueDElementDeProgramme',
+           'ElementDeProgramme', 'Evenement')
 
 
 class ElementDeDistribution(CustomModel):
@@ -203,9 +208,7 @@ class Evenement(AutoriteModel):
     link.allow_tags = True
 
     def sources_dict(self):
-        types = get_model('catalogue',
-                          'TypeDeSource').objects \
-                                         .filter(sources__evenements=self)
+        types = TypeDeSource.objects.filter(sources__evenements=self)
         types = types.distinct()
         d = {}
         for type in types:

@@ -3,8 +3,7 @@
 from __future__ import unicode_literals
 from .functions import str_list, str_list_w_last, href, sc
 from django.db.models import CharField, FloatField, BooleanField, ForeignKey, \
-                             ManyToManyField, OneToOneField, permalink, \
-                             get_model
+                             ManyToManyField, OneToOneField, permalink
 from tinymce.models import HTMLField
 from ..templatetags.extras import abbreviate
 from django.utils.html import strip_tags
@@ -13,6 +12,11 @@ from django.utils.translation import pgettext, ungettext_lazy, \
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     calc_pluriel, UniqueSlugModel
 from django.core.exceptions import ValidationError
+from .evenement import Evenement
+
+
+__all__ = ('Prenom', 'TypeDeParenteDIndividus', 'ParenteDIndividus',
+           'Individu')
 
 
 class Prenom(CustomModel):
@@ -156,7 +160,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def apparitions(self):
         # FIXME: Pas sûr que la condition soit logique.
-        return get_model('catalogue', 'Evenement').objects.filter(
+        return Evenement.objects.filter(
                             programme__distribution__individus=self).distinct()
 
     def parents(self):

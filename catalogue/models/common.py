@@ -12,7 +12,12 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from autoslug import AutoSlugField
 from .functions import href
 from django.contrib.contenttypes.generic import GenericRelation
-from collections import defaultdict
+
+
+__all__ = ('LOWER_MSG', 'PLURAL_MSG', 'DATE_MSG', 'REPLACE_FIELDS',
+           'replace_in_kwargs', 'calc_pluriel', 'CustomModel', 'AutoriteModel',
+           'SlugModel', 'UniqueSlugModel', 'Document', 'Illustration', 'Etat')
+
 
 #
 # Définitions globales du fichier

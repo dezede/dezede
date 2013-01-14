@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from .functions import href, date_html, str_list, ex
 from django.db.models import CharField, ForeignKey, BooleanField, \
-                             DateField, TimeField, permalink, get_model, Q
+                             DateField, TimeField, permalink, Q
 from tinymce.models import HTMLField
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
@@ -15,6 +15,12 @@ from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
 from django.core.exceptions import ValidationError
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.managers import TreeManager
+from .evenement import Evenement
+from .individu import Individu
+from .oeuvre import Oeuvre
+
+
+__all__ = ('NatureDeLieu', 'Lieu', 'Saison', 'AncrageSpatioTemporel')
 
 
 class NatureDeLieu(CustomModel, SlugModel):
@@ -82,22 +88,16 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
         return self.html(short=True)
 
     def evenements(self):  # TODO: gérer les fins d'événements.
-        return get_model('catalogue',
-                         'Evenement').objects.filter(ancrage_debut__lieu=self)
+        return Evenement.objects.filter(ancrage_debut__lieu=self)
 
     def individus_nes(self):
-        return get_model('catalogue',
-                         'Individu').objects \
-                                    .filter(ancrage_naissance__lieu=self)
+        return Individu.objects.filter(ancrage_naissance__lieu=self)
 
     def individus_decedes(self):
-        return get_model('catalogue',
-                         'Individu').objects.filter(ancrage_deces__lieu=self)
+        return Individu.objects.filter(ancrage_deces__lieu=self)
 
     def oeuvres_creees(self):
-        return get_model('catalogue',
-                         'Oeuvre').objects \
-                                  .filter(ancrage_creation__lieu=self)
+        return Oeuvre.objects.filter(ancrage_creation__lieu=self)
 
     def html(self, tags=True, short=False):
         url = None if not tags else self.get_absolute_url()

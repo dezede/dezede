@@ -12,6 +12,10 @@ from ..templatetags.extras import abbreviate
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 
 
+__all__ = ('Profession', 'Devise', 'Engagement', 'TypeDePersonnel',
+           'Personnel')
+
+
 class Profession(MPTTModel, CustomModel, SlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,

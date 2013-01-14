@@ -8,6 +8,10 @@ from django.utils.safestring import mark_safe
 from django.utils.encoding import smart_unicode
 
 
+__all__ = ('date_html', 'str_list', 'str_list_w_last', 'ex', 'no',
+           'html_decorator', 'cite', 'href', 'sc', 'hlp', 'small', 'strong')
+
+
 def date_html(d, tags=True, short=False):
     """
     Rendu HTML d’une date.
