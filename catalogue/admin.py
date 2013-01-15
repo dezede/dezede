@@ -121,7 +121,7 @@ class AncrageSpatioTemporelInline(CustomTabularInline):
 class OeuvreMereInline(CustomTabularInline):
     verbose_name = ParenteDOeuvres._meta.get_field_by_name('mere')[0]\
                                                                   .verbose_name
-    verbose_name_plural = _(u'œuvres mères')
+    verbose_name_plural = _('œuvres mères')
     model = ParenteDOeuvres
     fk_name = 'fille'
     raw_id_fields = ('mere',)
@@ -196,7 +196,7 @@ class ElementDeProgrammeInline(CustomStackedInline):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('illustrations', 'documents',),
         }),
-        (_(u'Champs avancés'), {
+        (_('Champs avancés'), {
             'classes': ('grp-collapse grp-closed',),
             'fields': ('personnels', 'etat', 'position',),
         }),
@@ -277,11 +277,11 @@ class LieuAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('illustrations', 'documents',),
         }),
-        (_(u'Champs avancés'), {
+        (_('Champs avancés'), {
             'classes': ('grp-collapse grp-closed',),
             'fields': ('etat', 'notes',),
         }),
-#        (_(u'Champs générés (Méthodes)'), {
+#        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__unicode__', 'html', 'link',),
 #        }),
@@ -374,7 +374,7 @@ class IndividuAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('ancrage_approx', 'biographie', 'etat', 'notes',),
         }),
-#        (_(u'Champs générés (Méthodes)'), {
+#        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__unicode__', 'html', 'link',),
 #        }),
@@ -493,11 +493,11 @@ class OeuvreAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('documents', 'illustrations',),
         }),
-        (_(u'Champs avancés'), {
+        (_('Champs avancés'), {
             'classes': ('grp-collapse grp-closed', 'wide',),
             'fields': ('lilypond', 'description', 'etat', 'notes',),
         }),
-#        (_(u'Champs générés (Méthodes)'), {
+#        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__unicode__', 'html', 'link',),
 #        }),
@@ -592,11 +592,11 @@ class SourceAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('documents', 'illustrations',),
         }),
-        (_(u'Champs avancés'), {
+        (_('Champs avancés'), {
             'classes': ('grp-collapse grp-closed',),
             'fields': ('etat', 'notes',),
         }),
-#        (_(u'Champs générés (Méthodes)'), {
+#        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__unicode__', 'html',),
 #        }),
