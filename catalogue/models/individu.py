@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from .functions import str_list, str_list_w_last, href, sc
 from django.db.models import CharField, FloatField, BooleanField, ForeignKey, \
-                             ManyToManyField, OneToOneField, permalink
+                             ManyToManyField, OneToOneField, permalink, Q
 from tinymce.models import HTMLField
 from ..templatetags.extras import abbreviate
 from django.utils.html import strip_tags
@@ -160,8 +160,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def apparitions(self):
         # FIXME: Pas sûr que la condition soit logique.
-        return Evenement.objects.filter(
-                            programme__distribution__individus=self).distinct()
+        return Evenement.objects.filter(Q(distribution__individus=self)
+                       | Q(programme__distribution__individus=self)).distinct()
 
     def parents(self):
         # FIXME: À simplifier

@@ -12,6 +12,7 @@
   <h4>
     {{ evenement.html|safe }}
   </h4>
+  <p>{{ evenement.distribution.html }}</p>
 
   {% with elements=evenement.programme.all %}
     {% for element in elements %}

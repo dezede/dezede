@@ -135,7 +135,7 @@ class OeuvreMereInline(CustomTabularInline):
 class OeuvreFilleInline(CustomTabularInline):
     verbose_name = ParenteDOeuvres._meta.get_field_by_name('fille')[0]\
                                                                   .verbose_name
-    verbose_name_plural = _(u'œuvres filles')
+    verbose_name_plural = _('œuvres filles')
     model = ParenteDOeuvres
     fk_name = 'mere'
     raw_id_fields = ('fille',)
@@ -164,7 +164,29 @@ class AuteurInline(CustomTabularInline, GenericStackedInline):
     classes = ('grp-collapse grp-closed',)
 
 
+class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
+    verbose_name = ElementDeDistribution._meta.verbose_name
+    verbose_name_plural = _('distribution')
+    model = ElementDeDistribution
+    raw_id_fields = ('pupitre', 'individus',)
+    autocomplete_lookup_fields = {
+        'fk': ['pupitre'],
+        'm2m': ['individus'],
+    }
+    fieldsets = (
+        (None, {
+            'description': _('Distribution commune à l’ensemble de '
+                             'l’événement. Une distribution plus précise peut '
+                             'être saisie avec le programme.'),
+            'fields': ('pupitre', 'individus',),
+        }),
+    )
+    classes = ('grp-collapse grp-open',)
+
+
 class ElementDeProgrammeInline(CustomStackedInline):
+    verbose_name = ElementDeProgramme._meta.verbose_name
+    verbose_name_plural = _('programme')
     fieldsets = (
         (_('Champs courants'), {
             'fields': (('oeuvre', 'autre',), 'caracteristiques',
@@ -187,7 +209,7 @@ class ElementDeProgrammeInline(CustomStackedInline):
         'fk': ['oeuvre'],
         'm2m': ['caracteristiques', 'distribution',
                 'personnels', 'illustrations', 'documents'],
-        }
+    }
     classes = ('grp-collapse grp-open',)
 
 
@@ -348,7 +370,7 @@ class IndividuAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('illustrations', 'documents',),
         }),
-        (_(u'Champs avancés'), {
+        (_('Champs avancés'), {
             'classes': ('grp-collapse grp-closed',),
             'fields': ('ancrage_approx', 'biographie', 'etat', 'notes',),
         }),
@@ -498,22 +520,6 @@ class CaracteristiqueDElementDeProgrammeAdmin(CustomAdmin):
     search_fields = ('nom', 'nom_pluriel',)
 
 
-class ElementDeProgrammeAdmin(CustomAdmin):
-    list_display = ('oeuvre', 'autre', 'position', 'html', 'etat')
-    list_editable = ('position', 'etat')
-    search_fields = ('oeuvre__titre', 'oeuvre__titre_secondaire',
-                     'autre')
-    filter_horizontal = ('caracteristiques', 'distribution', 'personnels',
-        'illustrations', 'documents',)
-    raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
-        'personnels', 'documents', 'illustrations',)
-    autocomplete_lookup_fields = {
-        'fk': ['oeuvre'],
-        'm2m': ['caracteristiques', 'distribution', 'personnels',
-                'documents', 'illustrations'],
-    }
-
-
 class EvenementAdmin(CustomAdmin):
     list_display = ('__unicode__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'etat', 'link',)
@@ -528,13 +534,13 @@ class EvenementAdmin(CustomAdmin):
         'm2m': ['documents', 'illustrations'],
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
-    inlines = (ElementDeProgrammeInline,)
+    inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,)
     fieldsets = (
         (_('Champs courants'), {
             'description': _(
-                u'Commencez par <strong>saisir ces quelques champs</strong> '
-                u'avant d’ajouter des <em>éléments de programme</em> '
-                u'plus bas.'),
+                'Commencez par <strong>saisir ces quelques champs</strong> '
+                'avant d’ajouter des <em>éléments de programme</em> '
+                'plus bas.'),
             'fields': (('ancrage_debut', 'ancrage_fin',),
                        ('circonstance', 'relache',),),
         }),
@@ -542,11 +548,11 @@ class EvenementAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('documents', 'illustrations',),
         }),
-        (_(u'Champs avancés'), {
+        (_('Champs avancés'), {
             'classes': ('grp-collapse grp-closed',),
             'fields': ('etat', 'notes',),
         }),
-#        (_(u'Champs générés (Méthodes)'), {
+#        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__unicode__', 'html', 'link',),
 #        }),
@@ -629,7 +635,6 @@ site.register(Oeuvre, OeuvreAdmin)
 site.register(ElementDeDistribution, ElementDeDistributionAdmin)
 site.register(CaracteristiqueDElementDeProgramme,
         CaracteristiqueDElementDeProgrammeAdmin)
-site.register(ElementDeProgramme, ElementDeProgrammeAdmin)
 site.register(Evenement, EvenementAdmin)
 site.register(TypeDeSource, TypeDeSourceAdmin)
 site.register(Source, SourceAdmin)

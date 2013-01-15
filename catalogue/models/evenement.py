@@ -5,27 +5,43 @@ from django.core.exceptions import ValidationError
 from .functions import str_list, str_list_w_last, href, hlp
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, OneToOneField, BooleanField, \
-                             PositiveSmallIntegerField, permalink, Q
+                             PositiveSmallIntegerField, permalink, Q, \
+                             PositiveIntegerField
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from django.template.defaultfilters import capfirst
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    calc_pluriel
+                    calc_pluriel, CustomManager
 from django.core.cache import cache
 from reversion.models import post_revision_commit
 from django.dispatch import receiver
 from .source import TypeDeSource
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.generic import GenericForeignKey, \
+                                                GenericRelation
 
 
 __all__ = ('ElementDeDistribution', 'CaracteristiqueDElementDeProgramme',
            'ElementDeProgramme', 'Evenement')
 
 
+class ElementDeDistributionManager(CustomManager):
+    use_for_related_fields = True
+
+    def html(self, tags=True):
+        return ', '.join(e.html(tags=tags) for e in self.iterator())
+
+
 class ElementDeDistribution(CustomModel):
     pupitre = ForeignKey('Pupitre', related_name='elements_de_distribution')
     individus = ManyToManyField('Individu',
                                 related_name='elements_de_distribution')
+    content_type = ForeignKey(ContentType, null=True)
+    object_id = PositiveIntegerField(null=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    objects = ElementDeDistributionManager()
 
     class Meta:
         verbose_name = ungettext_lazy('élément de distribution',
@@ -36,9 +52,15 @@ class ElementDeDistribution(CustomModel):
         app_label = 'catalogue'
 
     def __unicode__(self):
-        out = unicode(self.pupitre.partie) + ' : '
-        ins = self.individus.iterator()
-        out += str_list_w_last(unicode(i) for i in ins)
+        return self.html(tags=False)
+
+    def html(self, tags=True):
+        individus = self.individus.iterator()
+        out = str_list_w_last(individu.html(tags=tags)
+            for individu in individus)
+        out += ' [' + self.pupitre.partie.link() + ']'
+        if not tags:
+            out = strip_tags(out)
         return out
 
     @staticmethod
@@ -47,7 +69,7 @@ class ElementDeDistribution(CustomModel):
             'pupitre__partie__nom__icontains',
             'individus__nom__icontains',
             'individus__pseudonyme__icontains',
-            )
+        )
 
 
 class CaracteristiqueDElementDeProgramme(CustomModel):
@@ -100,6 +122,8 @@ class ElementDeProgramme(AutoriteModel):
     numerotation = CharField(_('numérotation'), choices=NUMEROTATIONS,
                              max_length=1, default='O')
     position = PositiveSmallIntegerField(_('Position'))
+    # TODO: Quand les nested inlines seront possibles avec Django, remplacer
+    # ceci par un GenericRelation.
     distribution = ManyToManyField(ElementDeDistribution,
         related_name='elements_de_programme', blank=True, null=True)
     personnels = ManyToManyField('Personnel',
@@ -112,25 +136,6 @@ class ElementDeProgramme(AutoriteModel):
         return str_list(unicode(c) for c in cs)
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _('caractéristiques')
-
-    def calc_distribution(self, tags=True):
-        if self.pk is None:
-            return ''
-        distribution = self.distribution
-        if not distribution.exists():
-            return ''
-        out = []
-        out__append = out.append
-        out__append('. — ')
-        maxi = distribution.count() - 1
-        for i, element in enumerate(distribution.iterator()):
-            individus = element.individus.iterator()
-            out__append(str_list(individu.html(tags)
-                                 for individu in individus))
-            out__append(' [' + element.pupitre.partie.link() + ']')
-            if i < maxi:
-                out__append(', ')
-        return ''.join(out)
 
     @property
     def numero(self):
@@ -151,7 +156,9 @@ class ElementDeProgramme(AutoriteModel):
         cs = self.calc_caracteristiques()
         if cs:
             out__append(' [' + cs + ']')
-        out__append(self.calc_distribution(tags))
+        if self.distribution.exists():
+            out__append('. — ')
+            out__append(self.distribution.html(tags=tags))
         return ''.join(out)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
@@ -189,11 +196,7 @@ class Evenement(AutoriteModel):
         related_name='evenements_fins', blank=True, null=True)
     relache = BooleanField(verbose_name='relâche')
     circonstance = CharField(max_length=500, blank=True)
-    distribution = ManyToManyField(ElementDeDistribution,
-        related_name='evenements', blank=True, null=True,
-        help_text=_('Distribution commune à l’ensemble de l’événement. '
-                    'Une distribution plus précise peut être saisie avec le '
-                    'programme.'))
+    distribution = GenericRelation(ElementDeDistribution)
 
     @permalink
     def get_absolute_url(self):
