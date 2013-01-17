@@ -23,6 +23,7 @@
   <dl class="dl-horizontal">
     {% list_in_dl partie.professions.all %}
     {% list_in_dl partie.interpretes verbose_name=_('interprète') verbose_name_plural=_('interprètes') %}
+    {% list_in_dl partie.evenements %}
     {% attr_in_dl 'parent.link' _('parent') %}
 
     {% with contenu=partie.get_descendants  %}

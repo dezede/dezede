@@ -6,7 +6,7 @@ from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from django.db.models import CharField, ManyToManyField, \
                              PositiveIntegerField, FloatField, ForeignKey, \
                              OneToOneField, IntegerField, TextField, \
-                             BooleanField, permalink
+                             BooleanField, permalink, get_model
 from tinymce.models import HTMLField
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
@@ -159,11 +159,13 @@ class Partie(MPTTModel, CustomModel, SlugModel):
         order_insertion_by = ['classement', 'nom']
 
     def interpretes(self):
-        return Individu.objects.filter(
-                                elements_de_distribution__pupitre__partie=self)
+        return self.pupitres.elements_de_distribution().individus()
 
     def interpretes_html(self):
         return str_list(i.html() for i in self.interpretes())
+
+    def evenements(self):
+        return self.pupitres.elements_de_distribution().evenements()
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -192,10 +194,28 @@ class Partie(MPTTModel, CustomModel, SlugModel):
                 'professions__nom_pluriel__icontains',)
 
 
+class PupitreQuerySet(CustomQuerySet):
+    def elements_de_distribution(self):
+        return get_model('catalogue', 'ElementDeDistribution').objects.filter(
+                                                              pupitre__in=self)
+
+
+class PupitreManager(CustomManager):
+    use_for_related_fields = True
+
+    def get_query_set(self):
+        return PupitreQuerySet(self.model, using=self._db)
+
+    def elements_de_distribution(self):
+        return self.all().elements_de_distribution()
+
+
 class Pupitre(CustomModel):
     partie = ForeignKey('Partie', related_name='pupitres')
     quantite_min = IntegerField(_('quantité minimale'), default=1)
     quantite_max = IntegerField(_('quantité maximale'), default=1)
+
+    objects = PupitreManager()
 
     class Meta:
         verbose_name = ungettext_lazy('pupitre', 'pupitres', 1)

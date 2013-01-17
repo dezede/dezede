@@ -22,6 +22,7 @@
 
     {% list_in_dl profession.parties.all %}
     {% list_in_dl profession.individus.all %}
+    {% list_in_dl profession.elements_de_distribution.evenements %}
     {% list_in_dl profession.auteurs.oeuvres %}
     {% list_in_dl profession.auteurs.sources %}
     {% attr_in_dl 'parent.link' _('parent') %}

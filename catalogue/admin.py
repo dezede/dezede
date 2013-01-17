@@ -168,9 +168,9 @@ class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
     verbose_name = ElementDeDistribution._meta.verbose_name
     verbose_name_plural = _('distribution')
     model = ElementDeDistribution
-    raw_id_fields = ('pupitre', 'individus',)
+    raw_id_fields = ('individus', 'pupitre', 'profession')
     autocomplete_lookup_fields = {
-        'fk': ['pupitre'],
+        'fk': ['pupitre', 'profession'],
         'm2m': ['individus'],
     }
     fieldsets = (
@@ -178,7 +178,7 @@ class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
             'description': _('Distribution commune à l’ensemble de '
                              'l’événement. Une distribution plus précise peut '
                              'être saisie avec le programme.'),
-            'fields': ('pupitre', 'individus',),
+            'fields': ('individus', 'pupitre', 'profession',),
         }),
     )
     classes = ('grp-collapse grp-open',)
@@ -505,11 +505,12 @@ class OeuvreAdmin(CustomAdmin):
 
 
 class ElementDeDistributionAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'pupitre',)
-    list_editable = ('pupitre',)
-    raw_id_fields = ('pupitre', 'individus',)
+    list_display = ('__unicode__', 'pupitre', 'profession',)
+    list_editable = ('pupitre', 'profession',)
+    fields = ('individus', 'pupitre', 'profession',)
+    raw_id_fields = ('individus', 'pupitre', 'profession',)
     autocomplete_lookup_fields = {
-        'fk': ['pupitre'],
+        'fk': ['pupitre', 'profession'],
         'm2m': ['individus'],
     }
 

@@ -6,13 +6,13 @@ from .functions import str_list, str_list_w_last, href, hlp
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, OneToOneField, BooleanField, \
                              PositiveSmallIntegerField, permalink, Q, \
-                             PositiveIntegerField
+                             PositiveIntegerField, get_model
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from django.template.defaultfilters import capfirst
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    calc_pluriel, CustomManager
+                    calc_pluriel, CustomManager, CustomQuerySet
 from django.core.cache import cache
 from reversion.models import post_revision_commit
 from django.dispatch import receiver
@@ -26,17 +26,48 @@ __all__ = ('ElementDeDistribution', 'CaracteristiqueDElementDeProgramme',
            'ElementDeProgramme', 'Evenement')
 
 
-class ElementDeDistributionManager(CustomManager):
-    use_for_related_fields = True
+class ElementDeDistributionQuerySet(CustomQuerySet):
+    def individus(self):
+        return get_model('catalogue', 'Individu').objects.filter(
+            pk__in=self.values_list('individus', flat=True))
+
+    def evenements(self):
+        distributions_evenements = self.filter(
+            content_type__app_label='catalogue',
+            content_type__model='evenement')
+        pk_list = distributions_evenements.values_list('object_id', flat=True)
+        return Evenement.objects.filter(Q(pk__in=pk_list)
+                              | Q(programme__distribution__in=self)).distinct()
 
     def html(self, tags=True):
         return ', '.join(e.html(tags=tags) for e in self.iterator())
 
 
+class ElementDeDistributionManager(CustomManager):
+    use_for_related_fields = True
+
+    def get_query_set(self):
+        return ElementDeDistributionQuerySet(self.model, using=self._db)
+
+    def individus(self):
+        return self.all().individus()
+
+    def evenements(self):
+        return self.all().evenements()
+
+    def html(self, tags=True):
+        return self.all().html(tags=tags)
+
+
 class ElementDeDistribution(CustomModel):
-    pupitre = ForeignKey('Pupitre', related_name='elements_de_distribution')
-    individus = ManyToManyField('Individu',
+    individus = ManyToManyField('Individu', verbose_name=_('individus'),
                                 related_name='elements_de_distribution')
+    pupitre = ForeignKey('Pupitre', verbose_name=_('pupitre'),
+                         null=True, blank=True,
+                         related_name='elements_de_distribution')
+    profession = ForeignKey('Profession', verbose_name=_('profession'),
+                            null=True, blank=True,
+                            related_name='elements_de_distribution')
     content_type = ForeignKey(ContentType, null=True)
     object_id = PositiveIntegerField(null=True)
     content_object = GenericForeignKey('content_type', 'object_id')
@@ -58,10 +89,20 @@ class ElementDeDistribution(CustomModel):
         individus = self.individus.iterator()
         out = str_list_w_last(individu.html(tags=tags)
             for individu in individus)
-        out += ' [' + self.pupitre.partie.link() + ']'
+        partie_ou_profession = ''
+        if self.pupitre:
+            partie_ou_profession = self.pupitre.partie.link()
+        elif self.profession:
+            partie_ou_profession = self.profession.link()
+        out += ' [' + partie_ou_profession  + ']'
         if not tags:
             out = strip_tags(out)
         return out
+
+    def clean(self):
+        if not (bool(self.pupitre) ^ bool(self.profession)):
+            raise ValidationError(_('Vous devez remplir un pupitre ou '
+                                    'une profession, mais pas les deux.'))
 
     @staticmethod
     def autocomplete_search_fields():
