@@ -1,17 +1,18 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from datetime import date
+from django.db.models import get_model
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.views.generic import ListView, DetailView
 from endless_pagination.views import AjaxListView
+from django_tables2 import SingleTableView
+from haystack.query import SearchQuerySet
+from viewsets import ModelViewSet
 from .models import *
 from .forms import *
 from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
-from django_tables2 import SingleTableView
-from haystack.query import SearchQuerySet
-from django.db.models import get_model
-from datetime import date
 
 
 class SourceDetailView(DetailView):
@@ -108,14 +109,32 @@ class EvenementDetailView(DetailView):
     model = Evenement
 
 
-class PartieListView(SingleTableView):
+class CommonViewSet(ModelViewSet):
+    excluded_views = (b'create_view', b'delete_view',
+                      b'update_view')
+    table_class = None
+
+    def __init__(self):
+        views = self.views
+        views[b'list_view'] = {
+            b'view': SingleTableView,
+            b'pattern': br'',
+            b'name': b'index',
+            b'kwargs': {
+                b'template_name': b'catalogue/tableau.html',
+                b'table_class': lambda _: self.table_class,
+            },
+        }
+        views[b'permanent_detail_view'] = views[b'detail_view'].copy()
+        views[b'permanent_detail_view'][b'pattern'] += br'/'
+        views[b'permanent_detail_view'][b'name'] = b'permanent_detail'
+        views[b'detail_view'][b'pattern'] = br'(?P<slug>[\w-]+)/'
+        super(CommonViewSet, self).__init__()
+
+
+class PartieViewSet(CommonViewSet):
     model = Partie
     table_class = PartieTable
-    template_name = 'catalogue/tableau.html'
-
-
-class PartieDetailView(DetailView):
-    model = Partie
 
 
 class ProfessionListView(SingleTableView):

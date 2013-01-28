@@ -172,11 +172,11 @@ class Partie(MPTTModel, CustomModel, SlugModel):
 
     @permalink
     def get_absolute_url(self):
-        return 'partie', (self.slug,)
+        return 'catalogue:role-ou-instrument_detail', (self.slug,)
 
     @permalink
     def permalien(self):
-        return 'partie_pk', (self.pk,)
+        return 'catalogue:role-ou-instrument_permanent_detail', (self.pk,)
 
     def link(self):
         return href(self.get_absolute_url(), self.html())
