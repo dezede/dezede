@@ -16,7 +16,6 @@ from datetime import date
 
 class SourceDetailView(DetailView):
     model = Source
-    context_object_name = 'source'
 
 
 def cleaned_querydict(qd):
@@ -127,7 +126,6 @@ class ProfessionListView(SingleTableView):
 
 class ProfessionDetailView(DetailView):
     model = Profession
-    context_object_name = 'profession'
 
 
 class LieuListView(ListView):
@@ -137,7 +135,6 @@ class LieuListView(ListView):
 
 class LieuDetailView(DetailView):
     model = Lieu
-    context_object_name = 'lieu'
 
 
 class IndividuListView(SingleTableView):
@@ -148,7 +145,6 @@ class IndividuListView(SingleTableView):
 
 class IndividuDetailView(DetailView):
     model = Individu
-    context_object_name = 'individu'
 
 
 class OeuvreListView(SingleTableView):
@@ -159,7 +155,6 @@ class OeuvreListView(SingleTableView):
 
 class OeuvreDetailView(DetailView):
     model = Oeuvre
-    context_object_name = 'oeuvre'
 
 
 def saisie_source(request, source_id=None):
