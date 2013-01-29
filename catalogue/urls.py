@@ -1,16 +1,21 @@
 # coding: utf-8
+
+from __future__ import unicode_literals
 from django.conf.urls import *
 from .views import *
 
 
+__all__ = (b'urlpatterns',)
+
+
 urlpatterns = patterns('',
-    url(r'^', include(LieuViewSet().urls)),
-    url(r'^', include(IndividuViewSet().urls)),
-    url(r'^', include(OeuvreViewSet().urls)),
-    url(r'^evenements/$', EvenementListView.as_view(), name='evenements'),
-    url(r'^evenements/id/(?P<pk>\d+)/$', EvenementDetailView.as_view(),
-        name='evenement_pk'),
-    url(r'^', include(SourceViewSet().urls)),
-    url(r'^', include(PartieViewSet().urls)),
-    url(r'^', include(ProfessionViewSet().urls)),
+    url(br'^', include(LieuViewSet().urls)),
+    url(br'^', include(IndividuViewSet().urls)),
+    url(br'^', include(OeuvreViewSet().urls)),
+    url(br'^evenements/$', EvenementListView.as_view(), name=b'evenements'),
+    url(br'^evenements/id/(?P<pk>\d+)/$', EvenementDetailView.as_view(),
+        name=b'evenement_pk'),
+    url(br'^', include(SourceViewSet().urls)),
+    url(br'^', include(PartieViewSet().urls)),
+    url(br'^', include(ProfessionViewSet().urls)),
 )

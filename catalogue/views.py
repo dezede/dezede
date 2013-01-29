@@ -18,6 +18,7 @@ __all__ = (b'EvenementListView', b'EvenementDetailView', b'SourceViewSet',
            b'PartieViewSet', b'ProfessionViewSet', b'LieuViewSet',
            b'IndividuViewSet', b'OeuvreViewSet')
 
+
 def cleaned_querydict(qd):
     new_qd = qd.copy()
     for k, v in new_qd.iteritems():
