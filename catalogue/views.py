@@ -156,14 +156,9 @@ class LieuDetailView(DetailView):
     model = Lieu
 
 
-class IndividuListView(SingleTableView):
+class IndividuViewSet(CommonViewSet):
     model = Individu
     table_class = IndividuTable
-    template_name = 'catalogue/tableau.html'
-
-
-class IndividuDetailView(DetailView):
-    model = Individu
 
 
 class OeuvreListView(SingleTableView):

@@ -21,7 +21,7 @@ class OeuvreTable(Table):
 class IndividuTable(Table):
     calc_fav_prenoms = Column(verbose_name=_('prénoms'),
                               order_by=('prenoms__prenom',))
-    nom = LinkColumn('individu', args=(A('slug'),), accessor='nom_seul',
+    nom = LinkColumn('individu_detail', args=(A('slug'),), accessor='nom_seul',
                      order_by=('pseudonyme', 'nom',))
     professions = Column(accessor='calc_professions',
                          verbose_name=_('professions'),
@@ -31,7 +31,7 @@ class IndividuTable(Table):
     deces = Column(verbose_name=_('décès'), order_by='ancrage_deces')
 
     class Meta:
-        attrs = {"class": "paleblue"}
+        attrs = {'class': 'paleblue'}
 
 
 class ProfessionTable(Table):
