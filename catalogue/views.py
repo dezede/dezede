@@ -3,8 +3,7 @@
 from __future__ import unicode_literals
 from datetime import date
 from django.db.models import get_model
-from django.shortcuts import render_to_response, redirect, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from endless_pagination.views import AjaxListView
 from django_tables2 import SingleTableView
@@ -14,6 +13,10 @@ from .models import *
 from .forms import *
 from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 
+
+__all__ = (b'EvenementListView', b'EvenementDetailView', b'SourceViewSet',
+           b'PartieViewSet', b'ProfessionViewSet', b'LieuViewSet',
+           b'IndividuViewSet', b'OeuvreViewSet')
 
 def cleaned_querydict(qd):
     new_qd = qd.copy()
