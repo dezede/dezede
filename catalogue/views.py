@@ -161,14 +161,11 @@ class IndividuViewSet(CommonViewSet):
     table_class = IndividuTable
 
 
-class OeuvreListView(SingleTableView):
+class OeuvreViewSet(CommonViewSet):
     model = Oeuvre
+    base_url = b'oeuvres'
+    model_slug = b'oeuvre'
     table_class = OeuvreTable
-    template_name = 'catalogue/tableau.html'
-
-
-class OeuvreDetailView(DetailView):
-    model = Oeuvre
 
 
 def saisie_source(request, source_id=None):

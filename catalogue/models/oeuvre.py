@@ -433,11 +433,11 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     @permalink
     def get_absolute_url(self):
-        return 'oeuvre', [self.slug]
+        return b'oeuvre_detail', [self.slug]
 
     @permalink
     def permalien(self):
-        return 'oeuvre_pk', [self.pk]
+        return b'oeuvre_permanent_detail', [self.pk]
 
     def link(self):
         return self.html(tags=True, auteurs=False, titre=True, descr=True,

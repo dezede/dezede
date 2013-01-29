@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class OeuvreTable(Table):
     genre = Column()
-    titre = LinkColumn('oeuvre', args=(A('slug'),), verbose_name=_('titre'))
+    titre = LinkColumn('oeuvre_detail', args=(A('slug'),), verbose_name=_('titre'))
     titre_secondaire = Column()
     auteurs = Column(accessor='auteurs_html', verbose_name=_('auteurs'),
                           order_by='auteurs__individu__nom')
