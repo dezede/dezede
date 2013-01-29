@@ -4,9 +4,7 @@ from .views import *
 
 
 urlpatterns = patterns('',
-    url(r'^lieux/$', LieuListView.as_view(), name='lieux'),
-    url(r'^lieux/id/(?P<pk>\d+)/$', LieuDetailView.as_view(), name='lieu_pk'),
-    url(r'^lieux/(?P<slug>[-\w]+)/$', LieuDetailView.as_view(), name='lieu'),
+    url(r'^', include(LieuViewSet().urls)),
     url(r'^', include(IndividuViewSet().urls)),
     url(r'^', include(OeuvreViewSet().urls)),
     url(r'^evenements/$', EvenementListView.as_view(), name='evenements'),

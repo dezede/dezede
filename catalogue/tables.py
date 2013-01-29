@@ -47,7 +47,7 @@ class ProfessionTable(Table):
 
 
 class PartieTable(Table):
-    nom = LinkColumn('role-ou-instrument_detail', args=(A('slug'),),
+    nom = LinkColumn('partie_detail', args=(A('slug'),),
                      verbose_name=_('nom'))
     interpretes = Column(accessor='interpretes_html',
                  verbose_name=_('interprètes'),

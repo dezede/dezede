@@ -17,11 +17,11 @@
 
         <ul class="nav">
           {% url 'evenements' as evenements_url %}
-          {% url 'lieux' as lieux_url %}
+          {% url 'lieu_index' as lieux_url %}
           {% url 'oeuvre_index' as oeuvres_url %}
           {% url 'individu_index' as individus_url %}
           {% url 'profession_index' as professions_url %}
-          {% url 'role-ou-instrument_index' as parties_url %}
+          {% url 'partie_index' as parties_url %}
           {% url 'admin:index' as admin_url %}
           <li{% if request.path == evenements_url %} class="active"{% endif %}>
             <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>

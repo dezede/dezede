@@ -14,8 +14,8 @@
     <h1>{% trans 'lieux et institutions'|capfirst %}</h1>
   </div>
 
-  {% if lieux %}
-    {% jstree lieux 'nom' %}
+  {% if object_list %}
+    {% jstree object_list 'nom' %}
   {% else %}
     {% trans "Aucun lieu ou institution ne figure dans la base de données." %}
   {% endif %}

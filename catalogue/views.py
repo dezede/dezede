@@ -133,12 +133,15 @@ class CommonViewSet(ModelViewSet):
     table_class = None
 
     def __init__(self):
-        self.views[b'list_view'][b'kwargs'][b'table_class'] = self.table_class
+        if self.table_class is not None:
+            self.views[b'list_view'][b'kwargs'][b'table_class'] \
+                = self.table_class
         super(CommonViewSet, self).__init__()
 
 
 class PartieViewSet(CommonViewSet):
     model = Partie
+    model_slug = b'partie'
     table_class = PartieTable
 
 
@@ -147,13 +150,14 @@ class ProfessionViewSet(CommonViewSet):
     table_class = ProfessionTable
 
 
-class LieuListView(ListView):
+class LieuViewSet(CommonViewSet):
     model = Lieu
-    context_object_name = b'lieux'
+    model_slug = b'lieu'
 
-
-class LieuDetailView(DetailView):
-    model = Lieu
+    def __init__(self):
+        super(LieuViewSet, self).__init__()
+        self.views[b'list_view'][b'view'] = ListView
+        del self.views[b'list_view'][b'kwargs']
 
 
 class IndividuViewSet(CommonViewSet):

@@ -70,11 +70,11 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     @permalink
     def get_absolute_url(self):
-        return 'lieu', [self.slug]
+        return b'lieu_detail', [self.slug]
 
     @permalink
     def permalien(self):
-        return 'lieu_pk', [self.pk]
+        return b'lieu_permanent_detail', [self.pk]
 
     def link(self):
         return self.html()
