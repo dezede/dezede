@@ -36,7 +36,7 @@ class IndividuTable(Table):
 
 class ProfessionTable(Table):
     # selection = CheckBoxColumn(accessor='pk')
-    nom = LinkColumn('profession', args=(A('slug'),), verbose_name=_('nom'))
+    nom = LinkColumn('profession_detail', args=(A('slug'),), verbose_name=_('nom'))
     individus_count = Column(accessor='individus.count', orderable=False,
                              verbose_name=_('nombre d’individus'))
     oeuvres_count = Column(accessor='auteurs.oeuvres.count', orderable=False,
@@ -47,7 +47,7 @@ class ProfessionTable(Table):
 
 
 class PartieTable(Table):
-    nom = LinkColumn('catalogue:role-ou-instrument_detail', args=(A('slug'),),
+    nom = LinkColumn('role-ou-instrument_detail', args=(A('slug'),),
                      verbose_name=_('nom'))
     interpretes = Column(accessor='interpretes_html',
                  verbose_name=_('interprètes'),

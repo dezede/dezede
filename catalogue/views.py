@@ -110,25 +110,30 @@ class EvenementDetailView(DetailView):
 
 
 class CommonViewSet(ModelViewSet):
-    excluded_views = (b'create_view', b'delete_view',
-                      b'update_view')
-    table_class = None
-
-    def __init__(self):
-        views = self.views
-        views[b'list_view'] = {
+    views = {
+        b'list_view': {
             b'view': SingleTableView,
             b'pattern': br'',
             b'name': b'index',
             b'kwargs': {
                 b'template_name': b'catalogue/tableau.html',
-                b'table_class': lambda _: self.table_class,
             },
-        }
-        views[b'permanent_detail_view'] = views[b'detail_view'].copy()
-        views[b'permanent_detail_view'][b'pattern'] += br'/'
-        views[b'permanent_detail_view'][b'name'] = b'permanent_detail'
-        views[b'detail_view'][b'pattern'] = br'(?P<slug>[\w-]+)/'
+        },
+        b'detail_view': {
+            b'view': DetailView,
+            b'pattern': br'(?P<slug>[\w-]+)/',
+            b'name': b'detail',
+        },
+        b'permanent_detail_view': {
+            b'view': DetailView,
+            b'pattern': br'id/(?P<pk>\d+)/',
+            b'name': b'permanent_detail',
+        },
+    }
+    table_class = None
+
+    def __init__(self):
+        self.views[b'list_view'][b'kwargs'][b'table_class'] = self.table_class
         super(CommonViewSet, self).__init__()
 
 
@@ -137,19 +142,14 @@ class PartieViewSet(CommonViewSet):
     table_class = PartieTable
 
 
-class ProfessionListView(SingleTableView):
+class ProfessionViewSet(CommonViewSet):
     model = Profession
     table_class = ProfessionTable
-    template_name = 'catalogue/tableau.html'
-
-
-class ProfessionDetailView(DetailView):
-    model = Profession
 
 
 class LieuListView(ListView):
     model = Lieu
-    context_object_name = 'lieux'
+    context_object_name = b'lieux'
 
 
 class LieuDetailView(DetailView):

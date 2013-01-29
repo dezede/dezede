@@ -30,16 +30,16 @@ class Profession(MPTTModel, CustomModel, SlugModel):
     class Meta:
         verbose_name = ungettext_lazy('profession', 'professions', 1)
         verbose_name_plural = ungettext_lazy('profession', 'professions', 2)
-        ordering = ['slug']
+        ordering = ('slug',)
         app_label = 'catalogue'
 
     @permalink
     def get_absolute_url(self):
-        return 'profession', [self.slug]
+        return b'profession_detail', (self.slug,)
 
     @permalink
     def permalien(self):
-        return 'profession_pk', [self.pk]
+        return b'profession_permanent_detail', (self.pk,)
 
     def pretty_link(self):
         return self.html(caps=True)

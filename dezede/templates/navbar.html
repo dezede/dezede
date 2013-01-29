@@ -20,8 +20,8 @@
           {% url 'lieux' as lieux_url %}
           {% url 'oeuvres' as oeuvres_url %}
           {% url 'individus' as individus_url %}
-          {% url 'professions' as professions_url %}
-          {% url 'catalogue:role-ou-instrument_index' as parties_url %}
+          {% url 'profession_index' as professions_url %}
+          {% url 'role-ou-instrument_index' as parties_url %}
           {% url 'admin:index' as admin_url %}
           <li{% if request.path == evenements_url %} class="active"{% endif %}>
             <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
