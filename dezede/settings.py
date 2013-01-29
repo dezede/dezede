@@ -6,7 +6,7 @@ from os import environ
 ugettext = lambda s: s
 
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
@@ -26,8 +26,8 @@ DATABASES = {
         'NAME': 'dezede',
         'USER': '',
         'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'HOST': '',
+        'PORT': '',
         'OPTIONS': {
             'autocommit': True,
         },
@@ -37,8 +37,8 @@ DATABASES = {
         'NAME': 'dezede_importation',
         'USER': '',
         'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'HOST': '',
+        'PORT': '',
         'OPTIONS': {
             'autocommit': True,
         },
@@ -111,7 +111,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
-#    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
 ROOT_URLCONF = 'dezede.urls'
