@@ -13,8 +13,4 @@ urlpatterns = patterns('',
     url(r'^', include(SourceViewSet().urls)),
     url(r'^', include(PartieViewSet().urls)),
     url(r'^', include(ProfessionViewSet().urls)),
-#    url(r'^saisie/source/$', saisie_source,
-#        name='saisie_sources'),
-#    url(r'^saisie/source/(?P<source_id>\d+)/$', saisie_source,
-#        name='saisie_source'),
 )

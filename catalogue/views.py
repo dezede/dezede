@@ -171,26 +171,3 @@ class OeuvreViewSet(CommonViewSet):
     base_url = b'oeuvres'
     model_slug = b'oeuvre'
     table_class = OeuvreTable
-
-
-def saisie_source(request, source_id=None):
-    if source_id is not None:
-        source = get_object_or_404(Source, pk=source_id)
-    else:
-        source = None
-    if request.method == 'POST':
-        form = SourceForm(request.POST, instance=source)
-        if form.is_valid():
-            form.save()
-            return redirect('saisie_sources')
-    else:
-        form = SourceForm(instance=source)
-    c = RequestContext(
-            request,
-            {
-                'form': form,
-                'sources': Source.objects.all(),
-                'source': source,
-            }
-        )
-    return render_to_response('catalogue/saisie_source.html', c)
