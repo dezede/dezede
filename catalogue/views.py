@@ -15,10 +15,6 @@ from .forms import *
 from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 
 
-class SourceDetailView(DetailView):
-    model = Source
-
-
 def cleaned_querydict(qd):
     new_qd = qd.copy()
     for k, v in new_qd.iteritems():
@@ -137,6 +133,11 @@ class CommonViewSet(ModelViewSet):
             self.views[b'list_view'][b'kwargs'][b'table_class'] \
                 = self.table_class
         super(CommonViewSet, self).__init__()
+
+
+class SourceViewSet(CommonViewSet):
+    model = Source
+    excluded_views = (b'list_view', b'detail_view')
 
 
 class PartieViewSet(CommonViewSet):

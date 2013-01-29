@@ -56,7 +56,7 @@ class Source(AutoriteModel):
 
     @permalink
     def get_absolute_url(self):
-        return 'source_pk', [self.pk]
+        return b'source_permanent_detail', (self.pk,)
 
     def permalien(self):
         return self.get_absolute_url()

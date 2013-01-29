@@ -141,11 +141,11 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     @permalink
     def get_absolute_url(self):
-        return b'individu_detail', [self.slug],
+        return b'individu_detail', (self.slug,)
 
     @permalink
     def permalien(self):
-        return b'individu_permanent_detail', [self.pk]
+        return b'individu_permanent_detail', (self.pk,)
 
     def link(self):
         return self.html()
