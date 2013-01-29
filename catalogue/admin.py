@@ -1,16 +1,18 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from .models import *
-from .forms import OeuvreForm, SourceForm, IndividuForm
 from django.contrib.admin import site, TabularInline, StackedInline
 from django.contrib.admin.options import BaseModelAdmin
-from reversion import VersionAdmin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import SimpleListFilter
 from django.db.models import Q
 from django.contrib.contenttypes.generic import GenericStackedInline
-from mptt.admin import MPTTModelAdmin
+from reversion import VersionAdmin
+from .models import *
+from .forms import OeuvreForm, SourceForm, IndividuForm
+
+
+__all__ = ()
 
 
 #

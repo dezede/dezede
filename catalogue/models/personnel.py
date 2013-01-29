@@ -12,8 +12,8 @@ from ..templatetags.extras import abbreviate
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 
 
-__all__ = ('Profession', 'Devise', 'Engagement', 'TypeDePersonnel',
-           'Personnel')
+__all__ = (b'Profession', b'Devise', b'Engagement', b'TypeDePersonnel',
+           b'Personnel')
 
 
 class Profession(MPTTModel, CustomModel, SlugModel):

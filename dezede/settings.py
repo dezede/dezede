@@ -26,8 +26,8 @@ DATABASES = {
         'NAME': 'dezede',
         'USER': '',
         'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'HOST': 'localhost',
+        'PORT': '5432',
         'OPTIONS': {
             'autocommit': True,
         },
@@ -37,8 +37,8 @@ DATABASES = {
         'NAME': 'dezede_importation',
         'USER': '',
         'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'HOST': 'localhost',
+        'PORT': '5432',
         'OPTIONS': {
             'autocommit': True,
         },
@@ -111,8 +111,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'dezede.urls'

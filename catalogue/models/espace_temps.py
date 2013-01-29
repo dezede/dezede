@@ -20,7 +20,7 @@ from .individu import Individu
 from .oeuvre import Oeuvre
 
 
-__all__ = ('NatureDeLieu', 'Lieu', 'Saison', 'AncrageSpatioTemporel')
+__all__ = (b'NatureDeLieu', b'Lieu', b'Saison', b'AncrageSpatioTemporel')
 
 
 class NatureDeLieu(CustomModel, SlugModel):

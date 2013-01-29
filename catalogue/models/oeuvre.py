@@ -27,9 +27,9 @@ from .personnel import Profession
 from .source import Source
 
 
-__all__ = ('GenreDOeuvre', 'TypeDeCaracteristiqueDOeuvre',
-           'CaracteristiqueDOeuvre', 'Partie', 'Pupitre',
-           'TypeDeParenteDOeuvres', 'ParenteDOeuvres', 'Auteur', 'Oeuvre')
+__all__ = (b'GenreDOeuvre', b'TypeDeCaracteristiqueDOeuvre',
+           b'CaracteristiqueDOeuvre', b'Partie', b'Pupitre',
+           b'TypeDeParenteDOeuvres', b'ParenteDOeuvres', b'Auteur', b'Oeuvre')
 
 
 class GenreDOeuvre(CustomModel, SlugModel):

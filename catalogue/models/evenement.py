@@ -22,8 +22,8 @@ from django.contrib.contenttypes.generic import GenericForeignKey, \
                                                 GenericRelation
 
 
-__all__ = ('ElementDeDistribution', 'CaracteristiqueDElementDeProgramme',
-           'ElementDeProgramme', 'Evenement')
+__all__ = (b'ElementDeDistribution', b'CaracteristiqueDElementDeProgramme',
+           b'ElementDeProgramme', b'Evenement')
 
 
 class ElementDeDistributionQuerySet(CustomQuerySet):

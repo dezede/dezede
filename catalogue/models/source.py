@@ -14,7 +14,7 @@ from django.utils.safestring import mark_safe
 from django.contrib.contenttypes.generic import GenericRelation
 
 
-__all__ = ('TypeDeSource', 'Source')
+__all__ = (b'TypeDeSource', b'Source')
 
 
 class TypeDeSource(CustomModel, SlugModel):

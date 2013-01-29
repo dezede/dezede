@@ -8,8 +8,9 @@ from django.utils.safestring import mark_safe
 from django.utils.encoding import smart_unicode
 
 
-__all__ = ('date_html', 'str_list', 'str_list_w_last', 'ex', 'no',
-           'html_decorator', 'cite', 'href', 'sc', 'hlp', 'small', 'strong')
+__all__ = (b'date_html', b'str_list', b'str_list_w_last', b'ex', b'no',
+           b'html_decorator', b'cite', b'href', b'sc', b'hlp', b'small',
+           b'strong')
 
 
 def date_html(d, tags=True, short=False):

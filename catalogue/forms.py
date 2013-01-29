@@ -3,13 +3,16 @@
 from __future__ import unicode_literals
 from django.forms import ValidationError
 from django.forms import ModelForm, Form, CharField, TextInput
-from .models import Oeuvre, Source, Individu
+from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
-from django.utils.translation import ugettext_lazy as _
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
                                AutoCompleteWidget
+from .models import Oeuvre, Source, Individu
 from .fields import RangeSliderField
+
+
+__all__ = (b'IndividuForm', b'OeuvreForm', b'SourceForm', b'EvenementListForm')
 
 
 class IndividuForm(ModelForm):
@@ -19,10 +22,10 @@ class IndividuForm(ModelForm):
     def clean_designation(self):
         # Anticipe si la désignation donnera un résultat nul.
         data = self.cleaned_data
-        designation = data['designation']
-        if designation == 'P' and not data['pseudonyme'] \
-        or designation == 'B' and not data['nom_naissance'] \
-        or designation == 'F' and not data['prenoms']:
+        designation = data[b'designation']
+        if designation == 'P' and not data[b'pseudonyme'] \
+        or designation == 'B' and not data[b'nom_naissance'] \
+        or designation == 'F' and not data[b'prenoms']:
             raise ValidationError(_('Il manque des données pour pouvoir '
                                     'choisir cette désignation.'))
         return designation
@@ -32,12 +35,12 @@ class OeuvreForm(ModelForm):
     class Meta:
         model = Oeuvre
         widgets = {
-            'prefixe_titre': AutoCompleteWidget('oeuvre__prefixe_titre',
+            b'prefixe_titre': AutoCompleteWidget('oeuvre__prefixe_titre',
                                             attrs={'style': 'width: 50px;'}),
-            'coordination': AutoCompleteWidget('oeuvre__coordination',
+            b'coordination': AutoCompleteWidget('oeuvre__coordination',
                                             attrs={'style': 'width: 70px;'}),
 
-            'prefixe_titre_secondaire': AutoCompleteWidget(
+            b'prefixe_titre_secondaire': AutoCompleteWidget(
                                          'oeuvre__prefixe_titre_secondaire',
                                          attrs={'style': 'width: 50px;'}),
 
@@ -48,9 +51,10 @@ class SourceForm(ModelForm):
     class Meta:
         model = Source
         widgets = {
-            'nom': AutoCompleteWidget('source__nom', attrs={'style': 'width: 600px;'}),
-            'numero': TextInput(attrs={'cols': 10}),
-            'page': TextInput(attrs={'cols': 10}),
+            b'nom': AutoCompleteWidget('source__nom',
+                                       attrs={'style': 'width: 600px;'}),
+            b'numero': TextInput(attrs={'cols': 10}),
+            b'page': TextInput(attrs={'cols': 10}),
         }
 
 
@@ -74,5 +78,5 @@ class EvenementListForm(Form):
         )
         super(EvenementListForm, self).__init__(*args, **kwargs)
         for field in self.fields.itervalues():
-            field.widget.attrs['placeholder'] = (field.label or '') + '...'
+            field.widget.attrs[b'placeholder'] = (field.label or '') + '...'
             field.label = ''

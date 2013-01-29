@@ -15,8 +15,8 @@ from django.core.exceptions import ValidationError
 from .evenement import Evenement
 
 
-__all__ = ('Prenom', 'TypeDeParenteDIndividus', 'ParenteDIndividus',
-           'Individu')
+__all__ = (b'Prenom', b'TypeDeParenteDIndividus', b'ParenteDIndividus',
+           b'Individu')
 
 
 class Prenom(CustomModel):

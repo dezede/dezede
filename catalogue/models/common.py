@@ -14,9 +14,10 @@ from .functions import href
 from django.contrib.contenttypes.generic import GenericRelation
 
 
-__all__ = ('LOWER_MSG', 'PLURAL_MSG', 'DATE_MSG', 'REPLACE_FIELDS',
-           'replace_in_kwargs', 'calc_pluriel', 'CustomModel', 'AutoriteModel',
-           'SlugModel', 'UniqueSlugModel', 'Document', 'Illustration', 'Etat')
+__all__ = (b'LOWER_MSG', b'PLURAL_MSG', b'DATE_MSG', b'REPLACE_FIELDS',
+           b'replace_in_kwargs', b'calc_pluriel', b'CustomModel',
+           b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'Document',
+           b'Illustration', b'Etat')
 
 
 #

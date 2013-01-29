@@ -1,7 +1,13 @@
+# coding: utf-8
+
+from __future__ import unicode_literals
 from django.forms.fields import MultiValueField
 from django.forms.widgets import MultiWidget, TextInput
 from django.template.loader import render_to_string
 from .models import Evenement
+
+
+__all__ = (b'RangeSliderWidget', b'RangeSliderField')
 
 
 class RangeSliderWidget(MultiWidget):
@@ -14,9 +20,9 @@ class RangeSliderWidget(MultiWidget):
                         ancrage_debut__date__isnull=False)
         if evenements.exists():
             min = evenements.order_by(
-                              'ancrage_debut__date')[0].ancrage_debut.date.year
+                             b'ancrage_debut__date')[0].ancrage_debut.date.year
             max = evenements.order_by(
-                             '-ancrage_debut__date')[0].ancrage_debut.date.year
+                            b'-ancrage_debut__date')[0].ancrage_debut.date.year
         else:
             min, max = 1600, 2012
         try:
@@ -24,7 +30,7 @@ class RangeSliderWidget(MultiWidget):
         except (ValueError, TypeError):
             value = (min, max)
         start, end = value
-        t = 'widgets/range_slider_widget.html'
+        t = b'widgets/range_slider_widget.html'
         return render_to_string(t, locals())
 
     def decompress(self, value):
