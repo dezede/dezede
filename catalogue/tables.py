@@ -7,9 +7,14 @@ from django_tables2.utils import A
 from django.utils.translation import ugettext_lazy as _
 
 
+__all__ = (b'OeuvreTable', b'IndividuTable', b'ProfessionTable',
+           b'PartieTable')
+
+
 class OeuvreTable(Table):
     genre = Column()
-    titre = LinkColumn('oeuvre_detail', args=(A('slug'),), verbose_name=_('titre'))
+    titre = LinkColumn('oeuvre_detail', args=(A('slug'),),
+                       verbose_name=_('titre'))
     titre_secondaire = Column()
     auteurs = Column(accessor='auteurs_html', verbose_name=_('auteurs'),
                           order_by='auteurs__individu__nom')
@@ -36,7 +41,8 @@ class IndividuTable(Table):
 
 class ProfessionTable(Table):
     # selection = CheckBoxColumn(accessor='pk')
-    nom = LinkColumn('profession_detail', args=(A('slug'),), verbose_name=_('nom'))
+    nom = LinkColumn('profession_detail', args=(A('slug'),),
+                     verbose_name=_('nom'))
     individus_count = Column(accessor='individus.count', orderable=False,
                              verbose_name=_('nombre d’individus'))
     oeuvres_count = Column(accessor='auteurs.oeuvres.count', orderable=False,
