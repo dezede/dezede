@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load url from future %}
-{% load i18n routines %}
+{% load i18n routines endless %}
 
 
 {% block title %}
@@ -11,13 +11,28 @@
 {% block content %}
   <div class="page-header">
     {% frontend_admin autorite=1 %}
-    <h1>{{ object.titre }}</h1>
+    <h1>
+      {{ object.titre }}
+      <small>par {{ object.owner.get_full_name }}</small>
+    </h1>
   </div>
 
-  <a href="{{ object.get_queryset_url }}">
-    {% trans 'Voir la sélection d’événements de ce dossier' %}
-  </a>
-
   {{ object.contenu }}
+
+  <hr />
+
+  <div class="well well-large">
+    <h2>Chronologie des spectacles de ce dossier</h2>
+    {% with object.get_queryset as evenements %}
+      {% paginate 5 evenements %}
+      {% show_pages %}
+      {% for evenement in evenements %}
+        <div class="content_part">
+          {% include 'catalogue/evenement_item.html' %}
+        </div>
+      {% endfor %}
+      {% show_pages %}
+    {% endwith %}
+  </div>
 
 {% endblock %}

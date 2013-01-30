@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.db.models import Model, Manager, CharField, \
+from django.db.models import Model, Manager, CharField, TextField, \
                              BooleanField, ManyToManyField, ForeignKey
 from django.db.models.query import QuerySet
 from django.contrib.auth.models import User
@@ -30,7 +30,7 @@ PLURAL_MSG = _('À remplir si le pluriel n’est pas un simple '
                'et non « animals ».')
 DATE_MSG = _('Exemple : « 6/6/1944 » pour le 6 juin 1944.')
 # Champs dans lesquels effectuer les remplacements typographiques.
-REPLACE_FIELDS = (CharField, HTMLField,)
+REPLACE_FIELDS = (CharField, HTMLField, TextField,)
 
 
 def replace_in_kwargs(obj, **kwargs):

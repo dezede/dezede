@@ -83,6 +83,10 @@ a:hover {
   text-shadow: white 0 0 0;
 }
 
+p {
+  text-align: justify;
+}
+
 .sc {
   font-variant: small-caps;
   font-size: 120%;
@@ -287,6 +291,10 @@ input, button {
 
 .navbar .brand {
   padding: 5px 20px 5px;
+}
+
+.front-end_admin {
+  margin: 0 5px;
 }
 
 ul.ui-autocomplete li a, .results_on_deck > div {

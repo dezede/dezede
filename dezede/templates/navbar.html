@@ -24,10 +24,10 @@
           {% url 'profession_index' as professions_url %}
           {% url 'partie_index' as parties_url %}
           {% url 'admin:index' as admin_url %}
-          <li{% if request.path == dossiers_url %} class="active"{% endif %}>
+          <li{% if dossiers_url in request.path %} class="active"{% endif %}>
             <a href="{{ dossiers_url }}">{% trans "dossiers"|capfirst %}</a>
           </li>
-          <li{% if request.path == evenements_url %} class="active"{% endif %}>
+          <li{% if evenements_url in request.path %} class="active"{% endif %}>
             <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
           </li>
           <li class="dropdown">
@@ -37,19 +37,19 @@
               <b class="caret"></b>
             </a>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-              <li{% if request.path == lieux_url %} class="active"{% endif %}>
+              <li{% if lieux_url in request.path %} class="active"{% endif %}>
                 <a href="{{ lieux_url }}">{% trans "lieux et institutions"|capfirst %}</a>
               </li>
-              <li{% if request.path == oeuvres_url %} class="active"{% endif %}>
+              <li{% if oeuvres_url in request.path %} class="active"{% endif %}>
                 <a href="{{ oeuvres_url }}">{% trans "œuvres"|capfirst %}</a>
               </li>
-              <li{% if request.path == individus_url %} class="active"{% endif %}>
+              <li{% if individus_url in request.path %} class="active"{% endif %}>
                 <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
               </li>
-              <li{% if request.path == professions_url %} class="active"{% endif %}>
+              <li{% if professions_url in request.path %} class="active"{% endif %}>
                 <a href="{{ professions_url }}">{% trans 'professions'|capfirst %}</a>
               </li>
-              <li{% if request.path == parties_url %} class="active"{% endif %}>
+              <li{% if parties_url in request.path %} class="active"{% endif %}>
                 <a href="{{ parties_url }}">{% trans 'rôles et instruments'|capfirst %}</a>
               </li>
             </ul>

@@ -1,12 +1,13 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.contrib.admin import site, ModelAdmin
+from django.contrib.admin import site
+from catalogue.admin import CustomAdmin
 from .forms import DossierDEvenementsForm
 from .models import DossierDEvenements
 
 
-class DossierDEvenementsAdmin(ModelAdmin):
+class DossierDEvenementsAdmin(CustomAdmin):
     form = DossierDEvenementsForm
     list_display = ('__unicode__', 'circonstance', 'debut', 'fin',
                     'lieux_html', 'oeuvres_html', 'auteurs_html', 'get_count')

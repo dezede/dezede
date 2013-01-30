@@ -2,14 +2,15 @@
 
 from __future__ import unicode_literals
 from django.core.urlresolvers import reverse
-from django.db.models import Model, CharField, DateField, ManyToManyField, \
+from django.db.models import CharField, DateField, ManyToManyField, \
                              TextField, permalink
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from catalogue.models import Lieu, Oeuvre, Evenement, Individu
+from catalogue.models.common import CustomModel
 from catalogue.models.functions import str_list_w_last
 
 
-class DossierDEvenements(Model):
+class DossierDEvenements(CustomModel):
     titre = CharField(_('titre'), max_length=100)
     contenu = TextField(_('contenu'))
     debut = DateField(_('début'), blank=True, null=True)
