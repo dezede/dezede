@@ -16,6 +16,7 @@
       <div class="nav-collapse">
 
         <ul class="nav">
+          {% url 'dossierdevenements_index' as dossiers_url %}
           {% url 'evenements' as evenements_url %}
           {% url 'lieu_index' as lieux_url %}
           {% url 'oeuvre_index' as oeuvres_url %}
@@ -23,6 +24,9 @@
           {% url 'profession_index' as professions_url %}
           {% url 'partie_index' as parties_url %}
           {% url 'admin:index' as admin_url %}
+          <li{% if request.path == dossiers_url %} class="active"{% endif %}>
+            <a href="{{ dossiers_url }}">{% trans "dossiers"|capfirst %}</a>
+          </li>
           <li{% if request.path == evenements_url %} class="active"{% endif %}>
             <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
           </li>

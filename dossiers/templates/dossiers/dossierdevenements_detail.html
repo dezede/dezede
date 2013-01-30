@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% load i18n routines %}
+
+
+{% block title %}
+  {{ object }}
+{% endblock %}
+
+
+{% block content %}
+  <div class="page-header">
+    {% frontend_admin autorite=1 %}
+    <h1>{{ object.titre }}</h1>
+  </div>
+
+  <a href="{{ object.get_queryset_url }}">
+    {% trans 'Voir la sélection d’événements de ce dossier' %}
+  </a>
+
+  {{ object.contenu }}
+
+{% endblock %}

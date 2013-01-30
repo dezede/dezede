@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% load i18n %}
+
+
+{% block title %}
+  {% trans 'dossiers'|capfirst %}
+{% endblock %}
+
+
+{% block content %}
+  <div class="page-header">
+    <h1>{% trans 'dossiers'|capfirst %}</h1>
+  </div>
+
+  <ul>
+    {% for dossier in object_list %}
+      <li>
+        <a href="{{ dossier.get_absolute_url }}">
+          {{ dossier }}
+        </a>
+      </li>
+    {% empty %}
+      {% trans 'Aucun dossier pour l’instant.' %}
+    {% endfor %}
+  </ul>
+{% endblock %}

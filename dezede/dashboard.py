@@ -8,6 +8,7 @@ To activate your index dashboard add the following to your settings.py::
     GRAPPELLI_INDEX_DASHBOARD = 'musicologie.dashboard.CustomIndexDashboard'
 """
 
+from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from grappelli.dashboard import modules, Dashboard
@@ -36,6 +37,14 @@ class CustomIndexDashboard(Dashboard):
             )
         )
 
+        self.children.append(modules.ModelList(
+            _('Rédaction'),
+            column=1,
+            collapsible=False,
+            css_classes=('grp-open',),
+            models=('dossiers.*', 'django.contrib.flatpages.*',),
+        ))
+
         self.children.append(modules.Group(
             _('Fichiers'),
             column=1,
@@ -55,7 +64,7 @@ class CustomIndexDashboard(Dashboard):
                     ]
                 ),
                 modules.ModelList(
-                    _(u'Intégration à la base de données'),
+                    _('Intégration à la base de données'),
                     collapsible=False,
                     models=('catalogue.models.common.Document',
                             'catalogue.models.common.Illustration',),
@@ -64,13 +73,13 @@ class CustomIndexDashboard(Dashboard):
         ))
 
         self.children.append(modules.RecentActions(
-            _(u'Actions récentes'),
+            _('Actions récentes'),
             limit=5,
             collapsible=False,
             column=2,
         ))
 
-        self.children.append(modules.AppList(
+        self.children.append(modules.ModelList(
             _('Utilisateurs et groupes'),
             column=3,
             css_classes=('grp-collapse grp-closed',),
@@ -79,18 +88,10 @@ class CustomIndexDashboard(Dashboard):
                     'django.contrib.sites.*',),
         ))
 
-        self.children.append(modules.AppList(
-            _(u'Rédaction'),
-            column=3,
-            css_classes=('grp-collapse grp-closed',),
-            models=('django.contrib.flatpages.*',),
-            ))
-
         self.children.append(modules.LinkList(
             _('Traduction'),
             column=3,
-            collapsible=False,
-            css_classes=('grp-open',),
+            css_classes=('grp-collapse grp-closed',),
             children=[
                 {
                     'title': 'Transifex',

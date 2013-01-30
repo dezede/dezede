@@ -151,6 +151,7 @@ INSTALLED_APPS = (
     'dezede',
     'haystack',
     'catalogue',
+    'dossiers',
     'django.contrib.flatpages',
     'django.contrib.markup',
     'mptt',

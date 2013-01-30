@@ -1,4 +1,4 @@
-Django==1.4.2
+Django==1.4.3
 django-endless-pagination==1.1
 django-tables2==0.13.0
 django-reversion==1.6.4
