@@ -133,7 +133,8 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'nom__icontains',
+        return ('nom__icontains',
+                'parent__nom__icontains')
 
 
 class Saison(CustomModel):
