@@ -187,20 +187,17 @@ class ElementDeProgramme(AutoriteModel):
                              Q(numerotation__in=numerotations_exclues)).count()
 
     def html(self, tags=True):
-        out = []
-        out__append = out.append
+        out = ''
         oeuvre = self.oeuvre
         if oeuvre:
-            out__append(oeuvre.html(tags))
+            out += oeuvre.html(tags)
         else:
-            out__append(self.autre)
-        cs = self.calc_caracteristiques()
-        if cs:
-            out__append(' [' + cs + ']')
+            out += self.autre
+        if self.caracteristiques.exists():
+            out += ' [' + self.calc_caracteristiques() + ']'
         if self.distribution.exists():
-            out__append('. — ')
-            out__append(self.distribution.html(tags=tags))
-        return ''.join(out)
+            out += '. — ' + self.distribution.html(tags=tags)
+        return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
@@ -241,7 +238,7 @@ class Evenement(AutoriteModel):
 
     @permalink
     def get_absolute_url(self):
-        return 'evenement_pk', [self.pk]
+        return 'evenement_pk', (self.pk,)
 
     def permalien(self):
         return self.get_absolute_url()
@@ -252,13 +249,12 @@ class Evenement(AutoriteModel):
     link.allow_tags = True
 
     def sources_dict(self):
-        types = TypeDeSource.objects.filter(sources__evenements=self)
-        types = types.distinct()
+        types = TypeDeSource.objects.filter(
+                                        sources__evenements=self).distinct()
         d = {}
         for type in types:
             sources = self.sources.filter(type=type)
-            if sources:
-                d[type] = sources
+            d[type] = sources
         return d
 
     def html(self, tags=True):
