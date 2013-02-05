@@ -1,27 +1,27 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.utils.safestring import mark_safe
-from .functions import ex, hlp, str_list, str_list_w_last, href, cite
+from collections import defaultdict
+from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.generic import GenericForeignKey
+from django.contrib.contenttypes.generic import GenericRelation
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.humanize.templatetags.humanize import apnumber
 from django.db.models import CharField, ManyToManyField, \
                              PositiveIntegerField, FloatField, ForeignKey, \
                              OneToOneField, IntegerField, TextField, \
                              BooleanField, permalink, get_model
-from tinymce.models import HTMLField
+from django.template.defaultfilters import capfirst
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
-from django.template.defaultfilters import capfirst
-from django.contrib.humanize.templatetags.humanize import apnumber
+from django.utils.safestring import mark_safe
+from mptt.models import MPTTModel, TreeForeignKey, TreeManager
+from tinymce.models import HTMLField
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     calc_pluriel, SlugModel, UniqueSlugModel, CustomManager, \
                     CustomQuerySet
-from django.core.exceptions import ValidationError
-from collections import defaultdict
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.generic import GenericForeignKey
-from django.contrib.contenttypes.generic import GenericRelation
-from mptt.models import MPTTModel, TreeForeignKey, TreeManager
+from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
 from .source import Source
@@ -592,4 +592,5 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return ('prefixe_titre__icontains', 'titre__icontains',
                 'prefixe_titre_secondaire__icontains',
                 'titre_secondaire__icontains', 'genre__nom__icontains',
-                'auteurs__individu__nom__icontains')
+                'auteurs__individu__nom__icontains',
+                'caracteristiques__valeur__icontains')
