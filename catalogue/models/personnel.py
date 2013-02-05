@@ -1,15 +1,15 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from .functions import ex, href
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, permalink
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, \
-                    SlugModel
 from django.template.defaultfilters import capfirst
-from ..templatetags.extras import abbreviate
+from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
+from ..templatetags.extras import abbreviate
+from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
+    SlugModel
+from .functions import ex, href
 
 
 __all__ = (b'Profession', b'Devise', b'Engagement', b'TypeDePersonnel',

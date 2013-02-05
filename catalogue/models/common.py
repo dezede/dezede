@@ -1,17 +1,17 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import Model, Manager, CharField, TextField, \
                              BooleanField, ManyToManyField, ForeignKey
 from django.db.models.query import QuerySet
-from django.contrib.auth.models import User
+from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from autoslug import AutoSlugField
 from tinymce.models import HTMLField
 from filebrowser.fields import FileBrowseField
 from ..templatetags.extras import replace
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from autoslug import AutoSlugField
 from .functions import href
-from django.contrib.contenttypes.generic import GenericRelation
 
 
 __all__ = (b'LOWER_MSG', b'PLURAL_MSG', b'DATE_MSG', b'REPLACE_FIELDS',

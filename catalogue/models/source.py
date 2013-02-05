@@ -1,17 +1,17 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from .functions import ex, str_list, cite, no, date_html, href, small
+from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import CharField, DateField, ForeignKey, \
                              ManyToManyField, permalink
-from tinymce.models import HTMLField
 from django.utils.html import strip_tags
-from django.utils.translation import ungettext_lazy, ugettext, \
+from django.utils.safestring import mark_safe
+from django.utils.translation import ungettext_lazy, ugettext,\
                                      ugettext_lazy as _
+from tinymce.models import HTMLField
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     DATE_MSG, calc_pluriel, SlugModel
-from django.utils.safestring import mark_safe
-from django.contrib.contenttypes.generic import GenericRelation
+from .functions import ex, cite, no, date_html, href, small
 
 
 __all__ = (b'TypeDeSource', b'Source')
