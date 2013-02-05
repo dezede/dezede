@@ -46,7 +46,7 @@
     {% endfor %}
   {% endwith %}
 
-  {% for type, sources in evenement.sources_dict.iteritems %}
+  {% for type, sources in evenement.sources_dict.items %}
     <br />
     <h3 style="text-align: center; font-style: italic;">
       {% if sources|length > 1 %}
@@ -63,21 +63,14 @@
         <div class="accordion-heading">
           <a class="accordion-toggle" data-toggle="collapse"
              data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
-             href="#source_{{ evenement.pk }}_{{ source.pk }}">
+             href="#source_{{ evenement.pk }}_{{ source.pk }}"
+             onmouseover="load_source_content(this, {{ source.pk }});">
             {{ source.html|removetags:'a' }}
           </a>
         </div>
         <div id="source_{{ evenement.pk }}_{{ source.pk }}"
              class="accordion-body collapse">
           <div class="accordion-inner">
-            <div class="pull-right front-end_admin">
-              {% include 'routines/permalink.html' with object=source %}
-            </div>
-            {% include 'catalogue/source_content.html' %}
-            {% if not source.contenu %}
-              {% list_in_dl source.illustrations.all %}
-              {% list_in_dl source.documents.all %}
-            {% endif %}
           </div>
         </div>
       </div>

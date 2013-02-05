@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from datetime import date
 from django.db.models import get_model
+from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from endless_pagination.views import AjaxListView
@@ -139,25 +140,47 @@ class CommonViewSet(ModelViewSet):
         super(CommonViewSet, self).__init__()
 
 
+class GETDetailView(DetailView):
+    def get_object(self, queryset=None):
+        pk = self.request.REQUEST.get(b'pk', None)
+        if pk is None:
+            raise Http404
+        self.kwargs[self.pk_url_kwarg] = pk
+        return super(GETDetailView, self).get_object(queryset=queryset)
+
+
 class SourceViewSet(CommonViewSet):
     model = Source
+    base_url_name = b'source'
     excluded_views = (b'list_view', b'detail_view')
+
+    def __init__(self):
+        self.views[b'content_view'] = {
+            b'view': GETDetailView,
+            b'pattern': br'content',
+            b'name': b'content',
+            b'kwargs': {
+                b'template_name': 'catalogue/source_ajax_content.html'
+            },
+        }
+        super(SourceViewSet, self).__init__()
 
 
 class PartieViewSet(CommonViewSet):
     model = Partie
-    model_slug = b'partie'
+    base_url_name = b'partie'
     table_class = PartieTable
 
 
 class ProfessionViewSet(CommonViewSet):
     model = Profession
+    base_url_name = b'profession'
     table_class = ProfessionTable
 
 
 class LieuViewSet(CommonViewSet):
     model = Lieu
-    model_slug = b'lieu'
+    base_url_name = b'lieu'
 
     def __init__(self):
         super(LieuViewSet, self).__init__()
@@ -167,11 +190,12 @@ class LieuViewSet(CommonViewSet):
 
 class IndividuViewSet(CommonViewSet):
     model = Individu
+    base_url_name = b'individu'
     table_class = IndividuTable
 
 
 class OeuvreViewSet(CommonViewSet):
     model = Oeuvre
-    base_url = b'oeuvres'
-    model_slug = b'oeuvre'
+    base_url_pattern = b'oeuvres'
+    base_url_name = b'oeuvre'
     table_class = OeuvreTable

@@ -1,0 +1,10 @@
+{% load routines %}
+
+<div class="pull-right front-end_admin">
+  {% include 'routines/permalink.html' with object=source %}
+</div>
+{% include 'catalogue/source_content.html' %}
+{% if not source.contenu %}
+  {% list_in_dl source.illustrations.all %}
+  {% list_in_dl source.documents.all %}
+{% endif %}
