@@ -1,9 +1,9 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.db.models import ManyToManyField
 from django.utils.encoding import smart_unicode
 from ..utils import notify_send, print_info
-from django.db.models import ManyToManyField
 
 
 def ask_for_choice(object, k, v, new_v):

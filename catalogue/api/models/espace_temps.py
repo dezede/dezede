@@ -1,12 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from datetime import datetime
+import re
 from ...models import NatureDeLieu, Lieu, AncrageSpatioTemporel
 from ...templatetags.extras import multiword_replace
 from ..exceptions import ParseError
 from .utils import update_or_create
-from datetime import datetime
-import re
 
 
 MONTH_BINDINGS_FR = {

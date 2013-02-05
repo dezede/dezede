@@ -1,8 +1,8 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.utils.encoding import smart_unicode
 import os
+from django.utils.encoding import smart_unicode
 
 
 def notify_send(msg):
