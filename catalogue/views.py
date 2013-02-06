@@ -22,7 +22,7 @@ __all__ = (b'EvenementListView', b'EvenementDetailView', b'SourceViewSet',
 
 def cleaned_querydict(qd):
     new_qd = qd.copy()
-    for k, v in new_qd.iteritems():
+    for k, v in new_qd.items():
         if not v or v == '|':
             del new_qd[k]
     return new_qd
@@ -30,7 +30,7 @@ def cleaned_querydict(qd):
 
 def get_filters(bindings, data):
     filters = {}
-    for key, value in data.iteritems():
+    for key, value in data.items():
         if value and key in bindings:
             if '|' in value:
                 # Sépare les différents objets à partir d'une liste de pk.

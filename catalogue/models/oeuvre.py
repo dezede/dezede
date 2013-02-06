@@ -344,7 +344,7 @@ class AuteurQuerySet(CustomQuerySet):
         return str_list(
             '%s [%s]' % (str_list_w_last(i.html(tags) for i in ins),
                          p.short_html(tags))
-                for p, ins in d.iteritems())
+                for p, ins in d.items())
 
 
 class AuteurManager(CustomManager):

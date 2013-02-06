@@ -160,7 +160,7 @@ def import_csv_file(csv_file, bindings):
     oeuvres = list(csv.DictReader(csv_file))
     for i, oeuvre in enumerate(oeuvres):
         oeuvre = {k.decode('utf-8'): v.decode('utf-8')
-                                                for k, v in oeuvre.iteritems()}
+                                                    for k, v in oeuvre.items()}
         import_oeuvre(i, oeuvre, bindings)
 
 
