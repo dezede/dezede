@@ -62,7 +62,7 @@ def ancrage_re_iterator():
                     r'^'                  # Begin of string.
                     r'(?:\([^)]+\)\s+)?'  # Matches "(something and so on...) "
                     r'(?P<lieux>%s)'
-                    r'%s\s+'               # Matches ", ".
+                    r'%s\s+'              # Matches ", ".
                     r'(?P<date>%s)'
                     r'$'                  # End of string.
                     % (lieu_re_pattern, separator, date_re_pattern)
