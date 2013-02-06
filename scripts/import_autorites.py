@@ -61,11 +61,12 @@ def build_individu(individu_str):
         ancrage_naissance = AncrageSpatioTemporel.objects.create(
                                                          date_approx=naissance)
         ancrage_deces = AncrageSpatioTemporel.objects.create(date_approx=deces)
-        individu = update_or_create(Individu, ['nom', 'prenoms'],
-                                    nom=nom, prenoms=prenoms,
-                                    pseudonyme=pseudonyme,
-                                    ancrage_naissance=ancrage_naissance,
-                                    ancrage_deces=ancrage_deces)
+        individu = update_or_create(Individu, {
+            'nom': nom, 'prenoms': prenoms,
+            'pseudonyme': pseudonyme,
+            'ancrage_naissance': ancrage_naissance,
+            'ancrage_deces': ancrage_deces,
+        }, unique_keys=['nom', 'prenoms'])
         individu.save()
         return individu
 

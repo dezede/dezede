@@ -6,7 +6,7 @@ import re
 from ...models import NatureDeLieu, Lieu, AncrageSpatioTemporel
 from ...templatetags.extras import multiword_replace
 from ..exceptions import ParseError
-from .utils import update_or_create
+from .utils import get_or_create, update_or_create
 
 
 MONTH_BINDINGS_FR = {
@@ -23,7 +23,7 @@ def translate_date_month(date_str, language='fr'):
     return multiword_replace(date_str, month_bindings)
 
 
-NATURE_DE_LIEU_NOMS = ['ville', 'institution', 'salle']
+NATURE_DE_LIEU_NOMS = ('ville', 'institution', 'salle')
 
 
 LIEU_RE_PATTERNS = (
@@ -70,15 +70,18 @@ def ancrage_re_iterator():
                 yield ancrage_re, date_strp_pattern
 
 
-def build_lieu(lieu_str):
+def build_lieu(lieu_str, commit=True):
     lieux = [l.strip() for l in lieu_str.split(',') if l]
     assert 1 <= len(lieux) <= 3
-    natures = [NatureDeLieu.objects.get_or_create(nom=s)[0]
+    natures = [get_or_create(NatureDeLieu, {'nom': s}, commit=commit)
                for s in NATURE_DE_LIEU_NOMS]
     lieu = None
     for i, lieu_nom in enumerate(lieux):
-        lieu = update_or_create(Lieu, ['nom', 'parent'], nom=lieu_nom,
-                                nature=natures[i], parent=lieu)
+        lieu = update_or_create(Lieu, {
+            'nom': lieu_nom,
+            'nature': natures[i],
+            'parent':lieu,
+        }, unique_keys=['nom', 'parent'], commit=commit)
     return lieu
 
 
@@ -88,12 +91,13 @@ def build_date(date_str, date_strp_pattern=None):
         return datetime.strptime(date_str, date_strp_pattern)
 
 
-def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern):
+def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern,
+                        commit=False):
     match = ancrage_re.match(ancrage_str)
     kwargs = {}
 
     lieu_str = match.group('lieux')
-    lieu = build_lieu(lieu_str)
+    lieu = build_lieu(lieu_str, commit=commit)
     if lieu is None:
         kwargs['lieu_approx'] = lieu_str
     else:
@@ -109,7 +113,7 @@ def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern):
     return kwargs
 
 
-def parse_ancrage(ancrage_str):
+def parse_ancrage(ancrage_str, commit=False):
     r"""
     >>> repr(parse_ancrage('Paris, Opéra-comique, 1852'))
     "{u'date_approx': u'1852', u'lieu': <Lieu: Paris, Op\xc3\xa9ra-comique>}"
@@ -117,12 +121,15 @@ def parse_ancrage(ancrage_str):
     for ancrage_re, date_strp_pattern in ancrage_re_iterator():
         try:
             return parse_ancrage_inner(ancrage_str, ancrage_re,
-                                       date_strp_pattern)
+                                       date_strp_pattern, commit=commit)
         except AttributeError:
             continue
     raise ParseError('Impossible d’analyser « %s »' % ancrage_str)
 
 
-def build_ancrage(ancrage_str):
-    kwargs = parse_ancrage(ancrage_str)
-    return AncrageSpatioTemporel.objects.create(**kwargs)
+def build_ancrage(ancrage_str, commit=True):
+    kwargs = parse_ancrage(ancrage_str, commit=commit)
+    ancrage = AncrageSpatioTemporel(**kwargs)
+    if commit:
+        ancrage.save()
+    return ancrage

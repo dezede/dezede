@@ -49,7 +49,7 @@ def get_field_settable_value(new_v):
 def get_changed_kwargs(object, new_kwargs):
     changed_kwargs = {}
 
-    for k, new_v in new_kwargs.iteritems():
+    for k, new_v in new_kwargs.items():
         v = getattr(object, k)
         v = get_field_cmp_value(object, k, v)
         new_v = get_field_settable_value(new_v)
@@ -60,9 +60,9 @@ def get_changed_kwargs(object, new_kwargs):
     return changed_kwargs
 
 
-def enlarged_get(Model, **kwargs):
+def enlarged_get(Model, filter_kwargs):
     new_kwargs = {}
-    for k, v in kwargs.iteritems():
+    for k, v in filter_kwargs.items():
         if is_many_to_many_field(Model, k):
             new_kwargs[k + '__in'] = v
         else:
@@ -70,29 +70,38 @@ def enlarged_get(Model, **kwargs):
     return Model.objects.get(**new_kwargs)
 
 
-def enlarged_create(Model, **kwargs):
-    kwargs = kwargs.copy()
-    m2m_kwargs = {k: v for k, v in kwargs.iteritems()
+def enlarged_create(Model, filter_kwargs, commit=True):
+    filter_kwargs = filter_kwargs.copy()
+    m2m_kwargs = {k: v for k, v in filter_kwargs.items()
                   if is_many_to_many_field(Model, k)}
     for k in m2m_kwargs:
-        del kwargs[k]
-    object = Model.objects.create(**kwargs)
-    for k, v in m2m_kwargs.iteritems():
+        del filter_kwargs[k]
+    object = Model(**filter_kwargs)
+    if commit:
+        object.save()
+    for k, v in m2m_kwargs.items():
         getattr(object, k).add(*v)
     return object
 
 
-def update_or_create(Model, unique_keys, **kwargs):
-    unique_kwargs = {k: kwargs[k] for k in unique_keys}
-
+def get_or_create(Model, filter_kwargs, unique_keys=(), commit=True):
+    if unique_keys:
+        unique_kwargs = {k: filter_kwargs[k] for k in unique_keys}
+    else:
+        unique_kwargs = filter_kwargs
     try:
-        object = enlarged_get(Model, **unique_kwargs)
+        return enlarged_get(Model, unique_kwargs)
     except Model.DoesNotExist:
-        return enlarged_create(Model, **kwargs)
-    changed_kwargs = get_changed_kwargs(object, kwargs)
+        return enlarged_create(Model, filter_kwargs, commit=commit)
+
+
+def update_or_create(Model, filter_kwargs, unique_keys=(), commit=True):
+    object = get_or_create(Model, filter_kwargs, unique_keys=unique_keys,
+                           commit=commit)
+    changed_kwargs = get_changed_kwargs(object, filter_kwargs)
     if not changed_kwargs:
         return object
-    for k, new_v in changed_kwargs.iteritems():
+    for k, new_v in changed_kwargs.items():
         v = getattr(object, k)
         v = get_field_cmp_value(object, k, v)
         if v == new_v:
@@ -104,7 +113,7 @@ def update_or_create(Model, unique_keys, **kwargs):
                     setattr(object, k, new_v)
                     break
                 elif choice == '3':
-                    return enlarged_create(Model, **kwargs)
+                    return enlarged_create(Model, filter_kwargs, commit=commit)
                 elif choice == '1':
                     break
         else:
@@ -112,5 +121,6 @@ def update_or_create(Model, unique_keys, **kwargs):
                 getattr(object, k).add(*new_v)
             else:
                 setattr(object, k, new_v)
-    object.save()
+    if commit:
+        object.save()
     return object
