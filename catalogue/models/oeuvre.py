@@ -342,8 +342,8 @@ class AuteurQuerySet(CustomQuerySet):
         for auteur in auteurs:
             d[auteur.profession].append(auteur.individu)
         return str_list(
-            '%s [%s]' % (str_list_w_last(i.html(tags) for i in ins),
-                         p.short_html(tags))
+            '%s [%s]' % (str_list_w_last(i.html(tags=tags) for i in ins),
+                         p.short_html(tags=tags))
                 for p, ins in d.items())
 
 
@@ -378,7 +378,8 @@ class Auteur(CustomModel):
     objects = AuteurManager()
 
     def html(self, tags=True):
-        return Auteur.objects.filter(pk=self.pk).html(tags)
+        return '%s [%s]' % (self.individu.html(tags=tags),
+                            self.profession.short_html(tags=tags))
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 

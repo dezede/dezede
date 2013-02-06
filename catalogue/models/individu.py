@@ -27,7 +27,7 @@ class Prenom(CustomModel):
     class Meta:
         verbose_name = ungettext_lazy('prénom', 'prénoms', 1)
         verbose_name_plural = ungettext_lazy('prénom', 'prénoms', 2)
-        ordering = ['prenom', 'classement']
+        ordering = ('classement', 'prenom')
         app_label = 'catalogue'
 
     def has_individu(self):

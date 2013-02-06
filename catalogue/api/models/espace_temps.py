@@ -88,7 +88,7 @@ def build_lieu(lieu_str, commit=True):
 def build_date(date_str, date_strp_pattern=None):
     if date_strp_pattern is not None:
         date_str = translate_date_month(date_str)
-        return datetime.strptime(date_str, date_strp_pattern)
+        return datetime.strptime(date_str, date_strp_pattern).date()
 
 
 def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern,

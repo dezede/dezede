@@ -246,6 +246,16 @@ class AncrageSpatioTemporel(CustomModel):
     def __unicode__(self):
         return strip_tags(self.html(tags=False, short=True))
 
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        cmp_fields = ('lieu', 'lieu_approx', 'date', 'date_approx',
+                      'heure', 'heure_approx')
+        for field in cmp_fields:
+            if getattr(self, field) != getattr(other, field):
+                return False
+        return True
+
     @staticmethod
     def autocomplete_search_fields():
         return (

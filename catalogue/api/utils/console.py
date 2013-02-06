@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import subprocess
+from django.utils.encoding import smart_unicode
 
 
 def notify_send(msg):
@@ -19,20 +20,20 @@ PRINT_COLORS = {
 
 
 def colored_print(msg, color='red'):
-    print(PRINT_COLORS[color] + msg + PRINT_COLORS['normal'])
+    print(PRINT_COLORS[color] + smart_unicode(msg) + PRINT_COLORS['normal'])
 
 
 def print_error(msg):
-    colored_print(msg, color='red')
+    colored_print(smart_unicode(msg), color='red')
 
 
 def print_warning(msg):
-    colored_print(msg, color='yellow')
+    colored_print(smart_unicode(msg), color='yellow')
 
 
 def print_success(msg):
-    colored_print(msg, color='green')
+    colored_print(smart_unicode(msg), color='green')
 
 
 def print_info(msg):
-    colored_print(msg, color='blue')
+    colored_print(smart_unicode(msg), color='blue')

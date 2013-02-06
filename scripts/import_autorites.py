@@ -1,15 +1,17 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-import csv, re, sys
-from django.template.defaultfilters import title
+import csv
+import re
+import sys
 from django.contrib.contenttypes.models import ContentType
+from django.template.defaultfilters import title
+from catalogue.api import build_ancrage
+from catalogue.api.models.utils import update_or_create, get_or_create
+from catalogue.api.utils import notify_send
 from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
     AncrageSpatioTemporel, GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
     CaracteristiqueDOeuvre
-from catalogue.api import build_ancrage
-from catalogue.api.models.utils import update_or_create
-from catalogue.api.utils import notify_send
 from .routines import print_error, print_success, print_warning
 
 
@@ -49,8 +51,10 @@ def build_individu(individu_str):
             prenom_str = match_pseudonyme.group('prenoms')
             pseudonyme = match_pseudonyme.group('pseudonyme')
         prenom_strs = [p for p in prenom_str.split() if p]
-        prenoms = [Prenom.objects.get_or_create(prenom=prenom_str)[0]
-                   for prenom_str in prenom_strs]
+        prenoms = [get_or_create(Prenom,
+                                 {'prenom': prenom_str, 'classement': i},
+                                 unique_keys=('prenom', 'classement'))
+                   for i, prenom_str in enumerate(prenom_strs)]
 
         naissance, deces = dates.split('-')
         i = Individu.objects.filter(nom=nom, pseudonyme=pseudonyme,
@@ -74,7 +78,7 @@ def build_individu(individu_str):
 Oeuvre_cti = ContentType.objects.get(app_label='catalogue', model='oeuvre')
 
 
-def build_auteurs(oeuvre_obj, individus_str, nom_profession,
+def build_auteurs(individus_str, nom_profession,
                   nom_pluriel_profession=None):
     if nom_pluriel_profession is None:
         nom_pluriel_profession = nom_profession + 's'
@@ -85,14 +89,12 @@ def build_auteurs(oeuvre_obj, individus_str, nom_profession,
         individu = build_individu(individu_str)
         if individu:
             individus.append(individu)
-    if not individus:
-        return
+    auteurs = []
     for individu in individus:
-        aut = Auteur.objects.get_or_create(profession=profession,
-                                           individu=individu,
-                                           content_type=Oeuvre_cti,
-                                           object_id=oeuvre_obj.id)[0]
+        aut = Auteur(profession=profession, individu=individu)
         aut.clean()
+        auteurs.append(aut)
+    return auteurs
 
 
 exceptions = []
@@ -112,40 +114,52 @@ def import_oeuvre(i, oeuvre, bindings):
     try:
         titre2 = oeuvre[bindings['titre_secondaire']]
         particule2, titre2 = split_titre(titre2)
-        coordination = ', ou ' if titre2 else ''
-        notes = oeuvre.get(bindings['notes'], '')
-        oeuvre_obj = update_or_create(Oeuvre, ['titre', 'titre_secondaire'],
-            prefixe_titre=particule, titre=titre, coordination=coordination,
-            prefixe_titre_secondaire=particule2, titre_secondaire=titre2,
-            notes=notes)
+        if 'coordination' in bindings:
+            coordination = oeuvre[bindings['coordination']]
+        else:
+            coordination = ', ou ' if titre2 else ''
         # TODO: Titres de la version originale à faire
         # Auteurs :
+        auteurs = []
         for profession, profession_pluriel, auteurs_key in bindings['auteurs']:
-            auteurs = oeuvre[auteurs_key]
-            build_auteurs(oeuvre_obj, auteurs, profession, profession_pluriel)
+            individus_str = oeuvre[auteurs_key]
+            auteurs.extend(build_auteurs(individus_str, profession,
+                                         profession_pluriel))
         # Genre :
         genre = GenreDOeuvre.objects.get_or_create(
                                       nom=oeuvre[bindings['genre']].strip())[0]
-        oeuvre_obj.genre = genre
         # Caractéristiques :
+        caracteristiques = []
         for type_nom, type_nom_pluriel, caracteristique_key \
                                                in bindings['caracteristiques']:
-            type = update_or_create(TypeDeCaracteristiqueDOeuvre, ['nom'],
-                                    nom=type_nom, nom_pluriel=type_nom_pluriel)
-            caracteristique = CaracteristiqueDOeuvre.objects.get_or_create(
-                              type=type, valeur=oeuvre[caracteristique_key])[0]
-            oeuvre_obj.caracteristiques.add(caracteristique)
+            type = update_or_create(TypeDeCaracteristiqueDOeuvre, {
+                'nom': type_nom, 'nom_pluriel': type_nom_pluriel,
+            }, unique_keys=['nom'])
+            caracteristique = get_or_create(CaracteristiqueDOeuvre, {
+                'type': type, 'valeur': oeuvre[caracteristique_key]})
+            caracteristiques.append(caracteristique)
         # Ancrage de création :
+        ancrage_creation = None
         creation_str = oeuvre[bindings['creation'][0]]
         if creation_str:
             try:
-                oeuvre_obj.ancrage_creation = build_ancrage(
+                ancrage_creation = build_ancrage(
                                 creation_str.split(bindings['creation'][1])[0])
             except:
                 print_warning('Impossible de parser la création de « %s »'
-                              % oeuvre_obj)
+                              % titre)
+        notes = oeuvre.get(bindings['notes'], '')
         # [Sauvegarde] :
-        oeuvre_obj.save()
+        oeuvre_obj = update_or_create(Oeuvre, {
+            'prefixe_titre': particule, 'titre': titre,
+            'coordination': coordination,
+            'prefixe_titre_secondaire': particule2, 'titre_secondaire': titre2,
+            'genre': genre,
+            'caracteristiques': caracteristiques,
+            'auteurs': auteurs,
+            'ancrage_creation': ancrage_creation,
+            'notes': notes,
+            }, unique_keys=['titre', 'titre_secondaire', 'genre'])
         print_success(oeuvre_obj)
     except KeyboardInterrupt:
         raise KeyboardInterrupt
