@@ -102,7 +102,7 @@ class EvenementListView(AjaxListView):
         if new_data.dict() != data.dict() or not self.valid_form:
             response = redirect('evenements')
             if self.valid_form:
-                response['Location'] += '?' + new_data.urlencode(safe='|')
+                response['Location'] += '?' + new_data.urlencode(safe=b'|')
         return response
 
 
