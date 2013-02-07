@@ -8,7 +8,7 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from ..templatetags.extras import abbreviate
 from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
-    SlugModel
+                    UniqueSlugModel
 from .functions import ex, href
 
 
@@ -16,7 +16,7 @@ __all__ = (b'Profession', b'Devise', b'Engagement', b'TypeDePersonnel',
            b'Personnel')
 
 
-class Profession(MPTTModel, CustomModel, SlugModel):
+class Profession(MPTTModel, CustomModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
@@ -75,6 +75,14 @@ class Profession(MPTTModel, CustomModel, SlugModel):
 
     def short_html(self, tags=True):
         return self.html(tags, short=True)
+
+    def _perform_unique_checks(self, unique_checks):
+        errors = super(Profession, self)._perform_unique_checks(unique_checks)
+        if Profession.objects.filter(nom__iexact=self.nom).exists():
+            error = self.unique_error_message(self.__class__, ('nom',))
+            if error not in errors.get('nom', ()):
+                errors.setdefault('nom', []).append(error)
+        return errors
 
     def __hash__(self):
         return hash(self.nom)
