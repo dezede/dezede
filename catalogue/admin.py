@@ -354,10 +354,12 @@ class IndividuAdmin(CustomAdmin):
     raw_id_fields = ('prenoms', 'ancrage_naissance', 'ancrage_deces',
                      'professions', 'parentes', 'ancrage_approx',
                      'illustrations', 'documents',)
+    related_lookup_fields = {
+        'fk': ('ancrage_naissance', 'ancrage_deces', 'ancrage_approx'),
+    }
     autocomplete_lookup_fields = {
-        'fk': ['ancrage_naissance', 'ancrage_deces', 'ancrage_approx'],
-        'm2m': ['prenoms', 'professions', 'parentes', 'illustrations',
-                'documents'],
+        'm2m': ('prenoms', 'professions', 'parentes', 'illustrations',
+                'documents'),
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
 #    inlines = (AuteurInline,)
@@ -474,10 +476,13 @@ class OeuvreAdmin(CustomAdmin):
     list_filter = ('genre__nom',)
     raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
                  'ancrage_creation', 'pupitres', 'documents', 'illustrations',)
+    related_lookup_fields = {
+        'fk': ('ancrage_creation',)
+    }
     autocomplete_lookup_fields = {
-        'fk': ['genre', 'ancrage_creation', 'contenu_dans'],
-        'm2m': ['caracteristiques', 'pupitres',
-                'documents', 'illustrations'],
+        'fk': ('genre', 'contenu_dans'),
+        'm2m': ('caracteristiques', 'pupitres',
+                'documents', 'illustrations'),
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
     inlines = (OeuvreMereInline, OeuvreFilleInline, AuteurInline,)
