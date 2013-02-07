@@ -193,10 +193,11 @@ class ElementDeProgramme(AutoriteModel):
             out += oeuvre.html(tags)
         else:
             out += self.autre
-        if self.caracteristiques.exists():
-            out += ' [' + self.calc_caracteristiques() + ']'
-        if self.distribution.exists():
-            out += '. — ' + self.distribution.html(tags=tags)
+        if self.pk:
+            if self.caracteristiques.exists():
+                out += ' [' + self.calc_caracteristiques() + ']'
+            if self.distribution.exists():
+                out += '. — ' + self.distribution.html(tags=tags)
         return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
