@@ -532,11 +532,13 @@ class EvenementAdmin(CustomAdmin):
                    EventHasProgramListFilter)
     raw_id_fields = ('ancrage_debut', 'ancrage_fin', 'documents',
         'illustrations',)
-    autocomplete_lookup_fields = {
-        'fk': ['ancrage_debut', 'ancrage_fin'],
-        'm2m': ['documents', 'illustrations'],
+    related_lookup_fields = {
+        'fk': ('ancrage_debut', 'ancrage_fin'),
     }
-    readonly_fields = ('__unicode__', 'html', 'link',)
+    autocomplete_lookup_fields = {
+        'm2m': ('documents', 'illustrations'),
+    }
+    readonly_fields = ('__unicode__', 'html', 'link')
     inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,)
     fieldsets = (
         (_('Champs courants'), {

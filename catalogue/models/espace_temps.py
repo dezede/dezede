@@ -228,6 +228,16 @@ class AncrageSpatioTemporel(CustomModel):
     def short_html(self, tags=True):
         return self.html(tags, short=True)
 
+    def related_label(self):
+        return self.get_change_link()
+
+    @permalink
+    def get_change_url(self):
+        return 'admin:catalogue_ancragespatiotemporel_change', (self.pk,)
+
+    def get_change_link(self):
+        return href(self.get_change_url(), unicode(self))
+
     def clean(self):
         if not (self.date or self.date_approx or self.lieu
                                               or self.lieu_approx):
