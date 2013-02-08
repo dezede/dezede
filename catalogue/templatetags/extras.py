@@ -7,6 +7,7 @@ from BeautifulSoup import BeautifulStoneSoup
 from django.template import Library
 from ..models.functions import hlp
 
+
 register = Library()
 
 
@@ -51,21 +52,21 @@ def is_vowel(string):
     return remove_diacritics(string) in 'AEIOUYaeiouy'
 
 
-def chars_iterator(str):
-   i0 = 0
-   c0 = str[0]
-   i1 = 1
-   for c1 in str[1:-1]:
-       yield i0, c0, i1, c1
-       i0 = i1
-       c0 = c1
-       i1 += 1
+def chars_iterator(s):
+    i0 = 0
+    c0 = s[0]
+    i1 = 1
+    for c1 in s[1:-1]:
+        yield i0, c0, i1, c1
+        i0 = i1
+        c0 = c1
+        i1 += 1
 
 
 @register.filter
 def abbreviate(string, min_vowels=0, min_len=1, tags=True):
     """
-    Abrègre les mots avec une limite de longueur (par défaut 0).
+    Abrège les mots avec une limite de longueur (par défaut 0).
 
     >>> print(abbreviate('amélie'))
     <span title="Amélie">a.</span>

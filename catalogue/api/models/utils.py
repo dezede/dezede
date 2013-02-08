@@ -8,8 +8,8 @@ from django.utils.encoding import smart_unicode
 from ..utils import notify_send, print_info
 
 
-def ask_for_choice(object, k, v, new_v):
-    intro = 'Deux possibilités pour le champ {0} de {1}'.format(k, object)
+def ask_for_choice(obj, k, v, new_v):
+    intro = 'Deux possibilités pour le champ {0} de {1}'.format(k, obj)
     notify_send(intro)
     print_info(intro)
     print_info('1. {} (valeur actuelle)'.format(smart_unicode(v)))
@@ -37,8 +37,8 @@ def is_str(v):
     return isinstance(v, str or unicode)
 
 
-def get_field_cmp_value(object, k, v):
-    if is_many_related_field(object, k):
+def get_field_cmp_value(obj, k, v):
+    if is_many_related_field(obj, k):
         return v.all()
     elif is_str(v):
         return smart_unicode(v)
@@ -51,12 +51,12 @@ def get_field_settable_value(new_v):
     return new_v
 
 
-def get_changed_kwargs(object, new_kwargs):
+def get_changed_kwargs(obj, new_kwargs):
     changed_kwargs = {}
 
     for k, new_v in new_kwargs.items():
-        v = getattr(object, k)
-        v = get_field_cmp_value(object, k, v)
+        v = getattr(obj, k)
+        v = get_field_cmp_value(obj, k, v)
         new_v = get_field_settable_value(new_v)
 
         if v != new_v or not are_sequences_equal(v, new_v):
@@ -81,12 +81,12 @@ def enlarged_create(Model, filter_kwargs, commit=True):
                   if is_many_related_field(Model, k)}
     for k in m2m_kwargs:
         del filter_kwargs[k]
-    object = Model(**filter_kwargs)
+    obj = Model(**filter_kwargs)
     if commit:
-        object.save()
+        obj.save()
     for k, v in m2m_kwargs.items():
-        getattr(object, k).add(*v)
-    return object
+        getattr(obj, k).add(*v)
+    return obj
 
 
 def get_or_create(Model, filter_kwargs, unique_keys=(), commit=True):
@@ -119,31 +119,31 @@ def are_sequences_equal(seq, other_seq):
 
 
 def update_or_create(Model, filter_kwargs, unique_keys=(), commit=True):
-    object = get_or_create(Model, filter_kwargs, unique_keys=unique_keys,
+    obj = get_or_create(Model, filter_kwargs, unique_keys=unique_keys,
                            commit=commit)
-    changed_kwargs = get_changed_kwargs(object, filter_kwargs)
+    changed_kwargs = get_changed_kwargs(obj, filter_kwargs)
     if not changed_kwargs:
-        return object
+        return obj
     for k, new_v in changed_kwargs.items():
-        v = getattr(object, k)
-        v = get_field_cmp_value(object, k, v)
+        v = getattr(obj, k)
+        v = get_field_cmp_value(obj, k, v)
         if v == new_v or are_sequences_equal(v, new_v):
             continue
         if v:
             while True:
-                choice = ask_for_choice(object, k, v, new_v)
+                choice = ask_for_choice(obj, k, v, new_v)
                 if choice in ('2', ''):
-                    setattr(object, k, new_v)
+                    setattr(obj, k, new_v)
                     break
                 elif choice == '3':
                     return enlarged_create(Model, filter_kwargs, commit=commit)
                 elif choice == '1':
                     break
         else:
-            if is_many_related_field(object, k):
-                getattr(object, k).add(*new_v)
+            if is_many_related_field(obj, k):
+                getattr(obj, k).add(*new_v)
             else:
-                setattr(object, k, new_v)
+                setattr(obj, k, new_v)
     if commit:
-        object.save()
-    return object
+        obj.save()
+    return obj

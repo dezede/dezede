@@ -5,7 +5,6 @@ import json
 import os.path
 import sys
 from django.db.models.query import QuerySet
-from catalogue.api.utils import *
 
 
 SCRIPT_PATH = os.path.abspath(os.path.dirname(__file__))

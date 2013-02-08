@@ -24,8 +24,8 @@ class IndividuForm(ModelForm):
         data = self.cleaned_data
         designation = data[b'designation']
         if designation == 'P' and not data[b'pseudonyme'] \
-        or designation == 'B' and not data[b'nom_naissance'] \
-        or designation == 'F' and not data[b'prenoms']:
+            or designation == 'B' and not data[b'nom_naissance'] \
+                or designation == 'F' and not data[b'prenoms']:
             raise ValidationError(_('Il manque des données pour pouvoir '
                                     'choisir cette désignation.'))
         return designation
@@ -35,15 +35,15 @@ class OeuvreForm(ModelForm):
     class Meta:
         model = Oeuvre
         widgets = {
-            b'prefixe_titre': AutoCompleteWidget('oeuvre__prefixe_titre',
-                                            attrs={'style': 'width: 50px;'}),
-            b'coordination': AutoCompleteWidget('oeuvre__coordination',
-                                            attrs={'style': 'width: 70px;'}),
-
-            b'prefixe_titre_secondaire': AutoCompleteWidget(
-                                         'oeuvre__prefixe_titre_secondaire',
-                                         attrs={'style': 'width: 50px;'}),
-
+            b'prefixe_titre':
+            AutoCompleteWidget('oeuvre__prefixe_titre',
+                               attrs={'style': 'width: 50px;'}),
+            b'coordination':
+            AutoCompleteWidget('oeuvre__coordination',
+                               attrs={'style': 'width: 70px;'}),
+            b'prefixe_titre_secondaire':
+            AutoCompleteWidget('oeuvre__prefixe_titre_secondaire',
+                               attrs={'style': 'width: 50px;'}),
         }
 
 

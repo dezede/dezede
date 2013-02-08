@@ -70,7 +70,7 @@ class ElementDeDistribution(CustomModel):
                             related_name='elements_de_distribution')
     content_type = ForeignKey(ContentType, null=True)
     object_id = PositiveIntegerField(null=True)
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey()
 
     objects = ElementDeDistributionManager()
 
@@ -311,5 +311,5 @@ class Evenement(AutoriteModel):
 
 @receiver(post_revision_commit)
 def clear_all_cache(sender, **kwargs):
-    "On vide le cache pour les templates d'événements."
+    """On vide le cache pour les templates d'événements."""
     cache.clear()

@@ -17,18 +17,18 @@ class RangeSliderWidget(MultiWidget):
 
     def render(self, name, value, attrs=None):
         evenements = Evenement.objects.filter(
-                        ancrage_debut__date__isnull=False)
+            ancrage_debut__date__isnull=False)
         if evenements.exists():
-            min = evenements.order_by(
-                             b'ancrage_debut__date')[0].ancrage_debut.date.year
-            max = evenements.order_by(
-                            b'-ancrage_debut__date')[0].ancrage_debut.date.year
+            min_year = evenements.order_by(
+                b'ancrage_debut__date')[0].ancrage_debut.date.year
+            max_year = evenements.order_by(
+                b'-ancrage_debut__date')[0].ancrage_debut.date.year
         else:
-            min, max = 1600, 2012
+            min_year, max_year = 1600, 2012
         try:
             int(value[0]), int(value[1])
         except (ValueError, TypeError):
-            value = (min, max)
+            value = (min_year, max_year)
         start, end = value
         t = b'widgets/range_slider_widget.html'
         return render_to_string(t, locals())

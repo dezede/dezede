@@ -18,11 +18,11 @@ def build_admin_view_name(perm):
 
 
 @register.simple_tag(takes_context=True)
-def frontend_admin(context, object=None, autorite=False):
+def frontend_admin(context, obj=None, autorite=False):
     request = context['request']
-    if object is None:
-        object = context['object']
-    Model = object.__class__
+    if obj is None:
+        obj = context['object']
+    Model = obj.__class__
     app_label = Model._meta.app_label
     model_slug = Model.__name__.lower()
     change_perm = build_permission(app_label, model_slug, 'change')
@@ -39,17 +39,17 @@ def frontend_admin(context, object=None, autorite=False):
         'admin_change': admin_change,
         'admin_delete': admin_delete,
         'domain': domain,
-        'object': object,
+        'object': obj,
     }
     t = 'routines/%sfront-end_admin.html' % ('autorite_' if autorite else '')
     return render_to_string(t, c)
 
 
 @register.simple_tag(takes_context=True)
-def attr_in_dl(context, attr, verbose_name=None, object=None):
-    if object is None:
-        object = context['object']
-    value = object
+def attr_in_dl(context, attr, verbose_name=None, obj=None):
+    if obj is None:
+        obj = context['object']
+    value = obj
     for attr_part in attr.split('.'):
         if value is None:
             break
@@ -59,7 +59,7 @@ def attr_in_dl(context, attr, verbose_name=None, object=None):
     if not value:
         return ''
     if verbose_name is None:
-        verbose_name = object._meta.get_field(attr).verbose_name
+        verbose_name = obj._meta.get_field(attr).verbose_name
     c = {
         'verbose_name': verbose_name,
         'value': value,
@@ -78,40 +78,40 @@ def get_verbose_name_from_object_list(object_list, verbose_name=None,
 
 
 @register.filter
-def get_property(object, properties_name):
+def get_property(obj, properties_name):
     """
     >>> get_property('a', 'split')
     [u'a']
     >>> get_property('abcd', '__len__')
     4
     >>> class Class(object):
-    ...     property = 8
-    >>> get_property(Class(), 'property')
+    ...     attribute = 8
+    >>> get_property(Class(), 'attribute')
     8
     """
     for property_name in properties_name.split('.'):
-        object = getattr(object, property_name)
-        if callable(object):
-            object = object()
-    return object
+        obj = getattr(obj, property_name)
+        if callable(obj):
+            obj = obj()
+    return obj
 
 
 def build_display_list(object_list, properties_name):
     display_list = []
-    for object in object_list:
-        object = get_property(object, properties_name)
-        display_list.append(object)
+    for obj in object_list:
+        obj = get_property(obj, properties_name)
+        display_list.append(obj)
     return display_list
 
 
 @register.simple_tag(takes_context=True)
 def list_in_dl(context, object_list, properties_name='link', verbose_name=None,
-                                                  verbose_name_plural=None):
+               verbose_name_plural=None):
     if not object_list:
         return ''
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
-                                    object_list, verbose_name=verbose_name,
-                                    verbose_name_plural=verbose_name_plural)
+        object_list, verbose_name=verbose_name,
+        verbose_name_plural=verbose_name_plural)
     display_list = build_display_list(object_list, properties_name)
     c = copy(context)
     c.update({
@@ -124,14 +124,14 @@ def list_in_dl(context, object_list, properties_name='link', verbose_name=None,
 
 
 @register.simple_tag()
-def jstree(queryset, properties_name='__unicode__', id=None):
+def jstree(queryset, properties_name='__unicode__', tree_id=None):
     if not queryset:
         return ''
-    if id is None:
-        id = queryset[0].__class__.__name__.lower()
+    if tree_id is None:
+        tree_id = queryset[0].__class__.__name__.lower()
     c = {
         'queryset': queryset,
-        'id': id,
+        'id': tree_id,
         'properties_name': properties_name,
     }
     return render_to_string('routines/jstree.html', c)

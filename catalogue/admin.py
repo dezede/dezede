@@ -73,14 +73,15 @@ def build_boolean_list_filter(class_title, class_parameter_name, filter=None,
         def queryset(self, request, queryset):
             if self.value() == '1':
                 query = getattr(queryset, 'filter' if filter is not None
-                                     else 'exclude')
+                                else 'exclude')
                 return query(filter if filter is not None
-                                    else exclude).distinct()
+                             else exclude).distinct()
             if self.value() == '0':
                 query = getattr(queryset, 'filter' if exclude is not None
-                                     else 'exclude')
+                                else 'exclude')
                 return query(exclude if exclude is not None
-                                     else filter).distinct()
+                             else filter).distinct()
+
 
     return HasEventsListFilter
 
@@ -88,14 +89,11 @@ def build_boolean_list_filter(class_title, class_parameter_name, filter=None,
 EventHasSourceListFilter = build_boolean_list_filter(_('source'), 'has_source',
                                                      exclude=Q(sources=None))
 
-
 EventHasProgramListFilter = build_boolean_list_filter(_('programme'),
                    'has_program', Q(programme__isnull=False) | Q(relache=True))
 
-
 SourceHasEventsListFilter = build_boolean_list_filter(
                    _(u'événements'), 'has_events', exclude=Q(evenements=None))
-
 
 SourceHasProgramListFilter = build_boolean_list_filter(
     _('programme'), 'has_program', Q(evenements__programme__isnull=False)
@@ -324,7 +322,7 @@ class SaisonAdmin(CustomAdmin):
 
 class ProfessionAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel', 'nom_feminin',
-        'parent',)
+                    'parent',)
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',)
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
@@ -335,7 +333,7 @@ class ProfessionAdmin(CustomAdmin):
 class AncrageSpatioTemporelAdmin(CustomAdmin):
     list_display = ('__unicode__', 'calc_date', 'calc_heure', 'calc_lieu',)
     search_fields = ('lieu__nom', 'lieu_approx', 'date_approx',
-        'lieu__parent__nom', 'heure_approx',)
+                     'lieu__parent__nom', 'heure_approx',)
     raw_id_fields = ('lieu',)
     autocomplete_lookup_fields = {
         'fk': ['lieu'],
@@ -361,8 +359,8 @@ class TypeDeParenteDIndividusAdmin(CustomAdmin):
 class IndividuAdmin(CustomAdmin):
     list_per_page = 20
     list_display = ('__unicode__', 'nom', 'calc_prenoms',
-        'pseudonyme', 'titre', 'ancrage_naissance', 'ancrage_deces',
-        'calc_professions', 'etat', 'link',)
+                    'pseudonyme', 'titre', 'ancrage_naissance',
+                    'ancrage_deces', 'calc_professions', 'etat', 'link',)
     list_editable = ('nom', 'titre', 'etat')
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',)
     list_filter = ('titre',)
@@ -383,8 +381,9 @@ class IndividuAdmin(CustomAdmin):
         (_('Champs courants'), {
             'fields': (('particule_nom', 'nom',), ('prenoms', 'pseudonyme',),
                        ('particule_nom_naissance', 'nom_naissance',),
-                       ('titre', 'designation',), ('ancrage_naissance',
-                        'ancrage_deces',), 'professions',),
+                       ('titre', 'designation',),
+                       ('ancrage_naissance', 'ancrage_deces',),
+                       'professions',),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),
@@ -485,13 +484,14 @@ class ParenteDOeuvresAdmin(CustomAdmin):
 class OeuvreAdmin(CustomAdmin):
     form = OeuvreForm
     list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre',
-        'calc_caracteristiques', 'auteurs_html', 'ancrage_creation',
-        'etat', 'link',)
+                    'calc_caracteristiques', 'auteurs_html',
+                    'ancrage_creation', 'etat', 'link',)
     list_editable = ('genre', 'etat')
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
     list_filter = ('genre__nom',)
     raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
-                 'ancrage_creation', 'pupitres', 'documents', 'illustrations',)
+                     'ancrage_creation', 'pupitres', 'documents',
+                     'illustrations',)
     related_lookup_fields = {
         'fk': ('ancrage_creation',)
     }
@@ -506,11 +506,11 @@ class OeuvreAdmin(CustomAdmin):
     fieldsets = (
         (_('Titre'), {
             'fields': (('prefixe_titre', 'titre',), 'coordination',
-                        ('prefixe_titre_secondaire', 'titre_secondaire',),),
+                       ('prefixe_titre_secondaire', 'titre_secondaire',),),
         }),
         (_('Autres champs courants'), {
             'fields': ('genre', 'caracteristiques',
-                        'ancrage_creation', 'pupitres', 'contenu_dans',),
+                       'ancrage_creation', 'pupitres', 'contenu_dans',),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),
@@ -552,7 +552,7 @@ class EvenementAdmin(CustomAdmin):
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
     raw_id_fields = ('ancrage_debut', 'ancrage_fin', 'documents',
-        'illustrations',)
+                     'illustrations',)
     related_lookup_fields = {
         'fk': ('ancrage_debut', 'ancrage_fin'),
     }
@@ -622,10 +622,10 @@ class SourceAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('etat', 'notes',),
         }),
-#        (_('Champs générés (Méthodes)'), {
-#            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__unicode__', 'html',),
-#        }),
+        #        (_('Champs générés (Méthodes)'), {
+        #            'classes': ('grp-collapse grp-closed',),
+        #            'fields': ('__unicode__', 'html',),
+        #        }),
     )
 
     class Media:
@@ -633,6 +633,7 @@ class SourceAdmin(CustomAdmin):
             '/static/tinymce_setup/tinymce_setup.js',
             '/static/tiny_mce/tiny_mce.js',
         ]
+
 
 site.register(Document, DocumentAdmin)
 site.register(Illustration, IllustrationAdmin)
@@ -659,7 +660,7 @@ site.register(ParenteDOeuvres, ParenteDOeuvresAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(ElementDeDistribution, ElementDeDistributionAdmin)
 site.register(CaracteristiqueDElementDeProgramme,
-        CaracteristiqueDElementDeProgrammeAdmin)
+              CaracteristiqueDElementDeProgrammeAdmin)
 site.register(Evenement, EvenementAdmin)
 site.register(TypeDeSource, TypeDeSourceAdmin)
 site.register(Source, SourceAdmin)

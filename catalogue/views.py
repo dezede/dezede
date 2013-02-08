@@ -45,9 +45,9 @@ def get_filters(bindings, data):
                             continue
                 # Inclus tous les événements impliquant les descendants
                 # éventuels de chaque objet de value.
-                for object in objects:
-                    if hasattr(object, 'get_descendants'):
-                        objects.extend(object.get_descendants())
+                for obj in objects:
+                    if hasattr(obj, 'get_descendants'):
+                        objects.extend(obj.get_descendants())
                 value = objects
             if value:
                 filters[bindings[key]] = value

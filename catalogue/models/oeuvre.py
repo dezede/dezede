@@ -370,7 +370,7 @@ class AuteurManager(CustomManager):
 class Auteur(CustomModel):
     content_type = ForeignKey(ContentType)
     object_id = PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey()
     individu = ForeignKey('Individu', related_name='auteurs',
                           verbose_name=_('individu'))
     profession = ForeignKey('Profession', related_name='auteurs',

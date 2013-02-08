@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
 from south.v2 import DataMigration
-from django.db import models
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        "Write your forwards methods here."
+        """Write your forwards methods here."""
         TypeDeParenteDOeuvres = orm['catalogue.TypeDeParenteDOeuvres']
         ParenteDOeuvres = orm['catalogue.ParenteDOeuvres']
         try:
@@ -22,7 +19,7 @@ class Migration(DataMigration):
         contenu_dans.delete()
 
     def backwards(self, orm):
-        "Write your backwards methods here."
+        """Write your backwards methods here."""
         raise RuntimeError("Cannot reverse this migration. 'Engagement.salaire' and its values cannot be restored.")
 
     models = {
