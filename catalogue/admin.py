@@ -121,44 +121,68 @@ class AncrageSpatioTemporelInline(CustomTabularInline):
 
 
 class OeuvreMereInline(CustomTabularInline):
-    verbose_name = ParenteDOeuvres._meta.get_field_by_name('mere')[0]\
-                                                                  .verbose_name
-    verbose_name_plural = _('œuvres mères')
     model = ParenteDOeuvres
+    verbose_name = model._meta.get_field_by_name('mere')[0].verbose_name
+    verbose_name_plural = _('œuvres mères')
     fk_name = 'fille'
     raw_id_fields = ('mere',)
     autocomplete_lookup_fields = {
-        'fk': ['mere'],
+        'fk': ('mere',),
     }
     fields = ('mere', 'type',)
     classes = ('grp-collapse grp-closed',)
 
 
 class OeuvreFilleInline(CustomTabularInline):
-    verbose_name = ParenteDOeuvres._meta.get_field_by_name('fille')[0]\
-                                                                  .verbose_name
-    verbose_name_plural = _('œuvres filles')
     model = ParenteDOeuvres
+    verbose_name = model._meta.get_field_by_name('fille')[0].verbose_name
+    verbose_name_plural = _('œuvres filles')
     fk_name = 'mere'
     raw_id_fields = ('fille',)
     autocomplete_lookup_fields = {
-        'fk': ['fille'],
+        'fk': ('fille',),
     }
     fields = ('type', 'fille')
     classes = ('grp-collapse grp-closed',)
 
 
+class IndividuParentInline(CustomTabularInline):
+    model = ParenteDIndividus
+    verbose_name = model._meta.get_field_by_name('parent')[0].verbose_name
+    verbose_name_plural = _('individus parents')
+    fk_name = 'enfant'
+    raw_id_fields = ('parent',)
+    autocomplete_lookup_fields = {
+        'fk': ('parent',),
+    }
+    fields = ('parent', 'type',)
+    classes = ('grp-collapse grp-closed',)
+
+
+class IndividuEnfantInline(CustomTabularInline):
+    model = ParenteDIndividus
+    verbose_name = model._meta.get_field_by_name('enfant')[0].verbose_name
+    verbose_name_plural = _('individus enfants')
+    fk_name = 'parent'
+    raw_id_fields = ('enfant',)
+    autocomplete_lookup_fields = {
+        'fk': ('enfant',),
+    }
+    fields = ('type', 'enfant')
+    classes = ('grp-collapse grp-closed',)
+
+
 class OeuvreLieesInline(StackedInline):
-    verbose_name = Oeuvre._meta.verbose_name
-    verbose_name_plural = Oeuvre._meta.verbose_name_plural
     model = Oeuvre
+    verbose_name = model._meta.verbose_name
+    verbose_name_plural = model._meta.verbose_name_plural
     classes = ('grp-collapse grp-closed',)
 
 
 class AuteurInline(CustomTabularInline, GenericStackedInline):
-    verbose_name = Auteur._meta.verbose_name
-    verbose_name_plural = Auteur._meta.verbose_name_plural
     model = Auteur
+    verbose_name = model._meta.verbose_name
+    verbose_name_plural = model._meta.verbose_name_plural
     raw_id_fields = ('profession', 'individu',)
     autocomplete_lookup_fields = {
         'fk': ['profession', 'individu'],
@@ -167,9 +191,9 @@ class AuteurInline(CustomTabularInline, GenericStackedInline):
 
 
 class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
-    verbose_name = ElementDeDistribution._meta.verbose_name
-    verbose_name_plural = _('distribution')
     model = ElementDeDistribution
+    verbose_name = model._meta.verbose_name
+    verbose_name_plural = _('distribution')
     raw_id_fields = ('individus', 'pupitre', 'profession')
     autocomplete_lookup_fields = {
         'fk': ['pupitre', 'profession'],
@@ -187,7 +211,8 @@ class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
 
 
 class ElementDeProgrammeInline(CustomStackedInline):
-    verbose_name = ElementDeProgramme._meta.verbose_name
+    model = ElementDeProgramme
+    verbose_name = model._meta.verbose_name
     verbose_name_plural = _('programme')
     fieldsets = (
         (_('Champs courants'), {
@@ -203,7 +228,6 @@ class ElementDeProgrammeInline(CustomStackedInline):
             'fields': ('personnels', 'etat', 'position',),
         }),
     )
-    model = ElementDeProgramme
     sortable_field_name = 'position'
     raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
                      'personnels', 'illustrations', 'documents')
@@ -334,14 +358,6 @@ class TypeDeParenteDIndividusAdmin(CustomAdmin):
     list_display = ('nom', 'nom_pluriel', 'classement',)
 
 
-class ParenteDIndividusAdmin(CustomAdmin):
-    list_display = ('__unicode__',)
-    raw_id_fields = ('individus_cibles',)
-    autocomplete_lookup_fields = {
-        'm2m': ['individus_cibles'],
-    }
-
-
 class IndividuAdmin(CustomAdmin):
     list_per_page = 20
     list_display = ('__unicode__', 'nom', 'calc_prenoms',
@@ -352,7 +368,7 @@ class IndividuAdmin(CustomAdmin):
     list_filter = ('titre',)
     form = IndividuForm
     raw_id_fields = ('prenoms', 'ancrage_naissance', 'ancrage_deces',
-                     'professions', 'parentes', 'ancrage_approx',
+                     'professions', 'ancrage_approx',
                      'illustrations', 'documents',)
     related_lookup_fields = {
         'fk': ('ancrage_naissance', 'ancrage_deces', 'ancrage_approx'),
@@ -362,13 +378,13 @@ class IndividuAdmin(CustomAdmin):
                 'documents'),
     }
     readonly_fields = ('__unicode__', 'html', 'link',)
-#    inlines = (AuteurInline,)
+    inlines = (IndividuParentInline, IndividuEnfantInline)
     fieldsets = (
         (_('Champs courants'), {
             'fields': (('particule_nom', 'nom',), ('prenoms', 'pseudonyme',),
                        ('particule_nom_naissance', 'nom_naissance',),
                        ('titre', 'designation',), ('ancrage_naissance',
-                        'ancrage_deces',), 'professions', 'parentes',),
+                        'ancrage_deces',), 'professions',),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),
@@ -628,7 +644,6 @@ site.register(Profession, ProfessionAdmin)
 site.register(AncrageSpatioTemporel, AncrageSpatioTemporelAdmin)
 site.register(Prenom, PrenomAdmin)
 site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
-site.register(ParenteDIndividus, ParenteDIndividusAdmin)
 site.register(Individu, IndividuAdmin)
 site.register(Devise, DeviseAdmin)
 site.register(Engagement, EngagementAdmin)

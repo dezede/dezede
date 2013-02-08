@@ -45,8 +45,8 @@
     {% list_in_dl individu.oeuvres %}
     {% list_in_dl individu.apparitions %}
     {% list_in_dl individu.publications 'html' %}
-    {% list_in_dl individu.parents %}
-    {% list_in_dl individu.enfants %}
+    {% list_in_dl individu.parents.all verbose_name=_('parent') verbose_name_plural=_('parents') %}
+    {% list_in_dl individu.enfants.all verbose_name=_('enfant') verbose_name_plural=_('enfants') %}
     {% attr_in_dl 'notes' %}
 
     {% list_in_dl source.illustrations.all %}

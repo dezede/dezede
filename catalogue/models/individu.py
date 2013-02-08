@@ -69,25 +69,27 @@ class TypeDeParenteDIndividus(CustomModel):
 class ParenteDIndividus(CustomModel):
     type = ForeignKey('TypeDeParenteDIndividus', related_name='parentes',
         verbose_name=_('type'))
-    individus_cibles = ManyToManyField('Individu',
-        related_name='enfances_cibles', verbose_name=_('individus cibles'))
+    parent = ForeignKey('Individu', related_name='enfances',
+                                 verbose_name=_('individu parent'))
+    enfant = ForeignKey('Individu', related_name='parentes',
+                                 verbose_name=_('individu enfant'))
 
     class Meta:
         verbose_name = ungettext_lazy('parenté d’individus',
                                       'parentés d’individus', 1)
         verbose_name_plural = ungettext_lazy('parenté d’individus',
                                              'parentés d’individus', 2)
-        ordering = ['type']
+        ordering = ('type', 'parent', 'enfant')
         app_label = 'catalogue'
 
+    def clean(self):
+        if self.parent == self.enfant:
+                raise ValidationError(_('Un individu ne peut avoir une '
+                                        'parenté avec lui-même.'))
+
     def __unicode__(self):
-        out = self.type.nom
-        if self.individus_cibles.count() > 1:
-            out = self.type.pluriel()
-        out += ' :'
-        cs = self.individus_cibles.iterator()
-        out += str_list((unicode(c) for c in cs), ' ; ')
-        return out
+        return _('%s, %s de %s') % (self.parent, self.type.nom,
+                                    self.enfant)
 
 
 class Individu(AutoriteModel, UniqueSlugModel):
@@ -131,9 +133,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
         help_text=_('Ne remplir que si on ne connaît aucune date précise.'))
     professions = ManyToManyField('Profession', related_name='individus',
         blank=True, null=True, verbose_name=_('professions'))
-    parentes = ManyToManyField('ParenteDIndividus',
-        related_name='individus_orig', blank=True, null=True,
-        verbose_name=_('parentés'))
+    enfants = ManyToManyField('self', through='ParenteDIndividus',
+                              related_name='parents', symmetrical=False)
     biographie = HTMLField(_('biographie'), blank=True)
 
     def get_slug(self):
@@ -162,20 +163,6 @@ class Individu(AutoriteModel, UniqueSlugModel):
         # FIXME: Pas sûr que la condition soit logique.
         return Evenement.objects.filter(Q(distribution__individus=self)
                        | Q(programme__distribution__individus=self)).distinct()
-
-    def parents(self):
-        # FIXME: À simplifier
-        pk_list = self.parentes.values_list('individus_cibles', flat=True) \
-                                             .order_by('individus_cibles__nom')
-        if pk_list:
-            return Individu.objects.in_bulk(tuple(pk_list)).values()
-
-    def enfants(self):
-        # FIXME: À simplifier
-        pk_list = self.enfances_cibles.values_list('individus_orig',
-                                     flat=True).order_by('individus_orig__nom')
-        if pk_list:
-            return Individu.objects.in_bulk(tuple(pk_list)).values()
 
     def calc_prenoms_methode(self, fav):
         if not self.pk:
@@ -320,11 +307,6 @@ class Individu(AutoriteModel, UniqueSlugModel):
                          designation=designation)
 
     def clean(self):
-        if self.pk:
-            for p in self.parentes.all():
-                if self in p.individus_cibles.all():
-                    raise ValidationError(_('L’individu a une parenté avec '
-                                            'lui-même.'))
         try:
             naissance = getattr(self.ancrage_naissance, 'date')
             deces = getattr(self.ancrage_deces, 'date')
@@ -338,7 +320,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     class Meta:
         verbose_name = ungettext_lazy('individu', 'individus', 1)
         verbose_name_plural = ungettext_lazy('individu', 'individus', 2)
-        ordering = ['nom']
+        ordering = ('nom',)
         app_label = 'catalogue'
 
     def __unicode__(self):
