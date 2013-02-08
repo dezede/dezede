@@ -118,10 +118,6 @@ def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern,
 
 
 def parse_ancrage(ancrage_str, commit=False):
-    r"""
-    >>> repr(parse_ancrage('Paris, Opéra-comique, 1852'))
-    "{u'date_approx': u'1852', u'lieu': <Lieu: Paris, Op\xc3\xa9ra-comique>}"
-    """
     for ancrage_re, date_strp_pattern in ancrage_re_iterator():
         try:
             return parse_ancrage_inner(ancrage_str, ancrage_re,
@@ -132,6 +128,16 @@ def parse_ancrage(ancrage_str, commit=False):
 
 
 def build_ancrage(ancrage_str, commit=True):
+    """
+    >>> build_ancrage('Paris, Concert Spirituel, ca. 1852', commit=False)
+    <AncrageSpatioTemporel: Concert Spirituel, ca. 1852>
+    >>> build_ancrage('Concert Spirituel, 5/7/1852', commit=False)
+    <AncrageSpatioTemporel: Concert Spirituel, 5 juillet 1852>
+    >>> build_ancrage('Concert Spirituel, 1852-7-5', commit=False)
+    <AncrageSpatioTemporel: Concert Spirituel, 5 juillet 1852>
+    >>> build_ancrage('Concert Spirituel, 5 juillet 1852', commit=False)
+    <AncrageSpatioTemporel: Concert Spirituel, 5 juillet 1852>
+    """
     kwargs = parse_ancrage(ancrage_str, commit=commit)
     ancrage = AncrageSpatioTemporel(**kwargs)
     if commit:
