@@ -20,11 +20,10 @@
         <h2>{{ dossier }}</h2>
         {{ dossier.contenu|truncatewords_html:50 }}
         <div class="btn-group">
-          <a href="{{ dossier.get_absolute_url }}#presentation"
-             class="btn btn-primary">
+          <a href="{{ dossier.get_absolute_url }}" class="btn btn-primary">
             {% trans 'Présentation' %}
           </a>
-          <a href="{{ dossier.get_absolute_url }}#data" class="btn">
+          <a href="{{ dossier.get_data_absolute_url }}" class="btn">
             {% trans 'Accès aux données »' %}
           </a>
         </div>
