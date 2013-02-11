@@ -43,6 +43,10 @@ class DossierDEvenements(MPTTModel, CustomModel):
     def get_absolute_url(self):
         return 'dossierdevenements_detail', (self.pk,)
 
+    @permalink
+    def get_data_absolute_url(self):
+        return 'dossierdevenements_data_detail', (self.pk,)
+
     def get_queryset(self):
         if self.evenements.exists():
             return self.evenements.all()

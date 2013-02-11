@@ -15,3 +15,7 @@ class DossierDEvenementsList(ListView):
 
 class DossierDEvenementsDetail(DetailView):
     model = DossierDEvenements
+
+
+class DossierDEvenementsDataDetail(DossierDEvenementsDetail):
+    template_name_suffix = '_data_detail'

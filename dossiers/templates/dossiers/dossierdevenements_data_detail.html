@@ -21,8 +21,19 @@
 
       <div class="span9">
 
-        <h2>{% trans 'Présentation' %}</h2>
-        {{ object.contenu }}
+        <h2>Chronologie des spectacles de ce dossier</h2>
+        {% with object.get_queryset as evenements %}
+          {% paginate 5 evenements %}
+          {% show_pages %}
+          {% for evenement in evenements %}
+            <section id="evenement{{ evenement.pk }}">
+              <div class="content_part">
+                {% include 'catalogue/evenement_item.html' %}
+              </div>
+            </section>
+          {% endfor %}
+          {% show_pages %}
+        {% endwith %}
 
         {% include 'dossiers/dossierdevenements_detail_cite.html' %}
 

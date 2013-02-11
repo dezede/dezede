@@ -1,0 +1,13 @@
+{% load i18n routines %}
+
+<div class="page-header">
+  {% frontend_admin autorite=1 %}
+  <h1>
+    {{ object.titre }}
+    <small>
+      {% trans 'par' %}
+      {{ object.owner.first_name }}
+      <span class="sc">{{ object.owner.last_name }}</span>
+    </small>
+  </h1>
+</div>

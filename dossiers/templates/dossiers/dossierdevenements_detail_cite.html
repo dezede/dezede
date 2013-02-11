@@ -1,0 +1,13 @@
+{% load i18n %}
+
+<section id="cite">
+  <h4>{% trans 'Pour citer ce corpus' %}</h4>
+  <a href="mailto:{{ object.owner.email }}">
+    {{ object.owner.first_name }}
+    <span class="sc">{{ object.owner.last_name }}</span></a>,
+  « {{ object }} »,
+  <a href="http://{{ request.META.HTTP_HOST }}">
+    <em>Dezède</em> [en ligne]</a>.
+  {{ request.build_absolute_uri|urlize }}
+  (consulté le {% now 'DATE_FORMAT' %}).
+</section>
