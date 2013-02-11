@@ -22,7 +22,7 @@
     var slider_end = $("#id_{{ name }}_1");
 
     bounded_value = function(value, bound) {
-      var new_val = Math.min(Math.max({{ min }}, value), {{ max }});
+      var new_val = Math.min(Math.max({{ min_year }}, value), {{ max_year }});
       var bound_value = slider_div.slider("values", bound);
       if(bound == 0) {
         new_val = Math.max(new_val, bound_value);
@@ -35,8 +35,8 @@
 
     slider_div.slider({
       range: true,
-      min: {{ min }},
-      max: {{ max }},
+      min: {{ min_year }},
+      max: {{ max_year }},
       values: [{{ start }}, {{ end }}],
       slide: function(event, ui) {
         slider_start.val(ui.values[0]);
