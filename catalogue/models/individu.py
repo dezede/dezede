@@ -1,18 +1,18 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from .functions import str_list, str_list_w_last, href, sc
+from django.core.exceptions import ValidationError
 from django.db.models import CharField, FloatField, BooleanField, ForeignKey, \
                              ManyToManyField, OneToOneField, permalink, Q
-from tinymce.models import HTMLField
-from ..templatetags.extras import abbreviate
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
+from tinymce.models import HTMLField
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     calc_pluriel, UniqueSlugModel
-from django.core.exceptions import ValidationError
+from ..templatetags.extras import abbreviate
 from .evenement import Evenement
+from .functions import str_list, str_list_w_last, href, sc
 
 
 __all__ = (b'Prenom', b'TypeDeParenteDIndividus', b'ParenteDIndividus',
@@ -46,16 +46,16 @@ class Prenom(CustomModel):
 class TypeDeParenteDIndividus(CustomModel):
     nom = CharField(_('nom'), max_length=50, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=55, blank=True,
-        help_text=PLURAL_MSG)
+                            help_text=PLURAL_MSG)
     classement = FloatField(_('classement'), default=1.0)
 
     class Meta:
         verbose_name = ungettext_lazy('type de parenté d’individus',
                                       'types de parenté d’individus', 1)
         verbose_name_plural = ungettext_lazy(
-                'type de parenté d’individus',
-                'types de parenté d’individus',
-                2)
+            'type de parenté d’individus',
+            'types de parenté d’individus',
+            2)
         ordering = ['classement']
         app_label = 'catalogue'
 
@@ -68,11 +68,11 @@ class TypeDeParenteDIndividus(CustomModel):
 
 class ParenteDIndividus(CustomModel):
     type = ForeignKey('TypeDeParenteDIndividus', related_name='parentes',
-        verbose_name=_('type'))
+                      verbose_name=_('type'))
     parent = ForeignKey('Individu', related_name='enfances',
-                                 verbose_name=_('individu parent'))
+                        verbose_name=_('individu parent'))
     enfant = ForeignKey('Individu', related_name='parentes',
-                                 verbose_name=_('individu enfant'))
+                        verbose_name=_('individu enfant'))
 
     class Meta:
         verbose_name = ungettext_lazy('parenté d’individus',
@@ -93,17 +93,17 @@ class ParenteDIndividus(CustomModel):
 
 
 class Individu(AutoriteModel, UniqueSlugModel):
-    particule_nom = CharField(_('particule du nom d’usage'), max_length=10,
-        blank=True)
+    particule_nom = CharField(
+        _('particule du nom d’usage'), max_length=10, blank=True)
     # TODO: rendre le champ nom 'blank'
     nom = CharField(_('nom d’usage'), max_length=200)
-    particule_nom_naissance = CharField(_('particule du nom de naissance'),
-        max_length=10, blank=True)
-    nom_naissance = CharField(_('nom de naissance'), max_length=200,
-        blank=True,
+    particule_nom_naissance = CharField(
+        _('particule du nom de naissance'), max_length=10, blank=True)
+    nom_naissance = CharField(
+        _('nom de naissance'), max_length=200, blank=True,
         help_text=_('Ne remplir que s’il est différent du nom d’usage.'))
     prenoms = ManyToManyField('Prenom', related_name='individus', blank=True,
-        null=True, verbose_name=_('prénoms'))
+                              null=True, verbose_name=_('prénoms'))
     pseudonyme = CharField(_('pseudonyme'), max_length=200, blank=True)
     DESIGNATIONS = (
         ('S', _('Standard (nom, prénoms et pseudonyme)')),
@@ -113,28 +113,30 @@ class Individu(AutoriteModel, UniqueSlugModel):
         ('F', _('Prénom(s) favori(s) (uniquement)')),  # F pour First name
     )
     designation = CharField(_('désignation'), max_length=1,
-        choices=DESIGNATIONS, default='S')
+                            choices=DESIGNATIONS, default='S')
     TITRES = (
         ('M', _('M.')),
         ('J', _('Mlle')),  # J pour Jouvencelle
         ('F', _('Mme')),
     )
     titre = CharField(pgettext('individu', 'titre'), max_length=1,
-        choices=TITRES, blank=True)
-    ancrage_naissance = OneToOneField('AncrageSpatioTemporel', blank=True,
-        null=True, related_name='individus_nes',
-        verbose_name=_('ancrage de naissance'))
-    ancrage_deces = OneToOneField('AncrageSpatioTemporel', blank=True,
-        null=True, related_name='individus_decedes',
-        verbose_name=_('ancrage du décès'))
-    ancrage_approx = OneToOneField('AncrageSpatioTemporel',
-        blank=True, null=True,
+                      choices=TITRES, blank=True)
+    ancrage_naissance = OneToOneField(
+        'AncrageSpatioTemporel', blank=True, null=True,
+        related_name='individus_nes', verbose_name=_('ancrage de naissance'))
+    ancrage_deces = OneToOneField(
+        'AncrageSpatioTemporel', blank=True, null=True,
+        related_name='individus_decedes', verbose_name=_('ancrage du décès'))
+    ancrage_approx = OneToOneField(
+        'AncrageSpatioTemporel', blank=True, null=True,
         related_name='individus', verbose_name=_('ancrage approximatif'),
         help_text=_('Ne remplir que si on ne connaît aucune date précise.'))
-    professions = ManyToManyField('Profession', related_name='individus',
-        blank=True, null=True, verbose_name=_('professions'))
-    enfants = ManyToManyField('self', through='ParenteDIndividus',
-                              related_name='parents', symmetrical=False)
+    professions = ManyToManyField(
+        'Profession', related_name='individus', blank=True, null=True,
+        verbose_name=_('professions'))
+    enfants = ManyToManyField(
+        'self', through='ParenteDIndividus', related_name='parents',
+        symmetrical=False)
     biographie = HTMLField(_('biographie'), blank=True)
 
     def get_slug(self):
@@ -199,7 +201,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def get_particule(self, naissance=False, lon=True):
         particule = self.particule_nom_naissance if naissance \
-               else self.particule_nom
+            else self.particule_nom
         if lon and particule != '' and particule[-1] not in ("'", '’'):
             particule += ' '
         return particule
@@ -235,7 +237,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
         ps = self.professions.iterator()
         titre = self.titre
         return str_list_w_last(p.gendered(titre, tags, caps=i == 0)
-                                                     for i, p in enumerate(ps))
+                               for i, p in enumerate(ps))
     calc_professions.short_description = _('professions')
     calc_professions.admin_order_field = 'professions__nom'
     calc_professions.allow_tags = True
@@ -278,18 +280,18 @@ class Individu(AutoriteModel, UniqueSlugModel):
             out = str_list(l, ' ')
             if pseudonyme:
                 alias = ugettext('dite') if self.titre in ('J', 'F',) \
-                   else ugettext('dit')
+                    else ugettext('dit')
                 out += ugettext(', %(alias)s %(pseudonyme)s') % \
                     {'alias': alias,
                      'pseudonyme': pseudonyme}
             return out
 
         main_choices = {
-          'S': nom,
-          'F': prenoms,
-          'L': nom,
-          'P': pseudonyme,
-          'B': nom_naissance,
+            'S': nom,
+            'F': prenoms,
+            'L': nom,
+            'P': pseudonyme,
+            'B': nom_naissance,
         }
         main = main_style(main_choices[designation])
         out = standard(main) if designation in ('S', 'B',) else main

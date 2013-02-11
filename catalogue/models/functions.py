@@ -2,10 +2,10 @@
 
 from __future__ import unicode_literals
 from django.template.defaultfilters import date, capfirst
-from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
+from django.utils.encoding import smart_unicode
 from django.utils.functional import allow_lazy
 from django.utils.safestring import mark_safe
-from django.utils.encoding import smart_unicode
+from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
 
 
 __all__ = (b'date_html', b'str_list', b'str_list_w_last', b'ex', b'no',
@@ -56,7 +56,7 @@ def str_list(l, infix=None, last_infix=None):
 
 
 def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
-        oxford_comma=True):
+                    oxford_comma=True):
     """
     Concatène une liste de chaîne de caractères avec des virgules
     et un «,\u00A0et\u00A0» final («\u00A0et\u00A0» pour deux éléments).
@@ -88,9 +88,11 @@ def ex(txt, pre='', post=''):
     >>> print ex('30/01/1989')
     Exemple : « 30/01/1989 ».
     """
-    return _('Exemple : %(pre)s« %(txt)s »%(post)s.') % {'pre': pre,
-                                                          'txt': txt,
-                                                          'post': post}
+    return _('Exemple : %(pre)s« %(txt)s »%(post)s.') % {
+        'pre': pre,
+        'txt': txt,
+        'post': post,
+    }
 ex = allow_lazy(ex, unicode)
 
 

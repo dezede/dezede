@@ -1,21 +1,21 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from .functions import href, date_html, str_list, ex
+from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, BooleanField, \
                              DateField, TimeField, permalink, Q
-from tinymce.models import HTMLField
+from django.template.defaultfilters import time, capfirst
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
-from django.template.defaultfilters import time, capfirst
+from mptt.managers import TreeManager
+from mptt.models import MPTTModel, TreeForeignKey
+from tinymce.models import HTMLField
 from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     AutoriteManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel
-from django.core.exceptions import ValidationError
-from mptt.models import MPTTModel, TreeForeignKey
-from mptt.managers import TreeManager
 from .evenement import Evenement
+from .functions import href, date_html, str_list, ex
 from .individu import Individu
 from .oeuvre import Oeuvre
 
@@ -160,8 +160,8 @@ class Saison(CustomModel):
 
 
 class AncrageSpatioTemporel(CustomModel):
-    date = DateField(_('date (précise)'), blank=True, null=True,
-        help_text=DATE_MSG)
+    date = DateField(
+        _('date (précise)'), blank=True, null=True, help_text=DATE_MSG)
     heure = TimeField(_('heure (précise)'), blank=True, null=True)
     lieu = ForeignKey('Lieu', related_name='ancrages', blank=True, null=True,
         verbose_name=_('lieu ou institution (précis)'))
@@ -169,10 +169,10 @@ class AncrageSpatioTemporel(CustomModel):
         blank=True, help_text=_('Ne remplir que si la date est imprécise.'))
     heure_approx = CharField(_('heure (approximative)'), max_length=200,
         blank=True, help_text=_('Ne remplir que si l’heure est imprécise.'))
-    lieu_approx = CharField(_('lieu ou institution (approximatif)'),
-                            max_length=200, blank=True,
-                    help_text=_('Ne remplir que si le lieu (ou institution) '
-                                'est imprécis(e).'))
+    lieu_approx = CharField(
+        _('lieu ou institution (approximatif)'), max_length=200, blank=True,
+        help_text=_('Ne remplir que si le lieu (ou institution) est '
+                    'imprécis(e).'))
 
     def year(self):
         if self.date:

@@ -1,18 +1,18 @@
 # coding: utf-8
 
+from crispy_forms.bootstrap import PrependedText, FormActions
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset
+from django.contrib.auth.models import User, Group
+from django.contrib.sites.models import get_current_site
 from django.forms import CharField, ModelChoiceField, ModelMultipleChoiceField
 from django.forms.widgets import CheckboxSelectMultiple
+from django.template.loader import render_to_string
+from django.utils.translation import ugettext_lazy as _
 # FIXME: Remplacer ceci par RegistrationFormUniqueEmail quand Joann aura fini
 # de faire mumuse.
 from registration.forms import RegistrationForm
-from django.utils.translation import ugettext_lazy as _
 from .models import StudentProfile
-from django.contrib.auth.models import User, Group
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset
-from crispy_forms.bootstrap import PrependedText, FormActions
-from django.contrib.sites.models import get_current_site
-from django.template.loader import render_to_string
 
 
 

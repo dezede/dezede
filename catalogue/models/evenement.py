@@ -1,25 +1,26 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.generic import GenericForeignKey, \
+                                                GenericRelation
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from .functions import str_list, str_list_w_last, href, hlp
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, OneToOneField, BooleanField, \
                              PositiveSmallIntegerField, permalink, Q, \
                              PositiveIntegerField, get_model
+from django.dispatch import receiver
+from django.template.defaultfilters import capfirst
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
-from django.template.defaultfilters import capfirst
-from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    calc_pluriel, CustomManager, CustomQuerySet
-from django.core.cache import cache
 from reversion.models import post_revision_commit
-from django.dispatch import receiver
+from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+    calc_pluriel, CustomManager, CustomQuerySet
+
+from .functions import str_list, str_list_w_last, href, hlp
 from .source import TypeDeSource
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.generic import GenericForeignKey, \
-                                                GenericRelation
 
 
 __all__ = (b'ElementDeDistribution', b'CaracteristiqueDElementDeProgramme',
@@ -62,12 +63,12 @@ class ElementDeDistributionManager(CustomManager):
 class ElementDeDistribution(CustomModel):
     individus = ManyToManyField('Individu', verbose_name=_('individus'),
                                 related_name='elements_de_distribution')
-    pupitre = ForeignKey('Pupitre', verbose_name=_('pupitre'),
-                         null=True, blank=True,
-                         related_name='elements_de_distribution')
-    profession = ForeignKey('Profession', verbose_name=_('profession'),
-                            null=True, blank=True,
-                            related_name='elements_de_distribution')
+    pupitre = ForeignKey(
+        'Pupitre', verbose_name=_('pupitre'), null=True, blank=True,
+        related_name='elements_de_distribution')
+    profession = ForeignKey(
+        'Profession', verbose_name=_('profession'), null=True, blank=True,
+        related_name='elements_de_distribution')
     content_type = ForeignKey(ContentType, null=True)
     object_id = PositiveIntegerField(null=True)
     content_object = GenericForeignKey()
@@ -88,13 +89,13 @@ class ElementDeDistribution(CustomModel):
     def html(self, tags=True):
         individus = self.individus.iterator()
         out = str_list_w_last(individu.html(tags=tags)
-            for individu in individus)
+                              for individu in individus)
         partie_ou_profession = ''
         if self.pupitre:
             partie_ou_profession = self.pupitre.partie.link()
         elif self.profession:
             partie_ou_profession = self.profession.link()
-        out += ' [' + partie_ou_profession  + ']'
+        out += ' [' + partie_ou_profession + ']'
         if not tags:
             out = strip_tags(out)
         return out
@@ -115,8 +116,9 @@ class ElementDeDistribution(CustomModel):
 
 class CaracteristiqueDElementDeProgramme(CustomModel):
     nom = CharField(max_length=100, help_text=LOWER_MSG, unique=True)
-    nom_pluriel = CharField(max_length=110, blank=True,
-        verbose_name=_('nom (au pluriel)'), help_text=PLURAL_MSG)
+    nom_pluriel = CharField(
+        max_length=110, blank=True, verbose_name=_('nom (au pluriel)'),
+        help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
 
     def pluriel(self):
@@ -124,13 +126,13 @@ class CaracteristiqueDElementDeProgramme(CustomModel):
 
     class Meta:
         verbose_name = ungettext_lazy(
-                'caractéristique d’élément de programme',
-                'caractéristiques d’élément de programme',
-                1)
+            'caractéristique d’élément de programme',
+            'caractéristiques d’élément de programme',
+            1)
         verbose_name_plural = ungettext_lazy(
-                'caractéristique d’élément de programme',
-                'caractéristiques d’élément de programme',
-                2)
+            'caractéristique d’élément de programme',
+            'caractéristiques d’élément de programme',
+            2)
         ordering = ['nom']
         app_label = 'catalogue'
 
@@ -146,12 +148,14 @@ class CaracteristiqueDElementDeProgramme(CustomModel):
 
 
 class ElementDeProgramme(AutoriteModel):
-    evenement = ForeignKey('Evenement', related_name='programme',
-                            verbose_name=_('événement'))
-    oeuvre = ForeignKey('Oeuvre', related_name='elements_de_programme',
+    evenement = ForeignKey(
+        'Evenement', related_name='programme', verbose_name=_('événement'))
+    oeuvre = ForeignKey(
+        'Oeuvre', related_name='elements_de_programme',
         verbose_name=_('œuvre'), blank=True, null=True)
     autre = CharField(max_length=500, blank=True)
-    caracteristiques = ManyToManyField(CaracteristiqueDElementDeProgramme,
+    caracteristiques = ManyToManyField(
+        CaracteristiqueDElementDeProgramme,
         related_name='elements_de_programme', blank=True, null=True,
         verbose_name=_('caractéristiques'))
     NUMEROTATIONS = (
@@ -160,15 +164,16 @@ class ElementDeProgramme(AutoriteModel):
         ('U', _('Puce')),  # U pour Unordered
         ('E', _('Absente (entracte, etc)')),  # E pour Empty
     )
-    numerotation = CharField(_('numérotation'), choices=NUMEROTATIONS,
-                             max_length=1, default='O')
+    numerotation = CharField(
+        _('numérotation'), choices=NUMEROTATIONS, max_length=1, default='O')
     position = PositiveSmallIntegerField(_('Position'))
     # TODO: Quand les nested inlines seront possibles avec Django, remplacer
     # ceci par un GenericRelation.
-    distribution = ManyToManyField(ElementDeDistribution,
-        related_name='elements_de_programme', blank=True, null=True)
-    personnels = ManyToManyField('Personnel',
-        related_name='elements_de_programme', blank=True, null=True)
+    distribution = ManyToManyField(
+        ElementDeDistribution, related_name='elements_de_programme',
+        blank=True, null=True)
+    personnels = ManyToManyField('Personnel', blank=True, null=True,
+                                 related_name='elements_de_programme')
 
     def calc_caracteristiques(self):
         if self.pk is None:
@@ -183,8 +188,8 @@ class ElementDeProgramme(AutoriteModel):
         numerotations_exclues = ('U', 'E',)
         if self.numerotation in numerotations_exclues:
             return ''
-        return self.evenement.programme.exclude(Q(position__gt=self.position) |
-                             Q(numerotation__in=numerotations_exclues)).count()
+        return self.evenement.programme.exclude(Q(position__gt=self.position)
+                           | Q(numerotation__in=numerotations_exclues)).count()
 
     def html(self, tags=True):
         out = ''
@@ -209,10 +214,10 @@ class ElementDeProgramme(AutoriteModel):
 
     class Meta:
         verbose_name = ungettext_lazy('élément de programme',
-                'éléments de programme', 1)
+                                      'éléments de programme', 1)
         verbose_name_plural = ungettext_lazy('élément de programme',
-                'éléments de programme', 2)
-        ordering = ['position', 'oeuvre']
+                                             'éléments de programme', 2)
+        ordering = ('position', 'oeuvre')
         app_label = 'catalogue'
 
     def __unicode__(self):
@@ -229,10 +234,11 @@ class ElementDeProgramme(AutoriteModel):
 
 
 class Evenement(AutoriteModel):
-    ancrage_debut = OneToOneField('AncrageSpatioTemporel',
-        related_name='evenements_debuts')
-    ancrage_fin = OneToOneField('AncrageSpatioTemporel',
-        related_name='evenements_fins', blank=True, null=True)
+    ancrage_debut = OneToOneField(
+        'AncrageSpatioTemporel', related_name='evenements_debuts')
+    ancrage_fin = OneToOneField(
+        'AncrageSpatioTemporel', related_name='evenements_fins', blank=True,
+        null=True)
     relache = BooleanField(verbose_name='relâche')
     circonstance = CharField(max_length=500, blank=True)
     distribution = GenericRelation(ElementDeDistribution)
@@ -251,7 +257,7 @@ class Evenement(AutoriteModel):
 
     def sources_dict(self):
         types = TypeDeSource.objects.filter(
-                                        sources__evenements=self).distinct()
+            sources__evenements=self).distinct()
         d = {}
         for type in types:
             sources = self.sources.filter(type=type)
@@ -286,7 +292,7 @@ class Evenement(AutoriteModel):
     class Meta:
         verbose_name = ungettext_lazy('événement', 'événements', 1)
         verbose_name_plural = ungettext_lazy('événement', 'événements', 2)
-        ordering = ['ancrage_debut']
+        ordering = ('ancrage_debut',)
         app_label = 'catalogue'
 
     def __unicode__(self):

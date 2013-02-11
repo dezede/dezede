@@ -8,8 +8,8 @@ from django.db.models import Model, Manager, CharField, TextField, \
 from django.db.models.query import QuerySet
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from autoslug import AutoSlugField
-from tinymce.models import HTMLField
 from filebrowser.fields import FileBrowseField
+from tinymce.models import HTMLField
 from ..templatetags.extras import replace
 from .functions import href
 
@@ -43,7 +43,7 @@ def replace_in_kwargs(obj, **kwargs):
     """
     fields = obj._meta.fields
     field_names = (field.attname for field in fields
-                          if field.__class__ in REPLACE_FIELDS)
+                   if field.__class__ in REPLACE_FIELDS)
     for k in kwargs:
         if k.split('__')[0] in field_names:
             kwargs[k] = replace(kwargs[k])
@@ -98,7 +98,7 @@ class CustomModel(Model):
     Modèle personnalisé, essentiellement pour les remplacements typographiques.
     """
     owner = ForeignKey(User, null=True, blank=True,
-                                               verbose_name=_('transcripteur'))
+                       verbose_name=_('transcripteur'))
     objects = CustomManager()
 
     class Meta:
@@ -151,20 +151,20 @@ class SlugModel(Model):
 
 
 class UniqueSlugModel(Model):
-   slug = AutoSlugField(populate_from='get_slug', unique=True,
-                        always_update=True)
+    slug = AutoSlugField(populate_from='get_slug', unique=True,
+                         always_update=True)
 
-   class Meta:
-       abstract = True
+    class Meta:
+        abstract = True
 
-   def get_slug(self):
-       return unicode(self)
+    def get_slug(self):
+        return unicode(self)
 
 
 class Document(CustomModel):
     nom = CharField(_('nom'), max_length=300, blank=True)
     document = FileBrowseField(_('document'), max_length=400,
-        directory='documents/')
+                               directory='documents/')
     description = HTMLField(_('description'), blank=True)
     auteurs = GenericRelation('Auteur')
 
@@ -218,8 +218,9 @@ class Illustration(CustomModel):
 class Etat(CustomModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
-        help_text=PLURAL_MSG)
-    message = HTMLField(_('message'), blank=True,
+                            help_text=PLURAL_MSG)
+    message = HTMLField(
+        _('message'), blank=True,
         help_text=_('Message à afficher dans la partie consultation.'))
     public = BooleanField(_('publié'), default=True)
     slug = AutoSlugField(populate_from='nom')
@@ -227,7 +228,7 @@ class Etat(CustomModel):
     class Meta:
         verbose_name = ungettext_lazy('état', 'états', 1)
         verbose_name_plural = ungettext_lazy('état', 'états', 2)
-        ordering = ['slug']
+        ordering = ('slug',)
         app_label = 'catalogue'
 
     def pluriel(self):
