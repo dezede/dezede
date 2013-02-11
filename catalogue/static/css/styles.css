@@ -28,23 +28,28 @@
   src: local('Gentium Basic Bold Italic'), local('GentiumBasic-BoldItalic'), url(fonts/GentiumBasic-BoldItalic.woff) format('woff');
 }
 
-html {
-  background: #B82819 url(images/damasse.png) fixed;
-  overflow-y: scroll;
-}
-
 body {
-  position: relative;
-  margin: 0 auto 20px auto;
-  border: 2px solid grey;
-  border-top: none;
   font-family: 'Gentium Basic', serif;
   font-size: 16px;
   line-height: 22px;
+}
+
+body:not(.mceContentBody) {
+  background: #B82819 url(images/damasse.png) fixed;
+  overflow-y: scroll;
+  position: relative;
+  margin: 60px 0;
+}
+
+#content, .mceContentBody {
   background-color: #FFF9D9;
   box-shadow: 0 5px 30px black;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border: 2px solid #CCC7AF;
+  border-radius: 5px;
+}
+
+section {
+  padding-top: 50px;
 }
 
 footer {
@@ -124,8 +129,7 @@ dl.dl-horizontal dd+dt, dl.dl-horizontal dd+dt+dd {
 }
 
 .liste td, .liste th {
-  padding: 2px 5px;
-  padding-right: 10px;
+  padding: 2px 10px 2px 5px;
 }
 
 .liste tbody tr:hover {
@@ -327,7 +331,6 @@ form .results_on_deck>div {
 @media (min-width: 1200px) {
   #content {
     padding: 15px;
-    padding-top: 72px; /* 42px (nav) + 30px */
   }
 
   .side {
@@ -342,7 +345,6 @@ form .results_on_deck>div {
 @media (min-width: 980px) and (max-width: 1200px) {
   #content {
     padding: 10px;
-    padding-top: 42px; /* 42px (nav) + 30px */
   }
 
   .side {
@@ -355,6 +357,10 @@ form .results_on_deck>div {
 }
 
 @media (min-width: 768px) and (max-width: 980px) {
+  body {
+    padding-top: 0;
+  }
+
   #content {
     padding: 5px;
   }
@@ -370,6 +376,10 @@ form .results_on_deck>div {
 }
 
 @media (max-width: 767px) {
+  body {
+    padding-top: 0;
+  }
+
   .side {
     position: static;
   }

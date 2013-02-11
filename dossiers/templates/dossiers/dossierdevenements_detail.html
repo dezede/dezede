@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load url from future %}
-{% load i18n routines endless %}
-
+{% load i18n routines endless sekizai_tags %}
 
 {% block title %}
   {{ object }}
@@ -9,30 +8,105 @@
 
 
 {% block content %}
+
   <div class="page-header">
     {% frontend_admin autorite=1 %}
     <h1>
       {{ object.titre }}
-      <small>par {{ object.owner.get_full_name }}</small>
+      <small>
+        par
+        {{ object.owner.first_name }}
+        <span class="sc">{{ object.owner.last_name }}</span>
+      </small>
     </h1>
   </div>
 
-  {{ object.contenu }}
+  <div class="container-fluid">
 
-  <hr />
+    <div class="row-fluid">
 
-  <div class="well well-large">
-    <h2>Chronologie des spectacles de ce dossier</h2>
-    {% with object.get_queryset as evenements %}
-      {% paginate 5 evenements %}
-      {% show_pages %}
-      {% for evenement in evenements %}
-        <div class="content_part">
-          {% include 'catalogue/evenement_item.html' %}
+      <div class="span3">
+        <div id="sidebar" class="side affix affix-top well" data-spy="affix"
+              data-offset-top="105" data-offset-bottom="160" style="padding: 8px 0;">
+          <ul class="nav nav-list">
+            <li>
+              <a href="#presentation">
+                {% trans 'Présentation' %}
+              </a>
+            </li>
+            <li>
+              <a href="#cite">
+                {% trans 'Citer ce corpus' %}
+              </a>
+            </li>
+            <li class="nav-header">
+              {% trans 'Accès aux données' %}
+            </li>
+{#            {% for evenement in object.evenements.all %}#}
+{#              <li>#}
+{#                <a href="#evenement{{ evenement.pk }}">#}
+{#                  {{ evenement.ancrage_debut.date }}#}
+{#                </a>#}
+{#              </li>#}
+{#            {% endfor %}#}
+            <li><a href="#data">Chronologie de spectacles</a></li>
+          </ul>
         </div>
-      {% endfor %}
-      {% show_pages %}
-    {% endwith %}
+      </div>
+
+      <div class="span9">
+
+        <section id="presentation">
+          <h2>{% trans 'Présentation' %}</h2>
+          {{ object.contenu }}
+        </section>
+
+        <section id="cite">
+          <h4>{% trans 'Pour citer ce corpus' %}</h4>
+          <a href="mailto:{{ object.owner.email }}">
+            {{ object.owner.first_name }}
+            <span class="sc">{{ object.owner.last_name }}</span></a>,
+          « {{ object }} »,
+          <a href="http://{{ request.META.HTTP_HOST }}">
+            <em>Dezède</em> [en ligne]</a>.
+          {{ request.build_absolute_uri|urlize }}
+          (consulté le {% now 'DATE_FORMAT' %}).
+        </section>
+
+        <section id="data">
+
+          <h2>Chronologie des spectacles de ce dossier</h2>
+          {% with object.get_queryset as evenements %}
+            {% paginate 5 evenements %}
+            {% show_pages %}
+            {% for evenement in evenements %}
+              <section id="evenement{{ evenement.pk }}">
+                <div class="content_part">
+                  {% include 'catalogue/evenement_item.html' %}
+                </div>
+              </section>
+            {% endfor %}
+            {% show_pages %}
+          {% endwith %}
+
+        </section>
+
+      </div>
+
+    </div>
+
   </div>
+
+  {% addtoblock 'js' %}
+    <script>
+      {# Met à jour le hash de l'URL avec le défilement. #}
+      $('#sidebar li').on('activate', function() {
+        var body = $('body');
+        var scroll_value = body.scrollTop();
+        window.location.hash = $('a', this).attr('href');
+        body.scrollTop(scroll_value);
+      });
+    </script>
+  {% endaddtoblock %}
 
 {% endblock %}

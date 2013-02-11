@@ -47,13 +47,13 @@
   </head>
 
 
-  <body class="container">
+  <body data-spy="scroll" data-target="#sidebar">
 
     <header>
       {% include 'navbar.html' %}
     </header>
 
-    <div id="content">
+    <div id="content" class="container">
 
       {% autoescape off %}
 
@@ -67,7 +67,7 @@
           </div>
         </noscript>
 
-        {% block body %}{% endblock %}{# À remplacer progressivement par content. #}
+        {% block body %}{% endblock %}{# FIXME: À remplacer progressivement par content. #}
         {% block content %}{% endblock %}
 
       {% endautoescape %}

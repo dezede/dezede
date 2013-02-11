@@ -18,12 +18,14 @@ class DossierDEvenements(CustomModel):
     lieux = ManyToManyField(Lieu, blank=True, null=True,
                             verbose_name=_('lieux'))
     oeuvres = ManyToManyField(Oeuvre, blank=True, null=True,
-                             verbose_name=_('œuvres'))
+                              verbose_name=_('œuvres'))
     auteurs = ManyToManyField(Individu, blank=True, null=True,
                               verbose_name=_('auteurs'))
     circonstance = CharField(_('circonstance'), max_length=100, blank=True)
+    evenements = ManyToManyField(Evenement, verbose_name=_('événements'),
+                                 blank=True, null=True)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('dossier d’événements',
                                       'dossiers d’événements', 0)
         verbose_name_plural = ungettext_lazy('dossier d’événements',
@@ -38,6 +40,8 @@ class DossierDEvenements(CustomModel):
         return 'dossierdevenements_detail', (self.pk,)
 
     def get_queryset(self):
+        if self.evenements.exists():
+            return self.evenements.all()
         kwargs = {}
         if self.debut:
             kwargs['ancrage_debut__date__gte'] = self.debut
@@ -64,10 +68,10 @@ class DossierDEvenements(CustomModel):
         request_kwargs = []
         if self.lieux.exists():
             request_kwargs.append('lieu=|%s|' % '|'.join([str(l.pk)
-                                                   for l in self.lieux.all()]))
+                                  for l in self.lieux.all()]))
         if self.oeuvres.exists():
             request_kwargs.append('oeuvre=|%s|' % '|'.join([str(o.pk)
-                                                 for o in self.oeuvres.all()]))
+                                  for o in self.oeuvres.all()]))
         if request_kwargs:
             url += '?' + '&'.join(request_kwargs)
         return url

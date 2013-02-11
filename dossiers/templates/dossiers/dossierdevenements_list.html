@@ -19,9 +19,15 @@
       <div class="span6">
         <h2>{{ dossier }}</h2>
         {{ dossier.contenu|truncatewords_html:50 }}
-        <a href="{{ dossier.get_absolute_url }}" class="btn">
-          Lire le dossier »
-        </a>
+        <div class="btn-group">
+          <a href="{{ dossier.get_absolute_url }}#presentation"
+             class="btn btn-primary">
+            {% trans 'Présentation' %}
+          </a>
+          <a href="{{ dossier.get_absolute_url }}#data" class="btn">
+            {% trans 'Accès aux données »' %}
+          </a>
+        </div>
       </div>
       {% cycle '' '</div>' %}
     {% empty %}
