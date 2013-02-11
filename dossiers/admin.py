@@ -19,7 +19,7 @@ class DossierDEvenementsAdmin(CustomAdmin):
     }
     fieldsets = (
         (None, {
-            'fields': ('titre', 'contenu'),
+            'fields': ('titre', 'parent', 'contenu'),
         }),
         (_('Sélection dynamique'), {
             'fields': ('debut', 'fin', 'lieux', 'oeuvres', 'auteurs',

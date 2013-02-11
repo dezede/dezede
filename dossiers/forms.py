@@ -2,11 +2,12 @@
 
 from __future__ import unicode_literals
 from django.forms import ModelForm, BooleanField
+from mptt.forms import MPTTAdminForm
 from tinymce.widgets import TinyMCE
 from .models import DossierDEvenements
 
 
-class DossierDEvenementsForm(ModelForm):
+class DossierDEvenementsForm(MPTTAdminForm):
     statique = BooleanField(required=False)
 
     class Meta(object):

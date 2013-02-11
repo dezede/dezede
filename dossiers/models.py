@@ -5,12 +5,14 @@ from django.core.urlresolvers import reverse
 from django.db.models import CharField, DateField, ManyToManyField, \
                              TextField, permalink
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from mptt.fields import TreeForeignKey
+from mptt.models import MPTTModel
 from catalogue.models import Lieu, Oeuvre, Evenement, Individu
 from catalogue.models.common import CustomModel
 from catalogue.models.functions import str_list_w_last
 
 
-class DossierDEvenements(CustomModel):
+class DossierDEvenements(MPTTModel, CustomModel):
     titre = CharField(_('titre'), max_length=100)
     contenu = TextField(_('contenu'))
     debut = DateField(_('début'), blank=True, null=True)
@@ -24,6 +26,8 @@ class DossierDEvenements(CustomModel):
     circonstance = CharField(_('circonstance'), max_length=100, blank=True)
     evenements = ManyToManyField(Evenement, verbose_name=_('événements'),
                                  blank=True, null=True)
+    parent = TreeForeignKey('self', null=True, blank=True,
+                            related_name='children')
 
     class Meta(object):
         verbose_name = ungettext_lazy('dossier d’événements',
