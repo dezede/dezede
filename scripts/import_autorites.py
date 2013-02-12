@@ -8,11 +8,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.template.defaultfilters import title
 from catalogue.api import build_ancrage
 from catalogue.api.models.utils import update_or_create, get_or_create
-from catalogue.api.utils import notify_send
+from catalogue.api.utils import notify_send, print_error, print_success, \
+                                print_warning
 from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
     AncrageSpatioTemporel, GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
     CaracteristiqueDOeuvre
-from .routines import print_error, print_success, print_warning
 
 
 TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+'
