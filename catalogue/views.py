@@ -77,8 +77,8 @@ class EvenementListView(AjaxListView):
                 pk_list = sqs.values_list('pk', flat=True)
                 qs = qs.filter(pk__in=pk_list)
             bindings = {
-              'lieu': 'ancrage_debut__lieu__in',
-              'oeuvre': 'programme__oeuvre__in',
+                'lieu': 'ancrage_debut__lieu__in',
+                'oeuvre': 'programme__oeuvre__in',
             }
             filters = get_filters(bindings, data)
             qs = qs.filter(**filters).distinct()

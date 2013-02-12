@@ -74,5 +74,5 @@ class SaisonTestCase(TransactionTestCase):
                                            'saison_changelist'))
         self.assertEqual(response.status_code, 200)
         response = self.client.get(reverse('admin:catalogue_saison_change',
-                                      args=[self.saison.pk]))
+                                           args=[self.saison.pk]))
         self.assertEqual(response.status_code, 200)
