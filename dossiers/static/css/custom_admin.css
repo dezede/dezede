@@ -1,0 +1,3 @@
+input[type="text"], input[type="password"], .vDateField, .vTimeField, .vIntegerField, .vPositiveSmallIntegerField, .vManyToManyRawIdAdminField, .vForeignKeyRawIdAdminField {
+  width: 600px;
+}
