@@ -341,10 +341,10 @@ class AuteurQuerySet(CustomQuerySet):
         d = defaultdict(list)
         for auteur in auteurs:
             d[auteur.profession].append(auteur.individu)
-        return str_list(
+        return mark_safe(str_list(
             '%s [%s]' % (str_list_w_last(i.html(tags=tags) for i in ins),
                          p.short_html(tags=tags))
-                for p, ins in d.items())
+                for p, ins in d.items()))
 
 
 class AuteurManager(CustomManager):
