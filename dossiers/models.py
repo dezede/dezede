@@ -48,23 +48,26 @@ class DossierDEvenements(MPTTModel, CustomModel):
         return 'dossierdevenements_data_detail', (self.pk,)
 
     def get_queryset(self):
-        if self.evenements.exists():
+        if self.pk and self.evenements.exists():
             return self.evenements.all()
         kwargs = {}
         if self.debut:
             kwargs['ancrage_debut__date__gte'] = self.debut
         if self.fin:
             kwargs['ancrage_debut__date__lte'] = self.fin
-        if self.lieux.exists():
-            kwargs['ancrage_debut__lieu__in'] = self.lieux.all()
-        if self.oeuvres.exists():
-            kwargs['programme__oeuvre__in'] = self.oeuvres.all()
-        if self.auteurs.exists():
-            kwargs['programme__oeuvre__auteurs__individu__in'] \
-                = self.auteurs.all()
+        if self.pk:
+            if self.lieux.exists():
+                kwargs['ancrage_debut__lieu__in'] = self.lieux.all()
+            if self.oeuvres.exists():
+                kwargs['programme__oeuvre__in'] = self.oeuvres.all()
+            if self.auteurs.exists():
+                kwargs['programme__oeuvre__auteurs__individu__in'] \
+                    = self.auteurs.all()
         if self.circonstance:
             kwargs['circonstance__icontains'] = self.circonstance
-        return Evenement.objects.filter(**kwargs).distinct()
+        if kwargs:
+            return Evenement.objects.filter(**kwargs).distinct()
+        return Evenement.objects.none()
     get_queryset.short_description = _('ensemble de données')
 
     def get_count(self):
