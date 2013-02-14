@@ -147,10 +147,10 @@ dl.dl-horizontal dd+dt, dl.dl-horizontal dd+dt+dd {
   -webkit-column-gap: 30px;
   -webkit-column-fill: auto;
   -moz-column-count: 2;
-  -moz-column-gap: 20px;
+  -moz-column-gap: 30px;
   -moz-column-fill: auto;
   column-count: 2;
-  column-gap: 20px;
+  column-gap: 30px;
   column-fill: auto;
 }
 
