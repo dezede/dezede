@@ -142,6 +142,22 @@ dl.dl-horizontal dd+dt, dl.dl-horizontal dd+dt+dd {
   border: 1px solid black;
 }
 
+.columns2 {
+  -webkit-column-count: 2;
+  -webkit-column-gap: 30px;
+  -webkit-column-fill: auto;
+  -moz-column-count: 2;
+  -moz-column-gap: 20px;
+  -moz-column-fill: auto;
+  column-count: 2;
+  column-gap: 20px;
+  column-fill: auto;
+}
+
+.column-cell {
+  -webkit-column-break-inside: avoid;
+}
+
 .result {
   border: 1.5px solid;
   border-radius: 5px;

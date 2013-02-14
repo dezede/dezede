@@ -13,14 +13,14 @@
     <h1>{% trans 'dossiers'|capfirst %}</h1>
   </div>
 
-  <div class="container-fluid">
+  <div class="columns2">
     {% for dossier in object_list %}
-      {% cycle '<div class="row-fluid">' '' %}
-      <div class="span6">
+      <div class="well column-cell">
         <div>
           <h2>{{ dossier }}</h2>
           {{ dossier.contenu|truncatewords_html:50 }}
         </div>
+        <hr />
         <div class="btn-group">
           <a href="{{ dossier.get_absolute_url }}" class="btn btn-primary">
             {% trans 'Présentation' %}
@@ -30,7 +30,6 @@
           </a>
         </div>
       </div>
-      {% cycle '' '</div>' %}
     {% empty %}
       {% trans 'Aucun dossier pour l’instant.' %}
     {% endfor %}
