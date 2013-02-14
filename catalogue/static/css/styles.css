@@ -144,19 +144,21 @@ dl.dl-horizontal dd+dt, dl.dl-horizontal dd+dt+dd {
 
 .columns2 {
   -webkit-column-count: 2;
-  -webkit-column-gap: 30px;
+  -webkit-column-gap: 0;
   -webkit-column-fill: auto;
   -moz-column-count: 2;
-  -moz-column-gap: 30px;
+  -moz-column-gap: 0;
   -moz-column-fill: auto;
   column-count: 2;
-  column-gap: 30px;
+  column-gap: 0;
   column-fill: auto;
 }
 
 .column-cell {
-  -webkit-column-break-inside: avoid;
+  display: inline-block;
+  margin: 6px;
 }
+
 
 .result {
   border: 1.5px solid;
@@ -407,5 +409,11 @@ form .results_on_deck>div {
 
   .side {
     position: static;
+  }
+
+  .columns2 {
+    -webkit-column-count: 1;
+    -moz-column-count: 1;
+    column-count: 1;
   }
 }
