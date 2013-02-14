@@ -373,8 +373,9 @@ form .results_on_deck>div {
 }
 
 @media (min-width: 768px) and (max-width: 980px) {
-  body {
-    padding-top: 0;
+  body:not(.mceContentBody) {
+    margin: 0;
+    padding: 0;
   }
 
   #content {
@@ -392,8 +393,16 @@ form .results_on_deck>div {
 }
 
 @media (max-width: 767px) {
-  body {
-    padding-top: 0;
+  body:not(.mceContentBody) {
+    margin: 0;
+    padding: 0;
+  }
+
+  #content {
+    margin: 0;
+    padding: 5px;
+    border: none;
+    border-radius: 0;
   }
 
   .side {
