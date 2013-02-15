@@ -11,7 +11,7 @@ class StudentProfile(Model):
     professor = ForeignKey(User, related_name='students',
                            verbose_name=_('professeur'))
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy(u'profil étudiant',
                                       u'profils étudiants', 1)
         verbose_name_plural = ungettext_lazy(u'profil étudiant',
