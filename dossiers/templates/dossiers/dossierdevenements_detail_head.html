@@ -3,7 +3,7 @@
 <div class="page-header">
   {% frontend_admin autorite=1 %}
   <h1>
-    {{ object.titre }}
+    {{ object.titre|safe }}
     <small>
       {% trans 'par' %}
       {{ object.owner.first_name }}

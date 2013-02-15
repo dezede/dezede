@@ -17,7 +17,7 @@
     {% for dossier in object_list %}
       <div class="well column-cell">
         <div>
-          <h2>{{ dossier }}</h2>
+          <h2>{{ dossier|safe }}</h2>
           {{ dossier.contenu|truncatewords_html:50 }}
         </div>
         <hr />
