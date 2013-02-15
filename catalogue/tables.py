@@ -19,7 +19,7 @@ class OeuvreTable(Table):
     auteurs = Column(accessor='auteurs_html', verbose_name=_('auteurs'),
                           order_by='auteurs__individu__nom')
 
-    class Meta:
+    class Meta(object):
         attrs = {'class': 'paleblue'}
 
 
@@ -35,7 +35,7 @@ class IndividuTable(Table):
                        order_by='ancrage_naissance')
     deces = Column(verbose_name=_('décès'), order_by='ancrage_deces')
 
-    class Meta:
+    class Meta(object):
         attrs = {'class': 'paleblue'}
 
 
@@ -48,7 +48,7 @@ class ProfessionTable(Table):
     oeuvres_count = Column(accessor='auteurs.oeuvres.count', orderable=False,
                            verbose_name=_('nombre d’œuvres'))
 
-    class Meta:
+    class Meta(object):
         attrs = {'class': 'paleblue'}
 
 
@@ -59,5 +59,5 @@ class PartieTable(Table):
                  verbose_name=_('interprètes'),
                  order_by='pupitres__elements_de_distribution__individus__nom')
 
-    class Meta:
+    class Meta(object):
         attrs = {'class': 'paleblue'}

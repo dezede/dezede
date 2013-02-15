@@ -16,7 +16,7 @@ __all__ = (b'IndividuForm', b'OeuvreForm', b'SourceForm', b'EvenementListForm')
 
 
 class IndividuForm(ModelForm):
-    class Meta:
+    class Meta(object):
         model = Individu
 
     def clean_designation(self):
@@ -32,23 +32,23 @@ class IndividuForm(ModelForm):
 
 
 class OeuvreForm(ModelForm):
-    class Meta:
+    class Meta(object):
         model = Oeuvre
         widgets = {
             b'prefixe_titre':
-            AutoCompleteWidget('oeuvre__prefixe_titre',
-                               attrs={'style': 'width: 50px;'}),
+                AutoCompleteWidget('oeuvre__prefixe_titre',
+                                   attrs={'style': 'width: 50px;'}),
             b'coordination':
-            AutoCompleteWidget('oeuvre__coordination',
-                               attrs={'style': 'width: 70px;'}),
+                AutoCompleteWidget('oeuvre__coordination',
+                                   attrs={'style': 'width: 70px;'}),
             b'prefixe_titre_secondaire':
-            AutoCompleteWidget('oeuvre__prefixe_titre_secondaire',
-                               attrs={'style': 'width: 50px;'}),
+                AutoCompleteWidget('oeuvre__prefixe_titre_secondaire',
+                                   attrs={'style': 'width: 50px;'}),
         }
 
 
 class SourceForm(ModelForm):
-    class Meta:
+    class Meta(object):
         model = Source
         widgets = {
             b'nom': AutoCompleteWidget('source__nom',

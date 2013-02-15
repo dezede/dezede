@@ -101,7 +101,7 @@ class CustomModel(Model):
                        verbose_name=_('transcripteur'))
     objects = CustomManager()
 
-    class Meta:
+    class Meta(object):
         abstract = True  # = prototype de modèle, et non un vrai modèle.
 
     def __init__(self, *args, **kwargs):
@@ -136,14 +136,14 @@ class AutoriteModel(CustomModel):
     notes = HTMLField(blank=True)
     objects = AutoriteManager()
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
 
 class SlugModel(Model):
     slug = AutoSlugField(populate_from='get_slug', always_update=True)
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     def get_slug(self):
@@ -154,7 +154,7 @@ class UniqueSlugModel(Model):
     slug = AutoSlugField(populate_from='get_slug', unique=True,
                          always_update=True)
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     def get_slug(self):
@@ -168,7 +168,7 @@ class Document(CustomModel):
     description = HTMLField(_('description'), blank=True)
     auteurs = GenericRelation('Auteur')
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('document', 'documents', 1)
         verbose_name_plural = ungettext_lazy('document', 'documents', 2)
         ordering = ['document']
@@ -194,7 +194,7 @@ class Illustration(CustomModel):
     commentaire = HTMLField(_('commentaire'), blank=True)
     GenericRelation('Auteur')
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('illustration', 'illustrations', 1)
         verbose_name_plural = ungettext_lazy('illustration',
                                              'illustrations', 2)
@@ -225,7 +225,7 @@ class Etat(CustomModel):
     public = BooleanField(_('publié'), default=True)
     slug = AutoSlugField(populate_from='nom')
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('état', 'états', 1)
         verbose_name_plural = ungettext_lazy('état', 'états', 2)
         ordering = ('slug',)

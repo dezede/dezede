@@ -24,7 +24,7 @@ class Prenom(CustomModel):
     classement = FloatField(_('classement'), default=1.0, db_index=True)
     favori = BooleanField(_('favori'), default=True, db_index=True)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('prénom', 'prénoms', 1)
         verbose_name_plural = ungettext_lazy('prénom', 'prénoms', 2)
         ordering = ('classement', 'prenom')
@@ -50,7 +50,7 @@ class TypeDeParenteDIndividus(CustomModel):
                             help_text=PLURAL_MSG)
     classement = FloatField(_('classement'), default=1.0, db_index=True)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('type de parenté d’individus',
                                       'types de parenté d’individus', 1)
         verbose_name_plural = ungettext_lazy(
@@ -75,7 +75,7 @@ class ParenteDIndividus(CustomModel):
     enfant = ForeignKey('Individu', related_name='parentes',
                         verbose_name=_('individu enfant'), db_index=True)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('parenté d’individus',
                                       'parentés d’individus', 1)
         verbose_name_plural = ungettext_lazy('parenté d’individus',
@@ -327,7 +327,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
                 raise ValidationError(_('Le décès ne peut précéder '
                                         'la naissance.'))
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('individu', 'individus', 1)
         verbose_name_plural = ungettext_lazy('individu', 'individus', 2)
         ordering = ('nom',)

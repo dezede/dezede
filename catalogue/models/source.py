@@ -23,7 +23,7 @@ class TypeDeSource(CustomModel, SlugModel):
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
                             db_index=True, help_text=PLURAL_MSG)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('type de source', 'types de source', 1)
         verbose_name_plural = ungettext_lazy('type de source',
                                              'types de source', 2)
@@ -114,7 +114,7 @@ class Source(AutoriteModel):
     has_program.short_description = _('Programme')
     has_program.boolean = True
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('source', 'sources', 1)
         verbose_name_plural = ungettext_lazy('source', 'sources', 2)
         ordering = ['date', 'nom', 'numero', 'page', 'type']

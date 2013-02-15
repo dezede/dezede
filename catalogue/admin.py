@@ -628,7 +628,7 @@ class SourceAdmin(CustomAdmin):
         #        }),
     )
 
-    class Media:
+    class Media(object):
         js = [
             '/static/tinymce_setup/tinymce_setup.js',
             '/static/tiny_mce/tiny_mce.js',

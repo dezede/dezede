@@ -49,7 +49,7 @@ class GenreDOeuvre(CustomModel, SlugModel):
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
         blank=True, null=True)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('genre d’œuvre', 'genres d’œuvre', 1)
         verbose_name_plural = ungettext_lazy('genre d’œuvre',
                                              'genres d’œuvre', 2)
@@ -80,13 +80,13 @@ class TypeDeCaracteristiqueDOeuvre(CustomModel):
         help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('type de caractéristique d’œuvre',
                                       'types de caracteristique d’œuvre', 1)
         verbose_name_plural = ungettext_lazy(
-                'type de caractéristique d’œuvre',
-                'types de caracteristique d’œuvre',
-                2)
+            'type de caractéristique d’œuvre',
+            'types de caracteristique d’œuvre',
+            2)
         ordering = ['classement']
         app_label = 'catalogue'
 
@@ -108,7 +108,7 @@ class CaracteristiqueDOeuvre(CustomModel):
         help_text=_('Par exemple, on peut choisir de classer'
                     'les découpages par nombre d’actes.'))
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('caractéristique d’œuvre',
                                       'caractéristiques d’œuvre', 1)
         verbose_name_plural = ungettext_lazy('caractéristique d’œuvre',
@@ -151,7 +151,7 @@ class Partie(MPTTModel, CustomModel, SlugModel):
 
     objects = TreeManager()
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('rôle ou instrument',
                                       'rôles et instruments', 1)
         verbose_name_plural = ungettext_lazy('rôle ou instrument',
@@ -159,7 +159,7 @@ class Partie(MPTTModel, CustomModel, SlugModel):
         ordering = ['classement', 'nom']
         app_label = 'catalogue'
 
-    class MPTTMeta:
+    class MPTTMeta(object):
         order_insertion_by = ['classement', 'nom']
 
     def interpretes(self):
@@ -224,7 +224,7 @@ class Pupitre(CustomModel):
 
     objects = PupitreManager()
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('pupitre', 'pupitres', 1)
         verbose_name_plural = ungettext_lazy('pupitre', 'pupitres', 2)
         ordering = ['partie']
@@ -271,7 +271,7 @@ class TypeDeParenteDOeuvres(CustomModel):
         max_length=130, blank=True, help_text=PLURAL_MSG)
     classement = FloatField(_('classement'), default=1.0, db_index=True)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('type de parenté d’œuvres',
                                       'types de parentés d’œuvres', 1)
         verbose_name_plural = ungettext_lazy('type de parenté d’œuvres',
@@ -303,7 +303,7 @@ class ParenteDOeuvres(CustomModel):
                        verbose_name=_('œuvre fille'), db_index=True)
     objects = ParenteDOeuvresManager()
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('parenté d’œuvres',
                                       'parentés d’œuvres', 1)
         verbose_name_plural = ungettext_lazy('parenté d’œuvres',
@@ -400,7 +400,7 @@ class Auteur(CustomModel):
                 Profession.DoesNotExist):
             pass
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
         verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
         ordering = ['profession', 'individu__nom']
@@ -585,13 +585,13 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             raise ValidationError(_('Un titre ou un genre doit au moins '
                                     'être précisé.'))
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('œuvre', 'œuvres', 1)
         verbose_name_plural = ungettext_lazy('œuvre', 'œuvres', 2)
         ordering = ['titre', 'genre', 'slug']
         app_label = 'catalogue'
 
-    class MPTTMeta:
+    class MPTTMeta(object):
         parent_attr = 'contenu_dans'
 
     def __unicode__(self):

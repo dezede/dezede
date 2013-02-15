@@ -75,7 +75,7 @@ class ElementDeDistribution(CustomModel):
 
     objects = ElementDeDistributionManager()
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('élément de distribution',
                                       'éléments de distribution', 1)
         verbose_name_plural = ungettext_lazy('élément de distribution',
@@ -124,7 +124,7 @@ class CaracteristiqueDElementDeProgramme(CustomModel):
     def pluriel(self):
         return calc_pluriel(self)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy(
             'caractéristique d’élément de programme',
             'caractéristiques d’élément de programme',
@@ -212,7 +212,7 @@ class ElementDeProgramme(AutoriteModel):
             raise ValidationError(_('Vous devez remplir au moins « Œuvre » ou '
                                     '« Autre ».'))
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('élément de programme',
                                       'éléments de programme', 1)
         verbose_name_plural = ungettext_lazy('élément de programme',
@@ -290,7 +290,7 @@ class Evenement(AutoriteModel):
     has_source.boolean = True
     has_source.admin_order_field = 'sources'
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('événement', 'événements', 1)
         verbose_name_plural = ungettext_lazy('événement', 'événements', 2)
         ordering = ('ancrage_debut',)

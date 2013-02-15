@@ -38,7 +38,7 @@ class NatureDeLieu(CustomModel, SlugModel):
                             'référent, ici choisi comme étant ceux de nature '
                             '« ville »'))))
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('nature de lieu', 'natures de lieu', 1)
         verbose_name_plural = ungettext_lazy('nature de lieu',
                                              'natures de lieu', 2)
@@ -118,10 +118,10 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
         if self.parent == self:
             raise ValidationError(_('Le lieu a une parenté avec lui-même.'))
 
-    class MPTTMeta:
+    class MPTTMeta(object):
         order_insertion_by = ['nom']
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('lieu ou institution',
                                       'lieux ou institutions', 1)
         verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
@@ -144,7 +144,7 @@ class Saison(CustomModel):
     debut = DateField(_('début'), help_text=DATE_MSG)
     fin = DateField(_('fin'))
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('saison', 'saisons', 1)
         verbose_name_plural = ungettext_lazy('saison', 'saisons', 2)
         ordering = ['lieu', 'debut']
@@ -249,7 +249,7 @@ class AncrageSpatioTemporel(CustomModel):
             raise ValidationError(_('Il faut au moins une date ou un lieu '
                                     '(ils peuvent n’être qu’approximatifs)'))
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('ancrage spatio-temporel',
                                       'ancrages spatio-temporels', 1)
         verbose_name_plural = ungettext_lazy('ancrage spatio-temporel',

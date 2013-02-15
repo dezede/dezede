@@ -28,7 +28,7 @@ class Profession(MPTTModel, CustomModel, UniqueSlugModel):
 
     objects = TreeManager()
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('profession', 'professions', 1)
         verbose_name_plural = ungettext_lazy('profession', 'professions', 2)
         ordering = ('slug',)
@@ -105,7 +105,7 @@ class Devise(CustomModel):
     symbole = CharField(max_length=10, help_text=ex(_('€')), unique=True,
                         db_index=True)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('devise', 'devises', 1)
         verbose_name_plural = ungettext_lazy('devise', 'devises', 2)
         app_label = 'catalogue'
@@ -125,7 +125,7 @@ class Engagement(CustomModel):
     devise = ForeignKey('Devise', blank=True, null=True, db_index=True,
         related_name='engagements')
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('engagement', 'engagements', 1)
         verbose_name_plural = ungettext_lazy('engagement', 'engagements', 2)
         app_label = 'catalogue'
@@ -137,7 +137,7 @@ class Engagement(CustomModel):
 class TypeDePersonnel(CustomModel):
     nom = CharField(max_length=100, unique=True, db_index=True)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('type de personnel',
                                       'types de personnel', 1)
         verbose_name_plural = ungettext_lazy('type de personnel',
@@ -156,7 +156,7 @@ class Personnel(CustomModel):
     engagements = ManyToManyField('Engagement', related_name='personnels',
                                   db_index=True)
 
-    class Meta:
+    class Meta(object):
         verbose_name = ungettext_lazy('personnel', 'personnels', 1)
         verbose_name_plural = ungettext_lazy('personnel', 'personnels', 2)
         app_label = 'catalogue'
