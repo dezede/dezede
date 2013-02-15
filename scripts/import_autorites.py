@@ -72,7 +72,7 @@ def build_individu(individu_str):
         'pseudonyme': pseudonyme,
         'ancrage_naissance': ancrage_naissance,
         'ancrage_deces': ancrage_deces,
-    }, unique_keys=['nom', 'prenoms'])
+    }, unique_keys=['nom', 'prenoms__prenom'])
     return individu
 
 
@@ -83,8 +83,10 @@ def build_auteurs(individus_str, nom_profession,
                   nom_pluriel_profession=None):
     if nom_pluriel_profession is None:
         nom_pluriel_profession = nom_profession + 's'
-    profession = Profession.objects.get_or_create(
-        nom=nom_profession, nom_pluriel=nom_pluriel_profession)[0]
+    profession = get_or_create(
+        Profession, {
+            'nom': nom_profession, 'nom_pluriel': nom_pluriel_profession
+        }, unique_keys=['nom'])
     individus = []
     for individu_str in split_individus(individus_str):
         individu = build_individu(individu_str)

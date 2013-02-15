@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from django.contrib.contenttypes.generic import GenericRelation
-from django.db.models import ManyToManyField
+from django.db.models import ManyToManyField, Manager
 from django.db.models.query import QuerySet
 from django.utils.encoding import smart_unicode
 from ..utils import notify_send, print_info
@@ -68,7 +68,7 @@ def get_changed_kwargs(obj, new_kwargs):
 def separate_m2m_kwargs(Model, filter_kwargs):
     filter_kwargs = filter_kwargs.copy()
     m2m_kwargs = {k: v for k, v in filter_kwargs.items()
-                  if is_many_related_field(Model, k)}
+                  if is_many_related_field(Model, k.split('__')[0])}
     for k in m2m_kwargs:
         del filter_kwargs[k]
     return filter_kwargs, m2m_kwargs
@@ -80,7 +80,7 @@ def enlarged_filter(Model, filter_kwargs):
     excluded_pk_list = []
     for k, v in m2m_kwargs.items():
         for obj in qs:
-            if not are_sequences_equal(getattr(obj, k).all(), v):
+            if not are_sequences_equal(access_related(obj, k), v):
                 excluded_pk_list.append(obj.pk)
     return qs.exclude(pk__in=excluded_pk_list)
 
@@ -99,9 +99,38 @@ def enlarged_create(Model, filter_kwargs, commit=True):
     return obj
 
 
+def access_related(v, lookup):
+    base_k = lookup.split('__')[0]
+    new_lookup = '__'.join(lookup.split('__')[1:])
+    if isinstance(v, Manager):
+        v = v.all()
+    if is_sequence(v):
+        new_v = []
+        for item in v:
+            item = access_related(item, lookup)
+            if is_sequence(item):
+                new_v.extend(item)
+            else:
+                new_v.append(item)
+        return new_v
+    v = getattr(v, base_k)
+    if isinstance(v, Manager):
+        v = v.all()
+    if not new_lookup:
+        return v
+    return access_related(v, new_lookup)
+
+
 def get_or_create(Model, filter_kwargs, unique_keys=(), commit=True):
     if unique_keys:
-        unique_kwargs = {k: filter_kwargs[k] for k in unique_keys}
+        unique_kwargs = {}
+        for k in unique_keys:
+            base_k = k.split('__')[0]
+            lookup = '__'.join(k.split('__')[1:])
+            v = filter_kwargs[base_k]
+            if lookup:
+                v = access_related(v, lookup)
+            unique_kwargs[k] = v
     else:
         unique_kwargs = filter_kwargs
     try:
