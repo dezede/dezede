@@ -3,7 +3,7 @@
 {% load i18n routines endless sekizai_tags %}
 
 {% block title %}
-  {{ object }}
+  {{ object|striptags }}
 {% endblock %}
 
 
