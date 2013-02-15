@@ -27,7 +27,7 @@ class TypeDeSource(CustomModel, SlugModel):
         verbose_name = ungettext_lazy('type de source', 'types de source', 1)
         verbose_name_plural = ungettext_lazy('type de source',
                                              'types de source', 2)
-        ordering = ['slug']
+        ordering = ('slug',)
         app_label = 'catalogue'
 
     def pluriel(self):
@@ -117,7 +117,7 @@ class Source(AutoriteModel):
     class Meta(object):
         verbose_name = ungettext_lazy('source', 'sources', 1)
         verbose_name_plural = ungettext_lazy('source', 'sources', 2)
-        ordering = ['date', 'nom', 'numero', 'page', 'type']
+        ordering = ('date', 'nom', 'numero', 'page', 'type')
         app_label = 'catalogue'
 
     def __unicode__(self):

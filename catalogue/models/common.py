@@ -171,7 +171,7 @@ class Document(CustomModel):
     class Meta(object):
         verbose_name = ungettext_lazy('document', 'documents', 1)
         verbose_name_plural = ungettext_lazy('document', 'documents', 2)
-        ordering = ['document']
+        ordering = ('document',)
         app_label = 'catalogue'
 
     def __unicode__(self):
@@ -198,7 +198,7 @@ class Illustration(CustomModel):
         verbose_name = ungettext_lazy('illustration', 'illustrations', 1)
         verbose_name_plural = ungettext_lazy('illustration',
                                              'illustrations', 2)
-        ordering = ['image']
+        ordering = ('image',)
         app_label = 'catalogue'
 
     def __unicode__(self):

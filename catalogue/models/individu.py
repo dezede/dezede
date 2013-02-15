@@ -57,7 +57,7 @@ class TypeDeParenteDIndividus(CustomModel):
             'type de parenté d’individus',
             'types de parenté d’individus',
             2)
-        ordering = ['classement']
+        ordering = ('classement',)
         app_label = 'catalogue'
 
     def pluriel(self):

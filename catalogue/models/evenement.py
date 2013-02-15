@@ -80,7 +80,7 @@ class ElementDeDistribution(CustomModel):
                                       'éléments de distribution', 1)
         verbose_name_plural = ungettext_lazy('élément de distribution',
                                              'éléments de distribution', 2)
-        ordering = ['pupitre']
+        ordering = ('pupitre',)
         app_label = 'catalogue'
 
     def __unicode__(self):
@@ -133,7 +133,7 @@ class CaracteristiqueDElementDeProgramme(CustomModel):
             'caractéristique d’élément de programme',
             'caractéristiques d’élément de programme',
             2)
-        ordering = ['nom']
+        ordering = ('nom',)
         app_label = 'catalogue'
 
     def __unicode__(self):

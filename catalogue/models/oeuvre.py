@@ -53,7 +53,7 @@ class GenreDOeuvre(CustomModel, SlugModel):
         verbose_name = ungettext_lazy('genre d’œuvre', 'genres d’œuvre', 1)
         verbose_name_plural = ungettext_lazy('genre d’œuvre',
                                              'genres d’œuvre', 2)
-        ordering = ['slug']
+        ordering = ('slug',)
         app_label = 'catalogue'
 
     def html(self, tags=True, caps=False, pluriel=False):
@@ -87,7 +87,7 @@ class TypeDeCaracteristiqueDOeuvre(CustomModel):
             'type de caractéristique d’œuvre',
             'types de caracteristique d’œuvre',
             2)
-        ordering = ['classement']
+        ordering = ('classement',)
         app_label = 'catalogue'
 
     def pluriel(self):
@@ -156,7 +156,7 @@ class Partie(MPTTModel, CustomModel, SlugModel):
                                       'rôles et instruments', 1)
         verbose_name_plural = ungettext_lazy('rôle ou instrument',
                                              'rôles et instruments', 2)
-        ordering = ['classement', 'nom']
+        ordering = ('classement', 'nom',)
         app_label = 'catalogue'
 
     class MPTTMeta(object):
@@ -227,7 +227,7 @@ class Pupitre(CustomModel):
     class Meta(object):
         verbose_name = ungettext_lazy('pupitre', 'pupitres', 1)
         verbose_name_plural = ungettext_lazy('pupitre', 'pupitres', 2)
-        ordering = ['partie']
+        ordering = ('partie',)
         app_label = 'catalogue'
 
     def __unicode__(self):
@@ -276,7 +276,7 @@ class TypeDeParenteDOeuvres(CustomModel):
                                       'types de parentés d’œuvres', 1)
         verbose_name_plural = ungettext_lazy('type de parenté d’œuvres',
                                              'types de parentés d’œuvres', 2)
-        ordering = ['classement']
+        ordering = ('classement',)
         app_label = 'catalogue'
 
     def relatif_pluriel(self):
@@ -308,7 +308,7 @@ class ParenteDOeuvres(CustomModel):
                                       'parentés d’œuvres', 1)
         verbose_name_plural = ungettext_lazy('parenté d’œuvres',
                                              'parentés d’œuvres', 2)
-        ordering = ['type']
+        ordering = ('type',)
         app_label = 'catalogue'
         unique_together = ('type', 'mere', 'fille',)
 
@@ -403,7 +403,7 @@ class Auteur(CustomModel):
     class Meta(object):
         verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
         verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
-        ordering = ['profession', 'individu__nom']
+        ordering = ('profession', 'individu__nom')
         app_label = 'catalogue'
 
     def __unicode__(self):
@@ -588,7 +588,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     class Meta(object):
         verbose_name = ungettext_lazy('œuvre', 'œuvres', 1)
         verbose_name_plural = ungettext_lazy('œuvre', 'œuvres', 2)
-        ordering = ['titre', 'genre', 'slug']
+        ordering = ('titre', 'genre', 'slug')
         app_label = 'catalogue'
 
     class MPTTMeta(object):

@@ -142,7 +142,7 @@ class TypeDePersonnel(CustomModel):
                                       'types de personnel', 1)
         verbose_name_plural = ungettext_lazy('type de personnel',
                                              'types de personnel', 2)
-        ordering = ['nom']
+        ordering = ('nom',)
         app_label = 'catalogue'
 
     def __unicode__(self):

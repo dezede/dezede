@@ -42,7 +42,7 @@ class NatureDeLieu(CustomModel, SlugModel):
         verbose_name = ungettext_lazy('nature de lieu', 'natures de lieu', 1)
         verbose_name_plural = ungettext_lazy('nature de lieu',
                                              'natures de lieu', 2)
-        ordering = ['slug']
+        ordering = ('slug',)
         app_label = 'catalogue'
 
     def pluriel(self):
@@ -125,7 +125,7 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
         verbose_name = ungettext_lazy('lieu ou institution',
                                       'lieux ou institutions', 1)
         verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
-        ordering = ['nom']
+        ordering = ('nom',)
         app_label = 'catalogue'
         unique_together = ('nom', 'parent',)
 
@@ -147,7 +147,7 @@ class Saison(CustomModel):
     class Meta(object):
         verbose_name = ungettext_lazy('saison', 'saisons', 1)
         verbose_name_plural = ungettext_lazy('saison', 'saisons', 2)
-        ordering = ['lieu', 'debut']
+        ordering = ('lieu', 'debut')
         app_label = 'catalogue'
 
     def __unicode__(self):
@@ -254,8 +254,8 @@ class AncrageSpatioTemporel(CustomModel):
                                       'ancrages spatio-temporels', 1)
         verbose_name_plural = ungettext_lazy('ancrage spatio-temporel',
                                              'ancrages spatio-temporels', 2)
-        ordering = ['date', 'heure', 'lieu__parent', 'lieu', 'date_approx',
-                    'heure_approx', 'lieu_approx']
+        ordering = ('date', 'heure', 'lieu__parent', 'lieu', 'date_approx',
+                    'heure_approx', 'lieu_approx')
         app_label = 'catalogue'
 
     def __unicode__(self):
