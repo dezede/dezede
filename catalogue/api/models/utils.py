@@ -5,6 +5,7 @@ from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import ManyToManyField, Manager
 from django.db.models.query import QuerySet
 from django.utils.encoding import smart_unicode
+from catalogue.api.utils.console import info, colored_diff
 from ..utils import notify_send, print_info
 
 
@@ -12,10 +13,11 @@ def ask_for_choice(obj, k, v, new_v):
     intro = 'Deux possibilités pour le champ {0} de {1}'.format(k, obj)
     notify_send(intro)
     print_info(intro)
-    print_info('1. {} (valeur actuelle)'.format(smart_unicode(v)))
-    print_info('2. {} (valeur importable)'.format(smart_unicode(new_v)))
-    print_info('3. Créer un nouvel objet')
-    return raw_input('Que faire ? (par défaut 2) ')
+    v, new_v = colored_diff(smart_unicode(v), smart_unicode(new_v))
+    print('1. {} (valeur actuelle)'.format(v))
+    print('2. {} (valeur importable)'.format(new_v))
+    print('3. Créer un nouvel objet')
+    return raw_input(info('Que faire ? (par défaut 2) '))
 
 
 def get_field_class(object_or_Model, field_name):
