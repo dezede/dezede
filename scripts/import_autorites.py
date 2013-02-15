@@ -7,7 +7,8 @@ import sys
 from django.contrib.contenttypes.models import ContentType
 from django.template.defaultfilters import title
 from catalogue.api import build_ancrage
-from catalogue.api.models.utils import update_or_create, get_or_create
+from catalogue.api.models.utils import update_or_create, get_or_create, \
+                                       enlarged_get
 from catalogue.api.utils import notify_send, print_error, print_success, \
                                 print_warning
 from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
@@ -41,38 +42,38 @@ def split_individus(individus):
 
 def build_individu(individu_str):
     match = INDIVIDU_FULL_RE.match(individu_str)
-    if match:
-        nom = title(match.group('nom'))
-        pseudonyme = ''
-        prenom_str = match.group('prenoms')
-        dates = match.group('dates')
-        match_pseudonyme = PSEUDONYME_RE.match(prenom_str)
-        if match_pseudonyme:
-            prenom_str = match_pseudonyme.group('prenoms')
-            pseudonyme = match_pseudonyme.group('pseudonyme')
-        prenom_strs = [p for p in prenom_str.split() if p]
-        prenoms = [get_or_create(Prenom,
-                                 {'prenom': prenom_str, 'classement': i},
-                                 unique_keys=('prenom', 'classement'))
-                   for i, prenom_str in enumerate(prenom_strs)]
+    if not match:
+        return
+    nom = title(match.group('nom'))
+    pseudonyme = ''
+    prenom_str = match.group('prenoms')
+    dates = match.group('dates')
+    match_pseudonyme = PSEUDONYME_RE.match(prenom_str)
+    if match_pseudonyme:
+        prenom_str = match_pseudonyme.group('prenoms')
+        pseudonyme = match_pseudonyme.group('pseudonyme')
+    prenom_strs = [p for p in prenom_str.split() if p]
+    prenoms = [get_or_create(Prenom,
+                             {'prenom': prenom_str, 'classement': i},
+                             unique_keys=('prenom', 'classement'))
+               for i, prenom_str in enumerate(prenom_strs)]
 
-        naissance, deces = dates.split('-')
-        i = Individu.objects.filter(nom=nom, pseudonyme=pseudonyme,
-                                    prenoms__in=prenoms).distinct()
-        if i.exists():
-            assert i.count() == 1
-            return i[0]
-        ancrage_naissance = AncrageSpatioTemporel.objects.create(
-                                                         date_approx=naissance)
-        ancrage_deces = AncrageSpatioTemporel.objects.create(date_approx=deces)
-        individu = update_or_create(Individu, {
-            'nom': nom, 'prenoms': prenoms,
-            'pseudonyme': pseudonyme,
-            'ancrage_naissance': ancrage_naissance,
-            'ancrage_deces': ancrage_deces,
-        }, unique_keys=['nom', 'prenoms'])
-        individu.save()
-        return individu
+    naissance, deces = dates.split('-')
+    try:
+        return enlarged_get(Individu, {'nom': nom, 'pseudonyme': pseudonyme,
+                                       'prenoms': prenoms})
+    except Individu.DoesNotExist:
+        pass
+    ancrage_naissance = AncrageSpatioTemporel.objects.create(
+        date_approx=naissance)
+    ancrage_deces = AncrageSpatioTemporel.objects.create(date_approx=deces)
+    individu = update_or_create(Individu, {
+        'nom': nom, 'prenoms': prenoms,
+        'pseudonyme': pseudonyme,
+        'ancrage_naissance': ancrage_naissance,
+        'ancrage_deces': ancrage_deces,
+    }, unique_keys=['nom', 'prenoms'])
+    return individu
 
 
 Oeuvre_cti = ContentType.objects.get(app_label='catalogue', model='oeuvre')
@@ -127,11 +128,11 @@ def import_oeuvre(i, oeuvre, bindings):
                                          profession_pluriel))
         # Genre :
         genre = GenreDOeuvre.objects.get_or_create(
-                                      nom=oeuvre[bindings['genre']].strip())[0]
+            nom=oeuvre[bindings['genre']].strip())[0]
         # Caractéristiques :
         caracteristiques = []
         for type_nom, type_nom_pluriel, caracteristique_key \
-                                               in bindings['caracteristiques']:
+                in bindings['caracteristiques']:
             type = update_or_create(TypeDeCaracteristiqueDOeuvre, {
                 'nom': type_nom, 'nom_pluriel': type_nom_pluriel,
             }, unique_keys=['nom'])
@@ -144,22 +145,24 @@ def import_oeuvre(i, oeuvre, bindings):
         if creation_str:
             try:
                 ancrage_creation = build_ancrage(
-                                creation_str.split(bindings['creation'][1])[0])
+                    creation_str.split(bindings['creation'][1])[0])
             except:
                 print_warning('Impossible de parser la création de « %s »'
                               % titre)
         notes = oeuvre.get(bindings['notes'], '')
         # [Sauvegarde] :
-        oeuvre_obj = update_or_create(Oeuvre, {
-            'prefixe_titre': particule, 'titre': titre,
-            'coordination': coordination,
-            'prefixe_titre_secondaire': particule2, 'titre_secondaire': titre2,
-            'genre': genre,
-            'caracteristiques': caracteristiques,
-            'auteurs': auteurs,
-            'ancrage_creation': ancrage_creation,
-            'notes': notes,
-            }, unique_keys=['titre', 'titre_secondaire', 'genre'])
+        oeuvre_obj = update_or_create(
+            Oeuvre, {
+                'prefixe_titre': particule, 'titre': titre,
+                'coordination': coordination,
+                'prefixe_titre_secondaire': particule2,
+                'titre_secondaire': titre2,
+                'genre': genre,
+                'caracteristiques': caracteristiques,
+                'auteurs': auteurs,
+                'ancrage_creation': ancrage_creation,
+                'notes': notes,
+            }, unique_keys=['titre', 'titre_secondaire', 'genre', 'auteurs'])
         print_success(oeuvre_obj)
     except KeyboardInterrupt:
         raise KeyboardInterrupt
@@ -174,7 +177,7 @@ def import_csv_file(csv_file, bindings):
     oeuvres = list(csv.DictReader(csv_file))
     for i, oeuvre in enumerate(oeuvres):
         oeuvre = {k.decode('utf-8'): v.decode('utf-8')
-                                                    for k, v in oeuvre.items()}
+                  for k, v in oeuvre.items()}
         import_oeuvre(i, oeuvre, bindings)
 
 

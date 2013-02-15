@@ -65,22 +65,32 @@ def get_changed_kwargs(obj, new_kwargs):
     return changed_kwargs
 
 
-def enlarged_get(Model, filter_kwargs):
-    new_kwargs = {}
-    for k, v in filter_kwargs.items():
-        if is_many_related_field(Model, k):
-            new_kwargs[k + '__in'] = v
-        else:
-            new_kwargs[k] = v
-    return Model.objects.get(**new_kwargs)
-
-
-def enlarged_create(Model, filter_kwargs, commit=True):
+def separate_m2m_kwargs(Model, filter_kwargs):
     filter_kwargs = filter_kwargs.copy()
     m2m_kwargs = {k: v for k, v in filter_kwargs.items()
                   if is_many_related_field(Model, k)}
     for k in m2m_kwargs:
         del filter_kwargs[k]
+    return filter_kwargs, m2m_kwargs
+
+
+def enlarged_filter(Model, filter_kwargs):
+    filter_kwargs, m2m_kwargs = separate_m2m_kwargs(Model, filter_kwargs)
+    qs = Model.objects.filter(**filter_kwargs)
+    excluded_pk_list = []
+    for k, v in m2m_kwargs.items():
+        for obj in qs:
+            if not are_sequences_equal(getattr(obj, k).all(), v):
+                excluded_pk_list.append(obj.pk)
+    return qs.exclude(pk__in=excluded_pk_list)
+
+
+def enlarged_get(Model, filter_kwargs):
+    return enlarged_filter(Model, filter_kwargs).get()
+
+
+def enlarged_create(Model, filter_kwargs, commit=True):
+    filter_kwargs, m2m_kwargs = separate_m2m_kwargs(Model, filter_kwargs)
     obj = Model(**filter_kwargs)
     if commit:
         obj.save()
@@ -104,23 +114,29 @@ def is_sequence(v):
     return isinstance(v, (QuerySet, list, tuple))
 
 
-def are_sequences_equal(seq, other_seq):
-    if is_sequence(seq) and is_sequence(other_seq):
-        if isinstance(seq, QuerySet):
-            seq = seq.order_by(*seq.model._meta.ordering)
-        if isinstance(other_seq, QuerySet):
-            other_seq = seq.order_by(*other_seq.model._meta.ordering)
+def try_to_order(seq):
+    if isinstance(seq, QuerySet):
+        return seq.order_by(*seq.model._meta.ordering)
+    return seq
 
-        for seq_item, other_seq_item in map(None,
-                                            tuple(seq), tuple(other_seq)):
-            if seq_item != other_seq_item:
-                return False
-        return True
+
+def are_sequences_equal(seq, other_seq):
+    if not (is_sequence(seq) and is_sequence(other_seq)):
+        return
+
+    seq = try_to_order(seq)
+    other_seq = try_to_order(other_seq)
+
+    for seq_item, other_seq_item in map(None,
+                                        tuple(seq), tuple(other_seq)):
+        if seq_item != other_seq_item:
+            return False
+    return True
 
 
 def update_or_create(Model, filter_kwargs, unique_keys=(), commit=True):
     obj = get_or_create(Model, filter_kwargs, unique_keys=unique_keys,
-                           commit=commit)
+                        commit=commit)
     changed_kwargs = get_changed_kwargs(obj, filter_kwargs)
     if not changed_kwargs:
         return obj

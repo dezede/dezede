@@ -406,6 +406,12 @@ class Auteur(CustomModel):
         ordering = ('profession', 'individu__nom')
         app_label = 'catalogue'
 
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        return self.individu == other.individu \
+            and self.profession == other.profession
+
     def __unicode__(self):
         return self.html(tags=False)
 
