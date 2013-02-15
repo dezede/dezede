@@ -156,8 +156,7 @@ def are_sequences_equal(seq, other_seq):
     seq = try_to_order(seq)
     other_seq = try_to_order(other_seq)
 
-    for seq_item, other_seq_item in map(None,
-                                        tuple(seq), tuple(other_seq)):
+    for seq_item, other_seq_item in map(None, tuple(seq), tuple(other_seq)):
         if seq_item != other_seq_item:
             return False
     return True
