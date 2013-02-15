@@ -24,10 +24,11 @@ __all__ = (b'NatureDeLieu', b'Lieu', b'Saison', b'AncrageSpatioTemporel')
 
 
 class NatureDeLieu(CustomModel, SlugModel):
-    nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True)
+    nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
+                    db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
                             help_text=PLURAL_MSG)
-    referent = BooleanField(_('référent'), default=False,
+    referent = BooleanField(_('référent'), default=False, db_index=True,
         help_text=_('L’affichage d’un lieu remonte jusqu’au lieu référent.') \
         + ' ' \
         + ex(unicode(_('ville, institution, salle')),
@@ -60,11 +61,11 @@ class LieuManager(TreeManager, AutoriteManager):
 
 
 class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
-    nom = CharField(_('nom'), max_length=200)
-    parent = TreeForeignKey('self', null=True, blank=True,
+    nom = CharField(_('nom'), max_length=200, db_index=True)
+    parent = TreeForeignKey('self', null=True, blank=True, db_index=True,
                             related_name='enfant', verbose_name=_('parent'))
-    nature = ForeignKey(NatureDeLieu, related_name='lieux',
-        verbose_name=_('nature'))
+    nature = ForeignKey(NatureDeLieu, related_name='lieux', db_index=True,
+                        verbose_name=_('nature'))
     historique = HTMLField(_('historique'), blank=True)
     objects = LieuManager()
 
@@ -160,17 +161,21 @@ class Saison(CustomModel):
 
 
 class AncrageSpatioTemporel(CustomModel):
-    date = DateField(
-        _('date (précise)'), blank=True, null=True, help_text=DATE_MSG)
-    heure = TimeField(_('heure (précise)'), blank=True, null=True)
+    date = DateField(_('date (précise)'), blank=True, null=True, db_index=True,
+        help_text=DATE_MSG)
+    heure = TimeField(_('heure (précise)'), blank=True, null=True,
+        db_index=True)
     lieu = ForeignKey('Lieu', related_name='ancrages', blank=True, null=True,
+        db_index=True,
         verbose_name=_('lieu ou institution (précis)'))
     date_approx = CharField(_('date (approximative)'), max_length=200,
-        blank=True, help_text=_('Ne remplir que si la date est imprécise.'))
+        blank=True, db_index=True,
+        help_text=_('Ne remplir que si la date est imprécise.'))
     heure_approx = CharField(_('heure (approximative)'), max_length=200,
-        blank=True, help_text=_('Ne remplir que si l’heure est imprécise.'))
-    lieu_approx = CharField(
-        _('lieu ou institution (approximatif)'), max_length=200, blank=True,
+        blank=True, db_index=True,
+        help_text=_('Ne remplir que si l’heure est imprécise.'))
+    lieu_approx = CharField(_('lieu ou institution (approximatif)'),
+        max_length=200, blank=True, db_index=True,
         help_text=_('Ne remplir que si le lieu (ou institution) est '
                     'imprécis(e).'))
 

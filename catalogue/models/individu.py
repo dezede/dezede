@@ -20,9 +20,9 @@ __all__ = (b'Prenom', b'TypeDeParenteDIndividus', b'ParenteDIndividus',
 
 
 class Prenom(CustomModel):
-    prenom = CharField(_('prénom'), max_length=100)
-    classement = FloatField(_('classement'), default=1.0)
-    favori = BooleanField(_('favori'), default=True)
+    prenom = CharField(_('prénom'), max_length=100, db_index=True)
+    classement = FloatField(_('classement'), default=1.0, db_index=True)
+    favori = BooleanField(_('favori'), default=True, db_index=True)
 
     class Meta:
         verbose_name = ungettext_lazy('prénom', 'prénoms', 1)
@@ -44,10 +44,11 @@ class Prenom(CustomModel):
 
 
 class TypeDeParenteDIndividus(CustomModel):
-    nom = CharField(_('nom'), max_length=50, help_text=LOWER_MSG, unique=True)
+    nom = CharField(_('nom'), max_length=50, help_text=LOWER_MSG, unique=True,
+                    db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=55, blank=True,
                             help_text=PLURAL_MSG)
-    classement = FloatField(_('classement'), default=1.0)
+    classement = FloatField(_('classement'), default=1.0, db_index=True)
 
     class Meta:
         verbose_name = ungettext_lazy('type de parenté d’individus',
@@ -68,11 +69,11 @@ class TypeDeParenteDIndividus(CustomModel):
 
 class ParenteDIndividus(CustomModel):
     type = ForeignKey('TypeDeParenteDIndividus', related_name='parentes',
-                      verbose_name=_('type'))
+                      verbose_name=_('type'), db_index=True)
     parent = ForeignKey('Individu', related_name='enfances',
-                        verbose_name=_('individu parent'))
+                        verbose_name=_('individu parent'), db_index=True)
     enfant = ForeignKey('Individu', related_name='parentes',
-                        verbose_name=_('individu enfant'))
+                        verbose_name=_('individu enfant'), db_index=True)
 
     class Meta:
         verbose_name = ungettext_lazy('parenté d’individus',
@@ -94,17 +95,21 @@ class ParenteDIndividus(CustomModel):
 
 class Individu(AutoriteModel, UniqueSlugModel):
     particule_nom = CharField(
-        _('particule du nom d’usage'), max_length=10, blank=True)
+        _('particule du nom d’usage'), max_length=10, blank=True,
+        db_index=True)
     # TODO: rendre le champ nom 'blank'
-    nom = CharField(_('nom d’usage'), max_length=200)
+    nom = CharField(_('nom d’usage'), max_length=200, db_index=True)
     particule_nom_naissance = CharField(
-        _('particule du nom de naissance'), max_length=10, blank=True)
+        _('particule du nom de naissance'), max_length=10, blank=True,
+        db_index=True)
     nom_naissance = CharField(
-        _('nom de naissance'), max_length=200, blank=True,
+        _('nom de naissance'), max_length=200, blank=True, db_index=True,
         help_text=_('Ne remplir que s’il est différent du nom d’usage.'))
     prenoms = ManyToManyField('Prenom', related_name='individus', blank=True,
-                              null=True, verbose_name=_('prénoms'))
-    pseudonyme = CharField(_('pseudonyme'), max_length=200, blank=True)
+                              null=True, db_index=True,
+                              verbose_name=_('prénoms'))
+    pseudonyme = CharField(_('pseudonyme'), max_length=200, blank=True,
+                           db_index=True)
     DESIGNATIONS = (
         ('S', _('Standard (nom, prénoms et pseudonyme)')),
         ('P', _('Pseudonyme (uniquement)')),
@@ -120,23 +125,26 @@ class Individu(AutoriteModel, UniqueSlugModel):
         ('F', _('Mme')),
     )
     titre = CharField(pgettext('individu', 'titre'), max_length=1,
-                      choices=TITRES, blank=True)
+                      choices=TITRES, blank=True, db_index=True)
     ancrage_naissance = OneToOneField(
         'AncrageSpatioTemporel', blank=True, null=True,
-        related_name='individus_nes', verbose_name=_('ancrage de naissance'))
+        related_name='individus_nes', verbose_name=_('ancrage de naissance'),
+        db_index=True)
     ancrage_deces = OneToOneField(
         'AncrageSpatioTemporel', blank=True, null=True,
-        related_name='individus_decedes', verbose_name=_('ancrage du décès'))
+        related_name='individus_decedes', verbose_name=_('ancrage du décès'),
+        db_index=True)
     ancrage_approx = OneToOneField(
         'AncrageSpatioTemporel', blank=True, null=True,
         related_name='individus', verbose_name=_('ancrage approximatif'),
-        help_text=_('Ne remplir que si on ne connaît aucune date précise.'))
+        help_text=_('Ne remplir que si on ne connaît aucune date précise.'),
+        db_index=True)
     professions = ManyToManyField(
         'Profession', related_name='individus', blank=True, null=True,
-        verbose_name=_('professions'))
+        verbose_name=_('professions'), db_index=True)
     enfants = ManyToManyField(
         'self', through='ParenteDIndividus', related_name='parents',
-        symmetrical=False)
+        symmetrical=False, db_index=True)
     biographie = HTMLField(_('biographie'), blank=True)
 
     def get_slug(self):

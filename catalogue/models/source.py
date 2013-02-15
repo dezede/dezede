@@ -18,10 +18,10 @@ __all__ = (b'TypeDeSource', b'Source')
 
 
 class TypeDeSource(CustomModel, SlugModel):
-    nom = CharField(max_length=200, help_text=LOWER_MSG, unique=True)
-    nom_pluriel = CharField(max_length=230, blank=True,
-        verbose_name=_('nom (au pluriel)'),
-        help_text=PLURAL_MSG)
+    nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
+                    db_index=True)
+    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
+                            db_index=True, help_text=PLURAL_MSG)
 
     class Meta:
         verbose_name = ungettext_lazy('type de source', 'types de source', 1)
@@ -38,21 +38,21 @@ class TypeDeSource(CustomModel, SlugModel):
 
 
 class Source(AutoriteModel):
-    nom = CharField(_('nom'), max_length=200,
+    nom = CharField(_('nom'), max_length=200, db_index=True,
                     help_text=ex(_('Journal de Rouen')))
-    numero = CharField(_('numéro'), max_length=50, blank=True,
+    numero = CharField(_('numéro'), max_length=50, blank=True, db_index=True,
                        help_text=_('Sans « № »') + '. ' + ex('52'))
-    date = DateField(_('date'), help_text=DATE_MSG)
+    date = DateField(_('date'), db_index=True, help_text=DATE_MSG)
     page = CharField(_('page'), max_length=50, blank=True,
                      help_text=_('Sans « p. »') + '. ' + ex('3'))
-    type = ForeignKey('TypeDeSource', related_name='sources',
+    type = ForeignKey('TypeDeSource', related_name='sources', db_index=True,
         help_text=ex(_('compte rendu')), verbose_name=_('type'))
     contenu = HTMLField(_('contenu'), blank=True,
         help_text=_('Recopié tel quel, avec les fautes d’orthographe suivies '
                     'de « [<em>sic</em>] » le cas échéant.'))
     auteurs = GenericRelation('Auteur')
     evenements = ManyToManyField('Evenement', related_name='sources',
-        blank=True, null=True, verbose_name=_('événements'))
+        blank=True, null=True, db_index=True, verbose_name=_('événements'))
 
     @permalink
     def get_absolute_url(self):

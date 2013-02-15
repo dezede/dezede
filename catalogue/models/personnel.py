@@ -17,12 +17,13 @@ __all__ = (b'Profession', b'Devise', b'Engagement', b'TypeDePersonnel',
 
 
 class Profession(MPTTModel, CustomModel, UniqueSlugModel):
-    nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
+    nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
+                    db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
     nom_feminin = CharField(_('nom (au féminin)'), max_length=230, blank=True,
         help_text=_('Ne préciser que s’il est différent du nom.'))
-    parent = TreeForeignKey('Profession', blank=True, null=True,
+    parent = TreeForeignKey('Profession', blank=True, null=True, db_index=True,
                             related_name='enfant', verbose_name=_('parent'))
 
     objects = TreeManager()
@@ -100,8 +101,9 @@ class Devise(CustomModel):
     Modélisation naïve d’une unité monétaire.
     """
     nom = CharField(max_length=200, blank=True, help_text=ex(_('euro')),
-        unique=True)
-    symbole = CharField(max_length=10, help_text=ex(_('€')), unique=True)
+        unique=True, db_index=True)
+    symbole = CharField(max_length=10, help_text=ex(_('€')), unique=True,
+                        db_index=True)
 
     class Meta:
         verbose_name = ungettext_lazy('devise', 'devises', 1)
@@ -115,10 +117,12 @@ class Devise(CustomModel):
 
 
 class Engagement(CustomModel):
-    individus = ManyToManyField('Individu', related_name='engagements')
-    profession = ForeignKey('Profession', related_name='engagements')
-    salaire = FloatField(blank=True, null=True)
-    devise = ForeignKey('Devise', blank=True, null=True,
+    individus = ManyToManyField('Individu', related_name='engagements',
+                                db_index=True)
+    profession = ForeignKey('Profession', related_name='engagements',
+                            db_index=True)
+    salaire = FloatField(blank=True, null=True, db_index=True)
+    devise = ForeignKey('Devise', blank=True, null=True, db_index=True,
         related_name='engagements')
 
     class Meta:
@@ -131,7 +135,7 @@ class Engagement(CustomModel):
 
 
 class TypeDePersonnel(CustomModel):
-    nom = CharField(max_length=100, unique=True)
+    nom = CharField(max_length=100, unique=True, db_index=True)
 
     class Meta:
         verbose_name = ungettext_lazy('type de personnel',
@@ -146,9 +150,11 @@ class TypeDePersonnel(CustomModel):
 
 
 class Personnel(CustomModel):
-    type = ForeignKey('TypeDePersonnel', related_name='personnels')
-    saison = ForeignKey('Saison', related_name='personnels')
-    engagements = ManyToManyField('Engagement', related_name='personnels')
+    type = ForeignKey('TypeDePersonnel', related_name='personnels',
+                      db_index=True)
+    saison = ForeignKey('Saison', related_name='personnels', db_index=True)
+    engagements = ManyToManyField('Engagement', related_name='personnels',
+                                  db_index=True)
 
     class Meta:
         verbose_name = ungettext_lazy('personnel', 'personnels', 1)

@@ -33,11 +33,11 @@ __all__ = (b'GenreDOeuvre', b'TypeDeCaracteristiqueDOeuvre',
 
 
 class GenreDOeuvre(CustomModel, SlugModel):
-    nom = CharField(max_length=255, help_text=LOWER_MSG, unique=True)
-    nom_pluriel = CharField(max_length=430, blank=True,
-        verbose_name=_('nom (au pluriel)'),
+    nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
+                    db_index=True)
+    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
         help_text=PLURAL_MSG)
-    referent = BooleanField(_('référent'), default=False,
+    referent = BooleanField(_('référent'), default=False, db_index=True,
         help_text=_('L’affichage d’une œuvre remonte jusqu’à l’œuvre '
                     'référente la contenant.') \
             + ' ' \
@@ -74,9 +74,10 @@ class GenreDOeuvre(CustomModel, SlugModel):
 
 
 class TypeDeCaracteristiqueDOeuvre(CustomModel):
-    nom = CharField(max_length=200, help_text=ex(_('tonalité')), unique=True)
-    nom_pluriel = CharField(max_length=230, blank=True,
-        verbose_name=_('nom (au pluriel)'), help_text=PLURAL_MSG)
+    nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
+                    unique=True, db_index=True)
+    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
+        help_text=PLURAL_MSG)
     classement = FloatField(default=1.0)
 
     class Meta:
@@ -98,10 +99,12 @@ class TypeDeCaracteristiqueDOeuvre(CustomModel):
 
 class CaracteristiqueDOeuvre(CustomModel):
     type = ForeignKey('TypeDeCaracteristiqueDOeuvre',
-        related_name='caracteristiques_d_oeuvre')
+        related_name='caracteristiques_d_oeuvre', db_index=True,
+        verbose_name=_('type'))
     # TODO: Changer valeur en nom ?
-    valeur = CharField(max_length=400, help_text=ex(_('en trois actes')))
-    classement = FloatField(default=1.0,
+    valeur = CharField(_('valeur'), max_length=400,
+                       help_text=ex(_('en trois actes')))
+    classement = FloatField(_('classement'), default=1.0, db_index=True,
         help_text=_('Par exemple, on peut choisir de classer'
                     'les découpages par nombre d’actes.'))
 
@@ -110,7 +113,7 @@ class CaracteristiqueDOeuvre(CustomModel):
                                       'caractéristiques d’œuvre', 1)
         verbose_name_plural = ungettext_lazy('caractéristique d’œuvre',
                                              'caractéristiques d’œuvre', 2)
-        ordering = ['type', 'classement', 'valeur']
+        ordering = ('type', 'classement', 'valeur')
         app_label = 'catalogue'
 
     def html(self, tags=True):
@@ -132,18 +135,19 @@ class Partie(MPTTModel, CustomModel, SlugModel):
     Pour plus de compréhensibilité, on affiche « rôle ou instrument » au lieu
     de « partie ».
     """
-    nom = CharField(max_length=200,
+    nom = CharField(_('nom'), max_length=200, db_index=True,
         help_text=_('Le nom d’une partie de la partition, '
                     'instrumentale ou vocale.'))
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
     professions = ManyToManyField('Profession', related_name='parties',
+        verbose_name=_('professions'), db_index=True,
         help_text=_('La ou les profession(s) capable(s) '
                     'de jouer ce rôle ou cet instrument.'))
     parent = TreeForeignKey('Partie', related_name='enfant',
-                            blank=True, null=True,
+                            blank=True, null=True, db_index=True,
                             verbose_name=_('rôle ou instrument parent'))
-    classement = FloatField(default=1.0)
+    classement = FloatField(_('classement'), default=1.0, db_index=True)
 
     objects = TreeManager()
 
@@ -211,9 +215,12 @@ class PupitreManager(CustomManager):
 
 
 class Pupitre(CustomModel):
-    partie = ForeignKey('Partie', related_name='pupitres')
-    quantite_min = IntegerField(_('quantité minimale'), default=1)
-    quantite_max = IntegerField(_('quantité maximale'), default=1)
+    partie = ForeignKey('Partie', related_name='pupitres',
+                        verbose_name=_('partie'), db_index=True)
+    quantite_min = IntegerField(_('quantité minimale'), default=1,
+                                db_index=True)
+    quantite_max = IntegerField(_('quantité maximale'), default=1,
+                                db_index=True)
 
     objects = PupitreManager()
 
@@ -256,11 +263,13 @@ class Pupitre(CustomModel):
 
 
 class TypeDeParenteDOeuvres(CustomModel):
-    nom = CharField(max_length=100, help_text=LOWER_MSG, unique=True)
-    nom_relatif = CharField(max_length=100, help_text=LOWER_MSG, unique=True)
-    nom_relatif_pluriel = CharField(max_length=130, blank=True,
-        verbose_name=_('nom relatif (au pluriel)'), help_text=PLURAL_MSG)
-    classement = FloatField(default=1.0)
+    nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG, unique=True,
+                    db_index=True)
+    nom_relatif = CharField(_('nom relatif'), max_length=100,
+                            help_text=LOWER_MSG, unique=True, db_index=True)
+    nom_relatif_pluriel = CharField(_('nom relatif (au pluriel)'),
+        max_length=130, blank=True, help_text=PLURAL_MSG)
+    classement = FloatField(_('classement'), default=1.0, db_index=True)
 
     class Meta:
         verbose_name = ungettext_lazy('type de parenté d’œuvres',
@@ -286,11 +295,12 @@ class ParenteDOeuvresManager(CustomManager):
 
 
 class ParenteDOeuvres(CustomModel):
-    type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes')
+    type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes',
+                      verbose_name=_('type'), db_index=True)
     mere = ForeignKey('Oeuvre', related_name='parentes_filles',
-                      verbose_name=_('œuvre mère'))
+                      verbose_name=_('œuvre mère'), db_index=True)
     fille = ForeignKey('Oeuvre', related_name='parentes_meres',
-                       verbose_name=_('œuvre fille'))
+                       verbose_name=_('œuvre fille'), db_index=True)
     objects = ParenteDOeuvresManager()
 
     class Meta:
@@ -368,13 +378,13 @@ class AuteurManager(CustomManager):
 
 
 class Auteur(CustomModel):
-    content_type = ForeignKey(ContentType)
-    object_id = PositiveIntegerField()
+    content_type = ForeignKey(ContentType, db_index=True)
+    object_id = PositiveIntegerField(db_index=True)
     content_object = GenericForeignKey()
     individu = ForeignKey('Individu', related_name='auteurs',
-                          verbose_name=_('individu'))
+                          verbose_name=_('individu'), db_index=True)
     profession = ForeignKey('Profession', related_name='auteurs',
-                            verbose_name=_('profession'))
+                            verbose_name=_('profession'), db_index=True)
     objects = AuteurManager()
 
     def html(self, tags=True):
@@ -401,34 +411,34 @@ class Auteur(CustomModel):
 
 
 class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
-    prefixe_titre = CharField(max_length=20, blank=True,
-        verbose_name=_('préfixe du titre'))
-    titre = CharField(max_length=200, blank=True)
-    coordination = CharField(max_length=20, blank=True,
-        verbose_name=_('coordination'))
-    prefixe_titre_secondaire = CharField(max_length=20, blank=True,
-        verbose_name=_('préfixe du titre secondaire'))
-    titre_secondaire = CharField(max_length=200, blank=True,
-        verbose_name=_('titre secondaire'))
+    prefixe_titre = CharField(_('préfixe du titre'), max_length=20, blank=True,
+                              db_index=True)
+    titre = CharField(_('titre'), max_length=200, blank=True, db_index=True)
+    coordination = CharField(_('coordination'), max_length=20, blank=True,
+                             db_index=True)
+    prefixe_titre_secondaire = CharField(_('préfixe du titre secondaire'),
+         max_length=20, blank=True, db_index=True)
+    titre_secondaire = CharField(_('titre secondaire'), max_length=200,
+                                 blank=True, db_index=True)
     genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True,
-        null=True)
+        null=True, verbose_name=_('genre'), db_index=True)
     caracteristiques = ManyToManyField('CaracteristiqueDOeuvre', blank=True,
-        null=True, verbose_name=_('caractéristiques'))
+        null=True, verbose_name=_('caractéristiques'), db_index=True)
     auteurs = GenericRelation('Auteur')
     ancrage_creation = OneToOneField('AncrageSpatioTemporel',
-        related_name='oeuvres_creees', blank=True, null=True,
+        related_name='oeuvres_creees', blank=True, null=True, db_index=True,
         verbose_name=_('ancrage spatio-temporel de création'))
     pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
-                               null=True, verbose_name=_('effectif'))
-    contenu_dans = TreeForeignKey('self', null=True, blank=True,
+        null=True, verbose_name=_('effectif'), db_index=True)
+    contenu_dans = TreeForeignKey('self', null=True, blank=True, db_index=True,
                                   related_name='enfants',
                                   verbose_name=_('contenu dans'))
-    filles = ManyToManyField('self', through='ParenteDOeuvres',
+    filles = ManyToManyField('self', through='ParenteDOeuvres', db_index=True,
                              related_name='meres', symmetrical=False)
     lilypond = TextField(blank=True, verbose_name='LilyPond')
     description = HTMLField(blank=True)
     evenements = ManyToManyField('Evenement', through='ElementDeProgramme',
-                                 related_name='oeuvres')
+                                 related_name='oeuvres', db_index=True)
 
     objects = TreeManager()
 

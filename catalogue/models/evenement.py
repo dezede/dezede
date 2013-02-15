@@ -115,11 +115,11 @@ class ElementDeDistribution(CustomModel):
 
 
 class CaracteristiqueDElementDeProgramme(CustomModel):
-    nom = CharField(max_length=100, help_text=LOWER_MSG, unique=True)
-    nom_pluriel = CharField(
-        max_length=110, blank=True, verbose_name=_('nom (au pluriel)'),
-        help_text=PLURAL_MSG)
-    classement = FloatField(default=1.0)
+    nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG, unique=True,
+                    db_index=True)
+    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=110, blank=True,
+                            help_text=PLURAL_MSG)
+    classement = FloatField(default=1.0, db_index=True)
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -148,12 +148,12 @@ class CaracteristiqueDElementDeProgramme(CustomModel):
 
 
 class ElementDeProgramme(AutoriteModel):
-    evenement = ForeignKey(
-        'Evenement', related_name='programme', verbose_name=_('événement'))
-    oeuvre = ForeignKey(
-        'Oeuvre', related_name='elements_de_programme',
-        verbose_name=_('œuvre'), blank=True, null=True)
-    autre = CharField(max_length=500, blank=True)
+    evenement = ForeignKey('Evenement', related_name='programme',
+                           db_index=True, verbose_name=_('événement'))
+    oeuvre = ForeignKey('Oeuvre', related_name='elements_de_programme',
+                        verbose_name=_('œuvre'), blank=True, null=True,
+                        db_index=True)
+    autre = CharField(max_length=500, blank=True, db_index=True)
     caracteristiques = ManyToManyField(
         CaracteristiqueDElementDeProgramme,
         related_name='elements_de_programme', blank=True, null=True,
@@ -235,12 +235,13 @@ class ElementDeProgramme(AutoriteModel):
 
 class Evenement(AutoriteModel):
     ancrage_debut = OneToOneField(
-        'AncrageSpatioTemporel', related_name='evenements_debuts')
+        'AncrageSpatioTemporel', related_name='evenements_debuts',
+        db_index=True)
     ancrage_fin = OneToOneField(
         'AncrageSpatioTemporel', related_name='evenements_fins', blank=True,
-        null=True)
-    relache = BooleanField(verbose_name='relâche')
-    circonstance = CharField(max_length=500, blank=True)
+        null=True, db_index=True)
+    relache = BooleanField(verbose_name='relâche', db_index=True)
+    circonstance = CharField(max_length=500, blank=True, db_index=True)
     distribution = GenericRelation(ElementDeDistribution)
 
     @permalink
