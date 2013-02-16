@@ -507,11 +507,11 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def filles_in_order(self):
         return self.parentes_in_order('filles')
 
-    def calc_referent_ancestors(self, links=False):
+    def calc_referent_ancestors(self, tags=False, links=False):
         if not self.pk or self.contenu_dans is None or (self.genre
                                                      and  self.genre.referent):
             return ''
-        return self.contenu_dans.titre_html(links=links)
+        return self.contenu_dans.titre_html(tags=tags, links=links)
 
     def titre_complet(self):
         l = (self.prefixe_titre, self.titre, self.coordination,
@@ -524,7 +524,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         # FIXME: Nettoyer cette horreur
         out = ''
         auts = self.auteurs_html(tags)
-        pars = self.calc_referent_ancestors(links=ancestors_links)
+        pars = self.calc_referent_ancestors(tags=tags, links=ancestors_links)
         titre_complet = self.titre_complet()
         genre = self.genre
         caracteristiques = self.calc_caracteristiques(tags=tags)
