@@ -53,22 +53,41 @@ section {
 }
 
 footer {
-  margin-top: 20px;
-  height: 90px;
+  margin-top: 50px;
   padding: 10px;
-  text-align: center;
 }
 
-footer a:first-child {
+footer table {
+  width: 100%;
+}
+
+footer #softwares {
+  width: 50%;
+}
+
+footer #softwares span+span {
+  margin-left: 10px;
+}
+
+footer #softwares span {
+
+}
+
+footer #logos {
+  width: 50%;
+  text-align: right;
+}
+
+footer #logos a:first-child {
   margin-left: 0;
 }
 
-footer a {
+footer #logos a {
   display: inline-block;
   margin-left: 10px;
 }
 
-footer img {
+footer #logos img {
   vertical-align: middle;
 }
 
