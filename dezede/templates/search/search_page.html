@@ -5,21 +5,23 @@
 {% show_pages %}
 
 {% for result in object_list %}
-  <div class="result {{ result.model.class_name.lower }}">
-    <h3>{{ result.verbose_name|capfirst }}</h3>
-    {% if result.object.link %}
-      {{ result.object.link }}<br />
-    {% else %}
-      {{ result.object.html }}<br />
-    {% endif %}
-    <small>
-      {% if result.object.contenu %}
-        {% highlight result.object.contenu with query html_tag 'mark' %}
+  {% if result %}
+    <div class="result {{ result.model.class_name.lower }}">
+      <h3>{{ result.verbose_name|capfirst }}</h3>
+      {% if result.object.link %}
+        {{ result.object.link }}<br />
       {% else %}
-        {% highlight result.object.html with query html_tag 'mark' %}
+        {{ result.object.html }}<br />
       {% endif %}
-    </small>
-  </div>
+      <small>
+        {% if result.object.contenu %}
+          {% highlight result.object.contenu with query html_tag 'mark' %}
+        {% else %}
+          {% highlight result.object.html with query html_tag 'mark' %}
+        {% endif %}
+      </small>
+    </div>
+  {% endif %}
 {% endfor %}
 
 {% show_pages %}
