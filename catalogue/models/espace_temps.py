@@ -63,7 +63,7 @@ class LieuManager(TreeManager, AutoriteManager):
 class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, db_index=True)
     parent = TreeForeignKey('self', null=True, blank=True, db_index=True,
-                            related_name='enfant', verbose_name=_('parent'))
+                            related_name='enfants', verbose_name=_('parent'))
     nature = ForeignKey(NatureDeLieu, related_name='lieux', db_index=True,
                         verbose_name=_('nature'))
     historique = HTMLField(_('historique'), blank=True)
@@ -108,7 +108,7 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
             ancestors = self.get_ancestors(include_self=True)
             ancestors = ancestors.filter(Q(nature__referent=False)
                 | Q(nature__referent=True,
-                    enfant__nature__referent=False)).distinct()
+                    enfants__nature__referent=False)).distinct()
             out = ', '.join(a.nom for a in ancestors)
         return href(url, out, tags)
     html.short_description = _('rendu HTML')
