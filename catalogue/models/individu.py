@@ -89,9 +89,13 @@ class ParenteDIndividus(CustomModel):
         app_label = 'catalogue'
 
     def clean(self):
-        if self.parent == self.enfant:
-                raise ValidationError(_('Un individu ne peut avoir une '
-                                        'parenté avec lui-même.'))
+        try:
+            parent, enfant = self.parent, self.enfant
+        except Individu.DoesNotExist:
+            return
+        if parent and enfant and parent == enfant:
+            raise ValidationError(_('Un individu ne peut avoir une '
+                                    'parenté avec lui-même.'))
 
     def __unicode__(self):
         return _('%s, %s de %s') % (self.parent, self.type.nom,
