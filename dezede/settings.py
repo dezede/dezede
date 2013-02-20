@@ -17,6 +17,9 @@ ADMINS = (
 )
 
 SEND_BROKEN_LINK_EMAILS = True
+IGNORABLE_404_URLS = (
+    '/favicon.ico',
+)
 
 MANAGERS = ADMINS
 
