@@ -212,7 +212,7 @@ class Illustration(CustomModel):
     @staticmethod
     def autocomplete_search_fields():
         return ('legende__icontains', 'image__icontains',
-                'commentaire__icontains', 'auteurs__individu__nom',)
+                'commentaire__icontains',)
 
 
 class Etat(CustomModel):

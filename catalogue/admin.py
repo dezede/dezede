@@ -365,7 +365,8 @@ class IndividuAdmin(CustomAdmin):
                     'pseudonyme', 'titre', 'ancrage_naissance',
                     'ancrage_deces', 'calc_professions', 'etat', 'link',)
     list_editable = ('nom', 'titre', 'etat')
-    search_fields = ('nom', 'pseudonyme', 'nom_naissance',)
+    search_fields = ('nom', 'pseudonyme', 'nom_naissance',
+                     'prenoms__prenom',)
     list_filter = ('titre',)
     form = IndividuForm
     raw_id_fields = ('prenoms', 'ancrage_naissance', 'ancrage_deces',
