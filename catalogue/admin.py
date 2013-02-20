@@ -353,7 +353,10 @@ class PrenomAdmin(CustomAdmin):
 
 
 class TypeDeParenteDIndividusAdmin(CustomAdmin):
-    list_display = ('nom', 'nom_pluriel', 'classement',)
+    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'nom_relatif',
+                    'nom_relatif_pluriel', 'classement',)
+    list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
+                     'nom_relatif_pluriel', 'classement',)
 
 
 class IndividuAdmin(CustomAdmin):

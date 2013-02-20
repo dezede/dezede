@@ -48,6 +48,11 @@ class TypeDeParenteDIndividus(CustomModel):
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=55, blank=True,
                             help_text=PLURAL_MSG)
+    nom_relatif = CharField(_('nom relatif'), max_length=50, db_index=True,
+                            help_text=LOWER_MSG)
+    nom_relatif_pluriel = CharField(_('nom relatif (au pluriel)'),
+                                    max_length=55, help_text=PLURAL_MSG,
+                                    blank=True)
     classement = FloatField(_('classement'), default=1.0, db_index=True)
 
     class Meta(object):
@@ -91,6 +96,12 @@ class ParenteDIndividus(CustomModel):
     def __unicode__(self):
         return _('%s, %s de %s') % (self.parent, self.type.nom,
                                     self.enfant)
+
+    def pluriel(self):
+        return calc_pluriel(self)
+
+    def relatif_pluriel(self):
+        return calc_pluriel(self, attr_base='nom_relatif')
 
 
 class Individu(AutoriteModel, UniqueSlugModel):
