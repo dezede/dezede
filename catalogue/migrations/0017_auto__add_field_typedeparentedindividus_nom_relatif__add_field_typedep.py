@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'TypeDeParenteDIndividus.nom_relatif'
         db.add_column(u'catalogue_typedeparentedindividus', 'nom_relatif',
-                      self.gf('django.db.models.fields.CharField')(default='changez-moi', max_length=50, db_index=True),
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=50, db_index=True),
                       keep_default=False)
 
         # Adding field 'TypeDeParenteDIndividus.nom_relatif_pluriel'
