@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from datetime import datetime
 import re
 from ...models import NatureDeLieu, Lieu, AncrageSpatioTemporel
-from ...templatetags.extras import multiword_replace
 from ..exceptions import ParseError
 from .utils import get_or_create, update_or_create
 
@@ -17,10 +16,19 @@ MONTH_BINDINGS_FR = {
 }
 
 
+def multiple_replace(text, replacement_dict):
+    rc = re.compile('|'.join(map(re.escape, replacement_dict)))
+
+    def translate(match):
+        return replacement_dict[match.group(0)]
+
+    return rc.sub(translate, text)
+
+
 def translate_date_month(date_str, language='fr'):
     var_name = 'MONTH_BINDINGS_' + language.upper()
     month_bindings = globals().get(var_name, {})
-    return multiword_replace(date_str, month_bindings)
+    return multiple_replace(date_str, month_bindings)
 
 
 NATURE_DE_LIEU_NOMS = ('ville', 'institution', 'salle')
