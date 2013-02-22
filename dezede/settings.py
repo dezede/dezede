@@ -2,6 +2,8 @@
 # coding: utf-8
 import os
 from os import environ
+import re
+
 
 ugettext = lambda s: s
 
@@ -18,7 +20,7 @@ ADMINS = (
 
 SEND_BROKEN_LINK_EMAILS = True
 IGNORABLE_404_URLS = (
-    '/favicon.ico',
+    re.compile(r'^/favicon.ico$'),
 )
 
 MANAGERS = ADMINS
