@@ -135,14 +135,14 @@ class PartieManager(TreeManager, AutoriteManager):
     pass
 
 
-class Partie(MPTTModel, AutoriteModel, SlugModel):
+class Partie(MPTTModel, AutoriteModel, UniqueSlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
     une œuvre musicale.
     Pour plus de compréhensibilité, on affiche « rôle ou instrument » au lieu
     de « partie ».
     """
-    nom = CharField(_('nom'), max_length=200, db_index=True,
+    nom = CharField(_('nom'), max_length=200, db_index=True, unique=True,
         help_text=_('Le nom d’une partie de la partition, '
                     'instrumentale ou vocale.'))
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
