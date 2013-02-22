@@ -8,7 +8,7 @@ from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
 from tinymce.models import HTMLField
-from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     calc_pluriel, UniqueSlugModel
 from ..templatetags.extras import abbreviate
 from .evenement import Evenement
@@ -19,7 +19,7 @@ __all__ = (b'Prenom', b'TypeDeParenteDIndividus', b'ParenteDIndividus',
            b'Individu')
 
 
-class Prenom(CustomModel):
+class Prenom(CommonModel):
     prenom = CharField(_('prénom'), max_length=100, db_index=True)
     classement = FloatField(_('classement'), default=1.0, db_index=True)
     favori = BooleanField(_('favori'), default=True, db_index=True)
@@ -43,7 +43,7 @@ class Prenom(CustomModel):
         return 'prenom__icontains',
 
 
-class TypeDeParenteDIndividus(CustomModel):
+class TypeDeParenteDIndividus(CommonModel):
     nom = CharField(_('nom'), max_length=50, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=55, blank=True,
@@ -72,7 +72,7 @@ class TypeDeParenteDIndividus(CustomModel):
         return self.nom
 
 
-class ParenteDIndividus(CustomModel):
+class ParenteDIndividus(CommonModel):
     type = ForeignKey('TypeDeParenteDIndividus', related_name='parentes',
                       verbose_name=_('type'), db_index=True)
     parent = ForeignKey('Individu', related_name='enfances',

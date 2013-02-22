@@ -11,7 +11,7 @@ from django.utils.translation import pgettext, ungettext_lazy, \
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 from tinymce.models import HTMLField
-from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     AutoriteManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel
 from .evenement import Evenement
@@ -23,7 +23,7 @@ from .oeuvre import Oeuvre
 __all__ = (b'NatureDeLieu', b'Lieu', b'Saison', b'AncrageSpatioTemporel')
 
 
-class NatureDeLieu(CustomModel, SlugModel):
+class NatureDeLieu(CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
@@ -138,7 +138,7 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
                 'parent__nom__icontains')
 
 
-class Saison(CustomModel):
+class Saison(CommonModel):
     lieu = ForeignKey('Lieu', related_name='saisons',
                       verbose_name=_('lieu ou institution'))
     debut = DateField(_('début'), help_text=DATE_MSG)
@@ -160,7 +160,7 @@ class Saison(CustomModel):
                         '%(lieu)s, %(debut)d–%(fin)d') % d
 
 
-class AncrageSpatioTemporel(CustomModel):
+class AncrageSpatioTemporel(CommonModel):
     date = DateField(_('date (précise)'), blank=True, null=True, db_index=True,
         help_text=DATE_MSG)
     heure = TimeField(_('heure (précise)'), blank=True, null=True,

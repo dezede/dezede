@@ -8,11 +8,11 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from catalogue.models import Lieu, Oeuvre, Evenement, Individu
-from catalogue.models.common import CustomModel
+from catalogue.models.common import CommonModel
 from catalogue.models.functions import str_list_w_last
 
 
-class DossierDEvenements(MPTTModel, CustomModel):
+class DossierDEvenements(MPTTModel, CommonModel):
     titre = CharField(_('titre'), max_length=100)
     contenu = TextField(_('contenu'))
     debut = DateField(_('début'), blank=True, null=True)

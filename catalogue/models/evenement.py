@@ -16,8 +16,8 @@ from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
 from reversion.models import post_revision_commit
-from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-    calc_pluriel, CustomManager, CustomQuerySet
+from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+    calc_pluriel, CommonQuerySet, CommonManager
 
 from .functions import str_list, str_list_w_last, href, hlp
 from .source import TypeDeSource
@@ -27,7 +27,7 @@ __all__ = (b'ElementDeDistribution', b'CaracteristiqueDElementDeProgramme',
            b'ElementDeProgramme', b'Evenement')
 
 
-class ElementDeDistributionQuerySet(CustomQuerySet):
+class ElementDeDistributionQuerySet(CommonQuerySet):
     def individus(self):
         return get_model('catalogue', 'Individu').objects.filter(
             pk__in=self.values_list('individus', flat=True))
@@ -44,7 +44,7 @@ class ElementDeDistributionQuerySet(CustomQuerySet):
         return ', '.join(e.html(tags=tags) for e in self.iterator())
 
 
-class ElementDeDistributionManager(CustomManager):
+class ElementDeDistributionManager(CommonManager):
     use_for_related_fields = True
 
     def get_query_set(self):
@@ -60,7 +60,7 @@ class ElementDeDistributionManager(CustomManager):
         return self.all().html(tags=tags)
 
 
-class ElementDeDistribution(CustomModel):
+class ElementDeDistribution(CommonModel):
     individus = ManyToManyField('Individu', verbose_name=_('individus'),
                                 related_name='elements_de_distribution')
     pupitre = ForeignKey(
@@ -114,7 +114,7 @@ class ElementDeDistribution(CustomModel):
         )
 
 
-class CaracteristiqueDElementDeProgramme(CustomModel):
+class CaracteristiqueDElementDeProgramme(CommonModel):
     nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=110, blank=True,

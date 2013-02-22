@@ -18,9 +18,8 @@ from django.utils.translation import ungettext_lazy, ugettext, \
 from django.utils.safestring import mark_safe
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from tinymce.models import HTMLField
-from .common import CustomModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    calc_pluriel, SlugModel, UniqueSlugModel, CustomManager, \
-                    CustomQuerySet
+from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+                    calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager
 from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -32,7 +31,7 @@ __all__ = (b'GenreDOeuvre', b'TypeDeCaracteristiqueDOeuvre',
            b'TypeDeParenteDOeuvres', b'ParenteDOeuvres', b'Auteur', b'Oeuvre')
 
 
-class GenreDOeuvre(CustomModel, SlugModel):
+class GenreDOeuvre(CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
@@ -73,7 +72,7 @@ class GenreDOeuvre(CustomModel, SlugModel):
         return 'nom__icontains', 'nom_pluriel__icontains',
 
 
-class TypeDeCaracteristiqueDOeuvre(CustomModel):
+class TypeDeCaracteristiqueDOeuvre(CommonModel):
     nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
                     unique=True, db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
@@ -97,7 +96,7 @@ class TypeDeCaracteristiqueDOeuvre(CustomModel):
         return self.nom
 
 
-class CaracteristiqueDOeuvre(CustomModel):
+class CaracteristiqueDOeuvre(CommonModel):
     type = ForeignKey('TypeDeCaracteristiqueDOeuvre',
         related_name='caracteristiques_d_oeuvre', db_index=True,
         verbose_name=_('type'))
@@ -128,7 +127,7 @@ class CaracteristiqueDOeuvre(CustomModel):
         return 'type__nom__icontains', 'valeur__icontains',
 
 
-class Partie(MPTTModel, CustomModel, SlugModel):
+class Partie(MPTTModel, CommonModel, SlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
     une œuvre musicale.
@@ -198,13 +197,13 @@ class Partie(MPTTModel, CustomModel, SlugModel):
                 'professions__nom_pluriel__icontains',)
 
 
-class PupitreQuerySet(CustomQuerySet):
+class PupitreQuerySet(CommonQuerySet):
     def elements_de_distribution(self):
         return get_model('catalogue', 'ElementDeDistribution').objects.filter(
                                                               pupitre__in=self)
 
 
-class PupitreManager(CustomManager):
+class PupitreManager(CommonManager):
     use_for_related_fields = True
 
     def get_query_set(self):
@@ -214,7 +213,7 @@ class PupitreManager(CustomManager):
         return self.all().elements_de_distribution()
 
 
-class Pupitre(CustomModel):
+class Pupitre(CommonModel):
     partie = ForeignKey('Partie', related_name='pupitres',
                         verbose_name=_('partie'), db_index=True)
     quantite_min = IntegerField(_('quantité minimale'), default=1,
@@ -262,7 +261,7 @@ class Pupitre(CustomModel):
                 'partie__professions__nom_pluriel__icontains',)
 
 
-class TypeDeParenteDOeuvres(CustomModel):
+class TypeDeParenteDOeuvres(CommonModel):
     nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_relatif = CharField(_('nom relatif'), max_length=100,
@@ -286,7 +285,7 @@ class TypeDeParenteDOeuvres(CustomModel):
         return '< %s | %s >' % (self.nom, self.nom_relatif)
 
 
-class ParenteDOeuvresManager(CustomManager):
+class ParenteDOeuvresManager(CommonManager):
     def meres_en_ordre(self):
         return self.all().order_by('mere__ancrage_creation')
 
@@ -294,7 +293,7 @@ class ParenteDOeuvresManager(CustomManager):
         return self.all().order_by('fille__ancrage_creation')
 
 
-class ParenteDOeuvres(CustomModel):
+class ParenteDOeuvres(CommonModel):
     type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes',
                       verbose_name=_('type'), db_index=True)
     mere = ForeignKey('Oeuvre', related_name='parentes_filles',
@@ -329,7 +328,7 @@ class ParenteDOeuvres(CustomModel):
             pass
 
 
-class AuteurQuerySet(CustomQuerySet):
+class AuteurQuerySet(CommonQuerySet):
     def __get_related(self, Model):
         qs = Model._default_manager.filter(auteurs__in=self)
         return qs.distinct().order_by(*Model._meta.ordering)
@@ -357,7 +356,7 @@ class AuteurQuerySet(CustomQuerySet):
                 for p, ins in d.items()))
 
 
-class AuteurManager(CustomManager):
+class AuteurManager(CommonManager):
     def get_query_set(self):
         return AuteurQuerySet(self.model, using=self._db)
 
@@ -377,7 +376,7 @@ class AuteurManager(CustomManager):
         return self.get_query_set().html(tags)
 
 
-class Auteur(CustomModel):
+class Auteur(CommonModel):
     content_type = ForeignKey(ContentType, db_index=True)
     object_id = PositiveIntegerField(db_index=True)
     content_object = GenericForeignKey()

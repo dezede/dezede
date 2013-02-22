@@ -159,6 +159,7 @@ INSTALLED_APPS = (
     'haystack',
     'catalogue',
     'dossiers',
+    'typography',
     'django.contrib.flatpages',
     'django.contrib.markup',
     'mptt',

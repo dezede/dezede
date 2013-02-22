@@ -7,7 +7,7 @@ from django.template.defaultfilters import capfirst
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from ..templatetags.extras import abbreviate
-from .common import CustomModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
+from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
                     UniqueSlugModel
 from .functions import ex, href
 
@@ -16,7 +16,7 @@ __all__ = (b'Profession', b'Devise', b'Engagement', b'TypeDePersonnel',
            b'Personnel')
 
 
-class Profession(MPTTModel, CustomModel, UniqueSlugModel):
+class Profession(MPTTModel, CommonModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
@@ -96,7 +96,7 @@ class Profession(MPTTModel, CustomModel, UniqueSlugModel):
         return 'nom__icontains', 'nom_pluriel__icontains',
 
 
-class Devise(CustomModel):
+class Devise(CommonModel):
     """
     Modélisation naïve d’une unité monétaire.
     """
@@ -116,7 +116,7 @@ class Devise(CustomModel):
         return self.symbole
 
 
-class Engagement(CustomModel):
+class Engagement(CommonModel):
     individus = ManyToManyField('Individu', related_name='engagements',
                                 db_index=True)
     profession = ForeignKey('Profession', related_name='engagements',
@@ -134,7 +134,7 @@ class Engagement(CustomModel):
         return self.profession.nom
 
 
-class TypeDePersonnel(CustomModel):
+class TypeDePersonnel(CommonModel):
     nom = CharField(max_length=100, unique=True, db_index=True)
 
     class Meta(object):
@@ -149,7 +149,7 @@ class TypeDePersonnel(CustomModel):
         return self.nom
 
 
-class Personnel(CustomModel):
+class Personnel(CommonModel):
     type = ForeignKey('TypeDePersonnel', related_name='personnels',
                       db_index=True)
     saison = ForeignKey('Saison', related_name='personnels', db_index=True)
