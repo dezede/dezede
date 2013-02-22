@@ -3,6 +3,6 @@
 from __future__ import unicode_literals
 
 
-__version__ = 1, 0, 4
+__version__ = 1, 0, 5
 get_version = lambda: '.'.join(str(i) for i in __version__)
 __verbose_name__ = 'Dezède'
