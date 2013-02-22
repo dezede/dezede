@@ -19,7 +19,8 @@ from django.utils.safestring import mark_safe
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from tinymce.models import HTMLField
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager
+    calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
+    AutoriteManager
 from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -127,7 +128,11 @@ class CaracteristiqueDOeuvre(CommonModel):
         return 'type__nom__icontains', 'valeur__icontains',
 
 
-class Partie(MPTTModel, CommonModel, SlugModel):
+class PartieManager(TreeManager, AutoriteManager):
+    pass
+
+
+class Partie(MPTTModel, AutoriteModel, SlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
     une œuvre musicale.
@@ -148,7 +153,7 @@ class Partie(MPTTModel, CommonModel, SlugModel):
                             verbose_name=_('rôle ou instrument parent'))
     classement = FloatField(_('classement'), default=1.0, db_index=True)
 
-    objects = TreeManager()
+    objects = PartieManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('rôle ou instrument',
@@ -415,6 +420,10 @@ class Auteur(CommonModel):
         return self.html(tags=False)
 
 
+class OeuvreManager(TreeManager, AutoriteManager):
+    pass
+
+
 class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(_('préfixe du titre'), max_length=20, blank=True,
                               db_index=True)
@@ -445,7 +454,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     evenements = ManyToManyField('Evenement', through='ElementDeProgramme',
                                  related_name='oeuvres', db_index=True)
 
-    objects = TreeManager()
+    objects = OeuvreManager()
 
     @permalink
     def get_absolute_url(self):

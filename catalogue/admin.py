@@ -82,22 +82,22 @@ def build_boolean_list_filter(class_title, class_parameter_name, filter=None,
                 return query(exclude if exclude is not None
                              else filter).distinct()
 
-
     return HasEventsListFilter
 
 
 EventHasSourceListFilter = build_boolean_list_filter(_('source'), 'has_source',
                                                      exclude=Q(sources=None))
 
-EventHasProgramListFilter = build_boolean_list_filter(_('programme'),
-                   'has_program', Q(programme__isnull=False) | Q(relache=True))
+EventHasProgramListFilter = build_boolean_list_filter(
+    _('programme'), 'has_program',
+    Q(programme__isnull=False) | Q(relache=True))
 
 SourceHasEventsListFilter = build_boolean_list_filter(
-                   _(u'événements'), 'has_events', exclude=Q(evenements=None))
+    _(u'événements'), 'has_events', exclude=Q(evenements=None))
 
 SourceHasProgramListFilter = build_boolean_list_filter(
-    _('programme'), 'has_program', Q(evenements__programme__isnull=False)
-                                   | Q(evenements__relache=True))
+    _('programme'), 'has_program',
+    Q(evenements__programme__isnull=False) | Q(evenements__relache=True))
 
 
 #
@@ -230,9 +230,9 @@ class ElementDeProgrammeInline(CustomStackedInline):
     raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
                      'personnels', 'illustrations', 'documents')
     autocomplete_lookup_fields = {
-        'fk': ['oeuvre'],
-        'm2m': ['caracteristiques', 'distribution',
-                'personnels', 'illustrations', 'documents'],
+        'fk': ('oeuvre',),
+        'm2m': ('caracteristiques', 'distribution',
+                'personnels', 'illustrations', 'documents'),
     }
     classes = ('grp-collapse grp-open',)
 
@@ -324,10 +324,28 @@ class ProfessionAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'nom_pluriel', 'nom_feminin',
                     'parent',)
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',)
-    raw_id_fields = ('parent',)
+    raw_id_fields = ('parent', 'illustrations', 'documents')
     autocomplete_lookup_fields = {
-        'fk': ['parent']
+        'fk': ['parent'],
+        'm2m': ('illustrations', 'documents'),
     }
+    fieldsets = (
+        (_('Champs courants'), {
+            'fields': ('nom', 'nom_pluriel', 'nom_feminin', 'parent',),
+        }),
+        (_('Fichiers'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': ('illustrations', 'documents',),
+        }),
+        (_('Champs avancés'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': ('etat', 'notes',),
+        }),
+#        (_('Champs générés (Méthodes)'), {
+#            'classes': ('grp-collapse grp-closed',),
+#            'fields': ('__unicode__', 'html', 'link',),
+#        }),
+    )
 
 
 class AncrageSpatioTemporelAdmin(CustomAdmin):
@@ -432,7 +450,7 @@ class GenreDOeuvreAdmin(CustomAdmin):
     search_fields = ('nom', 'nom_pluriel',)
     raw_id_fields = ('parents',)
     autocomplete_lookup_fields = {
-        'm2m': ['parents'],
+        'm2m': ('parents',),
     }
 
 
@@ -451,11 +469,29 @@ class PartieAdmin(CustomAdmin):
     list_display = ('__unicode__', 'nom', 'parent', 'classement',)
     list_editable = ('nom', 'parent', 'classement',)
     search_fields = ('nom',)
-    raw_id_fields = ('professions', 'parent',)
+    raw_id_fields = ('professions', 'parent', 'documents', 'illustrations')
     autocomplete_lookup_fields = {
-        'm2m': ['professions'],
-        'fk': ['parent'],
+        'm2m': ('professions', 'documents', 'illustrations'),
+        'fk': ('parent',),
     }
+    fieldsets = (
+        (_('Champs courants'), {
+            'fields': ('nom', 'nom_pluriel', 'professions', 'parent',
+                       'classement'),
+        }),
+        (_('Fichiers'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': ('illustrations', 'documents',),
+        }),
+        (_('Champs avancés'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': ('etat', 'notes',),
+        }),
+#        (_('Champs générés (Méthodes)'), {
+#            'classes': ('grp-collapse grp-closed',),
+#            'fields': ('__unicode__', 'html', 'link',),
+#        }),
+    )
 
 
 class PupitreAdmin(CustomAdmin):
@@ -481,7 +517,7 @@ class ParenteDOeuvresAdmin(CustomAdmin):
     list_editable = ('mere', 'type', 'fille',)
     raw_id_fields = ('fille', 'mere',)
     autocomplete_lookup_fields = {
-        'fk': ['fille', 'mere'],
+        'fk': ('fille', 'mere'),
     }
 
 

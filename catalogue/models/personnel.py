@@ -8,7 +8,7 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from ..templatetags.extras import abbreviate
 from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
-                    UniqueSlugModel
+                    UniqueSlugModel, AutoriteManager, AutoriteModel
 from .functions import ex, href
 
 
@@ -16,7 +16,11 @@ __all__ = (b'Profession', b'Devise', b'Engagement', b'TypeDePersonnel',
            b'Personnel')
 
 
-class Profession(MPTTModel, CommonModel, UniqueSlugModel):
+class ProfessionManager(TreeManager, AutoriteManager):
+    pass
+
+
+class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
@@ -26,7 +30,7 @@ class Profession(MPTTModel, CommonModel, UniqueSlugModel):
     parent = TreeForeignKey('Profession', blank=True, null=True, db_index=True,
                             related_name='enfant', verbose_name=_('parent'))
 
-    objects = TreeManager()
+    objects = ProfessionManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('profession', 'professions', 1)
