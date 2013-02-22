@@ -124,6 +124,22 @@ class UniqueSlugModel(Model):
     class Meta(object):
         abstract = True
 
+    def _perform_unique_checks(self, unique_checks):
+        errors = super(UniqueSlugModel, self)._perform_unique_checks(
+            unique_checks)
+        for Model, unique_fields in unique_checks:
+            qs = Model.objects.exclude(pk=self.pk)
+            model_errors = []
+            for field in unique_fields:
+                if not qs.filter(
+                        **{field + '__iexact': getattr(self, field)}).exists():
+                    continue
+                model_errors.append(field)
+                error = self.unique_error_message(Model, model_errors)
+                if error not in errors.get(field, ()):
+                    errors.setdefault(field, []).append(error)
+        return errors
+
     def get_slug(self):
         return unicode(self)
 

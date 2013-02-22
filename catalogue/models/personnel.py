@@ -81,14 +81,6 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     def short_html(self, tags=True):
         return self.html(tags, short=True)
 
-    def _perform_unique_checks(self, unique_checks):
-        errors = super(Profession, self)._perform_unique_checks(unique_checks)
-        if Profession.objects.filter(nom__iexact=self.nom).exists():
-            error = self.unique_error_message(self.__class__, ('nom',))
-            if error not in errors.get('nom', ()):
-                errors.setdefault('nom', []).append(error)
-        return errors
-
     def __hash__(self):
         return hash(self.nom)
 
