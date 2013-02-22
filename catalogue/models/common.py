@@ -80,9 +80,18 @@ class CommonModel(TypographicModel):
         return unicode(self)
 
 
-class AutoriteManager(CommonManager):
+class AutoriteQuerySet(CommonQuerySet):
     def published(self):
-        return self.get_query_set().filter(etat__public=True)
+        return self.filter(etat__public=True)
+
+
+class AutoriteManager(CommonManager):
+    # TODO: Implement get_empty_query_set.
+    def get_query_set(self):
+        return AutoriteQuerySet(self.model, using=self._db)
+
+    def published(self):
+        return self.get_query_set().published()
 
 
 class AutoriteModel(CommonModel):

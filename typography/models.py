@@ -51,6 +51,7 @@ class TypographicManager(Manager):
     Manager personnalisé pour utiliser TypographicQuerySet par défaut.
     """
 
+    # TODO: Implement get_empty_query_set.
     def get_query_set(self):
         return TypographicQuerySet(self.model, using=self._db)
 
