@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db.models import CharField, TextField, Manager, Model
 from django.db.models.query import QuerySet
 from django.dispatch import receiver
+from tinymce.models import HTMLField
 from .settings import SIGNALS
 from .utils import replace
 
@@ -13,7 +14,7 @@ __all__ = ('TypographicModel', 'TypographicManager', 'TypographicQuerySet',
 
 
 # Champs dans lesquels effectuer les remplacements typographiques.
-REPLACE_FIELDS = (CharField, TextField,)
+REPLACE_FIELDS = (CharField, TextField, HTMLField)
 
 
 def replace_in_kwargs(obj, kwargs_dict):
@@ -26,12 +27,10 @@ def replace_in_kwargs(obj, kwargs_dict):
     """
     fields = obj._meta.fields
     field_names = [field.attname for field in fields
-                   if isinstance(field, REPLACE_FIELDS)]
+                   if field.__class__ in REPLACE_FIELDS]
     for k, v in kwargs_dict.items():
         if k.split('__')[0] in field_names:
             kwargs_dict[k] = replace(v)
-
-    return kwargs_dict
 
 
 class TypographicQuerySet(QuerySet):
