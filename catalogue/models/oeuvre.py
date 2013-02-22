@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 from collections import defaultdict
+import re
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.generic import GenericRelation
@@ -11,6 +12,8 @@ from django.db.models import CharField, ManyToManyField, \
                              PositiveIntegerField, FloatField, ForeignKey, \
                              OneToOneField, IntegerField, TextField, \
                              BooleanField, permalink, get_model
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.template.defaultfilters import capfirst
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
@@ -598,6 +601,17 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         if not self.titre and not self.genre:
             raise ValidationError(_('Un titre ou un genre doit au moins '
                                     'être précisé.'))
+
+    def handle_whitespaces(self):
+        match = re.match(r'^,\s*(.+)$', self.coordination)
+        v = self.coordination if match is None else match.group(1)
+        if v:
+            self.coordination = ', %s' % v
+        for attr in ('prefixe_titre', 'prefixe_titre_secondaire',
+                     'coordination'):
+            v = getattr(self, attr)
+            if v and v[-1] not in (' ', "'", '’'):
+                setattr(self, attr, v + ' ')
 
     class Meta(object):
         verbose_name = ungettext_lazy('œuvre', 'œuvres', 1)

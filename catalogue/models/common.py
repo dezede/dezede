@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
     ForeignKey
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
@@ -201,3 +203,16 @@ class Etat(CommonModel):
 
     def __unicode__(self):
         return self.nom
+
+
+@receiver(pre_save)
+def handle_whitespaces(sender, **kwargs):
+    # We start by stripping all leading and trailing whitespaces.
+    obj = kwargs['instance']
+    for field_name in [f.attname for f in obj._meta.fields]:
+        v = getattr(obj, field_name)
+        if hasattr(v, 'strip'):
+            setattr(obj, field_name, v.strip())
+    # Then we call the specific whitespace handler of the model (if it exists).
+    if hasattr(obj, 'handle_whitespaces'):
+        obj.handle_whitespaces()
