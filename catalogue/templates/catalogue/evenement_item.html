@@ -1,7 +1,7 @@
 {% load i18n cache routines %}
 
 {% cache 3600 evenement evenement.pk LANGUAGE_CODE user.id %}
-  {% include "catalogue/etat.html" with etat=evenement.etat %}
+  {% include "catalogue/include/etat.html" with etat=evenement.etat %}
 
   <h2 style="text-align: center;">
     <a href="{{ evenement.get_absolute_url }}">
