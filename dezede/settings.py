@@ -20,7 +20,7 @@ ADMINS = (
 
 SEND_BROKEN_LINK_EMAILS = True
 IGNORABLE_404_URLS = (
-    re.compile(r'^/favicon\.ico$'),
+    re.compile(r'^/favicon\.ico/?$'),
 )
 
 MANAGERS = ADMINS
