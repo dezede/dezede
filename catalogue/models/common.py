@@ -77,8 +77,14 @@ class CommonModel(TypographicModel):
             qs = Model.objects.exclude(pk=self.pk)
             model_errors = []
             for field in unique_fields:
-                if not qs.filter(
-                        **{field + '__iexact': getattr(self, field)}).exists():
+                k, v = field + '__iexact', getattr(self, field)
+                if v in (None, ''):
+                    continue
+                try:
+                    exists = qs.filter(**{k: v}).exists()
+                except (TypeError, ValueError):  # When iexact is not possible, ie for fk.
+                    exists = qs.filter(**{field: v}).exists()
+                if not exists:
                     continue
                 model_errors.append(field)
                 error = self.unique_error_message(Model, model_errors)
