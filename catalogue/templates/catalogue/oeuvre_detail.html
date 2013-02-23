@@ -53,6 +53,10 @@
     </h4>
   </div>
 
+  <div class="span3 pull-right">
+    {% include 'catalogue/include/illustrations.html' %}
+  </div>
+
   <dl class="dl-horizontal">
     {% attr_in_dl 'pupitres_html' _('effectif') %}
 
@@ -68,7 +72,6 @@
     {% include "catalogue/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
     {% attr_in_dl 'notes' %}
 
-    {% list_in_dl oeuvre.illustrations.all %}
     {% list_in_dl oeuvre.documents.all %}
   </dl>
 

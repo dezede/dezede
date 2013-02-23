@@ -1,10 +1,14 @@
-<blockquote class="source">
+{% if source.contenu %}
+  <blockquote class="source">
 
-  {{ source.contenu|safe }}
-  {% if source.auteurs.exists %}
-    <small>
-      {{ source.auteurs_html }}
-    </small>
-  {% endif %}
+    {{ source.contenu|safe }}
+    {% if source.auteurs.exists %}
+      <small>
+        {{ source.auteurs_html }}
+      </small>
+    {% endif %}
 
-</blockquote>
+  </blockquote>
+{% endif %}
+
+{% include 'catalogue/include/illustrations.html' %}

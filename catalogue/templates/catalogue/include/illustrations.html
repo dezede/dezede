@@ -1,0 +1,11 @@
+<ul class="thumbnails">
+  {% for illustration in object.illustrations.all %}
+    <li class="span3">
+      <a href="{{ illustration.image.url }}" class="thumbnail">
+        <img src="{{ illustration.image.url }}" />
+        <h4>{{ illustration.legende }}</h4>
+        <p>{{ illustration.commentaire }}</p>
+      </a>
+    </li>
+  {% endfor %}
+</ul>

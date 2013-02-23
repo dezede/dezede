@@ -38,6 +38,10 @@
     </h3>
   </div>
 
+  <div class="span3 pull-right">
+    {% include 'catalogue/include/illustrations.html' %}
+  </div>
+
   <dl class="dl-horizontal">
     {% attr_in_dl 'nom_naissance' %}
     {% attr_in_dl 'biographie' %}
@@ -78,8 +82,7 @@
 
     {% attr_in_dl 'notes' %}
 
-    {% list_in_dl source.illustrations.all %}
-    {% list_in_dl source.documents.all %}
+    {% list_in_dl individu.documents.all %}
   </dl>
 
 {% endblock %}

@@ -21,6 +21,10 @@
     </h2>
   </div>
 
+  <div class="span3 pull-right">
+    {% include 'catalogue/include/illustrations.html' %}
+  </div>
+
   <dl class="dl-horizontal">
     {% with contenu=lieu.get_descendants %}
       {% if contenu %}
@@ -37,8 +41,7 @@
     {% list_in_dl lieu.oeuvres_creees verbose_name=_('œuvre créée ici') verbose_name_plural=_('œuvres créées ici') %}
     {% attr_in_dl 'notes' %}
 
-    {% list_in_dl source.illustrations.all %}
-    {% list_in_dl source.documents.all %}
+    {% list_in_dl lieu.documents.all %}
   </dl>
 
 {% endblock %}
