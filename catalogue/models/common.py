@@ -82,7 +82,9 @@ class CommonModel(TypographicModel):
                     continue
                 try:
                     exists = qs.filter(**{k: v}).exists()
-                except (TypeError, ValueError):  # When iexact is not possible, ie for fk.
+                except (TypeError, ValueError):
+                    # When iexact is not possible, ie for related fields or
+                    # integer fields.
                     exists = qs.filter(**{field: v}).exists()
                 if not exists:
                     continue
