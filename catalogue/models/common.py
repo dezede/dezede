@@ -5,7 +5,7 @@ from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
-    ForeignKey
+    ForeignKey, TextField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
@@ -84,16 +84,13 @@ class CommonModel(TypographicModel):
             qs = Model.objects.exclude(pk=self.pk)
             model_errors = []
             for field in unique_fields:
-                k, v = field + '__iexact', getattr(self, field)
+                v = getattr(self, field)
                 if v in (None, ''):
                     continue
-                try:
-                    exists = qs.filter(**{k: v}).exists()
-                except (TypeError, ValueError):
-                    # When iexact is not possible, ie for related fields or
-                    # integer fields.
-                    exists = qs.filter(**{field: v}).exists()
-                if not exists:
+                if isinstance(Model._meta.get_field_by_name(field)[0],
+                              (CharField, TextField)):
+                    field += '__iexact'
+                if not qs.filter(**{field: v}).exists():
                     continue
                 model_errors.append(field)
                 error = self.unique_error_message(Model, model_errors)
