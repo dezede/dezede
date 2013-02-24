@@ -1,5 +1,8 @@
-from haystack .indexes import SearchIndex, CharField, EdgeNgramField, \
-                              DateField
+# coding: utf-8
+
+from __future__ import unicode_literals
+from haystack.indexes import SearchIndex, CharField, EdgeNgramField, \
+    DateField
 from haystack import site
 from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie
 
@@ -18,6 +21,7 @@ class OeuvreIndex(SearchIndex):
     def prepare(self, obj):
         prepared_data = super(OeuvreIndex, self).prepare(obj)
         prepared_data['suggestions'] = prepared_data['text']
+        prepared_data['boost'] = 1.0 / (obj.level + 1)
         return prepared_data
 site.register(Oeuvre, OeuvreIndex)
 
