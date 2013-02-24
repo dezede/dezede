@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from collections import defaultdict
 import re
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.generic import GenericForeignKey
@@ -12,8 +11,6 @@ from django.db.models import CharField, ManyToManyField, \
                              PositiveIntegerField, FloatField, ForeignKey, \
                              OneToOneField, IntegerField, TextField, \
                              BooleanField, permalink, get_model
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from django.template.defaultfilters import capfirst
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
@@ -23,7 +20,7 @@ from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from tinymce.models import HTMLField
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
-    AutoriteManager
+    AutoriteManager, OrderedDefaultDict
 from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -355,7 +352,7 @@ class AuteurQuerySet(CommonQuerySet):
 
     def html(self, tags=True):
         auteurs = self
-        d = defaultdict(list)
+        d = OrderedDefaultDict()
         for auteur in auteurs:
             d[auteur.profession].append(auteur.individu)
         return mark_safe(str_list(
@@ -504,7 +501,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return self.calc_pupitres(prefix=prefix, tags=tags)
 
     def auteurs_html(self, tags=True):
-        return self.auteurs.html(tags)
+        return self.auteurs.order_by(*Auteur._meta.ordering).html(tags)
     auteurs_html.short_description = _('auteurs')
     auteurs_html.allow_tags = True
     auteurs_html.admin_order_field = 'auteurs__individu__nom'

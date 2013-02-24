@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
@@ -18,7 +19,13 @@ from typography.models import TypographicModel, TypographicManager, \
 
 __all__ = (b'LOWER_MSG', b'PLURAL_MSG', b'DATE_MSG', b'calc_pluriel',
            b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'Document',
-           b'Illustration', b'Etat')
+           b'Illustration', b'Etat', b'OrderedDefaultDict')
+
+
+class OrderedDefaultDict(OrderedDict):
+    def __missing__(self, k):
+        self[k] = l = []
+        return l
 
 
 #

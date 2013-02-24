@@ -35,7 +35,7 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     class Meta(object):
         verbose_name = ungettext_lazy('profession', 'professions', 1)
         verbose_name_plural = ungettext_lazy('profession', 'professions', 2)
-        ordering = ('slug',)
+        ordering = ('nom',)
         app_label = 'catalogue'
 
     @permalink
