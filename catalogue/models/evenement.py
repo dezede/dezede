@@ -4,20 +4,17 @@ from __future__ import unicode_literals
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey, \
                                                 GenericRelation
-from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, OneToOneField, BooleanField, \
                              PositiveSmallIntegerField, permalink, Q, \
                              PositiveIntegerField, get_model
-from django.dispatch import receiver
 from django.template.defaultfilters import capfirst
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
-from reversion.models import post_revision_commit
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-    calc_pluriel, CommonQuerySet, CommonManager
+    calc_pluriel, CommonQuerySet, CommonManager, model_method_cached
 
 from .functions import str_list, str_list_w_last, href, hlp
 from .source import TypeDeSource
@@ -191,6 +188,7 @@ class ElementDeProgramme(AutoriteModel):
         return self.evenement.programme.exclude(Q(position__gt=self.position)
                            | Q(numerotation__in=numerotations_exclues)).count()
 
+    @model_method_cached(24 * 60 * 60, 'programmes')
     def html(self, tags=True):
         out = ''
         oeuvre = self.oeuvre
@@ -314,9 +312,3 @@ class Evenement(AutoriteModel):
             'ancrage_debut__date_approx__icontains',
             'ancrage_debut__heure_approx__icontains',
         )
-
-
-@receiver(post_revision_commit)
-def clear_all_cache(sender, **kwargs):
-    """On vide le cache pour les templates d'événements."""
-    cache.clear()

@@ -9,7 +9,7 @@ from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
 from tinymce.models import HTMLField
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    calc_pluriel, UniqueSlugModel
+                    calc_pluriel, UniqueSlugModel, model_method_cached
 from ..templatetags.extras import abbreviate
 from .evenement import Evenement
 from .functions import str_list, str_list_w_last, href, sc
@@ -265,6 +265,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     calc_professions.admin_order_field = 'professions__nom'
     calc_professions.allow_tags = True
 
+    @model_method_cached(24 * 60 * 60, 'individus')
     def html(self, tags=True, lon=False, prenoms_fav=True,
              show_prenoms=True, designation=None):
         def add_particule(nom, lon, naissance=False):

@@ -20,7 +20,7 @@ from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from tinymce.models import HTMLField
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
-    AutoriteManager, OrderedDefaultDict
+    AutoriteManager, OrderedDefaultDict, model_method_cached
 from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -526,6 +526,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
              self.prefixe_titre_secondaire, self.titre_secondaire)
         return str_list(l, infix='')
 
+    @model_method_cached(24 * 60 * 60, 'oeuvres')
     def html(self, tags=True, auteurs=True, titre=True,
              descr=True, genre_caps=False, ancestors=True,
              ancestors_links=False, links=True):
