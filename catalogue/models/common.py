@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.sessions.models import Session
 from django.core.cache import cache
+from django.core.exceptions import NON_FIELD_ERRORS
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
     ForeignKey, TextField
 from django.db.models.signals import pre_save, post_save, post_delete
@@ -101,7 +102,6 @@ def invalidate_group(group):
 def clean_groups(sender, **kwargs):
     if sender is Session:
         return
-    print 'invalidation!!!'
     for group in ('programmes', 'oeuvres', 'individus'):
         invalidate_group(group)
 post_save.connect(clean_groups)
@@ -133,24 +133,39 @@ class CommonModel(TypographicModel):
         abstract = True  # = prototype de modèle, et non un vrai modèle.
 
     def _perform_unique_checks(self, unique_checks):
-        errors = super(CommonModel, self)._perform_unique_checks(
-            unique_checks)
-        for Model, unique_fields in unique_checks:
-            qs = Model.objects.exclude(pk=self.pk)
-            model_errors = []
-            for field in unique_fields:
-                v = getattr(self, field)
-                if v in (None, ''):
+        # Taken from the overridden method.
+        errors = {}
+
+        for model_class, unique_check in unique_checks:
+
+            lookup_kwargs = {}
+            for field_name in unique_check:
+                f = self._meta.get_field(field_name)
+                lookup_value = getattr(self, f.attname)
+                if lookup_value is None:
                     continue
-                if isinstance(Model._meta.get_field_by_name(field)[0],
-                              (CharField, TextField)):
-                    field += '__iexact'
-                if not qs.filter(**{field: v}).exists():
+                if f.primary_key and not self._state.adding:
                     continue
-                model_errors.append(field)
-                error = self.unique_error_message(Model, model_errors)
-                if error not in errors.get(field, ()):
-                    errors.setdefault(field, []).append(error)
+                if isinstance(f, (CharField, TextField)):
+                    field_name += '__iexact'
+                lookup_kwargs[str(field_name)] = lookup_value
+
+            if len(unique_check) != len(lookup_kwargs.keys()):
+                continue
+
+            qs = model_class._default_manager.filter(**lookup_kwargs)
+
+            if not self._state.adding and self.pk is not None:
+                qs = qs.exclude(pk=self.pk)
+
+            if qs.exists():
+                if len(unique_check) == 1:
+                    key = unique_check[0]
+                else:
+                    key = NON_FIELD_ERRORS
+                errors.setdefault(key, []).append(
+                    self.unique_error_message(model_class, unique_check))
+
         return errors
 
     @classmethod
