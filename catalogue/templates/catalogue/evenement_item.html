@@ -46,12 +46,17 @@
 {% endwith %}
 
 {% if evenement.notes %}
-  <h4>{% trans 'notes'|capfirst %}</h4>
-  {{ evenement.notes|safe }}
+  <hr />
+  <small>
+    <h4>{% trans 'notes'|capfirst %}</h4>
+    {{ evenement.notes|safe }}
+  </small>
 {% endif %}
 
 {% for type, sources in evenement.sources_dict.items %}
-  <br />
+  {% if forloop.first %}
+    <hr />
+  {% endif %}
   <h3 style="text-align: center; font-style: italic;">
     {% if sources|length > 1 %}
       {{ type.pluriel|capfirst }}
