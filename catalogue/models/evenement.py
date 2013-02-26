@@ -84,9 +84,11 @@ class ElementDeDistribution(CommonModel):
         return self.html(tags=False)
 
     def html(self, tags=True):
-        individus = self.individus.iterator()
-        out = str_list_w_last(individu.html(tags=tags)
-                              for individu in individus)
+        out = ''
+        if self.pk:
+            individus = self.individus.iterator()
+            out += str_list_w_last(individu.html(tags=tags)
+                                   for individu in individus)
         partie_ou_profession = ''
         if self.pupitre:
             partie_ou_profession = self.pupitre.partie.link()
