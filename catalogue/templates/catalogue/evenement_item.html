@@ -45,6 +45,11 @@
   {% endfor %}
 {% endwith %}
 
+{% if evenement.notes %}
+  <h4>{% trans 'notes'|capfirst %}</h4>
+  {{ evenement.notes|safe }}
+{% endif %}
+
 {% for type, sources in evenement.sources_dict.items %}
   <br />
   <h3 style="text-align: center; font-style: italic;">
