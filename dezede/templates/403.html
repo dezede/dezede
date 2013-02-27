@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load url from future %}
 {% load i18n %}
 
 {% block title %}
@@ -9,7 +10,7 @@
   <div class="page-header">
     <h1>{% trans "Erreur 403" %}</h1>
   </div>
-  {% url auth_login as login_url %}
+  {% url 'auth_login' as login_url %}
   {% blocktrans %}
     Vous n’avez pas l’autorisation d’accéder à cette page.<br />
     Souhaitez-vous <a href="{{ login_url }}">vous connecter</a> ?

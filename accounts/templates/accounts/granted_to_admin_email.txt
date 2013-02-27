@@ -1,4 +1,5 @@
+{% load url from future %}
 Bonjour {{ user.first_name }},
 
 Vous venez d’être accepté dans l’équipe de Dezède.
-Vous êtes donc autorisé à accéder à l’interface d'administration sur {{ site_url }}{% url admin:index %}.
+Vous êtes donc autorisé à accéder à l’interface d'administration sur {{ site_url }}{% url 'admin:index' %}.

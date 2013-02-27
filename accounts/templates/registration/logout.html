@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load url from future %}
 {% load crispy_forms_tags i18n %}
 
 {% block title %}
@@ -8,7 +9,7 @@
 {% block body %}
   <h1>{% trans "Déconnexion" %}</h1>
   <p>
-    {% url auth_login as url %}
+    {% url 'auth_login' as url %}
     {% blocktrans %}
       Vous venez de vous déconnecter avec succès.
       <a href="{{ url }}">Se connecter à nouveau</a> ?

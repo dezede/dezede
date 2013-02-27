@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load url from future %}
 
 {% block body %}
   <h1>Accès à l’interface d'administration</h1>
@@ -9,7 +10,7 @@
       {{ user.get_full_name }}, l’utilisateur {{ object.get_full_name }} a été
       autorisé à accéder à l’interface d'administration suite à votre accord.
       Si vous souhaitez annuler cela,
-      <a href="{% url admin:auth_user_change object.pk %}">
+      <a href="{% url 'admin:auth_user_change' object.pk %}">
         modifiez l’utilisateur {{ object.get_full_name }}</a>,
       décochez la case "statut équipe" et enregistrez.
     {% endif %}

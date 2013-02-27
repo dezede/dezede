@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load url from future %}
 {% load crispy_forms_tags i18n %}
 
 {% block title %}
@@ -8,7 +9,7 @@
 {% block body %}
   {% if user.is_authenticated %}
     <h1>{% trans "Déjà connecté" %}</h1>
-    {% url auth_logout as url %}
+    {% url 'auth_logout' as url %}
     {% blocktrans %}
       Vous êtes déjà connecté.  Souhaitez-vous <a href="{{ url }}">vous déconnecter</a> ?
     {% endblocktrans %}
@@ -16,7 +17,7 @@
     <form method="POST" class="well well-small form-horizontal">
       <legend>
         {% trans "Connexion" %}
-        {% url registration_register as url %}
+        {% url 'registration_register' as url %}
         <small>
           {% blocktrans %}
             Pas de compte utilisateur ?

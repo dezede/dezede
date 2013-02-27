@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load url from future %}
 {% load i18n %}
 
 {% block title %}
@@ -12,5 +13,5 @@
       <li><a href="{{ profile.get_absolute_url}}">{{ profile }}</a></li>
     {% endfor %}
   </ul>
-  <a href="{% url profiles_create_profile %}">[{% trans "Créer son profil" %}]</a>
+  <a href="{% url 'profiles_create_profile' %}">[{% trans "Créer son profil" %}]</a>
 {% endblock %}
