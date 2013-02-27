@@ -1,5 +1,6 @@
-# Django settings for the dezede project.
 # coding: utf-8
+
+from __future__ import unicode_literals
 import os
 from os import environ
 import re
@@ -68,7 +69,7 @@ TIME_ZONE = 'Europe/Paris'
 LANGUAGE_CODE = 'fr'
 
 LANGUAGES = (
-    ('fr', ugettext(u'Français')),
+    ('fr', ugettext('Français')),
     ('en', ugettext('English')),
     ('de', ugettext('Deutsch')),
 )
@@ -209,7 +210,7 @@ DATE_FORMAT = 'l j F Y'
 TIME_FORMAT = 'H:i'
 
 GRAPPELLI_INDEX_DASHBOARD = 'dezede.dashboard.CustomIndexDashboard'
-GRAPPELLI_ADMIN_TITLE = u'<a href="/evenements/">Dezède</a>'
+GRAPPELLI_ADMIN_TITLE = '<a href="/evenements/">Dezède</a>'
 
 ACCOUNT_ACTIVATION_DAYS = 7
 AUTH_PROFILE_MODULE = 'accounts.StudentProfile'
@@ -270,8 +271,8 @@ SERVER_EMAIL = 'noreply@dezede.org'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap'
 
-ENDLESS_PAGINATION_PREVIOUS_LABEL = u'«'
-ENDLESS_PAGINATION_NEXT_LABEL = u'»'
+ENDLESS_PAGINATION_PREVIOUS_LABEL = '«'
+ENDLESS_PAGINATION_NEXT_LABEL = '»'
 
 COMPRESS_OUTPUT_DIR = 'assets'
 

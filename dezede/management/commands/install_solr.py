@@ -1,12 +1,13 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from django.core.management.base import BaseCommand
 import os
 import tarfile
 
 
 class Command(BaseCommand):
-    help = u'Télécharge et installe Apache Solr'
+    help = 'Télécharge et installe Apache Solr'
 
     def handle(self, *args, **options):
         version = '3.6.1'
@@ -15,12 +16,13 @@ class Command(BaseCommand):
 
         if not os.path.exists(filename):
             fullurl = os.path.join(repository, version, filename)
-            print u'Téléchargement de Solr version %s en cours...' % version
-            print u'(Pour suivre son déroulement, lisez le fichier download.log.)'
+            print('Téléchargement de Solr version %s en cours...' % version)
+            print('(Pour suivre son déroulement, '
+                  'lisez le fichier download.log.)')
             os.system('wget %s -a download.log' % fullurl)
         else:
-            print 'Fichier %s trouvé.' % filename
+            print('Fichier %s trouvé.' % filename)
 
-        print 'Extraction en cours...'
+        print('Extraction en cours...')
         tar = tarfile.open(filename)
         tar.extractall()

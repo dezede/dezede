@@ -93,7 +93,7 @@ EventHasProgramListFilter = build_boolean_list_filter(
     Q(programme__isnull=False) | Q(relache=True))
 
 SourceHasEventsListFilter = build_boolean_list_filter(
-    _(u'événements'), 'has_events', exclude=Q(evenements=None))
+    _('événements'), 'has_events', exclude=Q(evenements=None))
 
 SourceHasProgramListFilter = build_boolean_list_filter(
     _('programme'), 'has_program',

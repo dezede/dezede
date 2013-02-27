@@ -64,7 +64,7 @@ class EvenementListForm(Form):
     lieu = AutoCompleteSelectMultipleField('lieu', label=_('Lieu'),
                                            required=False, help_text='')
     oeuvre = AutoCompleteSelectMultipleField('oeuvre', required=False,
-                                             label=_(u'Œuvre'), help_text='')
+                                             label=_('Œuvre'), help_text='')
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()

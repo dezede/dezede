@@ -9,8 +9,8 @@ import sys
 register = template.Library()
 
 
-@register.simple_tag(takes_context=True)
-def software_versions(context):
+@register.simple_tag()
+def software_versions():
     softwares = ('dezede', 'django', 'python')
     out = []
     for software in softwares:
