@@ -202,7 +202,7 @@ LOCALE_PATHS = (
     'locale',
 )
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = b'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = ['--with-doctest']
 
 DATE_FORMAT = 'l j F Y'
