@@ -1,4 +1,4 @@
-Django==1.4.3
+Django==1.4.5
 django-endless-pagination==1.1
 django-tables2==0.13.0
 django-reversion==1.6.5
@@ -9,7 +9,7 @@ django-tinymce==1.5.1a2
 django-flatpages-tinymce==0.1.1
 simplejson==2.6.2
 django-autoslug==1.6.1
-django-grappelli==2.4.3
+django-grappelli==2.4.4
 django-registration==0.8
 django-profiles==0.2
 django-crispy-forms==1.2.3
