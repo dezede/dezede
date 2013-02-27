@@ -8,9 +8,8 @@ from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.db.models import CharField, ManyToManyField, \
-                             PositiveIntegerField, FloatField, ForeignKey, \
-                             OneToOneField, IntegerField, TextField, \
-                             BooleanField, permalink, get_model
+    PositiveIntegerField, ForeignKey, OneToOneField, IntegerField, TextField, \
+    BooleanField, permalink, get_model, SmallIntegerField
 from django.template.defaultfilters import capfirst
 from django.utils.encoding import python_2_unicode_compatible, smart_text, \
     force_text
@@ -83,7 +82,7 @@ class TypeDeCaracteristiqueDOeuvre(CommonModel):
                     unique=True, db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
-    classement = FloatField(default=1.0)
+    classement = SmallIntegerField(default=1)
 
     class Meta(object):
         verbose_name = ungettext_lazy('type de caractéristique d’œuvre',
@@ -110,7 +109,7 @@ class CaracteristiqueDOeuvre(CommonModel):
     # TODO: Changer valeur en nom ?
     valeur = CharField(_('valeur'), max_length=400,
                        help_text=ex(_('en trois actes')))
-    classement = FloatField(_('classement'), default=1.0, db_index=True,
+    classement = SmallIntegerField(_('classement'), default=1, db_index=True,
         help_text=_('Par exemple, on peut choisir de classer'
                     'les découpages par nombre d’actes.'))
 
@@ -158,7 +157,7 @@ class Partie(MPTTModel, AutoriteModel, UniqueSlugModel):
     parent = TreeForeignKey('Partie', related_name='enfant',
                             blank=True, null=True, db_index=True,
                             verbose_name=_('rôle ou instrument parent'))
-    classement = FloatField(_('classement'), default=1.0, db_index=True)
+    classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
     objects = PartieManager()
 
@@ -282,7 +281,7 @@ class TypeDeParenteDOeuvres(CommonModel):
                             help_text=LOWER_MSG, unique=True, db_index=True)
     nom_relatif_pluriel = CharField(_('nom relatif (au pluriel)'),
         max_length=130, blank=True, help_text=PLURAL_MSG)
-    classement = FloatField(_('classement'), default=1.0, db_index=True)
+    classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
     class Meta(object):
         verbose_name = ungettext_lazy('type de parenté d’œuvres',

@@ -2,16 +2,16 @@
 
 from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, FloatField, BooleanField, ForeignKey, \
-                             ManyToManyField, OneToOneField, permalink, Q
+from django.db.models import CharField, BooleanField, ForeignKey, \
+    ManyToManyField, OneToOneField, permalink, Q, SmallIntegerField
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
-                                     ugettext,  ugettext_lazy as _
+    ugettext,  ugettext_lazy as _
 from tinymce.models import HTMLField
 from cache_tools import model_method_cached
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    calc_pluriel, UniqueSlugModel
+    calc_pluriel, UniqueSlugModel
 from ..templatetags.extras import abbreviate
 from .evenement import Evenement
 from .functions import str_list, str_list_w_last, href, sc
@@ -24,7 +24,7 @@ __all__ = (b'Prenom', b'TypeDeParenteDIndividus', b'ParenteDIndividus',
 @python_2_unicode_compatible
 class Prenom(CommonModel):
     prenom = CharField(_('prénom'), max_length=100, db_index=True)
-    classement = FloatField(_('classement'), default=1.0, db_index=True)
+    classement = SmallIntegerField(_('classement'), default=1, db_index=True)
     favori = BooleanField(_('favori'), default=True, db_index=True)
 
     class Meta(object):
@@ -57,7 +57,7 @@ class TypeDeParenteDIndividus(CommonModel):
     nom_relatif_pluriel = CharField(_('nom relatif (au pluriel)'),
                                     max_length=55, help_text=PLURAL_MSG,
                                     blank=True)
-    classement = FloatField(_('classement'), default=1.0, db_index=True)
+    classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
     class Meta(object):
         verbose_name = ungettext_lazy('type de parenté d’individus',
@@ -192,8 +192,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def apparitions(self):
         # FIXME: Pas sûr que la condition soit logique.
-        return Evenement.objects.filter(Q(distribution__individus=self)
-                       | Q(programme__distribution__individus=self)).distinct()
+        return Evenement.objects.filter(
+            Q(distribution__individus=self)
+            | Q(programme__distribution__individus=self)).distinct()
 
     def calc_prenoms_methode(self, fav):
         if not self.pk:

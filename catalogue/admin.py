@@ -322,16 +322,18 @@ class SaisonAdmin(CustomAdmin):
 
 class ProfessionAdmin(CustomAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_feminin',
-                    'parent',)
-    list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',)
+                    'parent', 'classement')
+    list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
+                     'classement')
     raw_id_fields = ('parent', 'illustrations', 'documents')
     autocomplete_lookup_fields = {
-        'fk': ['parent'],
+        'fk': ('parent',),
         'm2m': ('illustrations', 'documents'),
     }
     fieldsets = (
         (_('Champs courants'), {
-            'fields': ('nom', 'nom_pluriel', 'nom_feminin', 'parent',),
+            'fields': ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
+                       'classement'),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),

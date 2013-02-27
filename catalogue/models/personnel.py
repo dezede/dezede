@@ -2,14 +2,14 @@
 
 from __future__ import unicode_literals
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
-                             FloatField, permalink
+     FloatField, permalink, SmallIntegerField
 from django.template.defaultfilters import capfirst
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from ..templatetags.extras import abbreviate
 from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
-                    UniqueSlugModel, AutoriteManager, AutoriteModel
+    UniqueSlugModel, AutoriteManager, AutoriteModel
 from .functions import ex, href
 
 
@@ -26,18 +26,20 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
-        help_text=PLURAL_MSG)
-    nom_feminin = CharField(_('nom (au féminin)'), max_length=230, blank=True,
+                            help_text=PLURAL_MSG)
+    nom_feminin = CharField(
+        _('nom (au féminin)'), max_length=230, blank=True,
         help_text=_('Ne préciser que s’il est différent du nom.'))
     parent = TreeForeignKey('Profession', blank=True, null=True, db_index=True,
                             related_name='enfant', verbose_name=_('parent'))
+    classement = SmallIntegerField(default=1, db_index=True)
 
     objects = ProfessionManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('profession', 'professions', 1)
         verbose_name_plural = ungettext_lazy('profession', 'professions', 2)
-        ordering = ('nom',)
+        ordering = ('classement', 'nom')
         app_label = 'catalogue'
 
     @permalink

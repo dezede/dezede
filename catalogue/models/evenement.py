@@ -6,9 +6,8 @@ from django.contrib.contenttypes.generic import GenericForeignKey, \
                                                 GenericRelation
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
-                             FloatField, OneToOneField, BooleanField, \
-                             PositiveSmallIntegerField, permalink, Q, \
-                             PositiveIntegerField, get_model
+    OneToOneField, BooleanField, PositiveSmallIntegerField, permalink, Q, \
+    PositiveIntegerField, get_model, SmallIntegerField
 from django.template.defaultfilters import capfirst
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
@@ -122,7 +121,7 @@ class CaracteristiqueDElementDeProgramme(CommonModel):
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=110, blank=True,
                             help_text=PLURAL_MSG)
-    classement = FloatField(default=1.0, db_index=True)
+    classement = SmallIntegerField(default=1, db_index=True)
 
     def pluriel(self):
         return calc_pluriel(self)
