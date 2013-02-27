@@ -16,23 +16,27 @@ class GrantToAdmin(DetailView):
     model = User
     template_name = 'accounts/grant_to_admin.html'
 
+    def grant_user(self, user):
+        user.is_staff = True
+        user.save()
+        site_url = 'http://' + get_current_site(self.request).domain
+        email_content = render_to_string(
+            'accounts/granted_to_admin_email.txt',
+            {'user': user, 'site_url': site_url})
+        user.email_user(
+            '[Dezède] Accès autorisé à l’administration',
+            email_content)
+
     def get_context_data(self, **kwargs):
         context = super(GrantToAdmin, self).get_context_data(**kwargs)
         current_user = self.request.user
-        if not current_user.is_superuser:
+        user_to_be_granted = self.object
+        if current_user != user_to_be_granted.student_profile.professor:
             raise PermissionDenied
-        user = self.object
-        if user.is_staff:
+        if user_to_be_granted.is_staff:
             context['already_staff'] = True
         else:
-            user.is_staff = True
-            user.save()
-            site_url = 'http://' + get_current_site(self.request).domain
-            email_content = render_to_string(
-                'accounts/granted_to_admin_email.txt',
-                {'user': user, 'site_url': site_url})
-            user.email_user('[Dezède] Accès autorisé à l’administration',
-                            email_content)
+            self.grant_user(user_to_be_granted)
         return context
 
 

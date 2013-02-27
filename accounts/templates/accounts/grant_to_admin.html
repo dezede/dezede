@@ -1,18 +1,28 @@
 {% extends 'base.html' %}
 {% load url from future %}
+{% load i18n %}
+
+{% block title %}
+  {% trans 'Accès à l’interface d’administration' %}
+{% endblock %}
 
 {% block body %}
-  <h1>Accès à l’interface d'administration</h1>
+  <h1>{% trans 'Accès à l’interface d’administration' %}</h1>
   <p>
     {% if already_staff %}
-      L’utilisateur {{ object }} fait déjà partie de l’équipe !
+      {% blocktrans %}
+        L’utilisateur « {{ object }} » fait déjà partie de l’équipe !
+      {% endblocktrans %}
     {% else %}
-      {{ user.get_full_name }}, l’utilisateur {{ object.get_full_name }} a été
-      autorisé à accéder à l’interface d'administration suite à votre accord.
-      Si vous souhaitez annuler cela,
-      <a href="{% url 'admin:auth_user_change' object.pk %}">
-        modifiez l’utilisateur {{ object.get_full_name }}</a>,
-      décochez la case "statut équipe" et enregistrez.
+      {% url 'admin:auth_user_change' object.pk as change_user_url %}
+      {% blocktrans %}
+        {{ user.get_full_name }}, l’utilisateur « {{ object.get_full_name }} »
+        a été autorisé à accéder à l’interface d'administration suite à votre
+        accord. Si vous souhaitez annuler cela,
+        <a href="{{ change_user_url }}">
+          modifiez l’utilisateur {{ object.get_full_name }}</a>,
+        décochez la case « statut équipe » et enregistrez.
+      {% endblocktrans %}
     {% endif %}
   </p>
 {% endblock %}

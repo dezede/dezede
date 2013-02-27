@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db.models import Model, OneToOneField, ForeignKey, permalink
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 
 
