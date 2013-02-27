@@ -57,15 +57,6 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
         return smart_text(obj)
 
 
-def clean_groups(sender, **kwargs):
-    if sender is Session:
-        return
-    for group in ('programmes', 'oeuvres', 'individus'):
-        invalidate_group(group)
-post_save.connect(clean_groups)
-post_delete.connect(clean_groups)
-
-
 #
 # Modélisation
 #
@@ -264,6 +255,11 @@ class Etat(CommonModel):
         return self.nom
 
 
+#
+# Signals
+#
+
+
 @receiver(pre_save)
 def handle_whitespaces(sender, **kwargs):
     # We start by stripping all leading and trailing whitespaces.
@@ -275,3 +271,12 @@ def handle_whitespaces(sender, **kwargs):
     # Then we call the specific whitespace handler of the model (if it exists).
     if hasattr(obj, 'handle_whitespaces'):
         obj.handle_whitespaces()
+
+
+def clean_groups(sender, **kwargs):
+    if sender is Session:
+        return
+    for group in ('programmes', 'oeuvres', 'individus'):
+        invalidate_group(group)
+post_save.connect(clean_groups)
+post_delete.connect(clean_groups)
