@@ -12,7 +12,8 @@ from django.db.models import CharField, ManyToManyField, \
                              OneToOneField, IntegerField, TextField, \
                              BooleanField, permalink, get_model
 from django.template.defaultfilters import capfirst
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import python_2_unicode_compatible, smart_text, \
+    force_text
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
@@ -43,9 +44,9 @@ class GenreDOeuvre(CommonModel, SlugModel):
         help_text=_('L’affichage d’une œuvre remonte jusqu’à l’œuvre '
                     'référente la contenant.') \
             + ' ' \
-            + ex(smart_text(_('Le jeune Henri, acte 2, scène 3')),
-                 pre=smart_text(_('le rendu d’une scène sera du type ')),
-                 post=smart_text(_(' car on remonte jusqu’à l’œuvre référente, '
+            + ex(force_text(_('Le jeune Henri, acte 2, scène 3')),
+                 pre=force_text(_('le rendu d’une scène sera du type ')),
+                 post=force_text(_(' car on remonte jusqu’à l’œuvre référente, '
                                 'ici choisie comme étant celle de nature '
                                 '« opéra »'))))
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',

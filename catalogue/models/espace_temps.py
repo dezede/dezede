@@ -5,7 +5,8 @@ from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, BooleanField, \
                              DateField, TimeField, permalink, Q
 from django.template.defaultfilters import time, capfirst
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import python_2_unicode_compatible, smart_text, \
+    force_text
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
@@ -33,10 +34,10 @@ class NatureDeLieu(CommonModel, SlugModel):
     referent = BooleanField(_('référent'), default=False, db_index=True,
         help_text=_('L’affichage d’un lieu remonte jusqu’au lieu référent.') \
         + ' ' \
-        + ex(smart_text(_('ville, institution, salle')),
-             pre=smart_text(_('dans une architecture de pays, villes, théâtres, '
+        + ex(force_text(_('ville, institution, salle')),
+             pre=force_text(_('dans une architecture de pays, villes, théâtres, '
                            'etc, ')),
-             post=smart_text(_(' sera affiché car on remonte jusqu’à un lieu '
+             post=force_text(_(' sera affiché car on remonte jusqu’à un lieu '
                             'référent, ici choisi comme étant ceux de nature '
                             '« ville »'))))
 
