@@ -12,7 +12,7 @@ from django.db.models import CharField, ManyToManyField, \
                              OneToOneField, IntegerField, TextField, \
                              BooleanField, permalink, get_model
 from django.template.defaultfilters import capfirst
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
@@ -43,9 +43,9 @@ class GenreDOeuvre(CommonModel, SlugModel):
         help_text=_('L’affichage d’une œuvre remonte jusqu’à l’œuvre '
                     'référente la contenant.') \
             + ' ' \
-            + ex(unicode(_('Le jeune Henri, acte 2, scène 3')),
-                 pre=unicode(_('le rendu d’une scène sera du type ')),
-                 post=unicode(_(' car on remonte jusqu’à l’œuvre référente, '
+            + ex(smart_text(_('Le jeune Henri, acte 2, scène 3')),
+                 pre=smart_text(_('le rendu d’une scène sera du type ')),
+                 post=smart_text(_(' car on remonte jusqu’à l’œuvre référente, '
                                 'ici choisie comme étant celle de nature '
                                 '« opéra »'))))
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
@@ -125,7 +125,7 @@ class CaracteristiqueDOeuvre(CommonModel):
     html.allow_tags = True
 
     def __str__(self):
-        return unicode(self.type) + ' : ' + strip_tags(self.valeur)
+        return smart_text(self.type) + ' : ' + strip_tags(self.valeur)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -248,7 +248,7 @@ class Pupitre(CommonModel):
         if ma > 1:
             partie = partie.pluriel()
         else:
-            partie = unicode(partie)
+            partie = smart_text(partie)
         mi_str = apnumber(mi)
         ma_str = apnumber(ma)
         if mi != ma:
@@ -263,7 +263,7 @@ class Pupitre(CommonModel):
         return self.partie.get_absolute_url()
 
     def html(self, tags=True):
-        return href(self.get_absolute_url(), unicode(self), tags=tags)
+        return href(self.get_absolute_url(), smart_text(self), tags=tags)
 
     @staticmethod
     def autocomplete_search_fields():

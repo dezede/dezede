@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import ManyToManyField, Manager
 from django.db.models.query import QuerySet
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
 from catalogue.api.utils.console import info, colored_diff
 from ..utils import notify_send, print_info
 
@@ -13,7 +13,7 @@ def ask_for_choice(obj, k, v, new_v):
     intro = 'Deux possibilités pour le champ {0} de {1}'.format(k, obj)
     notify_send(intro)
     print_info(intro)
-    v, new_v = colored_diff(smart_unicode(v), smart_unicode(new_v))
+    v, new_v = colored_diff(smart_text(v), smart_text(new_v))
     print('1. {} (valeur actuelle)'.format(v))
     print('2. {} (valeur importable)'.format(new_v))
     print('3. Créer un nouvel objet')
@@ -43,13 +43,13 @@ def get_field_cmp_value(obj, k, v):
     if is_many_related_field(obj, k):
         return v.all()
     elif is_str(v):
-        return smart_unicode(v)
+        return smart_text(v)
     return v
 
 
 def get_field_settable_value(new_v):
     if is_str(new_v):
-        return smart_unicode(new_v)
+        return smart_text(new_v)
     return new_v
 
 

@@ -12,7 +12,7 @@ from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
     ForeignKey, TextField
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _, \
     get_language
 from autoslug import AutoSlugField
@@ -48,7 +48,7 @@ DATE_MSG = _('Exemple : « 6/6/1944 » pour le 6 juin 1944.')
 def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
     """
     Renvoie le nom au pluriel d'obj, si possible.
-    Sinon renvoie unicode(obj).
+    Sinon renvoie smart_text(obj).
     """
     try:
         pluriel = getattr(obj, attr_base + attr_suffix)
@@ -56,7 +56,7 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
             return pluriel
         return getattr(obj, attr_base) + 's'
     except (AttributeError, TypeError):
-        return unicode(obj)
+        return smart_text(obj)
 
 
 CONTROL_CHARACTERS = set([chr(i) for i in range(0, 33)])
@@ -171,14 +171,14 @@ class CommonModel(TypographicModel):
 
     @classmethod
     def class_name(cls):
-        return unicode(cls.__name__)
+        return smart_text(cls.__name__)
 
     @classmethod
     def meta(cls):
         return cls._meta
 
     def related_label(self):
-        return unicode(self)
+        return smart_text(self)
 
 
 class AutoriteQuerySet(CommonQuerySet):
@@ -213,7 +213,7 @@ class SlugModel(Model):
         abstract = True
 
     def get_slug(self):
-        return unicode(self)
+        return smart_text(self)
 
 
 class UniqueSlugModel(Model):
@@ -224,7 +224,7 @@ class UniqueSlugModel(Model):
         abstract = True
 
     def get_slug(self):
-        return unicode(self)
+        return smart_text(self)
 
 
 @python_2_unicode_compatible
@@ -244,10 +244,10 @@ class Document(CommonModel):
     def __str__(self):
         if self.nom:
             return self.nom
-        return unicode(self.document)
+        return smart_text(self.document)
 
     def link(self):
-        return href(self.document.url, unicode(self))
+        return href(self.document.url, smart_text(self))
 
     @staticmethod
     def autocomplete_search_fields():
@@ -272,10 +272,10 @@ class Illustration(CommonModel):
     def __str__(self):
         if self.legende:
             return self.legende
-        return unicode(self.image)
+        return smart_text(self.image)
 
     def link(self):
-        return href(self.image.url, unicode(self))
+        return href(self.image.url, smart_text(self))
 
     @staticmethod
     def autocomplete_search_fields():

@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from django.template.defaultfilters import date, capfirst
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
 from django.utils.functional import allow_lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
@@ -143,7 +143,7 @@ def href(url, txt, tags=True):
     if not txt:
         return ''
     if tags:
-        return mark_safe(smart_unicode('<a href="%s">%s</a>' % (url, txt)))
+        return mark_safe(smart_text('<a href="%s">%s</a>' % (url, txt)))
     return txt
 
 

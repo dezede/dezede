@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from django.core.urlresolvers import reverse
 from django.test import Client, TransactionTestCase
+from django.utils.encoding import smart_text
 from ...models import *
 from .utils import new, log_as_superuser
 from django.core.exceptions import ValidationError
@@ -68,13 +69,13 @@ class OeuvreTestCase(TransactionTestCase):
 
     def testComputedNames(self):
         # Carmen
-        self.assertEqual(unicode(self.carmen), 'Carmen')
+        self.assertEqual(smart_text(self.carmen), 'Carmen')
         self.assertEqual(self.carmen.calc_pupitres(),
                          'pour deux violons\xa0et\xa0quatre \xe0 huit voix')
         # Sonate
-        self.assertEqual(unicode(self.sonate), 'Sonate pour violon')
+        self.assertEqual(smart_text(self.sonate), 'Sonate pour violon')
         # Symphonie n° 5
-        self.assertEqual(unicode(self.symphonie), 'Symphonie n°\u00A05')
+        self.assertEqual(smart_text(self.symphonie), 'Symphonie n°\u00A05')
         self.assertEqual(self.symphonie.titre_html(tags=False),
                          'Symphonie n°\u00A05')
         self.assertEqual(self.symphonie.titre_descr_html(tags=False),
@@ -82,7 +83,7 @@ class OeuvreTestCase(TransactionTestCase):
         self.assertEqual(self.symphonie.description_html(tags=False),
                          'op.\xa0107')
         # Tartufe
-        self.assertEqual(unicode(self.tartuffe),
+        self.assertEqual(smart_text(self.tartuffe),
                          'Le Tartuffe, ou l’Imposteur')
 
     def testHTMLRenders(self):

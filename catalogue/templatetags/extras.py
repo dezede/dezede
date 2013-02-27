@@ -5,6 +5,7 @@ import re
 from unicodedata import normalize
 from BeautifulSoup import BeautifulStoneSoup
 from django.template import Library
+from django.utils.encoding import smart_text
 from ..models.functions import hlp
 
 
@@ -13,7 +14,7 @@ register = Library()
 
 @register.filter
 def stripchars(text):
-    return unicode(
+    return smart_text(
         BeautifulStoneSoup(
             text,
             convertEntities=BeautifulStoneSoup.HTML_ENTITIES

@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 from django.test import Client, TransactionTestCase
+from django.utils.encoding import smart_text
 from ...models import *
 from .utils import new, log_as_superuser
 
@@ -24,10 +25,10 @@ class IndividuTestCase(TransactionTestCase):
         log_as_superuser(self)
 
     def testComputedNames(self):
-        self.assertEqual(unicode(self.moliere), 'Molière')
+        self.assertEqual(smart_text(self.moliere), 'Molière')
         self.assertEqual(self.moliere.nom_complet(tags=False),
                          'Jean-Baptiste Poquelin, dit Molière')
-        self.assertEqual(unicode(self.piaf),
+        self.assertEqual(smart_text(self.piaf),
                          'Gassion (É.), dite La Môme Piaf')
         self.assertEqual(self.piaf.nom_complet(tags=False),
                          'Édith Giovanna Gassion, dite La Môme Piaf')

@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from difflib import SequenceMatcher
 import subprocess
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
 
 
 def notify_send(msg):
@@ -28,7 +28,7 @@ PRINT_COLORS = {
 def colored(msg, color):
     if not msg:
         return ''
-    return PRINT_COLORS[color] + smart_unicode(msg) + PRINT_COLORS['normal']
+    return PRINT_COLORS[color] + smart_text(msg) + PRINT_COLORS['normal']
 
 
 def red_bg(msg):
@@ -68,19 +68,19 @@ def info(msg):
 
 
 def print_error(msg):
-    print(error(smart_unicode(msg)))
+    print(error(smart_text(msg)))
 
 
 def print_warning(msg):
-    print(warning(smart_unicode(msg)))
+    print(warning(smart_text(msg)))
 
 
 def print_success(msg):
-    print(success(smart_unicode(msg)))
+    print(success(smart_text(msg)))
 
 
 def print_info(msg):
-    print(info(smart_unicode(msg)))
+    print(info(smart_text(msg)))
 
 
 def colored_diff(a, b):

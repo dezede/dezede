@@ -27,7 +27,7 @@ class StudentProfile(Model):
     __str__.admin_order_field = 'user'
 
     def professor_name(self):
-        return self.professor.get_full_name() or unicode(self.professor)
+        return self.professor.get_full_name() or smart_text(self.professor)
     professor_name.short_description = _('professeur')
     professor_name.admin_order_field = 'professor'
 

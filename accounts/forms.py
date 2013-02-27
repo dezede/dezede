@@ -26,7 +26,7 @@ def get_groups():
 
 class UserField(ModelChoiceField):
     def label_from_instance(self, obj):
-        return obj.get_full_name() or unicode(obj)
+        return obj.get_full_name() or smart_text(obj)
 
 
 class UserRegistrationForm(RegistrationForm):

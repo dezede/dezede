@@ -10,7 +10,7 @@ from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              PositiveSmallIntegerField, permalink, Q, \
                              PositiveIntegerField, get_model
 from django.template.defaultfilters import capfirst
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
@@ -182,7 +182,7 @@ class ElementDeProgramme(AutoriteModel):
         if self.pk is None:
             return ''
         cs = self.caracteristiques.iterator()
-        return str_list(unicode(c) for c in cs)
+        return str_list(smart_text(c) for c in cs)
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _('caractéristiques')
 
@@ -257,7 +257,7 @@ class Evenement(AutoriteModel):
         return self.get_absolute_url()
 
     def link(self):
-        return href(self.get_absolute_url(), unicode(self))
+        return href(self.get_absolute_url(), smart_text(self))
     link.short_description = _('lien')
     link.allow_tags = True
 

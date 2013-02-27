@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from django.core.urlresolvers import reverse
 from django.test import Client, TransactionTestCase
+from django.utils.encoding import smart_text
 from ...models import *
 from datetime import date
 from .utils import new, log_as_superuser
@@ -23,8 +24,8 @@ class LieuTestCase(TransactionTestCase):
         log_as_superuser(self)
 
     def testComputedNames(self):
-        self.assertEqual(unicode(self.rouen), 'Rouen')
-        self.assertEqual(unicode(self.theatre_des_arts),
+        self.assertEqual(smart_text(self.rouen), 'Rouen')
+        self.assertEqual(smart_text(self.theatre_des_arts),
                          'Rouen, Théâtre des Arts')
 
     def testTemplateRenders(self):
@@ -66,7 +67,7 @@ class SaisonTestCase(TransactionTestCase):
         log_as_superuser(self)
 
     def testComputedNames(self):
-        self.assertEqual(unicode(self.saison),
+        self.assertEqual(smart_text(self.saison),
                          'Rouen, Théâtre des Arts, 2011–2012')
 
     def testAdminRenders(self):

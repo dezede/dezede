@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, permalink
 from django.template.defaultfilters import capfirst
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from ..templatetags.extras import abbreviate
@@ -164,4 +164,4 @@ class Personnel(CommonModel):
         app_label = 'catalogue'
 
     def __str__(self):
-        return unicode(self.type) + unicode(self.saison)
+        return smart_text(self.type) + smart_text(self.saison)

@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, FloatField, BooleanField, ForeignKey, \
                              ManyToManyField, OneToOneField, permalink, Q
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
@@ -168,7 +168,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     biographie = HTMLField(_('biographie'), blank=True)
 
     def get_slug(self):
-        return self.nom or unicode(self)
+        return self.nom or smart_text(self)
 
     @permalink
     def get_absolute_url(self):
@@ -200,7 +200,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
         prenoms = self.prenoms.order_by('classement', 'prenom')
         if fav:
             prenoms = (p for p in prenoms if p.favori)
-        return ' '.join(unicode(p) for p in prenoms)
+        return ' '.join(smart_text(p) for p in prenoms)
 
     def calc_prenoms(self):
         return self.calc_prenoms_methode(False)
@@ -236,7 +236,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def naissance(self):
         if self.ancrage_naissance:
-            return unicode(self.ancrage_naissance)
+            return smart_text(self.ancrage_naissance)
         return ''
 
     def naissance_html(self, tags=True):
@@ -246,7 +246,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def deces(self):
         if self.ancrage_deces:
-            return unicode(self.ancrage_deces)
+            return smart_text(self.ancrage_deces)
         return ''
 
     def deces_html(self, tags=True):
@@ -256,7 +256,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def ancrage(self):
         if self.ancrage_approx:
-            return unicode(self.ancrage_approx)
+            return smart_text(self.ancrage_approx)
         return ''
 
     def calc_professions(self, tags=True):

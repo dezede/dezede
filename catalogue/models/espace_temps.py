@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, BooleanField, \
                              DateField, TimeField, permalink, Q
 from django.template.defaultfilters import time, capfirst
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
@@ -33,10 +33,10 @@ class NatureDeLieu(CommonModel, SlugModel):
     referent = BooleanField(_('référent'), default=False, db_index=True,
         help_text=_('L’affichage d’un lieu remonte jusqu’au lieu référent.') \
         + ' ' \
-        + ex(unicode(_('ville, institution, salle')),
-             pre=unicode(_('dans une architecture de pays, villes, théâtres, '
+        + ex(smart_text(_('ville, institution, salle')),
+             pre=smart_text(_('dans une architecture de pays, villes, théâtres, '
                            'etc, ')),
-             post=unicode(_(' sera affiché car on remonte jusqu’à un lieu '
+             post=smart_text(_(' sera affiché car on remonte jusqu’à un lieu '
                             'référent, ici choisi comme étant ceux de nature '
                             '« ville »'))))
 
@@ -156,7 +156,7 @@ class Saison(CommonModel):
 
     def __str__(self):
         d = {
-            'lieu': unicode(self.lieu),
+            'lieu': smart_text(self.lieu),
             'debut': self.debut.year,
             'fin': self.fin.year
         }
@@ -246,7 +246,7 @@ class AncrageSpatioTemporel(CommonModel):
         return 'admin:catalogue_ancragespatiotemporel_change', (self.pk,)
 
     def get_change_link(self):
-        return href(self.get_change_url(), unicode(self))
+        return href(self.get_change_url(), smart_text(self))
 
     def clean(self):
         if not (self.date or self.date_approx or self.lieu
