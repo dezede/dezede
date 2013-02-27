@@ -14,8 +14,9 @@ from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
+from cache_tools import model_method_cached
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-    calc_pluriel, CommonQuerySet, CommonManager, model_method_cached
+    calc_pluriel, CommonQuerySet, CommonManager
 
 from .functions import str_list, str_list_w_last, href, hlp
 from .source import TypeDeSource

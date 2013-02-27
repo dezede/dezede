@@ -2,22 +2,20 @@
 
 from __future__ import unicode_literals
 from collections import OrderedDict
-from hashlib import md5
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.sessions.models import Session
-from django.core.cache import cache
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
     ForeignKey, TextField
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _, \
-    get_language
+from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
 from tinymce.models import HTMLField
+from cache_tools import invalidate_group
 from .functions import href
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
@@ -57,47 +55,6 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
         return getattr(obj, attr_base) + 's'
     except (AttributeError, TypeError):
         return smart_text(obj)
-
-
-CONTROL_CHARACTERS = set([chr(i) for i in range(0, 33)])
-CONTROL_CHARACTERS.add(chr(127))
-
-
-def sanitize_memcached_key(key, max_length=250):
-    # Taken from django-cache-utils.
-    key = ''.join([c for c in key if c not in CONTROL_CHARACTERS])
-    if len(key) > max_length:
-        hashed_key = md5(key).hexdigest()
-        key = key[:max_length - 33] + '-' + hashed_key
-    return key
-
-
-def model_method_cached(timeout, group=None):
-    def decorator(method):
-        def wrapper(self, *args, **kwargs):
-            cache_key = '%s:%s.%s.%s:%s(%s,%s)' % (
-                get_language(), self.__module__, self.__class__.__name__,
-                method.__name__, self.pk, args, kwargs)
-            cache_key = sanitize_memcached_key(cache_key)
-            if group is not None:
-                group_cache_key = 'group:' + group
-                group_keys = cache.get(group_cache_key, [])
-                group_keys.append(cache_key)
-                cache.set(group_cache_key, group_keys, 0)
-            out = cache.get(cache_key)
-            if out is None:
-                out = method(self, *args, **kwargs)
-                cache.set(cache_key, out, timeout)
-            return out
-        return wrapper
-    return decorator
-
-
-def invalidate_group(group):
-    group_cache_key = 'group:' + group
-    group_keys = cache.get(group_cache_key, ())
-    cache.delete_many(group_keys)
-    cache.delete(group_cache_key)
 
 
 def clean_groups(sender, **kwargs):

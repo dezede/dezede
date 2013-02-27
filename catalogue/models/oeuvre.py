@@ -20,9 +20,10 @@ from django.utils.translation import ungettext_lazy, ugettext, \
 from django.utils.safestring import mark_safe
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from tinymce.models import HTMLField
+from cache_tools import model_method_cached
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
-    AutoriteManager, OrderedDefaultDict, model_method_cached
+    AutoriteManager, OrderedDefaultDict
 from .functions import ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
