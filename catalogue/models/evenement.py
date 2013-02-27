@@ -10,6 +10,7 @@ from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              PositiveSmallIntegerField, permalink, Q, \
                              PositiveIntegerField, get_model
 from django.template.defaultfilters import capfirst
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
@@ -57,6 +58,7 @@ class ElementDeDistributionManager(CommonManager):
         return self.all().html(tags=tags)
 
 
+@python_2_unicode_compatible
 class ElementDeDistribution(CommonModel):
     individus = ManyToManyField('Individu', verbose_name=_('individus'),
                                 related_name='elements_de_distribution')
@@ -80,7 +82,7 @@ class ElementDeDistribution(CommonModel):
         ordering = ('pupitre',)
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.html(tags=False)
 
     def html(self, tags=True):
@@ -113,6 +115,7 @@ class ElementDeDistribution(CommonModel):
         )
 
 
+@python_2_unicode_compatible
 class CaracteristiqueDElementDeProgramme(CommonModel):
     nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG, unique=True,
                     db_index=True)
@@ -135,7 +138,7 @@ class CaracteristiqueDElementDeProgramme(CommonModel):
         ordering = ('nom',)
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nom
 
     @staticmethod
@@ -146,6 +149,7 @@ class CaracteristiqueDElementDeProgramme(CommonModel):
         )
 
 
+@python_2_unicode_compatible
 class ElementDeProgramme(AutoriteModel):
     evenement = ForeignKey('Evenement', related_name='programme',
                            db_index=True, verbose_name=_('événement'))
@@ -220,7 +224,7 @@ class ElementDeProgramme(AutoriteModel):
         ordering = ('position', 'oeuvre')
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         return strip_tags(self.html(False))
 
     @staticmethod
@@ -233,6 +237,7 @@ class ElementDeProgramme(AutoriteModel):
         )
 
 
+@python_2_unicode_compatible
 class Evenement(AutoriteModel):
     ancrage_debut = OneToOneField(
         'AncrageSpatioTemporel', related_name='evenements_debuts',
@@ -296,7 +301,7 @@ class Evenement(AutoriteModel):
         ordering = ('ancrage_debut',)
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         out = self.ancrage_debut.calc_date(False)
         out = capfirst(out)
         out += '\u00A0> ' + self.html(False)

@@ -10,7 +10,7 @@ from .models import DossierDEvenements
 
 class DossierDEvenementsAdmin(CustomAdmin):
     form = DossierDEvenementsForm
-    list_display = ('__unicode__', 'circonstance', 'debut', 'fin',
+    list_display = ('__str__', 'circonstance', 'debut', 'fin',
                     'lieux_html', 'oeuvres_html', 'auteurs_html', 'get_count')
     readonly_fields = ('get_count', 'get_queryset')
     raw_id_fields = ('lieux', 'oeuvres', 'auteurs', 'evenements')

@@ -260,13 +260,13 @@ class CustomAdmin(VersionAdmin, CustomBaseModel):
 
 
 class DocumentAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'document',)
+    list_display = ('__str__', 'nom', 'document',)
     list_editable = ('nom', 'document',)
     search_fields = ('nom',)
 
 
 class IllustrationAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'legende', 'image',)
+    list_display = ('__str__', 'legende', 'image',)
     list_editable = ('legende', 'image',)
     search_fields = ('legende',)
 
@@ -276,12 +276,12 @@ class EtatAdmin(CustomAdmin):
 
 
 class NatureDeLieuAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'referent',)
+    list_display = ('__str__', 'nom', 'nom_pluriel', 'referent',)
     list_editable = ('nom', 'nom_pluriel', 'referent',)
 
 
 class LieuAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'parent', 'nature', 'etat', 'link',)
+    list_display = ('__str__', 'nom', 'parent', 'nature', 'etat', 'link',)
     list_editable = ('nom', 'parent', 'nature', 'etat',)
     search_fields = ('nom', 'parent__nom',)
     list_filter = ('nature__nom',)
@@ -291,7 +291,7 @@ class LieuAdmin(CustomAdmin):
         'm2m': ['illustrations', 'documents'],
     }
     filter_horizontal = ('illustrations', 'documents',)
-    readonly_fields = ('__unicode__', 'html', 'link',)
+    readonly_fields = ('__str__', 'html', 'link',)
 #    inlines = (AncrageSpatioTemporelInline,)
     fieldsets = (
         (_('Champs courants'), {
@@ -307,13 +307,13 @@ class LieuAdmin(CustomAdmin):
         }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__unicode__', 'html', 'link',),
+#            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
 
 
 class SaisonAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'lieu', 'debut', 'fin',)
+    list_display = ('__str__', 'lieu', 'debut', 'fin',)
     raw_id_fields = ('lieu',)
     autocomplete_lookup_fields = {
         'fk': ['lieu'],
@@ -321,7 +321,7 @@ class SaisonAdmin(CustomAdmin):
 
 
 class ProfessionAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'nom_feminin',
+    list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_feminin',
                     'parent',)
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',)
     raw_id_fields = ('parent', 'illustrations', 'documents')
@@ -343,13 +343,13 @@ class ProfessionAdmin(CustomAdmin):
         }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__unicode__', 'html', 'link',),
+#            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
 
 
 class AncrageSpatioTemporelAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'calc_date', 'calc_heure', 'calc_lieu',)
+    list_display = ('__str__', 'calc_date', 'calc_heure', 'calc_lieu',)
     search_fields = ('lieu__nom', 'lieu_approx', 'date_approx',
                      'lieu__parent__nom', 'heure_approx',)
     raw_id_fields = ('lieu',)
@@ -365,13 +365,13 @@ class AncrageSpatioTemporelAdmin(CustomAdmin):
 
 
 class PrenomAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'prenom', 'classement', 'favori',
+    list_display = ('__str__', 'prenom', 'classement', 'favori',
                     'has_individu')
     list_editable = ('prenom', 'classement', 'favori',)
 
 
 class TypeDeParenteDIndividusAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'nom_relatif',
+    list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_relatif',
                     'nom_relatif_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
                      'nom_relatif_pluriel', 'classement',)
@@ -379,7 +379,7 @@ class TypeDeParenteDIndividusAdmin(CustomAdmin):
 
 class IndividuAdmin(CustomAdmin):
     list_per_page = 20
-    list_display = ('__unicode__', 'nom', 'calc_prenoms',
+    list_display = ('__str__', 'nom', 'calc_prenoms',
                     'pseudonyme', 'titre', 'ancrage_naissance',
                     'ancrage_deces', 'calc_professions', 'etat', 'link',)
     list_editable = ('nom', 'titre', 'etat')
@@ -397,7 +397,7 @@ class IndividuAdmin(CustomAdmin):
         'm2m': ('prenoms', 'professions', 'parentes', 'illustrations',
                 'documents'),
     }
-    readonly_fields = ('__unicode__', 'html', 'link',)
+    readonly_fields = ('__str__', 'html', 'link',)
     inlines = (IndividuParentInline, IndividuEnfantInline)
     fieldsets = (
         (_('Champs courants'), {
@@ -417,18 +417,18 @@ class IndividuAdmin(CustomAdmin):
         }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__unicode__', 'html', 'link',),
+#            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
 
 
 class DeviseAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'symbole',)
+    list_display = ('__str__', 'nom', 'symbole',)
     list_editable = ('nom', 'symbole',)
 
 
 class EngagementAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'profession', 'salaire', 'devise',)
+    list_display = ('__str__', 'profession', 'salaire', 'devise',)
     raw_id_fields = ('profession', 'individus',)
     autocomplete_lookup_fields = {
         'fk': ['profession'],
@@ -445,7 +445,7 @@ class PersonnelAdmin(CustomAdmin):
 
 
 class GenreDOeuvreAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'nom_pluriel',)
+    list_display = ('__str__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
     search_fields = ('nom', 'nom_pluriel',)
     raw_id_fields = ('parents',)
@@ -455,18 +455,18 @@ class GenreDOeuvreAdmin(CustomAdmin):
 
 
 class TypeDeCaracteristiqueDOeuvreAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'classement',)
+    list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
 
 
 class CaracteristiqueDOeuvreAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'type', 'valeur', 'classement',)
+    list_display = ('__str__', 'type', 'valeur', 'classement',)
     list_editable = ('type', 'valeur', 'classement',)
     search_fields = ('type__nom', 'valeur')
 
 
 class PartieAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'parent', 'classement',)
+    list_display = ('__str__', 'nom', 'parent', 'classement',)
     list_editable = ('nom', 'parent', 'classement',)
     search_fields = ('nom',)
     raw_id_fields = ('professions', 'parent', 'documents', 'illustrations')
@@ -489,13 +489,13 @@ class PartieAdmin(CustomAdmin):
         }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__unicode__', 'html', 'link',),
+#            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
 
 
 class PupitreAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'partie', 'quantite_min', 'quantite_max',)
+    list_display = ('__str__', 'partie', 'quantite_min', 'quantite_max',)
     list_editable = ('partie', 'quantite_min', 'quantite_max',)
     search_fields = ('partie__nom', 'quantite_min', 'quantite_max')
     raw_id_fields = ('partie',)
@@ -505,7 +505,7 @@ class PupitreAdmin(CustomAdmin):
 
 
 class TypeDeParenteDOeuvresAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'nom_relatif', 'nom_relatif_pluriel',
+    list_display = ('__str__', 'nom', 'nom_relatif', 'nom_relatif_pluriel',
                     'classement',)
     list_editable = ('nom', 'nom_relatif', 'nom_relatif_pluriel',
                      'classement',)
@@ -513,7 +513,7 @@ class TypeDeParenteDOeuvresAdmin(CustomAdmin):
 
 class ParenteDOeuvresAdmin(CustomAdmin):
     fields = ('mere', 'type', 'fille',)
-    list_display = ('__unicode__', 'mere', 'type', 'fille',)
+    list_display = ('__str__', 'mere', 'type', 'fille',)
     list_editable = ('mere', 'type', 'fille',)
     raw_id_fields = ('fille', 'mere',)
     autocomplete_lookup_fields = {
@@ -523,7 +523,7 @@ class ParenteDOeuvresAdmin(CustomAdmin):
 
 class OeuvreAdmin(CustomAdmin):
     form = OeuvreForm
-    list_display = ('__unicode__', 'titre', 'titre_secondaire', 'genre',
+    list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
                     'calc_caracteristiques', 'auteurs_html',
                     'ancrage_creation', 'etat', 'link',)
     list_editable = ('genre', 'etat')
@@ -540,7 +540,7 @@ class OeuvreAdmin(CustomAdmin):
         'm2m': ('caracteristiques', 'pupitres',
                 'documents', 'illustrations'),
     }
-    readonly_fields = ('__unicode__', 'html', 'link',)
+    readonly_fields = ('__str__', 'html', 'link',)
     inlines = (OeuvreMereInline, OeuvreFilleInline, AuteurInline,)
 #    inlines = (ElementDeProgrammeInline,)
     fieldsets = (
@@ -562,13 +562,13 @@ class OeuvreAdmin(CustomAdmin):
         }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__unicode__', 'html', 'link',),
+#            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
 
 
 class ElementDeDistributionAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'pupitre', 'profession',)
+    list_display = ('__str__', 'pupitre', 'profession',)
     list_editable = ('pupitre', 'profession',)
     fields = ('individus', 'pupitre', 'profession',)
     raw_id_fields = ('individus', 'pupitre', 'profession',)
@@ -579,13 +579,13 @@ class ElementDeDistributionAdmin(CustomAdmin):
 
 
 class CaracteristiqueDElementDeProgrammeAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'classement',)
+    list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
     search_fields = ('nom', 'nom_pluriel',)
 
 
 class EvenementAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'relache', 'circonstance',
+    list_display = ('__str__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'etat', 'link',)
     list_editable = ('relache', 'circonstance', 'etat')
     search_fields = ('circonstance', 'ancrage_debut__lieu__nom')
@@ -599,7 +599,7 @@ class EvenementAdmin(CustomAdmin):
     autocomplete_lookup_fields = {
         'm2m': ('documents', 'illustrations'),
     }
-    readonly_fields = ('__unicode__', 'html', 'link')
+    readonly_fields = ('__str__', 'html', 'link')
     inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,)
     fieldsets = (
         (_('Champs courants'), {
@@ -620,13 +620,13 @@ class EvenementAdmin(CustomAdmin):
         }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__unicode__', 'html', 'link',),
+#            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
 
 
 class TypeDeSourceAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'nom_pluriel',)
+    list_display = ('__str__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
 
 
@@ -647,7 +647,7 @@ class SourceAdmin(CustomAdmin):
     autocomplete_lookup_fields = {
         'm2m': ['documents', 'illustrations'],
     }
-    readonly_fields = ('__unicode__', 'html',)
+    readonly_fields = ('__str__', 'html',)
     inlines = (AuteurInline,)
     fieldsets = (
         (_('Champs courants'), {
@@ -664,7 +664,7 @@ class SourceAdmin(CustomAdmin):
         }),
         #        (_('Champs générés (Méthodes)'), {
         #            'classes': ('grp-collapse grp-closed',),
-        #            'fields': ('__unicode__', 'html',),
+        #            'fields': ('__str__', 'html',),
         #        }),
     )
 

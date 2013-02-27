@@ -10,7 +10,7 @@
     <h1>{% trans "Profil de" %} {{ profile_user.get_full_name|default:profile_user }}</h1>
     <dl>
       {% attr_in_dl 'professor_name' _('professeur référent') profile %}
-      {% list_in_dl profile_user.groups.all '__unicode__' %}
+      {% list_in_dl profile_user.groups.all '__str__' %}
       <dt>{% trans "Sources transcrites" %}</dt>
       <dd>{{ profile_user.source_set.count }}</dd>
     </dl>

@@ -6,7 +6,7 @@ from .models import StudentProfile
 
 
 class StudentProfileAdmin(ModelAdmin):
-    list_display = ('__unicode__', 'professor_name')
+    list_display = ('__str__', 'professor_name')
 
 
 site.register(StudentProfile, StudentProfileAdmin)

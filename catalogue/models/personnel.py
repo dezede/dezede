@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
                              FloatField, permalink
 from django.template.defaultfilters import capfirst
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from ..templatetags.extras import abbreviate
@@ -20,6 +21,7 @@ class ProfessionManager(TreeManager, AutoriteManager):
     pass
 
 
+@python_2_unicode_compatible
 class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
@@ -84,7 +86,7 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     def __hash__(self):
         return hash(self.nom)
 
-    def __unicode__(self):
+    def __str__(self):
         return capfirst(self.html(tags=False))
 
     @staticmethod
@@ -92,6 +94,7 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
         return 'nom__icontains', 'nom_pluriel__icontains',
 
 
+@python_2_unicode_compatible
 class Devise(CommonModel):
     """
     Modélisation naïve d’une unité monétaire.
@@ -106,12 +109,13 @@ class Devise(CommonModel):
         verbose_name_plural = ungettext_lazy('devise', 'devises', 2)
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         if self.nom:
             return self.nom
         return self.symbole
 
 
+@python_2_unicode_compatible
 class Engagement(CommonModel):
     individus = ManyToManyField('Individu', related_name='engagements',
                                 db_index=True)
@@ -126,10 +130,11 @@ class Engagement(CommonModel):
         verbose_name_plural = ungettext_lazy('engagement', 'engagements', 2)
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.profession.nom
 
 
+@python_2_unicode_compatible
 class TypeDePersonnel(CommonModel):
     nom = CharField(max_length=100, unique=True, db_index=True)
 
@@ -141,10 +146,11 @@ class TypeDePersonnel(CommonModel):
         ordering = ('nom',)
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nom
 
 
+@python_2_unicode_compatible
 class Personnel(CommonModel):
     type = ForeignKey('TypeDePersonnel', related_name='personnels',
                       db_index=True)
@@ -157,5 +163,5 @@ class Personnel(CommonModel):
         verbose_name_plural = ungettext_lazy('personnel', 'personnels', 2)
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         return unicode(self.type) + unicode(self.saison)

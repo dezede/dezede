@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, FloatField, BooleanField, ForeignKey, \
                              ManyToManyField, OneToOneField, permalink, Q
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
@@ -19,6 +20,7 @@ __all__ = (b'Prenom', b'TypeDeParenteDIndividus', b'ParenteDIndividus',
            b'Individu')
 
 
+@python_2_unicode_compatible
 class Prenom(CommonModel):
     prenom = CharField(_('prénom'), max_length=100, db_index=True)
     classement = FloatField(_('classement'), default=1.0, db_index=True)
@@ -35,7 +37,7 @@ class Prenom(CommonModel):
     has_individu.short_description = _('individu(s) lié(s)')
     has_individu.boolean = True
 
-    def __unicode__(self):
+    def __str__(self):
         return self.prenom
 
     @staticmethod
@@ -43,6 +45,7 @@ class Prenom(CommonModel):
         return 'prenom__icontains',
 
 
+@python_2_unicode_compatible
 class TypeDeParenteDIndividus(CommonModel):
     nom = CharField(_('nom'), max_length=50, help_text=LOWER_MSG, unique=True,
                     db_index=True)
@@ -68,10 +71,11 @@ class TypeDeParenteDIndividus(CommonModel):
     def pluriel(self):
         return calc_pluriel(self)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nom
 
 
+@python_2_unicode_compatible
 class ParenteDIndividus(CommonModel):
     type = ForeignKey('TypeDeParenteDIndividus', related_name='parentes',
                       verbose_name=_('type'), db_index=True)
@@ -97,7 +101,7 @@ class ParenteDIndividus(CommonModel):
             raise ValidationError(_('Un individu ne peut avoir une '
                                     'parenté avec lui-même.'))
 
-    def __unicode__(self):
+    def __str__(self):
         return _('%s, %s de %s') % (self.parent, self.type.nom,
                                     self.enfant)
 
@@ -108,6 +112,7 @@ class ParenteDIndividus(CommonModel):
         return calc_pluriel(self, attr_base='nom_relatif')
 
 
+@python_2_unicode_compatible
 class Individu(AutoriteModel, UniqueSlugModel):
     particule_nom = CharField(
         _('particule du nom d’usage'), max_length=10, blank=True,
@@ -349,7 +354,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
         ordering = ('nom',)
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         return strip_tags(self.html(False))
 
     @staticmethod

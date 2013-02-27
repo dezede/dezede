@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.core.urlresolvers import reverse
 from django.db.models import CharField, DateField, ManyToManyField, \
                              TextField, permalink
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
@@ -12,6 +13,7 @@ from catalogue.models.common import CommonModel
 from catalogue.models.functions import str_list_w_last
 
 
+@python_2_unicode_compatible
 class DossierDEvenements(MPTTModel, CommonModel):
     titre = CharField(_('titre'), max_length=100)
     contenu = TextField(_('contenu'))
@@ -36,7 +38,7 @@ class DossierDEvenements(MPTTModel, CommonModel):
                                              'dossiers d’événements', 1)
         ordering = ('titre',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.titre
 
     @permalink

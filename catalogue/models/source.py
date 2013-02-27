@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import CharField, DateField, ForeignKey, \
                              ManyToManyField, permalink
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext,\
@@ -17,6 +18,7 @@ from .functions import ex, cite, no, date_html, href, small
 __all__ = (b'TypeDeSource', b'Source')
 
 
+@python_2_unicode_compatible
 class TypeDeSource(CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
@@ -33,10 +35,11 @@ class TypeDeSource(CommonModel, SlugModel):
     def pluriel(self):
         return calc_pluriel(self)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nom
 
 
+@python_2_unicode_compatible
 class Source(AutoriteModel):
     nom = CharField(_('nom'), max_length=200, db_index=True,
                     help_text=ex(_('Journal de Rouen')))
@@ -120,5 +123,5 @@ class Source(AutoriteModel):
         ordering = ('date', 'nom', 'numero', 'page', 'type')
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         return strip_tags(self.html(False))

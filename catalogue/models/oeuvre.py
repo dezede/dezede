@@ -12,6 +12,7 @@ from django.db.models import CharField, ManyToManyField, \
                              OneToOneField, IntegerField, TextField, \
                              BooleanField, permalink, get_model
 from django.template.defaultfilters import capfirst
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
                                      ugettext_lazy as _
@@ -32,6 +33,7 @@ __all__ = (b'GenreDOeuvre', b'TypeDeCaracteristiqueDOeuvre',
            b'TypeDeParenteDOeuvres', b'ParenteDOeuvres', b'Auteur', b'Oeuvre')
 
 
+@python_2_unicode_compatible
 class GenreDOeuvre(CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
                     db_index=True)
@@ -65,7 +67,7 @@ class GenreDOeuvre(CommonModel, SlugModel):
     def pluriel(self):
         return calc_pluriel(self)
 
-    def __unicode__(self):
+    def __str__(self):
         return strip_tags(self.html(False))
 
     @staticmethod
@@ -73,6 +75,7 @@ class GenreDOeuvre(CommonModel, SlugModel):
         return 'nom__icontains', 'nom_pluriel__icontains',
 
 
+@python_2_unicode_compatible
 class TypeDeCaracteristiqueDOeuvre(CommonModel):
     nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
                     unique=True, db_index=True)
@@ -93,10 +96,11 @@ class TypeDeCaracteristiqueDOeuvre(CommonModel):
     def pluriel(self):
         return calc_pluriel(self)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nom
 
 
+@python_2_unicode_compatible
 class CaracteristiqueDOeuvre(CommonModel):
     type = ForeignKey('TypeDeCaracteristiqueDOeuvre',
         related_name='caracteristiques_d_oeuvre', db_index=True,
@@ -120,7 +124,7 @@ class CaracteristiqueDOeuvre(CommonModel):
         return hlp(self.valeur, self.type, tags)
     html.allow_tags = True
 
-    def __unicode__(self):
+    def __str__(self):
         return unicode(self.type) + ' : ' + strip_tags(self.valeur)
 
     @staticmethod
@@ -132,6 +136,7 @@ class PartieManager(TreeManager, AutoriteManager):
     pass
 
 
+@python_2_unicode_compatible
 class Partie(MPTTModel, AutoriteModel, UniqueSlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
@@ -192,7 +197,7 @@ class Partie(MPTTModel, AutoriteModel, UniqueSlugModel):
     def html(self):
         return self.nom
 
-    def __unicode__(self):
+    def __str__(self):
         return self.html()
 
     @staticmethod
@@ -218,6 +223,7 @@ class PupitreManager(CommonManager):
         return self.all().elements_de_distribution()
 
 
+@python_2_unicode_compatible
 class Pupitre(CommonModel):
     partie = ForeignKey('Partie', related_name='pupitres',
                         verbose_name=_('partie'), db_index=True)
@@ -234,7 +240,7 @@ class Pupitre(CommonModel):
         ordering = ('partie',)
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         out = ''
         partie = self.partie
         mi = self.quantite_min
@@ -266,6 +272,7 @@ class Pupitre(CommonModel):
                 'partie__professions__nom_pluriel__icontains',)
 
 
+@python_2_unicode_compatible
 class TypeDeParenteDOeuvres(CommonModel):
     nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG, unique=True,
                     db_index=True)
@@ -286,7 +293,7 @@ class TypeDeParenteDOeuvres(CommonModel):
     def relatif_pluriel(self):
         return calc_pluriel(self, attr_base='nom_relatif')
 
-    def __unicode__(self):
+    def __str__(self):
         return '< %s | %s >' % (self.nom, self.nom_relatif)
 
 
@@ -298,6 +305,7 @@ class ParenteDOeuvresManager(CommonManager):
         return self.all().order_by('fille__ancrage_creation')
 
 
+@python_2_unicode_compatible
 class ParenteDOeuvres(CommonModel):
     type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes',
                       verbose_name=_('type'), db_index=True)
@@ -316,7 +324,7 @@ class ParenteDOeuvres(CommonModel):
         app_label = 'catalogue'
         unique_together = ('type', 'mere', 'fille',)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s %s %s' % (self.fille, self.type.nom, self.mere)
 
     def clean(self):
@@ -381,6 +389,7 @@ class AuteurManager(CommonManager):
         return self.get_query_set().html(tags)
 
 
+@python_2_unicode_compatible
 class Auteur(CommonModel):
     content_type = ForeignKey(ContentType, db_index=True)
     object_id = PositiveIntegerField(db_index=True)
@@ -416,7 +425,7 @@ class Auteur(CommonModel):
         return self.individu == other.individu \
             and self.profession == other.profession
 
-    def __unicode__(self):
+    def __str__(self):
         return self.html(tags=False)
 
 
@@ -424,6 +433,7 @@ class OeuvreManager(TreeManager, AutoriteManager):
     pass
 
 
+@python_2_unicode_compatible
 class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(_('préfixe du titre'), max_length=20, blank=True,
                               db_index=True)
@@ -620,7 +630,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     class MPTTMeta(object):
         parent_attr = 'contenu_dans'
 
-    def __unicode__(self):
+    def __str__(self):
         return strip_tags(self.titre_html(False))  # strip_tags car on autorise
                          # les rédacteurs à mettre des tags dans les CharFields
 

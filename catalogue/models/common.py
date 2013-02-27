@@ -12,6 +12,7 @@ from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
     ForeignKey, TextField
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _, \
     get_language
 from autoslug import AutoSlugField
@@ -226,6 +227,7 @@ class UniqueSlugModel(Model):
         return unicode(self)
 
 
+@python_2_unicode_compatible
 class Document(CommonModel):
     nom = CharField(_('nom'), max_length=300, blank=True)
     document = FileBrowseField(_('document'), max_length=400,
@@ -239,7 +241,7 @@ class Document(CommonModel):
         ordering = ('document',)
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         if self.nom:
             return self.nom
         return unicode(self.document)
@@ -253,6 +255,7 @@ class Document(CommonModel):
                 'description__icontains', 'auteurs__individu__nom',)
 
 
+@python_2_unicode_compatible
 class Illustration(CommonModel):
     legende = CharField(_('légende'), max_length=300, blank=True)
     image = FileBrowseField(_('image'), max_length=400, directory='images/')
@@ -266,7 +269,7 @@ class Illustration(CommonModel):
         ordering = ('image',)
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         if self.legende:
             return self.legende
         return unicode(self.image)
@@ -280,6 +283,7 @@ class Illustration(CommonModel):
                 'commentaire__icontains',)
 
 
+@python_2_unicode_compatible
 class Etat(CommonModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
@@ -299,7 +303,7 @@ class Etat(CommonModel):
     def pluriel(self):
         return calc_pluriel(self)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nom
 
 

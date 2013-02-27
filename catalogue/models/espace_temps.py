@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, BooleanField, \
                              DateField, TimeField, permalink, Q
 from django.template.defaultfilters import time, capfirst
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
                                      ugettext,  ugettext_lazy as _
@@ -23,6 +24,7 @@ from .oeuvre import Oeuvre
 __all__ = (b'NatureDeLieu', b'Lieu', b'Saison', b'AncrageSpatioTemporel')
 
 
+@python_2_unicode_compatible
 class NatureDeLieu(CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
                     db_index=True)
@@ -48,7 +50,7 @@ class NatureDeLieu(CommonModel, SlugModel):
     def pluriel(self):
         return calc_pluriel(self)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nom
 
     @staticmethod
@@ -60,6 +62,7 @@ class LieuManager(TreeManager, AutoriteManager):
     pass
 
 
+@python_2_unicode_compatible
 class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, db_index=True)
     parent = TreeForeignKey('self', null=True, blank=True, db_index=True,
@@ -129,7 +132,7 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
         app_label = 'catalogue'
         unique_together = ('nom', 'parent',)
 
-    def __unicode__(self):
+    def __str__(self):
         return strip_tags(self.html(False))
 
     @staticmethod
@@ -138,6 +141,7 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
                 'parent__nom__icontains')
 
 
+@python_2_unicode_compatible
 class Saison(CommonModel):
     lieu = ForeignKey('Lieu', related_name='saisons',
                       verbose_name=_('lieu ou institution'))
@@ -150,7 +154,7 @@ class Saison(CommonModel):
         ordering = ('lieu', 'debut')
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         d = {
             'lieu': unicode(self.lieu),
             'debut': self.debut.year,
@@ -160,6 +164,7 @@ class Saison(CommonModel):
                         '%(lieu)s, %(debut)d–%(fin)d') % d
 
 
+@python_2_unicode_compatible
 class AncrageSpatioTemporel(CommonModel):
     date = DateField(_('date (précise)'), blank=True, null=True, db_index=True,
         help_text=DATE_MSG)
@@ -258,7 +263,7 @@ class AncrageSpatioTemporel(CommonModel):
                     'heure_approx', 'lieu_approx')
         app_label = 'catalogue'
 
-    def __unicode__(self):
+    def __str__(self):
         return strip_tags(self.html(tags=False, short=True))
 
     def __eq__(self, other):
