@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from crispy_forms.bootstrap import PrependedText, FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset
@@ -13,7 +14,6 @@ from django.utils.translation import ugettext_lazy as _
 # de faire mumuse.
 from registration.forms import RegistrationForm
 from .models import StudentProfile
-
 
 
 def get_professors():
@@ -30,34 +30,38 @@ class UserField(ModelChoiceField):
 
 
 class UserRegistrationForm(RegistrationForm):
-    first_name = CharField(label=_(u'Prénom(s)'))
+    first_name = CharField(label=_('Prénom(s)'))
     last_name = CharField(label=_('Nom'))
     professor = UserField(queryset=get_professors(), label=_('Professeur'))
-    groups = ModelMultipleChoiceField(queryset=get_groups(),
-                             widget=CheckboxSelectMultiple, label=_('Groupes'))
+    groups = ModelMultipleChoiceField(
+        queryset=get_groups(), widget=CheckboxSelectMultiple,
+        label=_('Groupes'))
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal'
         self.helper.layout = Layout(
             Fieldset(
-                _(u'Général'),
+                _('Général'),
                 Field('first_name', 'last_name', css_class='input-xlarge'),
-                PrependedText('email', '<i class="icon-envelope"></i>', active=True),
+                PrependedText('email', '<i class="icon-envelope"></i>',
+                              active=True),
             ),
             Fieldset(
                 _('Utilisateur'),
-                PrependedText('username', '<i class="icon-user"></i>', active=True),
+                PrependedText('username', '<i class="icon-user"></i>',
+                              active=True),
                 'password1', 'password2',
             ),
             Fieldset(
-                _(u'Étudiant'),
+                _('Étudiant'),
                 'professor',
                 'groups',
             ),
             FormActions(
-                Submit('save_changes', _('Enregistrer'), css_class="btn-primary"),
-                Reset('reset', _(u'Réinitialiser')),
+                Submit('save_changes', _('Enregistrer'),
+                       css_class="btn-primary"),
+                Reset('reset', _('Réinitialiser')),
             ),
         )
         super(UserRegistrationForm, self).__init__(*args, **kwargs)
@@ -80,5 +84,5 @@ class UserRegistrationForm(RegistrationForm):
         email_content = render_to_string(
             'accounts/grant_to_admin_demand_email.txt',
             {'user': user, 'site_url': site_url})
-        professor.email_user(_(u'Demande d’accès étudiant'),
-            email_content)
+        professor.email_user(_('Demande d’accès étudiant'),
+                             email_content)

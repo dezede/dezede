@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from django.views.generic import DetailView
 from django.contrib.auth.models import User
 from django.contrib.sites.models import get_current_site
@@ -9,7 +10,6 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from registration.backends import get_backend
 from django.core.exceptions import PermissionDenied
-
 
 
 class GrantToAdmin(DetailView):
@@ -31,7 +31,7 @@ class GrantToAdmin(DetailView):
             email_content = render_to_string(
                 'accounts/granted_to_admin_email.txt',
                 {'user': user, 'site_url': site_url})
-            user.email_user(u'[Dezède] Accès autorisé à l’administration',
+            user.email_user('[Dezède] Accès autorisé à l’administration',
                             email_content)
         return context
 
@@ -40,7 +40,7 @@ def register(request, backend, success_url=None, form_class=None,
              disallowed_url='registration_disallowed',
              template_name='registration/registration_form.html',
              extra_context=None):
-    u"""Copié depuis django-registration et modifié."""
+    """Copié depuis django-registration et modifié."""
     backend = get_backend(backend)
     if not backend.registration_allowed(request):
         return redirect(disallowed_url)
@@ -53,8 +53,8 @@ def register(request, backend, success_url=None, form_class=None,
             new_user = backend.register(request, **form.cleaned_data)
             form.save(request, new_user)
             if success_url is None:
-                to, args, kwargs = backend.post_registration_redirect(request,
-                    new_user)
+                to, args, kwargs = backend.post_registration_redirect(
+                    request, new_user)
                 return redirect(to, *args, **kwargs)
             else:
                 return redirect(success_url)
@@ -67,6 +67,5 @@ def register(request, backend, success_url=None, form_class=None,
     for key, value in extra_context.items():
         context[key] = callable(value) and value() or value
 
-    return render_to_response(template_name,
-        {'form': form},
-        context_instance=context)
+    return render_to_response(template_name, {'form': form},
+                              context_instance=context)

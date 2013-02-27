@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db.models import Model, OneToOneField, ForeignKey, permalink
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
@@ -12,10 +13,10 @@ class StudentProfile(Model):
                            verbose_name=_('professeur'))
 
     class Meta(object):
-        verbose_name = ungettext_lazy(u'profil étudiant',
-                                      u'profils étudiants', 1)
-        verbose_name_plural = ungettext_lazy(u'profil étudiant',
-                                             u'profils étudiants', 2)
+        verbose_name = ungettext_lazy('profil étudiant',
+                                      'profils étudiants', 1)
+        verbose_name_plural = ungettext_lazy('profil étudiant',
+                                             'profils étudiants', 2)
 
     def __unicode__(self):
         user = self.user

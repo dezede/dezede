@@ -1,3 +1,6 @@
+# coding: utf-8
+
+from __future__ import unicode_literals
 from django.contrib.admin import site, ModelAdmin
 from .models import StudentProfile
 
