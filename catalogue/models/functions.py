@@ -18,13 +18,13 @@ def date_html(d, tags=True, short=False):
     Rendu HTML d’une date.
 
     >>> from datetime import date
-    >>> print date_html(date(1828, 1, 15))
+    >>> print(date_html(date(1828, 1, 15)))
     mardi 15 janvier 1828
-    >>> print date_html(date(1828, 1, 1), tags=False)
+    >>> print(date_html(date(1828, 1, 1), tags=False))
     mardi 1er janvier 1828
-    >>> print date_html(date(1828, 1, 1))
+    >>> print(date_html(date(1828, 1, 1)))
     mardi 1<sup>er</sup> janvier 1828
-    >>> print date_html(date(1828, 1, 1), tags=False, short=True)
+    >>> print(date_html(date(1828, 1, 1), tags=False, short=True))
     1er janvier 1828
     """
     pre = '' if short else date(d, 'l')
@@ -43,7 +43,7 @@ def str_list(l, infix=None, last_infix=None):
     Concatène une liste de chaîne de caractères avec des virgules.
 
     >>> l = ['Jeanne', 'Lola', 'Perrine', 'Marion']
-    >>> print str_list(l)
+    >>> print(str_list(l))
     Jeanne, Lola, Perrine, Marion
     """
     if infix is None:
@@ -63,9 +63,9 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
     Pour désactiver la virgule d’Oxford, passer oxford_comma=False en argument.
 
     >>> l = ['Jeanne', 'Marion', 'Lola', 'Perrine']
-    >>> print str_list_w_last(l)
+    >>> print(str_list_w_last(l))
     Jeanne, Marion, Lola\u00A0et\u00A0Perrine
-    >>> print str_list_w_last(l[:2])
+    >>> print(str_list_w_last(l[:2]))
     Jeanne\u00A0et\u00A0Marion
     """
     l = tuple(l)
@@ -85,7 +85,7 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
 
 def ex(txt, pre='', post=''):
     """
-    >>> print ex('30/01/1989')
+    >>> print(ex('30/01/1989'))
     Exemple : « 30/01/1989 ».
     """
     return _('Exemple : %(pre)s« %(txt)s »%(post)s.') % {
@@ -98,7 +98,7 @@ ex = allow_lazy(ex, unicode)
 
 def no(txt):
     """
-    >>> print no('13')
+    >>> print(no('13'))
     n°\u00A013
     """
     return _('n°\u00A0%s') % txt
@@ -123,9 +123,9 @@ def html_decorator(function):
 @html_decorator
 def cite(txt):
     """
-    >>> print cite('Le Cid')
+    >>> print(cite('Le Cid'))
     <cite>Le Cid</cite>
-    >>> print cite('The pillars of the earth', False)
+    >>> print(cite('The pillars of the earth', False))
     The pillars of the earth
     """
     return '<cite>' + txt + '</cite>'
@@ -133,7 +133,7 @@ def cite(txt):
 
 def href(url, txt, tags=True):
     """
-    >>> print href('truc.machin/bidule', 'Cliquez ici')
+    >>> print(href('truc.machin/bidule', 'Cliquez ici'))
     <a href="truc.machin/bidule">Cliquez ici</a>
     >>> print(href('a.b/c', "It's a trap!", tags=False))
     It's a trap!
@@ -150,9 +150,9 @@ def href(url, txt, tags=True):
 @html_decorator
 def sc(txt):
     """
-    >>> print sc('gentle shout')
+    >>> print(sc('gentle shout'))
     <span class="sc">gentle shout</span>
-    >>> print sc('I wish I could be in small caps', tags=False)
+    >>> print(sc('I wish I could be in small caps', tags=False))
     I wish I could be in small caps
     """
     return '<span class="sc">' + txt + '</span>'
@@ -160,9 +160,9 @@ def sc(txt):
 
 def hlp(txt, title, tags=True):
     """
-    >>> print hlp('two years', 'period')
+    >>> print(hlp('two years', 'period'))
     <span title="Period">two years</span>
-    >>> print hlp('G minor', 'tonality', tags=False)
+    >>> print(hlp('G minor', 'tonality', tags=False))
     G minor
     >>> hlp('', '')
     u''
@@ -178,9 +178,9 @@ def hlp(txt, title, tags=True):
 @html_decorator
 def small(txt):
     """
-    >>> print small('I feel tiny')
+    >>> print(small('I feel tiny'))
     <small>I feel tiny</small>
-    >>> print small('In a website I would be small...', tags=False)
+    >>> print(small('In a website I would be small...', tags=False))
     In a website I would be small...
     """
     return '<small>' + txt + '</small>'
@@ -189,7 +189,7 @@ def small(txt):
 @html_decorator
 def strong(txt):
     """
-    >>> print strong('I are STROOoOONG!!!')
+    >>> print(strong('I are STROOoOONG!!!'))
     <strong>I are STROOoOONG!!!</strong>
     """
     return '<strong>' + txt + '</strong>'
