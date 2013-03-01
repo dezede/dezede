@@ -14,13 +14,13 @@
 <span class="btn-group">
 
   {% if has_change_perm %}
-    <a class="btn btn-primary" href="{% url 'admin_change' object.pk %}">
+    <a class="btn btn-primary" href="{% url admin_change object.pk %}">
       <i class="icon-pencil icon-white"></i> {% trans "modifier"|capfirst %}
     </a>
   {% endif %}
 
   {% if has_delete_perm %}
-    <a class="btn btn-danger" href="{% url 'admin_delete' object.pk %}">
+    <a class="btn btn-danger" href="{% url admin_delete object.pk %}">
       <i class="icon-trash icon-white"></i> {% trans "supprimer"|capfirst %}
     </a>
   {% endif %}
