@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-25 00:41+0200\n"
+"POT-Creation-Date: 2013-03-06 22:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,147 +18,193 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: dashboard.py:27
+#: dashboard.py:26
 msgid "Saisie courante"
 msgstr ""
 
-#: dashboard.py:40
+#: dashboard.py:39
+msgid "Rédaction"
+msgstr ""
+
+#: dashboard.py:47
 msgid "Fichiers"
 msgstr ""
 
-#: dashboard.py:46
+#: dashboard.py:53
 msgid "Gestionnaire de fichiers bruts"
 msgstr ""
 
-#: dashboard.py:58
+#: dashboard.py:65
 msgid "Intégration à la base de données"
 msgstr ""
 
-#: dashboard.py:67
+#: dashboard.py:74
 msgid "Actions récentes"
 msgstr ""
 
-#: dashboard.py:74
+#: dashboard.py:81
 msgid "Utilisateurs et groupes"
 msgstr ""
 
-#: dashboard.py:81
+#: dashboard.py:90
 msgid "Traduction"
 msgstr ""
 
-#: dashboard.py:95
+#: dashboard.py:103
 msgid "Support"
 msgstr ""
 
-#: dashboard.py:100
+#: dashboard.py:108
 msgid "Documentation de Django"
 msgstr ""
 
-#: dashboard.py:105
+#: dashboard.py:113
 msgid "Documentation de Grappelli"
 msgstr ""
 
-#: dashboard.py:110
+#: dashboard.py:118
 msgid "Grappelli sur Google-Code"
 msgstr ""
 
-#: settings.py:45
+#: settings.py:72
 msgid "Français"
 msgstr ""
 
-#: settings.py:46
+#: settings.py:73
 msgid "English"
 msgstr ""
 
-#: templates/403.html:5
+#: settings.py:74
+msgid "Deutsch"
+msgstr ""
+
+#: templates/403.html:6 templates/403.html.py:11
 msgid "Erreur 403"
 msgstr ""
 
-#: templates/403.html:9
-msgid "Vous n’avez pas l’autorisation d’accéder à cette page."
+#: templates/403.html:14
+#, python-format
+msgid ""
+"\n"
+"    Vous n’avez pas l’autorisation d’accéder à cette page.<br />\n"
+"    Souhaitez-vous <a href=\"%(login_url)s\">vous connecter</a> ?\n"
+"  "
 msgstr ""
 
-#: templates/404.html:5
+#: templates/404.html:5 templates/404.html.py:10
 msgid "Erreur 404"
 msgstr ""
 
-#: templates/404.html:9
-msgid "La page n'a pu être trouvée."
+#: templates/404.html:12
+msgid "La page n’a pu être trouvée."
 msgstr ""
 
-#: templates/500.html:5
+#: templates/500.html:5 templates/500.html.py:10
 msgid "Erreur 500"
 msgstr ""
 
-#: templates/500.html:9
+#: templates/500.html:12
 msgid "Le serveur ne parvient pas à répondre correctement à votre requête."
 msgstr ""
 
-#: templates/base.html:7
+#: templates/base.html:10
 msgid "musicologie, base de données"
 msgstr ""
 
-#: templates/base.html:30
-msgid "Rechercher…"
+#: templates/base.html:65
+msgid ""
+"\n"
+"              Votre navigateur ne peut pas lancer javascript.\n"
+"              Attendez-vous à des défauts de fonctionnement.\n"
+"            "
 msgstr ""
 
-#: templates/base.html:42
+#: templates/navbar.html:27
+msgid "dossiers"
+msgstr ""
+
+#: templates/navbar.html:30
 msgid "événements"
 msgstr ""
 
-#: templates/base.html:46
+#: templates/navbar.html:35
 msgid "Autorités"
 msgstr ""
 
-#: templates/base.html:51
-msgid "lieux"
+#: templates/navbar.html:40
+msgid "lieux et institutions"
 msgstr ""
 
-#: templates/base.html:54
+#: templates/navbar.html:43
 msgid "œuvres"
 msgstr ""
 
-#: templates/base.html:57
+#: templates/navbar.html:46
 msgid "individus"
 msgstr ""
 
-#: templates/base.html:60
+#: templates/navbar.html:49
 msgid "professions"
 msgstr ""
 
-#: templates/base.html:63
-msgid "parties"
+#: templates/navbar.html:52
+msgid "rôles et instruments"
 msgstr ""
 
-#: templates/base.html:70
+#: templates/navbar.html:60
+msgid "Rechercher…"
+msgstr ""
+
+#: templates/navbar.html:73
+msgid ""
+"\n"
+"                    Infobulles\n"
+"                  "
+msgstr ""
+
+#: templates/navbar.html:113
+msgid "Langue"
+msgstr ""
+
+#: templates/navbar.html:139
+msgid "Questions/Bugs"
+msgstr ""
+
+#: templates/navbar.html:144
 msgid "Administration"
 msgstr ""
 
-#: templates/base.html:88
-msgid ""
-"Votre navigateur ne peut pas lancer javascript. Attendez-vous à des défauts "
-"de fonctionnement."
+#: templates/routines/front-end_admin.html:6
+msgid "Transcripteur"
 msgstr ""
 
-#: templates/search/search.html:5 templates/search/search.html.py:9
+#: templates/routines/front-end_admin.html:18
+msgid "modifier"
+msgstr ""
+
+#: templates/routines/front-end_admin.html:24
+msgid "supprimer"
+msgstr ""
+
+#: templates/search/search.html:5 templates/search/search.html.py:10
 msgid "Recherche"
 msgstr ""
 
-#: templates/search/search.html:25
+#: templates/search/search.html:20
 msgid "Filtres :"
 msgstr ""
 
-#: templates/search/search.html:40
+#: templates/search/search.html:57
 msgid "résultat"
 msgid_plural "résultats"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/search/search.html:45
+#: templates/search/search.html:62
 msgid "Essayez aussi :"
 msgstr ""
 
-#: templates/search/search.html:53
+#: templates/search/search.html:70
 msgid ""
 "Tapez par exemple « chanteuse », « Molière », « opéra » ou encore "
 "« théâtre »."

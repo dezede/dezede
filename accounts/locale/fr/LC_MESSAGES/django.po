@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-25 00:40+0200\n"
+"POT-Creation-Date: 2013-03-06 22:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,55 +18,82 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: forms.py:31
+#: forms.py:34
 msgid "Prénom(s)"
 msgstr ""
 
-#: forms.py:32
+#: forms.py:35
 msgid "Nom"
 msgstr ""
 
-#: forms.py:33
+#: forms.py:36
 msgid "Professeur"
 msgstr ""
 
-#: forms.py:35
+#: forms.py:39
 msgid "Groupes"
 msgstr ""
 
-#: forms.py:42
+#: forms.py:46
 msgid "Général"
 msgstr ""
 
-#: forms.py:47 models.py:10
+#: forms.py:52 models.py:22
 msgid "Utilisateur"
 msgstr ""
 
-#: forms.py:52
+#: forms.py:58
 msgid "Étudiant"
 msgstr ""
 
-#: forms.py:57
+#: forms.py:63
 msgid "Enregistrer"
 msgstr ""
 
-#: forms.py:58
+#: forms.py:65
 msgid "Réinitialiser"
 msgstr ""
 
-#: forms.py:81
+#: forms.py:88
 msgid "Demande d’accès étudiant"
 msgstr ""
 
-#: models.py:12 models.py:28
+#: models.py:24 models.py:40
 msgid "professeur"
 msgstr ""
 
-#: models.py:15 models.py:17
+#: models.py:27 models.py:29
 msgid "profil étudiant"
 msgid_plural "profils étudiants"
 msgstr[0] ""
 msgstr[1] ""
+
+#: templates/accounts/grant_to_admin.html:6
+#: templates/accounts/grant_to_admin.html:10
+msgid "Accès à l’interface d’administration"
+msgstr ""
+
+#: templates/accounts/grant_to_admin.html:13
+#, python-format
+msgid ""
+"\n"
+"        L’utilisateur « %(object)s » fait déjà partie de l’équipe !\n"
+"      "
+msgstr ""
+
+#: templates/accounts/grant_to_admin.html:18
+#, python-format
+msgid ""
+"\n"
+"        %(user.get_full_name)s, l’utilisateur « %(object.get_full_name)s »\n"
+"        a été autorisé à accéder à l’interface d'administration suite à "
+"votre\n"
+"        accord. Si vous souhaitez annuler cela,\n"
+"        <a href=\"%(change_user_url)s\">\n"
+"          modifiez l’utilisateur %(object.get_full_name)s</a>,\n"
+"        décochez la case « statut équipe » et enregistrez.\n"
+"      "
+msgstr ""
 
 #: templates/profiles/create_profile.html:5
 #: templates/profiles/create_profile.html:9
@@ -95,12 +122,12 @@ msgstr ""
 msgid "Sources transcrites"
 msgstr ""
 
-#: templates/profiles/profile_list.html:5
-#: templates/profiles/profile_list.html:9
+#: templates/profiles/profile_list.html:6
+#: templates/profiles/profile_list.html:10
 msgid "Profils utilisateur"
 msgstr ""
 
-#: templates/profiles/profile_list.html:15
+#: templates/profiles/profile_list.html:16
 msgid "Créer son profil"
 msgstr ""
 
@@ -144,11 +171,15 @@ msgid ""
 "compte.\n"
 msgstr ""
 
-#: templates/registration/login.html:5 templates/registration/login.html:9
+#: templates/registration/login.html:6 templates/registration/login.html:19
 msgid "Connexion"
 msgstr ""
 
-#: templates/registration/login.html:12
+#: templates/registration/login.html:11
+msgid "Déjà connecté"
+msgstr ""
+
+#: templates/registration/login.html:13
 #, python-format
 msgid ""
 "\n"
@@ -157,24 +188,24 @@ msgid ""
 "    "
 msgstr ""
 
-#: templates/registration/login.html:20
-msgid "Se connecter"
-msgstr ""
-
-#: templates/registration/login.html:23
+#: templates/registration/login.html:22
 #, python-format
 msgid ""
 "\n"
 "            Pas de compte utilisateur ?\n"
-"            Vous pouvez <a href=\"%(url)s\">en creer un.</a>\n"
+"            Vous pouvez <a href=\"%(url)s\">en creer un</a>.\n"
 "          "
 msgstr ""
 
-#: templates/registration/logout.html:5 templates/registration/logout.html:9
+#: templates/registration/login.html:31
+msgid "Se connecter"
+msgstr ""
+
+#: templates/registration/logout.html:6 templates/registration/logout.html:10
 msgid "Déconnexion"
 msgstr ""
 
-#: templates/registration/logout.html:12
+#: templates/registration/logout.html:13
 #, python-format
 msgid ""
 "\n"
@@ -211,9 +242,6 @@ msgid ""
 msgstr ""
 
 #: templates/registration/registration_form.html:5
-msgid "Créer un nouveau compte"
-msgstr ""
-
 #: templates/registration/registration_form.html:9
-msgid "Créer un nouveau compte étudiant"
+msgid "Créer un nouveau compte"
 msgstr ""

@@ -103,8 +103,9 @@ class ParenteDIndividus(CommonModel):
                                     'parenté avec lui-même.'))
 
     def __str__(self):
-        return _('%s, %s de %s') % (self.parent, self.type.nom,
-                                    self.enfant)
+        return ugettext('%(parent)s, %(type)s de %(enfant)s') % {
+            'parent': self.parent, 'type': self.type.nom,
+            'enfant': self.enfant}
 
     def pluriel(self):
         return calc_pluriel(self)
