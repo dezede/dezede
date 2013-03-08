@@ -27,3 +27,4 @@ django-debug-toolbar==0.9.4
 django-extensions==1.0.3
 BeautifulSoup==3.2.1
 Pygments==1.5
+transifex-client==0.8

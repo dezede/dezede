@@ -3,7 +3,7 @@ Projet Dezède
 *************
 
 :Auteur: Bertrand Bordage
-:Copyright: Bertrand Bordage © 2011-2012
+:Copyright: Bertrand Bordage © 2011-2013
 
 .. contents::
 
@@ -28,7 +28,7 @@ Dépendances
 ===========
 
 :Système d'exploitation:
-  Ubuntu 12.04 « Precise Pangolin »
+  Ubuntu 12.10 « Quantal Quetzal »
 
 Pour installer les dépendances qui suivent :
   ``sudo ./dependances.sh``
@@ -44,12 +44,13 @@ Nécessaires à l'exécution
 Paquet          Version
 =============== =======
 nano
-mysql-server    5.1
-python2.7       2.7.2
-python-mysqldb  1.2.3
-python-pip      1.0
-python-docutils 0.7
-memcached       1.4.13
+postgresql      9.1
+python2.7       2.7.3
+python-psycopg2 2.4.5
+python-pip      1.1
+python-docutils 0.8.1
+memcached       1.4.14
+python-dev      2.7.3
 =============== =======
 
 
@@ -87,7 +88,7 @@ Installation du moteur de recherche
     ``./manage.py build_solr_schema > apache-solr-[version]/example/solr/conf/schema.xml``
 
 
-#. Dans ce shéma, remplacer le fieldtype "text" par tout ceci :
+#. Dans ce schéma, remplacer le fieldtype "text" par tout ceci :
 
     ::
 
@@ -121,7 +122,7 @@ Installation du moteur de recherche
 
 
 #. Ajouter ceci dans le tag *config* du fichier
-   ``apache-sorl-[version]/example/solr/conf/solrconfig.xml`` :
+   `apache-sorl-[version]/example/solr/conf/solrconfig.xml` :
 
     ::
 
@@ -153,21 +154,26 @@ Installation du moteur de recherche
 
 
 
-Configuration de MySQL
-======================
+Configuration de PostgreSQL
+===========================
 
 .. index::
-    MySQL
+    PostgreSQL
 
-#. Création de la base de données dans MySQL :
-    ``mysql -uroot -p``
-    ::
+#. Effectuer les actions suivantes :
 
-      CREATE DATABASE criminocorpus;
-      exit;
+    | ``sudo -i -u postgres``
+    | ``psql``
+
+      | ``CREATE USER dezede LOGIN;``
+      | ``CREATE DATABASE dezede OWNER dezede;``
+      | ``ALTER USER dezede WITH ENCRYPTED PASSWORD 'mot_de_passe';``
+      | ``\q``
+
+    | ``exit``
 
 
-#. Paramétrer l'authentification de MySQL :
+#. Paramétrer l'accès de Django à la base de données :
 
     - Éditer le fichier de réglages :
         ``nano settings.py``
@@ -175,7 +181,7 @@ Configuration de MySQL
 
 
 #. Création des tables de la base de données :
-    ``./manage.py syncdb``
+    ``./manage.py syncdb`` puis ``./manage.py migrate``
 
 
 
@@ -192,7 +198,7 @@ Lancement du serveur de développement
           DEBUG = True
 
 
-#. `Configuration de MySQL`_
+#. `Configuration de PostgreSQL`_
 
 
 #. Création des révisions initiales :
@@ -207,10 +213,6 @@ Lancement du serveur de développement
     ``mkdir -p media/uploads/``
 
 
-#. Compiler les fichiers de langues :
-    ``./manage.py compilemessages``
-
-
 #. Indexation des données :
     ``./manage.py rebuild_index``
 
@@ -223,7 +225,7 @@ Lancement du serveur de développement
 Déploiement
 ===========
 
-#. `Configuration de MySQL`_
+#. `Configuration de PostgreSQL`_
 
 
 #. Création des révisions initiales :
@@ -310,7 +312,7 @@ Configuration d'Apache
         avant ``<VirtualHost ...>`` pour éviter d'avoir à relancer
         le serveur à chaque modification.
 
-#. Ajouter le nom de serveur à ``/etc/apache2/httpd.conf`` :
+#. Ajouter le nom de serveur à `/etc/apache2/httpd.conf` :
     ::
 
       ServerName [ip_du_serveur]
@@ -335,13 +337,12 @@ Localisation
 
 #. Ajouter (éventuellement) la langue désirée à LANGUAGES du fichier settings.py
 
-#. Créer ou mettre à jour le fichier de langue désirée :
-    ``sudo ./manage.py makemessages -l [langue (ex : de)]``
+#. Metre à jour à partir de Transifex :
+    ``tx pull -a``
 
-#. Éditer le fichier de langue :
-    ``nano locale/[langue]/LC_MESSAGES/django.po``
+#. Compiler les fichiers de langues (en se mettant au préalable dans le
+   dossier de l'application ou du projet) :
 
-#. Compiler les fichiers de langues :
     ``./manage.py compilemessages``
 
 #. Relancer le serveur

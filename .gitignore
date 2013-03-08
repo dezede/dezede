@@ -6,5 +6,4 @@ apache-solr*
 /stats/
 /profile/
 *.log
-*.mo
 _*/
