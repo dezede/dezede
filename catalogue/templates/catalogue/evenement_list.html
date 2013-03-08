@@ -38,14 +38,14 @@
   </div>
 
   {% addtoblock 'js' %}
-    <script src="{% static 'endless_pagination/js/endless.js' %}" charset="utf-8"></script>
-  {% endaddtoblock %}
-  {% addtoblock 'js' %}
-    <script src="{% static 'endless_pagination/js/endless_on_scroll.js' %}" charset="utf-8"></script>
+    <script src="{% static 'endless_pagination/js/endless-pagination.js' %}" charset="utf-8"></script>
   {% endaddtoblock %}
   {% addtoblock 'js' %}
     <script>
-      var endless_on_scroll_margin = 200;
+      $.endlessPaginate({
+        paginateOnScroll: true,
+        paginateOnScrollMargin: 200
+      });
     </script>
   {% endaddtoblock %}
 {% endblock %}
