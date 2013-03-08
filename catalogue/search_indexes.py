@@ -1,113 +1,70 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.conf import settings
+from django.utils import translation
 from haystack.indexes import SearchIndex, CharField, EdgeNgramField, \
     DateField
 from haystack import site
 from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie
 
 
-class OeuvreIndex(SearchIndex):
+class CommonSearchIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
     suggestions = CharField()
+
+    def index_queryset(self):
+        return self.get_model().objects.all()
+
+    def prepare(self, obj):
+        translation.activate(settings.LANGUAGE_CODE)
+        prepared_data = super(CommonSearchIndex, self).prepare(obj)
+        prepared_data['suggestions'] = prepared_data['text']
+        return prepared_data    
+
+
+class OeuvreIndex(CommonSearchIndex):
     content_auto = EdgeNgramField(model_attr='titre_html')
 
     def get_model(self):
         return Oeuvre
 
-    def index_queryset(self):
-        return self.get_model().objects.all()
-
     def prepare(self, obj):
         prepared_data = super(OeuvreIndex, self).prepare(obj)
-        prepared_data['suggestions'] = prepared_data['text']
         prepared_data['boost'] = 1.0 / (obj.level + 1)
         return prepared_data
 site.register(Oeuvre, OeuvreIndex)
 
 
-class SourceIndex(SearchIndex):
-    text = CharField(document=True, use_template=True)
+class SourceIndex(CommonSearchIndex):
     date = DateField(model_attr='date')
-    suggestions = CharField()
 
     def get_model(self):
         return Source
-
-    def index_queryset(self):
-        return self.get_model().objects.all()
-
-    def prepare(self, obj):
-        prepared_data = super(SourceIndex, self).prepare(obj)
-        prepared_data['suggestions'] = prepared_data['text']
-        return prepared_data
 site.register(Source, SourceIndex)
 
 
-class IndividuIndex(SearchIndex):
-    text = CharField(document=True, use_template=True)
-    suggestions = CharField()
-
+class IndividuIndex(CommonSearchIndex):
     def get_model(self):
         return Individu
-
-    def index_queryset(self):
-        return self.get_model().objects.all()
-
-    def prepare(self, obj):
-        prepared_data = super(IndividuIndex, self).prepare(obj)
-        prepared_data['suggestions'] = prepared_data['text']
-        return prepared_data
 site.register(Individu, IndividuIndex)
 
 
-class LieuIndex(SearchIndex):
-    text = CharField(document=True, use_template=True)
-    suggestions = CharField()
+class LieuIndex(CommonSearchIndex):
     content_auto = EdgeNgramField(model_attr='html')
 
     def get_model(self):
         return Lieu
-
-    def index_queryset(self):
-        return self.get_model().objects.all()
-
-    def prepare(self, obj):
-        prepared_data = super(LieuIndex, self).prepare(obj)
-        prepared_data['suggestions'] = prepared_data['text']
-        return prepared_data
 site.register(Lieu, LieuIndex)
 
 
-class EvenementIndex(SearchIndex):
-    text = CharField(document=True, use_template=True)
-    suggestions = CharField()
-
+class EvenementIndex(CommonSearchIndex):
     def get_model(self):
         return Evenement
-
-    def index_queryset(self):
-        return self.get_model().objects.all()
-
-    def prepare(self, obj):
-        prepared_data = super(EvenementIndex, self).prepare(obj)
-        prepared_data['suggestions'] = prepared_data['text']
-        return prepared_data
 site.register(Evenement, EvenementIndex)
 
 
-class PartieIndex(SearchIndex):
-    text = CharField(document=True, use_template=True)
-    suggestions = CharField()
-
+class PartieIndex(CommonSearchIndex):
     def get_model(self):
         return Partie
-
-    def index_queryset(self):
-        return self.get_model().objects.all()
-
-    def prepare(self, obj):
-        prepared_data = super(PartieIndex, self).prepare(obj)
-        prepared_data['suggestions'] = prepared_data['text']
-        return prepared_data
 site.register(Partie, PartieIndex)
