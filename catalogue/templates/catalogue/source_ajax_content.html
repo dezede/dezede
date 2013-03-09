@@ -6,8 +6,8 @@
 
 {% include 'catalogue/source_content.html' %}
 
-<dl class="dl-horizontal">
-  {% if not source.contenu %}
+{% if not source.contenu %}
+  <dl class="dl-horizontal">
     {% list_in_dl source.documents.all %}
-  {% endif %}
-</dl>
+  </dl>
+{% endif %}

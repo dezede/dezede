@@ -1,15 +1,19 @@
-<ul class="thumbnails">
-  {% for illustration in object.illustrations.all %}
-    <li class="span3">
-      <a href="{{ illustration.image.url }}" class="thumbnail">
-        <img src="{{ illustration.image.url }}" />
-        {% if illustration.legende %}
-          <h4>{{ illustration.legende }}</h4>
-        {% endif %}
-        {% if illustration.commentaire %}
-          <p>{{ illustration.commentaire }}</p>
-        {% endif %}
-      </a>
-    </li>
-  {% endfor %}
-</ul>
+{% for illustration in object.illustrations.all %}
+  {% if forloop.first %}
+    <ul class="thumbnails">
+  {% endif %}
+  <li class="span3">
+    <a href="{{ illustration.image.url }}" class="thumbnail">
+      <img src="{{ illustration.image.url }}" />
+      {% if illustration.legende %}
+        <h4>{{ illustration.legende }}</h4>
+      {% endif %}
+      {% if illustration.commentaire %}
+        <p>{{ illustration.commentaire }}</p>
+      {% endif %}
+    </a>
+  </li>
+  {% if forloop.last %}
+    </ul>
+  {% endif %}
+{% endfor %}
