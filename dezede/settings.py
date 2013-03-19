@@ -254,7 +254,7 @@ HAYSTACK_SEARCH_ENGINE = 'solr'
 HAYSTACK_SOLR_URL = 'http://127.0.0.1:15031/solr'
 HAYSTACK_INCLUDE_SPELLING = True
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
-HAYSTACK_CUSTOM_HIGHLIGHTER = 'catalogue.search_indexes.CustomHighlighter'
+HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
 
 CACHES = {
     'default': {
