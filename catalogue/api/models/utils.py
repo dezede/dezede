@@ -5,9 +5,15 @@ from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import ManyToManyField, Manager, Model
 from django.db.models.fields.related import RelatedField
 from django.db.models.query import QuerySet
+from django.utils import six
 from django.utils.encoding import smart_text
 from catalogue.api.utils.console import info, colored_diff, error
 from ..utils import notify_send, print_info
+
+
+# Python 2 & 3 compatibility.
+if not six.PY3:
+    input = raw_input
 
 
 def get_obj_contents(obj):
@@ -17,6 +23,11 @@ def get_obj_contents(obj):
         if v:
             contents[k] = v
     return contents
+
+
+def pprintable_dict(d):
+    return '(%s)' % ', '.join('%s=%s' % (k, smart_text(repr(v)))
+                              for k, v in d.items())
 
 
 def ask_for_choice(intro, choices, start=1, allow_empty=False, default=None):
@@ -34,11 +45,11 @@ def ask_for_choice(intro, choices, start=1, allow_empty=False, default=None):
             s = smart_text(obj)
         out = '{} {}'.format(info('{}.'.format(i)), s)
         if isinstance(obj, Model):
-            out += ' ' + smart_text(get_obj_contents(obj))
+            out += ' ' + pprintable_dict(get_obj_contents(obj))
         print(out)
 
     while True:
-        choice = raw_input(info(question).encode('utf-8'))
+        choice = input(info(question))
         if choice.isdigit():
             choice = int(choice)
             if 0 <= choice - start < len(choices):
@@ -71,7 +82,7 @@ def is_many_related_field(object_or_class, field_name):
 
 
 def is_str(v):
-    return isinstance(v, str or unicode)
+    return isinstance(v, six.string_types)
 
 
 def get_field_cmp_value(obj, k, v):
@@ -128,7 +139,7 @@ def enlarged_get(Model, filter_kwargs):
     if n <= 1:
         return qs.get()
     intro = '%d objets trouvés pour les arguments %s' \
-            % (n, smart_text(filter_kwargs))
+            % (n, pprintable_dict(filter_kwargs))
     return qs[ask_for_choice(intro, qs)]
 
 
