@@ -191,27 +191,31 @@ dl.dl-horizontal dd+dt, dl.dl-horizontal dd+dt+dd {
 }
 
 .result.evenement {
-  background-color: #FFB894;
+  background-color: #ff9999;
 }
 
 .result.individu {
-  background-color: #FFD040;
+  background-color: #ffdb99;
 }
 
 .result.lieu {
-  background-color: #9DBDFF;
+  background-color: #dfff99;
 }
 
 .result.oeuvre {
-  background-color: #FFBDFF;
+  background-color: #99ffb9;
 }
 
 .result.source {
-  background-color: #9BF09B;
+  background-color: #60c0f0;
 }
 
 .result.partie {
-  background-color: #ff6e6b;
+  background-color: #bb99ff;
+}
+
+.result.profession {
+  background-color: #ff99dd;
 }
 
 .content_part {

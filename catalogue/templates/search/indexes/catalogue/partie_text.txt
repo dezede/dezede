@@ -3,7 +3,7 @@
 {% filter stripchars|striptags %}
   {% autoescape off %}
     {{ object.nom }}
-    {{ object.parent }}
+    {{ object.parent|default_if_none:'' }}
     {{ object.nom_pluriel }}
     {{ object.professions.all|join:' ' }}
     {{ object.interpretes|join:' ' }}

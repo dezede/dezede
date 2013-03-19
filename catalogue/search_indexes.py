@@ -3,10 +3,11 @@
 from __future__ import unicode_literals
 from django.conf import settings
 from django.utils import translation
+from haystack import site
 from haystack.indexes import SearchIndex, CharField, EdgeNgramField, \
     DateField
-from haystack import site
-from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie
+from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie, \
+    Profession
 
 
 class CommonSearchIndex(SearchIndex):
@@ -68,3 +69,9 @@ class PartieIndex(CommonSearchIndex):
     def get_model(self):
         return Partie
 site.register(Partie, PartieIndex)
+
+
+class ProfessionIndex(CommonSearchIndex):
+    def get_model(self):
+        return Profession
+site.register(Profession, ProfessionIndex)
