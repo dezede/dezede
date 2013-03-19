@@ -8,6 +8,15 @@ import re
 ugettext = lambda s: s
 
 
+# Permet l'utilisation de pypy.
+try:
+    import psycopg2
+except ImportError:
+    # Fall back to psycopg2-ctypes
+    from psycopg2ct import compat
+    compat.register()
+
+
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
