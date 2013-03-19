@@ -1,4 +1,4 @@
-{% load i18n highlight endless %}
+{% load i18n highlight endless extras %}
 
 {% paginate 10 object_list %} {# FIXME: Utiliser HAYSTACK_SEARCH_RESULTS_PER_PAGE #}
 
@@ -15,9 +15,13 @@
       {% endif %}
       <small>
         {% if result.object.contenu %}
-          {% highlight result.object.contenu with query html_tag 'mark' %}
+          {% with result.object.contenu|stripchars as contenu %}
+            {% highlight contenu with query html_tag 'mark' %}
+          {% endwith %}
         {% else %}
-          {% highlight result.object.html with query html_tag 'mark' %}
+          {% with result.object.html|stripchars as contenu %}
+            {% highlight contenu with query html_tag 'mark' %}
+          {% endwith %}
         {% endif %}
       </small>
     </div>
