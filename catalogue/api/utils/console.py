@@ -28,7 +28,11 @@ PRINT_COLORS = {
 def colored(msg, color):
     if not msg:
         return ''
-    return PRINT_COLORS[color] + smart_text(msg) + PRINT_COLORS['normal']
+    return ''.join(smart_text(s) for s in (
+        PRINT_COLORS[color],
+        msg,
+        PRINT_COLORS['normal']
+    ))
 
 
 def red_bg(msg):

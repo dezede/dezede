@@ -6,6 +6,7 @@ import re
 import sys
 from django.contrib.contenttypes.models import ContentType
 from django.template.defaultfilters import title
+from django.utils import translation
 from catalogue.api import build_ancrage
 from catalogue.api.models.utils import update_or_create, get_or_create, \
                                        enlarged_get
@@ -189,6 +190,7 @@ def import_from_data_module(data_module):
 
 
 def run():
+    translation.activate('fr')
     from .data import data_modules
     for data_module in data_modules:
         import_from_data_module(data_module)

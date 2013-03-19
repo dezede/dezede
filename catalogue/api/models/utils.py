@@ -2,30 +2,65 @@
 
 from __future__ import unicode_literals
 from django.contrib.contenttypes.generic import GenericRelation
-from django.db.models import ManyToManyField, Manager
+from django.db.models import ManyToManyField, Manager, Model
+from django.db.models.fields.related import RelatedField
 from django.db.models.query import QuerySet
 from django.utils.encoding import smart_text
-from catalogue.api.utils.console import info, colored_diff
+from catalogue.api.utils.console import info, colored_diff, error
 from ..utils import notify_send, print_info
 
 
-def ask_for_choice(obj, k, v, new_v):
-    intro = 'Deux possibilités pour le champ {0} de {1}'.format(k, obj)
+def get_obj_contents(obj):
+    contents = {}
+    for k in [f.name for f in obj._meta.fields if f is not obj._meta.pk]:
+        v = getattr(obj, k)
+        if v:
+            contents[k] = v
+    return contents
+
+
+def ask_for_choice(intro, choices, start=1, allow_empty=False, default=None):
     notify_send(intro)
     print_info(intro)
+
+    question = 'Que choisir{} ? '.format(
+        '' if default is None else ' (par défaut {})'.format(default))
+
+    for i, obj in enumerate(choices, start=start):
+        if isinstance(obj, tuple):
+            obj, msg = obj
+            s = '{} {}'.format(obj, info(msg))
+        else:
+            s = smart_text(obj)
+        out = '{} {}'.format(info('{}.'.format(i)), s)
+        if isinstance(obj, Model):
+            out += ' ' + smart_text(get_obj_contents(obj))
+        print(out)
+
+    while True:
+        choice = raw_input(info(question).encode('utf-8'))
+        if choice.isdigit():
+            choice = int(choice)
+            if 0 <= choice - start < len(choices):
+                return choice - start
+        elif allow_empty and not choice:
+            return default if default is None else default - start
+        print(error('Choix invalide !'))
+
+
+def ask_for_old_new_or_create(obj, k, v, new_v):
+    intro = 'Deux possibilités pour le champ {0} de {1}'.format(k, obj)
     v, new_v = colored_diff(smart_text(v), smart_text(new_v))
-    print('1. {} (valeur actuelle)'.format(v))
-    print('2. {} (valeur importable)'.format(new_v))
-    print('3. Créer un nouvel objet')
-    return raw_input(info('Que faire ? (par défaut 2) '))
+    choices = (
+        (v, 'valeur actuelle'),
+        (new_v, 'valeur importable'),
+        'Créer un nouvel objet',
+    )
+    return ask_for_choice(intro, choices, allow_empty=True, default=1)
 
 
 def get_field_class(object_or_Model, field_name):
-    try:
-        Meta = object_or_Model.__class__._meta
-    except AttributeError:
-        Meta = object_or_Model._meta
-    return Meta.get_field_by_name(field_name)[0].__class__
+    return object_or_Model._meta.get_field(field_name).__class__
 
 
 MANY_RELATED_FIELDS = (ManyToManyField, GenericRelation)
@@ -61,7 +96,7 @@ def get_changed_kwargs(obj, new_kwargs):
         v = get_field_cmp_value(obj, k, v)
         new_v = get_field_settable_value(new_v)
 
-        if v != new_v or not are_sequences_equal(v, new_v):
+        if not are_equal(v, new_v):
             changed_kwargs[k] = new_v
 
     return changed_kwargs
@@ -88,7 +123,13 @@ def enlarged_filter(Model, filter_kwargs):
 
 
 def enlarged_get(Model, filter_kwargs):
-    return enlarged_filter(Model, filter_kwargs).get()
+    qs = enlarged_filter(Model, filter_kwargs)
+    n = qs.count()
+    if n <= 1:
+        return qs.get()
+    intro = '%d objets trouvés pour les arguments %s' \
+            % (n, smart_text(filter_kwargs))
+    return qs[ask_for_choice(intro, qs)]
 
 
 def enlarged_create(Model, filter_kwargs, commit=True):
@@ -164,32 +205,73 @@ def are_sequences_equal(seq, other_seq):
     return True
 
 
-def update_or_create(Model, filter_kwargs, unique_keys=(), commit=True):
+def are_equal(v1, v2):
+    return v1 == v2 or are_sequences_equal(v1, v2)
+
+
+def is_same_and_more_detailed(obj, ref_obj):
+    if obj.__class__ is not ref_obj.__class__:
+        return False
+    for k in [f.name for f in obj._meta.fields if f is not obj._meta.pk]:
+        v = getattr(ref_obj, k)
+        if v:
+            if getattr(obj, k, None) != v:
+                return False
+    return True
+
+
+# Conflict handling variables.
+INTERACTIVE = 'interactive'
+KEEP = 'keep'
+OVERRIDE = 'override'
+CREATE = 'create'
+CONFLICT_HANDLINGS = (INTERACTIVE, KEEP, OVERRIDE, CREATE)
+
+
+def update_or_create(Model, filter_kwargs, unique_keys=(), commit=True,
+                     conflict_handling=INTERACTIVE):
+    if conflict_handling not in CONFLICT_HANDLINGS:
+        raise Exception('`conflict_handling` must be in CONFLICT_HANDLINGS.')
+
     obj = get_or_create(Model, filter_kwargs, unique_keys=unique_keys,
                         commit=commit)
+
     changed_kwargs = get_changed_kwargs(obj, filter_kwargs)
     if not changed_kwargs:
         return obj
+
     for k, new_v in changed_kwargs.items():
-        v = getattr(obj, k)
-        v = get_field_cmp_value(obj, k, v)
-        if v == new_v or are_sequences_equal(v, new_v):
+        old_v = getattr(obj, k)
+        old_v = get_field_cmp_value(obj, k, old_v)
+
+        if are_equal(old_v, new_v):
             continue
-        if v:
-            while True:
-                choice = ask_for_choice(obj, k, v, new_v)
-                if choice in ('2', ''):
-                    setattr(obj, k, new_v)
-                    break
-                elif choice == '3':
-                    return enlarged_create(Model, filter_kwargs, commit=commit)
-                elif choice == '1':
-                    break
+
+        new_is_more_detailed = isinstance(Model._meta.get_field(k), RelatedField) \
+            and is_same_and_more_detailed(old_v, new_v)
+
+        if old_v and not new_is_more_detailed:
+
+            if conflict_handling == INTERACTIVE:
+                choice = ask_for_old_new_or_create(obj, k, old_v, new_v)
+                choice = {0: KEEP, 1: OVERRIDE, 2: CREATE}[choice]
+            else:
+                choice = conflict_handling
+
+            if choice == KEEP:
+                break
+            elif choice == OVERRIDE:
+                setattr(obj, k, new_v)
+                break
+            elif choice == CREATE:
+                return enlarged_create(Model, filter_kwargs, commit=commit)
+
         else:
             if is_many_related_field(obj, k):
                 getattr(obj, k).add(*new_v)
             else:
                 setattr(obj, k, new_v)
+
     if commit:
         obj.save()
     return obj
