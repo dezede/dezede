@@ -56,7 +56,7 @@ def build_individu(individu_str):
     prenom_strs = [p for p in prenom_str.split() if p]
     prenoms = [get_or_create(Prenom,
                              {'prenom': prenom_str, 'classement': i},
-                             unique_keys=('prenom', 'classement'))
+                             unique_keys=('prenom', 'classement'))[0]
                for i, prenom_str in enumerate(prenom_strs)]
 
     naissance, deces = dates.split('-')
@@ -87,7 +87,7 @@ def build_auteurs(individus_str, nom_profession,
     profession = get_or_create(
         Profession, {
             'nom': nom_profession, 'nom_pluriel': nom_pluriel_profession
-        }, unique_keys=['nom'])
+        }, unique_keys=['nom'])[0]
     individus = []
     for individu_str in split_individus(individus_str):
         individu = build_individu(individu_str)
@@ -140,7 +140,7 @@ def import_oeuvre(i, oeuvre, bindings):
                 'nom': type_nom, 'nom_pluriel': type_nom_pluriel,
             }, unique_keys=['nom'])
             caracteristique = get_or_create(CaracteristiqueDOeuvre, {
-                'type': type, 'valeur': oeuvre[caracteristique_key]})
+                'type': type, 'valeur': oeuvre[caracteristique_key]})[0]
             caracteristiques.append(caracteristique)
         # Ancrage de création :
         ancrage_creation = None

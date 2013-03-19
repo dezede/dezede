@@ -177,9 +177,9 @@ def get_or_create(Model, filter_kwargs, unique_keys=(), commit=True):
     else:
         unique_kwargs = filter_kwargs
     try:
-        return enlarged_get(Model, unique_kwargs)
+        return enlarged_get(Model, unique_kwargs), False
     except Model.DoesNotExist:
-        return enlarged_create(Model, filter_kwargs, commit=commit)
+        return enlarged_create(Model, filter_kwargs, commit=commit), True
 
 
 def is_sequence(v):
@@ -230,11 +230,14 @@ CONFLICT_HANDLINGS = (INTERACTIVE, KEEP, OVERRIDE, CREATE)
 
 def update_or_create(Model, filter_kwargs, unique_keys=(), commit=True,
                      conflict_handling=INTERACTIVE):
+
     if conflict_handling not in CONFLICT_HANDLINGS:
         raise Exception('`conflict_handling` must be in CONFLICT_HANDLINGS.')
 
-    obj = get_or_create(Model, filter_kwargs, unique_keys=unique_keys,
-                        commit=commit)
+    obj, created = get_or_create(Model, filter_kwargs, unique_keys=unique_keys,
+                                 commit=commit)
+    if created:
+        return obj
 
     changed_kwargs = get_changed_kwargs(obj, filter_kwargs)
     if not changed_kwargs:
@@ -247,7 +250,8 @@ def update_or_create(Model, filter_kwargs, unique_keys=(), commit=True,
         if are_equal(old_v, new_v):
             continue
 
-        new_is_more_detailed = isinstance(Model._meta.get_field(k), RelatedField) \
+        new_is_more_detailed = isinstance(Model._meta.get_field(k),
+                                          RelatedField) \
             and is_same_and_more_detailed(old_v, new_v)
 
         if old_v and not new_is_more_detailed:

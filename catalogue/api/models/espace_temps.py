@@ -85,7 +85,7 @@ def ancrage_re_iterator():
 def build_lieu(lieu_str, commit=True):
     lieux = [l.strip() for l in lieu_str.split(',') if l]
     assert 1 <= len(lieux) <= 3
-    natures = [get_or_create(NatureDeLieu, {'nom': s}, commit=commit)
+    natures = [get_or_create(NatureDeLieu, {'nom': s}, commit=commit)[0]
                for s in NATURE_DE_LIEU_NOMS]
     lieu = None
     for i, lieu_nom in enumerate(lieux):
