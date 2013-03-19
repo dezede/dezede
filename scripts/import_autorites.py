@@ -22,8 +22,11 @@ TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+'
 INDIVIDU_FULL_RE = re.compile(r'^(?P<nom>[^,]+),\s+'
                               r'(?P<prenoms>[^\(]+)\s+'
                               r'\((?P<dates>[^\)]+)\)$')
+PARTICULES = ('de', 'd’', "d'", 'van', 'von')
+PARTICULE_RE = re.compile(r'^(?P<prenoms>[^,]+)\s+(?P<particule>%s)$'
+                          % '|'.join(PARTICULES), flags=re.IGNORECASE)
 PSEUDONYME_RE = re.compile(r'^(?P<prenoms>[^,]+),?\s+'
-                           r'dit\s+(?P<pseudonyme>[^\)]+)$')
+                           r'dit(?P<feminin>e?)\s+(?P<pseudonyme>[^\)]+)$')
 
 
 def split_titre(titre):
@@ -46,13 +49,27 @@ def build_individu(individu_str):
     if not match:
         return
     nom = title(match.group('nom'))
-    pseudonyme = ''
     prenom_str = match.group('prenoms')
     dates = match.group('dates')
+    pseudonyme = ''
+    particule = ''
+    sexe = ''
+
     match_pseudonyme = PSEUDONYME_RE.match(prenom_str)
     if match_pseudonyme:
         prenom_str = match_pseudonyme.group('prenoms')
         pseudonyme = match_pseudonyme.group('pseudonyme')
+        if match_pseudonyme.group('feminin'):
+            sexe = 'F'
+
+    match_particule = PARTICULE_RE.match(prenom_str)
+    if match_particule:
+        prenom_str = match_particule.group('prenoms')
+        particule = match_particule.group('particule')
+    elif prenom_str.lower() in PARTICULES:
+        particule = prenom_str.lower()
+        prenom_str = ''
+
     prenom_strs = [p for p in prenom_str.split() if p]
     prenoms = [get_or_create(Prenom,
                              {'prenom': prenom_str, 'classement': i},
@@ -61,8 +78,9 @@ def build_individu(individu_str):
 
     naissance, deces = dates.split('-')
     try:
-        return enlarged_get(Individu, {'nom': nom, 'pseudonyme': pseudonyme,
-                                       'prenoms': prenoms})
+        return enlarged_get(Individu, {
+            'nom': nom, 'pseudonyme': pseudonyme, 'particule_nom': particule,
+            'prenoms': prenoms, 'titre': sexe})
     except Individu.DoesNotExist:
         pass
     ancrage_naissance = AncrageSpatioTemporel.objects.create(
@@ -71,8 +89,10 @@ def build_individu(individu_str):
     individu = update_or_create(Individu, {
         'nom': nom, 'prenoms': prenoms,
         'pseudonyme': pseudonyme,
+        'particule_nom': particule,
         'ancrage_naissance': ancrage_naissance,
         'ancrage_deces': ancrage_deces,
+        'titre': sexe,
     }, unique_keys=['nom', 'prenoms__prenom'])
     return individu
 
@@ -149,6 +169,8 @@ def import_oeuvre(i, oeuvre, bindings):
             try:
                 ancrage_creation = build_ancrage(
                     creation_str.split(bindings['creation'][1])[0])
+            except KeyboardInterrupt:
+                raise KeyboardInterrupt
             except:
                 print_warning('Impossible de parser la création de « %s »'
                               % titre)
