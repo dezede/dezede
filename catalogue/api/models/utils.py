@@ -8,6 +8,7 @@ from django.db.models.query import QuerySet
 from django.utils import six
 from django.utils.encoding import smart_text
 from catalogue.api.utils.console import info, colored_diff, error
+from typography.utils import replace
 from ..utils import notify_send, print_info
 
 
@@ -95,7 +96,7 @@ def get_field_cmp_value(obj, k, v):
 
 def get_field_settable_value(new_v):
     if is_str(new_v):
-        return smart_text(new_v)
+        return replace(smart_text(new_v))
     return new_v
 
 
@@ -255,6 +256,9 @@ def update_or_create(Model, filter_kwargs, unique_keys=(), commit=True,
         return obj
 
     for k, new_v in changed_kwargs.items():
+        if new_v in ('', None):
+            continue
+
         old_v = getattr(obj, k)
         old_v = get_field_cmp_value(obj, k, old_v)
 
