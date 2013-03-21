@@ -277,6 +277,27 @@ class AncrageSpatioTemporel(CommonModel):
                 return False
         return True
 
+    def has_date(self):
+        return self.date or self.date_approx
+
+    def has_lieu(self):
+        return self.lieu or self.lieu_approx
+
+    def get_preciseness(self):
+        score = 0
+        for k in ('date', 'date_approx', 'lieu', 'lieu_approx'):
+            if getattr(self, k):
+                score += 1 if '_approx' in k else 2
+        return score
+
+    def is_more_precise_than(self, other):
+        if other.__class__ is not self.__class__:
+            return False
+
+        if self.get_preciseness() > other.get_preciseness():
+            return True
+        return False
+
     @staticmethod
     def autocomplete_search_fields():
         return (

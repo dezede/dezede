@@ -92,7 +92,7 @@ def build_lieu(lieu_str, commit=True):
         lieu = update_or_create(Lieu, {
             'nom': lieu_nom,
             'nature': natures[i],
-            'parent':lieu,
+            'parent': lieu,
         }, unique_keys=['nom', 'parent'], commit=commit)
     return lieu
 
@@ -126,13 +126,22 @@ def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern,
 
 
 def parse_ancrage(ancrage_str, commit=False):
+    if ancrage_str.isdigit():
+        return {'date_approx': ancrage_str}
+
     for ancrage_re, date_strp_pattern in ancrage_re_iterator():
+        if date_strp_pattern is not None:
+            try:
+                return {'date': build_date(ancrage_str, date_strp_pattern)}
+            except ValueError:
+                pass
         try:
             return parse_ancrage_inner(ancrage_str, ancrage_re,
                                        date_strp_pattern, commit=commit)
         except AttributeError:
             continue
-    raise ParseError('Impossible d’analyser « %s »' % ancrage_str)
+
+    return {'date_approx': ancrage_str}
 
 
 def build_ancrage(ancrage_str, commit=True):
@@ -145,6 +154,12 @@ def build_ancrage(ancrage_str, commit=True):
     <AncrageSpatioTemporel: Concert Spirituel, 5 juillet 1852>
     >>> build_ancrage('Concert Spirituel, 5 juillet 1852', commit=False)
     <AncrageSpatioTemporel: Concert Spirituel, 5 juillet 1852>
+    >>> build_ancrage('5/7/1852', commit=False)
+    <AncrageSpatioTemporel: 5 juillet 1852>
+    >>> build_ancrage('1852', commit=False)
+    <AncrageSpatioTemporel: 1852>
+    >>> build_ancrage('18..', commit=False)
+    <AncrageSpatioTemporel: 18..>
     """
     kwargs = parse_ancrage(ancrage_str, commit=commit)
     ancrage = AncrageSpatioTemporel(**kwargs)

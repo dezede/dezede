@@ -83,9 +83,13 @@ def build_individu(individu_str):
             'prenoms': prenoms, 'titre': sexe})
     except Individu.DoesNotExist:
         pass
-    ancrage_naissance = AncrageSpatioTemporel.objects.create(
-        date_approx=naissance)
-    ancrage_deces = AncrageSpatioTemporel.objects.create(date_approx=deces)
+
+    # FIXME: Quand https://code.djangoproject.com/ticket/10811 sera résolu,
+    # il faudra mettre un argument "commit=True" au deux lignes suivantes
+    # et supprimer le try/except juste au dessus.
+    ancrage_naissance = build_ancrage(naissance)
+    ancrage_deces = build_ancrage(deces)
+
     individu = update_or_create(Individu, {
         'nom': nom, 'prenoms': prenoms,
         'pseudonyme': pseudonyme,

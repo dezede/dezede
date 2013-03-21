@@ -3,11 +3,11 @@
 from __future__ import unicode_literals
 from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import ManyToManyField, Manager, Model
-from django.db.models.fields.related import RelatedField
 from django.db.models.query import QuerySet
 from django.utils import six
 from django.utils.encoding import smart_text
 from catalogue.api.utils.console import info, colored_diff, error
+from catalogue.models import Oeuvre
 from typography.utils import replace
 from ..utils import notify_send, print_info
 
@@ -71,15 +71,12 @@ def ask_for_old_new_or_create(obj, k, v, new_v):
     return ask_for_choice(intro, choices, allow_empty=True, default=1)
 
 
-def get_field_class(object_or_Model, field_name):
-    return object_or_Model._meta.get_field(field_name).__class__
-
-
 MANY_RELATED_FIELDS = (ManyToManyField, GenericRelation)
 
 
-def is_many_related_field(object_or_class, field_name):
-    return get_field_class(object_or_class, field_name) in MANY_RELATED_FIELDS
+def is_many_related_field(object_or_model, field_name):
+    return isinstance(object_or_model._meta.get_field(field_name),
+                      MANY_RELATED_FIELDS)
 
 
 def is_str(v):
@@ -104,11 +101,11 @@ def get_changed_kwargs(obj, new_kwargs):
     changed_kwargs = {}
 
     for k, new_v in new_kwargs.items():
-        v = getattr(obj, k)
-        v = get_field_cmp_value(obj, k, v)
+        old_v = getattr(obj, k)
+        old_v = get_field_cmp_value(obj, k, old_v)
         new_v = get_field_settable_value(new_v)
 
-        if not are_equal(v, new_v):
+        if old_v != new_v or not are_sequences_equal(old_v, new_v):
             changed_kwargs[k] = new_v
 
     return changed_kwargs
@@ -198,37 +195,21 @@ def is_sequence(v):
     return isinstance(v, (QuerySet, list, tuple))
 
 
-def try_to_order(seq):
-    if isinstance(seq, QuerySet):
-        return seq.order_by(*seq.model._meta.ordering)
-    return seq
-
-
 def are_sequences_equal(seq, other_seq):
     if not (is_sequence(seq) and is_sequence(other_seq)):
         return
 
-    seq = try_to_order(seq)
-    other_seq = try_to_order(other_seq)
+    seq = list(seq)
+    other_seq = list(other_seq)
 
-    for seq_item, other_seq_item in map(None, tuple(seq), tuple(other_seq)):
-        if seq_item != other_seq_item:
-            return False
-    return True
-
-
-def are_equal(v1, v2):
-    return v1 == v2 or are_sequences_equal(v1, v2)
-
-
-def is_same_and_more_detailed(obj, ref_obj):
-    if obj.__class__ is not ref_obj.__class__:
+    if len(seq) != len(other_seq):
         return False
-    for k in [f.name for f in obj._meta.fields if f is not obj._meta.pk]:
-        v = getattr(ref_obj, k)
-        if v:
-            if getattr(obj, k, None) != v:
-                return False
+
+    for seq_item in seq:
+        if seq_item not in other_seq:
+            return False
+        seq.remove(seq_item)
+        other_seq.remove(seq_item)
     return True
 
 
@@ -262,16 +243,17 @@ def update_or_create(Model, filter_kwargs, unique_keys=(), commit=True,
         old_v = getattr(obj, k)
         old_v = get_field_cmp_value(obj, k, old_v)
 
-        if are_equal(old_v, new_v):
+        if old_v == new_v or are_sequences_equal(old_v, new_v):
             continue
 
-        new_is_more_detailed = isinstance(Model._meta.get_field(k),
-                                          RelatedField) \
-            and is_same_and_more_detailed(old_v, new_v)
+        if old_v:
 
-        if old_v and not new_is_more_detailed:
+            choice = None
+            if hasattr(old_v, 'is_more_precise_than'):
+                if old_v.is_more_precise_than(new_v):
+                    choice = KEEP
 
-            if conflict_handling == INTERACTIVE:
+            if choice is None and conflict_handling == INTERACTIVE:
                 choice = ask_for_old_new_or_create(obj, k, old_v, new_v)
                 choice = {0: KEEP, 1: OVERRIDE, 2: CREATE}[choice]
             else:
