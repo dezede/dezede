@@ -61,20 +61,11 @@ footer table {
   width: 100%;
 }
 
-footer #softwares {
-  width: 50%;
-}
-
 footer #softwares span+span {
   margin-left: 10px;
 }
 
-footer #softwares span {
-
-}
-
 footer #logos {
-  width: 50%;
   text-align: right;
 }
 
