@@ -50,7 +50,7 @@ def ask_for_choice(intro, choices, start=1, allow_empty=False, default=None):
         print(out)
 
     while True:
-        choice = input(info(question))
+        choice = input(info(question).encode('utf-8'))
         if choice.isdigit():
             choice = int(choice)
             if 0 <= choice - start < len(choices):
