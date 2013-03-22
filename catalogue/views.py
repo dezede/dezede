@@ -110,10 +110,16 @@ class EvenementDetailView(DetailView):
     model = Evenement
 
 
+class CommonTableView(SingleTableView):
+    def get_table_data(self):
+        qs = self.get_queryset()
+        return qs.order_by(*qs.model._meta.ordering)
+
+
 class CommonViewSet(ModelViewSet):
     views = {
         b'list_view': {
-            b'view': SingleTableView,
+            b'view': CommonTableView,
             b'pattern': br'',
             b'name': b'index',
             b'kwargs': {
