@@ -26,13 +26,17 @@ SITE_URL = '/'
 ADMINS = (
     ('Bertrand Bordage', 'bordage.bertrand@gmail.com'),
 )
+MANAGERS = ADMINS
 
 SEND_BROKEN_LINK_EMAILS = True
 IGNORABLE_404_URLS = (
     re.compile(r'^/favicon\.ico/?$'),
 )
 
-MANAGERS = ADMINS
+MAINTENANCE_MODE = False
+MAINTENANCE_IGNORE_URLS = (
+    r'^(?!/admin/).*$',
+)
 
 DATABASES = {
     'postgresql': {
@@ -112,7 +116,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -129,6 +133,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.gzip.GZipMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'dezede.middlewares.MaintenanceModeMiddleware',
 )
 
 ROOT_URLCONF = 'dezede.urls'
