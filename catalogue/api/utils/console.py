@@ -7,7 +7,10 @@ from django.utils.encoding import smart_text
 
 
 def notify_send(msg):
-    subprocess.call(['notify-send', msg])
+    try:
+        subprocess.call(['notify-send', msg])
+    except OSError:
+        pass
 
 
 PRINT_COLORS = {

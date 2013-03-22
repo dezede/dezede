@@ -13,8 +13,8 @@ from catalogue.api.models.utils import update_or_create, get_or_create, \
 from catalogue.api.utils import notify_send, print_error, print_success, \
                                 print_warning
 from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
-    AncrageSpatioTemporel, GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
-    CaracteristiqueDOeuvre
+    GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
+    CaracteristiqueDOeuvre, Etat
 
 
 TITRE_RE = re.compile(r'^(?P<titre>[^\(]+)\s+'
@@ -180,6 +180,12 @@ def import_oeuvre(i, oeuvre, bindings):
                               % titre)
         notes = oeuvre.get(bindings['notes'], '')
         # [Sauvegarde] :
+        etat = Etat.objects.get_or_create(
+            nom='importé automatiquement',
+            nom_pluriel='importé(e)s automatiquement',
+            message='<p>Les données ci-dessous ont été importées '
+                    'automatiquement et sont en attente de relecture.',
+            public=False)[0]
         oeuvre_obj = update_or_create(
             Oeuvre, {
                 'prefixe_titre': particule, 'titre': titre,
@@ -191,6 +197,7 @@ def import_oeuvre(i, oeuvre, bindings):
                 'auteurs': auteurs,
                 'ancrage_creation': ancrage_creation,
                 'notes': notes,
+                'etat': etat,
             }, unique_keys=['titre', 'titre_secondaire', 'genre', 'auteurs'])
         print_success(oeuvre_obj)
     except KeyboardInterrupt:
