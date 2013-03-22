@@ -200,8 +200,18 @@ class IndividuViewSet(CommonViewSet):
     table_class = IndividuTable
 
 
+class OeuvreTableView(CommonTableView):
+    def get_table_data(self):
+        qs = super(OeuvreTableView, self).get_table_data()
+        return qs.filter(contenu_dans=None)
+
+
 class OeuvreViewSet(CommonViewSet):
     model = Oeuvre
     base_url_pattern = b'oeuvres'
     base_url_name = b'oeuvre'
     table_class = OeuvreTable
+
+    def __init__(self):
+        super(OeuvreViewSet, self).__init__()
+        self.views[b'list_view'][b'view'] = OeuvreTableView

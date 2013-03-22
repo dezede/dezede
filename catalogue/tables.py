@@ -12,12 +12,14 @@ __all__ = (b'OeuvreTable', b'IndividuTable', b'ProfessionTable',
 
 
 class OeuvreTable(Table):
+    titre_complet = Column(accessor='titre_html', orderable=False,
+                           verbose_name=_('titre complet'))
     genre = Column()
     titre = LinkColumn('oeuvre_detail', args=(A('slug'),),
                        verbose_name=_('titre'))
     titre_secondaire = Column()
     auteurs = Column(accessor='auteurs_html', verbose_name=_('auteurs'),
-                          order_by='auteurs__individu__nom')
+                     order_by='auteurs__individu__nom')
 
     class Meta(object):
         attrs = {'class': 'paleblue'}
