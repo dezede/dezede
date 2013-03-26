@@ -305,7 +305,7 @@ class LieuAdmin(CustomAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'etat', 'link',)
     list_editable = ('nom', 'parent', 'nature', 'etat',)
     search_fields = ('nom', 'parent__nom',)
-    list_filter = ('nature__nom', HasRelatedObjectsListFilter)
+    list_filter = ('nature', HasRelatedObjectsListFilter)
     raw_id_fields = ('parent', 'illustrations', 'documents',)
     autocomplete_lookup_fields = {
         'fk': ['parent'],
