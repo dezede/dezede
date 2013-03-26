@@ -103,9 +103,9 @@ class TypeDeCaracteristiqueDOeuvre(CommonModel):
 
 @python_2_unicode_compatible
 class CaracteristiqueDOeuvre(CommonModel):
-    type = ForeignKey('TypeDeCaracteristiqueDOeuvre',
-        related_name='caracteristiques_d_oeuvre', db_index=True,
-        verbose_name=_('type'))
+    type = ForeignKey(
+        'TypeDeCaracteristiqueDOeuvre', db_index=True, on_delete=PROTECT,
+        related_name='caracteristiques_d_oeuvre', verbose_name=_('type'))
     # TODO: Changer valeur en nom ?
     valeur = CharField(_('valeur'), max_length=400,
                        help_text=ex(_('en trois actes')))
@@ -226,8 +226,9 @@ class PupitreManager(CommonManager):
 
 @python_2_unicode_compatible
 class Pupitre(CommonModel):
-    partie = ForeignKey('Partie', related_name='pupitres',
-                        verbose_name=_('partie'), db_index=True)
+    partie = ForeignKey(
+        'Partie', related_name='pupitres', verbose_name=_('partie'),
+        db_index=True, on_delete=PROTECT)
     quantite_min = IntegerField(_('quantité minimale'), default=1,
                                 db_index=True)
     quantite_max = IntegerField(_('quantité maximale'), default=1,
@@ -309,11 +310,13 @@ class ParenteDOeuvresManager(CommonManager):
 @python_2_unicode_compatible
 class ParenteDOeuvres(CommonModel):
     type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes',
-                      verbose_name=_('type'), db_index=True)
-    mere = ForeignKey('Oeuvre', related_name='parentes_filles',
-                      verbose_name=_('œuvre mère'), db_index=True)
-    fille = ForeignKey('Oeuvre', related_name='parentes_meres',
-                       verbose_name=_('œuvre fille'), db_index=True)
+                      verbose_name=_('type'), db_index=True, on_delete=PROTECT)
+    mere = ForeignKey(
+        'Oeuvre', related_name='parentes_filles', verbose_name=_('œuvre mère'),
+        db_index=True)
+    fille = ForeignKey(
+        'Oeuvre', related_name='parentes_meres', verbose_name=_('œuvre fille'),
+        db_index=True)
     objects = ParenteDOeuvresManager()
 
     class Meta(object):
@@ -392,7 +395,7 @@ class AuteurManager(CommonManager):
 
 @python_2_unicode_compatible
 class Auteur(CommonModel):
-    content_type = ForeignKey(ContentType, db_index=True)
+    content_type = ForeignKey(ContentType, db_index=True, on_delete=PROTECT)
     object_id = PositiveIntegerField(db_index=True)
     content_object = GenericForeignKey()
     individu = ForeignKey('Individu', related_name='auteurs',
@@ -448,7 +451,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     titre_secondaire = CharField(_('titre secondaire'), max_length=200,
                                  blank=True, db_index=True)
     genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True,
-        null=True, verbose_name=_('genre'), db_index=True)
+        null=True, verbose_name=_('genre'), db_index=True, on_delete=PROTECT)
     caracteristiques = ManyToManyField('CaracteristiqueDOeuvre', blank=True,
         null=True, verbose_name=_('caractéristiques'), related_name='oeuvres',
         db_index=True)

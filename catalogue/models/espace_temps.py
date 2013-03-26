@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, BooleanField, \
-                             DateField, TimeField, permalink, Q
+                             DateField, TimeField, permalink, Q, PROTECT
 from django.template.defaultfilters import time, capfirst
 from django.utils.encoding import python_2_unicode_compatible, smart_text, \
     force_text
@@ -69,7 +69,7 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     parent = TreeForeignKey('self', null=True, blank=True, db_index=True,
                             related_name='enfants', verbose_name=_('parent'))
     nature = ForeignKey(NatureDeLieu, related_name='lieux', db_index=True,
-                        verbose_name=_('nature'))
+                        verbose_name=_('nature'), on_delete=PROTECT)
     historique = HTMLField(_('historique'), blank=True)
     objects = LieuManager()
 

@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import CharField, DateField, ForeignKey, \
-                             ManyToManyField, permalink
+                             ManyToManyField, permalink, PROTECT
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -49,7 +49,8 @@ class Source(AutoriteModel):
     page = CharField(_('page'), max_length=50, blank=True,
                      help_text=_('Sans « p. »') + '. ' + ex('3'))
     type = ForeignKey('TypeDeSource', related_name='sources', db_index=True,
-        help_text=ex(_('compte rendu')), verbose_name=_('type'))
+                      help_text=ex(_('compte rendu')), verbose_name=_('type'),
+                      on_delete=PROTECT)
     contenu = HTMLField(_('contenu'), blank=True,
         help_text=_('Recopié tel quel, avec les fautes d’orthographe suivies '
                     'de « [<em>sic</em>] » le cas échéant.'))

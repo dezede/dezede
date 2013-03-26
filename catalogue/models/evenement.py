@@ -64,11 +64,11 @@ class ElementDeDistribution(CommonModel):
                                 related_name='elements_de_distribution')
     pupitre = ForeignKey(
         'Pupitre', verbose_name=_('pupitre'), null=True, blank=True,
-        related_name='elements_de_distribution')
+        related_name='elements_de_distribution', on_delete=PROTECT)
     profession = ForeignKey(
         'Profession', verbose_name=_('profession'), null=True, blank=True,
-        related_name='elements_de_distribution')
-    content_type = ForeignKey(ContentType, null=True)
+        related_name='elements_de_distribution', on_delete=PROTECT)
+    content_type = ForeignKey(ContentType, null=True, on_delete=PROTECT)
     object_id = PositiveIntegerField(null=True)
     content_object = GenericForeignKey()
 
@@ -155,7 +155,7 @@ class ElementDeProgramme(AutoriteModel):
                            db_index=True, verbose_name=_('événement'))
     oeuvre = ForeignKey('Oeuvre', related_name='elements_de_programme',
                         verbose_name=_('œuvre'), blank=True, null=True,
-                        db_index=True)
+                        db_index=True, on_delete=PROTECT)
     autre = CharField(max_length=500, blank=True, db_index=True)
     caracteristiques = ManyToManyField(
         CaracteristiqueDElementDeProgramme,

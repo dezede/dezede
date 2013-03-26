@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
-     FloatField, permalink, SmallIntegerField
+     FloatField, permalink, SmallIntegerField, PROTECT
 from django.template.defaultfilters import capfirst
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
@@ -122,10 +122,10 @@ class Engagement(CommonModel):
     individus = ManyToManyField('Individu', related_name='engagements',
                                 db_index=True)
     profession = ForeignKey('Profession', related_name='engagements',
-                            db_index=True)
+                            db_index=True, on_delete=PROTECT)
     salaire = FloatField(blank=True, null=True, db_index=True)
     devise = ForeignKey('Devise', blank=True, null=True, db_index=True,
-        related_name='engagements')
+                        related_name='engagements', on_delete=PROTECT)
 
     class Meta(object):
         verbose_name = ungettext_lazy('engagement', 'engagements', 1)
@@ -155,8 +155,9 @@ class TypeDePersonnel(CommonModel):
 @python_2_unicode_compatible
 class Personnel(CommonModel):
     type = ForeignKey('TypeDePersonnel', related_name='personnels',
-                      db_index=True)
-    saison = ForeignKey('Saison', related_name='personnels', db_index=True)
+                      db_index=True, on_delete=PROTECT)
+    saison = ForeignKey('Saison', related_name='personnels', db_index=True,
+                        on_delete=PROTECT)
     engagements = ManyToManyField('Engagement', related_name='personnels',
                                   db_index=True)
 

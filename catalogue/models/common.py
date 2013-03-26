@@ -7,7 +7,7 @@ from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.sessions.models import Session
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
-    ForeignKey, TextField, Manager
+    ForeignKey, TextField, Manager, PROTECT
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
@@ -87,7 +87,7 @@ class CommonModel(TypographicModel):
     Modèle commun à l’application, ajoutant diverses possibilités.
     """
     owner = ForeignKey(User, null=True, blank=True,
-                       verbose_name=_('transcripteur'))
+                       verbose_name=_('transcripteur'), on_delete=PROTECT)
     objects = CommonManager()
 
     class Meta(object):
@@ -179,7 +179,8 @@ class AutoriteManager(CommonManager):
 
 
 class AutoriteModel(CommonModel):
-    etat = ForeignKey('Etat', null=True, blank=True, verbose_name=_('état'))
+    etat = ForeignKey('Etat', null=True, blank=True, verbose_name=_('état'),
+                      on_delete=PROTECT)
     documents = ManyToManyField('Document', blank=True, null=True)
     illustrations = ManyToManyField('Illustration', blank=True, null=True)
     notes = HTMLField(blank=True)
