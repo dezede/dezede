@@ -203,7 +203,6 @@ class AuteurInline(CustomTabularInline, GenericStackedInline):
     autocomplete_lookup_fields = {
         'fk': ['profession', 'individu'],
     }
-    classes = ('grp-collapse grp-closed',)
 
 
 class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
@@ -576,7 +575,7 @@ class OeuvreAdmin(CustomAdmin):
                 'documents', 'illustrations'),
     }
     readonly_fields = ('__str__', 'html', 'link',)
-    inlines = (OeuvreMereInline, OeuvreFilleInline, AuteurInline,)
+    inlines = (AuteurInline, OeuvreMereInline, OeuvreFilleInline)
 #    inlines = (ElementDeProgrammeInline,)
     fieldsets = (
         (_('Titre'), {
