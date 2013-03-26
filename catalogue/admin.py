@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from django.contrib.admin import site, TabularInline, StackedInline
 from django.contrib.admin.options import BaseModelAdmin
+from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import SimpleListFilter
 from django.db.models import Q
@@ -48,7 +49,7 @@ class CustomBaseModel(BaseModelAdmin):
     def queryset(self, request):
         user = request.user
         objects = self.model.objects.all()
-        if not user.is_superuser:
+        if not user.is_superuser and IS_POPUP_VAR not in request.REQUEST:
             objects = objects.filter(owner=user)
         return objects
 
@@ -560,7 +561,8 @@ class OeuvreAdmin(CustomAdmin):
                     'calc_caracteristiques', 'auteurs_html',
                     'ancrage_creation', 'etat', 'link',)
     list_editable = ('genre', 'etat')
-    search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
+    search_fields = ('titre', 'titre_secondaire', 'genre__nom',
+                     'auteurs__individu__nom')
     list_filter = ('genre', HasRelatedObjectsListFilter)
     raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
                      'ancrage_creation', 'pupitres', 'documents',
