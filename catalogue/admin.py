@@ -58,6 +58,23 @@ class CustomBaseModel(BaseModelAdmin):
 #
 
 
+class HasRelatedObjectsListFilter(SimpleListFilter):
+    title = _('possède des objets liés')
+    parameter_name = 'has_related_objects'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1', _('Oui')),
+            ('0', _('Non')),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == '1':
+            return queryset.with_related_objects()
+        if self.value() == '0':
+            return queryset.without_related_objects()
+
+
 def build_boolean_list_filter(class_title, class_parameter_name, filter=None,
                               exclude=None):
     class HasEventsListFilter(SimpleListFilter):
@@ -260,23 +277,26 @@ class CustomAdmin(VersionAdmin, CustomBaseModel):
 
 
 class DocumentAdmin(CustomAdmin):
-    list_display = ('__str__', 'nom', 'document',)
+    list_display = ('__str__', 'nom', 'document', 'has_related_objects',)
     list_editable = ('nom', 'document',)
     search_fields = ('nom',)
 
 
 class IllustrationAdmin(CustomAdmin):
-    list_display = ('__str__', 'legende', 'image',)
+    list_display = ('__str__', 'legende', 'image', 'has_related_objects')
     list_editable = ('legende', 'image',)
     search_fields = ('legende',)
 
 
 class EtatAdmin(CustomAdmin):
-    pass
+    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'public',
+                    'has_related_objects')
+    list_editable = ('nom', 'nom_pluriel', 'public')
 
 
 class NatureDeLieuAdmin(CustomAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'referent',)
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel', 'referent',)
 
 
@@ -284,7 +304,7 @@ class LieuAdmin(CustomAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'etat', 'link',)
     list_editable = ('nom', 'parent', 'nature', 'etat',)
     search_fields = ('nom', 'parent__nom',)
-    list_filter = ('nature__nom',)
+    list_filter = ('nature__nom', HasRelatedObjectsListFilter)
     raw_id_fields = ('parent', 'illustrations', 'documents',)
     autocomplete_lookup_fields = {
         'fk': ['parent'],
@@ -323,6 +343,7 @@ class SaisonAdmin(CustomAdmin):
 class ProfessionAdmin(CustomAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_feminin',
                     'parent', 'classement')
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
                      'classement')
     raw_id_fields = ('parent', 'illustrations', 'documents')
@@ -352,6 +373,7 @@ class ProfessionAdmin(CustomAdmin):
 
 class AncrageSpatioTemporelAdmin(CustomAdmin):
     list_display = ('__str__', 'calc_date', 'calc_heure', 'calc_lieu',)
+    list_filter = (HasRelatedObjectsListFilter,)
     search_fields = ('lieu__nom', 'lieu_approx', 'date_approx',
                      'lieu__parent__nom', 'heure_approx',)
     raw_id_fields = ('lieu',)
@@ -369,12 +391,14 @@ class AncrageSpatioTemporelAdmin(CustomAdmin):
 class PrenomAdmin(CustomAdmin):
     list_display = ('__str__', 'prenom', 'classement', 'favori',
                     'has_individu')
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('prenom', 'classement', 'favori',)
 
 
 class TypeDeParenteDIndividusAdmin(CustomAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_relatif',
                     'nom_relatif_pluriel', 'classement',)
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
                      'nom_relatif_pluriel', 'classement',)
 
@@ -387,7 +411,7 @@ class IndividuAdmin(CustomAdmin):
     list_editable = ('nom', 'titre', 'etat')
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',
                      'prenoms__prenom',)
-    list_filter = ('titre',)
+    list_filter = ('titre', HasRelatedObjectsListFilter)
     form = IndividuForm
     raw_id_fields = ('prenoms', 'ancrage_naissance', 'ancrage_deces',
                      'professions', 'ancrage_approx',
@@ -440,6 +464,7 @@ class EngagementAdmin(CustomAdmin):
 
 class TypeDePersonnelAdmin(CustomAdmin):
     list_display = ('nom',)
+    list_filter = (HasRelatedObjectsListFilter,)
 
 
 class PersonnelAdmin(CustomAdmin):
@@ -447,7 +472,8 @@ class PersonnelAdmin(CustomAdmin):
 
 
 class GenreDOeuvreAdmin(CustomAdmin):
-    list_display = ('__str__', 'nom', 'nom_pluriel',)
+    list_display = ('__str__', 'nom', 'nom_pluriel', 'has_related_objects')
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel',)
     search_fields = ('nom', 'nom_pluriel',)
     raw_id_fields = ('parents',)
@@ -458,17 +484,20 @@ class GenreDOeuvreAdmin(CustomAdmin):
 
 class TypeDeCaracteristiqueDOeuvreAdmin(CustomAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
 
 
 class CaracteristiqueDOeuvreAdmin(CustomAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('type', 'valeur', 'classement',)
     search_fields = ('type__nom', 'valeur')
 
 
 class PartieAdmin(CustomAdmin):
     list_display = ('__str__', 'nom', 'parent', 'classement',)
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'parent', 'classement',)
     search_fields = ('nom',)
     raw_id_fields = ('professions', 'parent', 'documents', 'illustrations')
@@ -498,6 +527,7 @@ class PartieAdmin(CustomAdmin):
 
 class PupitreAdmin(CustomAdmin):
     list_display = ('__str__', 'partie', 'quantite_min', 'quantite_max',)
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('partie', 'quantite_min', 'quantite_max',)
     search_fields = ('partie__nom', 'quantite_min', 'quantite_max')
     raw_id_fields = ('partie',)
@@ -509,6 +539,7 @@ class PupitreAdmin(CustomAdmin):
 class TypeDeParenteDOeuvresAdmin(CustomAdmin):
     list_display = ('__str__', 'nom', 'nom_relatif', 'nom_relatif_pluriel',
                     'classement',)
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_relatif', 'nom_relatif_pluriel',
                      'classement',)
 
@@ -530,7 +561,7 @@ class OeuvreAdmin(CustomAdmin):
                     'ancrage_creation', 'etat', 'link',)
     list_editable = ('genre', 'etat')
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',)
-    list_filter = ('genre__nom',)
+    list_filter = ('genre', HasRelatedObjectsListFilter)
     raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
                      'ancrage_creation', 'pupitres', 'documents',
                      'illustrations',)
@@ -571,6 +602,7 @@ class OeuvreAdmin(CustomAdmin):
 
 class ElementDeDistributionAdmin(CustomAdmin):
     list_display = ('__str__', 'pupitre', 'profession',)
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('pupitre', 'profession',)
     fields = ('individus', 'pupitre', 'profession',)
     raw_id_fields = ('individus', 'pupitre', 'profession',)
@@ -582,6 +614,7 @@ class ElementDeDistributionAdmin(CustomAdmin):
 
 class CaracteristiqueDElementDeProgrammeAdmin(CustomAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
     search_fields = ('nom', 'nom_pluriel',)
 
@@ -592,7 +625,7 @@ class EvenementAdmin(CustomAdmin):
     list_editable = ('relache', 'circonstance', 'etat')
     search_fields = ('circonstance', 'ancrage_debut__lieu__nom')
     list_filter = ('relache', EventHasSourceListFilter,
-                   EventHasProgramListFilter)
+                   EventHasProgramListFilter, HasRelatedObjectsListFilter)
     raw_id_fields = ('ancrage_debut', 'ancrage_fin', 'documents',
                      'illustrations',)
     related_lookup_fields = {
@@ -629,6 +662,7 @@ class EvenementAdmin(CustomAdmin):
 
 class TypeDeSourceAdmin(CustomAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel',)
+    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel',)
 
 

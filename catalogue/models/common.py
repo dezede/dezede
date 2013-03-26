@@ -5,9 +5,9 @@ from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.sessions.models import Session
-from django.core.exceptions import NON_FIELD_ERRORS
+from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
-    ForeignKey, TextField
+    ForeignKey, TextField, Manager
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
@@ -63,11 +63,23 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
 
 
 class CommonQuerySet(TypographicQuerySet):
-    pass
+    def _get_no_related_objects_filter_kwargs(self):
+        meta = self.model._meta
+        return {r.get_accessor_name(): None for r in
+                meta.get_all_related_objects()
+                + meta.get_all_related_many_to_many_objects()}
+
+    def with_related_objects(self):
+        return self.exclude(**self._get_no_related_objects_filter_kwargs())
+
+    def without_related_objects(self):
+        return self.filter(**self._get_no_related_objects_filter_kwargs())
 
 
 class CommonManager(TypographicManager):
-    pass
+    # TODO: Implementer get_empty_query_set.
+    def get_query_set(self):
+        return CommonQuerySet(self.model, using=self._db)
 
 
 class CommonModel(TypographicModel):
@@ -116,6 +128,29 @@ class CommonModel(TypographicModel):
                     self.unique_error_message(model_class, unique_check))
 
         return errors
+
+    def _has_related_objects__fallback(self):
+        relations = self._meta.get_all_related_objects() \
+            + self._meta.get_all_related_many_to_many_objects()
+        for r in relations:
+            try:
+                v = getattr(self, r.get_accessor_name())
+            except r.model.DoesNotExist:
+                continue
+            if isinstance(v, Manager):
+                v = v.exists()
+            if v:
+                return True
+        return False
+
+    def has_related_objects(self):
+        self_qs = self.__class__.objects.filter(pk=self.pk)
+        try:
+            return self_qs.with_related_objects().exists()
+        except FieldError:
+            return self._has_related_objects__fallback()
+    has_related_objects.boolean = True
+    has_related_objects.short_description = _('a des objets liés')
 
     @classmethod
     def class_name(cls):

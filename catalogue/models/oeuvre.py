@@ -450,7 +450,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True,
         null=True, verbose_name=_('genre'), db_index=True)
     caracteristiques = ManyToManyField('CaracteristiqueDOeuvre', blank=True,
-        null=True, verbose_name=_('caractéristiques'), db_index=True)
+        null=True, verbose_name=_('caractéristiques'), related_name='oeuvres',
+        db_index=True)
     auteurs = GenericRelation('Auteur')
     ancrage_creation = OneToOneField('AncrageSpatioTemporel',
         related_name='oeuvres_creees', blank=True, null=True, db_index=True,
