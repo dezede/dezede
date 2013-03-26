@@ -9,7 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.db.models import CharField, ManyToManyField, \
     PositiveIntegerField, ForeignKey, OneToOneField, IntegerField, TextField, \
-    BooleanField, permalink, get_model, SmallIntegerField
+    BooleanField, permalink, get_model, SmallIntegerField, PROTECT
 from django.template.defaultfilters import capfirst
 from django.utils.encoding import python_2_unicode_compatible, smart_text, \
     force_text
@@ -396,9 +396,11 @@ class Auteur(CommonModel):
     object_id = PositiveIntegerField(db_index=True)
     content_object = GenericForeignKey()
     individu = ForeignKey('Individu', related_name='auteurs',
-                          verbose_name=_('individu'), db_index=True)
+                          verbose_name=_('individu'), db_index=True,
+                          on_delete=PROTECT)
     profession = ForeignKey('Profession', related_name='auteurs',
-                            verbose_name=_('profession'), db_index=True)
+                            verbose_name=_('profession'), db_index=True,
+                            on_delete=PROTECT)
     objects = AuteurManager()
 
     def html(self, tags=True):
@@ -452,7 +454,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     auteurs = GenericRelation('Auteur')
     ancrage_creation = OneToOneField('AncrageSpatioTemporel',
         related_name='oeuvres_creees', blank=True, null=True, db_index=True,
-        verbose_name=_('ancrage spatio-temporel de création'))
+        verbose_name=_('ancrage spatio-temporel de création'),
+        on_delete=PROTECT)
     pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
         null=True, verbose_name=_('effectif'), db_index=True)
     contenu_dans = TreeForeignKey('self', null=True, blank=True, db_index=True,

@@ -7,7 +7,7 @@ from django.contrib.contenttypes.generic import GenericForeignKey, \
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
     OneToOneField, BooleanField, PositiveSmallIntegerField, permalink, Q, \
-    PositiveIntegerField, get_model, SmallIntegerField
+    PositiveIntegerField, get_model, SmallIntegerField, PROTECT
 from django.template.defaultfilters import capfirst
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
@@ -241,10 +241,10 @@ class ElementDeProgramme(AutoriteModel):
 class Evenement(AutoriteModel):
     ancrage_debut = OneToOneField(
         'AncrageSpatioTemporel', related_name='evenements_debuts',
-        db_index=True)
+        db_index=True, on_delete=PROTECT)
     ancrage_fin = OneToOneField(
         'AncrageSpatioTemporel', related_name='evenements_fins', blank=True,
-        null=True, db_index=True)
+        null=True, db_index=True, on_delete=PROTECT)
     relache = BooleanField(verbose_name='relâche', db_index=True)
     circonstance = CharField(max_length=500, blank=True, db_index=True)
     distribution = GenericRelation(ElementDeDistribution)

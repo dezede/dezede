@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, BooleanField, ForeignKey, \
-    ManyToManyField, OneToOneField, permalink, Q, SmallIntegerField
+    ManyToManyField, OneToOneField, permalink, Q, SmallIntegerField, PROTECT
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext, ungettext_lazy, \
@@ -151,16 +151,16 @@ class Individu(AutoriteModel, UniqueSlugModel):
     ancrage_naissance = OneToOneField(
         'AncrageSpatioTemporel', blank=True, null=True,
         related_name='individus_nes', verbose_name=_('ancrage de naissance'),
-        db_index=True)
+        db_index=True, on_delete=PROTECT)
     ancrage_deces = OneToOneField(
         'AncrageSpatioTemporel', blank=True, null=True,
         related_name='individus_decedes', verbose_name=_('ancrage du décès'),
-        db_index=True)
+        db_index=True, on_delete=PROTECT)
     ancrage_approx = OneToOneField(
         'AncrageSpatioTemporel', blank=True, null=True,
         related_name='individus', verbose_name=_('ancrage approximatif'),
         help_text=_('Ne remplir que si on ne connaît aucune date précise.'),
-        db_index=True)
+        db_index=True, on_delete=PROTECT)
     professions = ManyToManyField(
         'Profession', related_name='individus', blank=True, null=True,
         verbose_name=_('professions'), db_index=True)
