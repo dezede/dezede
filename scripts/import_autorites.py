@@ -181,7 +181,7 @@ def import_oeuvre(i, oeuvre, bindings):
         notes = oeuvre.get(bindings['notes'], '')
         # [Sauvegarde] :
         etat = Etat.objects.get_or_create(
-            nom='importé automatiquement',
+            nom='importé(e) automatiquement',
             nom_pluriel='importé(e)s automatiquement',
             message='<p>Les données ci-dessous ont été importées '
                     'automatiquement et sont en attente de relecture.',
