@@ -1,6 +1,6 @@
 {% load extras %}
 
-{% filter stripchars|striptags %}
+{% filter striptags_n_chars %}
   {% autoescape off %}
     {{ object.nom }}
     {{ object.nature }}

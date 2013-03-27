@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 import re
 from unicodedata import normalize
-from BeautifulSoup import BeautifulStoneSoup
+from bs4 import BeautifulSoup
 from django.template import Library
 from django.utils.encoding import smart_text
 from ..models.functions import hlp
@@ -14,12 +14,12 @@ register = Library()
 
 @register.filter
 def stripchars(text):
-    return smart_text(
-        BeautifulStoneSoup(
-            text,
-            convertEntities=BeautifulStoneSoup.HTML_ENTITIES
-        )
-    )
+    return smart_text(BeautifulSoup(text, 'html.parser'))
+
+
+@register.filter
+def striptags_n_chars(text):
+    return smart_text(BeautifulSoup(text, 'html.parser').get_text())
 
 
 def remove_diacritics(string):
