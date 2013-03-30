@@ -289,7 +289,7 @@ class IllustrationAdmin(CustomAdmin):
 
 
 class EtatAdmin(CustomAdmin):
-    list_display = ('__unicode__', 'nom', 'nom_pluriel', 'public',
+    list_display = ('__str__', 'nom', 'nom_pluriel', 'public',
                     'has_related_objects')
     list_editable = ('nom', 'nom_pluriel', 'public')
 
