@@ -70,6 +70,29 @@
             <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">
               <li class="dropdown-submenu">
                 <a tabindex="-1" href="#">
+                  {% trans 'Langue' %}
+                </a>
+                <ul class="dropdown-menu">
+                  {% for lang in LANGUAGES %}
+                    {% if lang.0 != LANGUAGE_CODE %}
+                      <li>
+                        <form action="/i18n/setlang/" method="POST"
+                                id="form_{{ lang.0 }}">
+                          {% csrf_token %}
+                          <input type="hidden" name="language"
+                                 value="{{ lang.0 }}" />
+                        </form>
+                        <a tabindex="-1" href="#"
+                           onclick="$('#form_{{ lang.0 }}').submit();">
+                          {{ lang.1 }}
+                        </a>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </li>
+              <li class="dropdown-submenu">
+                <a tabindex="-1" href="#">
                   {% blocktrans %}
                     Infobulles
                   {% endblocktrans %}
@@ -106,29 +129,6 @@
                       Au-dessous
                     </a>
                   </li>
-                </ul>
-              </li>
-              <li class="dropdown-submenu">
-                <a tabindex="-1" href="#">
-                  {% trans 'Langue' %}
-                </a>
-                <ul class="dropdown-menu">
-                  {% for lang in LANGUAGES %}
-                    {% if lang.0 != LANGUAGE_CODE %}
-                      <li>
-                        <form action="/i18n/setlang/" method="POST"
-                                id="form_{{ lang.0 }}">
-                          {% csrf_token %}
-                          <input type="hidden" name="language"
-                                 value="{{ lang.0 }}" />
-                        </form>
-                        <a tabindex="-1" href="#"
-                           onclick="$('#form_{{ lang.0 }}').submit();">
-                          {{ lang.1 }}
-                        </a>
-                      </li>
-                    {% endif %}
-                  {% endfor %}
                 </ul>
               </li>
             </ul>
