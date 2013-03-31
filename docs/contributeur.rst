@@ -26,7 +26,7 @@ quelques jours après dans le même journal.
 Saisie de la source
 -------------------
 
-Rendez-vous sur `<http://alpha.dezede.org/admin/catalogue/source/add/>`_.
+Rendez-vous sur `<http://alpha.dezede.org/admin/libretto/source/add/>`_.
 Remplissez les différents champs courants (sauf ``Événements``) tout en tenant
 compte des :ref:`typo`.
 

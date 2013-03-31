@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.contrib.admin import site
 from django.utils.translation import ugettext_lazy as _
-from catalogue.admin import CustomAdmin
+from libretto.admin import CustomAdmin
 from .forms import DossierDEvenementsForm
 from .models import DossierDEvenements
 

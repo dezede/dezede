@@ -11,7 +11,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^', include('catalogue.urls')),
+    url(r'^', include('libretto.urls')),
     url(r'^dossiers/', include('dossiers.urls')),
 
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

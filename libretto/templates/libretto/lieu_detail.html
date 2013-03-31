@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load extras routines %}
+{% load url from future %}
+
+{% block title %}
+  {{ lieu }}
+{% endblock %}
+
+{% block body %}
+
+  {% include "libretto/include/etat.html" with etat=lieu.etat %}
+
+  <div class="page-header">
+    {% frontend_admin autorite=1 %}
+    <h1>
+      {{ lieu.nom }}{% if lieu.parent %}, <a href="{{ lieu.parent.get_absolute_url }}">{{ lieu.parent }}</a>{% endif %}
+    </h1>
+    <h2 title="{% trans "nature"|capfirst %}">
+      {{ lieu.nature|capfirst }}
+    </h2>
+  </div>
+
+  <div class="span3 pull-right">
+    {% include 'libretto/include/illustrations.html' %}
+  </div>
+
+  <dl class="dl-horizontal">
+    {% with contenu=lieu.get_descendants %}
+      {% if contenu %}
+        <dt>{% trans 'Lieux contenus' %}</dt>
+        <dd>
+          {% jstree contenu 'nom' %}
+        </dd>
+      {% endif %}
+    {% endwith %}
+    {% attr_in_dl 'historique' %}
+    {% include "libretto/evenement_list_def.html" with evenements=lieu.evenements %}
+    {% list_in_dl lieu.individus_nes verbose_name=_('individu né ici') verbose_name_plural=_('individus nés ici') %}
+    {% list_in_dl lieu.individus_decedes verbose_name=_('individu décédé ici') verbose_name_plural=_('individus décédés ici') %}
+    {% list_in_dl lieu.oeuvres_creees verbose_name=_('œuvre créée ici') verbose_name_plural=_('œuvres créées ici') %}
+    {% attr_in_dl 'notes' %}
+
+    {% list_in_dl lieu.documents.all %}
+  </dl>
+
+{% endblock %}

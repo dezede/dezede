@@ -7,12 +7,12 @@ import sys
 from django.contrib.contenttypes.models import ContentType
 from django.template.defaultfilters import title
 from django.utils import translation
-from catalogue.api import build_ancrage
-from catalogue.api.models.utils import update_or_create, get_or_create, \
+from libretto.api import build_ancrage
+from libretto.api.models.utils import update_or_create, get_or_create, \
                                        enlarged_get
-from catalogue.api.utils import notify_send, print_error, print_success, \
+from libretto.api.utils import notify_send, print_error, print_success, \
                                 print_warning
-from catalogue.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
+from libretto.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
     GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
     CaracteristiqueDOeuvre, Etat
 
@@ -101,7 +101,7 @@ def build_individu(individu_str):
     return individu
 
 
-Oeuvre_cti = ContentType.objects.get(app_label='catalogue', model='oeuvre')
+Oeuvre_cti = ContentType.objects.get(app_label='libretto', model='oeuvre')
 
 
 def build_auteurs(individus_str, nom_profession,

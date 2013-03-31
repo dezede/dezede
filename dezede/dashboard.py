@@ -26,11 +26,11 @@ class CustomIndexDashboard(Dashboard):
                 column=1,
                 collapsible=False,
                 css_classes=('grp-open',),
-                models=('catalogue.models.source.Source',
-                        'catalogue.models.evenement.Evenement',
-                        'catalogue.models.oeuvre.Oeuvre',
-                        'catalogue.models.individu.Individu',
-                        'catalogue.models.espace_temps.Lieu',),
+                models=('libretto.models.source.Source',
+                        'libretto.models.evenement.Evenement',
+                        'libretto.models.oeuvre.Oeuvre',
+                        'libretto.models.individu.Individu',
+                        'libretto.models.espace_temps.Lieu',),
             )
         )
 
@@ -63,8 +63,8 @@ class CustomIndexDashboard(Dashboard):
                 modules.ModelList(
                     _('Intégration à la base de données'),
                     collapsible=False,
-                    models=('catalogue.models.common.Document',
-                            'catalogue.models.common.Illustration',),
+                    models=('libretto.models.common.Document',
+                            'libretto.models.common.Illustration',),
                 )
             ]
         ))

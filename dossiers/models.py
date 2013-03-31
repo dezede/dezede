@@ -8,9 +8,9 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-from catalogue.models import Lieu, Oeuvre, Evenement, Individu
-from catalogue.models.common import CommonModel
-from catalogue.models.functions import str_list_w_last
+from libretto.models import Lieu, Oeuvre, Evenement, Individu
+from libretto.models.common import CommonModel
+from libretto.models.functions import str_list_w_last
 
 
 @python_2_unicode_compatible

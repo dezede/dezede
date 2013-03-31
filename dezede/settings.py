@@ -50,17 +50,17 @@ DATABASES = {
             'autocommit': True,
         },
     },
-    'importation': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dezede_importation',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-        'OPTIONS': {
-            'autocommit': True,
-        },
-    },
+    # 'importation': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'dezede_importation',
+    #     'USER': '',
+    #     'PASSWORD': '',
+    #     'HOST': '',
+    #     'PORT': '',
+    #     'OPTIONS': {
+    #         'autocommit': True,
+    #     },
+    # },
 }
 
 default_database = environ.get('DJANGO_DATABASE', 'postgresql')
@@ -171,7 +171,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'dezede',
     'haystack',
-    'catalogue',
+    'libretto',
     'dossiers',
     'typography',
     'django.contrib.flatpages',
@@ -288,13 +288,13 @@ CRISPY_TEMPLATE_PACK = 'bootstrap'
 COMPRESS_OUTPUT_DIR = 'assets'
 
 AJAX_LOOKUP_CHANNELS = {
-    'lieu': ('catalogue.lookups', 'LieuLookup'),
-    'oeuvre': ('catalogue.lookups', 'OeuvreLookup'),
-    'oeuvre__prefixe_titre': ('catalogue.lookups', 'OeuvrePrefixeTitreLookup'),
-    'oeuvre__coordination': ('catalogue.lookups', 'OeuvreCoordinationLookup'),
-    'oeuvre__prefixe_titre_secondaire': ('catalogue.lookups',
+    'lieu': ('libretto.lookups', 'LieuLookup'),
+    'oeuvre': ('libretto.lookups', 'OeuvreLookup'),
+    'oeuvre__prefixe_titre': ('libretto.lookups', 'OeuvrePrefixeTitreLookup'),
+    'oeuvre__coordination': ('libretto.lookups', 'OeuvreCoordinationLookup'),
+    'oeuvre__prefixe_titre_secondaire': ('libretto.lookups',
                                          'OeuvrePrefixeTitreSecondaireLookup'),
-    'source__nom': ('catalogue.lookups', 'SourceNomLookup'),
+    'source__nom': ('libretto.lookups', 'SourceNomLookup'),
 }
 AJAX_SELECT_BOOTSTRAP = True
 AJAX_SELECT_INLINES = 'inline'
