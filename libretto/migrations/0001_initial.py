@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        if was_applied(__file__, 'old_app'):
+        if was_applied(__file__, 'catalogue'):
             return
         # Adding model 'Document'
         db.create_table('catalogue_document', (
