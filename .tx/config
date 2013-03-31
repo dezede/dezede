@@ -1,11 +1,11 @@
 [main]
 host = https://www.transifex.com
 
-[dezede.core]
+[dezede.libretto]
 file_filter = libretto/locale/<lang>/LC_MESSAGES/django.po
 source_lang = fr
 
-[dezede.website]
+[dezede.dezede]
 file_filter = dezede/locale/<lang>/LC_MESSAGES/django.po
 source_lang = fr
 
