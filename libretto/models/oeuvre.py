@@ -617,6 +617,11 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         if not self.titre and not self.genre:
             raise ValidationError(_('Un titre ou un genre doit au moins '
                                     'être précisé.'))
+        # Ensures title look like "Le Tartuffe, ou l’Imposteur.".
+        self.prefixe_titre = capfirst(self.prefixe_titre)
+        self.titre = capfirst(self.titre)
+        self.prefixe_titre_secondaire = self.prefixe_titre_secondaire.lower()
+        self.titre_secondaire = capfirst(self.titre_secondaire)
 
     def handle_whitespaces(self):
         match = re.match(r'^,\s*(.+)$', self.coordination)
