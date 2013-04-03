@@ -16,13 +16,13 @@ def model_method_cached(timeout, group=None):
                 get_language(), self.__module__, self.__class__.__name__,
                 method.__name__, self.pk, args, kwargs)
             cache_key = sanitize_memcached_key(cache_key)
-            if group is not None:
-                group_cache_key = get_group_cache_key(group)
-                group_keys = cache.get(group_cache_key, [])
-                group_keys.append(cache_key)
-                cache.set(group_cache_key, group_keys, 0)
             out = cache.get(cache_key)
             if out is None:
+                if group is not None:
+                    group_cache_key = get_group_cache_key(group)
+                    group_keys = cache.get(group_cache_key, [])
+                    group_keys.append(cache_key)
+                    cache.set(group_cache_key, group_keys, 0)
                 out = method(self, *args, **kwargs)
                 cache.set(cache_key, out, timeout)
             return out
