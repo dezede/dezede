@@ -392,6 +392,7 @@ class PrenomAdmin(CustomAdmin):
     list_display = ('__str__', 'prenom', 'classement', 'favori',
                     'has_individu')
     list_filter = (HasRelatedObjectsListFilter,)
+    search_fields = ('prenom',)
     list_editable = ('prenom', 'classement', 'favori',)
 
 
@@ -605,6 +606,8 @@ class ElementDeDistributionAdmin(CustomAdmin):
     list_display = ('__str__', 'pupitre', 'profession',)
     list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('pupitre', 'profession',)
+    search_fields = ('individus__nom', 'individus__prenoms__prenom',
+                     'pupitre__partie__nom', 'profession__nom')
     fields = ('individus', 'pupitre', 'profession',)
     raw_id_fields = ('individus', 'pupitre', 'profession',)
     autocomplete_lookup_fields = {
