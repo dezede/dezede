@@ -247,7 +247,7 @@ class ElementDeProgrammeInline(CustomStackedInline):
     raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
                      'personnels', 'illustrations', 'documents')
     related_lookup_fields = {
-        'm2m': 'distribution',
+        'm2m': ('distribution',),
     }
     autocomplete_lookup_fields = {
         'fk': ('oeuvre',),
