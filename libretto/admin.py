@@ -246,10 +246,13 @@ class ElementDeProgrammeInline(CustomStackedInline):
     sortable_field_name = 'position'
     raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
                      'personnels', 'illustrations', 'documents')
+    related_lookup_fields = {
+        'm2m': 'distribution',
+    }
     autocomplete_lookup_fields = {
         'fk': ('oeuvre',),
-        'm2m': ('caracteristiques', 'distribution',
-                'personnels', 'illustrations', 'documents'),
+        'm2m': ('caracteristiques', 'personnels',
+                'illustrations', 'documents'),
     }
     classes = ('grp-collapse grp-open',)
 

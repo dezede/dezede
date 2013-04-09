@@ -101,6 +101,16 @@ class ElementDeDistribution(CommonModel):
             out = strip_tags(out)
         return out
 
+    def related_label(self):
+        return self.get_change_link()
+
+    @permalink
+    def get_change_url(self):
+        return 'admin:libretto_elementdedistribution_change', (self.pk,)
+
+    def get_change_link(self):
+        return href(self.get_change_url(), smart_text(self), new_tab=True)
+
     def clean(self):
         if not (bool(self.pupitre) ^ bool(self.profession)):
             raise ValidationError(_('Vous devez remplir un pupitre ou '

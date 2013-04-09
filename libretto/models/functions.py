@@ -131,7 +131,7 @@ def cite(txt):
     return '<cite>' + txt + '</cite>'
 
 
-def href(url, txt, tags=True):
+def href(url, txt, tags=True, new_tab=False):
     """
     >>> print(href('truc.machin/bidule', 'Cliquez ici'))
     <a href="truc.machin/bidule">Cliquez ici</a>
@@ -143,6 +143,8 @@ def href(url, txt, tags=True):
     if not txt:
         return ''
     if tags:
+        if new_tab:
+            url += '" target="_blank'
         return mark_safe(smart_text('<a href="%s">%s</a>' % (url, txt)))
     return txt
 

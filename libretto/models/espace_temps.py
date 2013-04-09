@@ -247,7 +247,7 @@ class AncrageSpatioTemporel(CommonModel):
         return 'admin:libretto_ancragespatiotemporel_change', (self.pk,)
 
     def get_change_link(self):
-        return href(self.get_change_url(), smart_text(self))
+        return href(self.get_change_url(), smart_text(self), new_tab=True)
 
     def clean(self):
         if not (self.date or self.date_approx or self.lieu
