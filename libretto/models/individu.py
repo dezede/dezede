@@ -277,7 +277,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     @model_method_cached(24 * 60 * 60, 'individus')
     def html(self, tags=True, lon=False, prenoms_fav=True,
-             show_prenoms=True, designation=None):
+             show_prenoms=True, designation=None, abbr=True):
         def add_particule(nom, lon, naissance=False):
             particule = self.get_particule(naissance)
             if lon:
@@ -307,7 +307,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
                 if lon:
                     l.insert(max(len(l) - 1, 0), prenoms)
                 else:
-                    s = str_list((abbreviate(prenoms, tags=tags),
+                    s = str_list((abbreviate(prenoms, tags=tags,
+                                             enabled=abbr),
                                   sc(particule, tags)),
                                  ' ')
                     l.append('(%s)' % s)
@@ -335,12 +336,17 @@ class Individu(AutoriteModel, UniqueSlugModel):
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
-    def nom_seul(self, tags=False):
-        return self.html(tags=tags, lon=False, show_prenoms=False)
+    def nom_seul(self, tags=False, abbr=False):
+        return self.html(tags=tags, lon=False, show_prenoms=False,
+                         abbr=abbr)
 
-    def nom_complet(self, tags=True, prenoms_fav=False, designation='S'):
+    def nom_complet(self, tags=True, prenoms_fav=False, designation='S',
+                    abbr=False):
         return self.html(tags=tags, lon=True, prenoms_fav=prenoms_fav,
-                         designation=designation)
+                         designation=designation, abbr=abbr)
+
+    def related_label(self):
+        return self.html(tags=False, abbr=False)
 
     def clean(self):
         try:

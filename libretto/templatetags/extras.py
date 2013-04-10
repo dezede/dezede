@@ -42,7 +42,7 @@ def chars_iterator(s):
 
 
 @register.filter
-def abbreviate(string, min_vowels=0, min_len=1, tags=True):
+def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
     """
     Abrège les mots avec une limite de longueur (par défaut 0).
 
@@ -56,6 +56,10 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True):
     >>> print(abbreviate('adaptateur', 1, 4, tags=False))
     adapt.
     """
+
+    if not enabled:
+        return string
+
     out = ''
     # TODO: créer un catalogue COMPLET de ponctuations de séparation.
     for i, sub in enumerate(re.split('(-|\.|\s)', string)):
