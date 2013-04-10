@@ -20,19 +20,33 @@ class CustomIndexDashboard(Dashboard):
     """
 
     def init_with_context(self, context):
-        self.children.append(
-            modules.ModelList(
-                _('Saisie courante'),
-                column=1,
-                collapsible=False,
-                css_classes=('grp-open',),
-                models=('libretto.models.source.Source',
-                        'libretto.models.evenement.Evenement',
-                        'libretto.models.oeuvre.Oeuvre',
-                        'libretto.models.individu.Individu',
-                        'libretto.models.espace_temps.Lieu',),
-            )
-        )
+        self.children.append(modules.Group(
+            _('Libretto'),
+            column=1,
+            collapsible=False,
+            children=[
+                modules.ModelList(
+                    _('Saisie courante'),
+                    column=1,
+                    models=('libretto.models.source.Source',
+                            'libretto.models.evenement.Evenement',
+                            'libretto.models.oeuvre.Oeuvre',
+                            'libretto.models.individu.Individu',
+                            'libretto.models.espace_temps.Lieu',),
+                ),
+                modules.ModelList(
+                    _('Saisie occasionnelle'),
+                    column=1,
+                    css_classes=('grp-collapse grp-closed',),
+                    models=('libretto.models.*',),
+                    exclude=('libretto.models.source.Source',
+                             'libretto.models.evenement.Evenement',
+                             'libretto.models.oeuvre.Oeuvre',
+                             'libretto.models.individu.Individu',
+                             'libretto.models.espace_temps.Lieu',),
+                )
+            ]
+        ))
 
         self.children.append(modules.ModelList(
             _('Rédaction'),
