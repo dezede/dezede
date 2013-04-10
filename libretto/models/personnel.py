@@ -72,8 +72,16 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     def gendered(self, titre='M', tags=True, caps=False):
         return self.html(tags, caps=caps, feminin=titre != 'M')
 
-    def html(self, tags=True, short=False, caps=False, feminin=False):
-        nom = self.feminin() if feminin else self.nom
+    def html(self, tags=True, short=False, caps=False, feminin=False,
+             pluriel=False):
+        if pluriel:
+            nom = self.pluriel()
+            if feminin:
+                raise Exception('Pas de féminin pluriel pour l’instant')
+        elif feminin:
+            nom = self.feminin()
+        else:
+            nom = self.nom
         if caps:
             nom = capfirst(nom)
         if short:
@@ -82,8 +90,8 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
         out = href(url, nom, tags)
         return out
 
-    def short_html(self, tags=True):
-        return self.html(tags, short=True)
+    def short_html(self, tags=True, pluriel=False):
+        return self.html(tags, short=True, pluriel=pluriel)
 
     def __hash__(self):
         return hash(self.nom)
