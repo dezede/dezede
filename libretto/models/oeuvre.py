@@ -573,7 +573,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                 titre_complet = self.genre.html(tags, caps=True)
                 if pupitres:
                     titre_complet += ' ' + pupitres
-                elif caracteristiques:
+                if caracteristiques:
                     cs = self.calc_caracteristiques(1, tags)
                     titre_complet += ' ' + cs[0]
                     caracteristiques = cs[1]
@@ -653,4 +653,5 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                 'prefixe_titre_secondaire__icontains',
                 'titre_secondaire__icontains', 'genre__nom__icontains',
                 'auteurs__individu__nom__icontains',
-                'caracteristiques__valeur__icontains')
+                'caracteristiques__valeur__icontains',
+                'pupitres__partie__nom__icontains')
