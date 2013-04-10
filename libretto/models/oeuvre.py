@@ -369,7 +369,7 @@ class AuteurQuerySet(CommonQuerySet):
             d[auteur.profession].append(auteur.individu)
         return mark_safe(str_list(
             '%s [%s]' % (str_list_w_last(i.html(tags=tags) for i in ins),
-                         p.short_html(tags=tags, pluriel=ins.count() > 1))
+                         p.short_html(tags=tags, pluriel=len(ins) > 1))
                 for p, ins in d.items()))
 
 
