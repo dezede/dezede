@@ -257,6 +257,16 @@ class ElementDeProgrammeInline(CustomStackedInline):
     classes = ('grp-collapse grp-open',)
 
 
+class SourceInline(TabularInline):
+    model = Source.evenements.through
+    verbose_name = Source._meta.verbose_name
+    verbose_name_plural = Source._meta.verbose_name_plural
+    readonly_fields = ('source',)
+    max_num = 0
+    exclude = ()
+    classes = ('grp-collapse grp-closed',)
+
+
 #
 # ModelAdmins
 #
@@ -642,7 +652,8 @@ class EvenementAdmin(CustomAdmin):
         'm2m': ('documents', 'illustrations'),
     }
     readonly_fields = ('__str__', 'html', 'link')
-    inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,)
+    inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,
+               SourceInline)
     fieldsets = (
         (_('Champs courants'), {
             'description': _(
