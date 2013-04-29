@@ -1,11 +1,12 @@
-{% load humanize %}
+{% load endless cache %}
 
+{% paginate display_list using page_variable %}
 {% for display in display_list %}
 
   <tr>
 
     {% if forloop.first %}
-      <th rowspan="{{ count }}">
+      <th rowspan="{{ display_list|length }}">
         {{ count }}
         {% if count == 1 %}
           {{ verbose_name }}
@@ -21,3 +22,8 @@
   </tr>
 
 {% endfor %}
+
+<tr>
+  <td></td>
+  <td>{% show_pages %}</td>
+</tr>
