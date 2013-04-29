@@ -23,7 +23,10 @@
 
 {% endfor %}
 
-<tr>
-  <td></td>
-  <td>{% show_pages %}</td>
-</tr>
+{% get_pages %}
+{% if pages.paginated %}
+  <tr>
+    <td></td>
+    <td>{{ pages }}</td>
+  </tr>
+{% endif %}
