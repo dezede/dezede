@@ -25,23 +25,23 @@
     {% include 'libretto/include/illustrations.html' %}
   </div>
 
-  <dl class="dl-horizontal">
+  <table class="data-table">
     {% with contenu=lieu.get_descendants %}
       {% if contenu %}
-        <dt>{% trans 'Lieux contenus' %}</dt>
-        <dd>
+        <th>{% trans 'Lieux contenus' %}</th>
+        <td>
           {% jstree contenu 'nom' %}
-        </dd>
+        </td>
       {% endif %}
     {% endwith %}
-    {% attr_in_dl 'historique' %}
+    {% data_table_attr 'historique' %}
     {% include "libretto/evenement_list_def.html" with evenements=lieu.evenements %}
-    {% list_in_dl lieu.individus_nes verbose_name=_('individu né ici') verbose_name_plural=_('individus nés ici') %}
-    {% list_in_dl lieu.individus_decedes verbose_name=_('individu décédé ici') verbose_name_plural=_('individus décédés ici') %}
-    {% list_in_dl lieu.oeuvres_creees verbose_name=_('œuvre créée ici') verbose_name_plural=_('œuvres créées ici') %}
-    {% attr_in_dl 'notes' %}
+    {% data_table_list lieu.individus_nes verbose_name=_('individu né ici') verbose_name_plural=_('individus nés ici') %}
+    {% data_table_list lieu.individus_decedes verbose_name=_('individu décédé ici') verbose_name_plural=_('individus décédés ici') %}
+    {% data_table_list lieu.oeuvres_creees verbose_name=_('œuvre créée ici') verbose_name_plural=_('œuvres créées ici') %}
+    {% data_table_attr 'notes' %}
 
-    {% list_in_dl lieu.documents.all %}
-  </dl>
+    {% data_table_list lieu.documents.all %}
+  </table>
 
 {% endblock %}

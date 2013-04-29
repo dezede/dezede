@@ -20,19 +20,19 @@
     </h1>
   </div>
 
-  <dl class="dl-horizontal">
-    {% list_in_dl partie.professions.all %}
-    {% list_in_dl partie.interpretes verbose_name=_('interprète') verbose_name_plural=_('interprètes') %}
-    {% list_in_dl partie.evenements %}
-    {% attr_in_dl 'parent.link' _('parent') %}
+  <table class="data-table">
+    {% data_table_list partie.professions.all %}
+    {% data_table_list partie.interpretes verbose_name=_('interprète') verbose_name_plural=_('interprètes') %}
+    {% data_table_list partie.evenements %}
+    {% data_table_attr 'parent.link' _('parent') %}
 
     {% with contenu=partie.get_descendants  %}
       {% if contenu %}
-        <dt>{% trans 'Contenu' %}</dt>
-        <dd>{% jstree contenu %}</dd>
+        <th>{% trans 'Contenu' %}</th>
+        <td>{% jstree contenu %}</td>
       {% endif %}
     {% endwith %}
 
-  </dl>
+  </table>
 
 {% endblock %}

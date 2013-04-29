@@ -8,12 +8,12 @@
 {% block body %}
   {% with profile_user=profile.user %}
     <h1>{% trans "Profil de" %} {{ profile_user.get_full_name|default:profile_user }}</h1>
-    <dl>
-      {% attr_in_dl 'professor_name' _('professeur référent') profile %}
-      {% list_in_dl profile_user.groups.all '__str__' %}
-      <dt>{% trans "Sources transcrites" %}</dt>
-      <dd>{{ profile_user.source_set.count }}</dd>
-    </dl>
+    <table class="data-table">
+      {% data_table_attr 'professor_name' _('professeur référent') profile %}
+      {% data_table_list profile_user.groups.all '__str__' %}
+      <th>{% trans "Sources transcrites" %}</th>
+      <td>{{ profile_user.source_set.count }}</td>
+    </table>
     {% frontend_admin profile %}
   {% endwith %}
 {% endblock %}

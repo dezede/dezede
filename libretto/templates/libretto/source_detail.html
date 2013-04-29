@@ -22,11 +22,11 @@
 
   {% include 'libretto/source_content.html' %}
 
-  <dl class="dl-horizontal">
-    {% list_in_dl source.documents.all %}
-    {% list_in_dl source.evenements.all %}
+  <table class="data-table">
+    {% data_table_list source.documents.all %}
+    {% data_table_list source.evenements.all %}
 
-    {% attr_in_dl 'notes' %}
-  </dl>
+    {% data_table_attr 'notes' %}
+  </table>
 
 {% endblock %}

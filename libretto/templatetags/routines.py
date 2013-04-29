@@ -46,7 +46,7 @@ def frontend_admin(context, obj=None, autorite=False):
 
 
 @register.simple_tag(takes_context=True)
-def attr_in_dl(context, attr, verbose_name=None, obj=None):
+def data_table_attr(context, attr, verbose_name=None, obj=None):
     if obj is None:
         obj = context['object']
     value = obj
@@ -64,7 +64,7 @@ def attr_in_dl(context, attr, verbose_name=None, obj=None):
         'verbose_name': verbose_name,
         'value': value,
     }
-    return render_to_string('routines/attr_in_dl.html', c)
+    return render_to_string('routines/data_table_attr.html', c)
 
 
 def get_verbose_name_from_object_list(object_list, verbose_name=None,
@@ -105,8 +105,8 @@ def build_display_list(object_list, properties_name):
 
 
 @register.simple_tag(takes_context=True)
-def list_in_dl(context, object_list, properties_name='link', verbose_name=None,
-               verbose_name_plural=None):
+def data_table_list(context, object_list, properties_name='link', verbose_name=None,
+                    verbose_name_plural=None):
     if not object_list:
         return ''
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
@@ -120,7 +120,7 @@ def list_in_dl(context, object_list, properties_name='link', verbose_name=None,
         'verbose_name': verbose_name,
         'verbose_name_plural': verbose_name_plural,
     })
-    return render_to_string('routines/list_in_dl.html', c)
+    return render_to_string('routines/data_table_list.html', c)
 
 
 @register.simple_tag()

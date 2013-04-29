@@ -18,22 +18,22 @@
     </h1>
   </div>
 
-  <dl class="dl-horizontal">
+  <table class="data-table">
 
-    {% list_in_dl profession.parties.all %}
-    {% list_in_dl profession.individus.all %}
-    {% list_in_dl profession.elements_de_distribution.evenements %}
-    {% list_in_dl profession.auteurs.oeuvres %}
-    {% list_in_dl profession.auteurs.sources %}
-    {% attr_in_dl 'parent.link' _('parent') %}
+    {% data_table_list profession.parties.all %}
+    {% data_table_list profession.individus.all %}
+    {% data_table_list profession.elements_de_distribution.evenements %}
+    {% data_table_list profession.auteurs.oeuvres %}
+    {% data_table_list profession.auteurs.sources %}
+    {% data_table_attr 'parent.link' _('parent') %}
 
     {% with contenu=profession.get_descendants  %}
       {% if contenu %}
-        <dt>{% trans 'Contenu' %}</dt>
-        <dd>{% jstree contenu %}</dd>
+        <th>{% trans 'Contenu' %}</th>
+        <td>{% jstree contenu %}</td>
       {% endif %}
     {% endwith %}
 
-  </dl>
+  </table>
 
 {% endblock %}

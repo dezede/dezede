@@ -26,30 +26,40 @@
       {{ oeuvre.ancrage_creation.html|default:'' }}
     </h3>
     <h4>
-      {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
-      <dl class="dl-horizontal">
+      <table class="data-table">
+        {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
         {% for parentes in parentes_list %}
-          <dt>{{ parentes.grouper.nom|capfirst }}</dt>
           {% for parente in parentes.list %}
-            <dd>{{ parente.mere.html }}</dd>
+            <tr>
+              {% if forloop.first %}
+                <th>{{ parentes.grouper.nom|capfirst }}</th>
+              {% else %}
+                <td></td>
+              {% endif %}
+              <td>{{ parente.mere.html }}</td>
+            </tr>
           {% endfor %}
         {% endfor %}
-      </dl>
-      {% regroup oeuvre.parentes_filles.filles_en_ordre by type as parentes_list %}
-      <dl class="dl-horizontal">
+        {% regroup oeuvre.parentes_filles.filles_en_ordre by type as parentes_list %}
         {% for parentes in parentes_list %}
-          <dt>
-            {% if parentes.list|length_is:'1' %}
-              {{ parentes.grouper.nom_relatif|capfirst }}
-            {% else %}
-              {{ parentes.grouper.relatif_pluriel|capfirst }}
-            {% endif %}
-          </dt>
           {% for parente in parentes.list %}
-            <dd>{{ parente.fille.html }}</dd>
+            <tr>
+              {% if forloop.first %}
+                <th>
+                  {% if parentes.list|length_is:'1' %}
+                    {{ parentes.grouper.nom_relatif|capfirst }}
+                  {% else %}
+                    {{ parentes.grouper.relatif_pluriel|capfirst }}
+                  {% endif %}
+                </th>
+              {% else %}
+                <td></td>
+              {% endif %}
+              <td>{{ parente.fille.html }}</td>
+            </tr>
           {% endfor %}
         {% endfor %}
-      </dl>
+      </table>
     </h4>
   </div>
 
@@ -57,22 +67,22 @@
     {% include 'libretto/include/illustrations.html' %}
   </div>
 
-  <dl class="dl-horizontal">
-    {% attr_in_dl 'pupitres_html' _('effectif') %}
+  <table class="data-table">
+    {% data_table_attr 'pupitres_html' _('effectif') %}
 
     {% with contenu=oeuvre.get_descendants %}
       {% if contenu %}
-        <dt>{% trans 'Contenu' %}</dt>
-        <dd>
+        <th>{% trans 'Contenu' %}</th>
+        <td>
           {% jstree contenu 'short_html' %}
-        </dd>
+        </td>
       {% endif %}
     {% endwith %}
 
     {% include "libretto/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
-    {% attr_in_dl 'notes' %}
+    {% data_table_attr 'notes' %}
 
-    {% list_in_dl oeuvre.documents.all %}
-  </dl>
+    {% data_table_list oeuvre.documents.all %}
+  </table>
 
 {% endblock %}

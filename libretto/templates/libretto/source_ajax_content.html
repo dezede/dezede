@@ -7,7 +7,7 @@
 {% include 'libretto/source_content.html' %}
 
 {% if not source.contenu %}
-  <dl class="dl-horizontal">
-    {% list_in_dl source.documents.all %}
-  </dl>
+  <table class="data-table">
+    {% data_table_list source.documents.all %}
+  </table>
 {% endif %}

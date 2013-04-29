@@ -42,47 +42,47 @@
     {% include 'libretto/include/illustrations.html' %}
   </div>
 
-  <dl class="dl-horizontal">
-    {% attr_in_dl 'nom_naissance' %}
-    {% attr_in_dl 'biographie' %}
+  <table class="data-table">
+    {% data_table_attr 'nom_naissance' %}
+    {% data_table_attr 'biographie' %}
 
-    {% list_in_dl individu.oeuvres %}
-    {% list_in_dl individu.apparitions %}
-    {% list_in_dl individu.publications 'html' %}
+    {% data_table_list individu.oeuvres %}
+    {% data_table_list individu.apparitions %}
+    {% data_table_list individu.publications 'html' %}
 
 
     {% regroup individu.parentes.all by type as parentes_list %}
     {% for parentes in parentes_list %}
-      <dt>
+      <th>
         {% if parentes.list|length_is:'1' %}
           {{ parentes.grouper.nom|capfirst }}
         {% else %}
           {{ parentes.grouper.pluriel|capfirst }}
         {% endif %}
-      </dt>
+      </th>
       {% for parente in parentes.list %}
-        <dd>{{ parente.parent.html }}</dd>
+        <td>{{ parente.parent.html }}</td>
       {% endfor %}
     {% endfor %}
 
     {% regroup individu.enfances.all by type as enfances_list %}
     {% for enfances in enfances_list %}
-      <dt>
+      <th>
         {% if enfances.list|length_is:'1' %}
           {{ enfances.grouper.nom_relatif|capfirst }}
         {% else %}
           {{ enfances.grouper.relatif_pluriel|capfirst }}
         {% endif %}
-      </dt>
+      </th>
       {% for parente in enfances.list %}
-        <dd>{{ parente.enfant.html }}</dd>
+        <td>{{ parente.enfant.html }}</td>
       {% endfor %}
     {% endfor %}
 
 
-    {% attr_in_dl 'notes' %}
+    {% data_table_attr 'notes' %}
 
-    {% list_in_dl individu.documents.all %}
-  </dl>
+    {% data_table_list individu.documents.all %}
+  </table>
 
 {% endblock %}

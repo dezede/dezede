@@ -1,0 +1,23 @@
+{% load humanize %}
+
+{% for display in display_list %}
+
+  <tr>
+
+    {% if forloop.first %}
+      <th rowspan="{{ count }}">
+        {{ count }}
+        {% if count == 1 %}
+          {{ verbose_name }}
+        {% else %}
+          {{ verbose_name_plural }}
+        {% endif %}
+      </th>
+    {% endif %}
+
+
+    <td>{{ display|safe }}</td>
+
+  </tr>
+
+{% endfor %}
