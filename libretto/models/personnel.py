@@ -70,7 +70,7 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
         return self.gendered(titre=titre, tags=tags, caps=True)
 
     def gendered(self, titre='M', tags=True, caps=False):
-        return self.html(tags, caps=caps, feminin=titre != 'M')
+        return self.html(tags, caps=caps, feminin=titre in ('F', 'J'))
 
     def html(self, tags=True, short=False, caps=False, feminin=False,
              pluriel=False):
