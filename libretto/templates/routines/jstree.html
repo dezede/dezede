@@ -9,7 +9,7 @@
       {% recursetree queryset %}
         <li>
           <a href="{{ node.get_absolute_url }}">
-            {{ node|get_property:properties_name }}
+            {{ node|get_property:attr }}
           </a>
           {% if not node.is_leaf_node %}
             <ul class="children">

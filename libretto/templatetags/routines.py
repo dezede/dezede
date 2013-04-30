@@ -78,7 +78,7 @@ def get_verbose_name_from_object_list(object_list, verbose_name=None,
 
 
 @register.filter
-def get_property(obj, properties_name):
+def get_property(obj, attr):
     """
     >>> get_property('a', 'split')
     [u'a']
@@ -89,7 +89,7 @@ def get_property(obj, properties_name):
     >>> get_property(Class(), 'attribute')
     8
     """
-    for property_name in properties_name.split('.'):
+    for property_name in attr.split('.'):
         obj = getattr(obj, property_name)
         if callable(obj):
             obj = obj()
@@ -97,7 +97,7 @@ def get_property(obj, properties_name):
 
 
 @register.simple_tag(takes_context=True)
-def data_table_list(context, object_list, properties_name='link',
+def data_table_list(context, object_list, attr='link',
                     verbose_name=None, verbose_name_plural=None):
     if not object_list:
         return ''
@@ -106,7 +106,7 @@ def data_table_list(context, object_list, properties_name='link',
         verbose_name_plural=verbose_name_plural)
     c = copy(context)
     c.update({
-        'properties_name': properties_name,
+        'attr': attr,
         'count': object_list.count(),
         'object_list': object_list,
         'verbose_name': verbose_name,
@@ -117,7 +117,7 @@ def data_table_list(context, object_list, properties_name='link',
 
 
 @register.simple_tag()
-def jstree(queryset, properties_name='__str__', tree_id=None):
+def jstree(queryset, attr='__str__', tree_id=None):
     if not queryset:
         return ''
     if tree_id is None:
@@ -125,6 +125,6 @@ def jstree(queryset, properties_name='__str__', tree_id=None):
     c = {
         'queryset': queryset,
         'id': tree_id,
-        'properties_name': properties_name,
+        'attr': attr,
     }
     return render_to_string('routines/jstree.html', c)
