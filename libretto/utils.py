@@ -6,6 +6,11 @@ from unicodedata import normalize
 from libretto.models.functions import hlp
 
 
+__all__ = (
+    'abbreviate',
+)
+
+
 def remove_diacritics(string):
     return normalize('NFKD', string).encode('ASCII', 'ignore')
 
