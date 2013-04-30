@@ -96,14 +96,6 @@ def get_property(obj, properties_name):
     return obj
 
 
-def build_display_list(object_list, properties_name):
-    display_list = []
-    for obj in object_list:
-        obj = get_property(obj, properties_name)
-        display_list.append(obj)
-    return display_list
-
-
 @register.simple_tag(takes_context=True)
 def data_table_list(context, object_list, properties_name='link',
                     verbose_name=None, verbose_name_plural=None):
@@ -112,11 +104,11 @@ def data_table_list(context, object_list, properties_name='link',
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         object_list, verbose_name=verbose_name,
         verbose_name_plural=verbose_name_plural)
-    display_list = build_display_list(object_list, properties_name)
     c = copy(context)
     c.update({
-        'count': len(display_list),
-        'display_list': display_list,
+        'properties_name': properties_name,
+        'count': object_list.count(),
+        'object_list': object_list,
         'verbose_name': verbose_name,
         'verbose_name_plural': verbose_name_plural,
         'page_variable': verbose_name + '_page',

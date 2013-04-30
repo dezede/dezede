@@ -1,12 +1,12 @@
-{% load endless cache %}
+{% load endless routines %}
 
-{% paginate display_list using page_variable %}
-{% for display in display_list %}
+{% paginate object_list using page_variable %}
+{% for object in object_list %}
 
   <tr>
 
     {% if forloop.first %}
-      <th rowspan="{{ display_list|length }}">
+      <th rowspan="{{ object_list|length }}">
         {{ count }}
         {% if count == 1 %}
           {{ verbose_name }}
@@ -17,7 +17,7 @@
     {% endif %}
 
 
-    <td>{{ display|safe }}</td>
+    <td>{{ object|get_property:properties_name }}</td>
 
   </tr>
 
