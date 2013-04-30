@@ -5,7 +5,8 @@ from django.template.defaultfilters import date
 from django.utils.encoding import smart_text
 from django.utils.functional import allow_lazy
 from django.utils.safestring import mark_safe
-from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _,\
+    pgettext_lazy
 
 
 __all__ = (b'capfirst', b'date_html', b'str_list', b'str_list_w_last', b'ex',
@@ -45,7 +46,8 @@ def date_html(d, tags=True, short=False):
     return ' '.join([s for s in (pre, j, post) if s])
 
 
-def str_list(iterable, infix=None, last_infix=None):
+def str_list(iterable, infix=pgettext_lazy('infix d’une liste', ', '),
+             last_infix=None):
     """
     Concatène une liste de chaîne de caractères avec des virgules.
 
@@ -53,12 +55,10 @@ def str_list(iterable, infix=None, last_infix=None):
     >>> print(str_list(l))
     Jeanne, Lola, Perrine, Marion
     """
-    if infix is None:
-        infix = pgettext('infix d’une liste', ', ')
 
     l = [e for e in iterable if e]
 
-    if not last_infix:
+    if last_infix is None:
         return infix.join(l)
 
     suffix = ''
@@ -67,8 +67,13 @@ def str_list(iterable, infix=None, last_infix=None):
     return infix.join(l) + suffix
 
 
-def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
-                    oxford_comma=True):
+def str_list_w_last(
+        l, infix=pgettext_lazy('infix d’une liste', ', '),
+        last_infix=pgettext_lazy(
+            'dernier infix pour 2 éléments', ' et '),
+        oxfordian_last_infix=pgettext_lazy(
+            'dernier infix pour plus de 2 éléments', ' et '),
+        oxford_comma=True):
     """
     Concatène une liste de chaîne de caractères avec des virgules
     et un «,\u00A0et\u00A0» final («\u00A0et\u00A0» pour deux éléments).
@@ -81,16 +86,7 @@ def str_list_w_last(l, infix=None, last_infix=None, oxfordian_last_infix=None,
     Jeanne\u00A0et\u00A0Marion
     """
     l = tuple(l)
-    if infix is None:
-        infix = pgettext('infix d’une liste', ', ')
-    if last_infix is None:
-        last_infix = pgettext('dernier infix pour 2 éléments',
-                              '\u00A0et\u00A0')
     if oxford_comma and len(l) > 2:
-        if oxfordian_last_infix is None:
-            oxfordian_last_infix = \
-                pgettext('dernier infix pour plus de 2 éléments',
-                         '\u00A0et\u00A0')
         last_infix = oxfordian_last_infix
     return str_list(l, infix, last_infix)
 
@@ -113,7 +109,7 @@ def no(txt):
     >>> print(no('13'))
     n°\u00A013
     """
-    return _('n°\u00A0%s') % txt
+    return _('n° %s') % txt
 
 
 #

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-01 00:41+0200\n"
+"POT-Creation-Date: 2013-05-01 01:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -496,33 +496,35 @@ msgstr ""
 msgid "Relâche"
 msgstr ""
 
-#: models/functions.py:41
+#: models/functions.py:42
 msgid "er"
 msgstr ""
 
-#: models/functions.py:57 models/functions.py:85
+#: models/functions.py:49 models/functions.py:71
 msgctxt "infix d’une liste"
 msgid ", "
 msgstr ""
 
-#: models/functions.py:88
+#: models/functions.py:73
+#, fuzzy
 msgctxt "dernier infix pour 2 éléments"
-msgid "\\u00A0et\\u00A0"
-msgstr ""
+msgid " et "
+msgstr " et "
 
-#: models/functions.py:93
+#: models/functions.py:75
+#, fuzzy
 msgctxt "dernier infix pour plus de 2 éléments"
-msgid "\\u00A0et\\u00A0"
-msgstr ""
+msgid " et "
+msgstr " et "
 
-#: models/functions.py:103
+#: models/functions.py:99
 #, python-format
 msgid "Exemple : %(pre)s« %(txt)s »%(post)s."
 msgstr ""
 
-#: models/functions.py:116
+#: models/functions.py:112
 #, python-format
-msgid "n°\\u00A0%s"
+msgid "n° %s"
 msgstr ""
 
 #: models/individu.py:26 models/individu.py:31 models/individu.py:32
@@ -1076,7 +1078,3 @@ msgstr ""
 #: templates/routines/permalink.html:4
 msgid "adresse permanente"
 msgstr ""
-
-#~ msgctxt "dernier infix pour plus de 2 éléments"
-#~ msgid ", et "
-#~ msgstr " et "
