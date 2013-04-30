@@ -8,7 +8,6 @@ from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
     OneToOneField, BooleanField, PositiveSmallIntegerField, permalink, Q, \
     PositiveIntegerField, get_model, SmallIntegerField, PROTECT
-from django.template.defaultfilters import capfirst
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy, ugettext, \
@@ -17,7 +16,7 @@ from cache_tools import model_method_cached
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, CommonQuerySet, CommonManager
 
-from .functions import str_list, str_list_w_last, href, hlp
+from .functions import capfirst, str_list, str_list_w_last, href, hlp
 from .source import TypeDeSource
 
 

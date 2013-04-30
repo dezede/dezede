@@ -1,16 +1,21 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.template.defaultfilters import date, capfirst
+from django.template.defaultfilters import date
 from django.utils.encoding import smart_text
 from django.utils.functional import allow_lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import pgettext, ugettext, ugettext_lazy as _
 
 
-__all__ = (b'date_html', b'str_list', b'str_list_w_last', b'ex', b'no',
-           b'html_decorator', b'cite', b'href', b'sc', b'hlp', b'small',
+__all__ = (b'capfirst', b'date_html', b'str_list', b'str_list_w_last', b'ex',
+           b'no', b'html_decorator', b'cite', b'href', b'sc', b'hlp', b'small',
            b'strong')
+
+
+def capfirst(text):
+    out = smart_text(text)
+    return out and out[0].upper() + out[1:]
 
 
 def date_html(d, tags=True, short=False):

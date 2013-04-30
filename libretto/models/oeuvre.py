@@ -10,7 +10,6 @@ from django.contrib.humanize.templatetags.humanize import apnumber
 from django.db.models import CharField, ManyToManyField, \
     PositiveIntegerField, ForeignKey, OneToOneField, IntegerField, TextField, \
     BooleanField, permalink, get_model, SmallIntegerField, PROTECT
-from django.template.defaultfilters import capfirst
 from django.utils.encoding import python_2_unicode_compatible, smart_text, \
     force_text
 from django.utils.html import strip_tags
@@ -23,7 +22,7 @@ from cache_tools import model_method_cached
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
     AutoriteManager, OrderedDefaultDict
-from .functions import ex, hlp, str_list, str_list_w_last, href, cite
+from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
 from .source import Source

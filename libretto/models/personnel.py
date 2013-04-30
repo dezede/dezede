@@ -3,14 +3,13 @@
 from __future__ import unicode_literals
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
      FloatField, permalink, SmallIntegerField, PROTECT
-from django.template.defaultfilters import capfirst
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from ..templatetags.extras import abbreviate
 from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
     UniqueSlugModel, AutoriteManager, AutoriteModel
-from .functions import ex, href
+from .functions import capfirst, ex, href
 
 
 __all__ = (b'Profession', b'Devise', b'Engagement', b'TypeDePersonnel',

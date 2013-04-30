@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, BooleanField, \
                              DateField, TimeField, permalink, Q, PROTECT
-from django.template.defaultfilters import time, capfirst
+from django.template.defaultfilters import time
 from django.utils.encoding import python_2_unicode_compatible, smart_text, \
     force_text
 from django.utils.html import strip_tags
@@ -17,7 +17,7 @@ from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     AutoriteManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel
 from .evenement import Evenement
-from .functions import href, date_html, str_list, ex
+from .functions import capfirst, href, date_html, str_list, ex
 from .individu import Individu
 from .oeuvre import Oeuvre
 
