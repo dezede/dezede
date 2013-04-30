@@ -12,7 +12,7 @@ from tinymce.models import HTMLField
 from cache_tools import model_method_cached
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, UniqueSlugModel
-from ..templatetags.extras import abbreviate
+from ..utils import abbreviate
 from .evenement import Evenement
 from .functions import str_list, str_list_w_last, href, sc
 
