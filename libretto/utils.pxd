@@ -1,10 +1,10 @@
 import cython
 
 
-cpdef remove_diacritics(string)
+cdef remove_diacritics(string)
 
 
-cpdef bint is_vowel(string)
+cdef bint is_vowel(string)
 
 
 @cython.locals(out=unicode, i=int, sub=unicode,

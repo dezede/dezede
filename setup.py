@@ -14,13 +14,6 @@ import os
 
 
 excluded_modules = (
-    'accounts.*',
-    'dezede.*',
-    'dossiers.*',
-    'libretto.migrations',
-    'libretto.migrations.*',
-    'libretto.models',
-    'libretto.models.*',
 )
 
 
@@ -46,6 +39,8 @@ def get_modules(path=None):
         else:
             f = f_or_d
             if f.endswith(('.py', 'pyx')):
+                if not(f[-3:] == '.py' and os.path.exists(f[:-3] + '.pxd')):
+                    continue
                 name = path_to_module(f)
                 if name and name not in excluded_modules:
                     yield name, f
