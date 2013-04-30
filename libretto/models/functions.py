@@ -15,7 +15,7 @@ __all__ = (b'capfirst', b'date_html', b'str_list', b'str_list_w_last', b'ex',
 
 def capfirst(text):
     out = smart_text(text)
-    if out:
+    if not out:
         return out
     return out[0].upper() + out[1:]
 
@@ -45,7 +45,7 @@ def date_html(d, tags=True, short=False):
     return ' '.join([s for s in (pre, j, post) if s])
 
 
-def str_list(l, infix=None, last_infix=None):
+def str_list(iterable, infix=None, last_infix=None):
     """
     Concatène une liste de chaîne de caractères avec des virgules.
 
@@ -55,9 +55,13 @@ def str_list(l, infix=None, last_infix=None):
     """
     if infix is None:
         infix = pgettext('infix d’une liste', ', ')
-    l = [e for e in l if e]
+
+    if not last_infix:
+        return infix.join(iterable)
+
+    l = [e for e in iterable if e]
     suffix = ''
-    if last_infix and len(l) > 1:
+    if len(l) > 1:
         suffix = last_infix + l.pop()
     return infix.join(l) + suffix
 

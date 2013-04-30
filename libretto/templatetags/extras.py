@@ -21,5 +21,6 @@ def striptags_n_chars(text):
 
 
 @register.filter
-def abbreviate(*args, **kwargs):
-    return abbreviate_func(*args, **kwargs)
+def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
+    return abbreviate_func(string, min_vowels=min_vowels, min_len=min_len,
+                           tags=tags, enabled=enabled)
