@@ -15,7 +15,9 @@ __all__ = (b'capfirst', b'date_html', b'str_list', b'str_list_w_last', b'ex',
 
 def capfirst(text):
     out = smart_text(text)
-    return out and out[0].upper() + out[1:]
+    if out:
+        return out
+    return out[0].upper() + out[1:]
 
 
 def date_html(d, tags=True, short=False):
@@ -40,7 +42,7 @@ def date_html(d, tags=True, short=False):
         if tags:
             k = '<sup>%s</sup>' % k
         j += k
-    return ' '.join(s for s in (pre, j, post) if s)
+    return ' '.join([s for s in (pre, j, post) if s])
 
 
 def str_list(l, infix=None, last_infix=None):
