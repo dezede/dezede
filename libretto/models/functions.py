@@ -56,10 +56,11 @@ def str_list(iterable, infix=None, last_infix=None):
     if infix is None:
         infix = pgettext('infix d’une liste', ', ')
 
-    if not last_infix:
-        return infix.join(iterable)
-
     l = [e for e in iterable if e]
+
+    if not last_infix:
+        return infix.join(l)
+
     suffix = ''
     if len(l) > 1:
         suffix = last_infix + l.pop()
