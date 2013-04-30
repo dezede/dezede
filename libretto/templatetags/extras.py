@@ -41,6 +41,10 @@ def chars_iterator(s):
         i1 += 1
 
 
+# TODO: créer un catalogue COMPLET de ponctuations de séparation.
+ABBREVIATION_RE = re.compile('(-|\.|\s)')
+
+
 @register.filter
 def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
     """
@@ -61,8 +65,7 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
         return string
 
     out = ''
-    # TODO: créer un catalogue COMPLET de ponctuations de séparation.
-    for i, sub in enumerate(re.split('(-|\.|\s)', string)):
+    for i, sub in enumerate(ABBREVIATION_RE.split(string)):
         if not i % 2:
             if not sub:
                 continue
