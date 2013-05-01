@@ -3,11 +3,11 @@
 from __future__ import unicode_literals
 from django.forms import ValidationError
 from django.forms import ModelForm, Form, CharField, TextInput
-from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
                                AutoCompleteWidget
+from cache_tools import cached_ugettext_lazy as _
 from .models import Oeuvre, Source, Individu
 from .fields import RangeSliderField
 

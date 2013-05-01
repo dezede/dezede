@@ -4,11 +4,11 @@ from __future__ import unicode_literals
 from django.contrib.admin import site, TabularInline, StackedInline
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
-from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import SimpleListFilter
 from django.db.models import Q
 from django.contrib.contenttypes.generic import GenericStackedInline
 from reversion import VersionAdmin
+from cache_tools import cached_ugettext_lazy as _
 from .models import *
 from .forms import OeuvreForm, SourceForm, IndividuForm
 

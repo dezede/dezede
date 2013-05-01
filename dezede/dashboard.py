@@ -9,7 +9,7 @@ To activate your index dashboard add the following to your settings.py::
 """
 
 from __future__ import unicode_literals
-from django.utils.translation import ugettext_lazy as _
+from cache_tools import cached_ugettext_lazy as _
 
 from grappelli.dashboard import modules, Dashboard
 

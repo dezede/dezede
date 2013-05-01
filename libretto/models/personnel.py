@@ -4,8 +4,9 @@ from __future__ import unicode_literals
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
      FloatField, permalink, SmallIntegerField, PROTECT
 from django.utils.encoding import python_2_unicode_compatible, smart_text
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ungettext_lazy
 from mptt.models import MPTTModel, TreeForeignKey, TreeManager
+from cache_tools import cached_ugettext_lazy as _
 from ..utils import abbreviate
 from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
     UniqueSlugModel, AutoriteManager, AutoriteModel

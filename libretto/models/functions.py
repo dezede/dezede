@@ -5,9 +5,8 @@ from django.template.defaultfilters import date
 from django.utils.encoding import smart_text
 from django.utils.functional import allow_lazy
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
-from cache_tools import cached_ugettext as ugettext,\
-    cached_pgettext as pgettext
+from cache_tools import cached_ugettext as ugettext, \
+    cached_pgettext as pgettext, cached_ugettext_lazy as _
 
 
 __all__ = (b'capfirst', b'date_html', b'str_list', b'str_list_w_last', b'ex',

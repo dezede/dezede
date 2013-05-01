@@ -4,12 +4,14 @@ from __future__ import unicode_literals
 from hashlib import md5
 import re
 from django.core.cache import cache
+from django.utils.functional import lazy
 from django.utils.translation import get_language, ugettext, pgettext
 
 
 __all__ = (
     'CONTROL_CHARACTERS', 'sanitize_memcached_key', 'get_group_cache_key',
     'invalidate_group', 'cached_ugettext', 'cached_pgettext',
+    'cached_ugettext_lazy', 'cached_pgettext_lazy',
 )
 
 
@@ -67,3 +69,7 @@ def cached_pgettext(context, message):
     except KeyError:
         out = PGETTEXT_CACHE[cache_key] = pgettext(context, message)
         return out
+
+
+cached_ugettext_lazy = lazy(cached_ugettext, unicode)
+cached_pgettext_lazy = lazy(cached_pgettext, unicode)

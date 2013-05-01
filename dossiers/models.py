@@ -5,9 +5,10 @@ from django.core.urlresolvers import reverse
 from django.db.models import CharField, DateField, ManyToManyField, \
                              TextField, permalink
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ungettext_lazy
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
+from cache_tools import cached_ugettext_lazy as _
 from libretto.models import Lieu, Oeuvre, Evenement, Individu
 from libretto.models.common import CommonModel
 from libretto.models.functions import str_list_w_last

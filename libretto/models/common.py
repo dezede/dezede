@@ -11,11 +11,11 @@ from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ungettext_lazy
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
 from tinymce.models import HTMLField
-from cache_tools import invalidate_group
+from cache_tools import invalidate_group, cached_ugettext_lazy as _
 from .functions import href
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet

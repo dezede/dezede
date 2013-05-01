@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django_tables2 import Table
 from django_tables2.columns import Column, LinkColumn, CheckBoxColumn
 from django_tables2.utils import A
-from django.utils.translation import ugettext_lazy as _
+from cache_tools import cached_ugettext_lazy as _
 
 
 __all__ = (b'OeuvreTable', b'IndividuTable', b'ProfessionTable',

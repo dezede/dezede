@@ -8,12 +8,12 @@ from django.template.defaultfilters import time
 from django.utils.encoding import python_2_unicode_compatible, smart_text, \
     force_text
 from django.utils.html import strip_tags
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ungettext_lazy
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 from tinymce.models import HTMLField
-from cache_tools import cached_ugettext as ugettext,\
-    cached_pgettext as pgettext
+from cache_tools import cached_ugettext as ugettext, \
+    cached_pgettext as pgettext, cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     AutoriteManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel
