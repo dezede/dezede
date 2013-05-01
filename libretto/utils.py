@@ -3,12 +3,12 @@
 from __future__ import unicode_literals
 import re
 from unicodedata import normalize
-from django.utils.translation import get_language, pgettext
+from django.utils.translation import get_language, ugettext, pgettext
 from .models.functions import hlp
 
 
 __all__ = (
-    'abbreviate', 'cached_pgettext',
+    'abbreviate', 'cached_ugettext', 'cached_pgettext',
 )
 
 
@@ -74,6 +74,19 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
                         vowels_count -= 1
         out += sub
     return hlp(out, string, tags)
+
+
+UGETTEXT_CACHE = {}
+
+
+def cached_ugettext(message):
+    lang = get_language()
+    cache_key = (lang, message)
+    try:
+        return UGETTEXT_CACHE[cache_key]
+    except KeyError:
+        out = UGETTEXT_CACHE[cache_key] = ugettext(message)
+        return out
 
 
 PGETTEXT_CACHE = {}

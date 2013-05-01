@@ -10,9 +10,9 @@ from django.db.models import CharField, ForeignKey, ManyToManyField, \
     PositiveIntegerField, get_model, SmallIntegerField, PROTECT
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
-from django.utils.translation import ungettext_lazy, ugettext, \
-                                     ugettext_lazy as _
+from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from cache_tools import model_method_cached
+from ..utils import cached_ugettext as ugettext
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, CommonQuerySet, CommonManager
 

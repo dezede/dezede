@@ -7,9 +7,9 @@ from django.db.models import CharField, DateField, ForeignKey, \
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext_lazy, ugettext,\
-                                     ugettext_lazy as _
+from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from tinymce.models import HTMLField
+from ..utils import cached_ugettext as ugettext
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     DATE_MSG, calc_pluriel, SlugModel
 from .functions import ex, cite, no, date_html, href, small
