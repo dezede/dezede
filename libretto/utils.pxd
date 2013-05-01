@@ -1,10 +1,17 @@
+#!python
+#cython: boundscheck=False
+
 import cython
 
 
-cdef remove_diacritics(string)
+cdef str remove_diacritics(unicode string)
 
 
-cdef bint is_vowel(string)
+cdef bint is_vowel(unicode string)
+
+
+@cython.locals(i0=int, c0=unicode, i1=int, c1=unicode, out=list)
+cdef list chars_iterator(unicode s)
 
 
 cdef ABBREVIATION_RE

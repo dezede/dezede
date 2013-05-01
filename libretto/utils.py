@@ -7,7 +7,7 @@ from .models.functions import hlp
 
 
 __all__ = (
-    'abbreviate', 'cached_ugettext', 'cached_pgettext',
+    'abbreviate',
 )
 
 
@@ -23,11 +23,13 @@ def chars_iterator(s):
     i0 = 0
     c0 = s[0]
     i1 = 1
+    out = []
     for c1 in s[1:-1]:
-        yield i0, c0, i1, c1
+        out.append((i0, c0, i1, c1))
         i0 = i1
         c0 = c1
         i1 += 1
+    return out
 
 
 # TODO: créer un catalogue COMPLET de ponctuations de séparation.
