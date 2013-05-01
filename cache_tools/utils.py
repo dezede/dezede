@@ -38,7 +38,7 @@ def get_group_cache_key(group):
 
 def invalidate_group(group):
     group_cache_key = get_group_cache_key(group)
-    group_keys = cache.get(group_cache_key, ())
+    group_keys = cache.get(group_cache_key, [])
     cache.delete_many(group_keys)
     cache.delete(group_cache_key)
 
