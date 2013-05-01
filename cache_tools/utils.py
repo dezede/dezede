@@ -4,10 +4,13 @@ from __future__ import unicode_literals
 from hashlib import md5
 import re
 from django.core.cache import cache
+from django.utils.translation import get_language, ugettext, pgettext
 
 
-__all__ = ('CONTROL_CHARACTERS', 'sanitize_memcached_key',
-           'get_group_cache_key', 'invalidate_group')
+__all__ = (
+    'CONTROL_CHARACTERS', 'sanitize_memcached_key', 'get_group_cache_key',
+    'invalidate_group', 'cached_ugettext', 'cached_pgettext',
+)
 
 
 CONTROL_CHARACTERS = b''.join(chr(i) for i in range(33))
@@ -38,3 +41,29 @@ def invalidate_group(group):
     group_keys = cache.get(group_cache_key, ())
     cache.delete_many(group_keys)
     cache.delete(group_cache_key)
+
+
+UGETTEXT_CACHE = {}
+
+
+def cached_ugettext(message):
+    lang = get_language()
+    cache_key = (lang, message)
+    try:
+        return UGETTEXT_CACHE[cache_key]
+    except KeyError:
+        out = UGETTEXT_CACHE[cache_key] = ugettext(message)
+        return out
+
+
+PGETTEXT_CACHE = {}
+
+
+def cached_pgettext(context, message):
+    lang = get_language()
+    cache_key = (lang, context, message)
+    try:
+        return PGETTEXT_CACHE[cache_key]
+    except KeyError:
+        out = PGETTEXT_CACHE[cache_key] = pgettext(context, message)
+        return out

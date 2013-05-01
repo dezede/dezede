@@ -14,4 +14,3 @@ register = Library()
 @register.filter
 def replace(string):
     return replace_util(string)
-

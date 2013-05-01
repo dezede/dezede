@@ -12,7 +12,8 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 from tinymce.models import HTMLField
-from ..utils import cached_ugettext as ugettext, cached_pgettext as pgettext
+from cache_tools import cached_ugettext as ugettext,\
+    cached_pgettext as pgettext
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     AutoriteManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel

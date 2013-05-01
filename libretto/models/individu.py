@@ -9,8 +9,8 @@ from django.utils.html import strip_tags
 from django.utils.translation import pgettext_lazy, ungettext_lazy, \
     ugettext_lazy as _
 from tinymce.models import HTMLField
-from cache_tools import model_method_cached
-from ..utils import abbreviate, cached_ugettext as ugettext
+from cache_tools import model_method_cached, cached_ugettext as ugettext
+from ..utils import abbreviate
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, UniqueSlugModel
 from .evenement import Evenement
