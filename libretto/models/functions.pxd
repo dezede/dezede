@@ -1,7 +1,6 @@
 import cython
 
 
-@cython.locals(out=unicode)
 cpdef unicode capfirst(text)
 
 
