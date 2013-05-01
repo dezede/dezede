@@ -13,5 +13,12 @@ cdef ABBREVIATION_RE
 @cython.locals(out=unicode, i=int, sub=unicode,
                vowels_count=int, vowel_first=bint, j0=int, c0=unicode,
                j1=int, c1=unicode, general_case=bint, particular_case=bint)
-cpdef abbreviate(unicode string, int min_vowels=?, int min_len=?, bint tags=?,
+cpdef abbreviate(string, int min_vowels=?, int min_len=?, bint tags=?,
                  bint enabled=?)
+
+
+cdef dict PGETTEXT_CACHE
+
+
+@cython.locals(cache_key=tuple, out=unicode)
+cpdef unicode cached_pgettext(unicode context, unicode message)

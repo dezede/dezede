@@ -6,7 +6,7 @@ from django.db.models import CharField, BooleanField, ForeignKey, \
     ManyToManyField, OneToOneField, permalink, Q, SmallIntegerField, PROTECT
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
-from django.utils.translation import pgettext, ungettext_lazy, \
+from django.utils.translation import pgettext_lazy, ungettext_lazy, \
     ugettext,  ugettext_lazy as _
 from tinymce.models import HTMLField
 from cache_tools import model_method_cached
@@ -148,7 +148,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
         ('J', _('Mlle')),  # J pour Jouvencelle
         ('F', _('Mme')),
     )
-    titre = CharField(pgettext('individu', 'titre'), max_length=1,
+    titre = CharField(pgettext_lazy('individu', 'titre'), max_length=1,
                       choices=TITRES, blank=True, db_index=True)
     ancrage_naissance = OneToOneField(
         'AncrageSpatioTemporel', blank=True, null=True,
