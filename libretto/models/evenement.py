@@ -92,14 +92,14 @@ class ElementDeDistribution(CommonModel):
             individus = self.individus.all()
             out += str_list_w_last(individu.html(tags=tags)
                                    for individu in individus)
-        partie_ou_profession = ''
+
         if self.pupitre:
-            partie_ou_profession = self.pupitre.partie.link()
+            out += ' [' + self.pupitre.partie.link() + ']'
         elif self.profession:
-            partie_ou_profession = self.profession.link()
-        out += ' [' + partie_ou_profession + ']'
+            out += ' [' + self.profession.link() + ']'
+
         if not tags:
-            out = strip_tags(out)
+            return strip_tags(out)
         return out
 
     def related_label(self):
@@ -113,9 +113,9 @@ class ElementDeDistribution(CommonModel):
         return href(self.get_change_url(), smart_text(self), new_tab=True)
 
     def clean(self):
-        if not (bool(self.pupitre) ^ bool(self.profession)):
-            raise ValidationError(_('Vous devez remplir un pupitre ou '
-                                    'une profession, mais pas les deux.'))
+        if self.pupitre and self.profession:
+            raise ValidationError(_('Vous ne pouvez remplir à la fois '
+                                    '« Pupitre » et « Profession ».'))
 
     @staticmethod
     def autocomplete_search_fields():
