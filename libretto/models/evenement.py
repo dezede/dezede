@@ -190,8 +190,7 @@ class ElementDeProgramme(AutoriteModel):
     def calc_caracteristiques(self):
         if self.pk is None:
             return ''
-        cs = self.caracteristiques.iterator()
-        return str_list(smart_text(c) for c in cs)
+        return str_list(smart_text(c) for c in self.caracteristiques.all())
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _('caractéristiques')
 
@@ -205,9 +204,11 @@ class ElementDeProgramme(AutoriteModel):
 
     @model_method_cached(24 * 60 * 60, 'programmes')
     def html(self, tags=True):
+        has_pk = self.pk is not None
+
         add_distribution = False
         distribution = ''
-        if self.pk and self.distribution.exists():
+        if has_pk and self.distribution.exists():
             distribution = self.distribution.html(tags=tags)
             add_distribution = True
 
@@ -221,7 +222,7 @@ class ElementDeProgramme(AutoriteModel):
         else:
             raise ValidationError('Il manque des champs dans ' + repr(self))
 
-        if self.pk and self.caracteristiques.exists():
+        if has_pk and self.caracteristiques.exists():
             out += ' [' + self.calc_caracteristiques() + ']'
 
         if add_distribution:
@@ -280,23 +281,21 @@ class Evenement(AutoriteModel):
     def sources_dict(self):
         types = TypeDeSource.objects.filter(
             sources__evenements=self).distinct()
-        d = {}
-        for type in types:
-            sources = self.sources.filter(type=type)
-            d[type] = sources
-        return d
+        sources_filter = self.sources.filter
+        return {type: sources_filter(type=type) for type in types}
 
     def html(self, tags=True):
-        relache, circonstance = '', ''
+        relache = ''
+        circonstance = ''
         if self.circonstance:
             circonstance = hlp(self.circonstance, ugettext('circonstance'),
                                tags)
         if self.relache:
             relache = ugettext('Relâche')
-        l = (self.ancrage_debut.calc_lieu(tags), circonstance,
-             self.ancrage_debut.calc_heure(), relache)
-        out = str_list(l)
-        return out
+
+        return str_list((self.ancrage_debut.calc_lieu(tags), circonstance,
+                         self.ancrage_debut.calc_heure(), relache))
+
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
