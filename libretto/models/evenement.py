@@ -205,25 +205,31 @@ class ElementDeProgramme(AutoriteModel):
 
     @model_method_cached(24 * 60 * 60, 'programmes')
     def html(self, tags=True):
-        out = ''
-        oeuvre = self.oeuvre
-        if oeuvre:
-            out += oeuvre.html(tags)
+        add_distribution = False
+        distribution = ''
+        if self.pk and self.distribution.exists():
+            distribution = self.distribution.html(tags=tags)
+            add_distribution = True
+
+        if self.oeuvre:
+            out = self.oeuvre.html(tags)
+        elif self.autre:
+            out = self.autre
+        elif distribution:
+            out = distribution
+            add_distribution = False
         else:
-            out += self.autre
-        if self.pk:
-            if self.caracteristiques.exists():
-                out += ' [' + self.calc_caracteristiques() + ']'
-            if self.distribution.exists():
-                out += '. — ' + self.distribution.html(tags=tags)
+            raise ValidationError('Il manque des champs dans ' + repr(self))
+
+        if self.pk and self.caracteristiques.exists():
+            out += ' [' + self.calc_caracteristiques() + ']'
+
+        if add_distribution:
+            out += '. — ' + distribution
+
         return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
-
-    def clean(self):
-        if not (self.oeuvre or self.autre):
-            raise ValidationError(_('Vous devez remplir au moins « Œuvre » ou '
-                                    '« Autre ».'))
 
     class Meta(object):
         verbose_name = ungettext_lazy('élément de programme',

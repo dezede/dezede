@@ -10,7 +10,7 @@ from django.contrib.contenttypes.generic import GenericStackedInline
 from reversion import VersionAdmin
 from cache_tools import cached_ugettext_lazy as _
 from .models import *
-from .forms import OeuvreForm, SourceForm, IndividuForm
+from .forms import OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm
 
 
 __all__ = ()
@@ -227,6 +227,7 @@ class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
 
 class ElementDeProgrammeInline(CustomStackedInline):
     model = ElementDeProgramme
+    form = ElementDeProgrammeForm
     verbose_name = model._meta.verbose_name
     verbose_name_plural = _('programme')
     fieldsets = (
