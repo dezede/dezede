@@ -73,3 +73,8 @@ class OeuvreCoordinationLookup(CharFieldLookupChannel):
 class OeuvrePrefixeTitreSecondaireLookup(CharFieldLookupChannel):
     model = Oeuvre
     attr = 'prefixe_titre_secondaire'
+
+
+class ElementDeProgrammeAutreLookup(CharFieldLookupChannel):
+    model = ElementDeProgramme
+    attr = 'autre'

@@ -274,6 +274,18 @@ CACHE_MIDDLEWARE_SECONDS = 24 * 60 * 60
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
 }
+DEBUG_TOOLBAR_PANELS = (
+    'debug_toolbar.panels.version.VersionDebugPanel',
+    'debug_toolbar.panels.timer.TimerDebugPanel',
+    # 'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+    # 'debug_toolbar.panels.headers.HeaderDebugPanel',
+    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+    # 'debug_toolbar.panels.template.TemplateDebugPanel',
+    'debug_toolbar.panels.sql.SQLDebugPanel',
+    'debug_toolbar.panels.signals.SignalDebugPanel',
+    # 'debug_toolbar.panels.logger.LoggingPanel',
+    # 'debug_toolbar.panels.profiling.ProfilingDebugPanel',
+)
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -294,6 +306,8 @@ AJAX_LOOKUP_CHANNELS = {
     'oeuvre__coordination': ('libretto.lookups', 'OeuvreCoordinationLookup'),
     'oeuvre__prefixe_titre_secondaire': ('libretto.lookups',
                                          'OeuvrePrefixeTitreSecondaireLookup'),
+    'elementdeprogramme__autre': ('libretto.lookups',
+                                  'ElementDeProgrammeAutreLookup'),
     'source__nom': ('libretto.lookups', 'SourceNomLookup'),
 }
 AJAX_SELECT_BOOTSTRAP = True

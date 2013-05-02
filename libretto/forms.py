@@ -51,15 +51,19 @@ class OeuvreForm(ModelForm):
 class ElementDeProgrammeForm(ModelForm):
     class Meta(object):
         model = ElementDeProgramme
+        widgets = {
+            b'autre': AutoCompleteWidget('elementdeprogramme__autre',
+                                         attrs={'style': 'width: 600px;'}),
+        }
 
     def clean(self):
         data = super(ElementDeProgrammeForm, self).clean()
 
-        if not (data['autre'] or data['oeuvre'] or data['distribution']):
+        if not (data[b'autre'] or data[b'oeuvre'] or data[b'distribution']):
             raise ValidationError(_('Vous devez remplir au moins « Œuvre », '
                                     '« Autre » ou « Distribution ».'))
 
-        if data['autre'] and data['oeuvre']:
+        if data[b'autre'] and data[b'oeuvre']:
             raise ValidationError(_('Vous ne pouvez remplir à la fois '
                                     '« Œuvre » et « Autre ».'))
 
