@@ -38,7 +38,9 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
                               | Q(programme__distribution__in=self)).distinct()
 
     def html(self, tags=True):
-        return ', '.join(e.html(tags=tags) for e in self.iterator())
+        l = self.select_related('pupitre', 'pupitre__partie', 'profession') \
+            .prefetch_related('individus')
+        return ', '.join(e.html(tags=tags) for e in l)
 
 
 class ElementDeDistributionManager(CommonManager):
@@ -87,7 +89,7 @@ class ElementDeDistribution(CommonModel):
     def html(self, tags=True):
         out = ''
         if self.pk:
-            individus = self.individus.iterator()
+            individus = self.individus.all()
             out += str_list_w_last(individu.html(tags=tags)
                                    for individu in individus)
         partie_ou_profession = ''
