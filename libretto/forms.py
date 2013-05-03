@@ -51,10 +51,11 @@ class OeuvreForm(ModelForm):
 class ElementDeProgrammeForm(ModelForm):
     class Meta(object):
         model = ElementDeProgramme
-        widgets = {
-            b'autre': AutoCompleteWidget('elementdeprogramme__autre',
-                                         attrs={'style': 'width: 600px;'}),
-        }
+        # FIXME: Rendre fonctionnel ce qui suit.
+        # widgets = {
+        #     b'autre': AutoCompleteWidget('elementdeprogramme__autre',
+        #                                  attrs={'style': 'width: 600px;'}),
+        # }
 
     def clean(self):
         data = super(ElementDeProgrammeForm, self).clean()
