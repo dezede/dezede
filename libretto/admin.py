@@ -138,7 +138,7 @@ class AncrageSpatioTemporelInline(CustomTabularInline):
 
 class OeuvreMereInline(CustomTabularInline):
     model = ParenteDOeuvres
-    verbose_name = model._meta.get_field_by_name('mere')[0].verbose_name
+    verbose_name = model._meta.get_field('mere').verbose_name
     verbose_name_plural = _('œuvres mères')
     fk_name = 'fille'
     raw_id_fields = ('mere',)
@@ -151,7 +151,7 @@ class OeuvreMereInline(CustomTabularInline):
 
 class OeuvreFilleInline(CustomTabularInline):
     model = ParenteDOeuvres
-    verbose_name = model._meta.get_field_by_name('fille')[0].verbose_name
+    verbose_name = model._meta.get_field('fille').verbose_name
     verbose_name_plural = _('œuvres filles')
     fk_name = 'mere'
     raw_id_fields = ('fille',)
@@ -164,7 +164,7 @@ class OeuvreFilleInline(CustomTabularInline):
 
 class IndividuParentInline(CustomTabularInline):
     model = ParenteDIndividus
-    verbose_name = model._meta.get_field_by_name('parent')[0].verbose_name
+    verbose_name = model._meta.get_field('parent').verbose_name
     verbose_name_plural = _('individus parents')
     fk_name = 'enfant'
     raw_id_fields = ('parent',)
@@ -177,7 +177,7 @@ class IndividuParentInline(CustomTabularInline):
 
 class IndividuEnfantInline(CustomTabularInline):
     model = ParenteDIndividus
-    verbose_name = model._meta.get_field_by_name('enfant')[0].verbose_name
+    verbose_name = model._meta.get_field('enfant').verbose_name
     verbose_name_plural = _('individus enfants')
     fk_name = 'parent'
     raw_id_fields = ('enfant',)

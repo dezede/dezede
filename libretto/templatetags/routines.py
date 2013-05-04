@@ -121,7 +121,7 @@ def jstree(queryset, attr='__str__', tree_id=None):
     if not queryset:
         return ''
     if tree_id is None:
-        tree_id = queryset[0].__class__.__name__.lower()
+        tree_id = queryset.model.__name__.lower()
     c = {
         'queryset': queryset,
         'id': tree_id,
