@@ -241,7 +241,7 @@ class ElementDeProgrammeInline(CustomStackedInline):
         }),
         (_('Champs avancés'), {
             'classes': ('grp-collapse grp-closed',),
-            'fields': ('personnels', 'etat', 'position',),
+            'fields': ('personnels', 'position',),
         }),
     )
     sortable_field_name = 'position'
@@ -273,8 +273,51 @@ class SourceInline(TabularInline):
 #
 
 
-class CustomAdmin(VersionAdmin, CustomBaseModel):
+class CommonAdmin(VersionAdmin, CustomBaseModel):
     list_per_page = 20
+    additional_fields = ()
+    admin_fields = ()
+    additional_list_filters = ('owner', HasRelatedObjectsListFilter,)
+
+    def __init__(self, *args, **kwargs):
+        self.list_filter += self.additional_list_filters
+        self.added_fieldsets = ()
+        super(CommonAdmin, self).__init__(*args, **kwargs)
+
+    @property
+    def declared_fieldsets(self):
+        declared_fieldsets = self._declared_fieldsets()
+        if declared_fieldsets is None:
+            return
+        return declared_fieldsets + self.added_fieldsets
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super(CommonAdmin, self).get_fieldsets(request, obj=obj)
+        if self.declared_fieldsets is None:
+            return tuple(fieldsets) + self.added_fieldsets
+        return fieldsets
+
+    # TODO: Ajouter cette méthode aux inlines.
+    def pre_get_form(self, request, obj=None, **kwargs):
+        excluded_fields = self.exclude
+        if not request.user.is_superuser:
+            excluded_fields += self.admin_fields
+
+        added_fields = []
+        for added_field in self.additional_fields:
+            if added_field not in excluded_fields:
+                added_fields.append(added_field)
+        if added_fields:
+            self.added_fieldsets = (
+                (_('Champs d’administration'), {
+                    'classes': ('grp-collapse grp-closed',),
+                    'fields': added_fields,
+                }),
+            )
+
+    def get_form(self, request, obj=None, **kwargs):
+        self.pre_get_form(request, obj=obj, **kwargs)
+        return super(CommonAdmin, self).get_form(request, obj=obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'owner') is None:
@@ -290,35 +333,42 @@ class CustomAdmin(VersionAdmin, CustomBaseModel):
         formset.save_m2m()
 
 
-class DocumentAdmin(CustomAdmin):
+class AutoriteAdmin(CommonAdmin):
+    additional_fields = ('etat', 'notes')
+    admin_fields = ('etat',)
+    additional_list_filters = ('etat', 'owner', HasRelatedObjectsListFilter,)
+
+
+class DocumentAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'document', 'has_related_objects',)
     list_editable = ('nom', 'document',)
     search_fields = ('nom',)
+    additional_list_filters = ()
 
 
-class IllustrationAdmin(CustomAdmin):
+class IllustrationAdmin(CommonAdmin):
     list_display = ('__str__', 'legende', 'image', 'has_related_objects')
     list_editable = ('legende', 'image',)
     search_fields = ('legende',)
+    additional_list_filters = ()
 
 
-class EtatAdmin(CustomAdmin):
+class EtatAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'public',
                     'has_related_objects')
     list_editable = ('nom', 'nom_pluriel', 'public')
 
 
-class NatureDeLieuAdmin(CustomAdmin):
+class NatureDeLieuAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'referent',)
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel', 'referent',)
 
 
-class LieuAdmin(CustomAdmin):
-    list_display = ('__str__', 'nom', 'parent', 'nature', 'etat', 'link',)
-    list_editable = ('nom', 'parent', 'nature', 'etat',)
+class LieuAdmin(AutoriteAdmin):
+    list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
+    list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom', 'parent__nom',)
-    list_filter = ('nature', HasRelatedObjectsListFilter)
+    list_filter = ('nature',)
     raw_id_fields = ('parent', 'illustrations', 'documents',)
     autocomplete_lookup_fields = {
         'fk': ['parent'],
@@ -335,10 +385,6 @@ class LieuAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('illustrations', 'documents',),
         }),
-        (_('Champs avancés'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('etat', 'notes',),
-        }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -346,7 +392,7 @@ class LieuAdmin(CustomAdmin):
     )
 
 
-class SaisonAdmin(CustomAdmin):
+class SaisonAdmin(CommonAdmin):
     list_display = ('__str__', 'lieu', 'debut', 'fin',)
     raw_id_fields = ('lieu',)
     autocomplete_lookup_fields = {
@@ -354,10 +400,9 @@ class SaisonAdmin(CustomAdmin):
     }
 
 
-class ProfessionAdmin(CustomAdmin):
+class ProfessionAdmin(AutoriteAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_feminin',
                     'parent', 'classement')
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
                      'classement')
     raw_id_fields = ('parent', 'illustrations', 'documents')
@@ -374,10 +419,6 @@ class ProfessionAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('illustrations', 'documents',),
         }),
-        (_('Champs avancés'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('etat', 'notes',),
-        }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -385,9 +426,8 @@ class ProfessionAdmin(CustomAdmin):
     )
 
 
-class AncrageSpatioTemporelAdmin(CustomAdmin):
+class AncrageSpatioTemporelAdmin(CommonAdmin):
     list_display = ('__str__', 'calc_date', 'calc_heure', 'calc_lieu',)
-    list_filter = (HasRelatedObjectsListFilter,)
     search_fields = ('lieu__nom', 'lieu_approx', 'date_approx',
                      'lieu__parent__nom', 'heure_approx',)
     raw_id_fields = ('lieu',)
@@ -402,31 +442,29 @@ class AncrageSpatioTemporelAdmin(CustomAdmin):
     )
 
 
-class PrenomAdmin(CustomAdmin):
+class PrenomAdmin(CommonAdmin):
     list_display = ('__str__', 'prenom', 'classement', 'favori',
                     'has_individu')
-    list_filter = (HasRelatedObjectsListFilter,)
     search_fields = ('prenom',)
     list_editable = ('prenom', 'classement', 'favori',)
 
 
-class TypeDeParenteDIndividusAdmin(CustomAdmin):
+class TypeDeParenteDIndividusAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_relatif',
                     'nom_relatif_pluriel', 'classement',)
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
                      'nom_relatif_pluriel', 'classement',)
 
 
-class IndividuAdmin(CustomAdmin):
+class IndividuAdmin(AutoriteAdmin):
     list_per_page = 20
     list_display = ('__str__', 'nom', 'calc_prenoms',
                     'pseudonyme', 'titre', 'ancrage_naissance',
-                    'ancrage_deces', 'calc_professions', 'etat', 'link',)
-    list_editable = ('nom', 'titre', 'etat')
+                    'ancrage_deces', 'calc_professions', 'link',)
+    list_editable = ('nom', 'titre',)
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',
                      'prenoms__prenom',)
-    list_filter = ('titre', HasRelatedObjectsListFilter)
+    list_filter = ('titre',)
     form = IndividuForm
     raw_id_fields = ('prenoms', 'ancrage_naissance', 'ancrage_deces',
                      'professions', 'ancrage_approx',
@@ -454,7 +492,7 @@ class IndividuAdmin(CustomAdmin):
         }),
         (_('Champs avancés'), {
             'classes': ('grp-collapse grp-closed',),
-            'fields': ('ancrage_approx', 'biographie', 'etat', 'notes',),
+            'fields': ('ancrage_approx', 'biographie',),
         }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
@@ -463,12 +501,12 @@ class IndividuAdmin(CustomAdmin):
     )
 
 
-class DeviseAdmin(CustomAdmin):
+class DeviseAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'symbole',)
     list_editable = ('nom', 'symbole',)
 
 
-class EngagementAdmin(CustomAdmin):
+class EngagementAdmin(CommonAdmin):
     list_display = ('__str__', 'profession', 'salaire', 'devise',)
     raw_id_fields = ('profession', 'individus',)
     autocomplete_lookup_fields = {
@@ -477,18 +515,16 @@ class EngagementAdmin(CustomAdmin):
     }
 
 
-class TypeDePersonnelAdmin(CustomAdmin):
+class TypeDePersonnelAdmin(CommonAdmin):
     list_display = ('nom',)
-    list_filter = (HasRelatedObjectsListFilter,)
 
 
-class PersonnelAdmin(CustomAdmin):
+class PersonnelAdmin(CommonAdmin):
     filter_horizontal = ('engagements',)
 
 
-class GenreDOeuvreAdmin(CustomAdmin):
+class GenreDOeuvreAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'has_related_objects')
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel',)
     search_fields = ('nom', 'nom_pluriel',)
     raw_id_fields = ('parents',)
@@ -497,22 +533,19 @@ class GenreDOeuvreAdmin(CustomAdmin):
     }
 
 
-class TypeDeCaracteristiqueDOeuvreAdmin(CustomAdmin):
+class TypeDeCaracteristiqueDOeuvreAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
 
 
-class CaracteristiqueDOeuvreAdmin(CustomAdmin):
+class CaracteristiqueDOeuvreAdmin(CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('type', 'valeur', 'classement',)
     search_fields = ('type__nom', 'valeur')
 
 
-class PartieAdmin(CustomAdmin):
+class PartieAdmin(AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'classement',)
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'parent', 'classement',)
     search_fields = ('nom',)
     raw_id_fields = ('professions', 'parent', 'documents', 'illustrations')
@@ -529,10 +562,6 @@ class PartieAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('illustrations', 'documents',),
         }),
-        (_('Champs avancés'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('etat', 'notes',),
-        }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -540,9 +569,8 @@ class PartieAdmin(CustomAdmin):
     )
 
 
-class PupitreAdmin(CustomAdmin):
+class PupitreAdmin(CommonAdmin):
     list_display = ('__str__', 'partie', 'quantite_min', 'quantite_max',)
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('partie', 'quantite_min', 'quantite_max',)
     search_fields = ('partie__nom', 'quantite_min', 'quantite_max')
     raw_id_fields = ('partie',)
@@ -551,15 +579,14 @@ class PupitreAdmin(CustomAdmin):
     }
 
 
-class TypeDeParenteDOeuvresAdmin(CustomAdmin):
+class TypeDeParenteDOeuvresAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_relatif', 'nom_relatif_pluriel',
                     'classement',)
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_relatif', 'nom_relatif_pluriel',
                      'classement',)
 
 
-class ParenteDOeuvresAdmin(CustomAdmin):
+class ParenteDOeuvresAdmin(CommonAdmin):
     fields = ('mere', 'type', 'fille',)
     list_display = ('__str__', 'mere', 'type', 'fille',)
     list_editable = ('mere', 'type', 'fille',)
@@ -569,15 +596,15 @@ class ParenteDOeuvresAdmin(CustomAdmin):
     }
 
 
-class OeuvreAdmin(CustomAdmin):
+class OeuvreAdmin(AutoriteAdmin):
     form = OeuvreForm
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
                     'calc_caracteristiques', 'auteurs_html',
-                    'ancrage_creation', 'etat', 'link',)
-    list_editable = ('genre', 'etat')
+                    'ancrage_creation', 'link',)
+    list_editable = ('genre',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',
                      'auteurs__individu__nom')
-    list_filter = ('genre', HasRelatedObjectsListFilter)
+    list_filter = ('genre',)
     raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
                      'ancrage_creation', 'pupitres', 'documents',
                      'illustrations',)
@@ -607,7 +634,7 @@ class OeuvreAdmin(CustomAdmin):
         }),
         (_('Champs avancés'), {
             'classes': ('grp-collapse grp-closed', 'wide',),
-            'fields': ('lilypond', 'description', 'etat', 'notes',),
+            'fields': ('lilypond', 'description',),
         }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
@@ -616,9 +643,8 @@ class OeuvreAdmin(CustomAdmin):
     )
 
 
-class ElementDeDistributionAdmin(CustomAdmin):
+class ElementDeDistributionAdmin(CommonAdmin):
     list_display = ('__str__', 'pupitre', 'profession',)
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('pupitre', 'profession',)
     search_fields = ('individus__nom', 'individus__prenoms__prenom',
                      'pupitre__partie__nom', 'profession__nom')
@@ -630,20 +656,19 @@ class ElementDeDistributionAdmin(CustomAdmin):
     }
 
 
-class CaracteristiqueDElementDeProgrammeAdmin(CustomAdmin):
+class CaracteristiqueDElementDeProgrammeAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
     search_fields = ('nom', 'nom_pluriel',)
 
 
-class EvenementAdmin(CustomAdmin):
+class EvenementAdmin(AutoriteAdmin):
     list_display = ('__str__', 'relache', 'circonstance',
-                    'has_source', 'has_program', 'etat', 'link',)
-    list_editable = ('relache', 'circonstance', 'etat')
+                    'has_source', 'has_program', 'link',)
+    list_editable = ('relache', 'circonstance',)
     search_fields = ('circonstance', 'ancrage_debut__lieu__nom')
     list_filter = ('relache', EventHasSourceListFilter,
-                   EventHasProgramListFilter, HasRelatedObjectsListFilter)
+                   EventHasProgramListFilter)
     raw_id_fields = ('ancrage_debut', 'ancrage_fin', 'documents',
                      'illustrations',)
     related_lookup_fields = {
@@ -668,10 +693,6 @@ class EvenementAdmin(CustomAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('documents', 'illustrations',),
         }),
-        (_('Champs avancés'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('etat', 'notes',),
-        }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -679,17 +700,16 @@ class EvenementAdmin(CustomAdmin):
     )
 
 
-class TypeDeSourceAdmin(CustomAdmin):
+class TypeDeSourceAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel',)
-    list_filter = (HasRelatedObjectsListFilter,)
     list_editable = ('nom', 'nom_pluriel',)
 
 
-class SourceAdmin(CustomAdmin):
+class SourceAdmin(AutoriteAdmin):
     form = SourceForm
     list_display = ('nom', 'date', 'type', 'has_events', 'has_program',
-                    'owner', 'etat', 'link')
-    list_editable = ('type', 'date', 'etat')
+                    'owner', 'link')
+    list_editable = ('type', 'date',)
     search_fields = ('nom', 'date', 'type__nom', 'numero', 'contenu',
                      'owner__username', 'owner__first_name',
                      'owner__last_name')
@@ -712,10 +732,6 @@ class SourceAdmin(CustomAdmin):
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),
             'fields': ('documents', 'illustrations',),
-        }),
-        (_('Champs avancés'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('etat', 'notes',),
         }),
         #        (_('Champs générés (Méthodes)'), {
         #            'classes': ('grp-collapse grp-closed',),
