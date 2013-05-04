@@ -111,6 +111,7 @@ SECRET_KEY = ''
 WSGI_APPLICATION = 'dezede.wsgi.application'
 
 INTERNAL_IPS = ('127.0.0.1',)
+ALLOWED_HOSTS = ('dezede.org',)
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
