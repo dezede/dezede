@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db.models import Model, OneToOneField, ForeignKey, permalink
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy
@@ -10,9 +10,9 @@ from cache_tools import cached_ugettext_lazy as _
 
 @python_2_unicode_compatible
 class StudentProfile(Model):
-    user = OneToOneField(User, related_name='student_profile',
+    user = OneToOneField(settings.AUTH_USER_MODEL, related_name='student_profile',
                          verbose_name=_('Utilisateur'))
-    professor = ForeignKey(User, related_name='students',
+    professor = ForeignKey(settings.AUTH_USER_MODEL, related_name='students',
                            verbose_name=_('professeur'))
 
     class Meta(object):
@@ -34,8 +34,7 @@ class StudentProfile(Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('profiles_profile_detail',
-                (), {'username': self.user.username})
+        return 'admin:accounts_studentprofile_change', (self.pk,)
 
     def permalien(self):
         return self.get_absolute_url()

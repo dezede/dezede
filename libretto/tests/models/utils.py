@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 
 
@@ -10,6 +10,7 @@ def log_as_superuser(test_case):
     username = 'test_superuser'
     password = 'test_password'
     email = 'a@b.com'
+    User = get_user_model()
     try:
         User.objects.get(username=username, is_staff=True, is_superuser=True)
     except User.DoesNotExist:

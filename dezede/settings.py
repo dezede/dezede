@@ -184,7 +184,6 @@ INSTALLED_APPS = (
     'grappelli.dashboard',
     'grappelli',
     'registration',
-    'profiles',
     'accounts',
     'crispy_forms',
     'ajax_select',

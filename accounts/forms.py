@@ -4,7 +4,8 @@ from __future__ import unicode_literals
 from crispy_forms.bootstrap import PrependedText, FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset
-from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.contrib.sites.models import get_current_site
 from django.forms import CharField, ModelChoiceField, ModelMultipleChoiceField
 from django.forms.widgets import CheckboxSelectMultiple
@@ -18,7 +19,7 @@ from .models import StudentProfile
 
 
 def get_professors():
-    return User.objects.filter(is_superuser=True)
+    return get_user_model().objects.filter(is_superuser=True)
 
 
 def get_groups():

@@ -1,19 +1,18 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.views.generic import DetailView
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.sites.models import get_current_site
-from django.template.loader import render_to_string
-from django.shortcuts import redirect
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from registration.backends import get_backend
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect
+from django.template.loader import render_to_string
+from django.views.generic import DetailView
+from registration.backends.default.views import RegistrationView
+from .forms import UserRegistrationForm
 
 
 class GrantToAdmin(DetailView):
-    model = User
+    model = get_user_model()
     template_name = 'accounts/grant_to_admin.html'
 
     def grant_user(self, user):
@@ -40,35 +39,16 @@ class GrantToAdmin(DetailView):
         return context
 
 
-def register(request, backend, success_url=None, form_class=None,
-             disallowed_url='registration_disallowed',
-             template_name='registration/registration_form.html',
-             extra_context=None):
-    """Copié depuis django-registration et modifié."""
-    backend = get_backend(backend)
-    if not backend.registration_allowed(request):
-        return redirect(disallowed_url)
-    if form_class is None:
-        form_class = backend.get_form_class(request)
+class MyRegistrationView(RegistrationView):
+    form_class = UserRegistrationForm
 
-    if request.method == 'POST':
-        form = form_class(data=request.POST, files=request.FILES)
-        if form.is_valid():
-            new_user = backend.register(request, **form.cleaned_data)
-            form.save(request, new_user)
-            if success_url is None:
-                to, args, kwargs = backend.post_registration_redirect(
-                    request, new_user)
-                return redirect(to, *args, **kwargs)
+    def form_valid(self, request, form):
+        new_user = self.register(request, **form.cleaned_data)
+        form.save(request, new_user)
+        success_url = self.get_success_url(request, new_user)
+
+        try:
+            to, args, kwargs = success_url
+            return redirect(to, *args, **kwargs)
+        except ValueError:
             return redirect(success_url)
-    else:
-        form = form_class()
-
-    if extra_context is None:
-        extra_context = {}
-    context = RequestContext(request)
-    for key, value in extra_context.items():
-        context[key] = callable(value) and value() or value
-
-    return render_to_response(template_name, {'form': form},
-                              context_instance=context)

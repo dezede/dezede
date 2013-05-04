@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from collections import OrderedDict
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.sessions.models import Session
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
@@ -86,7 +86,7 @@ class CommonModel(TypographicModel):
     """
     Modèle commun à l’application, ajoutant diverses possibilités.
     """
-    owner = ForeignKey(User, null=True, blank=True,
+    owner = ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                        verbose_name=_('transcripteur'), on_delete=PROTECT)
     objects = CommonManager()
 
