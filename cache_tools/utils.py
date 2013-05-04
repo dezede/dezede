@@ -9,15 +9,15 @@ from django.utils.translation import get_language, ugettext, pgettext
 
 
 __all__ = (
-    'CONTROL_CHARACTERS', 'sanitize_memcached_key', 'get_group_cache_key',
-    'invalidate_group', 'cached_ugettext', 'cached_pgettext',
-    'cached_ugettext_lazy', 'cached_pgettext_lazy',
+    'sanitize_memcached_key', 'get_group_cache_key', 'invalidate_group',
+    'cached_ugettext', 'cached_pgettext', 'cached_ugettext_lazy',
+    'cached_pgettext_lazy',
 )
 
 
 CONTROL_CHARACTERS = b''.join(chr(i) for i in range(33))
 CONTROL_CHARACTERS += chr(127)
-CONTROL_CHARACTERS_RE = re.compile('[%s]' % CONTROL_CHARACTERS)
+CONTROL_CHARACTERS_RE = re.compile(b'[%s]' % CONTROL_CHARACTERS)
 CONTROL_CHARACTERS_RE_SUB = CONTROL_CHARACTERS_RE.sub
 
 
@@ -27,15 +27,15 @@ def sanitize_memcached_key(key, max_length=250):
         key = bytes(key).translate(None, CONTROL_CHARACTERS)
     except:  # When key contains unicode or in any other unexpected case,
              # we fallback on the regular expression that shouldn't fail.
-        key = CONTROL_CHARACTERS_RE_SUB('', key)
+        key = CONTROL_CHARACTERS_RE_SUB(b'', key)
     if len(key) > max_length:
         hashed_key = md5(key).hexdigest()
-        key = key[:max_length - 33] + '-' + hashed_key
+        key = key[:max_length - 33] + b'-' + hashed_key
     return key
 
 
 def get_group_cache_key(group):
-    return 'group:' + group
+    return b'group:' + group
 
 
 def invalidate_group(group):

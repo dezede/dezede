@@ -3,20 +3,22 @@
 from __future__ import unicode_literals
 from django.core.cache import cache
 from django.utils.translation import get_language
-from .utils import sanitize_memcached_key, get_group_cache_key
+from .utils cimport sanitize_memcached_key, get_group_cache_key
 
 
 __all__ = ('model_method_cached',)
 
 
-cache_get = cache.get
-cache_set = cache.set
+cdef cache_get = cache.get
+cdef cache_set = cache.set
 
 
-def model_method_cached(timeout, group=None):
+def model_method_cached(int timeout, str group=None):
     def decorator(method):
         def wrapper(self, *args, **kwargs):
-            cache_key = '%s:%s.%s.%s:%s(%s,%s)' % (
+            cdef str group_cache_key
+            cdef list group_keys
+            cdef str cache_key = b'%s:%s.%s.%s:%s(%s,%s)' % (
                 get_language(), self.__module__, self.__class__.__name__,
                 method.__name__, self.pk, args, kwargs)
             cache_key = sanitize_memcached_key(cache_key)

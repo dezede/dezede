@@ -204,7 +204,7 @@ class ElementDeProgramme(AutoriteModel):
         return self.evenement.programme.exclude(Q(position__gt=self.position)
                            | Q(numerotation__in=numerotations_exclues)).count()
 
-    @model_method_cached(24 * 60 * 60, 'programmes')
+    @model_method_cached(24 * 60 * 60, b'programmes')
     def html(self, tags=True):
         has_pk = self.pk is not None
 

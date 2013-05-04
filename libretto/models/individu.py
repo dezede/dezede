@@ -275,7 +275,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     calc_professions.admin_order_field = 'professions__nom'
     calc_professions.allow_tags = True
 
-    @model_method_cached(24 * 60 * 60, 'individus')
+    @model_method_cached(24 * 60 * 60, b'individus')
     def html(self, tags=True, lon=False, prenoms_fav=True,
              show_prenoms=True, designation=None, abbr=True):
         def add_particule(nom, lon, naissance=False):
