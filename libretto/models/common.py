@@ -312,7 +312,7 @@ def handle_whitespaces(sender, **kwargs):
 def clean_groups(sender, **kwargs):
     if sender is Session:
         return
-    for group in ('programmes', 'oeuvres', 'individus'):
+    for group in (b'programmes', b'oeuvres', b'individus'):
         invalidate_group(group)
 post_save.connect(clean_groups)
 post_delete.connect(clean_groups)
