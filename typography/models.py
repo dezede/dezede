@@ -29,7 +29,7 @@ def replace_in_kwargs(obj, kwargs_dict):
     field_names = [field.attname for field in fields
                    if field.__class__ in REPLACE_FIELDS]
     for k, v in kwargs_dict.items():
-        if k.split('__')[0] in field_names:
+        if k.split(b'__')[0] in field_names:
             kwargs_dict[k] = replace(v)
 
 

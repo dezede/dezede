@@ -20,6 +20,8 @@ TYPOGRAPHIC_REPLACEMENTS = {
 TYPOGRAPHIC_REPLACEMENTS_RE = re.compile(
     '|'.join(map(re.escape, TYPOGRAPHIC_REPLACEMENTS)))
 
+TYPOGRAPHIC_REPLACEMENTS_RE_SUB = TYPOGRAPHIC_REPLACEMENTS_RE.sub
+
 
 def typographic_translation(match):
     return TYPOGRAPHIC_REPLACEMENTS[match.group(0)]
@@ -32,4 +34,4 @@ def replace(string):
     >>> print(replace(" ; !«  »“  ” /&ldquo;  &rdquo;"))
     \u00A0;\u202F!«\u00A0\u00A0»“\u00A0\u00A0”\u00A0/“\u00A0\u00A0”
     """
-    return TYPOGRAPHIC_REPLACEMENTS_RE.sub(typographic_translation, string)
+    return TYPOGRAPHIC_REPLACEMENTS_RE_SUB(typographic_translation, string)

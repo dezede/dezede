@@ -38,8 +38,10 @@ def get_modules(path=None):
                 yield name, f
         else:
             f = f_or_d
-            if f.endswith(('.py', 'pyx')):
-                if not(f[-3:] == '.py' and os.path.exists(f[:-3] + '.pxd')):
+            if f.endswith(('.py', '.pyx')):
+                if not f.endswith('.pyx') \
+                    and not (f[-3:] == '.py'
+                            and os.path.exists(f[:-3] + '.pxd')):
                     continue
                 name = path_to_module(f)
                 if name and name not in excluded_modules:

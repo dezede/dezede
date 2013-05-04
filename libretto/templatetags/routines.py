@@ -104,15 +104,15 @@ def data_table_list(context, object_list, attr='link',
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         object_list, verbose_name=verbose_name,
         verbose_name_plural=verbose_name_plural)
-    c = copy(context)
-    c.update({
+    c = {
+        'request': context['request'],
         'attr': attr,
         'count': object_list.count(),
         'object_list': object_list,
         'verbose_name': verbose_name,
         'verbose_name_plural': verbose_name_plural,
         'page_variable': verbose_name + '_page',
-    })
+    }
     return render_to_string('routines/data_table_list.html', c)
 
 
