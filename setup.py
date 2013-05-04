@@ -17,6 +17,10 @@ excluded_modules = (
 )
 
 
+pure_python_modules = (
+)
+
+
 def path_to_module(path):
     return '.'.join(s for s in path.split('.')[0].split('/')
                     if s != '__init__')
@@ -41,7 +45,8 @@ def get_modules(path=None):
             if f.endswith(('.py', '.pyx')):
                 if not f.endswith('.pyx') \
                     and not (f[-3:] == '.py'
-                             and os.path.exists(f[:-3] + '.pxd')):
+                             and os.path.exists(f[:-3] + '.pxd'))\
+                        and path_to_module(f) not in pure_python_modules:
                     continue
                 if f.endswith('.py') and os.path.exists(f[:-3] + 'pyx'):
                     continue
