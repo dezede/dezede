@@ -289,7 +289,7 @@ class CommonAdmin(VersionAdmin, CustomBaseModel):
         declared_fieldsets = self._declared_fieldsets()
         if declared_fieldsets is None:
             return
-        return declared_fieldsets + self.added_fieldsets
+        return tuple(declared_fieldsets) + self.added_fieldsets
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super(CommonAdmin, self).get_fieldsets(request, obj=obj)
