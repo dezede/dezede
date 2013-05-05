@@ -13,7 +13,7 @@ cdef CONTROL_CHARACTERS_RE_SUB
 
 
 @cython.locals(hashed_key=str)
-cpdef str sanitize_memcached_key(str key, int max_length=?)
+cpdef sanitize_memcached_key(key, int max_length=?)
 
 
 cpdef str get_group_cache_key(str group)

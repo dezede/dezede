@@ -18,7 +18,7 @@ def model_method_cached(int timeout, str group=None):
         def wrapper(self, *args, **kwargs):
             cdef str group_cache_key
             cdef list group_keys
-            cdef str cache_key = b'%s:%s.%s.%s:%s(%s,%s)' % (
+            cdef cache_key = b'%s:%s.%s.%s:%s(%s,%s)' % (
                 get_language(), self.__module__, self.__class__.__name__,
                 method.__name__, self.pk, args, kwargs)
             cache_key = sanitize_memcached_key(cache_key)
