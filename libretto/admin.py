@@ -278,6 +278,7 @@ class CommonAdmin(VersionAdmin, CustomBaseModel):
     additional_fields = ()
     admin_fields = ()
     additional_list_filters = ('owner', HasRelatedObjectsListFilter,)
+    fieldsets_and_inlines_order = ()
 
     def __init__(self, *args, **kwargs):
         self.list_filter += self.additional_list_filters
@@ -499,6 +500,7 @@ class IndividuAdmin(AutoriteAdmin):
 #            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
+    fieldsets_and_inlines_order = ('f', 'i', 'i')
 
 
 class DeviseAdmin(CommonAdmin):
@@ -641,6 +643,7 @@ class OeuvreAdmin(AutoriteAdmin):
 #            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
+    fieldsets_and_inlines_order = ('f', 'i', 'f', 'i', 'i')
 
 
 class ElementDeDistributionAdmin(CommonAdmin):
@@ -698,6 +701,7 @@ class EvenementAdmin(AutoriteAdmin):
 #            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
+    fieldsets_and_inlines_order = ('f', 'i', 'i')
 
 
 class TypeDeSourceAdmin(CommonAdmin):
@@ -738,6 +742,7 @@ class SourceAdmin(AutoriteAdmin):
         #            'fields': ('__str__', 'html',),
         #        }),
     )
+    fieldsets_and_inlines_order = ('f', 'i')
 
     class Media(object):
         js = [
