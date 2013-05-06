@@ -32,17 +32,20 @@ body {
   font-family: 'Gentium Basic', 'Georgia', serif;
   font-size: 16px;
   line-height: 22px;
-}
-
-body:not(.mceContentBody) {
   background: #B82819 url(images/damasse.png) fixed;
   overflow-y: scroll;
   position: relative;
   margin: 60px 0;
 }
 
+/* For TinyMCE only: #content exists in front office, but not body#content. */
+body.mceContentBody, body#content {
+  margin: 5px;
+}
+
+/* Both for front office and TinyMCE */
 #content, .mceContentBody {
-  background-color: #FFF9D9;
+  background: #FFF9D9;
   box-shadow: 0 5px 30px black;
   border: 2px solid #CCC7AF;
   border-radius: 5px;

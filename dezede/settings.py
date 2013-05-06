@@ -229,8 +229,9 @@ ACCOUNT_ACTIVATION_DAYS = 7
 AUTH_PROFILE_MODULE = 'accounts.StudentProfile'
 LOGIN_REDIRECT_URL = '/profils/'
 
+TINYMCE_COMPRESSOR = True
+TINYMCE_FILEBROWSER = True
 TINYMCE_DEFAULT_CONFIG = {
-    'mode': 'textareas',
     'theme': 'advanced',
     'plugins': 'contextmenu,fullscreen,inlinepopups,nonbreaking,paste,preview,searchreplace,table,smallcaps',
     'theme_advanced_buttons1': 'fullscreen,preview,code,|,selectall,cut,copy,paste,pasteword,|,undo,redo,|,link,unlink,|,charmap,nonbreaking,|,search',
@@ -246,7 +247,6 @@ TINYMCE_DEFAULT_CONFIG = {
 
     'content_css': STATIC_URL + 'css/styles.css',
 }
-TINYMCE_FILEBROWSER = False
 
 FILEBROWSER_VERSIONS = {
     'admin_thumbnail': {'verbose_name': 'Admin Thumbnail', 'width': 60, 'height': 60, 'opts': 'crop'},

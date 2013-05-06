@@ -5,7 +5,7 @@ django-reversion==1.6.6
 django-haystack==1.2.7
 pysolr==2.1.0-beta
 django-mptt==0.5.5
-django-tinymce==1.5.1a2
+django-tinymce==1.5.1
 django-flatpages-tinymce==0.1.1
 simplejson==2.6.2
 django-autoslug==1.6.1
