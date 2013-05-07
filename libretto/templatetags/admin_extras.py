@@ -15,7 +15,7 @@ def get_fieldsets_and_inlines(context):
     inlines = iter(context['inline_admin_formsets'])
 
     fieldsets_and_inlines = []
-    for choice in model_admin.fieldsets_and_inlines_order:
+    for choice in getattr(model_admin, 'fieldsets_and_inlines_order', ()):
         if choice == 'f':
             fieldsets_and_inlines.append(('f', adminform.next()))
         elif choice == 'i':
