@@ -109,7 +109,7 @@ class CaracteristiqueDOeuvre(CommonModel):
     valeur = CharField(_('valeur'), max_length=400,
                        help_text=ex(_('en trois actes')))
     classement = SmallIntegerField(_('classement'), default=1, db_index=True,
-        help_text=_('Par exemple, on peut choisir de classer'
+        help_text=_('Par exemple, on peut choisir de classer '
                     'les découpages par nombre d’actes.'))
 
     class Meta(object):
