@@ -1,12 +1,14 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from functools import partial
 from django.contrib.admin import site, TabularInline, StackedInline
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
-from django.db.models import Q
 from django.contrib.contenttypes.generic import GenericStackedInline
+from django.db.models import Q
+from django.forms.models import modelformset_factory
 from reversion import VersionAdmin
 from cache_tools import cached_ugettext_lazy as _
 from .models import *
@@ -22,8 +24,6 @@ __all__ = ()
 
 
 class CustomBaseModel(BaseModelAdmin):
-    exclude = ('owner',)
-
     def check_user_ownership(self, request, obj, has_class_permission):
         if not has_class_permission:
             return False
@@ -125,10 +125,12 @@ SourceHasProgramListFilter = build_boolean_list_filter(
 
 class CustomTabularInline(TabularInline, CustomBaseModel):
     extra = 0
+    exclude = ('owner',)
 
 
 class CustomStackedInline(StackedInline, CustomBaseModel):
     extra = 0
+    exclude = ('owner',)
 
 
 class AncrageSpatioTemporelInline(CustomTabularInline):
@@ -275,12 +277,17 @@ class SourceInline(TabularInline):
 
 class CommonAdmin(VersionAdmin, CustomBaseModel):
     list_per_page = 20
-    additional_fields = ()
+    additional_fields = ('owner',)
+    additional_readonly_fields = ('owner',)
     admin_fields = ()
+    additional_list_display = ('owner',)
+    additional_list_editable = ()
     additional_list_filters = ('owner', HasRelatedObjectsListFilter,)
     fieldsets_and_inlines_order = ()
 
     def __init__(self, *args, **kwargs):
+        self.readonly_fields += self.additional_readonly_fields
+        self.list_display += self.additional_list_display
         self.list_filter += self.additional_list_filters
         self.added_fieldsets = ()
         super(CommonAdmin, self).__init__(*args, **kwargs)
@@ -298,16 +305,27 @@ class CommonAdmin(VersionAdmin, CustomBaseModel):
             return tuple(fieldsets) + self.added_fieldsets
         return fieldsets
 
-    # TODO: Ajouter cette méthode aux inlines.
-    def pre_get_form(self, request, obj=None, **kwargs):
-        excluded_fields = self.exclude
+    def _get_added_fields(self, request, additional_fields_attname,
+                          excluded=()):
         if not request.user.is_superuser:
-            excluded_fields += self.admin_fields
+            excluded += self.admin_fields
 
         added_fields = []
-        for added_field in self.additional_fields:
-            if added_field not in excluded_fields:
+        for added_field in getattr(self, additional_fields_attname, ()):
+            if added_field not in excluded:
                 added_fields.append(added_field)
+
+        return tuple(added_fields)
+
+    # TODO: Ajouter cette méthode aux inlines.
+    def pre_get_form(self, request, obj=None, **kwargs):
+        if not self.fields and not self.fieldsets:
+            # Cas où le formulaire est fait automatiquement et inclut donc
+            # les champs qu'on voudrait ajouter ci-dessous.
+            return
+
+        added_fields = self._get_added_fields(
+            request, 'additional_fields', excluded=self.exclude or ())
         if added_fields:
             self.added_fieldsets = (
                 (_('Champs d’administration'), {
@@ -321,22 +339,36 @@ class CommonAdmin(VersionAdmin, CustomBaseModel):
         return super(CommonAdmin, self).get_form(request, obj=obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'owner') is None:
+        if obj.owner is None:
             obj.owner = request.user
-        obj.save()
+        super(CommonAdmin, self).save_model(request, obj, form, change)
 
-    def save_formset(self, request, form, formset, change):
-        instances = formset.save(commit=False)
-        for instance in instances:
-            if getattr(instance, 'owner') is None:
-                instance.owner = request.user
-            instance.save()
-        formset.save_m2m()
+    def get_list_editable(self, request, **kwargs):
+        added_editable_fields = self._get_added_fields(
+            request, 'additional_list_editable')
+        return tuple(self.list_editable) + added_editable_fields
+
+    def get_changelist_formset(self, request, **kwargs):
+        """
+        Modified version of the overriden method.
+        """
+        defaults = {
+            'formfield_callback': partial(
+                self.formfield_for_dbfield, request=request),
+        }
+        defaults.update(kwargs)
+
+        list_editable = self.get_list_editable(request, **kwargs)
+        return modelformset_factory(
+            self.model, self.get_changelist_form(request), extra=0,
+            fields=list_editable, **defaults)
 
 
 class AutoriteAdmin(CommonAdmin):
-    additional_fields = ('etat', 'notes')
+    additional_fields = ('etat', 'notes', 'owner')
     admin_fields = ('etat',)
+    additional_list_display = ('etat', 'owner')
+    additional_list_editable = ('etat',)
     additional_list_filters = ('etat', 'owner', HasRelatedObjectsListFilter,)
 
 
@@ -344,14 +376,12 @@ class DocumentAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'document', 'has_related_objects',)
     list_editable = ('nom', 'document',)
     search_fields = ('nom',)
-    additional_list_filters = ()
 
 
 class IllustrationAdmin(CommonAdmin):
     list_display = ('__str__', 'legende', 'image', 'has_related_objects')
     list_editable = ('legende', 'image',)
     search_fields = ('legende',)
-    additional_list_filters = ()
 
 
 class EtatAdmin(CommonAdmin):
@@ -711,8 +741,7 @@ class TypeDeSourceAdmin(CommonAdmin):
 
 class SourceAdmin(AutoriteAdmin):
     form = SourceForm
-    list_display = ('nom', 'date', 'type', 'has_events', 'has_program',
-                    'owner', 'link')
+    list_display = ('nom', 'date', 'type', 'has_events', 'has_program', 'link')
     list_editable = ('type', 'date',)
     search_fields = ('nom', 'date', 'type__nom', 'numero', 'contenu',
                      'owner__username', 'owner__first_name',
