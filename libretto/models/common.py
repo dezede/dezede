@@ -181,8 +181,10 @@ class AutoriteManager(CommonManager):
 class AutoriteModel(CommonModel):
     etat = ForeignKey('Etat', null=True, blank=True, verbose_name=_('état'),
                       on_delete=PROTECT)
-    documents = ManyToManyField('Document', blank=True, null=True)
-    illustrations = ManyToManyField('Illustration', blank=True, null=True)
+    documents = ManyToManyField(
+        'Document', blank=True, null=True, related_name='%(class)s_set')
+    illustrations = ManyToManyField(
+        'Illustration', blank=True, null=True, related_name='%(class)s_set')
     notes = HTMLField(blank=True)
     objects = AutoriteManager()
 
