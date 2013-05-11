@@ -343,6 +343,14 @@ class CommonAdmin(VersionAdmin, CustomBaseModel):
             obj.owner = request.user
         super(CommonAdmin, self).save_model(request, obj, form, change)
 
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for instance in instances:
+            if getattr(instance, 'owner') is None:
+                instance.owner = request.user
+            instance.save()
+        formset.save_m2m()
+
     def get_list_editable(self, request, **kwargs):
         added_editable_fields = self._get_added_fields(
             request, 'additional_list_editable')
