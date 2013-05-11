@@ -1,4 +1,5 @@
 Django==1.5.1
+psycopg2==2.5
 django-endless-pagination==2.0
 django-tables2==0.13.0
 django-reversion==1.6.6
