@@ -182,12 +182,13 @@ class PublishedQuerySet(CommonQuerySet):
             pass
         else:
             if isinstance(parent_field, TreeForeignKey):
+                qs = qs.order_by()
                 root_level = qs.aggregate(Min('level'))['level__min']
                 to_be_hidden = qs.filter(level__gt=root_level) \
                     .exclude(parent__in=qs).values_list('lft', 'rght')
 
                 lft_pk_list = []
-                for lft, rght in to_be_hidden.iterator():
+                for lft, rght in to_be_hidden:
                     lft_pk_list.extend(range(lft, rght + 1))
                 qs = qs.exclude(lft__in=lft_pk_list)
         return qs
