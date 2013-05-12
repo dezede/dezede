@@ -13,7 +13,7 @@
   <div class="page-header">
     <h1>
       {% trans 'événements'|capfirst %}
-      {% if evenements.exists %}
+      {% if evenements %}
         {% with count=evenements.count %}
           ({{ count|apnumber }}
           {% blocktrans count counter=count %}résultat{% plural %}résultats{% endblocktrans %})

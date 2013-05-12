@@ -197,6 +197,7 @@ class ElementDeProgramme(AutoriteModel):
     calc_caracteristiques.short_description = _('caractéristiques')
 
     @property
+    @model_method_cached(24 * 60 * 60, b'programmes')
     def numero(self):
         numerotations_exclues = ('U', 'E',)
         if self.numerotation in numerotations_exclues:
