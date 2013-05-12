@@ -372,12 +372,16 @@ class CommonAdmin(VersionAdmin, CustomBaseModel):
             fields=list_editable, **defaults)
 
 
-class AutoriteAdmin(CommonAdmin):
-    additional_fields = ('etat', 'notes', 'owner')
+class PublishedAdmin(CommonAdmin):
+    additional_fields = ('etat', 'owner')
     admin_fields = ('etat',)
     additional_list_display = ('etat', 'owner')
     additional_list_editable = ('etat',)
     additional_list_filters = ('etat', 'owner', HasRelatedObjectsListFilter,)
+
+
+class AutoriteAdmin(PublishedAdmin):
+    additional_fields = ('etat', 'notes', 'owner')
 
 
 class DocumentAdmin(CommonAdmin):

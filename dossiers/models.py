@@ -7,15 +7,20 @@ from django.db.models import CharField, DateField, ManyToManyField, \
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy
 from mptt.fields import TreeForeignKey
+from mptt.managers import TreeManager
 from mptt.models import MPTTModel
 from cache_tools import cached_ugettext_lazy as _
 from libretto.models import Lieu, Oeuvre, Evenement, Individu
-from libretto.models.common import CommonModel
+from libretto.models.common import PublishedModel, PublishedManager
 from libretto.models.functions import str_list_w_last
 
 
+class DossierDEvenementsManager(TreeManager, PublishedManager):
+    pass
+
+
 @python_2_unicode_compatible
-class DossierDEvenements(MPTTModel, CommonModel):
+class DossierDEvenements(MPTTModel, PublishedModel):
     titre = CharField(_('titre'), max_length=100)
     contenu = TextField(_('contenu'))
     debut = DateField(_('début'), blank=True, null=True)
@@ -35,6 +40,8 @@ class DossierDEvenements(MPTTModel, CommonModel):
         related_name='dossiers')
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children')
+
+    objects = DossierDEvenementsManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('dossier d’événements',

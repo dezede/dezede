@@ -7,7 +7,7 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from endless_pagination.views import AjaxListView
-from django_tables2 import SingleTableView
+from django_tables2 import SingleTableMixin
 from haystack.query import SearchQuerySet
 from viewsets import ModelViewSet
 from .models import *
@@ -15,9 +15,22 @@ from .forms import *
 from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 
 
-__all__ = (b'EvenementListView', b'EvenementDetailView', b'SourceViewSet',
-           b'PartieViewSet', b'ProfessionViewSet', b'LieuViewSet',
-           b'IndividuViewSet', b'OeuvreViewSet')
+__all__ = (b'PublishedDetailView', 'PublishedListView',
+           b'EvenementListView', b'EvenementDetailView',
+           b'SourceViewSet', b'PartieViewSet', b'ProfessionViewSet',
+           b'LieuViewSet', b'IndividuViewSet', b'OeuvreViewSet')
+
+
+class PublishedDetailView(DetailView):
+    def get_queryset(self):
+        return super(PublishedDetailView, self).get_queryset().published(
+            request=self.request)
+
+
+class PublishedListView(ListView):
+    def get_queryset(self):
+        return super(PublishedListView, self).get_queryset().published(
+            request=self.request)#.order_by(*self.model._meta.ordering)
 
 
 def cleaned_querydict(qd):
@@ -35,19 +48,13 @@ def get_filters(bindings, data):
             if '|' in value:
                 # Sépare les différents objets à partir d'une liste de pk.
                 Model = get_model('libretto', key)
-                pk_list = value.split('|')
-                objects = []
-                for pk in pk_list:
-                    if pk:
-                        try:
-                            objects.append(Model.objects.get(pk=pk))
-                        except Model.DoesNotExist:
-                            continue
+                pk_list = [pk for pk in value.split('|') if pk]
+                objects = Model._default_manager.filter(pk__in=pk_list)
                 # Inclus tous les événements impliquant les descendants
                 # éventuels de chaque objet de value.
-                for obj in objects:
+                for obj in tuple(objects):
                     if hasattr(obj, 'get_descendants'):
-                        objects.extend(obj.get_descendants())
+                        objects |= obj.get_descendants()
                 value = objects
             if value:
                 filters[bindings[key]] = value
@@ -59,8 +66,7 @@ class EvenementListView(AjaxListView):
     context_object_name = 'evenements'
 
     def get_queryset(self):
-        Model = self.model
-        qs = Model.objects.all()
+        qs = super(EvenementListView, self).get_queryset().published()
         data = self.request.GET
         self.form = form = EvenementListForm(data)
         try:
@@ -72,7 +78,7 @@ class EvenementListView(AjaxListView):
         if self.valid_form:
             search_query = data.get('q')
             if search_query:
-                sqs = SearchQuerySet().models(Model)
+                sqs = SearchQuerySet().models(self.model)
                 sqs = sqs.auto_query(search_query)
                 pk_list = sqs.values_list('pk', flat=True)
                 qs = qs.filter(pk__in=pk_list)
@@ -84,8 +90,8 @@ class EvenementListView(AjaxListView):
             qs = qs.filter(**filters).distinct()
             try:
                 start, end = int(data.get('dates_0')), int(data.get('dates_1'))
-                qs = qs.filter(ancrage_debut__date__gte=date(start, 1, 1),
-                               ancrage_debut__date__lte=date(end, 12, 31))
+                qs = qs.filter(ancrage_debut__date__range=(
+                    date(start, 1, 1), date(end, 12, 31)))
             except (TypeError, ValueError):
                 pass
         return qs
@@ -106,14 +112,12 @@ class EvenementListView(AjaxListView):
         return response
 
 
-class EvenementDetailView(DetailView):
+class EvenementDetailView(PublishedDetailView):
     model = Evenement
 
 
-class CommonTableView(SingleTableView):
-    def get_table_data(self):
-        qs = self.get_queryset()
-        return qs.order_by(*qs.model._meta.ordering)
+class CommonTableView(SingleTableMixin, PublishedListView):
+    pass
 
 
 class CommonViewSet(ModelViewSet):
@@ -127,12 +131,12 @@ class CommonViewSet(ModelViewSet):
             },
         },
         b'detail_view': {
-            b'view': DetailView,
+            b'view': PublishedDetailView,
             b'pattern': br'(?P<slug>[\w-]+)/',
             b'name': b'detail',
         },
         b'permanent_detail_view': {
-            b'view': DetailView,
+            b'view': PublishedDetailView,
             b'pattern': br'id/(?P<pk>\d+)/',
             b'name': b'permanent_detail',
         },
@@ -146,10 +150,11 @@ class CommonViewSet(ModelViewSet):
         super(CommonViewSet, self).__init__()
 
 
-class GETDetailView(DetailView):
+class GETDetailView(PublishedDetailView):
     def get_object(self, queryset=None):
-        pk = self.request.REQUEST.get(b'pk', None)
-        if pk is None:
+        try:
+            pk = int(self.request.REQUEST[b'pk'])
+        except (KeyError, ValueError):
             raise Http404
         self.kwargs[self.pk_url_kwarg] = pk
         return super(GETDetailView, self).get_object(queryset=queryset)
@@ -190,7 +195,7 @@ class LieuViewSet(CommonViewSet):
 
     def __init__(self):
         super(LieuViewSet, self).__init__()
-        self.views[b'list_view'][b'view'] = ListView
+        self.views[b'list_view'][b'view'] = PublishedListView
         del self.views[b'list_view'][b'kwargs']
 
 
@@ -201,9 +206,9 @@ class IndividuViewSet(CommonViewSet):
 
 
 class OeuvreTableView(CommonTableView):
-    def get_table_data(self):
-        qs = super(OeuvreTableView, self).get_table_data()
-        return qs.filter(contenu_dans=None)
+    def get_queryset(self):
+        return super(OeuvreTableView,
+                     self).get_queryset().filter(contenu_dans=None)
 
 
 class OeuvreViewSet(CommonViewSet):

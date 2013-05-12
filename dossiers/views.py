@@ -1,11 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.views.generic import ListView, DetailView
+from libretto.views import PublishedListView, PublishedDetailView
 from .models import DossierDEvenements
 
 
-class DossierDEvenementsList(ListView):
+class DossierDEvenementsList(PublishedListView):
     model = DossierDEvenements
 
     def get_queryset(self):
@@ -13,7 +13,7 @@ class DossierDEvenementsList(ListView):
         return qs.filter(level=0)
 
 
-class DossierDEvenementsDetail(DetailView):
+class DossierDEvenementsDetail(PublishedDetailView):
     model = DossierDEvenements
 
 

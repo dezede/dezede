@@ -3,12 +3,12 @@
 from __future__ import unicode_literals
 from django.contrib.admin import site
 from cache_tools import cached_ugettext_lazy as _
-from libretto.admin import CommonAdmin
+from libretto.admin import PublishedAdmin
 from .forms import DossierDEvenementsForm
 from .models import DossierDEvenements
 
 
-class DossierDEvenementsAdmin(CommonAdmin):
+class DossierDEvenementsAdmin(PublishedAdmin):
     form = DossierDEvenementsForm
     list_display = ('__str__', 'circonstance', 'debut', 'fin',
                     'lieux_html', 'oeuvres_html', 'auteurs_html', 'get_count')

@@ -9,7 +9,7 @@ from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 from cache_tools import cached_ugettext_lazy as _
 from ..utils import abbreviate
 from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
-    UniqueSlugModel, AutoriteManager, AutoriteModel
+    UniqueSlugModel, PublishedManager, AutoriteModel
 from .functions import capfirst, ex, href
 
 
@@ -17,7 +17,7 @@ __all__ = (b'Profession', b'Devise', b'Engagement', b'TypeDePersonnel',
            b'Personnel')
 
 
-class ProfessionManager(TreeManager, AutoriteManager):
+class ProfessionManager(TreeManager, PublishedManager):
     pass
 
 

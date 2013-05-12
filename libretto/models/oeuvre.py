@@ -21,7 +21,7 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
-    AutoriteManager, OrderedDefaultDict
+    PublishedManager, OrderedDefaultDict
 from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -132,7 +132,7 @@ class CaracteristiqueDOeuvre(CommonModel):
         return 'type__nom__icontains', 'valeur__icontains',
 
 
-class PartieManager(TreeManager, AutoriteManager):
+class PartieManager(TreeManager, PublishedManager):
     pass
 
 
@@ -434,7 +434,7 @@ class Auteur(CommonModel):
         return self.html(tags=False)
 
 
-class OeuvreManager(TreeManager, AutoriteManager):
+class OeuvreManager(TreeManager, PublishedManager):
     pass
 
 
