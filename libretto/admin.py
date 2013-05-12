@@ -371,6 +371,18 @@ class CommonAdmin(VersionAdmin, CustomBaseModel):
             self.model, self.get_changelist_form(request), extra=0,
             fields=list_editable, **defaults)
 
+    def get_changelist(self, request, **kwargs):
+        ChangeList = super(CommonAdmin, self).get_changelist(request, **kwargs)
+        list_editable = self.get_list_editable(request, **kwargs)
+
+        class NewChangeList(ChangeList):
+            def __init__(self, *args, **kwargs):
+                super(NewChangeList, self).__init__(*args, **kwargs)
+                if not self.is_popup:
+                    self.list_editable = list_editable
+
+        return NewChangeList
+
 
 class PublishedAdmin(CommonAdmin):
     additional_fields = ('etat', 'owner')
