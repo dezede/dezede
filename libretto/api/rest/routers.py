@@ -8,5 +8,4 @@ from .viewsets import *
 router = DefaultRouter()
 router.register(br'individus', IndividuViewSet)
 router.register(br'lieux', LieuViewSet)
-router.register(br'ancrages_spatiotemporels', AncrageSpatioTemporelViewSet)
 router.register(br'oeuvres', OeuvreViewSet)

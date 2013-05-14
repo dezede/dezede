@@ -6,9 +6,20 @@ from rest_framework.serializers import *
 from libretto.models import *
 
 
+class AncrageSpatioTemporelSerializer(ModelSerializer):
+    lieu = HyperlinkedRelatedField(view_name='lieu-detail')
+
+    class Meta(object):
+        model = AncrageSpatioTemporel
+        exclude = ('owner', 'id')
+
+
 class IndividuSerializer(HyperlinkedModelSerializer):
     displayed_name = Field(source='__str__')
     prenoms = RelatedField(many=True)
+    ancrage_naissance = AncrageSpatioTemporelSerializer()
+    ancrage_deces = AncrageSpatioTemporelSerializer()
+    ancrage_approx = AncrageSpatioTemporelSerializer()
     professions = RelatedField(many=True)
     parents = RelatedField(many=True)
     front_url = Field(source='get_absolute_url')
@@ -37,16 +48,11 @@ class LieuSerializer(HyperlinkedModelSerializer):
         )
 
 
-class AncrageSpatioTemporelSerializer(HyperlinkedModelSerializer):
-    class Meta(object):
-        model = AncrageSpatioTemporel
-        exclude = ('owner',)
-
-
 class OeuvreSerializer(HyperlinkedModelSerializer):
     displayed_name = Field(source='__str__')
     genre = RelatedField()
     caracteristiques = RelatedField(many=True)
+    ancrage_creation = AncrageSpatioTemporelSerializer()
     evenements = RelatedField(many=True)
     pupitres = RelatedField(many=True)
     front_url = Field(source='get_absolute_url')
