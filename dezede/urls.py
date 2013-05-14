@@ -23,6 +23,8 @@ urlpatterns = patterns('',
     url(r'^admin/filebrowser/', include(site.urls)),
     url(r'^recherche/', include('haystack.urls')),
     url(r'^comptes/', include('accounts.urls')),
+    url(r'^api-auth/', include('rest_framework.urls',
+                               namespace='rest_framework')),
     url(r'^(?P<url>.*/)$', 'django.contrib.flatpages.views.flatpage'),
 )
 

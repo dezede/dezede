@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 from django.conf.urls import *
+from .api.rest import router as api_router
 from .views import *
 
 
@@ -18,4 +19,5 @@ urlpatterns = patterns('',
     url(br'^', include(SourceViewSet().urls)),
     url(br'^', include(PartieViewSet().urls)),
     url(br'^', include(ProfessionViewSet().urls)),
+    url(br'^api/', include(api_router.urls)),
 )

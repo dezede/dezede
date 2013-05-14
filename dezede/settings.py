@@ -186,6 +186,7 @@ INSTALLED_APPS = (
     'grappelli',
     'registration',
     'accounts',
+    'rest_framework',
     'crispy_forms',
     'ajax_select',
     'filebrowser',
@@ -311,3 +312,18 @@ AJAX_LOOKUP_CHANNELS = {
 }
 AJAX_SELECT_BOOTSTRAP = True
 AJAX_SELECT_INLINES = 'inline'
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.JSONPRenderer',
+        'rest_framework.renderers.YAMLRenderer',
+        'rest_framework.renderers.XMLRenderer',
+    ),
+    'DEFAULT_FILTER_BACKENDS': ['rest_framework.filters.DjangoFilterBackend'],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser'
+    ],
+    'PAGINATE_BY': 10,
+}
