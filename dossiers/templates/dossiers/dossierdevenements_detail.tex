@@ -1,0 +1,42 @@
+{% extends 'libretto/base.tex' %}
+{% load i18n routines endless sekizai_tags extras %}
+
+{% block declarations %}
+  \newcounter{evenements-counter}
+{% endblock %}
+
+
+{% block document %}
+  \title{ {{ object.titre|safe }} }
+  \author{ {{ object.owner.first_name }} \bsc{ {{ object.owner.last_name }} } }
+
+  \maketitle
+
+  \setlength{\parskip}{0.4\baselineskip}
+
+  \onecolumn
+
+  \chapter*{Présentation}
+  \addcontentsline{toc}{chapter}{Présentation}
+
+  {{ object.contenu|safe }}
+
+
+  \twocolumn
+  \fontsize{10pt}{12pt}\selectfont
+  \setlength{\parindent}{0pt}
+  \setlength{\parskip}{0pt}
+
+  \chapter*{Données}
+  \addcontentsline{toc}{chapter}{Données}
+
+  {% with object.get_queryset as evenements %}
+    {#{% paginate 5 evenements %}#}
+    {% for evenement in evenements %}
+      {% include 'libretto/evenement_item.tex' %}
+    {% endfor %}
+  {% endwith %}
+
+  \tableofcontents
+
+{% endblock %}

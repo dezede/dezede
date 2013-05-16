@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.conf.urls import patterns, url
 from dossiers.views import DossierDEvenementsList, DossierDEvenementsDetail,\
-    DossierDEvenementsDataDetail
+    DossierDEvenementsDataDetail, DossierDEvenementsDetailXeLaTeX
 
 
 urlpatterns = patterns('',
@@ -13,4 +13,8 @@ urlpatterns = patterns('',
         name='dossierdevenements_detail'),
     url(r'^(?P<pk>\d+)/data$', DossierDEvenementsDataDetail.as_view(),
         name='dossierdevenements_data_detail'),
+    url(r'^(?P<pk>\d+)/tex$',
+        DossierDEvenementsDetailXeLaTeX.as_view(),
+        name='dossierdevenements_detail_xelatex'),
+
 )

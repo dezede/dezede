@@ -1,0 +1,33 @@
+{% load extras %}
+
+% Généré sur Dezède ({{ SITE }}{{ request.get_full_path }})
+% le {% now 'DATE_FORMAT' %}.
+% À compiler avec XeLaTeX.
+% Le paquet libertineotf doit être installé.
+
+\documentclass[12pt, a4paper, french]{book}
+\usepackage{fontspec}
+\usepackage{xunicode}
+\usepackage{graphicx}
+\usepackage{babel}
+\usepackage{csquotes}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{libertineotf}
+
+{# Toutes ces paramètres permettent d'éviter le overfull hbox #}
+\tolerance 1414
+\hbadness=1414
+\emergencystretch 1.5em
+\hfuzz=.03pt
+\widowpenalty=10000
+\vfuzz \hfuzz
+
+\setlength{\columnsep}{0.75cm}
+
+{% block declarations %}{% endblock %}
+
+\begin{document}
+  {% filter html_to_latex|escape_latex %}
+    {% block document %}{% endblock %}
+  {% endfilter %}
+\end{document}

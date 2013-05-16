@@ -1,0 +1,93 @@
+{% load i18n cache routines extras %}
+
+\begin{samepage}
+
+  \begin{center}
+    {\large \bfseries
+      \addtocounter{evenements-counter}{1}
+      \fbox{\arabic{evenements-counter}}
+
+      \nopagebreak
+
+      \medskip
+
+      {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
+    }
+  \end{center}
+
+  {{ evenement.html|safe }}
+
+\end{samepage}
+
+\medskip
+
+{{ evenement.distribution.html|safe }}
+
+\medskip
+
+{% with elements=evenement.programme.all %}
+  {% for element in elements %}
+    {% if forloop.first %}
+      {\bfseries {% trans "programme"|capfirst %}}
+      \nopagebreak
+
+      {% if elements.count > 1 %}
+        \begin{itemize}
+      {% endif %}
+    {% endif %}
+      {% spaceless %}
+        {% if elements.count > 1 %}
+          {% if element.numerotation == 'O' %}
+            \item[{{ element.numero }}.]
+          {% elif element.numerotation == 'B' %}
+            \item[{[{{ element.numero }}.]}]
+          {% elif element.numerotation == 'U' %}
+            \item[•]
+          {% endif %}
+        {% endif %}
+        {{ element.html|safe }}
+      {% endspaceless %}
+    {% if forloop.last and elements.count > 1 %}
+      \end{itemize}
+    {% endif %}
+  {% endfor %}
+{% endwith %}
+
+\bigskip
+
+{% if evenement.notes %}
+  \textbf{% templatetag openbrace %}{% trans 'notes'|capfirst %}}
+  \nopagebreak
+
+  {{ evenement.notes|safe }}
+  \bigskip
+{% endif %}
+
+{% for type, sources in evenement.sources_dict.items %}
+  {\bfseries
+    {% if sources|length > 1 %}
+      {{ type.pluriel|capfirst }}
+    {% else %}
+      {{ type|capfirst }}
+    {% endif %}
+  }
+
+  \nopagebreak
+
+  {% for source in sources %}
+    {% if source.contenu %}
+      \enquote{% templatetag openbrace %}{{ source.contenu|safe|html_to_latex|compact_paragraph }}}
+      \nopagebreak
+    {% endif %}
+
+    {{ source.html }}
+
+    {% if not forloop.last %}
+      \medskip
+    {% endif %}
+  {% endfor %}
+
+  {% if not forloop.last %}
+    \bigskip
+  {% endif %}
+{% endfor %}
