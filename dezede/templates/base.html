@@ -50,7 +50,9 @@
   <body data-spy="scroll" data-target="#sidebar">
 
     <header>
-      {% include 'navbar.html' %}
+      {% block navbar %}
+        {% include 'navbar.html' %}
+      {% endblock %}
     </header>
 
     <div id="content" class="container">
