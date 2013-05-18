@@ -460,6 +460,7 @@ class ProfessionAdmin(AutoriteAdmin):
                     'parent', 'classement')
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
                      'classement')
+    search_fields = ('nom', 'nom_pluriel', 'nom_feminin')
     raw_id_fields = ('parent', 'illustrations', 'documents')
     autocomplete_lookup_fields = {
         'fk': ('parent',),
