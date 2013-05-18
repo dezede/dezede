@@ -172,11 +172,14 @@ em {
   column-fill: auto;
 }
 
-.column-cell {
+.columns2 .column-cell {
   display: inline-block;
   margin: 6px;
 }
 
+.columns2 .column-cell .btn-group, .btn-group>.btn {
+  position: static;
+}
 
 .result {
   border: 1.5px solid;
