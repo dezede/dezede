@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import warnings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey, \
                                                 GenericRelation
@@ -223,7 +224,9 @@ class ElementDeProgramme(AutoriteModel):
             out = distribution
             add_distribution = False
         else:
-            raise ValidationError('Il manque des champs dans ' + repr(self))
+            warnings.warn('Il manque des champs dans <%(class)s pk=%(pk)s>' %
+                          {'class': self.__class__.__name__, 'pk': self.pk})
+            return ''
 
         if has_pk and self.caracteristiques.exists():
             out += ' [' + self.calc_caracteristiques() + ']'
