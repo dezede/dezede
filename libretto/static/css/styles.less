@@ -279,6 +279,28 @@ table {
   border-collapse: collapse;
 }
 
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input {
+  &:focus {
+    border-color: fadeout(@linkColorHover, 20%);
+    .box-shadow(0 0 8px fadeout(@linkColorHover, 40%));
+  }
+}
+
 #criteria {
   font-size: 14px;
   margin-top: 10px;
