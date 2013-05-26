@@ -17,6 +17,8 @@ django-ajax-selects==1.2.5
 django-filebrowser==3.5.2
 django-nose==1.1
 django_compressor==1.2
+cssmin==0.1.4
+rjsmin==1.0.6
 django-sekizai==0.7
 django-viewsets==0.1.6
 Pillow==2.0.0

@@ -1,0 +1,3 @@
+[submodule "libretto/static/bootstrap"]
+	path = libretto/static/bootstrap
+	url = https://github.com/twitter/bootstrap

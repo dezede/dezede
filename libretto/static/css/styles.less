@@ -1,0 +1,497 @@
+@import '../bootstrap/less/bootstrap.less';
+@import '../bootstrap/less/responsive.less';
+
+// Bootstrap variables
+
+@iconSpritePath:      '../bootstrap/img/glyphicons-halflings.png';
+@iconWhiteSpritePath: '../bootstrap/img/glyphicons-halflings-white.png';
+
+@serifFontFamily: 'Gentium Basic', 'Georgia', serif;
+@baseFontSize: 16px;
+@baseLineHeight: floor(@baseFontSize * 1.2);
+@baseFontFamily: @serifFontFamily;
+
+@textColor: contrast(@mainBackground);
+@linkColor: spin(contrast(@mainBackground,
+                          hsv(hue(@mainBackground), 100%, 35%),
+                          hsv(hue(@mainBackground), 100%, 65%)),
+                 60);
+@linkColorHover: lighten(desaturate(@linkColor, 40%), 20%);
+@placeholderText: @gray;
+
+@navbarBackgroundHighlight: desaturate(lighten(@mainBackground, 10%), 10%);
+@navbarLinkColor: @gray;
+@navbarLinkColorHover: @grayDarker;
+@navbarLinkColorActive: @gray;
+
+// Custom variables
+
+@navbarBorderHeight: 1px;
+@topPadding: 20px;
+@mainXPadding: 20px;
+@mainXPadding1200: 45px;
+@mainXPadding768: 10px;
+@mainXPadding480: 5px;
+@footerYPadding: 15px;
+@footerHeight: 50px;
+@mainBackground: hsv(0, 10%, 100%);
+@bodyBackground: darken(@mainBackground, 20%);
+@wellBackground: lighten(desaturate(@mainBackground, 30%), 2%);
+
+@font-face {
+  font-family: 'Gentium Basic';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Gentium Basic'), local('GentiumBasic'), url(fonts/GentiumBasic.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Gentium Basic';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Gentium Basic Italic'), local('GentiumBasic-Italic'), url(fonts/GentiumBasic-Italic.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Gentium Basic';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Gentium Basic Bold'), local('GentiumBasic-Bold'), url(fonts/GentiumBasic-Bold.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Gentium Basic';
+  font-style: italic;
+  font-weight: 700;
+  src: local('Gentium Basic Bold Italic'), local('GentiumBasic-BoldItalic'), url(fonts/GentiumBasic-BoldItalic.woff) format('woff');
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  overflow-y: scroll;
+  position: relative;
+  // For TinyMCE only: #content exists in front office, but not body#content.
+  &.mceContentBody, &#main {
+    margin: 5px;
+  }
+  &.mceContentBody {
+    min-height: 0;
+    min-width: 0;
+    padding: 15px;
+  }
+}
+
+// Both for front office and TinyMCE
+#main, .mceContentBody {
+  position: relative;
+  background: @mainBackground;
+  .box-shadow(0 0 15px darken(desaturate(@mainBackground, 50%), 60%));
+  min-height: 100%;
+}
+
+#content {
+  position: relative;
+  padding-top: @navbarHeight + @topPadding;
+}
+
+section {
+  padding-top: 50px;
+}
+
+a:not(.btn):not(.tooltip):not(.ui-slider-handle) {
+  text-decoration: none;
+  .transition(all 0.3s);
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+p {
+  text-align: justify;
+}
+
+.sc {
+  font-variant: small-caps;
+  font-size: 120%;
+}
+
+sup {
+  font-size: 60%;
+  vertical-align: 50%;
+}
+
+cite {
+  font-size: 110%;
+  font-style: italic;
+}
+
+em {
+  font-size: 105%;
+}
+
+blockquote {
+  p {
+    font-size: @baseFontSize;
+  }
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+  margin-top: 2px;
+}
+
+.data-table {
+  th+td {
+    padding-top: 10px;
+  }
+  th, td {
+    line-height: 10 * @baseLineHeight / 11;
+    vertical-align: baseline;
+  }
+  th {
+    padding-right: 20px;
+  }
+  td {
+    text-align: justify;
+  }
+}
+
+.column-count (@count) {
+  -webkit-column-count: @count;
+     -moz-column-count: @count;
+          column-count: @count;
+}
+
+.column-gap (@gap) {
+  -webkit-column-gap: @gap;
+     -moz-column-gap: @gap;
+          column-gap: @gap;
+}
+
+.column-fill (@fill) {
+  -webkit-column-fill: @fill;
+     -moz-column-fill: @fill;
+          column-fill: @fill;
+}
+
+.columns2 {
+  .column-count(2);
+  .column-gap(0);
+  .column-fill(auto);
+  .column-cell {
+    display: inline-block;
+    margin: 6px;
+    .btn-group, .btn-group>.btn {
+      position: static;
+    }
+  }
+}
+
+.result {
+  @baseResultBackground: hsv(0, 50%, 100%);
+  border: 1px solid;
+  .border-radius(@baseBorderRadius);
+  padding: 10px;
+  margin-bottom: 10px;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+  &.evenement {
+    background: spin(@baseResultBackground, 0);
+  }
+  &.individu {
+    background: spin(@baseResultBackground, 40);
+  }
+  &.lieu {
+    background: spin(@baseResultBackground, 80);
+  }
+  &.oeuvre {
+    background: spin(@baseResultBackground, 140);
+  }
+  &.source {
+    background: spin(@baseResultBackground, 200);
+  }
+  &.partie {
+    background: spin(@baseResultBackground, 260);
+  }
+  &.profession {
+    background: spin(@baseResultBackground, 320);
+  }
+}
+
+.content-part {
+  @localBackground: lighten(@mainBackground, 3%);
+  border: 1px solid darken(@localBackground, 10%);
+  .border-radius(@borderRadiusLarge);
+  background: @localBackground;
+  padding: 15px;
+  margin-bottom: 30px;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.source>p {
+  text-align: justify;
+  margin: .5em 0;
+  &:first-of-type {
+    margin-top: 0;
+  }
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+  &:lang(fr):first-child:before {
+    content: "\AB\A0";
+  }
+  &:lang(fr):last-of-type:after {
+    content: "\A0\BB";
+  }
+  &:lang(en):first-child:before {
+    content: "\201C\A0";
+  }
+  &:lang(en):last-of-type:after {
+    content: "\A0\201D";
+  }
+}
+
+.programme_titre {
+  margin: 0.75em 0 0.5em 0;
+}
+
+table.programme {
+  tr+tr {
+    margin-top: 5px;
+  }
+  tr td {
+    vertical-align: baseline;
+  }
+  tr td:first-child {
+    text-align: right;
+    padding-right: 6px;
+  }
+}
+
+table {
+  text-align: left;
+  border-collapse: collapse;
+}
+
+#criteria {
+  font-size: 14px;
+  margin-top: 10px;
+  cursor: default;
+  .ui-button-text {
+    padding: .2em .5em;
+  }
+}
+
+.ui-widget * {
+  font-family: 'Gentium Basic', serif;
+  line-height: normal;
+}
+
+.accordion-group {
+  background-color: whiteSmoke;
+}
+
+.accordion-inner {
+  max-height: 300px;
+  overflow: auto;
+  background-color: white;
+}
+
+.ui-helper-reset {
+  text-decoration: none;
+  font-size: 100%;
+  list-style: none;
+}
+
+input, button {
+  margin: 0;
+}
+
+.dropdown-submenu .dropdown-menu form {
+  margin: 0;
+}
+
+.navbar {
+  .brand {
+    padding: 5px 20px 5px 0;
+  }
+  .search-query {
+    #font > .serif();
+  }
+}
+
+.front-end_admin {
+  margin: 0 5px;
+}
+
+.ui-slider-range.ui-widget-header {
+  #gradient > .vertical(@linkColorHover, @linkColor);
+}
+
+ul.ui-autocomplete li a, .results_on_deck > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.affix-bottom {
+  position: absolute;
+  top: auto;
+  bottom: 120px;
+}
+
+form .results_on_deck {
+  padding: 0;
+  &>div {
+    margin: 0;
+  }
+}
+
+.tooltip {
+  .tooltip-inner {
+    font-size: @baseFontSize;
+    font-weight: normal;
+    padding: 2px 6px;
+  }
+  &.left {
+    margin-left: -13px;
+  }
+}
+
+.pagination ul > .disabled > span,
+.pagination ul > .disabled > a,
+.pagination ul > .disabled > a:hover,
+.pagination ul > .disabled > a:focus {
+  background: @paginationActiveBackground;
+  .opacity(60);
+}
+
+footer {
+  @localBackground: desaturate(darken(@mainBackground, 5%), 20%);
+  position: absolute;
+  bottom: 0;
+  margin-top: 50px;
+  height: @footerHeight;
+  background: @localBackground;
+  left: 0;
+  #softwares {
+    float: left;
+    span+span {
+      margin-left: 10px;
+    }
+  }
+  #logos {
+    float: right;
+    a {
+      display: inline-block;
+      margin-left: 10px;
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+    img {
+      vertical-align: middle;
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  #main {
+    padding: 0 @mainXPadding1200;
+  }
+
+  #content {
+    padding-bottom: @footerHeight + @mainXPadding1200;
+  }
+
+  footer {
+    padding: @footerYPadding @mainXPadding1200;
+  }
+
+  .side {
+    width: 258px;
+  }
+
+  .affix {
+    top: 77px;
+  }
+}
+
+@media (min-width: 980px) and (max-width: 1200px) {
+  #main {
+    padding: 0 @mainXPadding;
+  }
+
+  #content {
+    padding-bottom: @footerHeight + @mainXPadding;
+  }
+
+  footer {
+    padding: @footerYPadding @mainXPadding;
+  }
+
+  .side {
+    width: 210px;
+  }
+
+  .affix {
+    top: 47px;
+  }
+}
+
+@media (max-width: 980px) {
+  nav.navbar {
+    position: relative;
+  }
+
+  #main {
+    margin-top: -@topPadding;
+    padding: 0 @mainXPadding768;
+  }
+
+  #content {
+    padding-top: 0;
+  }
+
+  #content {
+    padding-bottom: @footerHeight + @mainXPadding768;
+  }
+
+  footer {
+    padding: @footerYPadding @mainXPadding768;
+  }
+
+  .side {
+    width: 166px;
+    margin-top: 20px;
+  }
+
+  .affix {
+    top: 80px;
+  }
+}
+
+@media (max-width: 767px) {
+  #main {
+    padding: 0 @mainXPadding480;
+  }
+
+  footer {
+    padding: @footerYPadding @mainXPadding480;
+  }
+
+  .side {
+    position: static;
+  }
+
+  .columns2 {
+    .column-count(1);
+  }
+}

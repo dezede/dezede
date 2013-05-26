@@ -297,7 +297,16 @@ SERVER_EMAIL = 'noreply@dezede.org'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap'
 
+COMPRESS_ENABLED = True
 COMPRESS_OUTPUT_DIR = 'assets'
+COMPRESS_CSS_FILTERS = (
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.CSSMinFilter',
+)
+LESS_PATH = 'lessc'
+COMPRESS_PRECOMPILERS = (
+    ('text/less', LESS_PATH + ' {infile} {outfile}'),
+)
 
 AJAX_LOOKUP_CHANNELS = {
     'lieu': ('libretto.lookups', 'LieuLookup'),
