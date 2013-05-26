@@ -34,6 +34,7 @@
 @mainXPadding480: 5px;
 @footerYPadding: 15px;
 @footerHeight: 50px;
+@footerHeight480: 80px;
 @mainBackground: hsv(0, 10%, 100%);
 @bodyBackground: darken(@mainBackground, 20%);
 @wellBackground: lighten(desaturate(@mainBackground, 30%), 2%);
@@ -399,20 +400,27 @@ footer {
   @localBackground: desaturate(darken(@mainBackground, 5%), 20%);
   position: absolute;
   bottom: 0;
-  margin-top: 50px;
   height: @footerHeight;
+  line-height: @footerHeight;
   background: @localBackground;
   left: 0;
+  &>* {
+    display: inline-block;
+    height: 100%;
+    width: 49.5%;
+    vertical-align: middle;
+    &>* {
+      vertical-align: middle;
+    }
+  }
   #softwares {
-    float: left;
     span+span {
       margin-left: 10px;
     }
   }
   #logos {
-    float: right;
+    text-align: right;
     a {
-      display: inline-block;
       margin-left: 10px;
       &:first-child {
         margin-left: 0;
@@ -452,7 +460,7 @@ footer {
   }
 
   #content {
-    padding-bottom: @footerHeight + @mainXPadding;
+    padding-bottom: @footerHeight + @footerYPadding * 2;
   }
 
   footer {
@@ -483,7 +491,7 @@ footer {
   }
 
   #content {
-    padding-bottom: @footerHeight + @mainXPadding768;
+    padding-bottom: @footerHeight + @footerYPadding * 2;
   }
 
   footer {
@@ -505,7 +513,13 @@ footer {
     padding: 0 @mainXPadding480;
   }
 
+  #content {
+    padding-bottom: @footerHeight480 + @footerYPadding * 2;
+  }
+
   footer {
+    height: @footerHeight480;
+    line-height: @footerHeight480 / 2;
     padding: @footerYPadding @mainXPadding480;
   }
 

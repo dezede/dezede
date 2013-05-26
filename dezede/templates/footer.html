@@ -1,15 +1,13 @@
 {% load static dezede_extras %}
 
 <div id="softwares">
-  <div>
-    {% software_versions %}
-  </div>
   <iframe src="http://ghbtns.com/github-btn.html?user=dezede&repo=dezede&type=watch"
           allowtransparency="true" frameborder="0" scrolling="0"
           width="62" height="20"></iframe>
+  {% software_versions %}
 </div>
 
-<div id="logos">{# La surface de chaque logo est de 2667 px² #}
+<div id="logos">{# La surface de chaque logo est de 700 px² #}
   <a href="http://www.univ-rouen.fr/" target="_blank"
      title="Université de Rouen">
     <img src="{% static 'images/univ_rouen.png' %}"

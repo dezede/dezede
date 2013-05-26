@@ -24,4 +24,4 @@ def software_versions():
             version = module.get_version()
         name = capfirst(name)
         out.append('<span>%s %s</span>' % (name, version))
-    return '<span>⋅</span>'.join(out)
+    return ''.join(out)
