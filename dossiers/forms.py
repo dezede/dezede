@@ -33,7 +33,4 @@ class DossierDEvenementsForm(MPTTAdminForm):
         if cleaned_data['statique']:
             cleaned_data['evenements'] = self.instance.get_queryset()
             self.instance.evenements.add(*cleaned_data['evenements'])
-            for k in ('debut', 'fin', 'lieux', 'oeuvres', 'auteurs',
-                      'circonstance'):
-                del cleaned_data[k]
         return cleaned_data
