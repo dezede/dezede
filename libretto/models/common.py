@@ -89,7 +89,7 @@ class CommonModel(TypographicModel):
     Modèle commun à l’application, ajoutant diverses possibilités.
     """
     owner = ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-                       verbose_name=_('transcripteur'), on_delete=PROTECT)
+                       verbose_name=_('propriétaire'), on_delete=PROTECT)
     objects = CommonManager()
 
     class Meta(object):

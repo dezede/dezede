@@ -2,6 +2,10 @@
 
 {% include "libretto/include/etat.html" with etat=evenement.etat %}
 
+<span class="pull-right">
+  {% include 'routines/lock.html' with object=evenement %}
+</span>
+
 <h2 style="text-align: center;">
   <a href="{{ evenement.get_absolute_url }}">
     {{ evenement.ancrage_debut.calc_date|capfirst|safe }}

@@ -14,21 +14,24 @@
   </div>
 
   <div class="columns2">
-    {% for dossier in object_list %}
+    {% for object in object_list %}
       <div class="well column-cell">
         <div>
-          <h2>{{ dossier|safe }}</h2>
-          {{ dossier.contenu|truncatewords_html:50 }}
+          <h2>{{ object|safe }}</h2>
+          {{ object.contenu|truncatewords_html:50 }}
         </div>
         <hr />
         <div class="btn-group">
-          <a href="{{ dossier.get_absolute_url }}" class="btn btn-primary">
+          <a href="{{ object.get_absolute_url }}" class="btn btn-primary">
             {% trans 'Présentation' %}
           </a>
-          <a href="{{ dossier.get_data_absolute_url }}" class="btn">
+          <a href="{{ object.get_data_absolute_url }}" class="btn">
             {% trans 'Accès aux données »' %}
           </a>
         </div>
+        <span class="btn-group pull-right">
+          {% include 'routines/ownership.html' %}
+        </span>
       </div>
     {% empty %}
       {% trans 'Aucun dossier pour l’instant.' %}

@@ -30,7 +30,7 @@ class PublishedDetailView(DetailView):
 class PublishedListView(ListView):
     def get_queryset(self):
         return super(PublishedListView, self).get_queryset().published(
-            request=self.request)#.order_by(*self.model._meta.ordering)
+            request=self.request)
 
 
 def cleaned_querydict(qd):
@@ -61,13 +61,13 @@ def get_filters(bindings, data):
     return filters
 
 
-class EvenementListView(AjaxListView):
+class EvenementListView(AjaxListView, PublishedListView):
     model = Evenement
     context_object_name = 'evenements'
     view_name = 'evenements'
 
     def get_queryset(self):
-        qs = super(EvenementListView, self).get_queryset().published()
+        qs = super(EvenementListView, self).get_queryset()
         data = self.request.GET
         self.form = form = EvenementListForm(data)
         try:
