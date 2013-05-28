@@ -61,8 +61,8 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     def get_data_absolute_url(self):
         return 'dossierdevenements_data_detail', (self.pk,)
 
-    def get_queryset(self):
-        if self.pk and self.evenements.exists():
+    def get_queryset(self, dynamic=False):
+        if not dynamic and self.pk and self.evenements.exists():
             return self.evenements.all()
         kwargs = {}
         if self.debut:
