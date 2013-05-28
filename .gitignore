@@ -7,3 +7,6 @@ apache-solr*
 /profile/
 *.log
 _*/
+*.c
+*.so
+*.h
