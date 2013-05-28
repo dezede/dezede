@@ -1,3 +1,21 @@
-input[type="text"], input[type="password"], .vDateField, .vTimeField, .vIntegerField, .vPositiveSmallIntegerField, .vManyToManyRawIdAdminField, .vForeignKeyRawIdAdminField {
+input[type="text"],
+input[type="password"],
+.vDateField,
+.vTimeField,
+.vIntegerField,
+.vPositiveSmallIntegerField,
+.vManyToManyRawIdAdminField,
+.vForeignKeyRawIdAdminField {
   width: 600px;
+}
+
+input.vManyToManyRawIdAdminField {
+  border-right: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 2px 6px 2px 5px;
+}
+
+input.vManyToManyRawIdAdminField+a.related-lookup {
+  margin: 0 0 0 -1px;
 }
