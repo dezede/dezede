@@ -12,7 +12,8 @@ from tinymce.models import HTMLField
 from cache_tools import cached_ugettext as ugettext, cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     DATE_MSG, calc_pluriel, SlugModel
-from .functions import ex, cite, no, date_html, href, small
+from .functions import ex, cite, no as no_func, date_html as date_html_func, \
+    href, small
 
 
 __all__ = (b'TypeDeSource', b'Source')
@@ -77,10 +78,10 @@ class Source(AutoriteModel):
         return self.auteurs.html(tags)
 
     def date_html(self, tags=True):
-        return date_html(self.date, tags)
+        return date_html_func(self.date, tags)
 
     def no(self):
-        return no(self.numero)
+        return no_func(self.numero)
 
     def p(self):
         return ugettext('p. %s') % self.page
@@ -123,6 +124,7 @@ class Source(AutoriteModel):
         verbose_name_plural = ungettext_lazy('source', 'sources', 2)
         ordering = ('date', 'nom', 'numero', 'page', 'type')
         app_label = 'libretto'
+        permissions = (('can_change_status', _('Peut changer l’état')),)
 
     def __str__(self):
         return strip_tags(self.html(False))

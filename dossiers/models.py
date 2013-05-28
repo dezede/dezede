@@ -49,6 +49,7 @@ class DossierDEvenements(MPTTModel, PublishedModel):
         verbose_name_plural = ungettext_lazy('dossier d’événements',
                                              'dossiers d’événements', 1)
         ordering = ('titre',)
+        permissions = (('can_change_status', _('Peut changer l’état')),)
 
     def __str__(self):
         return self.titre

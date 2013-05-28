@@ -171,6 +171,13 @@ class Individu(AutoriteModel, UniqueSlugModel):
         symmetrical=False, db_index=True)
     biographie = HTMLField(_('biographie'), blank=True)
 
+    class Meta(object):
+        verbose_name = ungettext_lazy('individu', 'individus', 1)
+        verbose_name_plural = ungettext_lazy('individu', 'individus', 2)
+        ordering = ('nom',)
+        app_label = 'libretto'
+        permissions = (('can_change_status', _('Peut changer l’état')),)
+
     def get_slug(self):
         return self.nom or smart_text(self)
 
@@ -358,12 +365,6 @@ class Individu(AutoriteModel, UniqueSlugModel):
             if naissance and deces and deces < naissance:
                 raise ValidationError(_('Le décès ne peut précéder '
                                         'la naissance.'))
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('individu', 'individus', 1)
-        verbose_name_plural = ungettext_lazy('individu', 'individus', 2)
-        ordering = ('nom',)
-        app_label = 'libretto'
 
     def __str__(self):
         return strip_tags(self.html(False))
