@@ -16,5 +16,4 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/tex$',
         DossierDEvenementsDetailXeLaTeX.as_view(),
         name='dossierdevenements_detail_xelatex'),
-
 )

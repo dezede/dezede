@@ -1,7 +1,9 @@
 {% load i18n routines %}
 
 <div class="page-header">
+
   {% frontend_admin autorite=1 %}
+
   <h1>
     {{ object.titre|safe }}
     <small>
@@ -10,4 +12,20 @@
       <span class="sc">{{ object.owner.last_name }}</span>
     </small>
   </h1>
+
+  <ul class="nav nav-tabs">
+    {% url 'dossierdevenements_detail' object.pk as text_url %}
+    <li{% if request.path == text_url %} class="active"{% endif %}>
+      <a href="{{ text_url }}">
+        {% trans 'Présentation' %}
+      </a>
+    </li>
+    {% url 'dossierdevenements_data_detail' object.pk as data_url %}
+    <li{% if request.path == data_url %} class="active"{% endif %}>
+      <a href="{{ data_url }}">
+        {% trans 'Événements' %}
+      </a>
+    </li>
+  </ul>
+
 </div>
