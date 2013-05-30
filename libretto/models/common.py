@@ -91,6 +91,8 @@ class CommonModel(TypographicModel):
     owner = ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                        verbose_name=_('propriétaire'), on_delete=PROTECT)
     objects = CommonManager()
+    versions = GenericRelation('reversion.Version',
+                               object_id_field='object_id_int')
 
     class Meta(object):
         abstract = True  # = prototype de modèle, et non un vrai modèle.
