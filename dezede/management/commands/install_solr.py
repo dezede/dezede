@@ -10,7 +10,7 @@ class Command(BaseCommand):
     help = 'Télécharge et installe Apache Solr'
 
     def handle(self, *args, **options):
-        version = '3.6.1'
+        version = '3.6.2'
         filename = 'apache-solr-%s.tgz' % version
         repository = 'ftp://mirrors.ircam.fr/pub/apache/lucene/solr'
 
