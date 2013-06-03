@@ -6,6 +6,7 @@
     {{ object.ancrage_debut|default_if_none:'' }}
     {{ object.ancrage_fin|default_if_none:'' }}
     {{ object.html }}
+    {{ object.distribution.html|safe }}
     {% for element in object.programme.all %}
       {{ element.html|safe }}
     {% endfor %}
