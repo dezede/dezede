@@ -167,6 +167,7 @@ class Partie(MPTTModel, AutoriteModel, UniqueSlugModel):
                                              'rôles et instruments', 2)
         ordering = ('classement', 'nom',)
         app_label = 'libretto'
+        permissions = (('can_change_status', _('Peut changer l’état')),)
 
     class MPTTMeta(object):
         order_insertion_by = ['classement', 'nom']
@@ -473,6 +474,16 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     objects = OeuvreManager()
 
+    class Meta(object):
+        verbose_name = ungettext_lazy('œuvre', 'œuvres', 1)
+        verbose_name_plural = ungettext_lazy('œuvre', 'œuvres', 2)
+        ordering = ('titre', 'genre', 'slug')
+        app_label = 'libretto'
+        permissions = (('can_change_status', _('Peut changer l’état')),)
+
+    class MPTTMeta(object):
+        parent_attr = 'contenu_dans'
+
     @permalink
     def get_absolute_url(self):
         return b'oeuvre_detail', [self.slug]
@@ -632,15 +643,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             v = getattr(self, attr)
             if v and v[-1] not in (' ', "'", '’'):
                 setattr(self, attr, v + ' ')
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('œuvre', 'œuvres', 1)
-        verbose_name_plural = ungettext_lazy('œuvre', 'œuvres', 2)
-        ordering = ('titre', 'genre', 'slug')
-        app_label = 'libretto'
-
-    class MPTTMeta(object):
-        parent_attr = 'contenu_dans'
 
     def __str__(self):
         return strip_tags(self.titre_html(False))  # strip_tags car on autorise

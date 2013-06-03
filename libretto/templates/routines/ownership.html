@@ -1,0 +1,12 @@
+{% load i18n %}
+
+{% include 'routines/lock.html' %}
+
+{% with owner=object.owner %}
+  {% if owner %}
+    <a class="btn disabled">
+      <i class="icon-user"></i>
+      {{ owner.get_full_name|default:owner }}
+    </a>
+  {% endif %}
+{% endwith%}

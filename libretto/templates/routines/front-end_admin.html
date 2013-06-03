@@ -3,17 +3,11 @@
 
 <div class="front-end_admin">
 
-  {% with owner=object.owner %}
-    {% if owner %}
-      <a class="btn disabled" title="{% trans 'Transcripteur' %}">
-        {{ owner.get_full_name|default:owner }}
-      </a>
-    {% endif %}
-  {% endwith%}
-
-  {% include 'routines/permalink.html' %}
-
   <span class="btn-group">
+
+    {% include 'routines/ownership.html' %}
+
+    {% include 'routines/permalink.html' %}
 
     {% if has_change_perm %}
       <a class="btn btn-primary" href="{% url admin_change object.pk %}">

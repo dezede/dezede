@@ -3,7 +3,8 @@
 from __future__ import unicode_literals
 from django.contrib.sites.models import get_current_site
 from django.utils.text import slugify
-from libretto.views import PublishedListView, PublishedDetailView
+from libretto.views import PublishedListView, PublishedDetailView, \
+    EvenementListView
 from .models import DossierDEvenements
 
 
@@ -19,8 +20,23 @@ class DossierDEvenementsDetail(PublishedDetailView):
     model = DossierDEvenements
 
 
-class DossierDEvenementsDataDetail(DossierDEvenementsDetail):
-    template_name_suffix = '_data_detail'
+class DossierDEvenementsDataDetail(EvenementListView):
+    template_name = 'dossiers/dossierdevenements_data_detail.html'
+    view_name = 'dossierdevenements_data_detail'
+
+    def get_queryset(self):
+        self.object = DossierDEvenements.objects.get(pk=self.kwargs['pk'])
+        return super(DossierDEvenementsDataDetail, self).get_queryset().filter(
+            pk__in=self.object.get_queryset())
+
+    def get_context_data(self, **kwargs):
+        data = super(DossierDEvenementsDataDetail, self) \
+            .get_context_data(**kwargs)
+        data['object'] = self.object
+        return data
+
+    def get_success_view(self):
+        return self.view_name, int(self.kwargs['pk'])
 
 
 class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
@@ -28,7 +44,8 @@ class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
     content_type = 'text/plain'
 
     def get_context_data(self, **kwargs):
-        context = super(DossierDEvenementsDetailXeLaTeX, self).get_context_data(**kwargs)
+        context = super(DossierDEvenementsDetailXeLaTeX, self) \
+            .get_context_data(**kwargs)
         context['SITE'] = get_current_site(self.request)
         return context
 

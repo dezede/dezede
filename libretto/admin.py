@@ -449,6 +449,7 @@ class LieuAdmin(AutoriteAdmin):
 
 class SaisonAdmin(CommonAdmin):
     list_display = ('__str__', 'lieu', 'debut', 'fin',)
+    date_hierarchy = 'debut'
     raw_id_fields = ('lieu',)
     autocomplete_lookup_fields = {
         'fk': ['lieu'],
@@ -484,6 +485,7 @@ class ProfessionAdmin(AutoriteAdmin):
 
 class AncrageSpatioTemporelAdmin(CommonAdmin):
     list_display = ('__str__', 'calc_date', 'calc_heure', 'calc_lieu',)
+    date_hierarchy = 'date'
     search_fields = ('lieu__nom', 'lieu_approx', 'date_approx',
                      'lieu__parent__nom', 'heure_approx',)
     raw_id_fields = ('lieu',)
@@ -768,6 +770,7 @@ class SourceAdmin(AutoriteAdmin):
     form = SourceForm
     list_display = ('nom', 'date', 'type', 'has_events', 'has_program', 'link')
     list_editable = ('type', 'date',)
+    date_hierarchy = 'date'
     search_fields = ('nom', 'date', 'type__nom', 'numero', 'contenu',
                      'owner__username', 'owner__first_name',
                      'owner__last_name')

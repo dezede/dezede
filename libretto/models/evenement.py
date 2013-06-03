@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import warnings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey, \
                                                 GenericRelation
@@ -189,6 +190,14 @@ class ElementDeProgramme(AutoriteModel):
     personnels = ManyToManyField('Personnel', blank=True, null=True,
                                  related_name='elements_de_programme')
 
+    class Meta(object):
+        verbose_name = ungettext_lazy('élément de programme',
+                                      'éléments de programme', 1)
+        verbose_name_plural = ungettext_lazy('élément de programme',
+                                             'éléments de programme', 2)
+        ordering = ('position', 'oeuvre')
+        app_label = 'libretto'
+
     def calc_caracteristiques(self):
         if self.pk is None:
             return ''
@@ -223,7 +232,9 @@ class ElementDeProgramme(AutoriteModel):
             out = distribution
             add_distribution = False
         else:
-            raise ValidationError('Il manque des champs dans ' + repr(self))
+            warnings.warn('Il manque des champs dans <%(class)s pk=%(pk)s>' %
+                          {'class': self.__class__.__name__, 'pk': self.pk})
+            return ''
 
         if has_pk and self.caracteristiques.exists():
             out += ' [' + self.calc_caracteristiques() + ']'
@@ -234,14 +245,6 @@ class ElementDeProgramme(AutoriteModel):
         return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('élément de programme',
-                                      'éléments de programme', 1)
-        verbose_name_plural = ungettext_lazy('élément de programme',
-                                             'éléments de programme', 2)
-        ordering = ('position', 'oeuvre')
-        app_label = 'libretto'
 
     def __str__(self):
         return strip_tags(self.html(False))
@@ -268,6 +271,13 @@ class Evenement(AutoriteModel):
     circonstance = CharField(max_length=500, blank=True, db_index=True)
     distribution = GenericRelation(ElementDeDistribution,
                                    related_name='evenements')
+
+    class Meta(object):
+        verbose_name = ungettext_lazy('événement', 'événements', 1)
+        verbose_name_plural = ungettext_lazy('événement', 'événements', 2)
+        ordering = ('ancrage_debut',)
+        app_label = 'libretto'
+        permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @permalink
     def get_absolute_url(self):
@@ -312,12 +322,6 @@ class Evenement(AutoriteModel):
     has_source.short_description = _('source')
     has_source.boolean = True
     has_source.admin_order_field = 'sources'
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('événement', 'événements', 1)
-        verbose_name_plural = ungettext_lazy('événement', 'événements', 2)
-        ordering = ('ancrage_debut',)
-        app_label = 'libretto'
 
     def __str__(self):
         out = self.ancrage_debut.calc_date(False)

@@ -30,7 +30,7 @@ class PublishedDetailView(DetailView):
 class PublishedListView(ListView):
     def get_queryset(self):
         return super(PublishedListView, self).get_queryset().published(
-            request=self.request)#.order_by(*self.model._meta.ordering)
+            request=self.request)
 
 
 def cleaned_querydict(qd):
@@ -61,12 +61,13 @@ def get_filters(bindings, data):
     return filters
 
 
-class EvenementListView(AjaxListView):
+class EvenementListView(AjaxListView, PublishedListView):
     model = Evenement
     context_object_name = 'evenements'
+    view_name = 'evenements'
 
     def get_queryset(self):
-        qs = super(EvenementListView, self).get_queryset().published()
+        qs = super(EvenementListView, self).get_queryset()
         data = self.request.GET
         self.form = form = EvenementListForm(data)
         try:
@@ -101,12 +102,15 @@ class EvenementListView(AjaxListView):
         context['form'] = self.form
         return context
 
+    def get_success_view(self):
+        return self.view_name,
+
     def get(self, request, *args, **kwargs):
         response = super(EvenementListView, self).get(request, *args, **kwargs)
         data = self.request.GET
         new_data = cleaned_querydict(data)
         if new_data.dict() != data.dict() or not self.valid_form:
-            response = redirect('evenements')
+            response = redirect(*self.get_success_view())
             if self.valid_form:
                 response['Location'] += '?' + new_data.urlencode(safe=b'|')
         return response

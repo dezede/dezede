@@ -28,12 +28,14 @@ class DossierDEvenementsForm(MPTTAdminForm):
             kwargs['initial'] = initial
         super(DossierDEvenementsForm, self).__init__(*args, **kwargs)
 
-    def save_m2m(self):
-        cleaned_data = self.cleaned_data
+    def clean(self):
+        cleaned_data = super(DossierDEvenementsForm, self).clean()
         if cleaned_data['statique']:
-            cleaned_data['evenements'] = self.instance.get_queryset()
-            self.instance.evenements.add(*cleaned_data['evenements'])
-            for k in ('debut', 'fin', 'lieux', 'oeuvres', 'auteurs',
-                      'circonstance'):
-                del cleaned_data[k]
+            if not cleaned_data['evenements']:
+                cleaned_data['evenements'] = \
+                    self.instance.get_queryset(dynamic=True)
+                self.instance.evenements.add(*cleaned_data['evenements'])
+        else:
+            cleaned_data['evenements'] = []
+            self.instance.evenements.clear()
         return cleaned_data

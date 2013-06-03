@@ -41,6 +41,7 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
         verbose_name_plural = ungettext_lazy('profession', 'professions', 2)
         ordering = ('classement', 'nom')
         app_label = 'libretto'
+        permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @permalink
     def get_absolute_url(self):

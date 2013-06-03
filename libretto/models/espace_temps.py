@@ -74,6 +74,18 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     historique = HTMLField(_('historique'), blank=True)
     objects = LieuManager()
 
+    class MPTTMeta(object):
+        order_insertion_by = ['nom']
+
+    class Meta(object):
+        verbose_name = ungettext_lazy('lieu ou institution',
+                                      'lieux ou institutions', 1)
+        verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
+        ordering = ('nom',)
+        app_label = 'libretto'
+        unique_together = ('nom', 'parent',)
+        permissions = (('can_change_status', _('Peut changer l’état')),)
+
     @permalink
     def get_absolute_url(self):
         return b'lieu_detail', [self.slug]
@@ -122,17 +134,6 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     def clean(self):
         if self.parent == self:
             raise ValidationError(_('Le lieu a une parenté avec lui-même.'))
-
-    class MPTTMeta(object):
-        order_insertion_by = ['nom']
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('lieu ou institution',
-                                      'lieux ou institutions', 1)
-        verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
-        ordering = ('nom',)
-        app_label = 'libretto'
-        unique_together = ('nom', 'parent',)
 
     def __str__(self):
         return strip_tags(self.html(False))

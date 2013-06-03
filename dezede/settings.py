@@ -265,11 +265,14 @@ CACHES = {
     'default': {
         'BACKEND': 'johnny.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
+        'KEY_PREFIX': '2Z',
         'JOHNNY_CACHE': True,
     }
 }
+JOHNNY_MIDDLEWARE_KEY_PREFIX = '2Z'
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 CACHE_MIDDLEWARE_SECONDS = 24 * 60 * 60
+CACHE_MIDDLEWARE_KEY_PREFIX = '2Z'
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,

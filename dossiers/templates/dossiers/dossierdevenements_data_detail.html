@@ -1,46 +1,11 @@
-{% extends 'base.html' %}
+{% extends 'libretto/evenement_list.html' %}
 {% load url from future %}
 {% load i18n routines endless sekizai_tags %}
 
 {% block title %}
-  {{ object|striptags }}
+  {{ object|striptags }} | {% trans 'Événements' %}
 {% endblock %}
 
-
-{% block content %}
-
+{% block page-header %}
   {% include 'dossiers/dossierdevenements_detail_head.html' %}
-
-  <div class="container-fluid">
-
-    <div class="row-fluid">
-
-      <div class="span3">
-        {% include 'dossiers/dossierdevenements_detail_affix.html' %}
-      </div>
-
-      <div class="span9">
-
-        <h2>Chronologie des spectacles de ce dossier</h2>
-        {% with object.get_queryset as evenements %}
-          {% paginate 5 evenements %}
-          {% show_pages %}
-          {% for evenement in evenements %}
-            <section id="evenement{{ evenement.pk }}">
-              <div class="content-part">
-                {% include 'libretto/evenement_item.html' %}
-              </div>
-            </section>
-          {% endfor %}
-          {% show_pages %}
-        {% endwith %}
-
-        {% include 'dossiers/dossierdevenements_detail_cite.html' %}
-
-      </div>
-
-    </div>
-
-  </div>
-
 {% endblock %}

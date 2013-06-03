@@ -10,17 +10,13 @@
 
 {% block body %}
 
-  <div class="page-header">
-    <h1>
-      {% trans 'événements'|capfirst %}
-      {% if evenements %}
-        {% with count=evenements.count %}
-          ({{ count|apnumber }}
-          {% blocktrans count counter=count %}résultat{% plural %}résultats{% endblocktrans %})
-        {% endwith %}
-      {% endif %}
-    </h1>
-  </div>
+  {% block page-header %}
+    <div class="page-header">
+      <h1>
+        {% trans 'événements'|capfirst %}
+      </h1>
+    </div>
+  {% endblock %}
 
   <div class="container-fluid">
     <div class="row-fluid">
@@ -32,7 +28,21 @@
         </div>
       </div>
 
-      <div class="span9" style="min-height: 423px;">{% include page_template %}</div>
+      <div class="span9" style="min-height: 423px;">
+
+        <h3>
+          {% if evenements %}
+            {% with count=evenements.count %}
+              {{ count|apnumber }}
+              {% blocktrans count counter=count %}résultat{% plural %}résultats
+              {% endblocktrans %}
+            {% endwith %}
+          {% endif %}
+        </h3>
+
+        {% include page_template %}
+
+      </div>
 
     </div>
   </div>

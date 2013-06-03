@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db.models import CharField, TextField, Manager, Model
 from django.db.models.query import QuerySet
 from django.dispatch import receiver
+from django.utils.encoding import force_text
 from tinymce.models import HTMLField
 from .settings import SIGNALS
 from .utils import replace
@@ -30,7 +31,7 @@ def replace_in_kwargs(obj, kwargs_dict):
                    if field.__class__ in REPLACE_FIELDS]
     for k, v in kwargs_dict.items():
         if k.split(b'__')[0] in field_names:
-            kwargs_dict[k] = replace(v)
+            kwargs_dict[k] = replace(force_text(v))
 
 
 class TypographicQuerySet(QuerySet):

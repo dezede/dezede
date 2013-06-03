@@ -3,7 +3,10 @@ if($.cookie("tooltips_placement") == null) {
   $.cookie("tooltips_placement", "left", {path: '/'});
 }
 get_tooltips_options = function() {
-  return {placement: $.cookie("tooltips_placement")};
+  return {
+    placement: $.cookie("tooltips_placement"),
+    container: 'body'
+  };
 };
 
 get_tooltips = function() {
