@@ -13,9 +13,9 @@
 
 @textColor: contrast(@mainBackground);
 @linkColor: spin(contrast(@mainBackground,
-                          hsv(hue(@mainBackground), 100%, 35%),
-                          hsv(hue(@mainBackground), 100%, 65%)),
-                 60);
+                          hsv(hue(@mainBackground), 100%, 40%),
+                          hsv(hue(@mainBackground), 100%, 60%)),
+                 -120);
 @linkColorHover: lighten(desaturate(@linkColor, 40%), 20%);
 @placeholderText: @gray;
 
@@ -35,9 +35,9 @@
 @footerYPadding: 15px;
 @footerHeight: 50px;
 @footerHeight480: 80px;
-@mainBackground: hsv(0, 10%, 100%);
-@bodyBackground: darken(@mainBackground, 20%);
-@wellBackground: lighten(desaturate(@mainBackground, 30%), 2%);
+@mainBackground: hsv(120, 15%, 100%);
+@bodyBackground: desaturate(darken(@mainBackground, 50%), 50%);
+@wellBackground: lighten(@mainBackground, 5%);
 
 @font-face {
   font-family: 'Gentium Basic';
@@ -152,11 +152,9 @@ blockquote {
     line-height: 10 * @baseLineHeight / 11;
     vertical-align: baseline;
   }
-  th {
-    padding-right: 20px;
-  }
   td {
     text-align: justify;
+    padding-left: 20px;
   }
 }
 
