@@ -11,7 +11,7 @@ django-tinymce==1.5.1
 django-flatpages-tinymce==0.1.1
 simplejson==3.3.0
 django-autoslug==1.6.1
-django-grappelli==2.4.4
+django-grappelli==2.4.5
 django-crispy-forms==1.2.8
 django-ajax-selects==1.2.5
 django-filebrowser==3.5.2
