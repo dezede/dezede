@@ -32,5 +32,5 @@ django-filter==0.6
 Pygments==1.6
 transifex-client==0.9
 Cython==0.19.1
--e hg+https://bitbucket.org/ubernostrum/django-registration@b3c41b3c7f50523b4ecb8267d6d27a918adc2e1f#egg=django-registration
+-e hg+https://bitbucket.org/bbordage/django-registration@39415efe2186cadca9d70752468eb80f60bb7f41#egg=django-registration
 -e git+https://github.com/jmoiron/johnny-cache@37e75019625979487f17b47050da7f0af3fea42c#egg=johnny-cache
