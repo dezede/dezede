@@ -9,6 +9,8 @@ from django.contrib.admin import SimpleListFilter
 from django.contrib.contenttypes.generic import GenericStackedInline
 from django.db.models import Q
 from django.forms.models import modelformset_factory
+from polymorphic.admin import PolymorphicChildModelAdmin, \
+    PolymorphicParentModelAdmin, PolymorphicChildModelFilter
 from reversion import VersionAdmin
 from cache_tools import cached_ugettext_lazy as _
 from .models import *
@@ -607,6 +609,7 @@ class PartieAdmin(AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'classement',)
     list_editable = ('nom', 'parent', 'classement',)
     search_fields = ('nom',)
+    list_filter = (PolymorphicChildModelFilter,)
     raw_id_fields = ('professions', 'parent', 'documents', 'illustrations')
     autocomplete_lookup_fields = {
         'm2m': ('professions', 'documents', 'illustrations'),
@@ -625,6 +628,26 @@ class PartieAdmin(AutoriteAdmin):
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
 #        }),
+    )
+
+
+class PartieChildAdmin(PolymorphicChildModelAdmin, PartieAdmin):
+    base_model = Partie
+
+
+class RoleAdmin(PartieChildAdmin):
+    pass
+
+
+class InstrumentAdmin(PartieChildAdmin):
+    pass
+
+
+class PartieParentAdmin(PolymorphicParentModelAdmin, PartieAdmin):
+    base_model = Partie
+    child_models = (
+        (Role, RoleAdmin),
+        (Instrument, InstrumentAdmin),
     )
 
 
@@ -826,7 +849,7 @@ site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
-site.register(Partie, PartieAdmin)
+site.register(Partie, PartieParentAdmin)
 site.register(Pupitre, PupitreAdmin)
 site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(ParenteDOeuvres, ParenteDOeuvresAdmin)
