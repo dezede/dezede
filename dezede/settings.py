@@ -191,6 +191,7 @@ INSTALLED_APPS = (
     'ajax_select',
     'filebrowser',
     'reversion',
+    'polymorphic',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'compressor',

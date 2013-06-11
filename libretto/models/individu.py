@@ -195,6 +195,10 @@ class Individu(AutoriteModel, UniqueSlugModel):
     link.allow_tags = True
 
     def oeuvres(self):
+        oeuvres = self.auteurs.oeuvres()
+        return oeuvres.exclude(contenu_dans__in=oeuvres)
+
+    def oeuvres_with_descendants(self):
         return self.auteurs.oeuvres()
 
     def publications(self):

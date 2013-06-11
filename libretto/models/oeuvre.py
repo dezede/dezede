@@ -15,7 +15,9 @@ from django.utils.encoding import python_2_unicode_compatible, smart_text, \
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy
 from django.utils.safestring import mark_safe
-from mptt.models import MPTTModel, TreeForeignKey, TreeManager
+from mptt.models import MPTTModel, TreeForeignKey, TreeManager, MPTTModelBase
+from polymorphic import PolymorphicModel, PolymorphicManager
+from polymorphic.base import PolymorphicModelBase
 from tinymce.models import HTMLField
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
@@ -132,18 +134,24 @@ class CaracteristiqueDOeuvre(CommonModel):
         return 'type__nom__icontains', 'valeur__icontains',
 
 
-class PartieManager(TreeManager, PublishedManager):
+class PartieManager(PolymorphicManager, TreeManager, PublishedManager):
+    pass
+
+
+class PartieBase(PolymorphicModelBase, MPTTModelBase):
     pass
 
 
 @python_2_unicode_compatible
-class Partie(MPTTModel, AutoriteModel, UniqueSlugModel):
+class Partie(PolymorphicModel, MPTTModel, AutoriteModel, UniqueSlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
     une œuvre musicale.
     Pour plus de compréhensibilité, on affiche « rôle ou instrument » au lieu
     de « partie ».
     """
+    __metaclass__ = PartieBase
+
     nom = CharField(_('nom'), max_length=200, db_index=True, unique=True,
         help_text=_('Le nom d’une partie de la partition, '
                     'instrumentale ou vocale.'))
@@ -206,6 +214,20 @@ class Partie(MPTTModel, AutoriteModel, UniqueSlugModel):
         return ('nom__icontains', 'nom_pluriel__icontains',
                 'professions__nom__icontains',
                 'professions__nom_pluriel__icontains',)
+
+
+class Role(Partie):
+    class Meta(object):
+        verbose_name = ungettext_lazy('rôle', 'rôles', 1)
+        verbose_name_plural = ungettext_lazy('rôle', 'rôles', 2)
+        app_label = 'libretto'
+
+
+class Instrument(Partie):
+    class Meta(object):
+        verbose_name = ungettext_lazy('instrument', 'instruments', 1)
+        verbose_name_plural = ungettext_lazy('instrument', 'instruments', 2)
+        app_label = 'libretto'
 
 
 class PupitreQuerySet(CommonQuerySet):
