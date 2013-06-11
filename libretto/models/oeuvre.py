@@ -13,26 +13,32 @@ from django.db.models import CharField, ManyToManyField, \
 from django.utils.encoding import python_2_unicode_compatible, smart_text, \
     force_text
 from django.utils.html import strip_tags
-from django.utils.translation import ungettext_lazy
 from django.utils.safestring import mark_safe
-from mptt.models import MPTTModel, TreeForeignKey, TreeManager, MPTTModelBase
-from polymorphic import PolymorphicModel, PolymorphicManager
-from polymorphic.base import PolymorphicModelBase
+from django.utils.translation import ungettext_lazy
+from mptt.fields import TreeForeignKey
+from mptt.managers import TreeManager
+from mptt.models import MPTTModel
+from polymorphic_tree.managers import PolymorphicMPTTModelManager, \
+    PolymorphicMPTTQuerySet
+from polymorphic_tree.models import PolymorphicMPTTModel, \
+    PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
-    PublishedManager, OrderedDefaultDict
+    PublishedManager, OrderedDefaultDict, PublishedQuerySet
 from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
 from .source import Source
 
 
-__all__ = (b'GenreDOeuvre', b'TypeDeCaracteristiqueDOeuvre',
-           b'CaracteristiqueDOeuvre', b'Partie', b'Pupitre',
-           b'TypeDeParenteDOeuvres', b'ParenteDOeuvres', b'Auteur', b'Oeuvre')
+__all__ = (
+    b'GenreDOeuvre', b'TypeDeCaracteristiqueDOeuvre',b'CaracteristiqueDOeuvre',
+    b'Partie', b'Role', b'Instrument', b'Pupitre', b'TypeDeParenteDOeuvres',
+    b'ParenteDOeuvres', b'Auteur', b'Oeuvre'
+)
 
 
 @python_2_unicode_compatible
@@ -134,23 +140,22 @@ class CaracteristiqueDOeuvre(CommonModel):
         return 'type__nom__icontains', 'valeur__icontains',
 
 
-class PartieManager(PolymorphicManager, TreeManager, PublishedManager):
+class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet):
     pass
 
 
-class PartieBase(PolymorphicModelBase, MPTTModelBase):
-    pass
+class PartieManager(PolymorphicMPTTModelManager, PublishedManager):
+    queryset_class = PartieQuerySet
 
 
 @python_2_unicode_compatible
-class Partie(PolymorphicModel, MPTTModel, AutoriteModel, UniqueSlugModel):
+class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
     une œuvre musicale.
     Pour plus de compréhensibilité, on affiche « rôle ou instrument » au lieu
     de « partie ».
     """
-    __metaclass__ = PartieBase
 
     nom = CharField(_('nom'), max_length=200, db_index=True, unique=True,
         help_text=_('Le nom d’une partie de la partition, '
@@ -161,9 +166,10 @@ class Partie(PolymorphicModel, MPTTModel, AutoriteModel, UniqueSlugModel):
         verbose_name=_('professions'), db_index=True,
         help_text=_('La ou les profession(s) capable(s) '
                     'de jouer ce rôle ou cet instrument.'))
-    parent = TreeForeignKey('Partie', related_name='enfant',
-                            blank=True, null=True, db_index=True,
-                            verbose_name=_('rôle ou instrument parent'))
+    parent = PolymorphicTreeForeignKey(
+        'self', related_name='enfant', blank=True, null=True, db_index=True,
+        verbose_name=_('rôle ou instrument parent')
+    )
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
     objects = PartieManager()

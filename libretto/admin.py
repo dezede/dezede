@@ -425,7 +425,7 @@ class LieuAdmin(AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom', 'parent__nom',)
-    list_filter = ('nature',)
+    list_filter = (PolymorphicChildModelFilter, 'nature',)
     raw_id_fields = ('parent', 'illustrations', 'documents',)
     autocomplete_lookup_fields = {
         'fk': ['parent'],
@@ -446,6 +446,26 @@ class LieuAdmin(AutoriteAdmin):
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
 #        }),
+    )
+
+
+class LieuChildAdmin(PolymorphicChildModelAdmin, LieuAdmin):
+    base_model = Lieu
+
+
+class LieuDiversAdmin(LieuChildAdmin):
+    pass
+
+
+class InstitutionAdmin(LieuChildAdmin):
+    pass
+
+
+class LieuParentAdmin(PolymorphicParentModelAdmin, LieuAdmin):
+    base_model = Lieu
+    child_models = (
+        (LieuDivers, LieuDiversAdmin),
+        (Institution, InstitutionAdmin),
     )
 
 
@@ -835,7 +855,7 @@ site.register(Document, DocumentAdmin)
 site.register(Illustration, IllustrationAdmin)
 site.register(Etat, EtatAdmin)
 site.register(NatureDeLieu, NatureDeLieuAdmin)
-site.register(Lieu, LieuAdmin)
+site.register(Lieu, LieuParentAdmin)
 site.register(Saison, SaisonAdmin)
 site.register(Profession, ProfessionAdmin)
 site.register(AncrageSpatioTemporel, AncrageSpatioTemporelAdmin)

@@ -1,5 +1,6 @@
 from .common import Document, Illustration, Etat
-from .espace_temps import NatureDeLieu, Lieu, Saison, AncrageSpatioTemporel
+from .espace_temps import NatureDeLieu, Lieu, LieuDivers, Institution, \
+    Saison, AncrageSpatioTemporel
 from .individu import Prenom, TypeDeParenteDIndividus, ParenteDIndividus, \
     Individu
 from .personnel import Profession, Devise, Engagement, TypeDePersonnel, \

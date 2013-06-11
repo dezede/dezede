@@ -8,6 +8,12 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'LieuDivers'
+        db.create_table(u'libretto_lieudivers', (
+            (u'lieu_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['libretto.Lieu'], unique=True, primary_key=True)),
+        ))
+        db.send_create_signal(u'libretto', ['LieuDivers'])
+
         # Adding model 'Instrument'
         db.create_table(u'libretto_instrument', (
             (u'partie_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['libretto.Partie'], unique=True, primary_key=True)),
@@ -20,22 +26,54 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'libretto', ['Role'])
 
+        # Adding model 'Institution'
+        db.create_table(u'libretto_institution', (
+            (u'lieu_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['libretto.Lieu'], unique=True, primary_key=True)),
+        ))
+        db.send_create_signal(u'libretto', ['Institution'])
+
+        # Adding field 'Lieu.polymorphic_ctype'
+        db.add_column(u'libretto_lieu', 'polymorphic_ctype',
+                      self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'polymorphic_libretto.lieu_set', null=True, to=orm['contenttypes.ContentType']),
+                      keep_default=False)
+
+
+        # Changing field 'Lieu.parent'
+        db.alter_column(u'libretto_lieu', 'parent_id', self.gf('polymorphic_tree.models.PolymorphicTreeForeignKey')(null=True, to=orm['libretto.Lieu']))
         # Adding field 'Partie.polymorphic_ctype'
         db.add_column(u'libretto_partie', 'polymorphic_ctype',
                       self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'polymorphic_libretto.partie_set', null=True, to=orm['contenttypes.ContentType']),
                       keep_default=False)
 
 
+        # Changing field 'Partie.parent'
+        db.alter_column(u'libretto_partie', 'parent_id', self.gf('polymorphic_tree.models.PolymorphicTreeForeignKey')(null=True, to=orm['libretto.Partie']))
+
     def backwards(self, orm):
+        # Deleting model 'LieuDivers'
+        db.delete_table(u'libretto_lieudivers')
+
         # Deleting model 'Instrument'
         db.delete_table(u'libretto_instrument')
 
         # Deleting model 'Role'
         db.delete_table(u'libretto_role')
 
+        # Deleting model 'Institution'
+        db.delete_table(u'libretto_institution')
+
+        # Deleting field 'Lieu.polymorphic_ctype'
+        db.delete_column(u'libretto_lieu', 'polymorphic_ctype_id')
+
+
+        # Changing field 'Lieu.parent'
+        db.alter_column(u'libretto_lieu', 'parent_id', self.gf('mptt.fields.TreeForeignKey')(null=True, to=orm['libretto.Lieu']))
         # Deleting field 'Partie.polymorphic_ctype'
         db.delete_column(u'libretto_partie', 'polymorphic_ctype_id')
 
+
+        # Changing field 'Partie.parent'
+        db.alter_column(u'libretto_partie', 'parent_id', self.gf('mptt.fields.TreeForeignKey')(null=True, to=orm['libretto.Partie']))
 
     models = {
         u'auth.group': {
@@ -226,6 +264,10 @@ class Migration(SchemaMigration):
             'slug': ('autoslug.fields.AutoSlugField', [], {'unique': 'True', 'max_length': '50', 'populate_from': "u'get_slug'", 'unique_with': '()'}),
             'titre': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '1', 'blank': 'True'})
         },
+        u'libretto.institution': {
+            'Meta': {'ordering': "(u'nom',)", 'object_name': 'Institution', '_ormbases': [u'libretto.Lieu']},
+            u'lieu_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['libretto.Lieu']", 'unique': 'True', 'primary_key': 'True'})
+        },
         u'libretto.instrument': {
             'Meta': {'ordering': "(u'classement', u'nom')", 'object_name': 'Instrument', '_ormbases': [u'libretto.Partie']},
             u'partie_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['libretto.Partie']", 'unique': 'True', 'primary_key': 'True'})
@@ -243,10 +285,15 @@ class Migration(SchemaMigration):
             'nom': ('django.db.models.fields.CharField', [], {'max_length': '200', 'db_index': 'True'}),
             'notes': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True', 'on_delete': 'models.PROTECT', 'blank': 'True'}),
-            'parent': ('mptt.fields.TreeForeignKey', [], {'blank': 'True', 'related_name': "u'enfants'", 'null': 'True', 'to': u"orm['libretto.Lieu']"}),
+            'parent': ('polymorphic_tree.models.PolymorphicTreeForeignKey', [], {'blank': 'True', 'related_name': "u'enfants'", 'null': 'True', 'to': u"orm['libretto.Lieu']"}),
+            'polymorphic_ctype': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'polymorphic_libretto.lieu_set'", 'null': 'True', 'to': u"orm['contenttypes.ContentType']"}),
             'rght': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
             'slug': ('autoslug.fields.AutoSlugField', [], {'unique': 'True', 'max_length': '50', 'populate_from': "u'get_slug'", 'unique_with': '()'}),
             'tree_id': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'})
+        },
+        u'libretto.lieudivers': {
+            'Meta': {'ordering': "(u'nom',)", 'object_name': 'LieuDivers', '_ormbases': [u'libretto.Lieu']},
+            u'lieu_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['libretto.Lieu']", 'unique': 'True', 'primary_key': 'True'})
         },
         u'libretto.naturedelieu': {
             'Meta': {'ordering': "(u'slug',)", 'object_name': 'NatureDeLieu'},
@@ -314,7 +361,7 @@ class Migration(SchemaMigration):
             'nom_pluriel': ('django.db.models.fields.CharField', [], {'max_length': '230', 'blank': 'True'}),
             'notes': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True', 'on_delete': 'models.PROTECT', 'blank': 'True'}),
-            'parent': ('mptt.fields.TreeForeignKey', [], {'blank': 'True', 'related_name': "u'enfant'", 'null': 'True', 'to': u"orm['libretto.Partie']"}),
+            'parent': ('polymorphic_tree.models.PolymorphicTreeForeignKey', [], {'blank': 'True', 'related_name': "u'enfant'", 'null': 'True', 'to': u"orm['libretto.Partie']"}),
             'polymorphic_ctype': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'polymorphic_libretto.partie_set'", 'null': 'True', 'to': u"orm['contenttypes.ContentType']"}),
             'professions': ('django.db.models.fields.related.ManyToManyField', [], {'db_index': 'True', 'related_name': "u'parties'", 'symmetrical': 'False', 'to': u"orm['libretto.Profession']"}),
             'rght': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
