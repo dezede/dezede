@@ -1,11 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from datetime import date
 from django.core.urlresolvers import reverse
 from django.test import Client, TransactionTestCase
 from django.utils.encoding import smart_text
 from ...models import *
-from datetime import date
 from .utils import new, log_as_superuser
 
 
