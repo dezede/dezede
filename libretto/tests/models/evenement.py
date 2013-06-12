@@ -1,14 +1,20 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import os
 from django.test import TransactionTestCase
 from django.utils.encoding import smart_text
 from ...models import *
 
 
+PATH = os.path.abspath(os.path.dirname(__file__))
+
+
 class EvenementTestCase(TransactionTestCase):
-    fixtures = ['libretto/tests/models/fixtures/auth.user.json',
-                'libretto/tests/models/fixtures/evenement.json']
+    fixtures = [
+        os.path.join(PATH, 'fixtures/auth.user.json'),
+        os.path.join(PATH, 'fixtures/evenement.json'),
+    ]
     cleans_up_after_itself = True
 
     def setUp(self):
