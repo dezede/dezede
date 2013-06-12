@@ -196,10 +196,10 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'compressor',
-    'django_nose',
     'sekizai',
     'django_extensions',
     'south',
+    'django_nose',
     'debug_toolbar',
 )
 
