@@ -15,8 +15,8 @@ class LieuTestCase(TransactionTestCase):
     def setUp(self):
         theatre = new(NatureDeLieu, nom='théâtre')
         ville = new(NatureDeLieu, nom='ville')
-        self.rouen = new(Lieu, nom='Rouen', nature=ville)
-        self.theatre_des_arts = new(Lieu,
+        self.rouen = new(LieuDivers, nom='Rouen', nature=ville)
+        self.theatre_des_arts = new(Institution,
                                     nom='Théâtre des Arts', nature=theatre,
                                     parent=self.rouen)
         # Test client
