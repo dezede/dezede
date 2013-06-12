@@ -3,15 +3,13 @@
 from __future__ import unicode_literals
 from datetime import date
 from django.core.urlresolvers import reverse
-from django.test import Client, TransactionTestCase
+from django.test import Client
 from django.utils.encoding import smart_text
 from ...models import *
-from .utils import new, log_as_superuser
+from .utils import new, log_as_superuser, TransactionTestCase
 
 
 class LieuTestCase(TransactionTestCase):
-    cleans_up_after_itself = True
-
     def setUp(self):
         theatre = new(NatureDeLieu, nom='théâtre')
         ville = new(NatureDeLieu, nom='ville')
@@ -51,8 +49,6 @@ class LieuTestCase(TransactionTestCase):
 
 
 class SaisonTestCase(TransactionTestCase):
-    cleans_up_after_itself = True
-
     def setUp(self):
         theatre = new(NatureDeLieu, nom='théâtre')
         ville = new(NatureDeLieu, nom='ville')

@@ -1,15 +1,13 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.test import Client, TransactionTestCase
+from django.test import Client
 from django.utils.encoding import smart_text
 from ...models import *
-from .utils import new, log_as_superuser
+from .utils import new, log_as_superuser, TransactionTestCase
 
 
 class IndividuTestCase(TransactionTestCase):
-    cleans_up_after_itself = True
-
     def setUp(self):
         jb = new(Prenom, prenom='Jean-Baptiste', favori=True, classement=1.0)
         self.moliere = new(Individu, nom='Poquelin', pseudonyme='Molière',

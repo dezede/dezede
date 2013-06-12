@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
+from django_nose import TransactionTestCase as OriginalTransactionTestCase
+import johnny.cache
 
 
 def new(Model, **kwargs):
@@ -20,3 +22,11 @@ def log_as_superuser(test_case):
                                       'password': password,
                                       'this_is_the_login_form': 1})
     test_case.assertEqual(response.status_code, 302)
+
+
+class TransactionTestCase(OriginalTransactionTestCase):
+    cleans_up_after_itself = True
+
+    def _pre_setup(self):
+        super(TransactionTestCase, self)._pre_setup()
+        johnny.cache.disable()
