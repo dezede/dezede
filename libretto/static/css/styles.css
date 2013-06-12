@@ -32,7 +32,7 @@ body {
   font-family: 'Gentium Basic', 'Georgia', serif;
   font-size: 16px;
   line-height: 22px;
-  background: #B82819 url(images/damasse.png) fixed;
+  background: #B82819;
   overflow-y: scroll;
   position: relative;
   margin: 60px 0;
