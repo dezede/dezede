@@ -7,7 +7,7 @@ from ...models import *
 
 
 class EvenementTestCase(TransactionTestCase):
-    fixtures = ['libretto/tests/models/fixtures/auth.json',
+    fixtures = ['libretto/tests/models/fixtures/auth.user.json',
                 'libretto/tests/models/fixtures/evenement.json']
     cleans_up_after_itself = True
 

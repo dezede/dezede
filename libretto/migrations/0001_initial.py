@@ -6,6 +6,9 @@ from libretto.migration_utils import was_applied
 
 
 class Migration(SchemaMigration):
+    depends_on = (
+        ('reversion', '0005_auto__add_field_revision_manager_slug'),
+    )
 
     def forwards(self, orm):
 
