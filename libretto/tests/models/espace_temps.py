@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 from datetime import date
 from django.core.urlresolvers import reverse
-from django.test import Client
 from django.utils.encoding import smart_text
 from ...models import *
 from .utils import new, log_as_superuser, TransactionTestCase
@@ -18,7 +17,6 @@ class LieuTestCase(TransactionTestCase):
                                     nom='Théâtre des Arts', nature=theatre,
                                     parent=self.rouen)
         # Test client
-        self.client = Client()
         log_as_superuser(self)
 
     def testComputedNames(self):

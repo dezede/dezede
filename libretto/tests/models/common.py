@@ -12,7 +12,7 @@ class EtatTestCase(TransactionTestCase):
         self.nouveau = new(Etat, nom='nouveau', nom_pluriel='nouveaux')
 
     def testComputedNames(self):
-        self.assertEqual(smart_text(self.brouillon),  'brouillon')
-        self.assertEqual(self.brouillon.pluriel(), 'brouillons')
-        self.assertEqual(smart_text(self.nouveau),    'nouveau')
+        self.assertEqual(smart_text(self.brouillon), 'brouillon')
+        self.assertEqual(self.brouillon.pluriel(),   'brouillons')
+        self.assertEqual(smart_text(self.nouveau), 'nouveau')
         self.assertEqual(self.nouveau.pluriel(),   'nouveaux')
