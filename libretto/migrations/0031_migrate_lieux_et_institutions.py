@@ -18,8 +18,7 @@ class Migration(DataMigration):
         cursor = connection.cursor()
 
         institution_natures = (
-            'cirque', 'concert', 'demeure', 'église', 'exposition',
-            'foyer', 'galerie', 'institution', 'Opéra', 'salle',
+            'institution',
         )
 
         institutions = Lieu.objects.filter(nature__nom__in=institution_natures)
