@@ -37,5 +37,6 @@ class DossierDEvenementsForm(MPTTAdminForm):
                 self.instance.evenements.add(*cleaned_data['evenements'])
         else:
             cleaned_data['evenements'] = []
-            self.instance.evenements.clear()
+            if self.instance.pk is not None:
+                self.instance.evenements.clear()
         return cleaned_data
