@@ -10,6 +10,9 @@ Projet Dezède
 .. |travis| image:: https://travis-ci.org/dezede/dezede.png
 .. _travis: https://travis-ci.org/dezede/dezede
 
+.. |coveralls| image:: https://coveralls.io/repos/dezede/dezede/badge.png
+.. _coveralls: https://coveralls.io/r/dezede/dezede
+
 .. contents::
 
 
