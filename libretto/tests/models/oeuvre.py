@@ -9,6 +9,8 @@ from .utils import new, log_as_superuser, TransactionTestCase
 
 
 class OeuvreTestCase(TransactionTestCase):
+    model = Oeuvre
+
     def setUp(self):
         # Invalid
         self.invalid = new(Oeuvre, titre_secondaire='l’essai infructeux')
@@ -115,18 +117,3 @@ class OeuvreTestCase(TransactionTestCase):
                          '<span title="Genre">Comédie</span>&#32;'
                          '<span title="Découpage">'
                          'en cinq actes et en vers</span>')
-
-    def testTemplateRenders(self):
-        for oeuvre in Oeuvre.objects.all():
-            self.fetch_page(oeuvre.get_absolute_url())
-
-    def testAdminRenders(self):
-        self.fetch_page(reverse('admin:libretto_oeuvre_changelist'))
-        self.fetch_page(reverse('admin:libretto_oeuvre_add'))
-        for oeuvre in Oeuvre.objects.all():
-            self.fetch_page(reverse(
-                'admin:libretto_oeuvre_history', args=[oeuvre.pk]))
-            self.fetch_page(reverse(
-                'admin:libretto_oeuvre_delete', args=[oeuvre.pk]))
-            self.fetch_page(reverse(
-                'admin:libretto_oeuvre_change', args=[oeuvre.pk]))

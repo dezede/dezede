@@ -12,6 +12,7 @@ PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class EvenementTestCase(TransactionTestCase):
+    model = Evenement
     fixtures = [
         os.path.join(PATH, 'fixtures/auth.user.json'),
         os.path.join(PATH, 'fixtures/evenement.json'),
@@ -46,11 +47,11 @@ class EvenementTestCase(TransactionTestCase):
 
     def testTemplateRenders(self):
         # ListView
-        self.fetch_page(reverse('evenements'))
-        self.fetch_page(
+        self.assertURL(reverse('evenements'))
+        self.assertURL(
             reverse('evenements'),
             {'q': 'Rouen', 'dates_0': 1771, 'dates_1': 2012, 'lieu': '|1|',
              'oeuvre': '||', 'page': 1})
         # DetailView
         for evenement in Evenement.objects.all():
-            self.fetch_page(evenement.get_absolute_url())
+            self.assertURL(evenement.get_absolute_url())

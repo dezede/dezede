@@ -7,6 +7,8 @@ from .utils import new, log_as_superuser, TransactionTestCase
 
 
 class IndividuTestCase(TransactionTestCase):
+    model = Oeuvre
+
     def setUp(self):
         jb = new(Prenom, prenom='Jean-Baptiste', favori=True, classement=1.0)
         self.moliere = new(Individu, nom='Poquelin', pseudonyme='Molière',
@@ -55,4 +57,4 @@ class IndividuTestCase(TransactionTestCase):
 
     def testTemplateRenders(self):
         for individu in Individu.objects.all():
-            self.fetch_page(individu.get_absolute_url())
+            self.assertURL(individu.get_absolute_url())

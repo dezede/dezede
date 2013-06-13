@@ -9,6 +9,8 @@ from .utils import new, log_as_superuser, TransactionTestCase
 
 
 class LieuTestCase(TransactionTestCase):
+    model = Lieu
+
     def setUp(self):
         theatre = new(NatureDeLieu, nom='théâtre')
         ville = new(NatureDeLieu, nom='ville')
@@ -24,23 +26,10 @@ class LieuTestCase(TransactionTestCase):
         self.assertEqual(smart_text(self.theatre_des_arts),
                          'Rouen, Théâtre des Arts')
 
-    def testTemplateRenders(self):
-        for lieu in Lieu.objects.all():
-            self.fetch_page(lieu.get_absolute_url())
-
-    def testAdminRenders(self):
-        self.fetch_page(reverse('admin:libretto_lieu_changelist'))
-        self.fetch_page(reverse('admin:libretto_lieu_add'))
-        for lieu in Lieu.objects.all():
-            self.fetch_page(
-                reverse('admin:libretto_lieu_history', args=[lieu.pk]))
-            self.fetch_page(
-                reverse('admin:libretto_lieu_delete', args=[lieu.pk]))
-            self.fetch_page(
-                reverse('admin:libretto_lieu_change', args=[lieu.pk]))
-
 
 class SaisonTestCase(TransactionTestCase):
+    model = Saison
+
     def setUp(self):
         theatre = new(NatureDeLieu, nom='théâtre')
         ville = new(NatureDeLieu, nom='ville')
@@ -56,8 +45,3 @@ class SaisonTestCase(TransactionTestCase):
     def testComputedNames(self):
         self.assertEqual(smart_text(self.saison),
                          'Rouen, Théâtre des Arts, 2011–2012')
-
-    def testAdminRenders(self):
-        self.fetch_page(reverse('admin:libretto_saison_changelist'))
-        self.fetch_page(
-            reverse('admin:libretto_saison_change', args=[self.saison.pk]))

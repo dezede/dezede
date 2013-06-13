@@ -7,6 +7,8 @@ from .utils import new, TransactionTestCase
 
 
 class EtatTestCase(TransactionTestCase):
+    model = Etat
+
     def setUp(self):
         self.brouillon = new(Etat, nom='brouillon', public=False)
         self.nouveau = new(Etat, nom='nouveau', nom_pluriel='nouveaux')

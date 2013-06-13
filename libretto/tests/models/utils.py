@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase as OriginalTransactionTestCase
+from django.utils import six
 import johnny.cache
 
 
@@ -23,14 +24,35 @@ def log_as_superuser(test_case):
 
 class TransactionTestCase(OriginalTransactionTestCase):
     cleans_up_after_itself = True
+    model = None
 
     def _pre_setup(self):
         super(TransactionTestCase, self)._pre_setup()
         johnny.cache.disable()
 
-    def fetch_page(self, url, data=None):
+    def assertURL(self, url, data=None):
         if data is None:
             data = {}
         response = self.client.get(url, data=data)
         self.assertEqual(response.status_code, 200)
-        return response.content
+        self.assertIsInstance(response.content, six.string_types)
+
+    def testAdminRenders(self):
+        if self.model is None:
+            return
+        model_name = self.model.__name__.lower()
+        self.assertURL(reverse('admin:libretto_%s_changelist' % model_name))
+        self.assertURL(reverse('admin:libretto_%s_add' % model_name))
+        for obj in self.model.objects.all():
+            self.assertURL(reverse(
+                'admin:libretto_%s_history' % model_name, args=[obj.pk]))
+            self.assertURL(reverse(
+                'admin:libretto_%s_delete' % model_name, args=[obj.pk]))
+            self.assertURL(reverse(
+                'admin:libretto_%s_change' % model_name, args=[obj.pk]))
+
+    def testTemplateRenders(self):
+        if not hasattr(self.model, 'get_absolute_url'):
+            return
+        for obj in self.model.objects.all():
+            self.assertURL(obj.get_absolute_url())

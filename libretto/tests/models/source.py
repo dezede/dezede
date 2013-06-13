@@ -8,6 +8,8 @@ from .utils import new, TransactionTestCase
 
 
 class SourceTestCase(TransactionTestCase):
+    model = Source
+
     def setUp(self):
         type_de_source = new(TypeDeSource, nom='compte rendu',
                              nom_pluriel='comptes rendus')
