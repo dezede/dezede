@@ -6,6 +6,7 @@ Projet Dezède
 :Copyright: Bertrand Bordage © 2011-2013
 
 |travis|_
+|coveralls|_
 
 .. |travis| image:: https://travis-ci.org/dezede/dezede.png
 .. _travis: https://travis-ci.org/dezede/dezede
