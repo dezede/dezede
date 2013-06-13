@@ -11,6 +11,6 @@ before_script:
   - psql -c 'DROP DATABASE IF EXISTS dezede;' -U postgres
   - psql -c 'create database dezede;' -U postgres
 script:
-  - coverage run manage.py test
+  - coverage run manage.py --source=dezede,libretto,accounts,dossiers,typography,cache_tools test
 after_success:
   - coveralls
