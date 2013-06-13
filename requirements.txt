@@ -20,7 +20,7 @@ django-filebrowser==3.5.2
 -e git+https://github.com/jbalogh/django-nose/@cff3b1c397d5a7c29843a394dbf799949d4c0845#egg=django-nose
 django_compressor==1.2
 django-sekizai==0.7
-django-viewsets==0.1.6
+django-viewsets==0.1.7
 Pillow==2.0.0
 python-memcached==1.51
 South==0.8.1
