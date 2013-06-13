@@ -41,8 +41,8 @@ class OeuvreTestCase(TransactionTestCase):
         cinq_actes_vers = new(CaracteristiqueDOeuvre, type=decoupage,
                               valeur='en cinq actes et en vers')
         self.tartuffe = new(Oeuvre,
-                            prefixe_titre='Le ', titre='Tartuffe',
-                            coordination=', ou ',
+                            prefixe_titre='Le', titre='Tartuffe',
+                            coordination='ou',
                             prefixe_titre_secondaire="l'",
                             titre_secondaire='Imposteur',
                             genre=comedie)
@@ -117,29 +117,16 @@ class OeuvreTestCase(TransactionTestCase):
                          'en cinq actes et en vers</span>')
 
     def testTemplateRenders(self):
-        for oeuvre in [self.carmen, self.sonate,
-                       self.symphonie, self.tartuffe]:
-            response = self.client.get(oeuvre.get_absolute_url())
-            self.assertEqual(response.status_code, 200)
+        for oeuvre in Oeuvre.objects.all():
+            self.fetch_page(oeuvre.get_absolute_url())
 
     def testAdminRenders(self):
-        response = self.client.get(reverse('admin:libretto_'
-                                           'oeuvre_changelist'))
-        self.assertEqual(response.status_code, 200)
-        response = self.client.get(reverse('admin:libretto_oeuvre_add'))
-        self.assertEqual(response.status_code, 200)
-        for oeuvre in [self.carmen, self.sonate,
-                       self.symphonie, self.tartuffe]:
-            response = self.client.get(reverse('admin:libretto_'
-                                               'oeuvre_history',
-                                               args=[oeuvre.pk]))
-            self.assertEqual(response.status_code, 200)
-            response = self.client.get(reverse('admin:libretto_'
-                                               'oeuvre_delete',
-                                               args=[oeuvre.pk]))
-            self.assertEqual(response.status_code, 200)
-            response = self.client.get(reverse('admin:libretto_'
-                                               'oeuvre_change',
-                                               args=[oeuvre.pk]))
-            self.assertEqual(response.status_code, 200)
-
+        self.fetch_page(reverse('admin:libretto_oeuvre_changelist'))
+        self.fetch_page(reverse('admin:libretto_oeuvre_add'))
+        for oeuvre in Oeuvre.objects.all():
+            self.fetch_page(reverse(
+                'admin:libretto_oeuvre_history', args=[oeuvre.pk]))
+            self.fetch_page(reverse(
+                'admin:libretto_oeuvre_delete', args=[oeuvre.pk]))
+            self.fetch_page(reverse(
+                'admin:libretto_oeuvre_change', args=[oeuvre.pk]))

@@ -54,6 +54,5 @@ class IndividuTestCase(TransactionTestCase):
                          % {'url': piaf_url})
 
     def testTemplateRenders(self):
-        for individu in [self.moliere, self.piaf]:
-            response = self.client.get(individu.get_absolute_url())
-            self.assertEqual(response.status_code, 200)
+        for individu in Individu.objects.all():
+            self.fetch_page(individu.get_absolute_url())

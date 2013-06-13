@@ -25,25 +25,19 @@ class LieuTestCase(TransactionTestCase):
                          'Rouen, Théâtre des Arts')
 
     def testTemplateRenders(self):
-        for oeuvre in [self.rouen, self.theatre_des_arts]:
-            response = self.client.get(oeuvre.get_absolute_url())
-            self.assertEqual(response.status_code, 200)
+        for lieu in Lieu.objects.all():
+            self.fetch_page(lieu.get_absolute_url())
 
     def testAdminRenders(self):
-        response = self.client.get(reverse('admin:libretto_lieu_changelist'))
-        self.assertEqual(response.status_code, 200)
-        response = self.client.get(reverse('admin:libretto_lieu_add'))
-        self.assertEqual(response.status_code, 200)
-        for lieu in [self.rouen, self.theatre_des_arts]:
-            response = self.client.get(reverse('admin:libretto_lieu_history',
-                                               args=[lieu.pk]))
-            self.assertEqual(response.status_code, 200)
-            response = self.client.get(reverse('admin:libretto_lieu_delete',
-                                               args=[lieu.pk]))
-            self.assertEqual(response.status_code, 200)
-            response = self.client.get(reverse('admin:libretto_lieu_change',
-                                               args=[lieu.pk]))
-            self.assertEqual(response.status_code, 200)
+        self.fetch_page(reverse('admin:libretto_lieu_changelist'))
+        self.fetch_page(reverse('admin:libretto_lieu_add'))
+        for lieu in Lieu.objects.all():
+            self.fetch_page(
+                reverse('admin:libretto_lieu_history', args=[lieu.pk]))
+            self.fetch_page(
+                reverse('admin:libretto_lieu_delete', args=[lieu.pk]))
+            self.fetch_page(
+                reverse('admin:libretto_lieu_change', args=[lieu.pk]))
 
 
 class SaisonTestCase(TransactionTestCase):
@@ -51,13 +45,12 @@ class SaisonTestCase(TransactionTestCase):
         theatre = new(NatureDeLieu, nom='théâtre')
         ville = new(NatureDeLieu, nom='ville')
         rouen = new(Lieu, nom='Rouen', nature=ville)
-        theatre_des_arts = new(Lieu,
-            nom='Théâtre des Arts', nature=theatre, parent=rouen)
-        self.saison = new(Saison,
-            lieu=theatre_des_arts, debut=date(2011, 9, 1),
+        theatre_des_arts = new(
+            Lieu, nom='Théâtre des Arts', nature=theatre, parent=rouen)
+        self.saison = new(
+            Saison, lieu=theatre_des_arts, debut=date(2011, 9, 1),
             fin=date(2012, 8, 31))
         # Test client
-        self.client = Client()
         log_as_superuser(self)
 
     def testComputedNames(self):
@@ -65,9 +58,6 @@ class SaisonTestCase(TransactionTestCase):
                          'Rouen, Théâtre des Arts, 2011–2012')
 
     def testAdminRenders(self):
-        response = self.client.get(reverse('admin:libretto_'
-                                           'saison_changelist'))
-        self.assertEqual(response.status_code, 200)
-        response = self.client.get(reverse('admin:libretto_saison_change',
-                                           args=[self.saison.pk]))
-        self.assertEqual(response.status_code, 200)
+        self.fetch_page(reverse('admin:libretto_saison_changelist'))
+        self.fetch_page(
+            reverse('admin:libretto_saison_change', args=[self.saison.pk]))

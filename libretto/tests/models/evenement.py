@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import os
+from django.core.urlresolvers import reverse
 from django.utils.encoding import smart_text
 from ...models import *
 from .utils import TransactionTestCase
@@ -32,8 +33,24 @@ class EvenementTestCase(TransactionTestCase):
                          'L’arrivée du père Noël, ou Le Saint Nicolas vengeur')
         self.assertEqual(smart_text(programme[4]),
                          'Distribution de pains d’épices')
+        self.assertEqual(
+            smart_text(programme[5]),
+            'Molière [auteur dram.], Le Tartuffe, ou l’Imposteur, '
+            'comédie en cinq actes et en vers. — Gassion (É.), '
+            'dite La Môme Piaf [chanteur]')
 
     def testRendering(self):
         self.assertEqual(smart_text(self.nicolas),
                          'Jeudi 6 décembre 2012 > '
                          'Rouen, Théâtre des Arts, Saint-Nicolas')
+
+    def testTemplateRenders(self):
+        # ListView
+        self.fetch_page(reverse('evenements'))
+        self.fetch_page(
+            reverse('evenements'),
+            {'q': 'Rouen', 'dates_0': 1771, 'dates_1': 2012, 'lieu': '|1|',
+             'oeuvre': '||', 'page': 1})
+        # DetailView
+        for evenement in Evenement.objects.all():
+            self.fetch_page(evenement.get_absolute_url())
