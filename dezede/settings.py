@@ -106,7 +106,7 @@ MEDIA_ROOT = os.path.join(SITE_ROOT, 'media/')
 MEDIA_URL = SITE_URL + 'media/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = ''
+SECRET_KEY = 'replace_this_with_some_random_string'
 
 WSGI_APPLICATION = 'dezede.wsgi.application'
 
