@@ -7,16 +7,12 @@ Projet Dezède
 
 |travis|_
 |coveralls|_
-|codeclimate|_
 
 .. |travis| image:: https://travis-ci.org/dezede/dezede.png
 .. _travis: https://travis-ci.org/dezede/dezede
 
 .. |coveralls| image:: https://coveralls.io/repos/dezede/dezede/badge.png
 .. _coveralls: https://coveralls.io/r/dezede/dezede
-
-.. |codeclimate| image:: https://codeclimate.com/github/dezede/dezede.png
-.. _codeclimate: https://codeclimate.com/github/dezede/dezede
 
 .. contents::
 
