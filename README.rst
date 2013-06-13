@@ -5,6 +5,11 @@ Projet Dezède
 :Auteur: Bertrand Bordage
 :Copyright: Bertrand Bordage © 2011-2013
 
+|travis|_
+
+.. |travis| image:: https://travis-ci.org/dezede/dezede.png
+.. _travis: https://travis-ci.org/dezede/dezede
+
 .. contents::
 
 
