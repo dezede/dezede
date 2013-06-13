@@ -52,18 +52,11 @@ class OeuvreTestCase(TransactionTestCase):
         # Test client
         log_as_superuser(self)
 
-    def testCleanObject(self):
-        # Invalid
+    def testClean(self, excluded=()):
         with self.assertRaises(ValidationError):
             self.invalid.clean()
-        # Carmen
-        self.carmen.clean()
-        # Sonate
-        self.sonate.clean()
-        # Symphonie
-        self.symphonie.clean()
-        # Tartufe
-        self.tartuffe.clean()
+
+        super(OeuvreTestCase, self).testClean(excluded=[self.invalid])
 
     def testComputedNames(self):
         # Carmen

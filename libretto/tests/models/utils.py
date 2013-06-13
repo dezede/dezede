@@ -37,9 +37,18 @@ class TransactionTestCase(OriginalTransactionTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.content, six.string_types)
 
+    def testClean(self, excluded=()):
+        if self.model is None:
+            return
+
+        for obj in self.model.objects.all():
+            if obj not in excluded:
+                obj.clean()
+
     def testAdminRenders(self):
         if self.model is None:
             return
+
         model_name = self.model.__name__.lower()
         self.assertURL(reverse('admin:libretto_%s_changelist' % model_name))
         self.assertURL(reverse('admin:libretto_%s_add' % model_name))
