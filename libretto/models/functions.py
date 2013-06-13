@@ -151,6 +151,8 @@ def href(url, txt, tags=True, new_tab=False):
     """
     >>> print(href('truc.machin/bidule', 'Cliquez ici'))
     <a href="truc.machin/bidule">Cliquez ici</a>
+    >>> print(href('/salut/toi', 'Bonjour mon gars!', new_tab=True))
+    <a href="/salut/toi" target="_blank">Bonjour mon gars!</a>
     >>> print(href('a.b/c', "It's a trap!", tags=False))
     It's a trap!
     >>> href('', '')
@@ -158,11 +160,11 @@ def href(url, txt, tags=True, new_tab=False):
     """
     if not txt:
         return ''
-    if tags:
-        if new_tab:
-            url += '" target="_blank'
-        return mark_safe(smart_text('<a href="%s">%s</a>' % (url, txt)))
-    return txt
+    if not tags:
+        return txt
+    if new_tab:
+        url += '" target="_blank'
+    return mark_safe(smart_text('<a href="%s">%s</a>' % (url, txt)))
 
 
 @html_decorator
