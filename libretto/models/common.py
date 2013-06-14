@@ -187,8 +187,8 @@ class PublishedQuerySet(CommonQuerySet):
             pass
         else:
             level = mgr.level_attr
-            lft = mgr.lft_attr
-            rght = mgr.rght_attr
+            lft = mgr.left_attr
+            rght = mgr.right_attr
 
             qs = qs.order_by()
             root_level = qs.aggregate(Min(level))[level + '__min'] or 0
