@@ -14,7 +14,7 @@ from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
-from mptt.fields import TreeForeignKey
+from mptt.managers import TreeManager
 from tinymce.models import HTMLField
 from cache_tools import invalidate_group, cached_ugettext_lazy as _
 from .functions import href
@@ -181,11 +181,8 @@ class PublishedQuerySet(CommonQuerySet):
         # Un élément isolé est un élément publié dont l'un des parents n'est
         # pas publié.
         mgr = self.model.objects
-        try:
+        if isinstance(mgr, TreeManager):
             parent = mgr.parent_attr
-        except AttributeError:
-            pass
-        else:
             level = mgr.level_attr
             lft = mgr.left_attr
             rght = mgr.right_attr
