@@ -91,12 +91,11 @@ def print_info(msg):
 
 
 def colored_diff(a, b):
-    """
+    r"""
     >>> colored_diff('azerty', 'qwerty')
     (u'\x1b[44maz\x1b[0merty', u'\x1b[44mqw\x1b[0merty')
     >>> colored_diff('Alphonse Durand', 'Alfonso Durando')
-    (u'Al\x1b[44mph\x1b[0mons\x1b[44me\x1b[0m Durand',
-    u'Al\x1b[44mf\x1b[0mons\x1b[44mo\x1b[0m Durand\x1b[44mo\x1b[0m')
+    (u'Al\x1b[44mph\x1b[0mons\x1b[44me\x1b[0m Durand', u'Al\x1b[44mf\x1b[0mons\x1b[44mo\x1b[0m Durand\x1b[44mo\x1b[0m')
     """
     s = SequenceMatcher(lambda x: x == ' ', a, b)
     new_a = ''
