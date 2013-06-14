@@ -146,17 +146,17 @@ def parse_ancrage(ancrage_str, commit=False):
 
 def build_ancrage(ancrage_str, commit=True):
     """
-    >>> build_ancrage('Paris, Concert Spirituel, ca. 1852', commit=False)
+    >>> build_ancrage('Paris, Concert Spirituel, ca. 1852')
     <AncrageSpatioTemporel: Concert Spirituel, ca. 1852>
-    >>> build_ancrage('Concert Spirituel, 5/7/1852', commit=False)
+    >>> build_ancrage('Concert Spirituel, 5/7/1852')
     <AncrageSpatioTemporel: Concert Spirituel, 5 juillet 1852>
-    >>> build_ancrage('Concert Spirituel, 1852-7-5', commit=False)
+    >>> build_ancrage('Concert Spirituel, 1852-7-5')
     <AncrageSpatioTemporel: Concert Spirituel, 5 juillet 1852>
-    >>> build_ancrage('Concert Spirituel, 5 juillet 1852', commit=False)
+    >>> build_ancrage('Concert Spirituel, 5 juillet 1852')
     <AncrageSpatioTemporel: Concert Spirituel, 5 juillet 1852>
-    >>> build_ancrage('5/7/1852', commit=False)
+    >>> build_ancrage('5/7/1852')
     <AncrageSpatioTemporel: 5 juillet 1852>
-    >>> build_ancrage('1852', commit=False)
+    >>> build_ancrage('1852')
     <AncrageSpatioTemporel: 1852>
     >>> build_ancrage('18..', commit=False)
     <AncrageSpatioTemporel: 18..>
