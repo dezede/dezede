@@ -1,3 +1,5 @@
+import re
+from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.test import TransactionTestCase as OriginalTransactionTestCase
@@ -32,12 +34,25 @@ class TransactionTestCase(OriginalTransactionTestCase):
         self.log_as_superuser()
         johnny.cache.disable()
 
-    def assertURL(self, url, data=None, method='get'):
+    def assertURL(self, url, data=None, method='get', status_codes=(200,)):
         if data is None:
             data = {}
         response = getattr(self.client, method)(url, data=data)
-        self.assertEqual(response.status_code, 200)
+        self.assertIn(response.status_code, status_codes)
         self.assertIsInstance(response.content, six.string_types)
+
+    def assertSendForm(self, url, method='post'):
+        soup = BeautifulSoup(self.client.get(url).content)
+
+        forms = soup.find_all('form')
+        self.assertEqual(len(forms), 1)
+        inputs = forms[0].find_all('input',
+                                   attrs={'name': True, 'value': True})
+
+        data = {input['name']: input['value']
+                for input in inputs if input['type'] not in ['submit']}
+
+        self.assertURL(url, data=data, method=method, status_codes=[200, 302])
 
     def testClean(self, excluded=()):
         if self.model is None:
@@ -53,14 +68,18 @@ class TransactionTestCase(OriginalTransactionTestCase):
 
         model_name = self.model.__name__.lower()
         self.assertURL(reverse('admin:libretto_%s_changelist' % model_name))
-        self.assertURL(reverse('admin:libretto_%s_add' % model_name))
+        add_url = reverse('admin:libretto_%s_add' % model_name)
+        self.assertURL(add_url)
+        self.assertSendForm(add_url)
         for obj in self.model.objects.all():
             self.assertURL(reverse(
                 'admin:libretto_%s_history' % model_name, args=[obj.pk]))
             self.assertURL(reverse(
                 'admin:libretto_%s_delete' % model_name, args=[obj.pk]))
-            self.assertURL(reverse(
-                'admin:libretto_%s_change' % model_name, args=[obj.pk]))
+            change_url = reverse(
+                'admin:libretto_%s_change' % model_name, args=[obj.pk])
+            self.assertURL(change_url)
+            self.assertSendForm(change_url)
 
     def testTemplateRenders(self):
         if not hasattr(self.model, 'get_absolute_url'):
