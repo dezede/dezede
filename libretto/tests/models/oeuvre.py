@@ -2,10 +2,9 @@
 
 from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
 from django.utils.encoding import smart_text
 from ...models import *
-from .utils import new, log_as_superuser, TransactionTestCase
+from .utils import new, TransactionTestCase
 
 
 class OeuvreTestCase(TransactionTestCase):
@@ -49,8 +48,6 @@ class OeuvreTestCase(TransactionTestCase):
                             titre_secondaire='Imposteur',
                             genre=comedie)
         self.tartuffe.caracteristiques.add(cinq_actes_vers)
-        # Test client
-        log_as_superuser(self)
 
     def testClean(self, excluded=()):
         with self.assertRaises(ValidationError):

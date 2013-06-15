@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.utils.encoding import smart_text
 from ...models import *
-from .utils import new, log_as_superuser, TransactionTestCase
+from .utils import new, TransactionTestCase
 
 
 class IndividuTestCase(TransactionTestCase):
@@ -19,8 +19,6 @@ class IndividuTestCase(TransactionTestCase):
         self.piaf = new(Individu, nom='Gassion', pseudonyme='La Môme Piaf',
                         designation='S', titre='F')
         self.piaf.prenoms.add(edith, giovanna)
-        # Test client
-        log_as_superuser(self)
 
     def testComputedNames(self):
         self.assertEqual(smart_text(self.moliere), 'Molière')
