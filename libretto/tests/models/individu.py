@@ -31,27 +31,27 @@ class IndividuTestCase(CommonTestCase):
 
     def testHTMLRenders(self):
         moliere_url = self.moliere.get_absolute_url()
-        self.assertEqual(self.moliere.html(),
-                         '<a href="%(url)s">'
-                         '<span class="sc">Molière</span></a>'
-                         % {'url': moliere_url})
-        self.assertEqual(self.moliere.nom_complet(),
-                         '<a href="%(url)s">Jean-Baptiste '
-                         '<span class="sc">Poquelin</span>, '
-                         'dit Molière</a>'
-                         % {'url': moliere_url})
+        self.assertHTMLEqual(self.moliere.html(),
+                             '<a href="%(url)s">'
+                             '<span class="sc">Molière</span></a>'
+                             % {'url': moliere_url})
+        self.assertHTMLEqual(self.moliere.nom_complet(),
+                             '<a href="%(url)s">Jean-Baptiste '
+                             '<span class="sc">Poquelin</span>, '
+                             'dit Molière</a>'
+                             % {'url': moliere_url})
         piaf_url = self.piaf.get_absolute_url()
-        self.assertEqual(self.piaf.html(),
-                         '<a href="%(url)s">'
-                         '<span class="sc">Gassion</span> '
-                         '(<span title="\xc9dith">\xc9.</span>), '
-                         'dite La Môme Piaf</a>'
-                         % {'url': piaf_url})
-        self.assertEqual(self.piaf.nom_complet(),
-                         '<a href="%(url)s">Édith Giovanna '
-                         '<span class="sc">Gassion</span>, '
-                         'dite La Môme Piaf</a>'
-                         % {'url': piaf_url})
+        self.assertHTMLEqual(self.piaf.html(),
+                             '<a href="%(url)s">'
+                             '<span class="sc">Gassion</span> '
+                             '(<span title="\xc9dith">\xc9.</span>), '
+                             'dite La Môme Piaf</a>'
+                             % {'url': piaf_url})
+        self.assertHTMLEqual(self.piaf.nom_complet(),
+                             '<a href="%(url)s">Édith Giovanna '
+                             '<span class="sc">Gassion</span>, '
+                             'dite La Môme Piaf</a>'
+                             % {'url': piaf_url})
 
     def testTemplateRenders(self):
         for individu in Individu.objects.all():
