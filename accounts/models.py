@@ -19,7 +19,8 @@ class HierarchicUserManager(TreeManager, UserManager):
 class HierarchicUser(MPTTModel, AbstractUser):
     mentor = TreeForeignKey(
         'self', null=True, blank=True, related_name='disciples',
-        verbose_name=_('mentor'), limit_choices_to={'willing_to_be_mentor__exact': True})
+        verbose_name=_('mentor'),
+        limit_choices_to={'willing_to_be_mentor__exact': True})
     willing_to_be_mentor = BooleanField(
         _('Veut être mentor'), default=False)
 
