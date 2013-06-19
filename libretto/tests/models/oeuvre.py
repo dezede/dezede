@@ -4,10 +4,10 @@ from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.utils.encoding import smart_text
 from ...models import *
-from .utils import new, TransactionTestCase
+from .utils import new, CommonTestCase
 
 
-class OeuvreTestCase(TransactionTestCase):
+class OeuvreTestCase(CommonTestCase):
     model = Oeuvre
 
     def setUp(self):

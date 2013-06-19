@@ -2,12 +2,41 @@
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
-
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'User'
+        db.create_table(u'auth_user', (
+            (u'id',
+             self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('password',
+             self.gf('django.db.models.fields.CharField')(max_length=128)),
+            ('last_login', self.gf('django.db.models.fields.DateTimeField')(
+                default=datetime.datetime.now)),
+            ('is_superuser',
+             self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('username',
+             self.gf('django.db.models.fields.CharField')(unique=True,
+                                                          max_length=30)),
+            ('first_name',
+             self.gf('django.db.models.fields.CharField')(max_length=30,
+                                                          blank=True)),
+            ('last_name',
+             self.gf('django.db.models.fields.CharField')(max_length=30,
+                                                          blank=True)),
+            ('email',
+             self.gf('django.db.models.fields.EmailField')(max_length=75,
+                                                           blank=True)),
+            ('is_staff',
+             self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('is_active',
+             self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('date_joined', self.gf('django.db.models.fields.DateTimeField')(
+                default=datetime.datetime.now)),
+        ))
+        db.send_create_signal(u'auth', ['User'])
+
         # Adding model 'StudentProfile'
         db.create_table('accounts_studentprofile', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -16,11 +45,10 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('accounts', ['StudentProfile'])
 
-
     def backwards(self, orm):
         # Deleting model 'StudentProfile'
         db.delete_table('accounts_studentprofile')
-
+        db.delete_table('auth_user')
 
     models = {
         'accounts.studentprofile': {

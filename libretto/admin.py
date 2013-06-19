@@ -30,7 +30,8 @@ class CustomBaseModel(BaseModelAdmin):
         if not has_class_permission:
             return False
         user = request.user
-        if obj is not None and not user.is_superuser and user != obj.owner:
+        if obj is not None and not user.is_superuser \
+                and obj.owner not in user.get_descendants(include_self=True):
             return False
         return True
 
@@ -52,7 +53,8 @@ class CustomBaseModel(BaseModelAdmin):
         user = request.user
         objects = self.model.objects.all()
         if not user.is_superuser and IS_POPUP_VAR not in request.REQUEST:
-            objects = objects.filter(owner=user)
+            objects = objects.filter(
+                owner__in=user.get_descendants(include_self=True))
         return objects
 
 

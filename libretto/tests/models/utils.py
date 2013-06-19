@@ -1,8 +1,7 @@
-import re
 from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
-from django.test import TransactionTestCase as OriginalTransactionTestCase
+from django.test import TestCase
 from django.utils import six
 import johnny.cache
 
@@ -11,7 +10,7 @@ def new(Model, **kwargs):
     return Model.objects.get_or_create(**kwargs)[0]
 
 
-class TransactionTestCase(OriginalTransactionTestCase):
+class CommonTestCase(TestCase):
     cleans_up_after_itself = True
     model = None
 
@@ -30,16 +29,18 @@ class TransactionTestCase(OriginalTransactionTestCase):
         self.assertTrue(is_logged)
 
     def _pre_setup(self):
-        super(TransactionTestCase, self)._pre_setup()
+        super(CommonTestCase, self)._pre_setup()
         self.log_as_superuser()
         johnny.cache.disable()
 
-    def assertURL(self, url, data=None, method='get', status_codes=(200,)):
+    def assertURL(self, url, data=None, method='get', status_codes=(200,),
+                  follow=False):
         if data is None:
             data = {}
-        response = getattr(self.client, method)(url, data=data)
+        response = getattr(self.client, method)(url, data=data, follow=follow)
         self.assertIn(response.status_code, status_codes)
         self.assertIsInstance(response.content, six.string_types)
+        return response
 
     def assertSendForm(self, url, method='post'):
         soup = BeautifulSoup(self.client.get(url).content)

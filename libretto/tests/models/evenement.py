@@ -5,16 +5,16 @@ import os
 from django.core.urlresolvers import reverse
 from django.utils.encoding import smart_text
 from ...models import *
-from .utils import TransactionTestCase
+from .utils import CommonTestCase
 
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
 
-class EvenementTestCase(TransactionTestCase):
+class EvenementTestCase(CommonTestCase):
     model = Evenement
     fixtures = [
-        os.path.join(PATH, 'fixtures/auth.user.json'),
+        os.path.join(PATH, 'fixtures/accounts.hierarchicuser.json'),
         os.path.join(PATH, 'fixtures/evenement.json'),
     ]
 

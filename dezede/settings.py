@@ -229,8 +229,8 @@ GRAPPELLI_INDEX_DASHBOARD = 'dezede.dashboard.CustomIndexDashboard'
 GRAPPELLI_ADMIN_TITLE = u'<a href="/evenements/">Dezède</a>'
 
 ACCOUNT_ACTIVATION_DAYS = 7
-AUTH_PROFILE_MODULE = 'accounts.StudentProfile'
-LOGIN_REDIRECT_URL = '/profils/'
+AUTH_USER_MODEL = 'accounts.HierarchicUser'
+LOGIN_REDIRECT_URL = '/'
 
 TINYMCE_FILEBROWSER = True
 TINYMCE_DEFAULT_CONFIG = {

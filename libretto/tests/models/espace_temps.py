@@ -4,10 +4,10 @@ from __future__ import unicode_literals
 from datetime import date
 from django.utils.encoding import smart_text
 from ...models import *
-from .utils import new, TransactionTestCase
+from .utils import new, CommonTestCase
 
 
-class LieuTestCase(TransactionTestCase):
+class LieuTestCase(CommonTestCase):
     model = Lieu
 
     def setUp(self):
@@ -24,7 +24,7 @@ class LieuTestCase(TransactionTestCase):
                          'Rouen, Théâtre des Arts')
 
 
-class SaisonTestCase(TransactionTestCase):
+class SaisonTestCase(CommonTestCase):
     model = Saison
 
     def setUp(self):
