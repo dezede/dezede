@@ -32,6 +32,8 @@ class CommonTestCase(TestCase):
         super(CommonTestCase, self)._pre_setup()
         self.log_as_superuser()
         johnny.cache.disable()
+        if self.model is not None:
+            self.model_name = self.model.__name__.lower()
 
     def assertURL(self, url, data=None, method='get', status_codes=(200,),
                   follow=False):
@@ -67,7 +69,7 @@ class CommonTestCase(TestCase):
         if self.model is None:
             return
 
-        model_name = self.model.__name__.lower()
+        model_name = self.model_name
         self.assertURL(reverse('admin:libretto_%s_changelist' % model_name))
         add_url = reverse('admin:libretto_%s_add' % model_name)
         self.assertURL(add_url)
@@ -81,6 +83,17 @@ class CommonTestCase(TestCase):
                 'admin:libretto_%s_change' % model_name, args=[obj.pk])
             self.assertURL(change_url)
             self.assertSendForm(change_url)
+
+    def testAdminAutocomplete(self):
+        if self.model is None \
+                or not hasattr(self.model, 'autocomplete_search_fields'):
+            return
+
+        self.assertURL(reverse('grp_autocomplete_lookup'), {
+            'app_label': self.model._meta.app_label,
+            'model_name': self.model_name,
+            'term': 'et',
+        })
 
     def testTemplateRenders(self):
         if not hasattr(self.model, 'get_absolute_url'):
