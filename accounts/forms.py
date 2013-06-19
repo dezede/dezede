@@ -47,7 +47,6 @@ class UserRegistrationForm(RegistrationForm):
                 PrependedText('username', '<i class="icon-user"></i>',
                               active=True),
                 'password1', 'password2',
-
             ),
             Fieldset(
                 _('Mentorat'),
