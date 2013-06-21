@@ -5,6 +5,15 @@ Projet Dezède
 :Auteur: Bertrand Bordage
 :Copyright: Bertrand Bordage © 2011-2013
 
+|travis|_
+|coveralls|_
+
+.. |travis| image:: https://travis-ci.org/dezede/dezede.png
+.. _travis: https://travis-ci.org/dezede/dezede
+
+.. |coveralls| image:: https://coveralls.io/repos/dezede/dezede/badge.png
+.. _coveralls: https://coveralls.io/r/dezede/dezede
+
 .. contents::
 
 
@@ -46,7 +55,6 @@ Paquet          Version
 nano
 postgresql      9.1
 python2.7       2.7.3
-python-psycopg2 2.4.5
 python-pip      1.1
 python-docutils 0.8.1
 memcached       1.4.14

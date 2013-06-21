@@ -30,7 +30,7 @@ class GrantToAdmin(DetailView):
         context = super(GrantToAdmin, self).get_context_data(**kwargs)
         current_user = self.request.user
         user_to_be_granted = self.object
-        if current_user != user_to_be_granted.student_profile.professor:
+        if current_user != user_to_be_granted.mentor:
             raise PermissionDenied
         if user_to_be_granted.is_staff:
             context['already_staff'] = True
@@ -43,6 +43,7 @@ class MyRegistrationView(RegistrationView):
     form_class = UserRegistrationForm
 
     def form_valid(self, request, form):
+        # Taken from the overriden method.
         new_user = self.register(request, **form.cleaned_data)
         form.save(request, new_user)
         success_url = self.get_success_url(request, new_user)

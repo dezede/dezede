@@ -1,14 +1,13 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.test import Client, TransactionTestCase
 from django.utils.encoding import smart_text
 from ...models import *
-from .utils import new, log_as_superuser
+from .utils import new, CommonTestCase
 
 
-class IndividuTestCase(TransactionTestCase):
-    cleans_up_after_itself = True
+class IndividuTestCase(CommonTestCase):
+    model = Oeuvre
 
     def setUp(self):
         jb = new(Prenom, prenom='Jean-Baptiste', favori=True, classement=1.0)
@@ -20,9 +19,6 @@ class IndividuTestCase(TransactionTestCase):
         self.piaf = new(Individu, nom='Gassion', pseudonyme='La Môme Piaf',
                         designation='S', titre='F')
         self.piaf.prenoms.add(edith, giovanna)
-        # Test client
-        self.client = Client()
-        log_as_superuser(self)
 
     def testComputedNames(self):
         self.assertEqual(smart_text(self.moliere), 'Molière')
@@ -35,29 +31,28 @@ class IndividuTestCase(TransactionTestCase):
 
     def testHTMLRenders(self):
         moliere_url = self.moliere.get_absolute_url()
-        self.assertEqual(self.moliere.html(),
-                         '<a href="%(url)s">'
-                         '<span class="sc">Molière</span></a>'
-                         % {'url': moliere_url})
-        self.assertEqual(self.moliere.nom_complet(),
-                         '<a href="%(url)s">Jean-Baptiste '
-                         '<span class="sc">Poquelin</span>, '
-                         'dit Molière</a>'
-                         % {'url': moliere_url})
+        self.assertHTMLEqual(self.moliere.html(),
+                             '<a href="%(url)s">'
+                             '<span class="sc">Molière</span></a>'
+                             % {'url': moliere_url})
+        self.assertHTMLEqual(self.moliere.nom_complet(),
+                             '<a href="%(url)s">Jean-Baptiste '
+                             '<span class="sc">Poquelin</span>, '
+                             'dit Molière</a>'
+                             % {'url': moliere_url})
         piaf_url = self.piaf.get_absolute_url()
-        self.assertEqual(self.piaf.html(),
-                         '<a href="%(url)s">'
-                         '<span class="sc">Gassion</span> '
-                         '(<span title="\xc9dith">\xc9.</span>), '
-                         'dite La Môme Piaf</a>'
-                         % {'url': piaf_url})
-        self.assertEqual(self.piaf.nom_complet(),
-                         '<a href="%(url)s">Édith Giovanna '
-                         '<span class="sc">Gassion</span>, '
-                         'dite La Môme Piaf</a>'
-                         % {'url': piaf_url})
+        self.assertHTMLEqual(self.piaf.html(),
+                             '<a href="%(url)s">'
+                             '<span class="sc">Gassion</span> '
+                             '(<span title="\xc9dith">\xc9.</span>), '
+                             'dite La Môme Piaf</a>'
+                             % {'url': piaf_url})
+        self.assertHTMLEqual(self.piaf.nom_complet(),
+                             '<a href="%(url)s">Édith Giovanna '
+                             '<span class="sc">Gassion</span>, '
+                             'dite La Môme Piaf</a>'
+                             % {'url': piaf_url})
 
     def testTemplateRenders(self):
-        for individu in [self.moliere, self.piaf]:
-            response = self.client.get(individu.get_absolute_url())
-            self.assertEqual(response.status_code, 200)
+        for individu in Individu.objects.all():
+            self.assertURL(individu.get_absolute_url())

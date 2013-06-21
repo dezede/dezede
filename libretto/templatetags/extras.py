@@ -55,11 +55,18 @@ html_latex_bindings = (
 
 @register.filter
 def html_to_latex(text):
-    """
+    r"""
     Permet de convertir du HTML en syntaxe LaTeX.
 
     Attention, ce convertisseur est parfaitement incomplet et ne devrait pas
     être utilisé en dehors d'un contexte très précis.
+
+    >>> print(html_to_latex('<h1>Bonjour à tous</h1>'))
+    \part*{Bonjour à tous}
+    >>> print(html_to_latex('<span style="font-series: bold; font-variant: small-caps;">Écriture romaine</span>'))
+    \textsc{Écriture romaine}
+    >>> print(html_to_latex('Vive les <!-- cons -->poilus !'))
+    Vive les poilus !
     """
     soup = BeautifulSoup(text)
     for html_selectors, latex_open_tag, latex_close_tag in html_latex_bindings:

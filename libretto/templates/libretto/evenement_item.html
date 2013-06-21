@@ -9,6 +9,9 @@
 <h2 style="text-align: center;">
   <a href="{{ evenement.get_absolute_url }}">
     {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
+    {% if evenement.ancrage_fin %}
+      − {{ evenement.ancrage_fin.calc_date|safe }}
+    {% endif %}
   </a>
 </h2>
 

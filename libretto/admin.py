@@ -30,7 +30,8 @@ class CustomBaseModel(BaseModelAdmin):
         if not has_class_permission:
             return False
         user = request.user
-        if obj is not None and not user.is_superuser and user != obj.owner:
+        if obj is not None and not user.is_superuser \
+                and obj.owner not in user.get_descendants(include_self=True):
             return False
         return True
 
@@ -52,7 +53,8 @@ class CustomBaseModel(BaseModelAdmin):
         user = request.user
         objects = self.model.objects.all()
         if not user.is_superuser and IS_POPUP_VAR not in request.REQUEST:
-            objects = objects.filter(owner=user)
+            objects = objects.filter(
+                owner__in=user.get_descendants(include_self=True))
         return objects
 
 
@@ -425,7 +427,7 @@ class LieuAdmin(AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom', 'parent__nom',)
-    list_filter = ('nature',)
+    list_filter = (PolymorphicChildModelFilter, 'nature',)
     raw_id_fields = ('parent', 'illustrations', 'documents',)
     autocomplete_lookup_fields = {
         'fk': ['parent'],
@@ -446,6 +448,26 @@ class LieuAdmin(AutoriteAdmin):
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
 #        }),
+    )
+
+
+class LieuChildAdmin(PolymorphicChildModelAdmin, LieuAdmin):
+    base_model = Lieu
+
+
+class LieuDiversAdmin(LieuChildAdmin):
+    pass
+
+
+class InstitutionAdmin(LieuChildAdmin):
+    pass
+
+
+class LieuParentAdmin(PolymorphicParentModelAdmin, LieuAdmin):
+    base_model = Lieu
+    child_models = (
+        (LieuDivers, LieuDiversAdmin),
+        (Institution, InstitutionAdmin),
     )
 
 
@@ -835,7 +857,7 @@ site.register(Document, DocumentAdmin)
 site.register(Illustration, IllustrationAdmin)
 site.register(Etat, EtatAdmin)
 site.register(NatureDeLieu, NatureDeLieuAdmin)
-site.register(Lieu, LieuAdmin)
+site.register(Lieu, LieuParentAdmin)
 site.register(Saison, SaisonAdmin)
 site.register(Profession, ProfessionAdmin)
 site.register(AncrageSpatioTemporel, AncrageSpatioTemporelAdmin)

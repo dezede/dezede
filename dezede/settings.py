@@ -106,7 +106,7 @@ MEDIA_ROOT = os.path.join(SITE_ROOT, 'media/')
 MEDIA_URL = SITE_URL + 'media/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = ''
+SECRET_KEY = 'replace_this_with_some_random_string'
 
 WSGI_APPLICATION = 'dezede.wsgi.application'
 
@@ -123,15 +123,15 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'johnny.middleware.LocalStoreClearMiddleware',
     'johnny.middleware.QueryCacheMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'dezede.middlewares.MaintenanceModeMiddleware',
@@ -177,6 +177,8 @@ INSTALLED_APPS = (
     'typography',
     'django.contrib.flatpages',
     'django.contrib.markup',
+    'polymorphic_tree',
+    'polymorphic',
     'mptt',
     'endless_pagination',
     'django_tables2',
@@ -191,14 +193,13 @@ INSTALLED_APPS = (
     'ajax_select',
     'filebrowser',
     'reversion',
-    'polymorphic',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'compressor',
-    'django_nose',
     'sekizai',
     'django_extensions',
     'south',
+    'django_nose',
     'debug_toolbar',
 )
 
@@ -228,8 +229,8 @@ GRAPPELLI_INDEX_DASHBOARD = 'dezede.dashboard.CustomIndexDashboard'
 GRAPPELLI_ADMIN_TITLE = u'<a href="/evenements/">Dezède</a>'
 
 ACCOUNT_ACTIVATION_DAYS = 7
-AUTH_PROFILE_MODULE = 'accounts.StudentProfile'
-LOGIN_REDIRECT_URL = '/profils/'
+AUTH_USER_MODEL = 'accounts.HierarchicUser'
+LOGIN_REDIRECT_URL = '/'
 
 TINYMCE_FILEBROWSER = True
 TINYMCE_DEFAULT_CONFIG = {

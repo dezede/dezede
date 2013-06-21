@@ -7,14 +7,14 @@ from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.sessions.models import Session
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
-    ForeignKey, TextField, Manager, PROTECT, Q, FieldDoesNotExist, Min
+    ForeignKey, TextField, Manager, PROTECT, Q, Min
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
-from mptt.fields import TreeForeignKey
+from mptt.managers import TreeManager
 from tinymce.models import HTMLField
 from cache_tools import invalidate_group, cached_ugettext_lazy as _
 from .functions import href
@@ -178,21 +178,24 @@ class PublishedQuerySet(CommonQuerySet):
             qs = self.filter(Q(etat__public=True) | Q(owner=request.user.pk))
 
         # Si le modèle est récursif, on retire les éléments isolés.
-        try:
-            parent_field = self.model._meta.get_field('parent')
-        except FieldDoesNotExist:
-            pass
-        else:
-            if isinstance(parent_field, TreeForeignKey):
-                qs = qs.order_by()
-                root_level = qs.aggregate(Min('level'))['level__min']
-                to_be_hidden = qs.filter(level__gt=root_level) \
-                    .exclude(parent__in=qs).values_list('lft', 'rght')
+        # Un élément isolé est un élément publié dont l'un des parents n'est
+        # pas publié.
+        mgr = self.model.objects
+        if isinstance(mgr, TreeManager):
+            parent = mgr.parent_attr
+            level = mgr.level_attr
+            lft = mgr.left_attr
+            rght = mgr.right_attr
 
-                lft_pk_list = []
-                for lft, rght in to_be_hidden:
-                    lft_pk_list.extend(range(lft, rght + 1))
-                qs = qs.exclude(lft__in=lft_pk_list)
+            qs = qs.order_by()
+            root_level = qs.aggregate(Min(level))[level + '__min'] or 0
+            to_be_hidden = qs.filter(**{level + '__gt': root_level}) \
+                .exclude(**{parent + '__in': qs}).values_list(lft, rght)
+
+            lft_pk_list = []
+            for lft, rght in to_be_hidden:
+                lft_pk_list.extend(range(lft, rght + 1))
+            qs = qs.exclude(**{lft + '__in': lft_pk_list})
         return qs
 
 

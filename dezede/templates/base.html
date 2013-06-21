@@ -23,7 +23,7 @@
             href="{% static 'css/styles.less' %}"/>
     {% endcompress %}
 
-    {% render_block 'css' postprocessor "dezede.postprocess_sekizai.compress" %}
+    {% render_block 'css' postprocessor 'compressor.contrib.sekizai.compress' %}
 
     {% compress js %}
       <script src="{% static 'js/jquery-1.7.1.min.js' %}"></script>
@@ -96,7 +96,7 @@
     <script>
       {% include 'base.execution.js' %}
     </script>
-    {% render_block 'js' postprocessor "dezede.postprocess_sekizai.compress" %}
+    {% render_block 'js' postprocessor 'compressor.contrib.sekizai.compress' %}
 
   </body>
 

@@ -14,9 +14,9 @@
         L’utilisateur « {{ object }} » fait déjà partie de l’équipe !
       {% endblocktrans %}
     {% else %}
-      {% url 'admin:auth_user_change' object.pk as change_user_url %}
+      {% url 'admin:accounts_hierarchicuser_change' object.pk as change_user_url %}
       {% blocktrans %}
-        {{ user.get_full_name }}, l’utilisateur « {{ object.get_full_name }} »
+        {{ user }}, l’utilisateur « {{ object }} »
         a été autorisé à accéder à l’interface d'administration suite à votre
         accord. Si vous souhaitez annuler cela,
         <a href="{{ change_user_url }}">

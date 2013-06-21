@@ -9,21 +9,26 @@ from django.utils.encoding import python_2_unicode_compatible, smart_text, \
     force_text
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy
-from mptt.managers import TreeManager
-from mptt.models import MPTTModel, TreeForeignKey
+from polymorphic_tree.managers import PolymorphicMPTTQuerySet, \
+    PolymorphicMPTTModelManager
+from polymorphic_tree.models import PolymorphicMPTTModel, \
+    PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
 from cache_tools import cached_ugettext as ugettext, \
     cached_pgettext as pgettext, cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
-                    UniqueSlugModel
+                    UniqueSlugModel, PublishedQuerySet
 from .evenement import Evenement
 from .functions import capfirst, href, date_html, str_list, ex
 from .individu import Individu
 from .oeuvre import Oeuvre
 
 
-__all__ = (b'NatureDeLieu', b'Lieu', b'Saison', b'AncrageSpatioTemporel')
+__all__ = (
+    b'NatureDeLieu', b'Lieu', b'LieuDivers', b'Institution', b'Saison',
+    b'AncrageSpatioTemporel'
+)
 
 
 @python_2_unicode_compatible
@@ -60,27 +65,34 @@ class NatureDeLieu(CommonModel, SlugModel):
         return 'nom__icontains',
 
 
-class LieuManager(TreeManager, PublishedManager):
+class LieuQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet):
     pass
 
 
+class LieuManager(PolymorphicMPTTModelManager, PublishedManager):
+    queryset_class = LieuQuerySet
+
+
 @python_2_unicode_compatible
-class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
+class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, db_index=True)
-    parent = TreeForeignKey('self', null=True, blank=True, db_index=True,
-                            related_name='enfants', verbose_name=_('parent'))
+    parent = PolymorphicTreeForeignKey(
+        'self', null=True, blank=True, db_index=True, related_name='enfants',
+        verbose_name=_('parent'))
     nature = ForeignKey(NatureDeLieu, related_name='lieux', db_index=True,
                         verbose_name=_('nature'), on_delete=PROTECT)
     historique = HTMLField(_('historique'), blank=True)
+
     objects = LieuManager()
 
     class MPTTMeta(object):
-        order_insertion_by = ['nom']
+        order_insertion_by = ('nom',)
 
     class Meta(object):
         verbose_name = ungettext_lazy('lieu ou institution',
-                                      'lieux ou institutions', 1)
-        verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
+                                      'lieux et institutions', 1)
+        verbose_name_plural = ungettext_lazy('lieu ou institution',
+                                             'lieux et institutions', 2)
         ordering = ('nom',)
         app_label = 'libretto'
         unique_together = ('nom', 'parent',)
@@ -142,6 +154,20 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     def autocomplete_search_fields():
         return ('nom__icontains',
                 'parent__nom__icontains')
+
+
+class LieuDivers(Lieu):
+    class Meta(object):
+        verbose_name = ungettext_lazy('lieu', 'lieux', 1)
+        verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
+        app_label = 'libretto'
+
+
+class Institution(Lieu):
+    class Meta(object):
+        verbose_name = ungettext_lazy('institution', 'institutions', 1)
+        verbose_name_plural = ungettext_lazy('institution', 'institutions', 2)
+        app_label = 'libretto'
 
 
 @python_2_unicode_compatible

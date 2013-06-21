@@ -1,15 +1,14 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.test import TransactionTestCase
+from datetime import date
 from django.utils.encoding import smart_text
 from ...models import *
-from datetime import date
-from .utils import new
+from .utils import new, CommonTestCase
 
 
-class SourceTestCase(TransactionTestCase):
-    cleans_up_after_itself = True
+class SourceTestCase(CommonTestCase):
+    model = Source
 
     def setUp(self):
         type_de_source = new(TypeDeSource, nom='compte rendu',

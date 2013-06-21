@@ -49,6 +49,10 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
     a. dram. de la tour de bab.
     >>> print(abbreviate('adaptateur', 1, 4, tags=False))
     adapt.
+    >>> print(abbreviate('Fait à Quincampoix', 2, tags=False))
+    Fait à Quincamp.
+    >>> print(abbreviate('ceci est un test bidon', enabled=False))
+    ceci est un test bidon
     """
 
     if not enabled:

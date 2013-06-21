@@ -7,34 +7,30 @@ from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.sites.models import get_current_site
-from django.forms import CharField, ModelChoiceField, ModelMultipleChoiceField
+from django.forms import CharField, ModelChoiceField, \
+    ModelMultipleChoiceField, BooleanField
 from django.forms.widgets import CheckboxSelectMultiple
 from django.template.loader import render_to_string
-from django.utils.encoding import smart_text
 # FIXME: Remplacer ceci par RegistrationFormUniqueEmail quand Joann aura fini
 # de faire mumuse.
 from registration.forms import RegistrationForm
 from cache_tools import cached_ugettext_lazy as _
-from .models import StudentProfile
 
 
-def get_professors():
-    return get_user_model().objects.filter(is_superuser=True)
+def get_mentors():
+    return get_user_model().objects.filter(willing_to_be_mentor=True)
 
 
 def get_groups():
     return Group.objects.all()
 
 
-class UserField(ModelChoiceField):
-    def label_from_instance(self, obj):
-        return obj.get_full_name() or smart_text(obj)
-
-
 class UserRegistrationForm(RegistrationForm):
     first_name = CharField(label=_('Prénom(s)'))
     last_name = CharField(label=_('Nom'))
-    professor = UserField(queryset=get_professors(), label=_('Professeur'))
+    mentor = ModelChoiceField(queryset=get_mentors(), label=_('Mentor'))
+    willing_to_be_mentor = BooleanField(
+        required=False, label=_('Veut être mentor'))
     groups = ModelMultipleChoiceField(
         queryset=get_groups(), widget=CheckboxSelectMultiple,
         label=_('Groupes'))
@@ -48,16 +44,14 @@ class UserRegistrationForm(RegistrationForm):
                 Field('first_name', 'last_name', css_class='input-xlarge'),
                 PrependedText('email', '<i class="icon-envelope"></i>',
                               active=True),
-            ),
-            Fieldset(
-                _('Utilisateur'),
                 PrependedText('username', '<i class="icon-user"></i>',
                               active=True),
                 'password1', 'password2',
             ),
             Fieldset(
-                _('Étudiant'),
-                'professor',
+                _('Mentorat'),
+                'mentor',
+                'willing_to_be_mentor',
                 'groups',
             ),
             FormActions(
@@ -74,17 +68,13 @@ class UserRegistrationForm(RegistrationForm):
         user.first_name = data['first_name']
         user.last_name = data['last_name']
         user.groups = data['groups']
+        user.mentor = data['mentor']
+        user.willing_to_be_mentor = data['willing_to_be_mentor']
         user.save()
-
-        professor = data['professor']
-        profile = StudentProfile.objects.create(
-            user=user,
-            professor=professor)
-        profile.save()
 
         site_url = 'http://' + get_current_site(request).domain
         email_content = render_to_string(
             'accounts/grant_to_admin_demand_email.txt',
-            {'user': user, 'site_url': site_url})
-        professor.email_user(_('Demande d’accès étudiant'),
-                             email_content)
+            {'user': user, 'site_url': site_url, 'mentor': user.mentor})
+        user.mentor.email_user(_('[Dezède] Demande de mentorat'),
+                               email_content)

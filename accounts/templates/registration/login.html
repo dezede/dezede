@@ -11,7 +11,8 @@
     <h1>{% trans "Déjà connecté" %}</h1>
     {% url 'auth_logout' as url %}
     {% blocktrans %}
-      Vous êtes déjà connecté.  Souhaitez-vous <a href="{{ url }}">vous déconnecter</a> ?
+      Vous êtes déjà connecté.
+      Souhaitez-vous <a href="{{ url }}">vous déconnecter</a> ?
     {% endblocktrans %}
   {% else %}
     <form method="POST" class="well well-small form-horizontal">

@@ -8,24 +8,28 @@ from django.db import models, connection
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        Partie = orm['libretto.Partie']
+        Lieu = orm['libretto.Lieu']
         ContentType = orm['contenttypes.ContentType']
-        role_ct = ContentType.objects.get_or_create(
-            app_label='libretto', model='role')[0]
-        instrument_ct = ContentType.objects.get_or_create(
-            app_label='libretto', model='instrument')[0]
+        institution_ct = ContentType.objects.get_or_create(
+            app_label='libretto', model='institution')[0]
+        lieudivers_ct = ContentType.objects.get_or_create(
+            app_label='libretto', model='lieudivers')[0]
 
         cursor = connection.cursor()
 
-        roles = Partie.objects.filter(nom__regex=r'^[A-Z]')
-        roles.update(polymorphic_ctype=role_ct)
-        for role in roles:
-            cursor.execute('INSERT INTO libretto_role VALUES (%s)', (role.pk,))
+        institution_natures = (
+            'institution',
+        )
 
-        instruments = Partie.objects.exclude(nom__regex=r'^[A-Z]')
-        instruments.update(polymorphic_ctype=instrument_ct)
-        for instrument in instruments:
-            cursor.execute('INSERT INTO libretto_instrument VALUES (%s)', (instrument.pk,))
+        institutions = Lieu.objects.filter(nature__nom__in=institution_natures)
+        institutions.update(polymorphic_ctype=institution_ct)
+        for institution in institutions:
+            cursor.execute('INSERT INTO libretto_institution VALUES (%s)', (institution.pk,))
+
+        lieux = Lieu.objects.exclude(nature__nom__in=institution_natures)
+        lieux.update(polymorphic_ctype=lieudivers_ct)
+        for lieu in lieux:
+            cursor.execute('INSERT INTO libretto_lieudivers VALUES (%s)', (lieu.pk,))
 
     def backwards(self, orm):
         raise RuntimeError("Cannot reverse this migration.")
