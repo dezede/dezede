@@ -2,11 +2,14 @@
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView
 from registration.backends.default.views import ActivationView
-from .views import MyRegistrationView, GrantToAdmin
+from .views import MyRegistrationView, GrantToAdmin, EvenementsGraph
 
 
 urlpatterns = patterns('',
-    url(r'^equipe/(?P<pk>\d+)', GrantToAdmin.as_view(), name='grant_to_admin'),
+    url(r'^evenements_graph.svg$', EvenementsGraph.as_view(),
+        name='evenements_graph'),
+    url(r'^equipe/(?P<pk>\d+)$', GrantToAdmin.as_view(),
+        name='grant_to_admin'),
     url(r'^activation/complete/$',
         TemplateView.as_view(
             template_name='registration/activation_complete.html'),

@@ -1,14 +1,19 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, division
+import datetime
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import get_current_site
 from django.core.exceptions import PermissionDenied
+from django.db import connection
+from django.db.models import Count
+from django.http import Http404
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
-from django.views.generic import DetailView
+from django.views.generic import DetailView, TemplateView
 from registration.backends.default.views import RegistrationView
 from .forms import UserRegistrationForm
+from libretto.models import AncrageSpatioTemporel
 
 
 class GrantToAdmin(DetailView):
@@ -53,3 +58,77 @@ class MyRegistrationView(RegistrationView):
             return redirect(to, *args, **kwargs)
         except ValueError:
             return redirect(success_url)
+
+
+class EvenementsGraph(TemplateView):
+    template_name = 'accounts/include/evenements_graph.svg'
+    displayed_range = 300  # years
+    rect_size = 16  # pixels
+    rect_margin = 4  # pixels
+    hue = 220  # degrees
+    legend_levels = 6
+
+    def get_context_data(self, **kwargs):
+        context = super(EvenementsGraph, self).get_context_data(**kwargs)
+
+        qs = AncrageSpatioTemporel.objects.all()
+
+        username = self.request.GET.get('username')
+
+        if username is not None:
+            User = get_user_model()
+            if not User.objects.filter(username=username).exists():
+                raise Http404
+
+            qs = qs.filter(evenements_debuts__owner__username=username)
+        else:
+            qs = qs.filter(evenements_debuts__isnull=False)
+
+        context['data'] = data = list(
+            qs
+            .extra({'year': connection.ops.date_trunc_sql('year', 'date')})
+            .values('year').annotate(n=Count('evenements_debuts'))
+            .order_by('year'))
+
+        for d in data:
+            d['year'] = d['year'].year
+
+        years = [d['year'] for d in data]
+        current_year = datetime.datetime.now().year
+        if not years:
+            years = [current_year]
+        min_year = min(years)
+        max_year = max(years)
+
+        margin = max(0, (self.displayed_range - (max_year - min_year)) // 2)
+
+        max_upper_margin = max(0, current_year - max_year)
+        margin_offset = max(0, margin - max_upper_margin)
+
+        context['min_year'] = min_year = min_year - (margin + margin_offset)
+        context['max_year'] = max_year = max_year + (margin - margin_offset)
+
+        counts = [d['n'] for d in data] + [0]
+        context['max_n'] = max(counts)
+
+        # Fill data with missing years between min_year and max_year.
+        for year in range(min_year, max_year + 1):
+            if year not in years:
+                data.append({'year': year, 'n': 0})
+        context['data'] = sorted(data, key=lambda d: d['year'])
+
+        context['size'] = self.rect_size
+        context['margin'] = self.rect_margin
+        context['hue'] = self.hue
+
+        def levels_iterator(start, end, n_steps):
+            step = (end - start) / (n_steps - 1)
+            i = start
+            while i <= end:
+                yield i
+                i += step
+
+        context['legend_levels'] = list(
+            levels_iterator(0, 1, self.legend_levels))
+
+        return context
