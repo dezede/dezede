@@ -34,7 +34,7 @@
         }
       </style>
 
-      <g transform="translate({{ margin|divide:4 }}, {{ size|multiply:3 }})">
+      <g transform="translate({{ margin|idivide:4 }}, {{ size|multiply:3 }})">
 
         <g class="graph">
           {% for d in data %}
