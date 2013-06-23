@@ -7,33 +7,25 @@
   {% get_current_language as LANGUAGE_CODE %}
 
   {% language 'en' %}
-    {% with hemisize=size|divide:2 doublesize=size|multiply:2 size_w_margin=size|add:margin first_decade=min_year|idivide:10|multiply:10 decades=max_year|substract:min_year|idivide:10 %}
+    {% with hemisize=size|divide:2 doublesize=size|multiply:2 size_w_margin=size|add:margin figure_margin=1|substract:figure_size_factor|multiply:size first_decade=min_year|idivide:10|multiply:10 decades=max_year|substract:min_year|idivide:10 %}
 
       <svg class="coverage" width="100%" height="{{ size_w_margin|multiply:16 }}">
 
         <style>
           .coverage {
             stroke: grey;
-            stroke-width: 1px;
-          }
-          .coverage rect {
-            stroke-width: 0;
-            fill-opacity: 1;
+            stroke-width: {{ margin|divide:25 }}px;
           }
           .coverage text {
             fill: grey;
             stroke-width: 0;
-            font-size: {{ size_w_margin }}px;
+            font-size: {{ size }}px;
           }
           .coverage .graph rect:hover {
-            stroke-width: {{ margin|divide:2 }}px;
-          }
-          .coverage .graph text {
-            writing-mode: tb;
-            text-anchor: end;
+            stroke-width: {{ margin|divide:4 }}px;
           }
           .coverage .legend text {
-            alignment-baseline: central;
+            dominant-baseline: central;
           }
         </style>
 
@@ -46,8 +38,9 @@
                       title="{% language LANGUAGE_CODE %}{{ d.year }} : {{ d.n }} {% trans 'événements' %}{% endlanguage %}"
                       style="fill: {% hsv_to_hex hue d.n|log_ratio:max_n 1 %};" />
                 {% if d.year|modulo:20 == 0 %}
-                  <text x="{{ x_offset|add:hemisize }}" y="{{ y_offset|add:hemisize }}" class="year"
-                        font-size="{{ doublesize }}">{{ d.year }}</text>
+                  <g transform="translate({{ x_offset|add:size|substract:figure_margin }} {{ y_offset|substract:margin }})">
+                    <text class="year" transform="rotate(-90)">{{ d.year }}</text>
+                  </g>
                 {% endif %}
               {% endwith %}
             {% endfor %}

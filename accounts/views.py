@@ -65,6 +65,9 @@ class EvenementsGraph(TemplateView):
     displayed_range = 300  # years
     rect_size = 16  # pixels
     rect_margin = 4  # pixels
+    # When we set the font size, the figures are smaller than
+    # the specified size.
+    figure_size_factor = 0.8
     hue = 220  # degrees
     legend_levels = 6
 
@@ -119,6 +122,7 @@ class EvenementsGraph(TemplateView):
 
         context['size'] = self.rect_size
         context['margin'] = self.rect_margin
+        context['figure_size_factor'] = self.figure_size_factor
         context['hue'] = self.hue
 
         def levels_iterator(start, end, n_steps):
