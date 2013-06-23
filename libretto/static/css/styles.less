@@ -12,17 +12,17 @@
 @baseFontFamily: @serifFontFamily;
 
 @textColor: contrast(@mainBackground);
-@linkColor: spin(contrast(@mainBackground,
-                          hsv(hue(@mainBackground), 100%, 40%),
-                          hsv(hue(@mainBackground), 100%, 60%)),
-                 -120);
-@linkColorHover: lighten(desaturate(@linkColor, 40%), 20%);
+@linkColor: spin(lighten(desaturate(@bodyBackground, 20%), 25%), 0);
 @placeholderText: @gray;
 
 @navbarBackgroundHighlight: desaturate(lighten(@mainBackground, 10%), 10%);
 @navbarLinkColor: @gray;
 @navbarLinkColorHover: @grayDarker;
 @navbarLinkColorActive: @gray;
+
+@btnPrimaryBackgroundHighlight: spin(@btnPrimaryBackground, 10%);
+
+@wellBackground: darken(@mainBackground, 3%);
 
 // Custom variables
 
@@ -35,9 +35,8 @@
 @footerYPadding: 15px;
 @footerHeight: 50px;
 @footerHeight480: 80px;
-@mainBackground: hsv(220, 5%, 100%);
-@bodyBackground: desaturate(darken(@mainBackground, 30%), 50%);
-@wellBackground: lighten(@mainBackground, 5%);
+@mainBackground: hsv(51, 17%, 100%);
+@bodyBackground: hsv(0, 100%, 70%);
 
 @font-face {
   font-family: 'Gentium Basic';
@@ -227,7 +226,7 @@ blockquote {
 }
 
 .content-part {
-  @localBackground: lighten(@mainBackground, 3%);
+  @localBackground: @wellBackground;
   border: 1px solid darken(@localBackground, 10%);
   .border-radius(@borderRadiusLarge);
   background: @localBackground;
@@ -357,7 +356,7 @@ input, button {
 }
 
 .ui-slider-range.ui-widget-header {
-  #gradient > .vertical(@linkColorHover, @linkColor);
+  #gradient > .vertical(@btnPrimaryBackground, @btnDangerBackgroundHighlight);
 }
 
 ul.ui-autocomplete li a, .results_on_deck > div {
