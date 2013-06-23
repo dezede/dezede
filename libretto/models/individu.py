@@ -72,6 +72,9 @@ class TypeDeParenteDIndividus(CommonModel):
     def pluriel(self):
         return calc_pluriel(self)
 
+    def relatif_pluriel(self):
+        return calc_pluriel(self, 'nom_relatif')
+
     def __str__(self):
         return self.nom
 

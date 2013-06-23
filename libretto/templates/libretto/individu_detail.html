@@ -53,30 +53,12 @@
 
     {% regroup individu.parentes.all by type as parentes_list %}
     {% for parentes in parentes_list %}
-      <th>
-        {% if parentes.list|length_is:'1' %}
-          {{ parentes.grouper.nom|capfirst }}
-        {% else %}
-          {{ parentes.grouper.pluriel|capfirst }}
-        {% endif %}
-      </th>
-      {% for parente in parentes.list %}
-        <td>{{ parente.parent.html }}</td>
-      {% endfor %}
+      {% data_table_list parentes.list 'parent.html' verbose_name=parentes.grouper.nom verbose_name_plural=parentes.grouper.pluriel number_if_one=False %}
     {% endfor %}
 
     {% regroup individu.enfances.all by type as enfances_list %}
     {% for enfances in enfances_list %}
-      <th>
-        {% if enfances.list|length_is:'1' %}
-          {{ enfances.grouper.nom_relatif|capfirst }}
-        {% else %}
-          {{ enfances.grouper.relatif_pluriel|capfirst }}
-        {% endif %}
-      </th>
-      {% for parente in enfances.list %}
-        <td>{{ parente.enfant.html }}</td>
-      {% endfor %}
+      {% data_table_list enfances.list 'enfant.html' verbose_name=enfances.grouper.nom_relatif verbose_name_plural=enfances.grouper.relatif_pluriel number_if_one=False %}
     {% endfor %}
 
 
