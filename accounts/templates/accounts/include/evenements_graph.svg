@@ -14,11 +14,7 @@
         <style>
           .coverage {
             stroke: grey;
-            stroke-width: 1px;
-          }
-          .coverage rect {
-            stroke-width: 0;
-            fill-opacity: 1;
+            stroke-width: {{ margin|divide:25 }}px;
           }
           .coverage text {
             fill: grey;
@@ -26,7 +22,7 @@
             font-size: {{ size }}px;
           }
           .coverage .graph rect:hover {
-            stroke-width: {{ margin|divide:2 }}px;
+            stroke-width: {{ margin|divide:4 }}px;
           }
           .coverage .legend text {
             dominant-baseline: central;
