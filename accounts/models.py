@@ -2,13 +2,14 @@
 
 from __future__ import unicode_literals
 from django.contrib.auth.models import AbstractUser, UserManager
-from django.db.models import BooleanField
-from django.utils.encoding import python_2_unicode_compatible
+from django.db.models import BooleanField, permalink
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy
 from mptt.fields import TreeForeignKey
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel
 from cache_tools import cached_ugettext_lazy as _
+from libretto.models.functions import href
 
 
 class HierarchicUserManager(TreeManager, UserManager):
@@ -36,3 +37,13 @@ class HierarchicUser(MPTTModel, AbstractUser):
 
     def __str__(self):
         return self.get_full_name() or self.get_username()
+
+    def link(self):
+        return href(self.get_absolute_url(), smart_text(self))
+
+    def html(self):
+        return self.link()
+
+    @permalink
+    def get_absolute_url(self):
+        return 'user_profile', (self.username,)

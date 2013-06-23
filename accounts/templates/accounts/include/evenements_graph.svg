@@ -1,75 +1,75 @@
-{% extends 'base.html' %}
 {% load accounts_extra i18n %}
 
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+{% get_current_language as LANGUAGE_CODE %}
 
-{% block content %}
+{% language 'en' %}
+  {% with hemisize=size|divide:2 doublesize=size|multiply:2 size_w_margin=size|add:margin figure_margin=1|substract:figure_size_factor|multiply:size first_decade=min_year|idivide:10|multiply:10 decades=max_year|substract:min_year|idivide:10 %}
 
-  {% get_current_language as LANGUAGE_CODE %}
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="coverage"
+         width="{{ decades|add:2|multiply:size_w_margin }}"
+         height="{{ size_w_margin|multiply:15 }}">
 
-  {% language 'en' %}
-    {% with hemisize=size|divide:2 doublesize=size|multiply:2 size_w_margin=size|add:margin figure_margin=1|substract:figure_size_factor|multiply:size first_decade=min_year|idivide:10|multiply:10 decades=max_year|substract:min_year|idivide:10 %}
+      <style>
+        .coverage {
+          stroke: grey;
+          stroke-width: {{ margin|divide:25 }}px;
+        }
+        .coverage text {
+          fill: grey;
+          stroke-width: 0;
+          font-size: {{ size }}px;
+        }
+        .coverage .graph rect:hover {
+          stroke-width: {{ margin|divide:4 }}px;
+        }
+        .coverage .legend text {
+          dominant-baseline: central;
+        }
+      </style>
 
-      <svg class="coverage" width="100%" height="{{ size_w_margin|multiply:16 }}">
+      <g transform="translate({{ margin|divide:4 }}, {{ size|multiply:3 }})">
 
-        <style>
-          .coverage {
-            stroke: grey;
-            stroke-width: {{ margin|divide:25 }}px;
-          }
-          .coverage text {
-            fill: grey;
-            stroke-width: 0;
-            font-size: {{ size }}px;
-          }
-          .coverage .graph rect:hover {
-            stroke-width: {{ margin|divide:4 }}px;
-          }
-          .coverage .legend text {
-            dominant-baseline: central;
-          }
-        </style>
-
-        <g transform="translate({{ margin|divide:4 }}, {{ size|multiply:3 }})">
-
-          <g class="graph">
-            {% for d in data %}
-              {% with x_offset=d.year|substract:first_decade|idivide:10|multiply:size_w_margin y_offset=d.year|modulo:10|multiply:size_w_margin %}
-                <rect width="{{ size }}" height="{{ size }}" x="{{ x_offset }}" y="{{ y_offset }}"
-                      title="{% language LANGUAGE_CODE %}{{ d.year }} : {{ d.n }} {% trans 'événements' %}{% endlanguage %}"
-                      style="fill: {% hsv_to_hex hue d.n|log_ratio:max_n 1 %};" />
-                {% if d.year|modulo:20 == 0 %}
-                  <g transform="translate({{ x_offset|add:size|substract:figure_margin }} {{ y_offset|substract:margin }})">
-                    <text class="year" transform="rotate(-90)">{{ d.year }}</text>
-                  </g>
-                {% endif %}
-              {% endwith %}
-            {% endfor %}
-          </g>
-
-          {% with legend_width=legend_levels|length|multiply:size %}
-            <g transform="translate({{ decades|multiply:size_w_margin|substract:legend_width }}, {{ size_w_margin|multiply:11 }})" class="legend">
-
-              {% for saturation_level in legend_levels %}
-                <rect width="{{ size }}" height="{{ size }}"
-                      x="{{ forloop.counter0|multiply:size }}"
-                      fill="{% hsv_to_hex hue saturation_level 1 %}" />
-                {% if forloop.last %}
-                  <text x="-{{ hemisize }}" y="{{ hemisize }}"
-                        style="text-anchor: end;">0</text>
-                  <text x="{{ forloop.counter|multiply:size|add:hemisize }}"
-                        y="{{ hemisize }}"
-                        style="text-anchor: start;">{{ max_n }}</text>
-                {% endif %}
-              {% endfor %}
-
-            </g>
-          {% endwith %}
-
+        <g class="graph">
+          {% for d in data %}
+            {% with x_offset=d.year|substract:first_decade|idivide:10|multiply:size_w_margin y_offset=d.year|modulo:10|multiply:size_w_margin %}
+              <rect width="{{ size }}" height="{{ size }}"
+                    x="{{ x_offset }}" y="{{ y_offset }}"
+                    {% language LANGUAGE_CODE %}
+                      title="{{ d.year }} : {{ d.n }} {% trans 'événements' %}"
+                    {% endlanguage %}
+                    style="fill: {% hsv_to_hex hue d.n|log_ratio:max_n 1 %};" />
+              {% if d.year|modulo:20 == 0 %}
+                <g transform="translate({{ x_offset|add:size|substract:figure_margin }} {{ y_offset|substract:margin }})">
+                  <text class="year" transform="rotate(-90)">{{ d.year }}</text>
+                </g>
+              {% endif %}
+            {% endwith %}
+          {% endfor %}
         </g>
 
-      </svg>
+        {% with legend_width=legend_levels|length|multiply:size %}
+          <g transform="translate({{ decades|multiply:size_w_margin|substract:legend_width }}, {{ size_w_margin|multiply:11 }})" class="legend">
 
-    {% endwith %}
-  {% endlanguage %}
+            {% for saturation_level in legend_levels %}
+              <rect width="{{ size }}" height="{{ size }}"
+                    x="{{ forloop.counter0|multiply:size }}"
+                    fill="{% hsv_to_hex hue saturation_level 1 %}" />
+              {% if forloop.last %}
+                <text x="-{{ hemisize }}" y="{{ hemisize }}"
+                      style="text-anchor: end;">0</text>
+                <text x="{{ forloop.counter|multiply:size|add:hemisize }}"
+                      y="{{ hemisize }}"
+                      style="text-anchor: start;">{{ max_n }}</text>
+              {% endif %}
+            {% endfor %}
 
-{% endblock %}
+          </g>
+        {% endwith %}
+
+      </g>
+
+    </svg>
+
+  {% endwith %}
+{% endlanguage %}
