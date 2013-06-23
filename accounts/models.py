@@ -28,7 +28,7 @@ class HierarchicUser(MPTTModel, AbstractUser):
 
     class MPTTMeta(object):
         parent_attr = 'mentor'
-        order_insertion_by = ('username',)
+        order_insertion_by = ('last_name', 'first_name', 'username')
 
     class Meta(object):
         verbose_name = ungettext_lazy('utilisateur', 'utilisateurs', 1)
