@@ -7,10 +7,10 @@ from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.sites.models import get_current_site
-from django.forms import CharField, ModelChoiceField, \
-    ModelMultipleChoiceField, BooleanField
+from django.forms import CharField, ModelMultipleChoiceField, BooleanField
 from django.forms.widgets import CheckboxSelectMultiple
 from django.template.loader import render_to_string
+from mptt.forms import TreeNodeChoiceField
 # FIXME: Remplacer ceci par RegistrationFormUniqueEmail quand Joann aura fini
 # de faire mumuse.
 from registration.forms import RegistrationForm
@@ -28,7 +28,7 @@ def get_groups():
 class UserRegistrationForm(RegistrationForm):
     first_name = CharField(label=_('Prénom(s)'))
     last_name = CharField(label=_('Nom'))
-    mentor = ModelChoiceField(queryset=get_mentors(), label=_('Mentor'))
+    mentor = TreeNodeChoiceField(queryset=get_mentors(), label=_('Mentor'))
     willing_to_be_mentor = BooleanField(
         required=False, label=_('Veut être mentor'))
     groups = ModelMultipleChoiceField(

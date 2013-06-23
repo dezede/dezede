@@ -12,6 +12,7 @@ from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.views.generic import DetailView, TemplateView
 from registration.backends.default.views import RegistrationView
+from accounts.models import HierarchicUser
 from .forms import UserRegistrationForm
 from libretto.models import AncrageSpatioTemporel
 
@@ -62,13 +63,14 @@ class MyRegistrationView(RegistrationView):
 
 class EvenementsGraph(TemplateView):
     template_name = 'accounts/include/evenements_graph.svg'
-    displayed_range = 300  # years
+    content_type = 'image/svg+xml'
+    displayed_range = 200  # years
     rect_size = 16  # pixels
     rect_margin = 4  # pixels
     # When we set the font size, the figures are smaller than
     # the specified size.
     figure_size_factor = 0.8
-    hue = 220  # degrees
+    hue = 0  # degrees
     legend_levels = 6
 
     def get_context_data(self, **kwargs):
@@ -120,10 +122,13 @@ class EvenementsGraph(TemplateView):
                 data.append({'year': year, 'n': 0})
         context['data'] = sorted(data, key=lambda d: d['year'])
 
-        context['size'] = self.rect_size
-        context['margin'] = self.rect_margin
-        context['figure_size_factor'] = self.figure_size_factor
-        context['hue'] = self.hue
+        def get_float(attr):
+            return float(self.request.GET.get(attr) or getattr(self, attr))
+
+        context['size'] = get_float('rect_size')
+        context['margin'] = get_float('rect_margin')
+        context['figure_size_factor'] = get_float('figure_size_factor')
+        context['hue'] = get_float('hue')
 
         def levels_iterator(start, end, n_steps):
             step = (end - start) / (n_steps - 1)
@@ -136,3 +141,9 @@ class EvenementsGraph(TemplateView):
             levels_iterator(0, 1, self.legend_levels))
 
         return context
+
+
+class HierarchicUserDetail(DetailView):
+    model = HierarchicUser
+    slug_url_kwarg = 'username'
+    slug_field = 'username'

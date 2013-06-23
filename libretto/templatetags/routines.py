@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.template import Library
+from django.template import Library, Template
 from django.template.loader import render_to_string
 from django.contrib.sites.models import get_current_site
 from copy import copy
@@ -56,10 +56,17 @@ def data_table_attr(context, attr, verbose_name=None, obj=None):
         value = getattr(value, attr_part)
         if callable(value):
             value = value()
+
     if not value:
         return ''
+
+    # Renders value using language preferences (as in a template).
+    sub_context = copy(context)
+    sub_context['value'] = value
+    value = Template('{{ value }}').render(sub_context)
+
     if verbose_name is None:
-        verbose_name = obj._meta.get_field(attr).verbose_name
+        verbose_name = obj._meta.get_field(attr.split('.')[0]).verbose_name
     c = {
         'verbose_name': verbose_name,
         'value': value,
@@ -98,7 +105,8 @@ def get_property(obj, attr):
 
 @register.simple_tag(takes_context=True)
 def data_table_list(context, object_list, attr='link',
-                    verbose_name=None, verbose_name_plural=None):
+                    verbose_name=None, verbose_name_plural=None,
+                    number_if_one=True):
     if not object_list:
         return ''
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
@@ -107,11 +115,12 @@ def data_table_list(context, object_list, attr='link',
     c = {
         'request': context['request'],
         'attr': attr,
-        'count': object_list.count(),
+        'count': len(object_list),
         'object_list': object_list,
         'verbose_name': verbose_name,
         'verbose_name_plural': verbose_name_plural,
         'page_variable': verbose_name + '_page',
+        'number_if_one': number_if_one,
     }
     return render_to_string('routines/data_table_list.html', c)
 

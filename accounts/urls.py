@@ -2,12 +2,15 @@
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView
 from registration.backends.default.views import ActivationView
-from .views import MyRegistrationView, GrantToAdmin, EvenementsGraph
+from .views import MyRegistrationView, GrantToAdmin, EvenementsGraph, \
+    HierarchicUserDetail
 
 
 urlpatterns = patterns('',
-    url(r'^evenements_graph.svg$', EvenementsGraph.as_view(),
+    url(r'^evenements_graph\.svg$', EvenementsGraph.as_view(),
         name='evenements_graph'),
+    url(r'^profils/(?P<username>[\w.@+-]+)$', HierarchicUserDetail.as_view(),
+        name='user_profile'),
     url(r'^equipe/(?P<pk>\d+)$', GrantToAdmin.as_view(),
         name='grant_to_admin'),
     url(r'^activation/complete/$',
@@ -29,4 +32,5 @@ urlpatterns = patterns('',
             template_name='registration/registration_closed.html'),
         name='registration_disallowed'),
     url(r'', include('registration.auth_urls')),
+
 )
