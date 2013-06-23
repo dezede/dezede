@@ -98,7 +98,8 @@ def get_property(obj, attr):
 
 @register.simple_tag(takes_context=True)
 def data_table_list(context, object_list, attr='link',
-                    verbose_name=None, verbose_name_plural=None):
+                    verbose_name=None, verbose_name_plural=None,
+                    number_if_one=True):
     if not object_list:
         return ''
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
@@ -107,11 +108,12 @@ def data_table_list(context, object_list, attr='link',
     c = {
         'request': context['request'],
         'attr': attr,
-        'count': object_list.count(),
+        'count': len(object_list),
         'object_list': object_list,
         'verbose_name': verbose_name,
         'verbose_name_plural': verbose_name_plural,
         'page_variable': verbose_name + '_page',
+        'number_if_one': number_if_one,
     }
     return render_to_string('routines/data_table_list.html', c)
 

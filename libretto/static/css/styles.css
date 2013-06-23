@@ -124,6 +124,11 @@ em {
   font-size: 105%;
 }
 
+.data-table {
+  border-collapse: separate;
+  border-spacing: 20px 0;
+}
+
 .data-table th+td {
   padding-top: 10px;
 }
@@ -131,10 +136,6 @@ em {
 .data-table th, .data-table td {
   line-height: 20px;
   vertical-align: baseline;
-}
-
-.data-table th {
-  padding-right: 20px;
 }
 
 .data-table td {

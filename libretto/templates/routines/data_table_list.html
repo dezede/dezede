@@ -7,9 +7,15 @@
 
     {% if forloop.first %}
       <th rowspan="{{ object_list|length }}">
-        {{ count }}
+        {% if count != 1 or number_if_one %}
+          {{ count }}
+        {% endif %}
         {% if count == 1 %}
-          {{ verbose_name }}
+          {% if number_if_one %}
+            {{ verbose_name }}
+          {% else %}
+            {{ verbose_name|capfirst }}
+          {% endif %}
         {% else %}
           {{ verbose_name_plural }}
         {% endif %}
