@@ -124,18 +124,15 @@ em {
   font-size: 105%;
 }
 
-.data-table {
-  border-collapse: separate;
-  border-spacing: 20px 0;
-}
-
-.data-table th+td {
-  padding-top: 10px;
-}
-
 .data-table th, .data-table td {
+  padding-top: 10px;
   line-height: 20px;
   vertical-align: baseline;
+}
+
+.data-table th {
+  white-space: nowrap;
+  padding-right: 20px;
 }
 
 .data-table td {
