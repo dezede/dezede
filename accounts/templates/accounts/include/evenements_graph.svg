@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load accounts_extra i18n %}
+
+
+{% block content %}
+
+  {% get_current_language as LANGUAGE_CODE %}
+
+  {% language 'en' %}
+    {% with hemisize=size|divide:2 doublesize=size|multiply:2 size_w_margin=size|add:margin first_decade=min_year|idivide:10|multiply:10 decades=max_year|substract:min_year|idivide:10 %}
+
+      <svg class="coverage" width="100%" height="{{ size_w_margin|multiply:16 }}">
+
+        <style>
+          .coverage {
+            stroke: grey;
+            stroke-width: 1px;
+          }
+          .coverage rect {
+            stroke-width: 0;
+            fill-opacity: 1;
+          }
+          .coverage text {
+            fill: grey;
+            stroke-width: 0;
+            font-size: {{ size_w_margin }}px;
+          }
+          .coverage .graph rect:hover {
+            stroke-width: {{ margin|divide:2 }}px;
+          }
+          .coverage .graph text {
+            writing-mode: tb;
+            text-anchor: end;
+          }
+          .coverage .legend text {
+            alignment-baseline: central;
+          }
+        </style>
+
+        <g transform="translate({{ margin|divide:4 }}, {{ size|multiply:3 }})">
+
+          <g class="graph">
+            {% for d in data %}
+              {% with x_offset=d.year|substract:first_decade|idivide:10|multiply:size_w_margin y_offset=d.year|modulo:10|multiply:size_w_margin %}
+                <rect width="{{ size }}" height="{{ size }}" x="{{ x_offset }}" y="{{ y_offset }}"
+                      title="{% language LANGUAGE_CODE %}{{ d.year }} : {{ d.n }} {% trans 'événements' %}{% endlanguage %}"
+                      style="fill: {% hsv_to_hex hue d.n|log_ratio:max_n 1 %};" />
+                {% if d.year|modulo:20 == 0 %}
+                  <text x="{{ x_offset|add:hemisize }}" y="{{ y_offset|add:hemisize }}" class="year"
+                        font-size="{{ doublesize }}">{{ d.year }}</text>
+                {% endif %}
+              {% endwith %}
+            {% endfor %}
+          </g>
+
+          {% with legend_width=legend_levels|length|multiply:size %}
+            <g transform="translate({{ decades|multiply:size_w_margin|substract:legend_width }}, {{ size_w_margin|multiply:11 }})" class="legend">
+
+              {% for saturation_level in legend_levels %}
+                <rect width="{{ size }}" height="{{ size }}"
+                      x="{{ forloop.counter0|multiply:size }}"
+                      fill="{% hsv_to_hex hue saturation_level 1 %}" />
+                {% if forloop.last %}
+                  <text x="-{{ hemisize }}" y="{{ hemisize }}"
+                        style="text-anchor: end;">0</text>
+                  <text x="{{ forloop.counter|multiply:size|add:hemisize }}"
+                        y="{{ hemisize }}"
+                        style="text-anchor: start;">{{ max_n }}</text>
+                {% endif %}
+              {% endfor %}
+
+            </g>
+          {% endwith %}
+
+        </g>
+
+      </svg>
+
+    {% endwith %}
+  {% endlanguage %}
+
+{% endblock %}
