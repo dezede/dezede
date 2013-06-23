@@ -144,16 +144,17 @@ blockquote {
 }
 
 .data-table {
-  th+td {
-    padding-top: 10px;
-  }
   th, td {
     line-height: 10 * @baseLineHeight / 11;
     vertical-align: baseline;
+    padding-top: 10px;
+  }
+  th {
+    white-space: nowrap;
+    padding-right: 20px;
   }
   td {
     text-align: justify;
-    padding-left: 20px;
   }
 }
 
