@@ -28,9 +28,6 @@
           .coverage .graph rect:hover {
             stroke-width: {{ margin|divide:2 }}px;
           }
-          .coverage .graph text {
-            text-anchor: end;
-          }
           .coverage .legend text {
             dominant-baseline: central;
           }
@@ -45,8 +42,8 @@
                       title="{% language LANGUAGE_CODE %}{{ d.year }} : {{ d.n }} {% trans 'événements' %}{% endlanguage %}"
                       style="fill: {% hsv_to_hex hue d.n|log_ratio:max_n 1 %};" />
                 {% if d.year|modulo:20 == 0 %}
-                  <g transform="translate({{ x_offset|add:figure_margin }} {{ y_offset|substract:margin }})">
-                    <text class="year" transform="rotate(90)">{{ d.year }}</text>
+                  <g transform="translate({{ x_offset|add:size|substract:figure_margin }} {{ y_offset|substract:margin }})">
+                    <text class="year" transform="rotate(-90)">{{ d.year }}</text>
                   </g>
                 {% endif %}
               {% endwith %}
