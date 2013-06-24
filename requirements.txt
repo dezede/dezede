@@ -11,7 +11,7 @@ django-tinymce==1.5.1
 django-flatpages-tinymce==0.1.1
 simplejson==3.3.0
 -e git+https://github.com/BertrandBordage/django_polymorphic@40eeb15fadbf9af940e9610ae613eef0d4fcc3b3#egg=django-polymorphic
--e git+https://github.com/edoburu/django-polymorphic-tree@a42283b8606469a245c02da4efe8faba55407978#egg=django-polymorphic-tree
+django-polymorphic-tree==0.8.8
 django-autoslug==1.6.1
 django-grappelli==2.4.5
 django-crispy-forms==1.3.2
