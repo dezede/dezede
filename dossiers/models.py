@@ -81,7 +81,7 @@ class DossierDEvenements(MPTTModel, PublishedModel):
                 kwargs['ancrage_debut__lieu__in'] = lieux
             if self.oeuvres.all():
                 oeuvres = Oeuvre.objects.none()
-                for oeuvre in self.oeuvres.non_polymorphic():
+                for oeuvre in self.oeuvres.all():
                     oeuvres |= oeuvre.get_descendants(include_self=True)
                 kwargs['programme__oeuvre__in'] = oeuvres
             if self.auteurs.all():
