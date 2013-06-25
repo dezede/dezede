@@ -127,7 +127,8 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         return Individu.objects.filter(ancrage_deces__lieu=self)
 
     def oeuvres_creees(self):
-        return Oeuvre.objects.filter(ancrage_creation__lieu=self)
+        return Oeuvre.objects.filter(
+            ancrage_creation__lieu__in=self.get_descendants(include_self=True))
 
     def html(self, tags=True, short=False):
         url = None if not tags else self.get_absolute_url()
