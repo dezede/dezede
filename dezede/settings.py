@@ -251,7 +251,10 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 FILEBROWSER_VERSIONS = {
-    'admin_thumbnail': {'verbose_name': 'Admin Thumbnail', 'width': 60, 'height': 60, 'opts': 'crop'},
+    'admin_thumbnail': {'verbose_name': 'Admin Thumbnail',
+                        'width': 60, 'height': 60, 'opts': 'crop'},
+    'avatar': {'verbose_name': 'Avatar',
+               'width': 150, 'height': 150, 'opts': ''},
 }
 
 FILEBROWSER_ADMIN_VERSIONS = []
