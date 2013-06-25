@@ -41,7 +41,7 @@ class HierarchicUserAdmin(VersionAdmin, UserAdmin):
             'classes': ('grp-collapse grp-closed',),
             'description': _('À saisir s’il existe une autorité sur vous '
                              'dans la base de données.'),
-            'fields': ('content_type', 'object_id')}),
+            'fields': (('content_type', 'object_id'),)}),
         (_('Mentorat'), {'fields': (('mentor', 'willing_to_be_mentor'),)}),
         (_('Informations complémentaires'), {
             'classes': ('grp-collapse grp-closed',),
