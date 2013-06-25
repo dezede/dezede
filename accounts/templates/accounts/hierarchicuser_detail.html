@@ -12,12 +12,16 @@
   <div class="row-fluid">
 
     <table class="data-table span6">
-      {% data_table_attr 'date_joined.date' %}
-      {% data_table_attr 'mentor.link' %}
-      {% data_table_list object.disciples.all verbose_name=_('disciple') verbose_name_plural=_('disciples') %}
+      {% data_table_list object.dossierdevenements.all|order_by:'-pk' %}
     </table>
 
     <div class="well span6 text-center">
+      <h3>{% trans 'Données générales' %}</h3>
+      <table class="data-table">
+        {% data_table_attr 'date_joined.date' %}
+        {% data_table_attr 'mentor.link' %}
+        {% data_table_list object.disciples.all verbose_name=_('disciple') verbose_name_plural=_('disciples') per_page=5 %}
+      </table>
       <h3>{% trans 'Événements créés' %}</h3>
       <div id="coverage">Chargement…</div>
     </div>

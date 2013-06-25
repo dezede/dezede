@@ -88,8 +88,10 @@ class CommonModel(TypographicModel):
     """
     Modèle commun à l’application, ajoutant diverses possibilités.
     """
-    owner = ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-                       verbose_name=_('propriétaire'), on_delete=PROTECT)
+    owner = ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        verbose_name=_('propriétaire'), on_delete=PROTECT,
+        related_name='%(class)s')
     objects = CommonManager()
     versions = GenericRelation('reversion.Version',
                                object_id_field='object_id_int')

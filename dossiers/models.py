@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.core.urlresolvers import reverse
 from django.db.models import CharField, DateField, ManyToManyField, \
                              TextField, permalink
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy
 from mptt.fields import TreeForeignKey
 from mptt.managers import TreeManager
@@ -12,7 +12,7 @@ from mptt.models import MPTTModel
 from cache_tools import cached_ugettext_lazy as _
 from libretto.models import Lieu, Oeuvre, Evenement, Individu
 from libretto.models.common import PublishedModel, PublishedManager
-from libretto.models.functions import str_list_w_last
+from libretto.models.functions import str_list_w_last, href
 
 
 class DossierDEvenementsManager(TreeManager, PublishedManager):
@@ -45,14 +45,17 @@ class DossierDEvenements(MPTTModel, PublishedModel):
 
     class Meta(object):
         verbose_name = ungettext_lazy('dossier d’événements',
-                                      'dossiers d’événements', 0)
+                                      'dossiers d’événements', 1)
         verbose_name_plural = ungettext_lazy('dossier d’événements',
-                                             'dossiers d’événements', 1)
+                                             'dossiers d’événements', 2)
         ordering = ('titre',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     def __str__(self):
         return self.titre
+
+    def link(self):
+        return href(self.get_absolute_url(), smart_text(self))
 
     @permalink
     def get_absolute_url(self):

@@ -105,7 +105,7 @@ def get_property(obj, attr):
 
 @register.simple_tag(takes_context=True)
 def data_table_list(context, object_list, attr='link',
-                    verbose_name=None, verbose_name_plural=None,
+                    verbose_name=None, verbose_name_plural=None, per_page=10,
                     number_if_one=True):
     if not object_list:
         return ''
@@ -119,13 +119,14 @@ def data_table_list(context, object_list, attr='link',
         'object_list': object_list,
         'verbose_name': verbose_name,
         'verbose_name_plural': verbose_name_plural,
+        'per_page': per_page,
         'page_variable': verbose_name + '_page',
         'number_if_one': number_if_one,
     }
     return render_to_string('routines/data_table_list.html', c)
 
 
-@register.simple_tag()
+@register.simple_tag
 def jstree(queryset, attr='__str__', tree_id=None):
     if not queryset:
         return ''
@@ -137,3 +138,8 @@ def jstree(queryset, attr='__str__', tree_id=None):
         'attr': attr,
     }
     return render_to_string('routines/jstree.html', c)
+
+
+@register.filter
+def order_by(qs, fields):
+    return qs.order_by(*fields.split(','))
