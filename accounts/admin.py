@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.contrib.admin import site
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
+from reversion import VersionAdmin
 from cache_tools.utils import cached_ugettext_lazy as _
 from .models import HierarchicUser
 
@@ -13,7 +14,7 @@ class HierarchicUserChangeForm(UserChangeForm):
         model = HierarchicUser
 
 
-class HierarchicUserAdmin(UserAdmin):
+class HierarchicUserAdmin(VersionAdmin, UserAdmin):
     form = HierarchicUserChangeForm
     list_display = ('__str__',) + UserAdmin.list_display + (
         'mentor', 'willing_to_be_mentor', 'is_active')
