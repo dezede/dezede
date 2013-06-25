@@ -128,10 +128,6 @@ em {
   font-size: 105%;
 }
 
-.data-table th+td {
-  padding-top: 10px;
-}
-
 .data-table th, .data-table td {
   line-height: 20px;
   vertical-align: baseline;
@@ -140,6 +136,11 @@ em {
 .data-table th {
   white-space: nowrap;
   padding-right: 20px;
+  padding-top: 10px;
+}
+
+.data-table th+td {
+  padding-top: 10px;
 }
 
 .data-table td {
