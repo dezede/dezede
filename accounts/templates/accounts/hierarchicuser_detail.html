@@ -11,7 +11,7 @@
 
   <div class="row-fluid">
 
-    <div class="span7">
+    <div class="span6">
 
       {% if object.presentation %}
         <h3>{% trans 'Présentation' %}</h3>
@@ -40,7 +40,7 @@
 
     </div>
 
-    <div class="well span5 text-center">
+    <div class="well span6 text-center">
       {% if object.avatar %}
         {% version_object object.avatar 'avatar' as avatar %}
         <img src="{{ avatar.url }}" class="img-polaroid"
