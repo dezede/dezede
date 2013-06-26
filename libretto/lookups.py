@@ -11,32 +11,36 @@ def search_in_model(Model, qs, search_query):
     return qs.filter(pk__in=pk_list)
 
 
-class LieuLookup(LookupChannel):
+class PublicLookup(LookupChannel):
+    max_results = 7
+    displayed_attr = 'html'
+
+    def get_query(self, q, request):
+        Model = self.model
+        return search_in_model(
+            Model, Model.objects.all(), q)[:self.max_results]
+
+    def format_match(self, obj):
+        out = getattr(obj, self.displayed_attr)
+        if callable(out):
+            out = out()
+        return removetags(out, 'a')
+
+    def check_auth(self, request):
+        pass
+
+
+class LieuLookup(PublicLookup):
     model = Lieu
 
-    def get_query(self, q, request):
-        Model = self.model
-        return search_in_model(Model, Model.objects.all(), q)[:7]
 
-    def format_match(self, obj):
-        return removetags(obj.html(), 'a')
-
-    def check_auth(self,request):
-        pass
-
-
-class OeuvreLookup(LookupChannel):
+class OeuvreLookup(PublicLookup):
     model = Oeuvre
+    displayed_attr = 'titre_html'
 
-    def get_query(self, q, request):
-        Model = self.model
-        return search_in_model(Model, Model.objects.all(), q)[:7]
 
-    def format_match(self, obj):
-        return removetags(obj.titre_html(), 'a')
-
-    def check_auth(self,request):
-        pass
+class IndividuLookup(PublicLookup):
+    model = Individu
 
 
 class CharFieldLookupChannel(LookupChannel):

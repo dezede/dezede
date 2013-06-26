@@ -24,6 +24,11 @@ class CommonSearchIndex(SearchIndex):
         return prepared_data    
 
 
+class PolymorphicCommonSearchIndex(CommonSearchIndex):
+    def index_queryset(self):
+        return self.get_model().objects.non_polymorphic()
+
+
 class OeuvreIndex(CommonSearchIndex):
     content_auto = EdgeNgramField(model_attr='titre_html')
 
@@ -46,12 +51,14 @@ site.register(Source, SourceIndex)
 
 
 class IndividuIndex(CommonSearchIndex):
+    content_auto = EdgeNgramField(model_attr='html')
+
     def get_model(self):
         return Individu
 site.register(Individu, IndividuIndex)
 
 
-class LieuIndex(CommonSearchIndex):
+class LieuIndex(PolymorphicCommonSearchIndex):
     content_auto = EdgeNgramField(model_attr='html')
 
     def get_model(self):
@@ -65,13 +72,17 @@ class EvenementIndex(CommonSearchIndex):
 site.register(Evenement, EvenementIndex)
 
 
-class PartieIndex(CommonSearchIndex):
+class PartieIndex(PolymorphicCommonSearchIndex):
+    content_auto = EdgeNgramField(model_attr='html')
+
     def get_model(self):
         return Partie
 site.register(Partie, PartieIndex)
 
 
 class ProfessionIndex(CommonSearchIndex):
+    content_auto = EdgeNgramField(model_attr='html')
+
     def get_model(self):
         return Profession
 site.register(Profession, ProfessionIndex)

@@ -87,15 +87,17 @@ class EvenementListForm(Form):
     dates = RangeSliderField(required=False)
     lieu = AutoCompleteSelectMultipleField('lieu', label=_('Lieu'),
                                            required=False, help_text='')
-    oeuvre = AutoCompleteSelectMultipleField('oeuvre', required=False,
-                                             label=_('Œuvre'), help_text='')
+    oeuvre = AutoCompleteSelectMultipleField(
+        'oeuvre', required=False, label=_('Œuvre'), help_text='')
+    individu = AutoCompleteSelectMultipleField(
+        'individu', required=False, label=_('Individu'), help_text='')
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_method = 'GET'
         self.helper.form_class = 'well well-small'
         self.helper.layout = Layout(
-            Field('q', 'dates', HTML('<hr/>'), 'lieu', 'oeuvre',
+            Field('q', 'dates', HTML('<hr/>'), 'lieu', 'oeuvre', 'individu',
                   css_class='span12'),
             HTML('<hr/>'),
             Submit('', _('Filtrer'), css_class='btn-primary span12'),
