@@ -1,7 +1,11 @@
 from ajax_select import LookupChannel
+from bs4 import BeautifulSoup
 from django.template.defaultfilters import removetags
-from .models import *
+from django.utils.encoding import force_text
+from django.utils.html import strip_tags
 from haystack.query import SearchQuerySet
+from .models.functions import hlp
+from .models import *
 
 
 def search_in_model(Model, qs, search_query):
@@ -24,7 +28,22 @@ class PublicLookup(LookupChannel):
         out = getattr(obj, self.displayed_attr)
         if callable(out):
             out = out()
-        return removetags(out, 'a')
+
+        soup = BeautifulSoup(out, 'html.parser')
+
+        # Retire les attributs title.
+        for with_title in soup.find_all(title=True):
+            del(with_title['title'])
+
+        # Retire les liens hypertexte.
+        for link in soup.find_all('a'):
+            link.unwrap()
+
+        out = force_text(soup)
+        return hlp(out, strip_tags(out))
+
+    def format_item_display(self, obj):
+        return self.format_match(obj)
 
     def check_auth(self, request):
         pass
@@ -36,7 +55,7 @@ class LieuLookup(PublicLookup):
 
 class OeuvreLookup(PublicLookup):
     model = Oeuvre
-    displayed_attr = 'titre_html'
+    displayed_attr = 'titre_descr_html'
 
 
 class IndividuLookup(PublicLookup):
