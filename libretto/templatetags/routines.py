@@ -5,6 +5,8 @@ from django.template import Library, Template
 from django.template.loader import render_to_string
 from django.contrib.sites.models import get_current_site
 from copy import copy
+from libretto.models.common import PublishedQuerySet
+
 
 register = Library()
 
@@ -109,6 +111,20 @@ def data_table_list(context, object_list, attr='link',
                     number_if_one=True):
     if not object_list:
         return ''
+
+    # Only show what the connected user is allowed to see and automatically
+    # orders by the correct ordering.
+    if isinstance(object_list, PublishedQuerySet):
+        ordering = []
+        if object_list.ordered:
+            query = object_list.query
+            if query.order_by:
+                ordering = query.order_by
+            elif query.default_ordering:
+                ordering = object_list.model._meta.ordering
+        object_list = object_list.published(
+            request=context['request']).order_by(*ordering)
+
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         object_list, verbose_name=verbose_name,
         verbose_name_plural=verbose_name_plural)

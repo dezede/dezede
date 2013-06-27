@@ -184,20 +184,22 @@ class PublishedQuerySet(CommonQuerySet):
         # pas publié.
         mgr = self.model.objects
         if isinstance(mgr, TreeManager):
-            parent = mgr.parent_attr
-            level = mgr.level_attr
-            lft = mgr.left_attr
-            rght = mgr.right_attr
+            parent_attr = mgr.parent_attr
+            level_attr = mgr.level_attr
+            lft_attr = mgr.left_attr
+            rght_attr = mgr.right_attr
 
             qs = qs.order_by()
-            root_level = qs.aggregate(Min(level))[level + '__min'] or 0
-            to_be_hidden = qs.filter(**{level + '__gt': root_level}) \
-                .exclude(**{parent + '__in': qs}).values_list(lft, rght)
+            root_level = \
+                qs.aggregate(Min(level_attr))[level_attr + '__min'] or 0
+            to_be_hidden = qs.filter(**{level_attr + '__gt': root_level}) \
+                .exclude(**{parent_attr + '__in': qs}) \
+                .values_list(lft_attr, rght_attr)
 
             lft_pk_list = []
             for lft, rght in to_be_hidden:
                 lft_pk_list.extend(range(lft, rght + 1))
-            qs = qs.exclude(**{lft + '__in': lft_pk_list})
+            qs = qs.exclude(**{lft_attr + '__in': lft_pk_list})
         return qs
 
 
