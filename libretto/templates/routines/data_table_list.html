@@ -23,7 +23,10 @@
     {% endif %}
 
 
-    <td>{{ object|get_property:attr }}</td>
+    <td>
+      {{ object|get_property:attr }}
+      {% if not object.is_public %}<i class="icon-lock"></i>{% endif %}
+    </td>
 
   </tr>
 
