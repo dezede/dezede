@@ -125,6 +125,10 @@ def data_table_list(context, object_list, attr='link',
         object_list = object_list.published(
             request=context['request']).order_by(*ordering)
 
+        is_published_queryset = True
+    else:
+        is_published_queryset = False
+
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         object_list, verbose_name=verbose_name,
         verbose_name_plural=verbose_name_plural)
@@ -133,6 +137,7 @@ def data_table_list(context, object_list, attr='link',
         'attr': attr,
         'count': len(object_list),
         'object_list': object_list,
+        'is_published_queryset': is_published_queryset,
         'verbose_name': verbose_name,
         'verbose_name_plural': verbose_name_plural,
         'per_page': per_page,

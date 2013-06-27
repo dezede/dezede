@@ -1,4 +1,4 @@
-{% load endless routines %}
+{% load endless routines i18n %}
 
 {% paginate per_page object_list using page_variable %}
 {% for object in object_list %}
@@ -25,7 +25,9 @@
 
     <td>
       {{ object|get_property:attr }}
-      {% if not object.is_public %}<i class="icon-lock"></i>{% endif %}
+      {% if is_published_queryset and not object.is_public %}
+        <i class="icon-lock" title="{% trans 'Privé' %}"></i>
+      {% endif %}
     </td>
 
   </tr>
