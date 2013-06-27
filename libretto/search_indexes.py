@@ -21,9 +21,9 @@ class CommonSearchIndex(SearchIndex):
 
 
 class PolymorphicCommonSearchIndex(CommonSearchIndex):
-    def index_queryset(self):
+    def index_queryset(self, *args, **kwargs):
         return super(PolymorphicCommonSearchIndex,
-                     self).index_queryset().non_polymorphic()
+                     self).index_queryset(*args, **kwargs).non_polymorphic()
 
 
 class OeuvreIndex(CommonSearchIndex, Indexable):
