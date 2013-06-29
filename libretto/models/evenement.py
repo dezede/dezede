@@ -269,8 +269,7 @@ class Evenement(AutoriteModel):
         null=True, db_index=True, on_delete=PROTECT)
     relache = BooleanField(verbose_name='relâche', db_index=True)
     circonstance = CharField(max_length=500, blank=True, db_index=True)
-    distribution = GenericRelation(ElementDeDistribution,
-                                   related_name='evenements')
+    distribution = GenericRelation(ElementDeDistribution)
 
     class Meta(object):
         verbose_name = ungettext_lazy('événement', 'événements', 1)
