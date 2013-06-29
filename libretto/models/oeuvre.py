@@ -392,7 +392,7 @@ class AuteurQuerySet(CommonQuerySet):
         return self.__get_related(Source)
 
     def html(self, tags=True):
-        auteurs = self
+        auteurs = self.select_related('individu', 'profession')
         d = OrderedDefaultDict()
         for auteur in auteurs:
             d[auteur.profession].append(auteur.individu)
@@ -537,7 +537,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def calc_caracteristiques(self, limite=0, tags=True):
         if not self.pk:
             return ''
-        cs = self.caracteristiques.all()
+        cs = self.caracteristiques.select_related('type')
 
         def clist(cs):
             return str_list(c.html(tags) for c in cs)
@@ -551,11 +551,11 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     calc_caracteristiques.admin_order_field = 'caracteristiques__valeur'
 
     def calc_pupitres(self, prefix=True, tags=False):
-        if not self.pk or not self.pupitres.exists():
+        if not self.pk or not self.pupitres.all():
             return ''
         out = ugettext('pour ') if prefix else ''
         out += str_list_w_last(
-                        p.html(tags=tags) for p in self.pupitres.iterator())
+                        p.html(tags=tags) for p in self.pupitres.all())
         return out
 
     def pupitres_html(self, prefix=False, tags=True):

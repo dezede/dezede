@@ -218,8 +218,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
             return ''
         prenoms = self.prenoms.order_by('classement', 'prenom')
         if fav:
-            prenoms = (p for p in prenoms if p.favori)
-        return ' '.join(smart_text(p) for p in prenoms)
+            prenoms = prenoms.filter(favori=True)
+        return ' '.join(prenoms.values_list('prenom', flat=True))
 
     def calc_prenoms(self):
         return self.calc_prenoms_methode(False)
@@ -281,7 +281,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     def calc_professions(self, tags=True):
         if not self.pk:
             return ''
-        ps = self.professions.iterator()
+        ps = self.professions.all()
         titre = self.titre
         return str_list_w_last(p.gendered(titre, tags, caps=i == 0)
                                for i, p in enumerate(ps))

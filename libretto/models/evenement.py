@@ -220,7 +220,7 @@ class ElementDeProgramme(AutoriteModel):
 
         add_distribution = False
         distribution = ''
-        if has_pk and self.distribution.exists():
+        if has_pk and self.distribution.all():
             distribution = self.distribution.html(tags=tags)
             add_distribution = True
 
@@ -236,7 +236,7 @@ class ElementDeProgramme(AutoriteModel):
                           {'class': self.__class__.__name__, 'pk': self.pk})
             return ''
 
-        if has_pk and self.caracteristiques.exists():
+        if has_pk and self.caracteristiques.all():
             out += ' [' + self.calc_caracteristiques() + ']'
 
         if add_distribution:

@@ -147,7 +147,7 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
             ancestors = ancestors.filter(Q(nature__referent=False)
                 | Q(nature__referent=True,
                     enfants__nature__referent=False)).distinct()
-            out = ', '.join(a.nom for a in ancestors)
+            out = ', '.join(ancestors.values_list('nom', flat=True))
         return href(url, out, tags)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
