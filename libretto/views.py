@@ -106,7 +106,7 @@ class EvenementListView(AjaxListView, PublishedListView):
                     date(start, 1, 1), date(end, 12, 31)))
             except (TypeError, ValueError):
                 pass
-        return qs.select_related().prefetch_related('programme')
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super(EvenementListView, self).get_context_data(**kwargs)
