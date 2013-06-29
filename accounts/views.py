@@ -12,9 +12,10 @@ from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.views.generic import DetailView, TemplateView
 from registration.backends.default.views import RegistrationView
-from accounts.models import HierarchicUser
-from .forms import UserRegistrationForm
+from cache_tools import cached_ugettext_lazy as _
 from libretto.models import AncrageSpatioTemporel
+from .models import HierarchicUser
+from .forms import UserRegistrationForm
 
 
 class GrantToAdmin(DetailView):
@@ -147,3 +148,21 @@ class HierarchicUserDetail(DetailView):
     model = HierarchicUser
     slug_url_kwarg = 'username'
     slug_field = 'username'
+
+    def get_context_data(self, **kwargs):
+        context = super(HierarchicUserDetail, self).get_context_data(**kwargs)
+        if self.object.legal_person:
+            context['verboses'] = {
+                'disciple': _('membre'),
+                'disciples': _('membres'),
+            }
+        else:
+            context['verboses'] = {
+                'disciple': _('disciple'),
+                'disciples': _('disciples'),
+            }
+        if getattr(self.object.mentor, 'legal_person', False):
+            context['verboses']['mentor'] = _('appartenance')
+        else:
+            context['verboses']['mentor'] = _('mentor')
+        return context

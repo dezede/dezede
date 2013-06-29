@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n routines sekizai_tags %}
+{% load i18n routines sekizai_tags fb_versions %}
 
 
 {% block content %}
@@ -11,13 +11,53 @@
 
   <div class="row-fluid">
 
-    <table class="data-table span6">
-      {% data_table_attr 'date_joined.date' %}
-      {% data_table_attr 'mentor.link' %}
-      {% data_table_list object.disciples.all verbose_name=_('disciple') verbose_name_plural=_('disciples') %}
-    </table>
+    <div class="span6">
+
+      {% if object.presentation %}
+        <h3>{% trans 'Présentation' %}</h3>
+        {{ object.presentation }}
+      {% endif %}
+      {% if object.fonctions %}
+        <h3>{% trans 'Fonction(s) au sein de l’équipe' %}</h3>
+        {{ object.fonctions }}
+      {% endif %}
+
+      {% if object.dossiersdevenements_roots %}
+        {% if object.presentation or object.fonctions %}
+          <hr/>
+        {% endif %}
+        <h3>{% trans 'À voir dans Dezède' %}</h3>
+        <table class="data-table">
+          {% data_table_list object.dossiersdevenements_roots|order_by:'-pk' %}
+        </table>
+      {% endif %}
+
+      {% if object.literature %}
+        <hr />
+        <h3>{% trans 'Bibliographie' %}</h3>
+        {{ object.literature }}
+      {% endif %}
+
+    </div>
 
     <div class="well span6 text-center">
+      {% if object.avatar %}
+        {% version_object object.avatar 'avatar' as avatar %}
+        <img src="{{ avatar.url }}" class="img-polaroid"
+             style="width: {{ avatar.width }}px;
+                    height: {{ avatar.height }}px;"/>
+      {% endif %}
+      <h3>{% trans 'Données générales' %}</h3>
+      <table class="data-table">
+        {% data_table_attr 'content_object.link' verbose_name=_('Autorité associée') %}
+        {% data_table_attr 'date_joined.date' verbose_name=_('Date d’inscription') %}
+        {% data_table_attr 'website_link' verbose_name=_('Site internet') %}
+        {% if object.show_email %}
+          {% data_table_attr 'email_link' verbose_name=_('Courriel') %}
+        {% endif %}
+        {% data_table_attr 'mentor.link' verbose_name=verboses.mentor %}
+        {% data_table_list object.disciples.all verbose_name=verboses.disciple verbose_name_plural=verboses.disciples per_page=5 %}
+      </table>
       <h3>{% trans 'Événements créés' %}</h3>
       <div id="coverage">Chargement…</div>
     </div>

@@ -117,17 +117,25 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     def short_link(self):
         return self.html(short=True)
 
-    def evenements(self):  # TODO: gérer les fins d'événements.
+    def evenements(self):
+        # TODO: gérer les fins d'événements.
+        # TODO: Inclure les événements des enfants.
         return Evenement.objects.filter(ancrage_debut__lieu=self)
 
     def individus_nes(self):
-        return Individu.objects.filter(ancrage_naissance__lieu=self)
+        return Individu.objects.filter(
+            ancrage_naissance__lieu__in=self.get_descendants(include_self=True)
+        ).order_by(*Individu._meta.ordering)
 
     def individus_decedes(self):
-        return Individu.objects.filter(ancrage_deces__lieu=self)
+        return Individu.objects.filter(
+            ancrage_deces__lieu__in=self.get_descendants(include_self=True)
+        ).order_by(*Individu._meta.ordering)
 
     def oeuvres_creees(self):
-        return Oeuvre.objects.filter(ancrage_creation__lieu=self)
+        return Oeuvre.objects.filter(
+            ancrage_creation__lieu__in=self.get_descendants(include_self=True)
+        ).order_by(*Oeuvre._meta.ordering)
 
     def html(self, tags=True, short=False):
         url = None if not tags else self.get_absolute_url()

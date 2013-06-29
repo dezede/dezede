@@ -251,15 +251,22 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 FILEBROWSER_VERSIONS = {
-    'admin_thumbnail': {'verbose_name': 'Admin Thumbnail', 'width': 60, 'height': 60, 'opts': 'crop'},
+    'admin_thumbnail': {'verbose_name': 'Admin Thumbnail',
+                        'width': 60, 'height': 60, 'opts': 'crop'},
+    'avatar': {'verbose_name': 'Avatar',
+               'width': 150, 'height': 150, 'opts': ''},
 }
 
 FILEBROWSER_ADMIN_VERSIONS = []
 
-HAYSTACK_SITECONF = 'dezede.search_sites'
-HAYSTACK_SEARCH_ENGINE = 'solr'
-HAYSTACK_SOLR_URL = 'http://127.0.0.1:15031/solr'
-HAYSTACK_INCLUDE_SPELLING = True
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': 'http://127.0.0.1:15031/solr',
+        'INCLUDE_SPELLING': True,
+        'BATCH_SIZE': 100,
+    },
+}
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
 
@@ -315,6 +322,7 @@ COMPRESS_PRECOMPILERS = (
 
 AJAX_LOOKUP_CHANNELS = {
     'lieu': ('libretto.lookups', 'LieuLookup'),
+    'individu': ('libretto.lookups', 'IndividuLookup'),
     'oeuvre': ('libretto.lookups', 'OeuvreLookup'),
     'oeuvre__prefixe_titre': ('libretto.lookups', 'OeuvrePrefixeTitreLookup'),
     'oeuvre__coordination': ('libretto.lookups', 'OeuvreCoordinationLookup'),

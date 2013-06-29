@@ -1,7 +1,11 @@
 from ajax_select import LookupChannel
+from bs4 import BeautifulSoup
 from django.template.defaultfilters import removetags
-from .models import *
+from django.utils.encoding import force_text
+from django.utils.html import strip_tags
 from haystack.query import SearchQuerySet
+from .models.functions import hlp
+from .models import *
 
 
 def search_in_model(Model, qs, search_query):
@@ -11,32 +15,51 @@ def search_in_model(Model, qs, search_query):
     return qs.filter(pk__in=pk_list)
 
 
-class LieuLookup(LookupChannel):
+class PublicLookup(LookupChannel):
+    max_results = 7
+    displayed_attr = 'html'
+
+    def get_query(self, q, request):
+        Model = self.model
+        return search_in_model(
+            Model, Model.objects.all(), q)[:self.max_results]
+
+    def format_match(self, obj):
+        out = getattr(obj, self.displayed_attr)
+        if callable(out):
+            out = out()
+
+        soup = BeautifulSoup(out, 'html.parser')
+
+        # Retire les attributs title.
+        for with_title in soup.find_all(title=True):
+            del(with_title['title'])
+
+        # Retire les liens hypertexte.
+        for link in soup.find_all('a'):
+            link.unwrap()
+
+        out = force_text(soup)
+        return hlp(out, strip_tags(out))
+
+    def format_item_display(self, obj):
+        return self.format_match(obj)
+
+    def check_auth(self, request):
+        pass
+
+
+class LieuLookup(PublicLookup):
     model = Lieu
 
-    def get_query(self, q, request):
-        Model = self.model
-        return search_in_model(Model, Model.objects.all(), q)[:7]
 
-    def format_match(self, obj):
-        return removetags(obj.html(), 'a')
-
-    def check_auth(self,request):
-        pass
-
-
-class OeuvreLookup(LookupChannel):
+class OeuvreLookup(PublicLookup):
     model = Oeuvre
+    displayed_attr = 'titre_descr_html'
 
-    def get_query(self, q, request):
-        Model = self.model
-        return search_in_model(Model, Model.objects.all(), q)[:7]
 
-    def format_match(self, obj):
-        return removetags(obj.titre_html(), 'a')
-
-    def check_auth(self,request):
-        pass
+class IndividuLookup(PublicLookup):
+    model = Individu
 
 
 class CharFieldLookupChannel(LookupChannel):

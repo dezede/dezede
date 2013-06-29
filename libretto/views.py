@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from datetime import date
-from django.db.models import get_model
+from django.db.models import get_model, Q
 from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
@@ -42,7 +42,7 @@ def cleaned_querydict(qd):
 
 
 def get_filters(bindings, data):
-    filters = {}
+    filters = Q()
     for key, value in data.items():
         if value and key in bindings:
             if '|' in value:
@@ -57,7 +57,15 @@ def get_filters(bindings, data):
                         objects |= obj.get_descendants()
                 value = objects
             if value:
-                filters[bindings[key]] = value
+                accessors = bindings[key]
+                if isinstance(accessors, (tuple, list)):
+                    subfilter = Q()
+                    for accessor in accessors:
+                        subfilter |= Q(**{accessor: value})
+                else:
+                    accessor = accessors
+                    subfilter = Q(**{accessor: value})
+                filters &= subfilter
     return filters
 
 
@@ -84,11 +92,14 @@ class EvenementListView(AjaxListView, PublishedListView):
                 pk_list = sqs.values_list('pk', flat=True)
                 qs = qs.filter(pk__in=pk_list)
             bindings = {
-                'lieu': 'ancrage_debut__lieu__in',
+                'lieu': ('ancrage_debut__lieu__in', 'ancrage_fin__lieu__in'),
                 'oeuvre': 'programme__oeuvre__in',
+                'individu': ('distribution__individus__in',
+                             'programme__distribution__individus__in',
+                             'programme__oeuvre__auteurs__individu__in'),
             }
             filters = get_filters(bindings, data)
-            qs = qs.filter(**filters).distinct()
+            qs = qs.filter(filters).distinct()
             try:
                 start, end = int(data.get('dates_0')), int(data.get('dates_1'))
                 qs = qs.filter(ancrage_debut__date__range=(
