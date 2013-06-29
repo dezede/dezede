@@ -6,10 +6,10 @@
     <a href="{{ illustration.image.url }}" class="thumbnail">
       <img src="{{ illustration.image.url }}" />
       {% if illustration.legende %}
-        <h4>{{ illustration.legende }}</h4>
+        <h4>{{ illustration.legende|safe }}</h4>
       {% endif %}
       {% if illustration.commentaire %}
-        <p>{{ illustration.commentaire }}</p>
+        <p>{{ illustration.commentaire|safe }}</p>
       {% endif %}
     </a>
   </li>
