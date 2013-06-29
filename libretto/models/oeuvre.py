@@ -16,7 +16,6 @@ from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy
 from mptt.fields import TreeForeignKey
-from mptt.managers import TreeManager
 from mptt.models import MPTTModel
 from polymorphic_tree.managers import PolymorphicMPTTModelManager, \
     PolymorphicMPTTQuerySet
@@ -27,7 +26,8 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
-    PublishedManager, OrderedDefaultDict, PublishedQuerySet
+    PublishedManager, OrderedDefaultDict, PublishedQuerySet, TreeManager, \
+    TreeQuerySet
 from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -140,11 +140,12 @@ class CaracteristiqueDOeuvre(CommonModel):
         return 'type__nom__icontains', 'valeur__icontains',
 
 
-class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet):
+class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet, TreeQuerySet):
     pass
 
 
-class PartieManager(PolymorphicMPTTModelManager, PublishedManager):
+class PartieManager(TreeManager, PolymorphicMPTTModelManager,
+                    PublishedManager):
     queryset_class = PartieQuerySet
 
 
@@ -463,8 +464,12 @@ class Auteur(CommonModel):
         return self.html(tags=False)
 
 
-class OeuvreManager(TreeManager, PublishedManager):
+class OeuvreQuerySet(TreeQuerySet, PublishedQuerySet):
     pass
+
+
+class OeuvreManager(TreeManager, PublishedManager):
+    queryset_class = OeuvreQuerySet
 
 
 @python_2_unicode_compatible

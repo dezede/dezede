@@ -52,9 +52,8 @@ def get_filters(bindings, data):
                 objects = Model._default_manager.filter(pk__in=pk_list)
                 # Inclus tous les événements impliquant les descendants
                 # éventuels de chaque objet de value.
-                for obj in tuple(objects):
-                    if hasattr(obj, 'get_descendants'):
-                        objects |= obj.get_descendants()
+                if hasattr(objects, 'get_descendants'):
+                    objects = objects.get_descendants(include_self=True)
                 value = objects
             if value:
                 accessors = bindings[key]

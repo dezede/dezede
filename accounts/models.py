@@ -11,10 +11,9 @@ from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy
 from filebrowser.fields import FileBrowseField
 from mptt.fields import TreeForeignKey
-from mptt.managers import TreeManager
 from mptt.models import MPTTModel
 from cache_tools import cached_ugettext_lazy as _
-from libretto.models.common import AutoriteModel
+from libretto.models.common import AutoriteModel, TreeManager
 from libretto.models.functions import href
 
 

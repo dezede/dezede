@@ -8,13 +8,14 @@ from django.contrib.sessions.models import Session
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
     ForeignKey, TextField, Manager, PROTECT, Q, Min
+from django.db.models.query import QuerySet
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
-from mptt.managers import TreeManager
+from mptt.managers import TreeManager as OriginalTreeManager
 from tinymce.models import HTMLField
 from cache_tools import invalidate_group, cached_ugettext_lazy as _
 from .functions import href
@@ -22,10 +23,13 @@ from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 
 
-__all__ = (b'LOWER_MSG', b'PLURAL_MSG', b'DATE_MSG', b'calc_pluriel',
-           b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
-           b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'Document',
-           b'Illustration', b'Etat', b'OrderedDefaultDict')
+__all__ = (
+    b'LOWER_MSG', b'PLURAL_MSG', b'DATE_MSG', b'calc_pluriel',
+    b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
+    b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'TreeQuerySet',
+    b'TreeManager', b'Document', b'Illustration', b'Etat',
+    b'OrderedDefaultDict'
+)
 
 
 class OrderedDefaultDict(OrderedDict):
@@ -265,6 +269,35 @@ class UniqueSlugModel(Model):
 
     def get_slug(self):
         return smart_text(self)
+
+
+class TreeQuerySet(QuerySet):
+    def get_descendants(self, include_self=False):
+        meta = self.model._meta
+        tree_id_attr, left_attr, right_attr = meta.tree_id_attr, meta.left_attr, meta.right_attr
+        filters = Q()
+
+        for tree_id, left, right in self.values_list(
+                tree_id_attr, left_attr, right_attr):
+            if not include_self:
+                left += 1
+                right -= 1
+            filters |= Q(**{tree_id_attr: tree_id,
+                            left_attr + '__gte': left,
+                            left_attr + '__lte': right})
+
+        return self.model._tree_manager.filter(filters)
+
+
+class TreeManager(OriginalTreeManager):
+    queryset_class = TreeQuerySet
+
+    def get_query_set(self):
+        return self.queryset_class(self.model, using=self._db).order_by(
+            self.tree_id_attr, self.left_attr)
+
+    def get_descendants(self, *args, **kwargs):
+        return self.get_query_set().get_descendants(*args, **kwargs)
 
 
 @python_2_unicode_compatible
