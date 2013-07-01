@@ -110,6 +110,13 @@ def get_property(obj, attr):
     return obj
 
 
+@register.filter
+def has_elements(object_list, request):
+    if isinstance(object_list, PublishedQuerySet):
+        object_list = object_list.published(request=request)
+    return bool(object_list)
+
+
 @register.simple_tag(takes_context=True)
 def data_table_list(context, object_list, attr='link',
                     verbose_name=None, verbose_name_plural=None, per_page=10,
