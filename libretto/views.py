@@ -73,14 +73,17 @@ class EvenementListView(AjaxListView, PublishedListView):
     context_object_name = 'evenements'
     view_name = 'evenements'
 
-    def get_queryset(self):
+    def get_queryset(self, base_filter=None):
         qs = super(EvenementListView, self).get_queryset()
+        if base_filter is not None:
+            qs = qs.filter(base_filter)
+
         data = self.request.GET
-        self.form = form = EvenementListForm(data)
+        self.form = EvenementListForm(data, queryset=qs)
         try:
-            self.valid_form = form.is_valid()
+            self.valid_form = self.form.is_valid()
         except:
-            self.form = EvenementListForm()
+            self.form = EvenementListForm(queryset=qs)
             self.valid_form = False
             data = {}
         if self.valid_form:

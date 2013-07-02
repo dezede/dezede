@@ -93,6 +93,8 @@ class EvenementListForm(Form):
         'individu', required=False, label=_('Individu'), help_text='')
 
     def __init__(self, *args, **kwargs):
+        queryset = kwargs.pop('queryset')
+
         self.helper = FormHelper()
         self.helper.form_method = 'GET'
         self.helper.form_class = 'well well-small'
@@ -102,7 +104,11 @@ class EvenementListForm(Form):
             HTML('<hr/>'),
             Submit('', _('Filtrer'), css_class='btn-primary span12'),
         )
+
         super(EvenementListForm, self).__init__(*args, **kwargs)
-        for field in self.fields.itervalues():
+
+        for field in self.fields.values():
             field.widget.attrs[b'placeholder'] = (field.label or '') + '...'
             field.label = ''
+
+        self.fields['dates'].widget.queryset = queryset
