@@ -1,10 +1,13 @@
+{% load fb_versions %}
+
 {% for illustration in object.illustrations.all %}
   {% if forloop.first %}
     <ul class="thumbnails">
   {% endif %}
   <li class="span3">
+    {% version_object illustration.image 'thumbnail' as thumbnail %}
     <a href="{{ illustration.image.url }}" class="thumbnail">
-      <img src="{{ illustration.image.url }}" />
+      <img src="{{ thumbnail.url }}" />
       {% if illustration.legende %}
         <h4>{{ illustration.legende|safe }}</h4>
       {% endif %}
