@@ -404,12 +404,14 @@ class DocumentAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'document', 'has_related_objects',)
     list_editable = ('nom', 'document',)
     search_fields = ('nom',)
+    inlines = (AuteurInline,)
 
 
 class IllustrationAdmin(CommonAdmin):
     list_display = ('__str__', 'legende', 'image', 'has_related_objects')
     list_editable = ('legende', 'image',)
     search_fields = ('legende',)
+    inlines = (AuteurInline,)
 
 
 class EtatAdmin(CommonAdmin):
