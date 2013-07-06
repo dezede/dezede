@@ -71,27 +71,28 @@
       {{ type|capfirst }}
     {% endif %}
   </h3>
-  {% for source in sources %}
-    {% if forloop.first %}
-      <div class="accordion" id="type_{{ evenement.pk }}_{{ type.pk }}">
-    {% endif %}
-    <div class="accordion-group">
-      <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse"
-           data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
-           href="#source_{{ evenement.pk }}_{{ source.pk }}"
-           onmouseover="load_source_content(this, {{ source.pk }});">
-          {{ source.html|removetags:'a' }}
-        </a>
-      </div>
-      <div id="source_{{ evenement.pk }}_{{ source.pk }}"
-           class="accordion-body collapse">
-        <div class="accordion-inner">
+  <div class="accordion" id="type_{{ evenement.pk }}_{{ type.pk }}">
+    {% for source in sources %}
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle full-width"
+             data-toggle="collapse"
+             data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
+             href="#source_{{ evenement.pk }}_{{ source.pk }}"
+             onmouseover="load_source_content(this, {{ source.pk }});">
+            {{ source.html|removetags:'a' }}
+          </a>
+
+          <span class="accordion-toggle front-end_admin">
+            {% include 'routines/permalink.html' with object=source size='mini' %}
+          </span>
+        </div>
+        <div id="source_{{ evenement.pk }}_{{ source.pk }}"
+             class="accordion-body collapse">
+          <div class="accordion-inner">
+          </div>
         </div>
       </div>
-    </div>
-    {% if forloop.last %}
-      </div>
-    {% endif %}
-  {% endfor %}
+    {% endfor %}
+  </div>
 {% endfor %}

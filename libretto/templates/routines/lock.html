@@ -1,7 +1,8 @@
 {% load i18n %}
 
 {% if not object.is_public %}
-  <a class="btn btn-warning disabled" title="{% trans 'Privé' %}">
+  <a class="btn{% if size %} btn-{{ size }}{% endif %} btn-warning disabled"
+     title="{% trans 'Privé' %}">
     <i class="icon-lock"></i>
   </a>
 {% endif %}

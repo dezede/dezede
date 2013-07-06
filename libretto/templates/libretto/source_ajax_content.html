@@ -1,9 +1,5 @@
 {% load routines %}
 
-<div class="pull-right front-end_admin">
-  {% include 'routines/permalink.html' with object=source %}
-</div>
-
 {% include 'libretto/source_content.html' %}
 
 {% if not source.contenu %}

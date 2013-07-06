@@ -308,8 +308,20 @@ table {
   line-height: normal;
 }
 
+.full-width {
+  width: 100%;
+}
+
 .accordion-group {
   background-color: whiteSmoke;
+}
+
+.accordion-heading {
+  display: table-row;
+}
+
+.accordion-heading .accordion-toggle {
+  display: table-cell;
 }
 
 .accordion-inner {
