@@ -68,7 +68,7 @@ def html_to_latex(text):
     >>> print(html_to_latex('Vive les <!-- cons -->poilus !'))
     Vive les poilus !
     """
-    soup = BeautifulSoup(text)
+    soup = BeautifulSoup(text, 'html.parser')
     for html_selectors, latex_open_tag, latex_close_tag in html_latex_bindings:
         for tag in soup.find_all(**html_selectors):
             tag.insert(0, latex_open_tag)
