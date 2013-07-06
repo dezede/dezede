@@ -38,14 +38,11 @@
         {% include 'libretto/main.js' %}
       </script>
     {% endcompress %}
-
-    {% compress js %}
-      {# À part à cause d'une importation de CSS dans ce JS #}
-      <script src="{% static 'js/jquery.jstree.js' %}"></script>
-      <script>
-        {% include 'base.definitions.js' %}
-      </script>
-    {% endcompress %}
+    {# À part à cause d'une importation de CSS dans ce JS #}
+    <script src="{% static 'js/jquery.jstree.js' %}"></script>
+    <script>
+      {% include 'base.definitions.js' %}
+    </script>
 
   </head>
 
