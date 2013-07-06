@@ -1,6 +1,6 @@
 #!/bin/sh
 
-apt-get install nano postgresql python2.7 python-pip python-docutils python-dev apache2 libapache2-mod-wsgi memcached
+apt-get install nano postgresql python2.7 python-pip python-docutils python-dev memcached libxml2
 
 # Pour satisfaire la construction de python-imaging (alias PIL)
 apt-get build-dep python-imaging

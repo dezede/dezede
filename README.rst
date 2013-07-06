@@ -59,6 +59,7 @@ python-pip      1.1
 python-docutils 0.8.1
 memcached       1.4.14
 python-dev      2.7.3
+libxml2
 =============== =======
 
 

@@ -19,6 +19,7 @@ django-ajax-selects==1.2.5
 django-filebrowser==3.5.2
 -e git+https://github.com/jbalogh/django-nose@cff3b1c397d5a7c29843a394dbf799949d4c0845#egg=django-nose
 django_compressor==1.3
+lxml==3.2.1
 django-sekizai==0.7
 django-viewsets==0.1.7
 Pillow==2.0.0
