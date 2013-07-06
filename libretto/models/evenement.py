@@ -15,7 +15,7 @@ from django.utils.translation import ungettext_lazy
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-    calc_pluriel, CommonQuerySet, CommonManager
+    calc_pluriel, CommonQuerySet, CommonManager, OrderedDefaultDict
 
 from .functions import capfirst, str_list, str_list_w_last, href, hlp
 from .source import TypeDeSource
@@ -290,11 +290,11 @@ class Evenement(AutoriteModel):
     link.short_description = _('lien')
     link.allow_tags = True
 
-    def sources_dict(self):
-        types = TypeDeSource.objects.filter(
-            sources__evenements=self).distinct()
-        sources_filter = self.sources.filter
-        return {type: sources_filter(type=type) for type in types}
+    def sources_by_type(self):
+        sources = OrderedDefaultDict()
+        for source in self.sources.select_related('type').order_by('type'):
+            sources[source.type].append(source)
+        return sources
 
     def html(self, tags=True):
         relache = ''

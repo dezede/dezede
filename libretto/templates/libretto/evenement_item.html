@@ -60,7 +60,7 @@
   </small>
 {% endif %}
 
-{% for type, sources in evenement.sources_dict.items %}
+{% for type, sources in evenement.sources_by_type.items %}
   {% if forloop.first %}
     <hr />
   {% endif %}
