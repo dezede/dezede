@@ -292,7 +292,7 @@ class Evenement(AutoriteModel):
 
     def sources_by_type(self):
         sources = OrderedDefaultDict()
-        for source in self.sources.select_related('type').order_by('type'):
+        for source in self.sources.select_related('type'):
             sources[source.type].append(source)
         return sources.items()
 
