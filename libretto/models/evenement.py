@@ -294,7 +294,7 @@ class Evenement(AutoriteModel):
         sources = OrderedDefaultDict()
         for source in self.sources.select_related('type').order_by('type'):
             sources[source.type].append(source)
-        return sources
+        return sources.items()
 
     def html(self, tags=True):
         relache = ''
