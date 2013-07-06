@@ -1,28 +1,24 @@
 {% load i18n %}
 {% load url from future %}
 
-<div class="front-end_admin">
+<div class="front-end_admin btn-group">
 
-  <span class="btn-group">
+  {% include 'routines/ownership.html' %}
 
-    {% include 'routines/ownership.html' %}
+  {% include 'routines/permalink.html' %}
 
-    {% include 'routines/permalink.html' %}
+  {% if has_change_perm %}
+    <a class="btn{% if size %} btn-{{ size }}{% endif %} btn-primary"
+       href="{% url admin_change object.pk %}">
+      <i class="icon-pencil icon-white"></i> {% trans "modifier"|capfirst %}
+    </a>
+  {% endif %}
 
-    {% if has_change_perm %}
-      <a class="btn{% if size %} btn-{{ size }}{% endif %} btn-primary"
-         href="{% url admin_change object.pk %}">
-        <i class="icon-pencil icon-white"></i> {% trans "modifier"|capfirst %}
-      </a>
-    {% endif %}
-
-    {% if has_delete_perm %}
-      <a class="btn{% if size %} btn-{{ size }}{% endif %} btn-danger"
-         href="{% url admin_delete object.pk %}">
-        <i class="icon-trash icon-white"></i> {% trans "supprimer"|capfirst %}
-      </a>
-    {% endif %}
-
-  </span>
+  {% if has_delete_perm %}
+    <a class="btn{% if size %} btn-{{ size }}{% endif %} btn-danger"
+       href="{% url admin_delete object.pk %}">
+      <i class="icon-trash icon-white"></i> {% trans "supprimer"|capfirst %}
+    </a>
+  {% endif %}
 
 </div>

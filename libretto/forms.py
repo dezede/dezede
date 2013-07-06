@@ -102,7 +102,7 @@ class EvenementListForm(Form):
             Field('q', 'dates', HTML('<hr/>'), 'lieu', 'oeuvre', 'individu',
                   css_class='span12'),
             HTML('<hr/>'),
-            Submit('', _('Filtrer'), css_class='btn-primary span12'),
+            Submit('', _('Filtrer'), css_class='btn-primary btn-block'),
         )
 
         super(EvenementListForm, self).__init__(*args, **kwargs)
