@@ -169,13 +169,10 @@ em {
 .columns2 {
   -webkit-column-count: 2;
   -webkit-column-gap: 0;
-  -webkit-column-fill: auto;
   -moz-column-count: 2;
   -moz-column-gap: 0;
-  -moz-column-fill: auto;
   column-count: 2;
   column-gap: 0;
-  column-fill: auto;
 }
 
 .columns2 .column-cell {
