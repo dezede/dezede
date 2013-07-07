@@ -30,7 +30,7 @@ class PublishedDetailView(DetailView):
 class PublishedListView(ListView):
     def get_queryset(self):
         return super(PublishedListView, self).get_queryset().published(
-            request=self.request)
+            request=self.request).order_by(*self.model._meta.ordering)
 
 
 def cleaned_querydict(qd):
