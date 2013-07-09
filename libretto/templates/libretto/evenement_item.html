@@ -9,8 +9,10 @@
     {% include 'routines/lock.html' with object=evenement %}
   </span>
 
+  <meta itemprop="summary" content="{{ evenement.get_summary|striptags }}"/>
+
   <h2 style="text-align: center;">
-    <a href="{{ evenement.get_absolute_url }}">
+    <a href="{{ evenement.get_absolute_url }}" itemprop="url">
       <time itemprop="startDate"
             datetime="{{ evenement.ancrage_debut.isoformat }}">
         {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
@@ -24,10 +26,6 @@
       {% endif %}
     </a>
   </h2>
-
-  <meta itemprop="url"
-        content="{{ SITE_URL }}{{ evenement.get_absolute_url }}" />
-  <meta itemprop="summary" content="{{ evenement.get_summary|striptags }}" />
 
   <h4>
     {{ evenement.html|safe }}
