@@ -13,16 +13,14 @@
 
   <h2 style="text-align: center;">
     <a href="{{ evenement.get_absolute_url }}" itemprop="url">
-      <time itemprop="startDate"
-            datetime="{{ evenement.ancrage_debut.isoformat }}">
+      <meta itemprop="startDate"
+            content="{{ evenement.ancrage_debut.isoformat }}" />
         {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
-      </time>
       {% if evenement.ancrage_fin %}
         −
-        <time itemprop="endDate"
-              datetime="{{ evenement.ancrage_fin.isoformat }}">
+        <meta itemprop="endDate"
+              content="{{ evenement.ancrage_fin.isoformat }}" />
           {{ evenement.ancrage_fin.calc_date|safe }}
-        </time>
       {% endif %}
     </a>
   </h2>
