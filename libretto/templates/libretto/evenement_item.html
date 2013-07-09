@@ -10,7 +10,7 @@
   </span>
 
   <h2 style="text-align: center;">
-    <a href="{{ evenement.get_absolute_url }}" itemprop="url" content="{{ evenement.get_absolute_url }}">
+    <a href="{{ evenement.get_absolute_url }}" itemprop="url">
       <time itemprop="startDate"
             datetime="{{ evenement.ancrage_debut.isoformat }}">
         {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
