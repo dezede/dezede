@@ -25,6 +25,8 @@
     </a>
   </h2>
 
+  <meta itemprop="summary" content="{{ evenement.get_summary|striptags }}" />
+
   <h4>
     {{ evenement.html|safe }}
   </h4>

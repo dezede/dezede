@@ -295,13 +295,28 @@ class Evenement(AutoriteModel):
             sources[source.type].append(source)
         return sources.items()
 
+    def get_summary(self, tags=False):
+        if self.circonstance:
+            out = self.circonstance
+        else:
+            distribution = self.distribution.all()
+            if distribution:
+                out = distribution.html(tags=tags)
+            else:
+                programme = self.programme.all()
+                if programme:
+                    element = programme[0]
+                    out = element.oeuvre or element.autre
+                else:
+                    return ''
+        return microdata(out, 'summary', tags=tags)
+
     def html(self, tags=True):
         relache = ''
         circonstance = ''
         if self.circonstance:
             circonstance = hlp(self.circonstance, ugettext('circonstance'),
                                tags)
-            circonstance = microdata(circonstance, 'summary', tags=tags)
         if self.relache:
             relache = microdata(ugettext('Relâche'), 'eventType', tags=tags)
 
