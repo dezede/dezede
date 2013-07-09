@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import datetime
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, BooleanField, \
                              DateField, TimeField, permalink, Q, PROTECT
@@ -267,6 +268,13 @@ class AncrageSpatioTemporel(CommonModel):
     calc_lieu.short_description = _('lieu ou institution')
     calc_lieu.admin_order_field = 'lieu'
     calc_lieu.allow_tags = True
+
+    def isoformat(self):
+        if not self.date:
+            return
+        if self.heure:
+            return datetime.datetime.combine(self.date, self.heure).isoformat()
+        return self.date.isoformat()
 
     def html(self, tags=True, short=False):
         out = str_list((self.calc_lieu(tags, short),

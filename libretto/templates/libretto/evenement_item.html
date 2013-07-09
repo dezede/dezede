@@ -1,98 +1,107 @@
 {% load i18n cache routines %}
 
-{% include "libretto/include/etat.html" with etat=evenement.etat %}
 
-<span class="pull-right">
-  {% include 'routines/lock.html' with object=evenement %}
-</span>
+<div class="content_part" itemscope itemtype="http://data-vocabulary.org/Event">
 
-<h2 style="text-align: center;">
-  <a href="{{ evenement.get_absolute_url }}">
-    {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
-    {% if evenement.ancrage_fin %}
-      − {{ evenement.ancrage_fin.calc_date|safe }}
-    {% endif %}
-  </a>
-</h2>
+  {% include "libretto/include/etat.html" with etat=evenement.etat %}
 
-<h4>
-  {{ evenement.html|safe }}
-</h4>
-<p>{{ evenement.distribution.html|safe }}</p>
+  <span class="pull-right">
+    {% include 'routines/lock.html' with object=evenement %}
+  </span>
 
-{% with elements=evenement.programme.all %}
-  {% for element in elements %}
-    {% if forloop.first %}
-      <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
-      {% if elements.count > 1 %}
-        <table class="programme">
+  <h2 style="text-align: center;">
+    <a href="{{ evenement.get_absolute_url }}" itemprop="url" content="{{ evenement.get_absolute_url }}">
+      <time itemprop="startDate"
+            datetime="{{ evenement.ancrage_debut.isoformat }}">
+        {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
+      </time>
+      {% if evenement.ancrage_fin %}
+        −
+        <time itemprop="endDate"
+              datetime="{{ evenement.ancrage_fin.isoformat }}">
+          {{ evenement.ancrage_fin.calc_date|safe }}
+        </time>
       {% endif %}
-    {% endif %}
-    <tr>
-      <td>
-        {% if elements.count > 1 %}
-          {% if element.numerotation == 'O' %}
-            {{ element.numero }}.
-          {% elif element.numerotation == 'B' %}
-            [{{ element.numero }}.]
-          {% elif element.numerotation == 'U' %}
-            •&nbsp;
-          {% endif %}
-        {% endif %}
-      </td>
-      <td>
-        {{ element.html|safe }}
-      </td>
-    </tr>
-    {% if forloop.last %}
-      {% if elements.count > 1 %}
+    </a>
+  </h2>
+
+  <h4>
+    {{ evenement.html|safe }}
+  </h4>
+
+  <p>{{ evenement.distribution.html|safe }}</p>
+
+  {% with elements=evenement.programme.all %}
+    {% if elements %}
+      <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
+      {% if elements|length == 1 %}
+        {{ elements.0.html|safe }}
+      {% else %}
+        <table class="programme">
+          {% for element in elements %}
+            <tr>
+              <td>
+                {% if element.numerotation == 'O' %}
+                  {{ element.numero }}.
+                {% elif element.numerotation == 'B' %}
+                  [{{ element.numero }}.]
+                {% elif element.numerotation == 'U' %}
+                  •&nbsp;
+                {% endif %}
+              </td>
+              <td>
+                {{ element.html|safe }}
+              </td>
+            </tr>
+          {% endfor %}
         </table>
       {% endif %}
     {% endif %}
-  {% endfor %}
-{% endwith %}
+  {% endwith %}
 
-{% if evenement.notes %}
-  <hr />
-  <small>
-    <h4>{% trans 'notes'|capfirst %}</h4>
-    {{ evenement.notes|safe }}
-  </small>
-{% endif %}
-
-{% for type, sources in evenement.sources_by_type %}
-  {% if forloop.first %}
+  {% if evenement.notes %}
     <hr />
+    <small>
+      <h4>{% trans 'notes'|capfirst %}</h4>
+      {{ evenement.notes|safe }}
+    </small>
   {% endif %}
-  <h3 style="text-align: center; font-style: italic;">
-    {% if sources|length > 1 %}
-      {{ type.pluriel|capfirst }}
-    {% else %}
-      {{ type|capfirst }}
-    {% endif %}
-  </h3>
-  <div class="accordion" id="type_{{ evenement.pk }}_{{ type.pk }}">
-    {% for source in sources %}
-      <div class="accordion-group">
-        <div class="accordion-heading">
-          <a class="accordion-toggle full-width"
-             data-toggle="collapse"
-             data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
-             href="#source_{{ evenement.pk }}_{{ source.pk }}"
-             onmouseover="load_source_content(this, {{ source.pk }});">
-            {{ source.html|removetags:'a' }}
-          </a>
 
-          <span class="accordion-toggle front-end_admin">
-            {% include 'routines/permalink.html' with object=source size='mini' %}
-          </span>
-        </div>
-        <div id="source_{{ evenement.pk }}_{{ source.pk }}"
-             class="accordion-body collapse">
-          <div class="accordion-inner">
+  {% for type, sources in evenement.sources_by_type %}
+    {% if forloop.first %}
+      <hr />
+    {% endif %}
+    <h3 style="text-align: center; font-style: italic;">
+      {% if sources|length > 1 %}
+        {{ type.pluriel|capfirst }}
+      {% else %}
+        {{ type|capfirst }}
+      {% endif %}
+    </h3>
+    <div class="accordion" id="type_{{ evenement.pk }}_{{ type.pk }}">
+      {% for source in sources %}
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="accordion-toggle full-width"
+               data-toggle="collapse"
+               data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
+               href="#source_{{ evenement.pk }}_{{ source.pk }}"
+               onmouseover="load_source_content(this, {{ source.pk }});">
+              {{ source.html|removetags:'a' }}
+            </a>
+
+            <span class="accordion-toggle front-end_admin">
+              {% include 'routines/permalink.html' with object=source size='mini' %}
+            </span>
+          </div>
+          <div id="source_{{ evenement.pk }}_{{ source.pk }}"
+               class="accordion-body collapse">
+            <div class="accordion-inner">
+            </div>
           </div>
         </div>
-      </div>
-    {% endfor %}
-  </div>
-{% endfor %}
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+</div>

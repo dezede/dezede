@@ -16,9 +16,8 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, CommonQuerySet, CommonManager, OrderedDefaultDict
-
-from .functions import capfirst, str_list, str_list_w_last, href, hlp
-from .source import TypeDeSource
+from .functions import capfirst, str_list, str_list_w_last, href, hlp, \
+    microdata
 
 
 __all__ = (b'ElementDeDistribution', b'CaracteristiqueDElementDeProgramme',
@@ -302,10 +301,14 @@ class Evenement(AutoriteModel):
         if self.circonstance:
             circonstance = hlp(self.circonstance, ugettext('circonstance'),
                                tags)
+            circonstance = microdata(circonstance, 'summary', tags=tags)
         if self.relache:
-            relache = ugettext('Relâche')
+            relache = microdata(ugettext('Relâche'), 'eventType', tags=tags)
 
-        return str_list((self.ancrage_debut.calc_lieu(tags), circonstance,
+        lieu = microdata(self.ancrage_debut.calc_lieu(tags), 'location',
+                         tags=tags)
+
+        return str_list((lieu, circonstance,
                          self.ancrage_debut.calc_heure(), relache))
 
     html.short_description = _('rendu HTML')

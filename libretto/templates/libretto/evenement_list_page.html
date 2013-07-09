@@ -3,9 +3,7 @@
 {% paginate 5 evenements %}
 {% show_pages %}
 {% for evenement in evenements %}
-  <div class="content_part">
-    {% include 'libretto/evenement_item.html' %}
-  </div>
+  {% include 'libretto/evenement_item.html' %}
 {% empty %}
   {% trans "Aucun événement n’a été trouvé selon ces critères." %}
 {% endfor %}
