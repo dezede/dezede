@@ -320,10 +320,7 @@ class Evenement(AutoriteModel):
         if self.relache:
             relache = microdata(ugettext('Relâche'), 'eventType', tags=tags)
 
-        lieu = microdata(self.ancrage_debut.calc_lieu(tags), 'location',
-                         tags=tags)
-
-        return str_list((lieu, circonstance,
+        return str_list((self.ancrage_debut.calc_lieu(tags), circonstance,
                          self.ancrage_debut.calc_heure(), relache))
 
     html.short_description = _('rendu HTML')
