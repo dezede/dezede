@@ -12,7 +12,7 @@
   <meta itemprop="name" content="{{ evenement.get_meta_name|striptags }}"/>
 
   <h2 style="text-align: center;">
-    <a href="{{ evenement.get_absolute_url }}" itemprop="url">
+    <a href="{{ SITE_URL }}{{ evenement.get_absolute_url }}" itemprop="url">
       <time itemprop="startDate"
             datetime="{{ evenement.ancrage_debut.isoformat }}">
         {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
