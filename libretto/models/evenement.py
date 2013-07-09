@@ -295,7 +295,7 @@ class Evenement(AutoriteModel):
             sources[source.type].append(source)
         return sources.items()
 
-    def get_summary(self, tags=False):
+    def get_meta_name(self, tags=False):
         if self.circonstance:
             out = self.circonstance
         else:
