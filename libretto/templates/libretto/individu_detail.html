@@ -15,11 +15,13 @@
     {% frontend_admin autorite=1 %}
     <h1>
       {{ individu.nom_complet }}
-      {% if individu.professions.exists %}
-        <small title="{% filter capfirst %}{% blocktrans count counter=individu.professions.count %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
-          {{ individu.calc_professions }}
-        </small>
-      {% endif %}
+      {% with professions_count=individu.professions.count %}
+        {% if professions_count %}
+          <small title="{% filter capfirst %}{% blocktrans count counter=professions_count %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
+            {{ individu.calc_professions }}
+          </small>
+        {% endif %}
+      {% endwith %}
     </h1>
     <h3>
       {% if individu.naissance or individu.deces %}
