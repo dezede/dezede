@@ -274,7 +274,9 @@ class UniqueSlugModel(Model):
 class TreeQuerySet(QuerySet):
     def get_descendants(self, include_self=False):
         meta = self.model._meta
-        tree_id_attr, left_attr, right_attr = meta.tree_id_attr, meta.left_attr, meta.right_attr
+        tree_id_attr = meta.tree_id_attr
+        left_attr = meta.left_attr
+        right_attr = meta.right_attr
         filters = Q()
 
         for tree_id, left, right in self.values_list(
