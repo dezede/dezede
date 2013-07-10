@@ -1,52 +1,83 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, division
 import datetime
-from django.contrib.auth import get_user_model
-from django.db.models import Count, Min, Max
+import io
+import time
+from django.db import connection
+from django.db.models import Count
 from reversion.models import Revision
+from accounts.templatetags.accounts_extra import log_ratio, hsv_to_hex
+from libretto.models.common import OrderedDefaultDict
 
 
 def run():
-    User = get_user_model()
-    headers = 'username', 'n_revisions', 'start'
-    data = User.objects.annotate(
-        n_revisions=Count('revision'),
-        start=Min('revision__date_created')).order_by('start').values(
-            *headers)
-    headers = 'username', 'n_revisions'
+    print('Lancement')
+    debut = time.time()
 
-    dates = Revision.objects.aggregate(start=Min('date_created'), end=Max('date_created'))
-    step = datetime.timedelta(days=7)
+    rect_size = 20  # pixels
+    date_format = '%d/%m/%Y'
 
-    with open('stats.html', 'w') as f:
-        f.write('<html><body><style>td { min-width: 20px; }</style><table>')
+    headers = 'user__first_name', 'user__last_name', 'n_revisions', 'week'
+    data = Revision.objects.extra({
+        'week': connection.ops.date_trunc_sql('week', 'date_created')}) \
+        .values('week').annotate(n_revisions=Count('pk')).values_list(*headers).order_by('user', 'week')
+
+    print('la requete a pris %s secondes' % (time.time() - debut))
+
+    grouped_data = OrderedDefaultDict()
+    for d in data:
+        if not d[0]:
+            continue
+        grouped_data[' '.join(d[:2])].append(d[2:])
+    data = grouped_data
+
+    step = datetime.timedelta(weeks=1)
+
+    with io.open('stats.html', 'w') as f:
+        f.write("""
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <style>td:first-child {text-align: right;} svg {border: 1px solid #EEE;}</style>
+  </head>
+  <body>
+    <table>""")
         f.write('<tr>')
-        for head in headers:
-            f.write('<th>%s</th>' % head)
-        f.write('<th colspan="%s">repartition</th></tr>' % int(1 + (dates['end'] - dates['start']).total_seconds() / step.total_seconds()))
-        for row in data:
-            f.write('<tr>')
-            for head in headers:
-                f.write('<td>%s</td>' % row[head])
-            start = dates['start']
-            end = dates['end']
-            user = User.objects.get(username=row['username'])
-            maxi = 0
-            while end > start:
-                maxi = max(maxi, Revision.objects.filter(user=user, date_created__range=(start, start + step)).count())
-                start += step
+        f.write('<th>Utilisateur</th>')
+        f.write('<th>Répartition de l’activité</th></tr>')
+        maxi = max(n for v in data.values() for n, date in v)
+        start = min(date for v in data.values() for n, date in v)
+        end = max(date for v in data.values() for n, date in v)
 
-            start = dates['start'].date()
-            end = dates['end'].date()
-            maxi = float(maxi)
-            while end > start:
-                count = Revision.objects.filter(user=user, date_created__range=(start, start + step)).count()
-                if maxi:
-                    ratio = 5 * count / maxi
-                else:
-                    ratio = 0
-                f.write('<td style="background-color: hsl(120, 100%%, %s%%);" title="%s au %s : %s revisions">&nbsp;</td>' % (100 / ratio if ratio else 100, start, start + step, count))
-                start += step
+        for k, v in data.items():
+            f.write('<tr>')
+            f.write('<td>%s</td>' % k)
+
+            start -= datetime.timedelta(days=start.weekday())
+            svg_width = rect_size * (end - start).total_seconds() / step.total_seconds()
+
+            f.write('<td><svg width="%s" height="%s">' % (svg_width, rect_size))
+            for count, date in sorted(v, key=lambda l: l[1]):
+                f.write('<rect width="%s" height="%s" x="%s" style="fill: %s;" title="%s au %s : %s révisions" />' % (
+                        rect_size,
+                        rect_size,
+                        rect_size * (date - start).total_seconds() / step.total_seconds(),
+                        hsv_to_hex(0, log_ratio(count, maxi), 1),
+                        date.strftime(date_format),
+                        (date + step).strftime(date_format),
+                        count))
+            f.write('</td></svg>')
             f.write('</tr>')
-        f.write('</table></body></html>')
+        f.write("""
+    </table>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script>
+      $('*[title]').tooltip({container: 'body'});
+    </script>
+  </body>
+</html>""")
+
+    print(time.time() - debut)
