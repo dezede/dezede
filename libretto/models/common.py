@@ -183,28 +183,16 @@ class PublishedQuerySet(CommonQuerySet):
         else:
             qs = self.filter(Q(etat__public=True) | Q(owner=request.user.pk))
 
-        # Si le modèle est récursif, on retire les éléments isolés.
-        # Un élément isolé est un élément publié dont l'un des parents n'est
-        # pas publié.
-        mgr = self.model.objects
-        if isinstance(mgr, TreeManager):
-            parent_attr = mgr.parent_attr
-            level_attr = mgr.level_attr
-            lft_attr = mgr.left_attr
-            rght_attr = mgr.right_attr
+        # Automatically orders by the correct ordering.
+        ordering = []
+        if self.ordered:
+            query = self.query
+            if query.order_by:
+                ordering = query.order_by
+            elif query.default_ordering:
+                ordering = self.model._meta.ordering
 
-            qs = qs.order_by()
-            root_level = \
-                qs.aggregate(Min(level_attr))[level_attr + '__min'] or 0
-            to_be_hidden = qs.filter(**{level_attr + '__gt': root_level}) \
-                .exclude(**{parent_attr + '__in': qs}) \
-                .values_list(lft_attr, rght_attr)
-
-            lft_pk_list = []
-            for lft, rght in to_be_hidden:
-                lft_pk_list.extend(range(lft, rght + 1))
-            qs = qs.exclude(**{lft_attr + '__in': lft_pk_list})
-        return qs
+        return qs.order_by(*ordering)
 
 
 class PublishedManager(CommonManager):
@@ -288,7 +276,10 @@ class TreeQuerySet(QuerySet):
                             left_attr + '__gte': left,
                             left_attr + '__lte': right})
 
-        return self.model._tree_manager.filter(filters)
+        qs = self.model._tree_manager.filter(filters)
+        if getattr(self, 'polymorphic_disabled', False):
+            qs = qs.non_polymorphic()
+        return qs
 
 
 class TreeManager(OriginalTreeManager):

@@ -125,18 +125,9 @@ def data_table_list(context, object_list, attr='link',
     if not object_list:
         return ''
 
-    # Only show what the connected user is allowed to see and automatically
-    # orders by the correct ordering.
+    # Only show what the connected user is allowed to see.
     if isinstance(object_list, PublishedQuerySet):
-        ordering = []
-        if object_list.ordered:
-            query = object_list.query
-            if query.order_by:
-                ordering = query.order_by
-            elif query.default_ordering:
-                ordering = object_list.model._meta.ordering
-        object_list = object_list.published(
-            request=context['request']).order_by(*ordering)
+        object_list = object_list.published(request=context['request'])
 
         is_published_queryset = True
     else:
@@ -163,10 +154,14 @@ def data_table_list(context, object_list, attr='link',
     return render_to_string('routines/data_table_list.html', c)
 
 
-@register.simple_tag
-def jstree(queryset, attr='__str__', tree_id=None):
+@register.simple_tag(takes_context=True)
+def jstree(context, queryset, attr='__str__', tree_id=None):
     if not queryset:
         return ''
+
+    if isinstance(queryset, PublishedQuerySet):
+        queryset = queryset.published(context['request'])
+
     if tree_id is None:
         tree_id = queryset.model.__name__.lower()
     c = {
