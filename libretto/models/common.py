@@ -307,7 +307,7 @@ class Document(CommonModel):
     nom = CharField(_('nom'), max_length=300, blank=True)
     document = FileBrowseField(
         _('document'), max_length=400, directory='documents/',
-            format='document')
+        format='document')
     description = HTMLField(_('description'), blank=True)
     auteurs = GenericRelation('Auteur')
 
