@@ -22,8 +22,10 @@
     <h3>
       {{ oeuvre.auteurs_html }}
     </h3>
-    <h3 title="{% trans 'Création' %}">
-      {{ oeuvre.ancrage_creation.html|default:'' }}
+    <h3>
+      <span title="{% trans 'Création' %}">
+        {{ oeuvre.ancrage_creation.html|default:'' }}
+      </span>
     </h3>
     <h4>
       <table class="data-table">
