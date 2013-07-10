@@ -305,8 +305,9 @@ class TreeManager(OriginalTreeManager):
 @python_2_unicode_compatible
 class Document(CommonModel):
     nom = CharField(_('nom'), max_length=300, blank=True)
-    document = FileBrowseField(_('document'), max_length=400,
-                               directory='documents/')
+    document = FileBrowseField(
+        _('document'), max_length=400, directory='documents/',
+            format='document')
     description = HTMLField(_('description'), blank=True)
     auteurs = GenericRelation('Auteur')
 
@@ -333,7 +334,8 @@ class Document(CommonModel):
 @python_2_unicode_compatible
 class Illustration(CommonModel):
     legende = CharField(_('légende'), max_length=300, blank=True)
-    image = FileBrowseField(_('image'), max_length=400, directory='images/')
+    image = FileBrowseField(
+        _('image'), max_length=400, directory='images/', format='image')
     commentaire = HTMLField(_('commentaire'), blank=True)
     auteurs = GenericRelation('Auteur')
 
