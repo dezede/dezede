@@ -9,6 +9,7 @@ from django.views.generic import ListView, DetailView
 from endless_pagination.views import AjaxListView
 from django_tables2 import SingleTableMixin
 from haystack.query import SearchQuerySet
+from polymorphic import PolymorphicQuerySet
 from viewsets import ModelViewSet
 from .models import *
 from .forms import *
@@ -23,8 +24,10 @@ __all__ = (b'PublishedDetailView', 'PublishedListView',
 
 class PublishedDetailView(DetailView):
     def get_queryset(self):
-        return super(PublishedDetailView, self).get_queryset().published(
-            request=self.request)
+        qs = super(PublishedDetailView, self).get_queryset()
+        if isinstance(qs, PolymorphicQuerySet):
+            qs = qs.non_polymorphic()
+        return qs.published(request=self.request)
 
 
 class PublishedListView(ListView):
