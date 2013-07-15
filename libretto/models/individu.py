@@ -12,7 +12,7 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from ..utils import abbreviate
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-    calc_pluriel, UniqueSlugModel
+    calc_pluriel, UniqueSlugModel, TypeDeParente
 from .evenement import Evenement
 from .functions import str_list, str_list_w_last, href, sc
 
@@ -46,19 +46,7 @@ class Prenom(CommonModel):
         return 'prenom__icontains',
 
 
-@python_2_unicode_compatible
-class TypeDeParenteDIndividus(CommonModel):
-    nom = CharField(_('nom'), max_length=50, help_text=LOWER_MSG, unique=True,
-                    db_index=True)
-    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=55, blank=True,
-                            help_text=PLURAL_MSG)
-    nom_relatif = CharField(_('nom relatif'), max_length=50, db_index=True,
-                            help_text=LOWER_MSG)
-    nom_relatif_pluriel = CharField(_('nom relatif (au pluriel)'),
-                                    max_length=55, help_text=PLURAL_MSG,
-                                    blank=True)
-    classement = SmallIntegerField(_('classement'), default=1, db_index=True)
-
+class TypeDeParenteDIndividus(TypeDeParente):
     class Meta(object):
         verbose_name = ungettext_lazy('type de parenté d’individus',
                                       'types de parenté d’individus', 1)
@@ -68,15 +56,6 @@ class TypeDeParenteDIndividus(CommonModel):
             2)
         ordering = ('classement',)
         app_label = 'libretto'
-
-    def pluriel(self):
-        return calc_pluriel(self)
-
-    def relatif_pluriel(self):
-        return calc_pluriel(self, 'nom_relatif')
-
-    def __str__(self):
-        return self.nom
 
 
 @python_2_unicode_compatible

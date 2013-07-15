@@ -400,6 +400,13 @@ class AutoriteAdmin(PublishedAdmin):
     additional_fields = ('etat', 'notes', 'owner')
 
 
+class TypeDeParenteAdmin(CommonAdmin):
+    list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_relatif',
+                    'nom_relatif_pluriel', 'classement',)
+    list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
+                     'nom_relatif_pluriel', 'classement',)
+
+
 class DocumentAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'document', 'has_related_objects',)
     list_editable = ('nom', 'document',)
@@ -533,11 +540,8 @@ class PrenomAdmin(CommonAdmin):
     list_editable = ('prenom', 'classement', 'favori',)
 
 
-class TypeDeParenteDIndividusAdmin(CommonAdmin):
-    list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_relatif',
-                    'nom_relatif_pluriel', 'classement',)
-    list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
-                     'nom_relatif_pluriel', 'classement',)
+class TypeDeParenteDIndividusAdmin(TypeDeParenteAdmin):
+    pass
 
 
 class IndividuAdmin(AutoriteAdmin):
@@ -685,11 +689,8 @@ class PupitreAdmin(CommonAdmin):
     }
 
 
-class TypeDeParenteDOeuvresAdmin(CommonAdmin):
-    list_display = ('__str__', 'nom', 'nom_relatif', 'nom_relatif_pluriel',
-                    'classement',)
-    list_editable = ('nom', 'nom_relatif', 'nom_relatif_pluriel',
-                     'classement',)
+class TypeDeParenteDOeuvresAdmin(TypeDeParenteAdmin):
+    pass
 
 
 class ParenteDOeuvresAdmin(CommonAdmin):

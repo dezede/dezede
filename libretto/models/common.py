@@ -7,7 +7,7 @@ from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.sessions.models import Session
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
-    ForeignKey, TextField, Manager, PROTECT, Q, Min
+    ForeignKey, TextField, Manager, PROTECT, Q, Min, SmallIntegerField
 from django.db.models.query import QuerySet
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
@@ -28,7 +28,7 @@ __all__ = (
     b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
     b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'TreeQuerySet',
     b'TreeManager', b'Document', b'Illustration', b'Etat',
-    b'OrderedDefaultDict'
+    b'OrderedDefaultDict', b'TypeDeParente',
 )
 
 
@@ -64,7 +64,7 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
 
 
 #
-# Modélisation
+# Modélisation abstraite
 #
 
 
@@ -291,6 +291,44 @@ class TreeManager(OriginalTreeManager):
 
     def get_descendants(self, *args, **kwargs):
         return self.get_query_set().get_descendants(*args, **kwargs)
+
+
+@python_2_unicode_compatible
+class TypeDeParente(CommonModel):
+    nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG,
+                    db_index=True)
+    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=55, blank=True,
+                            help_text=PLURAL_MSG)
+    nom_relatif = CharField(_('nom relatif'), max_length=100,
+                            help_text=LOWER_MSG, db_index=True)
+    nom_relatif_pluriel = CharField(
+        _('nom relatif (au pluriel)'), max_length=130, blank=True,
+        help_text=PLURAL_MSG)
+    classement = SmallIntegerField(_('classement'), default=1, db_index=True)
+
+    class Meta(object):
+        abstract = True
+        unique_together = ('nom', 'nom_relatif')
+        verbose_name = ungettext_lazy('type de parenté',
+                                      'types de parentés', 1)
+        verbose_name_plural = ungettext_lazy('type de parenté',
+                                             'types de parentés', 2)
+        ordering = ('classement',)
+        app_label = 'libretto'
+
+    def pluriel(self):
+        return calc_pluriel(self)
+
+    def relatif_pluriel(self):
+        return calc_pluriel(self, attr_base='nom_relatif')
+
+    def __str__(self):
+        return '< %s | %s >' % (self.nom, self.nom_relatif)
+
+
+#
+# Modèles communs
+#
 
 
 @python_2_unicode_compatible

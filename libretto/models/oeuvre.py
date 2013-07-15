@@ -27,7 +27,7 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
     PublishedManager, OrderedDefaultDict, PublishedQuerySet, TreeManager, \
-    TreeQuerySet
+    TreeQuerySet, TypeDeParente
 from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -303,16 +303,7 @@ class Pupitre(CommonModel):
                 'partie__professions__nom_pluriel__icontains',)
 
 
-@python_2_unicode_compatible
-class TypeDeParenteDOeuvres(CommonModel):
-    nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG, unique=True,
-                    db_index=True)
-    nom_relatif = CharField(_('nom relatif'), max_length=100,
-                            help_text=LOWER_MSG, unique=True, db_index=True)
-    nom_relatif_pluriel = CharField(_('nom relatif (au pluriel)'),
-        max_length=130, blank=True, help_text=PLURAL_MSG)
-    classement = SmallIntegerField(_('classement'), default=1, db_index=True)
-
+class TypeDeParenteDOeuvres(TypeDeParente):
     class Meta(object):
         verbose_name = ungettext_lazy('type de parenté d’œuvres',
                                       'types de parentés d’œuvres', 1)
@@ -320,12 +311,6 @@ class TypeDeParenteDOeuvres(CommonModel):
                                              'types de parentés d’œuvres', 2)
         ordering = ('classement',)
         app_label = 'libretto'
-
-    def relatif_pluriel(self):
-        return calc_pluriel(self, attr_base='nom_relatif')
-
-    def __str__(self):
-        return '< %s | %s >' % (self.nom, self.nom_relatif)
 
 
 class ParenteDOeuvresManager(CommonManager):
