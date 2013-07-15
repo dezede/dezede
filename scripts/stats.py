@@ -3,9 +3,13 @@
 from __future__ import unicode_literals, division
 import datetime
 import io
+import os
 import time
 from django.db import connection
 from django.db.models import Count
+from django.template import Context
+from django.template.base import Template
+from django.utils.safestring import mark_safe
 from reversion.models import Revision
 from accounts.templatetags.accounts_extra import log_ratio, hsv_to_hex
 from libretto.models.common import OrderedDefaultDict
@@ -45,44 +49,33 @@ def run():
     svg_width = rect_size * (end - start).total_seconds() / step.total_seconds()
 
     with io.open('stats.html', 'w') as f:
-        out = """
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
-    <style>td:first-child {text-align: right;} svg {border: 1px solid #EEE;}</style>
-  </head>
-  <body>
-    <table>"""
-        out += '<tr>'
-        out += '<th>Utilisateur</th>'
-        out += '<th>Répartition de l’activité</th></tr>'
+        html_table = """<tr>
+                          <th>Utilisateur</th>
+                          <th>Répartition de l’activité</th>
+                        </tr>"""
 
-        for k, v in data.items():
-            out += '<tr>'
-            out += '<td>%s</td>' % k
-
-            out += '<td><svg width="%s" height="%s">' % (svg_width, rect_size)
-            for count, date in sorted(v, key=lambda l: l[1]):
-                out += '<rect width="%s" height="%s" x="%s" style="fill: %s;" title="%s au %s : %s révisions" />' % (
-                    rect_size,
-                    rect_size,
+        for user_name, periods in data.items():
+            html_table += """
+                <tr>
+                  <td>%s</td>
+                  <td><svg width="%s" height="%s">""" % (user_name,
+                                                         svg_width, rect_size)
+            for count, date in periods:
+                html_table += """
+                    <rect width="%s" height="%s" x="%s" style="fill: %s;"
+                          title="%s au %s : %s révisions" />""" % (
+                    rect_size, rect_size,
                     rect_size * (date - start).total_seconds() / step_seconds,
                     hsv_to_hex(0, log_ratio(count, maxi), 1),
                     date.strftime(date_format),
                     (date + step).strftime(date_format),
                     count)
-            out += '</td></svg>'
-            out += '</tr>'
-        out += """
-    </table>
-    <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-    <script>
-      $('*[title]').tooltip({container: 'body'});
-    </script>
-  </body>
-</html>"""
+            html_table += '</td></svg>'
+            html_table += '</tr>'
+        current_path = os.path.abspath(os.path.dirname(__file__))
+        t = Template(open(
+            os.path.join(current_path, 'templates/stats.html')).read())
+        out = t.render(Context({'table': mark_safe(html_table)}))
         f.write(out)
 
     print(time.time() - script_start)
