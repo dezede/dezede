@@ -405,6 +405,28 @@ class TypeDeParenteAdmin(CommonAdmin):
                     'nom_relatif_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
                      'nom_relatif_pluriel', 'classement',)
+    list_filter = (PolymorphicChildModelFilter,)
+
+
+class TypeDeParenteChildAdmin(PolymorphicChildModelAdmin, TypeDeParenteAdmin):
+    base_model = TypeDeParente
+
+
+class TypeDeParenteDOeuvresAdmin(TypeDeParenteChildAdmin):
+    pass
+
+
+class TypeDeParenteDIndividusAdmin(TypeDeParenteChildAdmin):
+    pass
+
+
+class TypeDeParenteParentAdmin(PolymorphicParentModelAdmin,
+                               TypeDeParenteAdmin):
+    base_model = TypeDeParente
+    child_models = (
+        (TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin),
+        (TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin),
+    )
 
 
 class DocumentAdmin(CommonAdmin):
@@ -538,10 +560,6 @@ class PrenomAdmin(CommonAdmin):
                     'has_individu')
     search_fields = ('prenom',)
     list_editable = ('prenom', 'classement', 'favori',)
-
-
-class TypeDeParenteDIndividusAdmin(TypeDeParenteAdmin):
-    pass
 
 
 class IndividuAdmin(AutoriteAdmin):
@@ -687,10 +705,6 @@ class PupitreAdmin(CommonAdmin):
     autocomplete_lookup_fields = {
         'fk': ['partie'],
     }
-
-
-class TypeDeParenteDOeuvresAdmin(TypeDeParenteAdmin):
-    pass
 
 
 class ParenteDOeuvresAdmin(CommonAdmin):
@@ -865,7 +879,7 @@ site.register(Saison, SaisonAdmin)
 site.register(Profession, ProfessionAdmin)
 site.register(AncrageSpatioTemporel, AncrageSpatioTemporelAdmin)
 site.register(Prenom, PrenomAdmin)
-site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
+site.register(TypeDeParente, TypeDeParenteParentAdmin)
 site.register(Individu, IndividuAdmin)
 site.register(Devise, DeviseAdmin)
 site.register(Engagement, EngagementAdmin)
@@ -876,7 +890,6 @@ site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
 site.register(Partie, PartieParentAdmin)
 site.register(Pupitre, PupitreAdmin)
-site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(ParenteDOeuvres, ParenteDOeuvresAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(ElementDeDistribution, ElementDeDistributionAdmin)

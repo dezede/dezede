@@ -16,6 +16,7 @@ from django.utils.translation import ungettext_lazy
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
 from mptt.managers import TreeManager as OriginalTreeManager
+from polymorphic import PolymorphicModel, PolymorphicManager
 from tinymce.models import HTMLField
 from cache_tools import invalidate_group, cached_ugettext_lazy as _
 from .functions import href
@@ -293,8 +294,12 @@ class TreeManager(OriginalTreeManager):
         return self.get_query_set().get_descendants(*args, **kwargs)
 
 
+class TypeDeParenteManager(PolymorphicManager, CommonManager):
+    pass
+
+
 @python_2_unicode_compatible
-class TypeDeParente(CommonModel):
+class TypeDeParente(PolymorphicModel, CommonModel):
     nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=55, blank=True,
@@ -306,8 +311,9 @@ class TypeDeParente(CommonModel):
         help_text=PLURAL_MSG)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
+    objects = TypeDeParenteManager()
+
     class Meta(object):
-        abstract = True
         unique_together = ('nom', 'nom_relatif')
         verbose_name = ungettext_lazy('type de parenté',
                                       'types de parentés', 1)
