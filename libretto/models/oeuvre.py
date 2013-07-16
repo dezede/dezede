@@ -615,10 +615,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             if out:
                 # TODO: BUG : le validateur HTML supprime l'espace qu'on ajoute
                 #       ci-dessous si on ne le met pas en syntaxe HTML
-                if tags:
-                    out += '&#32;'
-                else:
-                    out += ' '
+                out += '&#32;' if tags else ' '
             out += caracteristiques
         return mark_safe(out)
     html.short_description = _('rendu HTML')
