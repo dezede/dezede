@@ -120,9 +120,9 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         return self.html(short=True)
 
     def evenements(self):
-        # TODO: gérer les fins d'événements.
-        # TODO: Inclure les événements des enfants.
-        return Evenement.objects.filter(ancrage_debut__lieu=self)
+        qs = self.get_descendants(include_self=True)
+        return Evenement.objects.filter(
+            Q(ancrage_debut__lieu__in=qs) | Q(ancrage_fin__lieu__in=qs))
 
     def individus_nes(self):
         return Individu.objects.filter(

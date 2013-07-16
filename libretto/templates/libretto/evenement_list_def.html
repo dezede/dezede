@@ -1,50 +1,41 @@
-{% load i18n extras %}
+{% load i18n extras endless %}
 {% load url from future %}
 
-{% regroup evenements by ancrage_debut.date.year as year_list %}
-{% for year in year_list %}
+{% with counter=evenements.count %}
+  {% if counter %}
+    <tr>
+      <th>
+        {{ counter }}
+        {% blocktrans count counter=counter %}événement{% plural %}événements{% endblocktrans %}
+      </th>
+      <td>
+        <a href="{% url 'evenements' %}?{{ object.class_name|lower }}=|{{ object.pk }}|">
+          <strong>{% trans 'Afficher tous les événements' %}</strong>
+        </a>
+      </td>
+    </tr>
+  {% endif %}
+{% endwith %}
 
+{% paginate 10 evenements.yearly_counts as yearly_counts %}
+{% for yearly_count in yearly_counts %}
   <tr>
 
-    {% if forloop.first %}
-      {% with counter=evenements.count %}
-        {% if counter %}
-          <th>
-            {% filter capfirst %}{% blocktrans count counter=counter %}événement
-            {% plural %}événements{% endblocktrans %}{% endfilter %}
-          </th>
-        {% endif %}
-      {% endwith %}
-      {% else %}
-      <td></td>
-    {% endif %}
+    <td></td>
 
     <td>
-      <a href="{% url 'evenements' %}?{{ object.class_name|lower }}=|{{ object.pk }}|&dates_0={{ year.grouper }}&dates_1={{ year.grouper }}">
-        {% if year.list|length_is:1 %}
-          {% if lieu %}
-            {{ year.list.0.ancrage_debut.calc_moment|capfirst }}
-          {% else %}
-            {{ year.list.0.ancrage_debut.html|removetags:'a' }}
-          {% endif %}
-        {% else %}
-          {{ year.grouper }} ({{ year.list|length }}
+      {% with year=yearly_count.year.year count=yearly_count.count %}
+        <a href="{% url 'evenements' %}?{{ object.class_name|lower }}=|{{ object.pk }}|&dates_0={{ year }}&dates_1={{ year }}">
+          {{ year }} ({{ count }}
           {% filter abbreviate:2 %}{% trans 'événements' %}{% endfilter %})
-        {% endif %}
-      </a>
+        </a>
+      {% endwith %}
     </td>
 
   </tr>
-
 {% endfor %}
 
-{% if evenements.count > 1 %}
-  <tr>
-    <td></td>
-    <td>
-      <a href="{% url 'evenements' %}?{{ object.class_name|lower }}=|{{ object.pk }}|">
-        <strong>{% trans "Afficher tous les événements" %}</strong>
-      </a>
-    </td>
-  </tr>
-{% endif %}
+<tr>
+  <td></td>
+  <td>{% show_pages %}</td>
+</tr>

@@ -6,16 +6,18 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey, \
                                                 GenericRelation
 from django.core.exceptions import ValidationError
+from django.db import connection
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
     OneToOneField, BooleanField, PositiveSmallIntegerField, permalink, Q, \
-    PositiveIntegerField, get_model, SmallIntegerField, PROTECT
+    PositiveIntegerField, get_model, SmallIntegerField, PROTECT, Count
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-    calc_pluriel, CommonQuerySet, CommonManager, OrderedDefaultDict
+    calc_pluriel, CommonQuerySet, CommonManager, OrderedDefaultDict, \
+    PublishedManager, PublishedQuerySet
 from .functions import capfirst, str_list, str_list_w_last, href, hlp, \
     microdata
 
@@ -267,6 +269,23 @@ class ElementDeProgramme(AutoriteModel):
         )
 
 
+class EvenementQuerySet(PublishedQuerySet):
+    def yearly_counts(self):
+        return get_model('libretto', 'AncrageSpatioTemporel').objects.filter(
+            Q(evenements_debuts__in=self) | Q(evenements_fins__in=self)) \
+            .extra({'year': connection.ops.date_trunc_sql('year', 'date')}) \
+            .values('year').annotate(count=Count('evenements_debuts')) \
+            .order_by('year')
+
+
+class EvenementManager(PublishedManager):
+    def get_query_set(self):
+        return EvenementQuerySet(self.model, using=self._db)
+
+    def yearly_counts(self):
+        return self.get_query_set().yearly_counts()
+
+
 @python_2_unicode_compatible
 class Evenement(AutoriteModel):
     ancrage_debut = OneToOneField(
@@ -278,6 +297,8 @@ class Evenement(AutoriteModel):
     relache = BooleanField(verbose_name='relâche', db_index=True)
     circonstance = CharField(max_length=500, blank=True, db_index=True)
     distribution = GenericRelation(ElementDeDistribution)
+
+    objects = EvenementManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('événement', 'événements', 1)
