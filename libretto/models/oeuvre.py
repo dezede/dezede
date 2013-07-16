@@ -533,8 +533,10 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     calc_caracteristiques.admin_order_field = 'caracteristiques__valeur'
 
     def calc_pupitres(self, prefix=True, tags=False):
+        if not self.pk:
+            return ''
         pupitres = self.pupitres.select_related('partie')
-        if not self.pk or not pupitres:
+        if not pupitres:
             return ''
         out = ugettext('pour ') if prefix else ''
         out += str_list_w_last(p.html(tags=tags) for p in pupitres)
