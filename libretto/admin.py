@@ -720,7 +720,7 @@ class ParenteDOeuvresAdmin(CommonAdmin):
 class OeuvreAdmin(AutoriteAdmin):
     form = OeuvreForm
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
-                    'calc_caracteristiques', 'auteurs_html',
+                    'caracteristiques_html', 'auteurs_html',
                     'ancrage_creation', 'link',)
     list_editable = ('genre',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',

@@ -108,6 +108,20 @@ class TypeDeCaracteristiqueDOeuvre(CommonModel):
         return self.nom
 
 
+class CaracteristiqueDOeuvreQuerySet(CommonQuerySet):
+    def html_list(self, tags=True):
+        return [hlp(valeur, type, tags)
+                for type, valeur in self.values_list('type__nom', 'valeur')]
+
+
+class CaracteristiqueDOeuvreManager(CommonManager):
+    def get_query_set(self):
+        return CaracteristiqueDOeuvreQuerySet(self.model, using=self._db)
+
+    def html_list(self, tags=True):
+        return self.get_query_set().html_list(tags=tags)
+
+
 @python_2_unicode_compatible
 class CaracteristiqueDOeuvre(CommonModel):
     type = ForeignKey(
@@ -119,6 +133,8 @@ class CaracteristiqueDOeuvre(CommonModel):
     classement = SmallIntegerField(_('classement'), default=1, db_index=True,
         help_text=_('Par exemple, on peut choisir de classer '
                     'les découpages par nombre d’actes.'))
+
+    objects = CaracteristiqueDOeuvreManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('caractéristique d’œuvre',
@@ -516,21 +532,13 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     link.short_description = _('lien')
     link.allow_tags = True
 
-    def calc_caracteristiques(self, limite=0, tags=True):
+    def caracteristiques_html(self, tags=True):
         if not self.pk:
             return ''
-        cs = list(self.caracteristiques.select_related('type'))
-
-        def clist(cs):
-            return str_list(c.html(tags) for c in cs)
-        out2 = clist(cs[limite:])
-        if limite:
-            out1 = clist(cs[:limite])
-            return out1, out2
-        return out2
-    calc_caracteristiques.allow_tags = True
-    calc_caracteristiques.short_description = _('caractéristiques')
-    calc_caracteristiques.admin_order_field = 'caracteristiques__valeur'
+        return str_list(self.caracteristiques.html_list(tags=tags))
+    caracteristiques_html.allow_tags = True
+    caracteristiques_html.short_description = _('caractéristiques')
+    caracteristiques_html.admin_order_field = 'caracteristiques__valeur'
 
     def calc_pupitres(self, prefix=True, tags=False):
         if not self.pk:
@@ -579,7 +587,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         out = ''
         titre_complet = self.titre_complet()
         genre = self.genre
-        caracteristiques = self.calc_caracteristiques(tags=tags)
+        caracteristiques = [] if not self.pk \
+            else self.caracteristiques.html_list(tags=tags)
         url = None if not tags else self.get_absolute_url()
         if auteurs:
             auts = self.auteurs_html(tags)
@@ -598,18 +607,15 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         if genre:
             genre = genre.html(tags, caps=genre_caps)
             if not titre_complet:
-                cs = None
                 titre_complet = self.genre.html(tags, caps=True)
                 pupitres = self.calc_pupitres()
                 if pupitres:
                     titre_complet += ' ' + pupitres
                 if caracteristiques:
-                    cs = self.calc_caracteristiques(1, tags)
-                    titre_complet += ' ' + cs[0]
-                    caracteristiques = cs[1]
+                    titre_complet += ' ' + caracteristiques.pop(0)
                 if titre:
                     out += href(url, titre_complet, tags=tags & links)
-                    if descr and cs and cs[1]:
+                    if descr and caracteristiques:
                         out += ','
             elif descr:
                 out += genre
@@ -618,7 +624,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                 # TODO: BUG : le validateur HTML supprime l'espace qu'on ajoute
                 #       ci-dessous si on ne le met pas en syntaxe HTML
                 out += '&#32;' if tags else ' '
-            out += caracteristiques
+            out += str_list(caracteristiques)
         return mark_safe(out)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
