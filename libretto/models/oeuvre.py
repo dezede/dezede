@@ -516,13 +516,10 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     link.short_description = _('lien')
     link.allow_tags = True
 
-    def individus_auteurs(self):
-        return self.auteurs.individus()
-
     def calc_caracteristiques(self, limite=0, tags=True):
         if not self.pk:
             return ''
-        cs = self.caracteristiques.select_related('type')
+        cs = list(self.caracteristiques.select_related('type'))
 
         def clist(cs):
             return str_list(c.html(tags) for c in cs)
@@ -536,11 +533,11 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     calc_caracteristiques.admin_order_field = 'caracteristiques__valeur'
 
     def calc_pupitres(self, prefix=True, tags=False):
-        if not self.pk or not self.pupitres.all():
+        pupitres = self.pupitres.select_related('partie')
+        if not self.pk or not pupitres:
             return ''
         out = ugettext('pour ') if prefix else ''
-        out += str_list_w_last(
-                        p.html(tags=tags) for p in self.pupitres.all())
+        out += str_list_w_last(p.html(tags=tags) for p in pupitres)
         return out
 
     def pupitres_html(self, prefix=False, tags=True):
@@ -578,27 +575,30 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
              ancestors_links=False, links=True):
         # FIXME: Nettoyer cette horreur
         out = ''
-        auts = self.auteurs_html(tags)
-        pars = self.calc_referent_ancestors(tags=tags, links=ancestors_links)
         titre_complet = self.titre_complet()
         genre = self.genre
         caracteristiques = self.calc_caracteristiques(tags=tags)
         url = None if not tags else self.get_absolute_url()
-        if auteurs and auts:
-            out += auts + ', '
+        if auteurs:
+            auts = self.auteurs_html(tags)
+            if auts:
+                out += auts + ', '
         if titre:
-            if ancestors and pars:
-                out += pars + ', '
+            if ancestors:
+                pars = self.calc_referent_ancestors(
+                    tags=tags, links=ancestors_links)
+                if pars:
+                    out += pars + ', '
             if titre_complet:
                 out += href(url, cite(titre_complet, tags=tags), tags & links)
                 if descr and genre:
                     out += ', '
         if genre:
             genre = genre.html(tags, caps=genre_caps)
-            pupitres = self.calc_pupitres()
             if not titre_complet:
                 cs = None
                 titre_complet = self.genre.html(tags, caps=True)
+                pupitres = self.calc_pupitres()
                 if pupitres:
                     titre_complet += ' ' + pupitres
                 if caracteristiques:

@@ -260,10 +260,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
     def calc_professions(self, tags=True):
         if not self.pk:
             return ''
-        ps = self.professions.all()
-        titre = self.titre
-        return str_list_w_last(p.gendered(titre, tags, caps=i == 0)
-                               for i, p in enumerate(ps))
+        return str_list_w_last(p.gendered(self.titre, tags, caps=i == 0)
+                               for i, p in enumerate(self.professions.all()))
     calc_professions.short_description = _('professions')
     calc_professions.admin_order_field = 'professions__nom'
     calc_professions.allow_tags = True

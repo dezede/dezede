@@ -37,10 +37,13 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
         return Evenement.objects.filter(Q(pk__in=pk_list)
                               | Q(programme__distribution__in=self)).distinct()
 
+    def prefetch(self):
+        return self.select_related(
+            'pupitre', 'pupitre__partie',
+            'profession').prefetch_related('individus')
+
     def html(self, tags=True):
-        l = self.select_related('pupitre', 'pupitre__partie', 'profession') \
-            .prefetch_related('individus')
-        return ', '.join(e.html(tags=tags) for e in l)
+        return ', '.join(e.html(tags=tags) for e in self)
 
 
 class ElementDeDistributionManager(CommonManager):
@@ -50,13 +53,16 @@ class ElementDeDistributionManager(CommonManager):
         return ElementDeDistributionQuerySet(self.model, using=self._db)
 
     def individus(self):
-        return self.all().individus()
+        return self.get_query_set().individus()
 
     def evenements(self):
-        return self.all().evenements()
+        return self.get_query_set().evenements()
+
+    def prefetch(self):
+        return self.get_query_set().prefetch()
 
     def html(self, tags=True):
-        return self.all().html(tags=tags)
+        return self.get_query_set().html(tags=tags)
 
 
 @python_2_unicode_compatible
@@ -217,11 +223,13 @@ class ElementDeProgramme(AutoriteModel):
     def html(self, tags=True):
         has_pk = self.pk is not None
 
-        add_distribution = False
-        distribution = ''
-        if has_pk and self.distribution.all():
-            distribution = self.distribution.html(tags=tags)
+        distribution = self.distribution.prefetch()
+        if has_pk and distribution:
+            distribution = distribution.html(tags=tags)
             add_distribution = True
+        else:
+            distribution = ''
+            add_distribution = False
 
         if self.oeuvre:
             out = self.oeuvre.html(tags)
@@ -235,8 +243,9 @@ class ElementDeProgramme(AutoriteModel):
                           {'class': self.__class__.__name__, 'pk': self.pk})
             return ''
 
-        if has_pk and self.caracteristiques.all():
-            out += ' [' + self.calc_caracteristiques() + ']'
+        caracteristiques = self.calc_caracteristiques()
+        if caracteristiques:
+            out += ' [' + caracteristiques + ']'
 
         if add_distribution:
             out += '. — ' + distribution
@@ -299,12 +308,12 @@ class Evenement(AutoriteModel):
         if self.circonstance:
             out = self.circonstance
         else:
-            distribution = self.distribution.all()
+            distribution = self.distribution.prefetch()
             if distribution:
                 out = distribution.html(tags=tags)
             else:
                 programme = self.programme.all()
-                if programme:
+                if programme.exists():
                     element = programme[0]
                     out = element.oeuvre or element.autre
                 else:
