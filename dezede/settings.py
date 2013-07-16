@@ -280,6 +280,7 @@ CACHES = {
         'BACKEND': 'johnny.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
         'KEY_PREFIX': '2Z',
+        'TIMEOUT': 24 * 60 * 60,  # seconds
         'JOHNNY_CACHE': True,
     }
 }
