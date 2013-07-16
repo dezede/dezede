@@ -7,35 +7,48 @@ from django.db import models
 class Migration(DataMigration):
 
     def forwards(self, orm):
+        ParenteDOeuvres = orm['libretto.ParenteDOeuvres']
+        ParenteDIndividus = orm['libretto.ParenteDIndividus']
         TypeDeParente = orm['libretto.TypeDeParente']
         TypeDeParenteDOeuvres = orm['libretto.TypeDeParenteDOeuvres']
         TypeDeParenteDIndividus = orm['libretto.TypeDeParenteDIndividus']
         TypeDeParenteDOeuvresPolymorphic = orm['libretto.TypeDeParenteDOeuvresPolymorphic']
         TypeDeParenteDIndividusPolymorphic = orm['libretto.TypeDeParenteDIndividusPolymorphic']
         ContentType = orm['contenttypes.ContentType']
+
         type_de_parente_d_oeuvres_ct = ContentType.objects.get_or_create(
             app_label='libretto', model='typedeparentedoeuvrespolymorphic')[0]
         type_de_parente_d_individus_ct = ContentType.objects.get_or_create(
             app_label='libretto', model='typedeparentedindividuspolymorphic')[0]
 
         for type in TypeDeParenteDOeuvres.objects.all():
-            TypeDeParenteDOeuvresPolymorphic.objects.create(
-                pk=type.pk, nom=type.nom, nom_pluriel=type.nom_pluriel,
+            new_type = TypeDeParenteDOeuvresPolymorphic.objects.create(
+                nom=type.nom, nom_pluriel=type.nom_pluriel,
                 nom_relatif=type.nom_relatif,
                 nom_relatif_pluriel=type.nom_relatif_pluriel,
                 classement=type.classement, owner=type.owner,
             )
+            old_pk = type.pk
+            type.pk = new_type.pk
+            type.save()
+            ParenteDOeuvres.objects.filter(type_id=old_pk).update(
+                type=new_type)
         TypeDeParente.objects.filter(polymorphic_ctype=None).update(
             polymorphic_ctype=type_de_parente_d_oeuvres_ct,
         )
 
         for type in TypeDeParenteDIndividus.objects.all():
-            TypeDeParenteDIndividusPolymorphic.objects.create(
-                pk=type.pk, nom=type.nom, nom_pluriel=type.nom_pluriel,
+            new_type = TypeDeParenteDIndividusPolymorphic.objects.create(
+                nom=type.nom, nom_pluriel=type.nom_pluriel,
                 nom_relatif=type.nom_relatif,
                 nom_relatif_pluriel=type.nom_relatif_pluriel,
                 classement=type.classement, owner=type.owner,
             )
+            old_pk = type.pk
+            type.pk = new_type.pk
+            type.save()
+            ParenteDIndividus.objects.filter(type_id=old_pk).update(
+                type=new_type)
         TypeDeParente.objects.filter(polymorphic_ctype=None).update(
             polymorphic_ctype=type_de_parente_d_individus_ct,
         )
@@ -322,7 +335,7 @@ class Migration(DataMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'parentedindividus'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['accounts.HierarchicUser']"}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'enfances'", 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.Individu']"}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'parentes'", 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.TypeDeParenteDIndividus']"})
+            'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'parentes'", 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.TypeDeParenteDIndividusPolymorphic']"})
         },
         u'libretto.parentedoeuvres': {
             'Meta': {'ordering': "(u'type',)", 'unique_together': "((u'type', u'mere', u'fille'),)", 'object_name': 'ParenteDOeuvres'},
@@ -330,7 +343,7 @@ class Migration(DataMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'mere': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'parentes_filles'", 'to': u"orm['libretto.Oeuvre']"}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'parentedoeuvres'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['accounts.HierarchicUser']"}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'parentes'", 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.TypeDeParenteDOeuvres']"})
+            'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'parentes'", 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.TypeDeParenteDOeuvresPolymorphic']"})
         },
         u'libretto.partie': {
             'Meta': {'ordering': "(u'classement', u'nom')", 'object_name': 'Partie'},
