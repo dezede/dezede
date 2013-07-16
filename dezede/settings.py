@@ -115,9 +115,11 @@ ALLOWED_HOSTS = ('dezede.org',)
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    # 'django.template.loaders.eggs.Loader',
+    ('django.template.loaders.cached.Loader', (
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+        # 'django.template.loaders.eggs.Loader',
+    )),
 )
 
 MIDDLEWARE_CLASSES = (
@@ -201,6 +203,7 @@ INSTALLED_APPS = (
     'south',
     'django_nose',
     'debug_toolbar',
+    'template_timings_panel',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -299,6 +302,7 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.signals.SignalDebugPanel',
     # 'debug_toolbar.panels.logger.LoggingPanel',
     # 'debug_toolbar.panels.profiling.ProfilingDebugPanel',
+    'template_timings_panel.panels.TemplateTimings.TemplateTimings',
 )
 
 if DEBUG:
@@ -341,4 +345,29 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAdminUser'
     ],
     'PAGINATE_BY': 10,
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
 }

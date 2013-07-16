@@ -26,6 +26,7 @@ Pillow==2.1.0
 python-memcached==1.53
 South==0.8.1
 django-debug-toolbar==0.9.4
+django-debug-toolbar-template-timings==0.4.4
 django-extensions==1.1.1
 django-maintenancemode==0.10
 beautifulsoup4==4.2.1
