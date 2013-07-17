@@ -79,7 +79,7 @@ class DossierDEvenements(MPTTModel, PublishedModel):
             kwargs['ancrage_debut__date__lte'] = self.fin
         if self.pk:
             if self.lieux.all():
-                lieux = self.lieux.non_polymorphic()\
+                lieux = self.lieux.non_polymorphic() \
                     .get_descendants(include_self=True)
                 kwargs['ancrage_debut__lieu__in'] = lieux
             if self.oeuvres.all():
