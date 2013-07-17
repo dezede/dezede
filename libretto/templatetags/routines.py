@@ -155,19 +155,11 @@ def data_table_list(context, object_list, attr='link',
 
 
 @register.simple_tag(takes_context=True)
-def jstree(context, queryset, attr='__str__', tree_id=None):
-    if not queryset:
-        return ''
-
-    if isinstance(queryset, PublishedQuerySet):
-        queryset = queryset.published(context['request'])
-
-    if tree_id is None:
-        tree_id = queryset.model.__name__.lower()
+def jstree(context, model_name, attr='__str__'):
     c = {
-        'queryset': queryset,
-        'id': tree_id,
+        'model_name': model_name,
         'attr': attr,
+        'object': context.get('object'),
     }
     return render_to_string('routines/jstree.html', c)
 

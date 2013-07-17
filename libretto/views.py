@@ -12,6 +12,7 @@ from haystack.query import SearchQuerySet
 from polymorphic import PolymorphicQuerySet
 from viewsets import ModelViewSet
 from .models import *
+from .models.common import PublishedQuerySet
 from .forms import *
 from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 
@@ -240,3 +241,31 @@ class OeuvreViewSet(CommonViewSet):
     def __init__(self):
         super(OeuvreViewSet, self).__init__()
         self.views[b'list_view'][b'view'] = OeuvreTableView
+
+
+class TreeNode(PublishedDetailView):
+    template_name = 'routines/tree_node.json'
+
+    def get_context_data(self, **kwargs):
+        context = super(TreeNode, self).get_context_data(**kwargs)
+
+        if self.object is None:
+            children = self.model._tree_manager.root_nodes()
+        else:
+            children = self.object.get_children()
+
+        if isinstance(children, PublishedQuerySet):
+            children = children.published(self.request)
+
+        context[b'children'] = children
+        context[b'attr'] = self.request.GET.get('attr', '__str__')
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.model = get_model('libretto', self.kwargs['model_name'])
+        try:
+            self.object = self.get_object()
+        except AttributeError:
+            self.object = None
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)

@@ -1,40 +1,42 @@
 {% load url from future %}
-{% load mptt_tags routines %}
+{% load i18n %}
 
+<div id="{{ model_name }}-tree">
+</div>
 
-{% if queryset %}
-
-  <div id="{{ id }}">
-    <ul class="root">
-      {% recursetree queryset %}
-        <li>
-          <a href="{{ node.get_absolute_url }}">
-            {{ node|get_property:attr }}
-          </a>
-          {% if not node.is_leaf_node %}
-            <ul class="children">
-              {{ children }}
-            </ul>
-          {% endif %}
-        </li>
-      {% endrecursetree %}
-    </ul>
-  </div>
-
-  <script>
-    $(function () {
-      $("#{{ id }}").jstree({
-        core: {
-          'html_titles': true
-        },
-        plugins: ["themes", "html_data"],
-        themes: {
-          theme: "classic",
-          icons: false,
-          dots: true
+<script>
+  $(function () {
+    $('#{{ model_name }}-tree').jstree({
+      core: {
+        html_titles: true,
+        strings: {loading: "{% trans 'Chargement…' %}"}
+      },
+      plugins: ['themes', 'json_data'],
+      themes: {
+        theme: 'classic',
+        icons: false,
+        dots: true
+      },
+      json_data: {
+        ajax: {
+          type: 'GET',
+          url: function (node) {
+            if (node == -1) {
+              return '{% url 'tree_node' model_name object.pk %}';
+            }
+            else {
+              var nodeId = node.attr('id');
+              return '{% url 'tree_node' model_name %}' + nodeId;
+            }
+          },
+          data: {
+            attr: '{{ attr }}'
+          },
+          success: function (new_data) {
+            return new_data;
+          }
         }
-      });
+      }
     });
-  </script>
-
-{% endif %}
+  });
+</script>

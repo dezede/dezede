@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% load extras routines %}
+{% load i18n routines %}
 {% load url from future %}
 
 {% block title %}
@@ -48,14 +47,10 @@
   <table class="data-table">
     {% data_table_attr 'pupitres_html' _('effectif') %}
 
-    {% with contenu=oeuvre.get_descendants %}
-      {% if contenu %}
-        <th>{% trans 'Contenu' %}</th>
-        <td>
-          {% jstree contenu 'short_html' %}
-        </td>
-      {% endif %}
-    {% endwith %}
+    {% if oeuvre.get_children|has_elements:request %}
+      <th>{% trans 'Contenu' %}</th>
+      <td>{% jstree 'oeuvre' 'short_html' %}</td>
+    {% endif %}
 
     {% include "libretto/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
     {% data_table_attr 'notes' %}

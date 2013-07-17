@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% load extras routines %}
+{% load i18n routines %}
 {% load url from future %}
 
 {% block title %}
@@ -27,12 +26,10 @@
     {% data_table_list profession.auteurs.sources %}
     {% data_table_attr 'parent.link' _('parent') %}
 
-    {% with contenu=profession.get_descendants  %}
-      {% if contenu %}
-        <th>{% trans 'Contenu' %}</th>
-        <td>{% jstree contenu %}</td>
-      {% endif %}
-    {% endwith %}
+    {% if profession.get_children|has_elements:request %}
+      <th>{% trans 'Contenu' %}</th>
+      <td>{% jstree 'profession' %}</td>
+    {% endif %}
 
   </table>
 
