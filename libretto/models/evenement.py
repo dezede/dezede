@@ -225,13 +225,13 @@ class ElementDeProgramme(AutoriteModel):
     def html(self, tags=True):
         has_pk = self.pk is not None
 
-        distribution = self.distribution.prefetch()
-        if has_pk and distribution:
-            distribution = distribution.html(tags=tags)
-            add_distribution = True
-        else:
-            distribution = ''
-            add_distribution = False
+        distribution = ''
+        add_distribution = False
+        if has_pk:
+            distribution = self.distribution.prefetch()
+            if distribution:
+                distribution = distribution.html(tags=tags)
+                add_distribution = True
 
         if self.oeuvre:
             out = self.oeuvre.html(tags)
