@@ -7,7 +7,7 @@ from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.sessions.models import Session
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
-    ForeignKey, TextField, Manager, PROTECT, Q, Min, SmallIntegerField
+    ForeignKey, TextField, Manager, PROTECT, Q, SmallIntegerField
 from django.db.models.query import QuerySet
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
@@ -15,8 +15,9 @@ from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
-from mptt.managers import TreeManager as OriginalTreeManager
-from polymorphic import PolymorphicModel, PolymorphicManager
+from mptt.managers import TreeManager
+from polymorphic import PolymorphicModel, PolymorphicManager, \
+    PolymorphicQuerySet
 from tinymce.models import HTMLField
 from cache_tools import invalidate_group, cached_ugettext_lazy as _
 from .functions import href
@@ -27,8 +28,8 @@ from typography.models import TypographicModel, TypographicManager, \
 __all__ = (
     b'LOWER_MSG', b'PLURAL_MSG', b'DATE_MSG', b'calc_pluriel',
     b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
-    b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'TreeQuerySet',
-    b'TreeManager', b'Document', b'Illustration', b'Etat',
+    b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'CommonTreeQuerySet',
+    b'CommonTreeManager', b'Document', b'Illustration', b'Etat',
     b'OrderedDefaultDict', b'TypeDeParente',
 )
 
@@ -260,7 +261,7 @@ class UniqueSlugModel(Model):
         return smart_text(self)
 
 
-class TreeQuerySet(QuerySet):
+class CommonTreeQuerySet(QuerySet):
     def get_descendants(self, include_self=False):
         meta = self.model._meta
         tree_id_attr = meta.tree_id_attr
@@ -283,8 +284,8 @@ class TreeQuerySet(QuerySet):
         return qs
 
 
-class TreeManager(OriginalTreeManager):
-    queryset_class = TreeQuerySet
+class CommonTreeManager(TreeManager):
+    queryset_class = CommonTreeQuerySet
 
     def get_query_set(self):
         return self.queryset_class(self.model, using=self._db).order_by(
@@ -294,8 +295,12 @@ class TreeManager(OriginalTreeManager):
         return self.get_query_set().get_descendants(*args, **kwargs)
 
 
-class TypeDeParenteManager(PolymorphicManager, CommonManager):
+class TypeDeParenteQuerySet(PolymorphicQuerySet, CommonQuerySet):
     pass
+
+
+class TypeDeParenteManager(PolymorphicManager, CommonManager):
+    queryset_class = TypeDeParenteQuerySet
 
 
 @python_2_unicode_compatible

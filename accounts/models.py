@@ -13,11 +13,11 @@ from filebrowser.fields import FileBrowseField
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from cache_tools import cached_ugettext_lazy as _
-from libretto.models.common import AutoriteModel, TreeManager
+from libretto.models.common import AutoriteModel, CommonTreeManager
 from libretto.models.functions import href
 
 
-class HierarchicUserManager(TreeManager, UserManager):
+class HierarchicUserManager(CommonTreeManager, UserManager):
     pass
 
 

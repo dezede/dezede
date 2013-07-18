@@ -26,8 +26,8 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
-    PublishedManager, OrderedDefaultDict, PublishedQuerySet, TreeManager, \
-    TreeQuerySet, TypeDeParente
+    PublishedManager, OrderedDefaultDict, PublishedQuerySet, \
+    CommonTreeManager, CommonTreeQuerySet, TypeDeParente
 from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -156,11 +156,12 @@ class CaracteristiqueDOeuvre(CommonModel):
         return 'type__nom__icontains', 'valeur__icontains',
 
 
-class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet, TreeQuerySet):
+class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet,
+                     CommonTreeQuerySet):
     pass
 
 
-class PartieManager(TreeManager, PolymorphicMPTTModelManager,
+class PartieManager(CommonTreeManager, PolymorphicMPTTModelManager,
                     PublishedManager):
     queryset_class = PartieQuerySet
 
@@ -465,11 +466,11 @@ class Auteur(CommonModel):
         return self.html(tags=False)
 
 
-class OeuvreQuerySet(TreeQuerySet, PublishedQuerySet):
+class OeuvreQuerySet(CommonTreeQuerySet, PublishedQuerySet):
     pass
 
 
-class OeuvreManager(TreeManager, PublishedManager):
+class OeuvreManager(CommonTreeManager, PublishedManager):
     queryset_class = OeuvreQuerySet
 
 

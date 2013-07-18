@@ -9,8 +9,8 @@ from mptt.models import MPTTModel, TreeForeignKey
 from cache_tools import cached_ugettext_lazy as _
 from ..utils import abbreviate
 from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
-    UniqueSlugModel, PublishedManager, AutoriteModel, TreeManager, \
-    PublishedQuerySet, TreeQuerySet
+    UniqueSlugModel, PublishedManager, AutoriteModel, CommonTreeManager, \
+    PublishedQuerySet, CommonTreeQuerySet
 from .functions import capfirst, ex, href
 
 
@@ -18,11 +18,11 @@ __all__ = (b'Profession', b'Devise', b'Engagement', b'TypeDePersonnel',
            b'Personnel')
 
 
-class ProfessionQuerySet(TreeQuerySet, PublishedQuerySet):
+class ProfessionQuerySet(CommonTreeQuerySet, PublishedQuerySet):
     pass
 
 
-class ProfessionManager(TreeManager, PublishedManager):
+class ProfessionManager(CommonTreeManager, PublishedManager):
     queryset_class = ProfessionQuerySet
 
 

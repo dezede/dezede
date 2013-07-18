@@ -19,8 +19,8 @@ from cache_tools import cached_ugettext as ugettext, \
     cached_pgettext as pgettext, cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
-                    UniqueSlugModel, PublishedQuerySet, TreeQuerySet, \
-    TreeManager
+                    UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
+    CommonTreeManager
 from .evenement import Evenement
 from .functions import capfirst, href, date_html, str_list, ex
 from .individu import Individu
@@ -67,11 +67,13 @@ class NatureDeLieu(CommonModel, SlugModel):
         return 'nom__icontains',
 
 
-class LieuQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet, TreeQuerySet):
+class LieuQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet,
+                   CommonTreeQuerySet):
     pass
 
 
-class LieuManager(TreeManager, PolymorphicMPTTModelManager, PublishedManager):
+class LieuManager(CommonTreeManager, PolymorphicMPTTModelManager,
+                  PublishedManager):
     queryset_class = LieuQuerySet
 
 

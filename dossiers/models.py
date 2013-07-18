@@ -11,15 +11,15 @@ from mptt.models import MPTTModel
 from cache_tools import cached_ugettext_lazy as _
 from libretto.models import Lieu, Oeuvre, Evenement, Individu
 from libretto.models.common import PublishedModel, PublishedManager, \
-    TreeManager, PublishedQuerySet, TreeQuerySet
+    CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from libretto.models.functions import str_list_w_last, href
 
 
-class DossierDEvenementsQuerySet(TreeQuerySet, PublishedQuerySet):
+class DossierDEvenementsQuerySet(CommonTreeQuerySet, PublishedQuerySet):
     pass
 
 
-class DossierDEvenementsManager(TreeManager, PublishedManager):
+class DossierDEvenementsManager(CommonTreeManager, PublishedManager):
     queryset_class = DossierDEvenementsQuerySet
 
 
