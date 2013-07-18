@@ -1,9 +1,7 @@
 # coding: utf-8
 
 import os
-from os import environ
 import re
-
 
 ugettext = lambda s: s
 
@@ -63,7 +61,7 @@ DATABASES = {
     # },
 }
 
-default_database = environ.get('DJANGO_DATABASE', 'postgresql')
+default_database = os.environ.get('DJANGO_DATABASE', 'postgresql')
 DATABASES['default'] = DATABASES[default_database]
 del DATABASES[default_database]
 
