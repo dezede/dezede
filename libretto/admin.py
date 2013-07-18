@@ -12,6 +12,7 @@ from django.forms.models import modelformset_factory
 from polymorphic.admin import PolymorphicChildModelAdmin, \
     PolymorphicParentModelAdmin, PolymorphicChildModelFilter
 from reversion import VersionAdmin
+import reversion
 from cache_tools import cached_ugettext_lazy as _
 from .models import *
 from .forms import OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm
@@ -436,6 +437,10 @@ class TypeDeParenteParentAdmin(VersionAdmin, TypeDeParenteAdmin,
     )
 
 
+reversion.register(TypeDeParenteDOeuvres)
+reversion.register(TypeDeParenteDIndividus)
+
+
 class DocumentAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'document', 'has_related_objects',)
     list_editable = ('nom', 'document',)
@@ -507,6 +512,10 @@ class LieuParentAdmin(VersionAdmin, LieuAdmin, PolymorphicParentModelAdmin):
         (LieuDivers, LieuDiversAdmin),
         (Institution, InstitutionAdmin),
     )
+
+
+reversion.register(LieuDivers)
+reversion.register(Institution)
 
 
 class SaisonAdmin(VersionAdmin, CommonAdmin):
@@ -703,6 +712,10 @@ class PartieParentAdmin(VersionAdmin, PartieAdmin,
         (Role, RoleAdmin),
         (Instrument, InstrumentAdmin),
     )
+
+
+reversion.register(Role)
+reversion.register(Instrument)
 
 
 class PupitreAdmin(VersionAdmin, CommonAdmin):
