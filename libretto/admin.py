@@ -437,8 +437,8 @@ class TypeDeParenteParentAdmin(VersionAdmin, TypeDeParenteAdmin,
     )
 
 
-reversion.register(TypeDeParenteDOeuvres)
-reversion.register(TypeDeParenteDIndividus)
+reversion.register(TypeDeParenteDOeuvres, follow=('typedeparente_ptr',))
+reversion.register(TypeDeParenteDIndividus, follow=('typedeparente_ptr',))
 
 
 class DocumentAdmin(VersionAdmin, CommonAdmin):
@@ -514,8 +514,8 @@ class LieuParentAdmin(VersionAdmin, LieuAdmin, PolymorphicParentModelAdmin):
     )
 
 
-reversion.register(LieuDivers)
-reversion.register(Institution)
+reversion.register(LieuDivers, follow=('lieu_ptr',))
+reversion.register(Institution, follow=('lieu_ptr',))
 
 
 class SaisonAdmin(VersionAdmin, CommonAdmin):
@@ -714,8 +714,8 @@ class PartieParentAdmin(VersionAdmin, PartieAdmin,
     )
 
 
-reversion.register(Role)
-reversion.register(Instrument)
+reversion.register(Role, follow=('partie_ptr',))
+reversion.register(Instrument, follow=('partie_ptr',))
 
 
 class PupitreAdmin(VersionAdmin, CommonAdmin):
