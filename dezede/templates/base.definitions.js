@@ -1,6 +1,6 @@
 {# Gestion des tooltips #}
 if($.cookie("tooltips_placement") == null) {
-  $.cookie("tooltips_placement", "left", {path: '/'});
+  $.cookie("tooltips_placement", "top", {path: '/'});
 }
 get_tooltips_options = function() {
   return {
