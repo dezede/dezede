@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from functools import partial
-from django.contrib.admin import site, TabularInline, StackedInline
+from django.contrib.admin import site, TabularInline, StackedInline, ModelAdmin
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
@@ -280,7 +280,7 @@ class SourceInline(TabularInline):
 #
 
 
-class CommonAdmin(CustomBaseModel):
+class CommonAdmin(CustomBaseModel, ModelAdmin):
     list_per_page = 20
     additional_fields = ('owner',)
     additional_readonly_fields = ('owner',)
@@ -795,7 +795,7 @@ class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     search_fields = ('nom', 'nom_pluriel',)
 
 
-class EvenementAdmin(VersionAdmin, AutoriteAdmin):
+class EvenementAdmin(AutoriteAdmin):
     list_display = ('__str__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'link',)
     list_editable = ('relache', 'circonstance',)
