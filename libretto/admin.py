@@ -707,16 +707,6 @@ class PupitreAdmin(CommonAdmin):
     }
 
 
-class ParenteDOeuvresAdmin(CommonAdmin):
-    fields = ('mere', 'type', 'fille',)
-    list_display = ('__str__', 'mere', 'type', 'fille',)
-    list_editable = ('mere', 'type', 'fille',)
-    raw_id_fields = ('fille', 'mere',)
-    autocomplete_lookup_fields = {
-        'fk': ('fille', 'mere'),
-    }
-
-
 class OeuvreAdmin(AutoriteAdmin):
     form = OeuvreForm
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
@@ -890,7 +880,6 @@ site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
 site.register(Partie, PartieParentAdmin)
 site.register(Pupitre, PupitreAdmin)
-site.register(ParenteDOeuvres, ParenteDOeuvresAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(ElementDeDistribution, ElementDeDistributionAdmin)
 site.register(CaracteristiqueDElementDeProgramme,
