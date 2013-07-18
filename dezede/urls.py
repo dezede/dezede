@@ -13,7 +13,6 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^', include('libretto.urls')),
     url(r'^dossiers/', include('dossiers.urls')),
-
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/lookups/', include(ajax_select_urls)),
     url(r'^admin/', include(admin.site.urls)),
