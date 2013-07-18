@@ -10,7 +10,7 @@ django-mptt==0.5.5
 django-tinymce==1.5.1
 django-flatpages-tinymce==0.1.1
 simplejson==3.3.0
--e git+https://github.com/BertrandBordage/django_polymorphic@40eeb15fadbf9af940e9610ae613eef0d4fcc3b3#egg=django-polymorphic
+-e git+https://github.com/BertrandBordage/django_polymorphic@2421f10ab5d167e841cca1aed295abd71cfc0dc0#egg=django-polymorphic
 django-polymorphic-tree==0.8.9
 django-autoslug==1.7.1
 django-grappelli==2.4.5
