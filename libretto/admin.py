@@ -419,11 +419,11 @@ class TypeDeParenteChildAdmin(TypeDeParenteAdmin, PolymorphicChildModelAdmin):
     base_model = TypeDeParente
 
 
-class TypeDeParenteDOeuvresAdmin(TypeDeParenteChildAdmin):
+class TypeDeParenteDOeuvresAdmin(VersionAdmin, TypeDeParenteChildAdmin):
     pass
 
 
-class TypeDeParenteDIndividusAdmin(TypeDeParenteChildAdmin):
+class TypeDeParenteDIndividusAdmin(VersionAdmin, TypeDeParenteChildAdmin):
     pass
 
 
@@ -493,11 +493,11 @@ class LieuChildAdmin(LieuAdmin, PolymorphicChildModelAdmin):
     base_model = Lieu
 
 
-class LieuDiversAdmin(LieuChildAdmin):
+class LieuDiversAdmin(VersionAdmin, LieuChildAdmin):
     pass
 
 
-class InstitutionAdmin(LieuChildAdmin):
+class InstitutionAdmin(VersionAdmin, LieuChildAdmin):
     pass
 
 
@@ -688,11 +688,11 @@ class PartieChildAdmin(PartieAdmin, PolymorphicChildModelAdmin):
     base_model = Partie
 
 
-class RoleAdmin(PartieChildAdmin):
+class RoleAdmin(VersionAdmin, PartieChildAdmin):
     pass
 
 
-class InstrumentAdmin(PartieChildAdmin):
+class InstrumentAdmin(VersionAdmin, PartieChildAdmin):
     pass
 
 
