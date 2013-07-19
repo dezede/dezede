@@ -4,11 +4,11 @@
 {% get_current_language as LANGUAGE_CODE %}
 
 {% language 'en' %}
-  {% with hemisize=size|divide:2 doublesize=size|multiply:2 size_w_margin=size|add:margin figure_margin=1|substract:figure_size_factor|multiply:size first_decade=min_year|idivide:10|multiply:10 decades=max_year|substract:min_year|idivide:10 %}
+  {% with hemisize=size|divide:2 doublesize=size|multiply:2 size_w_margin=size|add:margin figure_margin=1|substract:figure_size_factor|multiply:size first_decade=min_year|idivide:row_length|multiply:row_length %}
 
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="coverage"
-         width="{{ decades|add:2|multiply:size_w_margin }}"
-         height="{{ size_w_margin|multiply:15 }}">
+         width="{{ row_length|add:3|multiply:size_w_margin }}"
+         height="{{ n_rows|add:2|multiply:size_w_margin }}">
 
       <style>
         .coverage {
@@ -19,6 +19,7 @@
           fill: grey;
           stroke-width: 0;
           font-size: {{ size }}px;
+          text-anchor: end;
         }
         .coverage .graph rect:hover {
           stroke-width: {{ margin|divide:4 }}px;
@@ -28,28 +29,28 @@
         }
       </style>
 
-      <g transform="translate({{ margin|divide:4 }}, {{ size|multiply:3 }})">
+      <g transform="translate({{ size|multiply:3 }}, {{ margin|divide:4 }})">
 
         <g class="graph">
           {% for d in data %}
-            {% with x_offset=d.year|substract:first_decade|idivide:10|multiply:size_w_margin y_offset=d.year|modulo:10|multiply:size_w_margin %}
+            {% with x_offset=d.year|modulo:row_length|multiply:size_w_margin y_offset=d.year|substract:first_decade|idivide:row_length|multiply:size_w_margin %}
               <rect width="{{ size }}" height="{{ size }}"
                     x="{{ x_offset }}" y="{{ y_offset }}"
                     {% language LANGUAGE_CODE %}
                       title="{{ d.year }} : {{ d.n }} {% trans 'événements' %}"
                     {% endlanguage %}
                     style="fill: {% hsv_to_hex hue d.n|log_ratio:max_n 1 %};" />
-              {% if d.year|modulo:20 == 0 %}
-                <g transform="translate({{ x_offset|add:size|substract:figure_margin }} {{ y_offset|substract:margin }})">
-                  <text class="year" transform="rotate(-90)">{{ d.year }}</text>
+              {% if d.year|modulo:row_length == 0 %}
+                <g transform="translate(-{{ margin }} {{ y_offset|add:size|substract:figure_margin }})">
+                  <text class="year">{{ d.year }}</text>
                 </g>
               {% endif %}
             {% endwith %}
           {% endfor %}
         </g>
 
-        {% with legend_width=legend_levels|length|multiply:size %}
-          <g transform="translate({{ decades|multiply:size_w_margin|substract:legend_width }}, {{ size_w_margin|multiply:11 }})" class="legend">
+        {% with legend_width=legend_levels|length|add:3|multiply:size %}
+          <g transform="translate({{ size_w_margin|multiply:row_length|substract:legend_width }}, {{ n_rows|add:1|multiply:size_w_margin }})" class="legend">
 
             {% for saturation_level in legend_levels %}
               <rect width="{{ size }}" height="{{ size }}"

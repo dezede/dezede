@@ -1,0 +1,14 @@
+{% load routines %}[
+  {% for child in children %}
+    {
+      "data": {
+        "title": "{% filter escapejs %}{{ child|get_property:attr }}{% endfilter %}",
+        "attr": {"href": "{{ child.get_absolute_url }}"}
+      },
+      "attr": {
+        "id": "{{ child.pk }}"
+      }{% if not child.is_leaf_node %},
+      "state": "closed"{% endif %}
+    }{% if not forloop.last %},{% endif %}
+  {% endfor%}
+]

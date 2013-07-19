@@ -195,6 +195,20 @@ def hlp(txt, title, tags=True):
     return txt
 
 
+def microdata(txt, itemprop, itemtype=None, itemscope=False, tags=True):
+    if not txt:
+        return ''
+    if not tags:
+        return txt
+    additional = ''
+    if itemscope:
+        additional += ' itemscope'
+    if itemtype:
+        additional += ' itemtype="http://data-vocabulary.org/%s"' % itemtype
+    return mark_safe('<span itemprop="%s"%s>%s</span>'
+                     % (itemprop, additional, txt))
+
+
 @html_decorator
 def small(txt):
     """

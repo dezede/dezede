@@ -71,9 +71,6 @@ class Source(AutoriteModel):
     link.short_description = _('Lien')
     link.allow_tags = True
 
-    def individus_auteurs(self):
-        return self.auteurs.individus()
-
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
 
@@ -110,9 +107,10 @@ class Source(AutoriteModel):
     has_events.admin_order_field = 'evenements'
 
     def has_program(self):
-        if not self.has_events():
+        evenements = self.evenements.all()
+        if not evenements:
             return False
-        for e in self.evenements.all():
+        for e in evenements:
             if not e.has_program():
                 return False
         return True

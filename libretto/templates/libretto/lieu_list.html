@@ -15,9 +15,9 @@
   </div>
 
   {% if object_list %}
-    {% jstree object_list 'nom' %}
+    {% jstree 'lieu' 'nom' %}
   {% else %}
-    {% trans "Aucun lieu ou institution ne figure dans la base de données." %}
+    {% trans 'Aucun lieu ou institution ne figure dans la base de données.' %}
   {% endif %}
 
 {% endblock %}

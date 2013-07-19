@@ -1,9 +1,9 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import cython
 from django.core.cache import cache
-from django.utils.translation import get_language
-from .utils cimport sanitize_memcached_key, get_group_cache_key
+from .utils cimport get_cache_key, get_group_cache_key
 
 
 __all__ = ('model_method_cached',)
@@ -13,15 +13,13 @@ cdef cache_get = cache.get
 cdef cache_set = cache.set
 
 
-def model_method_cached(int timeout, str group=None):
+def model_method_cached(int timeout, bytes group=None, bytes id_attr=b'pk'):
     def decorator(method):
+        @cython.locals(args=tuple, kwargs=dict)
         def wrapper(self, *args, **kwargs):
-            cdef str group_cache_key
+            cdef bytes group_cache_key
             cdef list group_keys
-            cdef cache_key = b'%s:%s.%s.%s:%s(%s,%s)' % (
-                get_language(), self.__module__, self.__class__.__name__,
-                method.__name__, self.pk, args, kwargs)
-            cache_key = sanitize_memcached_key(cache_key)
+            cdef cache_key = get_cache_key(id_attr, method, self, args, kwargs)
             out = cache_get(cache_key)
             if out is None:
                 if group is not None:

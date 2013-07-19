@@ -16,7 +16,6 @@ from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy
 from mptt.fields import TreeForeignKey
-from mptt.managers import TreeManager
 from mptt.models import MPTTModel
 from polymorphic_tree.managers import PolymorphicMPTTModelManager, \
     PolymorphicMPTTQuerySet
@@ -27,7 +26,8 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
-    PublishedManager, OrderedDefaultDict, PublishedQuerySet
+    PublishedManager, OrderedDefaultDict, PublishedQuerySet, \
+    CommonTreeManager, CommonTreeQuerySet, TypeDeParente
 from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -108,6 +108,20 @@ class TypeDeCaracteristiqueDOeuvre(CommonModel):
         return self.nom
 
 
+class CaracteristiqueDOeuvreQuerySet(CommonQuerySet):
+    def html_list(self, tags=True):
+        return [hlp(valeur, type, tags)
+                for type, valeur in self.values_list('type__nom', 'valeur')]
+
+
+class CaracteristiqueDOeuvreManager(CommonManager):
+    def get_query_set(self):
+        return CaracteristiqueDOeuvreQuerySet(self.model, using=self._db)
+
+    def html_list(self, tags=True):
+        return self.get_query_set().html_list(tags=tags)
+
+
 @python_2_unicode_compatible
 class CaracteristiqueDOeuvre(CommonModel):
     type = ForeignKey(
@@ -119,6 +133,8 @@ class CaracteristiqueDOeuvre(CommonModel):
     classement = SmallIntegerField(_('classement'), default=1, db_index=True,
         help_text=_('Par exemple, on peut choisir de classer '
                     'les découpages par nombre d’actes.'))
+
+    objects = CaracteristiqueDOeuvreManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('caractéristique d’œuvre',
@@ -140,11 +156,13 @@ class CaracteristiqueDOeuvre(CommonModel):
         return 'type__nom__icontains', 'valeur__icontains',
 
 
-class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet):
+class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet,
+                     CommonTreeQuerySet):
     pass
 
 
-class PartieManager(PolymorphicMPTTModelManager, PublishedManager):
+class PartieManager(CommonTreeManager, PolymorphicMPTTModelManager,
+                    PublishedManager):
     queryset_class = PartieQuerySet
 
 
@@ -302,16 +320,7 @@ class Pupitre(CommonModel):
                 'partie__professions__nom_pluriel__icontains',)
 
 
-@python_2_unicode_compatible
-class TypeDeParenteDOeuvres(CommonModel):
-    nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG, unique=True,
-                    db_index=True)
-    nom_relatif = CharField(_('nom relatif'), max_length=100,
-                            help_text=LOWER_MSG, unique=True, db_index=True)
-    nom_relatif_pluriel = CharField(_('nom relatif (au pluriel)'),
-        max_length=130, blank=True, help_text=PLURAL_MSG)
-    classement = SmallIntegerField(_('classement'), default=1, db_index=True)
-
+class TypeDeParenteDOeuvres(TypeDeParente):
     class Meta(object):
         verbose_name = ungettext_lazy('type de parenté d’œuvres',
                                       'types de parentés d’œuvres', 1)
@@ -319,12 +328,6 @@ class TypeDeParenteDOeuvres(CommonModel):
                                              'types de parentés d’œuvres', 2)
         ordering = ('classement',)
         app_label = 'libretto'
-
-    def relatif_pluriel(self):
-        return calc_pluriel(self, attr_base='nom_relatif')
-
-    def __str__(self):
-        return '< %s | %s >' % (self.nom, self.nom_relatif)
 
 
 class ParenteDOeuvresManager(CommonManager):
@@ -391,7 +394,7 @@ class AuteurQuerySet(CommonQuerySet):
         return self.__get_related(Source)
 
     def html(self, tags=True):
-        auteurs = self
+        auteurs = self.select_related('individu', 'profession')
         d = OrderedDefaultDict()
         for auteur in auteurs:
             d[auteur.profession].append(auteur.individu)
@@ -463,8 +466,12 @@ class Auteur(CommonModel):
         return self.html(tags=False)
 
 
-class OeuvreManager(TreeManager, PublishedManager):
+class OeuvreQuerySet(CommonTreeQuerySet, PublishedQuerySet):
     pass
+
+
+class OeuvreManager(CommonTreeManager, PublishedManager):
+    queryset_class = OeuvreQuerySet
 
 
 @python_2_unicode_compatible
@@ -526,31 +533,22 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     link.short_description = _('lien')
     link.allow_tags = True
 
-    def individus_auteurs(self):
-        return self.auteurs.individus()
-
-    def calc_caracteristiques(self, limite=0, tags=True):
+    def caracteristiques_html(self, tags=True):
         if not self.pk:
             return ''
-        cs = self.caracteristiques.all()
-
-        def clist(cs):
-            return str_list(c.html(tags) for c in cs)
-        out2 = clist(cs[limite:])
-        if limite:
-            out1 = clist(cs[:limite])
-            return out1, out2
-        return out2
-    calc_caracteristiques.allow_tags = True
-    calc_caracteristiques.short_description = _('caractéristiques')
-    calc_caracteristiques.admin_order_field = 'caracteristiques__valeur'
+        return str_list(self.caracteristiques.html_list(tags=tags))
+    caracteristiques_html.allow_tags = True
+    caracteristiques_html.short_description = _('caractéristiques')
+    caracteristiques_html.admin_order_field = 'caracteristiques__valeur'
 
     def calc_pupitres(self, prefix=True, tags=False):
-        if not self.pk or not self.pupitres.exists():
+        if not self.pk:
+            return ''
+        pupitres = self.pupitres.select_related('partie')
+        if not pupitres:
             return ''
         out = ugettext('pour ') if prefix else ''
-        out += str_list_w_last(
-                        p.html(tags=tags) for p in self.pupitres.iterator())
+        out += str_list_w_last(p.html(tags=tags) for p in pupitres)
         return out
 
     def pupitres_html(self, prefix=False, tags=True):
@@ -588,36 +586,37 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
              ancestors_links=False, links=True):
         # FIXME: Nettoyer cette horreur
         out = ''
-        auts = self.auteurs_html(tags)
-        pars = self.calc_referent_ancestors(tags=tags, links=ancestors_links)
         titre_complet = self.titre_complet()
         genre = self.genre
-        caracteristiques = self.calc_caracteristiques(tags=tags)
+        caracteristiques = [] if not self.pk \
+            else self.caracteristiques.html_list(tags=tags)
         url = None if not tags else self.get_absolute_url()
-        if auteurs and auts:
-            out += auts + ', '
+        if auteurs:
+            auts = self.auteurs_html(tags)
+            if auts:
+                out += auts + ', '
         if titre:
-            if ancestors and pars:
-                out += pars + ', '
+            if ancestors:
+                pars = self.calc_referent_ancestors(
+                    tags=tags, links=ancestors_links)
+                if pars:
+                    out += pars + ', '
             if titre_complet:
                 out += href(url, cite(titre_complet, tags=tags), tags & links)
                 if descr and genre:
                     out += ', '
         if genre:
             genre = genre.html(tags, caps=genre_caps)
-            pupitres = self.calc_pupitres()
             if not titre_complet:
-                cs = None
                 titre_complet = self.genre.html(tags, caps=True)
+                pupitres = self.calc_pupitres()
                 if pupitres:
                     titre_complet += ' ' + pupitres
                 if caracteristiques:
-                    cs = self.calc_caracteristiques(1, tags)
-                    titre_complet += ' ' + cs[0]
-                    caracteristiques = cs[1]
+                    titre_complet += ' ' + caracteristiques.pop(0)
                 if titre:
                     out += href(url, titre_complet, tags=tags & links)
-                    if descr and cs and cs[1]:
+                    if descr and caracteristiques:
                         out += ','
             elif descr:
                 out += genre
@@ -625,11 +624,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             if out:
                 # TODO: BUG : le validateur HTML supprime l'espace qu'on ajoute
                 #       ci-dessous si on ne le met pas en syntaxe HTML
-                if tags:
-                    out += '&#32;'
-                else:
-                    out += ' '
-            out += caracteristiques
+                out += '&#32;' if tags else ' '
+            out += str_list(caracteristiques)
         return mark_safe(out)
     html.short_description = _('rendu HTML')
     html.allow_tags = True

@@ -3,11 +3,27 @@
 from __future__ import unicode_literals
 from django.contrib.admin import site
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.forms import UserChangeForm
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.core.exceptions import ValidationError
 from reversion import VersionAdmin
 from tinymce.widgets import TinyMCE
 from cache_tools.utils import cached_ugettext_lazy as _
 from .models import HierarchicUser
+
+
+class HierarchicUserCreationForm(UserCreationForm):
+    class Meta(object):
+        model = HierarchicUser
+        fields = ('username',)
+
+    def clean_username(self):
+        # Taken from the overriden method.
+        username = self.cleaned_data["username"]
+        try:
+            self._meta.model._default_manager.get(username=username)
+        except self._meta.model.DoesNotExist:
+            return username
+        raise ValidationError(self.error_messages['duplicate_username'])
 
 
 class HierarchicUserChangeForm(UserChangeForm):
@@ -21,6 +37,7 @@ class HierarchicUserChangeForm(UserChangeForm):
 
 
 class HierarchicUserAdmin(VersionAdmin, UserAdmin):
+    add_form = HierarchicUserCreationForm
     form = HierarchicUserChangeForm
     list_display = ('__str__',) + UserAdmin.list_display + (
         'mentor', 'willing_to_be_mentor', 'is_active')

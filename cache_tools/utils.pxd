@@ -3,7 +3,7 @@
 #cython: wraparound=False
 #cython: nonecheck=False
 
-
+from __future__ import unicode_literals
 import cython
 
 
@@ -12,14 +12,17 @@ cdef CONTROL_CHARACTERS_RE
 cdef CONTROL_CHARACTERS_RE_SUB
 
 
-@cython.locals(hashed_key=str)
 cpdef sanitize_memcached_key(key, int max_length=?)
 
 
-cpdef str get_group_cache_key(str group)
+cpdef get_cache_key(bytes id_attr, method, self, tuple args, dict kwargs)
 
-@cython.locals(group_cache_key=str, group_keys=list)
-cpdef invalidate_group(str group)
+
+cpdef bytes get_group_cache_key(bytes group)
+
+
+@cython.locals(group_cache_key=bytes, group_keys=list)
+cpdef invalidate_group(bytes group)
 
 
 cdef dict PGETTEXT_CACHE

@@ -4,7 +4,8 @@
 
 {% with owner=object.owner %}
   {% if owner %}
-    <a class="btn" href="{% url 'user_profile' owner.username %}">
+    <a class="btn{% if size %} btn-{{ size }}{% endif %}"
+       href="{% url 'user_profile' owner.username %}">
       <i class="icon-user"></i>
       {{ owner.get_full_name|default:owner }}
     </a>

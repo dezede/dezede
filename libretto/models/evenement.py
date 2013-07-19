@@ -6,19 +6,20 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey, \
                                                 GenericRelation
 from django.core.exceptions import ValidationError
+from django.db import connection
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
     OneToOneField, BooleanField, PositiveSmallIntegerField, permalink, Q, \
-    PositiveIntegerField, get_model, SmallIntegerField, PROTECT
+    PositiveIntegerField, get_model, SmallIntegerField, PROTECT, Count
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-    calc_pluriel, CommonQuerySet, CommonManager
-
-from .functions import capfirst, str_list, str_list_w_last, href, hlp
-from .source import TypeDeSource
+    calc_pluriel, CommonQuerySet, CommonManager, OrderedDefaultDict, \
+    PublishedManager, PublishedQuerySet
+from .functions import capfirst, str_list, str_list_w_last, href, hlp, \
+    microdata
 
 
 __all__ = (b'ElementDeDistribution', b'CaracteristiqueDElementDeProgramme',
@@ -38,10 +39,13 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
         return Evenement.objects.filter(Q(pk__in=pk_list)
                               | Q(programme__distribution__in=self)).distinct()
 
+    def prefetch(self):
+        return self.select_related(
+            'pupitre', 'pupitre__partie',
+            'profession').prefetch_related('individus')
+
     def html(self, tags=True):
-        l = self.select_related('pupitre', 'pupitre__partie', 'profession') \
-            .prefetch_related('individus')
-        return ', '.join(e.html(tags=tags) for e in l)
+        return ', '.join(e.html(tags=tags) for e in self)
 
 
 class ElementDeDistributionManager(CommonManager):
@@ -51,13 +55,16 @@ class ElementDeDistributionManager(CommonManager):
         return ElementDeDistributionQuerySet(self.model, using=self._db)
 
     def individus(self):
-        return self.all().individus()
+        return self.get_query_set().individus()
 
     def evenements(self):
-        return self.all().evenements()
+        return self.get_query_set().evenements()
+
+    def prefetch(self):
+        return self.get_query_set().prefetch()
 
     def html(self, tags=True):
-        return self.all().html(tags=tags)
+        return self.get_query_set().html(tags=tags)
 
 
 @python_2_unicode_compatible
@@ -218,11 +225,13 @@ class ElementDeProgramme(AutoriteModel):
     def html(self, tags=True):
         has_pk = self.pk is not None
 
-        add_distribution = False
         distribution = ''
-        if has_pk and self.distribution.exists():
-            distribution = self.distribution.html(tags=tags)
-            add_distribution = True
+        add_distribution = False
+        if has_pk:
+            distribution = self.distribution.prefetch()
+            if distribution:
+                distribution = distribution.html(tags=tags)
+                add_distribution = True
 
         if self.oeuvre:
             out = self.oeuvre.html(tags)
@@ -236,8 +245,9 @@ class ElementDeProgramme(AutoriteModel):
                           {'class': self.__class__.__name__, 'pk': self.pk})
             return ''
 
-        if has_pk and self.caracteristiques.exists():
-            out += ' [' + self.calc_caracteristiques() + ']'
+        caracteristiques = self.calc_caracteristiques()
+        if caracteristiques:
+            out += ' [' + caracteristiques + ']'
 
         if add_distribution:
             out += '. — ' + distribution
@@ -259,6 +269,23 @@ class ElementDeProgramme(AutoriteModel):
         )
 
 
+class EvenementQuerySet(PublishedQuerySet):
+    def yearly_counts(self):
+        return get_model('libretto', 'AncrageSpatioTemporel').objects.filter(
+            Q(evenements_debuts__in=self) | Q(evenements_fins__in=self)) \
+            .extra({'year': connection.ops.date_trunc_sql('year', 'date')}) \
+            .values('year').annotate(count=Count('evenements_debuts')) \
+            .order_by('year')
+
+
+class EvenementManager(PublishedManager):
+    def get_query_set(self):
+        return EvenementQuerySet(self.model, using=self._db)
+
+    def yearly_counts(self):
+        return self.get_query_set().yearly_counts()
+
+
 @python_2_unicode_compatible
 class Evenement(AutoriteModel):
     ancrage_debut = OneToOneField(
@@ -270,6 +297,8 @@ class Evenement(AutoriteModel):
     relache = BooleanField(verbose_name='relâche', db_index=True)
     circonstance = CharField(max_length=500, blank=True, db_index=True)
     distribution = GenericRelation(ElementDeDistribution)
+
+    objects = EvenementManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('événement', 'événements', 1)
@@ -290,11 +319,27 @@ class Evenement(AutoriteModel):
     link.short_description = _('lien')
     link.allow_tags = True
 
-    def sources_dict(self):
-        types = TypeDeSource.objects.filter(
-            sources__evenements=self).distinct()
-        sources_filter = self.sources.filter
-        return {type: sources_filter(type=type) for type in types}
+    def sources_by_type(self):
+        sources = OrderedDefaultDict()
+        for source in self.sources.select_related('type'):
+            sources[source.type].append(source)
+        return sources.items()
+
+    def get_meta_name(self, tags=False):
+        if self.circonstance:
+            out = self.circonstance
+        else:
+            distribution = self.distribution.prefetch()
+            if distribution:
+                out = distribution.html(tags=tags)
+            else:
+                programme = self.programme.all()
+                if programme.exists():
+                    element = programme[0]
+                    out = element.oeuvre or element.autre
+                else:
+                    return ''
+        return microdata(out, 'summary', tags=tags)
 
     def html(self, tags=True):
         relache = ''
@@ -303,9 +348,12 @@ class Evenement(AutoriteModel):
             circonstance = hlp(self.circonstance, ugettext('circonstance'),
                                tags)
         if self.relache:
-            relache = ugettext('Relâche')
+            relache = microdata(ugettext('Relâche'), 'eventType', tags=tags)
 
-        return str_list((self.ancrage_debut.calc_lieu(tags), circonstance,
+        lieu = microdata(self.ancrage_debut.calc_lieu(tags), 'location',
+                         tags=tags)
+
+        return str_list((lieu, circonstance,
                          self.ancrage_debut.calc_heure(), relache))
 
     html.short_description = _('rendu HTML')

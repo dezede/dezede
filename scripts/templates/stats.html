@@ -1,0 +1,23 @@
+{% load accounts_extra %}
+
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet" />
+    <style>
+      td:first-child {text-align: right;}
+      svg {border: 1px solid #EEE;}
+    </style>
+  </head>
+  <body>
+    <table>
+      {{ table }}
+    </table>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script>
+      $('*[title]').tooltip({container: 'body'});
+    </script>
+  </body>
+</html>

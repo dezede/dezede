@@ -55,8 +55,7 @@
           </li>
         </ul>
         <form method="get" action="{% url 'haystack_search' %}" class="navbar-search pull-left">
-          <input type="text" name="q"
-                 id="id_q"
+          <input type="text" name="q" id="id_q"
                  placeholder="{% trans "Rechercher…" %}"
                  class="search-query span2" />
         </form>
@@ -65,68 +64,47 @@
 
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              Options <span class="caret"></span>
+              {% trans 'Options' %} <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">
+            <ul class="dropdown-menu pull-right" role="menu"
+                aria-labelledby="dLabel">
+{# À réactiver dès qu'une langue aura fini d'être traduite. #}
+{#              <li class="dropdown-submenu">#}
+{#                <a tabindex="-1" href="#">#}
+{#                  {% trans 'Langue' %}#}
+{#                </a>#}
+{#                <ul class="dropdown-menu">#}
+{#                  {% for lang in LANGUAGES %}#}
+{#                    {% if lang.0 != LANGUAGE_CODE %}#}
+{#                      <li>#}
+{#                        <form action="/i18n/setlang/" method="POST"#}
+{#                                id="form_{{ lang.0 }}">#}
+{#                          {% csrf_token %}#}
+{#                          <input type="hidden" name="language"#}
+{#                                 value="{{ lang.0 }}" />#}
+{#                        </form>#}
+{#                        <a tabindex="-1" href="#"#}
+{#                           onclick="$('#form_{{ lang.0 }}').submit();">#}
+{#                          {{ lang.1 }}#}
+{#                        </a>#}
+{#                      </li>#}
+{#                    {% endif %}#}
+{#                  {% endfor %}#}
+{#                </ul>#}
+{#              </li>#}
               <li class="dropdown-submenu">
                 <a tabindex="-1" href="#">
-                  {% trans 'Langue' %}
-                </a>
-                <ul class="dropdown-menu">
-                  {% for lang in LANGUAGES %}
-                    {% if lang.0 != LANGUAGE_CODE %}
-                      <li>
-                        <form action="/i18n/setlang/" method="POST"
-                                id="form_{{ lang.0 }}">
-                          {% csrf_token %}
-                          <input type="hidden" name="language"
-                                 value="{{ lang.0 }}" />
-                        </form>
-                        <a tabindex="-1" href="#"
-                           onclick="$('#form_{{ lang.0 }}').submit();">
-                          {{ lang.1 }}
-                        </a>
-                      </li>
-                    {% endif %}
-                  {% endfor %}
-                </ul>
-              </li>
-              <li class="dropdown-submenu">
-                <a tabindex="-1" href="#">
-                  {% blocktrans %}
-                    Infobulles
-                  {% endblocktrans %}
+                  {% trans 'Infobulles' %}
                 </a>
                 <ul class="dropdown-menu">
                   <li>
                     <a tabindex="-1" href="javascript: tooltips_enable();">
-                      Activer (par défaut)
+                      {% trans 'Activer (par défaut)' %}
                     </a>
                   </li>
                   <li>
                     <a tabindex="-1" href="javascript: tooltips_disable();">
-                      Désactiver
-                    </a>
-                  </li>
-                  <li class="divider"></li>
-                  <li>
-                    <a tabindex="-1" href="javascript: tooltips_placement('left');">
-                      À gauche (par défaut)
-                    </a>
-                  </li>
-                  <li>
-                    <a tabindex="-1" href="javascript: tooltips_placement('right');">
-                      À droite
-                    </a>
-                  </li>
-                  <li>
-                    <a tabindex="-1" href="javascript: tooltips_placement('top');">
-                      Au-dessus
-                    </a>
-                  </li>
-                  <li>
-                    <a tabindex="-1" href="javascript: tooltips_placement('bottom');">
-                      Au-dessous
+                      {% trans 'Désactiver' %}
                     </a>
                   </li>
                 </ul>

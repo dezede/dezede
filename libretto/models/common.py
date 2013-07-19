@@ -7,7 +7,8 @@ from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.sessions.models import Session
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
-    ForeignKey, TextField, Manager, PROTECT, Q, Min
+    ForeignKey, TextField, Manager, PROTECT, Q, SmallIntegerField
+from django.db.models.query import QuerySet
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
@@ -15,6 +16,8 @@ from django.utils.translation import ungettext_lazy
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
 from mptt.managers import TreeManager
+from polymorphic import PolymorphicModel, PolymorphicManager, \
+    PolymorphicQuerySet
 from tinymce.models import HTMLField
 from cache_tools import invalidate_group, cached_ugettext_lazy as _
 from .functions import href
@@ -22,10 +25,13 @@ from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 
 
-__all__ = (b'LOWER_MSG', b'PLURAL_MSG', b'DATE_MSG', b'calc_pluriel',
-           b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
-           b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'Document',
-           b'Illustration', b'Etat', b'OrderedDefaultDict')
+__all__ = (
+    b'LOWER_MSG', b'PLURAL_MSG', b'DATE_MSG', b'calc_pluriel',
+    b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
+    b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'CommonTreeQuerySet',
+    b'CommonTreeManager', b'Document', b'Illustration', b'Etat',
+    b'OrderedDefaultDict', b'TypeDeParente',
+)
 
 
 class OrderedDefaultDict(OrderedDict):
@@ -60,7 +66,7 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
 
 
 #
-# Modélisation
+# Modélisation abstraite
 #
 
 
@@ -93,8 +99,6 @@ class CommonModel(TypographicModel):
         verbose_name=_('propriétaire'), on_delete=PROTECT,
         related_name='%(class)s')
     objects = CommonManager()
-    versions = GenericRelation('reversion.Version',
-                               object_id_field='object_id_int')
 
     class Meta(object):
         abstract = True  # = prototype de modèle, et non un vrai modèle.
@@ -179,28 +183,16 @@ class PublishedQuerySet(CommonQuerySet):
         else:
             qs = self.filter(Q(etat__public=True) | Q(owner=request.user.pk))
 
-        # Si le modèle est récursif, on retire les éléments isolés.
-        # Un élément isolé est un élément publié dont l'un des parents n'est
-        # pas publié.
-        mgr = self.model.objects
-        if isinstance(mgr, TreeManager):
-            parent_attr = mgr.parent_attr
-            level_attr = mgr.level_attr
-            lft_attr = mgr.left_attr
-            rght_attr = mgr.right_attr
+        # Automatically orders by the correct ordering.
+        ordering = []
+        if self.ordered:
+            query = self.query
+            if query.order_by:
+                ordering = query.order_by
+            elif query.default_ordering:
+                ordering = self.model._meta.ordering
 
-            qs = qs.order_by()
-            root_level = \
-                qs.aggregate(Min(level_attr))[level_attr + '__min'] or 0
-            to_be_hidden = qs.filter(**{level_attr + '__gt': root_level}) \
-                .exclude(**{parent_attr + '__in': qs}) \
-                .values_list(lft_attr, rght_attr)
-
-            lft_pk_list = []
-            for lft, rght in to_be_hidden:
-                lft_pk_list.extend(range(lft, rght + 1))
-            qs = qs.exclude(**{lft_attr + '__in': lft_pk_list})
-        return qs
+        return qs.order_by(*ordering)
 
 
 class PublishedManager(CommonManager):
@@ -267,11 +259,93 @@ class UniqueSlugModel(Model):
         return smart_text(self)
 
 
+class CommonTreeQuerySet(QuerySet):
+    def get_descendants(self, include_self=False):
+        meta = self.model._meta
+        tree_id_attr = meta.tree_id_attr
+        left_attr = meta.left_attr
+        right_attr = meta.right_attr
+        filters = Q()
+
+        for tree_id, left, right in self.values_list(
+                tree_id_attr, left_attr, right_attr):
+            if not include_self:
+                left += 1
+                right -= 1
+            filters |= Q(**{tree_id_attr: tree_id,
+                            left_attr + '__gte': left,
+                            left_attr + '__lte': right})
+
+        qs = self.model._tree_manager.filter(filters)
+        if getattr(self, 'polymorphic_disabled', False):
+            qs = qs.non_polymorphic()
+        return qs
+
+
+class CommonTreeManager(TreeManager):
+    queryset_class = CommonTreeQuerySet
+
+    def get_query_set(self):
+        return self.queryset_class(self.model, using=self._db).order_by(
+            self.tree_id_attr, self.left_attr)
+
+    def get_descendants(self, *args, **kwargs):
+        return self.get_query_set().get_descendants(*args, **kwargs)
+
+
+class TypeDeParenteQuerySet(PolymorphicQuerySet, CommonQuerySet):
+    pass
+
+
+class TypeDeParenteManager(PolymorphicManager, CommonManager):
+    queryset_class = TypeDeParenteQuerySet
+
+
+@python_2_unicode_compatible
+class TypeDeParente(PolymorphicModel, CommonModel):
+    nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG,
+                    db_index=True)
+    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=55, blank=True,
+                            help_text=PLURAL_MSG)
+    nom_relatif = CharField(_('nom relatif'), max_length=100,
+                            help_text=LOWER_MSG, db_index=True)
+    nom_relatif_pluriel = CharField(
+        _('nom relatif (au pluriel)'), max_length=130, blank=True,
+        help_text=PLURAL_MSG)
+    classement = SmallIntegerField(_('classement'), default=1, db_index=True)
+
+    objects = TypeDeParenteManager()
+
+    class Meta(object):
+        unique_together = ('nom', 'nom_relatif')
+        verbose_name = ungettext_lazy('type de parenté',
+                                      'types de parentés', 1)
+        verbose_name_plural = ungettext_lazy('type de parenté',
+                                             'types de parentés', 2)
+        ordering = ('classement',)
+        app_label = 'libretto'
+
+    def pluriel(self):
+        return calc_pluriel(self)
+
+    def relatif_pluriel(self):
+        return calc_pluriel(self, attr_base='nom_relatif')
+
+    def __str__(self):
+        return '< %s | %s >' % (self.nom, self.nom_relatif)
+
+
+#
+# Modèles communs
+#
+
+
 @python_2_unicode_compatible
 class Document(CommonModel):
     nom = CharField(_('nom'), max_length=300, blank=True)
-    document = FileBrowseField(_('document'), max_length=400,
-                               directory='documents/')
+    document = FileBrowseField(
+        _('document'), max_length=400, directory='documents/',
+        format='document')
     description = HTMLField(_('description'), blank=True)
     auteurs = GenericRelation('Auteur')
 
@@ -298,7 +372,8 @@ class Document(CommonModel):
 @python_2_unicode_compatible
 class Illustration(CommonModel):
     legende = CharField(_('légende'), max_length=300, blank=True)
-    image = FileBrowseField(_('image'), max_length=400, directory='images/')
+    image = FileBrowseField(
+        _('image'), max_length=400, directory='images/', format='image')
     commentaire = HTMLField(_('commentaire'), blank=True)
     auteurs = GenericRelation('Auteur')
 

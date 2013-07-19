@@ -45,7 +45,7 @@ class CommonTestCase(TestCase):
         return response
 
     def assertSendForm(self, url, method='post'):
-        soup = BeautifulSoup(self.client.get(url).content)
+        soup = BeautifulSoup(self.client.get(url).content, 'html.parser')
 
         forms = soup.find_all('form')
         self.assertEqual(len(forms), 1)

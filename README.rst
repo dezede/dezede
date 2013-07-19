@@ -59,18 +59,22 @@ python-pip      1.1
 python-docutils 0.8.1
 memcached       1.4.14
 python-dev      2.7.3
+libxml2
+libxml2-dev
+libxslt1-dev
 =============== =======
 
 
 Nécessaires au déploiement
 ..........................
 
-=================== =======
-Paquet              Version
-=================== =======
-apache2             2.2
-libapache2-mod-wsgi 3.3
-=================== =======
+========== =======
+Paquet     Version
+========== =======
+nginx      1.2.1
+gunicorn   0.17.4
+supervisor 3.0a8
+========== =======
 
 
 Modules Python
@@ -239,18 +243,12 @@ Déploiement
 #. Création des révisions initiales :
     ``./manage.py createinitialrevisions``
 
-
 #. Collecte des fichiers statiques :
-    ``./manage.py collectstatic``
+    ``sudo ./manage.py collectstatic``
 
 
 #. Préparation du dossier d'upload :
-    ``mkdir -p media/uploads/``
-
-
-#. Autoriser les uploads :
-    | ``sudo chgrp -R www-data /media/``
-    | ``sudo chmod -R 0774 /media/``
+    ``sudo mkdir -p media/uploads/``
 
 
 #. Compiler les fichiers de langues :
@@ -261,82 +259,100 @@ Déploiement
     ``./manage.py rebuild_index``
 
 
-#. Autoriser apache à utiliser le dossier où se trouve le projet :
-    | ``sudo chgrp -R www-data
-        [/chemin/vers/le/repertoire/parent/de/celui/du/projet]``
-    | ``sudo chmod -R 0774
-        [/chemin/vers/le/repertoire/parent/de/celui/du/projet]``
-
-
-#. `Configuration d'Apache`_
+#. `Configuration de nginx`_
 
 
 
-Configuration d'Apache
+Configuration de nginx
 ======================
 
 .. index::
-    Apache
+    nginx
 
-#. Création d'un site dans Apache :
-    ``sudo nano /etc/apache2/sites-available/dezede``
+#. Création d'un site dans nginx :
+
+    ``sudo nano /etc/nginx/sites-available/dezede``
 
 
-#. Copier ceci dans ce dernier (en remplaçant ce qui est balisé ``[quelque_chose]``) :
+#. Copier ceci dans ce dernier (en remplaçant ce qui est balisé
+   ``[[quelque_chose]]``) :
+
     ::
 
-      <VirtualHost *:80>
+      server {
+        listen 80;
+        server_name [[adresse_ou_domaine]];
 
-        Alias /media/ [/chemin/du/projet]/media/
-        Alias /static/ [/chemin/du/projet]/static/
+        gzip on;
+        gzip_vary on;
+        gzip_types
+          text/plain
+          text/css
+          text/javascript
+          application/x-javascript
+          image/png
+          image/svg+xml
+          image/jpeg
+          image/x-icon
+          application/pdf
+          application/octet-stream;
 
-        <Directory [/chemin/du/projet]/media>
-          Order deny,allow
-          Allow from all
-          Options FollowSymLinks
-          ExpiresActive On
-          ExpiresDefault "access plus 2 days"
-        </Directory>
+        add_header Cache-Control public;
 
-        <Directory [/chemin/du/projet]/static>
-          Order deny,allow
-          Allow from all
-          Options FollowSymLinks
-          ExpiresActive On
-          ExpiresDefault "access plus 2 days"
-        </Directory>
+        client_max_body_size 50M;
 
-        WSGIScriptAlias / [/chemin/du/projet]/apache/django.wsgi
+        location /media {
+          alias [[/chemin/du/projet]]/media;
+          allow all;
+          expires 1y;
+        }
 
-        <Directory [/chemin/du/projet]/apache>
-          Order deny,allow
-          Allow from all
-        </Directory>
+        location /static {
+          alias [[/chemin/du/projet]]/static;
+          allow all;
+          expires 1w;
+        }
 
-      </VirtualHost>
-
-    .. note::
-        On peut ajouter le paramètre ``MaxRequestsPerChild 1``
-        avant ``<VirtualHost ...>`` pour éviter d'avoir à relancer
-        le serveur à chaque modification.
-
-#. Ajouter le nom de serveur à `/etc/apache2/httpd.conf` :
-    ::
-
-      ServerName [ip_du_serveur]
+        location / {
+          proxy_pass http://localhost:8000;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header Host $http_host;
+          proxy_redirect off;
+        }
+      }
 
 
 #. Activer le site et désactiver le site par défaut :
-    | ``sudo a2ensite dezede``
-    | ``sudo a2dissite default``
+
+    | ``sudo ln -s /etc/nginx/sites-available/dezede
+      /etc/nginx/sites-enabled/``
+    | ``sudo unlink /etc/nginx/sites-enabled/default``
 
 
-#. Activer l'expiration du cache :
-    ``sudo a2enmod expires``
+#. Configuration de supervisor pour lancer automatiquement le serveur django
+   avec gunicorn :
+
+    ``sudo nano /etc/supervisor/conf.d/dezede.conf``
+
+
+#. Copier ceci dans ce dernier (en remplaçant ce qui est balisé
+   ``[[quelque_chose]]``) :
+
+    ::
+
+      [program:dezede]
+      directory=[[/chemin/du/projet]]
+      command=gunicorn_django
+      user=www-data
+      autostart=true
+      autorestart=true
+      redirect_stderror=true
 
 
 #. Relancer le serveur avec :
-    ``sudo service apache2 restart``
+    | ``sudo service supervisor restart``
+    | ``sudo service nginx restart``
 
 
 

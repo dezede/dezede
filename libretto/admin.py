@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from functools import partial
-from django.contrib.admin import site, TabularInline, StackedInline
+from django.contrib.admin import site, TabularInline, StackedInline, ModelAdmin
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
@@ -12,6 +12,7 @@ from django.forms.models import modelformset_factory
 from polymorphic.admin import PolymorphicChildModelAdmin, \
     PolymorphicParentModelAdmin, PolymorphicChildModelFilter
 from reversion import VersionAdmin
+import reversion
 from cache_tools import cached_ugettext_lazy as _
 from .models import *
 from .forms import OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm
@@ -51,11 +52,11 @@ class CustomBaseModel(BaseModelAdmin):
 
     def queryset(self, request):
         user = request.user
-        objects = self.model.objects.all()
+        qs = super(CustomBaseModel, self).queryset(request)
         if not user.is_superuser and IS_POPUP_VAR not in request.REQUEST:
-            objects = objects.filter(
+            qs = qs.filter(
                 owner__in=user.get_descendants(include_self=True))
-        return objects
+        return qs
 
 
 #
@@ -279,7 +280,7 @@ class SourceInline(TabularInline):
 #
 
 
-class CommonAdmin(VersionAdmin, CustomBaseModel):
+class CommonAdmin(CustomBaseModel, ModelAdmin):
     list_per_page = 20
     additional_fields = ('owner',)
     additional_readonly_fields = ('owner',)
@@ -400,25 +401,67 @@ class AutoriteAdmin(PublishedAdmin):
     additional_fields = ('etat', 'notes', 'owner')
 
 
-class DocumentAdmin(CommonAdmin):
+class TypeDeParenteAdmin(CommonAdmin):
+    list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_relatif',
+                    'nom_relatif_pluriel', 'classement',)
+    list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
+                     'nom_relatif_pluriel', 'classement',)
+    list_filter = (PolymorphicChildModelFilter,)
+    fieldsets = (
+        (None, {'fields': (
+            ('nom', 'nom_pluriel'), ('nom_relatif', 'nom_relatif_pluriel'),
+            'classement',
+        )
+        }),
+    )
+
+
+class TypeDeParenteChildAdmin(TypeDeParenteAdmin, PolymorphicChildModelAdmin):
+    base_model = TypeDeParente
+
+
+class TypeDeParenteDOeuvresAdmin(VersionAdmin, TypeDeParenteChildAdmin):
+    pass
+
+
+class TypeDeParenteDIndividusAdmin(VersionAdmin, TypeDeParenteChildAdmin):
+    pass
+
+
+class TypeDeParenteParentAdmin(VersionAdmin, TypeDeParenteAdmin,
+                               PolymorphicParentModelAdmin):
+    base_model = TypeDeParente
+    child_models = (
+        (TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin),
+        (TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin),
+    )
+
+
+reversion.register(TypeDeParenteDOeuvres, follow=('typedeparente_ptr',))
+reversion.register(TypeDeParenteDIndividus, follow=('typedeparente_ptr',))
+
+
+class DocumentAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'document', 'has_related_objects',)
     list_editable = ('nom', 'document',)
     search_fields = ('nom',)
+    inlines = (AuteurInline,)
 
 
-class IllustrationAdmin(CommonAdmin):
+class IllustrationAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'legende', 'image', 'has_related_objects')
     list_editable = ('legende', 'image',)
     search_fields = ('legende',)
+    inlines = (AuteurInline,)
 
 
-class EtatAdmin(CommonAdmin):
+class EtatAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'public',
                     'has_related_objects')
     list_editable = ('nom', 'nom_pluriel', 'public')
 
 
-class NatureDeLieuAdmin(CommonAdmin):
+class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'referent',)
     list_editable = ('nom', 'nom_pluriel', 'referent',)
 
@@ -451,19 +494,19 @@ class LieuAdmin(AutoriteAdmin):
     )
 
 
-class LieuChildAdmin(PolymorphicChildModelAdmin, LieuAdmin):
+class LieuChildAdmin(LieuAdmin, PolymorphicChildModelAdmin):
     base_model = Lieu
 
 
-class LieuDiversAdmin(LieuChildAdmin):
+class LieuDiversAdmin(VersionAdmin, LieuChildAdmin):
     pass
 
 
-class InstitutionAdmin(LieuChildAdmin):
+class InstitutionAdmin(VersionAdmin, LieuChildAdmin):
     pass
 
 
-class LieuParentAdmin(PolymorphicParentModelAdmin, LieuAdmin):
+class LieuParentAdmin(VersionAdmin, LieuAdmin, PolymorphicParentModelAdmin):
     base_model = Lieu
     child_models = (
         (LieuDivers, LieuDiversAdmin),
@@ -471,7 +514,11 @@ class LieuParentAdmin(PolymorphicParentModelAdmin, LieuAdmin):
     )
 
 
-class SaisonAdmin(CommonAdmin):
+reversion.register(LieuDivers, follow=('lieu_ptr',))
+reversion.register(Institution, follow=('lieu_ptr',))
+
+
+class SaisonAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'lieu', 'debut', 'fin',)
     date_hierarchy = 'debut'
     raw_id_fields = ('lieu',)
@@ -480,7 +527,7 @@ class SaisonAdmin(CommonAdmin):
     }
 
 
-class ProfessionAdmin(AutoriteAdmin):
+class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_feminin',
                     'parent', 'classement')
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
@@ -507,7 +554,7 @@ class ProfessionAdmin(AutoriteAdmin):
     )
 
 
-class AncrageSpatioTemporelAdmin(CommonAdmin):
+class AncrageSpatioTemporelAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'calc_date', 'calc_heure', 'calc_lieu',)
     date_hierarchy = 'date'
     search_fields = ('lieu__nom', 'lieu_approx', 'date_approx',
@@ -524,21 +571,14 @@ class AncrageSpatioTemporelAdmin(CommonAdmin):
     )
 
 
-class PrenomAdmin(CommonAdmin):
+class PrenomAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'prenom', 'classement', 'favori',
                     'has_individu')
     search_fields = ('prenom',)
     list_editable = ('prenom', 'classement', 'favori',)
 
 
-class TypeDeParenteDIndividusAdmin(CommonAdmin):
-    list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_relatif',
-                    'nom_relatif_pluriel', 'classement',)
-    list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
-                     'nom_relatif_pluriel', 'classement',)
-
-
-class IndividuAdmin(AutoriteAdmin):
+class IndividuAdmin(VersionAdmin, AutoriteAdmin):
     list_per_page = 20
     list_display = ('__str__', 'nom', 'calc_prenoms',
                     'pseudonyme', 'titre', 'ancrage_naissance',
@@ -584,12 +624,12 @@ class IndividuAdmin(AutoriteAdmin):
     fieldsets_and_inlines_order = ('f', 'i', 'i')
 
 
-class DeviseAdmin(CommonAdmin):
+class DeviseAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'symbole',)
     list_editable = ('nom', 'symbole',)
 
 
-class EngagementAdmin(CommonAdmin):
+class EngagementAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'profession', 'salaire', 'devise',)
     raw_id_fields = ('profession', 'individus',)
     autocomplete_lookup_fields = {
@@ -598,15 +638,15 @@ class EngagementAdmin(CommonAdmin):
     }
 
 
-class TypeDePersonnelAdmin(CommonAdmin):
+class TypeDePersonnelAdmin(VersionAdmin, CommonAdmin):
     list_display = ('nom',)
 
 
-class PersonnelAdmin(CommonAdmin):
+class PersonnelAdmin(VersionAdmin, CommonAdmin):
     filter_horizontal = ('engagements',)
 
 
-class GenreDOeuvreAdmin(CommonAdmin):
+class GenreDOeuvreAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'has_related_objects')
     list_editable = ('nom', 'nom_pluriel',)
     search_fields = ('nom', 'nom_pluriel',)
@@ -616,12 +656,12 @@ class GenreDOeuvreAdmin(CommonAdmin):
     }
 
 
-class TypeDeCaracteristiqueDOeuvreAdmin(CommonAdmin):
+class TypeDeCaracteristiqueDOeuvreAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
 
 
-class CaracteristiqueDOeuvreAdmin(CommonAdmin):
+class CaracteristiqueDOeuvreAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
     list_editable = ('type', 'valeur', 'classement',)
     search_fields = ('type__nom', 'valeur')
@@ -653,19 +693,20 @@ class PartieAdmin(AutoriteAdmin):
     )
 
 
-class PartieChildAdmin(PolymorphicChildModelAdmin, PartieAdmin):
+class PartieChildAdmin(PartieAdmin, PolymorphicChildModelAdmin):
     base_model = Partie
 
 
-class RoleAdmin(PartieChildAdmin):
+class RoleAdmin(VersionAdmin, PartieChildAdmin):
     pass
 
 
-class InstrumentAdmin(PartieChildAdmin):
+class InstrumentAdmin(VersionAdmin, PartieChildAdmin):
     pass
 
 
-class PartieParentAdmin(PolymorphicParentModelAdmin, PartieAdmin):
+class PartieParentAdmin(VersionAdmin, PartieAdmin,
+                        PolymorphicParentModelAdmin):
     base_model = Partie
     child_models = (
         (Role, RoleAdmin),
@@ -673,7 +714,11 @@ class PartieParentAdmin(PolymorphicParentModelAdmin, PartieAdmin):
     )
 
 
-class PupitreAdmin(CommonAdmin):
+reversion.register(Role, follow=('partie_ptr',))
+reversion.register(Instrument, follow=('partie_ptr',))
+
+
+class PupitreAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'partie', 'quantite_min', 'quantite_max',)
     list_editable = ('partie', 'quantite_min', 'quantite_max',)
     search_fields = ('partie__nom', 'quantite_min', 'quantite_max')
@@ -683,27 +728,10 @@ class PupitreAdmin(CommonAdmin):
     }
 
 
-class TypeDeParenteDOeuvresAdmin(CommonAdmin):
-    list_display = ('__str__', 'nom', 'nom_relatif', 'nom_relatif_pluriel',
-                    'classement',)
-    list_editable = ('nom', 'nom_relatif', 'nom_relatif_pluriel',
-                     'classement',)
-
-
-class ParenteDOeuvresAdmin(CommonAdmin):
-    fields = ('mere', 'type', 'fille',)
-    list_display = ('__str__', 'mere', 'type', 'fille',)
-    list_editable = ('mere', 'type', 'fille',)
-    raw_id_fields = ('fille', 'mere',)
-    autocomplete_lookup_fields = {
-        'fk': ('fille', 'mere'),
-    }
-
-
-class OeuvreAdmin(AutoriteAdmin):
+class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     form = OeuvreForm
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
-                    'calc_caracteristiques', 'auteurs_html',
+                    'caracteristiques_html', 'auteurs_html',
                     'ancrage_creation', 'link',)
     list_editable = ('genre',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',
@@ -748,7 +776,7 @@ class OeuvreAdmin(AutoriteAdmin):
     fieldsets_and_inlines_order = ('f', 'i', 'f', 'i', 'i')
 
 
-class ElementDeDistributionAdmin(CommonAdmin):
+class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'pupitre', 'profession',)
     list_editable = ('pupitre', 'profession',)
     search_fields = ('individus__nom', 'individus__prenoms__prenom',
@@ -761,7 +789,7 @@ class ElementDeDistributionAdmin(CommonAdmin):
     }
 
 
-class CaracteristiqueDElementDeProgrammeAdmin(CommonAdmin):
+class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
     search_fields = ('nom', 'nom_pluriel',)
@@ -806,12 +834,12 @@ class EvenementAdmin(AutoriteAdmin):
     fieldsets_and_inlines_order = ('f', 'i', 'i')
 
 
-class TypeDeSourceAdmin(CommonAdmin):
+class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
 
 
-class SourceAdmin(AutoriteAdmin):
+class SourceAdmin(VersionAdmin, AutoriteAdmin):
     form = SourceForm
     list_display = ('nom', 'date', 'type', 'has_events', 'has_program', 'link')
     list_editable = ('type', 'date',)
@@ -862,7 +890,7 @@ site.register(Saison, SaisonAdmin)
 site.register(Profession, ProfessionAdmin)
 site.register(AncrageSpatioTemporel, AncrageSpatioTemporelAdmin)
 site.register(Prenom, PrenomAdmin)
-site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
+site.register(TypeDeParente, TypeDeParenteParentAdmin)
 site.register(Individu, IndividuAdmin)
 site.register(Devise, DeviseAdmin)
 site.register(Engagement, EngagementAdmin)
@@ -873,8 +901,6 @@ site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
 site.register(Partie, PartieParentAdmin)
 site.register(Pupitre, PupitreAdmin)
-site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
-site.register(ParenteDOeuvres, ParenteDOeuvresAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(ElementDeDistribution, ElementDeDistributionAdmin)
 site.register(CaracteristiqueDElementDeProgramme,

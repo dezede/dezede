@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% load extras routines %}
+{% load i18n routines %}
 {% load url from future %}
 
 {% block title %}
@@ -16,8 +15,10 @@
     <h1>
       {{ lieu.nom }}{% if lieu.parent %}, <a href="{{ lieu.parent.get_absolute_url }}">{{ lieu.parent }}</a>{% endif %}
     </h1>
-    <h2 title="{% trans "nature"|capfirst %}">
-      {{ lieu.nature|capfirst }}
+    <h2>
+      <span title="{% trans "nature"|capfirst %}">
+        {{ lieu.nature|capfirst }}
+      </span>
     </h2>
   </div>
 
@@ -26,14 +27,10 @@
   </div>
 
   <table class="data-table">
-    {% with contenu=lieu.get_descendants %}
-      {% if contenu %}
-        <th>{% trans 'Lieux contenus' %}</th>
-        <td>
-          {% jstree contenu 'nom' %}
-        </td>
-      {% endif %}
-    {% endwith %}
+    {% if lieu.get_children|has_elements:request %}
+      <th>{% trans 'Lieux contenus' %}</th>
+      <td>{% jstree 'lieu' 'nom' %}</td>
+    {% endif %}
     {% data_table_attr 'historique' %}
     {% include "libretto/evenement_list_def.html" with evenements=lieu.evenements %}
     {% data_table_list lieu.individus_nes verbose_name=_('individu né ici') verbose_name_plural=_('individus nés ici') %}

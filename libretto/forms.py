@@ -1,12 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.forms import ValidationError
-from django.forms import ModelForm, Form, CharField, TextInput
+from django.forms import ValidationError, ModelForm, Form, CharField, TextInput
+from ajax_select.fields import AutoCompleteSelectMultipleField, \
+    AutoCompleteWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
-from ajax_select.fields import AutoCompleteSelectMultipleField, \
-                               AutoCompleteWidget
 from cache_tools import cached_ugettext_lazy as _
 from .models import Oeuvre, Source, Individu, ElementDeProgramme
 from .fields import RangeSliderField
@@ -93,6 +92,8 @@ class EvenementListForm(Form):
         'individu', required=False, label=_('Individu'), help_text='')
 
     def __init__(self, *args, **kwargs):
+        queryset = kwargs.pop('queryset')
+
         self.helper = FormHelper()
         self.helper.form_method = 'GET'
         self.helper.form_class = 'well well-small'
@@ -100,9 +101,13 @@ class EvenementListForm(Form):
             Field('q', 'dates', HTML('<hr/>'), 'lieu', 'oeuvre', 'individu',
                   css_class='span12'),
             HTML('<hr/>'),
-            Submit('', _('Filtrer'), css_class='btn-primary span12'),
+            Submit('', _('Filtrer'), css_class='btn-primary btn-block'),
         )
+
         super(EvenementListForm, self).__init__(*args, **kwargs)
-        for field in self.fields.itervalues():
+
+        for field in self.fields.values():
             field.widget.attrs[b'placeholder'] = (field.label or '') + '...'
             field.label = ''
+
+        self.fields['dates'].widget.queryset = queryset

@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.db.models.query import QuerySet
 from django.template import Library, Template
 from django.template.loader import render_to_string
 from django.contrib.sites.models import get_current_site
@@ -78,7 +79,11 @@ def data_table_attr(context, attr, verbose_name=None, obj=None):
 
 def get_verbose_name_from_object_list(object_list, verbose_name=None,
                                       verbose_name_plural=None):
-    Model = object_list[0].__class__
+    if isinstance(object_list, QuerySet):
+        Model = object_list.model
+    else:
+        Model = object_list[0].__class__
+
     if verbose_name is None:
         verbose_name = Model._meta.verbose_name
     if verbose_name_plural is None:
@@ -105,29 +110,31 @@ def get_property(obj, attr):
     return obj
 
 
+@register.filter
+def has_elements(object_list, request):
+    if isinstance(object_list, PublishedQuerySet):
+        object_list = object_list.published(request=request)
+    return bool(object_list)
+
+
 @register.simple_tag(takes_context=True)
 def data_table_list(context, object_list, attr='link',
                     verbose_name=None, verbose_name_plural=None, per_page=10,
                     number_if_one=True):
+
     if not object_list:
         return ''
 
-    # Only show what the connected user is allowed to see and automatically
-    # orders by the correct ordering.
+    # Only show what the connected user is allowed to see.
     if isinstance(object_list, PublishedQuerySet):
-        ordering = []
-        if object_list.ordered:
-            query = object_list.query
-            if query.order_by:
-                ordering = query.order_by
-            elif query.default_ordering:
-                ordering = object_list.model._meta.ordering
-        object_list = object_list.published(
-            request=context['request']).order_by(*ordering)
+        object_list = object_list.published(request=context['request'])
 
         is_published_queryset = True
     else:
         is_published_queryset = False
+
+    if not object_list:
+        return ''
 
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         object_list, verbose_name=verbose_name,
@@ -147,16 +154,12 @@ def data_table_list(context, object_list, attr='link',
     return render_to_string('routines/data_table_list.html', c)
 
 
-@register.simple_tag
-def jstree(queryset, attr='__str__', tree_id=None):
-    if not queryset:
-        return ''
-    if tree_id is None:
-        tree_id = queryset.model.__name__.lower()
+@register.simple_tag(takes_context=True)
+def jstree(context, model_name, attr='__str__'):
     c = {
-        'queryset': queryset,
-        'id': tree_id,
+        'model_name': model_name,
         'attr': attr,
+        'object': context.get('object'),
     }
     return render_to_string('routines/jstree.html', c)
 

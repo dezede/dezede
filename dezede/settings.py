@@ -1,9 +1,7 @@
 # coding: utf-8
 
 import os
-from os import environ
 import re
-
 
 ugettext = lambda s: s
 
@@ -63,7 +61,7 @@ DATABASES = {
     # },
 }
 
-default_database = environ.get('DJANGO_DATABASE', 'postgresql')
+default_database = os.environ.get('DJANGO_DATABASE', 'postgresql')
 DATABASES['default'] = DATABASES[default_database]
 del DATABASES[default_database]
 
@@ -82,8 +80,8 @@ LANGUAGE_CODE = 'fr'
 
 LANGUAGES = (
     ('fr', ugettext(u'Français')),
-    ('en', ugettext('English')),
-    ('de', ugettext('Deutsch')),
+    # ('en', ugettext('English')),
+    # ('de', ugettext('Deutsch')),
 )
 
 SITE_ID = 1
@@ -115,9 +113,11 @@ ALLOWED_HOSTS = ('dezede.org',)
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    # 'django.template.loaders.eggs.Loader',
+    ('django.template.loaders.cached.Loader', (
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+        # 'django.template.loaders.eggs.Loader',
+    )),
 )
 
 MIDDLEWARE_CLASSES = (
@@ -201,6 +201,7 @@ INSTALLED_APPS = (
     'south',
     'django_nose',
     'debug_toolbar',
+    'template_timings_panel',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -212,6 +213,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'django.contrib.messages.context_processors.messages',
     'sekizai.context_processors.sekizai',
+    'dezede.context_processors.site',
 )
 
 LOCALE_PATHS = (
@@ -251,13 +253,14 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 FILEBROWSER_VERSIONS = {
-    'admin_thumbnail': {'verbose_name': 'Admin Thumbnail',
-                        'width': 60, 'height': 60, 'opts': 'crop'},
-    'avatar': {'verbose_name': 'Avatar',
+    'avatar': {'verbose_name': ugettext('Avatar'),
                'width': 150, 'height': 150, 'opts': ''},
+    'thumbnail': {'verbose_name': ugettext('Standard thumbnail'),
+                  'width': 60, 'height': 60, 'opts': ''}
 }
-
-FILEBROWSER_ADMIN_VERSIONS = []
+FILEBROWSER_ADMIN_THUMBNAIL = 'thumbnail'
+FILEBROWSER_ADMIN_VERSIONS = ['avatar']
+FILEBROWSER_MAX_UPLOAD_SIZE = 50 * (1024 ** 2)  # octets
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -275,6 +278,7 @@ CACHES = {
         'BACKEND': 'johnny.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
         'KEY_PREFIX': '2Z',
+        'TIMEOUT': 24 * 60 * 60,  # seconds
         'JOHNNY_CACHE': True,
     }
 }
@@ -297,6 +301,7 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.signals.SignalDebugPanel',
     # 'debug_toolbar.panels.logger.LoggingPanel',
     # 'debug_toolbar.panels.profiling.ProfilingDebugPanel',
+    'template_timings_panel.panels.TemplateTimings.TemplateTimings',
 )
 
 if DEBUG:
@@ -348,4 +353,29 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAdminUser'
     ],
     'PAGINATE_BY': 10,
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
 }

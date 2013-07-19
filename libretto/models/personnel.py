@@ -5,11 +5,12 @@ from django.db.models import CharField, ForeignKey, ManyToManyField, \
      FloatField, permalink, SmallIntegerField, PROTECT
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy
-from mptt.models import MPTTModel, TreeForeignKey, TreeManager
+from mptt.models import MPTTModel, TreeForeignKey
 from cache_tools import cached_ugettext_lazy as _
 from ..utils import abbreviate
 from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
-    UniqueSlugModel, PublishedManager, AutoriteModel
+    UniqueSlugModel, PublishedManager, AutoriteModel, CommonTreeManager, \
+    PublishedQuerySet, CommonTreeQuerySet
 from .functions import capfirst, ex, href
 
 
@@ -17,8 +18,12 @@ __all__ = (b'Profession', b'Devise', b'Engagement', b'TypeDePersonnel',
            b'Personnel')
 
 
-class ProfessionManager(TreeManager, PublishedManager):
+class ProfessionQuerySet(CommonTreeQuerySet, PublishedQuerySet):
     pass
+
+
+class ProfessionManager(CommonTreeManager, PublishedManager):
+    queryset_class = ProfessionQuerySet
 
 
 @python_2_unicode_compatible

@@ -2,6 +2,8 @@
 
 from __future__ import unicode_literals
 from django.contrib.sites.models import get_current_site
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 from libretto.views import PublishedListView, PublishedDetailView, \
     EvenementListView
@@ -25,9 +27,10 @@ class DossierDEvenementsDataDetail(EvenementListView):
     view_name = 'dossierdevenements_data_detail'
 
     def get_queryset(self):
-        self.object = DossierDEvenements.objects.get(pk=self.kwargs['pk'])
-        return super(DossierDEvenementsDataDetail, self).get_queryset().filter(
-            pk__in=self.object.get_queryset())
+        self.object = get_object_or_404(DossierDEvenements,
+                                        pk=self.kwargs['pk'])
+        return super(DossierDEvenementsDataDetail, self).get_queryset(
+            base_filter=Q(pk__in=self.object.get_queryset()))
 
     def get_context_data(self, **kwargs):
         data = super(DossierDEvenementsDataDetail, self) \

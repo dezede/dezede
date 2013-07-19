@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import datetime
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, BooleanField, \
                              DateField, TimeField, permalink, Q, PROTECT
@@ -18,7 +19,8 @@ from cache_tools import cached_ugettext as ugettext, \
     cached_pgettext as pgettext, cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
-                    UniqueSlugModel, PublishedQuerySet
+                    UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
+    CommonTreeManager
 from .evenement import Evenement
 from .functions import capfirst, href, date_html, str_list, ex
 from .individu import Individu
@@ -65,11 +67,13 @@ class NatureDeLieu(CommonModel, SlugModel):
         return 'nom__icontains',
 
 
-class LieuQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet):
+class LieuQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet,
+                   CommonTreeQuerySet):
     pass
 
 
-class LieuManager(PolymorphicMPTTModelManager, PublishedManager):
+class LieuManager(CommonTreeManager, PolymorphicMPTTModelManager,
+                  PublishedManager):
     queryset_class = LieuQuerySet
 
 
@@ -118,9 +122,9 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         return self.html(short=True)
 
     def evenements(self):
-        # TODO: gérer les fins d'événements.
-        # TODO: Inclure les événements des enfants.
-        return Evenement.objects.filter(ancrage_debut__lieu=self)
+        qs = self.get_descendants(include_self=True)
+        return Evenement.objects.filter(
+            Q(ancrage_debut__lieu__in=qs) | Q(ancrage_fin__lieu__in=qs))
 
     def individus_nes(self):
         return Individu.objects.filter(
@@ -146,7 +150,7 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
             ancestors = ancestors.filter(Q(nature__referent=False)
                 | Q(nature__referent=True,
                     enfants__nature__referent=False)).distinct()
-            out = ', '.join(a.nom for a in ancestors)
+            out = ', '.join(ancestors.values_list('nom', flat=True))
         return href(url, out, tags)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
@@ -266,6 +270,13 @@ class AncrageSpatioTemporel(CommonModel):
     calc_lieu.short_description = _('lieu ou institution')
     calc_lieu.admin_order_field = 'lieu'
     calc_lieu.allow_tags = True
+
+    def isoformat(self):
+        if not self.date:
+            return
+        if self.heure:
+            return datetime.datetime.combine(self.date, self.heure).isoformat()
+        return self.date.isoformat()
 
     def html(self, tags=True, short=False):
         out = str_list((self.calc_lieu(tags, short),

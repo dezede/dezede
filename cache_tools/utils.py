@@ -21,17 +21,25 @@ CONTROL_CHARACTERS_RE = re.compile(b'[%s]' % CONTROL_CHARACTERS)
 CONTROL_CHARACTERS_RE_SUB = CONTROL_CHARACTERS_RE.sub
 
 
-def sanitize_memcached_key(key, max_length=250):
+def sanitize_memcached_key(key, max_length=200):
     # Derived from django-cache-utils.
+    # max_length is less than 250 because KEY_PREFIX and the version are added,
+    # leading to keys longer than 250.
     try:
         key = bytes(key).translate(None, CONTROL_CHARACTERS)
     except:  # When key contains unicode or in any other unexpected case,
              # we fallback on the regular expression that shouldn't fail.
         key = CONTROL_CHARACTERS_RE_SUB(b'', key)
     if len(key) > max_length:
-        hashed_key = md5(key).hexdigest()
-        key = key[:max_length - 33] + b'-' + hashed_key
+        return md5(key).hexdigest()
     return key
+
+
+def get_cache_key(id_attr, method, self, args, kwargs):
+    cache_key = b'%s:%s.%s.%s:%s(%s,%s)' % (
+        get_language(), self.__module__, self.__class__.__name__,
+        method.__name__, getattr(self, id_attr), args, kwargs)
+    return sanitize_memcached_key(cache_key)
 
 
 def get_group_cache_key(group):

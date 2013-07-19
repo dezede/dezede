@@ -22,7 +22,7 @@
         {{ object.fonctions }}
       {% endif %}
 
-      {% if object.dossiersdevenements_roots %}
+      {% if object.dossiersdevenements_roots|has_elements:request %}
         {% if object.presentation or object.fonctions %}
           <hr/>
         {% endif %}

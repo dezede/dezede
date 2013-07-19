@@ -9,8 +9,10 @@ from django.views.generic import ListView, DetailView
 from endless_pagination.views import AjaxListView
 from django_tables2 import SingleTableMixin
 from haystack.query import SearchQuerySet
+from polymorphic import PolymorphicQuerySet
 from viewsets import ModelViewSet
 from .models import *
+from .models.common import PublishedQuerySet
 from .forms import *
 from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 
@@ -23,14 +25,16 @@ __all__ = (b'PublishedDetailView', 'PublishedListView',
 
 class PublishedDetailView(DetailView):
     def get_queryset(self):
-        return super(PublishedDetailView, self).get_queryset().published(
-            request=self.request)
+        qs = super(PublishedDetailView, self).get_queryset()
+        if isinstance(qs, PolymorphicQuerySet):
+            qs = qs.non_polymorphic()
+        return qs.published(request=self.request)
 
 
 class PublishedListView(ListView):
     def get_queryset(self):
         return super(PublishedListView, self).get_queryset().published(
-            request=self.request)
+            request=self.request).order_by(*self.model._meta.ordering)
 
 
 def cleaned_querydict(qd):
@@ -52,9 +56,8 @@ def get_filters(bindings, data):
                 objects = Model._default_manager.filter(pk__in=pk_list)
                 # Inclus tous les événements impliquant les descendants
                 # éventuels de chaque objet de value.
-                for obj in tuple(objects):
-                    if hasattr(obj, 'get_descendants'):
-                        objects |= obj.get_descendants()
+                if hasattr(objects, 'get_descendants'):
+                    objects = objects.get_descendants(include_self=True)
                 value = objects
             if value:
                 accessors = bindings[key]
@@ -74,14 +77,17 @@ class EvenementListView(AjaxListView, PublishedListView):
     context_object_name = 'evenements'
     view_name = 'evenements'
 
-    def get_queryset(self):
+    def get_queryset(self, base_filter=None):
         qs = super(EvenementListView, self).get_queryset()
+        if base_filter is not None:
+            qs = qs.filter(base_filter)
+
         data = self.request.GET
-        self.form = form = EvenementListForm(data)
+        self.form = EvenementListForm(data, queryset=qs)
         try:
-            self.valid_form = form.is_valid()
+            self.valid_form = self.form.is_valid()
         except:
-            self.form = EvenementListForm()
+            self.form = EvenementListForm(queryset=qs)
             self.valid_form = False
             data = {}
         if self.valid_form:
@@ -106,7 +112,7 @@ class EvenementListView(AjaxListView, PublishedListView):
                     date(start, 1, 1), date(end, 12, 31)))
             except (TypeError, ValueError):
                 pass
-        return qs.select_related().prefetch_related('programme')
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super(EvenementListView, self).get_context_data(**kwargs)
@@ -235,3 +241,31 @@ class OeuvreViewSet(CommonViewSet):
     def __init__(self):
         super(OeuvreViewSet, self).__init__()
         self.views[b'list_view'][b'view'] = OeuvreTableView
+
+
+class TreeNode(PublishedDetailView):
+    template_name = 'routines/tree_node.json'
+
+    def get_context_data(self, **kwargs):
+        context = super(TreeNode, self).get_context_data(**kwargs)
+
+        if self.object is None:
+            children = self.model._tree_manager.root_nodes()
+        else:
+            children = self.object.get_children()
+
+        if isinstance(children, PublishedQuerySet):
+            children = children.published(self.request)
+
+        context[b'children'] = children
+        context[b'attr'] = self.request.GET.get('attr', '__str__')
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.model = get_model('libretto', self.kwargs['model_name'])
+        try:
+            self.object = self.get_object()
+        except AttributeError:
+            self.object = None
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)

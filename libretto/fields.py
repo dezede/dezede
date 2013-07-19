@@ -1,30 +1,33 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import datetime
+from django.db.models import Q, Min, Max
 from django.forms.fields import MultiValueField
 from django.forms.widgets import MultiWidget, TextInput
 from django.template.loader import render_to_string
-from .models import Evenement
+from .models import Evenement, AncrageSpatioTemporel
 
 
 __all__ = (b'RangeSliderWidget', b'RangeSliderField')
 
 
 class RangeSliderWidget(MultiWidget):
+    queryset = ()
+
     def __init__(self, attrs=None):
         widgets = [TextInput(attrs=attrs), TextInput(attrs=attrs)]
         super(RangeSliderWidget, self).__init__(widgets, attrs=attrs)
 
     def render(self, name, value, attrs=None):
-        evenements = Evenement.objects.filter(
-            ancrage_debut__date__isnull=False)
-        if evenements.exists():
-            min_year = evenements.order_by(
-                b'ancrage_debut__date')[0].ancrage_debut.date.year
-            max_year = evenements.order_by(
-                b'-ancrage_debut__date')[0].ancrage_debut.date.year
-        else:
-            min_year, max_year = 1600, 2012
+        dates = AncrageSpatioTemporel.objects.filter(
+            Q(evenements_debuts__in=self.queryset)
+            | Q(evenements_fins__in=self.queryset)).aggregate(
+                min=Min('date'), max=Max('date'))
+        min_date = dates['min'] or datetime.date(1600, 1, 1)
+        min_year = min_date.year
+        max_date = dates['max'] or datetime.datetime.now().date()
+        max_year = max_date.year
         try:
             int(value[0]), int(value[1])
         except (ValueError, TypeError):

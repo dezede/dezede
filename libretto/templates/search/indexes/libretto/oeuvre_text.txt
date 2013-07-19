@@ -5,7 +5,7 @@
     {{ object.titre }}
     {{ object.titre_secondaire }}
     {{ object.genre }}
-    {{ object.calc_caracteristiques }}
+    {{ object.caracteristiques_html }}
     {{ object.html }}
     {{ object.auteurs.individus.nom_complet }}
   {% endautoescape %}

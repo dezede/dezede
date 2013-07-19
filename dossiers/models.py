@@ -7,16 +7,20 @@ from django.db.models import CharField, DateField, ManyToManyField, \
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy
 from mptt.fields import TreeForeignKey
-from mptt.managers import TreeManager
 from mptt.models import MPTTModel
 from cache_tools import cached_ugettext_lazy as _
 from libretto.models import Lieu, Oeuvre, Evenement, Individu
-from libretto.models.common import PublishedModel, PublishedManager
+from libretto.models.common import PublishedModel, PublishedManager, \
+    CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from libretto.models.functions import str_list_w_last, href
 
 
-class DossierDEvenementsManager(TreeManager, PublishedManager):
+class DossierDEvenementsQuerySet(CommonTreeQuerySet, PublishedQuerySet):
     pass
+
+
+class DossierDEvenementsManager(CommonTreeManager, PublishedManager):
+    queryset_class = DossierDEvenementsQuerySet
 
 
 @python_2_unicode_compatible
@@ -75,14 +79,11 @@ class DossierDEvenements(MPTTModel, PublishedModel):
             kwargs['ancrage_debut__date__lte'] = self.fin
         if self.pk:
             if self.lieux.all():
-                lieux = Lieu.objects.none()
-                for lieu in self.lieux.non_polymorphic():
-                    lieux |= lieu.get_descendants(include_self=True)
+                lieux = self.lieux.non_polymorphic() \
+                    .get_descendants(include_self=True)
                 kwargs['ancrage_debut__lieu__in'] = lieux
             if self.oeuvres.all():
-                oeuvres = Oeuvre.objects.none()
-                for oeuvre in self.oeuvres.all():
-                    oeuvres |= oeuvre.get_descendants(include_self=True)
+                oeuvres = self.oeuvres.get_descendants(include_self=True)
                 kwargs['programme__oeuvre__in'] = oeuvres
             if self.auteurs.all():
                 kwargs['programme__oeuvre__auteurs__individu__in'] \

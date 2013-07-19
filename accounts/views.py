@@ -65,7 +65,8 @@ class MyRegistrationView(RegistrationView):
 class EvenementsGraph(TemplateView):
     template_name = 'accounts/include/evenements_graph.svg'
     content_type = 'image/svg+xml'
-    displayed_range = 200  # years
+    displayed_range = 150  # years
+    row_length = 20  # years
     rect_size = 16  # pixels
     rect_margin = 4  # pixels
     # When we set the font size, the figures are smaller than
@@ -103,6 +104,7 @@ class EvenementsGraph(TemplateView):
         current_year = datetime.datetime.now().year
         if not years:
             years = [current_year]
+            data = [{'year': current_year, 'n': 0}]
         min_year = min(years)
         max_year = max(years)
 
@@ -126,10 +128,23 @@ class EvenementsGraph(TemplateView):
         def get_float(attr):
             return float(self.request.GET.get(attr) or getattr(self, attr))
 
+        row_length = self.row_length
+
+        context['row_length'] = row_length
         context['size'] = get_float('rect_size')
         context['margin'] = get_float('rect_margin')
         context['figure_size_factor'] = get_float('figure_size_factor')
         context['hue'] = get_float('hue')
+
+        isolated_starting_years = min_year % row_length
+        isolated_ending_years = max_year % row_length
+        min_year -= isolated_starting_years
+        max_year -= isolated_ending_years
+
+        n_rows = (max_year - min_year) // row_length
+        if isolated_ending_years > 0:
+            n_rows += 1
+        context['n_rows'] = n_rows
 
         def levels_iterator(start, end, n_steps):
             step = (end - start) / (n_steps - 1)
