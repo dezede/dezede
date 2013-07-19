@@ -1,10 +1,7 @@
 {# Gestion des tooltips #}
-if($.cookie("tooltips_placement") == null) {
-  $.cookie("tooltips_placement", "top", {path: '/'});
-}
 get_tooltips_options = function() {
   return {
-    placement: $.cookie("tooltips_placement"),
+    placement: 'top',
     container: 'body'
   };
 };
@@ -21,19 +18,12 @@ tooltips_enable = function() {
   get_tooltips().tooltip(get_tooltips_options());
 };
 
-
 tooltips_reload = function() {
   var tooltips_enabled = $.cookie("tooltips_enabled");
   tooltips_enable();
   if(tooltips_enabled == "false") {
     tooltips_disable();
   }
-};
-
-tooltips_reset = function() {tooltips_disable(); tooltips_enable();};
-tooltips_placement = function(dir) {
-  $.cookie("tooltips_placement", dir, {path: '/'});
-  tooltips_reset();
 };
 {# Fin de la gestion des tooltips #}
 
