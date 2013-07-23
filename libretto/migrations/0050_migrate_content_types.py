@@ -26,6 +26,24 @@ class Migration(DataMigration):
         ct3.name = 'type de parenté d’individus'
         ct3.save()
 
+        db.rename_column('libretto_elementdeprogramme_caracteristiques',
+                         'caracteristiquedelementdeprogramme_id',
+                         'caracteristiquedeprogramme_id')
+
+        sql = db.foreign_key_sql(
+            'libretto_elementdeprogramme_caracteristiques',
+            'caracteristiquedeprogramme_id',
+            'libretto_caracteristiquedeprogramme',
+            'caracteristique_ptr_id')
+        db.execute(sql)
+
+        sql = db.foreign_key_sql(
+            'libretto_oeuvre_caracteristiques',
+            'caracteristiquedoeuvre_id',
+            'libretto_caracteristiquedoeuvre',
+            'caracteristique_ptr_id')
+        db.execute(sql)
+
     def backwards(self, orm):
         raise RuntimeError("Cannot reverse this migration.")
 
