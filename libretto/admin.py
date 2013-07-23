@@ -688,6 +688,7 @@ reversion.register(TypeDeCaracteristiqueDOeuvre,
 class CaracteristiqueAdmin(CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
     list_editable = ('type', 'valeur', 'classement',)
+    list_filter = (PolymorphicChildModelFilter,)
     search_fields = ('type__nom', 'valeur')
 
 
