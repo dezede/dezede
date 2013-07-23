@@ -24,10 +24,11 @@ from polymorphic_tree.models import PolymorphicMPTTModel, \
 from tinymce.models import HTMLField
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
-from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-    calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
-    PublishedManager, OrderedDefaultDict, PublishedQuerySet, \
-    CommonTreeManager, CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique
+from .common import (
+    CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
+    UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
+    OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,
+    CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique)
 from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -96,10 +97,6 @@ class TypeDeCaracteristiqueDOeuvre(TypeDeCaracteristique):
 
 
 class CaracteristiqueDOeuvre(Caracteristique):
-    type = ForeignKey(
-        'TypeDeCaracteristiqueDOeuvre', db_index=True, on_delete=PROTECT,
-        related_name='caracteristiques', verbose_name=_('type'))
-
     class Meta(object):
         verbose_name = ungettext_lazy('caractéristique d’œuvre',
                                       'caractéristiques d’œuvre', 1)
@@ -107,17 +104,6 @@ class CaracteristiqueDOeuvre(Caracteristique):
                                              'caractéristiques d’œuvre', 2)
         ordering = ('type', 'classement', 'valeur')
         app_label = 'libretto'
-
-    def html(self, tags=True):
-        return hlp(self.valeur, self.type, tags)
-    html.allow_tags = True
-
-    def __str__(self):
-        return smart_text(self.type) + ' : ' + strip_tags(self.valeur)
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return 'type__nom__icontains', 'valeur__icontains',
 
 
 class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet,

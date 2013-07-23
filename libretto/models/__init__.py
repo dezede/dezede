@@ -1,5 +1,5 @@
 from .common import (Document, Illustration, Etat, TypeDeParente,
-                     TypeDeCaracteristique)
+                     TypeDeCaracteristique, Caracteristique)
 from .espace_temps import (NatureDeLieu, Lieu, LieuDivers, Institution,
                            Saison, AncrageSpatioTemporel)
 from .individu import (Prenom, TypeDeParenteDIndividus, ParenteDIndividus,

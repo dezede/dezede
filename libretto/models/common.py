@@ -338,27 +338,27 @@ class TypeDeCaracteristique(PolymorphicModel, CommonModel):
         return 'nom__icontains', 'nom_pluriel__icontains',
 
 
-class CaracteristiqueQuerySet(CommonQuerySet):
+class CaracteristiqueQuerySet(PolymorphicQuerySet, CommonQuerySet):
     def html_list(self, tags=True):
         return [hlp(valeur, type, tags)
                 for type, valeur in self.values_list('type__nom', 'valeur')]
 
 
-class CaracteristiqueManager(CommonManager):
-    def get_query_set(self):
-        return CaracteristiqueQuerySet(self.model, using=self._db)
+class CaracteristiqueManager(PolymorphicManager, CommonManager):
+    queryset_class = CaracteristiqueQuerySet
 
     def html_list(self, tags=True):
         return self.get_query_set().html_list(tags=tags)
 
 
 @python_2_unicode_compatible
-class Caracteristique(CommonModel):
-    # WARNING: You have to add a foreign key like this on polymorphic children,
-    # except that it must point to the corresponding children type.
-    # type = ForeignKey(
-    #     'TypeDeCaracteristique', db_index=True, on_delete=PROTECT,
-    #     related_name='caracteristiques', verbose_name=_('type'))
+class Caracteristique(PolymorphicModel, CommonModel):
+    type = ForeignKey(
+        'TypeDeCaracteristique', db_index=True, on_delete=PROTECT,
+        limit_choices_to={
+            'polymorphic_ctype__app_label': 'libretto',
+            'polymorphic_ctype__model': 'typedecaracteristiquedoeuvre'},
+        related_name='caracteristiques', verbose_name=_('type'))
     valeur = CharField(_('valeur'), max_length=400,
                        help_text=ex(_('en trois actes')))
     classement = SmallIntegerField(
@@ -369,7 +369,6 @@ class Caracteristique(CommonModel):
     objects = CaracteristiqueManager()
 
     class Meta(object):
-        abstract = True
         verbose_name = ungettext_lazy('caractéristique',
                                       'caractéristiques', 1)
         verbose_name_plural = ungettext_lazy('caractéristique',

@@ -685,10 +685,32 @@ reversion.register(TypeDeCaracteristiqueDOeuvre,
                    follow=('typedecaracteristique_ptr',))
 
 
-class CaracteristiqueDOeuvreAdmin(VersionAdmin, CommonAdmin):
+class CaracteristiqueAdmin(CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
     list_editable = ('type', 'valeur', 'classement',)
     search_fields = ('type__nom', 'valeur')
+
+
+class CaracteristiqueChildAdmin(CaracteristiqueAdmin,
+                                PolymorphicChildModelAdmin):
+    base_model = Caracteristique
+
+
+class CaracteristiqueDOeuvreAdmin(VersionAdmin,
+                                  CaracteristiqueChildAdmin):
+    pass
+
+
+class CaracteristiqueParentAdmin(VersionAdmin, CaracteristiqueAdmin,
+                                 PolymorphicParentModelAdmin):
+    base_model = Caracteristique
+    child_models = (
+        (CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin),
+    )
+
+
+reversion.register(CaracteristiqueDOeuvre,
+                   follow=('caracteristique_ptr',))
 
 
 class PartieAdmin(AutoriteAdmin):
@@ -922,7 +944,7 @@ site.register(TypeDePersonnel, TypeDePersonnelAdmin)
 site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(TypeDeCaracteristique, TypeDeCaracteristiqueParentAdmin)
-site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
+site.register(Caracteristique, CaracteristiqueParentAdmin)
 site.register(Partie, PartieParentAdmin)
 site.register(Pupitre, PupitreAdmin)
 site.register(Oeuvre, OeuvreAdmin)
