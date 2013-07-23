@@ -23,7 +23,7 @@ from .functions import capfirst, str_list, str_list_w_last, href, hlp, \
     microdata
 
 
-__all__ = (b'ElementDeDistribution', b'CaracteristiqueDElementDeProgramme',
+__all__ = (b'ElementDeDistribution', b'CaracteristiqueDeProgramme',
            b'ElementDeProgramme', b'Evenement')
 
 
@@ -135,7 +135,7 @@ class ElementDeDistribution(CommonModel):
         )
 
 
-class TypeDeCaracteristiqueDElementDeProgramme(TypeDeCaracteristique):
+class TypeDeCaracteristiqueDeProgramme(TypeDeCaracteristique):
     class Meta(object):
         verbose_name = ungettext_lazy(
             "type de caractéristique de programme",
@@ -147,7 +147,7 @@ class TypeDeCaracteristiqueDElementDeProgramme(TypeDeCaracteristique):
         app_label = 'libretto'
 
 
-class CaracteristiqueDElementDeProgramme(Caracteristique):
+class CaracteristiqueDeProgramme(Caracteristique):
     class Meta(object):
         verbose_name = ungettext_lazy(
             'caractéristique de programme',
@@ -168,7 +168,7 @@ class ElementDeProgramme(AutoriteModel):
                         db_index=True, on_delete=PROTECT)
     autre = CharField(max_length=500, blank=True, db_index=True)
     caracteristiques = ManyToManyField(
-        CaracteristiqueDElementDeProgramme,
+        CaracteristiqueDeProgramme,
         related_name='elements_de_programme', blank=True, null=True,
         verbose_name=_('caractéristiques'))
     NUMEROTATIONS = (

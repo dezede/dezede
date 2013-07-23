@@ -673,7 +673,7 @@ class TypeDeCaracteristiqueDOeuvreAdmin(
     pass
 
 
-class TypeDeCaracteristiqueDElementDeProgrammeAdmin(
+class TypeDeCaracteristiqueDeProgrammeAdmin(
         VersionAdmin, TypeDeCaracteristiqueChildAdmin):
     pass
 
@@ -683,14 +683,14 @@ class TypeDeCaracteristiqueParentAdmin(
     base_model = TypeDeCaracteristique
     child_models = (
         (TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin),
-        (TypeDeCaracteristiqueDElementDeProgramme,
-         TypeDeCaracteristiqueDElementDeProgrammeAdmin),
+        (TypeDeCaracteristiqueDeProgramme,
+         TypeDeCaracteristiqueDeProgrammeAdmin),
     )
 
 
 reversion.register(TypeDeCaracteristiqueDOeuvre,
                    follow=('typedecaracteristique_ptr',))
-reversion.register(TypeDeCaracteristiqueDElementDeProgramme,
+reversion.register(TypeDeCaracteristiqueDeProgramme,
                    follow=('typedecaracteristique_ptr',))
 
 
@@ -711,7 +711,7 @@ class CaracteristiqueDOeuvreAdmin(VersionAdmin,
     pass
 
 
-class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin,
+class CaracteristiqueDeProgrammeAdmin(VersionAdmin,
                                               CaracteristiqueChildAdmin):
     pass
 
@@ -721,14 +721,13 @@ class CaracteristiqueParentAdmin(VersionAdmin, CaracteristiqueAdmin,
     base_model = Caracteristique
     child_models = (
         (CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin),
-        (CaracteristiqueDElementDeProgramme,
-         CaracteristiqueDElementDeProgrammeAdmin),
+        (CaracteristiqueDeProgramme, CaracteristiqueDeProgrammeAdmin),
     )
 
 
 reversion.register(CaracteristiqueDOeuvre,
                    follow=('caracteristique_ptr',))
-reversion.register(CaracteristiqueDElementDeProgramme,
+reversion.register(CaracteristiqueDeProgramme,
                    follow=('caracteristique_ptr',))
 
 
