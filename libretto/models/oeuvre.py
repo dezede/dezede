@@ -27,7 +27,7 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
     PublishedManager, OrderedDefaultDict, PublishedQuerySet, \
-    CommonTreeManager, CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique
+    CommonTreeManager, CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique
 from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -95,33 +95,10 @@ class TypeDeCaracteristiqueDOeuvre(TypeDeCaracteristique):
         app_label = 'libretto'
 
 
-class CaracteristiqueDOeuvreQuerySet(CommonQuerySet):
-    def html_list(self, tags=True):
-        return [hlp(valeur, type, tags)
-                for type, valeur in self.values_list('type__nom', 'valeur')]
-
-
-class CaracteristiqueDOeuvreManager(CommonManager):
-    def get_query_set(self):
-        return CaracteristiqueDOeuvreQuerySet(self.model, using=self._db)
-
-    def html_list(self, tags=True):
-        return self.get_query_set().html_list(tags=tags)
-
-
-@python_2_unicode_compatible
-class CaracteristiqueDOeuvre(CommonModel):
+class CaracteristiqueDOeuvre(Caracteristique):
     type = ForeignKey(
         'TypeDeCaracteristiqueDOeuvre', db_index=True, on_delete=PROTECT,
-        related_name='caracteristiques_d_oeuvre', verbose_name=_('type'))
-    # TODO: Changer valeur en nom ?
-    valeur = CharField(_('valeur'), max_length=400,
-                       help_text=ex(_('en trois actes')))
-    classement = SmallIntegerField(_('classement'), default=1, db_index=True,
-        help_text=_('Par exemple, on peut choisir de classer '
-                    'les découpages par nombre d’actes.'))
-
-    objects = CaracteristiqueDOeuvreManager()
+        related_name='caracteristiques', verbose_name=_('type'))
 
     class Meta(object):
         verbose_name = ungettext_lazy('caractéristique d’œuvre',

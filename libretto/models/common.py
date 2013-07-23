@@ -12,6 +12,7 @@ from django.db.models.query import QuerySet
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
@@ -20,7 +21,7 @@ from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
 from tinymce.models import HTMLField
 from cache_tools import invalidate_group, cached_ugettext_lazy as _
-from .functions import href, ex
+from .functions import href, ex, hlp
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 
@@ -335,6 +336,57 @@ class TypeDeCaracteristique(PolymorphicModel, CommonModel):
     @staticmethod
     def autocomplete_search_fields():
         return 'nom__icontains', 'nom_pluriel__icontains',
+
+
+class CaracteristiqueQuerySet(CommonQuerySet):
+    def html_list(self, tags=True):
+        return [hlp(valeur, type, tags)
+                for type, valeur in self.values_list('type__nom', 'valeur')]
+
+
+class CaracteristiqueManager(CommonManager):
+    def get_query_set(self):
+        return CaracteristiqueQuerySet(self.model, using=self._db)
+
+    def html_list(self, tags=True):
+        return self.get_query_set().html_list(tags=tags)
+
+
+@python_2_unicode_compatible
+class Caracteristique(CommonModel):
+    # WARNING: You have to add a foreign key like this on polymorphic children,
+    # except that it must point to the corresponding children type.
+    # type = ForeignKey(
+    #     'TypeDeCaracteristique', db_index=True, on_delete=PROTECT,
+    #     related_name='caracteristiques', verbose_name=_('type'))
+    valeur = CharField(_('valeur'), max_length=400,
+                       help_text=ex(_('en trois actes')))
+    classement = SmallIntegerField(
+        _('classement'), default=1, db_index=True,
+        help_text=_('Par exemple, on peut choisir de classer '
+                    'les découpages par nombre d’actes.'))
+
+    objects = CaracteristiqueManager()
+
+    class Meta(object):
+        abstract = True
+        verbose_name = ungettext_lazy('caractéristique',
+                                      'caractéristiques', 1)
+        verbose_name_plural = ungettext_lazy('caractéristique',
+                                             'caractéristiques', 2)
+        ordering = ('type', 'classement', 'valeur')
+        app_label = 'libretto'
+
+    def html(self, tags=True):
+        return hlp(self.valeur, self.type, tags)
+    html.allow_tags = True
+
+    def __str__(self):
+        return smart_text(self.type) + ' : ' + strip_tags(self.valeur)
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'type__nom__icontains', 'valeur__icontains',
 
 
 class TypeDeParenteQuerySet(PolymorphicQuerySet, CommonQuerySet):
