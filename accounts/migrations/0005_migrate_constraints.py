@@ -30,7 +30,6 @@ class Migration(SchemaMigration):
 
         migrate_fk('libretto_ancragespatiotemporel')
         migrate_fk('libretto_auteur')
-        migrate_fk('libretto_caracteristiquedelementdeprogramme')
         migrate_fk('libretto_caracteristique')
         migrate_fk('libretto_devise')
         migrate_fk('libretto_document')

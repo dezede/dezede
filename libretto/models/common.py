@@ -13,6 +13,7 @@ from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
+from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
@@ -354,11 +355,13 @@ class CaracteristiqueManager(PolymorphicManager, CommonManager):
 @python_2_unicode_compatible
 class Caracteristique(PolymorphicModel, CommonModel):
     type = ForeignKey(
-        'TypeDeCaracteristique', db_index=True, on_delete=PROTECT,
+        'TypeDeCaracteristique', null=True, blank=True, db_index=True,
+        on_delete=PROTECT, related_name='caracteristiques',
+        # FIXME: Autoriser les types de caractéristiques d'éléments de programme.
         limit_choices_to={
             'polymorphic_ctype__app_label': 'libretto',
             'polymorphic_ctype__model': 'typedecaracteristiquedoeuvre'},
-        related_name='caracteristiques', verbose_name=_('type'))
+        verbose_name=_('type'))
     valeur = CharField(_('valeur'), max_length=400,
                        help_text=ex(_('en trois actes')))
     classement = SmallIntegerField(
@@ -369,6 +372,8 @@ class Caracteristique(PolymorphicModel, CommonModel):
     objects = CaracteristiqueManager()
 
     class Meta(object):
+        # FIXME: Retirer les doublons et activer ce qui suit.
+        # unique_together = ('type', 'valeur')
         verbose_name = ungettext_lazy('caractéristique',
                                       'caractéristiques', 1)
         verbose_name_plural = ungettext_lazy('caractéristique',
@@ -377,11 +382,16 @@ class Caracteristique(PolymorphicModel, CommonModel):
         app_label = 'libretto'
 
     def html(self, tags=True):
-        return hlp(self.valeur, self.type, tags)
+        value = mark_safe(self.valeur)
+        if self.type:
+            return hlp(value, self.type, tags=tags)
+        return value
     html.allow_tags = True
 
     def __str__(self):
-        return smart_text(self.type) + ' : ' + strip_tags(self.valeur)
+        if self.type:
+            return smart_text(self.type) + ' : ' + strip_tags(self.valeur)
+        return strip_tags(self.valeur)
 
     @staticmethod
     def autocomplete_search_fields():

@@ -668,8 +668,13 @@ class TypeDeCaracteristiqueChildAdmin(TypeDeCaracteristiqueAdmin,
     base_model = TypeDeCaracteristique
 
 
-class TypeDeCaracteristiqueDOeuvreAdmin(VersionAdmin,
-                                        TypeDeCaracteristiqueChildAdmin):
+class TypeDeCaracteristiqueDOeuvreAdmin(
+        VersionAdmin, TypeDeCaracteristiqueChildAdmin):
+    pass
+
+
+class TypeDeCaracteristiqueDElementDeProgrammeAdmin(
+        VersionAdmin, TypeDeCaracteristiqueChildAdmin):
     pass
 
 
@@ -678,10 +683,14 @@ class TypeDeCaracteristiqueParentAdmin(
     base_model = TypeDeCaracteristique
     child_models = (
         (TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin),
+        (TypeDeCaracteristiqueDElementDeProgramme,
+         TypeDeCaracteristiqueDElementDeProgrammeAdmin),
     )
 
 
 reversion.register(TypeDeCaracteristiqueDOeuvre,
+                   follow=('typedecaracteristique_ptr',))
+reversion.register(TypeDeCaracteristiqueDElementDeProgramme,
                    follow=('typedecaracteristique_ptr',))
 
 
@@ -702,15 +711,24 @@ class CaracteristiqueDOeuvreAdmin(VersionAdmin,
     pass
 
 
+class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin,
+                                              CaracteristiqueChildAdmin):
+    pass
+
+
 class CaracteristiqueParentAdmin(VersionAdmin, CaracteristiqueAdmin,
                                  PolymorphicParentModelAdmin):
     base_model = Caracteristique
     child_models = (
         (CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin),
+        (CaracteristiqueDElementDeProgramme,
+         CaracteristiqueDElementDeProgrammeAdmin),
     )
 
 
 reversion.register(CaracteristiqueDOeuvre,
+                   follow=('caracteristique_ptr',))
+reversion.register(CaracteristiqueDElementDeProgramme,
                    follow=('caracteristique_ptr',))
 
 
@@ -836,12 +854,6 @@ class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
     }
 
 
-class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin, CommonAdmin):
-    list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
-    list_editable = ('nom', 'nom_pluriel', 'classement',)
-    search_fields = ('nom', 'nom_pluriel',)
-
-
 class EvenementAdmin(AutoriteAdmin):
     list_display = ('__str__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'link',)
@@ -950,8 +962,6 @@ site.register(Partie, PartieParentAdmin)
 site.register(Pupitre, PupitreAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(ElementDeDistribution, ElementDeDistributionAdmin)
-site.register(CaracteristiqueDElementDeProgramme,
-              CaracteristiqueDElementDeProgrammeAdmin)
 site.register(Evenement, EvenementAdmin)
 site.register(TypeDeSource, TypeDeSourceAdmin)
 site.register(Source, SourceAdmin)

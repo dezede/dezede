@@ -9,15 +9,16 @@ from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
     OneToOneField, BooleanField, PositiveSmallIntegerField, permalink, Q, \
-    PositiveIntegerField, get_model, SmallIntegerField, PROTECT, Count
+    PositiveIntegerField, get_model, PROTECT, Count
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
-from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-    calc_pluriel, CommonQuerySet, CommonManager, OrderedDefaultDict, \
-    PublishedManager, PublishedQuerySet
+from .common import (
+    CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
+    OrderedDefaultDict, PublishedManager, PublishedQuerySet,
+    TypeDeCaracteristique, Caracteristique)
 from .functions import capfirst, str_list, str_list_w_last, href, hlp, \
     microdata
 
@@ -134,38 +135,28 @@ class ElementDeDistribution(CommonModel):
         )
 
 
-@python_2_unicode_compatible
-class CaracteristiqueDElementDeProgramme(CommonModel):
-    nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG, unique=True,
-                    db_index=True)
-    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=110, blank=True,
-                            help_text=PLURAL_MSG)
-    classement = SmallIntegerField(default=1, db_index=True)
-
-    def pluriel(self):
-        return calc_pluriel(self)
-
+class TypeDeCaracteristiqueDElementDeProgramme(TypeDeCaracteristique):
     class Meta(object):
         verbose_name = ungettext_lazy(
-            'caractéristique d’élément de programme',
-            'caractéristiques d’élément de programme',
-            1)
+            "type de caractéristique de programme",
+            "types de caractéristique de programme", 1)
         verbose_name_plural = ungettext_lazy(
-            'caractéristique d’élément de programme',
-            'caractéristiques d’élément de programme',
-            2)
-        ordering = ('nom',)
+            "type de caractéristique de programme",
+            "types de caractéristique de programme", 2)
+        ordering = ('classement',)
         app_label = 'libretto'
 
-    def __str__(self):
-        return self.nom
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return (
-            'nom__icontains',
-            'nom_pluriel__icontains',
-        )
+class CaracteristiqueDElementDeProgramme(Caracteristique):
+    class Meta(object):
+        verbose_name = ungettext_lazy(
+            'caractéristique de programme',
+            'caractéristiques de programme', 1)
+        verbose_name_plural = ungettext_lazy(
+            'caractéristique de programme',
+            'caractéristiques de programme', 2)
+        ordering = ('type', 'classement', 'valeur')
+        app_label = 'libretto'
 
 
 @python_2_unicode_compatible

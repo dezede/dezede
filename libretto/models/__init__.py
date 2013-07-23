@@ -10,6 +10,6 @@ from .oeuvre import (GenreDOeuvre, TypeDeCaracteristiqueDOeuvre,
                      CaracteristiqueDOeuvre, Partie, Role, Instrument, Pupitre,
                      TypeDeParenteDOeuvres, ParenteDOeuvres, Auteur, Oeuvre)
 from .evenement import (
-    ElementDeDistribution, CaracteristiqueDElementDeProgramme,
-    ElementDeProgramme, Evenement)
+    ElementDeDistribution, TypeDeCaracteristiqueDElementDeProgramme,
+    CaracteristiqueDElementDeProgramme, ElementDeProgramme, Evenement)
 from .source import TypeDeSource, Source
