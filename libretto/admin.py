@@ -656,9 +656,33 @@ class GenreDOeuvreAdmin(VersionAdmin, CommonAdmin):
     }
 
 
-class TypeDeCaracteristiqueDOeuvreAdmin(VersionAdmin, CommonAdmin):
+class TypeDeCaracteristiqueAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
+    list_filter = (PolymorphicChildModelFilter,)
+    search_fields = ('nom', 'nom_pluriel')
+
+
+class TypeDeCaracteristiqueChildAdmin(TypeDeCaracteristiqueAdmin,
+                                      PolymorphicChildModelAdmin):
+    base_model = TypeDeCaracteristique
+
+
+class TypeDeCaracteristiqueDOeuvreAdmin(VersionAdmin,
+                                        TypeDeCaracteristiqueChildAdmin):
+    pass
+
+
+class TypeDeCaracteristiqueParentAdmin(
+        VersionAdmin, TypeDeCaracteristiqueAdmin, PolymorphicParentModelAdmin):
+    base_model = TypeDeCaracteristique
+    child_models = (
+        (TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin),
+    )
+
+
+reversion.register(TypeDeCaracteristiqueDOeuvre,
+                   follow=('typedecaracteristique_ptr',))
 
 
 class CaracteristiqueDOeuvreAdmin(VersionAdmin, CommonAdmin):
@@ -897,7 +921,7 @@ site.register(Engagement, EngagementAdmin)
 site.register(TypeDePersonnel, TypeDePersonnelAdmin)
 site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
-site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
+site.register(TypeDeCaracteristique, TypeDeCaracteristiqueParentAdmin)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
 site.register(Partie, PartieParentAdmin)
 site.register(Pupitre, PupitreAdmin)

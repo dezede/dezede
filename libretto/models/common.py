@@ -20,7 +20,7 @@ from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
 from tinymce.models import HTMLField
 from cache_tools import invalidate_group, cached_ugettext_lazy as _
-from .functions import href
+from .functions import href, ex
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 
@@ -30,7 +30,7 @@ __all__ = (
     b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
     b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'CommonTreeQuerySet',
     b'CommonTreeManager', b'Document', b'Illustration', b'Etat',
-    b'OrderedDefaultDict', b'TypeDeParente',
+    b'OrderedDefaultDict', b'TypeDeParente', b'TypeDeCaracteristique',
 )
 
 
@@ -291,6 +291,50 @@ class CommonTreeManager(TreeManager):
 
     def get_descendants(self, *args, **kwargs):
         return self.get_query_set().get_descendants(*args, **kwargs)
+
+
+#
+# Modèles génériques polymorphes.
+#
+
+
+class TypeDeCaracteristiqueQuerySet(PolymorphicQuerySet, CommonQuerySet):
+    pass
+
+
+class TypeDeCaracteristiqueManager(PolymorphicManager, CommonManager):
+    queryset_class = TypeDeCaracteristiqueQuerySet
+
+
+@python_2_unicode_compatible
+class TypeDeCaracteristique(PolymorphicModel, CommonModel):
+    nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
+                    unique=True, db_index=True)
+    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
+                            help_text=PLURAL_MSG)
+    classement = SmallIntegerField(default=1)
+
+    objects = TypeDeCaracteristiqueManager()
+
+    class Meta(object):
+        verbose_name = ungettext_lazy('type de caractéristique',
+                                      'types de caracteristique', 1)
+        verbose_name_plural = ungettext_lazy(
+            'type de caractéristique',
+            'types de caracteristique',
+            2)
+        ordering = ('classement',)
+        app_label = 'libretto'
+
+    def pluriel(self):
+        return calc_pluriel(self)
+
+    def __str__(self):
+        return self.nom
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'nom__icontains', 'nom_pluriel__icontains',
 
 
 class TypeDeParenteQuerySet(PolymorphicQuerySet, CommonQuerySet):

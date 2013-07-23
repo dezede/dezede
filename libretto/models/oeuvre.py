@@ -27,7 +27,7 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
     calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
     PublishedManager, OrderedDefaultDict, PublishedQuerySet, \
-    CommonTreeManager, CommonTreeQuerySet, TypeDeParente
+    CommonTreeManager, CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique
 from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -80,17 +80,10 @@ class GenreDOeuvre(CommonModel, SlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'nom__icontains', 'nom_pluriel__icontains',
+        return 'nom__icontains', 'nom_pluriel__icontains'
 
 
-@python_2_unicode_compatible
-class TypeDeCaracteristiqueDOeuvre(CommonModel):
-    nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
-                    unique=True, db_index=True)
-    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
-        help_text=PLURAL_MSG)
-    classement = SmallIntegerField(default=1)
-
+class TypeDeCaracteristiqueDOeuvre(TypeDeCaracteristique):
     class Meta(object):
         verbose_name = ungettext_lazy('type de caractéristique d’œuvre',
                                       'types de caracteristique d’œuvre', 1)
@@ -100,12 +93,6 @@ class TypeDeCaracteristiqueDOeuvre(CommonModel):
             2)
         ordering = ('classement',)
         app_label = 'libretto'
-
-    def pluriel(self):
-        return calc_pluriel(self)
-
-    def __str__(self):
-        return self.nom
 
 
 class CaracteristiqueDOeuvreQuerySet(CommonQuerySet):
