@@ -54,7 +54,7 @@ class Migration(SchemaMigration):
         migrate_fk('libretto_pupitre')
         migrate_fk('libretto_saison')
         migrate_fk('libretto_source')
-        migrate_fk('libretto_typedecaracteristiquedoeuvre')
+        migrate_fk('libretto_typedecaracteristique')
         migrate_fk('libretto_typedeparente')
         migrate_fk('libretto_typedepersonnel')
         migrate_fk('libretto_typedesource')
