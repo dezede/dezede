@@ -2,15 +2,16 @@
 
 from __future__ import unicode_literals
 from functools import partial
-from django.contrib.admin import site, TabularInline, StackedInline, ModelAdmin
-from django.contrib.admin.options import BaseModelAdmin
+from django.contrib.admin import (site, TabularInline, StackedInline,
+                                  ModelAdmin)
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
 from django.contrib.contenttypes.generic import GenericStackedInline
 from django.db.models import Q
 from django.forms.models import modelformset_factory
-from polymorphic.admin import PolymorphicChildModelAdmin, \
-    PolymorphicParentModelAdmin, PolymorphicChildModelFilter
+from polymorphic.admin import (
+    PolymorphicChildModelAdmin, PolymorphicParentModelAdmin,
+    PolymorphicChildModelFilter,PolymorphicCompatibleBaseModel)
 from reversion import VersionAdmin
 import reversion
 from cache_tools import cached_ugettext_lazy as _
@@ -26,7 +27,7 @@ __all__ = ()
 #
 
 
-class CustomBaseModel(BaseModelAdmin):
+class CustomBaseModel(PolymorphicCompatibleBaseModel):
     def check_user_ownership(self, request, obj, has_class_permission):
         if not has_class_permission:
             return False
@@ -711,8 +712,7 @@ class CaracteristiqueDOeuvreAdmin(VersionAdmin,
     pass
 
 
-class CaracteristiqueDeProgrammeAdmin(VersionAdmin,
-                                              CaracteristiqueChildAdmin):
+class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CaracteristiqueChildAdmin):
     pass
 
 
