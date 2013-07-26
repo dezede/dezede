@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import copy
 from functools import partial
 from django.contrib.admin import (site, TabularInline, StackedInline,
                                   ModelAdmin)
@@ -11,7 +12,7 @@ from django.db.models import Q
 from django.forms.models import modelformset_factory
 from polymorphic.admin import (
     PolymorphicChildModelAdmin, PolymorphicParentModelAdmin,
-    PolymorphicChildModelFilter,PolymorphicCompatibleBaseModel)
+    PolymorphicChildModelFilter, PolymorphicCompatibleBaseModelAdmin)
 from reversion import VersionAdmin
 import reversion
 from cache_tools import cached_ugettext_lazy as _
@@ -27,7 +28,7 @@ __all__ = ()
 #
 
 
-class CustomBaseModel(PolymorphicCompatibleBaseModel):
+class CustomBaseModel(PolymorphicCompatibleBaseModelAdmin):
     def check_user_ownership(self, request, obj, has_class_permission):
         if not has_class_permission:
             return False
@@ -697,7 +698,7 @@ reversion.register(TypeDeCaracteristiqueDeProgramme,
 
 class CaracteristiqueAdmin(CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
-    list_editable = ('type', 'valeur', 'classement',)
+    list_editable = ('valeur', 'classement',)
     list_filter = (PolymorphicChildModelFilter,)
     search_fields = ('type__nom', 'valeur')
 
@@ -705,10 +706,23 @@ class CaracteristiqueAdmin(CommonAdmin):
 class CaracteristiqueChildAdmin(CaracteristiqueAdmin,
                                 PolymorphicChildModelAdmin):
     base_model = Caracteristique
+    type_to = {
+        CaracteristiqueDOeuvre: TypeDeCaracteristiqueDOeuvre,
+        CaracteristiqueDeProgramme: TypeDeCaracteristiqueDeProgramme,
+    }
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        if db_field.name == 'type' and db_field.rel is not None \
+                and db_field.rel.to == TypeDeCaracteristique:
+            db_field = copy.copy(db_field)
+            db_field.rel = copy.copy(db_field.rel)
+            db_field.rel.to = self.type_to[self.model]
+        out = super(CaracteristiqueChildAdmin, self) \
+            .formfield_for_dbfield(db_field, **kwargs)
+        return out
 
 
-class CaracteristiqueDOeuvreAdmin(VersionAdmin,
-                                  CaracteristiqueChildAdmin):
+class CaracteristiqueDOeuvreAdmin(VersionAdmin, CaracteristiqueChildAdmin):
     pass
 
 

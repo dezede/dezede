@@ -357,10 +357,6 @@ class Caracteristique(PolymorphicModel, CommonModel):
     type = ForeignKey(
         'TypeDeCaracteristique', null=True, blank=True, db_index=True,
         on_delete=PROTECT, related_name='caracteristiques',
-        # FIXME: Autoriser les types de caractéristiques d'éléments de programme.
-        limit_choices_to={
-            'polymorphic_ctype__app_label': 'libretto',
-            'polymorphic_ctype__model': 'typedecaracteristiquedoeuvre'},
         verbose_name=_('type'))
     valeur = CharField(_('valeur'), max_length=400,
                        help_text=ex(_('en trois actes')))
