@@ -1,3 +1,4 @@
+from .simulation import SeleniumTest
 from .common import EtatTestCase
 from .espace_temps import LieuTestCase, SaisonTestCase
 from .individu import IndividuTestCase
