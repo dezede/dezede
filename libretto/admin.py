@@ -468,7 +468,7 @@ class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
     list_editable = ('nom', 'nom_pluriel', 'referent',)
 
 
-class LieuAdmin(VersionAdmin, AutoriteAdmin):
+class LieuAdmin(AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom', 'parent__nom',)
@@ -745,7 +745,7 @@ reversion.register(CaracteristiqueDeProgramme,
                    follow=('caracteristique_ptr',))
 
 
-class PartieAdmin(VersionAdmin, AutoriteAdmin):
+class PartieAdmin(AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'classement',)
     list_editable = ('nom', 'parent', 'classement',)
     search_fields = ('nom',)
