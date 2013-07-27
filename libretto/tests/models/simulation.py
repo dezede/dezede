@@ -5,14 +5,16 @@ import os
 from django.core.urlresolvers import reverse
 from django.test import LiveServerTestCase
 import johnny.cache
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver import Firefox
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.select import Select
 
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class SeleniumTest(LiveServerTestCase):
+    cleans_up_after_itself = True
     fixtures = [
         os.path.join(PATH, 'fixtures/accounts.hierarchicuser.json'),
     ]
@@ -80,15 +82,16 @@ class SeleniumTest(LiveServerTestCase):
         self.selenium.save_screenshot(
             'screenshots/test%s.png' % self.screenshot_id)
 
-    def switch(self):
+    def switch(self, i=None):
         """
         Passe d'une fenêtre ou onglet à l'autre quand il n'y en a que deux.
         """
         other_window_handles = [h for h in self.selenium.window_handles
                                 if h != self.current_window_handle]
-        self.assertEqual(len(other_window_handles), 1)
-        self.selenium.switch_to_window(other_window_handles[0])
-        self.current_window_handle = other_window_handles[0]
+        if i is None:
+            self.assertEqual(len(other_window_handles), 1)
+        self.selenium.switch_to_window(other_window_handles[i or 0])
+        self.current_window_handle = other_window_handles[i or 0]
 
     def write_to_tinymce(self, field_name, content):
         """
@@ -108,9 +111,12 @@ class SeleniumTest(LiveServerTestCase):
         self.selenium.find_element_by_id(
             'id_%s_%s' % (field_name, button_name)).click()
 
+    def save(self, input_name='_save'):
+        self.selenium.find_element_by_name(input_name).click()
+
     def setUp(self):
         # Ce paramètre résoud étrangement plein de problèmes de Firefox…
-        self.selenium.implicitly_wait(1)
+        self.selenium.implicitly_wait(5)
 
         self.current_window_handle = self.selenium.current_window_handle
         self.log_as_superuser()
@@ -143,23 +149,58 @@ class SeleniumTest(LiveServerTestCase):
         self.click_tinymce_button('contenu', 'smallcaps')
         self.write_to_tinymce('contenu', '.')
 
+        # Ajoute un événement et tous les objets lui étant lié.
+        self.selenium.find_element_by_id('lookup_id_evenements').click()
+        self.switch()
+        self.selenium.find_element_by_link_text('Ajouter événement').click()
+        self.selenium.find_element_by_id('lookup_id_ancrage_debut').click()
+        self.switch(-1)
+        # Créé son ancrage de début.
+        self.selenium.find_element_by_link_text(
+            'Ajouter ancrage spatio-temporel').click()
+        self.selenium.find_element_by_name('date').send_keys('1/1/1901')
+        self.selenium.find_element_by_id('lookup_id_lieu').click()
+        self.switch(-1)
+        # Créé le lieu de l'ancrage de début.
+        self.selenium.find_element_by_link_text(
+            'Ajouter lieu ou institution').click()
+        self.save()
+        self.selenium.find_element_by_name('nom').send_keys('Rouen')
+        self.selenium.find_element_by_id('add_id_nature').click()
+        self.switch(-1)
+        # Créé le type du lieu de l'ancrage de début.
+        self.selenium.find_element_by_name('nom').send_keys('ville')
+        self.selenium.find_element_by_name('referent').click()
+        self.save()
+        self.switch(-1)
+        select = Select(self.selenium.find_element_by_name('nature'))
+        select.select_by_visible_text('ville')
+        self.save()
+        self.switch(-1)
+        self.save()
+        self.switch(-1)
+        self.save()
+        self.switch(-1)
+
         # Enregistre.
-        self.selenium.find_element_by_name('_continue').click()
+        self.save('_continue')
         self.screenshot()
 
         # Regarde le résultat dans la partie visible.
         self.selenium.find_element_by_link_text('Voir sur le site').click()
+        self.selenium.close()
         self.switch()
+        self.selenium.find_element_by_css_selector('.data-table a').click()
         self.screenshot()
 
-        # Supprime la source…
+        # Supprime l'événement…
         self.selenium.find_element_by_link_text('Supprimer').click()
         self.selenium.find_element_by_css_selector(
             'input[value="Oui, j\'en suis sûr."]').click()
         # … avant de finalement la restaurer avec django-reversion.
         self.selenium.find_element_by_link_text(
-            'Récupérer sources supprimés').click()
+            'Récupérer événements supprimés').click()
         self.selenium.find_element_by_css_selector(
             '#grp-change-history a').click()
-        self.selenium.find_element_by_name('_save').click()
+        self.save()
         self.screenshot()
