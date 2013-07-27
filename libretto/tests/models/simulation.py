@@ -144,7 +144,7 @@ class SeleniumTest(LiveServerTestCase):
         self.write_to_tinymce('contenu', '.')
 
         # Enregistre.
-        self.selenium.find_element_by_name('_continue').click()
+        self.selenium.find_element_by_name('_coninue').click()
         self.screenshot()
 
         # Regarde le résultat dans la partie visible.
