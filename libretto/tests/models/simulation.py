@@ -22,9 +22,9 @@ class SeleniumTest(LiveServerTestCase):
     ]
 
     def _pre_setup(self):
+        cache.clear()
         self.screenshot_id = 0
         super(SeleniumTest, self)._pre_setup()
-        cache.clear()
 
     @classmethod
     def setUpClass(cls):
@@ -229,6 +229,14 @@ class SeleniumTest(LiveServerTestCase):
         self.selenium.find_element_by_link_text('Ajouter individu').click()
         self.selenium.find_element_by_name('nom').send_keys('Vivaldi')
         select = Select(self.selenium.find_element_by_name('titre'))
+        self.selenium.find_element_by_css_selector(
+            '.grp-cell.prenoms .related-lookup').click()
+        self.switch(-1)
+        # Créé le prénom de l'individu.
+        self.selenium.find_element_by_link_text('Ajouter prénom').click()
+        self.selenium.find_element_by_name('prenom').send_keys('Antonio')
+        self.save()
+        self.switch(-1)
         select.select_by_visible_text('M.')
         self.save()
         self.switch(-1)

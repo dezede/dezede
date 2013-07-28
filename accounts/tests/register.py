@@ -13,6 +13,8 @@ __all__ = ('RegisterTestCase',)
 
 
 class RegisterTestCase(CommonTestCase):
+    cleans_up_after_itself = True
+
     def setUp(self):
         self.mentor_password = 'empty'
         self.mentor = HierarchicUser.objects.create_user(
