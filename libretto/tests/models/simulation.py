@@ -43,53 +43,28 @@ class SeleniumTest(LiveServerTestCase):
     def abs_url(self, relative_url):
         return self.live_server_url + relative_url
 
-    def log_as_superuser(self):
-        """
-        Se connecte automatiquement avec un compte superutilisateur.
-        """
-        username = 'name'
-        password = 'password'
+    def get_link(self, link_text):
+        return self.selenium.find_element_by_link_text(link_text)
 
-        self.selenium.get(self.abs_url(reverse('admin:index')))
-        username_input = self.selenium.find_element_by_name('username')
-        username_input.send_keys(username)
-        password_input = self.selenium.find_element_by_name('password')
-        password_input.send_keys(password + Keys.RETURN)
+    def get_by_name(self, name):
+        return self.selenium.find_element_by_name(name)
 
-    def rewrite_site(self):
-        """
-        Réécrit l'objet Site préexistant pour qu'il contienne comme nom de
-        domaine l'adresse du serveur de test.
-        """
-        self.selenium.find_element_by_xpath(
-            '//*[text()="Utilisateurs et groupes"]').click()
-        self.selenium.find_element_by_link_text('Sites').click()
-        self.selenium.find_element_by_link_text('example.com').click()
+    def get_by_id(self, id_):
+        return self.selenium.find_element_by_id(id_)
 
-        domain = self.selenium.find_element_by_name('domain')
-        domain.clear()
-        domain.send_keys(self.live_server_url[7:])
+    def get_by_css(self, css_selector):
+        return self.selenium.find_element_by_css_selector(css_selector)
 
-        name = self.selenium.find_element_by_name('name')
-        name.clear()
-        name.send_keys(self.live_server_url[7:])
+    def get_by_xpath(self, xpath):
+        return self.selenium.find_element_by_xpath(xpath)
 
-        self.selenium.find_element_by_name('_save').click()
+    def scroll_and_click(self, element):
+        ActionChains(self.selenium).move_to_element(
+            element).click_and_hold().release().perform()
 
     def wait_until_ready(self):
         self.wait.until(lambda driver: WebDriver.execute_script(
             driver, 'return document.readyState;') == 'complete')
-
-    def get_screenshot_filename(self, i=None):
-        return os.path.join(PATH, 'test%s.png' % (i or self.screenshot_id))
-
-    def screenshot(self):
-        """
-        Prend une capture d'écran avec un nom de fichier autoincrémenté.
-        """
-        self.screenshot_id += 1
-        self.wait_until_ready()
-        self.selenium.save_screenshot(self.get_screenshot_filename())
 
     def switch(self, i=None):
         """
@@ -102,9 +77,16 @@ class SeleniumTest(LiveServerTestCase):
         self.selenium.switch_to_window(other_window_handles[i or 0])
         self.current_window_handle = other_window_handles[i or 0]
 
-    def scroll_and_click(self, element):
-        ActionChains(self.selenium).move_to_element(
-            element).click_and_hold().release().perform()
+    def get_screenshot_filename(self, i=None):
+        return os.path.join(PATH, 'test%s.png' % (i or self.screenshot_id))
+
+    def screenshot(self):
+        """
+        Prend une capture d'écran avec un nom de fichier autoincrémenté.
+        """
+        self.screenshot_id += 1
+        self.wait_until_ready()
+        self.selenium.save_screenshot(self.get_screenshot_filename())
 
     def write_to_tinymce(self, field_name, content):
         """
@@ -112,8 +94,8 @@ class SeleniumTest(LiveServerTestCase):
         ``field_name``.
         """
         self.selenium.switch_to_frame(
-            self.selenium.find_element_by_id('id_%s_ifr' % field_name))
-        self.selenium.find_element_by_id('tinymce').send_keys(content)
+            self.get_by_id('id_%s_ifr' % field_name))
+        self.get_by_id('tinymce').send_keys(content)
         self.selenium.switch_to_default_content()
 
     def click_tinymce_button(self, field_name, button_name):
@@ -121,16 +103,53 @@ class SeleniumTest(LiveServerTestCase):
         Clique sur le bouton nommé ``button_name`` du widget TinyMCE du
         champ de formulaire nommé ``field_name``.
         """
-        self.selenium.find_element_by_id(
+        self.get_by_id(
             'id_%s_%s' % (field_name, button_name)).click()
 
     def save(self, input_name='_save'):
-        self.selenium.find_element_by_name(input_name).click()
+        self.get_by_name(input_name).click()
+
+    def save_popup(self):
+        self.save()
+        self.switch(-1)
 
     def show_on_site(self):
-        self.selenium.find_element_by_link_text('Voir sur le site').click()
+        self.get_link('Voir sur le site').click()
         self.selenium.close()
         self.switch()
+
+    def log_as_superuser(self):
+        """
+        Se connecte automatiquement avec un compte superutilisateur.
+        """
+        username = 'name'
+        password = 'password'
+
+        self.selenium.get(self.abs_url(reverse('admin:index')))
+        username_input = self.get_by_name('username')
+        username_input.send_keys(username)
+        password_input = self.get_by_name('password')
+        password_input.send_keys(password + Keys.RETURN)
+
+    def rewrite_site(self):
+        """
+        Réécrit l'objet Site préexistant pour qu'il contienne comme nom de
+        domaine l'adresse du serveur de test.
+        """
+        self.get_by_xpath(
+            '//*[text()="Utilisateurs et groupes"]').click()
+        self.get_link('Sites').click()
+        self.get_link('example.com').click()
+
+        domain = self.get_by_name('domain')
+        domain.clear()
+        domain.send_keys(self.live_server_url[7:])
+
+        name = self.get_by_name('name')
+        name.clear()
+        name.send_keys(self.live_server_url[7:])
+
+        self.get_by_name('_save').click()
 
     def setUp(self):
         # La réponse du serveur et l'interprétation peuvent être lents.
@@ -145,18 +164,17 @@ class SeleniumTest(LiveServerTestCase):
     def testSimulation(self):
         # Décide d'ajouter une nouvelle source.
         self.selenium.get(self.abs_url(reverse('admin:index')))
-        self.selenium.find_element_by_link_text('Sources').click()
-        self.selenium.find_element_by_link_text('Ajouter source').click()
+        self.get_link('Sources').click()
+        self.get_link('Ajouter source').click()
 
         # Remplit deux champs.
-        self.selenium.find_element_by_name('nom').send_keys('L’épisodique')
-        self.selenium.find_element_by_name('date').send_keys('1/1/1901')
+        self.get_by_name('nom').send_keys('L’épisodique')
+        self.get_by_name('date').send_keys('1/1/1901')
 
         # Ajoute un nouveau type de source.
-        self.selenium.find_element_by_id('add_id_type').click()
+        self.get_by_id('add_id_type').click()
         self.switch()
-        self.selenium.find_element_by_name(
-            'nom').send_keys('annonce' + Keys.RETURN)
+        self.get_by_name('nom').send_keys('annonce' + Keys.RETURN)
         self.switch()
 
         # Teste la saisie dans TinyMCE ainsi que le bouton de petites capitales
@@ -169,116 +187,98 @@ class SeleniumTest(LiveServerTestCase):
         self.write_to_tinymce('contenu', '.')
 
         # Ajoute un événement et tous les objets lui étant lié.
-        self.selenium.find_element_by_id('lookup_id_evenements').click()
+        self.get_by_id('lookup_id_evenements').click()
         self.switch()
-        self.selenium.find_element_by_link_text('Ajouter événement').click()
-        self.selenium.find_element_by_id('lookup_id_ancrage_debut').click()
+        self.get_link('Ajouter événement').click()
+        self.get_by_id('lookup_id_ancrage_debut').click()
         self.switch(-1)
         # Créé son ancrage de début.
-        self.selenium.find_element_by_link_text(
-            'Ajouter ancrage spatio-temporel').click()
-        self.selenium.find_element_by_name('date').send_keys('1/1/1901')
-        self.selenium.find_element_by_id('lookup_id_lieu').click()
+        self.get_link('Ajouter ancrage spatio-temporel').click()
+        self.get_by_name('date').send_keys('1/1/1901')
+        self.get_by_id('lookup_id_lieu').click()
         self.switch(-1)
         # Créé le lieu de l'ancrage de début.
-        self.selenium.find_element_by_link_text(
-            'Ajouter lieu ou institution').click()
+        self.get_link('Ajouter lieu ou institution').click()
         self.save()
-        self.selenium.find_element_by_name('nom').send_keys('Rouen')
-        self.selenium.find_element_by_id('add_id_nature').click()
+        self.get_by_name('nom').send_keys('Rouen')
+        self.get_by_id('add_id_nature').click()
         self.switch(-1)
         # Créé le type du lieu de l'ancrage de début.
-        self.selenium.find_element_by_name('nom').send_keys('ville')
-        self.selenium.find_element_by_name('referent').click()
-        self.save()
-        self.switch(-1)
-        select = Select(self.selenium.find_element_by_name('nature'))
+        self.get_by_name('nom').send_keys('ville')
+        self.get_by_name('referent').click()
+        self.save_popup()
+        select = Select(self.get_by_name('nature'))
         select.select_by_visible_text('ville')
-        self.save()
-        self.switch(-1)
-        self.save()
-        self.switch(-1)
+        self.save_popup()
+        self.save_popup()
         # Ajoute un élément de programme.
-        self.selenium.find_element_by_link_text(
+        self.get_link(
             'Ajouter un objet Élément De Programme supplémentaire').click()
-        programme0 = self.selenium.find_element_by_id('programme0')
+        programme0 = self.get_by_id('programme0')
         programme0.find_element_by_class_name('grp-collapse-handler').click()
         programme0.find_element_by_css_selector(
             '.grp-cell.autre input').send_keys('Présentation du programme')
         # Ajoute un autre élément de programme.
-        self.selenium.find_element_by_link_text(
+        self.get_link(
             'Ajouter un objet Élément De Programme supplémentaire').click()
-        programme1 = self.selenium.find_element_by_id('programme1')
+        programme1 = self.get_by_id('programme1')
         self.scroll_and_click(
             programme1.find_element_by_class_name('grp-collapse-handler'))
         programme1.find_element_by_css_selector(
             '.grp-cell.oeuvre .related-lookup').click()
         self.switch(-1)
         # Créé l'œuvre de l'élément de programme.
-        self.selenium.find_element_by_link_text('Ajouter œuvre').click()
-        self.selenium.find_element_by_name('prefixe_titre').send_keys('la')
-        self.selenium.find_element_by_name('titre').send_keys(
-            'senna festeggiante')
-        self.selenium.find_element_by_link_text(
+        self.get_link('Ajouter œuvre').click()
+        self.get_by_name('prefixe_titre').send_keys('la')
+        self.get_by_name('titre').send_keys('senna festeggiante')
+        self.get_link(
             'Ajouter un objet Auteur supplémentaire').click()
-        auteur = self.selenium.find_element_by_id(
-            'libretto-auteur-content_type-object_id0')
+        auteur = self.get_by_id('libretto-auteur-content_type-object_id0')
         auteur.find_element_by_css_selector(
             '.individu .related-lookup').click()
         self.switch(-1)
         # Créé l'individu auteur de l'œuvre.
-        self.selenium.find_element_by_link_text('Ajouter individu').click()
-        self.selenium.find_element_by_name('nom').send_keys('Vivaldi')
-        select = Select(self.selenium.find_element_by_name('titre'))
-        self.selenium.find_element_by_css_selector(
-            '.grp-cell.prenoms .related-lookup').click()
+        self.get_link('Ajouter individu').click()
+        self.get_by_name('nom').send_keys('Vivaldi')
+        select = Select(self.get_by_name('titre'))
+        self.get_by_css('.grp-cell.prenoms .related-lookup').click()
         self.switch(-1)
         # Créé le prénom de l'individu.
-        self.selenium.find_element_by_link_text('Ajouter prénom').click()
-        self.selenium.find_element_by_name('prenom').send_keys('Antonio')
-        self.save()
-        self.switch(-1)
+        self.get_link('Ajouter prénom').click()
+        self.get_by_name('prenom').send_keys('Antonio')
+        self.save_popup()
         select.select_by_visible_text('M.')
-        self.save()
-        self.switch(-1)
+        self.save_popup()
         auteur.find_element_by_css_selector(
             '.profession .related-lookup').click()
         self.switch(-1)
         # Créé la profession de l'auteur.
-        self.selenium.find_element_by_link_text('Ajouter profession').click()
-        self.selenium.find_element_by_name('nom').send_keys('compositeur')
-        self.save()
-        self.switch(-1)
-        self.save()
-        self.switch(-1)
+        self.get_link('Ajouter profession').click()
+        self.get_by_name('nom').send_keys('compositeur')
+        self.save_popup()
+        self.save_popup()
         # Ajoute un troisième élément de programme.
-        self.selenium.find_element_by_link_text(
+        self.get_link(
             'Ajouter un objet Élément De Programme supplémentaire').click()
-        programme2 = self.selenium.find_element_by_id('programme2')
+        programme2 = self.get_by_id('programme2')
         self.scroll_and_click(
             programme2.find_element_by_class_name('grp-collapse-handler'))
         programme2.find_element_by_css_selector(
             '.grp-cell.oeuvre .related-lookup').click()
         self.switch(-1)
         # Créé l'œuvre de l'élément de programme.
-        self.selenium.find_element_by_link_text('Ajouter œuvre').click()
-        self.selenium.find_element_by_name('prefixe_titre').send_keys('la')
-        self.selenium.find_element_by_name('titre').send_keys(
-            'Gloria e Himeneo')
-        self.selenium.find_element_by_link_text(
-            'Ajouter un objet Auteur supplémentaire').click()
-        auteur = self.selenium.find_element_by_id(
-            'libretto-auteur-content_type-object_id0')
-        auteur.find_element_by_css_selector(
-            '.individu input').send_keys('Viv')
-        self.selenium.find_element_by_link_text('Vivaldi (Antonio)').click()
+        self.get_link('Ajouter œuvre').click()
+        self.get_by_name('prefixe_titre').send_keys('la')
+        self.get_by_name('titre').send_keys('Gloria e Himeneo')
+        self.get_link('Ajouter un objet Auteur supplémentaire').click()
+        auteur = self.get_by_id('libretto-auteur-content_type-object_id0')
+        auteur.find_element_by_css_selector('.individu input').send_keys('Viv')
+        self.get_link('Vivaldi (Antonio)').click()
         auteur.find_element_by_css_selector(
             '.profession input').send_keys('com')
-        self.selenium.find_element_by_link_text('Compositeur').click()
-        self.save()
-        self.switch(-1)
-        self.save()
-        self.switch(-1)
+        self.get_link('Compositeur').click()
+        self.save_popup()
+        self.save_popup()
 
         # Enregistre.
         self.save('_continue')
@@ -289,14 +289,11 @@ class SeleniumTest(LiveServerTestCase):
         self.screenshot()
 
         # Supprime la source…
-        self.selenium.find_element_by_link_text('Supprimer').click()
-        self.selenium.find_element_by_css_selector(
-            'input[value="Oui, j\'en suis sûr."]').click()
+        self.get_link('Supprimer').click()
+        self.get_by_css('input[value="Oui, j\'en suis sûr."]').click()
         # … avant de finalement la restaurer avec django-reversion.
-        self.selenium.find_element_by_link_text(
-            'Récupérer sources supprimés').click()
-        self.selenium.find_element_by_css_selector(
-            '#grp-change-history a').click()
+        self.get_link('Récupérer sources supprimés').click()
+        self.get_by_css('#grp-change-history a').click()
         self.save()
         self.screenshot()
 
@@ -305,5 +302,5 @@ class SeleniumTest(LiveServerTestCase):
         self.screenshot()
         self.assertEqual(open(self.get_screenshot_filename(2), 'rb').read(),
                          open(self.get_screenshot_filename(4), 'rb').read())
-        self.selenium.find_element_by_css_selector('.data-table a').click()
+        self.get_by_css('.data-table a').click()
         self.screenshot()
