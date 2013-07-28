@@ -199,6 +199,44 @@ class SeleniumTest(LiveServerTestCase):
         programme0.find_element_by_class_name('grp-collapse-handler').click()
         programme0.find_element_by_css_selector(
             '.grp-cell.autre input').send_keys('Présentation du programme')
+        programme0.find_element_by_class_name('grp-collapse-handler').click()
+        # Ajoute un autre élément de programme.
+        self.selenium.find_element_by_link_text(
+            'Ajouter un objet Élément De Programme supplémentaire').click()
+        programme1 = self.selenium.find_element_by_id('programme1')
+        programme1.find_element_by_class_name('grp-collapse-handler').click()
+        programme1.find_element_by_css_selector(
+            '.grp-cell.oeuvre .related-lookup').click()
+        self.switch(-1)
+        # Créé l'œuvre de l'élément de programme.
+        self.selenium.find_element_by_link_text('Ajouter œuvre').click()
+        self.selenium.find_element_by_name('prefixe_titre').send_keys('la')
+        self.selenium.find_element_by_name('titre').send_keys(
+            'senna festeggiante')
+        self.selenium.find_element_by_link_text(
+            'Ajouter un objet Auteur supplémentaire').click()
+        auteur = self.selenium.find_element_by_id(
+            'libretto-auteur-content_type-object_id0')
+        auteur.find_element_by_css_selector(
+            '.individu .related-lookup').click()
+        self.switch(-1)
+        # Créé l'individu auteur de l'œuvre.
+        self.selenium.find_element_by_link_text('Ajouter individu').click()
+        self.selenium.find_element_by_name('nom').send_keys('Vivaldi')
+        select = Select(self.selenium.find_element_by_name('titre'))
+        select.select_by_visible_text('M.')
+        self.save()
+        self.switch(-1)
+        auteur.find_element_by_css_selector(
+            '.profession .related-lookup').click()
+        self.switch(-1)
+        # Créé la profession de l'auteur.
+        self.selenium.find_element_by_link_text('Ajouter profession').click()
+        self.selenium.find_element_by_name('nom').send_keys('compositeur')
+        self.save()
+        self.switch(-1)
+        self.save()
+        self.switch(-1)
         self.save()
         self.switch(-1)
 
