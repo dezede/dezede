@@ -263,10 +263,10 @@ class UniqueSlugModel(Model):
 
 class CommonTreeQuerySet(QuerySet):
     def get_descendants(self, include_self=False):
-        meta = self.model._meta
-        tree_id_attr = meta.tree_id_attr
-        left_attr = meta.left_attr
-        right_attr = meta.right_attr
+        manager = self.model._default_manager
+        tree_id_attr = manager.tree_id_attr
+        left_attr = manager.left_attr
+        right_attr = manager.right_attr
         filters = Q()
 
         for tree_id, left, right in self.values_list(
