@@ -113,12 +113,14 @@ class SeleniumTest(LiveServerTestCase):
         self.save()
         self.switch(-1)
 
-    def new_popup(self):
+    def new_popup(self, add=None):
         parent_self = self
 
         class NewPopup(object):
             def __enter__(self):
                 parent_self.switch(-1)
+                if add is not None:
+                    parent_self.get_link('Ajouter ' + add).click()
 
             def __exit__(self, exc_type, exc_val, exc_tb):
                 parent_self.save_popup()
@@ -202,15 +204,13 @@ class SeleniumTest(LiveServerTestCase):
         self.switch()
         self.get_link('Ajouter événement').click()
         self.get_by_id('lookup_id_ancrage_debut').click()
-        with self.new_popup():
+        with self.new_popup(add='ancrage spatio-temporel'):
             # Créé son ancrage de début.
-            self.get_link('Ajouter ancrage spatio-temporel').click()
             self.get_by_name('date').send_keys('1/1/1901')
             self.get_by_id('lookup_id_lieu').click()
-            with self.new_popup():
+            with self.new_popup(add='lieu ou institution'):
                 # Créé le lieu de l'ancrage de début.
-                self.get_link('Ajouter lieu ou institution').click()
-                self.save()
+                self.save()  # Choisit "lieu" parmi les polymorphes.
                 self.get_by_name('nom').send_keys('Rouen')
                 self.get_by_id('add_id_nature').click()
                 with self.new_popup():
@@ -220,23 +220,28 @@ class SeleniumTest(LiveServerTestCase):
                 select = Select(self.get_by_name('nature'))
                 select.select_by_visible_text('ville')
         # Ajoute un élément de programme.
-        self.get_link(
-            'Ajouter un objet Élément De Programme supplémentaire').click()
-        programme0 = self.get_by_id('programme0')
-        programme0.find_element_by_class_name('grp-collapse-handler').click()
+
+        def open_new_element_de_programme(id, scroll=True):
+            self.get_link(
+                'Ajouter un objet Élément De Programme supplémentaire').click()
+            programme = self.get_by_id('programme%s' % id)
+            handler = programme.find_element_by_class_name(
+                'grp-collapse-handler')
+            if scroll:
+                self.scroll_and_click(handler)
+            else:
+                handler.click()
+            return programme
+
+        programme0 = open_new_element_de_programme(0, scroll=False)
         programme0.find_element_by_css_selector(
             '.grp-cell.autre input').send_keys('Présentation du programme')
         # Ajoute un autre élément de programme.
-        self.get_link(
-            'Ajouter un objet Élément De Programme supplémentaire').click()
-        programme1 = self.get_by_id('programme1')
-        self.scroll_and_click(
-            programme1.find_element_by_class_name('grp-collapse-handler'))
+        programme1 = open_new_element_de_programme(1)
         programme1.find_element_by_css_selector(
             '.grp-cell.oeuvre .related-lookup').click()
-        with self.new_popup():
+        with self.new_popup(add='œuvre'):
             # Créé l'œuvre de l'élément de programme.
-            self.get_link('Ajouter œuvre').click()
             self.get_by_name('prefixe_titre').send_keys('la')
             self.get_by_name('titre').send_keys('senna festeggiante')
             self.get_link(
@@ -244,34 +249,26 @@ class SeleniumTest(LiveServerTestCase):
             auteur = self.get_by_id('libretto-auteur-content_type-object_id0')
             auteur.find_element_by_css_selector(
                 '.individu .related-lookup').click()
-            with self.new_popup():
+            with self.new_popup(add='individu'):
                 # Créé l'individu auteur de l'œuvre.
-                self.get_link('Ajouter individu').click()
                 self.get_by_name('nom').send_keys('Vivaldi')
                 self.get_by_css('.grp-cell.prenoms .related-lookup').click()
-                with self.new_popup():
+                with self.new_popup(add='prénom'):
                     # Créé le prénom de l'individu.
-                    self.get_link('Ajouter prénom').click()
                     self.get_by_name('prenom').send_keys('Antonio')
                 select = Select(self.get_by_name('titre'))
                 select.select_by_visible_text('M.')
             auteur.find_element_by_css_selector(
                 '.profession .related-lookup').click()
-            with self.new_popup():
+            with self.new_popup(add='profession'):
                 # Créé la profession de l'auteur.
-                self.get_link('Ajouter profession').click()
                 self.get_by_name('nom').send_keys('compositeur')
         # Ajoute un troisième élément de programme.
-        self.get_link(
-            'Ajouter un objet Élément De Programme supplémentaire').click()
-        programme2 = self.get_by_id('programme2')
-        self.scroll_and_click(
-            programme2.find_element_by_class_name('grp-collapse-handler'))
+        programme2 = open_new_element_de_programme(2)
         programme2.find_element_by_css_selector(
             '.grp-cell.oeuvre .related-lookup').click()
-        with self.new_popup():
+        with self.new_popup(add='œuvre'):
             # Créé l'œuvre de l'élément de programme.
-            self.get_link('Ajouter œuvre').click()
             self.get_by_name('prefixe_titre').send_keys('la')
             self.get_by_name('titre').send_keys('Gloria e Himeneo')
             self.get_link('Ajouter un objet Auteur supplémentaire').click()
@@ -284,12 +281,11 @@ class SeleniumTest(LiveServerTestCase):
             self.get_link('Compositeur').click()
         programme2.find_element_by_css_selector(
             '.distribution .related-lookup').click()
-        with self.new_popup():
+        with self.new_popup(add='élément de distribution'):
             # Ajoute une distribution à cet élément de programme.
-            self.get_link('Ajouter élément de distribution').click()
             self.get_by_css('.individus .related-lookup').click()
-            with self.new_popup():
-                self.get_link('Ajouter individu').click()
+            with self.new_popup(add='individu'):
+                # Ajoute l'individu de cette distribution.
                 self.get_by_name('nom').send_keys('Désile')
                 select = Select(self.get_by_name('titre'))
                 select.select_by_visible_text('Mlle')
