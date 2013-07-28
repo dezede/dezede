@@ -5,6 +5,7 @@ import os
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import LiveServerTestCase
+from django.test.utils import override_settings
 from selenium.webdriver import ActionChains
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.keys import Keys
@@ -15,6 +16,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 PATH = os.path.abspath(os.path.dirname(__file__))
 
 
+@override_settings(DEBUG=True, INTERNAL_IPS=())
 class SeleniumTest(LiveServerTestCase):
     cleans_up_after_itself = True
     fixtures = [
