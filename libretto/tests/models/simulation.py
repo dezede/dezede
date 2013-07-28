@@ -240,13 +240,13 @@ class SeleniumTest(LiveServerTestCase):
         # Créé l'individu auteur de l'œuvre.
         self.get_link('Ajouter individu').click()
         self.get_by_name('nom').send_keys('Vivaldi')
-        select = Select(self.get_by_name('titre'))
         self.get_by_css('.grp-cell.prenoms .related-lookup').click()
         self.switch(-1)
         # Créé le prénom de l'individu.
         self.get_link('Ajouter prénom').click()
         self.get_by_name('prenom').send_keys('Antonio')
         self.save_popup()
+        select = Select(self.get_by_name('titre'))
         select.select_by_visible_text('M.')
         self.save_popup()
         auteur.find_element_by_css_selector(
@@ -277,6 +277,19 @@ class SeleniumTest(LiveServerTestCase):
         auteur.find_element_by_css_selector(
             '.profession input').send_keys('com')
         self.get_link('Compositeur').click()
+        self.save_popup()
+        programme2.find_element_by_css_selector(
+            '.distribution .related-lookup').click()
+        self.switch(-1)
+        # Ajoute une distribution à cet élément de programme.
+        self.get_link('Ajouter élément de distribution').click()
+        self.get_by_css('.individus .related-lookup').click()
+        self.switch(-1)
+        self.get_link('Ajouter individu').click()
+        self.get_by_name('nom').send_keys('Désile')
+        select = Select(self.get_by_name('titre'))
+        select.select_by_visible_text('Mlle')
+        self.save_popup()
         self.save_popup()
         self.save_popup()
 
