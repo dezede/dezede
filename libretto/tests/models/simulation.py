@@ -5,9 +5,10 @@ import os
 from django.core.urlresolvers import reverse
 from django.test import LiveServerTestCase
 import johnny.cache
-from selenium.webdriver import Firefox
+from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 PATH = os.path.abspath(os.path.dirname(__file__))
@@ -26,7 +27,7 @@ class SeleniumTest(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.selenium = Firefox()
+        cls.selenium = WebDriver()
         cls.selenium.set_window_size(1366, 768)
         super(SeleniumTest, cls).setUpClass()
 
@@ -60,7 +61,7 @@ class SeleniumTest(LiveServerTestCase):
         # self.selenium.find_element_by_css_selector(
         #     '#module_5 .module_title').click()
         self.selenium.find_element_by_xpath(
-            '//*[contains(text(),"Utilisateurs et groupes")]').click()
+            '//*[text()="Utilisateurs et groupes"]').click()
         self.selenium.find_element_by_link_text('Sites').click()
         self.selenium.find_element_by_link_text('example.com').click()
 
@@ -74,13 +75,21 @@ class SeleniumTest(LiveServerTestCase):
 
         self.selenium.find_element_by_name('_save').click()
 
+    def wait_until_ready(self, timeout=10):
+        waiter = WebDriverWait(self.selenium, timeout)
+        waiter.until(lambda driver: WebDriver.execute_script(
+            driver, 'return document.readyState;') == 'complete')
+
+    def get_screenshot_filename(self, i=None):
+        return 'test%s.png' % i or self.screenshot_id
+
     def screenshot(self):
         """
         Prend une capture d'écran avec un nom de fichier autoincrémenté.
         """
         self.screenshot_id += 1
-        self.selenium.save_screenshot(
-            'screenshots/test%s.png' % self.screenshot_id)
+        self.wait_until_ready()
+        self.selenium.save_screenshot(self.get_screenshot_filename())
 
     def switch(self, i=None):
         """
@@ -114,8 +123,13 @@ class SeleniumTest(LiveServerTestCase):
     def save(self, input_name='_save'):
         self.selenium.find_element_by_name(input_name).click()
 
+    def show_on_site(self):
+        self.selenium.find_element_by_link_text('Voir sur le site').click()
+        self.selenium.close()
+        self.switch()
+
     def setUp(self):
-        # Ce paramètre résoud étrangement plein de problèmes de Firefox…
+        # La réponse du serveur peut être lente.
         self.selenium.implicitly_wait(5)
 
         self.current_window_handle = self.selenium.current_window_handle
@@ -127,7 +141,6 @@ class SeleniumTest(LiveServerTestCase):
         self.selenium.get(self.abs_url(reverse('admin:index')))
         self.selenium.find_element_by_link_text('Sources').click()
         self.selenium.find_element_by_link_text('Ajouter source').click()
-        self.screenshot()
 
         # Remplit deux champs.
         self.selenium.find_element_by_name('nom').send_keys('L’épisodique')
@@ -179,6 +192,15 @@ class SeleniumTest(LiveServerTestCase):
         self.switch(-1)
         self.save()
         self.switch(-1)
+        # Ajoute un élément de programme.
+        self.selenium.find_element_by_link_text(
+            'Ajouter un objet Élément De Programme supplémentaire').click()
+        programme0_xpath = '//h3[text()="Élément De Programme\u00A0\u00A0"]'
+        self.selenium.find_element_by_xpath(programme0_xpath).click()
+        programme0_parent = self.selenium.find_element_by_xpath(
+            programme0_xpath + '//..')
+        programme0_parent.find_element_by_css_selector(
+            '.grp-cell.autre input').send_keys('Présentation du programme')
         self.save()
         self.switch(-1)
 
@@ -187,20 +209,25 @@ class SeleniumTest(LiveServerTestCase):
         self.screenshot()
 
         # Regarde le résultat dans la partie visible.
-        self.selenium.find_element_by_link_text('Voir sur le site').click()
-        self.selenium.close()
-        self.switch()
-        self.selenium.find_element_by_css_selector('.data-table a').click()
+        self.show_on_site()
         self.screenshot()
 
-        # Supprime l'événement…
+        # Supprime la source…
         self.selenium.find_element_by_link_text('Supprimer').click()
         self.selenium.find_element_by_css_selector(
             'input[value="Oui, j\'en suis sûr."]').click()
         # … avant de finalement la restaurer avec django-reversion.
         self.selenium.find_element_by_link_text(
-            'Récupérer événements supprimés').click()
+            'Récupérer sources supprimés').click()
         self.selenium.find_element_by_css_selector(
             '#grp-change-history a').click()
         self.save()
+        self.screenshot()
+
+        # Vérifie si tout a été restauré correctement.
+        self.show_on_site()
+        self.screenshot()
+        self.assertEqual(open(self.get_screenshot_filename(2), 'rb').read(),
+                         open(self.get_screenshot_filename(4), 'rb').read())
+        self.selenium.find_element_by_css_selector('.data-table a').click()
         self.screenshot()
