@@ -2,9 +2,10 @@
 
 from __future__ import unicode_literals
 import os
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import LiveServerTestCase
-import johnny.cache
+from selenium.webdriver import ActionChains
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
@@ -21,9 +22,9 @@ class SeleniumTest(LiveServerTestCase):
     ]
 
     def _pre_setup(self):
-        johnny.cache.disable()
         self.screenshot_id = 0
         super(SeleniumTest, self)._pre_setup()
+        cache.clear()
 
     @classmethod
     def setUpClass(cls):
@@ -101,6 +102,10 @@ class SeleniumTest(LiveServerTestCase):
             self.assertEqual(len(other_window_handles), 1)
         self.selenium.switch_to_window(other_window_handles[i or 0])
         self.current_window_handle = other_window_handles[i or 0]
+
+    def scroll_and_click(self, element):
+        ActionChains(self.selenium).move_to_element(
+            element).click_and_hold().release().perform()
 
     def write_to_tinymce(self, field_name, content):
         """
@@ -199,12 +204,12 @@ class SeleniumTest(LiveServerTestCase):
         programme0.find_element_by_class_name('grp-collapse-handler').click()
         programme0.find_element_by_css_selector(
             '.grp-cell.autre input').send_keys('Présentation du programme')
-        programme0.find_element_by_class_name('grp-collapse-handler').click()
         # Ajoute un autre élément de programme.
         self.selenium.find_element_by_link_text(
             'Ajouter un objet Élément De Programme supplémentaire').click()
         programme1 = self.selenium.find_element_by_id('programme1')
-        programme1.find_element_by_class_name('grp-collapse-handler').click()
+        self.scroll_and_click(
+            programme1.find_element_by_class_name('grp-collapse-handler'))
         programme1.find_element_by_css_selector(
             '.grp-cell.oeuvre .related-lookup').click()
         self.switch(-1)
