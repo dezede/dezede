@@ -201,95 +201,110 @@ class SeleniumTest(LiveServerTestCase):
 
         # Ajoute un événement et tous les objets lui étant lié.
         self.get_by_id('lookup_id_evenements').click()
-        self.switch()
-        self.get_link('Ajouter événement').click()
-        self.get_by_id('lookup_id_ancrage_debut').click()
-        with self.new_popup(add='ancrage spatio-temporel'):
+        with self.new_popup():
+            self.get_link('Ajouter événement').click()
+
             # Créé son ancrage de début.
-            self.get_by_name('date').send_keys('1/1/1901')
-            self.get_by_id('lookup_id_lieu').click()
-            with self.new_popup(add='lieu ou institution'):
+            self.get_by_id('lookup_id_ancrage_debut').click()
+            with self.new_popup(add='ancrage spatio-temporel'):
+                self.get_by_name('date').send_keys('1/1/1901')
+
                 # Créé le lieu de l'ancrage de début.
-                self.save()  # Choisit "lieu" parmi les polymorphes.
-                self.get_by_name('nom').send_keys('Rouen')
-                self.get_by_id('add_id_nature').click()
-                with self.new_popup():
-                    # Créé le type du lieu de l'ancrage de début.
-                    self.get_by_name('nom').send_keys('ville')
-                    self.get_by_name('referent').click()
-                select = Select(self.get_by_name('nature'))
-                select.select_by_visible_text('ville')
-        # Ajoute un élément de programme.
+                self.get_by_id('lookup_id_lieu').click()
+                with self.new_popup(add='lieu ou institution'):
+                    self.save()  # Choisit "lieu" parmi les polymorphes.
+                    self.get_by_name('nom').send_keys('Rouen')
 
-        def open_new_element_de_programme(id, scroll=True):
-            self.get_link(
-                'Ajouter un objet Élément De Programme supplémentaire').click()
-            programme = self.get_by_id('programme%s' % id)
-            handler = programme.find_element_by_class_name(
-                'grp-collapse-handler')
-            if scroll:
-                self.scroll_and_click(handler)
-            else:
-                handler.click()
-            return programme
+                    # Créé la nature du lieu de l'ancrage de début.
+                    self.get_by_id('add_id_nature').click()
+                    with self.new_popup():
+                        self.get_by_name('nom').send_keys('ville')
+                        self.get_by_name('referent').click()
+                    select = Select(self.get_by_name('nature'))
+                    select.select_by_visible_text('ville')
 
-        programme0 = open_new_element_de_programme(0, scroll=False)
-        programme0.find_element_by_css_selector(
-            '.grp-cell.autre input').send_keys('Présentation du programme')
-        # Ajoute un autre élément de programme.
-        programme1 = open_new_element_de_programme(1)
-        programme1.find_element_by_css_selector(
-            '.grp-cell.oeuvre .related-lookup').click()
-        with self.new_popup(add='œuvre'):
+            # Ajoute un élément de programme.
+
+            def open_new_element_de_programme(id, scroll=True):
+                self.get_link('Ajouter un objet Élément De Programme '
+                              'supplémentaire').click()
+                programme = self.get_by_id('programme%s' % id)
+                handler = programme.find_element_by_class_name(
+                    'grp-collapse-handler')
+                if scroll:
+                    self.scroll_and_click(handler)
+                else:
+                    handler.click()
+                return programme
+
+            programme0 = open_new_element_de_programme(0, scroll=False)
+            programme0.find_element_by_css_selector(
+                '.grp-cell.autre input').send_keys('Présentation du programme')
+
+            # Ajoute un autre élément de programme.
+            programme1 = open_new_element_de_programme(1)
+
             # Créé l'œuvre de l'élément de programme.
-            self.get_by_name('prefixe_titre').send_keys('la')
-            self.get_by_name('titre').send_keys('senna festeggiante')
-            self.get_link(
-                'Ajouter un objet Auteur supplémentaire').click()
-            auteur = self.get_by_id('libretto-auteur-content_type-object_id0')
-            auteur.find_element_by_css_selector(
-                '.individu .related-lookup').click()
-            with self.new_popup(add='individu'):
+            programme1.find_element_by_css_selector(
+                '.grp-cell.oeuvre .related-lookup').click()
+            with self.new_popup(add='œuvre'):
+                self.get_by_name('prefixe_titre').send_keys('la')
+                self.get_by_name('titre').send_keys('senna festeggiante')
+                self.get_link(
+                    'Ajouter un objet Auteur supplémentaire').click()
+                auteur = self.get_by_id(
+                    'libretto-auteur-content_type-object_id0')
+
                 # Créé l'individu auteur de l'œuvre.
-                self.get_by_name('nom').send_keys('Vivaldi')
-                self.get_by_css('.grp-cell.prenoms .related-lookup').click()
-                with self.new_popup(add='prénom'):
+                auteur.find_element_by_css_selector(
+                    '.individu .related-lookup').click()
+                with self.new_popup(add='individu'):
+                    self.get_by_name('nom').send_keys('Vivaldi')
+
                     # Créé le prénom de l'individu.
-                    self.get_by_name('prenom').send_keys('Antonio')
-                select = Select(self.get_by_name('titre'))
-                select.select_by_visible_text('M.')
-            auteur.find_element_by_css_selector(
-                '.profession .related-lookup').click()
-            with self.new_popup(add='profession'):
+                    self.get_by_css(
+                        '.grp-cell.prenoms .related-lookup').click()
+                    with self.new_popup(add='prénom'):
+                        self.get_by_name('prenom').send_keys('Antonio')
+
+                    select = Select(self.get_by_name('titre'))
+                    select.select_by_visible_text('M.')
+
                 # Créé la profession de l'auteur.
-                self.get_by_name('nom').send_keys('compositeur')
-        # Ajoute un troisième élément de programme.
-        programme2 = open_new_element_de_programme(2)
-        programme2.find_element_by_css_selector(
-            '.grp-cell.oeuvre .related-lookup').click()
-        with self.new_popup(add='œuvre'):
+                auteur.find_element_by_css_selector(
+                    '.profession .related-lookup').click()
+                with self.new_popup(add='profession'):
+                    self.get_by_name('nom').send_keys('compositeur')
+
+            # Ajoute un troisième élément de programme.
+            programme2 = open_new_element_de_programme(2)
+
             # Créé l'œuvre de l'élément de programme.
-            self.get_by_name('prefixe_titre').send_keys('la')
-            self.get_by_name('titre').send_keys('Gloria e Himeneo')
-            self.get_link('Ajouter un objet Auteur supplémentaire').click()
-            auteur = self.get_by_id('libretto-auteur-content_type-object_id0')
-            auteur.find_element_by_css_selector(
-                '.individu input').send_keys('Viv')
-            self.get_link('Vivaldi (Antonio)').click()
-            auteur.find_element_by_css_selector(
-                '.profession input').send_keys('com')
-            self.get_link('Compositeur').click()
-        programme2.find_element_by_css_selector(
-            '.distribution .related-lookup').click()
-        with self.new_popup(add='élément de distribution'):
+            programme2.find_element_by_css_selector(
+                '.grp-cell.oeuvre .related-lookup').click()
+            with self.new_popup(add='œuvre'):
+                self.get_by_name('prefixe_titre').send_keys('la')
+                self.get_by_name('titre').send_keys('Gloria e Himeneo')
+                self.get_link('Ajouter un objet Auteur supplémentaire').click()
+                auteur = self.get_by_id(
+                    'libretto-auteur-content_type-object_id0')
+                auteur.find_element_by_css_selector(
+                    '.individu input').send_keys('Viv')
+                self.get_link('Vivaldi (Antonio)').click()
+                auteur.find_element_by_css_selector(
+                    '.profession input').send_keys('com')
+                self.get_link('Compositeur').click()
+
             # Ajoute une distribution à cet élément de programme.
-            self.get_by_css('.individus .related-lookup').click()
-            with self.new_popup(add='individu'):
+            programme2.find_element_by_css_selector(
+                '.distribution .related-lookup').click()
+            with self.new_popup(add='élément de distribution'):
                 # Ajoute l'individu de cette distribution.
-                self.get_by_name('nom').send_keys('Désile')
-                select = Select(self.get_by_name('titre'))
-                select.select_by_visible_text('Mlle')
-        self.save_popup()
+                self.get_by_css('.individus .related-lookup').click()
+                with self.new_popup(add='individu'):
+                    self.get_by_name('nom').send_keys('Désile')
+                    select = Select(self.get_by_name('titre'))
+                    select.select_by_visible_text('Mlle')
 
         # Enregistre.
         self.save('_continue')
