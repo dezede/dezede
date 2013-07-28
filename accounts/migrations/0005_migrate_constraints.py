@@ -15,7 +15,7 @@ def migrate_fk(table, field='owner_id', to_table='accounts_hierarchicuser',
 
 class Migration(SchemaMigration):
     depends_on = (
-        ('libretto', '0031_migrate_lieux_et_institutions'),
+        ('libretto', '0050_migrate_content_types'),
         ('dossiers', '0004_auto__chg_field_dossierdevenements_etat'),
     )
 

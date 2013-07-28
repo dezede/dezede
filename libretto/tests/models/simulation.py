@@ -59,9 +59,6 @@ class SeleniumTest(LiveServerTestCase):
         Réécrit l'objet Site préexistant pour qu'il contienne comme nom de
         domaine l'adresse du serveur de test.
         """
-        self.selenium.get(self.abs_url(reverse('admin:index')))
-        # self.selenium.find_element_by_css_selector(
-        #     '#module_5 .module_title').click()
         self.selenium.find_element_by_xpath(
             '//*[text()="Utilisateurs et groupes"]').click()
         self.selenium.find_element_by_link_text('Sites').click()
@@ -134,10 +131,12 @@ class SeleniumTest(LiveServerTestCase):
         self.switch()
 
     def setUp(self):
-        # La réponse du serveur peut être lente.
-        self.selenium.implicitly_wait(5)
+        # La réponse du serveur et l'interprétation peuvent être lents.
+        self.selenium.implicitly_wait(10)
+        self.selenium.set_page_load_timeout(10)
 
         self.current_window_handle = self.selenium.current_window_handle
+
         self.log_as_superuser()
         self.rewrite_site()
 
