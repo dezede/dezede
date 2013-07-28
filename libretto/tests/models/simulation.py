@@ -250,6 +250,32 @@ class SeleniumTest(LiveServerTestCase):
         self.switch(-1)
         self.save()
         self.switch(-1)
+        # Ajoute un troisième élément de programme.
+        self.selenium.find_element_by_link_text(
+            'Ajouter un objet Élément De Programme supplémentaire').click()
+        programme2 = self.selenium.find_element_by_id('programme2')
+        self.scroll_and_click(
+            programme2.find_element_by_class_name('grp-collapse-handler'))
+        programme2.find_element_by_css_selector(
+            '.grp-cell.oeuvre .related-lookup').click()
+        self.switch(-1)
+        # Créé l'œuvre de l'élément de programme.
+        self.selenium.find_element_by_link_text('Ajouter œuvre').click()
+        self.selenium.find_element_by_name('prefixe_titre').send_keys('la')
+        self.selenium.find_element_by_name('titre').send_keys(
+            'Gloria e Himeneo')
+        self.selenium.find_element_by_link_text(
+            'Ajouter un objet Auteur supplémentaire').click()
+        auteur = self.selenium.find_element_by_id(
+            'libretto-auteur-content_type-object_id0')
+        auteur.find_element_by_css_selector(
+            '.individu input').send_keys('Viv')
+        self.selenium.find_element_by_link_text('Vivaldi (Antonio)').click()
+        auteur.find_element_by_css_selector(
+            '.profession input').send_keys('com')
+        self.selenium.find_element_by_link_text('Compositeur').click()
+        self.save()
+        self.switch(-1)
         self.save()
         self.switch(-1)
 
