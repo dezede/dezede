@@ -29,6 +29,7 @@ class SeleniumTest(LiveServerTestCase):
     def setUpClass(cls):
         cls.selenium = WebDriver()
         cls.selenium.set_window_size(1366, 768)
+        cls.wait = WebDriverWait(cls.selenium, 10)
         super(SeleniumTest, cls).setUpClass()
 
     @classmethod
@@ -75,13 +76,12 @@ class SeleniumTest(LiveServerTestCase):
 
         self.selenium.find_element_by_name('_save').click()
 
-    def wait_until_ready(self, timeout=10):
-        waiter = WebDriverWait(self.selenium, timeout)
-        waiter.until(lambda driver: WebDriver.execute_script(
+    def wait_until_ready(self):
+        self.wait.until(lambda driver: WebDriver.execute_script(
             driver, 'return document.readyState;') == 'complete')
 
     def get_screenshot_filename(self, i=None):
-        return 'test%s.png' % i or self.screenshot_id
+        return os.path.join(PATH, 'test%s.png' % (i or self.screenshot_id))
 
     def screenshot(self):
         """
@@ -195,11 +195,9 @@ class SeleniumTest(LiveServerTestCase):
         # Ajoute un élément de programme.
         self.selenium.find_element_by_link_text(
             'Ajouter un objet Élément De Programme supplémentaire').click()
-        programme0_xpath = '//h3[text()="Élément De Programme\u00A0\u00A0"]'
-        self.selenium.find_element_by_xpath(programme0_xpath).click()
-        programme0_parent = self.selenium.find_element_by_xpath(
-            programme0_xpath + '//..')
-        programme0_parent.find_element_by_css_selector(
+        programme0 = self.selenium.find_element_by_id('programme0')
+        programme0.find_element_by_class_name('grp-collapse-handler').click()
+        programme0.find_element_by_css_selector(
             '.grp-cell.autre input').send_keys('Présentation du programme')
         self.save()
         self.switch(-1)
