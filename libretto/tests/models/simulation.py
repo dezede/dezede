@@ -106,6 +106,12 @@ class SeleniumTest(LiveServerTestCase):
         self.get_by_id(
             'id_%s_%s' % (field_name, button_name)).click()
 
+    def m2m_autocomplete(self, element, query, link_text):
+        ActionChains(self.selenium).click(element).send_keys(query).perform()
+        self.wait.until(
+            lambda driver: driver.find_element_by_link_text(link_text))
+        self.get_link(link_text).click()
+
     def save(self, input_name='_save'):
         self.get_by_name(input_name).click()
 
@@ -305,6 +311,35 @@ class SeleniumTest(LiveServerTestCase):
                     self.get_by_name('nom').send_keys('Désile')
                     select = Select(self.get_by_name('titre'))
                     select.select_by_visible_text('Mlle')
+
+                # Ajoute le pupitre de cette distribution.
+                self.get_by_css('.pupitre .related-lookup').click()
+                with self.new_popup(add='pupitre'):
+                    self.get_by_css('.partie .related-lookup').click()
+                    with self.new_popup(add='rôle ou instrument'):
+                        self.get_by_xpath(
+                            '//label[text()=" instrument"]/input').click()
+                        self.save()
+                        self.get_by_name('nom').send_keys('violon')
+                        self.get_by_css('.professions .related-lookup').click()
+                        with self.new_popup(add='profession'):
+                            self.get_by_name('nom').send_keys('violoniste')
+
+            # Ajoute un quatrième élément de programme.
+            programme3 = open_new_element_de_programme(3)
+
+            # Ajoute une distribution à cet élément de programme.
+            programme3.find_element_by_css_selector(
+                '.distribution .related-lookup').click()
+            with self.new_popup(add='élément de distribution'):
+                self.m2m_autocomplete(
+                    self.get_by_css('.individus .grp-search input'),
+                    'dés', 'Mademoiselle Désile')
+                # Ajoute un autre individu de cette distribution.
+                self.get_by_css('.individus .related-lookup').click()
+                with self.new_popup(add='individu'):
+                    self.get_by_name('nom').send_keys('Balensi')
+                    self.get_by_name('pseudonyme').send_keys('petite renarde')
 
         # Enregistre.
         self.save('_continue')
