@@ -6,7 +6,22 @@ from django.conf import settings
 from filebrowser.sites import site
 from ajax_select import urls as ajax_select_urls
 from django.contrib import admin
+from haystack.views import SearchView
 
+
+class CustomSearchView(SearchView):
+    """
+    Custom SearchView to fix spelling suggestions.
+    """
+    def extra_context(self):
+        context = {'suggestion': None}
+
+        if self.results.query.backend.include_spelling:
+            suggestion = self.form.get_suggestion()
+            if suggestion != self.query:
+                context['suggestion'] = suggestion
+
+        return context
 
 admin.autodiscover()
 
@@ -20,7 +35,7 @@ urlpatterns = patterns('',
     url(r'^tinymce/', include('tinymce.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/filebrowser/', include(site.urls)),
-    url(r'^recherche/', include('haystack.urls')),
+    url(r'^recherche/', CustomSearchView(), name='haystack_search'),
     url(r'^comptes/', include('accounts.urls')),
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),

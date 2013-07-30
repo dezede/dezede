@@ -264,8 +264,9 @@ FILEBROWSER_MAX_UPLOAD_SIZE = 50 * (1024 ** 2)  # octets
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://127.0.0.1:15031/solr',
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'dezede',
         'INCLUDE_SPELLING': True,
         'BATCH_SIZE': 100,
     },

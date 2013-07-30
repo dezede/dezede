@@ -11,13 +11,10 @@ from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie, \
 
 class CommonSearchIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
-    suggestions = CharField()
 
     def prepare(self, obj):
         translation.activate(settings.LANGUAGE_CODE)
-        prepared_data = super(CommonSearchIndex, self).prepare(obj)
-        prepared_data['suggestions'] = prepared_data['text']
-        return prepared_data    
+        return super(CommonSearchIndex, self).prepare(obj)
 
 
 class PolymorphicCommonSearchIndex(CommonSearchIndex):

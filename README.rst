@@ -25,8 +25,6 @@ Procédure d'installation
 
 #. Vérifier la satisfaction des `dépendances`_.
 
-#. `Installation du moteur de recherche`_.
-
 #. Choisir un mode de lancement :
     - `Lancement du serveur de développement`_, ou
     - `Déploiement`_.
@@ -84,85 +82,6 @@ Nécessaires à l'exécution
 .........................
 
 Voir le fichier `requirements.txt`.
-
-
-
-Installation du moteur de recherche
-===================================
-
-#. Téléchargement d'Apache Solr :
-
-    ``./manage.py install_solr``
-
-
-#. Création du schéma pour Solr :
-
-    ``./manage.py build_solr_schema > apache-solr-[version]/example/solr/conf/schema.xml``
-
-
-#. Dans ce schéma, remplacer le fieldtype "text" par tout ceci :
-
-    ::
-
-      <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
-        <analyzer>
-          <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-          <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt" />
-          <filter class="solr.PatternReplaceFilterFactory" pattern="^(\p{Punct}*)(.*?)(\p{Punct}*)$" replacement="$2"/>
-          <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_fr.txt"/>
-          <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0"/>
-          <filter class="solr.LowerCaseFilterFactory"/>
-          <filter class="solr.SnowballPorterFilterFactory" language="French"/>
-        </analyzer>
-      </fieldType>
-
-      <fieldType name="textSpell" class="solr.TextField" positionIncrementGap="100">
-        <analyzer>
-          <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-          <filter class="solr.PatternReplaceFilterFactory" pattern="^(\p{Punct}*)(.*?)(\p{Punct}*)$" replacement="$2"/>
-          <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_fr.txt"/>
-          <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-        </analyzer>
-      </fieldType>
-
-
-#. Remplacer ``<field name="suggestions" type="text"`` par
-   ``<field name="suggestions" type="textSpell"``
-
-
-#. Changer le port dans le fichier `apache-sorl-[version]/example/etc/jetty.xml`
-
-
-#. Ajouter ceci dans le tag *config* du fichier
-   `apache-sorl-[version]/example/solr/conf/solrconfig.xml` :
-
-    ::
-
-      <requestHandler name="/mlt" class="solr.MoreLikeThisHandler" />
-      <searchComponent name="spellcheck" class="solr.SpellCheckComponent">
-        <str name="queryAnalyzerFieldType">textSpell</str>
-        <lst name="spellchecker">
-          <str name="name">default</str>
-          <str name="field">suggestions</str>
-          <str name="spellcheckIndexDir">./spellchecker1</str>
-          <str name="buildOnCommit">true</str>
-        </lst>
-      </searchComponent>
-
-
-#. Ajouter ceci au tag
-   ``<requestHandler name="/select" class="solr.SearchHandler">`` :
-
-    ::
-
-      <arr name="last-components">
-        <str>spellcheck</str>
-      </arr>
-
-
-#. Pour lancer Solr, lancer :
-
-    ``python dezede/solr.py``
 
 
 
