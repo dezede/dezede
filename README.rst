@@ -94,10 +94,10 @@ Configuration de PostgreSQL
 #. Effectuer les actions suivantes :
     | ``sudo -i -u postgres``
     | ``psql``
-      | ``CREATE USER dezede LOGIN;``
-      | ``CREATE DATABASE dezede OWNER dezede;``
-      | ``ALTER USER dezede WITH ENCRYPTED PASSWORD 'mot_de_passe';``
-      | ``\q``
+    |   ``CREATE USER dezede LOGIN;``
+    |   ``CREATE DATABASE dezede OWNER dezede;``
+    |   ``ALTER USER dezede WITH ENCRYPTED PASSWORD 'mot_de_passe';``
+    |   ``\q``
     | ``exit``
 
 
@@ -276,7 +276,7 @@ Localisation
 
 #. Compiler les fichiers de langues (en se mettant au préalable dans le
    dossier de l'application ou du projet) :
-   | ``./manage.py compilemessages``
+   ``./manage.py compilemessages``
 
 #. Relancer le serveur
 
