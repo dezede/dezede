@@ -6,6 +6,8 @@ djangorestframework==2.3.6
 django-reversion==1.7.1
 django-haystack==2.1.0
 pyelasticsearch==0.6
+celery-haystack==0.7.2
+django-celery==3.0.21
 django-mptt==0.5.5
 django-tinymce==1.5.1
 django-flatpages-tinymce==0.1.1

@@ -14,6 +14,9 @@ except ImportError:
     from psycopg2cffi import compat
     compat.register()
 
+import djcelery
+djcelery.setup_loader()
+
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -173,6 +176,8 @@ INSTALLED_APPS = (
     'accounts',
     'dezede',
     'haystack',
+    'celery_haystack',
+    'djcelery',
     'libretto',
     'dossiers',
     'typography',
@@ -268,9 +273,9 @@ HAYSTACK_CONNECTIONS = {
         'URL': 'http://127.0.0.1:9200/',
         'INDEX_NAME': 'dezede',
         'INCLUDE_SPELLING': True,
-        'BATCH_SIZE': 100,
     },
 }
+HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
 
@@ -347,6 +352,8 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 10,
 }
 
+CELERY_CACHE_BACKEND = 'memcached://' + CACHES['default']['LOCATION']
+CELERY_RESULT_BACKEND = 'cache'
 
 LOGGING = {
     'version': 1,

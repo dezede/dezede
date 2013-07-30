@@ -60,6 +60,8 @@ python-dev      2.7.3
 libxml2
 libxml2-dev
 libxslt1-dev
+elasticsearch   0.90.2
+rabbitmq-server 3.0.2
 =============== =======
 
 
@@ -278,11 +280,23 @@ Configuration de nginx
 
       [program:dezede]
       directory=[[/chemin/du/projet]]
-      command=gunicorn_django
-      user=www-data
+      command=gunicorn_django -w3 --timeout=300
+      user=[[utilisateur]]
       autostart=true
       autorestart=true
       redirect_stderror=true
+      stdout_logfile=[[/chemin/du/projet]]/supervisor_django.log
+      stdout_logfile_maxbytes=10MB
+
+      [program:dezede]
+      directory=[[/chemin/du/projet]]
+      command=python manage.py celery worker --loglevel=info
+      user=[[utilisateur]]
+      autostart=true
+      autorestart=true
+      redirect_stderror=true
+      stdout_logfile=[[/chemin/du/projet]]/supervisor_django.log
+      stdout_logfile_maxbytes=10MB
 
 
 #. Relancer le serveur avec :

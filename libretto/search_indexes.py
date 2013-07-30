@@ -3,7 +3,8 @@
 from __future__ import unicode_literals
 from django.conf import settings
 from django.utils import translation
-from haystack.indexes import SearchIndex, Indexable, CharField, \
+from celery_haystack.indexes import CelerySearchIndex as SearchIndex
+from haystack.indexes import Indexable, CharField, \
     EdgeNgramField, DateField
 from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie, \
     Profession
