@@ -105,7 +105,6 @@ Configuration de PostgreSQL
 
 
 #. Paramétrer l'accès de Django à la base de données :
-
     - Éditer le fichier de réglages :
         ``nano settings.py``
     - Les réglages à modifier sont dans ``DATABASES``.
