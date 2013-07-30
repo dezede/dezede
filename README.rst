@@ -304,7 +304,7 @@ Localisation
 #. Compiler les fichiers de langues (en se mettant au préalable dans le
    dossier de l'application ou du projet) :
 
-   ``./manage.py compilemessages``
+    ``./manage.py compilemessages``
 
 #. Relancer le serveur
 
