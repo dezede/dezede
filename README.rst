@@ -92,7 +92,6 @@ Configuration de PostgreSQL
     PostgreSQL
 
 #. Effectuer les actions suivantes :
-
     | ``sudo -i -u postgres``
     | ``psql``
 
@@ -188,13 +187,11 @@ Configuration de nginx
     nginx
 
 #. Création d'un site dans nginx :
-
     ``sudo nano /etc/nginx/sites-available/dezede``
 
 
 #. Copier ceci dans ce dernier (en remplaçant ce qui est balisé
    ``[[quelque_chose]]``) :
-
     ::
 
       server {
@@ -242,7 +239,6 @@ Configuration de nginx
 
 
 #. Activer le site et désactiver le site par défaut :
-
     | ``sudo ln -s /etc/nginx/sites-available/dezede
       /etc/nginx/sites-enabled/``
     | ``sudo unlink /etc/nginx/sites-enabled/default``
@@ -250,13 +246,11 @@ Configuration de nginx
 
 #. Configuration de supervisor pour lancer automatiquement le serveur django
    avec gunicorn :
-
     ``sudo nano /etc/supervisor/conf.d/dezede.conf``
 
 
 #. Copier ceci dans ce dernier (en remplaçant ce qui est balisé
    ``[[quelque_chose]]``) :
-
     ::
 
       [program:dezede]
@@ -284,7 +278,6 @@ Localisation
 
 #. Compiler les fichiers de langues (en se mettant au préalable dans le
    dossier de l'application ou du projet) :
-
     ``./manage.py compilemessages``
 
 #. Relancer le serveur
