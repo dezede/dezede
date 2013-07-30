@@ -108,8 +108,6 @@ class SeleniumTest(LiveServerTestCase):
 
     def m2m_autocomplete(self, element, query, link_text):
         ActionChains(self.selenium).click(element).send_keys(query).perform()
-        self.wait.until(
-            lambda driver: driver.find_element_by_link_text(link_text))
         self.get_link(link_text).click()
 
     def save(self, input_name='_save'):
@@ -333,13 +331,15 @@ class SeleniumTest(LiveServerTestCase):
                 '.distribution .related-lookup').click()
             with self.new_popup(add='élément de distribution'):
                 self.m2m_autocomplete(
-                    self.get_by_css('.individus .grp-search input'),
+                    self.get_by_css('.individus .grp-search'),
                     'dés', 'Mademoiselle Désile')
                 # Ajoute un autre individu de cette distribution.
                 self.get_by_css('.individus .related-lookup').click()
                 with self.new_popup(add='individu'):
                     self.get_by_name('nom').send_keys('Balensi')
                     self.get_by_name('pseudonyme').send_keys('petite renarde')
+                    select = Select(self.get_by_name('titre'))
+                    select.select_by_visible_text('Mlle')
 
         # Enregistre.
         self.save('_continue')
