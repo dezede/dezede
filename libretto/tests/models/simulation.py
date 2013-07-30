@@ -106,10 +106,10 @@ class SeleniumTest(LiveServerTestCase):
         self.get_by_id(
             'id_%s_%s' % (field_name, button_name)).click()
 
-    def m2m_autocomplete(self, element, query, link_text):
-        ActionChains(self.selenium).click(element).send_keys(query).perform()
-        self.wait.until(
-            lambda driver: driver.find_element_by_link_text(link_text))
+    def autocomplete(self, element, query, link_text):
+        ActionChains(self.selenium).move_to_element(
+            element.find_element_by_css_selector('input:first-child')
+        ).click().send_keys(query + Keys.DOWN).perform()
         self.get_link(link_text).click()
 
     def save(self, input_name='_save'):
@@ -294,12 +294,12 @@ class SeleniumTest(LiveServerTestCase):
                 self.get_link('Ajouter un objet Auteur supplémentaire').click()
                 auteur = self.get_by_id(
                     'libretto-auteur-content_type-object_id0')
-                auteur.find_element_by_css_selector(
-                    '.individu input').send_keys('Viv')
-                self.get_link('Vivaldi (Antonio)').click()
-                auteur.find_element_by_css_selector(
-                    '.profession input').send_keys('com')
-                self.get_link('Compositeur').click()
+                self.autocomplete(
+                    auteur.find_element_by_css_selector('.individu'),
+                    'viv', 'Vivaldi (Antonio)')
+                self.autocomplete(
+                    auteur.find_element_by_css_selector('.profession'),
+                    'com', 'Compositeur')
 
             # Ajoute une distribution à cet élément de programme.
             programme2.find_element_by_css_selector(
@@ -332,8 +332,8 @@ class SeleniumTest(LiveServerTestCase):
             programme3.find_element_by_css_selector(
                 '.distribution .related-lookup').click()
             with self.new_popup(add='élément de distribution'):
-                self.m2m_autocomplete(
-                    self.get_by_css('.individus .grp-search input'),
+                self.autocomplete(
+                    self.get_by_css('.individus'),
                     'dés', 'Mademoiselle Désile')
                 # Ajoute un autre individu de cette distribution.
                 self.get_by_css('.individus .related-lookup').click()
