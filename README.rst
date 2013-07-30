@@ -92,22 +92,29 @@ Configuration de PostgreSQL
     PostgreSQL
 
 #. Effectuer les actions suivantes :
+
     | ``sudo -i -u postgres``
     | ``psql``
-    |   ``CREATE USER dezede LOGIN;``
-    |   ``CREATE DATABASE dezede OWNER dezede;``
-    |   ``ALTER USER dezede WITH ENCRYPTED PASSWORD 'mot_de_passe';``
-    |   ``\q``
+
+      | ``CREATE USER dezede LOGIN;``
+      | ``CREATE DATABASE dezede OWNER dezede;``
+      | ``ALTER USER dezede WITH ENCRYPTED PASSWORD 'mot_de_passe';``
+      | ``\q``
+
     | ``exit``
 
 
 #. Paramétrer l'accès de Django à la base de données :
+
     - Éditer le fichier de réglages :
+
         ``nano settings.py``
+
     - Les réglages à modifier sont dans ``DATABASES``.
 
 
 #. Création des tables de la base de données :
+
     ``./manage.py syncdb`` puis ``./manage.py migrate``
 
 
@@ -116,10 +123,13 @@ Lancement du serveur de développement
 =====================================
 
 #. Passer en mode ``DEBUG`` :
+
     - Éditer le fichier de réglages :
+
         ``nano settings.py``
 
     - Remplacer la ligne ``DEBUG = False`` par :
+
         ::
 
           DEBUG = True
@@ -129,22 +139,27 @@ Lancement du serveur de développement
 
 
 #. Création des révisions initiales :
+
     ``./manage.py createinitialrevisions``
 
 
 #. Collecte des fichiers statiques :
+
     ``./manage.py collectstatic -l``
 
 
 #. Préparation du dossier d'upload :
+
     ``mkdir -p media/uploads/``
 
 
 #. Indexation des données :
+
     ``./manage.py rebuild_index``
 
 
 #. Lancement du serveur de développement :
+
     ``./manage.py runserver``
 
 
@@ -156,21 +171,26 @@ Déploiement
 
 
 #. Création des révisions initiales :
+
     ``./manage.py createinitialrevisions``
 
 #. Collecte des fichiers statiques :
+
     ``sudo ./manage.py collectstatic``
 
 
 #. Préparation du dossier d'upload :
+
     ``sudo mkdir -p media/uploads/``
 
 
 #. Compiler les fichiers de langues :
+
     ``./manage.py compilemessages``
 
 
 #. Indexation des données :
+
     ``./manage.py rebuild_index``
 
 
@@ -185,11 +205,13 @@ Configuration de nginx
     nginx
 
 #. Création d'un site dans nginx :
+
     ``sudo nano /etc/nginx/sites-available/dezede``
 
 
 #. Copier ceci dans ce dernier (en remplaçant ce qui est balisé
    ``[[quelque_chose]]``) :
+
     ::
 
       server {
@@ -237,6 +259,7 @@ Configuration de nginx
 
 
 #. Activer le site et désactiver le site par défaut :
+
     | ``sudo ln -s /etc/nginx/sites-available/dezede
       /etc/nginx/sites-enabled/``
     | ``sudo unlink /etc/nginx/sites-enabled/default``
@@ -244,11 +267,13 @@ Configuration de nginx
 
 #. Configuration de supervisor pour lancer automatiquement le serveur django
    avec gunicorn :
+
     ``sudo nano /etc/supervisor/conf.d/dezede.conf``
 
 
 #. Copier ceci dans ce dernier (en remplaçant ce qui est balisé
    ``[[quelque_chose]]``) :
+
     ::
 
       [program:dezede]
@@ -261,6 +286,7 @@ Configuration de nginx
 
 
 #. Relancer le serveur avec :
+
     | ``sudo service supervisor restart``
     | ``sudo service nginx restart``
 
@@ -272,10 +298,12 @@ Localisation
 #. Ajouter (éventuellement) la langue désirée à LANGUAGES du fichier settings.py
 
 #. Metre à jour à partir de Transifex :
+
     ``tx pull -a``
 
 #. Compiler les fichiers de langues (en se mettant au préalable dans le
    dossier de l'application ou du projet) :
+
    ``./manage.py compilemessages``
 
 #. Relancer le serveur
