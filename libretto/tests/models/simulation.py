@@ -333,7 +333,7 @@ class SeleniumTest(LiveServerTestCase):
                 '.distribution .related-lookup').click()
             with self.new_popup(add='élément de distribution'):
                 self.m2m_autocomplete(
-                    self.get_by_css('.individus .grp-search'),
+                    self.get_by_css('.individus .grp-search input'),
                     'dés', 'Mademoiselle Désile')
                 # Ajoute un autre individu de cette distribution.
                 self.get_by_css('.individus .related-lookup').click()
