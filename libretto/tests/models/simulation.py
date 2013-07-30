@@ -108,8 +108,6 @@ class SeleniumTest(LiveServerTestCase):
 
     def m2m_autocomplete(self, element, query, link_text):
         ActionChains(self.selenium).click(element).send_keys(query).perform()
-        self.wait.until(
-            lambda driver: driver.find_element_by_link_text(link_text))
         self.get_link(link_text).click()
 
     def save(self, input_name='_save'):
