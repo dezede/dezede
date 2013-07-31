@@ -17,7 +17,7 @@ before_script:
   # Corrige https://github.com/travis-ci/travis-cookbooks/issues/155
   - "sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm"
   - python manage.py celery worker &
-  - python manage.py rebuild_index
+  - python manage.py rebuild_index --noinput
 script:
   - coverage run --source=dezede,libretto,accounts,dossiers,typography,cache_tools manage.py test
 after_success:
