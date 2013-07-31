@@ -92,6 +92,12 @@ class ElementDeDistribution(CommonModel):
         ordering = ('pupitre',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            'content_object', 'elements_de_programme'
+        )
+
     def __str__(self):
         return self.html(tags=False)
 
@@ -158,6 +164,12 @@ class CaracteristiqueDeProgramme(Caracteristique):
         ordering = ('type', 'classement', 'valeur')
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            'elements_de_programme',
+        )
+
 
 @python_2_unicode_compatible
 class ElementDeProgramme(AutoriteModel):
@@ -196,6 +208,13 @@ class ElementDeProgramme(AutoriteModel):
         ordering = ('position', 'oeuvre')
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'evenement',
+        )
+
     def calc_caracteristiques(self):
         if self.pk is None:
             return ''
@@ -204,7 +223,7 @@ class ElementDeProgramme(AutoriteModel):
     calc_caracteristiques.short_description = _('caractéristiques')
 
     @property
-    @model_method_cached(24 * 60 * 60, b'programmes')
+    @model_method_cached()
     def numero(self):
         numerotations_exclues = ('U', 'E',)
         if self.numerotation in numerotations_exclues:
@@ -212,7 +231,7 @@ class ElementDeProgramme(AutoriteModel):
         return self.evenement.programme.exclude(Q(position__gt=self.position)
                            | Q(numerotation__in=numerotations_exclues)).count()
 
-    @model_method_cached(24 * 60 * 60, b'programmes')
+    @model_method_cached()
     def html(self, tags=True):
         has_pk = self.pk is not None
 
@@ -297,6 +316,13 @@ class Evenement(AutoriteModel):
         ordering = ('ancrage_debut',)
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'dossiers',
+        )
 
     @permalink
     def get_absolute_url(self):

@@ -175,6 +175,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'accounts',
     'dezede',
+    'cache_tools',
     'haystack',
     'celery_haystack',
     'djcelery',
@@ -207,6 +208,7 @@ INSTALLED_APPS = (
     'django_nose',
     'debug_toolbar',
     'template_timings_panel',
+    'haystack_panel',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -308,6 +310,7 @@ DEBUG_TOOLBAR_PANELS = (
     # 'debug_toolbar.panels.logger.LoggingPanel',
     # 'debug_toolbar.panels.profiling.ProfilingDebugPanel',
     'template_timings_panel.panels.TemplateTimings.TemplateTimings',
+    'haystack_panel.panel.HaystackDebugPanel',
 )
 
 if DEBUG:

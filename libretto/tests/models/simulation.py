@@ -16,6 +16,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 PATH = os.path.abspath(os.path.dirname(__file__))
 
 
+# Ces réglages permettent étrangement d'être épargné d'un bug d'autant plus
+# étrange : Firefox se déconnecte intempestivement quand le mode DEBUG est
+# globalement False.  INTERNAL_IPS vide permet de désactiver la debug toolbar.
 @override_settings(DEBUG=True, INTERNAL_IPS=())
 class SeleniumTest(LiveServerTestCase):
     cleans_up_after_itself = True

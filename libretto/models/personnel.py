@@ -36,7 +36,7 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
         _('nom (au féminin)'), max_length=230, blank=True,
         help_text=_('Ne préciser que s’il est différent du nom.'))
     parent = TreeForeignKey('Profession', blank=True, null=True, db_index=True,
-                            related_name='enfant', verbose_name=_('parent'))
+                            related_name='enfants', verbose_name=_('parent'))
     classement = SmallIntegerField(default=1, db_index=True)
 
     objects = ProfessionManager()
@@ -47,6 +47,14 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
         ordering = ('classement', 'nom')
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            'auteurs', 'elements_de_distribution',
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'enfants', 'individus', 'parties', 'engagements',
+        )
 
     @permalink
     def get_absolute_url(self):
@@ -125,6 +133,13 @@ class Devise(CommonModel):
         verbose_name_plural = ungettext_lazy('devise', 'devises', 2)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'engagements',
+        )
+
     def __str__(self):
         if self.nom:
             return self.nom
@@ -146,6 +161,13 @@ class Engagement(CommonModel):
         verbose_name_plural = ungettext_lazy('engagement', 'engagements', 2)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'personnels',
+        )
+
     def __str__(self):
         return self.profession.nom
 
@@ -161,6 +183,13 @@ class TypeDePersonnel(CommonModel):
                                              'types de personnel', 2)
         ordering = ('nom',)
         app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'personnels',
+        )
 
     def __str__(self):
         return self.nom
@@ -179,6 +208,13 @@ class Personnel(CommonModel):
         verbose_name = ungettext_lazy('personnel', 'personnels', 1)
         verbose_name_plural = ungettext_lazy('personnel', 'personnels', 2)
         app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'elements_de_programme',
+        )
 
     def __str__(self):
         return smart_text(self.type) + smart_text(self.saison)

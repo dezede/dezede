@@ -4,12 +4,11 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 from django.conf import settings
 from django.contrib.contenttypes.generic import GenericRelation
-from django.contrib.sessions.models import Session
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
     ForeignKey, TextField, Manager, PROTECT, Q, SmallIntegerField
 from django.db.models.query import QuerySet
-from django.db.models.signals import pre_save, post_save, post_delete
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
@@ -20,8 +19,10 @@ from filebrowser.fields import FileBrowseField
 from mptt.managers import TreeManager
 from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
+from reversion import pre_revision_commit
 from tinymce.models import HTMLField
-from cache_tools import invalidate_group, cached_ugettext_lazy as _
+from cache_tools import (
+    auto_invalidate_signal_receiver, cached_ugettext_lazy as _)
 from .functions import href, ex, hlp
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
@@ -328,6 +329,10 @@ class TypeDeCaracteristique(PolymorphicModel, CommonModel):
         ordering = ('classement',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return ('caracteristiques',)
+
     def pluriel(self):
         return calc_pluriel(self)
 
@@ -377,6 +382,10 @@ class Caracteristique(PolymorphicModel, CommonModel):
         ordering = ('type', 'classement', 'valeur')
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return ('get_real_instance',)
+
     def html(self, tags=True):
         value = mark_safe(self.valeur)
         if self.type:
@@ -425,6 +434,10 @@ class TypeDeParente(PolymorphicModel, CommonModel):
                                              'types de parentés', 2)
         ordering = ('classement',)
         app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return ('get_real_instance',)
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -540,10 +553,4 @@ def handle_whitespaces(sender, **kwargs):
         obj.handle_whitespaces()
 
 
-def clean_groups(sender, **kwargs):
-    if sender is Session:
-        return
-    for group in (b'programmes', b'oeuvres', b'individus'):
-        invalidate_group(group)
-post_save.connect(clean_groups)
-post_delete.connect(clean_groups)
+pre_revision_commit.connect(auto_invalidate_signal_receiver)

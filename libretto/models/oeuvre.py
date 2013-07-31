@@ -67,6 +67,14 @@ class GenreDOeuvre(CommonModel, SlugModel):
         ordering = ('slug',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            'oeuvres',
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'enfants',
+        )
+
     def html(self, tags=True, caps=False, pluriel=False):
         nom = self.pluriel() if pluriel else self.nom
         if caps:
@@ -105,6 +113,11 @@ class CaracteristiqueDOeuvre(Caracteristique):
         ordering = ('type', 'classement', 'valeur')
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            'oeuvres',
+        )
 
 class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet,
                      CommonTreeQuerySet):
@@ -150,6 +163,12 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         ordering = ('classement', 'nom',)
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            'pupitres',
+        )
 
     class MPTTMeta(object):
         order_insertion_by = ['classement', 'nom']
@@ -238,6 +257,12 @@ class Pupitre(CommonModel):
         ordering = ('partie',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            'oeuvres', 'elements_de_distribution'
+        )
+
     def __str__(self):
         out = ''
         partie = self.partie
@@ -279,6 +304,13 @@ class TypeDeParenteDOeuvres(TypeDeParente):
         ordering = ('classement',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'parentes',
+        )
+
 
 class ParenteDOeuvresManager(CommonManager):
     def meres_en_ordre(self):
@@ -298,6 +330,7 @@ class ParenteDOeuvres(CommonModel):
     fille = ForeignKey(
         'Oeuvre', related_name='parentes_meres', verbose_name=_('œuvre fille'),
         db_index=True)
+
     objects = ParenteDOeuvresManager()
 
     class Meta(object):
@@ -308,6 +341,13 @@ class ParenteDOeuvres(CommonModel):
         ordering = ('type',)
         app_label = 'libretto'
         unique_together = ('type', 'mere', 'fille',)
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'mere', 'fille',
+        )
 
     def __str__(self):
         return '%s %s %s' % (self.fille, self.type.nom, self.mere)
@@ -385,7 +425,20 @@ class Auteur(CommonModel):
     profession = ForeignKey('Profession', related_name='auteurs',
                             verbose_name=_('profession'), db_index=True,
                             on_delete=PROTECT)
+
     objects = AuteurManager()
+
+    class Meta(object):
+        verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
+        verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
+        ordering = ('profession', 'individu__nom')
+        app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            'content_object',
+        )
 
     def html(self, tags=True):
         return '%s [%s]' % (self.individu.html(tags=tags),
@@ -399,12 +452,6 @@ class Auteur(CommonModel):
         except (Individu.DoesNotExist,
                 Profession.DoesNotExist):
             pass
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
-        verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
-        ordering = ('profession', 'individu__nom')
-        app_label = 'libretto'
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -465,6 +512,14 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         ordering = ('titre', 'genre', 'slug')
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            'enfants', 'elements_de_programme',
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'dossiers', 'filles',
+        )
 
     class MPTTMeta(object):
         parent_attr = 'contenu_dans'
@@ -530,7 +585,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
              self.prefixe_titre_secondaire, self.titre_secondaire)
         return str_list(l, infix='')
 
-    @model_method_cached(24 * 60 * 60, b'oeuvres')
+    @model_method_cached()
     def html(self, tags=True, auteurs=True, titre=True,
              descr=True, genre_caps=False, ancestors=True,
              ancestors_links=False, links=True):

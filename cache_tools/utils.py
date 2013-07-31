@@ -9,7 +9,8 @@ from django.utils.translation import get_language, ugettext, pgettext
 
 
 __all__ = (
-    'sanitize_memcached_key', 'get_group_cache_key', 'invalidate_group',
+    'sanitize_memcached_key', 'get_cache_key',
+    'get_object_cache_key', 'invalidate_object',
     'cached_ugettext', 'cached_pgettext', 'cached_ugettext_lazy',
     'cached_pgettext_lazy',
 )
@@ -35,22 +36,24 @@ def sanitize_memcached_key(key, max_length=200):
     return key
 
 
-def get_cache_key(id_attr, method, self, args, kwargs):
+def get_cache_key(method, obj, args, kwargs, id_attr=b'pk'):
     cache_key = b'%s:%s.%s.%s:%s(%s,%s)' % (
-        get_language(), self.__module__, self.__class__.__name__,
-        method.__name__, getattr(self, id_attr), args, kwargs)
+        get_language(), obj.__module__, obj.__class__.__name__,
+        method.__name__, getattr(obj, id_attr), args, kwargs)
     return sanitize_memcached_key(cache_key)
 
 
-def get_group_cache_key(group):
-    return b'group:' + group
+def get_object_cache_key(self, id_attr=b'pk'):
+    cache_key = b'%s.%s.%s' % (
+        self.__module__, self.__class__.__name__, getattr(self, id_attr))
+    return sanitize_memcached_key(cache_key)
 
 
-def invalidate_group(group):
-    group_cache_key = get_group_cache_key(group)
-    group_keys = cache.get(group_cache_key, [])
-    cache.delete_many(group_keys)
-    cache.delete(group_cache_key)
+def invalidate_object(obj, id_attr=b'pk'):
+    object_cache_key = get_object_cache_key(obj, id_attr)
+    object_keys = cache.get(object_cache_key, [])
+    cache.delete_many(object_keys)
+    cache.delete(object_cache_key)
 
 
 UGETTEXT_CACHE = {}

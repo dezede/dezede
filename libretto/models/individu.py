@@ -11,7 +11,7 @@ from tinymce.models import HTMLField
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from ..utils import abbreviate
-from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+from .common import CommonModel, AutoriteModel, \
     calc_pluriel, UniqueSlugModel, TypeDeParente
 from .evenement import Evenement
 from .functions import str_list, str_list_w_last, href, sc
@@ -32,6 +32,12 @@ class Prenom(CommonModel):
         verbose_name_plural = ungettext_lazy('prénom', 'prénoms', 2)
         ordering = ('classement', 'prenom')
         app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            'individus',
+        )
 
     def has_individu(self):
         return self.individus.exists()
@@ -57,6 +63,13 @@ class TypeDeParenteDIndividus(TypeDeParente):
         ordering = ('classement',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'parentes',
+        )
+
 
 @python_2_unicode_compatible
 class ParenteDIndividus(CommonModel):
@@ -76,6 +89,13 @@ class ParenteDIndividus(CommonModel):
                                              'parentés d’individus', 2)
         ordering = ('type', 'parent', 'enfant')
         app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'parent', 'enfant'
+        )
 
     def clean(self):
         try:
@@ -159,6 +179,14 @@ class Individu(AutoriteModel, UniqueSlugModel):
         ordering = ('nom',)
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            'auteurs', 'elements_de_distribution',
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'enfants', 'engagements', 'dossiers',
+        )
 
     def get_slug(self):
         return self.nom or smart_text(self)
@@ -266,7 +294,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     calc_professions.admin_order_field = 'professions__nom'
     calc_professions.allow_tags = True
 
-    @model_method_cached(24 * 60 * 60, b'individus')
+    @model_method_cached()
     def html(self, tags=True, lon=False, prenoms_fav=True,
              show_prenoms=True, designation=None, abbr=True):
         def add_particule(nom, lon, naissance=False):

@@ -56,6 +56,13 @@ class NatureDeLieu(CommonModel, SlugModel):
         ordering = ('slug',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'lieux',
+        )
+
     def pluriel(self):
         return calc_pluriel(self)
 
@@ -101,6 +108,13 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         app_label = 'libretto'
         unique_together = ('nom', 'parent',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'get_real_instance', 'enfants', 'saisons', 'ancrages', 'dossiers'
+        )
 
     @permalink
     def get_absolute_url(self):
@@ -225,6 +239,23 @@ class AncrageSpatioTemporel(CommonModel):
         help_text=_('Ne remplir que si le lieu (ou institution) est '
                     'imprécis(e).'))
 
+    class Meta(object):
+        verbose_name = ungettext_lazy('ancrage spatio-temporel',
+                                      'ancrages spatio-temporels', 1)
+        verbose_name_plural = ungettext_lazy('ancrage spatio-temporel',
+                                             'ancrages spatio-temporels', 2)
+        ordering = ('date', 'heure', 'lieu__parent', 'lieu', 'date_approx',
+                    'heure_approx', 'lieu_approx')
+        app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved():
+        return (
+            # Relations non utilisés pour des méthodes mises en cache :
+            # 'individus_nes', 'individus_decedes', 'individus',
+            # 'evenements_debuts', 'evenements_fins', 'oeuvres_creees',
+        )
+
     def year(self):
         if self.date:
             return self.date.year
@@ -301,15 +332,6 @@ class AncrageSpatioTemporel(CommonModel):
                                               or self.lieu_approx):
             raise ValidationError(_('Il faut au moins une date ou un lieu '
                                     '(ils peuvent n’être qu’approximatifs)'))
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('ancrage spatio-temporel',
-                                      'ancrages spatio-temporels', 1)
-        verbose_name_plural = ungettext_lazy('ancrage spatio-temporel',
-                                             'ancrages spatio-temporels', 2)
-        ordering = ('date', 'heure', 'lieu__parent', 'lieu', 'date_approx',
-                    'heure_approx', 'lieu_approx')
-        app_label = 'libretto'
 
     def __str__(self):
         return strip_tags(self.html(tags=False, short=True))
