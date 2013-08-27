@@ -288,14 +288,14 @@ Configuration de nginx
       stdout_logfile=[[/chemin/du/projet]]/supervisor_django.log
       stdout_logfile_maxbytes=10MB
 
-      [program:dezede]
+      [program:dezede_celery]
       directory=[[/chemin/du/projet]]
       command=python manage.py celery worker --loglevel=info
       user=[[utilisateur]]
       autostart=true
       autorestart=true
       redirect_stderror=true
-      stdout_logfile=[[/chemin/du/projet]]/supervisor_django.log
+      stdout_logfile=[[/chemin/du/projet]]/supervisor_celery.log
       stdout_logfile_maxbytes=10MB
 
 
