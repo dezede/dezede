@@ -234,19 +234,21 @@ class SeleniumTest(LiveServerTestCase):
 
             # Ajoute un élément de programme.
 
-            def open_new_element_de_programme(id, scroll=True):
+            def open_new_element_de_programme(id, open=False, scroll=True):
                 self.get_link('Ajouter un objet élément de programme '
                               'supplémentaire').click()
                 programme = self.get_by_id('programme%s' % id)
-                handler = programme.find_element_by_class_name(
-                    'grp-collapse-handler')
-                if scroll:
-                    self.scroll_and_click(handler)
-                else:
-                    handler.click()
+                if open:
+                    handler = programme.find_element_by_class_name(
+                        'grp-collapse-handler')
+                    if scroll:
+                        self.scroll_and_click(handler)
+                    else:
+                        handler.click()
                 return programme
 
-            programme0 = open_new_element_de_programme(0, scroll=False)
+            programme0 = open_new_element_de_programme(0, open=True,
+                                                       scroll=False)
             programme0.find_element_by_css_selector(
                 '.grp-cell.autre input').send_keys('Présentation du programme')
 
