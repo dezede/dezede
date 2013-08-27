@@ -14,9 +14,6 @@ install:
 before_script:
   - psql -c 'DROP DATABASE IF EXISTS dezede;' -U postgres
   - psql -c 'CREATE DATABASE dezede;' -U postgres
-  # Corrige https://github.com/travis-ci/travis-cookbooks/issues/155
-  - "sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm"
-  - python manage.py celery worker &
 script:
   - coverage run --source=dezede,libretto,accounts,dossiers,typography,cache_tools manage.py test
 after_success:
