@@ -9,7 +9,7 @@ from haystack import connections, connection_router
 from haystack.exceptions import NotHandled
 from haystack.utils import get_identifier
 from polymorphic import PolymorphicModel
-from cache_tools.tasks import get_stale_objects
+from cache_tools.tasks import get_stale_objects, auto_invalidate
 
 
 __all__ = ('CeleryHaystackSignalHandler',)
@@ -33,7 +33,7 @@ def is_polymorphic_child_model(model):
     return get_polymorphic_parent_model(model) != model
 
 
-def enqueue(action, instance, model):
+def process_action(action, instance, model):
     # Taken from celery_haystack.signals.CelerySignalProcessor.enqueue
     using_backends = connection_router.for_write(instance=instance)
 
@@ -54,6 +54,9 @@ def enqueue(action, instance, model):
 
 @task
 def enqueue_with_stale_objects(action, instance):
+    # Invalidates cache before updating the search engine.
+    auto_invalidate(instance)
+
     for obj in get_stale_objects(instance, [], all_relations=True):
         model = obj.__class__
 
@@ -61,12 +64,12 @@ def enqueue_with_stale_objects(action, instance):
             model = get_polymorphic_parent_model(model)
             obj = model._default_manager.non_polymorphic().get(pk=obj.pk)
 
-        enqueue(action, obj, model)
+        process_action(action, obj, model)
 
 
 class CeleryHaystackSignalHandler(Original):
     def get_instance(self, model_class, pk, **kwargs):
-        # Taken from the overriden method
+        # Taken from the overridden method
         logger = self.get_logger(**kwargs)
         instance = None
         manager = model_class._default_manager

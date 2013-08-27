@@ -551,6 +551,3 @@ def handle_whitespaces(sender, **kwargs):
     # Then we call the specific whitespace handler of the model (if it exists).
     if hasattr(obj, 'handle_whitespaces'):
         obj.handle_whitespaces()
-
-
-pre_revision_commit.connect(auto_invalidate_signal_receiver)
