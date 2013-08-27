@@ -235,7 +235,7 @@ class SeleniumTest(LiveServerTestCase):
             # Ajoute un élément de programme.
 
             def open_new_element_de_programme(id, scroll=True):
-                self.get_link('Ajouter un objet Élément De Programme '
+                self.get_link('Ajouter un objet élément de programme '
                               'supplémentaire').click()
                 programme = self.get_by_id('programme%s' % id)
                 handler = programme.find_element_by_class_name(
@@ -260,7 +260,7 @@ class SeleniumTest(LiveServerTestCase):
                 self.get_by_name('prefixe_titre').send_keys('la')
                 self.get_by_name('titre').send_keys('senna festeggiante')
                 self.get_link(
-                    'Ajouter un objet Auteur supplémentaire').click()
+                    'Ajouter un objet auteur supplémentaire').click()
                 auteur = self.get_by_id(
                     'libretto-auteur-content_type-object_id0')
 
@@ -294,7 +294,7 @@ class SeleniumTest(LiveServerTestCase):
             with self.new_popup(add='œuvre'):
                 self.get_by_name('prefixe_titre').send_keys('la')
                 self.get_by_name('titre').send_keys('Gloria e Himeneo')
-                self.get_link('Ajouter un objet Auteur supplémentaire').click()
+                self.get_link('Ajouter un objet auteur supplémentaire').click()
                 auteur = self.get_by_id(
                     'libretto-auteur-content_type-object_id0')
                 self.autocomplete(
