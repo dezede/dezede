@@ -21,8 +21,8 @@ from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
 from reversion import pre_revision_commit
 from tinymce.models import HTMLField
-from cache_tools import (
-    auto_invalidate_signal_receiver, cached_ugettext_lazy as _)
+from cache_tools import cached_ugettext_lazy as _
+from cache_tools.signals import auto_invalidate_signal_receiver
 from .functions import href, ex, hlp
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
@@ -330,8 +330,8 @@ class TypeDeCaracteristique(PolymorphicModel, CommonModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return ('caracteristiques',)
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('get_real_instance', 'caracteristiques',)
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -383,7 +383,7 @@ class Caracteristique(PolymorphicModel, CommonModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
+    def invalidated_relations_when_saved(all_relations=False):
         return ('get_real_instance',)
 
     def html(self, tags=True):
@@ -436,7 +436,7 @@ class TypeDeParente(PolymorphicModel, CommonModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
+    def invalidated_relations_when_saved(all_relations=False):
         return ('get_real_instance',)
 
     def pluriel(self):

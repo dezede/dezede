@@ -93,10 +93,8 @@ class ElementDeDistribution(CommonModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            'content_object', 'elements_de_programme'
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('content_object', 'elements_de_programme')
 
     def __str__(self):
         return self.html(tags=False)
@@ -152,6 +150,10 @@ class TypeDeCaracteristiqueDeProgramme(TypeDeCaracteristique):
         ordering = ('classement',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('typedecaracteristique_ptr',)
+
 
 class CaracteristiqueDeProgramme(Caracteristique):
     class Meta(object):
@@ -165,10 +167,8 @@ class CaracteristiqueDeProgramme(Caracteristique):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            'elements_de_programme',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('caracteristique_ptr', 'elements_de_programme',)
 
 
 @python_2_unicode_compatible
@@ -209,11 +209,10 @@ class ElementDeProgramme(AutoriteModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'evenement',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('evenement',)
+        return ()
 
     def calc_caracteristiques(self):
         if self.pk is None:
@@ -318,11 +317,10 @@ class Evenement(AutoriteModel):
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'dossiers',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('dossiers',)
+        return ()
 
     @permalink
     def get_absolute_url(self):

@@ -16,4 +16,4 @@ def auto_invalidate_signal_receiver(sender, **kwargs):
 
     instances = kwargs['instances']
     for instance in instances:
-        auto_invalidate.delay(instance, [])
+        auto_invalidate.delay(instance)

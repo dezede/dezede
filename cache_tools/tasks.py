@@ -7,32 +7,42 @@ from djcelery_transactions import task
 from .utils import get_object_cache_key, invalidate_object
 
 
-__all__ = ('auto_invalidate',)
+__all__ = ('get_stale_objects', 'auto_invalidate',)
 
 
-@task
-def auto_invalidate(instance, explored_instances=()):
+def get_stale_objects(instance, explored_instances, all_relations=False):
     if instance is None:
-        return
+        raise StopIteration
+
     cache_key = get_object_cache_key(instance)
-
     if cache_key in explored_instances:
-        return
+        raise StopIteration
 
-    invalidate_object(instance)
+    yield instance
+
     explored_instances.append(cache_key)
 
     relations = getattr(instance, 'invalidated_relations_when_saved',
-                        lambda: ())()
+                        lambda all_relations: ())(all_relations=all_relations)
     for relation in relations:
         try:
             related = getattr(instance, relation)
+            if callable(related):
+                related = related()
         except ObjectDoesNotExist:
             continue
-        if callable(related):
-            related = related()
         if isinstance(related, Manager):
             for obj in related.all():
-                auto_invalidate(obj, explored_instances)
+                for sub_obj in get_stale_objects(
+                        obj, explored_instances, all_relations=all_relations):
+                    yield sub_obj
         else:
-            auto_invalidate(related, explored_instances)
+            for sub_related in get_stale_objects(
+                    related, explored_instances, all_relations=all_relations):
+                yield sub_related
+
+
+@task
+def auto_invalidate(instance):
+    for stale_object in get_stale_objects(instance, []):
+        invalidate_object(stale_object)

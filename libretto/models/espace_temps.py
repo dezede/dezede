@@ -57,11 +57,10 @@ class NatureDeLieu(CommonModel, SlugModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'lieux',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('lieux',)
+        return ()
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -110,11 +109,12 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'get_real_instance', 'enfants', 'saisons', 'ancrages', 'dossiers'
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        relations = ('get_real_instance',)
+        if all_relations:
+            relations += ('enfants', 'saisons', 'ancrages',
+                    'dossiers',)
+        return relations
 
     @permalink
     def get_absolute_url(self):
@@ -188,12 +188,20 @@ class LieuDivers(Lieu):
         verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('lieu_ptr',)
+
 
 class Institution(Lieu):
     class Meta(object):
         verbose_name = ungettext_lazy('institution', 'institutions', 1)
         verbose_name_plural = ungettext_lazy('institution', 'institutions', 2)
         app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('lieu_ptr',)
 
 
 @python_2_unicode_compatible
@@ -249,12 +257,11 @@ class AncrageSpatioTemporel(CommonModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'individus_nes', 'individus_decedes', 'individus',
-            # 'evenements_debuts', 'evenements_fins', 'oeuvres_creees',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('individus_nes', 'individus_decedes', 'individus',
+                    'evenements_debuts', 'evenements_fins', 'oeuvres_creees',)
+        return ()
 
     def year(self):
         if self.date:

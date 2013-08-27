@@ -175,10 +175,10 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'accounts',
     'dezede',
-    'cache_tools',
     'haystack',
     'celery_haystack',
     'djcelery',
+    'cache_tools',
     'libretto',
     'dossiers',
     'typography',
@@ -277,7 +277,8 @@ HAYSTACK_CONNECTIONS = {
         'INCLUDE_SPELLING': True,
     },
 }
-HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
+HAYSTACK_SIGNAL_PROCESSOR = 'libretto.signals.HaystackAutoInvalidator'
+CELERY_HAYSTACK_DEFAULT_TASK = 'libretto.tasks.CeleryHaystackSignalHandler'
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
 

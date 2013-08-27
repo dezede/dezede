@@ -34,11 +34,10 @@ class TypeDeSource(CommonModel, SlugModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'sources',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('sources',)
+        return ()
 
     def pluriel(self):
         return calc_pluriel(self)

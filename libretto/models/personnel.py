@@ -49,12 +49,11 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            'auteurs', 'elements_de_distribution',
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'enfants', 'individus', 'parties', 'engagements',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        relations = ('auteurs', 'elements_de_distribution',)
+        if all_relations:
+            relations += ('enfants', 'individus', 'parties', 'engagements',)
+        return relations
 
     @permalink
     def get_absolute_url(self):
@@ -134,11 +133,10 @@ class Devise(CommonModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'engagements',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('engagements',)
+        return ()
 
     def __str__(self):
         if self.nom:
@@ -162,11 +160,10 @@ class Engagement(CommonModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'personnels',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('personnels',)
+        return ()
 
     def __str__(self):
         return self.profession.nom
@@ -185,11 +182,10 @@ class TypeDePersonnel(CommonModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'personnels',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('personnels',)
+        return ()
 
     def __str__(self):
         return self.nom
@@ -210,11 +206,10 @@ class Personnel(CommonModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'elements_de_programme',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('elements_de_programme',)
+        return ()
 
     def __str__(self):
         return smart_text(self.type) + smart_text(self.saison)

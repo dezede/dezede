@@ -34,10 +34,8 @@ class Prenom(CommonModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            'individus',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('individus',)
 
     def has_individu(self):
         return self.individus.exists()
@@ -64,11 +62,11 @@ class TypeDeParenteDIndividus(TypeDeParente):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'parentes',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        relations = ('typedeparente_ptr',)
+        if all_relations:
+            relations += ('parentes',)
+        return relations
 
 
 @python_2_unicode_compatible
@@ -91,11 +89,10 @@ class ParenteDIndividus(CommonModel):
         app_label = 'libretto'
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'parent', 'enfant'
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('parent', 'enfant')
+        return ()
 
     def clean(self):
         try:
@@ -181,12 +178,11 @@ class Individu(AutoriteModel, UniqueSlugModel):
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod
-    def invalidated_relations_when_saved():
-        return (
-            'auteurs', 'elements_de_distribution',
-            # Relations non utilisés pour des méthodes mises en cache :
-            # 'enfants', 'engagements', 'dossiers',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        relations = ('auteurs', 'elements_de_distribution',)
+        if all_relations:
+            relations += ('enfants', 'engagements', 'dossiers',)
+        return relations
 
     def get_slug(self):
         return self.nom or smart_text(self)
