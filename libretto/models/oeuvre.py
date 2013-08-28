@@ -121,6 +121,7 @@ class CaracteristiqueDOeuvre(Caracteristique):
     def invalidated_relations_when_saved(all_relations=False):
         return ('caracteristique_ptr', 'oeuvres',)
 
+
 class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet,
                      CommonTreeQuerySet):
     pass
