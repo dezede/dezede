@@ -14,6 +14,9 @@ except ImportError:
     from psycopg2cffi import compat
     compat.register()
 
+import djcelery
+djcelery.setup_loader()
+
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -170,8 +173,12 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'accounts',
     'dezede',
     'haystack',
+    'celery_haystack',
+    'djcelery',
+    'cache_tools',
     'libretto',
     'dossiers',
     'typography',
@@ -187,7 +194,6 @@ INSTALLED_APPS = (
     'grappelli.dashboard',
     'grappelli',
     'registration',
-    'accounts',
     'rest_framework',
     'crispy_forms',
     'ajax_select',
@@ -202,6 +208,7 @@ INSTALLED_APPS = (
     'django_nose',
     'debug_toolbar',
     'template_timings_panel',
+    'haystack_panel',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -264,12 +271,14 @@ FILEBROWSER_MAX_UPLOAD_SIZE = 50 * (1024 ** 2)  # octets
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://127.0.0.1:15031/solr',
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'dezede',
         'INCLUDE_SPELLING': True,
-        'BATCH_SIZE': 100,
     },
 }
+HAYSTACK_SIGNAL_PROCESSOR = 'libretto.signals.HaystackAutoInvalidator'
+CELERY_HAYSTACK_DEFAULT_TASK = 'libretto.tasks.CeleryHaystackSignalHandler'
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
 
@@ -302,6 +311,7 @@ DEBUG_TOOLBAR_PANELS = (
     # 'debug_toolbar.panels.logger.LoggingPanel',
     # 'debug_toolbar.panels.profiling.ProfilingDebugPanel',
     'template_timings_panel.panels.TemplateTimings.TemplateTimings',
+    'haystack_panel.panel.HaystackDebugPanel',
 )
 
 if DEBUG:
@@ -355,6 +365,8 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 10,
 }
 
+CELERY_CACHE_BACKEND = 'memcached://' + CACHES['default']['LOCATION']
+CELERY_RESULT_BACKEND = 'cache'
 
 LOGGING = {
     'version': 1,

@@ -25,8 +25,6 @@ Procédure d'installation
 
 #. Vérifier la satisfaction des `dépendances`_.
 
-#. `Installation du moteur de recherche`_.
-
 #. Choisir un mode de lancement :
     - `Lancement du serveur de développement`_, ou
     - `Déploiement`_.
@@ -62,6 +60,8 @@ python-dev      2.7.3
 libxml2
 libxml2-dev
 libxslt1-dev
+elasticsearch   0.90.2
+rabbitmq-server 3.0.2
 =============== =======
 
 
@@ -87,85 +87,6 @@ Voir le fichier `requirements.txt`.
 
 
 
-Installation du moteur de recherche
-===================================
-
-#. Téléchargement d'Apache Solr :
-
-    ``./manage.py install_solr``
-
-
-#. Création du schéma pour Solr :
-
-    ``./manage.py build_solr_schema > apache-solr-[version]/example/solr/conf/schema.xml``
-
-
-#. Dans ce schéma, remplacer le fieldtype "text" par tout ceci :
-
-    ::
-
-      <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
-        <analyzer>
-          <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-          <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt" />
-          <filter class="solr.PatternReplaceFilterFactory" pattern="^(\p{Punct}*)(.*?)(\p{Punct}*)$" replacement="$2"/>
-          <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_fr.txt"/>
-          <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0"/>
-          <filter class="solr.LowerCaseFilterFactory"/>
-          <filter class="solr.SnowballPorterFilterFactory" language="French"/>
-        </analyzer>
-      </fieldType>
-
-      <fieldType name="textSpell" class="solr.TextField" positionIncrementGap="100">
-        <analyzer>
-          <tokenizer class="solr.WhitespaceTokenizerFactory"/>
-          <filter class="solr.PatternReplaceFilterFactory" pattern="^(\p{Punct}*)(.*?)(\p{Punct}*)$" replacement="$2"/>
-          <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_fr.txt"/>
-          <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
-        </analyzer>
-      </fieldType>
-
-
-#. Remplacer ``<field name="suggestions" type="text"`` par
-   ``<field name="suggestions" type="textSpell"``
-
-
-#. Changer le port dans le fichier `apache-sorl-[version]/example/etc/jetty.xml`
-
-
-#. Ajouter ceci dans le tag *config* du fichier
-   `apache-sorl-[version]/example/solr/conf/solrconfig.xml` :
-
-    ::
-
-      <requestHandler name="/mlt" class="solr.MoreLikeThisHandler" />
-      <searchComponent name="spellcheck" class="solr.SpellCheckComponent">
-        <str name="queryAnalyzerFieldType">textSpell</str>
-        <lst name="spellchecker">
-          <str name="name">default</str>
-          <str name="field">suggestions</str>
-          <str name="spellcheckIndexDir">./spellchecker1</str>
-          <str name="buildOnCommit">true</str>
-        </lst>
-      </searchComponent>
-
-
-#. Ajouter ceci au tag
-   ``<requestHandler name="/select" class="solr.SearchHandler">`` :
-
-    ::
-
-      <arr name="last-components">
-        <str>spellcheck</str>
-      </arr>
-
-
-#. Pour lancer Solr, lancer :
-
-    ``python dezede/solr.py``
-
-
-
 Configuration de PostgreSQL
 ===========================
 
@@ -188,11 +109,14 @@ Configuration de PostgreSQL
 #. Paramétrer l'accès de Django à la base de données :
 
     - Éditer le fichier de réglages :
+
         ``nano settings.py``
+
     - Les réglages à modifier sont dans ``DATABASES``.
 
 
 #. Création des tables de la base de données :
+
     ``./manage.py syncdb`` puis ``./manage.py migrate``
 
 
@@ -201,10 +125,13 @@ Lancement du serveur de développement
 =====================================
 
 #. Passer en mode ``DEBUG`` :
+
     - Éditer le fichier de réglages :
+
         ``nano settings.py``
 
     - Remplacer la ligne ``DEBUG = False`` par :
+
         ::
 
           DEBUG = True
@@ -214,22 +141,27 @@ Lancement du serveur de développement
 
 
 #. Création des révisions initiales :
+
     ``./manage.py createinitialrevisions``
 
 
 #. Collecte des fichiers statiques :
+
     ``./manage.py collectstatic -l``
 
 
 #. Préparation du dossier d'upload :
+
     ``mkdir -p media/uploads/``
 
 
 #. Indexation des données :
+
     ``./manage.py rebuild_index``
 
 
 #. Lancement du serveur de développement :
+
     ``./manage.py runserver``
 
 
@@ -241,21 +173,26 @@ Déploiement
 
 
 #. Création des révisions initiales :
+
     ``./manage.py createinitialrevisions``
 
 #. Collecte des fichiers statiques :
+
     ``sudo ./manage.py collectstatic``
 
 
 #. Préparation du dossier d'upload :
+
     ``sudo mkdir -p media/uploads/``
 
 
 #. Compiler les fichiers de langues :
+
     ``./manage.py compilemessages``
 
 
 #. Indexation des données :
+
     ``./manage.py rebuild_index``
 
 
@@ -343,14 +280,27 @@ Configuration de nginx
 
       [program:dezede]
       directory=[[/chemin/du/projet]]
-      command=gunicorn_django
-      user=www-data
+      command=gunicorn_django -w3 --timeout=300
+      user=[[utilisateur]]
       autostart=true
       autorestart=true
       redirect_stderror=true
+      stdout_logfile=[[/chemin/du/projet]]/supervisor_django.log
+      stdout_logfile_maxbytes=10MB
+
+      [program:dezede_celery]
+      directory=[[/chemin/du/projet]]
+      command=python manage.py celery worker --loglevel=info
+      user=[[utilisateur]]
+      autostart=true
+      autorestart=true
+      redirect_stderror=true
+      stdout_logfile=[[/chemin/du/projet]]/supervisor_celery.log
+      stdout_logfile_maxbytes=10MB
 
 
 #. Relancer le serveur avec :
+
     | ``sudo service supervisor restart``
     | ``sudo service nginx restart``
 
@@ -362,6 +312,7 @@ Localisation
 #. Ajouter (éventuellement) la langue désirée à LANGUAGES du fichier settings.py
 
 #. Metre à jour à partir de Transifex :
+
     ``tx pull -a``
 
 #. Compiler les fichiers de langues (en se mettant au préalable dans le

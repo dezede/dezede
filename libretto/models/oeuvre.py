@@ -24,10 +24,11 @@ from polymorphic_tree.models import PolymorphicMPTTModel, \
 from tinymce.models import HTMLField
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
-from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-    calc_pluriel, SlugModel, UniqueSlugModel, CommonQuerySet, CommonManager, \
-    PublishedManager, OrderedDefaultDict, PublishedQuerySet, \
-    CommonTreeManager, CommonTreeQuerySet, TypeDeParente
+from .common import (
+    CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
+    UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
+    OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,
+    CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique)
 from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -66,6 +67,13 @@ class GenreDOeuvre(CommonModel, SlugModel):
         ordering = ('slug',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        relations = ('oeuvres',)
+        if all_relations:
+            relations += ('enfants',)
+        return relations
+
     def html(self, tags=True, caps=False, pluriel=False):
         nom = self.pluriel() if pluriel else self.nom
         if caps:
@@ -80,17 +88,10 @@ class GenreDOeuvre(CommonModel, SlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'nom__icontains', 'nom_pluriel__icontains',
+        return 'nom__icontains', 'nom_pluriel__icontains'
 
 
-@python_2_unicode_compatible
-class TypeDeCaracteristiqueDOeuvre(CommonModel):
-    nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
-                    unique=True, db_index=True)
-    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
-        help_text=PLURAL_MSG)
-    classement = SmallIntegerField(default=1)
-
+class TypeDeCaracteristiqueDOeuvre(TypeDeCaracteristique):
     class Meta(object):
         verbose_name = ungettext_lazy('type de caractéristique d’œuvre',
                                       'types de caracteristique d’œuvre', 1)
@@ -101,41 +102,13 @@ class TypeDeCaracteristiqueDOeuvre(CommonModel):
         ordering = ('classement',)
         app_label = 'libretto'
 
-    def pluriel(self):
-        return calc_pluriel(self)
 
-    def __str__(self):
-        return self.nom
-
-
-class CaracteristiqueDOeuvreQuerySet(CommonQuerySet):
-    def html_list(self, tags=True):
-        return [hlp(valeur, type, tags)
-                for type, valeur in self.values_list('type__nom', 'valeur')]
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('typedecaracteristique_ptr',)
 
 
-class CaracteristiqueDOeuvreManager(CommonManager):
-    def get_query_set(self):
-        return CaracteristiqueDOeuvreQuerySet(self.model, using=self._db)
-
-    def html_list(self, tags=True):
-        return self.get_query_set().html_list(tags=tags)
-
-
-@python_2_unicode_compatible
-class CaracteristiqueDOeuvre(CommonModel):
-    type = ForeignKey(
-        'TypeDeCaracteristiqueDOeuvre', db_index=True, on_delete=PROTECT,
-        related_name='caracteristiques_d_oeuvre', verbose_name=_('type'))
-    # TODO: Changer valeur en nom ?
-    valeur = CharField(_('valeur'), max_length=400,
-                       help_text=ex(_('en trois actes')))
-    classement = SmallIntegerField(_('classement'), default=1, db_index=True,
-        help_text=_('Par exemple, on peut choisir de classer '
-                    'les découpages par nombre d’actes.'))
-
-    objects = CaracteristiqueDOeuvreManager()
-
+class CaracteristiqueDOeuvre(Caracteristique):
     class Meta(object):
         verbose_name = ungettext_lazy('caractéristique d’œuvre',
                                       'caractéristiques d’œuvre', 1)
@@ -144,16 +117,9 @@ class CaracteristiqueDOeuvre(CommonModel):
         ordering = ('type', 'classement', 'valeur')
         app_label = 'libretto'
 
-    def html(self, tags=True):
-        return hlp(self.valeur, self.type, tags)
-    html.allow_tags = True
-
-    def __str__(self):
-        return smart_text(self.type) + ' : ' + strip_tags(self.valeur)
-
     @staticmethod
-    def autocomplete_search_fields():
-        return 'type__nom__icontains', 'valeur__icontains',
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('caracteristique_ptr', 'oeuvres',)
 
 
 class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet,
@@ -201,6 +167,10 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('get_real_instance', 'pupitres',)
+
     class MPTTMeta(object):
         order_insertion_by = ['classement', 'nom']
 
@@ -246,12 +216,20 @@ class Role(Partie):
         verbose_name_plural = ungettext_lazy('rôle', 'rôles', 2)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('partie_ptr',)
+
 
 class Instrument(Partie):
     class Meta(object):
         verbose_name = ungettext_lazy('instrument', 'instruments', 1)
         verbose_name_plural = ungettext_lazy('instrument', 'instruments', 2)
         app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('partie_ptr',)
 
 
 class PupitreQuerySet(CommonQuerySet):
@@ -287,6 +265,10 @@ class Pupitre(CommonModel):
         verbose_name_plural = ungettext_lazy('pupitre', 'pupitres', 2)
         ordering = ('partie',)
         app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('oeuvres', 'elements_de_distribution')
 
     def __str__(self):
         out = ''
@@ -329,6 +311,13 @@ class TypeDeParenteDOeuvres(TypeDeParente):
         ordering = ('classement',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        relations = ('typedeparente_ptr',)
+        if all_relations:
+            relations += ('parentes',)
+        return relations
+
 
 class ParenteDOeuvresManager(CommonManager):
     def meres_en_ordre(self):
@@ -348,6 +337,7 @@ class ParenteDOeuvres(CommonModel):
     fille = ForeignKey(
         'Oeuvre', related_name='parentes_meres', verbose_name=_('œuvre fille'),
         db_index=True)
+
     objects = ParenteDOeuvresManager()
 
     class Meta(object):
@@ -358,6 +348,12 @@ class ParenteDOeuvres(CommonModel):
         ordering = ('type',)
         app_label = 'libretto'
         unique_together = ('type', 'mere', 'fille',)
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('mere', 'fille',)
+        return ()
 
     def __str__(self):
         return '%s %s %s' % (self.fille, self.type.nom, self.mere)
@@ -435,7 +431,20 @@ class Auteur(CommonModel):
     profession = ForeignKey('Profession', related_name='auteurs',
                             verbose_name=_('profession'), db_index=True,
                             on_delete=PROTECT)
+
     objects = AuteurManager()
+
+    class Meta(object):
+        verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
+        verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
+        ordering = ('profession', 'individu__nom')
+        app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return (
+            'content_object',
+        )
 
     def html(self, tags=True):
         return '%s [%s]' % (self.individu.html(tags=tags),
@@ -449,12 +458,6 @@ class Auteur(CommonModel):
         except (Individu.DoesNotExist,
                 Profession.DoesNotExist):
             pass
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
-        verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
-        ordering = ('profession', 'individu__nom')
-        app_label = 'libretto'
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -515,6 +518,13 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         ordering = ('titre', 'genre', 'slug')
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        relations = ('enfants', 'elements_de_programme',)
+        if all_relations:
+            relations += ('dossiers', 'filles',)
+        return relations
 
     class MPTTMeta(object):
         parent_attr = 'contenu_dans'
@@ -580,7 +590,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
              self.prefixe_titre_secondaire, self.titre_secondaire)
         return str_list(l, infix='')
 
-    @model_method_cached(24 * 60 * 60, b'oeuvres')
+    @model_method_cached()
     def html(self, tags=True, auteurs=True, titre=True,
              descr=True, genre_caps=False, ancestors=True,
              ancestors_links=False, links=True):

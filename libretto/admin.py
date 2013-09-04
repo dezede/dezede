@@ -1,16 +1,19 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import copy
 from functools import partial
-from django.contrib.admin import site, TabularInline, StackedInline, ModelAdmin
+from django.contrib.admin import (site, TabularInline, StackedInline,
+                                  ModelAdmin)
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
 from django.contrib.contenttypes.generic import GenericStackedInline
 from django.db.models import Q
 from django.forms.models import modelformset_factory
-from polymorphic.admin import PolymorphicChildModelAdmin, \
-    PolymorphicParentModelAdmin, PolymorphicChildModelFilter
+from polymorphic.admin import (
+    PolymorphicChildModelAdmin, PolymorphicParentModelAdmin,
+    PolymorphicChildModelFilter)
 from reversion import VersionAdmin
 import reversion
 from cache_tools import cached_ugettext_lazy as _
@@ -401,7 +404,7 @@ class AutoriteAdmin(PublishedAdmin):
     additional_fields = ('etat', 'notes', 'owner')
 
 
-class TypeDeParenteAdmin(CommonAdmin):
+class TypeDeParenteCommonAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_relatif',
                     'nom_relatif_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
@@ -416,7 +419,14 @@ class TypeDeParenteAdmin(CommonAdmin):
     )
 
 
-class TypeDeParenteChildAdmin(TypeDeParenteAdmin, PolymorphicChildModelAdmin):
+class TypeDeParenteAdmin(VersionAdmin, TypeDeParenteCommonAdmin,
+                         PolymorphicParentModelAdmin):
+    base_model = TypeDeParente
+    child_models = (TypeDeParenteDOeuvres, TypeDeParenteDIndividus)
+
+
+class TypeDeParenteChildAdmin(TypeDeParenteCommonAdmin,
+                              PolymorphicChildModelAdmin):
     base_model = TypeDeParente
 
 
@@ -426,15 +436,6 @@ class TypeDeParenteDOeuvresAdmin(VersionAdmin, TypeDeParenteChildAdmin):
 
 class TypeDeParenteDIndividusAdmin(VersionAdmin, TypeDeParenteChildAdmin):
     pass
-
-
-class TypeDeParenteParentAdmin(VersionAdmin, TypeDeParenteAdmin,
-                               PolymorphicParentModelAdmin):
-    base_model = TypeDeParente
-    child_models = (
-        (TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin),
-        (TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin),
-    )
 
 
 reversion.register(TypeDeParenteDOeuvres, follow=('typedeparente_ptr',))
@@ -466,7 +467,7 @@ class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
     list_editable = ('nom', 'nom_pluriel', 'referent',)
 
 
-class LieuAdmin(AutoriteAdmin):
+class LieuCommonAdmin(AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom', 'parent__nom',)
@@ -494,7 +495,12 @@ class LieuAdmin(AutoriteAdmin):
     )
 
 
-class LieuChildAdmin(LieuAdmin, PolymorphicChildModelAdmin):
+class LieuAdmin(VersionAdmin, LieuCommonAdmin, PolymorphicParentModelAdmin):
+    base_model = Lieu
+    child_models = (LieuDivers, Institution)
+
+
+class LieuChildAdmin(LieuCommonAdmin, PolymorphicChildModelAdmin):
     base_model = Lieu
 
 
@@ -504,14 +510,6 @@ class LieuDiversAdmin(VersionAdmin, LieuChildAdmin):
 
 class InstitutionAdmin(VersionAdmin, LieuChildAdmin):
     pass
-
-
-class LieuParentAdmin(VersionAdmin, LieuAdmin, PolymorphicParentModelAdmin):
-    base_model = Lieu
-    child_models = (
-        (LieuDivers, LieuDiversAdmin),
-        (Institution, InstitutionAdmin),
-    )
 
 
 reversion.register(LieuDivers, follow=('lieu_ptr',))
@@ -656,18 +654,88 @@ class GenreDOeuvreAdmin(VersionAdmin, CommonAdmin):
     }
 
 
-class TypeDeCaracteristiqueDOeuvreAdmin(VersionAdmin, CommonAdmin):
+class TypeDeCaracteristiqueCommonAdmin(CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
+    list_filter = (PolymorphicChildModelFilter,)
+    search_fields = ('nom', 'nom_pluriel')
 
 
-class CaracteristiqueDOeuvreAdmin(VersionAdmin, CommonAdmin):
+class TypeDeCaracteristiqueAdmin(
+        VersionAdmin, TypeDeCaracteristiqueCommonAdmin,
+        PolymorphicParentModelAdmin):
+    base_model = TypeDeCaracteristique
+    child_models = (TypeDeCaracteristiqueDOeuvre,
+                    TypeDeCaracteristiqueDeProgramme)
+
+
+class TypeDeCaracteristiqueChildAdmin(TypeDeCaracteristiqueCommonAdmin,
+                                      PolymorphicChildModelAdmin):
+    base_model = TypeDeCaracteristique
+
+
+class TypeDeCaracteristiqueDOeuvreAdmin(
+        VersionAdmin, TypeDeCaracteristiqueChildAdmin):
+    pass
+
+
+class TypeDeCaracteristiqueDeProgrammeAdmin(
+        VersionAdmin, TypeDeCaracteristiqueChildAdmin):
+    pass
+
+
+reversion.register(TypeDeCaracteristiqueDOeuvre,
+                   follow=('typedecaracteristique_ptr',))
+reversion.register(TypeDeCaracteristiqueDeProgramme,
+                   follow=('typedecaracteristique_ptr',))
+
+
+class CaracteristiqueCommonAdmin(CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
-    list_editable = ('type', 'valeur', 'classement',)
+    list_editable = ('valeur', 'classement',)
+    list_filter = (PolymorphicChildModelFilter,)
     search_fields = ('type__nom', 'valeur')
 
 
-class PartieAdmin(AutoriteAdmin):
+class CaracteristiqueAdmin(VersionAdmin, CaracteristiqueCommonAdmin,
+                           PolymorphicParentModelAdmin):
+    base_model = Caracteristique
+    child_models = (CaracteristiqueDOeuvre, CaracteristiqueDeProgramme)
+
+
+class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
+                                PolymorphicChildModelAdmin):
+    base_model = Caracteristique
+    type_to = {
+        CaracteristiqueDOeuvre: TypeDeCaracteristiqueDOeuvre,
+        CaracteristiqueDeProgramme: TypeDeCaracteristiqueDeProgramme,
+    }
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        if db_field.name == 'type' and db_field.rel is not None \
+                and db_field.rel.to == TypeDeCaracteristique:
+            db_field = copy.copy(db_field)
+            db_field.rel = copy.copy(db_field.rel)
+            db_field.rel.to = self.type_to[self.model]
+        return super(CaracteristiqueChildAdmin, self) \
+            .formfield_for_dbfield(db_field, **kwargs)
+
+
+class CaracteristiqueDOeuvreAdmin(VersionAdmin, CaracteristiqueChildAdmin):
+    pass
+
+
+class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CaracteristiqueChildAdmin):
+    pass
+
+
+reversion.register(CaracteristiqueDOeuvre,
+                   follow=('caracteristique_ptr',))
+reversion.register(CaracteristiqueDeProgramme,
+                   follow=('caracteristique_ptr',))
+
+
+class PartieCommonAdmin(AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'classement',)
     list_editable = ('nom', 'parent', 'classement',)
     search_fields = ('nom',)
@@ -693,7 +761,13 @@ class PartieAdmin(AutoriteAdmin):
     )
 
 
-class PartieChildAdmin(PartieAdmin, PolymorphicChildModelAdmin):
+class PartieAdmin(VersionAdmin, PartieCommonAdmin,
+                  PolymorphicParentModelAdmin):
+    base_model = Partie
+    child_models = (Role, Instrument)
+
+
+class PartieChildAdmin(PartieCommonAdmin, PolymorphicChildModelAdmin):
     base_model = Partie
 
 
@@ -703,15 +777,6 @@ class RoleAdmin(VersionAdmin, PartieChildAdmin):
 
 class InstrumentAdmin(VersionAdmin, PartieChildAdmin):
     pass
-
-
-class PartieParentAdmin(VersionAdmin, PartieAdmin,
-                        PolymorphicParentModelAdmin):
-    base_model = Partie
-    child_models = (
-        (Role, RoleAdmin),
-        (Instrument, InstrumentAdmin),
-    )
 
 
 reversion.register(Role, follow=('partie_ptr',))
@@ -789,13 +854,7 @@ class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
     }
 
 
-class CaracteristiqueDElementDeProgrammeAdmin(VersionAdmin, CommonAdmin):
-    list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
-    list_editable = ('nom', 'nom_pluriel', 'classement',)
-    search_fields = ('nom', 'nom_pluriel',)
-
-
-class EvenementAdmin(AutoriteAdmin):
+class EvenementAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'link',)
     list_editable = ('relache', 'circonstance',)
@@ -885,26 +944,35 @@ site.register(Document, DocumentAdmin)
 site.register(Illustration, IllustrationAdmin)
 site.register(Etat, EtatAdmin)
 site.register(NatureDeLieu, NatureDeLieuAdmin)
-site.register(Lieu, LieuParentAdmin)
+site.register(Lieu, LieuAdmin)
+site.register(LieuDivers, LieuDiversAdmin)
+site.register(Institution, InstitutionAdmin)
 site.register(Saison, SaisonAdmin)
 site.register(Profession, ProfessionAdmin)
 site.register(AncrageSpatioTemporel, AncrageSpatioTemporelAdmin)
 site.register(Prenom, PrenomAdmin)
-site.register(TypeDeParente, TypeDeParenteParentAdmin)
+site.register(TypeDeParente, TypeDeParenteAdmin)
+site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
+site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
 site.register(Individu, IndividuAdmin)
 site.register(Devise, DeviseAdmin)
 site.register(Engagement, EngagementAdmin)
 site.register(TypeDePersonnel, TypeDePersonnelAdmin)
 site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
+site.register(TypeDeCaracteristique, TypeDeCaracteristiqueAdmin)
 site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
+site.register(TypeDeCaracteristiqueDeProgramme,
+              TypeDeCaracteristiqueDeProgrammeAdmin)
+site.register(Caracteristique, CaracteristiqueAdmin)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
-site.register(Partie, PartieParentAdmin)
+site.register(CaracteristiqueDeProgramme, CaracteristiqueDeProgrammeAdmin)
+site.register(Partie, PartieAdmin)
+site.register(Role, RoleAdmin)
+site.register(Instrument, InstrumentAdmin)
 site.register(Pupitre, PupitreAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(ElementDeDistribution, ElementDeDistributionAdmin)
-site.register(CaracteristiqueDElementDeProgramme,
-              CaracteristiqueDElementDeProgrammeAdmin)
 site.register(Evenement, EvenementAdmin)
 site.register(TypeDeSource, TypeDeSourceAdmin)
 site.register(Source, SourceAdmin)

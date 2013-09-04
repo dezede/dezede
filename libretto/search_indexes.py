@@ -3,7 +3,8 @@
 from __future__ import unicode_literals
 from django.conf import settings
 from django.utils import translation
-from haystack.indexes import SearchIndex, Indexable, CharField, \
+from celery_haystack.indexes import CelerySearchIndex as SearchIndex
+from haystack.indexes import Indexable, CharField, \
     EdgeNgramField, DateField
 from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie, \
     Profession
@@ -11,13 +12,10 @@ from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie, \
 
 class CommonSearchIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
-    suggestions = CharField()
 
     def prepare(self, obj):
         translation.activate(settings.LANGUAGE_CODE)
-        prepared_data = super(CommonSearchIndex, self).prepare(obj)
-        prepared_data['suggestions'] = prepared_data['text']
-        return prepared_data    
+        return super(CommonSearchIndex, self).prepare(obj)
 
 
 class PolymorphicCommonSearchIndex(CommonSearchIndex):

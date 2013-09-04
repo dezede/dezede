@@ -29,9 +29,9 @@ class CommonTestCase(TestCase):
         self.assertTrue(is_logged)
 
     def _pre_setup(self):
+        johnny.cache.disable()
         super(CommonTestCase, self)._pre_setup()
         self.log_as_superuser()
-        johnny.cache.disable()
         if self.model is not None:
             self.model_name = self.model.__name__.lower()
 

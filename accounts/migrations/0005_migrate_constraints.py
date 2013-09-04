@@ -15,7 +15,7 @@ def migrate_fk(table, field='owner_id', to_table='accounts_hierarchicuser',
 
 class Migration(SchemaMigration):
     depends_on = (
-        ('libretto', '0031_migrate_lieux_et_institutions'),
+        ('libretto', '0050_migrate_content_types'),
         ('dossiers', '0004_auto__chg_field_dossierdevenements_etat'),
     )
 
@@ -30,8 +30,7 @@ class Migration(SchemaMigration):
 
         migrate_fk('libretto_ancragespatiotemporel')
         migrate_fk('libretto_auteur')
-        migrate_fk('libretto_caracteristiquedelementdeprogramme')
-        migrate_fk('libretto_caracteristiquedoeuvre')
+        migrate_fk('libretto_caracteristique')
         migrate_fk('libretto_devise')
         migrate_fk('libretto_document')
         migrate_fk('libretto_elementdedistribution')
@@ -54,7 +53,7 @@ class Migration(SchemaMigration):
         migrate_fk('libretto_pupitre')
         migrate_fk('libretto_saison')
         migrate_fk('libretto_source')
-        migrate_fk('libretto_typedecaracteristiquedoeuvre')
+        migrate_fk('libretto_typedecaracteristique')
         migrate_fk('libretto_typedeparente')
         migrate_fk('libretto_typedepersonnel')
         migrate_fk('libretto_typedesource')

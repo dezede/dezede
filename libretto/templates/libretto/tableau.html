@@ -3,7 +3,7 @@
 {% load url from future %}
 
 {% block title %}
-  {{ object_list.0.meta.verbose_name_plural|capfirst }}
+  {{ object_list.model.meta.verbose_name_plural|capfirst }}
 {% endblock %}
 
 {% block body %}
@@ -14,7 +14,7 @@
   {% endaddtoblock %}
 
   <div class="page-header">
-    <h1>{{ object_list.0.meta.verbose_name_plural|capfirst }}</h1>
+    <h1>{{ object_list.model.meta.verbose_name_plural|capfirst }}</h1>
   </div>
   {% render_table table %}
 

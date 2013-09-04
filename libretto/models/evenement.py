@@ -9,20 +9,21 @@ from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
     OneToOneField, BooleanField, PositiveSmallIntegerField, permalink, Q, \
-    PositiveIntegerField, get_model, SmallIntegerField, PROTECT, Count
+    PositiveIntegerField, get_model, PROTECT, Count
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import ungettext_lazy
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
-from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-    calc_pluriel, CommonQuerySet, CommonManager, OrderedDefaultDict, \
-    PublishedManager, PublishedQuerySet
+from .common import (
+    CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
+    OrderedDefaultDict, PublishedManager, PublishedQuerySet,
+    TypeDeCaracteristique, Caracteristique)
 from .functions import capfirst, str_list, str_list_w_last, href, hlp, \
     microdata
 
 
-__all__ = (b'ElementDeDistribution', b'CaracteristiqueDElementDeProgramme',
+__all__ = (b'ElementDeDistribution', b'CaracteristiqueDeProgramme',
            b'ElementDeProgramme', b'Evenement')
 
 
@@ -91,6 +92,10 @@ class ElementDeDistribution(CommonModel):
         ordering = ('pupitre',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('content_object', 'elements_de_programme')
+
     def __str__(self):
         return self.html(tags=False)
 
@@ -134,38 +139,36 @@ class ElementDeDistribution(CommonModel):
         )
 
 
-@python_2_unicode_compatible
-class CaracteristiqueDElementDeProgramme(CommonModel):
-    nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG, unique=True,
-                    db_index=True)
-    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=110, blank=True,
-                            help_text=PLURAL_MSG)
-    classement = SmallIntegerField(default=1, db_index=True)
-
-    def pluriel(self):
-        return calc_pluriel(self)
-
+class TypeDeCaracteristiqueDeProgramme(TypeDeCaracteristique):
     class Meta(object):
         verbose_name = ungettext_lazy(
-            'caractéristique d’élément de programme',
-            'caractéristiques d’élément de programme',
-            1)
+            "type de caractéristique de programme",
+            "types de caractéristique de programme", 1)
         verbose_name_plural = ungettext_lazy(
-            'caractéristique d’élément de programme',
-            'caractéristiques d’élément de programme',
-            2)
-        ordering = ('nom',)
+            "type de caractéristique de programme",
+            "types de caractéristique de programme", 2)
+        ordering = ('classement',)
         app_label = 'libretto'
 
-    def __str__(self):
-        return self.nom
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('typedecaracteristique_ptr',)
+
+
+class CaracteristiqueDeProgramme(Caracteristique):
+    class Meta(object):
+        verbose_name = ungettext_lazy(
+            'caractéristique de programme',
+            'caractéristiques de programme', 1)
+        verbose_name_plural = ungettext_lazy(
+            'caractéristique de programme',
+            'caractéristiques de programme', 2)
+        ordering = ('type', 'classement', 'valeur')
+        app_label = 'libretto'
 
     @staticmethod
-    def autocomplete_search_fields():
-        return (
-            'nom__icontains',
-            'nom_pluriel__icontains',
-        )
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('caracteristique_ptr', 'elements_de_programme',)
 
 
 @python_2_unicode_compatible
@@ -177,7 +180,7 @@ class ElementDeProgramme(AutoriteModel):
                         db_index=True, on_delete=PROTECT)
     autre = CharField(max_length=500, blank=True, db_index=True)
     caracteristiques = ManyToManyField(
-        CaracteristiqueDElementDeProgramme,
+        CaracteristiqueDeProgramme,
         related_name='elements_de_programme', blank=True, null=True,
         verbose_name=_('caractéristiques'))
     NUMEROTATIONS = (
@@ -205,6 +208,12 @@ class ElementDeProgramme(AutoriteModel):
         ordering = ('position', 'oeuvre')
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('evenement',)
+        return ()
+
     def calc_caracteristiques(self):
         if self.pk is None:
             return ''
@@ -213,7 +222,7 @@ class ElementDeProgramme(AutoriteModel):
     calc_caracteristiques.short_description = _('caractéristiques')
 
     @property
-    @model_method_cached(24 * 60 * 60, b'programmes')
+    @model_method_cached()
     def numero(self):
         numerotations_exclues = ('U', 'E',)
         if self.numerotation in numerotations_exclues:
@@ -221,7 +230,7 @@ class ElementDeProgramme(AutoriteModel):
         return self.evenement.programme.exclude(Q(position__gt=self.position)
                            | Q(numerotation__in=numerotations_exclues)).count()
 
-    @model_method_cached(24 * 60 * 60, b'programmes')
+    @model_method_cached()
     def html(self, tags=True):
         has_pk = self.pk is not None
 
@@ -306,6 +315,12 @@ class Evenement(AutoriteModel):
         ordering = ('ancrage_debut',)
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('dossiers',)
+        return ()
 
     @permalink
     def get_absolute_url(self):

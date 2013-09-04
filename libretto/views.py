@@ -95,7 +95,10 @@ class EvenementListView(AjaxListView, PublishedListView):
             if search_query:
                 sqs = SearchQuerySet().models(self.model)
                 sqs = sqs.auto_query(search_query)
-                pk_list = sqs.values_list('pk', flat=True)
+                # Le slicing est là pour compenser un bug de haystack, qui va
+                # chercher les valeurs par paquets de 10, faisant parfois ainsi
+                # des centaines de requêtes à elasticsearch.
+                pk_list = sqs.values_list('pk', flat=True)[:10 ** 6]
                 qs = qs.filter(pk__in=pk_list)
             bindings = {
                 'lieu': ('ancrage_debut__lieu__in', 'ancrage_fin__lieu__in'),

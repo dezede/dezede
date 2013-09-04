@@ -4,23 +4,26 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 from django.conf import settings
 from django.contrib.contenttypes.generic import GenericRelation
-from django.contrib.sessions.models import Session
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
     ForeignKey, TextField, Manager, PROTECT, Q, SmallIntegerField
 from django.db.models.query import QuerySet
-from django.db.models.signals import pre_save, post_save, post_delete
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.html import strip_tags
+from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
 from mptt.managers import TreeManager
 from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
+from reversion import pre_revision_commit
 from tinymce.models import HTMLField
-from cache_tools import invalidate_group, cached_ugettext_lazy as _
-from .functions import href
+from cache_tools import cached_ugettext_lazy as _
+from cache_tools.signals import auto_invalidate_signal_receiver
+from .functions import href, ex, hlp
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 
@@ -30,7 +33,7 @@ __all__ = (
     b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
     b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'CommonTreeQuerySet',
     b'CommonTreeManager', b'Document', b'Illustration', b'Etat',
-    b'OrderedDefaultDict', b'TypeDeParente',
+    b'OrderedDefaultDict', b'TypeDeParente', b'TypeDeCaracteristique',
 )
 
 
@@ -261,10 +264,10 @@ class UniqueSlugModel(Model):
 
 class CommonTreeQuerySet(QuerySet):
     def get_descendants(self, include_self=False):
-        meta = self.model._meta
-        tree_id_attr = meta.tree_id_attr
-        left_attr = meta.left_attr
-        right_attr = meta.right_attr
+        manager = self.model._default_manager
+        tree_id_attr = manager.tree_id_attr
+        left_attr = manager.left_attr
+        right_attr = manager.right_attr
         filters = Q()
 
         for tree_id, left, right in self.values_list(
@@ -291,6 +294,113 @@ class CommonTreeManager(TreeManager):
 
     def get_descendants(self, *args, **kwargs):
         return self.get_query_set().get_descendants(*args, **kwargs)
+
+
+#
+# Modèles génériques polymorphes.
+#
+
+
+class TypeDeCaracteristiqueQuerySet(PolymorphicQuerySet, CommonQuerySet):
+    pass
+
+
+class TypeDeCaracteristiqueManager(PolymorphicManager, CommonManager):
+    queryset_class = TypeDeCaracteristiqueQuerySet
+
+
+@python_2_unicode_compatible
+class TypeDeCaracteristique(PolymorphicModel, CommonModel):
+    nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
+                    unique=True, db_index=True)
+    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
+                            help_text=PLURAL_MSG)
+    classement = SmallIntegerField(default=1)
+
+    objects = TypeDeCaracteristiqueManager()
+
+    class Meta(object):
+        verbose_name = ungettext_lazy('type de caractéristique',
+                                      'types de caracteristique', 1)
+        verbose_name_plural = ungettext_lazy(
+            'type de caractéristique',
+            'types de caracteristique',
+            2)
+        ordering = ('classement',)
+        app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('get_real_instance', 'caracteristiques',)
+
+    def pluriel(self):
+        return calc_pluriel(self)
+
+    def __str__(self):
+        return self.nom
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'nom__icontains', 'nom_pluriel__icontains',
+
+
+class CaracteristiqueQuerySet(PolymorphicQuerySet, CommonQuerySet):
+    def html_list(self, tags=True):
+        return [hlp(valeur, type, tags)
+                for type, valeur in self.values_list('type__nom', 'valeur')]
+
+
+class CaracteristiqueManager(PolymorphicManager, CommonManager):
+    queryset_class = CaracteristiqueQuerySet
+
+    def html_list(self, tags=True):
+        return self.get_query_set().html_list(tags=tags)
+
+
+@python_2_unicode_compatible
+class Caracteristique(PolymorphicModel, CommonModel):
+    type = ForeignKey(
+        'TypeDeCaracteristique', null=True, blank=True, db_index=True,
+        on_delete=PROTECT, related_name='caracteristiques',
+        verbose_name=_('type'))
+    valeur = CharField(_('valeur'), max_length=400,
+                       help_text=ex(_('en trois actes')))
+    classement = SmallIntegerField(
+        _('classement'), default=1, db_index=True,
+        help_text=_('Par exemple, on peut choisir de classer '
+                    'les découpages par nombre d’actes.'))
+
+    objects = CaracteristiqueManager()
+
+    class Meta(object):
+        # FIXME: Retirer les doublons et activer ce qui suit.
+        # unique_together = ('type', 'valeur')
+        verbose_name = ungettext_lazy('caractéristique',
+                                      'caractéristiques', 1)
+        verbose_name_plural = ungettext_lazy('caractéristique',
+                                             'caractéristiques', 2)
+        ordering = ('type', 'classement', 'valeur')
+        app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('get_real_instance',)
+
+    def html(self, tags=True):
+        value = mark_safe(self.valeur)
+        if self.type:
+            return hlp(value, self.type, tags=tags)
+        return value
+    html.allow_tags = True
+
+    def __str__(self):
+        if self.type:
+            return smart_text(self.type) + ' : ' + strip_tags(self.valeur)
+        return strip_tags(self.valeur)
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'type__nom__icontains', 'valeur__icontains',
 
 
 class TypeDeParenteQuerySet(PolymorphicQuerySet, CommonQuerySet):
@@ -324,6 +434,10 @@ class TypeDeParente(PolymorphicModel, CommonModel):
                                              'types de parentés', 2)
         ordering = ('classement',)
         app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('get_real_instance',)
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -437,12 +551,3 @@ def handle_whitespaces(sender, **kwargs):
     # Then we call the specific whitespace handler of the model (if it exists).
     if hasattr(obj, 'handle_whitespaces'):
         obj.handle_whitespaces()
-
-
-def clean_groups(sender, **kwargs):
-    if sender is Session:
-        return
-    for group in (b'programmes', b'oeuvres', b'individus'):
-        invalidate_group(group)
-post_save.connect(clean_groups)
-post_delete.connect(clean_groups)

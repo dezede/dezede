@@ -2,12 +2,14 @@
 
 from __future__ import unicode_literals
 from django.db.models import Manager
-from django.test import TransactionTestCase
+from django.test import TestCase
 from libretto.api.models.utils import update_or_create
 from libretto.models import *
 
 
-class UpdateOrCreateTestCase(TransactionTestCase):
+class UpdateOrCreateTestCase(TestCase):
+    cleans_up_after_itself = True
+
     def setUp(self):
         self.objects = []
 

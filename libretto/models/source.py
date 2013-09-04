@@ -33,6 +33,12 @@ class TypeDeSource(CommonModel, SlugModel):
         ordering = ('slug',)
         app_label = 'libretto'
 
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('sources',)
+        return ()
+
     def pluriel(self):
         return calc_pluriel(self)
 
