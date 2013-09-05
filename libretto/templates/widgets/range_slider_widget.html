@@ -1,19 +1,26 @@
 {% load static %}
 
 {#<link rel="stylesheet" type="text/css"#}
-{#      href="{% static 'css/custom-theme/jquery-ui-1.8.16.custom.css' %}">#}
-{#<script src="{% static 'js/jquery-1.6.2.min.js' %}"></script>#}
-{#<script src="{% static 'js/jquery-ui-1.8.16.custom.min.js' %}"></script>#}
+{#      href="{% static 'css/custom-theme/jquery-ui-1.9.2.min.css' %}">#}
+{#<script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>#}
+{#<script src="{% static 'js/jquery-ui-1.9.2.min.js' %}"></script>#}
 
 
-<div style="text-align: center;">
-<input type="text" name="{{ name }}_0" id="id_{{ name }}_0"
-       value="{{ start }}" class="span4" style="text-align: center;" />
-⁻
-<input type="text" name="{{ name }}_1" id="id_{{ name }}_1"
-       value="{{ end }}" class="span4" style="text-align: center;" />
+<div class="form-group">
+  <div class="row">
+    <div class="input-group form-group col-md-10 col-md-offset-1">
+      <input type="text" name="{{ name }}_0" id="id_{{ name }}_0"
+             value="{{ start }}" class="form-control text-center" />
+      <span class="input-group-addon">-</span>
+      <input type="text" name="{{ name }}_1" id="id_{{ name }}_1"
+             value="{{ end }}" class="form-control text-center" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div id="id_{{ name }}_slider-range" class="col-md-10 col-md-offset-1"></div>
+  </div>
 </div>
-<div id="id_{{ name }}_slider-range"></div>
 
 <script>
   $(function() {

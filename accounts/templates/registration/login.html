@@ -8,14 +8,14 @@
 
 {% block body %}
   {% if user.is_authenticated %}
-    <h1>{% trans "Déjà connecté" %}</h1>
+    <h1 class="page-header">{% trans "Déjà connecté" %}</h1>
     {% url 'auth_logout' as url %}
     {% blocktrans %}
       Vous êtes déjà connecté.
       Souhaitez-vous <a href="{{ url }}">vous déconnecter</a> ?
     {% endblocktrans %}
   {% else %}
-    <form method="POST" class="well well-small form-horizontal">
+    <form method="POST" class="well well-sm form-horizontal">
       <legend>
         {% trans "Connexion" %}
         {% url 'registration_register' as url %}

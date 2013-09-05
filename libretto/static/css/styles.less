@@ -1,42 +1,40 @@
 @import '../bootstrap/less/bootstrap.less';
-@import '../bootstrap/less/responsive.less';
+@import '../bootstrap/less/responsive-utilities.less';
 
 // Bootstrap variables
 
-@iconSpritePath:      '../bootstrap/img/glyphicons-halflings.png';
-@iconWhiteSpritePath: '../bootstrap/img/glyphicons-halflings-white.png';
+@icon-font-path: '../bootstrap/fonts/';
 
-@serifFontFamily: 'Gentium Basic', 'Georgia', serif;
-@baseFontSize: 16px;
-@baseLineHeight: floor(@baseFontSize * 1.2);
-@baseFontFamily: @serifFontFamily;
+@font-size-base:    15px;
+@font-family-serif: 'Gentium Basic', 'Georgia', serif;
+@font-family-base:  @font-family-serif;
 
-@textColor: contrast(@mainBackground);
-@linkColor: spin(lighten(desaturate(@bodyBackground, 20%), 25%), 0);
-@placeholderText: @gray;
+@brand-primary:           spin(lighten(desaturate(@body-bg, 20%), 15%), 25);
+@text-color:              contrast(@main-bg);
+@input-color-placeholder: @gray;
 
-@navbarBackgroundHighlight: desaturate(lighten(@mainBackground, 10%), 10%);
-@navbarLinkColor: @gray;
-@navbarLinkColorHover: @grayDarker;
-@navbarLinkColorActive: @gray;
+@navbar-default-link-color:        @gray;
+@navbar-default-link-hover-color:  @gray-darker;
+@navbar-default-link-active-color: black;
 
-@btnPrimaryBackgroundHighlight: spin(@btnPrimaryBackground, 10%);
+@nav-link-hover-bg:             lighten(@gray-lighter, 3%);
+@nav-tabs-active-link-hover-bg: @gray-lighter;
 
-@wellBackground: darken(@mainBackground, 3%);
+@body-bg: hsv(0, 100%, 70%);
+@well-bg: darken(@main-bg, 4%);
 
 // Custom variables
 
-@navbarBorderHeight: 1px;
-@topPadding: 20px;
-@mainXPadding: 20px;
-@mainXPadding1200: 45px;
-@mainXPadding768: 10px;
-@mainXPadding480: 5px;
-@footerYPadding: 15px;
-@footerHeight: 50px;
-@footerHeight480: 80px;
-@mainBackground: hsv(51, 17%, 100%);
-@bodyBackground: hsv(0, 100%, 70%);
+@main-x-padding:     20px;
+@main-x-padding1200: 45px;
+@main-x-padding768:  10px;
+@main-x-padding480:  5px;
+
+@footer-y-padding: 15px;
+@footer-height:    50px;
+@footer-height480: 80px;
+
+@main-bg: hsv(51, 17%, 100%);
 
 @font-face {
   font-family: 'Gentium Basic';
@@ -87,18 +85,22 @@ body {
 // Both for front office and TinyMCE
 #main, .mceContentBody {
   position: relative;
-  background: @mainBackground;
-  .box-shadow(0 0 15px darken(desaturate(@mainBackground, 50%), 60%));
+  background: @main-bg;
+  .box-shadow(0 0 15px darken(desaturate(@main-bg, 50%), 60%));
   min-height: 100%;
 }
 
 #content {
   position: relative;
-  padding-top: @navbarHeight + @topPadding;
+  padding-top: @navbar-height;
 }
 
 section {
   padding-top: 50px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  text-shadow: 1px 2px 0 white;
 }
 
 a:not(.btn):not(.tooltip):not(.ui-slider-handle) {
@@ -132,36 +134,19 @@ em {
   font-size: 105%;
 }
 
+.glyphicon {
+  font-size: 85%;
+}
+
 blockquote {
   p {
-    font-size: @baseFontSize;
+    font-size: @font-size-base;
   }
-}
-
-[class^="icon-"],
-[class*=" icon-"] {
-  margin-top: 2px;
-}
-
-.btn-large [class^="icon-"],
-.btn-large [class*=" icon-"] {
-  margin-top: 4px;
-}
-
-
-.btn-small [class^="icon-"],
-.btn-small [class*=" icon-"] {
-  margin-top: 1px;
-}
-
-.btn-mini [class^="icon-"],
-.btn-mini [class*=" icon-"] {
-  margin-top: 0;
 }
 
 .data-table {
   th, td {
-    line-height: 10 * @baseLineHeight / 11;
+    line-height: 10 * @line-height-base / 11;
     vertical-align: baseline;
   }
   th {
@@ -202,47 +187,47 @@ blockquote {
 }
 
 .result {
-  @baseResultBackground: hsv(0, 25%, 100%);
-  border: 1px solid darken(@baseResultBackground, 20%);
-  .border-radius(@baseBorderRadius);
+  @base-result-background: hsv(0, 25%, 97%);
+  border: 1px solid darken(@base-result-background, 20%);
+  border-radius: @border-radius-base;
   padding: 10px;
   margin-bottom: 10px;
   &:last-of-type {
     margin-bottom: 0;
   }
-  .applyBackground (@spin) {
-    @resultBackground: spin(@baseResultBackground, @spin);
+  .apply-background (@spin) {
+    @resultBackground: spin(@base-result-background, @spin);
     background: @resultBackground;
     border-color: darken(@resultBackground, 10%);
   }
   &.evenement {
-    .applyBackground(0);
+    .apply-background(0);
   }
   &.individu {
-    .applyBackground(40);
+    .apply-background(40);
   }
   &.lieu {
-    .applyBackground(80);
+    .apply-background(80);
   }
   &.oeuvre {
-    .applyBackground(120);
+    .apply-background(120);
   }
   &.source {
-    .applyBackground(200);
+    .apply-background(200);
   }
   &.partie {
-    .applyBackground(260);
+    .apply-background(260);
   }
   &.profession {
-    .applyBackground(320);
+    .apply-background(320);
   }
 }
 
 .content-part {
-  @localBackground: @wellBackground;
-  border: 1px solid darken(@localBackground, 10%);
-  .border-radius(@borderRadiusLarge);
-  background: @localBackground;
+  @local-background: @well-bg;
+  border: 1px solid darken(@local-background, 10%);
+  border-radius: @border-radius-large;
+  background: @local-background;
   padding: 15px;
   margin-bottom: 30px;
   &:last-of-type {
@@ -312,8 +297,8 @@ input[type="tel"],
 input[type="color"],
 .uneditable-input {
   &:focus {
-    border-color: fadeout(@linkColorHover, 20%);
-    .box-shadow(0 0 8px fadeout(@linkColorHover, 40%));
+    border-color: fadeout(@link-hover-color, 20%);
+    .box-shadow(0 0 8px fadeout(@link-hover-color, 40%));
   }
 }
 
@@ -331,26 +316,21 @@ input[type="color"],
   line-height: normal;
 }
 
-.full-width {
-  width: 100%;
-}
+.panel-group {
+  .panel {
+    + .panel {
+      margin-top: 2px;
+    }
+  }
 
-.accordion-group {
-  background-color: whiteSmoke;
-}
+  .panel-heading {
+    padding: 6px 15px;
+  }
 
-.accordion-heading {
-  display: table-row;
-}
-
-.accordion-heading .accordion-toggle {
-  display: table-cell;
-}
-
-.accordion-inner {
-  max-height: 300px;
-  overflow: auto;
-  background-color: white;
+  .panel-body {
+    max-height: 300px;
+    overflow: auto;
+  }
 }
 
 .ui-helper-reset {
@@ -359,29 +339,39 @@ input[type="color"],
   list-style: none;
 }
 
-input, button {
-  margin: 0;
-}
-
 .dropdown-submenu .dropdown-menu form {
   margin: 0;
 }
 
 .navbar {
-  .brand {
-    padding: 5px 20px 5px 0;
+  opacity: 0.9;
+  .transition(opacity 0.3s);
+
+  &:hover {
+    opacity: 1;
   }
-  .search-query {
-    #font > .serif();
+
+  .navbar-brand {
+    padding: 8px 15px 6px;
   }
+}
+
+.nav.nav-tabs {
+  margin-bottom: 20px;
 }
 
 .front-end_admin {
-  margin: 0 5px;
+  margin: @line-height-computed 5px (@line-height-computed / 2);
 }
 
-.ui-slider-range.ui-widget-header {
-  #gradient > .vertical(@btnPrimaryBackground, @btnDangerBackgroundHighlight);
+.ui-slider {
+  .ui-slider-range {
+    background: @btn-primary-bg;
+  }
+
+  .ui-slider-handle {
+    background: @gray-lighter
+  }
 }
 
 ul.ui-autocomplete li a, .results_on_deck > div {
@@ -406,7 +396,7 @@ form .results_on_deck {
 
 .tooltip {
   .tooltip-inner {
-    font-size: @baseFontSize;
+    font-size: @font-size-base;
     font-weight: normal;
     padding: 2px 6px;
   }
@@ -419,34 +409,30 @@ form .results_on_deck {
 .pagination ul > .disabled > a,
 .pagination ul > .disabled > a:hover,
 .pagination ul > .disabled > a:focus {
-  background: @paginationActiveBackground;
+  background: @pagination-active-bg;
   .opacity(60);
 }
 
 footer {
-  @localBackground: desaturate(darken(@mainBackground, 5%), 20%);
+  @local-background: desaturate(darken(@main-bg, 5%), 20%);
   position: absolute;
   bottom: 0;
-  height: @footerHeight;
-  line-height: @footerHeight;
-  background: @localBackground;
+  width: 100%;
+  line-height: @footer-height;
+  background: @local-background;
   left: 0;
   &>* {
-    display: inline-block;
-    height: 100%;
-    width: 49.5%;
     vertical-align: middle;
     &>* {
       vertical-align: middle;
     }
   }
   #softwares {
-    span+span {
+    &>*+* {
       margin-left: 10px;
     }
   }
   #logos {
-    text-align: right;
     a {
       margin-left: 10px;
       &:first-child {
@@ -461,19 +447,19 @@ footer {
 
 @media (min-width: 1200px) {
   #main {
-    padding: 0 @mainXPadding1200;
+    padding: 0 @main-x-padding1200;
   }
 
   #content {
-    padding-bottom: @footerHeight + @mainXPadding1200;
+    padding-bottom: @footer-height + @main-x-padding1200;
   }
 
   footer {
-    padding: @footerYPadding @mainXPadding1200;
+    padding: @footer-y-padding @main-x-padding1200;
   }
 
   .side {
-    width: 258px;
+    width: 247px;
   }
 
   .affix {
@@ -483,15 +469,15 @@ footer {
 
 @media (min-width: 980px) and (max-width: 1200px) {
   #main {
-    padding: 0 @mainXPadding;
+    padding: 0 @main-x-padding;
   }
 
   #content {
-    padding-bottom: @footerHeight + @footerYPadding * 2;
+    padding-bottom: @footer-height + @footer-y-padding * 2;
   }
 
   footer {
-    padding: @footerYPadding @mainXPadding;
+    padding: @footer-y-padding @main-x-padding;
   }
 
   .side {
@@ -509,8 +495,7 @@ footer {
   }
 
   #main {
-    margin-top: -@topPadding;
-    padding: 0 @mainXPadding768;
+    padding: 0 @main-x-padding768;
   }
 
   #content {
@@ -518,16 +503,15 @@ footer {
   }
 
   #content {
-    padding-bottom: @footerHeight + @footerYPadding * 2;
+    padding-bottom: @footer-height + @footer-y-padding * 2;
   }
 
   footer {
-    padding: @footerYPadding @mainXPadding768;
+    padding: @footer-y-padding @main-x-padding768;
   }
 
   .side {
-    width: 166px;
-    margin-top: 20px;
+    width: 286px;
   }
 
   .affix {
@@ -537,21 +521,22 @@ footer {
 
 @media (max-width: 767px) {
   #main {
-    padding: 0 @mainXPadding480;
+    padding: 0 @main-x-padding480;
   }
 
   #content {
-    padding-bottom: @footerHeight480 + @footerYPadding * 2;
+    padding-bottom: @footer-height480 + @footer-y-padding * 2;
   }
 
   footer {
-    height: @footerHeight480;
-    line-height: @footerHeight480 / 2;
-    padding: @footerYPadding @mainXPadding480;
+    height: @footer-height480;
+    line-height: @footer-height480 / 2;
+    padding: @footer-y-padding @main-x-padding480;
   }
 
   .side {
     position: static;
+    width: 100%;
   }
 
   .columns2 {

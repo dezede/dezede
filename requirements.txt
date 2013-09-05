@@ -16,7 +16,7 @@ simplejson==3.3.0
 django-polymorphic-tree==0.8.9
 django-autoslug==1.7.1
 django-grappelli==2.4.6
-django-crispy-forms==1.3.2
+django-crispy-forms==1.4.0
 django-ajax-selects==1.2.5
 django-filebrowser==3.5.2
 django-nose==1.2

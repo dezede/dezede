@@ -96,12 +96,15 @@ class EvenementListForm(Form):
 
         self.helper = FormHelper()
         self.helper.form_method = 'GET'
-        self.helper.form_class = 'well well-small'
+        self.helper.form_class = 'well well-sm'
         self.helper.layout = Layout(
-            Field('q', 'dates', HTML('<hr/>'), 'lieu', 'oeuvre', 'individu',
-                  css_class='span12'),
+            Field('q', css_class='input-lg'),
             HTML('<hr/>'),
-            Submit('', _('Filtrer'), css_class='btn-primary btn-block'),
+            'dates',
+            HTML('<hr/>'),
+            'lieu', 'oeuvre', 'individu',
+            HTML('<hr/>'),
+            Submit('', _('Filtrer'), css_class='btn-block'),
         )
 
         super(EvenementListForm, self).__init__(*args, **kwargs)

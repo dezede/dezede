@@ -4,9 +4,9 @@
   {% if forloop.first %}
     <ul class="thumbnails">
   {% endif %}
-  <li class="span3">
+  <li class="col-md-3">
     {% version_object illustration.image 'thumbnail' as thumbnail %}
-    <a href="{{ illustration.image.url }}" class="thumbnail">
+    <a href="{{ illustration.image.url }}" class="img-thumbnail">
       <img src="{{ thumbnail.url }}" />
       {% if illustration.legende %}
         <h4>{{ illustration.legende|safe }}</h4>

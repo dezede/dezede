@@ -2,7 +2,7 @@
 {% load i18n %}
 
 load_source_content = function(object, pk) {
-  var inner = $($(object).attr('href') + ' .accordion-inner');
+  var inner = $($(object).attr('href') + ' .panel-body');
   inner.html('{% trans 'Chargement…' %}');
   $.ajax({
     url: '{% url 'source_content' %}',

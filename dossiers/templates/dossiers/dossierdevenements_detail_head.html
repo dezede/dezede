@@ -4,7 +4,7 @@
 
 <h1>{{ object.titre|safe }}</h1>
 
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs nav-justified">
   {% url 'dossierdevenements_detail' object.pk as text_url %}
   <li{% if request.path == text_url %} class="active"{% endif %}>
     <a href="{{ text_url }}">

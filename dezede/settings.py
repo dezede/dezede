@@ -322,7 +322,7 @@ EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'noreply@dezede.org'
 SERVER_EMAIL = 'noreply@dezede.org'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 COMPRESS_ENABLED = True
 COMPRESS_OUTPUT_DIR = 'assets'

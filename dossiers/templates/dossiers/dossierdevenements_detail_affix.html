@@ -7,7 +7,7 @@
     {% if object.parent %}
       <li>
         <a href="{{ object.parent.get_absolute_url }}">
-          <i class="icon-step-backward"></i>
+          <i class="glyphicon glyphicon-step-backward"></i>
           Revenir à « {{ object.parent }} »
         </a>
       </li>
@@ -19,7 +19,7 @@
     </li>
     <li>
       <a href="#cite">
-        <i class="icon-book"></i>
+        <i class="glyphicon glyphicon-book"></i>
         {% trans 'Citer ce dossier' %}
       </a>
     </li>

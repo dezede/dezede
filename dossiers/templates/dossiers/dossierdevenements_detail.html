@@ -11,24 +11,16 @@
 
   {% include 'dossiers/dossierdevenements_detail_head.html' %}
 
-  <div class="container-fluid">
+  <div class="col-md-3">
+    {% include 'dossiers/dossierdevenements_detail_affix.html' %}
+  </div>
 
-    <div class="row-fluid">
+  <div class="col-md-9">
 
-      <div class="span3">
-        {% include 'dossiers/dossierdevenements_detail_affix.html' %}
-      </div>
+    <h2>{% trans 'Présentation' %}</h2>
+    {{ object.contenu }}
 
-      <div class="span9">
-
-        <h2>{% trans 'Présentation' %}</h2>
-        {{ object.contenu }}
-
-        {% include 'dossiers/dossierdevenements_detail_cite.html' %}
-
-      </div>
-
-    </div>
+    {% include 'dossiers/dossierdevenements_detail_cite.html' %}
 
   </div>
 

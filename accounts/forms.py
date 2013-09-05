@@ -30,7 +30,7 @@ class UserRegistrationForm(RegistrationForm):
     last_name = CharField(label=_('Nom'))
     mentor = TreeNodeChoiceField(queryset=get_mentors(), label=_('Mentor'))
     willing_to_be_mentor = BooleanField(
-        required=False, label=_('Veut être mentor'))
+        required=False, label=_('Souhaite devenir mentor'))
     groups = ModelMultipleChoiceField(
         queryset=get_groups(), widget=CheckboxSelectMultiple,
         label=_('Groupes'))
@@ -38,25 +38,28 @@ class UserRegistrationForm(RegistrationForm):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-2'
+        self.helper.field_class = 'col-md-8'
         self.helper.layout = Layout(
             Fieldset(
                 _('Général'),
-                Field('first_name', 'last_name', css_class='input-xlarge'),
-                PrependedText('email', '<i class="icon-envelope"></i>',
-                              active=True),
-                PrependedText('username', '<i class="icon-user"></i>',
-                              active=True),
+                Field('first_name', 'last_name'),
+                PrependedText(
+                    'email', '<i class="glyphicon glyphicon-envelope"></i>',
+                    active=True),
+                PrependedText(
+                    'username', '<i class="glyphicon glyphicon-user"></i>',
+                    active=True),
                 'password1', 'password2',
             ),
             Fieldset(
                 _('Mentorat'),
                 'mentor',
-                'willing_to_be_mentor',
+                Field('willing_to_be_mentor', wrapper_class='col-md-offset-2'),
                 'groups',
             ),
             FormActions(
-                Submit('save_changes', _('Enregistrer'),
-                       css_class="btn-primary"),
+                Submit('save_changes', _('Enregistrer')),
                 Reset('reset', _('Réinitialiser')),
             ),
         )

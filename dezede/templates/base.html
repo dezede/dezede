@@ -9,7 +9,7 @@
     <meta name="keywords"
           content="Dezède, {% trans "musicologie, base de données" %}" />
     <meta name="author" content="Bertrand Bordage" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>
       {% block title %}{% endblock %} | Dezède
     </title>
@@ -18,7 +18,7 @@
           href="/static/images/favicon.ico">
     {% compress css %}
       <link rel="stylesheet" type="text/css"
-            href="{% static 'css/custom-theme/jquery-ui-1.8.16.custom.css' %}">
+            href="{% static 'css/custom-theme/jquery-ui-1.9.2.min.css' %}">
       <link rel="stylesheet" type="text/less"
             href="{% static 'css/styles.less' %}"/>
     {% endcompress %}
@@ -26,22 +26,21 @@
     {% render_block 'css' postprocessor 'compressor.contrib.sekizai.compress' %}
 
     {% compress js %}
-      <script src="{% static 'js/jquery-1.7.1.min.js' %}"></script>
-      <script src="{% static 'js/jquery-ui-1.8.16.custom.min.js' %}"></script>
+      <script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
+      <script src="{% static 'js/jquery-ui-1.9.2.min.js' %}"></script>
       {# Attention, l'ordre des JS de bootstrap importe ! #}
-      <script src="{% static 'bootstrap/js/bootstrap-transition.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-alert.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-button.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-carousel.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-collapse.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-dropdown.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-modal.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-tooltip.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-popover.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-scrollspy.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-tab.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-typeahead.js' %}"></script>
-      <script src="{% static 'bootstrap/js/bootstrap-affix.js' %}"></script>
+      <script src="{% static 'bootstrap/js/transition.js' %}"></script>
+      <script src="{% static 'bootstrap/js/alert.js' %}"></script>
+      <script src="{% static 'bootstrap/js/button.js' %}"></script>
+      <script src="{% static 'bootstrap/js/carousel.js' %}"></script>
+      <script src="{% static 'bootstrap/js/collapse.js' %}"></script>
+      <script src="{% static 'bootstrap/js/dropdown.js' %}"></script>
+      <script src="{% static 'bootstrap/js/modal.js' %}"></script>
+      <script src="{% static 'bootstrap/js/tooltip.js' %}"></script>
+      <script src="{% static 'bootstrap/js/popover.js' %}"></script>
+      <script src="{% static 'bootstrap/js/scrollspy.js' %}"></script>
+      <script src="{% static 'bootstrap/js/tab.js' %}"></script>
+      <script src="{% static 'bootstrap/js/affix.js' %}"></script>
       <script src="{% static 'js/jquery.query.js' %}"></script>
       <script src="{% static 'js/jquery.cookie.js' %}"></script>
       <script>
@@ -89,7 +88,7 @@
         {% endautoescape %}
       </div>
 
-      <footer class="container">
+      <footer>
         {% include 'footer.html' %}
       </footer>
 
