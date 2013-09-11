@@ -1,13 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}
-  {% trans "Maintenance en cours" %}
+{% block header %}
+  <h1>{% block title %}{% trans "Maintenance en cours" %}{% endblock %}</h1>
 {% endblock %}
 
-{% block body %}
-  <div class="page-header">
-    <h1>{% trans "Maintenance en cours" %}</h1>
-  </div>
+{% block content %}
   {% trans "Cette partie du site sera de retour d’ici une heure." %}
 {% endblock %}

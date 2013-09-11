@@ -104,7 +104,8 @@ class EvenementListForm(Form):
             HTML('<hr/>'),
             'lieu', 'oeuvre', 'individu',
             HTML('<hr/>'),
-            Submit('', _('Filtrer'), css_class='btn-block'),
+            Submit('', _('Filtrer'), css_class='btn-block',
+                   data_loading_text=_('Chargement…')),
         )
 
         super(EvenementListForm, self).__init__(*args, **kwargs)

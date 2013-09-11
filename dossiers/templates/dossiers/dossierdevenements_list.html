@@ -3,16 +3,12 @@
 {% load i18n %}
 
 
-{% block title %}
-  {% trans 'dossiers'|capfirst %}
+{% block header %}
+  <h1>{% block title %}{% trans 'dossiers'|capfirst %}{% endblock %}</h1>
 {% endblock %}
 
 
 {% block content %}
-  <div class="page-header">
-    <h1>{% trans 'dossiers'|capfirst %}</h1>
-  </div>
-
   <div class="columns2">
     {% for object in object_list %}
       <div class="well column-cell">

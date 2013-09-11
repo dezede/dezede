@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags i18n static %}
 
-{% block title %}
-  {% trans "Créer un nouveau compte" %}
+{% block header %}
+  <h1>{% block title %}{% trans "Créer un nouveau compte" %}{% endblock %}</h1>
 {% endblock %}
 
-{% block body %}
-  <h1 class="page-header">{% trans "Créer un nouveau compte" %}</h1>
+{% block content %}
   <div class="well">
     {% crispy form %}
   </div>

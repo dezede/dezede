@@ -21,7 +21,7 @@ def build_admin_view_name(perm):
 
 
 @register.simple_tag(takes_context=True)
-def frontend_admin(context, obj=None, autorite=False):
+def frontend_admin(context, obj=None, size='xs'):
     request = context['request']
     if obj is None:
         obj = context['object']
@@ -36,6 +36,9 @@ def frontend_admin(context, obj=None, autorite=False):
     admin_change = build_admin_view_name(change_perm)
     admin_delete = build_admin_view_name(delete_perm)
     domain = get_current_site(request)
+
+    assert size in ('', 'xs', 'sm', 'md', 'lg')
+
     c = {
         'has_change_perm': has_change_perm,
         'has_delete_perm': has_delete_perm,
@@ -43,9 +46,9 @@ def frontend_admin(context, obj=None, autorite=False):
         'admin_delete': admin_delete,
         'domain': domain,
         'object': obj,
+        'size': size,
     }
-    t = 'routines/%sfront-end_admin.html' % ('autorite_' if autorite else '')
-    return render_to_string(t, c)
+    return render_to_string('routines/front-end_admin.html', c)
 
 
 @register.simple_tag(takes_context=True)

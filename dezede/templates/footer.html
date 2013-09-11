@@ -1,56 +1,64 @@
 {% load static dezede_extras i18n %}
 
-<div id="softwares" class="col-md-6">
-  <a href="https://github.com/dezede/dezede" class="btn btn-default btn-xs">
-    <b class="glyphicon glyphicon-star"></b> {% trans 'Source sur' %} GitHub
-  </a>
-  {% software_versions %}
-</div>
+<div class="container">
 
-<div id="logos" class="col-md-6 text-right">{# La surface de chaque logo est de 2667 px² #}
-  <a href="http://www.univ-rouen.fr/" target="_blank">
-    <img src="{% static 'images/univ_rouen.png' %}"
-         style="width: 58px; height: 21px;"
-         title="Université de Rouen" />
-  </a>
-  <a href="http://www.grhis.fr/" target="_blank">
-    <img src="{% static 'images/grhis.png' %}"
-         style="width: 51px; height: 23px;"
-         title="Groupe de Recherche d’HIStoire" />
-  </a>
-  <a href="http://ceredi.labos.univ-rouen.fr/" target="_blank">
-    <img src="{% static 'images/ceredi.png' %}"
-         style="width: 35px; height: 33px;"
-         title="Centre d’Études et de Recherche Éditer/Interpréter" />
-  </a>
-  <a href="http://www.univ-rouen.fr/99535530/0/fiche___pagelibre/" target="_blank">
-    <img src="{% static 'images/irihs.png' %}"
-         style="width: 35px; height: 35px;"
-         title="Institut de Recherche Inter-disciplinaire Homme Société" />
-  </a>
-  <a href="http://www.hautenormandie.fr/" target="_blank">
-    <img src="{% static 'images/region_h-n.png' %}"
-         style="width: 26px; height: 45px;"
-         title="Région Haute-Normandie" />
-  </a>
-  <a href="http://www.univ-montp3.fr/" target="_blank">
-    <img src="{% static 'images/upv_montpellier.png' %}"
-         style="width: 47px; height: 26px;"
-         title="Université Paul-Valéry - Montpellier 3" />
-  </a>
-  <a href="http://www.ircl.cnrs.fr/" target="_blank">
-    <img src="{% static 'images/ircl.png' %}"
-         style="width: 35px; height: 35px;"
-         title="Institut de Recherche sur la Renaissance, l’âge Classique et les Lumières" />
-  </a>
-  <a href="http://www.cnrs.fr/" target="_blank">
-    <img src="{% static 'images/cnrs.png' %}"
-         style="width: 35px; height: 35px;"
-         title="Centre national de la recherche scientifique" />
-  </a>
-  <a href="http://www.huma-num.fr/" target="_blank">
-    <img src="{% static 'images/humanum.png' %}"
-         style="width: 41px; height: 29px;"
-         title="TGIR Huma-Num" />
-  </a>
+  <div class="row">
+
+  <div id="softwares" class="col-xs-6 col-sm-5 col-lg-6">
+    <a href="https://github.com/dezede/dezede" class="btn btn-default btn-xs">
+      <b class="glyphicon glyphicon-star"></b> {% trans 'Source sur' %} GitHub
+    </a>
+    {% software_versions %}
+  </div>
+
+  <div id="logos" class="col-xs-6 col-sm-7 col-lg-6 text-right">{# La surface de chaque logo est de 2667 px² #}
+    <a href="http://www.univ-rouen.fr/" target="_blank">
+      <img src="{% static 'images/univ_rouen.png' %}"
+           style="width: 58px; height: 21px;"
+           title="Université de Rouen" />
+    </a>
+    <a href="http://www.grhis.fr/" target="_blank">
+      <img src="{% static 'images/grhis.png' %}"
+           style="width: 51px; height: 23px;"
+           title="Groupe de Recherche d’HIStoire" />
+    </a>
+    <a href="http://ceredi.labos.univ-rouen.fr/" target="_blank">
+      <img src="{% static 'images/ceredi.png' %}"
+           style="width: 35px; height: 33px;"
+           title="Centre d’Études et de Recherche Éditer/Interpréter" />
+    </a>
+    <a href="http://www.univ-rouen.fr/99535530/0/fiche___pagelibre/" target="_blank">
+      <img src="{% static 'images/irihs.png' %}"
+           style="width: 35px; height: 35px;"
+           title="Institut de Recherche Inter-disciplinaire Homme Société" />
+    </a>
+    <a href="http://www.hautenormandie.fr/" target="_blank">
+      <img src="{% static 'images/region_h-n.png' %}"
+           style="width: 26px; height: 45px;"
+           title="Région Haute-Normandie" />
+    </a>
+    <a href="http://www.univ-montp3.fr/" target="_blank">
+      <img src="{% static 'images/upv_montpellier.png' %}"
+           style="width: 47px; height: 26px;"
+           title="Université Paul-Valéry - Montpellier 3" />
+    </a>
+    <a href="http://www.ircl.cnrs.fr/" target="_blank">
+      <img src="{% static 'images/ircl.png' %}"
+           style="width: 35px; height: 35px;"
+           title="Institut de Recherche sur la Renaissance, l’âge Classique et les Lumières" />
+    </a>
+    <a href="http://www.cnrs.fr/" target="_blank">
+      <img src="{% static 'images/cnrs.png' %}"
+           style="width: 35px; height: 35px;"
+           title="Centre national de la recherche scientifique" />
+    </a>
+    <a href="http://www.huma-num.fr/" target="_blank">
+      <img src="{% static 'images/humanum.png' %}"
+           style="width: 41px; height: 29px;"
+           title="TGIR Huma-Num" />
+    </a>
+  </div>
+
+  </div>
+
 </div>

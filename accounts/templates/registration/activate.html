@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}
-  {% trans "Erreur d’activation" %}
+{% block header %}
+  <h1>{% block title %}{% trans "Erreur d’activation" %}{% endblock %}</h1>
 {% endblock %}
 
-{% block body %}
-  <h1 class="page-header">{% trans "Erreur d’activation" %}</h1>
+{% block content %}
   <p>
     {% blocktrans %}
       L’activation de la clé {{ activation_key }} a échoué.

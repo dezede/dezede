@@ -2,25 +2,39 @@
 {% load url from future %}
 {% load i18n routines endless sekizai_tags %}
 
+
 {% block title %}
   {{ object|striptags }} | {% trans 'Présentation' %}
 {% endblock %}
 
 
+{% block header %}
+  <h1>{{ object.titre|safe }}</h1>
+{% endblock %}
+
+
+{% block header-aside %}{% frontend_admin %}{% endblock %}
+
+
+{% block tabs %}{% include 'dossiers/tabs.html' %}{% endblock %}
+
+
 {% block content %}
 
-  {% include 'dossiers/dossierdevenements_detail_head.html' %}
+  <div class="row">
 
-  <div class="col-md-3">
-    {% include 'dossiers/dossierdevenements_detail_affix.html' %}
-  </div>
+    <div class="col-xs-12 col-sm-4 col-lg-3">
+      {% include 'dossiers/dossierdevenements_detail_affix.html' %}
+    </div>
 
-  <div class="col-md-9">
+    <div class="col-xs-12 col-sm-8 col-lg-9">
 
-    <h2>{% trans 'Présentation' %}</h2>
-    {{ object.contenu }}
+      <h2>{% trans 'Présentation' %}</h2>
+      {{ object.contenu }}
 
-    {% include 'dossiers/dossierdevenements_detail_cite.html' %}
+      {% include 'dossiers/dossierdevenements_detail_cite.html' %}
+
+    </div>
 
   </div>
 

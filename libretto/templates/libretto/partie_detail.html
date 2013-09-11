@@ -2,22 +2,29 @@
 {% load i18n routines %}
 {% load url from future %}
 
+
 {% block title %}
   {{ partie|capfirst }}
 {% endblock %}
 
-{% block body %}
+
+{% block header %}
+  <h1>
+    <a href="{{ partie.get_absolute_url }}">
+      {{ partie|capfirst }}
+    </a>
+  </h1>
+{% endblock %}
+
+
+{% block header-aside %}
+  {% frontend_admin %}
+{% endblock %}
+
+
+{% block content %}
 
   {% include "libretto/include/etat.html" with etat=partie.etat %}
-
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>
-      <a href="{{ partie.get_absolute_url }}">
-        {{ partie|capfirst }}
-      </a>
-    </h1>
-  </div>
 
   <table class="data-table">
     {% data_table_list partie.professions.all %}

@@ -2,10 +2,18 @@
 {% load url from future %}
 {% load i18n routines endless sekizai_tags %}
 
+
 {% block title %}
   {{ object|striptags }} | {% trans 'Événements' %}
 {% endblock %}
 
-{% block page-header %}
-  {% include 'dossiers/dossierdevenements_detail_head.html' %}
+
+{% block header %}
+  <h1>{{ object.titre|safe }}</h1>
 {% endblock %}
+
+
+{% block header-aside %}{% frontend_admin %}{% endblock %}
+
+
+{% block tabs %}{% include 'dossiers/tabs.html' %}{% endblock %}

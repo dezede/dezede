@@ -5,13 +5,17 @@
 
 @icon-font-path: '../bootstrap/fonts/';
 
-@font-size-base:    15px;
-@font-family-serif: 'Gentium Basic', 'Georgia', serif;
-@font-family-base:  @font-family-serif;
+@font-size-base:         15px;
+@font-family-serif:      'Gentium Basic', Georgia, serif;
+@font-family-sans-serif: 'Average Sans', Arial, sans-serif;
+@font-family-base:       @font-family-sans-serif;
+@headings-font-family:   @font-family-serif;
 
-@brand-primary:           spin(lighten(desaturate(@body-bg, 20%), 15%), 25);
-@text-color:              contrast(@main-bg);
-@input-color-placeholder: @gray;
+@brand-primary:           lighten(desaturate(@link-color, 20%), 20%);
+@link-color:              darken(saturate(spin(@body-bg, -33), 100%), 53%);
+@text-color:              darken(desaturate(@link-color, 30%), 30%);
+@input-color:             @text-color;
+@input-color-placeholder: lighten(desaturate(@text-color, 100%), 45%);
 
 @navbar-default-link-color:        @gray;
 @navbar-default-link-hover-color:  @gray-darker;
@@ -20,21 +24,19 @@
 @nav-link-hover-bg:             lighten(@gray-lighter, 3%);
 @nav-tabs-active-link-hover-bg: @gray-lighter;
 
-@body-bg: hsv(0, 100%, 70%);
-@well-bg: darken(@main-bg, 4%);
+@body-bg: hsv(50, 7%, 100%);
+@well-bg: darken(@body-bg, 4%);
 
 // Custom variables
 
-@main-x-padding:     20px;
-@main-x-padding1200: 45px;
-@main-x-padding768:  10px;
-@main-x-padding480:  5px;
+@main-padding-x:     10px;
+@main-padding-bottom: 20px;
 
-@footer-y-padding: 15px;
-@footer-height:    50px;
-@footer-height480: 80px;
-
-@main-bg: hsv(51, 17%, 100%);
+@footer-padding-y:   15px;
+@footer-line-height: 50px;
+@footer-height:      @footer-line-height + @footer-padding-y * 2;
+@footer-height480:   @footer-line-height * 2 + @footer-padding-y * 2;
+@footer-bg:          darken(@navbar-default-bg, 8%);
 
 @font-face {
   font-family: 'Gentium Basic';
@@ -64,6 +66,13 @@
   src: local('Gentium Basic Bold Italic'), local('GentiumBasic-BoldItalic'), url(fonts/GentiumBasic-BoldItalic.woff) format('woff');
 }
 
+@font-face {
+  font-family: 'Average Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Average Sans'), local('AverageSans-Regular'), url(fonts/AverageSans.woff) format('woff');
+}
+
 html, body {
   height: 100%;
 }
@@ -84,15 +93,16 @@ body {
 
 // Both for front office and TinyMCE
 #main, .mceContentBody {
-  position: relative;
-  background: @main-bg;
-  .box-shadow(0 0 15px darken(desaturate(@main-bg, 50%), 60%));
   min-height: 100%;
+  height: auto !important;  // Those two lines are a min-height hack for IE.
+  height: 100%;             //
+  padding: 0 @main-padding-x;
+  margin-bottom: -@footer-height;
 }
 
 #content {
-  position: relative;
   padding-top: @navbar-height;
+  padding-bottom: @footer-height480; // =max(@footer-height, @footer-height480)
 }
 
 section {
@@ -117,21 +127,14 @@ p {
 
 .sc {
   font-variant: small-caps;
-  font-size: 120%;
 }
 
 sup {
-  font-size: 60%;
   vertical-align: 50%;
 }
 
 cite {
-  font-size: 110%;
   font-style: italic;
-}
-
-em {
-  font-size: 105%;
 }
 
 .glyphicon {
@@ -176,10 +179,10 @@ blockquote {
 
 .columns2 {
   .column-count(2);
-  .column-gap(0);
+  .column-gap(@grid-gutter-width);
   .column-cell {
     display: inline-block;
-    margin: 6px;
+    margin-bottom: @grid-gutter-width / 2;
     .btn-group, .btn-group>.btn {
       position: static;
     }
@@ -303,7 +306,7 @@ input[type="color"],
 }
 
 #criteria {
-  font-size: 14px;
+  font-size: @font-size-base;
   margin-top: 10px;
   cursor: default;
   .ui-button-text {
@@ -335,7 +338,6 @@ input[type="color"],
 
 .ui-helper-reset {
   text-decoration: none;
-  font-size: 100%;
   list-style: none;
 }
 
@@ -344,24 +346,13 @@ input[type="color"],
 }
 
 .navbar {
-  opacity: 0.9;
-  .transition(opacity 0.3s);
-
-  &:hover {
-    opacity: 1;
-  }
-
   .navbar-brand {
-    padding: 8px 15px 6px;
+    padding: 8px 25px 6px;
   }
 }
 
-.nav.nav-tabs {
-  margin-bottom: 20px;
-}
-
-.front-end_admin {
-  margin: @line-height-computed 5px (@line-height-computed / 2);
+.header-side {
+  margin: @line-height-computed 0 (@line-height-computed / 2);
 }
 
 .ui-slider {
@@ -379,6 +370,10 @@ ul.ui-autocomplete li a, .results_on_deck > div {
   text-overflow: ellipsis;
   border: 1px solid transparent;
   white-space: nowrap;
+}
+
+.affix {
+  top: 77px;
 }
 
 .affix-bottom {
@@ -414,124 +409,37 @@ form .results_on_deck {
 }
 
 footer {
-  @local-background: desaturate(darken(@main-bg, 5%), 20%);
-  position: absolute;
-  bottom: 0;
   width: 100%;
-  line-height: @footer-height;
-  background: @local-background;
-  left: 0;
-  &>* {
-    vertical-align: middle;
+  background: @footer-bg;
+  &>.container {
+    padding: @footer-padding-y @main-padding-x;
     &>* {
-      vertical-align: middle;
+      height: @footer-line-height;
+      line-height: @footer-line-height;
     }
-  }
-  #softwares {
-    &>*+* {
-      margin-left: 10px;
-    }
-  }
-  #logos {
-    a {
-      margin-left: 10px;
-      &:first-child {
-        margin-left: 0;
+    #softwares {
+      &>* {
+        vertical-align: middle;
+      }
+      &>*+* {
+        margin-left: 10px;
       }
     }
-    img {
-      vertical-align: middle;
+    #logos {
+      a:not(:first-child) {
+        margin-left: 10px;
+      }
     }
   }
 }
 
-@media (min-width: 1200px) {
+@media (max-width: @screen-xs-max) {
   #main {
-    padding: 0 @main-x-padding1200;
+    margin-bottom: -@footer-height480;
   }
 
   #content {
-    padding-bottom: @footer-height + @main-x-padding1200;
-  }
-
-  footer {
-    padding: @footer-y-padding @main-x-padding1200;
-  }
-
-  .side {
-    width: 247px;
-  }
-
-  .affix {
-    top: 77px;
-  }
-}
-
-@media (min-width: 980px) and (max-width: 1200px) {
-  #main {
-    padding: 0 @main-x-padding;
-  }
-
-  #content {
-    padding-bottom: @footer-height + @footer-y-padding * 2;
-  }
-
-  footer {
-    padding: @footer-y-padding @main-x-padding;
-  }
-
-  .side {
-    width: 210px;
-  }
-
-  .affix {
-    top: 47px;
-  }
-}
-
-@media (max-width: 980px) {
-  nav.navbar {
-    position: relative;
-  }
-
-  #main {
-    padding: 0 @main-x-padding768;
-  }
-
-  #content {
-    padding-top: 0;
-  }
-
-  #content {
-    padding-bottom: @footer-height + @footer-y-padding * 2;
-  }
-
-  footer {
-    padding: @footer-y-padding @main-x-padding768;
-  }
-
-  .side {
-    width: 286px;
-  }
-
-  .affix {
-    top: 80px;
-  }
-}
-
-@media (max-width: 767px) {
-  #main {
-    padding: 0 @main-x-padding480;
-  }
-
-  #content {
-    padding-bottom: @footer-height480 + @footer-y-padding * 2;
-  }
-
-  footer {
-    height: @footer-height480;
-    line-height: @footer-height480 / 2;
-    padding: @footer-y-padding @main-x-padding480;
+    padding-bottom: @footer-height480;
   }
 
   .side {
@@ -541,5 +449,23 @@ footer {
 
   .columns2 {
     .column-count(1);
+  }
+}
+
+@media (min-width: @screen-sm) and (max-width: @screen-sm-max) {
+  .side {
+    width: 223px;
+  }
+}
+
+@media (min-width: @screen-md) and (max-width: @screen-md-max) {
+  .side {
+    width: 296px;
+  }
+}
+
+@media (min-width: @screen-lg) {
+  .side {
+    width: 265px;
   }
 }

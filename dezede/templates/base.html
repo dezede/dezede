@@ -60,11 +60,9 @@
 
   <body data-spy="scroll" data-target="#sidebar">
 
-    <header>
-      {% block navbar %}
-        {% include 'navbar.html' %}
-      {% endblock %}
-    </header>
+    {% block navbar %}
+      {% include 'navbar.html' %}
+    {% endblock %}
 
     <div id="main" class="container">
 
@@ -82,17 +80,28 @@
             </div>
           </noscript>
 
-          {% block body %}{% endblock %}{# FIXME: À remplacer progressivement par content. #}
+          <div class="page-header">
+            <div class="row">
+              <header class="col-xs-8">
+                {% block header %}{% endblock %}
+              </header>
+              <div class="header-side col-xs-4">
+                {% block header-aside %}{% endblock %}
+              </div>
+            </div>
+            {% block tabs %}{% endblock %}
+          </div>
+
           {% block content %}{% endblock %}
 
         {% endautoescape %}
       </div>
 
-      <footer>
-        {% include 'footer.html' %}
-      </footer>
-
     </div>
+
+    <footer>
+      {% include 'footer.html' %}
+    </footer>
 
     {% compress js %}
       <script>

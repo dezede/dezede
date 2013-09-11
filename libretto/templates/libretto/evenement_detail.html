@@ -1,18 +1,13 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% load extras routines %}
+{% load i18n extras routines %}
 {% load url from future %}
 
 {% block title %}
   {% trans "événement"|capfirst %}
 {% endblock %}
 
-{% block body %}
+{% block content %}
 
   {% include "libretto/evenement_item.html" %}
-
-  <div>
-    {% frontend_admin %}
-  </div>
 
 {% endblock %}

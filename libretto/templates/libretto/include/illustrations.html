@@ -4,7 +4,7 @@
   {% if forloop.first %}
     <ul class="thumbnails">
   {% endif %}
-  <li class="col-md-3">
+  <li class="col-xs-3">
     {% version_object illustration.image 'thumbnail' as thumbnail %}
     <a href="{{ illustration.image.url }}" class="img-thumbnail">
       <img src="{{ thumbnail.url }}" />

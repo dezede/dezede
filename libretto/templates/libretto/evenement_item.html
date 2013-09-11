@@ -5,13 +5,11 @@
 
   {% include "libretto/include/etat.html" with etat=evenement.etat %}
 
-  <span class="pull-right">
-    {% include 'routines/lock.html' with object=evenement %}
-  </span>
+  {% frontend_admin evenement %}
 
   <meta itemprop="name" content="{{ evenement.get_meta_name|striptags }}" />
 
-  <h2 class="text-center">
+  <h2>
     <a href="{{ evenement.get_absolute_url }}" itemprop="url">
       <meta itemprop="startDate"
             content="{{ evenement.ancrage_debut.isoformat }}" />
@@ -75,7 +73,7 @@
     {% if forloop.first %}
       <hr />
     {% endif %}
-    <h3 class="text-center">
+    <h3>
       {% if sources|length > 1 %}
         {{ type.pluriel|capfirst }}
       {% else %}
@@ -88,18 +86,18 @@
           <div class="panel-heading">
             <div class="row">
               {% if source.contenu or source.documents.exists or source.illustrations.exists %}
-                <a class="col-md-11" data-toggle="collapse"
+                <a class="col-xs-7" data-toggle="collapse"
                    data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
                    href="#source_{{ evenement.pk }}_{{ source.pk }}"
                    onmouseover="load_source_content(this, {{ source.pk }});">
                   {{ source.html|removetags:'a' }}
                 </a>
               {% else %}
-                <span class="col-md-11">{{ source.html|removetags:'a' }}</span>
+                <span class="col-xs-7">{{ source.html|removetags:'a' }}</span>
               {% endif %}
 
-              <span class="col-md-1 text-right">
-                {% include 'routines/permalink.html' with object=source size='xs' %}
+              <span class="col-xs-5">
+                {% frontend_admin source %}
               </span>
             </div>
           </div>

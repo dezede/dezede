@@ -1,39 +1,31 @@
 {% load i18n %}
 
-<div class="nav side affix-top well" data-spy="affix"
-      data-offset-top="105" data-offset-bottom="160"
-      style="padding: 8px 0;">
-  <ul class="nav nav-list">
+<div class="side affix-top" data-spy="affix"
+      data-offset-top="105" data-offset-bottom="160">
+  <ul class="list-group">
     {% if object.parent %}
-      <li>
-        <a href="{{ object.parent.get_absolute_url }}">
-          <i class="glyphicon glyphicon-step-backward"></i>
-          Revenir à « {{ object.parent }} »
-        </a>
-      </li>
+      <a href="{{ object.parent.get_absolute_url }}" class="list-group-item">
+        <i class="glyphicon glyphicon-step-backward"></i>
+        Revenir à « {{ object.parent }} »
+      </a>
     {% endif %}
-    <li class="active">
-      <a href="{{ object.get_absolute_url }}">
-        {% trans 'Présentation' %}
-      </a>
-    </li>
-    <li>
-      <a href="#cite">
-        <i class="glyphicon glyphicon-book"></i>
-        {% trans 'Citer ce dossier' %}
-      </a>
-    </li>
+    <a href="{{ object.get_absolute_url }}" class="list-group-item active">
+      {% trans 'Présentation' %}
+    </a>
+    <a href="#cite" class="list-group-item">
+      <i class="glyphicon glyphicon-book"></i>
+      {% trans 'Citer ce dossier' %}
+    </a>
     {% if object.children.exists %}
-      <li class="nav-header">
-        {% trans 'Sous-dossiers' %}
-      </li>
-      {% for sous_dossier in object.children.all %}
-        <li>
-          <a href="{{ sous_dossier.get_absolute_url }}">
-            {{ sous_dossier }}
-          </a>
-        </li>
-      {% endfor %}
+      <h4 class="list-group-item">{% trans 'Sous-dossiers' %}
+        {% for sous_dossier in object.children.all %}
+          <li class="list-group-item">
+            <a href="{{ sous_dossier.get_absolute_url }}">
+              {{ sous_dossier }}
+            </a>
+          </li>
+        {% endfor %}
+      </h4>
     {% endif %}
   </ul>
 </div>

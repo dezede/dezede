@@ -23,5 +23,5 @@ def software_versions():
                 or getattr(module, '__name__', '') or software
             version = module.get_version()
         name = capfirst(name)
-        out.append('<span>%s %s</span>' % (name, version))
-    return ''.join(out)
+        out.append('<span>%s\u00A0%s</span>' % (name, version))
+    return ' '.join(out)

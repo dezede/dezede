@@ -2,13 +2,11 @@
 {% load url from future %}
 {% load crispy_forms_tags i18n %}
 
-{% block title %}
-  {% trans "Connexion" %}
-{% endblock %}
+{% block title %}{% trans "Connexion" %}{% endblock %}
 
-{% block body %}
+{% block content %}
   {% if user.is_authenticated %}
-    <h1 class="page-header">{% trans "Déjà connecté" %}</h1>
+    {% block header %}<h1>{% trans "Déjà connecté" %}</h1>{% endblock %}
     {% url 'auth_logout' as url %}
     {% blocktrans %}
       Vous êtes déjà connecté.

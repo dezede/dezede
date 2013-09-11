@@ -2,45 +2,52 @@
 {% load i18n routines %}
 {% load url from future %}
 
+
 {% block title %}
   {{ oeuvre }}
 {% endblock %}
 
-{% block body %}
+
+{% block header %}
+  <h1>
+    {{ oeuvre.titre_html }}
+  </h1>
+  <h2>
+    {{ oeuvre.description_html }}
+  </h2>
+  <h3>
+    {{ oeuvre.auteurs_html }}
+  </h3>
+  <h3>
+    <span title="{% trans 'Création' %}">
+      {{ oeuvre.ancrage_creation.html|default:'' }}
+    </span>
+  </h3>
+  <h4>
+    <table class="data-table">
+      {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
+      {% for parentes in parentes_list %}
+        {% data_table_list parentes.list 'mere.html' verbose_name=parentes.grouper.nom number_if_one=False %}
+      {% endfor %}
+      {% regroup oeuvre.parentes_filles.filles_en_ordre by type as parentes_list %}
+      {% for parentes in parentes_list %}
+        {% data_table_list parentes.list 'fille.html' verbose_name=parentes.grouper.nom_relatif verbose_name_plural=parentes.grouper.relatif_pluriel number_if_one=False %}
+      {% endfor %}
+    </table>
+  </h4>
+{% endblock %}
+
+
+{% block header-aside %}
+  {% frontend_admin %}
+{% endblock %}
+
+
+{% block content %}
 
   {% include "libretto/include/etat.html" with etat=oeuvre.etat %}
 
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>
-      {{ oeuvre.titre_html }}
-    </h1>
-    <h2>
-      {{ oeuvre.description_html }}
-    </h2>
-    <h3>
-      {{ oeuvre.auteurs_html }}
-    </h3>
-    <h3>
-      <span title="{% trans 'Création' %}">
-        {{ oeuvre.ancrage_creation.html|default:'' }}
-      </span>
-    </h3>
-    <h4>
-      <table class="data-table">
-        {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
-        {% for parentes in parentes_list %}
-          {% data_table_list parentes.list 'mere.html' verbose_name=parentes.grouper.nom number_if_one=False %}
-        {% endfor %}
-        {% regroup oeuvre.parentes_filles.filles_en_ordre by type as parentes_list %}
-        {% for parentes in parentes_list %}
-          {% data_table_list parentes.list 'fille.html' verbose_name=parentes.grouper.nom_relatif verbose_name_plural=parentes.grouper.relatif_pluriel number_if_one=False %}
-        {% endfor %}
-      </table>
-    </h4>
-  </div>
-
-  <div class="col-md-3 pull-right">
+  <div class="col-xs-3 pull-right">
     {% include 'libretto/include/illustrations.html' %}
   </div>
 

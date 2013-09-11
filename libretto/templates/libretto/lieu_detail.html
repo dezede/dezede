@@ -2,27 +2,34 @@
 {% load i18n routines %}
 {% load url from future %}
 
+
 {% block title %}
   {{ lieu }}
 {% endblock %}
 
-{% block body %}
+
+{% block header %}
+  <h1>
+    {{ lieu.nom }}{% if lieu.parent %}, <a href="{{ lieu.parent.get_absolute_url }}">{{ lieu.parent }}</a>{% endif %}
+  </h1>
+  <h2>
+    <span title="{% trans "nature"|capfirst %}">
+      {{ lieu.nature|capfirst }}
+    </span>
+  </h2>
+{% endblock %}
+
+
+{% block header-aside %}
+  {% frontend_admin %}
+{% endblock %}
+
+
+{% block content %}
 
   {% include "libretto/include/etat.html" with etat=lieu.etat %}
 
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>
-      {{ lieu.nom }}{% if lieu.parent %}, <a href="{{ lieu.parent.get_absolute_url }}">{{ lieu.parent }}</a>{% endif %}
-    </h1>
-    <h2>
-      <span title="{% trans "nature"|capfirst %}">
-        {{ lieu.nature|capfirst }}
-      </span>
-    </h2>
-  </div>
-
-  <div class="col-md-3 pull-right">
+  <div class="col-xs-3 pull-right">
     {% include 'libretto/include/illustrations.html' %}
   </div>
 

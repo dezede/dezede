@@ -2,23 +2,30 @@
 {% load i18n extras routines %}
 {% load url from future %}
 
+
 {% block title %}
   {{ source }}
 {% endblock %}
 
-{% block body %}
+
+{% block header %}
+  <h1>
+    {{ source.pretty_title|removetags:'a' }}
+  </h1>
+  <h3>
+    {{ source.type|capfirst }}
+  </h3>
+{% endblock %}
+
+
+{% block header-aside %}
+  {% frontend_admin %}
+{% endblock %}
+
+
+{% block content %}
 
   {% include "libretto/include/etat.html" with etat=source.etat %}
-
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>
-      {{ source.pretty_title|removetags:'a' }}
-    </h1>
-    <h3>
-      {{ source.type|capfirst }}
-    </h3>
-  </div>
 
   {% include 'libretto/source_content.html' %}
 

@@ -1,46 +1,52 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% load extras routines %}
+{% load i18n extras routines %}
 {% load url from future %}
+
 
 {% block title %}
   {{ individu }}
 {% endblock %}
 
-{% block body %}
+
+{% block header %}
+  <h1>
+    {{ individu.nom_complet }}
+    {% with professions_count=individu.professions.count %}
+      {% if professions_count %}
+        <small title="{% filter capfirst %}{% blocktrans count counter=professions_count %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
+          {{ individu.calc_professions }}
+        </small>
+      {% endif %}
+    {% endwith %}
+  </h1>
+  <h3>
+    {% if individu.naissance or individu.deces %}
+      <span title="{% trans "naissance"|capfirst %}">
+        {{ individu.naissance_html }}
+      </span>
+      &ndash;
+      <span title="{% trans "décès"|capfirst %}">
+        {{ individu.deces_html }}
+      </span>
+    {% elif individu.ancrage %}
+      <span title="{% trans "ancrage spatio-temporel"|capfirst %}">
+        {{ individu.ancrage }}
+      </span>
+    {% endif %}
+  </h3>
+{% endblock %}
+
+
+{% block header-aside %}
+  {% frontend_admin %}
+{% endblock %}
+
+
+{% block content %}
 
   {% include "libretto/include/etat.html" with etat=individu.etat %}
 
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>
-      {{ individu.nom_complet }}
-      {% with professions_count=individu.professions.count %}
-        {% if professions_count %}
-          <small title="{% filter capfirst %}{% blocktrans count counter=professions_count %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
-            {{ individu.calc_professions }}
-          </small>
-        {% endif %}
-      {% endwith %}
-    </h1>
-    <h3>
-      {% if individu.naissance or individu.deces %}
-        <span title="{% trans "naissance"|capfirst %}">
-          {{ individu.naissance_html }}
-        </span>
-        &ndash;
-        <span title="{% trans "décès"|capfirst %}">
-          {{ individu.deces_html }}
-        </span>
-      {% elif individu.ancrage %}
-        <span title="{% trans "ancrage spatio-temporel"|capfirst %}">
-          {{ individu.ancrage }}
-        </span>
-      {% endif %}
-    </h3>
-  </div>
-
-  <div class="col-md-3 pull-right">
+  <div class="col-xs-3 pull-right">
     {% include 'libretto/include/illustrations.html' %}
   </div>
 

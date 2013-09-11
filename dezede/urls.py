@@ -1,11 +1,12 @@
 # coding: utf-8
 
-from django.conf.urls import *
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
-from filebrowser.sites import site
-from ajax_select import urls as ajax_select_urls
+from django.conf.urls import *
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.generic import TemplateView
+from ajax_select import urls as ajax_select_urls
+from filebrowser.sites import site
 from haystack.views import SearchView
 
 
@@ -39,7 +40,6 @@ urlpatterns = patterns('',
     url(r'^comptes/', include('accounts.urls')),
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),
-    url(r'^(?P<url>.*/)$', 'django.contrib.flatpages.views.flatpage'),
 )
 
 urlpatterns += staticfiles_urlpatterns()
@@ -54,3 +54,14 @@ if settings.DEBUG:
                                 serve,
                                 {'document_root': settings.MEDIA_ROOT}))
     del(_media_url, serve)
+
+    urlpatterns += patterns('',
+        (r'^403/$', TemplateView.as_view(template_name='403.html')),
+        (r'^404/$', TemplateView.as_view(template_name='404.html')),
+        (r'^500/$', TemplateView.as_view(template_name='500.html')),
+        (r'^503/$', TemplateView.as_view(template_name='503.html')),
+    )
+
+urlpatterns += patterns('',
+    url(r'^(?P<url>.*/)$', 'django.contrib.flatpages.views.flatpage'),
+)

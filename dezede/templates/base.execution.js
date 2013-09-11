@@ -5,3 +5,7 @@ tooltips_reload();
 {# Gestion des cadres d’alerte #}
 $('.alert').alert();
 {# Fin de la gestion des cadres d’alerte #}
+
+$('*[data-loading-text]').click(function () {
+  $(this).button('loading');
+});

@@ -1,8 +1,5 @@
-{% load i18n routines %}
-
-{% frontend_admin autorite=1 %}
-
-<h1>{{ object.titre|safe }}</h1>
+{% load url from future %}
+{% load i18n %}
 
 <ul class="nav nav-tabs nav-justified">
   {% url 'dossierdevenements_detail' object.pk as text_url %}

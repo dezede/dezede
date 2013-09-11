@@ -2,20 +2,21 @@
 {% load i18n static django_tables2 sekizai_tags %}
 {% load url from future %}
 
-{% block title %}
-  {{ object_list.model.meta.verbose_name_plural|capfirst }}
+{% block header %}
+  <h1>
+    {% block title %}
+      {{ object_list.model.meta.verbose_name_plural|capfirst }}
+    {% endblock %}
+  </h1>
 {% endblock %}
 
-{% block body %}
+{% block content %}
 
   {% addtoblock 'css' %}
     <link rel="stylesheet"
           href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
   {% endaddtoblock %}
 
-  <div class="page-header">
-    <h1>{{ object_list.model.meta.verbose_name_plural|capfirst }}</h1>
-  </div>
   {% render_table table %}
 
 {% endblock %}
