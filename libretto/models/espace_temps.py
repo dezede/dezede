@@ -156,15 +156,16 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         ).order_by(*Oeuvre._meta.ordering)
 
     def html(self, tags=True, short=False):
-        url = None if not tags else self.get_absolute_url()
         if short or self.parent is None or self.nature.referent:
             out = self.nom
         else:
             ancestors = self.get_ancestors(include_self=True)
-            ancestors = ancestors.filter(Q(nature__referent=False)
-                | Q(nature__referent=True,
-                    enfants__nature__referent=False)).distinct()
-            out = ', '.join(ancestors.values_list('nom', flat=True))
+            l = list(ancestors.values_list('nom', 'nature__referent'))
+            m = len(l) - 1
+            out = ', '.join([nom for i, (nom, ref)
+                             in enumerate(l) if not l[min(i + 1, m)][1]])
+
+        url = None if not tags else self.get_absolute_url()
         return href(url, out, tags)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
