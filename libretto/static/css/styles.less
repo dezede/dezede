@@ -13,7 +13,8 @@
 
 @brand-primary:           lighten(desaturate(@link-color, 20%), 20%);
 @link-color:              darken(saturate(spin(@body-bg, -33), 100%), 53%);
-@text-color:              darken(desaturate(@link-color, 30%), 30%);
+@link-hover-color:        darken(@link-color, 5%);
+@text-color:              black;
 @input-color:             @text-color;
 @input-color-placeholder: lighten(desaturate(@text-color, 100%), 45%);
 
@@ -30,13 +31,16 @@
 // Custom variables
 
 @main-padding-x:     10px;
-@main-padding-bottom: 20px;
+@content-padding-bottom: 30px;
 
 @footer-padding-y:   15px;
 @footer-line-height: 50px;
-@footer-height:      @footer-line-height + @footer-padding-y * 2;
-@footer-height480:   @footer-line-height * 2 + @footer-padding-y * 2;
-@footer-bg:          darken(@navbar-default-bg, 8%);
+@footer-height:      @footer-line-height + @footer-padding-y * 2 + @footer-border-width;
+@footer-height-sm:   @footer-height + @footer-line-height;
+@footer-bg:          @navbar-default-bg;
+@footer-color:       darken(@footer-bg, 40%);
+@footer-border-width: 1px;
+@footer-border-color: @navbar-default-border;
 
 @font-face {
   font-family: 'Gentium Basic';
@@ -102,15 +106,11 @@ body {
 
 #content {
   padding-top: @navbar-height;
-  padding-bottom: @footer-height480; // =max(@footer-height, @footer-height480)
+  padding-bottom: @footer-height + @content-padding-bottom;
 }
 
 section {
   padding-top: 50px;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  text-shadow: 1px 2px 0 white;
 }
 
 a:not(.btn):not(.tooltip):not(.ui-slider-handle) {
@@ -119,6 +119,10 @@ a:not(.btn):not(.tooltip):not(.ui-slider-handle) {
   &:hover {
     text-decoration: none;
   }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  text-shadow: 1px 2px 0 white;
 }
 
 p {
@@ -351,10 +355,6 @@ input[type="color"],
   }
 }
 
-.header-side {
-  margin: @line-height-computed 0 (@line-height-computed / 2);
-}
-
 .ui-slider {
   .ui-slider-range {
     background: @btn-primary-bg;
@@ -410,38 +410,40 @@ form .results_on_deck {
 
 footer {
   width: 100%;
+  color: @footer-color;
   background: @footer-bg;
+  border-top: @footer-border-width solid @footer-border-color;
   &>.container {
     padding: @footer-padding-y @main-padding-x;
-    &>* {
-      height: @footer-line-height;
-      line-height: @footer-line-height;
-    }
-    #softwares {
+    .row {
       &>* {
-        vertical-align: middle;
+        height: @footer-line-height;
+        line-height: @footer-line-height;
       }
-      &>*+* {
-        margin-left: 10px;
+      #softwares {
+        a.btn {
+          color: @footer-color;
+        }
+        span {
+          font-size: @font-size-small;
+        }
+        &>* {
+          vertical-align: middle;
+        }
+        &>*+* {
+          margin-left: 10px;
+        }
       }
-    }
-    #logos {
-      a:not(:first-child) {
-        margin-left: 10px;
+      #logos {
+        a:not(:first-child) {
+          margin-left: 10px;
+        }
       }
     }
   }
 }
 
 @media (max-width: @screen-xs-max) {
-  #main {
-    margin-bottom: -@footer-height480;
-  }
-
-  #content {
-    padding-bottom: @footer-height480;
-  }
-
   .side {
     position: static;
     width: 100%;
@@ -449,6 +451,20 @@ footer {
 
   .columns2 {
     .column-count(1);
+  }
+}
+
+@media (max-width: @screen-sm-max) {
+  #main {
+    margin-bottom: -@footer-height-sm;
+  }
+
+  #content {
+    padding-bottom: @footer-height-sm + @content-padding-bottom;
+  }
+
+  footer .container .row>* {
+    height: @footer-line-height * 2;
   }
 }
 
