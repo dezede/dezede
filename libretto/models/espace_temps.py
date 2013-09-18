@@ -277,9 +277,9 @@ class AncrageSpatioTemporel(CommonModel):
             return self.date.day
 
     def calc_date(self, tags=True, short=False):
-        if self.date:
-            return date_html(self.date, tags, short)
-        return self.date_approx
+        if self.date_approx:
+            return self.date_approx
+        return date_html(self.date, tags, short)
     calc_date.short_description = _('date')
     calc_date.admin_order_field = 'date'
 
