@@ -46,7 +46,7 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
             'profession').prefetch_related('individus')
 
     def html(self, tags=True):
-        return ', '.join(e.html(tags=tags) for e in self)
+        return str_list(e.html(tags=tags) for e in self)
 
 
 class ElementDeDistributionManager(CommonManager):
@@ -89,7 +89,7 @@ class ElementDeDistribution(CommonModel):
                                       'éléments de distribution', 1)
         verbose_name_plural = ungettext_lazy('élément de distribution',
                                              'éléments de distribution', 2)
-        ordering = ('pupitre',)
+        ordering = ('pupitre', 'profession',)
         app_label = 'libretto'
 
     @staticmethod
