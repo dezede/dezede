@@ -1,11 +1,13 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from copy import copy
 from django.db.models.query import QuerySet
 from django.template import Library, Template
 from django.template.loader import render_to_string
 from django.contrib.sites.models import get_current_site
-from copy import copy
+from django.utils.encoding import force_text
+from django.utils.text import capfirst
 from libretto.models.common import PublishedQuerySet
 
 
@@ -121,9 +123,26 @@ def has_elements(object_list, request):
 
 
 @register.simple_tag(takes_context=True)
+def data_table_list_header(context):
+    count = context['count']
+    has_count = context['has_count']
+    has_count_if_one = context['has_count_if_one']
+    verbose_name = context['verbose_name']
+    verbose_name_plural = context['verbose_name_plural']
+    out = ''
+    if has_count and (count != 1 or has_count_if_one):
+        out = '%s ' % count
+    if count == 1:
+        out += force_text(verbose_name)
+    else:
+        out += force_text(verbose_name_plural)
+    return capfirst(out)
+
+
+@register.simple_tag(takes_context=True)
 def data_table_list(context, object_list, attr='link',
                     verbose_name=None, verbose_name_plural=None, per_page=10,
-                    number_if_one=True):
+                    has_count_if_one=True, has_count=True):
 
     if not object_list:
         return ''
@@ -152,7 +171,8 @@ def data_table_list(context, object_list, attr='link',
         'verbose_name_plural': verbose_name_plural,
         'per_page': per_page,
         'page_variable': verbose_name + '_page',
-        'number_if_one': number_if_one,
+        'has_count_if_one': has_count_if_one,
+        'has_count': has_count,
     }
     return render_to_string('routines/data_table_list.html', c)
 

@@ -1,11 +1,6 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n extras routines %}
 {% load url from future %}
-
-
-{% block title %}
-  {{ individu }}
-{% endblock %}
 
 
 {% block header %}
@@ -37,18 +32,9 @@
 {% endblock %}
 
 
-{% block header-aside %}
-  {% frontend_admin %}
-{% endblock %}
-
-
 {% block content %}
 
-  {% include "libretto/include/etat.html" with etat=individu.etat %}
-
-  <div class="col-xs-3 pull-right">
-    {% include 'libretto/include/illustrations.html' %}
-  </div>
+  {{ block.super }}
 
   <table class="data-table">
     {% data_table_attr 'nom_naissance' %}
@@ -61,12 +47,12 @@
 
     {% regroup individu.parentes.all by type as parentes_list %}
     {% for parentes in parentes_list %}
-      {% data_table_list parentes.list 'parent.html' verbose_name=parentes.grouper.nom verbose_name_plural=parentes.grouper.pluriel number_if_one=False %}
+      {% data_table_list parentes.list 'parent.html' verbose_name=parentes.grouper.nom verbose_name_plural=parentes.grouper.pluriel has_count_if_one=False %}
     {% endfor %}
 
     {% regroup individu.enfances.all by type as enfances_list %}
     {% for enfances in enfances_list %}
-      {% data_table_list enfances.list 'enfant.html' verbose_name=enfances.grouper.nom_relatif verbose_name_plural=enfances.grouper.relatif_pluriel number_if_one=False %}
+      {% data_table_list enfances.list 'enfant.html' verbose_name=enfances.grouper.nom_relatif verbose_name_plural=enfances.grouper.relatif_pluriel has_count_if_one=False %}
     {% endfor %}
 
 

@@ -5,9 +5,9 @@
 {% with owner=object.owner %}
   {% if owner %}
     <a class="btn btn-default"
-       href="{% url 'user_profile' owner.username %}">
+       href="{% url 'user_profile' owner.username %}"
+       title="{% trans 'Auteur :' %} {{ owner.get_full_name|default:owner }}">
       <i class="glyphicon glyphicon-user"></i>
-      {{ owner.get_full_name|default:owner }}
     </a>
   {% endif %}
 {% endwith%}

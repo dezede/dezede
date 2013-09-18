@@ -1,11 +1,6 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n routines %}
 {% load url from future %}
-
-
-{% block title %}
-  {{ lieu }}
-{% endblock %}
 
 
 {% block header %}
@@ -20,18 +15,9 @@
 {% endblock %}
 
 
-{% block header-aside %}
-  {% frontend_admin %}
-{% endblock %}
-
-
 {% block content %}
 
-  {% include "libretto/include/etat.html" with etat=lieu.etat %}
-
-  <div class="col-xs-3 pull-right">
-    {% include 'libretto/include/illustrations.html' %}
-  </div>
+  {{ block.super }}
 
   <table class="data-table">
     {% if lieu.get_children|has_elements:request %}

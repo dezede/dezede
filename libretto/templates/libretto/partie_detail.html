@@ -1,11 +1,6 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n routines %}
 {% load url from future %}
-
-
-{% block title %}
-  {{ partie|capfirst }}
-{% endblock %}
 
 
 {% block header %}
@@ -17,14 +12,9 @@
 {% endblock %}
 
 
-{% block header-aside %}
-  {% frontend_admin %}
-{% endblock %}
-
-
 {% block content %}
 
-  {% include "libretto/include/etat.html" with etat=partie.etat %}
+  {{ block.super }}
 
   <table class="data-table">
     {% data_table_list partie.professions.all %}

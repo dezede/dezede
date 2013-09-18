@@ -86,17 +86,17 @@
           <div class="panel-heading">
             <div class="row">
               {% if source.contenu or source.documents.exists or source.illustrations.exists %}
-                <a class="col-xs-7" data-toggle="collapse"
+                <a class="col-xs-8 col-sm-9 col-md-10" data-toggle="collapse"
                    data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
                    href="#source_{{ evenement.pk }}_{{ source.pk }}"
                    onmouseover="load_source_content(this, {{ source.pk }});">
                   {{ source.html|removetags:'a' }}
                 </a>
               {% else %}
-                <span class="col-xs-7">{{ source.html|removetags:'a' }}</span>
+                <span class="col-xs-8 col-sm-9 col-md-10">{{ source.html|removetags:'a' }}</span>
               {% endif %}
 
-              <span class="col-xs-5">
+              <span class="col-xs-4 col-sm-3 col-md-2">
                 {% frontend_admin source %}
               </span>
             </div>

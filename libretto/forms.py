@@ -104,7 +104,7 @@ class EvenementListForm(Form):
             HTML('<hr/>'),
             'lieu', 'oeuvre', 'individu',
             HTML('<hr/>'),
-            Submit('', _('Filtrer'), css_class='btn-block',
+            Submit('', _('Filtrer'), css_class='btn-lg btn-block',
                    data_loading_text=_('Chargement…')),
         )
 

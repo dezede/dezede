@@ -1,28 +1,16 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n routines %}
 {% load url from future %}
 
 
-{% block title %}
-  {{ profession|capfirst }}
-{% endblock %}
-
-
 {% block header %}
-  <h1>
-    {{ profession.pretty_link }}
-  </h1>
-{% endblock %}
-
-
-{% block header-aside %}
-  {% frontend_admin %}
+  <h1>{{ profession.pretty_link }}</h1>
 {% endblock %}
 
 
 {% block content %}
 
-  {% include "libretto/include/etat.html" with etat=profession.etat %}
+  {{ block.super }}
 
   <table class="data-table">
 
