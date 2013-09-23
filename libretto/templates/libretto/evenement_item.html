@@ -28,6 +28,9 @@
   <h4>
     {{ evenement.html|safe }}
   </h4>
+  <h4>
+    {{ evenement.caracteristiques.html }}
+  </h4>
 
   <p>{{ evenement.distribution.prefetch.html|safe }}</p>
 

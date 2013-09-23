@@ -1,21 +1,28 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import warnings
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
-     FloatField, permalink, SmallIntegerField, PROTECT
+     FloatField, permalink, SmallIntegerField, PROTECT, DateField, \
+    PositiveSmallIntegerField
+from django.template.defaultfilters import date
 from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy
 from mptt.models import MPTTModel, TreeForeignKey
-from cache_tools import cached_ugettext_lazy as _
+from cache_tools import cached_ugettext_lazy as _, cached_ugettext as ugettext
 from ..utils import abbreviate
 from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
     UniqueSlugModel, PublishedManager, AutoriteModel, CommonTreeManager, \
-    PublishedQuerySet, CommonTreeQuerySet
-from .functions import capfirst, ex, href
+    PublishedQuerySet, CommonTreeQuerySet, Caracteristique, \
+    TypeDeCaracteristique
+from .functions import capfirst, ex, href, date_html
 
 
-__all__ = (b'Profession', b'Devise', b'Engagement', b'TypeDePersonnel',
-           b'Personnel')
+__all__ = (
+    b'Profession', b'Devise', b'TypeDeCaracteristiqueDEnsemble',
+    b'CaracteristiqueDEnsemble', b'Membre', b'Ensemble', b'Engagement',
+    b'TypeDePersonnel', b'Personnel')
 
 
 class ProfessionQuerySet(CommonTreeQuerySet, PublishedQuerySet):
@@ -79,18 +86,12 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
         f = self.nom_feminin
         return f or self.nom
 
-    def pretty_gendered(self, titre='M', tags=True):
-        return self.gendered(titre=titre, tags=tags, caps=True)
-
-    def gendered(self, titre='M', tags=True, caps=False):
-        return self.html(tags, caps=caps, feminin=titre in ('F', 'J'))
-
     def html(self, tags=True, short=False, caps=False, feminin=False,
              pluriel=False):
         if pluriel:
             nom = self.pluriel()
             if feminin:
-                raise Exception('Pas de féminin pluriel pour l’instant')
+                warnings.warn("Pas de feminin pluriel pour l'instant")
         elif feminin:
             nom = self.feminin()
         else:
@@ -115,6 +116,168 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     @staticmethod
     def autocomplete_search_fields():
         return 'nom__icontains', 'nom_pluriel__icontains',
+
+
+class TypeDeCaracteristiqueDEnsemble(TypeDeCaracteristique):
+    class Meta(object):
+        verbose_name = ungettext_lazy(
+            'type de caractéristique d’ensemble',
+            'types de caractéristique d’ensemble', 1)
+        verbose_name_plural = ungettext_lazy(
+            'type de caractéristique d’ensemble',
+            'types de caractéristique d’ensemble', 2)
+        ordering = ('classement',)
+        app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('typedecaracteristique_ptr',)
+
+
+class CaracteristiqueDEnsemble(Caracteristique):
+    class Meta(object):
+        verbose_name = ungettext_lazy(
+            'caractéristique d’ensemble',
+            'caractéristiques d’ensemble', 1)
+        verbose_name_plural = ungettext_lazy(
+            'caractéristique d’ensemble',
+            'caractéristiques d’ensemble', 2)
+        ordering = ('type', 'classement', 'valeur')
+        app_label = 'libretto'
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('caracteristique_ptr', 'ensembles',)
+
+
+@python_2_unicode_compatible
+class Membre(CommonModel):
+    ensemble = ForeignKey('Ensemble', related_name='membres',
+                          verbose_name=_('ensemble'))
+    individu = ForeignKey('Individu', related_name='membres',
+                          verbose_name=_('individu'))
+    profession = ForeignKey(
+        Profession, blank=True, null=True, related_name='membres',
+        verbose_name=_('profession'))
+    YEAR = 0
+    MONTH = 1
+    DAY = 2
+    PRECISIONS = (
+        (YEAR, _('Année')),
+        (MONTH, _('Mois')),
+        (DAY, _('Jour')),
+    )
+    debut = DateField(_('début'), blank=True, null=True)
+    debut_precision = PositiveSmallIntegerField(
+        _('précision du début'), choices=PRECISIONS, default=0)
+    fin = DateField(_('fin'), blank=True, null=True)
+    fin_precision = PositiveSmallIntegerField(
+        _('précision de la fin'), choices=PRECISIONS, default=0)
+
+    class Meta(object):
+        app_label = 'libretto'
+
+    def smart_date(self, attr, attr_precision, tags=True):
+        d = getattr(self, attr)
+        if d is None:
+            return
+        precision = getattr(self, attr_precision)
+        if precision == self.YEAR:
+            return smart_text(d.year)
+        if precision == self.MONTH:
+            return date(d, 'F Y')
+        if precision == self.DAY:
+            return date_html(d, tags=tags)
+
+    def smart_debut(self, tags=True):
+        return self.smart_date('debut', 'debut_precision', tags=tags)
+
+    def smart_fin(self, tags=True):
+        return self.smart_date('fin', 'fin_precision', tags=tags)
+
+    def smart_period(self, tags=True):
+        debut = self.smart_debut(tags=tags)
+        fin = self.smart_fin(tags=tags)
+        # TODO: Rendre ceci plus simple en conservant les possibilités
+        # d’internationalisation.
+        if fin is None:
+            if debut is None:
+                return ''
+            if self.debut_precision == self.DAY:
+                t = ugettext('depuis le %(debut)s')
+            else:
+                t = ugettext('depuis %(debut)s')
+        else:
+            if debut is None:
+                if self.fin_precision == self.DAY:
+                    t = ugettext('jusqu’au %(fin)s')
+                else:
+                    t = ugettext('jusqu’à %(fin)s')
+            else:
+                if self.debut_precision == self.DAY:
+                    if self.fin_precision == self.DAY:
+                        t = ugettext('du %(debut)s au %(fin)s')
+                    else:
+                        t = ugettext('du %(debut)s à %(fin)s')
+                else:
+                    if self.fin_precision == self.DAY:
+                        t = ugettext('de %(debut)s au %(fin)s')
+                    else:
+                        t = ugettext('de %(debut)s à %(fin)s')
+        return t % {'debut': debut, 'fin': fin}
+
+    def html(self, tags=True):
+        l = [self.individu.html(tags=tags)]
+        if self.profession:
+            l.append('[%s]' % self.profession.html(
+                feminin=self.individu.is_feminin(), tags=tags))
+        if self.debut or self.fin:
+            l.append('(%s)' % self.smart_period(tags=tags))
+        return mark_safe(' '.join(l))
+
+    def __str__(self):
+        return self.html(tags=False)
+
+    def link(self):
+        return self.html()
+
+
+@python_2_unicode_compatible
+class Ensemble(AutoriteModel, UniqueSlugModel):
+    nom = CharField(max_length=50)
+    caracteristiques = ManyToManyField(
+        CaracteristiqueDEnsemble, blank=True, null=True,
+        related_name='ensembles', verbose_name=_('caractéristiques'))
+    individus = ManyToManyField('Individu', through=Membre)
+
+    class Meta(object):
+        app_label = 'libretto'
+
+    def __str__(self):
+        return self.html(tags=False)
+
+    def html(self, tags=True):
+        if not tags:
+            return self.nom
+        return href(self.get_absolute_url(), self.nom, tags=tags)
+
+    @permalink
+    def get_absolute_url(self):
+        return b'ensemble_detail', (self.slug,)
+
+    @permalink
+    def permalien(self):
+        return b'ensemble_permanent_detail', (self.pk,)
+
+    def calc_caracteristiques(self, tags=True, caps=False):
+        return self.caracteristiques.html(tags=tags, caps=caps)
+    calc_caracteristiques.short_description = _('caractéristiques')
+    calc_caracteristiques.allow_tags = True
+    calc_caracteristiques.admin_order_field = 'caracteristiques'
+
+    def membres_count(self):
+        return self.membres.count()
+    membres_count.short_description = _('nombre de membres')
 
 
 @python_2_unicode_compatible

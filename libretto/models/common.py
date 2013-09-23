@@ -23,7 +23,7 @@ from reversion import pre_revision_commit
 from tinymce.models import HTMLField
 from cache_tools import cached_ugettext_lazy as _
 from cache_tools.signals import auto_invalidate_signal_receiver
-from .functions import href, ex, hlp
+from .functions import href, ex, hlp, capfirst, str_list
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 
@@ -349,12 +349,29 @@ class CaracteristiqueQuerySet(PolymorphicQuerySet, CommonQuerySet):
         return [hlp(valeur, type, tags)
                 for type, valeur in self.values_list('type__nom', 'valeur')]
 
+    def html(self, tags=True, caps=False):
+        l = []
+        first = True
+        for type, valeur in self.values_list('type__nom', 'valeur'):
+            if first and caps:
+                valeur = capfirst(valeur)
+                first = False
+            valeur = mark_safe(valeur)
+            if type:
+                l.append(hlp(valeur, type, tags=tags))
+            else:
+                l.append(valeur)
+        return str_list(l)
+
 
 class CaracteristiqueManager(PolymorphicManager, CommonManager):
     queryset_class = CaracteristiqueQuerySet
 
     def html_list(self, tags=True):
         return self.get_query_set().html_list(tags=tags)
+
+    def html(self, tags=True, caps=True):
+        return self.get_query_set().html(tags=tags, caps=caps)
 
 
 @python_2_unicode_compatible
@@ -386,8 +403,11 @@ class Caracteristique(PolymorphicModel, CommonModel):
     def invalidated_relations_when_saved(all_relations=False):
         return ('get_real_instance',)
 
-    def html(self, tags=True):
-        value = mark_safe(self.valeur)
+    def html(self, tags=True, caps=False):
+        value = self.valeur
+        if caps:
+            value = capfirst(self.valeur)
+        value = mark_safe(value)
         if self.type:
             return hlp(value, self.type, tags=tags)
         return value

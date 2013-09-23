@@ -200,36 +200,45 @@ class IndividuEnfantInline(CustomTabularInline):
 
 class OeuvreLieesInline(StackedInline):
     model = Oeuvre
-    verbose_name = model._meta.verbose_name
-    verbose_name_plural = model._meta.verbose_name_plural
     classes = ('grp-collapse grp-closed',)
 
 
 class AuteurInline(CustomTabularInline, GenericStackedInline):
     model = Auteur
-    verbose_name = model._meta.verbose_name
-    verbose_name_plural = model._meta.verbose_name_plural
     raw_id_fields = ('profession', 'individu',)
     autocomplete_lookup_fields = {
         'fk': ['profession', 'individu'],
     }
 
 
+class MembreInline(CustomStackedInline):
+    model = Membre
+    raw_id_fields = ('individu', 'profession')
+    autocomplete_lookup_fields = {
+        'fk': ['individu', 'profession'],
+    }
+    fieldsets = (
+        (None, {'fields': ('individu', 'profession')}),
+        (_('Période d’activité'), {
+            'fields': (('debut', 'debut_precision'), ('fin', 'fin_precision'))
+        })
+    )
+
+
 class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
     model = ElementDeDistribution
-    verbose_name = model._meta.verbose_name
     verbose_name_plural = _('distribution')
-    raw_id_fields = ('individus', 'pupitre', 'profession')
+    raw_id_fields = ('individus', 'ensembles', 'pupitre', 'profession')
     autocomplete_lookup_fields = {
         'fk': ['pupitre', 'profession'],
-        'm2m': ['individus'],
+        'm2m': ['individus', 'ensembles'],
     }
     fieldsets = (
         (None, {
             'description': _('Distribution commune à l’ensemble de '
                              'l’événement. Une distribution plus précise peut '
                              'être saisie avec le programme.'),
-            'fields': ('individus', 'pupitre', 'profession',),
+            'fields': ('individus', 'ensembles', 'pupitre', 'profession',),
         }),
     )
     classes = ('grp-collapse grp-open',)
@@ -238,7 +247,6 @@ class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
 class ElementDeProgrammeInline(CustomStackedInline):
     model = ElementDeProgramme
     form = ElementDeProgrammeForm
-    verbose_name = model._meta.verbose_name
     verbose_name_plural = _('programme')
     fieldsets = (
         (_('Champs courants'), {
@@ -410,6 +418,8 @@ class TypeDeParenteCommonAdmin(CommonAdmin):
     list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
                      'nom_relatif_pluriel', 'classement',)
     list_filter = (PolymorphicChildModelFilter,)
+    search_fields = ('nom', 'nom_relatif',
+                     'nom_pluriel', 'nom_relatif_pluriel')
     fieldsets = (
         (None, {'fields': (
             ('nom', 'nom_pluriel'), ('nom_relatif', 'nom_relatif_pluriel'),
@@ -465,6 +475,8 @@ class EtatAdmin(VersionAdmin, CommonAdmin):
 class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'referent',)
     list_editable = ('nom', 'nom_pluriel', 'referent',)
+    list_filter = ('referent',)
+    search_fields = ('nom', 'nom_pluriel')
 
 
 class LieuCommonAdmin(AutoriteAdmin):
@@ -622,6 +634,26 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
     fieldsets_and_inlines_order = ('f', 'i', 'i')
 
 
+class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
+    list_display = ('__str__', 'calc_caracteristiques', 'membres_count')
+    search_fields = ('nom', 'membres__individu__nom')
+    inlines = (MembreInline,)
+    raw_id_fields = ('caracteristiques', 'documents', 'illustrations')
+    autocomplete_lookup_fields = {
+        'm2m': ('caracteristiques', 'documents', 'illustrations'),
+    }
+    fieldsets = (
+        (_('Champs courants'), {
+            'fields': ('nom', 'caracteristiques'),
+        }),
+        (_('Fichiers'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': ('illustrations', 'documents',),
+        }),
+    )
+    fieldsets_and_inlines_order = ('f', 'i')
+
+
 class DeviseAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'symbole',)
     list_editable = ('nom', 'symbole',)
@@ -666,6 +698,7 @@ class TypeDeCaracteristiqueAdmin(
         PolymorphicParentModelAdmin):
     base_model = TypeDeCaracteristique
     child_models = (TypeDeCaracteristiqueDOeuvre,
+                    TypeDeCaracteristiqueDEnsemble,
                     TypeDeCaracteristiqueDeProgramme)
 
 
@@ -679,12 +712,19 @@ class TypeDeCaracteristiqueDOeuvreAdmin(
     pass
 
 
+class TypeDeCaracteristiqueDEnsembleAdmin(
+        VersionAdmin, TypeDeCaracteristiqueChildAdmin):
+    pass
+
+
 class TypeDeCaracteristiqueDeProgrammeAdmin(
         VersionAdmin, TypeDeCaracteristiqueChildAdmin):
     pass
 
 
 reversion.register(TypeDeCaracteristiqueDOeuvre,
+                   follow=('typedecaracteristique_ptr',))
+reversion.register(TypeDeCaracteristiqueDEnsemble,
                    follow=('typedecaracteristique_ptr',))
 reversion.register(TypeDeCaracteristiqueDeProgramme,
                    follow=('typedecaracteristique_ptr',))
@@ -700,7 +740,11 @@ class CaracteristiqueCommonAdmin(CommonAdmin):
 class CaracteristiqueAdmin(VersionAdmin, CaracteristiqueCommonAdmin,
                            PolymorphicParentModelAdmin):
     base_model = Caracteristique
-    child_models = (CaracteristiqueDOeuvre, CaracteristiqueDeProgramme)
+    child_models = (
+        CaracteristiqueDOeuvre,
+        CaracteristiqueDEnsemble,
+        CaracteristiqueDeProgramme,
+    )
 
 
 class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
@@ -708,6 +752,7 @@ class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
     base_model = Caracteristique
     type_to = {
         CaracteristiqueDOeuvre: TypeDeCaracteristiqueDOeuvre,
+        CaracteristiqueDEnsemble: TypeDeCaracteristiqueDEnsemble,
         CaracteristiqueDeProgramme: TypeDeCaracteristiqueDeProgramme,
     }
 
@@ -722,6 +767,10 @@ class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
 
 
 class CaracteristiqueDOeuvreAdmin(VersionAdmin, CaracteristiqueChildAdmin):
+    pass
+
+
+class CaracteristiqueDEnsembleAdmin(VersionAdmin, CaracteristiqueChildAdmin):
     pass
 
 
@@ -846,11 +895,11 @@ class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
     list_editable = ('pupitre', 'profession',)
     search_fields = ('individus__nom', 'individus__prenoms__prenom',
                      'pupitre__partie__nom', 'profession__nom')
-    fields = ('individus', 'pupitre', 'profession',)
-    raw_id_fields = ('individus', 'pupitre', 'profession',)
+    fields = ('individus', 'ensembles', 'pupitre', 'profession',)
+    raw_id_fields = ('individus', 'ensembles', 'pupitre', 'profession',)
     autocomplete_lookup_fields = {
         'fk': ['pupitre', 'profession'],
-        'm2m': ['individus'],
+        'm2m': ['individus', 'ensembles'],
     }
 
 
@@ -861,13 +910,13 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
     search_fields = ('circonstance', 'ancrage_debut__lieu__nom')
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
-    raw_id_fields = ('ancrage_debut', 'ancrage_fin', 'documents',
-                     'illustrations',)
+    raw_id_fields = ('ancrage_debut', 'ancrage_fin', 'caracteristiques',
+                     'documents', 'illustrations',)
     related_lookup_fields = {
         'fk': ('ancrage_debut', 'ancrage_fin'),
     }
     autocomplete_lookup_fields = {
-        'm2m': ('documents', 'illustrations'),
+        'm2m': ('caracteristiques', 'documents', 'illustrations'),
     }
     readonly_fields = ('__str__', 'html', 'link')
     inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,
@@ -879,7 +928,7 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
                 'avant d’ajouter des <em>éléments de programme</em> '
                 'plus bas.'),
             'fields': (('ancrage_debut', 'ancrage_fin',),
-                       ('circonstance', 'relache',),),
+                       ('circonstance', 'relache',), 'caracteristiques',),
         }),
         (_('Fichiers'), {
             'classes': ('grp-collapse grp-closed',),
@@ -896,6 +945,7 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
 class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
+    search_fields = ('nom', 'nom_pluriel')
 
 
 class SourceAdmin(VersionAdmin, AutoriteAdmin):
@@ -955,17 +1005,21 @@ site.register(TypeDeParente, TypeDeParenteAdmin)
 site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
 site.register(Individu, IndividuAdmin)
-site.register(Devise, DeviseAdmin)
-site.register(Engagement, EngagementAdmin)
-site.register(TypeDePersonnel, TypeDePersonnelAdmin)
-site.register(Personnel, PersonnelAdmin)
+site.register(Ensemble, EnsembleAdmin)
+# site.register(Devise, DeviseAdmin)
+# site.register(Engagement, EngagementAdmin)
+# site.register(TypeDePersonnel, TypeDePersonnelAdmin)
+# site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(TypeDeCaracteristique, TypeDeCaracteristiqueAdmin)
 site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
+site.register(TypeDeCaracteristiqueDEnsemble,
+              TypeDeCaracteristiqueDEnsembleAdmin)
 site.register(TypeDeCaracteristiqueDeProgramme,
               TypeDeCaracteristiqueDeProgrammeAdmin)
 site.register(Caracteristique, CaracteristiqueAdmin)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
+site.register(CaracteristiqueDEnsemble, CaracteristiqueDEnsembleAdmin)
 site.register(CaracteristiqueDeProgramme, CaracteristiqueDeProgrammeAdmin)
 site.register(Partie, PartieAdmin)
 site.register(Role, RoleAdmin)

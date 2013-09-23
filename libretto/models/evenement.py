@@ -70,8 +70,12 @@ class ElementDeDistributionManager(CommonManager):
 
 @python_2_unicode_compatible
 class ElementDeDistribution(CommonModel):
-    individus = ManyToManyField('Individu', verbose_name=_('individus'),
-                                related_name='elements_de_distribution')
+    individus = ManyToManyField(
+        'Individu', blank=True, null=True,
+        related_name='elements_de_distribution', verbose_name=_('individus'))
+    ensembles = ManyToManyField(
+        'Ensemble', blank=True, null=True,
+        related_name='elements_de_distribution', verbose_name=_('ensembles'))
     pupitre = ForeignKey(
         'Pupitre', verbose_name=_('pupitre'), null=True, blank=True,
         related_name='elements_de_distribution', on_delete=PROTECT)
@@ -100,17 +104,28 @@ class ElementDeDistribution(CommonModel):
         return self.html(tags=False)
 
     def html(self, tags=True):
-        out = ''
+        l = []
+        pluriel = False
+        feminin = False
         if self.pk:
             individus = self.individus.all()
-            out += str_list_w_last(individu.html(tags=tags)
-                                   for individu in individus)
+            interpretes = [individu.html(tags=tags)
+                           for individu in individus]
+            ensembles = self.ensembles.all()
+            interpretes += [ensemble.html(tags=tags)
+                            for ensemble in ensembles]
+            if not ensembles:
+                feminin = individus.are_feminins()
+            l.append(str_list_w_last(interpretes))
+            pluriel = len(interpretes) > 1
 
         if self.pupitre:
-            out += ' [' + self.pupitre.partie.link() + ']'
+            l.append('[' + self.pupitre.html() + ']')
         elif self.profession:
-            out += ' [' + self.profession.link() + ']'
+            l.append('[' + self.profession.html(feminin=feminin,
+                                                pluriel=pluriel) + ']')
 
+        out = str_list(l, infix=' ')
         if not tags:
             return strip_tags(out)
         return out
@@ -126,6 +141,11 @@ class ElementDeDistribution(CommonModel):
         return href(self.get_change_url(), smart_text(self), new_tab=True)
 
     def clean(self):
+        # FIXME: Déplacer cette validation dans un formulaire.
+        if self.pk and not self.individus.exists() \
+                and not self.ensembles.exists():
+            raise ValidationError(
+                _('Vous devez remplir au moins un individu ou un ensemble.'))
         if self.pupitre and self.profession:
             raise ValidationError(_('Vous ne pouvez remplir à la fois '
                                     '« Pupitre » et « Profession ».'))
@@ -217,7 +237,7 @@ class ElementDeProgramme(AutoriteModel):
     def calc_caracteristiques(self):
         if self.pk is None:
             return ''
-        return str_list(smart_text(c) for c in self.caracteristiques.all())
+        return self.caracteristiques.html()
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _('caractéristiques')
 
@@ -305,6 +325,10 @@ class Evenement(AutoriteModel):
         null=True, db_index=True, on_delete=PROTECT)
     relache = BooleanField(verbose_name='relâche', db_index=True)
     circonstance = CharField(max_length=500, blank=True, db_index=True)
+    caracteristiques = ManyToManyField(
+        CaracteristiqueDeProgramme,
+        related_name='evenements', blank=True, null=True,
+        verbose_name=_('caractéristiques'))
     distribution = GenericRelation(ElementDeDistribution)
 
     objects = EvenementManager()
@@ -333,6 +357,11 @@ class Evenement(AutoriteModel):
         return href(self.get_absolute_url(), smart_text(self))
     link.short_description = _('lien')
     link.allow_tags = True
+
+    def calc_caracteristiques(self, tags=True, caps=True):
+        if self.pk is None:
+            return ''
+        return self.caracteristiques.html(tags=tags, caps=caps)
 
     def sources_by_type(self):
         sources = OrderedDefaultDict()

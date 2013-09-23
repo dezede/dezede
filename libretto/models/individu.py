@@ -11,8 +11,9 @@ from tinymce.models import HTMLField
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from ..utils import abbreviate
-from .common import CommonModel, AutoriteModel, \
-    calc_pluriel, UniqueSlugModel, TypeDeParente
+from .common import (
+    CommonModel, AutoriteModel, calc_pluriel, UniqueSlugModel, TypeDeParente,
+    PublishedManager, PublishedQuerySet)
 from .evenement import Evenement
 from .functions import str_list, str_list_w_last, href, sc
 
@@ -115,6 +116,20 @@ class ParenteDIndividus(CommonModel):
         return calc_pluriel(self, attr_base='nom_relatif')
 
 
+class IndividuQuerySet(PublishedQuerySet):
+    def are_feminins(self):
+        return all([titre in ('J', 'F',)
+                    for titre in self.values_list('titre', flat=True)])
+
+
+class IndividuManager(PublishedManager):
+    def get_query_set(self):
+        return IndividuQuerySet(self.model, using=self._db)
+
+    def are_feminins(self):
+        return self.get_query_set().are_feminins()
+
+
 @python_2_unicode_compatible
 class Individu(AutoriteModel, UniqueSlugModel):
     particule_nom = CharField(
@@ -169,6 +184,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
         'self', through='ParenteDIndividus', related_name='parents',
         symmetrical=False, db_index=True)
     biographie = HTMLField(_('biographie'), blank=True)
+
+    objects = IndividuManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('individu', 'individus', 1)
@@ -249,6 +266,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
             return titres[self.titre]
         return ''
 
+    def is_feminin(self):
+        return self.titre in ('J', 'F',)
+
     def get_particule(self, naissance=False, lon=True):
         particule = self.particule_nom_naissance if naissance \
             else self.particule_nom
@@ -284,8 +304,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
     def calc_professions(self, tags=True):
         if not self.pk:
             return ''
-        return str_list_w_last(p.gendered(self.titre, tags, caps=i == 0)
-                               for i, p in enumerate(self.professions.all()))
+        return str_list_w_last(
+            p.html(feminin=self.is_feminin(), tags=tags, caps=i == 0)
+            for i, p in enumerate(self.professions.all()))
     calc_professions.short_description = _('professions')
     calc_professions.admin_order_field = 'professions__nom'
     calc_professions.allow_tags = True
@@ -329,7 +350,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
                     l.append('(%s)' % s)
             out = str_list(l, ' ')
             if pseudonyme:
-                alias = ugettext('dite') if self.titre in ('J', 'F',) \
+                alias = ugettext('dite') if self.is_feminin() \
                     else ugettext('dit')
                 out += ugettext(', %(alias)s %(pseudonyme)s') % \
                     {'alias': alias,
