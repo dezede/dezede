@@ -224,10 +224,10 @@ class ElementDeProgramme(AutoriteModel):
             return ('evenement',)
         return ()
 
-    def calc_caracteristiques(self):
+    def calc_caracteristiques(self, tags=False):
         if self.pk is None:
             return ''
-        return self.caracteristiques.html()
+        return self.caracteristiques.html(tags=tags, caps=False)
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _('caractéristiques')
 
@@ -264,7 +264,7 @@ class ElementDeProgramme(AutoriteModel):
                           {'class': self.__class__.__name__, 'pk': self.pk})
             return ''
 
-        caracteristiques = self.calc_caracteristiques()
+        caracteristiques = self.calc_caracteristiques(tags=tags)
         if caracteristiques:
             out += ' [' + caracteristiques + ']'
 
