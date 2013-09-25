@@ -12,7 +12,7 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from ..utils import abbreviate
 from .common import (
-    CommonModel, AutoriteModel, calc_pluriel, UniqueSlugModel, TypeDeParente,
+    CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
     PublishedManager, PublishedQuerySet)
 from .evenement import Evenement
 from .functions import str_list, str_list_w_last, href, sc
@@ -108,12 +108,6 @@ class ParenteDIndividus(CommonModel):
         return ugettext('%(parent)s, %(type)s de %(enfant)s') % {
             'parent': self.parent, 'type': self.type.nom,
             'enfant': self.enfant}
-
-    def pluriel(self):
-        return calc_pluriel(self)
-
-    def relatif_pluriel(self):
-        return calc_pluriel(self, attr_base='nom_relatif')
 
 
 class IndividuQuerySet(PublishedQuerySet):
