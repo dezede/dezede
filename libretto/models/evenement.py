@@ -140,16 +140,6 @@ class ElementDeDistribution(CommonModel):
     def get_change_link(self):
         return href(self.get_change_url(), smart_text(self), new_tab=True)
 
-    def clean(self):
-        # FIXME: Déplacer cette validation dans un formulaire.
-        if self.pk and not self.individus.exists() \
-                and not self.ensembles.exists():
-            raise ValidationError(
-                _('Vous devez remplir au moins un individu ou un ensemble.'))
-        if self.pupitre and self.profession:
-            raise ValidationError(_('Vous ne pouvez remplir à la fois '
-                                    '« Pupitre » et « Profession ».'))
-
     @staticmethod
     def autocomplete_search_fields():
         return (

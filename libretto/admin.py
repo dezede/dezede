@@ -18,7 +18,7 @@ from reversion import VersionAdmin
 import reversion
 from cache_tools import cached_ugettext_lazy as _
 from .models import *
-from .forms import OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm
+from .forms import OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm, ElementDeDistributionForm
 
 
 __all__ = ()
@@ -227,6 +227,7 @@ class MembreInline(CustomStackedInline):
 
 class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
     model = ElementDeDistribution
+    form = ElementDeDistributionForm
     verbose_name_plural = _('distribution')
     raw_id_fields = ('individus', 'ensembles', 'pupitre', 'profession')
     autocomplete_lookup_fields = {
@@ -891,6 +892,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
 
 
 class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
+    form = ElementDeDistributionForm
     list_display = ('__str__', 'pupitre', 'profession',)
     list_editable = ('pupitre', 'profession',)
     search_fields = ('individus__nom', 'individus__prenoms__prenom',
