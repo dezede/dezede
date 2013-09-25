@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-  <form method="get" action="." class="well">
+  <form method="get" action=".">
     <div class="form-group row">
       <div class="input-group col-xs-5">
         <input type="text" name="q" value="{{ form.q.data|default:""|escape }}"
@@ -54,6 +54,8 @@
   </form>
 
   {% if query %}
+    <hr />
+
     <h3>
       {{ paginator.object_list.count|apnumber|capfirst }}
       {% blocktrans count counter=paginator.object_list|length %}résultat{% plural %}résultats{% endblocktrans %}

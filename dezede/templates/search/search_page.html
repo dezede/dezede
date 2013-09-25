@@ -6,26 +6,40 @@
 
 {% for result in object_list %}
   {% if result %}
-    <div class="result {{ result.model.class_name.lower }}">
-      <h3>{{ result.verbose_name|capfirst }}</h3>
-      {% if result.object.link %}
-        {{ result.object.link }}<br />
-      {% else %}
-        {{ result.object.html }}<br />
-      {% endif %}
-      <small>
-        {% if result.object.contenu %}
-          {% with result.object.contenu|stripchars as contenu %}
-            {% highlight contenu with query html_tag 'mark' max_length 500 %}
-          {% endwith %}
-        {% else %}
-          {% with result.object.html|stripchars as contenu %}
-            {% highlight contenu with query html_tag 'mark' %}
-          {% endwith %}
-        {% endif %}
-      </small>
+    <div class="result well">
+      <div class="row">
+
+        <div class="col-xs-1">
+          <div class="btn-group-vertical btn-group-sm">
+            <a class="btn btn-default disabled {{ result.model.class_name.lower }}"
+               title="{{ result.verbose_name|capfirst }}">
+              {{ result.verbose_name.0|capfirst }}
+            </a>
+            {# TODO: La case à cocher ci-dessous sera utile quand on aura un panier #}
+{#            <button type="button" class="btn btn-default" data-toggle="button" title="{% trans "Ajouter au panier" %}">#}
+{#              <i class="glyphicon glyphicon-checkbox"></i>#}
+{#            </button>#}
+          </div>
+        </div>
+
+        <div class="col-xs-11">
+          <h4>{{ result.object.link|default:result.object.html }}</h4>
+          <small>
+            {% if result.object.contenu %}
+              {% with result.object.contenu|stripchars as contenu %}
+                {% highlight contenu with query html_tag 'mark' max_length 500 %}
+              {% endwith %}
+            {% else %}
+              {% with result.object.html|stripchars as contenu %}
+                {% highlight contenu with query html_tag 'mark' %}
+              {% endwith %}
+            {% endif %}
+          </small>
+        </div>
+
+      </div>
     </div>
   {% endif %}
 {% endfor %}
-
+  
 {% show_pages %}

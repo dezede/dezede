@@ -141,8 +141,21 @@ cite {
   font-style: italic;
 }
 
+.btn.disabled {
+  pointer-events: auto;
+}
+
 .glyphicon {
   font-size: 85%;
+}
+
+.glyphicon.glyphicon-checkbox {
+  &:before {
+    content: '\e157';
+  }
+  .active &:before {
+    content: '\e067';
+  }
 }
 
 blockquote {
@@ -160,6 +173,7 @@ blockquote {
     white-space: nowrap;
     padding-right: 20px;
     padding-top: 10px;
+    font-weight: normal;
   }
   th+td {
     padding-top: 10px;
@@ -194,39 +208,35 @@ blockquote {
 }
 
 .result {
-  @base-result-background: hsv(0, 25%, 97%);
-  border: 1px solid darken(@base-result-background, 20%);
-  border-radius: @border-radius-base;
-  padding: 10px;
-  margin-bottom: 10px;
-  &:last-of-type {
-    margin-bottom: 0;
+  h4 {
+    margin-top: 0;
   }
-  .apply-background (@spin) {
-    @resultBackground: spin(@base-result-background, @spin);
-    background: @resultBackground;
-    border-color: darken(@resultBackground, 10%);
-  }
-  &.evenement {
-    .apply-background(0);
-  }
-  &.individu {
-    .apply-background(40);
-  }
-  &.lieu {
-    .apply-background(80);
-  }
-  &.oeuvre {
-    .apply-background(120);
-  }
-  &.source {
-    .apply-background(200);
-  }
-  &.partie {
-    .apply-background(260);
-  }
-  &.profession {
-    .apply-background(320);
+  .btn.disabled {
+    @base-result-background: hsv(0, 25%, 97%);
+    .apply-background (@spin) {
+      background: spin(@base-result-background, @spin);
+    }
+    &.evenement {
+      .apply-background(0);
+    }
+    &.individu {
+      .apply-background(40);
+    }
+    &.lieu {
+      .apply-background(80);
+    }
+    &.oeuvre {
+      .apply-background(120);
+    }
+    &.source {
+      .apply-background(200);
+    }
+    &.partie {
+      .apply-background(260);
+    }
+    &.profession {
+      .apply-background(320);
+    }
   }
 }
 
