@@ -102,7 +102,6 @@ class TypeDeCaracteristiqueDOeuvre(TypeDeCaracteristique):
         ordering = ('classement',)
         app_label = 'libretto'
 
-
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
         return ('typedecaracteristique_ptr',)
@@ -195,15 +194,15 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         return b'partie_permanent_detail', (self.pk,)
 
     def link(self):
-        return href(self.get_absolute_url(), self.html())
+        return self.html()
 
     def html(self, pluriel=False, tags=True):
+        url = '' if not tags else self.get_absolute_url()
         if pluriel:
             out = self.pluriel()
         else:
             out = self.nom
-        return href(self.get_absolute_url(),
-                    out, tags=tags)
+        return href(url, out, tags=tags)
 
     def __str__(self):
         return self.html(tags=False)
