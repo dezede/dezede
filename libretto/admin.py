@@ -62,6 +62,20 @@ class CustomBaseModel(BaseModelAdmin):
         return qs
 
 
+# Common fieldsets
+
+
+COMMON_FIELDSET_LABEL = _('Champs courants')
+ADVANCED_FIELDSET_LABEL = _('Champs courants')
+PERIODE_D_ACTIVITE_FIELDSET = (_('Période d’activité'), {
+    'fields': (('debut', 'debut_precision'), ('fin', 'fin_precision'))
+})
+FILES_FIELDSET = (_('Fichiers'), {
+    'classes': ('grp-collapse grp-closed',),
+    'fields': ('illustrations', 'documents',),
+})
+
+
 #
 # Filters
 #
@@ -213,15 +227,13 @@ class AuteurInline(CustomTabularInline, GenericStackedInline):
 
 class MembreInline(CustomStackedInline):
     model = Membre
-    raw_id_fields = ('individu', 'profession')
+    raw_id_fields = ('individu', 'instrument')
     autocomplete_lookup_fields = {
-        'fk': ['individu', 'profession'],
+        'fk': ['individu', 'instrument'],
     }
     fieldsets = (
-        (None, {'fields': ('individu', 'profession')}),
-        (_('Période d’activité'), {
-            'fields': (('debut', 'debut_precision'), ('fin', 'fin_precision'))
-        })
+        (None, {'fields': ('individu', 'instrument', 'classement')}),
+        PERIODE_D_ACTIVITE_FIELDSET,
     )
 
 
@@ -250,15 +262,12 @@ class ElementDeProgrammeInline(CustomStackedInline):
     form = ElementDeProgrammeForm
     verbose_name_plural = _('programme')
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': (('oeuvre', 'autre',), 'caracteristiques',
                        'distribution', 'numerotation',),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('illustrations', 'documents',),
-        }),
-        (_('Champs avancés'), {
+        FILES_FIELDSET,
+        (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed',),
             'fields': ('personnels', 'position',),
         }),
@@ -494,13 +503,10 @@ class LieuCommonAdmin(AutoriteAdmin):
     readonly_fields = ('__str__', 'html', 'link',)
 #    inlines = (AncrageSpatioTemporelInline,)
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': ('nom', 'parent', 'nature', 'historique',),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('illustrations', 'documents',),
-        }),
+        FILES_FIELDSET,
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -550,14 +556,11 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
         'm2m': ('illustrations', 'documents'),
     }
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
                        'classement'),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('illustrations', 'documents',),
-        }),
+        FILES_FIELDSET,
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -612,18 +615,15 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
     readonly_fields = ('__str__', 'html', 'link',)
     inlines = (IndividuParentInline, IndividuEnfantInline)
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': (('particule_nom', 'nom',), ('prenoms', 'pseudonyme',),
                        ('particule_nom_naissance', 'nom_naissance',),
                        ('titre', 'designation',),
                        ('ancrage_naissance', 'ancrage_deces',),
                        'professions',),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('illustrations', 'documents',),
-        }),
-        (_('Champs avancés'), {
+        FILES_FIELDSET,
+        (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed',),
             'fields': ('ancrage_approx', 'biographie',),
         }),
@@ -639,20 +639,19 @@ class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'calc_caracteristiques', 'membres_count')
     search_fields = ('nom', 'membres__individu__nom')
     inlines = (MembreInline,)
-    raw_id_fields = ('caracteristiques', 'documents', 'illustrations')
+    raw_id_fields = ('caracteristiques', 'siege', 'documents', 'illustrations')
     autocomplete_lookup_fields = {
+        'fk': ('siege',),
         'm2m': ('caracteristiques', 'documents', 'illustrations'),
     }
     fieldsets = (
-        (_('Champs courants'), {
-            'fields': ('nom', 'caracteristiques'),
+        (COMMON_FIELDSET_LABEL, {
+            'fields': ('nom', 'caracteristiques', 'siege'),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('illustrations', 'documents',),
-        }),
+        PERIODE_D_ACTIVITE_FIELDSET,
+        FILES_FIELDSET,
     )
-    fieldsets_and_inlines_order = ('f', 'i')
+    fieldsets_and_inlines_order = ('f', 'f', 'i')
 
 
 class DeviseAdmin(VersionAdmin, CommonAdmin):
@@ -796,14 +795,11 @@ class PartieCommonAdmin(AutoriteAdmin):
         'fk': ('parent',),
     }
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': ('nom', 'nom_pluriel', 'professions', 'parent',
                        'classement'),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('illustrations', 'documents',),
-        }),
+        FILES_FIELDSET,
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -875,11 +871,8 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
             'fields': ('genre', 'caracteristiques',
                        'ancrage_creation', 'pupitres', 'contenu_dans',),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('documents', 'illustrations',),
-        }),
-        (_('Champs avancés'), {
+        FILES_FIELDSET,
+        (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed', 'wide',),
             'fields': ('lilypond', 'description',),
         }),
@@ -924,7 +917,7 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
     inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,
                SourceInline)
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'description': _(
                 'Commencez par <strong>saisir ces quelques champs</strong> '
                 'avant d’ajouter des <em>éléments de programme</em> '
@@ -932,10 +925,7 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
             'fields': (('ancrage_debut', 'ancrage_fin',),
                        ('circonstance', 'relache',), 'caracteristiques',),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('documents', 'illustrations',),
-        }),
+        FILES_FIELDSET,
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -970,14 +960,11 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     readonly_fields = ('__str__', 'html',)
     inlines = (AuteurInline,)
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': ('nom', ('numero', 'page',), ('date', 'type',),
                        'contenu', 'evenements',),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('documents', 'illustrations',),
-        }),
+        FILES_FIELDSET,
         #        (_('Champs générés (Méthodes)'), {
         #            'classes': ('grp-collapse grp-closed',),
         #            'fields': ('__str__', 'html',),

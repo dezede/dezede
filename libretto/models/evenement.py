@@ -82,6 +82,7 @@ class ElementDeDistribution(CommonModel):
     profession = ForeignKey(
         'Profession', verbose_name=_('profession'), null=True, blank=True,
         related_name='elements_de_distribution', on_delete=PROTECT)
+    # TODO: Ajouter une FK (ou M2M?) vers Individu pour les remplacements.
     content_type = ForeignKey(ContentType, null=True, on_delete=PROTECT)
     object_id = PositiveIntegerField(null=True)
     content_object = GenericForeignKey()

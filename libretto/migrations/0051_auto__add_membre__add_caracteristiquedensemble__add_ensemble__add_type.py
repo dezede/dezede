@@ -12,13 +12,14 @@ class Migration(SchemaMigration):
         db.create_table(u'libretto_membre', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('owner', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'membre', null=True, on_delete=models.PROTECT, to=orm['accounts.HierarchicUser'])),
-            ('ensemble', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'membres', to=orm['libretto.Ensemble'])),
-            ('individu', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'membres', to=orm['libretto.Individu'])),
-            ('profession', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'membres', null=True, to=orm['libretto.Profession'])),
             ('debut', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
             ('debut_precision', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0)),
             ('fin', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
             ('fin_precision', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0)),
+            ('ensemble', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'membres', to=orm['libretto.Ensemble'])),
+            ('individu', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'membres', to=orm['libretto.Individu'])),
+            ('instrument', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'membres', null=True, to=orm['libretto.Instrument'])),
+            ('classement', self.gf('django.db.models.fields.SmallIntegerField')(default=1)),
         ))
         db.send_create_signal(u'libretto', ['Membre'])
 
@@ -35,7 +36,12 @@ class Migration(SchemaMigration):
             ('etat', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['libretto.Etat'], on_delete=models.PROTECT)),
             ('notes', self.gf('tinymce.models.HTMLField')(blank=True)),
             ('slug', self.gf('autoslug.fields.AutoSlugField')(unique=True, max_length=50, populate_from=u'get_slug', unique_with=())),
+            ('debut', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
+            ('debut_precision', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0)),
+            ('fin', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
+            ('fin_precision', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0)),
             ('nom', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('siege', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'ensembles', null=True, to=orm['libretto.Lieu'])),
         ))
         db.send_create_signal(u'libretto', ['Ensemble'])
 
@@ -269,14 +275,19 @@ class Migration(SchemaMigration):
         u'libretto.ensemble': {
             'Meta': {'object_name': 'Ensemble'},
             'caracteristiques': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "u'ensembles'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['libretto.CaracteristiqueDEnsemble']"}),
+            'debut': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'debut_precision': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'}),
             'documents': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "u'ensemble_set'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['libretto.Document']"}),
             'etat': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['libretto.Etat']", 'on_delete': 'models.PROTECT'}),
+            'fin': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'fin_precision': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'illustrations': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "u'ensemble_set'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['libretto.Illustration']"}),
             'individus': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['libretto.Individu']", 'through': u"orm['libretto.Membre']", 'symmetrical': 'False'}),
             'nom': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'notes': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'ensemble'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['accounts.HierarchicUser']"}),
+            'siege': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'ensembles'", 'null': 'True', 'to': u"orm['libretto.Lieu']"}),
             'slug': ('autoslug.fields.AutoSlugField', [], {'unique': 'True', 'max_length': '50', 'populate_from': "u'get_slug'", 'unique_with': '()'})
         },
         u'libretto.etat': {
@@ -377,7 +388,8 @@ class Migration(SchemaMigration):
             u'lieu_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['libretto.Lieu']", 'unique': 'True', 'primary_key': 'True'})
         },
         u'libretto.membre': {
-            'Meta': {'object_name': 'Membre'},
+            'Meta': {'ordering': "(u'instrument', u'classement')", 'object_name': 'Membre'},
+            'classement': ('django.db.models.fields.SmallIntegerField', [], {'default': '1'}),
             'debut': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'debut_precision': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'}),
             'ensemble': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'membres'", 'to': u"orm['libretto.Ensemble']"}),
@@ -385,8 +397,8 @@ class Migration(SchemaMigration):
             'fin_precision': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'individu': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'membres'", 'to': u"orm['libretto.Individu']"}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'membre'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['accounts.HierarchicUser']"}),
-            'profession': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'membres'", 'null': 'True', 'to': u"orm['libretto.Profession']"})
+            'instrument': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'membres'", 'null': 'True', 'to': u"orm['libretto.Instrument']"}),
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'membre'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['accounts.HierarchicUser']"})
         },
         u'libretto.naturedelieu': {
             'Meta': {'ordering': "(u'slug',)", 'object_name': 'NatureDeLieu'},

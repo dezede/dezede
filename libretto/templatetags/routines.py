@@ -1,12 +1,14 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.db.models import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template import Library, Template
 from django.template.loader import render_to_string
 from django.contrib.sites.models import get_current_site
 from copy import copy
 from libretto.models.common import PublishedQuerySet
+from libretto.models.functions import capfirst
 
 
 register = Library()
@@ -49,7 +51,7 @@ def frontend_admin(context, obj=None, autorite=False):
 
 
 @register.simple_tag(takes_context=True)
-def data_table_attr(context, attr, verbose_name=None, obj=None):
+def data_table_attr(context, attr, verbose_name=None, obj=None, caps=False):
     if obj is None:
         obj = context['object']
     value = obj
@@ -69,7 +71,13 @@ def data_table_attr(context, attr, verbose_name=None, obj=None):
     value = Template('{{ value }}').render(sub_context)
 
     if verbose_name is None:
-        verbose_name = obj._meta.get_field(attr.split('.')[0]).verbose_name
+        try:
+            verbose_name = obj._meta.get_field(attr.split('.')[0]).verbose_name
+        except FieldDoesNotExist:
+            verbose_name = getattr(obj, attr).short_description
+
+    if caps:
+        value = capfirst(value.strip())
     c = {
         'verbose_name': verbose_name,
         'value': value,

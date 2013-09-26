@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import warnings
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
      FloatField, permalink, SmallIntegerField, PROTECT, DateField, \
-    PositiveSmallIntegerField
+    PositiveSmallIntegerField, Model
 from django.template.defaultfilters import date
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.safestring import mark_safe
@@ -16,7 +16,7 @@ from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
     UniqueSlugModel, PublishedManager, AutoriteModel, CommonTreeManager, \
     PublishedQuerySet, CommonTreeQuerySet, Caracteristique, \
     TypeDeCaracteristique
-from .functions import capfirst, ex, href, date_html
+from .functions import capfirst, ex, href, date_html, sc
 
 
 __all__ = (
@@ -129,10 +129,6 @@ class TypeDeCaracteristiqueDEnsemble(TypeDeCaracteristique):
         ordering = ('classement',)
         app_label = 'libretto'
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('typedecaracteristique_ptr',)
-
 
 class CaracteristiqueDEnsemble(Caracteristique):
     class Meta(object):
@@ -150,15 +146,7 @@ class CaracteristiqueDEnsemble(Caracteristique):
         return ('caracteristique_ptr', 'ensembles',)
 
 
-@python_2_unicode_compatible
-class Membre(CommonModel):
-    ensemble = ForeignKey('Ensemble', related_name='membres',
-                          verbose_name=_('ensemble'))
-    individu = ForeignKey('Individu', related_name='membres',
-                          verbose_name=_('individu'))
-    profession = ForeignKey(
-        Profession, blank=True, null=True, related_name='membres',
-        verbose_name=_('profession'))
+class PeriodeDActivite(Model):
     YEAR = 0
     MONTH = 1
     DAY = 2
@@ -175,9 +163,9 @@ class Membre(CommonModel):
         _('précision de la fin'), choices=PRECISIONS, default=0)
 
     class Meta(object):
-        app_label = 'libretto'
+        abstract = True
 
-    def smart_date(self, attr, attr_precision, tags=True):
+    def _smart_date(self, attr, attr_precision, tags=True):
         d = getattr(self, attr)
         if d is None:
             return
@@ -190,10 +178,10 @@ class Membre(CommonModel):
             return date_html(d, tags=tags)
 
     def smart_debut(self, tags=True):
-        return self.smart_date('debut', 'debut_precision', tags=tags)
+        return self._smart_date('debut', 'debut_precision', tags=tags)
 
     def smart_fin(self, tags=True):
-        return self.smart_date('fin', 'fin_precision', tags=tags)
+        return self._smart_date('fin', 'fin_precision', tags=tags)
 
     def smart_period(self, tags=True):
         debut = self.smart_debut(tags=tags)
@@ -225,12 +213,30 @@ class Membre(CommonModel):
                     else:
                         t = ugettext('de %(debut)s à %(fin)s')
         return t % {'debut': debut, 'fin': fin}
+    smart_period.short_description = _('Période d’activité')
+
+
+@python_2_unicode_compatible
+class Membre(CommonModel, PeriodeDActivite):
+    ensemble = ForeignKey('Ensemble', related_name='membres',
+                          verbose_name=_('ensemble'))
+    individu = ForeignKey('Individu', related_name='membres',
+                          verbose_name=_('individu'))
+    instrument = ForeignKey(
+        'Instrument', blank=True, null=True, related_name='membres',
+        verbose_name=_('instrument'))
+    classement = SmallIntegerField(default=1)
+
+    class Meta(object):
+        verbose_name = _('membre')
+        verbose_name_plural = _('membres')
+        ordering = ('instrument', 'classement')
+        app_label = 'libretto'
 
     def html(self, tags=True):
         l = [self.individu.html(tags=tags)]
-        if self.profession:
-            l.append('[%s]' % self.profession.html(
-                feminin=self.individu.is_feminin(), tags=tags))
+        if self.instrument:
+            l.append('[%s]' % self.instrument.html(tags=tags))
         if self.debut or self.fin:
             l.append('(%s)' % self.smart_period(tags=tags))
         return mark_safe(' '.join(l))
@@ -243,11 +249,14 @@ class Membre(CommonModel):
 
 
 @python_2_unicode_compatible
-class Ensemble(AutoriteModel, UniqueSlugModel):
+class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     nom = CharField(max_length=50)
     caracteristiques = ManyToManyField(
         CaracteristiqueDEnsemble, blank=True, null=True,
         related_name='ensembles', verbose_name=_('caractéristiques'))
+    siege = ForeignKey('Lieu', null=True, blank=True,
+                       related_name='ensembles', verbose_name=_('siège'))
+
     individus = ManyToManyField('Individu', through=Membre)
 
     class Meta(object):
@@ -257,9 +266,10 @@ class Ensemble(AutoriteModel, UniqueSlugModel):
         return self.html(tags=False)
 
     def html(self, tags=True):
-        if not tags:
-            return self.nom
-        return href(self.get_absolute_url(), self.nom, tags=tags)
+        if tags:
+            return href(self.get_absolute_url(),
+                        sc(self.nom, tags=tags), tags=tags)
+        return self.nom
 
     @permalink
     def get_absolute_url(self):
@@ -279,7 +289,16 @@ class Ensemble(AutoriteModel, UniqueSlugModel):
         return self.membres.count()
     membres_count.short_description = _('nombre de membres')
 
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        return ('elements_de_distribution',)
 
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('nom__icontains', 'lieu__nom__icontains')
+
+
+# TODO: Peut-être supprimer ce modèle.
 @python_2_unicode_compatible
 class Devise(CommonModel):
     """
@@ -307,6 +326,7 @@ class Devise(CommonModel):
         return self.symbole
 
 
+# TODO: Peut-être supprimer ce modèle.
 @python_2_unicode_compatible
 class Engagement(CommonModel):
     individus = ManyToManyField('Individu', related_name='engagements',
@@ -332,6 +352,7 @@ class Engagement(CommonModel):
         return self.profession.nom
 
 
+# TODO: Peut-être supprimer ce modèle.
 @python_2_unicode_compatible
 class TypeDePersonnel(CommonModel):
     nom = CharField(max_length=100, unique=True, db_index=True)
@@ -354,6 +375,7 @@ class TypeDePersonnel(CommonModel):
         return self.nom
 
 
+# TODO: Peut-être supprimer ce modèle.
 @python_2_unicode_compatible
 class Personnel(CommonModel):
     type = ForeignKey('TypeDePersonnel', related_name='personnels',

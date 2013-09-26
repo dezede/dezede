@@ -197,11 +197,16 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     def link(self):
         return href(self.get_absolute_url(), self.html())
 
-    def html(self):
-        return self.nom
+    def html(self, pluriel=False, tags=True):
+        if pluriel:
+            out = self.pluriel()
+        else:
+            out = self.nom
+        return href(self.get_absolute_url(),
+                    out, tags=tags)
 
     def __str__(self):
-        return self.html()
+        return self.html(tags=False)
 
     @staticmethod
     def autocomplete_search_fields():

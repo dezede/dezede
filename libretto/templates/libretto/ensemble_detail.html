@@ -12,7 +12,7 @@
 
   <div class="page-header">
     {% frontend_admin autorite=1 %}
-    <h1>{{ object }}</h1>
+    <h1>{{ object.html }}</h1>
 
     <h2>{{ object.caracteristiques.html }}</h2>
   </div>
@@ -22,6 +22,9 @@
   </div>
 
   <table class="data-table">
+    {% data_table_attr 'caracteristiques.html' %}
+    {% data_table_attr 'siege.link' %}
+    {% data_table_attr 'smart_period' caps=True %}
     {% data_table_list object.membres.all %}
 
     {% data_table_attr 'notes' %}
