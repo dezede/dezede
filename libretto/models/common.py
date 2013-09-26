@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.contenttypes.generic import GenericRelation
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
-    ForeignKey, TextField, Manager, PROTECT, Q, SmallIntegerField
+    ForeignKey, TextField, Manager, PROTECT, Q, SmallIntegerField, Count
 from django.db.models.query import QuerySet
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -164,6 +164,16 @@ class CommonModel(TypographicModel):
             return self._has_related_objects__fallback()
     has_related_objects.boolean = True
     has_related_objects.short_description = _('a des objets liés')
+
+    def get_related_counts(self):
+        attrs = [f.get_accessor_name()
+                 for f in self._meta.get_all_related_objects()
+                        + self._meta.get_all_related_many_to_many_objects()]
+        return self.__class__._default_manager.filter(pk=self.pk) \
+            .aggregate(**{attr: Count(attr) for attr in attrs})
+
+    def get_related_count(self):
+        return sum(self.get_related_counts().values())
 
     @classmethod
     def class_name(cls):

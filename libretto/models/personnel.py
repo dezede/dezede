@@ -257,7 +257,8 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     siege = ForeignKey('Lieu', null=True, blank=True,
                        related_name='ensembles', verbose_name=_('siège'))
 
-    individus = ManyToManyField('Individu', through=Membre)
+    individus = ManyToManyField('Individu', through=Membre,
+                                related_name='ensembles')
 
     class Meta(object):
         app_label = 'libretto'

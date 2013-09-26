@@ -375,8 +375,11 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return self.html(tags=tags, lon=True, prenoms_fav=prenoms_fav,
                          designation=designation, abbr=abbr)
 
-    def related_label(self):
-        return self.html(tags=False, abbr=False)
+    def related_label(self, tags=False):
+        return self.html(tags=tags, abbr=False)
+
+    def related_label_html(self):
+        return self.related_label(tags=True)
 
     def clean(self):
         try:
