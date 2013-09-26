@@ -295,7 +295,7 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('nom__icontains', 'lieu__nom__icontains')
+        return ('nom__icontains', 'siege__nom__icontains')
 
 
 # TODO: Peut-être supprimer ce modèle.
