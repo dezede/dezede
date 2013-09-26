@@ -648,14 +648,16 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return self.html(tags=tags, auteurs=False, titre=True, descr=False,
                          ancestors=False, links=links)
 
-
     def titre_html(self, tags=True, links=True):
         return self.html(tags, auteurs=False, titre=True, descr=False,
                          ancestors=True, ancestors_links=True, links=links)
 
-    def titre_descr_html(self, tags=True):
-        return self.html(tags, auteurs=False, titre=True, descr=True,
+    def titre_descr(self, tags=False):
+        return self.html(tags=tags, auteurs=False, titre=True, descr=True,
                          ancestors=True)
+
+    def titre_descr_html(self):
+        return self.titre_descr(tags=True)
 
     def description_html(self, tags=True):
         return self.html(tags, auteurs=False, titre=False, descr=True,

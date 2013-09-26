@@ -1,16 +1,41 @@
+import operator
 from ajax_select import LookupChannel
 from bs4 import BeautifulSoup
 from django.utils.encoding import force_text
+from django.utils import six
 from django.utils.html import strip_tags
+from haystack.backends import SQ
 from haystack.query import SearchQuerySet
+from typography.utils import replace
 from .models.functions import hlp
 from .models import *
 
 
-def search_in_model(model, search_query, max_results):
+# Application de https://github.com/toastdriven/django-haystack/pull/732
+def autocomplete(self, **kwargs):
+    clone = self._clone()
+    query_bits = []
+
+    for field_name, query in kwargs.items():
+        for word in query.split(' '):
+            bit = clone.query.clean(word.strip())
+            if bit:
+                kwargs = {
+                    field_name: bit,
+                }
+                query_bits.append(SQ(**kwargs))
+
+    return clone.filter(six.moves.reduce(operator.__and__, query_bits))
+
+
+SearchQuerySet.autocomplete = autocomplete
+
+
+def search_in_model(model, q, max_results):
+    q = replace(q)
     sqs = SearchQuerySet().models(model)
-    sqs = sqs.autocomplete(content_auto=search_query)[:max_results]
-    q = search_query.lower()
+    sqs = sqs.autocomplete(content_auto=q).boost(q+'*', 10)[:max_results]
+    q = q.lower()
     return [r.object for r in sqs
             if q in r.get_stored_fields()['content_auto'].lower()]
 

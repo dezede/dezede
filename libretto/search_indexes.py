@@ -27,7 +27,7 @@ class PolymorphicCommonSearchIndex(CommonSearchIndex):
 
 
 class OeuvreIndex(CommonSearchIndex, Indexable):
-    content_auto = EdgeNgramField(model_attr='titre_descr_html')
+    content_auto = EdgeNgramField(model_attr='titre_descr')
 
     def get_model(self):
         return Oeuvre
