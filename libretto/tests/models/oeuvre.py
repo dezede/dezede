@@ -66,7 +66,7 @@ class OeuvreTestCase(CommonTestCase):
         self.assertEqual(smart_text(self.symphonie), 'Symphonie n°\u00A05')
         self.assertEqual(self.symphonie.titre_html(tags=False),
                          'Symphonie n°\u00A05')
-        self.assertEqual(self.symphonie.titre_descr_html(tags=False),
+        self.assertEqual(self.symphonie.titre_descr(),
                          'Symphonie n°\xa05, op.\xa0107')
         self.assertEqual(self.symphonie.description_html(tags=False),
                          'op.\xa0107')
