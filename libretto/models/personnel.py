@@ -33,6 +33,7 @@ class ProfessionManager(CommonTreeManager, PublishedManager):
     queryset_class = ProfessionQuerySet
 
 
+# TODO: Songer à l’arrivée du polymorphisme "Emploi".
 @python_2_unicode_compatible
 class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
@@ -250,7 +251,10 @@ class Membre(CommonModel, PeriodeDActivite):
 
 @python_2_unicode_compatible
 class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
-    nom = CharField(max_length=50)
+    particule_nom = CharField(
+        _('particule du nom'), max_length=5, blank=True, db_index=True)
+    nom = CharField(_('nom'), max_length=50, db_index=True)
+    # TODO: Ajouter une typologie (orchestre, chœur, groupe de rock).
     caracteristiques = ManyToManyField(
         CaracteristiqueDEnsemble, blank=True, null=True,
         related_name='ensembles', verbose_name=_('caractéristiques'))

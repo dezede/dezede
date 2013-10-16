@@ -238,12 +238,16 @@ class MembreInline(CustomStackedInline):
 
 
 class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
+    """
+    Utilisé uniquement pour les distributions de tête d'événement.
+    La restriction est que l'on utilise pas de champ 'pupitre'.
+    """
     model = ElementDeDistribution
     form = ElementDeDistributionForm
     verbose_name_plural = _('distribution')
-    raw_id_fields = ('individus', 'ensembles', 'pupitre', 'profession')
+    raw_id_fields = ('individus', 'ensembles', 'profession')
     autocomplete_lookup_fields = {
-        'fk': ['pupitre', 'profession'],
+        'fk': ['profession'],
         'm2m': ['individus', 'ensembles'],
     }
     fieldsets = (
@@ -251,7 +255,7 @@ class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
             'description': _('Distribution commune à l’ensemble de '
                              'l’événement. Une distribution plus précise peut '
                              'être saisie avec le programme.'),
-            'fields': ('individus', 'ensembles', 'pupitre', 'profession',),
+            'fields': ('individus', 'ensembles', 'profession',),
         }),
     )
     classes = ('grp-collapse grp-open',)
@@ -269,19 +273,18 @@ class ElementDeProgrammeInline(CustomStackedInline):
         FILES_FIELDSET,
         (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed',),
-            'fields': ('personnels', 'position',),
+            'fields': ('position',),
         }),
     )
     sortable_field_name = 'position'
     raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
-                     'personnels', 'illustrations', 'documents')
+                     'illustrations', 'documents')
     related_lookup_fields = {
         'm2m': ('distribution',),
     }
     autocomplete_lookup_fields = {
         'fk': ('oeuvre',),
-        'm2m': ('caracteristiques', 'personnels',
-                'illustrations', 'documents'),
+        'm2m': ('caracteristiques', 'illustrations', 'documents'),
     }
     classes = ('grp-collapse grp-open',)
 
@@ -819,6 +822,13 @@ class PartieChildAdmin(PartieCommonAdmin, PolymorphicChildModelAdmin):
 
 class RoleAdmin(VersionAdmin, PartieChildAdmin):
     pass
+RoleAdmin.fieldsets = copy.deepcopy(RoleAdmin.fieldsets)
+RoleAdmin.fieldsets[0][1]['fields'] = (
+    'nom', 'nom_pluriel', 'oeuvre', 'professions', 'parent',
+    'classement',
+)
+RoleAdmin.raw_id_fields += ('oeuvre',)
+RoleAdmin.autocomplete_lookup_fields['fk'] += ('oeuvre',)
 
 
 class InstrumentAdmin(VersionAdmin, PartieChildAdmin):

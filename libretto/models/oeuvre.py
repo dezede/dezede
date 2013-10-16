@@ -145,8 +145,10 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
                     'instrumentale ou vocale.'))
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
+    # TODO: Changer le verbose_name en un genre de "types de voix"
+    # pour les rôles, mais en plus générique (ou un help_text).
     professions = ManyToManyField('Profession', related_name='parties',
-        verbose_name=_('professions'), db_index=True,
+        verbose_name=_('professions'), db_index=True, blank=True, null=True,
         help_text=_('La ou les profession(s) capable(s) '
                     'de jouer ce rôle ou cet instrument.'))
     parent = PolymorphicTreeForeignKey(
@@ -215,6 +217,9 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
 
 class Role(Partie):
+    oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'), blank=True,
+                        null=True, related_name='roles')
+
     class Meta(object):
         verbose_name = ungettext_lazy('rôle', 'rôles', 1)
         verbose_name_plural = ungettext_lazy('rôle', 'rôles', 2)
@@ -252,6 +257,8 @@ class PupitreManager(CommonManager):
         return self.all().elements_de_distribution()
 
 
+# TODO: une fois les quantités déplacées en inline, ce modèle ne doit plus être
+# registered dans l'admin.
 @python_2_unicode_compatible
 class Pupitre(CommonModel):
     partie = ForeignKey(

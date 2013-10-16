@@ -91,6 +91,8 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         verbose_name=_('parent'))
     nature = ForeignKey(NatureDeLieu, related_name='lieux', db_index=True,
                         verbose_name=_('nature'), on_delete=PROTECT)
+    # TODO: Parentés d'institution avec périodes d'activité pour l'histoire des
+    # institutions.
     historique = HTMLField(_('historique'), blank=True)
 
     objects = LieuManager()
