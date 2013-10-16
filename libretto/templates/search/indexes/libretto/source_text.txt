@@ -6,5 +6,6 @@
     {{ object.calc_date }}
     {{ object }}
     {{ object.contenu }}
+    {{ object.notes }}
   {% endautoescape %}
 {% endfilter %}

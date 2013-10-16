@@ -7,5 +7,6 @@
     {{ object.nom_pluriel }}
     {{ object.professions.all|join:' ' }}
     {{ object.interpretes|join:' ' }}
+    {{ object.notes }}
   {% endautoescape %}
 {% endfilter %}

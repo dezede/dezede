@@ -10,5 +10,6 @@
     {% for element in object.programme.all %}
       {{ element.html|safe }}
     {% endfor %}
+    {{ object.notes }}
   {% endautoescape %}
 {% endfilter %}
