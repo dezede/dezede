@@ -31,6 +31,9 @@ class Prenom(CommonModel):
     class Meta(object):
         verbose_name = ungettext_lazy('prénom', 'prénoms', 1)
         verbose_name_plural = ungettext_lazy('prénom', 'prénoms', 2)
+        # FIXME: Fusionner ce qui ne vérifie pas cette contrainte, puis
+        # Décommenter cette ligne.
+        # unique_together = ('prenom', 'classement', 'favori')
         ordering = ('classement', 'prenom')
         app_label = 'libretto'
 
@@ -346,9 +349,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
             if pseudonyme:
                 alias = ugettext('dite') if self.is_feminin() \
                     else ugettext('dit')
-                out += ugettext(', %(alias)s %(pseudonyme)s') % \
-                    {'alias': alias,
-                     'pseudonyme': pseudonyme}
+                out += ' %s %s' % (alias, pseudonyme)
             return out
 
         main_choices = {
