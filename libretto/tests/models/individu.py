@@ -23,11 +23,11 @@ class IndividuTestCase(CommonTestCase):
     def testComputedNames(self):
         self.assertEqual(smart_text(self.moliere), 'Molière')
         self.assertEqual(self.moliere.nom_complet(tags=False),
-                         'Jean-Baptiste Poquelin, dit Molière')
+                         'Jean-Baptiste Poquelin dit Molière')
         self.assertEqual(smart_text(self.piaf),
-                         'Gassion (É.), dite La Môme Piaf')
+                         'Gassion (É.) dite La Môme Piaf')
         self.assertEqual(self.piaf.nom_complet(tags=False),
-                         'Édith Giovanna Gassion, dite La Môme Piaf')
+                         'Édith Giovanna Gassion dite La Môme Piaf')
 
     def testHTMLRenders(self):
         moliere_url = self.moliere.get_absolute_url()
@@ -37,19 +37,19 @@ class IndividuTestCase(CommonTestCase):
                              % {'url': moliere_url})
         self.assertHTMLEqual(self.moliere.nom_complet(),
                              '<a href="%(url)s">Jean-Baptiste '
-                             '<span class="sc">Poquelin</span>, '
+                             '<span class="sc">Poquelin</span> '
                              'dit Molière</a>'
                              % {'url': moliere_url})
         piaf_url = self.piaf.get_absolute_url()
         self.assertHTMLEqual(self.piaf.html(),
                              '<a href="%(url)s">'
                              '<span class="sc">Gassion</span> '
-                             '(<span title="\xc9dith">\xc9.</span>), '
+                             '(<span title="\xc9dith">\xc9.</span>) '
                              'dite La Môme Piaf</a>'
                              % {'url': piaf_url})
         self.assertHTMLEqual(self.piaf.nom_complet(),
                              '<a href="%(url)s">Édith Giovanna '
-                             '<span class="sc">Gassion</span>, '
+                             '<span class="sc">Gassion</span> '
                              'dite La Môme Piaf</a>'
                              % {'url': piaf_url})
 
