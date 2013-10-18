@@ -261,14 +261,16 @@ class TreeNode(PublishedDetailView):
             children = children.published(self.request)
 
         context[b'children'] = children
-        context[b'attr'] = self.request.GET.get('attr', '__str__')
+        context[b'attr'] = self.kwargs['attr']
         return context
 
     def get(self, request, *args, **kwargs):
         self.model = get_model('libretto', self.kwargs['model_name'])
+        if 'node' in self.request.GET:
+            self.kwargs['pk'] = self.request.GET['node']
         try:
             self.object = self.get_object()
         except AttributeError:
             self.object = None
-        context = self.get_context_data(object=self.object)
+        context = self.get_context_data()
         return self.render_to_response(context)

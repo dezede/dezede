@@ -48,7 +48,7 @@
 
     {% if oeuvre.get_children|has_elements:request %}
       <th>{% trans 'Contenu' %}</th>
-      <td>{% jstree 'oeuvre' 'short_html' %}</td>
+      <td>{% jqtree 'oeuvre' 'short_html' %}</td>
     {% endif %}
 
     {% include "libretto/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}

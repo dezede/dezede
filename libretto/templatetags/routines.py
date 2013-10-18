@@ -178,13 +178,13 @@ def data_table_list(context, object_list, attr='link',
 
 
 @register.simple_tag(takes_context=True)
-def jstree(context, model_name, attr='__str__'):
+def jqtree(context, model_name, attr='__str__'):
     c = {
         'model_name': model_name,
         'attr': attr,
         'object': context.get('object'),
     }
-    return render_to_string('routines/jstree.html', c)
+    return render_to_string('routines/jqtree.html', c)
 
 
 @register.filter

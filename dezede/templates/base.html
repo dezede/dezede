@@ -10,15 +10,15 @@
           content="Dezède, {% trans "musicologie, base de données" %}" />
     <meta name="author" content="Bertrand Bordage" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>
-      {% block title %}{% endblock %} | Dezède
-    </title>
+    <title>{% block title %}{% endblock %} | Dezède</title>
 
     <link rel="shortcut icon" type="image/x-icon"
-          href="/static/images/favicon.ico">
+          href="{% static 'images/favicon.ico' %}">
     {% compress css %}
       <link rel="stylesheet" type="text/css"
-            href="{% static 'css/custom-theme/jquery-ui-1.9.2.min.css' %}">
+            href="{% static 'css/custom-theme/jquery-ui-1.9.2.min.css' %}" />
+      <link rel="stylesheet" type="text/css"
+            href="{% static 'css/jqtree.css' %}" />
       <link rel="stylesheet" type="text/less"
             href="{% static 'css/styles.less' %}"/>
     {% endcompress %}
@@ -43,15 +43,10 @@
       <script src="{% static 'bootstrap/js/affix.js' %}"></script>
       <script src="{% static 'js/jquery.query.js' %}"></script>
       <script src="{% static 'js/jquery.cookie.js' %}"></script>
-      <script>
-        {% include 'libretto/main.js' %}
-      </script>
-    {% endcompress %}
-    {# À part à cause d'une importation de CSS dans ce JS #}
-    <script src="{% static 'js/jquery.jstree.js' %}"></script>
-    {% compress js %}
+      <script src="{% static 'js/tree.jquery.js' %}"></script>
       <script>
         {% include 'base.definitions.js' %}
+        {% include 'libretto/main.js' %}
       </script>
     {% endcompress %}
 

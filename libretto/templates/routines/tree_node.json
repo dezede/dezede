@@ -1,14 +1,9 @@
 {% load routines %}[
   {% for child in children %}
     {
-      "data": {
-        "title": "{% filter escapejs %}{{ child|get_property:attr }}{% endfilter %}",
-        "attr": {"href": "{{ child.get_absolute_url }}"}
-      },
-      "attr": {
-        "id": "{{ child.pk }}"
-      }{% if not child.is_leaf_node %},
-      "state": "closed"{% endif %}
+      "label": "{% filter escapejs %}<a href="{{ child.get_absolute_url }}">{{ child|get_property:attr }}</a>{% endfilter %}",
+      "id": "{{ child.pk }}",
+      "load_on_demand": {{ child.is_leaf_node|yesno:'false,true' }}
     }{% if not forloop.last %},{% endif %}
   {% endfor%}
 ]

@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     url(br'^', include(SourceViewSet().urls)),
     url(br'^', include(PartieViewSet().urls)),
     url(br'^', include(ProfessionViewSet().urls)),
-    url(r'^tree_node/(?P<model_name>\w+)/(?P<pk>\d+)?$', TreeNode.as_view(),
+    url(r'^tree_node/(?P<model_name>\w+)/(?P<attr>[\w_]+)/(?P<pk>\d+)?$', TreeNode.as_view(),
         name='tree_node'),
     url(br'^api/', include(api_router.urls)),
 )

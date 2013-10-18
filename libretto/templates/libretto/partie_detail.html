@@ -24,7 +24,7 @@
 
     {% if partie.get_children|has_elements:request %}
       <th>{% trans 'Contenu' %}</th>
-      <td>{% jstree 'partie' %}</td>
+      <td>{% jqtree 'partie' %}</td>
     {% endif %}
 
   </table>

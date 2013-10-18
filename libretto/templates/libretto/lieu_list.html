@@ -13,7 +13,7 @@
 {% block content %}
 
   {% if object_list %}
-    {% jstree 'lieu' 'nom' %}
+    {% jqtree 'lieu' 'nom' %}
   {% else %}
     {% trans 'Aucun lieu ou institution ne figure dans la base de données.' %}
   {% endif %}

@@ -22,7 +22,7 @@
   <table class="data-table">
     {% if lieu.get_children|has_elements:request %}
       <th>{% trans 'Lieux contenus' %}</th>
-      <td>{% jstree 'lieu' 'nom' %}</td>
+      <td>{% jqtree 'lieu' 'nom' %}</td>
     {% endif %}
     {% data_table_attr 'historique' %}
     {% include "libretto/evenement_list_def.html" with evenements=lieu.evenements %}
