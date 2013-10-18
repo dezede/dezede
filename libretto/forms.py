@@ -60,7 +60,7 @@ class ElementDeDistributionForm(ModelForm):
             self._errors[b'ensembles'] = self.error_class([msg])
             del data[b'individus']
             del data[b'ensembles']
-        if data[b'pupitre'] and data[b'profession']:
+        if data.get(b'pupitre', None) and data[b'profession']:
             msg = _('Vous ne pouvez remplir à la fois '
                     '« Pupitre » et « Profession ».')
             self._errors[b'pupitre'] = self.error_class([msg])
