@@ -1,7 +1,7 @@
 {% load url from future %}
 {% load i18n %}
 
-load_source_content = function(object, pk) {
+function load_source_content(object, pk) {
   var inner = $($(object).attr('href') + ' .panel-body');
   inner.html('{% trans 'Chargement…' %}');
   $.ajax({
@@ -11,4 +11,4 @@ load_source_content = function(object, pk) {
     inner.html(data);
     $(object).removeAttr('onmouseover');
   });
-};
+}
