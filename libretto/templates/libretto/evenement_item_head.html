@@ -1,0 +1,19 @@
+<meta itemprop="name" content="{{ evenement.get_meta_name|striptags }}" />
+
+<h2>
+  <a href="{{ evenement.get_absolute_url }}" itemprop="url">
+    <meta itemprop="startDate"
+          content="{{ evenement.ancrage_debut.isoformat }}" />
+      {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
+    {% if evenement.ancrage_fin %}
+      −
+      <meta itemprop="endDate"
+            content="{{ evenement.ancrage_fin.isoformat }}" />
+        {{ evenement.ancrage_fin.calc_date|safe }}
+    {% endif %}
+  </a>
+</h2>
+
+<div class="auto-links">
+  <h4>{{ evenement.html|safe }}</h4>
+</div>

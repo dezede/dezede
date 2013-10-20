@@ -15,9 +15,9 @@
     <link rel="shortcut icon" type="image/x-icon"
           href="{% static 'images/favicon.ico' %}">
     {% compress css %}
-      <link rel="stylesheet" type="text/css"
+      <link rel="stylesheet"
             href="{% static 'css/custom-theme/jquery-ui-1.9.2.min.css' %}" />
-      <link rel="stylesheet" type="text/css"
+      <link rel="stylesheet"
             href="{% static 'css/jqtree.css' %}" />
       <link rel="stylesheet" type="text/less"
             href="{% static 'css/styles.less' %}"/>
@@ -75,19 +75,23 @@
             </div>
           </noscript>
 
-          <div class="page-header">
-            <div class="row">
-              <header class="col-xs-8 col-sm-9 col-md-10">
-                {% block header %}{% endblock %}
-              </header>
-              <div class="col-xs-4 col-sm-3 col-md-2">
-                {% block header-aside %}{% endblock %}
-              </div>
-            </div>
-            {% block tabs %}{% endblock %}
-          </div>
+          <section {% block microdata_attrs %}{% endblock %}>
 
-          {% block content %}{% endblock %}
+            <header class="page-header">
+              <div class="row">
+                <div class="col-xs-8 col-sm-9 col-md-10">
+                  {% block header %}{% endblock %}
+                </div>
+                <aside class="col-xs-4 col-sm-3 col-md-2">
+                  {% block header-aside %}{% endblock %}
+                </aside>
+              </div>
+              {% block tabs %}{% endblock %}
+            </header>
+
+            {% block content %}{% endblock %}
+
+          </section>
 
         {% endautoescape %}
       </div>
