@@ -7,9 +7,11 @@
   <h1>
     {{ source.pretty_title|removetags:'a' }}
   </h1>
-  <h3>
-    {{ source.type|capfirst }}
-  </h3>
+  <div class="auto-links">
+    <h3>
+      {{ source.type|capfirst }}
+    </h3>
+  </div>
 {% endblock %}
 
 
@@ -19,7 +21,7 @@
 
   {% include 'libretto/source_content.html' %}
 
-  <table class="data-table">
+  <table class="data-table auto-links">
     {% data_table_list source.documents.all %}
     {% data_table_list source.evenements.all %}
 

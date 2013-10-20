@@ -7,11 +7,13 @@
   <h1>
     {{ lieu.nom }}{% if lieu.parent %}, <a href="{{ lieu.parent.get_absolute_url }}">{{ lieu.parent }}</a>{% endif %}
   </h1>
-  <h2>
-    <span title="{% trans "nature"|capfirst %}">
-      {{ lieu.nature|capfirst }}
-    </span>
-  </h2>
+  <div class="auto-links">
+    <h2>
+      <span title="{% trans "nature"|capfirst %}">
+        {{ lieu.nature|capfirst }}
+      </span>
+    </h2>
+  </div>
 {% endblock %}
 
 
@@ -19,7 +21,7 @@
 
   {{ block.super }}
 
-  <table class="data-table">
+  <table class="data-table auto-links">
     {% if lieu.get_children|has_elements:request %}
       <th>{% trans 'Lieux contenus' %}</th>
       <td>{% jqtree 'lieu' 'nom' %}</td>

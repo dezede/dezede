@@ -12,25 +12,27 @@
   <h1>
     {{ oeuvre.titre_html }}
   </h1>
-  <h2>
-    {{ oeuvre.description_html }}
-  </h2>
-  <h3>
-    {{ oeuvre.auteurs_html }}
-  </h3>
-  <h3>
-    <span title="{% trans 'Création' %}">
-      {{ oeuvre.ancrage_creation.html|default:'' }}
-    </span>
-  </h3>
-  <h4>
-    <table class="data-table">
-      {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
-      {% for parentes in parentes_list %}
-        {% data_table_list parentes.list 'mere.html' verbose_name=parentes.grouper.nom verbose_name_plural=parentes.grouper.pluriel has_count=False %}
-      {% endfor %}
-    </table>
-  </h4>
+  <div class="auto-links">
+    <h2>
+      {{ oeuvre.description_html }}
+    </h2>
+    <h3>
+      {{ oeuvre.auteurs_html }}
+    </h3>
+    <h3>
+      <span title="{% trans 'Création' %}">
+        {{ oeuvre.ancrage_creation.html|default:'' }}
+      </span>
+    </h3>
+    <h4>
+      <table class="data-table">
+        {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
+        {% for parentes in parentes_list %}
+          {% data_table_list parentes.list 'mere.html' verbose_name=parentes.grouper.nom verbose_name_plural=parentes.grouper.pluriel has_count=False %}
+        {% endfor %}
+      </table>
+    </h4>
+  </div>
 {% endblock %}
 
 
@@ -43,7 +45,7 @@
 
   {{ block.super }}
 
-  <table class="data-table">
+  <table class="data-table auto-links">
     {% data_table_attr 'pupitres_html' _('effectif') %}
 
     {% if oeuvre.get_children|has_elements:request %}

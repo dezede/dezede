@@ -12,8 +12,8 @@
 @headings-font-family:   @font-family-serif;
 
 @brand-primary:           lighten(desaturate(@link-color, 20%), 20%);
-@link-color:              darken(saturate(spin(@body-bg, -33), 100%), 53%);
-@link-hover-color:        darken(@link-color, 5%);
+@link-color:              darken(saturate(spin(@body-bg, -33), 100%), 52%);
+@link-hover-color:        lighten(@link-color, 5%);
 @text-color:              black;
 @input-color:             @text-color;
 @input-color-placeholder: lighten(desaturate(@text-color, 100%), 45%);
@@ -115,9 +115,11 @@ section {
 
 a:not(.btn):not(.tooltip):not(.ui-slider-handle) {
   text-decoration: none;
-  .transition(all 0.3s);
-  &:hover {
-    text-decoration: none;
+  .auto-links &:not(.endless_page_link) {
+    color: black;
+    &:hover {
+      color: @link-hover-color;
+    }
   }
 }
 
@@ -500,6 +502,11 @@ footer {
 
 @media (min-width: @screen-lg) {
   .side {
-    width: 265px;
+    .col-lg-3>& {
+      width: 265px;
+    }
+    .col-lg-5>& {
+      width: 461px;
+    }
   }
 }
