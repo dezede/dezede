@@ -25,7 +25,7 @@
           <hr/>
         {% endif %}
         <h3>{% trans 'À voir dans Dezède' %}</h3>
-        <table class="data-table">
+        <table class="data-table auto-links">
           {% data_table_list object.dossiersdevenements_roots|order_by:'-pk' %}
         </table>
       {% endif %}
@@ -46,7 +46,7 @@
                     height: {{ avatar.height }}px;"/>
       {% endif %}
       <h3>{% trans 'Données générales' %}</h3>
-      <table class="data-table">
+      <table class="data-table auto-links">
         {% data_table_attr 'content_object.link' verbose_name=_('Autorité associée') %}
         {% data_table_attr 'date_joined.date' verbose_name=_('Date d’inscription') %}
         {% data_table_attr 'website_link' verbose_name=_('Site internet') %}
