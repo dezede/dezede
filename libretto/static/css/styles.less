@@ -30,7 +30,7 @@
 
 // Custom variables
 
-@main-padding-x:     10px;
+@main-padding-x:         floor(@grid-gutter-width / 2);
 @content-padding-bottom: 30px;
 
 @footer-padding-y:   15px;
@@ -83,7 +83,6 @@ html, body {
 
 body {
   overflow-y: scroll;
-  position: relative;
   // For TinyMCE only: #content exists in front office, but not body#content.
   &.mceContentBody, &#main {
     margin: 5px;
@@ -389,13 +388,11 @@ ul.ui-autocomplete li a, .results_on_deck > div {
 }
 
 .affix {
-  top: 77px;
+  top: 80px;
 }
 
 .affix-bottom {
   position: absolute;
-  top: auto;
-  bottom: 120px;
 }
 
 form .results_on_deck {
@@ -460,9 +457,8 @@ footer {
 }
 
 @media (max-width: @screen-xs-max) {
-  .side {
+  .affix-top, .affix, .affix-bottom {
     position: static;
-    width: 100%;
   }
 
   .columns2 {
@@ -484,25 +480,60 @@ footer {
   }
 }
 
-@media (min-width: @screen-sm) and (max-width: @screen-sm-max) {
-  .side {
-    width: 223px;
+.container-col-width(@cols; @container-width) {
+  @media (min-width: @container-width) {
+    width: floor(@cols * @container-width / @grid-columns)
+           - @grid-gutter-width;
   }
 }
 
-@media (min-width: @screen-md) and (max-width: @screen-md-max) {
-  .side {
-    width: 296px;
+.affix-top, .affix, .affix-bottom {
+  .col-sm-3>& {
+    .container-col-width(3; @screen-sm);
+    .container-col-width(3; @screen-md);
+    .container-col-width(3; @screen-lg);
   }
-}
-
-@media (min-width: @screen-lg) {
-  .side {
-    .col-lg-3>& {
-      width: 265px;
-    }
-    .col-lg-5>& {
-      width: 461px;
-    }
+  .col-sm-4>& {
+    .container-col-width(4; @screen-sm);
+    .container-col-width(4; @screen-md);
+    .container-col-width(4; @screen-lg);
+  }
+  .col-sm-5>& {
+    .container-col-width(5; @screen-sm);
+    .container-col-width(5; @screen-md);
+    .container-col-width(5; @screen-lg);
+  }
+  .col-sm-6>& {
+    .container-col-width(6; @screen-sm);
+    .container-col-width(6; @screen-md);
+    .container-col-width(6; @screen-lg);
+  }
+  .col-md-3>& {
+    .container-col-width(3; @screen-md);
+    .container-col-width(3; @screen-lg);
+  }
+  .col-md-4>& {
+    .container-col-width(4; @screen-md);
+    .container-col-width(4; @screen-lg);
+  }
+  .col-md-5>& {
+    .container-col-width(5; @screen-md);
+    .container-col-width(5; @screen-lg);
+  }
+  .col-md-6>& {
+    .container-col-width(6; @screen-md);
+    .container-col-width(6; @screen-lg);
+  }
+  .col-lg-3>& {
+    .container-col-width(3; @screen-lg);
+  }
+  .col-lg-4>& {
+    .container-col-width(4; @screen-lg);
+  }
+  .col-lg-5>& {
+    .container-col-width(5; @screen-lg);
+  }
+  .col-lg-6>& {
+    .container-col-width(6; @screen-lg);
   }
 }
