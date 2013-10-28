@@ -53,6 +53,7 @@ html_latex_bindings = (
                            r'small-caps;.*')), r'\textsc{', r'}'),
 )
 
+
 @register.filter
 def html_to_latex(text):
     r"""
@@ -63,7 +64,8 @@ def html_to_latex(text):
 
     >>> print(html_to_latex('<h1>Bonjour à tous</h1>'))
     \part*{Bonjour à tous}
-    >>> print(html_to_latex('<span style="font-series: bold; font-variant: small-caps;">Écriture romaine</span>'))
+    >>> print(html_to_latex('<span style="font-series: bold; '
+    ... 'font-variant: small-caps;">Écriture romaine</span>'))
     \textsc{Écriture romaine}
     >>> print(html_to_latex('Vive les <!-- cons -->poilus !'))
     Vive les poilus !

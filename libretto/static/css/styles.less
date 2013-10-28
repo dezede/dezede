@@ -1,13 +1,16 @@
 @import '../bootstrap/less/bootstrap.less';
 @import '../bootstrap/less/responsive-utilities.less';
 
+//
 // Bootstrap variables
+//
 
 @icon-font-path: '../bootstrap/fonts/';
 
 @font-size-base:         15px;
-@font-family-serif:      'Gentium Basic', Georgia, serif;
-@font-family-sans-serif: 'Average Sans', Arial, sans-serif;
+@font-family-serif:      'Linux Libertine', Georgia, serif;
+@font-family-sans-serif: 'Linux Biolinum', Arial, sans-serif;
+@font-family-monospace:  'Linux Libertine Monospace', Monaco, monospace;
 @font-family-base:       @font-family-sans-serif;
 @headings-font-family:   @font-family-serif;
 
@@ -28,7 +31,9 @@
 @body-bg: hsv(50, 7%, 100%);
 @well-bg: darken(@body-bg, 4%);
 
+//
 // Custom variables
+//
 
 @main-padding-x:         floor(@grid-gutter-width / 2);
 @content-padding-bottom: 30px;
@@ -42,40 +47,121 @@
 @footer-border-width: 1px;
 @footer-border-color: @navbar-default-border;
 
+//
+// Mixins
+//
+
+.font-feature-settings(@settings) {
+  -webkit-font-feature-settings: @settings;
+  -moz-font-feature-settings: @settings;
+  -ms-font-feature-settings: @settings;
+  -o-font-feature-settings: @settings;
+  font-feature-settings: @settings;
+}
+
+.column-count (@count) {
+  -webkit-column-count: @count;
+     -moz-column-count: @count;
+          column-count: @count;
+}
+
+.column-gap (@gap) {
+  -webkit-column-gap: @gap;
+     -moz-column-gap: @gap;
+          column-gap: @gap;
+}
+
+//
+// Fonts
+//
+
+// Serif font
+
 @font-face {
-  font-family: 'Gentium Basic';
+  font-family: 'Linux Libertine';
   font-style: normal;
-  font-weight: 400;
-  src: local('Gentium Basic'), local('GentiumBasic'), url(fonts/GentiumBasic.woff) format('woff');
+  font-weight: normal;
+  src: url(fonts/LinLibertine_R.woff) format('woff');
 }
 
 @font-face {
-  font-family: 'Gentium Basic';
+  font-family: 'Linux Libertine';
+  font-style: normal;
+  font-weight: 600;  // Semi-bold
+  src: url(fonts/LinLibertine_RZ.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Linux Libertine';
+  font-style: normal;
+  font-weight: bold;
+  src: url(fonts/LinLibertine_RB.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Linux Libertine';
   font-style: italic;
-  font-weight: 400;
-  src: local('Gentium Basic Italic'), local('GentiumBasic-Italic'), url(fonts/GentiumBasic-Italic.woff) format('woff');
+  font-weight: normal;
+  src: url(fonts/LinLibertine_RI.woff) format('woff');
 }
 
 @font-face {
-  font-family: 'Gentium Basic';
-  font-style: normal;
-  font-weight: 700;
-  src: local('Gentium Basic Bold'), local('GentiumBasic-Bold'), url(fonts/GentiumBasic-Bold.woff) format('woff');
-}
-
-@font-face {
-  font-family: 'Gentium Basic';
+  font-family: 'Linux Libertine';
   font-style: italic;
-  font-weight: 700;
-  src: local('Gentium Basic Bold Italic'), local('GentiumBasic-BoldItalic'), url(fonts/GentiumBasic-BoldItalic.woff) format('woff');
+  font-weight: 600;  // Semi-bold
+  src: url(fonts/LinLibertine_RZI.woff) format('woff');
 }
 
 @font-face {
-  font-family: 'Average Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Average Sans'), local('AverageSans-Regular'), url(fonts/AverageSans.woff) format('woff');
+  font-family: 'Linux Libertine';
+  font-style: italic;
+  font-weight: bold;
+  src: url(fonts/LinLibertine_RBI.woff) format('woff');
 }
+
+// Sans serif font
+
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: normal;
+  font-weight: normal;
+  src: url(fonts/LinBiolinum_R.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: italic;
+  font-weight: normal;
+  src: url(fonts/LinBiolinum_RI.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: normal;
+  font-weight: bold;
+  src: url(fonts/LinBiolinum_RB.woff) format('woff');
+}
+
+// FIXME: This hack allows bold-italic support for Biolinum.
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: italic;
+  font-weight: bold;
+  src: url(fonts/LinLibertine_RBI.woff) format('woff');
+}
+
+// Monospace font
+
+@font-face {
+  font-family: 'Linux Libertine Monospace';
+  font-style: normal;
+  font-weight: normal;
+  src: url(fonts/LinLibertine_M.woff) format('woff');
+}
+
+//
+// Custom styling
+//
 
 html, body {
   height: 100%;
@@ -83,6 +169,7 @@ html, body {
 
 body {
   overflow-y: scroll;
+  .font-feature-settings('kern', 'liga', 'dlig', 'clig', 'hlig';);
   // For TinyMCE only: #content exists in front office, but not body#content.
   &.mceContentBody, &#main {
     margin: 5px;
@@ -127,11 +214,11 @@ p {
 }
 
 .sc {
-  font-variant: small-caps;
+  .font-feature-settings('kern', 'liga', 'dlig', 'clig', 'hlig', 'smcp';);
 }
 
 sup {
-  vertical-align: 50%;
+  top: -0.3em;
 }
 
 cite {
@@ -178,18 +265,6 @@ blockquote {
   td {
     text-align: justify;
   }
-}
-
-.column-count (@count) {
-  -webkit-column-count: @count;
-     -moz-column-count: @count;
-          column-count: @count;
-}
-
-.column-gap (@gap) {
-  -webkit-column-gap: @gap;
-     -moz-column-gap: @gap;
-          column-gap: @gap;
 }
 
 .columns2 {
@@ -455,6 +530,10 @@ footer {
     }
   }
 }
+
+//
+// Responsive styling
+//
 
 @media (max-width: @screen-xs-max) {
   .affix-top, .affix, .affix-bottom {
