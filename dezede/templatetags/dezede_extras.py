@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 from django import template
+from django.core.urlresolvers import reverse
 from django.utils.text import capfirst
 import sys
 
@@ -9,7 +10,7 @@ import sys
 register = template.Library()
 
 
-@register.simple_tag()
+@register.simple_tag
 def software_versions():
     softwares = ('dezede', 'django', 'python')
     out = []
@@ -25,3 +26,11 @@ def software_versions():
         name = capfirst(name)
         out.append('<span>%s\u00A0%s</span>' % (name, version))
     return ' '.join(out)
+
+
+@register.simple_tag(takes_context=True)
+def nav_link(context, view_name, text):
+    requested_url = context['request'].path
+    url = reverse(view_name)
+    css_class = ' class="active"' if requested_url.startswith(url) else ''
+    return '<li%s><a href="%s">%s</a></li>' % (css_class, url, capfirst(text))
