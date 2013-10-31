@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% load i18n routines sekizai_tags fb_versions %}
 
+{% block title %}{{ object }}{% endblock %}
+
 {% block header %}
-  <h1>{% block title %}{{ object }}{% endblock %}</h1>
+  <h1>{{ object.html }}</h1>
 {% endblock %}
 
 {% block content %}
