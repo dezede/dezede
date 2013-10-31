@@ -1,3 +1,6 @@
 [submodule "libretto/static/bootstrap"]
 	path = libretto/static/bootstrap
 	url = https://github.com/twbs/bootstrap
+[submodule "libretto/static/jqTree"]
+	path = libretto/static/jqTree
+	url = https://github.com/mbraak/jqTree
