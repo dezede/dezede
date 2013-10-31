@@ -68,9 +68,9 @@
         url: '{% url 'evenements_graph' %}?username={{ object.username }}',
         dataType: 'html'
       }).done(function (data) {
-                $('#coverage').replaceWith(data);
-                tooltips_reload();
-              });
+        $('#coverage').replaceWith(data);
+        tooltips_reload();
+      });
     </script>
   {% endaddtoblock %}
 

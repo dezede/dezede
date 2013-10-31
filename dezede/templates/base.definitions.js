@@ -1,29 +1,11 @@
 {# Gestion des tooltips #}
-function get_tooltips_options() {
-  return {
+function tooltips_reload() {
+  var $tooltips = $('*[title], *[data-original-title]');
+  $tooltips.tooltip('destroy');
+  $tooltips.tooltip({
     placement: 'top',
     container: 'body'
-  };
-}
-
-function get_tooltips() {
-  return $('*[title], *[data-original-title]');
-}
-function tooltips_disable() {
-  $.cookie("tooltips_enabled", "false", {path: '/'});
-  get_tooltips().tooltip('destroy');
-}
-function tooltips_enable() {
-  $.cookie("tooltips_enabled", "true", {path: '/'});
-  get_tooltips().tooltip(get_tooltips_options());
-}
-
-function tooltips_reload() {
-  var tooltips_enabled = $.cookie("tooltips_enabled");
-  tooltips_enable();
-  if(tooltips_enabled == "false") {
-    tooltips_disable();
-  }
+  });
 }
 {# Fin de la gestion des tooltips #}
 

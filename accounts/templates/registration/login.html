@@ -27,7 +27,9 @@
       {% csrf_token %}
       {{ form|crispy }}
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">{% trans 'Se connecter' %}</button>
+        <button type="submit" class="btn btn-primary">
+          {% trans 'Se connecter' %}
+        </button>
       </div>
     </form>
   {% endif %}
