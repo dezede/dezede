@@ -1,22 +1,20 @@
 {% load i18n %}
 {% load url from future %}
 
-<div class="btn-toolbar pull-right">
+<div class="btn-toolbar pull-right" role="toolbar">
 
   <div class="btn-group{% if size %} btn-group-{{ size }}{% endif %}">
 
     {% if has_change_perm %}
-      <a class="btn btn-primary"
-         href="{% url admin_change object.pk %}"
-         title="{% trans "modifier"|capfirst %}">
+      <a class="btn btn-primary" href="{% url admin_change object.pk %}"
+         title="{% trans "modifier"|capfirst %}" role="button">
         <i class="glyphicon glyphicon-pencil"></i>
       </a>
     {% endif %}
 
     {% if has_delete_perm %}
-      <a class="btn btn-danger"
-         href="{% url admin_delete object.pk %}"
-         title="{% trans "supprimer"|capfirst %}">
+      <a class="btn btn-danger" href="{% url admin_delete object.pk %}"
+         title="{% trans "supprimer"|capfirst %}" role="button">
         <i class="glyphicon glyphicon-trash"></i>
       </a>
     {% endif %}

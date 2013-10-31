@@ -1,8 +1,7 @@
 {% load i18n %}
 
 {% if not object.is_public %}
-  <a class="btn btn-warning disabled"
-     title="{% trans 'Privé' %}">
+  <span class="btn btn-warning disabled" title="{% trans 'Privé' %}">
     <i class="glyphicon glyphicon-lock"></i>
-  </a>
+  </span>
 {% endif %}
