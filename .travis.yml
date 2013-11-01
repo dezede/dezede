@@ -5,7 +5,7 @@ services:
   - elasticsearch
   - rabbitmq
 before_install:
-  - echo -e 'unixsocket /var/run/redis/redis.sock\nunixsocketperm 777' >> /etc/redis/redis.conf
+  - sudo echo -e 'unixsocket /var/run/redis/redis.sock\nunixsocketperm 777' >> /etc/redis/redis.conf
   - sudo service redis-server restart
   - export DISPLAY=:99.0
   - sudo service xvfb start
