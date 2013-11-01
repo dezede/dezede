@@ -16,6 +16,7 @@ install:
 before_script:
   - psql -c 'DROP DATABASE IF EXISTS dezede;' -U postgres
   - psql -c 'CREATE DATABASE dezede;' -U postgres
+  - ./manage.py celeryd_detach
 script:
   - coverage run --source=dezede,libretto,accounts,dossiers,typography,cache_tools manage.py test
 after_success:
