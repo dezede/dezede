@@ -30,7 +30,8 @@ def software_versions():
 
 @register.simple_tag(takes_context=True)
 def nav_link(context, view_name, text):
-    requested_url = context['request'].path
+    request = context.get('request')
+    requested_url = '' if request is None else request.path
     url = reverse(view_name)
     css_class = ' class="active"' if requested_url.startswith(url) else ''
     return '<li%s><a href="%s">%s</a></li>' % (css_class, url, capfirst(text))
