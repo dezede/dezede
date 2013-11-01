@@ -5,14 +5,16 @@ services:
   - elasticsearch
   - rabbitmq
 before_install:
+  # Starts Redis in a socket file.
   - sudo sh -c "echo 'unixsocket /var/run/redis/redis.sock\nunixsocketperm 777' >> /etc/redis/redis.conf"
   - sudo service redis-server restart
+  # Starts a virtual desktop for Selenium tests.
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 install:
   - pip install -r requirements.txt --use-mirrors
-  - pip install coveralls --use-mirrors
   - npm install -g less
+  - pip install coveralls --use-mirrors
 before_script:
   - psql -c 'DROP DATABASE IF EXISTS dezede;' -U postgres
   - psql -c 'CREATE DATABASE dezede;' -U postgres
