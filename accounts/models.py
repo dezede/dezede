@@ -7,18 +7,27 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MaxLengthValidator
 from django.db.models import BooleanField, permalink, TextField, URLField, \
     CharField, ForeignKey, PositiveIntegerField, get_models
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy
 from filebrowser.fields import FileBrowseField
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from cache_tools import cached_ugettext_lazy as _
-from libretto.models.common import AutoriteModel, CommonTreeManager
-from libretto.models.functions import href
+from libretto.models.common import AutoriteModel, CommonTreeManager, \
+    CommonTreeQuerySet
+from libretto.models.functions import href, str_list_w_last, sc
+
+
+class HierarchicUserQuerySet(CommonTreeQuerySet):
+    def html(self, tags=True):
+        return str_list_w_last([u.html(tags=tags) for u in self])
 
 
 class HierarchicUserManager(CommonTreeManager, UserManager):
-    pass
+    queryset_class = HierarchicUserQuerySet
+
+    def html(self, tags=True):
+        return self.get_query_set().html(tags=tags)
 
 
 def _is_polymorphic_child(models, model):
@@ -77,14 +86,19 @@ class HierarchicUser(MPTTModel, AbstractUser):
         verbose_name = ungettext_lazy('utilisateur', 'utilisateurs', 1)
         verbose_name_plural = ungettext_lazy('utilisateur', 'utilisateurs', 2)
 
-    def __str__(self):
-        return self.get_full_name() or self.get_username()
+    def __str__(self, tags=False):
+        return self.html(tags=False)
 
-    def link(self):
-        return href(self.get_absolute_url(), smart_text(self))
+    def get_full_name(self, tags=False):
+        full_name = '%s %s' % (self.first_name, sc(self.last_name, tags=tags))
+        return full_name.strip()
 
-    def html(self):
-        return self.link()
+    def html(self, tags=True):
+        txt = self.get_full_name(tags=tags) or self.get_username()
+        return href(self.get_absolute_url(), txt, tags=tags)
+
+    def link(self, tags=True):
+        return self.html(tags=tags)
 
     @permalink
     def get_absolute_url(self):
@@ -98,3 +112,7 @@ class HierarchicUser(MPTTModel, AbstractUser):
 
     def dossiersdevenements_roots(self):
         return self.dossierdevenements.exclude(parent__owner=self)
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'first_name__icontains', 'last_name__icontains'
