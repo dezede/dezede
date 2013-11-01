@@ -284,7 +284,7 @@ HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
 
 CACHES = {
     'default': {
-        'BACKEND': 'redis_cache.cache.RedisCache',
+        'BACKEND': 'redis_cache.cache.RedisCache',  # FIXME: Peut-être faire mix avec le backend johnny cache.
         'LOCATION': 'unix:/var/run/redis/redis.sock:1',
         'KEY_PREFIX': '2Z',
         'TIMEOUT': 24 * 60 * 60,  # seconds
@@ -365,8 +365,7 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 10,
 }
 
-CELERY_CACHE_BACKEND = 'memcached://' + CACHES['default']['LOCATION']
-CELERY_RESULT_BACKEND = 'cache'
+CELERY_RESULT_BACKEND = 'redis'
 
 LOGGING = {
     'version': 1,
