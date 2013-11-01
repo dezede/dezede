@@ -55,7 +55,7 @@ postgresql      9.1
 python2.7       2.7.3
 python-pip      1.1
 python-docutils 0.8.1
-memcached       1.4.14
+redis-server    2:2.6.7
 python-dev      2.7.3
 libxml2
 libxml2-dev
@@ -118,6 +118,29 @@ Configuration de PostgreSQL
 #. Création des tables de la base de données :
 
     ``./manage.py syncdb`` puis ``./manage.py migrate``
+
+
+
+Configuration de Redis
+======================
+
+#. Activer le socket Unix de Redis :
+
+    - Éditer le fichier de configuration :
+
+        ``nano /etc/redis/redis.conf``
+
+    - Ajouter ces lignes :
+
+        ::
+
+          unixsocket /var/run/redis/redis.sock
+          unixsocketperm 777
+
+
+#. Relancer le serveur :
+
+    ``sudo service redis restart``
 
 
 

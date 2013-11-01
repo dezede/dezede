@@ -28,7 +28,7 @@ rjsmin==1.0.7
 django-sekizai==0.7
 django-viewsets==0.1.7
 Pillow==2.1.0
-python-memcached==1.53
+django-redis==3.3
 South==0.8.2
 django-debug-toolbar==0.9.4
 django-debug-toolbar-template-timings==0.5.1

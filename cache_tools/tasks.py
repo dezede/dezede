@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Manager
 from djcelery_transactions import task
-from .utils import get_object_cache_key, invalidate_object
+from .utils import invalidate_object
 
 
 __all__ = ('get_stale_objects', 'auto_invalidate',)
@@ -14,13 +14,12 @@ def get_stale_objects(instance, explored_instances, all_relations=False):
     if instance is None:
         raise StopIteration
 
-    cache_key = get_object_cache_key(instance)
-    if cache_key in explored_instances:
+    if instance in explored_instances:
         raise StopIteration
 
     yield instance
 
-    explored_instances.append(cache_key)
+    explored_instances.append(instance)
 
     relations = getattr(instance, 'invalidated_relations_when_saved',
                         lambda all_relations: ())(all_relations=all_relations)

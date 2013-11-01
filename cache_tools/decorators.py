@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from django.core.cache import cache
-from .utils import get_cache_key, get_object_cache_key
+from .utils import get_cache_key
 
 
 __all__ = ('model_method_cached',)
@@ -18,10 +18,6 @@ def model_method_cached(id_attr=b'pk'):
             cache_key = get_cache_key(method, self, args, kwargs, id_attr)
             out = cache_get(cache_key)
             if out is None:
-                object_cache_key = get_object_cache_key(self, id_attr)
-                object_keys = cache_get(object_cache_key, [])
-                object_keys.append(cache_key)
-                cache_set(object_cache_key, object_keys, 0)
                 out = method(self, *args, **kwargs)
                 cache_set(cache_key, out, 0)
             return out

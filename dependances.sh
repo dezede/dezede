@@ -1,6 +1,6 @@
 #!/bin/sh
 
-apt-get install nano postgresql python2.7 python-pip python-docutils python-dev memcached libxml2 libxml2-dev libxslt1-dev rabbitmq-server
+apt-get install nano postgresql python2.7 python-pip python-docutils python-dev redis-server libxml2 libxml2-dev libxslt1-dev rabbitmq-server
 
 wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.2.deb
 dpkg -i elasticsearch-0.90.2.deb
