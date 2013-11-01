@@ -239,10 +239,7 @@ class PupitreQuerySet(CommonQuerySet):
 
 
 class PupitreManager(CommonManager):
-    use_for_related_fields = True
-
-    def get_query_set(self):
-        return PupitreQuerySet(self.model, using=self._db)
+    queryset_class = PupitreQuerySet
 
     def elements_de_distribution(self):
         return self.all().elements_de_distribution()
@@ -401,8 +398,7 @@ class AuteurQuerySet(CommonQuerySet):
 
 
 class AuteurManager(CommonManager):
-    def get_query_set(self):
-        return AuteurQuerySet(self.model, using=self._db)
+    queryset_class = AuteurQuerySet
 
     def individus(self):
         return self.get_query_set().individus()

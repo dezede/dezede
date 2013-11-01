@@ -7,7 +7,6 @@ from django.contrib.contenttypes.generic import GenericRelation
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
     ForeignKey, TextField, Manager, PROTECT, Q, SmallIntegerField
-from django.db.models.query import QuerySet
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
@@ -19,10 +18,8 @@ from filebrowser.fields import FileBrowseField
 from mptt.managers import TreeManager
 from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
-from reversion import pre_revision_commit
 from tinymce.models import HTMLField
 from cache_tools import cached_ugettext_lazy as _
-from cache_tools.signals import auto_invalidate_signal_receiver
 from .functions import href, ex, hlp
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
@@ -88,9 +85,8 @@ class CommonQuerySet(TypographicQuerySet):
 
 
 class CommonManager(TypographicManager):
-    # TODO: Implementer get_empty_query_set.
-    def get_query_set(self):
-        return CommonQuerySet(self.model, using=self._db)
+    use_for_related_fields = True
+    queryset_class = CommonQuerySet
 
 
 class CommonModel(TypographicModel):
@@ -199,9 +195,7 @@ class PublishedQuerySet(CommonQuerySet):
 
 
 class PublishedManager(CommonManager):
-    # TODO: Implement get_empty_query_set.
-    def get_query_set(self):
-        return PublishedQuerySet(self.model, using=self._db)
+    queryset_class = PublishedQuerySet
 
     def published(self, request=None):
         return self.get_query_set().published(request=request)
@@ -262,7 +256,7 @@ class UniqueSlugModel(Model):
         return smart_text(self)
 
 
-class CommonTreeQuerySet(QuerySet):
+class CommonTreeQuerySet(CommonQuerySet):
     def get_descendants(self, include_self=False):
         manager = self.model._default_manager
         tree_id_attr = manager.tree_id_attr
@@ -285,7 +279,7 @@ class CommonTreeQuerySet(QuerySet):
         return qs
 
 
-class CommonTreeManager(TreeManager):
+class CommonTreeManager(CommonManager, TreeManager):
     queryset_class = CommonTreeQuerySet
 
     def get_query_set(self):

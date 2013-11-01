@@ -50,10 +50,7 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
 
 
 class ElementDeDistributionManager(CommonManager):
-    use_for_related_fields = True
-
-    def get_query_set(self):
-        return ElementDeDistributionQuerySet(self.model, using=self._db)
+    queryset_class = ElementDeDistributionQuerySet
 
     def individus(self):
         return self.get_query_set().individus()
@@ -299,12 +296,15 @@ class EvenementManager(PublishedManager):
 class Evenement(AutoriteModel):
     ancrage_debut = OneToOneField(
         'AncrageSpatioTemporel', related_name='evenements_debuts',
-        db_index=True, on_delete=PROTECT)
+        db_index=True, on_delete=PROTECT,
+        verbose_name=_('ancrage spatio-temporel de début'))
     ancrage_fin = OneToOneField(
         'AncrageSpatioTemporel', related_name='evenements_fins', blank=True,
-        null=True, db_index=True, on_delete=PROTECT)
-    relache = BooleanField(verbose_name='relâche', db_index=True)
-    circonstance = CharField(max_length=500, blank=True, db_index=True)
+        null=True, db_index=True, on_delete=PROTECT,
+        verbose_name=_('ancrage spatio-temporel de fin'))
+    relache = BooleanField(_('relâche'), db_index=True)
+    circonstance = CharField(_('circonstance'), max_length=500, blank=True,
+                             db_index=True)
     distribution = GenericRelation(ElementDeDistribution)
 
     objects = EvenementManager()

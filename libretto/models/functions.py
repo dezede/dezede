@@ -126,7 +126,7 @@ def no(txt):
 
 
 def html_decorator(function):
-    def wrapper(txt, tags):
+    def wrapper(txt, tags=True):
         if not txt:
             return ''
         if tags:
