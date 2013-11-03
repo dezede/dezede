@@ -25,8 +25,7 @@
 @navbar-default-link-hover-color:  @gray-darker;
 @navbar-default-link-active-color: black;
 
-@nav-link-hover-bg:             lighten(@gray-lighter, 3%);
-@nav-tabs-active-link-hover-bg: @gray-lighter;
+@breadcrumb-separator: '\00A0/';
 
 @body-bg: hsv(50, 7%, 100%);
 @well-bg: darken(@body-bg, 4%);
@@ -35,7 +34,6 @@
 // Custom variables
 //
 
-@main-padding-x:         floor(@grid-gutter-width / 2);
 @content-padding-bottom: 30px;
 
 @footer-padding-y:   15px;
@@ -186,7 +184,6 @@ body {
   min-height: 100%;
   height: auto !important;  // Those two lines are a min-height hack for IE.
   height: 100%;             //
-  padding: 0 @main-padding-x;
   margin-bottom: -@footer-height;
 }
 
@@ -312,38 +309,14 @@ blockquote {
   }
 }
 
-.content-part {
-  @local-background: @well-bg;
-  border: 1px solid darken(@local-background, 10%);
-  border-radius: @border-radius-large;
-  background: @local-background;
-  padding: 15px;
-  margin-bottom: 30px;
-  &:last-of-type {
-    margin-bottom: 0;
-  }
-}
-
-blockquote.source>* {
+blockquote.source .contenu {
   text-align: justify;
   margin: .5em 0;
-  &:first-of-type {
+  *:first-child {
     margin-top: 0;
   }
-  &:last-of-type {
+  *:last-child {
     margin-bottom: 0;
-  }
-  &:lang(fr):first-child:before {
-    content: "\AB\A0";
-  }
-  &:lang(fr):last-of-type:after {
-    content: "\A0\BB";
-  }
-  &:lang(en):first-child:before {
-    content: "\201C\A0";
-  }
-  &:lang(en):last-of-type:after {
-    content: "\A0\201D";
   }
 }
 
@@ -502,7 +475,8 @@ footer {
   background: @footer-bg;
   border-top: @footer-border-width solid @footer-border-color;
   &>.container {
-    padding: @footer-padding-y @main-padding-x;
+    padding-top: @footer-padding-y;
+    padding-bottom: @footer-padding-y;
     .row {
       &>* {
         height: @footer-line-height;
@@ -561,58 +535,57 @@ footer {
 
 .container-col-width(@cols; @container-width) {
   @media (min-width: @container-width) {
-    width: floor(@cols * @container-width / @grid-columns)
-           - @grid-gutter-width;
+    width: @cols * @container-width / @grid-columns - @grid-gutter-width;
   }
 }
 
 .affix-top, .affix, .affix-bottom {
   .col-sm-3>& {
-    .container-col-width(3; @screen-sm-min);
-    .container-col-width(3; @screen-md-min);
-    .container-col-width(3; @screen-lg-min);
+    .container-col-width(3; @container-sm);
+    .container-col-width(3; @container-md);
+    .container-col-width(3; @container-lg);
   }
   .col-sm-4>& {
-    .container-col-width(4; @screen-sm-min);
-    .container-col-width(4; @screen-md-min);
-    .container-col-width(4; @screen-lg-min);
+    .container-col-width(4; @container-sm);
+    .container-col-width(4; @container-md);
+    .container-col-width(4; @container-lg);
   }
   .col-sm-5>& {
-    .container-col-width(5; @screen-sm-min);
-    .container-col-width(5; @screen-md-min);
-    .container-col-width(5; @screen-lg-min);
+    .container-col-width(5; @container-sm);
+    .container-col-width(5; @container-md);
+    .container-col-width(5; @container-lg);
   }
   .col-sm-6>& {
-    .container-col-width(6; @screen-sm-min);
-    .container-col-width(6; @screen-md-min);
-    .container-col-width(6; @screen-lg-min);
+    .container-col-width(6; @container-sm);
+    .container-col-width(6; @container-md);
+    .container-col-width(6; @container-lg);
   }
   .col-md-3>& {
-    .container-col-width(3; @screen-md-min);
-    .container-col-width(3; @screen-lg-min);
+    .container-col-width(3; @container-md);
+    .container-col-width(3; @container-lg);
   }
   .col-md-4>& {
-    .container-col-width(4; @screen-md-min);
-    .container-col-width(4; @screen-lg-min);
+    .container-col-width(4; @container-md);
+    .container-col-width(4; @container-lg);
   }
   .col-md-5>& {
-    .container-col-width(5; @screen-md-min);
-    .container-col-width(5; @screen-lg-min);
+    .container-col-width(5; @container-md);
+    .container-col-width(5; @container-lg);
   }
   .col-md-6>& {
-    .container-col-width(6; @screen-md-min);
-    .container-col-width(6; @screen-lg-min);
+    .container-col-width(6; @container-md);
+    .container-col-width(6; @container-lg);
   }
   .col-lg-3>& {
-    .container-col-width(3; @screen-lg-min);
+    .container-col-width(3; @container-lg);
   }
   .col-lg-4>& {
-    .container-col-width(4; @screen-lg-min);
+    .container-col-width(4; @container-lg);
   }
   .col-lg-5>& {
-    .container-col-width(5; @screen-lg-min);
+    .container-col-width(5; @container-lg);
   }
   .col-lg-6>& {
-    .container-col-width(6; @screen-lg-min);
+    .container-col-width(6; @container-lg);
   }
 }
