@@ -1,4 +1,4 @@
-{% load i18n endless %}
+{% load i18n endless compress %}
 
 {% paginate 5 evenements %}
 {% show_pages %}
@@ -11,12 +11,14 @@
 
 {% show_current_number as page_number %}
 
-<script>
-  if(typeof jQuery != 'undefined') {
-    window.history.replaceState(
-      {},
-      '',  {# title, unused for now in any browser #}
-      $.query.set('page', {{ page_number }}).toString());
-    tooltips_reload();
-  }
-</script>
+{% compress js file %}
+  <script>
+    if(typeof jQuery != 'undefined') {
+      window.history.replaceState(
+        {},
+        '',  {# title, unused for now in any browser #}
+        $.query.set('page', {{ page_number }}).toString());
+      tooltips_reload();
+    }
+  </script>
+{% endcompress %}

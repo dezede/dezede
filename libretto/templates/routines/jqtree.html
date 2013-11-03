@@ -1,18 +1,20 @@
-{% load i18n static %}
+{% load i18n static compress %}
 
 <div id="{{ model_name }}-tree"
      data-url="{% url 'tree_node' model_name attr object.pk %}">
 </div>
 
-<script>
-  $(function () {
-    $('#{{ model_name }}-tree').tree({
-      selectable: false,
-      autoEscape: false,
-      useContextMenu: false,
-      keyboardSupport: false,
-      openedIcon: '<span class="glyphicon glyphicon-minus">',
-      closedIcon: '<span class="glyphicon glyphicon-plus">'
+{% compress js file %}
+  <script>
+    $(function () {
+      $('#{{ model_name }}-tree').tree({
+        selectable: false,
+        autoEscape: false,
+        useContextMenu: false,
+        keyboardSupport: false,
+        openedIcon: '<span class="glyphicon glyphicon-minus">',
+        closedIcon: '<span class="glyphicon glyphicon-plus">'
+      });
     });
-  });
-</script>
+  </script>
+{% endcompress %}
