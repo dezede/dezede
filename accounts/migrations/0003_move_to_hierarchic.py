@@ -27,8 +27,6 @@ class Migration(DataMigration):
             new_user = HierarchicUser.objects.create(**content_dict)
             new_user.groups.add(*user.groups.all())
             new_user.user_permissions.add(*user.user_permissions.all())
-        print('Please launch ’manage.py shell_plus’ '
-              'and execute `HierarchicUser.objects.rebuild()`.')
 
     def backwards(self, orm):
         raise RuntimeError('Cannot reverse this migration.')
