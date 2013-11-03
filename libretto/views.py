@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from copy import deepcopy
 from datetime import date
 from django.db.models import get_model, Q
 from django.http import Http404
@@ -227,6 +228,15 @@ class IndividuViewSet(CommonViewSet):
     model = Individu
     base_url_name = b'individu'
     table_class = IndividuTable
+
+
+class EnsembleViewSet(CommonViewSet):
+    model = Ensemble
+    base_url_name = b'ensemble'
+
+    def __init__(self):
+        super(EnsembleViewSet, self).__init__()
+        del self.views[b'list_view']
 
 
 class OeuvreTableView(CommonTableView):

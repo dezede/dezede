@@ -1,18 +1,43 @@
+import operator
 from ajax_select import LookupChannel
 from bs4 import BeautifulSoup
-from django.template.defaultfilters import removetags
 from django.utils.encoding import force_text
+from django.utils import six
 from django.utils.html import strip_tags
+from haystack.backends import SQ
 from haystack.query import SearchQuerySet
+from typography.utils import replace
 from .models.functions import hlp
 from .models import *
 
 
-def search_in_model(Model, qs, search_query):
-    sqs = SearchQuerySet().models(Model)
-    sqs = sqs.autocomplete(content_auto=search_query)
-    pk_list = sqs.values_list('pk', flat=True)
-    return qs.filter(pk__in=pk_list)
+# Application de https://github.com/toastdriven/django-haystack/pull/732
+def autocomplete(self, **kwargs):
+    clone = self._clone()
+    query_bits = []
+
+    for field_name, query in kwargs.items():
+        for word in query.split(' '):
+            bit = clone.query.clean(word.strip())
+            if bit:
+                kwargs = {
+                    field_name: bit,
+                }
+                query_bits.append(SQ(**kwargs))
+
+    return clone.filter(six.moves.reduce(operator.__and__, query_bits))
+
+
+SearchQuerySet.autocomplete = autocomplete
+
+
+def search_in_model(model, q, max_results):
+    q = replace(q)
+    sqs = SearchQuerySet().models(model)
+    sqs = sqs.autocomplete(content_auto=q).boost(q+'*', 10)[:max_results]
+    q = q.lower()
+    return [r.object for r in sqs
+            if q in r.get_stored_fields()['content_auto'].lower()]
 
 
 class PublicLookup(LookupChannel):
@@ -20,9 +45,7 @@ class PublicLookup(LookupChannel):
     displayed_attr = 'html'
 
     def get_query(self, q, request):
-        Model = self.model
-        return search_in_model(
-            Model, Model.objects.all(), q)[:self.max_results]
+        return search_in_model(self.model, q, self.max_results)
 
     def format_match(self, obj):
         out = getattr(obj, self.displayed_attr)
@@ -60,20 +83,21 @@ class OeuvreLookup(PublicLookup):
 
 class IndividuLookup(PublicLookup):
     model = Individu
+    displayed_attr = 'related_label_html'
 
 
 class CharFieldLookupChannel(LookupChannel):
     attr = None
 
     def get_query(self, q, request):
-        Model = self.model
+        model = self.model
         attr = self.attr
         filters = {attr + '__istartswith': q}
-        all_results = Model.objects.filter(**filters) \
+        all_results = model.objects.filter(**filters) \
                                    .values_list(attr, flat=True) \
                                    .distinct().order_by(attr)
         results = sorted(all_results,
-                       key=lambda r: Model.objects.filter(**{attr: r}).count())
+                       key=lambda r: model.objects.filter(**{attr: r}).count())
         results.reverse()
         return results[:7]
 

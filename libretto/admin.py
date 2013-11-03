@@ -18,7 +18,7 @@ from reversion import VersionAdmin
 import reversion
 from cache_tools import cached_ugettext_lazy as _
 from .models import *
-from .forms import OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm
+from .forms import OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm, ElementDeDistributionForm
 
 
 __all__ = ()
@@ -60,6 +60,20 @@ class CustomBaseModel(BaseModelAdmin):
             qs = qs.filter(
                 owner__in=user.get_descendants(include_self=True))
         return qs
+
+
+# Common fieldsets
+
+
+COMMON_FIELDSET_LABEL = _('Champs courants')
+ADVANCED_FIELDSET_LABEL = _('Champs courants')
+PERIODE_D_ACTIVITE_FIELDSET = (_('Période d’activité'), {
+    'fields': (('debut', 'debut_precision'), ('fin', 'fin_precision'))
+})
+FILES_FIELDSET = (_('Fichiers'), {
+    'classes': ('grp-collapse grp-closed',),
+    'fields': ('illustrations', 'documents',),
+})
 
 
 #
@@ -200,36 +214,48 @@ class IndividuEnfantInline(CustomTabularInline):
 
 class OeuvreLieesInline(StackedInline):
     model = Oeuvre
-    verbose_name = model._meta.verbose_name
-    verbose_name_plural = model._meta.verbose_name_plural
     classes = ('grp-collapse grp-closed',)
 
 
 class AuteurInline(CustomTabularInline, GenericStackedInline):
     model = Auteur
-    verbose_name = model._meta.verbose_name
-    verbose_name_plural = model._meta.verbose_name_plural
     raw_id_fields = ('profession', 'individu',)
     autocomplete_lookup_fields = {
         'fk': ['profession', 'individu'],
     }
 
 
-class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
-    model = ElementDeDistribution
-    verbose_name = model._meta.verbose_name
-    verbose_name_plural = _('distribution')
-    raw_id_fields = ('individus', 'pupitre', 'profession')
+class MembreInline(CustomStackedInline):
+    model = Membre
+    raw_id_fields = ('individu', 'instrument')
     autocomplete_lookup_fields = {
-        'fk': ['pupitre', 'profession'],
-        'm2m': ['individus'],
+        'fk': ['individu', 'instrument'],
+    }
+    fieldsets = (
+        (None, {'fields': ('individu', 'instrument', 'classement')}),
+        PERIODE_D_ACTIVITE_FIELDSET,
+    )
+
+
+class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
+    """
+    Utilisé uniquement pour les distributions de tête d'événement.
+    La restriction est que l'on utilise pas de champ 'pupitre'.
+    """
+    model = ElementDeDistribution
+    form = ElementDeDistributionForm
+    verbose_name_plural = _('distribution')
+    raw_id_fields = ('individus', 'ensembles', 'profession')
+    autocomplete_lookup_fields = {
+        'fk': ['profession'],
+        'm2m': ['individus', 'ensembles'],
     }
     fieldsets = (
         (None, {
             'description': _('Distribution commune à l’ensemble de '
                              'l’événement. Une distribution plus précise peut '
                              'être saisie avec le programme.'),
-            'fields': ('individus', 'pupitre', 'profession',),
+            'fields': ('individus', 'ensembles', 'profession',),
         }),
     )
     classes = ('grp-collapse grp-open',)
@@ -238,32 +264,27 @@ class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
 class ElementDeProgrammeInline(CustomStackedInline):
     model = ElementDeProgramme
     form = ElementDeProgrammeForm
-    verbose_name = model._meta.verbose_name
     verbose_name_plural = _('programme')
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': (('oeuvre', 'autre',), 'caracteristiques',
                        'distribution', 'numerotation',),
         }),
-        (_('Fichiers'), {
+        FILES_FIELDSET,
+        (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed',),
-            'fields': ('illustrations', 'documents',),
-        }),
-        (_('Champs avancés'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('personnels', 'position',),
+            'fields': ('position',),
         }),
     )
     sortable_field_name = 'position'
     raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
-                     'personnels', 'illustrations', 'documents')
+                     'illustrations', 'documents')
     related_lookup_fields = {
         'm2m': ('distribution',),
     }
     autocomplete_lookup_fields = {
         'fk': ('oeuvre',),
-        'm2m': ('caracteristiques', 'personnels',
-                'illustrations', 'documents'),
+        'm2m': ('caracteristiques', 'illustrations', 'documents'),
     }
     classes = ('grp-collapse grp-open',)
 
@@ -410,6 +431,8 @@ class TypeDeParenteCommonAdmin(CommonAdmin):
     list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
                      'nom_relatif_pluriel', 'classement',)
     list_filter = (PolymorphicChildModelFilter,)
+    search_fields = ('nom', 'nom_relatif',
+                     'nom_pluriel', 'nom_relatif_pluriel')
     fieldsets = (
         (None, {'fields': (
             ('nom', 'nom_pluriel'), ('nom_relatif', 'nom_relatif_pluriel'),
@@ -465,6 +488,8 @@ class EtatAdmin(VersionAdmin, CommonAdmin):
 class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'referent',)
     list_editable = ('nom', 'nom_pluriel', 'referent',)
+    list_filter = ('referent',)
+    search_fields = ('nom', 'nom_pluriel')
 
 
 class LieuCommonAdmin(AutoriteAdmin):
@@ -481,13 +506,10 @@ class LieuCommonAdmin(AutoriteAdmin):
     readonly_fields = ('__str__', 'html', 'link',)
 #    inlines = (AncrageSpatioTemporelInline,)
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': ('nom', 'parent', 'nature', 'historique',),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('illustrations', 'documents',),
-        }),
+        FILES_FIELDSET,
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -537,14 +559,11 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
         'm2m': ('illustrations', 'documents'),
     }
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
                        'classement'),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('illustrations', 'documents',),
-        }),
+        FILES_FIELDSET,
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -599,18 +618,15 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
     readonly_fields = ('__str__', 'html', 'link',)
     inlines = (IndividuParentInline, IndividuEnfantInline)
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': (('particule_nom', 'nom',), ('prenoms', 'pseudonyme',),
                        ('particule_nom_naissance', 'nom_naissance',),
                        ('titre', 'designation',),
                        ('ancrage_naissance', 'ancrage_deces',),
                        'professions',),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('illustrations', 'documents',),
-        }),
-        (_('Champs avancés'), {
+        FILES_FIELDSET,
+        (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed',),
             'fields': ('ancrage_approx', 'biographie',),
         }),
@@ -620,6 +636,25 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
 #        }),
     )
     fieldsets_and_inlines_order = ('f', 'i', 'i')
+
+
+class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
+    list_display = ('__str__', 'calc_caracteristiques', 'membres_count')
+    search_fields = ('nom', 'membres__individu__nom')
+    inlines = (MembreInline,)
+    raw_id_fields = ('caracteristiques', 'siege', 'documents', 'illustrations')
+    autocomplete_lookup_fields = {
+        'fk': ('siege',),
+        'm2m': ('caracteristiques', 'documents', 'illustrations'),
+    }
+    fieldsets = (
+        (COMMON_FIELDSET_LABEL, {
+            'fields': ('nom', 'caracteristiques', 'siege'),
+        }),
+        PERIODE_D_ACTIVITE_FIELDSET,
+        FILES_FIELDSET,
+    )
+    fieldsets_and_inlines_order = ('f', 'f', 'i')
 
 
 class DeviseAdmin(VersionAdmin, CommonAdmin):
@@ -666,6 +701,7 @@ class TypeDeCaracteristiqueAdmin(
         PolymorphicParentModelAdmin):
     base_model = TypeDeCaracteristique
     child_models = (TypeDeCaracteristiqueDOeuvre,
+                    TypeDeCaracteristiqueDEnsemble,
                     TypeDeCaracteristiqueDeProgramme)
 
 
@@ -679,12 +715,19 @@ class TypeDeCaracteristiqueDOeuvreAdmin(
     pass
 
 
+class TypeDeCaracteristiqueDEnsembleAdmin(
+        VersionAdmin, TypeDeCaracteristiqueChildAdmin):
+    pass
+
+
 class TypeDeCaracteristiqueDeProgrammeAdmin(
         VersionAdmin, TypeDeCaracteristiqueChildAdmin):
     pass
 
 
 reversion.register(TypeDeCaracteristiqueDOeuvre,
+                   follow=('typedecaracteristique_ptr',))
+reversion.register(TypeDeCaracteristiqueDEnsemble,
                    follow=('typedecaracteristique_ptr',))
 reversion.register(TypeDeCaracteristiqueDeProgramme,
                    follow=('typedecaracteristique_ptr',))
@@ -700,7 +743,11 @@ class CaracteristiqueCommonAdmin(CommonAdmin):
 class CaracteristiqueAdmin(VersionAdmin, CaracteristiqueCommonAdmin,
                            PolymorphicParentModelAdmin):
     base_model = Caracteristique
-    child_models = (CaracteristiqueDOeuvre, CaracteristiqueDeProgramme)
+    child_models = (
+        CaracteristiqueDOeuvre,
+        CaracteristiqueDEnsemble,
+        CaracteristiqueDeProgramme,
+    )
 
 
 class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
@@ -708,6 +755,7 @@ class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
     base_model = Caracteristique
     type_to = {
         CaracteristiqueDOeuvre: TypeDeCaracteristiqueDOeuvre,
+        CaracteristiqueDEnsemble: TypeDeCaracteristiqueDEnsemble,
         CaracteristiqueDeProgramme: TypeDeCaracteristiqueDeProgramme,
     }
 
@@ -722,6 +770,10 @@ class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
 
 
 class CaracteristiqueDOeuvreAdmin(VersionAdmin, CaracteristiqueChildAdmin):
+    pass
+
+
+class CaracteristiqueDEnsembleAdmin(VersionAdmin, CaracteristiqueChildAdmin):
     pass
 
 
@@ -746,14 +798,11 @@ class PartieCommonAdmin(AutoriteAdmin):
         'fk': ('parent',),
     }
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': ('nom', 'nom_pluriel', 'professions', 'parent',
                        'classement'),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('illustrations', 'documents',),
-        }),
+        FILES_FIELDSET,
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -773,6 +822,13 @@ class PartieChildAdmin(PartieCommonAdmin, PolymorphicChildModelAdmin):
 
 class RoleAdmin(VersionAdmin, PartieChildAdmin):
     pass
+RoleAdmin.fieldsets = copy.deepcopy(RoleAdmin.fieldsets)
+RoleAdmin.fieldsets[0][1]['fields'] = (
+    'nom', 'nom_pluriel', 'oeuvre', 'professions', 'parent',
+    'classement',
+)
+RoleAdmin.raw_id_fields += ('oeuvre',)
+RoleAdmin.autocomplete_lookup_fields['fk'] += ('oeuvre',)
 
 
 class InstrumentAdmin(VersionAdmin, PartieChildAdmin):
@@ -825,11 +881,8 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
             'fields': ('genre', 'caracteristiques',
                        'ancrage_creation', 'pupitres', 'contenu_dans',),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('documents', 'illustrations',),
-        }),
-        (_('Champs avancés'), {
+        FILES_FIELDSET,
+        (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed', 'wide',),
             'fields': ('lilypond', 'description',),
         }),
@@ -842,15 +895,16 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
 
 
 class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
+    form = ElementDeDistributionForm
     list_display = ('__str__', 'pupitre', 'profession',)
     list_editable = ('pupitre', 'profession',)
     search_fields = ('individus__nom', 'individus__prenoms__prenom',
                      'pupitre__partie__nom', 'profession__nom')
-    fields = ('individus', 'pupitre', 'profession',)
-    raw_id_fields = ('individus', 'pupitre', 'profession',)
+    fields = ('individus', 'ensembles', 'pupitre', 'profession',)
+    raw_id_fields = ('individus', 'ensembles', 'pupitre', 'profession',)
     autocomplete_lookup_fields = {
         'fk': ['pupitre', 'profession'],
-        'm2m': ['individus'],
+        'm2m': ['individus', 'ensembles'],
     }
 
 
@@ -861,30 +915,27 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
     search_fields = ('circonstance', 'ancrage_debut__lieu__nom')
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
-    raw_id_fields = ('ancrage_debut', 'ancrage_fin', 'documents',
-                     'illustrations',)
+    raw_id_fields = ('ancrage_debut', 'ancrage_fin', 'caracteristiques',
+                     'documents', 'illustrations',)
     related_lookup_fields = {
         'fk': ('ancrage_debut', 'ancrage_fin'),
     }
     autocomplete_lookup_fields = {
-        'm2m': ('documents', 'illustrations'),
+        'm2m': ('caracteristiques', 'documents', 'illustrations'),
     }
     readonly_fields = ('__str__', 'html', 'link')
     inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,
                SourceInline)
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'description': _(
                 'Commencez par <strong>saisir ces quelques champs</strong> '
                 'avant d’ajouter des <em>éléments de programme</em> '
                 'plus bas.'),
             'fields': (('ancrage_debut', 'ancrage_fin',),
-                       ('circonstance', 'relache',),),
+                       ('circonstance', 'relache',), 'caracteristiques',),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('documents', 'illustrations',),
-        }),
+        FILES_FIELDSET,
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
@@ -896,6 +947,7 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
 class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
+    search_fields = ('nom', 'nom_pluriel')
 
 
 class SourceAdmin(VersionAdmin, AutoriteAdmin):
@@ -918,14 +970,11 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     readonly_fields = ('__str__', 'html',)
     inlines = (AuteurInline,)
     fieldsets = (
-        (_('Champs courants'), {
+        (COMMON_FIELDSET_LABEL, {
             'fields': ('nom', ('numero', 'page',), ('date', 'type',),
                        'contenu', 'evenements',),
         }),
-        (_('Fichiers'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('documents', 'illustrations',),
-        }),
+        FILES_FIELDSET,
         #        (_('Champs générés (Méthodes)'), {
         #            'classes': ('grp-collapse grp-closed',),
         #            'fields': ('__str__', 'html',),
@@ -955,17 +1004,21 @@ site.register(TypeDeParente, TypeDeParenteAdmin)
 site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
 site.register(Individu, IndividuAdmin)
-site.register(Devise, DeviseAdmin)
-site.register(Engagement, EngagementAdmin)
-site.register(TypeDePersonnel, TypeDePersonnelAdmin)
-site.register(Personnel, PersonnelAdmin)
+site.register(Ensemble, EnsembleAdmin)
+# site.register(Devise, DeviseAdmin)
+# site.register(Engagement, EngagementAdmin)
+# site.register(TypeDePersonnel, TypeDePersonnelAdmin)
+# site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(TypeDeCaracteristique, TypeDeCaracteristiqueAdmin)
 site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
+site.register(TypeDeCaracteristiqueDEnsemble,
+              TypeDeCaracteristiqueDEnsembleAdmin)
 site.register(TypeDeCaracteristiqueDeProgramme,
               TypeDeCaracteristiqueDeProgrammeAdmin)
 site.register(Caracteristique, CaracteristiqueAdmin)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
+site.register(CaracteristiqueDEnsemble, CaracteristiqueDEnsembleAdmin)
 site.register(CaracteristiqueDeProgramme, CaracteristiqueDeProgrammeAdmin)
 site.register(Partie, PartieAdmin)
 site.register(Role, RoleAdmin)

@@ -6,5 +6,6 @@
     {{ object.parent|default_if_none:'' }}
     {{ object.nom_pluriel }}
     {{ object.feminin }}
+    {{ object.notes }}
   {% endautoescape %}
 {% endfilter %}

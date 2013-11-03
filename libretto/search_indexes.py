@@ -15,7 +15,9 @@ class CommonSearchIndex(SearchIndex):
 
     def prepare(self, obj):
         translation.activate(settings.LANGUAGE_CODE)
-        return super(CommonSearchIndex, self).prepare(obj)
+        prepared_data = super(CommonSearchIndex, self).prepare(obj)
+        prepared_data['boost'] = obj.get_related_count()
+        return prepared_data
 
 
 class PolymorphicCommonSearchIndex(CommonSearchIndex):
@@ -25,14 +27,14 @@ class PolymorphicCommonSearchIndex(CommonSearchIndex):
 
 
 class OeuvreIndex(CommonSearchIndex, Indexable):
-    content_auto = EdgeNgramField(model_attr='titre_descr_html')
+    content_auto = EdgeNgramField(model_attr='titre_descr')
 
     def get_model(self):
         return Oeuvre
 
     def prepare(self, obj):
         prepared_data = super(OeuvreIndex, self).prepare(obj)
-        prepared_data['boost'] = 1.0 / (obj.level + 1)
+        prepared_data['boost'] *= 1.0 / (obj.level + 1)
         return prepared_data
 
 
@@ -44,7 +46,7 @@ class SourceIndex(CommonSearchIndex, Indexable):
 
 
 class IndividuIndex(CommonSearchIndex, Indexable):
-    content_auto = EdgeNgramField(model_attr='html')
+    content_auto = EdgeNgramField(model_attr='related_label')
 
     def get_model(self):
         return Individu

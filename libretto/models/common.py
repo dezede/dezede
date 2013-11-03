@@ -5,8 +5,9 @@ from collections import OrderedDict
 from django.conf import settings
 from django.contrib.contenttypes.generic import GenericRelation
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
-from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
-    ForeignKey, TextField, Manager, PROTECT, Q, SmallIntegerField
+from django.db.models import (
+    Model, CharField, BooleanField, ManyToManyField, ForeignKey, TextField,
+    Manager, PROTECT, Q, SmallIntegerField, Count)
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
@@ -20,7 +21,7 @@ from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
 from tinymce.models import HTMLField
 from cache_tools import cached_ugettext_lazy as _
-from .functions import href, ex, hlp
+from .functions import href, ex, hlp, capfirst, str_list
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 
@@ -161,6 +162,16 @@ class CommonModel(TypographicModel):
     has_related_objects.boolean = True
     has_related_objects.short_description = _('a des objets liés')
 
+    def get_related_counts(self):
+        attrs = [f.get_accessor_name()
+                 for f in self._meta.get_all_related_objects()
+                        + self._meta.get_all_related_many_to_many_objects()]
+        return self.__class__._default_manager.filter(pk=self.pk) \
+            .aggregate(**{attr: Count(attr) for attr in attrs})
+
+    def get_related_count(self):
+        return sum(self.get_related_counts().values())
+
     @classmethod
     def class_name(cls):
         return smart_text(cls.__name__)
@@ -246,8 +257,15 @@ class SlugModel(Model):
 
 
 class UniqueSlugModel(Model):
-    slug = AutoSlugField(populate_from='get_slug', unique=True,
-                         always_update=True)
+    slug = AutoSlugField(
+        populate_from='get_slug', unique=True, always_update=True)
+
+    def __init__(self, *args, **kwargs):
+        super(UniqueSlugModel, self).__init__(*args, **kwargs)
+        # FIXME: Retirer les deux lignes suivantes quand sera résolu
+        # https://bitbucket.org/neithere/django-autoslug/pull-request/6
+        slug = self._meta.get_field('slug')
+        slug.manager = slug.model._default_manager
 
     class Meta(object):
         abstract = True
@@ -343,12 +361,29 @@ class CaracteristiqueQuerySet(PolymorphicQuerySet, CommonQuerySet):
         return [hlp(valeur, type, tags)
                 for type, valeur in self.values_list('type__nom', 'valeur')]
 
+    def html(self, tags=True, caps=False):
+        l = []
+        first = True
+        for type, valeur in self.values_list('type__nom', 'valeur'):
+            if first and caps:
+                valeur = capfirst(valeur)
+                first = False
+            valeur = mark_safe(valeur)
+            if type:
+                l.append(hlp(valeur, type, tags=tags))
+            else:
+                l.append(valeur)
+        return str_list(l)
+
 
 class CaracteristiqueManager(PolymorphicManager, CommonManager):
     queryset_class = CaracteristiqueQuerySet
 
     def html_list(self, tags=True):
         return self.get_query_set().html_list(tags=tags)
+
+    def html(self, tags=True, caps=True):
+        return self.get_query_set().html(tags=tags, caps=caps)
 
 
 @python_2_unicode_compatible
@@ -380,8 +415,11 @@ class Caracteristique(PolymorphicModel, CommonModel):
     def invalidated_relations_when_saved(all_relations=False):
         return ('get_real_instance',)
 
-    def html(self, tags=True):
-        value = mark_safe(self.valeur)
+    def html(self, tags=True, caps=False):
+        value = self.valeur
+        if caps:
+            value = capfirst(self.valeur)
+        value = mark_safe(value)
         if self.type:
             return hlp(value, self.type, tags=tags)
         return value

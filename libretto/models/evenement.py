@@ -46,7 +46,7 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
             'profession').prefetch_related('individus')
 
     def html(self, tags=True):
-        return ', '.join(e.html(tags=tags) for e in self)
+        return str_list(e.html(tags=tags) for e in self)
 
 
 class ElementDeDistributionManager(CommonManager):
@@ -67,14 +67,19 @@ class ElementDeDistributionManager(CommonManager):
 
 @python_2_unicode_compatible
 class ElementDeDistribution(CommonModel):
-    individus = ManyToManyField('Individu', verbose_name=_('individus'),
-                                related_name='elements_de_distribution')
+    individus = ManyToManyField(
+        'Individu', blank=True, null=True,
+        related_name='elements_de_distribution', verbose_name=_('individus'))
+    ensembles = ManyToManyField(
+        'Ensemble', blank=True, null=True,
+        related_name='elements_de_distribution', verbose_name=_('ensembles'))
     pupitre = ForeignKey(
         'Pupitre', verbose_name=_('pupitre'), null=True, blank=True,
         related_name='elements_de_distribution', on_delete=PROTECT)
     profession = ForeignKey(
         'Profession', verbose_name=_('profession'), null=True, blank=True,
         related_name='elements_de_distribution', on_delete=PROTECT)
+    # TODO: Ajouter une FK (ou M2M?) vers Individu pour les remplacements.
     content_type = ForeignKey(ContentType, null=True, on_delete=PROTECT)
     object_id = PositiveIntegerField(null=True)
     content_object = GenericForeignKey()
@@ -86,7 +91,7 @@ class ElementDeDistribution(CommonModel):
                                       'éléments de distribution', 1)
         verbose_name_plural = ungettext_lazy('élément de distribution',
                                              'éléments de distribution', 2)
-        ordering = ('pupitre',)
+        ordering = ('pupitre', 'profession',)
         app_label = 'libretto'
 
     @staticmethod
@@ -97,17 +102,28 @@ class ElementDeDistribution(CommonModel):
         return self.html(tags=False)
 
     def html(self, tags=True):
-        out = ''
+        l = []
+        pluriel = False
+        feminin = False
         if self.pk:
             individus = self.individus.all()
-            out += str_list_w_last(individu.html(tags=tags)
-                                   for individu in individus)
+            interpretes = [individu.html(tags=tags)
+                           for individu in individus]
+            ensembles = self.ensembles.all()
+            interpretes += [ensemble.html(tags=tags)
+                            for ensemble in ensembles]
+            if not ensembles:
+                feminin = individus.are_feminins()
+            l.append(str_list_w_last(interpretes))
+            pluriel = len(interpretes) > 1
 
         if self.pupitre:
-            out += ' [' + self.pupitre.partie.link() + ']'
+            l.append('[' + self.pupitre.html() + ']')
         elif self.profession:
-            out += ' [' + self.profession.link() + ']'
+            l.append('[' + self.profession.html(feminin=feminin,
+                                                pluriel=pluriel) + ']')
 
+        out = str_list(l, infix=' ')
         if not tags:
             return strip_tags(out)
         return out
@@ -121,11 +137,6 @@ class ElementDeDistribution(CommonModel):
 
     def get_change_link(self):
         return href(self.get_change_url(), smart_text(self), new_tab=True)
-
-    def clean(self):
-        if self.pupitre and self.profession:
-            raise ValidationError(_('Vous ne pouvez remplir à la fois '
-                                    '« Pupitre » et « Profession ».'))
 
     @staticmethod
     def autocomplete_search_fields():
@@ -194,6 +205,7 @@ class ElementDeProgramme(AutoriteModel):
     distribution = ManyToManyField(
         ElementDeDistribution, related_name='elements_de_programme',
         blank=True, null=True)
+    # FIXME: Retirer ceci si on supprime Personnel.
     personnels = ManyToManyField('Personnel', blank=True, null=True,
                                  related_name='elements_de_programme')
 
@@ -211,10 +223,10 @@ class ElementDeProgramme(AutoriteModel):
             return ('evenement',)
         return ()
 
-    def calc_caracteristiques(self):
+    def calc_caracteristiques(self, tags=False):
         if self.pk is None:
             return ''
-        return str_list(smart_text(c) for c in self.caracteristiques.all())
+        return self.caracteristiques.html(tags=tags, caps=False)
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _('caractéristiques')
 
@@ -251,7 +263,7 @@ class ElementDeProgramme(AutoriteModel):
                           {'class': self.__class__.__name__, 'pk': self.pk})
             return ''
 
-        caracteristiques = self.calc_caracteristiques()
+        caracteristiques = self.calc_caracteristiques(tags=tags)
         if caracteristiques:
             out += ' [' + caracteristiques + ']'
 
@@ -305,6 +317,10 @@ class Evenement(AutoriteModel):
     relache = BooleanField(_('relâche'), db_index=True)
     circonstance = CharField(_('circonstance'), max_length=500, blank=True,
                              db_index=True)
+    caracteristiques = ManyToManyField(
+        CaracteristiqueDeProgramme,
+        related_name='evenements', blank=True, null=True,
+        verbose_name=_('caractéristiques'))
     distribution = GenericRelation(ElementDeDistribution)
 
     objects = EvenementManager()
@@ -333,6 +349,11 @@ class Evenement(AutoriteModel):
         return href(self.get_absolute_url(), smart_text(self))
     link.short_description = _('lien')
     link.allow_tags = True
+
+    def calc_caracteristiques(self, tags=True, caps=True):
+        if self.pk is None:
+            return ''
+        return self.caracteristiques.html(tags=tags, caps=caps)
 
     def sources_by_type(self):
         sources = OrderedDefaultDict()

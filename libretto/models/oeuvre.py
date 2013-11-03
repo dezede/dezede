@@ -102,7 +102,6 @@ class TypeDeCaracteristiqueDOeuvre(TypeDeCaracteristique):
         ordering = ('classement',)
         app_label = 'libretto'
 
-
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
         return ('typedecaracteristique_ptr',)
@@ -146,8 +145,10 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
                     'instrumentale ou vocale.'))
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
+    # TODO: Changer le verbose_name en un genre de "types de voix"
+    # pour les rôles, mais en plus générique (ou un help_text).
     professions = ManyToManyField('Profession', related_name='parties',
-        verbose_name=_('professions'), db_index=True,
+        verbose_name=_('professions'), db_index=True, blank=True, null=True,
         help_text=_('La ou les profession(s) capable(s) '
                     'de jouer ce rôle ou cet instrument.'))
     parent = PolymorphicTreeForeignKey(
@@ -195,13 +196,18 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         return b'partie_permanent_detail', (self.pk,)
 
     def link(self):
-        return href(self.get_absolute_url(), self.html())
+        return self.html()
 
-    def html(self):
-        return self.nom
+    def html(self, pluriel=False, tags=True):
+        url = '' if not tags else self.get_absolute_url()
+        if pluriel:
+            out = self.pluriel()
+        else:
+            out = self.nom
+        return href(url, out, tags=tags)
 
     def __str__(self):
-        return self.html()
+        return self.html(tags=False)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -211,6 +217,9 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
 
 class Role(Partie):
+    oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'), blank=True,
+                        null=True, related_name='roles')
+
     class Meta(object):
         verbose_name = ungettext_lazy('rôle', 'rôles', 1)
         verbose_name_plural = ungettext_lazy('rôle', 'rôles', 2)
@@ -245,6 +254,8 @@ class PupitreManager(CommonManager):
         return self.all().elements_de_distribution()
 
 
+# TODO: une fois les quantités déplacées en inline, ce modèle ne doit plus être
+# registered dans l'admin.
 @python_2_unicode_compatible
 class Pupitre(CommonModel):
     partie = ForeignKey(
@@ -640,14 +651,16 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return self.html(tags=tags, auteurs=False, titre=True, descr=False,
                          ancestors=False, links=links)
 
-
     def titre_html(self, tags=True, links=True):
         return self.html(tags, auteurs=False, titre=True, descr=False,
                          ancestors=True, ancestors_links=True, links=links)
 
-    def titre_descr_html(self, tags=True):
-        return self.html(tags, auteurs=False, titre=True, descr=True,
+    def titre_descr(self, tags=False):
+        return self.html(tags=tags, auteurs=False, titre=True, descr=True,
                          ancestors=True)
+
+    def titre_descr_html(self):
+        return self.titre_descr(tags=True)
 
     def description_html(self, tags=True):
         return self.html(tags, auteurs=False, titre=False, descr=True,

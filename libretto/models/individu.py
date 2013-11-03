@@ -11,8 +11,9 @@ from tinymce.models import HTMLField
 from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from ..utils import abbreviate
-from .common import CommonModel, AutoriteModel, \
-    calc_pluriel, UniqueSlugModel, TypeDeParente
+from .common import (
+    CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
+    PublishedManager, PublishedQuerySet)
 from .evenement import Evenement
 from .functions import str_list, str_list_w_last, href, sc
 
@@ -30,6 +31,9 @@ class Prenom(CommonModel):
     class Meta(object):
         verbose_name = ungettext_lazy('prénom', 'prénoms', 1)
         verbose_name_plural = ungettext_lazy('prénom', 'prénoms', 2)
+        # FIXME: Fusionner ce qui ne vérifie pas cette contrainte, puis
+        # Décommenter cette ligne.
+        # unique_together = ('prenom', 'classement', 'favori')
         ordering = ('classement', 'prenom')
         app_label = 'libretto'
 
@@ -108,11 +112,19 @@ class ParenteDIndividus(CommonModel):
             'parent': self.parent, 'type': self.type.nom,
             'enfant': self.enfant}
 
-    def pluriel(self):
-        return calc_pluriel(self)
 
-    def relatif_pluriel(self):
-        return calc_pluriel(self, attr_base='nom_relatif')
+class IndividuQuerySet(PublishedQuerySet):
+    def are_feminins(self):
+        return all([titre in ('J', 'F',)
+                    for titre in self.values_list('titre', flat=True)])
+
+
+class IndividuManager(PublishedManager):
+    def get_query_set(self):
+        return IndividuQuerySet(self.model, using=self._db)
+
+    def are_feminins(self):
+        return self.get_query_set().are_feminins()
 
 
 @python_2_unicode_compatible
@@ -169,6 +181,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
         'self', through='ParenteDIndividus', related_name='parents',
         symmetrical=False, db_index=True)
     biographie = HTMLField(_('biographie'), blank=True)
+
+    objects = IndividuManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('individu', 'individus', 1)
@@ -249,6 +263,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
             return titres[self.titre]
         return ''
 
+    def is_feminin(self):
+        return self.titre in ('J', 'F',)
+
     def get_particule(self, naissance=False, lon=True):
         particule = self.particule_nom_naissance if naissance \
             else self.particule_nom
@@ -284,8 +301,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
     def calc_professions(self, tags=True):
         if not self.pk:
             return ''
-        return str_list_w_last(p.gendered(self.titre, tags, caps=i == 0)
-                               for i, p in enumerate(self.professions.all()))
+        return str_list_w_last(
+            p.html(feminin=self.is_feminin(), tags=tags, caps=i == 0)
+            for i, p in enumerate(self.professions.all()))
     calc_professions.short_description = _('professions')
     calc_professions.admin_order_field = 'professions__nom'
     calc_professions.allow_tags = True
@@ -329,11 +347,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
                     l.append('(%s)' % s)
             out = str_list(l, ' ')
             if pseudonyme:
-                alias = ugettext('dite') if self.titre in ('J', 'F',) \
+                alias = ugettext('dite') if self.is_feminin() \
                     else ugettext('dit')
-                out += ugettext(', %(alias)s %(pseudonyme)s') % \
-                    {'alias': alias,
-                     'pseudonyme': pseudonyme}
+                out += ' %s %s' % (alias, pseudonyme)
             return out
 
         main_choices = {
@@ -360,8 +376,11 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return self.html(tags=tags, lon=True, prenoms_fav=prenoms_fav,
                          designation=designation, abbr=abbr)
 
-    def related_label(self):
-        return self.html(tags=False, abbr=False)
+    def related_label(self, tags=False):
+        return self.html(tags=tags, abbr=False)
+
+    def related_label_html(self):
+        return self.related_label(tags=True)
 
     def clean(self):
         try:

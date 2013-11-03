@@ -1,0 +1,31 @@
+{% extends 'libretto/autorite.html' %}
+{% load i18n extras routines %}
+{% load url from future %}
+
+{% block title %}
+  {{ object }}
+{% endblock %}
+
+{% block header %}
+  <h1>{{ object.html }}</h1>
+  <div class="auto-links">
+    <h2>{{ object.caracteristiques.html }}</h2>
+  </div>
+{% endblock %}
+
+{% block content %}
+
+  {{ block.super }}
+
+  <table class="data-table auto-links">
+    {% data_table_attr 'caracteristiques.html' %}
+    {% data_table_attr 'siege.link' %}
+    {% data_table_attr 'smart_period' caps=True %}
+    {% data_table_list object.membres.all %}
+
+    {% data_table_attr 'notes' %}
+
+    {% data_table_list object.documents.all %}
+  </table>
+
+{% endblock %}

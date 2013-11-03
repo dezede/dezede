@@ -7,7 +7,8 @@ from ajax_select.fields import AutoCompleteSelectMultipleField, \
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
 from cache_tools import cached_ugettext_lazy as _
-from .models import Oeuvre, Source, Individu, ElementDeProgramme
+from .models import (
+    Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution)
 from .fields import RangeSliderField
 
 
@@ -45,6 +46,28 @@ class OeuvreForm(ModelForm):
                 AutoCompleteWidget('oeuvre__prefixe_titre_secondaire',
                                    attrs={'style': 'width: 50px;'}),
         }
+
+
+class ElementDeDistributionForm(ModelForm):
+    class Meta(object):
+        model = ElementDeDistribution
+
+    def clean(self):
+        data = super(ElementDeDistributionForm, self).clean()
+        if not (data[b'individus'] or data[b'ensembles']):
+            msg = _('Vous devez remplir au moins un individu ou un ensemble.')
+            self._errors[b'individus'] = self.error_class([msg])
+            self._errors[b'ensembles'] = self.error_class([msg])
+            del data[b'individus']
+            del data[b'ensembles']
+        if data.get(b'pupitre', None) and data[b'profession']:
+            msg = _('Vous ne pouvez remplir à la fois '
+                    '« Pupitre » et « Profession ».')
+            self._errors[b'pupitre'] = self.error_class([msg])
+            self._errors[b'profession'] = self.error_class([msg])
+            del data[b'pupitre']
+            del data[b'profession']
+        return data
 
 
 class ElementDeProgrammeForm(ModelForm):

@@ -10,6 +10,8 @@
 
   {% with elements=evenement.programme.all %}
     {% if elements %}
+      <hr />
+
       <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
       {% if elements|length == 1 %}
         {{ elements.0.html|safe }}
