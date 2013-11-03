@@ -14,14 +14,16 @@
       <div class="well column-cell">
         <div>
           <h2>{{ object|safe }}</h2>
-          {{ object.contenu|truncatewords_html:50 }}
+          {{ object.presentation|truncatewords_html:50 }}
         </div>
         <hr />
         <div class="btn-group">
-          <a href="{{ object.get_absolute_url }}" class="btn btn-primary">
+          <a href="{{ object.get_absolute_url }}" class="btn btn-primary"
+              role="button">
             {% trans 'Présentation' %}
           </a>
-          <a href="{{ object.get_data_absolute_url }}" class="btn btn-default">
+          <a href="{{ object.get_data_absolute_url }}" class="btn btn-default"
+              role="button">
             {% trans 'Accès aux données »' %}
           </a>
         </div>

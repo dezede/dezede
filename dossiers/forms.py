@@ -1,9 +1,8 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.forms import ModelForm, BooleanField
+from django.forms import BooleanField
 from mptt.forms import MPTTAdminForm
-from tinymce.widgets import TinyMCE
 from .models import DossierDEvenements
 
 
@@ -12,9 +11,6 @@ class DossierDEvenementsForm(MPTTAdminForm):
 
     class Meta(object):
         model = DossierDEvenements
-        widgets = {
-            'contenu': TinyMCE,
-        }
 
     class Media(object):
         css = {

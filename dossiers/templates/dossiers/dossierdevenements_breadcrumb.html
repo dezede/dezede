@@ -1,0 +1,8 @@
+{% spaceless %}
+  <ol class="breadcrumb">
+    {% for parent in object.get_ancestors %}
+      <li><a href="{{ parent.get_absolute_url }}">{{ parent.titre_court|default:parent.titre }}</a></li>
+    {% endfor %}
+    <li class="active">{{ object.titre_court|default:object.titre }}</li>
+  </ol>
+{% endspaceless %}

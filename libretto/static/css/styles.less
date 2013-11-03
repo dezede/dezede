@@ -245,6 +245,19 @@ blockquote {
   }
 }
 
+dl {
+  dt {
+    color: grey;
+    font-weight: normal;
+  }
+  dd {
+    padding-left: 20px;
+    &+dt {
+      padding-top: 3px;
+    }
+  }
+}
+
 .data-table {
   th, td {
     line-height: 10 * @line-height-base / 11;
@@ -340,6 +353,10 @@ table.programme {
 table {
   text-align: left;
   border-collapse: collapse;
+}
+
+.page-header.no-separator {
+  border: none;
 }
 
 textarea,
@@ -441,6 +458,10 @@ ul.ui-autocomplete li a, .results_on_deck > div {
 
 .affix-bottom {
   position: absolute;
+}
+
+#dossier-switcher {
+  margin-top: @grid-gutter-width;
 }
 
 form .results_on_deck {

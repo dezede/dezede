@@ -12,6 +12,7 @@
   <li{% if request.path == data_url %} class="active"{% endif %}>
     <a href="{{ data_url }}">
       {% trans 'Événements' %}
+      <span class="badge">{{ object.get_queryset.count }}</span>
     </a>
   </li>
 </ul>

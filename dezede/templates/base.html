@@ -52,7 +52,7 @@
   </head>
 
 
-  <body data-spy="scroll" data-target="#sidebar">
+  <body>
 
     {% spaceless %}
       {% block navbar %}
@@ -76,7 +76,8 @@
 
             <section {% block microdata_attrs %}{% endblock %}>
 
-              <header class="page-header">
+              <header class="page-header {% block header_extra_class %}{% endblock %}">
+                {% block breadcrumb %}{% endblock %}
                 <div class="row">
                   <div class="col-xs-8 col-sm-9 col-md-10">
                     {% block header %}{% endblock %}

@@ -1,8 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.conf import settings
 from django.contrib.admin import site
+from django.db.models import TextField
 from reversion import VersionAdmin
+from tinymce.widgets import TinyMCE
 from cache_tools import cached_ugettext_lazy as _
 from libretto.admin import PublishedAdmin
 from .forms import DossierDEvenementsForm
@@ -14,22 +17,36 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
     list_display = ('__str__', 'circonstance', 'debut', 'fin',
                     'lieux_html', 'oeuvres_html', 'auteurs_html', 'get_count')
     readonly_fields = ('get_count', 'get_queryset')
-    raw_id_fields = ('lieux', 'oeuvres', 'auteurs', 'evenements')
+    raw_id_fields = ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs',
+                     'evenements')
     autocomplete_lookup_fields = {
-        'm2m': ('lieux', 'oeuvres', 'auteurs'),
+        'm2m': ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs'),
     }
     fieldsets = (
         (None, {
-            'fields': ('titre', 'parent', 'contenu'),
+            'fields': ('titre', 'titre_court', ('parent', 'position'))
+        }),
+        (_('Métadonnées'), {
+            'fields': (
+                ('editeurs_scientifiques', 'date_publication'),
+                'publications', 'developpements',),
+            'classes': ('grp-collapse grp-open',),
+        }),
+        (_('Article'), {
+            'fields': ('presentation', 'contexte', 'sources', 'bibliographie'),
+            'classes': ('grp-collapse grp-open',),
         }),
         (_('Sélection dynamique'), {
-            'fields': ('debut', 'fin', 'lieux', 'oeuvres', 'auteurs',
+            'fields': (('debut', 'fin'), 'lieux', 'oeuvres', 'auteurs',
                        'circonstance'),
         }),
         (_('Sélection manuelle'), {
             'fields': ('evenements', 'statique', 'get_count', 'get_queryset'),
         })
     )
+    formfield_overrides = {
+        TextField: {'widget': TinyMCE},
+    }
 
 
 site.register(DossierDEvenements, DossierDEvenementsAdmin)

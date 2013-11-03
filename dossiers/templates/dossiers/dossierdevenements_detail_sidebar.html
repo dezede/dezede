@@ -1,0 +1,70 @@
+{% load i18n sekizai_tags static %}
+
+<aside id="sidebar">
+
+  <div class="well">
+    {% with children=object.children.all %}
+      {% if children %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">{% trans 'Contenu' %}</h3>
+          </div>
+          <ul class="list-group">
+            {% for child in children %}
+              <li class="list-group-item">
+                <a href="{{ child.get_absolute_url }}">{{ child }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    {% endwith %}
+    <dl class="auto-links">
+      <dt>
+        {% blocktrans count counter=object.editeurs_scientifiques.count %}
+          Éditeur scientifique
+        {% plural %}
+          Éditeurs scientifiques
+        {% endblocktrans %}
+      </dt>{# Auteur(s) pour revue #}
+      <dd>{{ object.editeurs_scientifiques.html }}</dd>
+      {% with n_contributors=object.get_contributors.count %}
+        {% if n_contributors %}
+          <dt>
+            {% blocktrans count counter=n_contributors %}
+              Contributeur
+            {% plural %}
+              Contributeurs
+            {% endblocktrans %}
+          </dt>{# Supprimé dans revue #}
+          <dd>{{ object.get_contributors.html }}</dd>
+        {% endif %}
+      {% endwith %}
+      <dt>{% trans 'Date de mise en ligne' %}</dt>
+      <dd>{{ object.date_publication }}</dd>
+      <dt>{% trans 'Pour citer ce dossier' %}</dt>
+      <dd>
+        {{ object.editeurs_scientifiques.html }},
+        « {{ object }} »,
+        <em>Dezède</em> [en ligne].
+        {{ request.build_absolute_uri }}
+        (consulté le {% now 'DATE_FORMAT' %}).
+      </dd>
+      {# FIXME: Revoir cette condition quand le "voir aussi sera implémenté #}
+      {% if object.publications or object.developpements %}
+        <hr />
+      {% endif %}
+      {% if object.publications %}
+        <dt>{% trans 'Publication(s) associée(s)' %}</dt>
+        <dd>{{ object.publications }}</dd>
+      {% endif %}
+      {# TODO: Implémenter cette fonctionnalité #}
+{#      <dt>{% trans 'Voir aussi' %}</dt>#}
+      {% if object.developpements %}
+        <dt>{% trans 'Développements envisagés' %}</dt>{# Supprimé dans revue #}
+        <dd>{{ object.developpements }}</dd>
+      {% endif %}
+    </dl>
+  </div>
+
+</aside>
