@@ -5,7 +5,7 @@
 {% for evenement in evenements %}
   {% include 'libretto/evenement_item.html' %}
 {% empty %}
-  {% trans "Aucun événement n’a été trouvé selon ces critères." %}
+  {% trans 'Aucun événement n’a été trouvé selon ces critères.' %}
 {% endfor %}
 {% show_more %}
 
@@ -14,9 +14,9 @@
 <script>
   if(typeof jQuery != 'undefined') {
     window.history.replaceState(
-            {},
-            "",  {# title, unused for now in any browser #}
-            $.query.set("page", {{ page_number }}).toString());
+      {},
+      '',  {# title, unused for now in any browser #}
+      $.query.set('page', {{ page_number }}).toString());
     tooltips_reload();
   }
 </script>
