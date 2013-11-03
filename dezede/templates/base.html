@@ -54,52 +54,53 @@
 
   <body data-spy="scroll" data-target="#sidebar">
 
-    {% block navbar %}
-      {% include 'navbar.html' %}
-    {% endblock %}
+    {% spaceless %}
+      {% block navbar %}
+        {% include 'navbar.html' %}
+      {% endblock %}
 
-    <div id="main" class="container">
+      <div id="main" class="container">
 
-      <div id="content">
+        <div id="content">
 
-        {% autoescape off %}
+          {% autoescape off %}
 
-          <noscript>
-            <div class="alert alert-danger">
-              <button type="button" class="close" data-dismiss="alert">×</button>
-              {% blocktrans %}
-                Votre navigateur ne peut pas lancer javascript.
-                Attendez-vous à des défauts de fonctionnement.
-              {% endblocktrans %}
-            </div>
-          </noscript>
-
-          <section {% block microdata_attrs %}{% endblock %}>
-
-            <header class="page-header">
-              <div class="row">
-                <div class="col-xs-8 col-sm-9 col-md-10">
-                  {% block header %}{% endblock %}
-                </div>
-                <aside class="col-xs-4 col-sm-3 col-md-2">
-                  {% block header-aside %}{% endblock %}
-                </aside>
+            <noscript>
+              <div class="alert alert-danger">
+                {% blocktrans %}
+                  Votre navigateur ne peut pas lancer javascript.
+                  Attendez-vous à des défauts de fonctionnement.
+                {% endblocktrans %}
               </div>
-              {% block tabs %}{% endblock %}
-            </header>
+            </noscript>
 
-            {% block content %}{% endblock %}
+            <section {% block microdata_attrs %}{% endblock %}>
 
-          </section>
+              <header class="page-header">
+                <div class="row">
+                  <div class="col-xs-8 col-sm-9 col-md-10">
+                    {% block header %}{% endblock %}
+                  </div>
+                  <aside class="col-xs-4 col-sm-3 col-md-2">
+                    {% block header-aside %}{% endblock %}
+                  </aside>
+                </div>
+                {% block tabs %}{% endblock %}
+              </header>
 
-        {% endautoescape %}
+              {% block content %}{% endblock %}
+
+            </section>
+
+          {% endautoescape %}
+        </div>
+
       </div>
 
-    </div>
-
-    <footer>
-      {% include 'footer.html' %}
-    </footer>
+      <footer>
+        {% include 'footer.html' %}
+      </footer>
+    {% endspaceless %}
 
     {% compress js file %}
       <script>
