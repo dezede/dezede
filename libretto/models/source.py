@@ -48,11 +48,14 @@ class TypeDeSource(CommonModel, SlugModel):
 
 @python_2_unicode_compatible
 class Source(AutoriteModel):
+    # TODO: Rendre les sources polymorphes.  On trouve des périodiques, mais
+    # également des registres, des catalogues, etc.
     nom = CharField(_('nom'), max_length=200, db_index=True,
                     help_text=ex(_('Journal de Rouen')))
     numero = CharField(_('numéro'), max_length=50, blank=True, db_index=True,
                        help_text=_('Sans « № »') + '. ' + ex('52'))
-    date = DateField(_('date'), db_index=True, help_text=DATE_MSG)
+    date = DateField(_('date'), db_index=True, help_text=DATE_MSG,
+                     null=True, blank=True)
     page = CharField(_('page'), max_length=50, blank=True,
                      help_text=_('Sans « p. »') + '. ' + ex('3'))
     type = ForeignKey('TypeDeSource', related_name='sources', db_index=True,
@@ -62,8 +65,20 @@ class Source(AutoriteModel):
         help_text=_('Recopié tel quel, avec les fautes d’orthographe suivies '
                     'de « [<em>sic</em>] » le cas échéant.'))
     auteurs = GenericRelation('Auteur')
+    # TODO: Permettre les sources d'autres données que des événements :
+    # œuvres, lieux, individus, etc.
     evenements = ManyToManyField('Evenement', related_name='sources',
         blank=True, null=True, db_index=True, verbose_name=_('événements'))
+
+    class Meta(object):
+        verbose_name = ungettext_lazy('source', 'sources', 1)
+        verbose_name_plural = ungettext_lazy('source', 'sources', 2)
+        ordering = ('date', 'nom', 'numero', 'page', 'type')
+        app_label = 'libretto'
+        permissions = (('can_change_status', _('Peut changer l’état')),)
+
+    def __str__(self):
+        return strip_tags(self.html(False))
 
     @permalink
     def get_absolute_url(self):
@@ -122,13 +137,3 @@ class Source(AutoriteModel):
         return True
     has_program.short_description = _('Programme')
     has_program.boolean = True
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('source', 'sources', 1)
-        verbose_name_plural = ungettext_lazy('source', 'sources', 2)
-        ordering = ('date', 'nom', 'numero', 'page', 'type')
-        app_label = 'libretto'
-        permissions = (('can_change_status', _('Peut changer l’état')),)
-
-    def __str__(self):
-        return strip_tags(self.html(False))
