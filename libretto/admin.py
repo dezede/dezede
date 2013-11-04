@@ -18,7 +18,9 @@ from reversion import VersionAdmin
 import reversion
 from cache_tools import cached_ugettext_lazy as _
 from .models import *
-from .forms import OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm, ElementDeDistributionForm
+from .forms import (
+    OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
+    ElementDeDistributionForm, EnsembleForm)
 
 
 __all__ = ()
@@ -639,6 +641,7 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
 
 
 class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
+    form = EnsembleForm
     list_display = ('__str__', 'calc_caracteristiques', 'membres_count')
     search_fields = ('nom', 'membres__individu__nom')
     inlines = (MembreInline,)
@@ -649,7 +652,7 @@ class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     }
     fieldsets = (
         (COMMON_FIELDSET_LABEL, {
-            'fields': ('nom', 'caracteristiques', 'siege'),
+            'fields': (('particule_nom', 'nom'), 'caracteristiques', 'siege'),
         }),
         PERIODE_D_ACTIVITE_FIELDSET,
         FILES_FIELDSET,

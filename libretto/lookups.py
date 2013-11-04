@@ -107,6 +107,11 @@ class SourceNomLookup(CharFieldLookupChannel):
     attr = 'nom'
 
 
+class EnsembleParticuleNomLookup(CharFieldLookupChannel):
+    model = Ensemble
+    attr = 'particule_nom'
+
+
 class OeuvrePrefixeTitreLookup(CharFieldLookupChannel):
     model = Oeuvre
     attr = 'prefixe_titre'

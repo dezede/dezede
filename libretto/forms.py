@@ -8,12 +8,13 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
 from cache_tools import cached_ugettext_lazy as _
 from .models import (
-    Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution)
+    Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
+    Ensemble)
 from .fields import RangeSliderField
 
 
-__all__ = (b'IndividuForm', b'OeuvreForm', b'ElementDeProgrammeForm',
-           b'SourceForm', b'EvenementListForm')
+__all__ = (b'IndividuForm', b'EnsembleForm', b'OeuvreForm',
+           b'ElementDeProgrammeForm', b'SourceForm', b'EvenementListForm')
 
 
 class IndividuForm(ModelForm):
@@ -30,6 +31,16 @@ class IndividuForm(ModelForm):
             raise ValidationError(_('Il manque des données pour pouvoir '
                                     'choisir cette désignation.'))
         return designation
+
+
+class EnsembleForm(ModelForm):
+    class Meta(object):
+        model = Ensemble
+        widgets = {
+            b'particule_nom':
+                AutoCompleteWidget('ensemble__particule_nom',
+                                   attrs={'style': 'width: 50px;'})
+        }
 
 
 class OeuvreForm(ModelForm):
@@ -53,6 +64,11 @@ class ElementDeDistributionForm(ModelForm):
         model = ElementDeDistribution
 
     def clean(self):
+        # TODO: Dans les distributions non-globales, interdire la saisie d'une
+        # profession si la partie est liée à une profession.  Par exemple,
+        # pour un élément de programme donné, interdire de saisir :
+        # « Monsieur Truc [violoniste] », car la profession est au moins liée à
+        # « violon ».
         data = super(ElementDeDistributionForm, self).clean()
         if not (data[b'individus'] or data[b'ensembles']):
             msg = _('Vous devez remplir au moins un individu ou un ensemble.')

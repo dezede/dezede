@@ -329,6 +329,7 @@ COMPRESS_OUTPUT_DIR = 'assets'
 AJAX_LOOKUP_CHANNELS = {
     'lieu': ('libretto.lookups', 'LieuLookup'),
     'individu': ('libretto.lookups', 'IndividuLookup'),
+    'ensemble__particule_nom': ('libretto.lookups', 'EnsembleParticuleNomLookup'),
     'oeuvre': ('libretto.lookups', 'OeuvreLookup'),
     'oeuvre__prefixe_titre': ('libretto.lookups', 'OeuvrePrefixeTitreLookup'),
     'oeuvre__coordination': ('libretto.lookups', 'OeuvreCoordinationLookup'),
