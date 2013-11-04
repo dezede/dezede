@@ -221,6 +221,8 @@ class PeriodeDActivite(Model):
 class Membre(CommonModel, PeriodeDActivite):
     ensemble = ForeignKey('Ensemble', related_name='membres',
                           verbose_name=_('ensemble'))
+    # TODO: Ajouter nombre pour les membres d'orchestre pouvant être saisi
+    # au lieu d'un individu.
     individu = ForeignKey('Individu', related_name='membres',
                           verbose_name=_('individu'))
     instrument = ForeignKey(
@@ -254,12 +256,15 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     particule_nom = CharField(
         _('particule du nom'), max_length=5, blank=True, db_index=True)
     nom = CharField(_('nom'), max_length=50, db_index=True)
-    # TODO: Ajouter une typologie (orchestre, chœur, groupe de rock).
+    # TODO: Ajouter une typologie (orchestre, chœur, groupe de rock)
+    # facultative.
     caracteristiques = ManyToManyField(
         CaracteristiqueDEnsemble, blank=True, null=True,
         related_name='ensembles', verbose_name=_('caractéristiques'))
+    # TODO: Permettre deux villes sièges.
     siege = ForeignKey('Lieu', null=True, blank=True,
                        related_name='ensembles', verbose_name=_('siège'))
+    # TODO: Ajouter historique d'ensemble.
 
     individus = ManyToManyField('Individu', through=Membre,
                                 related_name='ensembles')
