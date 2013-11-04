@@ -186,6 +186,8 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
 
 class LieuDivers(Lieu):
+    # TODO: Stocker les codes postaux ?
+
     class Meta(object):
         verbose_name = ungettext_lazy('lieu', 'lieux', 1)
         verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
@@ -209,6 +211,7 @@ class Institution(Lieu):
 
 @python_2_unicode_compatible
 class Saison(CommonModel):
+    # TODO: Permettre de faire des saisons d'ensemble et non seulement de lieu.
     lieu = ForeignKey('Lieu', related_name='saisons',
                       verbose_name=_('lieu ou institution'))
     debut = DateField(_('début'), help_text=DATE_MSG)

@@ -322,6 +322,10 @@ class Evenement(AutoriteModel):
         related_name='evenements', blank=True, null=True,
         verbose_name=_('caractéristiques'))
     distribution = GenericRelation(ElementDeDistribution)
+    # TODO: Ajouter code de programme au événements pour faire des
+    # rapprochements entre événements et faciliter la copie de programmes ?
+    # TODO: Ajouter jauge et jauge variable (petit entier + booléen)
+    # TODO: Ajouter les fréquentations, entrées.
 
     objects = EvenementManager()
 
