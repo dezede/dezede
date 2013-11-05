@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.db.models import CharField, DateField, ManyToManyField, \
-                             TextField, permalink, PositiveSmallIntegerField
+                             TextField, permalink, PositiveSmallIntegerField, Q
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.translation import ungettext_lazy
 from mptt.fields import TreeForeignKey
@@ -26,6 +26,11 @@ class DossierDEvenementsManager(CommonTreeManager, PublishedManager):
 
 
 # TODO: Créer des catégories de dossiers.
+#       Une seule catégorie par dossier pour éviter la bazar.
+# TODO: Dossiers de photos: présentation, contexte historique,
+#       sources et protocole, et bibliographie indicative.
+#       Les photos doivent pouvoir être classées par cote (ex: AJ13)
+#       ou par thème (ex: censure, livret, etc).
 
 
 @python_2_unicode_compatible
@@ -155,7 +160,9 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     auteurs_html.allow_tags = True
 
     def get_contributors(self):
-        return HierarchicUser.objects.exclude(
-            pk__in=self.editeurs_scientifiques.values_list('pk', flat=True)
-        ).filter(
-            pk__in=self.get_queryset().values_list('owner_id', flat=True))
+        return HierarchicUser.objects.filter(
+            Q(pk__in=self.get_queryset().values_list('owner_id',
+                                                     flat=True).distinct()) |
+            Q(pk__in=self.get_queryset().values_list('sources__owner_id',
+                                                     flat=True).distinct())
+        ).order_by('last_name', 'first_name')

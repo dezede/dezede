@@ -36,19 +36,23 @@
     </div>
 
     <div class="col-xs-12 col-sm-6 col-md-8">
-      {{ object.presentation }}
-      {% if object.contexte %}{# FIXME: Retirer cette condition quand ces champs auront été remplis après la migration #}
-        <h2>{% trans 'Contexte historique' %}</h2>
-        {{ object.contexte }}
-      {% endif %}
-      {% if object.sources %}{# FIXME: Comme au-dessus, retirer ceci #}
-        <h2>{% trans 'Sources et protocole' %}</h2>
-        {{ object.sources }}
-      {% endif %}
-      {% if object.bibliographie %}
-        <h2>{% trans 'Bibliographie indicative' %}</h2>
-        {{ object.bibliographie }}
-      {% endif %}
+      <div class="dossier">
+        <div class="presentation">
+        {{ object.presentation }}
+        </div>
+        {% if object.contexte %}{# FIXME: Retirer cette condition quand ces champs auront été remplis après la migration #}
+          <h2>{% trans 'Contexte historique' %}</h2>
+          {{ object.contexte }}
+        {% endif %}
+        {% if object.sources %}{# FIXME: Comme au-dessus, retirer ceci #}
+          <h2>{% trans 'Sources et protocole' %}</h2>
+          {{ object.sources }}
+        {% endif %}
+        {% if object.bibliographie %}
+          <h2>{% trans 'Bibliographie indicative' %}</h2>
+          {{ object.bibliographie }}
+        {% endif %}
+      </div>
     </div>
 
   </div>

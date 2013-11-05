@@ -253,8 +253,20 @@ dl {
   dd {
     padding-left: 20px;
     &+dt {
-      padding-top: 3px;
+      padding-top: 8px;
     }
+  }
+}
+
+.dossier {
+  font-family: @font-family-serif;
+
+  .presentation {
+    font-size: round(@font-size-base * 1.2);
+  }
+  h2 {
+    margin-top: floor(@font-size-h2 * @line-height-large);
+    margin-bottom: floor(@font-size-h2 * @line-height-large / 2);
   }
 }
 
@@ -323,6 +335,7 @@ dl {
 }
 
 blockquote.source .contenu {
+  font-family: @font-family-serif;
   text-align: justify;
   margin: .5em 0;
   *:first-child {

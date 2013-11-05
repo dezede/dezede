@@ -42,14 +42,18 @@
       {% endwith %}
       <dt>{% trans 'Date de mise en ligne' %}</dt>
       <dd>{{ object.date_publication }}</dd>
-      <dt>{% trans 'Pour citer ce dossier' %}</dt>
-      <dd>
-        {{ object.editeurs_scientifiques.html }},
-        « {{ object }} »,
-        <em>Dezède</em> [en ligne].
-        {{ request.build_absolute_uri }}
-        (consulté le {% now 'DATE_FORMAT' %}).
-      </dd>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{% trans 'Pour citer ce dossier' %}</h3>
+        </div>
+        <div class="panel-body">
+          {{ object.editeurs_scientifiques.html }},
+          « {{ object }} »,
+          <em>Dezède</em> [en ligne].
+          {{ request.build_absolute_uri }}
+          (consulté le {% now 'DATE_FORMAT' %}).
+        </div>
+      </div>
       {# FIXME: Revoir cette condition quand le "voir aussi sera implémenté #}
       {% if object.publications or object.developpements %}
         <hr />
