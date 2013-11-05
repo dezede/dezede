@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from collections import defaultdict
 from django.forms import ValidationError, ModelForm, Form, CharField, TextInput
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
     AutoCompleteWidget
@@ -64,25 +65,28 @@ class ElementDeDistributionForm(ModelForm):
         model = ElementDeDistribution
 
     def clean(self):
-        # TODO: Dans les distributions non-globales, interdire la saisie d'une
-        # profession si la partie est liée à une profession.  Par exemple,
-        # pour un élément de programme donné, interdire de saisir :
-        # « Monsieur Truc [violoniste] », car la profession est au moins liée à
-        # « violon ».
         data = super(ElementDeDistributionForm, self).clean()
+
+        error_msgs = defaultdict(list)
         if not (data[b'individus'] or data[b'ensembles']):
             msg = _('Vous devez remplir au moins un individu ou un ensemble.')
-            self._errors[b'individus'] = self.error_class([msg])
-            self._errors[b'ensembles'] = self.error_class([msg])
-            del data[b'individus']
-            del data[b'ensembles']
-        if data.get(b'pupitre', None) and data[b'profession']:
+            error_msgs[b'individus'].append(msg)
+            error_msgs[b'ensembles'].append(msg)
+        if data.get(b'pupitre') and data[b'profession']:
             msg = _('Vous ne pouvez remplir à la fois '
                     '« Pupitre » et « Profession ».')
-            self._errors[b'pupitre'] = self.error_class([msg])
-            self._errors[b'profession'] = self.error_class([msg])
-            del data[b'pupitre']
-            del data[b'profession']
+            error_msgs[b'pupitre'].append(msg)
+            error_msgs[b'profession'].append(msg)
+        if data.get(b'pupitre', '') != '' \
+                and data[b'profession'].parties.exists():
+            msg = _('Au moins un rôle ou instrument est lié à cette '
+                    'profession. Remplissez donc « Pupitre » à la place.')
+            error_msgs[b'profession'].append(msg)
+
+        for k, v in error_msgs.items():
+            self._errors[k] = self.error_class(v)
+            del data[k]
+
         return data
 
 
