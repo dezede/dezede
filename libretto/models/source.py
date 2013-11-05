@@ -109,7 +109,8 @@ class Source(AutoriteModel):
         l = [cite(self.nom, tags)]
         if self.numero:
             l.append(self.no())
-        l.append(self.date_html(tags))
+        if self.date:
+            l.append(self.date_html(tags))
         if self.page:
             l.append(self.p())
         l = (l[0], small(', '.join(l[1:]), tags=tags)) if pretty_title else l
