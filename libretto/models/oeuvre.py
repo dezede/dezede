@@ -140,6 +140,8 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     de « partie ».
     """
 
+    # FIXME: retirer cette contrainte et la recréer virtuellement pour les
+    # instruments.
     nom = CharField(_('nom'), max_length=200, db_index=True, unique=True,
         help_text=_('Le nom d’une partie de la partition, '
                     'instrumentale ou vocale.'))
@@ -217,6 +219,7 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
 
 class Role(Partie):
+    # TODO: créer un unique_together virtuel entre nom et œuvre.
     oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'), blank=True,
                         null=True, related_name='roles')
 
@@ -224,6 +227,13 @@ class Role(Partie):
         verbose_name = ungettext_lazy('rôle', 'rôles', 1)
         verbose_name_plural = ungettext_lazy('rôle', 'rôles', 2)
         app_label = 'libretto'
+
+    def related_label(self):
+        txt = super(Role, self).related_label()
+        oeuvre = smart_text(self.oeuvre)
+        if oeuvre:
+            txt += ' (' + oeuvre + ')'
+        return txt
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -243,8 +253,9 @@ class Instrument(Partie):
 
 class PupitreQuerySet(CommonQuerySet):
     def elements_de_distribution(self):
-        return get_model('libretto', 'ElementDeDistribution').objects.filter(
-                                                              pupitre__in=self)
+        return get_model(
+            'libretto',
+            'ElementDeDistribution').objects.filter(pupitre__in=self)
 
 
 class PupitreManager(CommonManager):
@@ -690,6 +701,13 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             v = getattr(self, attr)
             if v and v[-1] not in (' ', "'", '’'):
                 setattr(self, attr, v + ' ')
+
+    def related_label(self):
+        txt = smart_text(self)
+        auteurs = self.auteurs.html(tags=False)
+        if auteurs:
+            txt += ' (' + auteurs + ')'
+        return txt
 
     def __str__(self):
         return strip_tags(self.titre_html(False))  # strip_tags car on autorise
