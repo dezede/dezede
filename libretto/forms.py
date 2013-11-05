@@ -78,6 +78,7 @@ class ElementDeDistributionForm(ModelForm):
             error_msgs[b'pupitre'].append(msg)
             error_msgs[b'profession'].append(msg)
         if data.get(b'pupitre', '') != '' \
+                and data[b'profession'] \
                 and data[b'profession'].parties.exists():
             msg = _('Au moins un rôle ou instrument est lié à cette '
                     'profession. Remplissez donc « Pupitre » à la place.')
