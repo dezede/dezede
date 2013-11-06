@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load facts %}
+
+
+{% block full_title %}
+  Dezède
+{% endblock %}
+
+
+{% block content %}
+  <div class="row">
+    <div class="col-xs-4">
+      <div class="well fact">
+        {% on_this_day %}
+      </div>
+    </div>
+    <div class="col-xs-4">
+      <div class="well fact">
+        {% famous_event %}
+      </div>
+    </div>
+    <div class="col-xs-4">
+      <div class="well fact">
+        {% prolific_author %}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-4">
+      <div class="well fact">
+        {% centenarian %}
+      </div>
+    </div>
+    <div class="col-xs-4">
+      <div class="well fact">
+        {% random_fact %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

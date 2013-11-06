@@ -310,7 +310,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     @model_method_cached()
     def html(self, tags=True, lon=False, prenoms_fav=True,
-             show_prenoms=True, designation=None, abbr=True):
+             show_prenoms=True, designation=None, abbr=True, links=True):
         def add_particule(nom, lon, naissance=False):
             particule = self.get_particule(naissance)
             if lon:
@@ -362,19 +362,19 @@ class Individu(AutoriteModel, UniqueSlugModel):
         main = main_style(main_choices[designation])
         out = standard(main) if designation in ('S', 'B',) else main
         url = None if not tags else self.get_absolute_url()
-        out = href(url, out, tags)
+        out = href(url, out, tags & links)
         return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
-    def nom_seul(self, tags=False, abbr=False):
+    def nom_seul(self, tags=False, abbr=False, links=False):
         return self.html(tags=tags, lon=False, show_prenoms=False,
-                         abbr=abbr)
+                         abbr=abbr, links=links)
 
     def nom_complet(self, tags=True, prenoms_fav=False, designation='S',
-                    abbr=False):
+                    abbr=False, links=True):
         return self.html(tags=tags, lon=True, prenoms_fav=prenoms_fav,
-                         designation=designation, abbr=abbr)
+                         designation=designation, abbr=abbr, links=links)
 
     def related_label(self, tags=False):
         return self.html(tags=tags, abbr=False)

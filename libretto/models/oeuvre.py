@@ -488,11 +488,15 @@ class Auteur(CommonModel):
 
 
 class OeuvreQuerySet(CommonTreeQuerySet, PublishedQuerySet):
-    pass
+    def html(self, *args, **kwargs):
+        return str_list_w_last([o.html(*args, **kwargs) for o in self])
 
 
 class OeuvreManager(CommonTreeManager, PublishedManager):
     queryset_class = OeuvreQuerySet
+
+    def html(self, *args, **kwargs):
+        return self.get_query_set().html(*args, **kwargs)
 
 
 @python_2_unicode_compatible

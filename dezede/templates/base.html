@@ -10,7 +10,7 @@
           content="Dezède, {% trans "musicologie, base de données" %}" />
     <meta name="author" content="Bertrand Bordage" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>{% block title %}{% endblock %} | Dezède</title>
+    <title>{% block full_title %}{% block title %}{% endblock %} | Dezède{% endblock %}</title>
 
     <link rel="shortcut icon" type="image/x-icon"
           href="{% static 'images/favicon.ico' %}">

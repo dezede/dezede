@@ -28,6 +28,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^', include('libretto.urls')),
+    url(r'^$', TemplateView.as_view(template_name='home.html')),
     url(r'^dossiers/', include('dossiers.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/lookups/', include(ajax_select_urls)),
@@ -61,7 +62,3 @@ if settings.DEBUG:
         (r'^500/$', TemplateView.as_view(template_name='500.html')),
         (r'^503/$', TemplateView.as_view(template_name='503.html')),
     )
-
-urlpatterns += patterns('',
-    url(r'^(?P<url>.*/)$', 'django.contrib.flatpages.views.flatpage'),
-)
