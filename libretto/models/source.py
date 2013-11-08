@@ -13,7 +13,7 @@ from cache_tools import cached_ugettext as ugettext, cached_ugettext_lazy as _
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     DATE_MSG, calc_pluriel, SlugModel
 from .functions import ex, cite, no as no_func, date_html as date_html_func, \
-    href, small
+    href, small, str_list
 
 
 __all__ = (b'TypeDeSource', b'Source')
@@ -113,8 +113,8 @@ class Source(AutoriteModel):
             l.append(self.date_html(tags))
         if self.page:
             l.append(self.p())
-        l = (l[0], small(', '.join(l[1:]), tags=tags)) if pretty_title else l
-        out = ', '.join(l)
+        l = (l[0], small(str_list(l[1:]), tags=tags)) if pretty_title else l
+        out = str_list(l)
         return mark_safe(href(url, out, tags))
     html.short_description = _('rendu HTML')
     html.allow_tags = True
