@@ -192,17 +192,13 @@ def multi_instrumentalist(n=10):
 def centenarian():
     out = title_n_icon(ugettext('Centenaire'))
 
-    # FIXME: Retirer cette désactivation de johnny-cache quand #15 sera résolue
-    # https://github.com/jmoiron/johnny-cache/issues/15
-    import johnny.cache
-    johnny.cache.disable()
+    # TODO: Faire un rapport de bug à Django.  Si on retire le `.days`,
+    #       une exception innatendue est levée.
+    an = timedelta(days=100*365.25).days
     centenarians = Individu.objects.filter(
-        ancrage_deces__date__gt=F('ancrage_naissance__date')
-                                + timedelta(days=100*365.25))
+        ancrage_deces__date__gte=F('ancrage_naissance__date') + an)
     c = centenarians[randrange(centenarians.count())]
     age = relativedelta(c.ancrage_deces.date, c.ancrage_naissance.date).years
-
-    johnny.cache.enable()
 
     out += '<h4>%s</h4>' % c.nom_complet(links=False)
     subject = ugettext('Elle') if c.is_feminin() else ugettext('Il')
