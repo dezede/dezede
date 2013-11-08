@@ -91,8 +91,9 @@ class ElementDeDistribution(CommonModel):
                                       'éléments de distribution', 1)
         verbose_name_plural = ungettext_lazy('élément de distribution',
                                              'éléments de distribution', 2)
-        ordering = ('pupitre', 'profession',
-                    'individus__nom', 'individus__prenoms__prenom')
+        # WARNING: Ordonner par un ManyToMany peut aboutir
+        #          à des doublons apparents.
+        ordering = ('pupitre', 'profession', 'individus__nom',)
         app_label = 'libretto'
 
     @staticmethod
