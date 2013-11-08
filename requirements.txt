@@ -10,7 +10,6 @@ celery-haystack==0.7.2
 django-celery==3.0.23
 django-mptt==0.6.0
 django-tinymce==1.5.2
-django-flatpages-tinymce==0.1.1
 simplejson==3.3.1
 -e git+https://github.com/BertrandBordage/django_polymorphic@366cee58cf2f4bdc0c2846632c9672c98cff05cf#egg=django-polymorphic
 django-polymorphic-tree==0.8.10

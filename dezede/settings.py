@@ -136,7 +136,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'dezede.middlewares.MaintenanceModeMiddleware',
 )
 
@@ -148,9 +147,6 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
-
-
-FLATPAGES_TEMPLATE_DIR = 'dezede/templates/flatpages'
 
 
 STATIC_ROOT = os.path.join(SITE_ROOT, 'static/')
@@ -182,15 +178,12 @@ INSTALLED_APPS = (
     'libretto',
     'dossiers',
     'typography',
-    'django.contrib.flatpages',
-    'django.contrib.markup',
     'polymorphic_tree',
     'polymorphic',
     'mptt',
     'endless_pagination',
     'django_tables2',
     'tinymce',
-    'flatpages_tinymce',
     'grappelli.dashboard',
     'grappelli',
     'registration',

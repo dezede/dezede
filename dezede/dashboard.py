@@ -53,7 +53,7 @@ class CustomIndexDashboard(Dashboard):
             column=1,
             collapsible=False,
             css_classes=('grp-open',),
-            models=('dossiers.*', 'django.contrib.flatpages.*',),
+            models=('dossiers.*',),
         ))
 
         self.children.append(modules.Group(
