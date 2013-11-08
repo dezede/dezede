@@ -39,7 +39,7 @@ class OeuvreIndex(CommonSearchIndex, Indexable):
 
 
 class SourceIndex(CommonSearchIndex, Indexable):
-    date = DateField(model_attr='date')
+    date = DateField(model_attr='date', null=True)
 
     def get_model(self):
         return Source
