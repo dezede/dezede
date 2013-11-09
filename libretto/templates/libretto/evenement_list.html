@@ -46,7 +46,7 @@
         paginateOnScrollMargin: 200
       });
 
-      function getURLParameter(name, default_value) {
+      function get_url_kwarg(name, default_value) {
         return decodeURI(
           (new RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)
            || [,default_value])[1]
@@ -60,37 +60,36 @@
         var scroll = $(window).scrollTop();
         var top = $object.offset().top;
         var height = $object.height();
-        {# Si on est au-dessus de la première page, on considère #}
-        {# qu'on est dans cette première page #}
+        {# When the window scroll is above the first page, we consider #}
+        {# we're in the first page #}
         if (scroll < top && $object.prev('.page')[0] == undefined) {
           return true
         }
         return top <= scroll && scroll < top + height;
       }
 
-      {# Actualise le numéro de page dynamiquement #}
+      {# Dynamically updates URL page number #}
       $(window).scroll(function () {
-        {# Ajoute un timeout pour n'actualiser l'URL que de temps en temps #}
+        {# Adds a timeout to update URL after a small idle moment #}
         $.doTimeout('scroll', 500, function() {
 
-          {# Vérifie si la page indiquée par l'URL est toujours #}
-          {# la page courante, auquel cas il ne faut rien changer #}
-          var selector = '.page[data-page=' + getURLParameter('page', 1) + ']';
+          {# Checks whether the current page according to the URL is #}
+          {# the real current page, in order to avoid useless updates #}
+          var selector = '.page[data-page=' + get_url_kwarg('page', 1) + ']';
           if (is_current_page($(selector))) {
             return false;
           }
-          {# Passe chaque page en revue pour trouver la page courante #}
-          {# et ainsi actualiser l'URL #}
+          {# Iterates over pages to find the current page and update URL #}
           $('.page').each(function () {
             if (is_current_page($(this))) {
-              {# Actualise l'URL #}
+              {# Updates URL #}
               window.history.replaceState(
                 {},
                 '',  {# title, unused for now in any browser #}
                 $.query.set('page', $(this).data('page')));
-              return false;  {# break du each #}
+              return false;  {# breaks the `each` loop #}
             }
-            return true;  {# continue du each #}
+            return true;  {# continues the `each` loop #}
           });
           return false;
 
