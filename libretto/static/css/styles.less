@@ -157,6 +157,15 @@
   src: url(fonts/LinLibertine_M.woff) format('woff');
 }
 
+// Dezède icons
+
+@font-face {
+  font-family: 'Dezède icons';
+  font-style: normal;
+  font-weight: normal;
+  src: url(fonts/dezede-icons.woff) format('woff');
+}
+
 //
 // Custom styling
 //
@@ -449,8 +458,21 @@ ul.jqtree-tree .jqtree-element {
 }
 
 .navbar {
-  .navbar-brand {
-    padding: 8px 25px 6px;
+  &>.container {
+    .navbar-brand {
+      margin-left: 0;
+      color: black;
+      &:hover {
+        color: @brand-primary;
+      }
+    }
+  }
+}
+
+.dezedeicon {
+  font-family: 'Dezède icons';
+  &.D:before {
+    content: 'D';
   }
 }
 

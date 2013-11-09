@@ -28,7 +28,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^', include('libretto.urls')),
-    url(r'^$', TemplateView.as_view(template_name='home.html')),
+    url(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
     url(r'^dossiers/', include('dossiers.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/lookups/', include(ajax_select_urls)),
