@@ -140,11 +140,9 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     de « partie ».
     """
 
-    # FIXME: retirer cette contrainte et la recréer virtuellement pour les
-    # instruments.
-    nom = CharField(_('nom'), max_length=200, db_index=True, unique=True,
-        help_text=_('Le nom d’une partie de la partition, '
-                    'instrumentale ou vocale.'))
+    nom = CharField(_('nom'), max_length=200, db_index=True,
+                    help_text=_('Le nom d’une partie de la partition, '
+                                'instrumentale ou vocale.'))
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
     # TODO: Changer le verbose_name en un genre de "types de voix"
@@ -161,6 +159,8 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
     objects = PartieManager()
 
+    weak_unique_constraint = ('nom',)
+
     class Meta(object):
         verbose_name = ungettext_lazy('rôle ou instrument',
                                       'rôles et instruments', 1)
@@ -176,6 +176,19 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
     class MPTTMeta(object):
         order_insertion_by = ['classement', 'nom']
+
+    def _get_unique_checks(self, exclude=None):
+        # Ajoute une contrainte faible, inexistante dans la base de données,
+        # mais testée par l'administration Django.
+        # On ne peut pas appliquer cette contrainte à la base de données car
+        # les données sont réparties entre plusieurs tables à cause du
+        # polymorphisme.
+        # WARNING: cette contrainte n'est pas testée par l'ORM !  Attention aux
+        # doublons lors de scripts !
+        unique_checks, date_checks = super(
+            Partie, self)._get_unique_checks(exclude=exclude)
+        unique_checks.append((self.__class__, self.weak_unique_constraint))
+        return unique_checks, date_checks
 
     def interpretes(self):
         return self.pupitres.elements_de_distribution().individus()
@@ -219,9 +232,10 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
 
 class Role(Partie):
-    # TODO: créer un unique_together virtuel entre nom et œuvre.
     oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'), blank=True,
                         null=True, related_name='roles')
+
+    weak_unique_constraint = ('nom', 'oeuvre',)
 
     class Meta(object):
         verbose_name = ungettext_lazy('rôle', 'rôles', 1)
