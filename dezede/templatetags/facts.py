@@ -193,7 +193,7 @@ def centenarian():
     out = title_n_icon(ugettext('Centenaire'))
 
     # TODO: Faire un rapport de bug à Django.  Si on retire le `.days`,
-    #       une exception innatendue est levée.
+    #       une exception inattendue est levée.
     an = timedelta(days=100*365.25).days
     centenarians = Individu.objects.filter(
         ancrage_deces__date__gte=F('ancrage_naissance__date') + an)
