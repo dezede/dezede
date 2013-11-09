@@ -4,3 +4,6 @@
 [submodule "libretto/static/jqTree"]
 	path = libretto/static/jqTree
 	url = https://github.com/mbraak/jqTree
+[submodule "libretto/static/js/jquery-dotimeout"]
+	path = libretto/static/js/jquery-dotimeout
+	url = https://github.com/cowboy/jquery-dotimeout

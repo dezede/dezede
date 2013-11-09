@@ -40,14 +40,61 @@
     <script src="{% static 'js/run_affix.js' %}"></script>
   {% endaddtoblock %}
   {% addtoblock 'js' %}
-    <script src="{% static 'endless_pagination/js/endless-pagination.js' %}"
-            charset="utf-8"></script>
-  {% endaddtoblock %}
-  {% addtoblock 'js' %}
     <script>
       $.endlessPaginate({
         paginateOnScroll: true,
         paginateOnScrollMargin: 200
+      });
+
+      function getURLParameter(name, default_value) {
+        return decodeURI(
+          (new RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)
+           || [,default_value])[1]
+        );
+      }
+
+      function is_current_page($object) {
+        if ($object[0] == undefined) {
+          return false;
+        }
+        var scroll = $(window).scrollTop();
+        var top = $object.offset().top;
+        var height = $object.height();
+        {# Si on est au-dessus de la première page, on considère #}
+        {# qu'on est dans cette première page #}
+        if (scroll < top && $object.prev('.page')[0] == undefined) {
+          return true
+        }
+        return top <= scroll && scroll < top + height;
+      }
+
+      {# Actualise le numéro de page dynamiquement #}
+      $(window).scroll(function () {
+        {# Ajoute un timeout pour n'actualiser l'URL que de temps en temps #}
+        $.doTimeout('scroll', 500, function() {
+
+          {# Vérifie si la page indiquée par l'URL est toujours #}
+          {# la page courante, auquel cas il ne faut rien changer #}
+          var selector = '.page[data-page=' + getURLParameter('page', 1) + ']';
+          if (is_current_page($(selector))) {
+            return false;
+          }
+          {# Passe chaque page en revue pour trouver la page courante #}
+          {# et ainsi actualiser l'URL #}
+          $('.page').each(function () {
+            if (is_current_page($(this))) {
+              {# Actualise l'URL #}
+              window.history.replaceState(
+                {},
+                '',  {# title, unused for now in any browser #}
+                $.query.set('page', $(this).data('page')));
+              return false;  {# break du each #}
+            }
+            return true;  {# continue du each #}
+          });
+          return false;
+
+        });
       });
     </script>
   {% endaddtoblock %}

@@ -41,8 +41,11 @@
 {#      <script src="{% static 'bootstrap/js/scrollspy.js' %}"></script>#}
 {#      <script src="{% static 'bootstrap/js/tab.js' %}"></script>#}
       <script src="{% static 'bootstrap/js/affix.js' %}"></script>
-      <script src="{% static 'js/jquery.query.js' %}"></script>
       <script src="{% static 'jqTree/tree.jquery.js' %}"></script>
+      {# Les trois modules suivants servent à la pagination infinie #}
+      <script src="{% static 'endless_pagination/js/endless-pagination.js' %}"></script>
+      <script src="{% static 'js/jquery-dotimeout/jquery.ba-dotimeout.js' %}"></script>
+      <script src="{% static 'js/jquery.query.js' %}"></script>
       <script>
         {% include 'base.definitions.js' %}
         {% include 'libretto/main.js' %}

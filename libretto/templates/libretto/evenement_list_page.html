@@ -1,24 +1,19 @@
 {% load i18n endless compress %}
 
 {% paginate 5 evenements %}
-{% show_pages %}
-{% for evenement in evenements %}
-  {% include 'libretto/evenement_item.html' %}
-{% empty %}
-  {% trans 'Aucun événement n’a été trouvé selon ces critères.' %}
-{% endfor %}
-{% show_more %}
-
 {% show_current_number as page_number %}
 
-{% compress js file %}
-  <script>
-    if(typeof jQuery != 'undefined') {
-      window.history.replaceState(
-        {},
-        '',  {# title, unused for now in any browser #}
-        $.query.set('page', {{ page_number }}).toString());
-      tooltips_reload();
-    }
-  </script>
-{% endcompress %}
+<div class="page" data-page="{{ page_number }}">
+  {% show_pages %}
+  {% for evenement in evenements %}
+    {% include 'libretto/evenement_item.html' %}
+  {% empty %}
+    {% trans 'Aucun événement n’a été trouvé selon ces critères.' %}
+  {% endfor %}
+</div>
+
+{% show_more %}
+
+<script>
+  tooltips_reload();
+</script>
