@@ -14,8 +14,6 @@ except ImportError:
     from psycopg2cffi import compat
     compat.register()
 
-import djcelery
-djcelery.setup_loader()
 
 
 DEBUG = False
@@ -173,7 +171,6 @@ INSTALLED_APPS = (
     'dezede',
     'haystack',
     'celery_haystack',
-    'djcelery',
     'cache_tools',
     'libretto',
     'dossiers',
@@ -270,7 +267,7 @@ HAYSTACK_CONNECTIONS = {
         'INCLUDE_SPELLING': True,
     },
 }
-HAYSTACK_SIGNAL_PROCESSOR = 'libretto.signals.HaystackAutoInvalidator'
+HAYSTACK_SIGNAL_PROCESSOR = 'libretto.signals.CeleryAutoInvalidator'
 CELERY_HAYSTACK_DEFAULT_TASK = 'libretto.tasks.CeleryHaystackSignalHandler'
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'

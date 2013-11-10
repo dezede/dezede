@@ -313,7 +313,7 @@ Configuration de nginx
 
       [program:dezede_celery]
       directory=[[/chemin/du/projet]]
-      command=python manage.py celery worker --loglevel=info
+      command=DJANGO_SETTINGS_MO='dezede.settings' celery -A dezede worker
       user=[[utilisateur]]
       autostart=true
       autorestart=true

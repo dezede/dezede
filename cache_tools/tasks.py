@@ -1,9 +1,9 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from celery.task import task
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Manager
-from djcelery_transactions import task
 from .utils import invalidate_object
 
 
