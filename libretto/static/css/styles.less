@@ -461,6 +461,11 @@ ul.jqtree-tree .jqtree-element {
   &>.container {
     .navbar-brand {
       margin-left: 0;
+      @font-size: floor(@navbar-height * 2 / 3);
+      font-size: @font-size;
+      line-height: 1;  // Hack to force line-height to follow font-size.
+      padding: floor((@navbar-height - @font-size) / 2)
+               @navbar-padding-horizontal;
       color: black;
       &:hover {
         color: @brand-primary;
