@@ -7,14 +7,14 @@ from django.db.models import Manager
 from .utils import invalidate_object
 
 
-__all__ = ('get_stale_objects', 'auto_invalidate',)
+__all__ = ('get_stale_objects', 'auto_invalidate_cache',)
 
 
-def get_stale_objects(instance, explored_instances, all_relations=False):
-    if instance is None:
-        raise StopIteration
+def get_stale_objects(instance, explored_instances=None, all_relations=False):
+    if explored_instances is None:
+        explored_instances = []
 
-    if instance in explored_instances:
+    if instance is None or instance in explored_instances:
         raise StopIteration
 
     yield instance
@@ -42,6 +42,6 @@ def get_stale_objects(instance, explored_instances, all_relations=False):
 
 
 @task
-def auto_invalidate(instance):
-    for stale_object in get_stale_objects(instance, []):
+def auto_invalidate_cache(instance):
+    for stale_object in get_stale_objects(instance):
         invalidate_object(stale_object)

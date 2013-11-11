@@ -5,7 +5,8 @@ from django.contrib.admin.models import LogEntry
 from django.db.models.signals import post_delete
 from haystack.signals import BaseSignalProcessor
 from reversion.models import Version, Revision, post_revision_commit
-from .tasks import enqueue_with_stale_objects
+from cache_tools.tasks import auto_invalidate_cache
+from .tasks import auto_update_haystack
 
 
 # FIXME: Revenir vite (plausiblement lors de la mise en place de Django 1.6)
@@ -31,4 +32,5 @@ class CeleryAutoInvalidator(BaseSignalProcessor):
 
         instances = kwargs.get('instances', [kwargs.get('instance')])
         for instance in instances:
-            enqueue_with_stale_objects.delay(action, instance)
+            auto_invalidate_cache.delay(instance)
+            auto_update_haystack.delay(action, instance)

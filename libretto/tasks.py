@@ -9,7 +9,7 @@ from haystack import connections, connection_router
 from haystack.exceptions import NotHandled
 from haystack.utils import get_identifier
 from polymorphic import PolymorphicModel
-from cache_tools.tasks import get_stale_objects, auto_invalidate
+from cache_tools.tasks import get_stale_objects
 
 
 __all__ = ('CeleryHaystackSignalHandler',)
@@ -53,11 +53,8 @@ def process_action(action, instance, model):
 
 
 @task
-def enqueue_with_stale_objects(action, instance):
-    # Invalidates cache before updating the search engine.
-    auto_invalidate(instance)
-
-    for obj in get_stale_objects(instance, [], all_relations=True):
+def auto_update_haystack(action, instance):
+    for obj in get_stale_objects(instance, all_relations=True):
         model = obj.__class__
 
         if is_polymorphic_child_model(model):
