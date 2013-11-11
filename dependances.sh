@@ -6,7 +6,7 @@ wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearc
 dpkg -i elasticsearch-0.90.2.deb
 rm elasticsearch-0.90.2.deb
 
-# Pour satisfaire la construction de python-imaging (alias PIL)
+# Pour satisfaire la construction de python-imaging (alias PIL ou Pillow)
 apt-get build-dep python-imaging
 
 # Liens symboliques pour que PIL trouve ses dépendances.

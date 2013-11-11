@@ -200,12 +200,12 @@ Déploiement
 
 #. Collecte des fichiers statiques :
 
-    ``sudo ./manage.py collectstatic``
+    ``./manage.py collectstatic``
 
 
 #. Préparation du dossier d'upload :
 
-    ``sudo mkdir -p media/uploads/``
+    ``mkdir -p media/uploads/``
 
 
 #. Compiler les fichiers de langues :
@@ -352,4 +352,4 @@ Tests de régression
 Une suite de tests a été créée pour l’application libretto.
 Pour la lancer, exécuter :
 
-  ``sudo ./manage.py test libretto``
+  ``./manage.py test dezede libretto accounts dossiers typography cache_tools``
