@@ -8,8 +8,7 @@ from .tasks import enqueue_with_stale_objects
 
 
 class CeleryAutoInvalidator(CelerySignalProcessor):
-    @staticmethod
-    def enqueue(action, instance, sender, **kwargs):
+    def enqueue(self, action, instance, sender, **kwargs):
         if sender in (LogEntry, Revision, Version):
             return
 
