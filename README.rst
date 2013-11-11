@@ -62,6 +62,8 @@ libxml2-dev
 libxslt1-dev
 elasticsearch   0.90.2
 rabbitmq-server 3.0.2
+nodejs          0.10.21
+node-less       1.5.0
 =============== =======
 
 
