@@ -10,6 +10,9 @@ import cython
 cpdef get_cache_key(method, self, tuple args, dict kwargs, bytes id_attr=?)
 
 
+cpdef get_cache_pattern(obj, bytes id_attr=?)
+
+
 cpdef invalidate_object(obj, bytes id_attr=?)
 
 

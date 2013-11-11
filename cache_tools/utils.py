@@ -7,7 +7,7 @@ from django.utils.translation import get_language, ugettext, pgettext
 
 
 __all__ = (
-    'get_cache_key', 'invalidate_object',
+    'get_cache_key', 'get_cache_pattern', 'invalidate_object',
     'cached_ugettext', 'cached_pgettext', 'cached_ugettext_lazy',
     'cached_pgettext_lazy',
 )
@@ -19,9 +19,13 @@ def get_cache_key(method, obj, args, kwargs, id_attr=b'pk'):
         method.__name__, getattr(obj, id_attr), args, kwargs)
 
 
+def get_cache_pattern(obj, id_attr=b'pk'):
+    return b'*:%s.%s.*:%s(*,*)' % (
+        obj.__module__, obj.__class__.__name__, getattr(obj, id_attr))
+
+
 def invalidate_object(obj, id_attr=b'pk'):
-    cache.delete_pattern(b'*:%s.%s.*:%s(*,*)' % (
-        obj.__module__, obj.__class__.__name__, getattr(obj, id_attr)))
+    cache.delete_pattern(get_cache_pattern(obj, id_attr))
 
 
 UGETTEXT_CACHE = {}
