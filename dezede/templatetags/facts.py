@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 from datetime import datetime, timedelta
 from random import randrange, choice
-from dateutil.relativedelta import relativedelta
 from django.db.models import Count, F
 from django.template import Library
 from cache_tools import cached_ugettext as ugettext
@@ -194,11 +193,12 @@ def centenarian():
 
     # TODO: Faire un rapport de bug à Django.  Si on retire le `.days`,
     #       une exception inattendue est levée.
-    an = timedelta(days=100*365.25).days
+    dpy = 365.25
+    an = timedelta(days=100*dpy).days
     centenarians = Individu.objects.filter(
         ancrage_deces__date__gte=F('ancrage_naissance__date') + an)
     c = centenarians[randrange(centenarians.count())]
-    age = relativedelta(c.ancrage_deces.date, c.ancrage_naissance.date).years
+    age = int((c.ancrage_deces.date - c.ancrage_naissance.date).days / dpy)
 
     out += '<h4>%s</h4>' % c.nom_complet(links=False)
     subject = ugettext('Elle') if c.is_feminin() else ugettext('Il')
