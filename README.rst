@@ -72,7 +72,6 @@ Nécessaires au déploiement
 Paquet     Version
 ========== =======
 nginx      1.2.1
-gunicorn   0.17.4
 supervisor 3.0a8
 ========== =======
 
@@ -303,7 +302,7 @@ Configuration de nginx
 
       [program:dezede]
       directory=[[/chemin/du/projet]]
-      command=gunicorn_django -w3 --timeout=300
+      command=gunicorn dezede.wsgi:application -w3 -t300 -b [[ip]]:[[port]]
       user=[[utilisateur]]
       autostart=true
       autorestart=true
