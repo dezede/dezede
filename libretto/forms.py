@@ -2,11 +2,11 @@
 
 from __future__ import unicode_literals
 from collections import defaultdict
-from django.forms import ValidationError, ModelForm, Form, CharField, TextInput
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
     AutoCompleteWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
+from django.forms import ValidationError, ModelForm, Form, CharField, TextInput
 from cache_tools import cached_ugettext_lazy as _
 from .models import (
     Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
@@ -155,7 +155,7 @@ class EvenementListForm(Form):
         super(EvenementListForm, self).__init__(*args, **kwargs)
 
         for field in self.fields.values():
-            field.widget.attrs[b'placeholder'] = (field.label or '') + '...'
+            field.widget.attrs[b'placeholder'] = (field.label or '') + '…'
             field.label = ''
 
         self.fields['dates'].widget.queryset = queryset

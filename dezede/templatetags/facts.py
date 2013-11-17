@@ -14,8 +14,8 @@ from libretto.models.functions import capfirst
 register = Library()
 
 
-def title_n_icon(title, icon='info-sign'):
-    return '<h3>%s<i class="glyphicon glyphicon-%s pull-right">' \
+def title_n_icon(title, icon='info-circle'):
+    return '<h3>%s<i class="fa fa-%s pull-right">' \
            '</i></h3>' % (title, icon)
 
 

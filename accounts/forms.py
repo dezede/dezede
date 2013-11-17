@@ -44,13 +44,11 @@ class UserRegistrationForm(RegistrationForm):
             Fieldset(
                 _('Général'),
                 Field('first_name', 'last_name'),
-                PrependedText(
-                    'email', '<i class="glyphicon glyphicon-envelope"></i>',
-                    active=True),
-                PrependedText(
-                    'username', '<i class="glyphicon glyphicon-user"></i>',
-                    active=True),
-                'password1', 'password2',
+                PrependedText('email',
+                              '<i class="fa fa-envelope-o fa-fw"></i>'),
+                PrependedText('username', '<i class="fa fa-user fa-fw"></i>'),
+                PrependedText('password1', '<i class="fa fa-key fa-fw"></i>'),
+                PrependedText('password2', '<i class="fa fa-key fa-fw"></i>'),
             ),
             Fieldset(
                 _('Mentorat'),

@@ -1,4 +1,4 @@
-{% load static compress %}
+{% load static compress i18n %}
 
 {#<link rel="stylesheet" type="text/css"#}
 {#      href="{% static 'css/custom-theme/jquery-ui-1.9.2.min.css' %}">#}
@@ -8,7 +8,8 @@
 
 <div class="form-group">
   <div class="row">
-    <div class="input-group form-group col-md-10 col-md-offset-1">
+    <div class="input-group form-group col-md-10 col-md-offset-1"
+         title="{% trans 'Intervalle temporel' %}">
       <input type="text" name="{{ name }}_0" id="id_{{ name }}_0"
              value="{{ start }}" class="form-control text-center" />
       <span class="input-group-addon">-</span>

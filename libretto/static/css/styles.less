@@ -1,11 +1,12 @@
-@import '../bootstrap/less/bootstrap.less';
-@import '../bootstrap/less/responsive-utilities.less';
+@import 'bootstrap';
+@import '../font-awesome/less/font-awesome';
 
 //
 // Bootstrap variables
 //
 
 @icon-font-path: '../bootstrap/fonts/';
+@fa-font-path:   '../Font-Awesome/fonts';
 
 @font-size-base:         15px;
 @font-family-serif:      'Linux Libertine', Georgia, serif;
@@ -51,10 +52,10 @@
 
 .font-feature-settings(@settings) {
   -webkit-font-feature-settings: @settings;
-  -moz-font-feature-settings: @settings;
-  -ms-font-feature-settings: @settings;
-  -o-font-feature-settings: @settings;
-  font-feature-settings: @settings;
+     -moz-font-feature-settings: @settings;
+      -ms-font-feature-settings: @settings;
+       -o-font-feature-settings: @settings;
+          font-feature-settings: @settings;
 }
 
 .column-count (@count) {
@@ -241,16 +242,12 @@ cite {
   pointer-events: auto;
 }
 
-.glyphicon {
-  font-size: 85%;
-}
-
-.glyphicon.glyphicon-checkbox {
+.fa.fa-square-o {
   &:before {
-    content: '\e157';
+    content: '\f096';
   }
   .active &:before {
-    content: '\e067';
+    content: '\f046';
   }
 }
 
@@ -427,8 +424,11 @@ ul.jqtree-tree .jqtree-element {
     cursor: auto;
 }
 
-.jqtree-loading .jqtree-toggler .glyphicon:before {
-  content: '\e178';  // Same as overwriting with .glyphicon-transfer
+.jqtree-loading .jqtree-toggler .fa {
+  .animation(spin 2s infinite linear);  // Same as adding .fa-spin
+  &:before {
+    content: '\f110';  // Same as overwriting with .fa-spinner
+  }
 }
 
 .panel-group {

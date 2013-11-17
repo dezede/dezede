@@ -59,7 +59,10 @@
         {% data_table_list object.disciples.all verbose_name=verboses.disciple verbose_name_plural=verboses.disciples per_page=5 %}
       </table>
       <h3>{% trans 'Événements créés' %}</h3>
-      <div id="coverage">Chargement…</div>
+      <div id="coverage">
+        <i class="fa fa-spinner fa-spin"></i>
+        {% trans 'Chargement…' %}
+      </div>
     </div>
 
   </div>

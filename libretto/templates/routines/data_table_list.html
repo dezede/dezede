@@ -15,7 +15,7 @@
     <td>
       {{ object|get_property:attr }}
       {% if is_published_queryset and not object.is_public %}
-        <i class="glyphicon glyphicon-lock" title="{% trans 'Privé' %}"></i>
+        <i class="fa fa-lock" title="{% trans 'Privé' %}"></i>
       {% endif %}
     </td>
 
