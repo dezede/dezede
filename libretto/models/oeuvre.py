@@ -232,6 +232,7 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
 
 class Role(Partie):
+    # TODO: Ajouter automatiquement le rôle à l’effectif.
     oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'), blank=True,
                         null=True, related_name='roles')
 

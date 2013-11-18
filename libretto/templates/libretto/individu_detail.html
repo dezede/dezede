@@ -47,6 +47,8 @@
     {% data_table_list individu.publications 'html' %}
 
 
+    {# FIXME: regrouper les parentés et enfance pour des histoires #}
+    {# de classement (voir le cas de Maria Malibran) #}
     {% regroup individu.parentes.all by type as parentes_list %}
     {% for parentes in parentes_list %}
       {% data_table_list parentes.list 'parent.html' verbose_name=parentes.grouper.nom verbose_name_plural=parentes.grouper.pluriel has_count_if_one=False %}
