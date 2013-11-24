@@ -46,7 +46,7 @@ cssmin==0.2.0
 rjsmin==1.0.7
 
 # Database migrations
-South==0.8.4
+South==0.8.3
 
 # Developer tools
 django-debug-toolbar==0.11.0
