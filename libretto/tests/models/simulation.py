@@ -357,7 +357,8 @@ class SeleniumTest(LiveServerTestCase):
         self.screenshot()
 
         # Supprime la source…
-        self.get_by_css('.page-header a .fa-trash-o').click()
+        self.get_by_css('.page-header '
+                        'a[data-original-title="Supprimer"]').click()
         self.get_by_css('input[value="Oui, j\'en suis sûr."]').click()
         # … avant de finalement la restaurer avec django-reversion.
         self.get_link('Récupérer sources supprimés').click()
