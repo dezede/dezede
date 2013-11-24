@@ -19,7 +19,8 @@ django-ajax-selects==1.2.5
 -e hg+https://bitbucket.org/mszamot/django-registration@ae1d07e2518e548e3f41a0617de2f7498827191a#egg=django-registration
 
 # Search engine
-django-haystack==2.1.0
+# FIXME: Revenir à toastdriven/django-haystack quand https://github.com/toastdriven/django-haystack/pull/868 sera résolu.
+-e git+https://github.com/greenkahuna/django-haystack@378eaf6d0a94d6da89ccbfe15db7b23a0eb3a801#egg=django-haystack
 pyelasticsearch==0.6.1
 
 # Caching
