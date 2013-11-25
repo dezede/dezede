@@ -164,6 +164,9 @@ Lancement du serveur de développement
 #. `Configuration de PostgreSQL`_
 
 
+#. `Configuration de Redis`_
+
+
 #. Création des révisions initiales :
 
     ``./manage.py createinitialrevisions``
@@ -194,6 +197,9 @@ Déploiement
 ===========
 
 #. `Configuration de PostgreSQL`_
+
+
+#. `Configuration de Redis`_
 
 
 #. Création des révisions initiales :
