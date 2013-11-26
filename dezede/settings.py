@@ -15,8 +15,7 @@ except ImportError:
     compat.register()
 
 
-
-DEBUG = False
+DEBUG = bool(eval(os.environ.get('DJANGO_DEBUG', 'False')))
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
