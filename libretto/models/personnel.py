@@ -295,6 +295,9 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.admin_order_field = 'caracteristiques'
 
+    # TODO: Calculer les apparitions et les ajouter au template, comme pour
+    #       les individus.
+
     def membres_count(self):
         return self.membres.count()
     membres_count.short_description = _('nombre de membres')
