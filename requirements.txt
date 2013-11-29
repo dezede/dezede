@@ -5,7 +5,7 @@ psycopg2==2.5.1
 # Database fields
 django-mptt==0.6.0
 -e git+https://github.com/BertrandBordage/django_polymorphic@6569725ad66bd9fb5248098c614a0f3b2a41a80a#egg=django-polymorphic
-django-polymorphic-tree==0.8.10
+django-polymorphic-tree==0.8.11
 django-autoslug==1.7.1
 
 # User interface
@@ -37,7 +37,7 @@ django-endless-pagination==2.0
 django-viewsets==0.1.7
 
 # Asynchronous tasks
-celery==3.1.4
+celery==3.1.5
 celery-haystack==0.7.2
 
 # CSS/JS handling
@@ -47,7 +47,7 @@ cssmin==0.2.0
 rjsmin==1.0.7
 
 # Database migrations
-South==0.8.3
+South==0.8.4
 
 # Developer tools
 django-debug-toolbar==0.11.0
