@@ -349,7 +349,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
             if pseudonyme:
                 alias = ugettext('dite') if self.is_feminin() \
                     else ugettext('dit')
-                out += ' %s %s' % (alias, pseudonyme)
+                out += ' %s\u00A0%s' % (alias, pseudonyme)
             return out
 
         main_choices = {

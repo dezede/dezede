@@ -38,7 +38,7 @@ class EvenementTestCase(CommonTestCase):
             smart_text(programme[5]),
             'Molière [auteur dram.], Le Tartuffe, ou l’Imposteur, '
             'comédie en cinq actes et en vers. — Gassion (É.) '
-            'dite La Môme Piaf [chanteuse]')
+            'dite\u00A0La Môme Piaf [chanteuse]')
 
     def testRendering(self):
         self.assertEqual(smart_text(self.nicolas),
