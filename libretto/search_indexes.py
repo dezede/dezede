@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, division
 from django.conf import settings
 from django.utils import translation
 from celery_haystack.indexes import CelerySearchIndex as SearchIndex
@@ -16,7 +16,13 @@ class CommonSearchIndex(SearchIndex):
     def prepare(self, obj):
         translation.activate(settings.LANGUAGE_CODE)
         prepared_data = super(CommonSearchIndex, self).prepare(obj)
-        prepared_data['boost'] = obj.get_related_count()
+        # Booste chaque objet en fonction du nombre de données liées.
+        # le plus petit boost possible est `min_boost`, et une racine de base
+        # `root_base` est appliquée pour niveler les résultats.
+        root_base = 5
+        min_boost = 0.5
+        prepared_data['boost'] = (
+            (1 + obj.get_related_count()) ** (1 / root_base) - (1 - min_boost))
         return prepared_data
 
 

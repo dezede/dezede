@@ -1,4 +1,4 @@
-{% load static i18n dezede_extras %}
+{% load static i18n dezede_extras sekizai_tags %}
 {% load url from future %}
 
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -39,9 +39,24 @@
         </ul>
         <form method="get" action="{% url 'haystack_search' %}"
               class="navbar-form navbar-left" role="search">
-          <input type="search" name="q" class="form-control"
+          <input id="navbar-search" type="search" name="q" class="form-control"
                  placeholder="{% trans "Rechercher…" %}" />
         </form>
+        {% addtoblock 'js' %}
+          <script>
+            $('input[name="q"]').typeahead({
+              remote: '{% url 'autocomplete' %}?q=%QUERY'
+            }).on('typeahead:initialized', function (e) {
+              {# FIXME: Retirer quand https://github.com/twitter/typeahead.js/pull/325 sera résolu. #}
+              $(this).prev('.tt-hint').addClass(this.className);
+            }).keypress(function (e) {
+              if (e.which == 13) {
+                $(this).parents('form').submit();
+                return false;
+              }
+            });
+          </script>
+        {% endaddtoblock %}
 
         <ul class="nav navbar-nav navbar-right">
 

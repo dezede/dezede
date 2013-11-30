@@ -1,3 +1,4 @@
+@import 'typeahead-bootstrap/typeahead.js-bootstrap';
 @import 'bootstrap';
 @import '../font-awesome/less/font-awesome';
 
@@ -655,4 +656,18 @@ footer {
   .col-lg-6>& {
     .container-col-width(6; @container-lg);
   }
+}
+
+.tt-hint {
+  color: @input-color-placeholder;
+  .input-group &:first-child+.form-control {
+    border-radius: @input-border-radius;
+    &:not(:last-child) {
+      .border-right-radius(0);
+    }
+  }
+}
+
+.tt-suggestion p {
+  text-align: inherit;
 }

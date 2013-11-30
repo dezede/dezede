@@ -7,22 +7,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic import TemplateView
 from ajax_select import urls as ajax_select_urls
 from filebrowser.sites import site
-from haystack.views import SearchView
+from .views import CustomSearchView, autocomplete
 
-
-class CustomSearchView(SearchView):
-    """
-    Custom SearchView to fix spelling suggestions.
-    """
-    def extra_context(self):
-        context = {'suggestion': None}
-
-        if self.results.query.backend.include_spelling:
-            suggestion = self.form.get_suggestion()
-            if suggestion != self.query:
-                context['suggestion'] = suggestion
-
-        return context
 
 admin.autodiscover()
 
@@ -41,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^comptes/', include('accounts.urls')),
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),
+    url(r'autocomplete', autocomplete, name='autocomplete'),
 )
 
 urlpatterns += staticfiles_urlpatterns()

@@ -10,3 +10,9 @@
 [submodule "libretto/static/font-awesome"]
 	path = libretto/static/font-awesome
 	url = https://github.com/FortAwesome/Font-Awesome
+[submodule "libretto/static/js/typeahead"]
+	path = libretto/static/js/typeahead
+	url = https://github.com/twitter/typeahead.js
+[submodule "libretto/static/css/typeahead-bootstrap"]
+	path = libretto/static/css/typeahead-bootstrap
+	url = https://github.com/cviebrock/typeahead.js-bootstrap.css
