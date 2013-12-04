@@ -47,25 +47,26 @@ Paquets
 Nécessaires à l'exécution
 .........................
 
-=============== =======
-Paquet          Version
-=============== =======
+========================= =======
+Paquet                    Version
+========================= =======
 nano
-postgresql      9.1
-python2.7       2.7.3
-python-pip      1.1
-python-docutils 0.8.1
-redis-server    2:2.6.7
-python-dev      2.7.3
+postgresql                9.1
+postgresql-server-dev-9.1
+python2.7                 2.7.3
+python-pip                1.1
+python-docutils           0.8.1
+redis-server              2:2.6.7
+python-dev                2.7.3
 libxml2
 libxml2-dev
 libxslt1-dev
 openjdk-7-jre
-elasticsearch   0.90.2
-rabbitmq-server 3.0.2
-nodejs          0.10.21
-node-less       1.5.0
-=============== =======
+elasticsearch             0.90.2
+rabbitmq-server           3.0.2
+nodejs                    0.10.21
+node-less                 1.5.0
+========================= =======
 
 
 Nécessaires au déploiement
