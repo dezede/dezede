@@ -144,7 +144,7 @@ Configuration de Redis
 
 #. Relancer le serveur :
 
-    ``sudo service redis restart``
+    ``sudo service redis-server restart``
 
 
 
