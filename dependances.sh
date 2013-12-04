@@ -13,7 +13,7 @@ apt-get install nano postgresql python2.7 python-pip python-docutils python-dev 
 npm install -g less
 
 # Installe le moteur de recherche elasticsearch.
-wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.6.deb
+wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.7.deb
 dpkg -i elasticsearch-*.deb
 rm elasticsearch-*.deb
 
