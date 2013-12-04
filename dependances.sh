@@ -7,7 +7,7 @@ add-apt-repository ppa:chris-lea/node.js
 apt-get update
 
 # Installe tous les paquets Ubuntu requis.
-apt-get install nano postgresql python2.7 python-pip python-docutils python-dev redis-server libxml2 libxml2-dev libxslt1-dev rabbitmq-server nodejs
+apt-get install nano postgresql python2.7 python-pip python-docutils python-dev redis-server libxml2 libxml2-dev libxslt1-dev rabbitmq-server nodejs openjdk-7-jre
 
 # Installe LESS CSS.
 npm install -g less
