@@ -51,6 +51,7 @@ Nécessaires à l'exécution
 Paquet                    Version
 ========================= =======
 nano
+mercurial
 postgresql                9.1
 postgresql-server-dev-9.1
 python2.7                 2.7.3
