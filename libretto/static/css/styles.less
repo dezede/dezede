@@ -32,9 +32,21 @@
 @body-bg: hsv(50, 7%, 100%);
 @well-bg: darken(@body-bg, 4%);
 
+@carousel-caption-color: black;
+@carousel-text-shadow: 1px 1px 0px white;
+@carousel-control-width: 10%;
+@carousel-control-color: @link-color;
+@carousel-control-opacity: 0.8;
+@carousel-control-font-size: 60px;
+@carousel-indicator-border-color: white;
+@carousel-indicator-active-bg: @carousel-indicator-border-color;
+
+
 //
 // Custom variables
 //
+
+@default-font-features: 'kern', 'liga', 'dlig', 'clig', 'hlig';
 
 @content-padding-bottom: 30px;
 
@@ -69,6 +81,17 @@
   -webkit-column-gap: @gap;
      -moz-column-gap: @gap;
           column-gap: @gap;
+}
+
+.animation(@animation) {
+  -webkit-animation: @animation;
+     -moz-animation: @animation;
+       -o-animation: @animation;
+          animation: @animation;
+}
+
+.small-caps () {
+  .font-feature-settings(@default-font-features, 'smcp';);
 }
 
 //
@@ -178,7 +201,7 @@ html, body {
 
 body {
   overflow-y: scroll;
-  .font-feature-settings('kern', 'liga', 'dlig', 'clig', 'hlig';);
+  .font-feature-settings(@default-font-features);
   // For TinyMCE only: #content exists in front office, but not body#content.
   &.mceContentBody, &#main {
     margin: 5px;
@@ -221,14 +244,20 @@ p {
   text-align: justify;
 }
 
-.fact {
+.well {
+  :first-child {
+    margin-top: 0;
+  }
+}
+
+.facts {
   p {
-    text-align: left;
+    text-align: inherit;
   }
 }
 
 .sc {
-  .font-feature-settings('kern', 'liga', 'dlig', 'clig', 'hlig', 'smcp';);
+  .small-caps;
 }
 
 sup {
@@ -249,6 +278,96 @@ cite {
   }
   .active &:before {
     content: '\f046';
+  }
+}
+
+#logo {
+  max-width: 400px;
+  margin: -50px 0 -80px;
+}
+
+#carousel-home {
+  margin-bottom: @grid-gutter-width;
+}
+
+.carousel {
+  @border-radius: @border-radius-large;
+  .carousel-inner {
+    border-radius: @border-radius;
+    .carousel-background {
+      background: hsv(0, 0%, 90%);
+      img {
+        height: 450px;
+      }
+    }
+  }
+  .carousel-caption {
+    @font-size-ratio: 2.0;
+    display: inline-block;
+    left: @carousel-control-width;
+    right: @carousel-control-width;
+    bottom: 10%;
+    text-align: inherit;
+    header, article {
+      display: inline-block;
+    }
+    &.text-background {
+      &>* {
+        padding-left: @padding-large-horizontal;
+        padding-right: @padding-large-horizontal;
+      }
+      header, article {
+        background: fadeout(@navbar-default-bg, 25%);
+      }
+    }
+    header {
+      .small-caps;
+      padding-bottom: 10px;
+    }
+    article {
+      font-family: @font-family-serif;
+      font-size: @font-size-base * @font-size-ratio;
+      font-style: italic;
+      padding-top: 10px;
+    }
+    h1 {
+      font-size: @font-size-h1 * @font-size-ratio;
+    }
+    h2 {
+      font-size: @font-size-h2 * @font-size-ratio;
+    }
+    .read-more {
+      display: block;
+      margin-top: 20px;
+    }
+  }
+  .carousel-control {
+    z-index: 15;
+    &.left, &.right {
+      background: none;
+      .fa {
+        position: absolute;
+        top: 50%;
+        width: @carousel-control-font-size;
+        height: @carousel-control-font-size;
+        margin-top: -@carousel-control-font-size / 2;
+        margin-left: -@carousel-control-font-size / 2;
+      }
+    }
+    &.left {
+      .border-left-radius(@border-radius);
+    }
+    &.right {
+      .border-right-radius(@border-radius);
+    }
+  }
+  .carousel-indicators {
+    li {
+      box-shadow: 0px 0px 5px grey;
+      &.active {
+        background-color: @brand-primary;
+      }
+    }
   }
 }
 
@@ -480,6 +599,10 @@ ul.jqtree-tree .jqtree-element {
   &.D:before {
     content: 'D';
   }
+}
+
+.above-text {
+  z-index: 500;
 }
 
 .ui-slider {

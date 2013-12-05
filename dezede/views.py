@@ -3,8 +3,19 @@
 from __future__ import unicode_literals
 import json
 from django.http import HttpResponse
+from django.views.generic import ListView
 from haystack.query import SearchQuerySet
 from haystack.views import SearchView
+from .models import Diapositive
+
+
+class HomeView(ListView):
+    model = Diapositive
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        qs = super(HomeView, self).get_queryset()
+        return qs.published(self.request)
 
 
 class CustomSearchView(SearchView):

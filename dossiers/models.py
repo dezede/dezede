@@ -25,13 +25,6 @@ class DossierDEvenementsManager(CommonTreeManager, PublishedManager):
     queryset_class = DossierDEvenementsQuerySet
 
 
-# TODO: Pour l’accueil, pouvoir paramétrer :
-#       l'opacité, placement & massicotage de l'image, [couleur de fond],
-#       placement horizontal, placement vertical, possibilité de mettre
-#       un léger fond à la légende,
-#       pour améliorer la lisibilité dans les cas extrêmes.
-# TODO: Ajuster automatiquement h1, h2, h3, ou h4 en fonction
-#       du nombre de caractères du titre court.
 # TODO: Créer des catégories de dossiers.
 #       Une seule catégorie par dossier pour éviter la bazar.
 # TODO: Dossiers de photos: présentation, contexte historique,

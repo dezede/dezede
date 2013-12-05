@@ -7,14 +7,14 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic import TemplateView
 from ajax_select import urls as ajax_select_urls
 from filebrowser.sites import site
-from .views import CustomSearchView, autocomplete
+from .views import HomeView, CustomSearchView, autocomplete
 
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^', include('libretto.urls')),
-    url(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
+    url(r'^$', HomeView.as_view(), name='home'),
     url(r'^dossiers/', include('dossiers.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/lookups/', include(ajax_select_urls)),

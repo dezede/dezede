@@ -35,11 +35,18 @@ def _is_polymorphic_child(models, model):
             and set(model.__bases__) & models)
 
 
-def _get_valid_modelnames():
-    models = frozenset(get_models())
-    return [model.__name__.lower() for model in models
-            if hasattr(model, 'link') and AutoriteModel in model.__bases__
-            and not _is_polymorphic_child(models, model)]
+def _get_valid_modelnames_func(autorites_only=True):
+    def is_valid(models, model):
+        b = hasattr(model, 'link') and not _is_polymorphic_child(models, model)
+        if autorites_only:
+            b &= AutoriteModel in model.__bases__
+        return b
+
+    def get_valid_modelnames():
+        models = frozenset(get_models())
+        return [model.__name__.lower() for model in models
+                if is_valid(models, model)]
+    return get_valid_modelnames
 
 
 @python_2_unicode_compatible
@@ -54,7 +61,7 @@ class HierarchicUser(MPTTModel, AbstractUser):
         help_text=_('Cochez si vous êtes une institution ou un ensemble.'))
     content_type = ForeignKey(
         ContentType, blank=True, null=True,
-        limit_choices_to={'model__in': _get_valid_modelnames},
+        limit_choices_to={'model__in': _get_valid_modelnames_func()},
         verbose_name=_('type d’autorité associée'))
     object_id = PositiveIntegerField(_('identifiant de l’autorité associée'),
                                      blank=True, null=True)

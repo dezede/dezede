@@ -188,6 +188,8 @@ INSTALLED_APPS = (
     'crispy_forms',
     'ajax_select',
     'filebrowser',
+    'easy_thumbnails',
+    'image_cropping',
     'reversion',
     'django.contrib.admin',
     'django.contrib.admindocs',
@@ -258,6 +260,12 @@ FILEBROWSER_VERSIONS = {
 FILEBROWSER_ADMIN_THUMBNAIL = 'thumbnail'
 FILEBROWSER_ADMIN_VERSIONS = ['avatar']
 FILEBROWSER_MAX_UPLOAD_SIZE = 50 * (1024 ** 2)  # octets
+
+from easy_thumbnails.conf import Settings as thumbnail_settings
+THUMBNAIL_PROCESSORS = (
+    'image_cropping.thumbnail_processors.crop_corners',
+) + thumbnail_settings.THUMBNAIL_PROCESSORS
+IMAGE_CROPPING_THUMB_SIZE = (800, 600)
 
 HAYSTACK_CONNECTIONS = {
     'default': {

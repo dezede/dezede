@@ -14,9 +14,20 @@ from libretto.models.functions import capfirst
 register = Library()
 
 
-def title_n_icon(title, icon='info-circle'):
-    return '<h3>%s<i class="fa fa-%s pull-right">' \
-           '</i></h3>' % (title, icon)
+def html_object(tag, txt):
+    return '<' + tag + '>' + txt + '</' + tag + '>'
+
+
+def h3(txt):
+    return html_object('h3', txt)
+
+
+def h4(txt):
+    return html_object('h4', txt)
+
+
+def p(txt):
+    return html_object('p', txt)
 
 
 def read_more(obj):
@@ -33,6 +44,10 @@ def valid_events():
     ).distinct()
 
 
+def valid_individus():
+    return Individu.objects.exclude(nom='Anonyme')
+
+
 def event_oeuvres(event):
     return event.oeuvres.html(auteurs=False, descr=False,
                               ancestors=False, links=False)
@@ -47,25 +62,25 @@ def on_this_day():
 
     e = events[randrange(events.count())]
 
-    out = title_n_icon(ugettext('Il y a exactement %s ans')
-                       % (now.year - e.ancrage_debut.date.year),
-                       'calendar')
-    out += '<h4>%s</h4>' % e.ancrage_debut.calc_lieu(tags=False)
-    out += '<p>%s</p>' % (ugettext('On donnait %s.')
-                          % event_oeuvres(e))
+    out = h3(ugettext('Jour pour jour'))
+    out += h4(ugettext('Il y a %s ans aujourd’hui')
+              % (now.year - e.ancrage_debut.date.year))
+    out += p(e.ancrage_debut.calc_lieu(tags=False))
+    out += p(ugettext('On donnait %s') % event_oeuvres(e))
     out += read_more(e)
     return out
 
 
 @register.simple_tag
-def famous_event(n=50):
+def famous_event(n=10):
     """
     Affiche l’un des ``n`` événements les plus documentés.
 
-    Or les événements les plus documentés sont généralement les plus célèbres.
+    Or les événements les plus documentés sont généralement
+    les plus remarquable.
     """
 
-    out = title_n_icon(ugettext('Représentation célèbre'), 'bullhorn')
+    out = h3(ugettext('L’événement'))
 
     data = Source.objects \
         .filter(evenements__isnull=False).values('evenements') \
@@ -81,10 +96,9 @@ def famous_event(n=50):
         else:
             break
 
-    out += '<h4>%s</h4>' % capfirst(e.ancrage_debut.calc_moment())
-    out += '<h4>%s</h4>' % e.ancrage_debut.calc_lieu(tags=False)
-    out += '<p>%s</p>' % (ugettext('On donnait %s.')
-                          % event_oeuvres(e))
+    out += h4(capfirst(e.ancrage_debut.calc_moment()))
+    out += h4(e.ancrage_debut.calc_lieu(tags=False))
+    out += p(ugettext('On donnait %s') % event_oeuvres(e))
     out += read_more(e)
     return out
 
@@ -92,18 +106,19 @@ def famous_event(n=50):
 # FIXME: La requête de ce fact est cassée.
 #@register.simple_tag
 def traveller():
-    out = title_n_icon(ugettext('Interprète voyageur'), 'plane')
+    out = h3(ugettext('Interprète voyageur'))
     Lieu.objects.values('ancrages')
-    travellers = Individu.objects.order_by(
+    travellers = valid_individus().order_by(
         'elements_de_distribution__elements_de_programme__'
-        'evenement__ancrage_debut__lieu').annotate(
+        'evenement__ancrage_debut__lieu'
+    ).annotate(
         n_lieux=Count('elements_de_distribution__elements_de_programme__'
                       'evenement__ancrage_debut__lieu')).filter(n_lieux__gte=5)
     t = travellers[randrange(travellers.count())]
-    out += '<h4>%s</h4>' % t.nom_complet(links=False)
+    out += h4(t.nom_complet(links=False))
     subject = ugettext('Elle') if t.is_feminin() else ugettext('Il')
-    out += '<p>%s</p>' % (
-        ugettext('%s a joué dans au moins %s endroits différents.')
+    out += p(
+        ugettext('%s a joué dans au moins %s endroits différents')
         % (subject, t.n_lieux))
     out += read_more(t)
     return out
@@ -111,29 +126,39 @@ def traveller():
 
 @register.simple_tag
 def prolific_author(n=20):
-    out = title_n_icon(ugettext('Auteur prolifique'), 'book')
+    out = h3(ugettext('Auteur prolifique'))
 
     data = Oeuvre.objects \
         .filter(auteurs__isnull=False).values('auteurs__individu') \
         .annotate(n_oeuvres=Count('pk')).order_by('-n_oeuvres') \
         .values_list('auteurs__individu', 'n_oeuvres')
 
-    pk, n_oeuvres = data[randrange(n)]
-    a = Individu.objects.get(pk=pk)
+    a = None
+    anonyme_found = False
+    while True:
+        pk, n_oeuvres = data[randrange(n)]
+        try:
+            a = valid_individus().get(pk=pk)
+        except Individu.DoesNotExist:
+            # FIXME: Ici, on cherche un nouvel individu si on tombe
+            #        sur Anonyme.  Il faut donc chercher parmi n+1 individus.
+            if not anonyme_found:
+                n += 1
+                anonyme_found = True
+            continue
+        else:
+            break
 
     data = a.oeuvres().values('genre').annotate(n_oeuvres=Count('genre')) \
         .order_by('-n_oeuvres').filter(n_oeuvres__gte=10)
 
     genres = GenreDOeuvre.objects.filter(pk__in=[d['genre'] for d in data])
 
-    out += '<h4>%s</h4>' % a.nom_complet(links=False)
+    out += h4(a.nom_complet(links=False))
     subject = ugettext('Elle') if a.is_feminin() else ugettext('Il')
     if genres:
-        out += '<p>%s</p>' % (
-            ugettext('Genre de prédilection : %s.') % genres[0])
-    out += '<p>%s</p>' % (
-        ugettext('%s a écrit au moins %s œuvres.')
-        % (subject, n_oeuvres))
+        out += p(ugettext('Genre de prédilection : %s') % genres[0])
+    out += p(ugettext('%s a écrit au moins %s œuvres') % (subject, n_oeuvres))
     out += read_more(a)
     return out
 
@@ -141,7 +166,7 @@ def prolific_author(n=20):
 # WARNING: Ce fact est peut-être erroné (voir multi-instrumentiste).
 #@register.simple_tag
 def transformist(n=10):
-    out = title_n_icon(ugettext('« Transformiste »'))
+    out = h3(ugettext('« Transformiste »'))
 
     individu_accessor = 'pupitres__elements_de_distribution__individus'
     data = Role.objects \
@@ -153,19 +178,22 @@ def transformist(n=10):
     pk, n_roles = data[randrange(n)]
     t = Individu.objects.get(pk=pk)
 
-    out += '<h4>%s</h4>' % t.nom_complet(links=False)
+    out += h4(t.nom_complet(links=False))
     subject = ugettext('Elle') if t.is_feminin() else ugettext('Il')
-    out += '<p>%s</p>' % (
-        ugettext('%s a joué au moins %s rôles différents.')
-        % (subject, n_roles))
+    out += p(ugettext('%s a joué au moins %s rôles différents')
+             % (subject, n_roles))
     out += read_more(t)
     return out
+
+
+# TODO: Ajouter les œuvres les plus représentées
+#               les institutions créatrices d'œuvres
 
 
 # FIXME: La requête de ce fact est cassée.
 #@register.simple_tag
 def multi_instrumentalist(n=10):
-    out = title_n_icon(ugettext('Multi-instrumentiste'))
+    out = h3(ugettext('Multi-instrumentiste'))
 
     individu_accessor = 'pupitres__elements_de_distribution__individus'
     data = Instrument.objects \
@@ -177,19 +205,19 @@ def multi_instrumentalist(n=10):
     pk, n_instruments = data[randrange(n)]
     m = Individu.objects.get(pk=pk)
 
-    out += '<h4>%s</h4>' % m.nom_complet(links=False)
+    out += h4(m.nom_complet(links=False))
     subject = ugettext('Elle') if m.is_feminin() else ugettext('Il')
-    out += '<p>%s</p>' % (
-        ugettext('%s a joué d’au moins %s instruments différents.')
-        % (subject, n_instruments))
+    out += p(ugettext('%s a joué d’au moins %s instruments différents')
+             % (subject, n_instruments))
     out += read_more(m)
 
     return out
 
 
-@register.simple_tag
+# Fonctionnel mais non révélateur.
+#@register.simple_tag
 def centenarian():
-    out = title_n_icon(ugettext('Centenaire'))
+    out = h3(ugettext('Centenaire'))
 
     # TODO: Faire un rapport de bug à Django.  Si on retire le `.days`,
     #       une exception inattendue est levée.
@@ -200,15 +228,18 @@ def centenarian():
     c = centenarians[randrange(centenarians.count())]
     age = int((c.ancrage_deces.date - c.ancrage_naissance.date).days / dpy)
 
-    out += '<h4>%s</h4>' % c.nom_complet(links=False)
+    out += h4(c.nom_complet(links=False))
     subject = ugettext('Elle') if c.is_feminin() else ugettext('Il')
-    out += '<p>%s</p>' % (
-        ugettext('%s a vécu %s ans.')
-        % (subject, age))
+    out += p(ugettext('%s a vécu %s ans') % (subject, age))
     out += read_more(c)
     return out
 
 
-@register.simple_tag
-def random_fact():
-    return choice((on_this_day, famous_event, prolific_author, centenarian))()
+@register.simple_tag(takes_context=True)
+def random_fact(context):
+    used_facts = context.get('used_facts', set())
+    chosen_fact = choice(list({on_this_day, famous_event,
+                               prolific_author} - used_facts))
+    used_facts.add(chosen_fact)
+    context['used_facts'] = used_facts
+    return chosen_fact()

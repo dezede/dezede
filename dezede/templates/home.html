@@ -1,38 +1,103 @@
 {% extends 'base.html' %}
-{% load facts %}
+{% load static facts thumbnail i18n sekizai_tags %}
 
 
 {% block full_title %}
   Dezède
 {% endblock %}
 
+{% block header_extra_class %}no-separator{% endblock %}
 
-{% block content %}
+{% block full_header %}
   <div class="row">
-    <div class="col-xs-4">
-      <div class="well fact">
-        {% on_this_day %}
-      </div>
-    </div>
-    <div class="col-xs-4">
-      <div class="well fact">
-        {% famous_event %}
-      </div>
-    </div>
-    <div class="col-xs-4">
-      <div class="well fact">
-        {% prolific_author %}
-      </div>
+    <div class="col-xs-12 above-text">
+      <img id="logo" src="{% static 'images/logo.svg' %}" alt="Dezède" />
+      {% addtoblock 'js' %}
+        <script>
+          {# Empêche l'utilisateur de faire un cliquer-glisser par erreur #}
+          {# sur le logo pendant qu'il utilise le carousel #}
+          $('#logo').on('dragstart', function(e) { e.preventDefault(); });
+        </script>
+      {% endaddtoblock %}
     </div>
   </div>
-  <div class="row">
-    <div class="col-xs-4">
-      <div class="well fact">
-        {% centenarian %}
+{% endblock %}
+
+
+{% block content %}
+
+  {% if object_list %}
+    <div id="carousel-home" class="carousel slide"
+         data-ride="carousel" data-interval="8000">
+      {% if object_list|length > 1 %}
+        <ol class="carousel-indicators">
+          {% for object in object_list %}
+            <li data-target="#carousel-home"
+                data-slide-to="{{ forloop.counter0 }}"{% if forloop.first %}
+                class="active"{% endif %}></li>
+          {% endfor %}
+        </ol>
+      {% endif %}
+
+      <div class="carousel-inner">
+        {% for object in object_list %}
+          <div class="item{% if forloop.first %} active{% endif %}">
+            {% language 'en' %}
+              <div class="carousel-background"
+                   style="opacity: {{ object.opacity }};">
+                <div class="{{ object.image_align }} visible-lg">
+                  <img src="{% thumbnail object.image object.size_lg box=object.box_lg crop detail %}" />
+                </div>
+                <div class="{{ object.image_align }} visible-md">
+                  <img src="{% thumbnail object.image object.size_md box=object.box_md crop detail %}" />
+                </div>
+                <div class="{{ object.image_align }} visible-sm visible-xs">
+                  <img src="{% thumbnail object.image object.size_sm box=object.box_sm crop detail %}" />
+                </div>
+              </div>
+            {% endlanguage %}
+            <div class="{{ object.text_align }}">
+              <div class="carousel-caption{% if object.text_background %} text-background{% endif %}">
+                <header>
+                  <h2>{{ object.title }}</h2>
+                </header><br />
+                <article>
+                  <p>{{ object.subtitle }}</p>
+                </article>
+                <div class="read-more">
+                  <a class="btn btn-primary btn-lg"
+                     href="{{ object.content_object.get_absolute_url }}">
+                    {% trans 'Lire' %}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
       </div>
+
+      {% if object_list|length > 1 %}
+        <a class="left carousel-control" href="#carousel-home"
+           data-slide="prev">
+          <span class="fa fa-angle-left"></span>
+        </a>
+        <a class="right carousel-control" href="#carousel-home"
+           data-slide="next">
+          <span class="fa fa-angle-right"></span>
+        </a>
+      {% endif %}
     </div>
-    <div class="col-xs-4">
-      <div class="well fact">
+  {% endif %}
+
+  <div class="col-xs-12">
+    <div class="row well facts text-center">
+      <div class="col-xs-4">
+        {% random_fact %}
+      </div>
+      <div class="col-xs-4">
+        {% random_fact %}
+      </div>
+      <div class="col-xs-4">
         {% random_fact %}
       </div>
     </div>
