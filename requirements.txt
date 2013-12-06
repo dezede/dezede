@@ -72,7 +72,7 @@ gunicorn==18.0
 
 # Testing
 django-nose==1.2
-selenium==2.37.2
+selenium==2.38.1
 
 # Translation helper
 transifex-client==0.10

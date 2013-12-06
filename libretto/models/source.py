@@ -25,6 +25,7 @@ class TypeDeSource(CommonModel, SlugModel):
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
                             db_index=True, help_text=PLURAL_MSG)
+    # TODO: Ajouter un classement et changer ordering en conséquence.
 
     class Meta(object):
         verbose_name = ungettext_lazy('type de source', 'types de source', 1)
