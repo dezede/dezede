@@ -91,9 +91,10 @@ class ElementDeDistribution(CommonModel):
                                       'éléments de distribution', 1)
         verbose_name_plural = ungettext_lazy('élément de distribution',
                                              'éléments de distribution', 2)
-        # WARNING: Ordonner par un ManyToMany peut aboutir
-        #          à des doublons apparents.
-        ordering = ('pupitre', 'profession', 'individus__nom',)
+        # TODO: Trouver une solution pour pouvoir ordonner par nom d'individu.
+        #       La solution la plus sage est sans doute de transformer le M2M
+        #       'individus' en un FK 'individu'.
+        ordering = ('pupitre', 'profession',)
         app_label = 'libretto'
 
     @staticmethod
@@ -363,7 +364,13 @@ class Evenement(AutoriteModel):
 
     def sources_by_type(self):
         sources = OrderedDefaultDict()
-        for source in self.sources.select_related('type'):
+
+        ordering = list(get_model('libretto', 'Source')._meta.ordering)
+        if 'type' in ordering:
+            ordering.remove('type')
+        ordering.insert(0, 'type')
+
+        for source in self.sources.select_related('type').order_by(*ordering):
             sources[source.type].append(source)
         return sources.items()
 
