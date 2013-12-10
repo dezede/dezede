@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),
     url(r'autocomplete', autocomplete, name='autocomplete'),
+    url(r'^404$', ErrorView.as_view(status=404)),
 )
 
 urlpatterns += staticfiles_urlpatterns()
@@ -44,7 +45,6 @@ if settings.DEBUG:
 
     urlpatterns += patterns('',
         url(r'^403$', ErrorView.as_view(status=403)),
-        url(r'^404$', ErrorView.as_view(status=404)),
         url(r'^500$', ErrorView.as_view(status=500)),
         url(r'^503$', ErrorView.as_view(status=503)),
     )

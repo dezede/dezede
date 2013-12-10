@@ -236,7 +236,7 @@ Configuration de nginx
         listen 80;
         server_name [[adresse_ou_domaine]];
 
-        error_page 403 404 =404 @django;
+        error_page 403 404 =404 /404;
 
         gzip on;
         gzip_vary on;
@@ -268,7 +268,7 @@ Configuration de nginx
           expires 1w;
         }
 
-        location @django {
+        location / {
           proxy_pass http://localhost:8000;
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
