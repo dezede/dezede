@@ -236,7 +236,7 @@ Configuration de nginx
         listen 80;
         server_name [[adresse_ou_domaine]];
 
-        error_page 403 404 @django;
+        error_page 403 404 =404 @django;
 
         gzip on;
         gzip_vary on;
