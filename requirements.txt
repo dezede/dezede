@@ -29,7 +29,7 @@ django-redis==3.3
 -e git+https://github.com/jmoiron/johnny-cache@37e75019625979487f17b47050da7f0af3fea42c#egg=johnny-cache
 
 # Data visualization frameworks
-djangorestframework==2.3.9
+djangorestframework==2.3.10
 django-tables2==0.14.0
 
 # Small but powerful tools
@@ -72,7 +72,7 @@ gunicorn==18.0
 
 # Testing
 django-nose==1.2
-selenium==2.38.1
+selenium==2.38.3
 
 # Translation helper
 transifex-client==0.10
