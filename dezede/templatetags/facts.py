@@ -188,6 +188,10 @@ def transformist(n=10):
 
 # TODO: Ajouter les œuvres les plus représentées
 #               les institutions créatrices d'œuvres
+#               [les partenaires]
+#               les dossiers non mis en avant
+# TODO: Ajouter un booléen "remarquable" à Événement et mettre en valeur
+#       les événements remarquables par un fact.
 
 
 # FIXME: La requête de ce fact est cassée.
