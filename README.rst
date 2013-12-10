@@ -35,7 +35,7 @@ Dépendances
 ===========
 
 :Système d'exploitation:
-  Ubuntu 12.10 « Quantal Quetzal »
+  Ubuntu 13.04 « Raring Ringtail »
 
 Pour installer les dépendances qui suivent :
   ``sudo ./dependances.sh``
@@ -48,26 +48,31 @@ Nécessaires à l'exécution
 .........................
 
 ========================= =======
-Paquet                    Version
+Paquet Ubuntu             Version
 ========================= =======
 nano
 mercurial
 postgresql                9.1
 postgresql-server-dev-9.1
-python2.7                 2.7.3
-python-pip                1.1
-python-docutils           0.8.1
+python2.7                 2.7.4
+python-pip                1.3.1
+python-docutils           0.10
 redis-server              2:2.6.7
-python-dev                2.7.3
+python-dev                2.7.4
 libxml2
 libxml2-dev
 libxslt1-dev
 openjdk-7-jre
-elasticsearch             0.90.2
+elasticsearch             0.90.7
 rabbitmq-server           3.0.2
-nodejs                    0.10.21
-node-less                 1.5.0
+nodejs                    0.10.22
 ========================= =======
+
+================= =======
+Module javascript Version
+================= =======
+less              1.5.0
+================= =======
 
 
 Nécessaires au déploiement
@@ -76,18 +81,9 @@ Nécessaires au déploiement
 ========== =======
 Paquet     Version
 ========== =======
-nginx      1.2.1
+nginx      1.2.6
 supervisor 3.0a8
 ========== =======
-
-
-Modules Python
---------------
-
-Nécessaires à l'exécution
-.........................
-
-Voir le fichier `requirements.txt`.
 
 
 
@@ -132,7 +128,7 @@ Configuration de Redis
 
     - Éditer le fichier de configuration :
 
-        ``nano /etc/redis/redis.conf``
+        ``sudo nano /etc/redis/redis.conf``
 
     - Ajouter ces lignes :
 
@@ -150,19 +146,6 @@ Configuration de Redis
 
 Lancement du serveur de développement
 =====================================
-
-#. Passer en mode ``DEBUG`` :
-
-    - Éditer le fichier de réglages :
-
-        ``nano settings.py``
-
-    - Remplacer la ligne ``DEBUG = False`` par :
-
-        ::
-
-          DEBUG = True
-
 
 #. `Configuration de PostgreSQL`_
 
@@ -192,7 +175,7 @@ Lancement du serveur de développement
 
 #. Lancement du serveur de développement :
 
-    ``./manage.py runserver``
+    ``DJANGO_DEBUG=True ./manage.py runserver``
 
 
 
