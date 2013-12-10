@@ -24,18 +24,6 @@
         <ul class="nav navbar-nav">
           {% nav_link 'dossierdevenements_index' _('dossiers') %}
           {% nav_link 'evenements' _('événements') %}
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              {% trans "Autorités" %} <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu" role="menu">
-              {% nav_link 'lieu_index' _('lieux et institutions') %}
-              {% nav_link 'oeuvre_index' _('œuvres') %}
-              {% nav_link 'individu_index' _('individus') %}
-              {% nav_link 'profession_index' _('professions') %}
-              {% nav_link 'partie_index' _('rôles et instruments') %}
-            </ul>
-          </li>
         </ul>
         <form method="get" action="{% url 'haystack_search' %}"
               class="navbar-form navbar-left" role="search">
@@ -59,6 +47,19 @@
         {% endaddtoblock %}
 
         <ul class="nav navbar-nav navbar-right">
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              {% trans 'Index' %} <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              {% nav_link 'lieu_index' _('lieux et institutions') %}
+              {% nav_link 'oeuvre_index' _('œuvres') %}
+              {% nav_link 'individu_index' _('individus') %}
+              {% nav_link 'profession_index' _('professions') %}
+              {% nav_link 'partie_index' _('rôles et instruments') %}
+            </ul>
+          </li>
 
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
