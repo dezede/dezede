@@ -3,7 +3,8 @@
 from __future__ import unicode_literals
 import json
 from django.http import HttpResponse
-from django.views.generic import ListView
+from django.utils.encoding import smart_text
+from django.views.generic import ListView, TemplateView
 from haystack.query import SearchQuerySet
 from haystack.views import SearchView
 from .models import Diapositive
@@ -36,6 +37,16 @@ class CustomSearchView(SearchView):
 def autocomplete(request):
     q = request.GET.get('q', '')
     sqs = SearchQuerySet().autocomplete(content_auto=q)[:5]
-    suggestions = [unicode(result.object) for result in sqs]
+    suggestions = [smart_text(result.object) for result in sqs]
     data = json.dumps(suggestions)
     return HttpResponse(data, content_type='application/json')
+
+
+class ErrorView(TemplateView):
+    status = 200
+
+    def render_to_response(self, context, **response_kwargs):
+        response_kwargs['status'] = self.status
+        self.template_name = '%s.html' % self.status
+        return super(ErrorView, self).render_to_response(context,
+                                                         **response_kwargs)

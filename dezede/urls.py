@@ -4,10 +4,9 @@ from django.conf import settings
 from django.conf.urls import *
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.views.generic import TemplateView
 from ajax_select import urls as ajax_select_urls
 from filebrowser.sites import site
-from .views import HomeView, CustomSearchView, autocomplete
+from .views import HomeView, CustomSearchView, autocomplete, ErrorView
 
 
 admin.autodiscover()
@@ -44,8 +43,8 @@ if settings.DEBUG:
     del(_media_url, serve)
 
     urlpatterns += patterns('',
-        (r'^403/$', TemplateView.as_view(template_name='403.html')),
-        (r'^404/$', TemplateView.as_view(template_name='404.html')),
-        (r'^500/$', TemplateView.as_view(template_name='500.html')),
-        (r'^503/$', TemplateView.as_view(template_name='503.html')),
+        url(r'^403$', ErrorView.as_view(status=403)),
+        url(r'^404$', ErrorView.as_view(status=404)),
+        url(r'^500$', ErrorView.as_view(status=500)),
+        url(r'^503$', ErrorView.as_view(status=503)),
     )
