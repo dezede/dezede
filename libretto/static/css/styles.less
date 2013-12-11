@@ -48,7 +48,7 @@
 
 @default-font-features: 'kern', 'liga', 'dlig', 'clig', 'hlig';
 
-@content-padding-bottom: 30px;
+@content-padding-bottom: @grid-gutter-width;
 
 @footer-padding-y:   15px;
 @footer-line-height: 50px;
@@ -253,6 +253,9 @@ p {
 .facts {
   p {
     text-align: inherit;
+  }
+  &.well {
+    margin: 0;
   }
 }
 
@@ -674,17 +677,9 @@ footer {
         line-height: @footer-line-height;
       }
       #softwares {
-        a.btn {
-          color: @footer-color;
-        }
-        span {
-          font-size: @font-size-small;
-        }
-        &>* {
-          vertical-align: middle;
-        }
-        &>*+* {
-          margin-left: 10px;
+        line-height: @footer-line-height / 2;
+        p {
+          margin: 0;
         }
       }
       #logos {
