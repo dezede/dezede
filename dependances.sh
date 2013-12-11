@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Installe add-apt-repository.
-apt-get install python-software-properties
+apt-get install software-properties-common
 # Ajout le dépôt PPA node.js.
 add-apt-repository ppa:chris-lea/node.js
 apt-get update
