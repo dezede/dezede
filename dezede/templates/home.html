@@ -6,11 +6,11 @@
   Dezède
 {% endblock %}
 
-{% block header_extra_class %}no-separator{% endblock %}
+{% block header_extra_class %}no-separator title-header{% endblock %}
 
 {% block full_header %}
   <div class="row">
-    <div class="col-xs-12 above-text">
+    <div class="col-xs-12 col-md-5 above-text">
       <img id="logo" src="{% static 'images/logo.svg' %}" alt="Dezède" />
       {% addtoblock 'js' %}
         <script>
@@ -19,6 +19,11 @@
           $('#logo').on('dragstart', function(e) { e.preventDefault(); });
         </script>
       {% endaddtoblock %}
+    </div>
+    <div class="col-xs-12 col-md-7">
+      <div id="slogan" class="text-right">
+        Écrire l’histoire des spectacles au jour le jour
+      </div>
     </div>
   </div>
 {% endblock %}
