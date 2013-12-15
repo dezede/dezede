@@ -33,9 +33,14 @@ class PublishedDetailView(DetailView):
 
 
 class PublishedListView(ListView):
+    has_frontend_admin = False
+
     def get_queryset(self):
-        return super(PublishedListView, self).get_queryset().published(
-            request=self.request).order_by(*self.model._meta.ordering)
+        qs = super(PublishedListView, self).get_queryset()
+        if self.has_frontend_admin:
+            qs = qs.select_related('owner', 'etat')
+        return qs.published(request=self.request) \
+                 .order_by(*self.model._meta.ordering)
 
 
 def cleaned_querydict(qd):
@@ -77,6 +82,7 @@ class EvenementListView(AjaxListView, PublishedListView):
     model = Evenement
     context_object_name = 'evenements'
     view_name = 'evenements'
+    has_frontend_admin = True
 
     def get_queryset(self, base_filter=None):
         qs = super(EvenementListView, self).get_queryset()

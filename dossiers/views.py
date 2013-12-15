@@ -12,6 +12,7 @@ from .models import DossierDEvenements
 
 class DossierDEvenementsList(PublishedListView):
     model = DossierDEvenements
+    has_frontend_admin = True
 
     def get_queryset(self):
         qs = super(DossierDEvenementsList, self).get_queryset()
