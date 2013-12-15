@@ -33,7 +33,7 @@ class SeleniumTest(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.selenium = WebDriver()
+        cls.selenium = WebDriver(timeout=60)
         cls.selenium.set_window_size(1366, 768)
         cls.wait = WebDriverWait(cls.selenium, 10)
         super(SeleniumTest, cls).setUpClass()
