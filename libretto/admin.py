@@ -985,12 +985,6 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     )
     fieldsets_and_inlines_order = ('f', 'i')
 
-    class Media(object):
-        js = [
-            '/static/tinymce_setup/tinymce_setup.js',
-            '/static/tiny_mce/tiny_mce.js',
-        ]
-
 
 site.register(Document, DocumentAdmin)
 site.register(Illustration, IllustrationAdmin)
