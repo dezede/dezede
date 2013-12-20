@@ -557,7 +557,7 @@ class Etat(CommonModel, UniqueSlugModel):
     message = HTMLField(
         _('message'), blank=True,
         help_text=_('Message à afficher dans la partie consultation.'))
-    public = BooleanField(_('publié'), default=True)
+    public = BooleanField(_('publié'), default=True, db_index=True)
 
     class Meta(object):
         verbose_name = ungettext_lazy('état', 'états', 1)
