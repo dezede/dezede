@@ -199,8 +199,9 @@ INSTALLED_APPS = (
     'south',
     'django_nose',
     'debug_toolbar',
-    'template_timings_panel',
-    'haystack_panel',
+    # Réactiver quand ils seront devenus compatibles debug-toolbar 1.0
+    # 'template_timings_panel',
+    # 'haystack_panel',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
