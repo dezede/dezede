@@ -43,7 +43,8 @@
     <script>
       $.endlessPaginate({
         paginateOnScroll: true,
-        paginateOnScrollMargin: 200
+        paginateOnScrollMargin: 200,
+        onCompleted: tooltips_reload
       });
 
       function get_url_kwarg(name, default_value) {
