@@ -1,8 +1,6 @@
 {# Gestion des tooltips #}
 function tooltips_reload() {
-  var $tooltips = $('*[title], *[data-original-title]');
-  $tooltips.tooltip('destroy');
-  $tooltips.tooltip({
+  $('*[title]').tooltip({
     placement: 'top',
     container: 'body'
   });
