@@ -199,8 +199,8 @@ INSTALLED_APPS = (
     'south',
     'django_nose',
     'debug_toolbar',
-    # Réactiver quand ils seront devenus compatibles debug-toolbar 1.0
-    # 'template_timings_panel',
+    'template_timings_panel',
+    # Réactiver quand il sera devenu compatible debug-toolbar 1.0
     # 'haystack_panel',
 )
 
@@ -310,8 +310,8 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
     'debug_toolbar.panels.profiling.ProfilingPanel',
-    # Réactiver quand ils seront devenus compatibles debug-toolbar 1.0
-    # 'template_timings_panel.panels.TemplateTimings.TemplateTimings',
+    'template_timings_panel.panels.TemplateTimings.TemplateTimings',
+    # Réactiver quand il sera devenu compatible debug-toolbar 1.0
     # 'haystack_panel.panel.HaystackDebugPanel',
 )
 
