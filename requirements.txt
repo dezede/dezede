@@ -85,7 +85,7 @@ Cython==0.19.2
 # For django-image-cropping
 easy-thumbnails==1.4
 # For django-filebrowser (mandatory)
-Pillow==2.2.2
+Pillow==2.3.0
 # For djangorestframework (optionals)
 Pygments==1.6
 django-filter==0.7
