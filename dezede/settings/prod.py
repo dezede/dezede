@@ -18,4 +18,7 @@ EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'noreply@dezede.org'
 SERVER_EMAIL = 'noreply@dezede.org'
 
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 COMPRESS_ENABLED = True

@@ -237,6 +237,14 @@ Configuration de nginx
       server {
         listen 80;
         server_name [[adresse_ou_domaine]];
+        rewrite ^(.*) https://$host$1 permanent;
+      }
+
+      server {
+        listen 443 ssl;
+        server_name [[adresse_ou_domaine]];
+        ssl_certificate     [[/chemin/du/certificat.crt]];
+        ssl_certificate_key [[/chemin/de/la/clé.key]];
 
         error_page 403 404 =404 /404;
 
@@ -300,7 +308,7 @@ Configuration de nginx
 
     ::
 
-      [program:dezede]
+      [program:dezede_django]
       directory=[[/chemin/du/projet]]
       command=gunicorn dezede.wsgi:application -w3 -t300 -b [[ip]]:[[port]]
       user=[[utilisateur]]
@@ -319,6 +327,9 @@ Configuration de nginx
       redirect_stderror=true
       stdout_logfile=[[/chemin/du/projet]]/supervisor_celery.log
       stdout_logfile_maxbytes=10MB
+
+      [group:dezede]
+      programs=dezede_django,dezede_celery
 
 
 #. Relancer le serveur avec :
