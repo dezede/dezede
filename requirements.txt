@@ -1,6 +1,7 @@
 # Gathers all Python dependencies.
-# For a more precise setup, use either `requirements/dev.txt` or
-# `requirements/prod.txt`.
+# For a more precise setup, use `requirements/base.txt`
+# and either `requirements/dev.txt` or `requirements/prod.txt`.
 
+-r requirements/base.txt
 -r requirements/dev.txt
 -r requirements/prod.txt

@@ -1,4 +1,2 @@
--r base.txt
-
 # Deployment
 gunicorn==18.0
