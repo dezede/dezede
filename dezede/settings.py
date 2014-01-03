@@ -228,7 +228,7 @@ DATE_FORMAT = 'l j F Y'
 TIME_FORMAT = 'H:i'
 
 GRAPPELLI_INDEX_DASHBOARD = 'dezede.dashboard.CustomIndexDashboard'
-GRAPPELLI_ADMIN_TITLE = u'<a href="/evenements/">Dezède</a>'
+GRAPPELLI_ADMIN_TITLE = u'<a href="/">Dezède</a>'
 
 ACCOUNT_ACTIVATION_DAYS = 7
 AUTH_USER_MODEL = 'accounts.HierarchicUser'
