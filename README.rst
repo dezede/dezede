@@ -56,7 +56,6 @@ postgresql                9.1
 postgresql-server-dev-9.1
 python2.7                 2.7.4
 python-pip                1.3.1
-python-docutils           0.10
 redis-server              2:2.6.7
 python-dev                2.7.4
 libxml2
@@ -100,19 +99,22 @@ Configuration de PostgreSQL
 
       | ``CREATE USER dezede LOGIN;``
       | ``CREATE DATABASE dezede OWNER dezede;``
-      | ``ALTER USER dezede WITH ENCRYPTED PASSWORD 'mot_de_passe';``
       | ``\q``
 
     | ``exit``
 
 
-#. Paramétrer l'accès de Django à la base de données :
+#. Autoriser l'utilisateur dezede à accéder à PostgreSQL par le socket unix :
 
-    - Éditer le fichier de réglages :
+   - Éditer le fichier de configuration :
 
-        ``nano settings.py``
+        ``sudo nano /etc/postgresql/9.1/main/pg_hba.conf``
 
-    - Les réglages à modifier sont dans ``DATABASES``.
+    - Ajouter cette ligne :
+
+        ::
+
+          local dezede dezede trust
 
 
 #. Création des tables de la base de données :
@@ -351,3 +353,11 @@ Une suite de tests a été créée pour l’application libretto.
 Pour la lancer, exécuter :
 
   ``./manage.py test dezede libretto accounts dossiers typography cache_tools``
+
+
+
+Restauration de sauvegarde SQL
+==============================
+
+| ``sudo -i -u postgres``
+| ``psql -v ON_ERROR_STOP=1 dezede < dezede.sql``
