@@ -17,7 +17,8 @@ install:
   - pip install coveralls --use-mirrors
 before_script:
   - psql -c 'DROP DATABASE IF EXISTS dezede;' -U postgres
-  - psql -c 'CREATE DATABASE dezede;' -U postgres
+  - psql -c 'CREATE USER dezede LOGIN;' -U postgres
+  - psql -c 'CREATE DATABASE dezede OWNER dezede;' -U postgres
   # Starts a celery worker in the background and discards the output.
   - celery -A dezede worker </dev/null &>/dev/null &
 script:
