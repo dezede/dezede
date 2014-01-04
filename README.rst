@@ -234,6 +234,11 @@ Configuration de nginx
 
     ::
 
+      limit_conn_zone $binary_remote_addr zone=dezede_django_conn:1m;
+      limit_req_zone $binary_remote_addr zone=dezede_django_req:1m rate=3r/s;
+      limit_conn_zone $binary_remote_addr zone=dezede_static_conn:10m;
+      limit_req_zone $binary_remote_addr zone=dezede_static_req:10m rate=50r/s;
+
       server {
         listen 80;
         server_name [[adresse_ou_domaine]];
@@ -266,6 +271,9 @@ Configuration de nginx
 
         client_max_body_size 50M;
 
+        limit_conn dezede_static_conn 50;
+        limit_req zone=dezede_static_req burst=500;
+
         location /media {
           alias [[/chemin/du/projet]]/media;
           allow all;
@@ -286,6 +294,8 @@ Configuration de nginx
           proxy_redirect off;
           proxy_connect_timeout 300s;
           proxy_read_timeout 300s;
+          limit_conn dezede_django_conn 3;
+          limit_req zone=dezede_django_req burst=20;
         }
       }
 
