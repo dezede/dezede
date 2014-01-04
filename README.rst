@@ -110,7 +110,7 @@ Configuration de PostgreSQL
 
         ``sudo nano /etc/postgresql/9.1/main/pg_hba.conf``
 
-    - Ajouter cette ligne :
+   - Ajouter cette ligne :
 
         ::
 
