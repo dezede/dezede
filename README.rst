@@ -234,6 +234,10 @@ Configuration de nginx
 
     ::
 
+      # Don't show infos about the server on error pages
+      server_tokens off;
+
+      # Zones created to avoid DDOS attacks
       limit_conn_zone $binary_remote_addr zone=dezede_django_conn:1m;
       limit_req_zone $binary_remote_addr zone=dezede_django_req:1m rate=3r/s;
       limit_conn_zone $binary_remote_addr zone=dezede_static_conn:10m;
@@ -268,6 +272,14 @@ Configuration de nginx
           application/octet-stream;
 
         add_header Cache-Control public;
+        # HSTS
+        add_header Strict-Transport-Security "max-age=86400; includeSubdomains";
+        # Clickjacking protection
+        add_header X-Frame-Options SAMEORIGIN;
+        # Disables browser content-type sniffing
+        add_header X-Content-Type-Options nosniff;
+        # Enables cross-site scripting protection
+        add_header X-XSS-Protection "1; mode=block";
 
         client_max_body_size 50M;
 
@@ -294,6 +306,7 @@ Configuration de nginx
           proxy_redirect off;
           proxy_connect_timeout 300s;
           proxy_read_timeout 300s;
+          # Parameters to avoid DDOS attacks
           limit_conn dezede_django_conn 3;
           limit_req zone=dezede_django_req burst=20;
         }
