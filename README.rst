@@ -229,88 +229,8 @@ Configuration de nginx
     ``sudo nano /etc/nginx/sites-available/dezede``
 
 
-#. Copier ceci dans ce dernier (en remplaçant ce qui est balisé
-   ``[[quelque_chose]]``) :
-
-    ::
-
-      # Don't show infos about the server on error pages
-      server_tokens off;
-
-      # Zones created to avoid DDOS attacks
-      limit_conn_zone $binary_remote_addr zone=dezede_django_conn:1m;
-      limit_req_zone $binary_remote_addr zone=dezede_django_req:1m rate=3r/s;
-      limit_conn_zone $binary_remote_addr zone=dezede_static_conn:10m;
-      limit_req_zone $binary_remote_addr zone=dezede_static_req:10m rate=50r/s;
-
-      server {
-        listen 80;
-        server_name [[adresse_ou_domaine]];
-        rewrite ^(.*) https://$host$1 permanent;
-      }
-
-      server {
-        listen 443 ssl;
-        server_name [[adresse_ou_domaine]];
-        ssl_certificate     [[/chemin/du/certificat.crt]];
-        ssl_certificate_key [[/chemin/de/la/clé.key]];
-
-        error_page 403 404 =404 /404;
-
-        gzip on;
-        gzip_vary on;
-        gzip_types
-          text/plain
-          text/css
-          text/javascript
-          application/x-javascript
-          image/png
-          image/svg+xml
-          image/jpeg
-          image/x-icon
-          application/pdf
-          application/octet-stream;
-
-        add_header Cache-Control public;
-        # HSTS
-        add_header Strict-Transport-Security "max-age=86400; includeSubdomains";
-        # Clickjacking protection
-        add_header X-Frame-Options SAMEORIGIN;
-        # Disables browser content-type sniffing
-        add_header X-Content-Type-Options nosniff;
-        # Enables cross-site scripting protection
-        add_header X-XSS-Protection "1; mode=block";
-
-        client_max_body_size 50M;
-
-        limit_conn dezede_static_conn 50;
-        limit_req zone=dezede_static_req burst=500;
-
-        location /media {
-          alias [[/chemin/du/projet]]/media;
-          allow all;
-          expires 1y;
-        }
-
-        location /static {
-          alias [[/chemin/du/projet]]/static;
-          allow all;
-          expires 1w;
-        }
-
-        location / {
-          proxy_pass http://localhost:8000;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header Host $http_host;
-          proxy_redirect off;
-          proxy_connect_timeout 300s;
-          proxy_read_timeout 300s;
-          # Parameters to avoid DDOS attacks
-          limit_conn dezede_django_conn 3;
-          limit_req zone=dezede_django_req burst=20;
-        }
-      }
+#. Copier dedans le contenu de nginx/dezede.conf (en remplaçant ce qui est
+   balisé ``[[quelque_chose]]``)
 
 
 #. Activer le site et désactiver le site par défaut :
@@ -333,7 +253,7 @@ Configuration de nginx
 
       [program:dezede_django]
       directory=[[/chemin/du/projet]]
-      command=gunicorn dezede.wsgi:application -w3 -t300 -b [[ip]]:[[port]]
+      command=gunicorn dezede.wsgi:application -w3 -t300 -b 127.0.0.1:[[port]]
       user=[[utilisateur]]
       autostart=true
       autorestart=true
