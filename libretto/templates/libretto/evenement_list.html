@@ -18,6 +18,13 @@
       </aside>
     </div>
 
+    {% addtoblock 'js' %}
+      {{ form.media.js }}
+    {% endaddtoblock %}
+    {% addtoblock 'css' %}
+      {{ form.media.css }}
+    {% endaddtoblock %}
+
     <div class="col-xs-12 col-sm-8 col-lg-9">
 
       <h3>

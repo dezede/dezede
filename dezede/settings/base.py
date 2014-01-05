@@ -241,9 +241,6 @@ AJAX_LOOKUP_CHANNELS = {
                                   'ElementDeProgrammeAutreLookup'),
     'source__nom': ('libretto.lookups', 'SourceNomLookup'),
 }
-# FIXME: django-ajax-selects rajoute ses versions de jQuery et jQueryUI !
-AJAX_SELECT_BOOTSTRAP = True
-AJAX_SELECT_INLINES = 'inline'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
