@@ -383,8 +383,7 @@ Localisation
 Tests de régression
 ===================
 
-Une suite de tests a été créée pour l’application libretto.
-Pour la lancer, exécuter :
+Une suite de tests encore incomplète est disponible. Pour la lancer, exécuter :
 
   ``./manage.py test dezede libretto accounts dossiers typography cache_tools``
 
