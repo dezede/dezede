@@ -73,7 +73,7 @@ class UserRegistrationForm(RegistrationForm):
         user.willing_to_be_mentor = data['willing_to_be_mentor']
         user.save()
 
-        site_url = 'http://' + get_current_site(request).domain
+        site_url = 'https://' + get_current_site(request).domain
         email_content = render_to_string(
             'accounts/grant_to_admin_demand_email.txt',
             {'user': user, 'site_url': site_url, 'mentor': user.mentor})

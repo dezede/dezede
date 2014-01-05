@@ -141,7 +141,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'django.contrib.messages.context_processors.messages',
     'sekizai.context_processors.sekizai',
-    'dezede.context_processors.site',
 )
 
 LOCALE_PATHS = (
