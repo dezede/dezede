@@ -6,7 +6,7 @@ psycopg2==2.5.1
 django-mptt==0.6.0
 -e git+https://github.com/BertrandBordage/django_polymorphic@6569725ad66bd9fb5248098c614a0f3b2a41a80a#egg=django-polymorphic
 django-polymorphic-tree==0.8.11
-django-autoslug==1.7.1
+django-autoslug==1.7.2
 
 # User interface
 django-grappelli==2.4.8
@@ -55,7 +55,7 @@ South==0.8.4
 beautifulsoup4==4.3.2
 BeautifulSoup<4.0
 lxml==3.2.4
-simplejson==3.3.1
+simplejson==3.3.2
 defusedxml==0.4.1
 PyYAML==3.10
 
