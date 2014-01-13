@@ -103,6 +103,16 @@ def get_verbose_name_from_object_list(object_list, verbose_name=None,
     return verbose_name, verbose_name_plural
 
 
+@register.assignment_tag(takes_context=True)
+def published(context, qs):
+    return qs.published(context['request'])
+
+
+@register.assignment_tag(takes_context=True)
+def next_sibling(context, obj):
+    return obj.get_next_sibling()
+
+
 @register.filter
 def get_property(obj, attr):
     """

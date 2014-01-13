@@ -362,18 +362,6 @@ class Evenement(AutoriteModel):
             return ''
         return self.caracteristiques.html(tags=tags, caps=caps)
 
-    def sources_by_type(self):
-        sources = OrderedDefaultDict()
-
-        ordering = list(get_model('libretto', 'Source')._meta.ordering)
-        if 'type' in ordering:
-            ordering.remove('type')
-        ordering.insert(0, 'type')
-
-        for source in self.sources.select_related('type').order_by(*ordering):
-            sources[source.type].append(source)
-        return sources.items()
-
     def get_meta_name(self, tags=False):
         if self.circonstance:
             out = self.circonstance

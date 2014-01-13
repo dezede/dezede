@@ -2,18 +2,19 @@
 
 from __future__ import unicode_literals
 from django.contrib.contenttypes.generic import GenericRelation
-from django.db.models import CharField, DateField, ForeignKey, \
-                             ManyToManyField, permalink, PROTECT
+from django.db.models import (
+    CharField, DateField, ForeignKey, ManyToManyField, permalink, PROTECT)
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy
 from tinymce.models import HTMLField
 from cache_tools import cached_ugettext as ugettext, cached_ugettext_lazy as _
-from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    DATE_MSG, calc_pluriel, SlugModel
-from .functions import ex, cite, no as no_func, date_html as date_html_func, \
-    href, small, str_list
+from .common import (
+    CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, DATE_MSG, calc_pluriel,
+    SlugModel, PublishedManager, PublishedQuerySet, OrderedDefaultDict)
+from .functions import (ex, cite, no as no_func, date_html as date_html_func,
+                        href, small, str_list)
 
 
 __all__ = (b'TypeDeSource', b'Source')
@@ -47,6 +48,27 @@ class TypeDeSource(CommonModel, SlugModel):
         return self.nom
 
 
+class SourceQuerySet(PublishedQuerySet):
+    def group_by_type(self):
+        sources = OrderedDefaultDict()
+
+        ordering = list(self.model._meta.ordering)
+        if 'type' in ordering:
+            ordering.remove('type')
+        ordering.insert(0, 'type')
+
+        for source in self.select_related('type').order_by(*ordering):
+            sources[source.type].append(source)
+        return sources.items()
+
+
+class SourceManager(PublishedManager):
+    queryset_class = SourceQuerySet
+
+    def group_by_type(self):
+        return self.get_query_set().group_by_type()
+
+
 @python_2_unicode_compatible
 class Source(AutoriteModel):
     # TODO: Rendre les sources polymorphes.  On trouve des périodiques, mais
@@ -70,6 +92,8 @@ class Source(AutoriteModel):
     # œuvres, lieux, individus, etc.
     evenements = ManyToManyField('Evenement', related_name='sources',
         blank=True, null=True, db_index=True, verbose_name=_('événements'))
+
+    objects = SourceManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('source', 'sources', 1)

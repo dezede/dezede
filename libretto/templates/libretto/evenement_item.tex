@@ -68,7 +68,8 @@
   \bigskip
 {% endif %}
 
-{% for type, sources in evenement.sources_by_type %}
+{% published evenement.sources as sources %}
+{% for type, sources in sources.group_by_type %}
   {\bfseries
     {% if sources|length > 1 %}
       {{ type.pluriel|capfirst }}
