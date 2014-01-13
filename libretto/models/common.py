@@ -185,13 +185,18 @@ class CommonModel(TypographicModel):
 
 
 class PublishedQuerySet(CommonQuerySet):
-    def published(self, request=None):
+    @staticmethod
+    def _get_filters(request=None):
         if request is None or not request.user.is_authenticated:
-            qs = self.filter(etat__public=True)
-        elif request.user.is_superuser:
-            qs = self
-        else:
-            qs = self.filter(Q(etat__public=True) | Q(owner=request.user.pk))
+            return (), {'etat__public': True}
+        elif not request.user.is_superuser:
+            return (Q(etat__public=True) | Q(owner=request.user.pk),), {}
+        return (), {}
+
+    def published(self, request=None):
+        filter_args, filter_kwargs = self._get_filters(request)
+
+        qs = self.filter(*filter_args, **filter_kwargs)
 
         # Automatically orders by the correct ordering.
         ordering = []
