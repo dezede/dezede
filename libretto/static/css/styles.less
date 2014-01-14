@@ -255,9 +255,6 @@ p {
   p {
     text-align: inherit;
   }
-  .well {
-    margin-bottom: 0;
-  }
 }
 
 .sc {
@@ -734,6 +731,12 @@ footer {
 
   footer .container .row>* {
     height: @footer-line-height * 2;
+  }
+
+  @media (min-width: @screen-sm-min) {
+    .row.facts .well {
+      margin-bottom: 0;
+    }
   }
 }
 
