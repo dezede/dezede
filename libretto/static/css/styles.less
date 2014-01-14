@@ -22,6 +22,7 @@
 @text-color:              black;
 @input-color:             @text-color;
 @input-color-placeholder: lighten(desaturate(@text-color, 100%), 45%);
+@input-border-focus:      fadeout(@link-hover-color, 20%);
 
 @navbar-default-link-color:        @gray;
 @navbar-default-link-hover-color:  @gray-darker;
@@ -237,7 +238,7 @@ a:not(.btn):not(.tooltip):not(.ui-slider-handle) {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  text-shadow: 1px 2px 0 white;
+  text-shadow: 1px 1px 0 white;
 }
 
 p {
@@ -517,28 +518,6 @@ table {
 
 .page-header.no-separator {
   border: none;
-}
-
-textarea,
-input[type="text"],
-input[type="password"],
-input[type="datetime"],
-input[type="datetime-local"],
-input[type="date"],
-input[type="month"],
-input[type="time"],
-input[type="week"],
-input[type="number"],
-input[type="email"],
-input[type="url"],
-input[type="search"],
-input[type="tel"],
-input[type="color"],
-.uneditable-input {
-  &:focus {
-    border-color: fadeout(@link-hover-color, 20%);
-    .box-shadow(0 0 8px fadeout(@link-hover-color, 40%));
-  }
 }
 
 #criteria {
