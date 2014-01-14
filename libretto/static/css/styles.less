@@ -552,14 +552,18 @@ input[type="color"],
   line-height: normal;
 }
 
-ul.jqtree-tree .jqtree-element {
+ul.jqtree-tree {
+  .jqtree-element {
     cursor: auto;
-}
-
-.jqtree-loading .jqtree-toggler .fa {
-  .animation(spin 2s infinite linear);  // Same as adding .fa-spin
-  &:before {
-    content: '\f110';  // Same as overwriting with .fa-spinner
+  }
+  .jqtree-toggler {
+    top: 25%;
+    .jqtree-loading & .fa {
+      .animation(spin 2s infinite linear);  // Same as adding .fa-spin
+      &:before {
+        content: '\f110';  // Same as overwriting with .fa-spinner
+      }
+    }
   }
 }
 
