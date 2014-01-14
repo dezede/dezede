@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from copy import deepcopy
 from datetime import date
 from django.db.models import get_model, Q
 from django.http import Http404
@@ -18,7 +17,7 @@ from .forms import *
 from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 
 
-__all__ = (b'PublishedDetailView', 'PublishedListView',
+__all__ = (b'PublishedDetailView', b'PublishedListView',
            b'EvenementListView', b'EvenementDetailView',
            b'SourceViewSet', b'PartieViewSet', b'ProfessionViewSet',
            b'LieuViewSet', b'IndividuViewSet', b'OeuvreViewSet')
@@ -43,18 +42,26 @@ class PublishedListView(ListView):
                  .order_by(*self.model._meta.ordering)
 
 
-def cleaned_querydict(qd):
-    new_qd = qd.copy()
-    for k, v in new_qd.items():
-        if not v or v == '|':
-            del new_qd[k]
-    return new_qd
+class EvenementListView(AjaxListView, PublishedListView):
+    model = Evenement
+    context_object_name = 'evenements'
+    view_name = 'evenements'
+    has_frontend_admin = True
 
+    BINDINGS = {
+        'lieu': ('ancrage_debut__lieu__in', 'ancrage_fin__lieu__in'),
+        'oeuvre': 'programme__oeuvre__in',
+        'individu': ('distribution__individus__in',
+                     'programme__distribution__individus__in',
+                     'programme__oeuvre__auteurs__individu__in'),
+    }
 
-def get_filters(bindings, data):
-    filters = Q()
-    for key, value in data.items():
-        if value and key in bindings:
+    @classmethod
+    def get_filters(cls, data):
+        filters = Q()
+        for key, value in data.items():
+            if not value or key not in cls.BINDINGS:
+                continue
             if '|' in value:
                 # Sépare les différents objets à partir d'une liste de pk.
                 Model = get_model('libretto', key)
@@ -66,23 +73,14 @@ def get_filters(bindings, data):
                     objects = objects.get_descendants(include_self=True)
                 value = objects
             if value:
-                accessors = bindings[key]
-                if isinstance(accessors, (tuple, list)):
-                    subfilter = Q()
-                    for accessor in accessors:
-                        subfilter |= Q(**{accessor: value})
-                else:
-                    accessor = accessors
-                    subfilter = Q(**{accessor: value})
+                accessors = cls.BINDINGS[key]
+                if not isinstance(accessors, (tuple, list)):
+                    accessors = [accessors]
+                subfilter = Q()
+                for accessor in accessors:
+                    subfilter |= Q(**{accessor: value})
                 filters &= subfilter
-    return filters
-
-
-class EvenementListView(AjaxListView, PublishedListView):
-    model = Evenement
-    context_object_name = 'evenements'
-    view_name = 'evenements'
-    has_frontend_admin = True
+        return filters
 
     def get_queryset(self, base_filter=None):
         qs = super(EvenementListView, self).get_queryset()
@@ -97,31 +95,28 @@ class EvenementListView(AjaxListView, PublishedListView):
             self.form = EvenementListForm(queryset=qs)
             self.valid_form = False
             data = {}
-        if self.valid_form:
-            search_query = data.get('q')
-            if search_query:
-                sqs = SearchQuerySet().models(self.model)
-                sqs = sqs.auto_query(search_query)
-                # Le slicing est là pour compenser un bug de haystack, qui va
-                # chercher les valeurs par paquets de 10, faisant parfois ainsi
-                # des centaines de requêtes à elasticsearch.
-                pk_list = sqs.values_list('pk', flat=True)[:10 ** 6]
-                qs = qs.filter(pk__in=pk_list)
-            bindings = {
-                'lieu': ('ancrage_debut__lieu__in', 'ancrage_fin__lieu__in'),
-                'oeuvre': 'programme__oeuvre__in',
-                'individu': ('distribution__individus__in',
-                             'programme__distribution__individus__in',
-                             'programme__oeuvre__auteurs__individu__in'),
-            }
-            filters = get_filters(bindings, data)
-            qs = qs.filter(filters).distinct()
-            try:
-                start, end = int(data.get('dates_0')), int(data.get('dates_1'))
-                qs = qs.filter(ancrage_debut__date__range=(
-                    date(start, 1, 1), date(end, 12, 31)))
-            except (TypeError, ValueError):
-                pass
+
+        if not self.valid_form:
+            return qs
+
+        search_query = data.get('q')
+        if search_query:
+            sqs = SearchQuerySet().models(self.model)
+            sqs = sqs.auto_query(search_query)
+            # Le slicing est là pour compenser un bug de haystack, qui va
+            # chercher les valeurs par paquets de 10, faisant parfois ainsi
+            # des centaines de requêtes à elasticsearch.
+            pk_list = sqs.values_list('pk', flat=True)[:10 ** 6]
+            qs = qs.filter(pk__in=pk_list)
+
+        filters = self.get_filters(data)
+        qs = qs.filter(filters).distinct()
+        try:
+            start, end = int(data.get('dates_0')), int(data.get('dates_1'))
+            qs = qs.filter(ancrage_debut__date__range=(
+                date(start, 1, 1), date(end, 12, 31)))
+        except (TypeError, ValueError):
+            pass
         return qs
 
     def get_context_data(self, **kwargs):
@@ -132,14 +127,20 @@ class EvenementListView(AjaxListView, PublishedListView):
     def get_success_view(self):
         return self.view_name,
 
+    def get_cleaned_GET(self):
+        new_qd = self.request.GET.copy()
+        for k, v in new_qd.items():
+            if not v or v == '|':
+                del new_qd[k]
+        return new_qd
+
     def get(self, request, *args, **kwargs):
         response = super(EvenementListView, self).get(request, *args, **kwargs)
-        data = self.request.GET
-        new_data = cleaned_querydict(data)
-        if new_data.dict() != data.dict() or not self.valid_form:
+        new_GET = self.get_cleaned_GET()
+        if new_GET.dict() != self.request.GET.dict() or not self.valid_form:
             response = redirect(*self.get_success_view())
             if self.valid_form:
-                response['Location'] += '?' + new_data.urlencode(safe=b'|')
+                response['Location'] += '?' + new_GET.urlencode(safe=b'|')
         return response
 
 
@@ -276,8 +277,7 @@ class TreeNode(PublishedDetailView):
         if isinstance(children, PublishedQuerySet):
             children = children.published(self.request)
 
-        context[b'children'] = children
-        context[b'attr'] = self.kwargs['attr']
+        context.update(children=children, attr=self.kwargs['attr'])
         return context
 
     def get(self, request, *args, **kwargs):
