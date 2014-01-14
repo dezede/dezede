@@ -158,10 +158,7 @@ def data_table_list_header(context):
     out = ''
     if has_count and (count != 1 or has_count_if_one):
         out = '%s ' % count
-    if count == 1:
-        out += force_text(verbose_name)
-    else:
-        out += force_text(verbose_name_plural)
+    out += force_text(verbose_name if count == 1 else verbose_name_plural)
     return capfirst(out)
 
 
