@@ -29,7 +29,7 @@
 
 @breadcrumb-separator: '\00A0/';
 
-@body-bg: hsv(50, 7%, 100%);
+@body-bg: hsv(50, 10%, 100%);
 @well-bg: darken(@body-bg, 4%);
 
 @carousel-caption-color: black;
@@ -288,14 +288,19 @@ cite {
 .title-header {
   padding: 0;
   #logo {
-    max-width: 400px;
-    margin: -50px 0 -70px;
+    margin: -50px 0 -80px;
   }
   #slogan {
-    margin: 22px 0 0;
+    margin: 40px 0 0;
     font-family: @font-family-serif;
     font-style: italic;
     font-size: @font-size-h2;
+    .btn {
+      position: relative;
+      top: -2px;
+      margin-left: @grid-gutter-width / 2;
+      padding: 1px 6px;
+    }
   }
 }
 
