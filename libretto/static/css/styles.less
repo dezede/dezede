@@ -285,11 +285,7 @@ cite {
 
 .title-header {
   padding: 0;
-  #logo {
-    margin: -50px 0 -80px;
-  }
   #slogan {
-    margin: 40px 0 0;
     font-family: @font-family-serif;
     font-style: italic;
     font-size: @font-size-h2;
@@ -712,9 +708,39 @@ footer {
     height: @footer-line-height * 2;
   }
 
-  @media (min-width: @screen-sm-min) {
-    .row.facts .well {
-      margin-bottom: 0;
+  .title-header {
+    #slogan {
+      text-align: center;
+    }
+  }
+
+  .row.facts :last-child .well {
+    margin-bottom: 0;
+  }
+}
+
+@media (min-width: @screen-md-min) {
+  .title-header {
+    #logo {
+      margin-bottom: -65px;
+    }
+    #slogan {
+      text-align: right;
+      margin-top: 35px;
+    }
+  }
+  .row.facts .well {
+    margin-bottom: 0;
+  }
+}
+
+@media(min-width: @screen-lg-min) {
+  .title-header {
+    #logo {
+      margin-bottom: -80px;
+    }
+    #slogan {
+      margin-top: 52px;
     }
   }
 }
