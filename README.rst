@@ -3,7 +3,7 @@ Projet Dezède
 *************
 
 :Auteur: Bertrand Bordage
-:Copyright: Bertrand Bordage © 2011-2013
+:Copyright: Bertrand Bordage © 2011-2014
 
 |travis|_
 |coveralls|_
