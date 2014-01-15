@@ -314,7 +314,21 @@ cite {
     }
   }
   .carousel-caption {
-    @font-size-ratio: 2.0;
+    @font-size-ratio-xs-sm: 1.5;
+    @font-size-ratio-md: 1.7;
+    @font-size-ratio-lg: 2.0;
+    .responsive-font-size(@font-size) {
+      @media (max-width: @screen-sm-max) {
+        font-size: round(@font-size * @font-size-ratio-xs-sm);
+      }
+      @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
+        font-size: round(@font-size * @font-size-ratio-md);
+      }
+      @media (min-width: @screen-lg-min) {
+        font-size: round(@font-size * @font-size-ratio-lg);
+      }
+    }
+
     display: inline-block;
     left: @carousel-control-width;
     right: @carousel-control-width;
@@ -338,15 +352,15 @@ cite {
     }
     article {
       font-family: @font-family-serif;
-      font-size: @font-size-base * @font-size-ratio;
       font-style: italic;
       padding-top: 10px;
+      .responsive-font-size(@font-size-base);
     }
     h1 {
-      font-size: @font-size-h1 * @font-size-ratio;
+      .responsive-font-size(@font-size-h1);
     }
     h2 {
-      font-size: @font-size-h2 * @font-size-ratio;
+      .responsive-font-size(@font-size-h2);
     }
     .read-more {
       display: block;
