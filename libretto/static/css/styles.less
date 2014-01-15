@@ -64,7 +64,7 @@
 // Mixins
 //
 
-.font-feature-settings(@settings) {
+.font-feature-settings (@settings) {
   -webkit-font-feature-settings: @settings;
      -moz-font-feature-settings: @settings;
       -ms-font-feature-settings: @settings;
@@ -276,10 +276,10 @@ cite {
 
 .fa.fa-square-o {
   &:before {
-    content: '\f096';
+    content: @fa-var-square-o;
   }
   .active &:before {
-    content: '\f046';
+    content: @fa-var-check-square-o;
   }
 }
 
@@ -553,7 +553,7 @@ ul.jqtree-tree {
     .jqtree-loading & .fa {
       .animation(spin 2s infinite linear);  // Same as adding .fa-spin
       &:before {
-        content: '\f110';  // Same as overwriting with .fa-spinner
+        content: @fa-var-spinner;
       }
     }
   }
