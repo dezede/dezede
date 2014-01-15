@@ -5,109 +5,104 @@
 
   <div class="container">
 
-    <div class="row">
+    <div class="navbar-header">
+      <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">{% trans 'Afficher/masquer le menu' %}</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="{% url 'home' %}" class="navbar-brand">
+        <span class="dezedeicon D"></span>
+      </a>
+    </div>
 
-      <div class="navbar-header">
-        <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">{% trans 'Afficher/masquer le menu' %}</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a href="{% url 'home' %}" class="navbar-brand">
-          <span class="dezedeicon D"></span>
-        </a>
-      </div>
+    <div class="collapse navbar-collapse">
 
-      <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        {% nav_link 'dossierdevenements_index' _('dossiers') %}
+        {% nav_link 'evenements' _('événements') %}
+      </ul>
+      <form method="get" action="{% url 'haystack_search' %}"
+            class="navbar-form navbar-left" role="search">
+        <input id="navbar-search" type="search" name="q" class="form-control"
+               placeholder="{% trans "Rechercher…" %}" />
+      </form>
+      {% addtoblock 'js' %}
+        <script>
+          $('input[name="q"]').typeahead({
+            remote: '{% url 'autocomplete' %}?q=%QUERY'
+          }).on('typeahead:initialized', function (e) {
+            {# FIXME: Retirer quand https://github.com/twitter/typeahead.js/pull/325 sera résolu. #}
+            $(this).prev('.tt-hint').addClass(this.className);
+          }).keypress(function (e) {
+            if (e.which == 13) {
+              $(this).parents('form').submit();
+              return false;
+            }
+          });
+        </script>
+      {% endaddtoblock %}
 
-        <ul class="nav navbar-nav">
-          {% nav_link 'dossierdevenements_index' _('dossiers') %}
-          {% nav_link 'evenements' _('événements') %}
-        </ul>
-        <form method="get" action="{% url 'haystack_search' %}"
-              class="navbar-form navbar-left" role="search">
-          <input id="navbar-search" type="search" name="q" class="form-control"
-                 placeholder="{% trans "Rechercher…" %}" />
-        </form>
-        {% addtoblock 'js' %}
-          <script>
-            $('input[name="q"]').typeahead({
-              remote: '{% url 'autocomplete' %}?q=%QUERY'
-            }).on('typeahead:initialized', function (e) {
-              {# FIXME: Retirer quand https://github.com/twitter/typeahead.js/pull/325 sera résolu. #}
-              $(this).prev('.tt-hint').addClass(this.className);
-            }).keypress(function (e) {
-              if (e.which == 13) {
-                $(this).parents('form').submit();
-                return false;
-              }
-            });
-          </script>
-        {% endaddtoblock %}
+      <ul class="nav navbar-nav navbar-right">
 
-        <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            {% trans 'Index' %} <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            {% nav_link 'lieu_index' _('lieux et institutions') %}
+            {% nav_link 'oeuvre_index' _('œuvres') %}
+            {% nav_link 'individu_index' _('individus') %}
+            {% nav_link 'profession_index' _('professions') %}
+            {% nav_link 'partie_index' _('rôles et instruments') %}
+          </ul>
+        </li>
 
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              {% trans 'Index' %} <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu" role="menu">
-              {% nav_link 'lieu_index' _('lieux et institutions') %}
-              {% nav_link 'oeuvre_index' _('œuvres') %}
-              {% nav_link 'individu_index' _('individus') %}
-              {% nav_link 'profession_index' _('professions') %}
-              {% nav_link 'partie_index' _('rôles et instruments') %}
-            </ul>
-          </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <b class="fa fa-info-circle"></b> <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
 
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <b class="fa fa-info-circle"></b> <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
+            <li>
+              <span class="navbar-text text-center">
+                {% trans 'Une aide arrivera prochainement' %}
+              </span>
+            </li>
 
-              <li>
-                <span class="navbar-text text-center">
-                  {% trans 'Une aide arrivera prochainement' %}
-                </span>
-              </li>
+            <li>
+              <a href="https://groups.google.com/forum/?fromgroups=#!forum/dezede">
+                <b class="fa fa-comments fa-fw"></b>
+                {% trans 'Questions/Bugs' %}
+              </a>
+            </li>
 
-              <li>
-                <a href="https://groups.google.com/forum/?fromgroups=#!forum/dezede">
-                  <b class="fa fa-comments fa-fw"></b>
-                  {% trans 'Questions/Bugs' %}
-                </a>
-              </li>
+            <li>
+              <a href="https://github.com/dezede/dezede">
+                <b class="fa fa-github fa-fw"></b>
+                {% trans 'Source sur' %} GitHub
+              </a>
+            </li>
+          </ul>
+        </li>
 
-              <li>
-                <a href="https://github.com/dezede/dezede">
-                  <b class="fa fa-github fa-fw"></b>
-                  {% trans 'Source sur' %} GitHub
-                </a>
-              </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <b class="fa fa-cog"></b> <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
 
-            </ul>
-          </li>
+            <li>
+              <a href="{% url 'admin:index' %}">
+                <b class="fa fa-wrench fa-fw"></b>
+                {% trans "Administration" %}
+              </a>
+            </li>
+          </ul>
+        </li>
 
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <b class="fa fa-cog"></b> <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-
-              <li>
-                <a href="{% url 'admin:index' %}">
-                  <b class="fa fa-wrench fa-fw"></b>
-                  {% trans "Administration" %}
-                </a>
-              </li>
-            </ul>
-          </li>
-
-        </ul>
-
-      </div>
+      </ul>
 
     </div>
 
