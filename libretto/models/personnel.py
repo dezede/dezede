@@ -16,7 +16,7 @@ from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
     UniqueSlugModel, PublishedManager, AutoriteModel, CommonTreeManager, \
     PublishedQuerySet, CommonTreeQuerySet, Caracteristique, \
     TypeDeCaracteristique
-from .functions import capfirst, ex, href, date_html, sc
+from .functions import capfirst, ex, href, date_html, sc, str_list
 
 
 __all__ = (
@@ -113,6 +113,14 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     def __str__(self):
         return capfirst(self.html(tags=False))
+
+    def individus_count(self):
+        return self.individus.count()
+    individus_count.short_description = _('nombre d’individus')
+
+    def oeuvres_count(self):
+        return self.auteurs.oeuvres().count()
+    oeuvres_count.short_description = _('nombre d’œuvres')
 
     @staticmethod
     def autocomplete_search_fields():
@@ -297,6 +305,12 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
 
     # TODO: Calculer les apparitions et les ajouter au template, comme pour
     #       les individus.
+
+    def membres_html(self):
+        return str_list([
+            membre.html for membre in
+            self.membres.select_related('individu', 'instrument')])
+    membres_html.short_description = _('membres')
 
     def membres_count(self):
         return self.membres.count()

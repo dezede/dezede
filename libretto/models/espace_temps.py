@@ -16,7 +16,7 @@ from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
 from cache_tools import cached_ugettext as ugettext, \
-    cached_pgettext as pgettext, cached_ugettext_lazy as _
+    cached_pgettext as pgettext, cached_ugettext_lazy as _, model_method_cached
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
@@ -115,7 +115,7 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         relations = ('get_real_instance',)
         if all_relations:
             relations += ('enfants', 'saisons', 'ancrages',
-                    'dossiers',)
+                          'dossiers',)
         return relations
 
     @permalink
@@ -322,6 +322,7 @@ class AncrageSpatioTemporel(CommonModel):
             return datetime.datetime.combine(self.date, self.heure).isoformat()
         return self.date.isoformat()
 
+    @model_method_cached()
     def html(self, tags=True, short=False):
         out = str_list((self.calc_lieu(tags, short),
                         self.calc_moment(tags, short)))

@@ -378,6 +378,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def related_label(self, tags=False):
         return self.html(tags=tags, abbr=False)
+    related_label.short_description = _('individu')
 
     def related_label_html(self):
         return self.related_label(tags=True)
@@ -394,7 +395,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
                                         'la naissance.'))
 
     def __str__(self):
-        return strip_tags(self.html(False))
+        return strip_tags(self.html(tags=False))
 
     @staticmethod
     def autocomplete_search_fields():

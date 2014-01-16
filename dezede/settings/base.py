@@ -102,7 +102,7 @@ INSTALLED_APPS = (
     'polymorphic',
     'mptt',
     'endless_pagination',
-    'django_tables2',
+    'eztables',
     'tinymce',
     'grappelli.dashboard',
     'grappelli',

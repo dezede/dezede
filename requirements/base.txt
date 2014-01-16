@@ -30,7 +30,7 @@ django-redis==3.4.0
 
 # Data visualization frameworks
 djangorestframework==2.3.10
-django-tables2==0.14.0
+-e git+https://github.com/noirbizarre/django-eztables@daeff682d5113684770c153455410bef160c581b#egg=django-eztables
 
 # Small but powerful tools
 django-reversion==1.8.0

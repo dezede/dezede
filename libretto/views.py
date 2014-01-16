@@ -1,20 +1,23 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from collections import OrderedDict
 from datetime import date
-from django.db.models import get_model, Q
-from django.http import Http404
+from django.db.models import get_model, Q, FieldDoesNotExist
+from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import redirect
-from django.views.generic import ListView, DetailView
+from django.utils.encoding import force_text
+from django.views.generic import ListView, DetailView, TemplateView
 from endless_pagination.views import AjaxListView
-from django_tables2 import SingleTableMixin
+from eztables.forms import DatatablesForm
+from eztables.views import DatatablesView
 from haystack.query import SearchQuerySet
 from polymorphic import PolymorphicQuerySet
 from viewsets import ModelViewSet
+from libretto.models.functions import href
 from .models import *
 from .models.common import PublishedQuerySet
 from .forms import *
-from .tables import OeuvreTable, IndividuTable, ProfessionTable, PartieTable
 
 
 __all__ = (b'PublishedDetailView', b'PublishedListView',
@@ -148,8 +151,72 @@ class EvenementDetailView(PublishedDetailView):
     model = Evenement
 
 
-class CommonTableView(SingleTableMixin, PublishedListView):
-    pass
+class CommonTableView(TemplateView):
+    template_name = 'libretto/tableau.html'
+    fields = None
+    model = None
+
+    def _get_verbose_name(self, field):
+        try:
+            return self.model._meta.get_field(field).verbose_name
+        except FieldDoesNotExist:
+            try:
+                return getattr(self.model, field).short_description
+            except AttributeError:
+                return field
+
+    def get_context_data(self, **kwargs):
+        context = super(CommonTableView, self).get_context_data(**kwargs)
+        context.update(
+            fields_verbose=[self._get_verbose_name(f) for f in self.fields],
+            fieldnames=self.fields,
+            model=self.model,
+        )
+        return context
+
+
+class CommonDatatablesView(DatatablesView):
+    undefined_str = '−'
+    link_on_column = 0
+
+    def process_dt_response(self, data):
+        self.form = DatatablesForm(data)
+        if self.form.is_valid():
+            self.object_list = self.get_queryset()
+            return self.render_to_response(self.form)
+        return HttpResponseBadRequest()
+
+    def get_db_fields(self):
+        raise NotImplementedError
+
+    def _get_value(self, obj, attr):
+        out = getattr(obj, attr)
+        if callable(out):
+            out = out()
+        return force_text(out or self.undefined_str)
+
+    def get_row(self, obj):
+        out = {}
+        for i, attr in enumerate(self.fields):
+            v = self._get_value(obj, attr)
+            if self.link_on_column is not None and i == self.link_on_column:
+                v = href(obj.get_absolute_url(), v)
+            out[attr] = v
+        return out
+
+    def global_search(self, queryset):
+        q = self.dt_data['sSearch']
+        if not q:
+            return queryset
+        sqs = SearchQuerySet().models(self.model).auto_query(q)
+        # Le slicing est là pour compenser un bug de haystack, qui va
+        # chercher les valeurs par paquets de 10, faisant parfois ainsi
+        # des centaines de requêtes à elasticsearch.
+        pk_list = sqs.values_list('pk', flat=True)[:10 ** 6]
+        return queryset.filter(pk__in=pk_list)
+
+    def column_search(self, queryset):
+        return queryset
 
 
 class CommonViewSet(ModelViewSet):
@@ -158,9 +225,11 @@ class CommonViewSet(ModelViewSet):
             b'view': CommonTableView,
             b'pattern': br'',
             b'name': b'index',
-            b'kwargs': {
-                b'template_name': b'libretto/tableau.html',
-            },
+        },
+        b'list_view_data': {
+            b'view': CommonDatatablesView,
+            b'pattern': br'ajax',
+            b'name': b'ajax',
         },
         b'detail_view': {
             b'view': PublishedDetailView,
@@ -173,12 +242,13 @@ class CommonViewSet(ModelViewSet):
             b'name': b'permanent_detail',
         },
     }
-    table_class = None
+    table_fields = ()
 
     def __init__(self):
-        if self.table_class is not None:
-            self.views[b'list_view'][b'kwargs'][b'table_class'] \
-                = self.table_class
+        fields = OrderedDict(self.table_fields)
+        self.views[b'list_view'][b'kwargs'] = {b'fields': fields}
+        self.views[b'list_view_data'][b'kwargs'] = {
+            b'model': self.model, b'fields': fields}
         super(CommonViewSet, self).__init__()
 
 
@@ -212,13 +282,21 @@ class SourceViewSet(CommonViewSet):
 class PartieViewSet(CommonViewSet):
     model = Partie
     base_url_name = b'partie'
-    table_class = PartieTable
+    table_fields = (
+        ('nom', 'nom'),
+        ('interpretes_html', None),
+    )
 
 
 class ProfessionViewSet(CommonViewSet):
     model = Profession
     base_url_name = b'profession'
-    table_class = ProfessionTable
+    table_fields = (
+        ('nom', 'nom'),
+        ('parent', 'parent'),
+        ('individus_count', None),
+        ('oeuvres_count', None),
+    )
 
 
 class LieuViewSet(CommonViewSet):
@@ -234,16 +312,21 @@ class LieuViewSet(CommonViewSet):
 class IndividuViewSet(CommonViewSet):
     model = Individu
     base_url_name = b'individu'
-    table_class = IndividuTable
+    table_fields = (
+        ('related_label', '{nom} {prenoms}'),
+        ('calc_professions', 'professions'),
+        ('ancrage_naissance', 'ancrage_naissance'),
+        ('ancrage_deces', 'ancrage_deces')
+    )
 
 
 class EnsembleViewSet(CommonViewSet):
     model = Ensemble
     base_url_name = b'ensemble'
-
-    def __init__(self):
-        super(EnsembleViewSet, self).__init__()
-        del self.views[b'list_view']
+    table_fields = (
+        ('nom', 'nom'),
+        ('membres_html', 'membres'),
+    )
 
 
 class OeuvreTableView(CommonTableView):
@@ -256,7 +339,11 @@ class OeuvreViewSet(CommonViewSet):
     model = Oeuvre
     base_url_pattern = b'oeuvres'
     base_url_name = b'oeuvre'
-    table_class = OeuvreTable
+    table_fields = (
+        ('_str', '{titre} {genre}'),
+        ('genre', 'genre'),
+        ('auteurs_html', 'auteurs__individu'),
+    )
 
     def __init__(self):
         super(OeuvreViewSet, self).__init__()

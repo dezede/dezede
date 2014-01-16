@@ -195,6 +195,7 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
     def interpretes_html(self):
         return str_list(i.html() for i in self.interpretes())
+    interpretes_html.short_description = _('interprètes')
 
     def evenements(self):
         return self.pupitres.elements_de_distribution().evenements()
@@ -601,6 +602,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def pupitres_html(self, prefix=False, tags=True):
         return self.calc_pupitres(prefix=prefix, tags=tags)
 
+    @model_method_cached()
     def auteurs_html(self, tags=True):
         return self.auteurs.order_by(*Auteur._meta.ordering).html(tags)
     auteurs_html.short_description = _('auteurs')
@@ -684,6 +686,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def titre_html(self, tags=True, links=True):
         return self.html(tags, auteurs=False, titre=True, descr=False,
                          ancestors=True, ancestors_links=True, links=links)
+    titre_html.short_description = _('titre')
 
     def titre_descr(self, tags=False):
         return self.html(tags=tags, auteurs=False, titre=True, descr=True,
@@ -727,6 +730,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def __str__(self):
         return strip_tags(self.titre_html(False))  # strip_tags car on autorise
                          # les rédacteurs à mettre des tags dans les CharFields
+
+    _str = __str__
+    _str.short_description = _('œuvre')
 
     @staticmethod
     def autocomplete_search_fields():
