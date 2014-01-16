@@ -42,7 +42,10 @@ if settings.DEBUG:
                                 {'document_root': settings.MEDIA_ROOT}))
     del(_media_url, serve)
 
+    import debug_toolbar
+
     urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
         url(r'^403$', ErrorView.as_view(status=403)),
         url(r'^500$', ErrorView.as_view(status=500)),
         url(r'^503$', ErrorView.as_view(status=503)),
