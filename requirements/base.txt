@@ -29,7 +29,7 @@ django-redis==3.4.0
 -e git+https://github.com/jmoiron/johnny-cache@37e75019625979487f17b47050da7f0af3fea42c#egg=johnny-cache
 
 # Data visualization frameworks
-djangorestframework==2.3.10
+djangorestframework==2.3.12
 -e git+https://github.com/noirbizarre/django-eztables@daeff682d5113684770c153455410bef160c581b#egg=django-eztables
 
 # Small but powerful tools
