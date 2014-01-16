@@ -110,7 +110,8 @@ Configuration de PostgreSQL
 
         ``sudo nano /etc/postgresql/9.1/main/pg_hba.conf``
 
-   - Ajouter cette ligne :
+   - Ajouter cette nouvelle ligne après
+     ``# Database administrative login by Unix domain socket`` :
 
         ::
 
@@ -120,6 +121,11 @@ Configuration de PostgreSQL
 #. Création des tables de la base de données :
 
     ``./manage.py syncdb`` puis ``./manage.py migrate``
+
+
+#. Redémarrer PostgreSQL :
+
+    ``sudo service postgresql restart``
 
 
 
@@ -140,7 +146,7 @@ Configuration de Redis
           unixsocketperm 777
 
 
-#. Relancer le serveur :
+#. Redémarrer Redis :
 
     ``sudo service redis-server restart``
 
