@@ -97,7 +97,7 @@ Configuration de PostgreSQL
     | ``sudo -i -u postgres``
     | ``psql``
 
-      | ``CREATE USER dezede LOGIN;``
+      | ``CREATE USER dezede LOGIN CREATEDB;``
       | ``CREATE DATABASE dezede OWNER dezede;``
       | ``\q``
 
@@ -115,7 +115,7 @@ Configuration de PostgreSQL
 
         ::
 
-          local dezede dezede trust
+          local dezede,test_dezede dezede trust
 
 
 #. Création des tables de la base de données :
