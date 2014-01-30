@@ -84,13 +84,6 @@
           column-gap: @gap;
 }
 
-.animation(@animation) {
-  -webkit-animation: @animation;
-     -moz-animation: @animation;
-       -o-animation: @animation;
-          animation: @animation;
-}
-
 .small-caps () {
   .font-feature-settings(@default-font-features, 'smcp';);
 }
@@ -731,7 +724,7 @@ form .results_on_deck {
   .opacity(60);
 }
 
-footer {
+body>footer {
   width: 100%;
   color: @footer-color;
   background: @footer-bg;
