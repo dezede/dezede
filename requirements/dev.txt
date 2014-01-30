@@ -3,10 +3,21 @@ django-debug-toolbar==1.0.1
 django-debug-toolbar-template-timings==0.5.5
 # Réactiver quand il sera devenu compatible debug-toolbar 1.0
 #django-haystack-panel==0.1.3
-django-extensions==1.3.2
+django-extensions==1.3.3
 
-# Dependency for django-extension runserver_plus
+# For manage.py runserver_plus
 Werkzeug==0.9.4
+
+# For manage.py shell_plus
+ipython
+
+# For manage.py shell_plus --notebook
+pyzmq
+jinja2
+tornado
+
+# For manage.py graph_models
+pygraphviz
 
 # Translation helper
 transifex-client==0.10

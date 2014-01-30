@@ -39,7 +39,7 @@ django-viewsets==0.1.7
 Unipath==1.0
 
 # Asynchronous tasks
-celery==3.1.7
+celery==3.1.8
 celery-haystack==0.7.2
 
 # CSS/JS handling
@@ -54,7 +54,7 @@ South==0.8.4
 # Data parsing/serialization
 beautifulsoup4==4.3.2
 BeautifulSoup<4.0
-lxml==3.2.5
+lxml==3.3.0
 simplejson==3.3.2
 defusedxml==0.4.1
 PyYAML==3.10
@@ -67,7 +67,7 @@ django-nose==1.2
 selenium==2.39.0
 
 # C optimization
-Cython==0.19.2
+Cython==0.20
 
 # Dependencies
 # For django-image-cropping
