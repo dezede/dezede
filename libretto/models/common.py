@@ -265,13 +265,6 @@ class UniqueSlugModel(Model):
     slug = AutoSlugField(
         populate_from='get_slug', unique=True, always_update=True)
 
-    def __init__(self, *args, **kwargs):
-        super(UniqueSlugModel, self).__init__(*args, **kwargs)
-        # FIXME: Retirer les deux lignes suivantes quand sera résolu
-        # https://bitbucket.org/neithere/django-autoslug/pull-request/6
-        slug = self._meta.get_field('slug')
-        slug.manager = slug.model._default_manager
-
     class Meta(object):
         abstract = True
 
