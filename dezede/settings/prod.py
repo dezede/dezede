@@ -20,5 +20,3 @@ SERVER_EMAIL = 'noreply@dezede.org'
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-
-COMPRESS_ENABLED = True
