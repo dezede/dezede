@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.conf.urls import *
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from ajax_select import urls as ajax_select_urls
@@ -29,18 +30,11 @@ urlpatterns = patterns('',
     url(r'^404$', ErrorView.as_view(status=404)),
 )
 
-urlpatterns += staticfiles_urlpatterns()
-
 if settings.DEBUG:
-    from django.views.static import serve
-    _media_url = settings.MEDIA_URL
-    if _media_url.startswith('/'):
-        _media_url = _media_url[1:]
-        urlpatterns += patterns('',
-                                (r'^%s(?P<path>.*)$' % _media_url,
-                                serve,
-                                {'document_root': settings.MEDIA_ROOT}))
-    del(_media_url, serve)
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
 
     import debug_toolbar
 
