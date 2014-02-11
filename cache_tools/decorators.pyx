@@ -19,6 +19,10 @@ def model_method_cached(bytes id_attr=b'pk'):
         def wrapper(self, *args, **kwargs):
             cdef cache_key = get_cache_key(method, self, args, kwargs, id_attr)
             out = cache_get(cache_key)
+
+            if cache_key is None:  # Happens when the object has no id.
+                return method(self, *args, **kwargs)
+
             if out is None:
                 out = method(self, *args, **kwargs)
                 cache_set(cache_key, out, 0)

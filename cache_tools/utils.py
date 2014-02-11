@@ -14,9 +14,12 @@ __all__ = (
 
 
 def get_cache_key(method, obj, args, kwargs, id_attr=b'pk'):
+    _id = getattr(obj, id_attr)
+    if _id is None:
+        return None
     return b'%s:%s.%s.%s:%s(%s,%s)' % (
         get_language(), obj.__module__, obj.__class__.__name__,
-        method.__name__, getattr(obj, id_attr), args, kwargs)
+        method.__name__, _id, args, kwargs)
 
 
 def get_cache_pattern(obj, id_attr=b'pk'):

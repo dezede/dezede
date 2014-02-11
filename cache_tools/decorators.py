@@ -16,6 +16,10 @@ def model_method_cached(id_attr=b'pk'):
     def decorator(method):
         def wrapper(self, *args, **kwargs):
             cache_key = get_cache_key(method, self, args, kwargs, id_attr)
+
+            if cache_key is None:  # Happens when the object has no id.
+                return method(self, *args, **kwargs)
+
             out = cache_get(cache_key)
             if out is None:
                 out = method(self, *args, **kwargs)
