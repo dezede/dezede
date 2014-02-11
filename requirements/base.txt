@@ -39,7 +39,7 @@ django-viewsets==0.1.7
 Unipath==1.0
 
 # Asynchronous tasks
-celery==3.1.8
+celery==3.1.9
 celery-haystack==0.7.2
 
 # CSS/JS handling
