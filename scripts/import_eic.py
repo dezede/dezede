@@ -225,5 +225,5 @@ def create_events():
             f.write('%s %s\n' % (None, identifier))
         f.close()
 
-
-create_events()
+def run():
+    create_events()
