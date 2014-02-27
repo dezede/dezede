@@ -9,22 +9,29 @@ from bs4 import BeautifulSoup
 import dateutil.parser
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.urlresolvers import reverse
 from django.db.transaction import commit_on_success
 from django.utils.encoding import force_text
 from django.test.client import Client
 # from IPython.display import display, HTML
 import requests
+from accounts.models import HierarchicUser
 from libretto.api.models.utils import update_or_create, KEEP
 from libretto.models import Etat, Individu, Prenom, Profession, Instrument, \
     Pupitre, Oeuvre, Auteur, ElementDeDistribution, ElementDeProgramme, \
-    NatureDeLieu, Lieu, AncrageSpatioTemporel, Evenement
+    NatureDeLieu, Lieu, AncrageSpatioTemporel, Evenement, Ensemble
 
 
 cache.clear()
 
 url = 'http://serveur.ensembleinter.com/oai'
 
+
+eic_ensemble = update_or_create(Ensemble, {'nom': 'Ensemble intercontemporain'})
+eic = update_or_create(HierarchicUser, {
+    'username': 'eic',
+    'last_name': 'Ensemble intercontemporain',
+    'content_type': ContentType.objects.get_for_model(Ensemble),
+    'object_id': eic_ensemble.pk})
 
 etat = update_or_create(Etat, dict(
             nom='importé(e) automatiquement',
@@ -89,7 +96,7 @@ def parse_individu(nom_complet):
     match = NOM_COMPLET_RE.match(nom_complet)
     if match is None:
         warnings.warn('Unable to parse "%s"' % repr(nom_complet))
-        individu = update_or_create(Individu, dict(nom=nom_complet, etat=etat),
+        individu = update_or_create(Individu, dict(nom=nom_complet, etat=etat, owner=eic),
                                     unique_keys=('nom',))
     else:
         nom = match.group('nom')
@@ -97,7 +104,7 @@ def parse_individu(nom_complet):
             prenom = Prenom.objects.filter(prenom=match.group('prenom'))[0]
         except IndexError:
             prenom = Prenom.objects.create(prenom=match.group('prenom'))
-        individu = update_or_create(Individu, dict(nom=nom.title(), prenoms=(prenom,), etat=etat),
+        individu = update_or_create(Individu, dict(nom=nom.title(), prenoms=(prenom,), etat=etat, owner=eic),
                                     unique_keys=('nom', 'prenoms__prenom'), conflict_handling=KEEP)
     return individu
 
@@ -105,14 +112,14 @@ def parse_individu(nom_complet):
 def parse_profession(role_tag):
     with ParseTag(role_tag) as role:
         nom = role.roleTerm.extract().string
-        profession = Profession.objects.get_or_create(nom=nom.lower(), defaults={'etat': etat})[0]
+        profession = Profession.objects.get_or_create(nom=nom.lower(), defaults={'etat': etat, 'owner': eic})[0]
     return profession
 
 
 def parse_pupitre(role_tag):
     with ParseTag(role_tag) as role:
         nom = role.roleTerm.extract().string
-        instrument = Instrument.objects.get_or_create(nom=nom.lower(), defaults={'etat': etat})[0]
+        instrument = Instrument.objects.get_or_create(nom=nom.lower(), defaults={'etat': etat, 'owner': eic})[0]
         pupitre = Pupitre.objects.create(partie=instrument)
     return pupitre
 
@@ -136,7 +143,7 @@ def parse_oeuvre(titleInfo):
     with ParseTag(titleInfo) as oeuvre_data:
         titre = oeuvre_data.title.extract().string
         titre_secondaire = oeuvre_data.subTitle.extract().string or ''  # TODO: Faire quelque chose de ceci.
-        oeuvre = update_or_create(Oeuvre, dict(titre=titre, etat=etat), unique_keys=('titre',))
+        oeuvre = update_or_create(Oeuvre, dict(titre=titre, etat=etat, owner=eic), unique_keys=('titre',))
         oeuvre_data.nomenclature.extract()  # TODO: traiter les nomenclatures.
         #parse_nomenclature(oeuvre_data.nomenclature)
     return oeuvre
@@ -169,7 +176,7 @@ def parse_element_de_programme(evenement, i, item):
             distribution.append(element_de_distribution)
     element_de_programme = ElementDeProgramme.objects.create(
         evenement=evenement, position=i,
-        oeuvre=oeuvre, etat=etat)
+        oeuvre=oeuvre, etat=etat, owner=eic)
     element_de_programme.distribution.add(*distribution)
     return element_de_programme
 
@@ -183,8 +190,8 @@ def parse_programme(evenement, data):
 def parse_place(place_tag):
     with ParseTag(place_tag) as place:
         nom_lieu = place.placeTerm.extract().string
-        salle = NatureDeLieu.objects.get_or_create(nom='salle', defaults={'etat': etat})[0]
-        lieu = Lieu.objects.get_or_create(nom=nom_lieu, nature=salle, defaults={'etat': etat})[0]
+        salle = NatureDeLieu.objects.get_or_create(nom='salle', defaults={'etat': etat, 'owner': eic})[0]
+        lieu = Lieu.objects.get_or_create(nom=nom_lieu, nature=salle, defaults={'etat': etat, 'owner': eic})[0]
         # TODO: traiter tout ce qui suit :
         place.typeLieu.extract()
         place.presentation.extract()
@@ -200,13 +207,18 @@ def parse_evenement_meta(data):
         datetime = dateutil.parser.parse(metadata.dateOther.extract().string)
         ancrage = AncrageSpatioTemporel.objects.create(
             lieu=lieu, date=datetime.date(), heure=datetime.time())
-        evenement = Evenement.objects.create(ancrage_debut=ancrage, relache=False, etat=etat)
+        evenement = Evenement.objects.create(ancrage_debut=ancrage, relache=False, etat=etat, owner=eic)
+        d = ElementDeDistribution.objects.create(
+            content_type=ContentType.objects.get_for_model(Evenement),
+            object_id=evenement.pk)
+        d.ensembles.add(eic_ensemble)
     return evenement
 
 
 commit_on_success()
 def create_events():
     # c = Client()
+    # c.login(username='bertrand', password='')
     for identifier in get_identifiers():
         f = open('mapping_eic_dezede.txt', 'a')
         print(identifier)
@@ -225,5 +237,8 @@ def create_events():
             f.write('%s %s\n' % (None, identifier))
         f.close()
 
+
 def run():
+    from johnny import cache
+    cache.enable()
     create_events()
