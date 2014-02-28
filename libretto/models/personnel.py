@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import warnings
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
      FloatField, permalink, SmallIntegerField, PROTECT, DateField, \
-    PositiveSmallIntegerField, Model
+    PositiveSmallIntegerField, Model, Q
 from django.template.defaultfilters import date
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.safestring import mark_safe
@@ -16,6 +16,7 @@ from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
     UniqueSlugModel, PublishedManager, AutoriteModel, CommonTreeManager, \
     PublishedQuerySet, CommonTreeQuerySet, Caracteristique, \
     TypeDeCaracteristique
+from .evenement import Evenement
 from .functions import capfirst, ex, href, date_html, sc
 
 
@@ -301,6 +302,12 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     def membres_count(self):
         return self.membres.count()
     membres_count.short_description = _('nombre de membres')
+
+    def apparitions(self):
+        # FIXME: Pas sûr que la condition soit logique.
+        return Evenement.objects.filter(
+            Q(distribution__ensembles=self)
+            | Q(programme__distribution__ensembles=self)).distinct()
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
