@@ -289,6 +289,9 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
                         sc(self.nom, tags=tags), tags=tags)
         return self.nom
 
+    def link(self):
+        return self.html()
+
     @permalink
     def get_absolute_url(self):
         return b'ensemble_detail', (self.slug,)
