@@ -11,8 +11,7 @@ INSTALLED_APPS += (
     'django_extensions',
     'debug_toolbar',
     'template_timings_panel',
-    # Réactiver quand il sera devenu compatible debug-toolbar 1.0
-    # 'haystack_panel',
+    'haystack_panel',
     'django_nose',
 )
 
@@ -38,8 +37,7 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.redirects.RedirectsPanel',
     'debug_toolbar.panels.profiling.ProfilingPanel',
     'template_timings_panel.panels.TemplateTimings.TemplateTimings',
-    # Réactiver quand il sera devenu compatible debug-toolbar 1.0
-    # 'haystack_panel.panel.HaystackDebugPanel',
+    'haystack_panel.panel.HaystackDebugPanel',
 )
 
 TEST_RUNNER = b'django_nose.NoseTestSuiteRunner'
