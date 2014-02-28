@@ -162,10 +162,13 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
             out = self.nom
         else:
             ancestors = self.get_ancestors(include_self=True)
-            l = list(ancestors.values_list('nom', 'nature__referent'))
-            m = len(l) - 1
-            out = ', '.join([nom for i, (nom, ref)
-                             in enumerate(l) if not l[min(i + 1, m)][1]])
+            values = ancestors.values_list('nom', 'nature__referent')
+            l = []
+            for nom, ref in reversed(values):
+                l.append(nom)
+                if ref:
+                    break
+            out = ', '.join(reversed(l))
 
         url = None if not tags else self.get_absolute_url()
         return href(url, out, tags)
