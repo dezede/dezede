@@ -15,12 +15,14 @@ from .models import DossierDEvenements
 class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
     form = DossierDEvenementsForm
     list_display = ('__str__', 'circonstance', 'debut', 'fin',
-                    'lieux_html', 'oeuvres_html', 'auteurs_html', 'get_count')
+                    'lieux_html', 'oeuvres_html', 'auteurs_html',
+                    'ensembles_html', 'get_count')
     readonly_fields = ('get_count', 'get_queryset')
     raw_id_fields = ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs',
-                     'evenements')
+                     'ensembles', 'evenements')
     autocomplete_lookup_fields = {
-        'm2m': ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs'),
+        'm2m': ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs',
+                'ensembles'),
     }
     fieldsets = (
         (None, {
@@ -38,7 +40,7 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
         }),
         (_('Sélection dynamique'), {
             'fields': (('debut', 'fin'), 'lieux', 'oeuvres', 'auteurs',
-                       'circonstance'),
+                       'ensembles', 'circonstance'),
         }),
         (_('Sélection manuelle'), {
             'fields': ('evenements', 'statique', 'get_count', 'get_queryset'),

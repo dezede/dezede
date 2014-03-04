@@ -11,7 +11,7 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from accounts.models import HierarchicUser
 from cache_tools import cached_ugettext_lazy as _
-from libretto.models import Lieu, Oeuvre, Evenement, Individu
+from libretto.models import Lieu, Oeuvre, Evenement, Individu, Ensemble
 from libretto.models.common import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from libretto.models.functions import str_list_w_last, href
@@ -74,6 +74,9 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     evenements = ManyToManyField(
         Evenement, verbose_name=_('événements'), blank=True, null=True,
         related_name='dossiers')
+    ensembles = ManyToManyField(
+        Ensemble, verbose_name=_('ensembles'), blank=True, null=True,
+        related_name='dossiers')
 
     objects = DossierDEvenementsManager()
 
@@ -105,6 +108,7 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     def get_queryset(self, dynamic=False):
         if not dynamic and self.pk and self.evenements.exists():
             return self.evenements.all()
+        args = []
         kwargs = {}
         if self.debut:
             kwargs['ancrage_debut__date__gte'] = self.debut
@@ -121,10 +125,15 @@ class DossierDEvenements(MPTTModel, PublishedModel):
             auteurs = self.auteurs.all()
             if auteurs:
                 kwargs['programme__oeuvre__auteurs__individu__in'] = auteurs
+            ensembles = self.ensembles.all()
+            if ensembles:
+                args.append(
+                    Q(distribution__ensembles__in=ensembles)
+                    | Q(programme__distribution__ensembles__in=ensembles))
         if self.circonstance:
             kwargs['circonstance__icontains'] = self.circonstance
-        if kwargs:
-            return Evenement.objects.filter(**kwargs).distinct()
+        if args or kwargs:
+            return Evenement.objects.filter(*args, **kwargs).distinct()
         return Evenement.objects.none()
     get_queryset.short_description = _('ensemble de données')
 
@@ -159,6 +168,11 @@ class DossierDEvenements(MPTTModel, PublishedModel):
         return str_list_w_last([a.html() for a in self.auteurs.all()])
     auteurs_html.short_description = _('auteurs')
     auteurs_html.allow_tags = True
+
+    def ensembles_html(self):
+        return str_list_w_last([e.html() for e in self.ensembles.all()])
+    ensembles_html.short_description = _('ensembles')
+    ensembles_html.allow_tags = True
 
     def get_contributors(self):
         return HierarchicUser.objects.filter(
