@@ -98,9 +98,9 @@ class EvenementsGraph(TemplateView):
             .order_by('year'))
 
         for d in data:
-            d['year'] = d['year'].year
+            d['year'] = getattr(d['year'], 'year')
 
-        years = [d['year'] for d in data]
+        years = [d['year'] for d in data if d['year'] is not None]
         current_year = datetime.datetime.now().year
         if not years:
             years = [current_year]
