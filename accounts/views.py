@@ -78,7 +78,7 @@ class EvenementsGraph(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(EvenementsGraph, self).get_context_data(**kwargs)
 
-        qs = AncrageSpatioTemporel.objects.all()
+        qs = AncrageSpatioTemporel.objects.exclude(date=None)
 
         username = self.request.GET.get('username')
 
@@ -89,7 +89,7 @@ class EvenementsGraph(TemplateView):
 
             qs = qs.filter(evenements_debuts__owner__username=username)
         else:
-            qs = qs.filter(evenements_debuts__isnull=False)
+            qs = qs.exclude(evenements_debuts=None)
 
         context['data'] = data = list(
             qs
@@ -98,9 +98,9 @@ class EvenementsGraph(TemplateView):
             .order_by('year'))
 
         for d in data:
-            d['year'] = getattr(d['year'], 'year', None)
+            d['year'] = d['year'].year
 
-        years = [d['year'] for d in data if d['year'] is not None]
+        years = [d['year'] for d in data]
         current_year = datetime.datetime.now().year
         if not years:
             years = [current_year]
