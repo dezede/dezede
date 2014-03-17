@@ -32,6 +32,8 @@ __all__ = ()
 
 
 class CustomBaseModel(BaseModelAdmin):
+    # FIXME: Utiliser un AuthenticationBackend personnalisé.
+
     def check_user_ownership(self, request, obj, has_class_permission):
         if not has_class_permission:
             return False
@@ -850,6 +852,14 @@ class PupitreAdmin(VersionAdmin, CommonAdmin):
     autocomplete_lookup_fields = {
         'fk': ['partie'],
     }
+
+    # N'affiche que les pupitres différents pour éviter de flooder les
+    # admins de doublons (qui sont pourtant nécessaires).
+    def get_queryset(self, request):
+        qs = super(PupitreAdmin, self).get_queryset(request)
+        return (qs.order_by('quantite_min', 'quantite_max')
+                  .distinct('partie__classement', 'partie__nom',
+                            'quantite_min', 'quantite_max'))
 
 
 class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
