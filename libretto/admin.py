@@ -57,6 +57,7 @@ class CustomBaseModel(BaseModelAdmin):
                                      self).has_delete_permission(request, obj)
         return self.check_user_ownership(request, obj, has_class_permission)
 
+    # FIXME: renommer cette méthode en get_queryset en passan à Django 1.6.
     def queryset(self, request):
         user = request.user
         qs = super(CustomBaseModel, self).queryset(request)
@@ -855,8 +856,9 @@ class PupitreAdmin(VersionAdmin, CommonAdmin):
 
     # N'affiche que les pupitres différents pour éviter de flooder les
     # admins de doublons (qui sont pourtant nécessaires).
-    def get_queryset(self, request):
-        qs = super(PupitreAdmin, self).get_queryset(request)
+    # FIXME: renommer cette méthode en get_queryset en passan à Django 1.6.
+    def queryset(self, request):
+        qs = super(PupitreAdmin, self).queryset(request)
         return (qs.order_by('quantite_min', 'quantite_max')
                   .distinct('partie__classement', 'partie__nom',
                             'quantite_min', 'quantite_max'))
