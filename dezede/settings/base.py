@@ -257,5 +257,5 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 10,
 }
 
-BROKER_URL = 'redis://'
-CELERY_RESULT_BACKEND = 'redis'
+BROKER_URL = 'redis://localhost:6379/1'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
