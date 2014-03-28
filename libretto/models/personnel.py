@@ -284,11 +284,15 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     def __str__(self):
         return self.html(tags=False)
 
+    def nom_complet(self):
+        return ('%s %s' % (self.particule_nom, self.nom)).strip()
+
     def html(self, tags=True):
+        nom = self.nom_complet()
         if tags:
             return href(self.get_absolute_url(),
-                        sc(self.nom, tags=tags), tags=tags)
-        return self.nom
+                        sc(nom, tags=tags), tags=tags)
+        return nom
 
     def link(self):
         return self.html()
@@ -321,7 +325,6 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     membres_count.short_description = _('nombre de membres')
 
     def apparitions(self):
-        # FIXME: Pas sûr que la condition soit logique.
         return Evenement.objects.filter(
             Q(distribution__ensembles=self)
             | Q(programme__distribution__ensembles=self)).distinct()

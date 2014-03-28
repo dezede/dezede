@@ -4,10 +4,10 @@ from __future__ import unicode_literals, division
 from django.conf import settings
 from django.utils import translation
 from celery_haystack.indexes import CelerySearchIndex as SearchIndex
-from haystack.indexes import Indexable, CharField, \
-    EdgeNgramField, DateField
-from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie, \
-    Profession
+from haystack.indexes import (
+    Indexable, CharField, EdgeNgramField, DateField)
+from .models import (
+    Oeuvre, Source, Individu, Lieu, Evenement, Partie, Profession, Ensemble)
 
 
 class CommonSearchIndex(SearchIndex):
@@ -56,6 +56,13 @@ class IndividuIndex(CommonSearchIndex, Indexable):
 
     def get_model(self):
         return Individu
+
+
+class EnsembleIndex(CommonSearchIndex, Indexable):
+    content_auto = EdgeNgramField(model_attr='related_label')
+
+    def get_model(self):
+        return Ensemble
 
 
 class LieuIndex(PolymorphicCommonSearchIndex, Indexable):

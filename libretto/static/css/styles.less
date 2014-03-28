@@ -535,30 +535,34 @@ dl {
     margin-top: 0;
   }
   .btn.disabled {
-    @base-result-background: hsv(0, 25%, 97%);
+    @base-result-background: hsv(0, 30%, 100%);
+    @colors-count: 8;
     .apply-background (@spin) {
-      background: spin(@base-result-background, @spin);
+      background: spin(@base-result-background, @spin * 360 / @colors-count);
     }
     &.evenement {
       .apply-background(0);
     }
     &.individu {
-      .apply-background(40);
+      .apply-background(1);
     }
     &.lieu {
-      .apply-background(80);
+      .apply-background(2);
     }
     &.oeuvre {
-      .apply-background(120);
+      .apply-background(3);
+    }
+    &.ensemble {
+      .apply-background(4);
     }
     &.source {
-      .apply-background(200);
+      .apply-background(5);
     }
     &.partie {
-      .apply-background(260);
+      .apply-background(6);
     }
     &.profession {
-      .apply-background(320);
+      .apply-background(7);
     }
   }
 }
