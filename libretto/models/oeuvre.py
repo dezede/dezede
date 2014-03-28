@@ -159,7 +159,7 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
     objects = PartieManager()
 
-    weak_unique_constraint = ('nom',)
+    weak_unique_constraint = ('nom', 'parent')
 
     class Meta(object):
         verbose_name = ungettext_lazy('rôle ou instrument',
