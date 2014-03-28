@@ -25,11 +25,11 @@ django-image-cropping==0.8
 pyelasticsearch==0.6.1
 
 # Caching
-django-redis==3.5.1
+django-redis==3.5.2
 -e git+https://github.com/jmoiron/johnny-cache@37e75019625979487f17b47050da7f0af3fea42c#egg=johnny-cache
 
 # Data visualization frameworks
-djangorestframework==2.3.12
+djangorestframework==2.3.13
 -e git+https://github.com/noirbizarre/django-eztables@daeff682d5113684770c153455410bef160c581b#egg=django-eztables
 
 # Small but powerful tools
@@ -39,14 +39,14 @@ django-viewsets==0.1.7
 Unipath==1.0
 
 # Asynchronous tasks
-celery==3.1.9
+celery==3.1.10
 celery-haystack==0.7.2
 
 # CSS/JS handling
 django_compressor==1.3
 django-sekizai==0.7
 cssmin==0.2.0
-rjsmin==1.0.8
+rjsmin==1.0.9
 
 # Database migrations
 South==0.8.4
@@ -54,26 +54,26 @@ South==0.8.4
 # Data parsing/serialization
 beautifulsoup4==4.3.2
 BeautifulSoup<4.0
-lxml==3.3.1
-simplejson==3.3.2
+lxml==3.3.3
+simplejson==3.3.3
 defusedxml==0.4.1
-PyYAML==3.10
+PyYAML==3.11
 
 # Website temporary shutdown
 django-maintenancemode==0.10
 
 # Testing
 django-nose==1.2
-selenium==2.39.0
+selenium==2.40.0
 
 # C optimization
 Cython==0.20.1
 
 # Dependencies
 # For django-image-cropping
-easy-thumbnails==1.4
+easy-thumbnails==1.5
 # For django-filebrowser (mandatory)
-Pillow==2.3.0
+Pillow==2.3.1
 # For djangorestframework (optionals)
 Pygments==1.6
 django-filter==0.7
