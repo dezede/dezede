@@ -5,14 +5,14 @@
 
 {% block header %}
   <h1>
-    {{ lieu.nom }}{% if lieu.parent %}, <a href="{{ lieu.parent.get_absolute_url }}">{{ lieu.parent }}</a>{% endif %}
+    <a href="{{ lieu.get_absolute_url }}" title="{{ lieu.nature|capfirst }}">
+      {{ lieu.nom }}
+    </a>
   </h1>
   <div class="auto-links">
-    <h2>
-      <span title="{% trans "nature"|capfirst %}">
-        {{ lieu.nature|capfirst }}
-      </span>
-    </h2>
+    {% if lieu.parent %}
+      <h2>{{ lieu.parent.link }}</h2>
+    {% endif %}
   </div>
 {% endblock %}
 
