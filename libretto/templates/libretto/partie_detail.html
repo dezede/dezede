@@ -19,6 +19,7 @@
   <table class="data-table auto-links">
     {% data_table_list partie.professions.all %}
     {% data_table_list partie.interpretes verbose_name=_('interprète') verbose_name_plural=_('interprètes') %}
+    {% data_table_list partie.repertoire %}
     {% data_table_list partie.evenements %}
     {% data_table_attr 'parent.link' _('parent') %}
 

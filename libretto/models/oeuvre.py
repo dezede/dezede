@@ -200,6 +200,9 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     def evenements(self):
         return self.pupitres.elements_de_distribution().evenements()
 
+    def repertoire(self):
+        return self.pupitres.oeuvres()
+
     def pluriel(self):
         return calc_pluriel(self)
 
@@ -271,7 +274,13 @@ class PupitreQuerySet(CommonQuerySet):
     def elements_de_distribution(self):
         return get_model(
             'libretto',
-            'ElementDeDistribution').objects.filter(pupitre__in=self)
+            'ElementDeDistribution'
+        ).objects.filter(pupitre__in=self).distinct()
+
+    def oeuvres(self):
+        return (get_model('libretto', 'Oeuvre').objects
+                .filter(pupitres__in=self).distinct()
+                .order_by(*Oeuvre._meta.ordering))
 
 
 class PupitreManager(CommonManager):
@@ -279,6 +288,9 @@ class PupitreManager(CommonManager):
 
     def elements_de_distribution(self):
         return self.all().elements_de_distribution()
+
+    def oeuvres(self):
+        return self.all().oeuvres()
 
 
 # TODO: une fois les quantités déplacées en inline, ce modèle ne doit plus être
