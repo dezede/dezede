@@ -157,18 +157,21 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
             ancrage_creation__lieu__in=self.get_descendants(include_self=True)
         ).order_by(*Oeuvre._meta.ordering)
 
+    def ancestors_until_referent(self):
+        ancestors = self.get_ancestors(include_self=True)
+        values = ancestors.values_list('nom', 'nature__referent')
+        l = []
+        for nom, ref in values[::-1]:
+            l.append(nom)
+            if ref:
+                break
+        return l[::-1]
+
     def html(self, tags=True, short=False):
         if short or self.parent is None or self.nature.referent:
             out = self.nom
         else:
-            ancestors = self.get_ancestors(include_self=True)
-            values = ancestors.values_list('nom', 'nature__referent')
-            l = []
-            for nom, ref in reversed(values):
-                l.append(nom)
-                if ref:
-                    break
-            out = ', '.join(reversed(l))
+            out = ', '.join(self.ancestors_until_referent())
 
         url = None if not tags else self.get_absolute_url()
         return href(url, out, tags)

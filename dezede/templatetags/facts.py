@@ -7,7 +7,7 @@ from django.db.models import Count, F
 from django.template import Library
 from cache_tools import cached_ugettext as ugettext
 from libretto.models import (
-    Evenement, Individu, Source, Oeuvre, GenreDOeuvre, Lieu, Role, Instrument)
+    Evenement, Individu, Source, Oeuvre, Lieu, Role, Instrument)
 from libretto.models.functions import capfirst
 
 
@@ -58,15 +58,15 @@ def on_this_day():
     now = datetime.now()
     events = valid_events().filter(
         ancrage_debut__date__month=now.month,
-        ancrage_debut__date__day=now.day)
+        ancrage_debut__date__day=now.day,
+        ancrage_debut__lieu__isnull=False)
 
     e = events[randrange(events.count())]
 
-    out = h3(ugettext('Jour pour jour'))
-    out += h4(ugettext('Il y a %s ans aujourd’hui')
-              % (now.year - e.ancrage_debut.date.year))
-    out += p(e.ancrage_debut.calc_lieu(tags=False))
-    out += p(ugettext('On donnait %s') % event_oeuvres(e))
+    out = h3(ugettext('Il y a %s ans aujourd’hui')
+             % (now.year - e.ancrage_debut.date.year))
+    out += h4(ugettext('On donnait %s') % event_oeuvres(e))
+    out += p('à %s' % e.ancrage_debut.lieu.ancestors_until_referent()[0])
     out += read_more(e)
     return out
 
@@ -80,7 +80,7 @@ def famous_event(n=10):
     les plus remarquable.
     """
 
-    out = h3(ugettext('L’événement'))
+    out = h3(ugettext('Événement à la une'))
 
     data = Source.objects \
         .filter(evenements__isnull=False).values('evenements') \
@@ -125,8 +125,8 @@ def traveller():
 
 
 @register.simple_tag
-def prolific_author(n=20):
-    out = h3(ugettext('Auteur prolifique'))
+def prolific_author(n=40):
+    out = h3(ugettext('Rencontre avec'))
 
     data = Oeuvre.objects \
         .filter(auteurs__isnull=False).values('auteurs__individu') \
@@ -149,16 +149,15 @@ def prolific_author(n=20):
         else:
             break
 
-    data = a.oeuvres().values('genre').annotate(n_oeuvres=Count('genre')) \
-        .order_by('-n_oeuvres').filter(n_oeuvres__gte=10)
-
-    genres = GenreDOeuvre.objects.filter(pk__in=[d['genre'] for d in data])
-
     out += h4(a.nom_complet(links=False))
-    subject = ugettext('Elle') if a.is_feminin() else ugettext('Il')
-    if genres:
-        out += p(ugettext('Genre de prédilection : %s') % genres[0])
-    out += p(ugettext('%s a écrit au moins %s œuvres') % (subject, n_oeuvres))
+    # Ceci permet de trouver le genre de prédilection.
+    # Restituer si on trouve cela bien.
+    # data = a.oeuvres().values('genre').annotate(n_oeuvres=Count('genre')) \
+    #     .order_by('-n_oeuvres').filter(n_oeuvres__gte=10)
+    # genres = GenreDOeuvre.objects.filter(pk__in=[d['genre'] for d in data])
+    # if genres:
+    #     out += p(ugettext('Genre de prédilection : %s') % genres[0])
+    out += p(ugettext('%s œuvres dans Dezède') % n_oeuvres)
     out += read_more(a)
     return out
 
