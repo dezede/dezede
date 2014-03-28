@@ -19,18 +19,10 @@
     <h3>
       {{ oeuvre.auteurs_html }}
     </h3>
-    <h3>
+    <h4>
       <span title="{% trans 'Création' %}">
         {{ oeuvre.ancrage_creation.html|default:'' }}
       </span>
-    </h3>
-    <h4>
-      <table class="data-table">
-        {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
-        {% for parentes in parentes_list %}
-          {% data_table_list parentes.list 'mere.html' verbose_name=parentes.grouper.nom verbose_name_plural=parentes.grouper.pluriel has_count=False %}
-        {% endfor %}
-      </table>
     </h4>
   </div>
 {% endblock %}
@@ -55,6 +47,11 @@
 
     {% include "libretto/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
     {% data_table_attr 'notes' %}
+
+    {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
+    {% for parentes in parentes_list %}
+      {% data_table_list parentes.list 'mere.html' verbose_name=parentes.grouper.nom verbose_name_plural=parentes.grouper.pluriel has_count=False %}
+    {% endfor %}
 
     {% regroup oeuvre.parentes_filles.filles_en_ordre by type as parentes_list %}
     {% for parentes in parentes_list %}
