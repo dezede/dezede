@@ -64,7 +64,7 @@ django-maintenancemode==0.10
 
 # Testing
 django-nose==1.2
-selenium==2.40.0
+selenium==2.41.0
 
 # C optimization
 Cython==0.20.1
