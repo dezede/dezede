@@ -26,7 +26,7 @@
         {% if object.presentation or object.fonctions %}
           <hr/>
         {% endif %}
-        <h3>{% trans 'À voir dans Dezède' %}</h3>
+        <h3>{% trans 'À consulter dans Dezède' %}</h3>
         <table class="data-table auto-links">
           {% data_table_list object.dossiersdevenements_roots|order_by:'-pk' %}
         </table>
