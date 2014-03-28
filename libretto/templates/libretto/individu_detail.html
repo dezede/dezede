@@ -6,13 +6,6 @@
 {% block header %}
   <h1>
     {{ individu.nom_complet }}
-    {% with professions_count=individu.professions.count %}
-      {% if professions_count %}
-        <small title="{% filter capfirst %}{% blocktrans count counter=professions_count %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
-          {{ individu.calc_professions }}
-        </small>
-      {% endif %}
-    {% endwith %}
   </h1>
   <div class="auto-links">
     <h3>
@@ -30,6 +23,15 @@
         </span>
       {% endif %}
     </h3>
+    {% with professions_count=individu.professions.count %}
+      {% if professions_count %}
+        <h4>
+          <span title="{% filter capfirst %}{% blocktrans count counter=professions_count %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
+            {{ individu.calc_professions }}
+          </span>
+        </h4>
+      {% endif %}
+    {% endwith %}
   </div>
 {% endblock %}
 
@@ -43,7 +45,8 @@
     {% data_table_attr 'biographie' %}
 
     {% data_table_list individu.oeuvres %}
-    {% data_table_list individu.apparitions %}
+    {% data_table_list individu.apparitions verbose_name=_('apparition') verbose_name_plural=_('apparitions') %}
+    {% data_table_list individu.evenements_referents %}
     {% data_table_list individu.publications 'html' %}
 
 

@@ -225,10 +225,17 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return self.auteurs.sources()
 
     def apparitions(self):
-        # FIXME: Pas sûr que la condition soit logique.
+        # FIXME: Gérer la période d’activité des membres d’un groupe.
         return Evenement.objects.filter(
             Q(distribution__individus=self)
-            | Q(programme__distribution__individus=self)).distinct()
+            | Q(programme__distribution__individus=self)
+            | Q(distribution__ensembles__individus=self)
+            | Q(programme__distribution__ensembles__individus=self)
+        ).distinct()
+
+    def evenements_referents(self):
+        return Evenement.objects.filter(
+            programme__oeuvre__auteurs__individu=self).distinct()
 
     def calc_prenoms_methode(self, fav):
         if not self.pk:
