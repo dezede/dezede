@@ -312,7 +312,7 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
 
     def membres_html(self):
         return str_list([
-            membre.html for membre in
+            membre.html() for membre in
             self.membres.select_related('individu', 'instrument')])
     membres_html.short_description = _('membres')
 
