@@ -890,16 +890,23 @@ body>footer {
   }
 }
 
-.tt-hint {
-  color: @input-color-placeholder;
-  .input-group &:first-child+.form-control {
-    border-radius: @input-border-radius;
-    &:not(:last-child) {
-      .border-right-radius(0);
+.twitter-typeahead {
+  .tt-hint {
+    color: @input-color-placeholder;
+    .input-group &:first-child+.form-control {
+      border-radius: @input-border-radius;
+      &:not(:last-child) {
+        .border-right-radius(0);
+      }
     }
   }
-}
-
-.tt-suggestion p {
-  text-align: inherit;
+  .tt-suggestion p {
+    text-align: inherit;
+  }
+  // FIXME: Ceci est un hack pour corriger la position du bouton de validation
+  //        de recherche cassée par typeahead.
+  &+.input-group-btn .btn {
+    top: -3px;
+    height: 35px;
+  }
 }
