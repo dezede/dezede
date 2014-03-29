@@ -27,8 +27,9 @@ class CustomSearchView(SearchView):
         context = {'suggestion': None}
 
         if self.results.query.backend.include_spelling:
+            q = self.query or ''
             suggestion = self.form.get_suggestion()
-            if suggestion.lower() != self.query.lower():
+            if suggestion.lower() != q.lower():
                 context['suggestion'] = suggestion
 
         return context
