@@ -3,7 +3,7 @@
     "sSearch":         "",
     "sLengthMenu":     "Afficher _MENU_ éléments",
     "sInfo":           "Éléments _START_ à _END_ sur _TOTAL_ affichés",
-    "sInfoEmpty":      "Aucun élément affichée",
+    "sInfoEmpty":      "Aucun élément affiché",
     "sInfoFiltered":   "(filtré de _MAX_ éléments au total)",
     "sInfoPostFix":    "",
     "sLoadingRecords": "Chargement en cours...",
