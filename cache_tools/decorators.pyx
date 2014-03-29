@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 import cython
 from django.core.cache import cache
-from .utils cimport get_cache_key
+from .utils cimport get_cache_key, get_obj_cache_key
 
 
 __all__ = ('model_method_cached',)
@@ -24,6 +24,10 @@ def model_method_cached(bytes id_attr=b'pk'):
                 return method(self, *args, **kwargs)
 
             if out is None:
+                object_cache_key = get_obj_cache_key(self, id_attr)
+                object_keys = cache_get(object_cache_key, [])
+                object_keys.append(cache_key)
+                cache_set(object_cache_key, object_keys, 0)
                 out = method(self, *args, **kwargs)
                 cache_set(cache_key, out, 0)
             return out

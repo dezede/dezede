@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from celery.task import task
+from celery import shared_task
 from celery_haystack.indexes import CelerySearchIndex
 from celery_haystack.tasks import CeleryHaystackSignalHandler as Original
 from celery_haystack.utils import get_update_task
@@ -9,7 +9,7 @@ from haystack import connections, connection_router
 from haystack.exceptions import NotHandled
 from haystack.utils import get_identifier
 from polymorphic import PolymorphicModel
-from cache_tools.tasks import get_stale_objects
+from cache_tools.tasks import get_stale_objects, auto_invalidate_cache
 
 
 __all__ = ('CeleryHaystackSignalHandler',)
@@ -52,7 +52,7 @@ def process_action(action, instance, model):
             break
 
 
-@task
+@shared_task
 def auto_update_haystack(action, instance):
     for obj in get_stale_objects(instance, all_relations=True):
         model = obj.__class__
@@ -62,6 +62,12 @@ def auto_update_haystack(action, instance):
             obj = model._default_manager.non_polymorphic().get(pk=obj.pk)
 
         process_action(action, obj, model)
+
+
+@shared_task
+def auto_invalidate(action, instance):
+    auto_invalidate_cache(instance)
+    auto_update_haystack(action, instance)
 
 
 class CeleryHaystackSignalHandler(Original):

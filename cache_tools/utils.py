@@ -22,13 +22,16 @@ def get_cache_key(method, obj, args, kwargs, id_attr=b'pk'):
         method.__name__, _id, args, kwargs)
 
 
-def get_cache_pattern(obj, id_attr=b'pk'):
-    return b'*:%s.%s.*:%s(*,*)' % (
+def get_obj_cache_key(obj, id_attr=b'pk'):
+    return b'%s.%s.%s' % (
         obj.__module__, obj.__class__.__name__, getattr(obj, id_attr))
 
 
 def invalidate_object(obj, id_attr=b'pk'):
-    cache.delete_pattern(get_cache_pattern(obj, id_attr))
+    object_cache_key = get_obj_cache_key(obj, id_attr)
+    object_keys = cache.get(object_cache_key, [])
+    cache.delete_many(object_keys)
+    cache.delete(object_cache_key)
 
 
 UGETTEXT_CACHE = {}

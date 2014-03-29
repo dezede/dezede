@@ -1,10 +1,10 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from celery.task import task
+from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Manager
-from .utils import invalidate_object, get_cache_pattern
+from .utils import invalidate_object, get_obj_cache_key
 
 
 __all__ = ('get_stale_objects', 'auto_invalidate_cache',)
@@ -17,13 +17,13 @@ def get_stale_objects(instance, explored=None, all_relations=False):
     if instance is None:
         raise StopIteration
 
-    cache_pattern = get_cache_pattern(instance)
-    if cache_pattern in explored:
+    obj_cache_key = get_obj_cache_key(instance)
+    if obj_cache_key in explored:
         raise StopIteration
 
     yield instance
 
-    explored.append(cache_pattern)
+    explored.append(obj_cache_key)
 
     relations = getattr(instance, 'invalidated_relations_when_saved',
                         lambda all_relations: ())(all_relations=all_relations)
@@ -45,7 +45,7 @@ def get_stale_objects(instance, explored=None, all_relations=False):
                 yield sub_related
 
 
-@task
+@shared_task
 def auto_invalidate_cache(instance):
     for stale_object in get_stale_objects(instance):
         invalidate_object(stale_object)
