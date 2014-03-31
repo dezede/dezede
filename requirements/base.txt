@@ -13,7 +13,7 @@ django-grappelli==2.4.8
 django-filebrowser==3.5.3
 django-tinymce==1.5.2
 django-crispy-forms==1.4.0
-django-ajax-selects==1.3.3
+django-ajax-selects==1.3.4
 django-image-cropping==0.8
 
 # User registration
