@@ -54,8 +54,8 @@ South==0.8.4
 # Data parsing/serialization
 beautifulsoup4==4.3.2
 BeautifulSoup<4.0
-lxml==3.3.3
-simplejson==3.3.3
+lxml==3.3.4
+simplejson==3.4.0
 defusedxml==0.4.1
 PyYAML==3.11
 
@@ -73,7 +73,7 @@ Cython==0.20.1
 # For django-image-cropping
 easy-thumbnails==1.5
 # For django-filebrowser (mandatory)
-Pillow==2.3.1
+Pillow==2.4.0
 # For djangorestframework (optionals)
 Pygments==1.6
 django-filter==0.7
