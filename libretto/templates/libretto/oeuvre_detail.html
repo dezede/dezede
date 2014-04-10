@@ -1,11 +1,6 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n routines %}
 {% load url from future %}
-
-
-{% block title %}
-  {{ oeuvre }}
-{% endblock %}
 
 
 {% block header %}
@@ -25,11 +20,6 @@
       </span>
     </h4>
   </div>
-{% endblock %}
-
-
-{% block header-aside %}
-  {% frontend_admin %}
 {% endblock %}
 
 
