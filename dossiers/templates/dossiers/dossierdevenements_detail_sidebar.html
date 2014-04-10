@@ -3,11 +3,21 @@
 <aside id="sidebar">
 
   <div class="well">
+    <dl class="auto-links">
+      <dt>
+        {% blocktrans count counter=object.editeurs_scientifiques.count %}
+          Éditeur scientifique
+        {% plural %}
+          Éditeurs scientifiques
+        {% endblocktrans %}
+      </dt>{# Auteur(s) pour revue #}
+      <dd>{{ object.editeurs_scientifiques.html }}</dd>
+    </dl>
     {% with children=object.children.all %}
       {% if children %}
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">{% trans 'Contenu' %}</h3>
+            <h3 class="panel-title">{% trans 'Dans ce dossier' %}</h3>
           </div>
           <ul class="list-group">
             {% for child in children %}
@@ -20,14 +30,6 @@
       {% endif %}
     {% endwith %}
     <dl class="auto-links">
-      <dt>
-        {% blocktrans count counter=object.editeurs_scientifiques.count %}
-          Éditeur scientifique
-        {% plural %}
-          Éditeurs scientifiques
-        {% endblocktrans %}
-      </dt>{# Auteur(s) pour revue #}
-      <dd>{{ object.editeurs_scientifiques.html }}</dd>
       {% with n_contributors=object.get_contributors.count %}
         {% if n_contributors %}
           <dt>
@@ -42,18 +44,6 @@
       {% endwith %}
       <dt>{% trans 'Date de mise en ligne' %}</dt>
       <dd>{{ object.date_publication }}</dd>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">{% trans 'Pour citer ce dossier' %}</h3>
-        </div>
-        <div class="panel-body">
-          {{ object.editeurs_scientifiques.html }},
-          « {{ object }} »,
-          <em>Dezède</em> [en ligne].
-          {{ request.build_absolute_uri }}
-          (consulté le {% now 'DATE_FORMAT' %}).
-        </div>
-      </div>
       {# FIXME: Revoir cette condition quand le "voir aussi sera implémenté #}
       {% if object.publications or object.developpements %}
         <hr />

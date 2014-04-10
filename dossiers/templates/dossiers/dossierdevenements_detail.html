@@ -53,35 +53,46 @@
           {{ object.bibliographie }}
         {% endif %}
       </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{% trans 'Pour citer ce dossier' %}</h3>
+        </div>
+        <div class="panel-body">
+          {{ object.editeurs_scientifiques.html }}{% if object.get_contributors.count > object.editeurs_scientifiques.count %} (dir.){% endif %},
+          « {{ object }} »,
+          <em>Dezède</em> [en ligne].
+          {{ request.build_absolute_uri }}
+          (consulté le {% now 'DATE_FORMAT' %}).
+        </div>
+      </div>
     </div>
 
   </div>
 
   <div class="row">
     <div class="col-xs-12 col-md-offset-4 col-md-8">
-      <nav class="panel panel-default" id="dossier-switcher">
-        <div class="panel-body">
-          <div class="btn-group btn-group-justified">
-            {% previous_sibling object as prev %}
-            <a href="{{ prev.get_absolute_url|default:'#' }}" role="button"
-               {% if not prev %}disabled="disabled"{% endif %}
-               class="btn btn-primary">
-              <i class="fa fa-angle-left"></i>
-              {% trans 'Dossier précédent' %}
-            </a>
-            <a href="#" class="btn btn-default" role="button">
-              <i class="fa fa-angle-double-up"></i>
-              {% trans 'Retourner en haut' %}
-              <i class="fa fa-angle-double-up"></i>
-            </a>
-            {% next_sibling object as next %}
-            <a href="{{ next.get_absolute_url|default:'#' }}" role="button"
-               {% if not next %}disabled="disabled"{% endif %}
-               class="btn btn-primary">
-              {% trans 'Dossier suivant' %}
-              <i class="fa fa-angle-right"></i>
-            </a>
-          </div>
+      <nav id="dossier-switcher">
+        <div class="btn-group btn-group-justified">
+          {% previous_sibling object as prev %}
+          <a href="{{ prev.get_absolute_url|default:'#' }}" role="button"
+             {% if not prev %}disabled="disabled"{% endif %}
+             class="btn btn-primary">
+            <i class="fa fa-angle-left"></i>
+            {% trans 'Dossier précédent' %}
+          </a>
+          <a href="#" class="btn btn-default" role="button">
+            <i class="fa fa-angle-double-up"></i>
+            {% trans 'Retourner en haut' %}
+            <i class="fa fa-angle-double-up"></i>
+          </a>
+          {% next_sibling object as next %}
+          <a href="{{ next.get_absolute_url|default:'#' }}" role="button"
+             {% if not next %}disabled="disabled"{% endif %}
+             class="btn btn-primary">
+            {% trans 'Dossier suivant' %}
+            <i class="fa fa-angle-right"></i>
+          </a>
         </div>
       </nav>
     </div>
