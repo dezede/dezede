@@ -31,11 +31,13 @@ johnny.cache.enable()
 #client = Client()
 #client.login(username='bertrand', password='')
 
+
 def display_evenement(evenement):
     r = client.get(reverse('evenement_pk', args=(evenement.pk,)))
     evenement_html = BeautifulSoup(r.content).section
     evenement_html.find(class_='btn-toolbar').extract()
     display(HTML(force_text(evenement_html)))
+
 
 etat = update_or_create(Etat, dict(
             nom='importé(e) automatiquement',
@@ -53,7 +55,6 @@ onl_ensemble.owner = onl
 onl_ensemble.save()
 
 
-
 DATE_COL = u'Date de la représentation'
 TIME_COL = 'Horaire'
 PROGRAMME_COL = u'Code du programme / série'
@@ -62,11 +63,13 @@ SALLE_COL = 'Nom de la salle'
 VILLE_COL = 'ville'
 DISTRIBUTION_COL = u'Distribution : direction, mise en scène, interprètes, etc.'
 
+
 def to_time(time_str):
     if time_str == 'nan':
         return np.NaN
     parts = map(int, time_str.split('h'))
     return datetime.time(*parts)
+
 
 def to_oeuvres(oeuvres_str):
     rows = oeuvres_str.split('\n')
@@ -105,6 +108,7 @@ def to_oeuvres(oeuvres_str):
         oeuvre = update_or_create(Oeuvre, dict(titre=oeuvre, auteurs=auteurs, etat=etat, owner=onl), unique_keys=('titre', 'auteurs__individu'), conflict_handling=KEEP)
         oeuvres.append(oeuvre)
     return oeuvres
+
 
 VILLE = NatureDeLieu.objects.get(nom='ville')
 SALLE = NatureDeLieu.objects.get(nom='salle')
@@ -152,11 +156,13 @@ def to_distribution(distribution_str):
 def import_excel(excel_path):
     print u'Ouverture de la source…'
     df = pandas.read_excel(excel_path, 1)
-    df = df[np.isfinite(df[PROGRAMME_COL])]
-    df[PROGRAMME_COL] = df[PROGRAMME_COL].astype(int)
+    df = df[np.isfinite(df['Jauge']) & df['Jauge'] != 0]
+    #df[PROGRAMME_COL] = df[PROGRAMME_COL].astype(int)
     print u'Conversion des horaires…'
+    df[DATE_COL].replace('12/01/143', '12/01/2013', inplace=True)
     df[TIME_COL] = df[TIME_COL].astype(str).apply(to_time)
     print u'Analyse des œuvres…'
+    df[OEUVRES_COL].fillna('', inplace=True)
     replacements = (
         ('Claude.debussy', 'Claude;Debussy'),
         (u'Concerto pour piano n°1,Franz;Liszt', u'Concerto pour piano n°1;Franz;Liszt'),
