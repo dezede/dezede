@@ -55,7 +55,7 @@ South==0.8.4
 beautifulsoup4==4.3.2
 BeautifulSoup<4.0
 lxml==3.3.5
-simplejson==3.4.0
+simplejson==3.4.1
 defusedxml==0.4.1
 PyYAML==3.11
 
@@ -71,7 +71,7 @@ Cython==0.20.1
 
 # Dependencies
 # For django-image-cropping
-easy-thumbnails==1.5
+easy-thumbnails==2.0.1
 # For django-filebrowser (mandatory)
 Pillow==2.4.0
 # For djangorestframework (optionals)
