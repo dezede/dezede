@@ -264,7 +264,7 @@ class AncrageSpatioTemporel(CommonModel):
                                       'ancrages spatio-temporels', 1)
         verbose_name_plural = ungettext_lazy('ancrage spatio-temporel',
                                              'ancrages spatio-temporels', 2)
-        ordering = ('date', 'heure', 'lieu__parent', 'lieu', 'date_approx',
+        ordering = ('date', 'heure', 'lieu', 'date_approx',
                     'heure_approx', 'lieu_approx')
         app_label = 'libretto'
 
