@@ -214,7 +214,7 @@ CACHES = {
     }
 }
 JOHNNY_MIDDLEWARE_KEY_PREFIX = '2Z'
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
