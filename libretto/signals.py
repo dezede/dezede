@@ -13,4 +13,6 @@ class CeleryAutoInvalidator(CelerySignalProcessor):
         if sender in (LogEntry, Session, Revision, Version):
             return
 
-        auto_invalidate.delay(action, instance.__class__, instance.pk)
+        auto_invalidate.delay(
+            action, instance._meta.app_label,
+            str(instance.__class__), instance.pk)

@@ -5,6 +5,7 @@ from celery import shared_task
 from celery_haystack.indexes import CelerySearchIndex
 from celery_haystack.tasks import CeleryHaystackSignalHandler as Original
 from celery_haystack.utils import get_update_task
+from django.db.models import get_model
 from haystack import connections, connection_router
 from haystack.exceptions import NotHandled
 from haystack.utils import get_identifier
@@ -65,7 +66,9 @@ def auto_update_haystack(action, instance):
 
 
 @shared_task
-def auto_invalidate(action, instance):
+def auto_invalidate(action, app_label, model_name, pk):
+    model = get_model(app_label, model_name)
+    instance = model._default_manager.get(pk=pk)
     auto_invalidate_cache(instance)
     auto_update_haystack(action, instance)
 
