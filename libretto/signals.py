@@ -15,4 +15,4 @@ class CeleryAutoInvalidator(CelerySignalProcessor):
 
         auto_invalidate.delay(
             action, instance._meta.app_label,
-            str(instance.__class__), instance.pk)
+            instance.__class__.__name__, instance.pk)
