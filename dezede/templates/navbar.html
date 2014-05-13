@@ -67,24 +67,23 @@
           <ul class="dropdown-menu">
 
             <li>
-              <span class="navbar-text text-center">
-                {% trans 'Une aide arrivera prochainement' %}
-              </span>
+              <a href="{% url 'presentation' %}">{% trans 'Présentation' %}</a>
             </li>
-
+            {# TODO: Créer un mode d’emploi #}
+{#            <li>#}
+{#              <a href="">{% trans 'Mode d’emploi' %}</a>#}
+{#            </li>#}
             <li>
-              <a href="https://groups.google.com/forum/?fromgroups=#!forum/dezede">
-                <b class="fa fa-comments fa-fw"></b>
-                {% trans 'Questions/Bugs' %}
-              </a>
+              <a href="{% url 'bibliographie' %}">{% trans 'Bibliographie' %}</a>
             </li>
-
             <li>
-              <a href="https://github.com/dezede/dezede">
-                <b class="fa fa-github fa-fw"></b>
-                {% trans 'Source sur' %} GitHub
-              </a>
+              <a href="{% url 'contribuer' %}">{% trans 'Contribuer' %}</a>
             </li>
+            {# TODO: Rédiger la méthode scientifique #}
+{#            <li>#}
+{#              <a href="">{% trans 'Méthode scientifique' %}</a>#}
+{#            </li>#}
+
           </ul>
         </li>
 
@@ -100,6 +99,21 @@
                 {% trans "Administration" %}
               </a>
             </li>
+
+            <li>
+              <a href="https://groups.google.com/forum/?fromgroups=#!forum/dezede">
+                <b class="fa fa-comments fa-fw"></b>
+                {% trans 'Questions/Bugs' %}
+              </a>
+            </li>
+
+            <li>
+              <a href="https://github.com/dezede/dezede">
+                <b class="fa fa-github fa-fw"></b>
+                {% trans 'Source sur' %} GitHub
+              </a>
+            </li>
+
           </ul>
         </li>
 

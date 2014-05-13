@@ -4,16 +4,24 @@ from django.conf import settings
 from django.conf.urls import *
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.generic import TemplateView
 from ajax_select import urls as ajax_select_urls
 from filebrowser.sites import site
-from .views import HomeView, CustomSearchView, autocomplete, ErrorView
+from .views import (
+    HomeView, CustomSearchView, autocomplete, ErrorView, BibliographieView)
 
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^', include('libretto.urls')),
+    url(r'^presentation$',
+        TemplateView.as_view(template_name='pages/presentation.html'),
+        name='presentation'),
+    url(r'^contribuer$',
+        TemplateView.as_view(template_name='pages/contribute.html'),
+        name='contribuer'),
+    url(r'^bibliographie$', BibliographieView.as_view(), name='bibliographie'),
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^dossiers/', include('dossiers.urls')),
     url(r'^admin/lookups/', include(ajax_select_urls)),

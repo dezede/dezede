@@ -15,6 +15,7 @@
 @font-family-monospace:  'Linux Libertine Monospace', Monaco, monospace;
 @font-family-base:       @font-family-sans-serif;
 @headings-font-family:   @font-family-serif;
+@line-height-base: 20 / 15;
 
 @brand-primary:           lighten(desaturate(@link-color, 20%), 20%);
 @link-color:              darken(saturate(spin(@body-bg, -33), 100%), 52%);
@@ -251,6 +252,7 @@ p {
 
 .row.facts {
   text-align: center;
+  margin-bottom: @grid-gutter-width;
   .fact-container {
     display: table !important;
     height: 250px;
@@ -495,6 +497,22 @@ dl {
       .pagination {
         margin: 0;
       }
+    }
+  }
+}
+
+table {
+  td {
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+ul {
+  li {
+    p:last-child {
+      margin-bottom: 0;
     }
   }
 }
@@ -908,5 +926,19 @@ body>footer {
   &+.input-group-btn .btn {
     top: -3px;
     height: 35px;
+  }
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.static-page {
+  font-family: @font-family-serif;
+  font-size: @font-size-large;
+  table {
+    td {
+      vertical-align: top;
+    }
   }
 }

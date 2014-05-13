@@ -7,6 +7,7 @@ from django.utils.encoding import smart_text
 from django.views.generic import ListView, TemplateView
 from haystack.query import SearchQuerySet
 from haystack.views import SearchView
+from libretto.models import Oeuvre, Lieu, Individu
 from .models import Diapositive
 
 
@@ -51,3 +52,16 @@ class ErrorView(TemplateView):
         self.template_name = '%s.html' % self.status
         return super(ErrorView, self).render_to_response(context,
                                                          **response_kwargs)
+
+
+class BibliographieView(TemplateView):
+    template_name = 'pages/bibliographie.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(BibliographieView, self).get_context_data(**kwargs)
+        context.update(
+            oeuvres=Oeuvre.objects.all(),
+            individus=Individu.objects.all(),
+            lieux=Lieu.objects.all(),
+        )
+        return context
