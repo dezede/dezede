@@ -41,12 +41,7 @@
     </div>
 
     <div class="well col-xs-6 text-center">
-      {% if object.avatar %}
-        {% version_object object.avatar 'avatar' as avatar %}
-        <img src="{{ avatar.url }}" class="img-polaroid"
-             style="width: {{ avatar.width }}px;
-                    height: {{ avatar.height }}px;"/>
-      {% endif %}
+      {% include 'accounts/include/avatar.html' %}
       <h3>{% trans 'Données générales' %}</h3>
       <table class="data-table auto-links">
         {% data_table_attr 'content_object.link' verbose_name=_('Autorité associée') %}

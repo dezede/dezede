@@ -242,6 +242,24 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 
 p {
   text-align: justify;
+  .text-center & {
+    text-align: center;
+  }
+  .text-right & {
+    text-align: right;
+  }
+}
+
+.thumbnail {
+  margin-bottom: 0;
+}
+
+.fa.default-avatar {
+  font-size: 125px;
+  color: lightgray;
+  &:before {
+    content: @fa-var-user;
+  }
 }
 
 .well {
