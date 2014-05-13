@@ -7,13 +7,13 @@ add-apt-repository ppa:chris-lea/node.js
 apt-get update
 
 # Installe tous les paquets Ubuntu requis.
-apt-get install nano mercurial postgresql postgresql-server-dev-9.1 python2.7 python-pip python-dev redis-server libxml2 libxml2-dev libxslt1-dev rabbitmq-server nodejs openjdk-7-jre
+apt-get install nano mercurial postgresql postgresql-server-dev-9.1 python2.7 python-pip python-dev redis-server libxml2 libxml2-dev libxslt1-dev nodejs openjdk-7-jre
 
 # Installe LESS CSS.
-npm install -g less@1.6.1
+npm install -g less@1.7.0
 
 # Installe le moteur de recherche elasticsearch.
-wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.10.deb
+wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.13.deb
 dpkg -i elasticsearch-*.deb
 rm elasticsearch-*.deb
 
