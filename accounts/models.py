@@ -78,7 +78,7 @@ class HierarchicUser(MPTTModel, AbstractUser):
                              blank=True, null=True)
 
     presentation = TextField(
-        _('présentation'), blank=True, validators=[MaxLengthValidator(1000)])
+        _('présentation'), blank=True, validators=[MaxLengthValidator(2000)])
     fonctions = TextField(_('fonctions au sein de l’équipe'), blank=True,
                           validators=[MaxLengthValidator(200)])
     literature = TextField(_('publications'), blank=True)
