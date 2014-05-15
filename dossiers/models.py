@@ -54,8 +54,8 @@ class DossierDEvenements(MPTTModel, PublishedModel):
 
     # Article
     presentation = TextField(_('présentation'))
-    contexte = TextField(_('contexte historique'))
-    sources = TextField(_('sources et protocole'))
+    contexte = TextField(_('contexte historique'), blank=True)
+    sources = TextField(_('sources et protocole'), blank=True)
     bibliographie = TextField(_('bibliographie indicative'), blank=True)
 
     # Sélecteurs
