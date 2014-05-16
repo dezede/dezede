@@ -2,7 +2,7 @@
 django-debug-toolbar==1.2
 django-debug-toolbar-template-timings==0.6.1
 django-haystack-panel==0.2.1
-django-extensions==1.3.6
+django-extensions==1.3.7
 
 # For manage.py runserver_plus
 Werkzeug==0.9.4
