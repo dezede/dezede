@@ -72,7 +72,7 @@ class Diapositive(PublishedModel):
     opacity = DecimalField(_('opacité'), max_digits=2, decimal_places=1,
                            default=0.6, choices=OPACITIES)
     position = PositiveSmallIntegerField(
-        _('position'), default=get_default_position, unique=True)
+        _('position'), default=get_default_position)
 
     SLIDER_LG_WIDTH = 1140
     SLIDER_MD_WIDTH = 940
