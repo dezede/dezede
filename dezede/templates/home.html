@@ -73,10 +73,13 @@
               <div class="carousel-caption{% if object.text_background %} text-background{% endif %}">
                 <header>
                   <h2>{{ object.title }}</h2>
-                </header><br />
-                <article>
-                  <p>{{ object.subtitle }}</p>
-                </article>
+                </header>
+                {% if object.subtitle %}
+                  <br />
+                  <article>
+                    <p>{{ object.subtitle }}</p>
+                  </article>
+                {% endif %}
                 <div class="read-more">
                   <a class="btn btn-primary btn-lg"
                      href="{{ object.content_object.get_absolute_url }}">

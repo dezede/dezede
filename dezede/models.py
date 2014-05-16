@@ -39,7 +39,7 @@ class Diapositive(PublishedModel):
     content_object.short_description = _('objet lié')
     # Contenu
     title = CharField(_('titre'), max_length=70)
-    subtitle = CharField(_('sous-titre'), max_length=100)
+    subtitle = CharField(_('sous-titre'), max_length=100, blank=True)
     ALIGNEMENT_CHOICES = (
         ('text-left', _('Gauche')),
         ('text-center', _('Centre')),
