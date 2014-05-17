@@ -406,6 +406,11 @@ class Evenement(AutoriteModel):
     has_source.boolean = True
     has_source.admin_order_field = 'sources'
 
+    @property
+    def oeuvres(self):
+        return get_model('libretto', 'Oeuvre').objects.filter(
+            elements_de_programme__evenement=self)
+
     def __str__(self):
         out = self.ancrage_debut.calc_date(False)
         out = capfirst(out)
