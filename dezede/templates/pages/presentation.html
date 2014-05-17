@@ -268,38 +268,38 @@
     <p><a href="{% url 'contribuer' %}">Soumettre un projet</a></p>
     {# TODO: Lien vers la fiche comité éditorial (voir ci-dessus) #}
 
-    <h3>Les classeurs</h3>
-    <p>
-      <span class="lead">Archivez vos spectacles (à l’étude).</span>
-      Vous souhaitez conserver une archive de vos spectacles ?
-      Rien de plus simple grâce aux classeurs Dezède !
-      Cette application disponible gratuitement permet de créer un compte personnel
-      – que l’on soit utilisateur ou simple lecteur – et de constituer
-      un panier de spectacles à partir des événements déjà mis en ligne.
-    </p>
+{#    <h3>Les classeurs</h3>#}
+{#    <p>#}
+{#      <span class="lead">Archivez vos spectacles (à l’étude).</span>#}
+{#      Vous souhaitez conserver une archive de vos spectacles ?#}
+{#      Rien de plus simple grâce aux classeurs Dezède !#}
+{#      Cette application disponible gratuitement permet de créer un compte personnel#}
+{#      – que l’on soit utilisateur ou simple lecteur – et de constituer#}
+{#      un panier de spectacles à partir des événements déjà mis en ligne.#}
+{#    </p>#}
     {# TODO: Lien vers le formulaire de création de classeur #}
 
-    <h3>La revue</h3>
-    <p>
-      <span class="lead">Publiez des études scientifiques (à l’étude).</span>
-      La revue en ligne permettra d’associer un article à un dossier d’événements,
-      de constituer des numéros spéciaux sur une thématique donnée
-      ou encore de rassembler les actes des journées d’étude et des colloques
-      consacrés à des chronologies en ligne.
-      Elle sera le support des études critiques que les dossiers ont vocation à générer.
-      Toutes les propositions sont soumises à l’avis du comité éditorial.
-    </p>
+{#    <h3>La revue</h3>#}
+{#    <p>#}
+{#      <span class="lead">Publiez des études scientifiques (à l’étude).</span>#}
+{#      La revue en ligne permettra d’associer un article à un dossier d’événements,#}
+{#      de constituer des numéros spéciaux sur une thématique donnée#}
+{#      ou encore de rassembler les actes des journées d’étude et des colloques#}
+{#      consacrés à des chronologies en ligne.#}
+{#      Elle sera le support des études critiques que les dossiers ont vocation à générer.#}
+{#      Toutes les propositions sont soumises à l’avis du comité éditorial.#}
+{#    </p>#}
     {# TODO: Lien vers la revue #}
-    <p><a href="{% url 'contribuer' %}">Soumettre un projet</a></p>
+{#    <p><a href="{% url 'contribuer' %}">Soumettre un projet</a></p>#}
     {# TODO: Lien vers la fiche comité éditorial (voir ci-dessus) #}
 
-    <h3>Les expositions</h3>
-    <p>
-      <span class="lead">Exposez (à l’étude).</span>
-      Les expositions virtuelles pourront mettre en relief par l’image
-      certains contenus des dossiers et de la revue,
-      ou valoriser des collections publiques déposées dans Dezède.
-    </p>
+{#    <h3>Les expositions</h3>#}
+{#    <p>#}
+{#      <span class="lead">Exposez (à l’étude).</span>#}
+{#      Les expositions virtuelles pourront mettre en relief par l’image#}
+{#      certains contenus des dossiers et de la revue,#}
+{#      ou valoriser des collections publiques déposées dans Dezède.#}
+{#    </p>#}
     {# TODO: Lien vers les expositions #}
     {# TODO: Lien vers la fiche comité éditorial (voir ci-dessus) #}
 
@@ -674,6 +674,12 @@
           </td>
         </tr>
         <tr>
+          <td>17 mai</td>
+          <td>
+            <p>12 000<sup>e</sup> événement.</p>
+          </td>
+        </tr>
+        <tr>
           <td>21 mai</td>
           <td>
             <p>
@@ -690,66 +696,50 @@
     <h3>Pérennité</h3>
 
     <p>
-      Dezède a jusqu’à aujourd’hui − 21 mai 2014 − été exclusivement développé
-      par <a href="https://github.com/BertrandBordage">Bertrand <span class="sc">Bordage</span></a>,
+      Dezède a été exclusivement développé par
+      <a href="https://github.com/BertrandBordage">Bertrand <span class="sc">Bordage</span></a>,
       développeur indépendant, suivant les consignes scientifiques de
       <a href="{% url 'user_profile' 'joann_elart' %}">Joann <span class="sc">Élart</span></a>.
-      Une si petite équipe peut sembler inappropriée pour assurer la pérennité
-      d’un tel outil, mais nous faisons toutefois tout pour maximiser sa durée de vie :
+      La conception de Dezède repose sur quatre idées fondatrices :
       <ul>
         <li>
           <p>
-            Nous prenons le temps de bien faire les choses.
+            la volonté de rendre l’outil très ergonomique,
+            tant pour le lecteur que pour le contributeur ;
           </p>
         </li>
         <li>
           <p>
-            Nous cherchons à créer un outil le plus ergonomique possible,
-            tant pour le lecteur que pour le contributeur.
+            le recours à des solutions 100 % <em>open source</em> (le code est accessible
+            <a href="https://github.com/dezede/dezede">dans notre dépôt GitHub</a>) ;
           </p>
         </li>
         <li>
           <p>
-            Dezède est hébergé par un service public français.
-            Si jamais l’évolution de l’outil informatique s’arrête un jour
-            (ce que nous ne souhaitons pas), les utilisateurs pourront continuer
-            à l’utiliser et des données pourront toujours y être ajoutées.
+            le choix de solutions techniques les plus pérennes.
+            Notamment le langage de programmation <a href="https://www.python.org/">Python</a>,
+            en permettant d’écrire du code extrêmement lisible, simplifie nettement la maintenance ;
           </p>
         </li>
         <li>
           <p>
-            Dezède est 100 % <em>open source</em> : à la fois Dezède et tous les outils
-            qu’il utilise sont <em>open source</em>. Vous pouvez trouver le code
-            <a href="https://github.com/dezede/dezede">dans notre dépôt GitHub</a>.
-            Outre l’absence de frais de fonctionnement (pas de licences
-            ou contrats de maintenance à payer), le projet pourra être repris
-            par une autre institution si jamais nous ne pouvons plus continuer à l’améliorer.
-          </p>
-        </li>
-        <li>
-          <p>
-            Dezède est d’une grande stabilité grâce à une suite de tests automatiques
-            couvrant la majeure partie de ses fonctionnalités.
-            Avant chaque publication d’une nouvelle version de Dezède,
+            la recherche d’une grande stabilité par la mise en place
+            d’une suite de tests automatiques couvrant la majeure partie de ses fonctionnalités.
+            À titre d’exemple, avant chaque publication d’une nouvelle version de Dezède,
             cette suite de tests est exécutée afin de s’assurer qu’aucun bug
             important ne puisse se produire.  Dans les rares cas où un bug
-            advient toutefois, le développeur reçoit automatiquement un rapport
-            d’erreur par mail afin de le corriger rapidement.
-          </p>
-        </li>
-        <li>
-          <p>
-            Nous choisissons les solutions techniques qui nous paraissent les plus pérennes.
-            Notamment, le langage de programmation <a href="https://www.python.org/">Python</a>
-            permet d’écrire du code extrêmement lisible − probablement le plus lisible du monde −
-            et ce en moins de lignes de code que n’importe quel autre langage.
-            Cela simplifie nettement la maintenance, tout en accroissant
-            considérablement les chances de reprise du projet si nous n’avons
-            plus les moyens de poursuivre le développement.
+            advient toutefois, Bertrand <span class="sc">Bordage</span>
+            reçoit automatiquement un rapport d’erreur par mail afin de le corriger rapidement.
           </p>
         </li>
       </ul>
 
+    </p>
+
+    <p>
+      Dezède est hébergé sur la grille de services de la
+      <abbr title="Très Grande Infrastructure de Recherche">TGIR</abbr>
+      <a href="http://www.huma-num.fr/" target="_blank">Huma-Num</a>
     </p>
 
     <h3>Solutions techniques</h3>
