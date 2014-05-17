@@ -39,8 +39,8 @@
 </div>
 
 {% if evenement.notes %}
+  <h4>{% trans 'notes'|capfirst %}</h4>
   <small>
-    <h4>{% trans 'notes'|capfirst %}</h4>
     {{ evenement.notes|safe }}
   </small>
 {% endif %}
