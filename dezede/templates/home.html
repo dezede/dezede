@@ -64,7 +64,7 @@
                 <div class="{{ object.image_align }} visible-md">
                   <img src="{% thumbnail object.image object.size_md box=object.box_md crop detail %}" />
                 </div>
-                <div class="{{ object.image_align }} visible-sm visible-xs">
+                <div class="{{ object.image_align }} hidden-md hidden-lg">
                   <img src="{% thumbnail object.image object.size_sm box=object.box_sm crop detail %}" />
                 </div>
               </div>
