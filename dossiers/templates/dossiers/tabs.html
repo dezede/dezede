@@ -1,5 +1,5 @@
 {% load url from future %}
-{% load i18n %}
+{% load i18n routines %}
 
 <ul class="nav nav-tabs nav-justified">
   {% url 'dossierdevenements_detail' object.pk as text_url %}
@@ -12,7 +12,8 @@
   <li{% if request.path == data_url %} class="active"{% endif %}>
     <a href="{{ data_url }}">
       {% trans 'Événements' %}
-      <span class="badge">{{ object.get_queryset.count }}</span>
+      {% published object.get_queryset as evenements %}
+      <span class="badge">{{ evenements.count }}</span>
     </a>
   </li>
 </ul>
