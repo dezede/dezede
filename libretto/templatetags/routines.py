@@ -201,8 +201,10 @@ def data_table_list(context, object_list, attr='link',
 
 
 @register.simple_tag(takes_context=True)
-def jqtree(context, model_name, attr='__str__'):
+def jqtree(context, model_path, attr='__str__'):
+    app_label, model_name = model_path.split('.')
     c = {
+        'app_label': app_label,
         'model_name': model_name,
         'attr': attr,
         'object': context.get('object'),

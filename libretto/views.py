@@ -370,7 +370,8 @@ class TreeNode(PublishedDetailView):
         return context
 
     def get(self, request, *args, **kwargs):
-        self.model = get_model('libretto', self.kwargs['model_name'])
+        self.model = get_model(self.kwargs['app_label'],
+                               self.kwargs['model_name'])
         if 'node' in self.request.GET:
             self.kwargs['pk'] = self.request.GET['node']
         try:

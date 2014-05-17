@@ -1,7 +1,7 @@
 {% load i18n static compress %}
 
 <div id="{{ model_name }}-tree"
-     data-url="{% url 'tree_node' model_name attr object.pk %}">
+     data-url="{% url 'tree_node' app_label model_name attr object.pk %}">
 </div>
 
 {% compress js file %}
@@ -12,8 +12,8 @@
         autoEscape: false,
         useContextMenu: false,
         keyboardSupport: false,
-        openedIcon: '<span class="fa fa-minus-square">',
-        closedIcon: '<span class="fa fa-plus-square">'
+        openedIcon: '<span class="fa fa-minus-square"></span>',
+        closedIcon: '<span class="fa fa-plus-square"></span>'
       });
     });
   </script>
