@@ -161,7 +161,7 @@ class EvenementsGraph(TemplateView):
 
 class HierarchicUserList(ListView):
     model = HierarchicUser
-    title = _('Liste de utilisateurs')
+    title = _('Liste des utilisateurs')
 
     def get_context_data(self, **kwargs):
         context = super(HierarchicUserList, self).get_context_data(**kwargs)
@@ -170,8 +170,25 @@ class HierarchicUserList(ListView):
 
 
 class EquipeView(HierarchicUserList):
+    membres = ()
+
+    def get_queryset(self):
+        qs = super(EquipeView, self).get_queryset()
+        return qs.filter(
+            pk__in=self.membres).order_by(*self.model._meta.ordering)
+
+
+class ComiteEditorialeView(EquipeView):
     membres = (
-        1,  # Bertrand
+        5,  # Joann
+        6,  # Yannick
+        7,  # Patrick
+    )
+    title = _('Comité éditorial')
+
+
+class ContributeursView(EquipeView):
+    membres = (
         5,  # Joann
         6,  # Yannick
         7,  # Patrick
@@ -181,12 +198,17 @@ class EquipeView(HierarchicUserList):
         102,  # Thomas Bacquet
         168,  # Thomas Vernet
     )
-    title = 'Équipe'
+    title = _('Contributeurs')
 
-    def get_queryset(self):
-        qs = super(EquipeView, self).get_queryset()
-        return qs.filter(
-            pk__in=self.membres).order_by(*self.model._meta.ordering)
+
+class EquipeDeveloppementView(EquipeView):
+    membres = (
+        1,  # Bertrand
+        5,  # Joann
+        6,  # Yannick
+        7,  # Patrick
+    )
+    title = _('Équipe de développement')
 
 
 class PartenairesView(EquipeView):
