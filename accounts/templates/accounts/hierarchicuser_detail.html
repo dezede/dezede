@@ -11,8 +11,7 @@
 
   <div class="row">
 
-    <div class="col-xs-6">
-
+    <div class="col-md-8">
       {% if object.presentation %}
         <h3>{% trans 'Présentation' %}</h3>
         {{ object.presentation }}
@@ -37,41 +36,25 @@
         <h3>{% trans 'Bibliographie' %}</h3>
         {{ object.literature }}
       {% endif %}
-
     </div>
 
-    <div class="well col-xs-6 text-center">
-      {% include 'accounts/include/avatar.html' %}
-      <h3>{% trans 'Données générales' %}</h3>
-      <table class="data-table auto-links">
-        {% data_table_attr 'content_object.link' verbose_name=_('Autorité associée') %}
-        {% data_table_attr 'date_joined.date' verbose_name=_('Date d’inscription') %}
-        {% data_table_attr 'website_link' verbose_name=_('Site internet') %}
-        {% if object.show_email %}
-          {% data_table_attr 'email_link' verbose_name=_('Courriel') %}
-        {% endif %}
-        {% data_table_attr 'mentor.link' verbose_name=verboses.mentor %}
-        {% data_table_list object.disciples.all verbose_name=verboses.disciple verbose_name_plural=verboses.disciples per_page=5 %}
-      </table>
-      <h3>{% trans 'Événements créés' %}</h3>
-      <div id="coverage">
-        <i class="fa fa-spinner fa-spin"></i>
-        {% trans 'Chargement…' %}
+    <div class="col-md-4">
+      <div class="well text-center">
+        {% include 'accounts/include/avatar.html' %}
+        <p style="margin-top: 20px;">
+          {% if object.content_object %}
+            {% trans 'Autorité associée :' %} {{ object.content_object.link }}<br />
+          {% endif %}
+          {% if object.website %}
+            {{ object.website_link }}<br />
+          {% endif %}
+          {% if object.show_email %}
+            {{ object.email_link }}
+          {% endif %}
+        </p>
       </div>
     </div>
 
   </div>
-
-  {% addtoblock 'js' %}
-    <script>
-      $.ajax({
-        url: '{% url 'evenements_graph' %}?username={{ object.username }}',
-        dataType: 'html'
-      }).done(function (data) {
-        $('#coverage').replaceWith(data);
-        tooltips_reload();
-      });
-    </script>
-  {% endaddtoblock %}
 
 {% endblock %}
