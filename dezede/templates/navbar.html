@@ -70,7 +70,15 @@
             {% nav_link 'equipe_developpement' _('Équipe de développement') %}
           </ul>
         </li>
-        {% nav_link 'partenaires' 'Partenaires' %}
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            {% trans 'Partenariats' %} <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            {% nav_link 'proprietaires' _('Propriétaires') %}
+            {% nav_link 'partenaires' _('Partenaires') %}
+          </ul>
+        </li>
 
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">

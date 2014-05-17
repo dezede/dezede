@@ -5,7 +5,7 @@ from registration.backends.default.views import ActivationView
 from .views import (
     MyRegistrationView, GrantToAdmin, EvenementsGraph, HierarchicUserDetail,
     PartenairesView, ComiteEditorialeView, ContributeursView,
-    EquipeDeveloppementView)
+    EquipeDeveloppementView, ProprietairesView)
 
 
 urlpatterns = patterns('',
@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^contributeurs$', ContributeursView.as_view(), name='contributeurs'),
     url(r'^equipe-developpement$', EquipeDeveloppementView.as_view(),
         name='equipe_developpement'),
+    url(r'^proprietaires$', ProprietairesView.as_view(), name='proprietaires'),
     url(r'^partenaires$', PartenairesView.as_view(), name='partenaires'),
     url(r'^evenements_graph\.svg$', EvenementsGraph.as_view(),
         name='evenements_graph'),

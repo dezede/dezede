@@ -211,6 +211,17 @@ class EquipeDeveloppementView(EquipeView):
     title = _('Équipe de développement')
 
 
+class ProprietairesView(EquipeView):
+    membres = (
+        194,  # Université de Rouen
+        195,  # Université de Montpellier 3
+        196,  # CÉRÉdI
+        197,  # GRHis
+        198,  # IRCL
+    )
+    title = _('Propriétaires')
+
+
 class PartenairesView(EquipeView):
     membres = (
         157,  # AFO
