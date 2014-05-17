@@ -300,8 +300,7 @@ class EvenementQuerySet(PublishedQuerySet):
 
 
 class EvenementManager(PublishedManager):
-    def get_query_set(self):
-        return EvenementQuerySet(self.model, using=self._db)
+    queryset_class = EvenementQuerySet
 
     def yearly_counts(self):
         return self.get_query_set().yearly_counts()
