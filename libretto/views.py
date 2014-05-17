@@ -26,23 +26,25 @@ __all__ = (b'PublishedDetailView', b'PublishedListView',
            b'LieuViewSet', b'IndividuViewSet', b'OeuvreViewSet')
 
 
-class PublishedDetailView(DetailView):
-    def get_queryset(self):
-        qs = super(PublishedDetailView, self).get_queryset()
-        if isinstance(qs, PolymorphicQuerySet):
-            qs = qs.non_polymorphic()
-        return qs.published(request=self.request)
-
-
-class PublishedListView(ListView):
+class PublishedMixin(object):
     has_frontend_admin = False
 
     def get_queryset(self):
-        qs = super(PublishedListView, self).get_queryset()
+        qs = super(PublishedMixin, self).get_queryset()
+        if isinstance(qs, PolymorphicQuerySet):
+            qs = qs.non_polymorphic()
         if self.has_frontend_admin:
             qs = qs.select_related('owner', 'etat')
         return qs.published(request=self.request) \
                  .order_by(*self.model._meta.ordering)
+
+
+class PublishedDetailView(PublishedMixin, DetailView):
+    pass
+
+
+class PublishedListView(PublishedMixin, ListView):
+    pass
 
 
 class EvenementListView(AjaxListView, PublishedListView):
@@ -175,7 +177,7 @@ class CommonTableView(TemplateView):
         return context
 
 
-class CommonDatatablesView(DatatablesView):
+class CommonDatatablesView(PublishedMixin, DatatablesView):
     undefined_str = '−'
     link_on_column = 0
 
