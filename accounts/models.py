@@ -138,7 +138,8 @@ class HierarchicUser(MPTTModel, AbstractUser):
         return 'user_profile', (self.username,)
 
     def website_link(self):
-        return href(self.website, self.website_verbose or self.website)
+        return href(self.website, self.website_verbose or self.website,
+                    new_tab=True)
 
     def email_link(self):
         return href('mailto:' + self.email, self.email)
