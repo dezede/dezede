@@ -175,6 +175,11 @@ class EquipeView(HierarchicUserList):
         5,  # Joann
         6,  # Yannick
         7,  # Patrick
+        80,  # Lucille Brunel
+        85,  # Denis Tchorek
+        95,  # Christine Carrère-Saucède
+        102,  # Thomas Bacquet
+        168,  # Thomas Vernet
     )
     title = 'Équipe'
 
@@ -185,7 +190,6 @@ class EquipeView(HierarchicUserList):
 
 class PartenairesView(EquipeView):
     membres = (
-        103,  # Opéra-Comique
         157,  # AFO
     )
     title = _('Partenaires')
