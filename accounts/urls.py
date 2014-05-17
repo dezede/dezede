@@ -2,11 +2,15 @@
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView
 from registration.backends.default.views import ActivationView
-from .views import MyRegistrationView, GrantToAdmin, EvenementsGraph, \
-    HierarchicUserDetail
+from .views import (
+    MyRegistrationView, GrantToAdmin, EvenementsGraph, HierarchicUserDetail,
+    HierarchicUserList, EquipeView, PartenairesView)
 
 
 urlpatterns = patterns('',
+    url(r'^$', HierarchicUserList.as_view(), name='user_profiles'),
+    url(r'^equipe$', EquipeView.as_view(), name='equipe'),
+    url(r'^partenaires$', PartenairesView.as_view(), name='partenaires'),
     url(r'^evenements_graph\.svg$', EvenementsGraph.as_view(),
         name='evenements_graph'),
     url(r'^profils/(?P<username>[\w.@+-]+)$', HierarchicUserDetail.as_view(),

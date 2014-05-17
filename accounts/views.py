@@ -10,7 +10,7 @@ from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import DetailView, TemplateView, ListView
 from registration.backends.default.views import RegistrationView
 from cache_tools import cached_ugettext_lazy as _
 from libretto.models import AncrageSpatioTemporel
@@ -72,7 +72,7 @@ class EvenementsGraph(TemplateView):
     # When we set the font size, the figures are smaller than
     # the specified size.
     figure_size_factor = 0.8
-    hue = 0  # degrees
+    hue = 17  # degrees
     legend_levels = 6
 
     def get_context_data(self, **kwargs):
@@ -157,6 +157,38 @@ class EvenementsGraph(TemplateView):
             levels_iterator(0, 1, self.legend_levels))
 
         return context
+
+
+class HierarchicUserList(ListView):
+    model = HierarchicUser
+    title = _('Liste de utilisateurs')
+
+    def get_context_data(self, **kwargs):
+        context = super(HierarchicUserList, self).get_context_data(**kwargs)
+        context['title'] = self.title
+        return context
+
+
+class EquipeView(HierarchicUserList):
+    membres = (
+        1,  # Bertrand
+        5,  # Joann
+        6,  # Yannick
+        7,  # Patrick
+    )
+    title = 'Équipe'
+
+    def get_queryset(self):
+        qs = super(EquipeView, self).get_queryset()
+        return qs.filter(pk__in=self.membres)
+
+
+class PartenairesView(EquipeView):
+    membres = (
+        103,  # Opéra-Comique
+        157,  # AFO
+    )
+    title = _('Partenaires')
 
 
 class HierarchicUserDetail(DetailView):
