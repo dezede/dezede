@@ -180,7 +180,7 @@ FILEBROWSER_VERSIONS = {
     'avatar': {'verbose_name': ugettext('Avatar'),
                'width': 150, 'height': 150, 'opts': ''},
     'thumbnail': {'verbose_name': ugettext('Standard thumbnail'),
-                  'width': 60, 'height': 60, 'opts': ''}
+                  'width': 300, 'height': 300, 'opts': ''}
 }
 FILEBROWSER_ADMIN_THUMBNAIL = 'thumbnail'
 FILEBROWSER_ADMIN_VERSIONS = ['avatar']

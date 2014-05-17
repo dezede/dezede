@@ -1,14 +1,24 @@
 {% load fb_versions %}
 
-{% for illustration in object.illustrations.all %}
-  {% version_object illustration.image 'thumbnail' as thumbnail %}
-  <a href="{{ illustration.image.url }}" class="thumbnail">
-    <img src="{{ thumbnail.url }}" />
-    {% if illustration.legende %}
-      <h4>{{ illustration.legende|safe }}</h4>
-    {% endif %}
-    {% if illustration.commentaire %}
-      <p>{{ illustration.commentaire|safe }}</p>
-    {% endif %}
-  </a>
-{% endfor %}
+{% with illustrations=object.illustrations.all %}
+  {% if illustrations %}
+    <div class="row">
+      {% for illustration in illustrations %}
+        {% version_object illustration.image 'thumbnail' as thumbnail %}
+        <div class="col-xs-4">
+          <a href="{{ illustration.image.url }}" class="thumbnail">
+            <img src="{{ thumbnail.url }}" />
+            <div class="caption">
+              {% if illustration.legende %}
+                <h4>{{ illustration.legende|safe }}</h4>
+              {% endif %}
+              {% if illustration.commentaire %}
+                <p>{{ illustration.commentaire|safe }}</p>
+              {% endif %}
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
