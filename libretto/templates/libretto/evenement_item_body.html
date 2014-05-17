@@ -4,7 +4,7 @@
 
   {% with distribution=evenement.distribution.prefetch.html|safe %}
     {% if distribution %}
-      <p>{{ distribution }}</p>
+      <p class="text-left">{{ distribution }}</p>
     {% endif %}
   {% endwith %}
 
