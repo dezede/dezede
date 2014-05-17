@@ -557,8 +557,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                              related_name='meres', symmetrical=False)
     lilypond = TextField(blank=True, verbose_name='LilyPond')
     description = HTMLField(blank=True)
-    evenements = ManyToManyField('Evenement', through='ElementDeProgramme',
-                                 related_name='oeuvres', db_index=True)
 
     objects = OeuvreManager()
 
@@ -630,9 +628,14 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def filles_in_order(self):
         return self.parentes_in_order('filles')
 
+    @property
+    def evenements(self):
+        return get_model('libretto', 'Evenement').objects.filter(
+            programme__oeuvre__in=self.get_descendants(include_self=True))
+
     def calc_referent_ancestors(self, tags=False, links=False):
-        if not self.pk or self.contenu_dans is None or (self.genre
-                                                     and  self.genre.referent):
+        if not self.pk or self.contenu_dans is None or \
+                (self.genre and  self.genre.referent):
             return ''
         return self.contenu_dans.titre_html(tags=tags, links=links)
 
