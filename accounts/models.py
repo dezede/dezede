@@ -116,6 +116,7 @@ class HierarchicUser(MPTTModel, AbstractUser):
         order_insertion_by = ('last_name', 'first_name', 'username')
 
     class Meta(object):
+        ordering = ('last_name', 'first_name')
         verbose_name = ungettext_lazy('utilisateur', 'utilisateurs', 1)
         verbose_name_plural = ungettext_lazy('utilisateur', 'utilisateurs', 2)
 

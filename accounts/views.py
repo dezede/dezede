@@ -185,7 +185,8 @@ class EquipeView(HierarchicUserList):
 
     def get_queryset(self):
         qs = super(EquipeView, self).get_queryset()
-        return qs.filter(pk__in=self.membres)
+        return qs.filter(
+            pk__in=self.membres).order_by(*self.model._meta.ordering)
 
 
 class PartenairesView(EquipeView):
