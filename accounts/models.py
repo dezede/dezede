@@ -5,8 +5,11 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MaxLengthValidator
-from django.db.models import BooleanField, permalink, TextField, URLField, \
-    CharField, ForeignKey, PositiveIntegerField, get_models
+from django.db.models import (
+    BooleanField, permalink, TextField, URLField,
+    CharField, ForeignKey, PositiveIntegerField, get_models)
+from django.db.models.signals import class_prepared
+from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy
 from filebrowser.fields import FileBrowseField
@@ -16,6 +19,29 @@ from cache_tools import cached_ugettext_lazy as _
 from libretto.models.common import AutoriteModel, CommonTreeManager, \
     CommonTreeQuerySet
 from libretto.models.functions import href, str_list_w_last, sc
+
+
+#
+# Hack to monkey patch the user model
+#
+
+
+LAST_NAME_MAX_LENGTH = 75
+
+
+@receiver(class_prepared)
+def longer_last_name(sender, *args, **kwargs):
+    if sender.__name__ == 'HierarchicUser' \
+            and sender.__module__ == 'accounts.models':
+        last_name = sender._meta.get_field('last_name')
+        last_name.max_length = LAST_NAME_MAX_LENGTH
+        assert len(last_name.validators) == 1
+        last_name.validators = [MaxLengthValidator(LAST_NAME_MAX_LENGTH)]
+
+
+#
+# Regular modelisation
+#
 
 
 class HierarchicUserQuerySet(CommonTreeQuerySet):
