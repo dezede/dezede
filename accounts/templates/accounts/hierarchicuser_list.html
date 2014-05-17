@@ -10,21 +10,17 @@
 {% block content %}
 
   {% for object in object_list %}
-    <div class="row">
-      <div class="col-md-7{% cycle '' ' col-md-offset-4' %}">
-        <div class="well container-fluid">
-          <div class="row">
-            <div class="col-md-3{% cycle '' ' pull-right' %}">
-              {% include 'accounts/include/avatar.html' %}
-            </div>
+    <div class="well container-fluid">
+      <div class="row">
+        <div class="col-md-2{% cycle '' ' pull-right' %}">
+          {% include 'accounts/include/avatar.html' %}
+        </div>
 
-            <div class="col-md-9{% cycle '' ' text-right' %}" style="margin-top: 25px;">
-              <h3>{{ object.link }}</h3>
-              {% if object.fonctions %}
-                {{ object.fonctions }}
-              {% endif %}
-            </div>
-          </div>
+        <div class="col-md-10{% cycle '' ' text-right' %}" style="margin-top: 3px;">
+          <h3>{{ object.link }}</h3>
+          {% if object.fonctions %}
+            {{ object.fonctions }}
+          {% endif %}
         </div>
       </div>
     </div>
