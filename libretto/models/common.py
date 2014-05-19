@@ -8,6 +8,7 @@ from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import (
     Model, CharField, BooleanField, ManyToManyField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count)
+from django.db.models.query import EmptyQuerySet
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
@@ -71,6 +72,14 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
 #
 
 
+class CommonEmptyQuerySet(EmptyQuerySet):
+    def with_related_objects(self):
+        return self
+
+    def without_related_objects(self):
+        return self
+
+
 class CommonQuerySet(TypographicQuerySet):
     def _get_no_related_objects_filter_kwargs(self):
         meta = self.model._meta
@@ -88,6 +97,10 @@ class CommonQuerySet(TypographicQuerySet):
 class CommonManager(TypographicManager):
     use_for_related_fields = True
     queryset_class = CommonQuerySet
+    empty_queryset_class = CommonEmptyQuerySet
+
+    def get_empty_query_set(self):
+        return self.empty_queryset_class(self.model, using=self._db)
 
 
 class CommonModel(TypographicModel):
@@ -184,6 +197,11 @@ class CommonModel(TypographicModel):
         return smart_text(self)
 
 
+class PublishedEmptyQuerySet(CommonEmptyQuerySet):
+    def published(self, request=None):
+        return self
+
+
 class PublishedQuerySet(CommonQuerySet):
     @staticmethod
     def _get_filters(request=None):
@@ -212,6 +230,7 @@ class PublishedQuerySet(CommonQuerySet):
 
 class PublishedManager(CommonManager):
     queryset_class = PublishedQuerySet
+    empty_queryset_class = PublishedEmptyQuerySet
 
     def published(self, request=None):
         return self.get_query_set().published(request=request)
