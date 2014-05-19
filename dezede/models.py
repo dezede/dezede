@@ -91,15 +91,18 @@ class Diapositive(PublishedModel):
         return self.title
 
     def box(self, slider_ratio):
-        x1, y1, x2, y2 = [int(n) for n in self.cropping.split(',')]
-        w, h = self.size(slider_ratio)
+        x1, y1, x2, y2 = map(int, self.cropping.split(','))
+        w, h = self.size(slider_ratio, scale_down=False)
         x1 += ((x2 - x1) - w) // 2
-        return ','.join([str(n) for n in (x1, y1, x1 + w, y1 + h)])
+        return ','.join(map(str, (x1, y1, x1 + w, y1 + h)))
 
-    def size(self, slider_ratio):
-        x1, y1, x2, y2 = [int(n) for n in self.cropping.split(',')]
+    def size(self, slider_ratio, scale_down=True):
+        x1, y1, x2, y2 = map(int, self.cropping.split(','))
         w = x2 - x1
         h = y2 - y1
+        if scale_down and h > self.SLIDER_HEIGHT:
+            w = w * self.SLIDER_HEIGHT // h
+            h = self.SLIDER_HEIGHT
         if w / h > slider_ratio:
             w = int(h * slider_ratio)
         return w, h
