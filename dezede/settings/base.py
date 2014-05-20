@@ -173,7 +173,8 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_resizing': 'true',
     'theme_advanced_resizing_max_width': '1024',
 
-    'content_css': STATIC_URL + 'css/styles.css',
+    # FIXME : Trouver un moyen d'appliquer le style de Dezède à TinyMCE.
+    # 'content_css': STATIC_URL + 'css/styles.css',
 }
 
 FILEBROWSER_VERSIONS = {
