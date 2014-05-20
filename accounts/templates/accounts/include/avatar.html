@@ -1,12 +1,12 @@
 {% load fb_versions %}
 
-  {% if object.avatar %}
-    {% version_object object.avatar 'avatar' as avatar %}
-    <img src="{{ avatar.url }}" class="center-block thumbnail"
-         style="width: {{ avatar.width }}px;
-                height: {{ avatar.height }}px;"/>
-  {% else %}
-    <div class="center-block thumbnail" style="width: 78px; height: 92px">
-    <i class="fa default-avatar"></i>
-    </div>
-  {% endif %}
+{% if object.avatar %}
+  {% version_object object.avatar size as avatar %}
+  <img src="{{ avatar.url }}" class="center-block thumbnail"
+       style="width: {{ avatar.width }}px;
+              height: {{ avatar.height }}px;"/>
+{% else %}
+  <div class="center-block thumbnail" style="width: 78px; height: 96px">
+  <i class="fa default-avatar"></i>
+  </div>
+{% endif %}

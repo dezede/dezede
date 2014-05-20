@@ -178,9 +178,9 @@ TINYMCE_DEFAULT_CONFIG = {
 
 FILEBROWSER_VERSIONS = {
     'avatar': {'verbose_name': ugettext('Avatar'),
-               'width': 92, 'height': 92, 'opts': ''},
+               'width': 96, 'height': 96, 'opts': ''},
     'thumbnail': {'verbose_name': ugettext('Standard thumbnail'),
-                  'width': 300, 'height': 300, 'opts': ''}
+                  'width': 192, 'height': 192, 'opts': ''}
 }
 FILEBROWSER_ADMIN_THUMBNAIL = 'thumbnail'
 FILEBROWSER_ADMIN_VERSIONS = ['avatar']

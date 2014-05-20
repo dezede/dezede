@@ -58,10 +58,10 @@
             {% language 'en' %}
               <div class="carousel-background"
                    style="opacity: {{ object.opacity }};">
-                <div class="{{ object.image_align }} visible-lg">
+                <div class="{{ object.image_align }} hidden-xs hidden-sm hidden-md">
                   <img src="{% thumbnail object.image object.size_lg box=object.box_lg crop detail %}" />
                 </div>
-                <div class="{{ object.image_align }} visible-md">
+                <div class="{{ object.image_align }} hidden-xs hidden-sm hidden-lg">
                   <img src="{% thumbnail object.image object.size_md box=object.box_md crop detail %}" />
                 </div>
                 <div class="{{ object.image_align }} hidden-md hidden-lg">

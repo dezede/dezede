@@ -16,42 +16,43 @@
         <h3>{% trans 'Présentation' %}</h3>
         {{ object.presentation }}
       {% endif %}
-      {% if object.fonctions %}
-        <h3>{% trans 'Fonction(s) au sein de l’équipe' %}</h3>
-        {{ object.fonctions }}
-      {% endif %}
-
-      {% if object.dossiersdevenements_roots|has_elements:request %}
-        {% if object.presentation or object.fonctions %}
-          <hr/>
-        {% endif %}
-        <h3>{% trans 'À consulter dans Dezède' %}</h3>
-        <table class="data-table auto-links">
-          {% data_table_list object.dossiersdevenements_roots|order_by:'-pk' %}
-        </table>
-      {% endif %}
 
       {% if object.literature %}
-        <hr />
+        {% if object.presentation %}<hr />{% endif %}
         <h3>{% trans 'Bibliographie' %}</h3>
         {{ object.literature }}
       {% endif %}
     </div>
 
     <div class="col-md-4">
-      <div class="well text-center">
-        {% include 'accounts/include/avatar.html' %}
-        <p style="margin-top: 20px;">
+      <div class="well">
+        {% include 'accounts/include/avatar.html' with size='thumbnail' %}
+        <dl class="auto-links" style="margin-top: 20px;">
           {% if object.content_object %}
-            {% trans 'Autorité associée :' %} {{ object.content_object.link }}<br />
+            <dt>{% trans 'Autorité associée' %}</dt>
+            <dd>{{ object.content_object.link }}</dd>
+          {% endif %}
+          {% if object.fonctions %}
+            <dt>{% trans 'Fonction(s) au sein de l’équipe' %}</dt>
+            <dd>{{ object.fonctions }}</dd>
+          {% endif %}
+          {% if object.dossiersdevenements_roots|has_elements:request %}
+            <dt>{% trans 'À consulter dans Dezède' %}</dt>
+            <dd>
+              {% for dossier in object.dossiersdevenements_roots|order_by:'-pk' %}
+                {{ dossier.link }}<br />
+              {% endfor %}
+            </dd>
           {% endif %}
           {% if object.website %}
-            {{ object.website_link }}<br />
+            <dt>{% trans 'Site internet' %}</dt>
+            <dd>{{ object.website_link }}</dd>
           {% endif %}
           {% if object.show_email %}
+            <dt>{% trans 'Courriel' %}</dt>
             {{ object.email_link }}
           {% endif %}
-        </p>
+        </dl>
       </div>
     </div>
 
