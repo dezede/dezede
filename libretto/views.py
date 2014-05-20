@@ -52,6 +52,7 @@ class EvenementListView(AjaxListView, PublishedListView):
     context_object_name = 'evenements'
     view_name = 'evenements'
     has_frontend_admin = True
+    enable_default_page = True
 
     BINDINGS = {
         'lieu': ('ancrage_debut__lieu__in', 'ancrage_fin__lieu__in'),
@@ -100,7 +101,7 @@ class EvenementListView(AjaxListView, PublishedListView):
             self.form = EvenementListForm(queryset=qs)
             self.valid_form = False
             data = {}
-        if not data:
+        if self.enable_default_page and not data:
             self.default_page = True
             return qs.none()
         else:

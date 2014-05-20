@@ -26,6 +26,7 @@ class DossierDEvenementsDetail(PublishedDetailView):
 class DossierDEvenementsDataDetail(EvenementListView):
     template_name = 'dossiers/dossierdevenements_data_detail.html'
     view_name = 'dossierdevenements_data_detail'
+    enable_default_page = False
 
     def get_queryset(self):
         self.object = get_object_or_404(DossierDEvenements,
