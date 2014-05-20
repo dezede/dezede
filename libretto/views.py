@@ -100,6 +100,11 @@ class EvenementListView(AjaxListView, PublishedListView):
             self.form = EvenementListForm(queryset=qs)
             self.valid_form = False
             data = {}
+        if not data:
+            self.default_page = True
+            return qs.none()
+        else:
+            self.default_page = False
 
         if not self.valid_form:
             return qs
@@ -126,7 +131,10 @@ class EvenementListView(AjaxListView, PublishedListView):
 
     def get_context_data(self, **kwargs):
         context = super(EvenementListView, self).get_context_data(**kwargs)
-        context['form'] = self.form
+        context.update(
+            form=self.form,
+            default_page=self.default_page,
+        )
         return context
 
     def get_success_view(self):

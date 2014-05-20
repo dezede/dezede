@@ -27,17 +27,27 @@
 
     <div class="col-xs-12 col-sm-8 col-lg-9">
 
-      <h3>
-        {% if evenements %}
-          {% with count=evenements.count %}
-            {{ count|apnumber }}
-            {% blocktrans count counter=count %}résultat{% plural %}résultats
-            {% endblocktrans %}
-          {% endwith %}
-        {% endif %}
-      </h3>
+      {% if default_page %}
+        <p class="static-page">
+          Ce menu permet de consulter librement les événements publiés dans Dezède par les
+          chercheurs, qu’ils soient rattachés ou non à un dossier. Le filtre qui lui est associé permet
+          de croiser différentes requêtes de tri : recherche libre, période chronologique, lieu, œuvre,
+          individu. Il est également possible de consulter toutes les données dans l’ordre chronologique
+          en cliquant sur « Filtrer » sans remplir les champs. Bonne lecture !
+        </p>
+      {% else %}
+        <h3>
+          {% if evenements %}
+            {% with count=evenements.count %}
+              {{ count|apnumber }}
+              {% blocktrans count counter=count %}résultat{% plural %}résultats
+              {% endblocktrans %}
+            {% endwith %}
+          {% endif %}
+        </h3>
 
-      {% include page_template %}
+        {% include page_template %}
+      {% endif %}
 
     </div>
 
