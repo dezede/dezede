@@ -5,13 +5,16 @@ from django.conf import settings
 from django.utils import translation
 from celery_haystack.indexes import CelerySearchIndex as SearchIndex
 from haystack.indexes import (
-    Indexable, CharField, EdgeNgramField, DateField)
+    Indexable, CharField, EdgeNgramField, DateField, BooleanField,
+    IntegerField)
 from .models import (
     Oeuvre, Source, Individu, Lieu, Evenement, Partie, Profession, Ensemble)
 
 
 class CommonSearchIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
+    public = BooleanField(model_attr='etat__public')
+    owner_id = IntegerField(model_attr='owner_id', null=True)
 
     def prepare(self, obj):
         translation.activate(settings.LANGUAGE_CODE)

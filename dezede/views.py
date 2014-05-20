@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import json
+from django.db.models import Q
 from django.http import HttpResponse
 from django.utils.encoding import smart_text
 from django.views.generic import ListView, TemplateView
@@ -34,6 +35,14 @@ class CustomSearchView(SearchView):
                 context['suggestion'] = suggestion
 
         return context
+
+    def get_results(self):
+        sqs = super(CustomSearchView, self).get_results()
+        user_id = self.request.user.id
+        filters = Q(public=True)
+        if user_id is not None:
+            filters |= Q(owner_id=user_id)
+        return sqs.filter(filters)
 
 
 def autocomplete(request):
