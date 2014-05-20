@@ -14,7 +14,7 @@
         <h4>{{ object }}</h4>
         <div style="margin-left: 20px;">
           {% with index_str=forloop.counter|stringformat:'d' %}
-            {% jqtree 'dossiers.categoriededossiers' id='dossiers-tree-'|add:index_str %}
+            {% jqtree 'dossiers.categoriededossiers' attr='short_link' id='dossiers-tree-'|add:index_str %}
           {% endwith %}
         </div>
       {% endfor %}

@@ -123,6 +123,9 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     def link(self):
         return href(self.get_absolute_url(), smart_text(self))
 
+    def short_link(self):
+        return href(self.get_absolute_url(), self.titre_court)
+
     @permalink
     def get_absolute_url(self):
         return 'dossierdevenements_detail', (self.pk,)
