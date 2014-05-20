@@ -15,8 +15,8 @@
   <div class="static-page">
 
     <ul class="nav nav-tabs" style="margin: 0 0 20px;">
-      <li class="active"><a href="#identite" data-toggle="tab">Identité</a></li>
-      <li><a href="#presentation" data-toggle="tab">Présentation</a></li>
+      <li class="active"><a href="#presentation" data-toggle="tab">Présentation</a></li>
+      <li><a href="#identite" data-toggle="tab">Identité</a></li>
       <li><a href="#contenus" data-toggle="tab">Contenus</a></li>
       <li><a href="#utilisateurs" data-toggle="tab">Utilisateurs</a></li>
       <li><a href="#historique" data-toggle="tab">Historique</a></li>
@@ -24,7 +24,118 @@
     </ul>
 
     <div class="tab-content">
-      <div class="tab-pane active" id="identite">
+
+      <div class="tab-pane active" id="presentation">
+
+        <h3>Sa philosophie</h3>
+        <p>
+          <span class="lead">Une ressource numérique <em>open source</em>.</span>
+          Dezède est une application web qui offre un accès gratuit
+          et dématérialisé aux données publiées.
+          Elle est consultable sur différents supports
+          (ordinateurs, tablettes numériques, mobiles),
+          chez soi ou à proximité des sources en bibliothèque,
+          et par tous les utilisateurs (chercheurs, étudiants, organismes de recherche ou institutions culturelles)
+          et lecteurs (internautes).
+          L’outil de recherche est également un portail de valorisation :
+          si Dezède seconde en effet les chercheurs dans leurs travaux
+          (outils d’édition et de transcription, organisation du corpus,
+          exploitation du fonds d’autorités, indexation automatique des matières,
+          moteur de recherche, suivi du travail, sauvegarde et sécurisation des données),
+          le programme facilite l’édition des résultats, tout en les plaçant
+          dans une perspective contributive plus large.
+        </p>
+
+        <h3>Ses fonctions</h3>
+        <p>
+          <span class="lead">Un outil de recherche et de valorisation sur la chronologie et l’histoire des spectacles.</span>
+          Dezède permet de reconstituer et d’organiser des corpus documentaires de programmes de spectacle,
+          consacrés à des villes, des institutions, des artistes ou des œuvres.
+          Pour ce faire, il utilise une méthode scientifique originale structurant
+          la publication en ligne, du traitement et de l’analyse des sources
+          à l’édition critique des programmes et à l’agencement des événements entre eux.
+          Le cœur de l’application est doté d’une base relationnelle
+          qui lie les événements à un ensemble d’autorités interrogeables séparément
+          (œuvres, individus, lieux de diffusion, rôles, emplois, etc.)
+          Application unique pour l’édition de chronologies événementielles
+          dans le domaine des humanités numériques, Dezède a vocation à favoriser
+          le développement de recherches sur la circulation des œuvres et des interprètes,
+          en mettant à la disposition des chercheurs et du public
+          une masse importante de données historiques.
+        </p>
+        {#  TODO: Lien vers le mode d’emploi #}
+        {# TODO: Lien vers la méthode scientifique #}
+
+        <h3>Son comité éditorial</h3>
+        <p>
+          <span class="lead">Dezède est une ressource en ligne (ISSN 2269-9473)</span>
+          proposant différents formats de publication (dossier, revue, exposition).
+          Les éditions sont soumises, expertisées, validées et suivies par le comité éditorial,
+          qui a pour autres fonctions de structurer la publication
+          (calendrier, organisation intellectuelle des contenus)
+          et de réfléchir aux aspects méthodologiques (développement informatique, autorités).
+        </p>
+        <p>Le comité éditorial est composé de 3 membres :</p>
+        <p>
+          <a href="{% url 'user_profile' 'joann_elart' %}">Joann <span class="sc">Élart</span></a>,
+          Maître de conférences en musicologie, université de Rouen (fondateur de Dezède)
+        </p>
+        <p>
+          <a href="{% url 'user_profile' 'yannick_simon' %}">Yannick <span class="sc">Simon</span></a>,
+          Professeur des Universités en musicologie, université de Rouen (fondateur de Dezède)
+        </p>
+        <p>
+          <a href="{% url 'user_profile' 'patrick_taieb' %}">Patrick <span class="sc">Taïeb</span></a>,
+          Professeur des Universités en musicologie, université Montpellier III (fondateur de Dezède)
+        </p>
+
+        <h3>Ses propriétaires</h3>
+        <p>
+          <span class="lead">
+            L’invention de trois enseignants-chercheurs :
+            Joann Élart, Yannick Simon
+            et Patrick Taïeb</span>,
+          musicologues aux universités de Rouen et Montpellier III.
+          Ils partagent un accord de co-propriété avec leur laboratoire
+          – le <abbr title="Groupe de Recherche d’Histoire">GRHis</abbr> (<abbr title="Équipe d’accueil">EA</abbr> 3831),
+          le <abbr title="Centre d’Études et de Recherche Éditer/Interpréter">CÉRÉdI</abbr> (EA 3229)
+          et l’<abbr title="Institut de Recherche sur la Renaissance, l’Age Classique et les Lumières">IRCL</abbr>
+          (<abbr title="Unité Mixte de Recherche">UMR</abbr> 5186 du CNRS) –
+          et leur université de rattachement.
+          Hébergé sur les serveurs de la <abbr title="Très Grande Infrastructure de Recherche">TGIR</abbr> Huma-Num,
+          Dezède est une ressource numérique <em>open source</em>
+          référencée par le numéro d’ISSN 2269-9473.
+          La première phase du développement a été rendue possible
+          grâce au soutien financier des universités de Rouen et Montpellier III,
+          des laboratoires associés et de la Région Haute-Normandie
+          via les <abbr title="Grands Réseaux de Recherche">GRR</abbr>.
+        </p>
+        <p>
+          Du point de vue des responsabilités, Joann Élart
+          est chargé de coordonner le développement méthodologique et informatique,
+          Yannick Simon s’occupe plus particulièrement
+          des affaires juridiques (conventions, contrats de licence, accord de copropriété, etc.),
+          Patrick Taïeb est chargé des questions méthodologiques
+          et du projet des répertoires de concert.
+        </p>
+        <p>
+          <a href="{% url 'user_profile' 'joann_elart' %}">Joann <span class="sc">Élart</span></a> −
+          <a href="{% url 'user_profile' 'yannick_simon' %}">Yannick <span class="sc">Simon</span></a> −
+          <a href="{% url 'user_profile' 'patrick_taieb' %}">Patrick <span class="sc">Taïeb</span></a><br />
+          <a href="http://www.univ-rouen.fr/">université de Rouen</a> −
+          <a href="http://www.univ-montp3.fr/">université de Montpellier III</a><br />
+          <a href="http://grhis.univ-rouen.fr/">GRHis</a> −
+          <a href="http://ceredi.labos.univ-rouen.fr/">CÉRÉdI</a> −
+          <a href="http://www.ircl.cnrs.fr/">IRCL</a>
+        </p>
+
+        <a href="{% url 'contribuer' %}"
+           class="btn btn-primary btn-lg btn-block sc no-padding"
+           style="margin-top: 20px;">Contribuer</a>
+
+      </div>
+
+      <div class="tab-pane" id="identite">
 
         <h3>Le choix du nom</h3>
         <div class="row">
@@ -141,116 +252,6 @@
           </span>
           depuis le 12 décembre 2013 sous le numéro national 13 4 056 592.
         </p>
-
-      </div>
-
-      <div class="tab-pane" id="presentation">
-
-        <h3>Ses propriétaires</h3>
-        <p>
-          <span class="lead">
-            L’invention de trois enseignants-chercheurs :
-            Joann Élart, Yannick Simon
-            et Patrick Taïeb</span>,
-          musicologues aux universités de Rouen et Montpellier III.
-          Ils partagent un accord de co-propriété avec leur laboratoire
-          – le <abbr title="Groupe de Recherche d’Histoire">GRHis</abbr> (<abbr title="Équipe d’accueil">EA</abbr> 3831),
-          le <abbr title="Centre d’Études et de Recherche Éditer/Interpréter">CÉRÉdI</abbr> (EA 3229)
-          et l’<abbr title="Institut de Recherche sur la Renaissance, l’Age Classique et les Lumières">IRCL</abbr>
-          (<abbr title="Unité Mixte de Recherche">UMR</abbr> 5186 du CNRS) –
-          et leur université de rattachement.
-          Hébergé sur les serveurs de la <abbr title="Très Grande Infrastructure de Recherche">TGIR</abbr> Huma-Num,
-          Dezède est une ressource numérique <em>open source</em>
-          référencée par le numéro d’ISSN 2269-9473.
-          La première phase du développement a été rendue possible
-          grâce au soutien financier des universités de Rouen et Montpellier III,
-          des laboratoires associés et de la Région Haute-Normandie
-          via les <abbr title="Grands Réseaux de Recherche">GRR</abbr>.
-        </p>
-        <p>
-          Du point de vue des responsabilités, Joann Élart
-          est chargé de coordonner le développement méthodologique et informatique,
-          Yannick Simon s’occupe plus particulièrement
-          des affaires juridiques (conventions, contrats de licence, accord de copropriété, etc.),
-          Patrick Taïeb est chargé des questions méthodologiques
-          et du projet des répertoires de concert.
-        </p>
-        <p>
-          <a href="{% url 'user_profile' 'joann_elart' %}">Joann <span class="sc">Élart</span></a> −
-          <a href="{% url 'user_profile' 'yannick_simon' %}">Yannick <span class="sc">Simon</span></a> −
-          <a href="{% url 'user_profile' 'patrick_taieb' %}">Patrick <span class="sc">Taïeb</span></a><br />
-          <a href="http://www.univ-rouen.fr/">université de Rouen</a> −
-          <a href="http://www.univ-montp3.fr/">université de Montpellier III</a><br />
-          <a href="http://grhis.univ-rouen.fr/">GRHis</a> −
-          <a href="http://ceredi.labos.univ-rouen.fr/">CÉRÉdI</a> −
-          <a href="http://www.ircl.cnrs.fr/">IRCL</a>
-        </p>
-
-        <h3>Ses fonctions</h3>
-        <p>
-          <span class="lead">Un outil de recherche et de valorisation sur la chronologie et l’histoire des spectacles.</span>
-          Dezède permet de reconstituer et d’organiser des corpus documentaires de programmes de spectacle,
-          consacrés à des villes, des institutions, des artistes ou des œuvres.
-          Pour ce faire, il utilise une méthode scientifique originale structurant
-          la publication en ligne, du traitement et de l’analyse des sources
-          à l’édition critique des programmes et à l’agencement des événements entre eux.
-          Le cœur de l’application est doté d’une base relationnelle
-          qui lie les événements à un ensemble d’autorités interrogeables séparément
-          (œuvres, individus, lieux de diffusion, rôles, emplois, etc.)
-          Application unique pour l’édition de chronologies événementielles
-          dans le domaine des humanités numériques, Dezède a vocation à favoriser
-          le développement de recherches sur la circulation des œuvres et des interprètes,
-          en mettant à la disposition des chercheurs et du public
-          une masse importante de données historiques.
-        </p>
-        {#  TODO: Lien vers le mode d’emploi #}
-        {# TODO: Lien vers la méthode scientifique #}
-
-        <h3>Sa philosophie</h3>
-        <p>
-          <span class="lead">Une ressource numérique <em>open source</em>.</span>
-          Dezède est une application web qui offre un accès gratuit
-          et dématérialisé aux données publiées.
-          Elle est consultable sur différents supports
-          (ordinateurs, tablettes numériques, mobiles),
-          chez soi ou à proximité des sources en bibliothèque,
-          et par tous les utilisateurs (chercheurs, étudiants, organismes de recherche ou institutions culturelles)
-          et lecteurs (internautes).
-          L’outil de recherche est également un portail de valorisation :
-          si Dezède seconde en effet les chercheurs dans leurs travaux
-          (outils d’édition et de transcription, organisation du corpus,
-          exploitation du fonds d’autorités, indexation automatique des matières,
-          moteur de recherche, suivi du travail, sauvegarde et sécurisation des données),
-          le programme facilite l’édition des résultats, tout en les plaçant
-          dans une perspective contributive plus large.
-        </p>
-
-        <h3>Son comité éditorial</h3>
-        <p>
-          <span class="lead">Dezède est une ressource en ligne (ISSN 2269-9473)</span>
-          proposant différents formats de publication (dossier, revue, exposition).
-          Les éditions sont soumises, expertisées, validées et suivies par le comité éditorial,
-          qui a pour autres fonctions de structurer la publication
-          (calendrier, organisation intellectuelle des contenus)
-          et de réfléchir aux aspects méthodologiques (développement informatique, autorités).
-        </p>
-        <p>Le comité éditorial est composé de 3 membres :</p>
-        <p>
-          <a href="{% url 'user_profile' 'joann_elart' %}">Joann <span class="sc">Élart</span></a>,
-          Maître de conférences en musicologie, université de Rouen (fondateur de Dezède)
-        </p>
-        <p>
-          <a href="{% url 'user_profile' 'yannick_simon' %}">Yannick <span class="sc">Simon</span></a>,
-          Professeur des Universités en musicologie, université de Rouen (fondateur de Dezède)
-        </p>
-        <p>
-          <a href="{% url 'user_profile' 'patrick_taieb' %}">Patrick <span class="sc">Taïeb</span></a>,
-          Professeur des Universités en musicologie, université Montpellier III (fondateur de Dezède)
-        </p>
-
-        <a href="{% url 'contribuer' %}"
-           class="btn btn-primary btn-lg btn-block sc no-padding"
-           style="margin-top: 20px;">Contribuer</a>
 
       </div>
 
