@@ -1,0 +1,13 @@
+{% load extras %}
+
+{% filter striptags_n_chars %}
+  {% autoescape off %}
+    {{ object.titre|safe }}
+    {{ object.titre_court|safe }}
+    {{ object.parent|default_if_none:'' }}
+    {{ object.presentation|safe }}
+    {{ object.contexte|safe }}
+    {{ object.sources|safe }}
+    {{ object.bibliographie|safe }}
+  {% endautoescape %}
+{% endfilter %}
