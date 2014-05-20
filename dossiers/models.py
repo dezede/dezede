@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import CharField, DateField, ManyToManyField, \
                              TextField, permalink, PositiveSmallIntegerField, Q
 from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
@@ -92,7 +93,10 @@ class DossierDEvenements(MPTTModel, PublishedModel):
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     def __str__(self):
-        return self.titre
+        return self.html()
+
+    def html(self):
+        return mark_safe(self.titre)
 
     def link(self):
         return href(self.get_absolute_url(), smart_text(self))
