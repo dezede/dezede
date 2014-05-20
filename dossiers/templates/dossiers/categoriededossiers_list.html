@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load i18n routines %}
+
+
+{% block header %}
+  <h1>{% block title %}{% trans 'dossiers'|capfirst %}{% endblock %}</h1>
+{% endblock %}
+
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-8">
+      {% for object in object_list %}
+        <h4>{{ object }}</h4>
+        <div style="margin-left: 20px;">
+          {% with index_str=forloop.counter|stringformat:'d' %}
+            {% jqtree 'dossiers.categoriededossiers' id='dossiers-tree-'|add:index_str %}
+          {% endwith %}
+        </div>
+      {% endfor %}
+    </div>
+    <div class="col-md-4">
+      <div class="well">
+        <h3>Qu’est-ce qu’un dossier ?</h3>
+        <p>
+          {% include 'pages/include/dossiers.html' %}
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

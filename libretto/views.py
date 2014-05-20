@@ -379,8 +379,16 @@ class TreeNode(PublishedDetailView):
         return context
 
     def get(self, request, *args, **kwargs):
-        self.model = get_model(self.kwargs['app_label'],
-                               self.kwargs['model_name'])
+        app_label = self.kwargs['app_label']
+        model_name = self.kwargs['model_name']
+
+        # FIXME: Ceci est un hack laid pour gérer les DossierDEvenements
+        #        enfants de CategorieDeDossiers.
+        if app_label == 'dossiers' and model_name == 'categoriededossiers' \
+                and 'node' in self.request.GET:
+            model_name = 'dossierdevenements'
+
+        self.model = get_model(app_label, model_name)
         if 'node' in self.request.GET:
             self.kwargs['pk'] = self.request.GET['node']
         try:

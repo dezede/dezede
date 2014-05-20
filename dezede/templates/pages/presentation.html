@@ -263,19 +263,7 @@
             Réalisez une chronologie de spectacles sur un territoire,
             une institution, une carrière ou une œuvre.
           </span>
-          Le dossier est la forme aboutie d’une publication dans Dezède :
-          il s’agit d’un corpus d’événements ou d’images, créé et rassemblé
-          par un ou plusieurs éditeurs scientifiques qui en assure(nt) la présentation.
-          Le dossier d’événements a pour objectif de reconstituer les spectacles
-          dans un espace géographique et temporel, d’établir la programmation d’une institution,
-          d’accompagner la carrière d’un interprète, ou de suivre la diffusion et la réception d’une œuvre.
-          Les événements sont présentés de manière chronologique.
-          Le dossier d’images peut venir compléter un dossier d’événements :
-          il permet de publier et d’organiser des corpus d’images numérisées
-          sous forme d’albums consultable à l’aide d’un feuilleteur.
-          Les dossiers sont classés entre eux selon un ordre établi
-          par une table générale qui évolue en fonction des enrichissements ;
-          ils sont soumis à l’expertise du comité éditorial.
+          {% include 'pages/include/dossiers.html' %}
         </p>
         <p><a href="{% url 'dossierdevenements_index' %}">Liste des dossiers</a></p>
         <p><a href="{% url 'contribuer' %}">Soumettre un projet</a></p>

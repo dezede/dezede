@@ -582,18 +582,6 @@ ul {
   }
 }
 
-.columns2 {
-  .column-count(2);
-  .column-gap(@grid-gutter-width);
-  .column-cell {
-    display: inline-block;
-    margin-bottom: @grid-gutter-width / 2;
-    .btn-group, .btn-group>.btn {
-      position: static;
-    }
-  }
-}
-
 .result {
   h4 {
     margin-top: 0;
@@ -843,10 +831,6 @@ body>footer {
 @media (max-width: @screen-xs-max) {
   .affix-top, .affix, .affix-bottom {
     position: static;
-  }
-
-  .columns2 {
-    .column-count(1);
   }
 }
 

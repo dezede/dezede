@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.conf import settings
 from django.contrib.admin import site
 from django.db.models import TextField
 from reversion import VersionAdmin
@@ -9,7 +8,17 @@ from tinymce.widgets import TinyMCE
 from cache_tools import cached_ugettext_lazy as _
 from libretto.admin import PublishedAdmin
 from .forms import DossierDEvenementsForm
-from .models import DossierDEvenements
+from .models import DossierDEvenements, CategorieDeDossiers
+
+
+class CategorieDeDossierAdmin(VersionAdmin, PublishedAdmin):
+    list_display = ('__str__', 'position')
+    list_editable = ('position',)
+    fieldsets = (
+        (None, {
+            'fields': ('nom', 'position')
+        }),
+    )
 
 
 class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
@@ -27,7 +36,8 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
     }
     fieldsets = (
         (None, {
-            'fields': ('titre', 'titre_court', ('parent', 'position'))
+            'fields': ('titre', 'titre_court', 'categorie',
+                       ('parent', 'position'))
         }),
         (_('Métadonnées'), {
             'fields': (
@@ -52,4 +62,5 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
     }
 
 
+site.register(CategorieDeDossiers, CategorieDeDossierAdmin)
 site.register(DossierDEvenements, DossierDEvenementsAdmin)

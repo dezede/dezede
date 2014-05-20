@@ -26,6 +26,13 @@ class DossierDEvenementsForm(MPTTAdminForm):
 
     def clean(self):
         cleaned_data = super(DossierDEvenementsForm, self).clean()
+
+        if cleaned_data['categorie'] is not None \
+                and cleaned_data['parent'] is not None:
+            msg = 'Ne pas saisir de catégorie si le dossier a un parent.'
+            self._errors['categorie'] = self.error_class((msg,))
+            self._errors['parent'] = self.error_class((msg,))
+
         if cleaned_data['statique']:
             if not cleaned_data['evenements']:
                 cleaned_data['evenements'] = \

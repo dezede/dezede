@@ -3,8 +3,10 @@
 from __future__ import unicode_literals
 from datetime import datetime
 from django.core.urlresolvers import reverse
-from django.db.models import CharField, DateField, ManyToManyField, \
-                             TextField, permalink, PositiveSmallIntegerField, Q
+from django.db.models import (
+    CharField, DateField, ManyToManyField,
+    TextField, permalink, PositiveSmallIntegerField, Q,
+    ForeignKey)
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy
@@ -18,6 +20,23 @@ from libretto.models.common import PublishedModel, PublishedManager, \
 from libretto.models.functions import str_list_w_last, href
 
 
+@python_2_unicode_compatible
+class CategorieDeDossiers(PublishedModel):
+    nom = CharField(max_length=75)
+    position = PositiveSmallIntegerField(default=1)
+
+    class Meta(object):
+        ordering = ('position',)
+        verbose_name = _('catégorie de dossiers')
+        verbose_name_plural = _('catégories de dossiers')
+
+    def __str__(self):
+        return self.nom
+
+    def get_children(self):
+        return self.dossiersdevenements.all()
+
+
 class DossierDEvenementsQuerySet(CommonTreeQuerySet, PublishedQuerySet):
     pass
 
@@ -26,8 +45,6 @@ class DossierDEvenementsManager(CommonTreeManager, PublishedManager):
     queryset_class = DossierDEvenementsQuerySet
 
 
-# TODO: Créer des catégories de dossiers.
-#       Une seule catégorie par dossier pour éviter la bazar.
 # TODO: Dossiers de photos: présentation, contexte historique,
 #       sources et protocole, et bibliographie indicative.
 #       Les photos doivent pouvoir être classées par cote (ex: AJ13)
@@ -36,6 +53,11 @@ class DossierDEvenementsManager(CommonTreeManager, PublishedManager):
 
 @python_2_unicode_compatible
 class DossierDEvenements(MPTTModel, PublishedModel):
+    categorie = ForeignKey(
+        CategorieDeDossiers, null=True, blank=True,
+        related_name='dossiersdevenements', verbose_name=_('catégorie'),
+        help_text=_('Attention, un dossier contenu dans un autre dossier '
+                    'ne peut être dans une catégorie.'))
     titre = CharField(_('titre'), max_length=100)
     titre_court = CharField(_('titre court'), max_length=100, blank=True,
                             help_text=_('Utilisé pour le chemin de fer.'))
