@@ -16,9 +16,9 @@
 
     <ul class="nav nav-tabs" style="margin: 0 0 20px;">
       <li class="active"><a href="#presentation" data-toggle="tab">Présentation</a></li>
-      <li><a href="#identite" data-toggle="tab">Identité</a></li>
       <li><a href="#contenus" data-toggle="tab">Contenus</a></li>
       <li><a href="#utilisateurs" data-toggle="tab">Utilisateurs</a></li>
+      <li><a href="#identite" data-toggle="tab">Identité</a></li>
       <li><a href="#historique" data-toggle="tab">Historique</a></li>
       <li><a href="#developpement" data-toggle="tab">Développement</a></li>
     </ul>
@@ -132,126 +132,6 @@
         <a href="{% url 'contribuer' %}"
            class="btn btn-primary btn-lg btn-block sc no-padding"
            style="margin-top: 20px;">Contribuer</a>
-
-      </div>
-
-      <div class="tab-pane" id="identite">
-
-        <h3>Le choix du nom</h3>
-        <div class="row">
-          <div class="col-md-8">
-            <p>
-              <span class="lead">« Dezède » est le nom d’un compositeur qui ne connaissait pas son nom.</span>
-              <em>Les Trois fermiers</em> (1777),
-              <em>Blaise et Babet</em> (1783) et <em>Alexis et Justine</em> (1785)
-              figurent parmi les plus grands succès de Nicolas Dezède (1740/5-1792)
-              et du répertoire de l’Opéra-Comique entre la fin de l’Ancien Régime
-              et la Restauration.
-              De ses vingt opéras, <em>Julie</em> (1772) a également été rendu célèbre
-              par les variations que Mozart composa sur l’air
-              « Lison dormait dans un bocage » (K. 264).
-              Fétis écrivait en 1837 qu’« on ignore quelle fut sa patrie »
-              (<em>Biographie générale de la musique</em>, Bruxelles, Méline,
-              Cans et compagnie, 1837, t. III, p. 302) :
-              était-il le fils illégitime d’un prince allemand
-              – de Frédéric II de Prusse, comme on peut le lire parfois –
-              ou était-il né à Lyon ?
-              Lui-même signait ses partitions « De Z. », « D. Z. » ou encore « Dezède »
-              car il ne connaissait pas ses origines.
-              Fétis publie d’ailleurs cette anecdote :
-              à son arrivée à Paris, « il jouissait […] d’une pension de vingt-cinq mille francs,
-              qui fut doublée à sa majorité.
-              Désirant connaître les auteurs de ses jours, il s’adressa à son notaire ;
-              mais celui-ci le prévint que ses démarches seraient inutiles,
-              et qu’en les continuant il s’exposerait à perdre son revenu.
-              Il ne tint compte de cet avis, continua ses recherches,
-              ne découvrit rien, et fut privé de sa pension.
-              Ce fut alors qu’il songea à tirer parti de ses talents
-              pour assurer son existence. » (<em>op. cit.</em>)
-            </p>
-            <p>
-              Ce choix s’est imposé pendant le déjeuner du 23 février 2012,
-              quand Joann Élart, Étienne Jardin, Yannick Simon, Patrick Taïeb
-              et Bertrand Bordage ont abordé la question du nom
-              à donner à l’application. Il fallait un mot qui puisse incarner le projet :
-              la séduisante Carmen et l’emblématique Boieldieu furent évoqués avant de laisser place à Dezède,
-              proposition de Patrick Taïeb apparue évidente à tous :
-              le nom est une énigme en soi…
-              Et il fallait inventer un outil informatique pour parvenir, peut-être un jour, à la résoudre !
-            </p>
-            <p>
-              <a href="{% url 'individu_detail' 'dezede' %}">
-                En savoir plus sur <span class="sc">Dezède</span> dans Dezède
-              </a>
-            </p>
-          </div>
-          <div class="col-md-4">
-            <div class="thumbnail">
-              <img src="{% static 'images/dezede-portrait.png' %}" />
-              <div class="caption">
-                Jean-Baptiste Greuze, <em>Nicolas Dezède</em>, huile sur toile, Galerie Saphir.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <h3>Le logo</h3>
-        <p>
-          <span class="lead">Le logo est inspiré d’un manuscrit conservé à Rouen.</span>
-          Il reproduit la mention d’auteur tirée de la page de titre d’<em>Auguste et Théodore</em>,
-          plus particulièrement de l’exemplaire conservé à la Bibliothèque municipale de Rouen
-          en copie manuscrite sous la cote [Théâtre 52.
-          Il s’agissait de rendre hommage à cette bibliothèque théâtrale
-          qui a joué un rôle fondateur dans l’installation du projet Dezède.
-          Le logo n’est pas une reproduction à proprement parler,
-          mais une réalisation de Bertrand Bordage en dessin vectoriel
-          inspirée de cette mention.
-        </p>
-        <p>
-          <a href="{% static 'images/logo-source.jpg' %}" target="_blank">Source du logo</a>
-        </p>
-        <p>
-          Pour utiliser le logo, contactez {{ 'contact@dezede.org'|urlize }}. Il est décliné en quatre versions :
-        </p>
-        <div class="row text-center">
-          <div class="col-md-2 text-right" style="padding-top: 12px;">
-            Complet
-          </div>
-          <div class="col-md-3">
-            <img src="{% static 'images/logo.png' %}" style="padding-top: 5px;" />
-          </div>
-          <div class="col-md-3" style="background-color: black; border-radius: 5px 5px 0 0; padding-top: 5px;">
-            <img src="{% static 'images/logo-light.png' %}" />
-          </div>
-        </div>
-        <div class="row text-center">
-          <div class="col-md-2 text-right" style="padding-top: 6px;">
-            Réduit
-          </div>
-          <div class="col-md-3">
-            <img src="{% static 'images/logo-mini.png' %}" />
-          </div>
-          <div class="col-md-3" style="background-color: black; padding-bottom: 5px;">
-            <img src="{% static 'images/logo-mini-light.png' %}" />
-          </div>
-        </div>
-        <div class="row text-center">
-          <div class="col-md-3 col-md-offset-2">
-            Supports clairs
-          </div>
-          <div class="col-md-3" style="background-color: black; color: #fffbe6; border-radius: 0 0 5px 5px; padding-bottom: 2px;">
-            Supports sombres
-          </div>
-        </div>
-
-        <h3>La marque</h3>
-        <p>
-          <span class="lead">
-            Dezède est une marque déposée à
-            l’<abbr title="Institut national de la propriété industrielle">INPI</abbr>
-          </span>
-          depuis le 12 décembre 2013 sous le numéro national 13 4 056 592.
-        </p>
 
       </div>
 
@@ -421,6 +301,126 @@
           l’auteur et le propriétaire.
           Cet affichage offre une transparence totale sur l’appartenance
           et la provenance des données, en même temps qu’il laisse une traçabilité et un historique.
+        </p>
+
+      </div>
+
+      <div class="tab-pane" id="identite">
+
+        <h3>Le choix du nom</h3>
+        <div class="row">
+          <div class="col-md-8">
+            <p>
+              <span class="lead">« Dezède » est le nom d’un compositeur qui ne connaissait pas son nom.</span>
+              <em>Les Trois fermiers</em> (1777),
+              <em>Blaise et Babet</em> (1783) et <em>Alexis et Justine</em> (1785)
+              figurent parmi les plus grands succès de Nicolas Dezède (1740/5-1792)
+              et du répertoire de l’Opéra-Comique entre la fin de l’Ancien Régime
+              et la Restauration.
+              De ses vingt opéras, <em>Julie</em> (1772) a également été rendu célèbre
+              par les variations que Mozart composa sur l’air
+              « Lison dormait dans un bocage » (K. 264).
+              Fétis écrivait en 1837 qu’« on ignore quelle fut sa patrie »
+              (<em>Biographie générale de la musique</em>, Bruxelles, Méline,
+              Cans et compagnie, 1837, t. III, p. 302) :
+              était-il le fils illégitime d’un prince allemand
+              – de Frédéric II de Prusse, comme on peut le lire parfois –
+              ou était-il né à Lyon ?
+              Lui-même signait ses partitions « De Z. », « D. Z. » ou encore « Dezède »
+              car il ne connaissait pas ses origines.
+              Fétis publie d’ailleurs cette anecdote :
+              à son arrivée à Paris, « il jouissait […] d’une pension de vingt-cinq mille francs,
+              qui fut doublée à sa majorité.
+              Désirant connaître les auteurs de ses jours, il s’adressa à son notaire ;
+              mais celui-ci le prévint que ses démarches seraient inutiles,
+              et qu’en les continuant il s’exposerait à perdre son revenu.
+              Il ne tint compte de cet avis, continua ses recherches,
+              ne découvrit rien, et fut privé de sa pension.
+              Ce fut alors qu’il songea à tirer parti de ses talents
+              pour assurer son existence. » (<em>op. cit.</em>)
+            </p>
+            <p>
+              Ce choix s’est imposé pendant le déjeuner du 23 février 2012,
+              quand Joann Élart, Étienne Jardin, Yannick Simon, Patrick Taïeb
+              et Bertrand Bordage ont abordé la question du nom
+              à donner à l’application. Il fallait un mot qui puisse incarner le projet :
+              la séduisante Carmen et l’emblématique Boieldieu furent évoqués avant de laisser place à Dezède,
+              proposition de Patrick Taïeb apparue évidente à tous :
+              le nom est une énigme en soi…
+              Et il fallait inventer un outil informatique pour parvenir, peut-être un jour, à la résoudre !
+            </p>
+            <p>
+              <a href="{% url 'individu_detail' 'dezede' %}">
+                En savoir plus sur <span class="sc">Dezède</span> dans Dezède
+              </a>
+            </p>
+          </div>
+          <div class="col-md-4">
+            <div class="thumbnail">
+              <img src="{% static 'images/dezede-portrait.png' %}" />
+              <div class="caption">
+                Jean-Baptiste Greuze, <em>Nicolas Dezède</em>, huile sur toile, Galerie Saphir.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3>Le logo</h3>
+        <p>
+          <span class="lead">Le logo est inspiré d’un manuscrit conservé à Rouen.</span>
+          Il reproduit la mention d’auteur tirée de la page de titre d’<em>Auguste et Théodore</em>,
+          plus particulièrement de l’exemplaire conservé à la Bibliothèque municipale de Rouen
+          en copie manuscrite sous la cote [Théâtre 52.
+          Il s’agissait de rendre hommage à cette bibliothèque théâtrale
+          qui a joué un rôle fondateur dans l’installation du projet Dezède.
+          Le logo n’est pas une reproduction à proprement parler,
+          mais une réalisation de Bertrand Bordage en dessin vectoriel
+          inspirée de cette mention.
+        </p>
+        <p>
+          <a href="{% static 'images/logo-source.jpg' %}" target="_blank">Source du logo</a>
+        </p>
+        <p>
+          Pour utiliser le logo, contactez {{ 'contact@dezede.org'|urlize }}. Il est décliné en quatre versions :
+        </p>
+        <div class="row text-center">
+          <div class="col-md-2 text-right" style="padding-top: 12px;">
+            Complet
+          </div>
+          <div class="col-md-3">
+            <img src="{% static 'images/logo.png' %}" style="padding-top: 5px;" />
+          </div>
+          <div class="col-md-3" style="background-color: black; border-radius: 5px 5px 0 0; padding-top: 5px;">
+            <img src="{% static 'images/logo-light.png' %}" />
+          </div>
+        </div>
+        <div class="row text-center">
+          <div class="col-md-2 text-right" style="padding-top: 6px;">
+            Réduit
+          </div>
+          <div class="col-md-3">
+            <img src="{% static 'images/logo-mini.png' %}" />
+          </div>
+          <div class="col-md-3" style="background-color: black; padding-bottom: 5px;">
+            <img src="{% static 'images/logo-mini-light.png' %}" />
+          </div>
+        </div>
+        <div class="row text-center">
+          <div class="col-md-3 col-md-offset-2">
+            Supports clairs
+          </div>
+          <div class="col-md-3" style="background-color: black; color: #fffbe6; border-radius: 0 0 5px 5px; padding-bottom: 2px;">
+            Supports sombres
+          </div>
+        </div>
+
+        <h3>La marque</h3>
+        <p>
+          <span class="lead">
+            Dezède est une marque déposée à
+            l’<abbr title="Institut national de la propriété industrielle">INPI</abbr>
+          </span>
+          depuis le 12 décembre 2013 sous le numéro national 13 4 056 592.
         </p>
 
       </div>
