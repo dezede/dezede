@@ -193,7 +193,7 @@ class CommonDatatablesView(PublishedMixin, DatatablesView):
     def process_dt_response(self, data):
         self.form = DatatablesForm(data)
         if self.form.is_valid():
-            self.object_list = self.get_queryset()
+            self.object_list = self.get_queryset().order_by(*self.get_orders())
             return self.render_to_response(self.form)
         return HttpResponseBadRequest()
 
@@ -224,7 +224,7 @@ class CommonDatatablesView(PublishedMixin, DatatablesView):
         # chercher les valeurs par paquets de 10, faisant parfois ainsi
         # des centaines de requêtes à elasticsearch.
         pk_list = sqs.values_list('pk', flat=True)[:10 ** 6]
-        return queryset.filter(pk__in=pk_list)
+        return queryset.filter(pk__in=pk_list).order_by(*self.get_orders())
 
     def column_search(self, queryset):
         return queryset
