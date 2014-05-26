@@ -1,59 +1,53 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n routines %}
 {% load url from future %}
 
-{% block title %}
-  {{ oeuvre }}
-{% endblock %}
 
-{% block body %}
-
-  {% include "libretto/include/etat.html" with etat=oeuvre.etat %}
-
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>
-      {{ oeuvre.titre_html }}
-    </h1>
+{% block header %}
+  <h1>
+    {{ oeuvre.titre_html }}
+  </h1>
+  <div class="auto-links">
     <h2>
       {{ oeuvre.description_html }}
     </h2>
     <h3>
       {{ oeuvre.auteurs_html }}
     </h3>
-    <h3>
+    <h4>
       <span title="{% trans 'Création' %}">
         {{ oeuvre.ancrage_creation.html|default:'' }}
       </span>
-    </h3>
-    <h4>
-      <table class="data-table">
-        {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
-        {% for parentes in parentes_list %}
-          {% data_table_list parentes.list 'mere.html' verbose_name=parentes.grouper.nom number_if_one=False %}
-        {% endfor %}
-        {% regroup oeuvre.parentes_filles.filles_en_ordre by type as parentes_list %}
-        {% for parentes in parentes_list %}
-          {% data_table_list parentes.list 'fille.html' verbose_name=parentes.grouper.nom_relatif verbose_name_plural=parentes.grouper.relatif_pluriel number_if_one=False %}
-        {% endfor %}
-      </table>
     </h4>
   </div>
+{% endblock %}
 
-  <div class="span3 pull-right">
-    {% include 'libretto/include/illustrations.html' %}
-  </div>
 
-  <table class="data-table">
+{% block content %}
+
+  {{ block.super }}
+
+  <table class="data-table auto-links">
     {% data_table_attr 'pupitres_html' _('effectif') %}
 
     {% if oeuvre.get_children|has_elements:request %}
       <th>{% trans 'Contenu' %}</th>
-      <td>{% jstree 'oeuvre' 'short_html' %}</td>
+      <td>{% jqtree 'libretto.oeuvre' 'short_html' %}</td>
     {% endif %}
 
     {% include "libretto/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
     {% data_table_attr 'notes' %}
+
+    {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
+    {% for parentes in parentes_list %}
+      {% data_table_list parentes.list 'mere.html' verbose_name=parentes.grouper.nom verbose_name_plural=parentes.grouper.pluriel has_count=False %}
+    {% endfor %}
+
+    {% regroup oeuvre.parentes_filles.filles_en_ordre by type as parentes_list %}
+    {% for parentes in parentes_list %}
+      {% data_table_list parentes.list 'fille.html' verbose_name=parentes.grouper.nom_relatif verbose_name_plural=parentes.grouper.relatif_pluriel has_count=False %}
+    {% endfor %}
+
 
     {% data_table_list oeuvre.documents.all %}
   </table>

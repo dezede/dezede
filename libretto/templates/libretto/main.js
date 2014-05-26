@@ -1,9 +1,10 @@
 {% load url from future %}
 {% load i18n %}
 
-load_source_content = function(object, pk) {
-  var inner = $($(object).attr('href') + ' .accordion-inner');
-  inner.html('{% trans 'Chargement…' %}');
+function load_source_content(object, pk) {
+  var inner = $($(object).attr('href') + ' .panel-body');
+  inner.html('<div class="text-center">' +
+             '<i class="fa fa-spinner fa-spin fa-5x"></i></div>');
   $.ajax({
     url: '{% url 'source_content' %}',
     data: {pk: pk}
@@ -11,4 +12,4 @@ load_source_content = function(object, pk) {
     inner.html(data);
     $(object).removeAttr('onmouseover');
   });
-};
+}

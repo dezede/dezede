@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n extras routines %}
+{% load url from future %}
+
+
+{% block title %}
+  {{ object|capfirst }}
+{% endblock %}
+
+
+{% block header-aside %}
+  {% frontend_admin %}
+{% endblock %}
+
+
+{% block microdata_attrs %}
+   itemscope itemtype="http://schema.org/Event"
+{% endblock %}
+
+{% block content %}
+  {% include "libretto/include/etat.html" with etat=object.etat %}
+
+  {% if object.illustrations.exists %}
+    <div class="col-xs-1 pull-right">
+      {% include 'libretto/include/illustrations.html' %}
+    </div>
+  {% endif %}
+{% endblock %}

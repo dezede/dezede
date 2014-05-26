@@ -1,0 +1,19 @@
+{% load url from future %}
+{% load i18n routines %}
+
+<ul class="nav nav-tabs nav-justified">
+  {% url 'dossierdevenements_detail' object.pk as text_url %}
+  <li{% if request.path == text_url %} class="active"{% endif %}>
+    <a href="{{ text_url }}">
+      {% trans 'Présentation' %}
+    </a>
+  </li>
+  {% url 'dossierdevenements_data_detail' object.pk as data_url %}
+  <li{% if request.path == data_url %} class="active"{% endif %}>
+    <a href="{{ data_url }}">
+      {% trans 'Événements' %}
+      {% published object.get_queryset as evenements %}
+      <span class="badge">{{ evenements.count }}</span>
+    </a>
+  </li>
+</ul>

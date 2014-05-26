@@ -1,0 +1,20 @@
+{% load i18n static compress %}
+
+<div id="{% if id %}{{ id }}{% else %}{{ model_name }}-tree{% endif %}"
+     data-url="{% url 'tree_node' app_label model_name attr object.pk %}">
+</div>
+
+{% compress js file %}
+  <script>
+    $(function () {
+      $('#{% if id %}{{ id }}{% else %}{{ model_name }}-tree{% endif %}').tree({
+        selectable: false,
+        autoEscape: false,
+        useContextMenu: false,
+        keyboardSupport: false,
+        openedIcon: '<span class="fa fa-minus-square"></span>',
+        closedIcon: '<span class="fa fa-plus-square"></span>'
+      });
+    });
+  </script>
+{% endcompress %}

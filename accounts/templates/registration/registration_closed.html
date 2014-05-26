@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}
-  {% trans "Enregistrement désactivé" %}
+{% block header %}
+  <h1>
+    {% block title %}{% trans "Enregistrement désactivé" %}{% endblock %}
+  </h1>
 {% endblock %}
 
-{% block body %}
-  <h1>{% trans "Enregistrement désactivé" %}</h1>
+{% block content %}
   <p>
     {% blocktrans %}
       La création de nouveaux comptes utilisateur a été momentanément

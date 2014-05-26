@@ -1,33 +1,31 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n routines %}
 {% load url from future %}
 
-{% block title %}
-  {{ partie|capfirst }}
+
+{% block header %}
+  <h1>
+    <a href="{{ partie.get_absolute_url }}">
+      {{ partie|capfirst }}
+    </a>
+  </h1>
 {% endblock %}
 
-{% block body %}
 
-  {% include "libretto/include/etat.html" with etat=partie.etat %}
+{% block content %}
 
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>
-      <a href="{{ partie.get_absolute_url }}">
-        {{ partie|capfirst }}
-      </a>
-    </h1>
-  </div>
+  {{ block.super }}
 
-  <table class="data-table">
+  <table class="data-table auto-links">
     {% data_table_list partie.professions.all %}
     {% data_table_list partie.interpretes verbose_name=_('interprète') verbose_name_plural=_('interprètes') %}
+    {% data_table_list partie.repertoire %}
     {% data_table_list partie.evenements %}
     {% data_table_attr 'parent.link' _('parent') %}
 
     {% if partie.get_children|has_elements:request %}
       <th>{% trans 'Contenu' %}</th>
-      <td>{% jstree 'partie' %}</td>
+      <td>{% jqtree 'libretto.partie' %}</td>
     {% endif %}
 
   </table>

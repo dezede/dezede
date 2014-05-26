@@ -1,66 +1,62 @@
-{% load static dezede_extras %}
+{% load static dezede_extras i18n %}
 
-<table>
+<div class="container">
 
-  <tr>
+  <div class="row">
 
-    <td id="softwares">
-      <div>
-        {% software_versions %}
-      </div>
-      <iframe src="http://ghbtns.com/github-btn.html?user=dezede&repo=dezede&type=watch"
-              allowtransparency="true" frameborder="0" scrolling="0"
-              width="62" height="20"></iframe>
-    </td>
+    <div id="softwares" class="col-xs-6 col-sm-5 col-lg-6">
+      <p>ISSN 2269-9473</p>
+      <p>{% dezede_version %}</p>
+    </div>
 
-    <td id="logos">{# La surface de chaque logo est de 2667 px² #}
-      <a href="http://www.univ-rouen.fr/" target="_blank"
-         title="Université de Rouen">
+    <nav id="logos" class="col-xs-6 col-sm-7 col-lg-6 text-right">{# La surface de chaque logo est de 1200 px² #}
+      <a href="http://www.univ-rouen.fr/" target="_blank">
         <img src="{% static 'images/univ_rouen.png' %}"
-             style="width: 87px; height: 31px;" />
+             style="width: 58px; height: 21px;"
+             title="Université de Rouen" />
       </a>
-      <a href="http://www.grhis.fr/" target="_blank"
-         title="Groupe de Recherche d’HIStoire">
+      <a href="http://grhis.univ-rouen.fr/" target="_blank">
         <img src="{% static 'images/grhis.png' %}"
-             style="width: 77px; height: 35px;" />
+             style="width: 51px; height: 23px;"
+             title="Groupe de Recherche d’HIStoire" />
       </a>
-      <a href="http://ceredi.labos.univ-rouen.fr/" target="_blank"
-         title="Centre d’Études et de Recherche Éditer/Interpréter">
+      <a href="http://ceredi.labos.univ-rouen.fr/" target="_blank">
         <img src="{% static 'images/ceredi.png' %}"
-             style="width: 52px; height: 50px;" />
+             style="width: 35px; height: 33px;"
+             title="Centre d’Études et de Recherche Éditer/Interpréter" />
       </a>
-      <a href="http://www.univ-rouen.fr/99535530/0/fiche___pagelibre/" target="_blank"
-         title="Institut de Recherche Inter-disciplinaire Homme Société">
+      <a href="http://www.univ-rouen.fr/version-francaise/bienvenue-a-l-irihs-institut-de-recherche-interdisciplinaire-homme-et-societe-fed-4137-272624.kjsp" target="_blank">
         <img src="{% static 'images/irihs.png' %}"
-             style="width: 52px; height: 52px;" />
+             style="width: 35px; height: 35px;"
+             title="Institut de Recherche Inter-disciplinaire Homme Société" />
       </a>
-      <a href="http://www.hautenormandie.fr/" target="_blank"
-         title="Région Haute-Normandie">
+      <a href="http://www.hautenormandie.fr/" target="_blank">
         <img src="{% static 'images/region_h-n.png' %}"
-             style="width: 39px; height: 68px;" />
+             style="width: 26px; height: 45px;"
+             title="Région Haute-Normandie" />
       </a>
-      <a href="http://www.univ-montp3.fr/" target="_blank"
-         title="Université Paul-Valéry - Montpellier 3">
+      <a href="http://www.univ-montp3.fr/" target="_blank">
         <img src="{% static 'images/upv_montpellier.png' %}"
-             style="width: 70px; height: 39px;" />
+             style="width: 47px; height: 26px;"
+             title="Université Paul-Valéry - Montpellier 3" />
       </a>
-      <a href="http://www.ircl.cnrs.fr/" target="_blank"
-         title="Institut de Recherche sur la Renaissance, l’âge Classique et les Lumières">
+      <a href="http://www.ircl.cnrs.fr/" target="_blank">
         <img src="{% static 'images/ircl.png' %}"
-             style="width: 52px; height: 52px;" />
+             style="width: 35px; height: 35px;"
+             title="Institut de Recherche sur la Renaissance, l’âge Classique et les Lumières" />
       </a>
-      <a href="http://www.cnrs.fr/" target="_blank"
-         title="Centre national de la recherche scientifique">
+      <a href="http://www.cnrs.fr/" target="_blank">
         <img src="{% static 'images/cnrs.png' %}"
-             style="width: 52px; height: 52px;" />
+             style="width: 35px; height: 35px;"
+             title="Centre national de la recherche scientifique" />
       </a>
-      <a href="http://www.huma-num.fr/" target="_blank"
-         title="TGIR Huma-Num">
+      <a href="http://www.huma-num.fr/" target="_blank">
         <img src="{% static 'images/humanum.png' %}"
-             style="width: 62px; height: 43px;"/>
+             style="width: 41px; height: 29px;"
+             title="TGIR Huma-Num" />
       </a>
-    </td>
+    </nav>
 
-  </tr>
+  </div>
 
-</table>
+</div>

@@ -1,13 +1,12 @@
 # Imports, sorted alphabetically.
 
 # Python packages
-from Cython.Distutils import build_ext
-from distutils.core import setup
-from distutils.extension import Extension
 import os
 
 # Third-party packages
-# Nothing for now...
+from Cython.Distutils import build_ext
+from distutils.core import setup
+from distutils.extension import Extension
 
 # Modules from this project
 # Nothing for now...

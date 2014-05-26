@@ -1,34 +1,30 @@
 # coding: utf-8
 
-from django.conf.urls import *
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
-from filebrowser.sites import site
-from ajax_select import urls as ajax_select_urls
+from django.conf.urls import *
+from django.conf.urls.static import static
 from django.contrib import admin
-from haystack.views import SearchView
+from django.views.generic import TemplateView
+from ajax_select import urls as ajax_select_urls
+from filebrowser.sites import site
+from .views import (
+    HomeView, CustomSearchView, autocomplete, ErrorView, BibliographieView)
 
-
-class CustomSearchView(SearchView):
-    """
-    Custom SearchView to fix spelling suggestions.
-    """
-    def extra_context(self):
-        context = {'suggestion': None}
-
-        if self.results.query.backend.include_spelling:
-            suggestion = self.form.get_suggestion()
-            if suggestion != self.query:
-                context['suggestion'] = suggestion
-
-        return context
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^$', HomeView.as_view(), name='home'),
     url(r'^', include('libretto.urls')),
+    url(r'^presentation$',
+        TemplateView.as_view(template_name='pages/presentation.html'),
+        name='presentation'),
+    url(r'^contribuer$',
+        TemplateView.as_view(template_name='pages/contribute.html'),
+        name='contribuer'),
+    url(r'^bibliographie$', BibliographieView.as_view(), name='bibliographie'),
+    url(r'^', include('accounts.urls')),
     url(r'^dossiers/', include('dossiers.urls')),
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/lookups/', include(ajax_select_urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
@@ -36,21 +32,23 @@ urlpatterns = patterns('',
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/filebrowser/', include(site.urls)),
     url(r'^recherche/', CustomSearchView(), name='haystack_search'),
-    url(r'^comptes/', include('accounts.urls')),
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),
-    url(r'^(?P<url>.*/)$', 'django.contrib.flatpages.views.flatpage'),
+    url(r'autocomplete', autocomplete, name='autocomplete'),
+    url(r'^404$', ErrorView.as_view(status=404)),
 )
 
-urlpatterns += staticfiles_urlpatterns()
-
 if settings.DEBUG:
-    from django.views.static import serve
-    _media_url = settings.MEDIA_URL
-    if _media_url.startswith('/'):
-        _media_url = _media_url[1:]
-        urlpatterns += patterns('',
-                                (r'^%s(?P<path>.*)$' % _media_url,
-                                serve,
-                                {'document_root': settings.MEDIA_ROOT}))
-    del(_media_url, serve)
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+
+    import debug_toolbar
+
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+        url(r'^403$', ErrorView.as_view(status=403)),
+        url(r'^500$', ErrorView.as_view(status=500)),
+        url(r'^503$', ErrorView.as_view(status=503)),
+    )

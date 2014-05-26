@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}
-  {% trans "En attente d’activation" %}
+{% block header %}
+  <h1>{% block title %}{% trans "En attente d’activation" %}{% endblock %}</h1>
 {% endblock %}
 
-{% block body %}
-  <h1>{% trans "En attente d’activation" %}</h1>
+{% block content %}
   <p>
     {% blocktrans %}
       Votre compte a bien été créé mais demande une vérification de votre part.

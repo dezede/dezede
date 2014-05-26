@@ -1,27 +1,13 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n extras routines %}
 {% load url from future %}
 
-{% block title %}
-  {{ individu }}
-{% endblock %}
 
-{% block body %}
-
-  {% include "libretto/include/etat.html" with etat=individu.etat %}
-
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>
-      {{ individu.nom_complet }}
-      {% with professions_count=individu.professions.count %}
-        {% if professions_count %}
-          <small title="{% filter capfirst %}{% blocktrans count counter=professions_count %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
-            {{ individu.calc_professions }}
-          </small>
-        {% endif %}
-      {% endwith %}
-    </h1>
+{% block header %}
+  <h1>
+    {{ individu.nom_complet }}
+  </h1>
+  <div class="auto-links">
     <h3>
       {% if individu.naissance or individu.deces %}
         <span title="{% trans "naissance"|capfirst %}">
@@ -37,29 +23,43 @@
         </span>
       {% endif %}
     </h3>
+    {% with professions_count=individu.professions.count %}
+      {% if professions_count %}
+        <h4>
+          <span title="{% filter capfirst %}{% blocktrans count counter=professions_count %}profession{% plural %}professions{% endblocktrans %}{% endfilter %}">
+            {{ individu.calc_professions }}
+          </span>
+        </h4>
+      {% endif %}
+    {% endwith %}
   </div>
+{% endblock %}
 
-  <div class="span3 pull-right">
-    {% include 'libretto/include/illustrations.html' %}
-  </div>
 
-  <table class="data-table">
+{% block content %}
+
+  {{ block.super }}
+
+  <table class="data-table auto-links">
     {% data_table_attr 'nom_naissance' %}
     {% data_table_attr 'biographie' %}
 
     {% data_table_list individu.oeuvres %}
-    {% data_table_list individu.apparitions %}
+    {% data_table_list individu.apparitions verbose_name=_('apparition') verbose_name_plural=_('apparitions') %}
+    {% data_table_list individu.evenements_referents %}
     {% data_table_list individu.publications 'html' %}
 
 
+    {# FIXME: regrouper les parentés et enfance pour des histoires #}
+    {# de classement (voir le cas de Maria Malibran) #}
     {% regroup individu.parentes.all by type as parentes_list %}
     {% for parentes in parentes_list %}
-      {% data_table_list parentes.list 'parent.html' verbose_name=parentes.grouper.nom verbose_name_plural=parentes.grouper.pluriel number_if_one=False %}
+      {% data_table_list parentes.list 'parent.html' verbose_name=parentes.grouper.nom verbose_name_plural=parentes.grouper.pluriel has_count_if_one=False %}
     {% endfor %}
 
     {% regroup individu.enfances.all by type as enfances_list %}
     {% for enfances in enfances_list %}
-      {% data_table_list enfances.list 'enfant.html' verbose_name=enfances.grouper.nom_relatif verbose_name_plural=enfances.grouper.relatif_pluriel number_if_one=False %}
+      {% data_table_list enfances.list 'enfant.html' verbose_name=enfances.grouper.nom_relatif verbose_name_plural=enfances.grouper.relatif_pluriel has_count_if_one=False %}
     {% endfor %}
 
 

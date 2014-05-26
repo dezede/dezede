@@ -3,7 +3,7 @@ Projet Dezède
 *************
 
 :Auteur: Bertrand Bordage
-:Copyright: Bertrand Bordage © 2011-2013
+:Copyright: Bertrand Bordage © 2011-2014
 
 |travis|_
 |coveralls|_
@@ -35,7 +35,7 @@ Dépendances
 ===========
 
 :Système d'exploitation:
-  Ubuntu 12.10 « Quantal Quetzal »
+  Ubuntu 13.04 « Raring Ringtail »
 
 Pour installer les dépendances qui suivent :
   ``sudo ./dependances.sh``
@@ -47,22 +47,31 @@ Paquets
 Nécessaires à l'exécution
 .........................
 
-=============== =======
-Paquet          Version
-=============== =======
+========================= =======
+Paquet Ubuntu             Version
+========================= =======
 nano
-postgresql      9.1
-python2.7       2.7.3
-python-pip      1.1
-python-docutils 0.8.1
-memcached       1.4.14
-python-dev      2.7.3
+mercurial
+postgresql                9.1
+postgresql-server-dev-9.1
+python2.7                 2.7.4
+python-pip                1.3.1
+redis-server              2:2.6.7
+python-dev                2.7.4
 libxml2
 libxml2-dev
 libxslt1-dev
-elasticsearch   0.90.2
-rabbitmq-server 3.0.2
-=============== =======
+openjdk-7-jre
+elasticsearch             0.90.7
+rabbitmq-server           3.0.2
+nodejs                    0.10.22
+========================= =======
+
+================= =======
+Module javascript Version
+================= =======
+less              1.6.1
+================= =======
 
 
 Nécessaires au déploiement
@@ -71,19 +80,9 @@ Nécessaires au déploiement
 ========== =======
 Paquet     Version
 ========== =======
-nginx      1.2.1
-gunicorn   0.17.4
+nginx      1.2.6
 supervisor 3.0a8
 ========== =======
-
-
-Modules Python
---------------
-
-Nécessaires à l'exécution
-.........................
-
-Voir le fichier `requirements.txt`.
 
 
 
@@ -98,21 +97,25 @@ Configuration de PostgreSQL
     | ``sudo -i -u postgres``
     | ``psql``
 
-      | ``CREATE USER dezede LOGIN;``
+      | ``CREATE USER dezede LOGIN CREATEDB;``
       | ``CREATE DATABASE dezede OWNER dezede;``
-      | ``ALTER USER dezede WITH ENCRYPTED PASSWORD 'mot_de_passe';``
       | ``\q``
 
     | ``exit``
 
 
-#. Paramétrer l'accès de Django à la base de données :
+#. Autoriser l'utilisateur dezede à accéder à PostgreSQL par le socket unix :
 
-    - Éditer le fichier de réglages :
+   - Éditer le fichier de configuration :
 
-        ``nano settings.py``
+        ``sudo nano /etc/postgresql/9.1/main/pg_hba.conf``
 
-    - Les réglages à modifier sont dans ``DATABASES``.
+   - Ajouter cette nouvelle ligne après
+     ``# Database administrative login by Unix domain socket`` :
+
+        ::
+
+          local dezede,test_dezede dezede trust
 
 
 #. Création des tables de la base de données :
@@ -120,24 +123,42 @@ Configuration de PostgreSQL
     ``./manage.py syncdb`` puis ``./manage.py migrate``
 
 
+#. Redémarrer PostgreSQL :
+
+    ``sudo service postgresql restart``
+
+
+
+Configuration de Redis
+======================
+
+#. Activer le socket Unix de Redis :
+
+    - Éditer le fichier de configuration :
+
+        ``sudo nano /etc/redis/redis.conf``
+
+    - Ajouter ces lignes :
+
+        ::
+
+          unixsocket /var/run/redis/redis.sock
+          unixsocketperm 777
+
+
+#. Redémarrer Redis :
+
+    ``sudo service redis-server restart``
+
+
 
 Lancement du serveur de développement
 =====================================
 
-#. Passer en mode ``DEBUG`` :
-
-    - Éditer le fichier de réglages :
-
-        ``nano settings.py``
-
-    - Remplacer la ligne ``DEBUG = False`` par :
-
-        ::
-
-          DEBUG = True
-
-
 #. `Configuration de PostgreSQL`_
+
+
+#. `Configuration de Redis`_
 
 
 #. Création des révisions initiales :
@@ -162,7 +183,7 @@ Lancement du serveur de développement
 
 #. Lancement du serveur de développement :
 
-    ``./manage.py runserver``
+    ``DJANGO_DEBUG=True ./manage.py runserver``
 
 
 
@@ -172,18 +193,21 @@ Déploiement
 #. `Configuration de PostgreSQL`_
 
 
+#. `Configuration de Redis`_
+
+
 #. Création des révisions initiales :
 
     ``./manage.py createinitialrevisions``
 
 #. Collecte des fichiers statiques :
 
-    ``sudo ./manage.py collectstatic``
+    ``./manage.py collectstatic``
 
 
 #. Préparation du dossier d'upload :
 
-    ``sudo mkdir -p media/uploads/``
+    ``mkdir -p media/uploads/``
 
 
 #. Compiler les fichiers de langues :
@@ -211,53 +235,8 @@ Configuration de nginx
     ``sudo nano /etc/nginx/sites-available/dezede``
 
 
-#. Copier ceci dans ce dernier (en remplaçant ce qui est balisé
-   ``[[quelque_chose]]``) :
-
-    ::
-
-      server {
-        listen 80;
-        server_name [[adresse_ou_domaine]];
-
-        gzip on;
-        gzip_vary on;
-        gzip_types
-          text/plain
-          text/css
-          text/javascript
-          application/x-javascript
-          image/png
-          image/svg+xml
-          image/jpeg
-          image/x-icon
-          application/pdf
-          application/octet-stream;
-
-        add_header Cache-Control public;
-
-        client_max_body_size 50M;
-
-        location /media {
-          alias [[/chemin/du/projet]]/media;
-          allow all;
-          expires 1y;
-        }
-
-        location /static {
-          alias [[/chemin/du/projet]]/static;
-          allow all;
-          expires 1w;
-        }
-
-        location / {
-          proxy_pass http://localhost:8000;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header Host $http_host;
-          proxy_redirect off;
-        }
-      }
+#. Copier dedans le contenu de nginx/dezede.conf (en remplaçant ce qui est
+   balisé ``[[quelque_chose]]``)
 
 
 #. Activer le site et désactiver le site par défaut :
@@ -278,9 +257,9 @@ Configuration de nginx
 
     ::
 
-      [program:dezede]
+      [program:dezede_django]
       directory=[[/chemin/du/projet]]
-      command=gunicorn_django -w3 --timeout=300
+      command=gunicorn dezede.wsgi:application -w3 -t300 -b 127.0.0.1:[[port]]
       user=[[utilisateur]]
       autostart=true
       autorestart=true
@@ -290,13 +269,16 @@ Configuration de nginx
 
       [program:dezede_celery]
       directory=[[/chemin/du/projet]]
-      command=python manage.py celery worker --loglevel=info
+      command=celery -A dezede worker
       user=[[utilisateur]]
       autostart=true
       autorestart=true
       redirect_stderror=true
       stdout_logfile=[[/chemin/du/projet]]/supervisor_celery.log
       stdout_logfile_maxbytes=10MB
+
+      [group:dezede]
+      programs=dezede_django,dezede_celery
 
 
 #. Relancer le serveur avec :
@@ -327,7 +309,14 @@ Localisation
 Tests de régression
 ===================
 
-Une suite de tests a été créée pour l’application libretto.
-Pour la lancer, exécuter :
+Une suite de tests encore incomplète est disponible. Pour la lancer, exécuter :
 
-  ``sudo ./manage.py test libretto``
+  ``./manage.py test dezede libretto accounts dossiers typography cache_tools``
+
+
+
+Restauration de sauvegarde SQL
+==============================
+
+| ``sudo -i -u postgres``
+| ``psql -v ON_ERROR_STOP=1 dezede < dezede.sql``

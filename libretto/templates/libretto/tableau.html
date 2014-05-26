@@ -1,21 +1,62 @@
 {% extends 'base.html' %}
-{% load i18n static django_tables2 sekizai_tags %}
+{% load i18n sekizai_tags eztables static %}
 {% load url from future %}
 
-{% block title %}
-  {{ object_list.model.meta.verbose_name_plural|capfirst }}
+{% block header %}
+  <h1>
+    {% block title %}
+      {{ model.meta.verbose_name_plural|capfirst }}
+    {% endblock %}
+  </h1>
 {% endblock %}
 
-{% block body %}
+{% block content %}
 
-  {% addtoblock 'css' %}
-    <link rel="stylesheet"
-          href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+  <table id="data-table" class="table table-striped">
+    <thead>
+      <tr>
+        {% for field in fields_verbose %}
+          <th>{{ field|capfirst }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+  </table>
+
+  {% addtoblock 'js' %}
+    {% datatables_js %}
   {% endaddtoblock %}
-
-  <div class="page-header">
-    <h1>{{ object_list.model.meta.verbose_name_plural|capfirst }}</h1>
-  </div>
-  {% render_table table %}
+  {% addtoblock 'js' %}
+    {% datatables_bootstrap_js %}
+  {% endaddtoblock %}
+  {% addtoblock 'js' %}
+    <script>
+      $(document).ready(function() {
+        $('#data-table').dataTable({
+          sDom: "<'text-right'f><'table-container't><'row table-footer'<'col-xs-12 col-sm-6'i><'col-xs-12 col-sm-6'p>>",
+          bLengthChange: false,
+          sPaginationType: 'bootstrap',
+          sAjaxSource: '{% url model.meta.module_name|add:'_ajax' %}',
+          bServerSide: true,
+          bDeferRender: true,
+          aoColumns: [
+            {% for field, sort in fieldnames.items %}
+              {
+                mData: '{{ field }}',
+                bSortable: {{ sort|yesno:'true,false' }}
+              }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ],
+          oLanguage: {
+            sUrl: '{% static 'js/libs/datatables/language.fr.json' %}'
+          },
+          fnInitComplete: function() {
+            $('.dataTables_filter input').attr('placeholder', 'Rechercher...')
+                .addClass('form-control');
+          },
+          fnDrawCallback: tooltips_reload
+        });
+      });
+    </script>
+  {% endaddtoblock %}
 
 {% endblock %}

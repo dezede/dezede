@@ -1,7 +1,6 @@
 {% load i18n %}
 
-<a class="btn{% if size %} btn-{{ size }}{% endif %} btn-info"
-   href="{{ object.permalien }}"
+<a class="btn btn-default" href="{{ object.permalien }}" role="button"
    title="{% trans 'adresse permanente'|capfirst %}">
-  <i class="icon-barcode icon-white"></i>
+  <i class="fa fa-link"></i>
 </a>

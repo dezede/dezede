@@ -3,7 +3,7 @@
   tinymce.create('tinymce.plugins.SmallCapsPlugin', {
     init : function(ed, url) {
       ed.onInit.add(function(ed) {
-        ed.formatter.register('smallcaps', {inline : 'span', styles: {'font-variant': 'small-caps'}});
+        ed.formatter.register('smallcaps', {inline : 'span', classes: 'sc'});
       });
 
       ed.addCommand('mceSmallCaps', function() {

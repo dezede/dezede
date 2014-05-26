@@ -1,131 +1,146 @@
-{% load static i18n %}
+{% load static i18n dezede_extras sekizai_tags %}
 {% load url from future %}
 
-<nav class="navbar navbar-fixed-top">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+
+  <div class="container">
+
+    <div class="navbar-header">
+      <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">{% trans 'Afficher/masquer le menu' %}</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
+      </button>
+      <a href="{% url 'home' %}" class="navbar-brand">
+        <span class="dezedeicon D"></span>
       </a>
-      <a href="/" class="brand nav"><img src="{% static 'images/logo.svg' %}"
-                                        style="width: 60px; height: 30px;"
-                                        alt="Dezède"/></a>
-      <div class="nav-collapse">
+    </div>
 
-        <ul class="nav">
-          {% url 'dossierdevenements_index' as dossiers_url %}
-          {% url 'evenements' as evenements_url %}
-          {% url 'lieu_index' as lieux_url %}
-          {% url 'oeuvre_index' as oeuvres_url %}
-          {% url 'individu_index' as individus_url %}
-          {% url 'profession_index' as professions_url %}
-          {% url 'partie_index' as parties_url %}
-          {% url 'admin:index' as admin_url %}
-          <li{% if dossiers_url in request.path %} class="active"{% endif %}>
-            <a href="{{ dossiers_url }}">{% trans "dossiers"|capfirst %}</a>
-          </li>
-          <li{% if evenements_url in request.path %} class="active"{% endif %}>
-            <a href="{{ evenements_url }}">{% trans "événements"|capfirst %}</a>
-          </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle" id="dLabel" role="button"
-               data-toggle="dropdown" data-target="#" href="">
-              {% trans "Autorités" %}
-              <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-              <li{% if lieux_url in request.path %} class="active"{% endif %}>
-                <a href="{{ lieux_url }}">{% trans "lieux et institutions"|capfirst %}</a>
-              </li>
-              <li{% if oeuvres_url in request.path %} class="active"{% endif %}>
-                <a href="{{ oeuvres_url }}">{% trans "œuvres"|capfirst %}</a>
-              </li>
-              <li{% if individus_url in request.path %} class="active"{% endif %}>
-                <a href="{{ individus_url }}">{% trans "individus"|capfirst %}</a>
-              </li>
-              <li{% if professions_url in request.path %} class="active"{% endif %}>
-                <a href="{{ professions_url }}">{% trans 'professions'|capfirst %}</a>
-              </li>
-              <li{% if parties_url in request.path %} class="active"{% endif %}>
-                <a href="{{ parties_url }}">{% trans 'rôles et instruments'|capfirst %}</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-        <form method="get" action="{% url 'haystack_search' %}" class="navbar-search pull-left">
-          <input type="text" name="q" id="id_q"
-                 placeholder="{% trans "Rechercher…" %}"
-                 class="search-query span2" />
-        </form>
+    <div class="collapse navbar-collapse">
 
-        <ul class="nav pull-right">
+      <ul class="nav navbar-nav">
+        {% nav_link 'dossierdevenements_index' _('dossiers') %}
+        {% nav_link 'evenements' _('événements') %}
+      </ul>
+      <form method="get" action="{% url 'haystack_search' %}"
+            class="navbar-form navbar-left" role="search">
+        <input id="navbar-search" type="search" name="q" class="form-control"
+               placeholder="{% trans "Rechercher…" %}" />
+      </form>
+      {% addtoblock 'js' %}
+        <script>
+          $('input[name="q"]').typeahead({
+            remote: '{% url 'autocomplete' %}?q=%QUERY'
+          }).on('typeahead:initialized', function (e) {
+            {# FIXME: Retirer quand https://github.com/twitter/typeahead.js/pull/325 sera résolu. #}
+            $(this).prev('.tt-hint').addClass(this.className);
+          }).keypress(function (e) {
+            if (e.which == 13) {
+              $(this).parents('form').submit();
+              return false;
+            }
+          });
+        </script>
+      {% endaddtoblock %}
 
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              {% trans 'Options' %} <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu pull-right" role="menu"
-                aria-labelledby="dLabel">
-{# À réactiver dès qu'une langue aura fini d'être traduite. #}
-{#              <li class="dropdown-submenu">#}
-{#                <a tabindex="-1" href="#">#}
-{#                  {% trans 'Langue' %}#}
-{#                </a>#}
-{#                <ul class="dropdown-menu">#}
-{#                  {% for lang in LANGUAGES %}#}
-{#                    {% if lang.0 != LANGUAGE_CODE %}#}
-{#                      <li>#}
-{#                        <form action="/i18n/setlang/" method="POST"#}
-{#                                id="form_{{ lang.0 }}">#}
-{#                          {% csrf_token %}#}
-{#                          <input type="hidden" name="language"#}
-{#                                 value="{{ lang.0 }}" />#}
-{#                        </form>#}
-{#                        <a tabindex="-1" href="#"#}
-{#                           onclick="$('#form_{{ lang.0 }}').submit();">#}
-{#                          {{ lang.1 }}#}
-{#                        </a>#}
-{#                      </li>#}
-{#                    {% endif %}#}
-{#                  {% endfor %}#}
-{#                </ul>#}
-{#              </li>#}
-              <li class="dropdown-submenu">
-                <a tabindex="-1" href="#">
-                  {% trans 'Infobulles' %}
-                </a>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a tabindex="-1" href="javascript: tooltips_enable();">
-                      {% trans 'Activer (par défaut)' %}
-                    </a>
-                  </li>
-                  <li>
-                    <a tabindex="-1" href="javascript: tooltips_disable();">
-                      {% trans 'Désactiver' %}
-                    </a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
+      <ul class="nav navbar-nav navbar-right">
 
-          <li>
-            <a href="https://groups.google.com/forum/?fromgroups=#!forum/dezede">
-              {% trans 'Questions/Bugs' %}
-            </a>
-          </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            {% trans 'Index' %} <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            {% nav_link 'lieu_index' _('lieux et institutions') %}
+            {% nav_link 'oeuvre_index' _('œuvres') %}
+            {% nav_link 'individu_index' _('individus') %}
+            {% nav_link 'ensemble_index' _('ensembles') %}
+            {% nav_link 'profession_index' _('professions') %}
+            {% nav_link 'partie_index' _('rôles et instruments') %}
+          </ul>
+        </li>
 
-          <li{% if request.path == admin_url %} class="active"{% endif %}>
-            <a href="{{ admin_url }}">{% trans "Administration" %}</a>
-          </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            {% trans 'Équipe' %} <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            {% nav_link 'comite_editorial' _('Comité éditorial') %}
+            {% nav_link 'contributeurs' _('Contributeurs') %}
+            {% nav_link 'equipe_developpement' _('Équipe de développement') %}
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            {% trans 'Partenariats' %} <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            {% nav_link 'proprietaires' _('Propriétaires') %}
+            {% nav_link 'partenaires' _('Partenaires') %}
+          </ul>
+        </li>
 
-        </ul>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <b class="fa fa-info-circle"></b> <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
 
-      </div>
+            <li>
+              <a href="{% url 'presentation' %}">{% trans 'Présentation' %}</a>
+            </li>
+            {# TODO: Créer un mode d’emploi #}
+{#            <li>#}
+{#              <a href="">{% trans 'Mode d’emploi' %}</a>#}
+{#            </li>#}
+            <li>
+              <a href="{% url 'bibliographie' %}">{% trans 'Bibliographie' %}</a>
+            </li>
+            <li>
+              <a href="{% url 'contribuer' %}">{% trans 'Contribuer' %}</a>
+            </li>
+            {# TODO: Rédiger la méthode scientifique #}
+{#            <li>#}
+{#              <a href="">{% trans 'Méthode scientifique' %}</a>#}
+{#            </li>#}
+
+          </ul>
+        </li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <b class="fa fa-cog"></b> <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+
+            <li>
+              <a href="{% url 'admin:index' %}">
+                <b class="fa fa-wrench fa-fw"></b>
+                {% trans "Administration" %}
+              </a>
+            </li>
+
+            <li>
+              <a href="https://groups.google.com/forum/?fromgroups=#!forum/dezede">
+                <b class="fa fa-comments fa-fw"></b>
+                {% trans 'Questions/Bugs' %}
+              </a>
+            </li>
+
+            <li>
+              <a href="https://github.com/dezede/dezede">
+                <b class="fa fa-github fa-fw"></b>
+                {% trans 'Source sur' %} GitHub
+              </a>
+            </li>
+
+          </ul>
+        </li>
+
+      </ul>
 
     </div>
+
   </div>
+
 </nav>

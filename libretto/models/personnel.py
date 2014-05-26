@@ -17,7 +17,7 @@ from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
     PublishedQuerySet, CommonTreeQuerySet, Caracteristique, \
     TypeDeCaracteristique
 from .evenement import Evenement
-from .functions import capfirst, ex, href, date_html, sc
+from .functions import capfirst, ex, href, date_html, sc, str_list
 
 
 __all__ = (
@@ -114,6 +114,14 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     def __str__(self):
         return capfirst(self.html(tags=False))
+
+    def individus_count(self):
+        return self.individus.count()
+    individus_count.short_description = _('nombre d’individus')
+
+    def oeuvres_count(self):
+        return self.auteurs.oeuvres().count()
+    oeuvres_count.short_description = _('nombre d’œuvres')
 
     @staticmethod
     def autocomplete_search_fields():
@@ -276,11 +284,18 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     def __str__(self):
         return self.html(tags=False)
 
+    def nom_complet(self):
+        return ('%s %s' % (self.particule_nom, self.nom)).strip()
+
     def html(self, tags=True):
+        nom = self.nom_complet()
         if tags:
             return href(self.get_absolute_url(),
-                        sc(self.nom, tags=tags), tags=tags)
-        return self.nom
+                        sc(nom, tags=tags), tags=tags)
+        return nom
+
+    def link(self):
+        return self.html()
 
     def link(self):
         return self.html()
@@ -299,12 +314,20 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     calc_caracteristiques.allow_tags = True
     calc_caracteristiques.admin_order_field = 'caracteristiques'
 
+    # TODO: Calculer les apparitions et les ajouter au template, comme pour
+    #       les individus.
+
+    def membres_html(self):
+        return str_list([
+            membre.html() for membre in
+            self.membres.select_related('individu', 'instrument')])
+    membres_html.short_description = _('membres')
+
     def membres_count(self):
         return self.membres.count()
     membres_count.short_description = _('nombre de membres')
 
     def apparitions(self):
-        # FIXME: Pas sûr que la condition soit logique.
         return Evenement.objects.filter(
             Q(distribution__ensembles=self)
             | Q(programme__distribution__ensembles=self)).distinct()

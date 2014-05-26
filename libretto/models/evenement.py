@@ -50,10 +50,7 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
 
 
 class ElementDeDistributionManager(CommonManager):
-    use_for_related_fields = True
-
-    def get_query_set(self):
-        return ElementDeDistributionQuerySet(self.model, using=self._db)
+    queryset_class = ElementDeDistributionQuerySet
 
     def individus(self):
         return self.get_query_set().individus()
@@ -94,9 +91,10 @@ class ElementDeDistribution(CommonModel):
                                       'éléments de distribution', 1)
         verbose_name_plural = ungettext_lazy('élément de distribution',
                                              'éléments de distribution', 2)
-        # WARNING: Ordonner par un ManyToMany peut aboutir
-        #          à des doublons apparents.
-        ordering = ('pupitre', 'profession', 'individus__nom',)
+        # TODO: Trouver une solution pour pouvoir ordonner par nom d'individu.
+        #       La solution la plus sage est sans doute de transformer le M2M
+        #       'individus' en un FK 'individu'.
+        ordering = ('pupitre', 'profession',)
         app_label = 'libretto'
 
     @staticmethod
@@ -302,8 +300,7 @@ class EvenementQuerySet(PublishedQuerySet):
 
 
 class EvenementManager(PublishedManager):
-    def get_query_set(self):
-        return EvenementQuerySet(self.model, using=self._db)
+    queryset_class = EvenementQuerySet
 
     def yearly_counts(self):
         return self.get_query_set().yearly_counts()
@@ -313,12 +310,15 @@ class EvenementManager(PublishedManager):
 class Evenement(AutoriteModel):
     ancrage_debut = OneToOneField(
         'AncrageSpatioTemporel', related_name='evenements_debuts',
-        db_index=True, on_delete=PROTECT)
+        db_index=True, on_delete=PROTECT,
+        verbose_name=_('ancrage spatio-temporel de début'))
     ancrage_fin = OneToOneField(
         'AncrageSpatioTemporel', related_name='evenements_fins', blank=True,
-        null=True, db_index=True, on_delete=PROTECT)
-    relache = BooleanField(verbose_name='relâche', db_index=True)
-    circonstance = CharField(max_length=500, blank=True, db_index=True)
+        null=True, db_index=True, on_delete=PROTECT,
+        verbose_name=_('ancrage spatio-temporel de fin'))
+    relache = BooleanField(_('relâche'), db_index=True)
+    circonstance = CharField(_('circonstance'), max_length=500, blank=True,
+                             db_index=True)
     caracteristiques = ManyToManyField(
         CaracteristiqueDeProgramme,
         related_name='evenements', blank=True, null=True,
@@ -360,12 +360,6 @@ class Evenement(AutoriteModel):
         if self.pk is None:
             return ''
         return self.caracteristiques.html(tags=tags, caps=caps)
-
-    def sources_by_type(self):
-        sources = OrderedDefaultDict()
-        for source in self.sources.select_related('type'):
-            sources[source.type].append(source)
-        return sources.items()
 
     def get_meta_name(self, tags=False):
         if self.circonstance:
@@ -411,6 +405,11 @@ class Evenement(AutoriteModel):
     has_source.short_description = _('source')
     has_source.boolean = True
     has_source.admin_order_field = 'sources'
+
+    @property
+    def oeuvres(self):
+        return get_model('libretto', 'Oeuvre').objects.filter(
+            elements_de_programme__evenement=self)
 
     def __str__(self):
         out = self.ancrage_debut.calc_date(False)

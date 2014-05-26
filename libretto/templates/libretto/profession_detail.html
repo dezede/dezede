@@ -1,23 +1,18 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n routines %}
 {% load url from future %}
 
-{% block title %}
-  {{ profession|capfirst }}
+
+{% block header %}
+  <h1>{{ profession.pretty_link }}</h1>
 {% endblock %}
 
-{% block body %}
 
-  {% include "libretto/include/etat.html" with etat=profession.etat %}
+{% block content %}
 
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>
-      {{ profession.pretty_link }}
-    </h1>
-  </div>
+  {{ block.super }}
 
-  <table class="data-table">
+  <table class="data-table auto-links">
 
     {% data_table_list profession.parties.all %}
     {% data_table_list profession.individus.all %}
@@ -28,7 +23,7 @@
 
     {% if profession.get_children|has_elements:request %}
       <th>{% trans 'Contenu' %}</th>
-      <td>{% jstree 'profession' %}</td>
+      <td>{% jqtree 'libretto.profession' %}</td>
     {% endif %}
 
   </table>

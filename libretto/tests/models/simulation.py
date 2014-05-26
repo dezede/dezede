@@ -33,7 +33,7 @@ class SeleniumTest(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.selenium = WebDriver()
+        cls.selenium = WebDriver(timeout=60)
         cls.selenium.set_window_size(1366, 768)
         cls.wait = WebDriverWait(cls.selenium, 10)
         super(SeleniumTest, cls).setUpClass()
@@ -357,7 +357,8 @@ class SeleniumTest(LiveServerTestCase):
         self.screenshot()
 
         # Supprime la source…
-        self.get_link('Supprimer').click()
+        self.get_by_css('.page-header '
+                        'a[data-original-title="Supprimer"]').click()
         self.get_by_css('input[value="Oui, j\'en suis sûr."]').click()
         # … avant de finalement la restaurer avec django-reversion.
         self.get_link('Récupérer sources supprimés').click()

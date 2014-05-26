@@ -1,7 +1,13 @@
 {% load i18n %}
 {% if querystring %}
-    <div class="endless_container">
-        <a class="endless_more" href="{{ path }}{{ querystring }}" rel="{{ querystring_key }}">{% if label %}{{ label }}{% else %}{% trans "Voir plus" %}{% endif %}</a>
-        <div class="endless_loading" style="display: none;">{% trans 'Chargement…' %}</div>
+  <div class="endless_container text-center">
+    <a class="endless_more btn btn-primary btn-lg btn-block"
+       href="{{ path }}{{ querystring }}" rel="{{ querystring_key }}">
+      {% if label %}{{ label }}{% else %}{% trans 'Afficher la suite' %}{% endif %}
+    </a>
+    <div class="endless_loading btn btn-primary btn-lg btn-block disabled"
+         style="display: none;">
+      <i class="fa fa-spinner fa-spin fa-lg"></i>
     </div>
+  </div>
 {% endif %}

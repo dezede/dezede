@@ -1,22 +1,31 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, division
 from django.conf import settings
 from django.utils import translation
 from celery_haystack.indexes import CelerySearchIndex as SearchIndex
-from haystack.indexes import Indexable, CharField, \
-    EdgeNgramField, DateField
-from .models import Oeuvre, Source, Individu, Lieu, Evenement, Partie, \
-    Profession
+from haystack.indexes import (
+    Indexable, CharField, EdgeNgramField, DateField, BooleanField,
+    IntegerField)
+from .models import (
+    Oeuvre, Source, Individu, Lieu, Evenement, Partie, Profession, Ensemble)
 
 
 class CommonSearchIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
+    public = BooleanField(model_attr='etat__public')
+    owner_id = IntegerField(model_attr='owner_id', null=True)
 
     def prepare(self, obj):
         translation.activate(settings.LANGUAGE_CODE)
         prepared_data = super(CommonSearchIndex, self).prepare(obj)
-        prepared_data['boost'] = obj.get_related_count()
+        # Booste chaque objet en fonction du nombre de données liées.
+        # le plus petit boost possible est `min_boost`, et une racine de base
+        # `root_base` est appliquée pour niveler les résultats.
+        root_base = 5
+        min_boost = 0.5
+        prepared_data['boost'] = (
+            (1 + obj.get_related_count()) ** (1 / root_base) - (1 - min_boost))
         return prepared_data
 
 
@@ -50,6 +59,13 @@ class IndividuIndex(CommonSearchIndex, Indexable):
 
     def get_model(self):
         return Individu
+
+
+class EnsembleIndex(CommonSearchIndex, Indexable):
+    content_auto = EdgeNgramField(model_attr='related_label')
+
+    def get_model(self):
+        return Ensemble
 
 
 class LieuIndex(PolymorphicCommonSearchIndex, Indexable):

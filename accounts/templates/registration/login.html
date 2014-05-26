@@ -2,20 +2,18 @@
 {% load url from future %}
 {% load crispy_forms_tags i18n %}
 
-{% block title %}
-  {% trans "Connexion" %}
-{% endblock %}
+{% block title %}{% trans "Connexion" %}{% endblock %}
 
-{% block body %}
+{% block content %}
   {% if user.is_authenticated %}
-    <h1>{% trans "Déjà connecté" %}</h1>
+    {% block header %}<h1>{% trans "Déjà connecté" %}</h1>{% endblock %}
     {% url 'auth_logout' as url %}
     {% blocktrans %}
       Vous êtes déjà connecté.
       Souhaitez-vous <a href="{{ url }}">vous déconnecter</a> ?
     {% endblocktrans %}
   {% else %}
-    <form method="POST" class="well well-small form-horizontal">
+    <form method="POST" class="well well-sm form-horizontal">
       <legend>
         {% trans "Connexion" %}
         {% url 'registration_register' as url %}
@@ -29,7 +27,9 @@
       {% csrf_token %}
       {{ form|crispy }}
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">{% trans 'Se connecter' %}</button>
+        <button type="submit" class="btn btn-primary">
+          {% trans 'Se connecter' %}
+        </button>
       </div>
     </form>
   {% endif %}

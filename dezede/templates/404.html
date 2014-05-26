@@ -1,14 +1,10 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}
-  {% trans "Erreur 404" %}
+{% block header %}
+  <h1>{% block title %}{% trans "Erreur 404" %}{% endblock %}</h1>
 {% endblock %}
 
-{% block body %}
-  <div class="page-header">
-    <h1>{% trans "Erreur 404" %}</h1>
-  </div>
+{% block content %}
   {% trans "La page n’a pu être trouvée." %}
 {% endblock %}
-

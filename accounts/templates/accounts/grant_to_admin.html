@@ -2,12 +2,15 @@
 {% load url from future %}
 {% load i18n %}
 
-{% block title %}
-  {% trans 'Accès à l’interface d’administration' %}
+{% block header %}
+  <h1>
+    {% block title %}
+      {% trans 'Accès à l’interface d’administration' %}
+    {% endblock %}
+  </h1>
 {% endblock %}
 
-{% block body %}
-  <h1>{% trans 'Accès à l’interface d’administration' %}</h1>
+{% block content %}
   <p>
     {% if already_staff %}
       {% blocktrans %}

@@ -1,28 +1,27 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n extras routines %}
 {% load url from future %}
 
-{% block title %}
-  {{ source }}
-{% endblock %}
 
-{% block body %}
-
-  {% include "libretto/include/etat.html" with etat=source.etat %}
-
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>
-      {{ source.pretty_title|removetags:'a' }}
-    </h1>
+{% block header %}
+  <h1>
+    {{ source.pretty_title|removetags:'a' }}
+  </h1>
+  <div class="auto-links">
     <h3>
       {{ source.type|capfirst }}
     </h3>
   </div>
+{% endblock %}
+
+
+{% block content %}
+
+  {% include "libretto/include/etat.html" with etat=source.etat %}
 
   {% include 'libretto/source_content.html' %}
 
-  <table class="data-table">
+  <table class="data-table auto-links">
     {% data_table_list source.documents.all %}
     {% data_table_list source.evenements.all %}
 

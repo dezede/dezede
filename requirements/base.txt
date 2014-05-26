@@ -1,0 +1,79 @@
+# Basics
+Django==1.5.8
+psycopg2==2.5.3
+
+# Database fields
+django-mptt==0.6.0
+-e git+https://github.com/BertrandBordage/django_polymorphic@6569725ad66bd9fb5248098c614a0f3b2a41a80a#egg=django-polymorphic
+django-polymorphic-tree==0.8.11
+django-autoslug==1.7.2
+
+# User interface
+django-grappelli==2.4.8
+django-filebrowser==3.5.3
+django-tinymce==1.5.2
+django-crispy-forms==1.4.0
+django-ajax-selects==1.3.4
+django-image-cropping==0.8.2
+
+# User registration
+-e hg+https://bitbucket.org/mszamot/django-registration@ae1d07e2518e548e3f41a0617de2f7498827191a#egg=django-registration
+
+# Search engine
+# FIXME: Revenir à toastdriven/django-haystack quand https://github.com/toastdriven/django-haystack/pull/868 sera résolu.
+-e git+https://github.com/greenkahuna/django-haystack@378eaf6d0a94d6da89ccbfe15db7b23a0eb3a801#egg=django-haystack
+pyelasticsearch==0.6.1
+
+# Caching
+django-redis==3.6.2
+-e git+https://github.com/jmoiron/johnny-cache@37e75019625979487f17b47050da7f0af3fea42c#egg=johnny-cache
+
+# Data visualization frameworks
+djangorestframework==2.3.13
+-e git+https://github.com/noirbizarre/django-eztables@daeff682d5113684770c153455410bef160c581b#egg=django-eztables
+
+# Small but powerful tools
+django-reversion==1.8.0
+django-endless-pagination==2.0
+django-viewsets==0.1.7
+Unipath==1.0
+
+# Asynchronous tasks
+celery==3.1.11
+celery-haystack==0.7.2
+
+# CSS/JS handling
+django_compressor==1.3
+django-sekizai==0.7
+cssmin==0.2.0
+rjsmin==1.0.9
+
+# Database migrations
+South==0.8.4
+
+# Data parsing/serialization
+beautifulsoup4==4.3.2
+BeautifulSoup<4.0
+lxml==3.3.5
+simplejson==3.4.1
+defusedxml==0.4.1
+PyYAML==3.11
+
+# Website temporary shutdown
+django-maintenancemode==0.10
+
+# Testing
+django-nose==1.2
+selenium==2.41.0
+
+# C optimization
+Cython==0.20.1
+
+# Dependencies
+# For django-image-cropping
+easy-thumbnails==2.0.1
+# For django-filebrowser (mandatory)
+Pillow==2.4.0
+# For djangorestframework (optionals)
+Pygments==1.6
+django-filter==0.7

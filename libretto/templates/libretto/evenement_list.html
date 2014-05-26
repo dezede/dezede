@@ -3,33 +3,39 @@
 {% load url from future %}
 
 
-{% block title %}
-  {% trans 'événements'|capfirst %}
+{% block header %}
+  <h1>{% block title %}{% trans 'événements'|capfirst %}{% endblock %}</h1>
 {% endblock %}
 
 
-{% block body %}
+{% block content %}
 
-  {% block page-header %}
-    <div class="page-header">
-      <h1>
-        {% trans 'événements'|capfirst %}
-      </h1>
+  <div class="row">
+
+    <div class="col-xs-12 col-sm-4 col-lg-3">
+      <aside id="sidebar">
+        {% crispy form %}
+      </aside>
     </div>
-  {% endblock %}
 
-  <div class="container-fluid">
-    <div class="row-fluid">
+    {% addtoblock 'js' %}
+      {{ form.media.js }}
+    {% endaddtoblock %}
+    {% addtoblock 'css' %}
+      {{ form.media.css }}
+    {% endaddtoblock %}
 
-      <div class="span3">
-        <div class="nav affix-top side" data-spy="affix"
-             data-offset-top="105" data-offset-bottom="160">
-          {% crispy form %}
-        </div>
-      </div>
+    <div class="col-xs-12 col-sm-8 col-lg-9">
 
-      <div class="span9" style="min-height: 423px;">
-
+      {% if default_page %}
+        <p class="static-page">
+          Ce menu permet de consulter librement les événements publiés dans Dezède par les
+          chercheurs, qu’ils soient rattachés ou non à un dossier. Le filtre qui lui est associé permet
+          de croiser différentes requêtes de tri : recherche libre, période chronologique, lieu, œuvre,
+          individu. Il est également possible de consulter toutes les données dans l’ordre chronologique
+          en cliquant sur « Filtrer » sans remplir les champs. Bonne lecture !
+        </p>
+      {% else %}
         <h3>
           {% if evenements %}
             {% with count=evenements.count %}
@@ -41,21 +47,73 @@
         </h3>
 
         {% include page_template %}
-
-      </div>
+      {% endif %}
 
     </div>
+
   </div>
 
   {% addtoblock 'js' %}
-    <script src="{% static 'endless_pagination/js/endless-pagination.js' %}" charset="utf-8"></script>
+    <script src="{% static 'js/run_affix.js' %}"></script>
   {% endaddtoblock %}
   {% addtoblock 'js' %}
     <script>
       $.endlessPaginate({
         paginateOnScroll: true,
-        paginateOnScrollMargin: 200
+        paginateOnScrollMargin: 200,
+        onCompleted: tooltips_reload
+      });
+
+      function get_url_kwarg(name, default_value) {
+        return decodeURI(
+          (new RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)
+           || [,default_value])[1]
+        );
+      }
+
+      function is_current_page($object) {
+        if ($object[0] == undefined) {
+          return false;
+        }
+        var scroll = $(window).scrollTop();
+        var top = $object.offset().top;
+        var height = $object.height();
+        {# When the window scroll is above the first page, we consider #}
+        {# we're in the first page #}
+        if (scroll < top && $object.prev('.page')[0] == undefined) {
+          return true
+        }
+        return top <= scroll && scroll < top + height;
+      }
+
+      {# Dynamically updates URL page number #}
+      $(window).scroll(function () {
+        {# Adds a timeout to update URL after a small idle moment #}
+        $.doTimeout('scroll', 500, function() {
+
+          {# Checks whether the current page according to the URL is #}
+          {# the real current page, in order to avoid useless updates #}
+          var selector = '.page[data-page=' + get_url_kwarg('page', 1) + ']';
+          if (is_current_page($(selector))) {
+            return false;
+          }
+          {# Iterates over pages to find the current page and update URL #}
+          $('.page').each(function () {
+            if (is_current_page($(this))) {
+              {# Updates URL #}
+              window.history.replaceState(
+                {},
+                '',  {# title, unused for now in any browser #}
+                $.query.set('page', $(this).data('page')));
+              return false;  {# breaks the `each` loop #}
+            }
+            return true;  {# continues the `each` loop #}
+          });
+          return false;
+
+        });
       });
     </script>
   {% endaddtoblock %}
+
 {% endblock %}

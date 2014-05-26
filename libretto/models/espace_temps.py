@@ -16,7 +16,7 @@ from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
 from cache_tools import cached_ugettext as ugettext, \
-    cached_pgettext as pgettext, cached_ugettext_lazy as _
+    cached_pgettext as pgettext, cached_ugettext_lazy as _, model_method_cached
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
@@ -115,7 +115,7 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         relations = ('get_real_instance',)
         if all_relations:
             relations += ('enfants', 'saisons', 'ancrages',
-                    'dossiers',)
+                          'dossiers',)
         return relations
 
     @permalink
@@ -157,18 +157,21 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
             ancrage_creation__lieu__in=self.get_descendants(include_self=True)
         ).order_by(*Oeuvre._meta.ordering)
 
+    def ancestors_until_referent(self):
+        ancestors = self.get_ancestors(include_self=True)
+        values = ancestors.values_list('nom', 'nature__referent')
+        l = []
+        for nom, ref in values[::-1]:
+            l.append(nom)
+            if ref:
+                break
+        return l[::-1]
+
     def html(self, tags=True, short=False):
         if short or self.parent is None or self.nature.referent:
             out = self.nom
         else:
-            ancestors = self.get_ancestors(include_self=True)
-            values = ancestors.values_list('nom', 'nature__referent')
-            l = []
-            for nom, ref in reversed(values):
-                l.append(nom)
-                if ref:
-                    break
-            out = ', '.join(reversed(l))
+            out = ', '.join(self.ancestors_until_referent())
 
         url = None if not tags else self.get_absolute_url()
         return href(url, out, tags)
@@ -261,7 +264,7 @@ class AncrageSpatioTemporel(CommonModel):
                                       'ancrages spatio-temporels', 1)
         verbose_name_plural = ungettext_lazy('ancrage spatio-temporel',
                                              'ancrages spatio-temporels', 2)
-        ordering = ('date', 'heure', 'lieu__parent', 'lieu', 'date_approx',
+        ordering = ('date', 'heure', 'lieu', 'date_approx',
                     'heure_approx', 'lieu_approx')
         app_label = 'libretto'
 
@@ -325,6 +328,7 @@ class AncrageSpatioTemporel(CommonModel):
             return datetime.datetime.combine(self.date, self.heure).isoformat()
         return self.date.isoformat()
 
+    @model_method_cached()
     def html(self, tags=True, short=False):
         out = str_list((self.calc_lieu(tags, short),
                         self.calc_moment(tags, short)))

@@ -1,79 +1,61 @@
 {% extends 'base.html' %}
 {% load i18n routines sekizai_tags fb_versions %}
 
+{% block title %}{{ object }}{% endblock %}
+
+{% block header %}
+  <h1>{{ object.html }}</h1>
+{% endblock %}
 
 {% block content %}
-  <h1 class="page-header">
-    {% block title %}
-      {{ object }}
-    {% endblock %}
-  </h1>
 
-  <div class="row-fluid">
+  <div class="row">
 
-    <div class="span6">
-
+    <div class="col-md-8">
       {% if object.presentation %}
         <h3>{% trans 'Présentation' %}</h3>
         {{ object.presentation }}
       {% endif %}
-      {% if object.fonctions %}
-        <h3>{% trans 'Fonction(s) au sein de l’équipe' %}</h3>
-        {{ object.fonctions }}
-      {% endif %}
-
-      {% if object.dossiersdevenements_roots|has_elements:request %}
-        {% if object.presentation or object.fonctions %}
-          <hr/>
-        {% endif %}
-        <h3>{% trans 'À voir dans Dezède' %}</h3>
-        <table class="data-table">
-          {% data_table_list object.dossiersdevenements_roots|order_by:'-pk' %}
-        </table>
-      {% endif %}
 
       {% if object.literature %}
-        <hr />
+        {% if object.presentation %}<hr />{% endif %}
         <h3>{% trans 'Bibliographie' %}</h3>
         {{ object.literature }}
       {% endif %}
-
     </div>
 
-    <div class="well span6 text-center">
-      {% if object.avatar %}
-        {% version_object object.avatar 'avatar' as avatar %}
-        <img src="{{ avatar.url }}" class="img-polaroid"
-             style="width: {{ avatar.width }}px;
-                    height: {{ avatar.height }}px;"/>
-      {% endif %}
-      <h3>{% trans 'Données générales' %}</h3>
-      <table class="data-table">
-        {% data_table_attr 'content_object.link' verbose_name=_('Autorité associée') %}
-        {% data_table_attr 'date_joined.date' verbose_name=_('Date d’inscription') %}
-        {% data_table_attr 'website_link' verbose_name=_('Site internet') %}
-        {% if object.show_email %}
-          {% data_table_attr 'email_link' verbose_name=_('Courriel') %}
-        {% endif %}
-        {% data_table_attr 'mentor.link' verbose_name=verboses.mentor %}
-        {% data_table_list object.disciples.all verbose_name=verboses.disciple verbose_name_plural=verboses.disciples per_page=5 %}
-      </table>
-      <h3>{% trans 'Événements créés' %}</h3>
-      <div id="coverage">Chargement…</div>
+    <div class="col-md-4">
+      <div class="well">
+        {% include 'accounts/include/avatar.html' with size='thumbnail' %}
+        <dl class="auto-links" style="margin-top: 20px;">
+          {% if object.content_object %}
+            <dt>{% trans 'Autorité associée' %}</dt>
+            <dd>{{ object.content_object.link }}</dd>
+          {% endif %}
+          {% if object.fonctions %}
+            <dt>{% trans 'Fonction(s) au sein de l’équipe' %}</dt>
+            <dd>{{ object.fonctions }}</dd>
+          {% endif %}
+          {% if object.dossiersdevenements_roots|has_elements:request %}
+            <dt>{% trans 'À consulter dans Dezède' %}</dt>
+            <dd>
+              {% for dossier in object.dossiersdevenements_roots|order_by:'-pk' %}
+                {{ dossier.link }}<br />
+              {% endfor %}
+            </dd>
+          {% endif %}
+          {% if object.website %}
+            <dt>{% trans 'Site internet' %}</dt>
+            <dd>{{ object.website_link }}</dd>
+          {% endif %}
+          {% if object.show_email %}
+            <dt>{% trans 'Courriel' %}</dt>
+            {{ object.email_link }}
+          {% endif %}
+        </dl>
+      </div>
     </div>
 
   </div>
-
-  {% addtoblock 'js' %}
-    <script>
-      $.ajax({
-        url: '{% url 'evenements_graph' %}?username={{ object.username }}',
-        dataType: 'html'
-      }).done(function (data) {
-                $('#coverage').replaceWith(data);
-{#                tooltips_reload(); #}{# FIXME: À réactiver dès que bootstrap >= 2.3 #}
-              });
-    </script>
-  {% endaddtoblock %}
 
 {% endblock %}

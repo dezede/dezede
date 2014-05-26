@@ -1,11 +1,13 @@
 {% if source.contenu %}
   <blockquote class="source">
 
-    {{ source.contenu|safe }}
+    <div class="contenu">
+      {{ source.contenu|safe }}
+    </div>
     {% if source.auteurs.exists %}
-      <small>
+      <footer class="auteurs">
         {{ source.auteurs_html }}
-      </small>
+      </footer>
     {% endif %}
 
   </blockquote>

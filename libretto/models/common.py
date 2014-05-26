@@ -5,9 +5,10 @@ from collections import OrderedDict
 from django.conf import settings
 from django.contrib.contenttypes.generic import GenericRelation
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
-from django.db.models import Model, CharField, BooleanField, ManyToManyField, \
-    ForeignKey, TextField, Manager, PROTECT, Q, SmallIntegerField, Count
-from django.db.models.query import QuerySet
+from django.db.models import (
+    Model, CharField, BooleanField, ManyToManyField, ForeignKey, TextField,
+    Manager, PROTECT, Q, SmallIntegerField, Count)
+from django.db.models.query import EmptyQuerySet
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible, smart_text
@@ -19,10 +20,8 @@ from filebrowser.fields import FileBrowseField
 from mptt.managers import TreeManager
 from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
-from reversion import pre_revision_commit
 from tinymce.models import HTMLField
 from cache_tools import cached_ugettext_lazy as _
-from cache_tools.signals import auto_invalidate_signal_receiver
 from .functions import href, ex, hlp, capfirst, str_list
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
@@ -73,6 +72,14 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
 #
 
 
+class CommonEmptyQuerySet(EmptyQuerySet):
+    def with_related_objects(self):
+        return self
+
+    def without_related_objects(self):
+        return self
+
+
 class CommonQuerySet(TypographicQuerySet):
     def _get_no_related_objects_filter_kwargs(self):
         meta = self.model._meta
@@ -88,9 +95,12 @@ class CommonQuerySet(TypographicQuerySet):
 
 
 class CommonManager(TypographicManager):
-    # TODO: Implementer get_empty_query_set.
-    def get_query_set(self):
-        return CommonQuerySet(self.model, using=self._db)
+    use_for_related_fields = True
+    queryset_class = CommonQuerySet
+    empty_queryset_class = CommonEmptyQuerySet
+
+    def get_empty_query_set(self):
+        return self.empty_queryset_class(self.model, using=self._db)
 
 
 class CommonModel(TypographicModel):
@@ -187,14 +197,24 @@ class CommonModel(TypographicModel):
         return smart_text(self)
 
 
-class PublishedQuerySet(CommonQuerySet):
+class PublishedEmptyQuerySet(CommonEmptyQuerySet):
     def published(self, request=None):
+        return self
+
+
+class PublishedQuerySet(CommonQuerySet):
+    @staticmethod
+    def _get_filters(request=None):
         if request is None or not request.user.is_authenticated:
-            qs = self.filter(etat__public=True)
-        elif request.user.is_superuser:
-            qs = self
-        else:
-            qs = self.filter(Q(etat__public=True) | Q(owner=request.user.pk))
+            return (), {'etat__public': True}
+        elif not request.user.is_superuser:
+            return (Q(etat__public=True) | Q(owner=request.user.pk),), {}
+        return (), {}
+
+    def published(self, request=None):
+        filter_args, filter_kwargs = self._get_filters(request)
+
+        qs = self.filter(*filter_args, **filter_kwargs)
 
         # Automatically orders by the correct ordering.
         ordering = []
@@ -209,9 +229,8 @@ class PublishedQuerySet(CommonQuerySet):
 
 
 class PublishedManager(CommonManager):
-    # TODO: Implement get_empty_query_set.
-    def get_query_set(self):
-        return PublishedQuerySet(self.model, using=self._db)
+    queryset_class = PublishedQuerySet
+    empty_queryset_class = PublishedEmptyQuerySet
 
     def published(self, request=None):
         return self.get_query_set().published(request=request)
@@ -265,13 +284,6 @@ class UniqueSlugModel(Model):
     slug = AutoSlugField(
         populate_from='get_slug', unique=True, always_update=True)
 
-    def __init__(self, *args, **kwargs):
-        super(UniqueSlugModel, self).__init__(*args, **kwargs)
-        # FIXME: Retirer les deux lignes suivantes quand sera résolu
-        # https://bitbucket.org/neithere/django-autoslug/pull-request/6
-        slug = self._meta.get_field('slug')
-        slug.manager = slug.model._default_manager
-
     class Meta(object):
         abstract = True
 
@@ -279,7 +291,7 @@ class UniqueSlugModel(Model):
         return smart_text(self)
 
 
-class CommonTreeQuerySet(QuerySet):
+class CommonTreeQuerySet(CommonQuerySet):
     def get_descendants(self, include_self=False):
         manager = self.model._default_manager
         tree_id_attr = manager.tree_id_attr
@@ -302,7 +314,7 @@ class CommonTreeQuerySet(QuerySet):
         return qs
 
 
-class CommonTreeManager(TreeManager):
+class CommonTreeManager(CommonManager, TreeManager):
     queryset_class = CommonTreeQuerySet
 
     def get_query_set(self):

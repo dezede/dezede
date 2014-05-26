@@ -225,10 +225,17 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return self.auteurs.sources()
 
     def apparitions(self):
-        # FIXME: Pas sûr que la condition soit logique.
+        # FIXME: Gérer la période d’activité des membres d’un groupe.
         return Evenement.objects.filter(
             Q(distribution__individus=self)
-            | Q(programme__distribution__individus=self)).distinct()
+            | Q(programme__distribution__individus=self)
+            | Q(distribution__ensembles__individus=self)
+            | Q(programme__distribution__ensembles__individus=self)
+        ).distinct()
+
+    def evenements_referents(self):
+        return Evenement.objects.filter(
+            programme__oeuvre__auteurs__individu=self).distinct()
 
     def calc_prenoms_methode(self, fav):
         if not self.pk:
@@ -310,7 +317,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     @model_method_cached()
     def html(self, tags=True, lon=False, prenoms_fav=True,
-             show_prenoms=True, designation=None, abbr=True):
+             show_prenoms=True, designation=None, abbr=True, links=True):
         def add_particule(nom, lon, naissance=False):
             particule = self.get_particule(naissance)
             if lon:
@@ -349,7 +356,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
             if pseudonyme:
                 alias = ugettext('dite') if self.is_feminin() \
                     else ugettext('dit')
-                out += ' %s %s' % (alias, pseudonyme)
+                out += ' %s\u00A0%s' % (alias, pseudonyme)
             return out
 
         main_choices = {
@@ -362,22 +369,23 @@ class Individu(AutoriteModel, UniqueSlugModel):
         main = main_style(main_choices[designation])
         out = standard(main) if designation in ('S', 'B',) else main
         url = None if not tags else self.get_absolute_url()
-        out = href(url, out, tags)
+        out = href(url, out, tags & links)
         return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
-    def nom_seul(self, tags=False, abbr=False):
+    def nom_seul(self, tags=False, abbr=False, links=False):
         return self.html(tags=tags, lon=False, show_prenoms=False,
-                         abbr=abbr)
+                         abbr=abbr, links=links)
 
     def nom_complet(self, tags=True, prenoms_fav=False, designation='S',
-                    abbr=False):
+                    abbr=False, links=True):
         return self.html(tags=tags, lon=True, prenoms_fav=prenoms_fav,
-                         designation=designation, abbr=abbr)
+                         designation=designation, abbr=abbr, links=links)
 
     def related_label(self, tags=False):
         return self.html(tags=tags, abbr=False)
+    related_label.short_description = _('individu')
 
     def related_label_html(self):
         return self.related_label(tags=True)
@@ -394,7 +402,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
                                         'la naissance.'))
 
     def __str__(self):
-        return strip_tags(self.html(False))
+        return strip_tags(self.html(tags=False))
 
     @staticmethod
     def autocomplete_search_fields():

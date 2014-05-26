@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n extras routines %}
 {% load url from future %}
 
@@ -6,22 +6,18 @@
   {{ object }}
 {% endblock %}
 
-{% block body %}
-
-  {% include "libretto/include/etat.html" with etat=object.etat %}
-
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>{{ object.html }}</h1>
-
+{% block header %}
+  <h1>{{ object.html }}</h1>
+  <div class="auto-links">
     <h2>{{ object.caracteristiques.html }}</h2>
   </div>
+{% endblock %}
 
-  <div class="span3 pull-right">
-    {% include 'libretto/include/illustrations.html' %}
-  </div>
+{% block content %}
 
-  <table class="data-table">
+  {{ block.super }}
+
+  <table class="data-table auto-links">
     {% data_table_attr 'caracteristiques.html' %}
     {% data_table_attr 'siege.link' %}
     {% data_table_attr 'smart_period' caps=True %}

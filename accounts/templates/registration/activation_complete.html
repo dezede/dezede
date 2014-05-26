@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}
-  {% trans "Bienvenue" %}
+{% block header %}
+  <h1>{% block title %}{% trans "Bienvenue" %}{% endblock %}</h1>
 {% endblock %}
 
-{% block body %}
-  <h1>{% trans "Bienvenue" %}</h1>
+{% block content %}
   <p>
     {% blocktrans %}
       La création et l’activation de votre compte ont été un succès !

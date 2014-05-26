@@ -1,27 +1,18 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from celery_haystack.signals import CelerySignalProcessor
 from django.contrib.admin.models import LogEntry
-from haystack.signals import BaseSignalProcessor
-from reversion.models import (
-    Version, Revision, post_revision_commit, VERSION_DELETE)
-from .tasks import enqueue_with_stale_objects
+from django.contrib.sessions.models import Session
+from reversion.models import Version, Revision
+from .tasks import auto_invalidate
 
 
-class HaystackAutoInvalidator(BaseSignalProcessor):
-    def setup(self):
-        post_revision_commit.connect(self.enqueue)
-
-    def teardown(self):
-        post_revision_commit.connect(self.enqueue)
-
-    def enqueue(self, sender, **kwargs):
-        if sender in (LogEntry, Revision, Version):
+class CeleryAutoInvalidator(CelerySignalProcessor):
+    def enqueue(self, action, instance, sender, **kwargs):
+        if sender in (LogEntry, Session, Revision, Version):
             return
 
-        instances = kwargs['instances']
-        versions = kwargs['versions']
-        for instance, version in zip(instances, versions):
-            action = 'delete' if version.type == VERSION_DELETE \
-                else 'update'
-            enqueue_with_stale_objects.delay(action, instance)
+        auto_invalidate.delay(
+            action, instance._meta.app_label,
+            instance.__class__.__name__, instance.pk)

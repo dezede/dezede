@@ -1,18 +1,15 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n %}
-{% load extras routines %}
-{% load url from future %}
 
 {% block title %}
   {% trans "événement"|capfirst %}
 {% endblock %}
 
-{% block body %}
+{% block header %}
+  {% include 'libretto/evenement_item_head.html' %}
+{% endblock %}
 
-  {% include "libretto/evenement_item.html" %}
-
-  <div>
-    {% frontend_admin %}
-  </div>
-
+{% block content %}
+  {{ block.super }}
+  {% include 'libretto/evenement_item_body.html' %}
 {% endblock %}

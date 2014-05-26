@@ -159,7 +159,7 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
     objects = PartieManager()
 
-    weak_unique_constraint = ('nom',)
+    weak_unique_constraint = ('nom', 'parent')
 
     class Meta(object):
         verbose_name = ungettext_lazy('rôle ou instrument',
@@ -195,9 +195,13 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
     def interpretes_html(self):
         return str_list(i.html() for i in self.interpretes())
+    interpretes_html.short_description = _('interprètes')
 
     def evenements(self):
         return self.pupitres.elements_de_distribution().evenements()
+
+    def repertoire(self):
+        return self.pupitres.oeuvres()
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -232,6 +236,7 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
 
 class Role(Partie):
+    # TODO: Ajouter automatiquement le rôle à l’effectif.
     oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'), blank=True,
                         null=True, related_name='roles')
 
@@ -269,17 +274,23 @@ class PupitreQuerySet(CommonQuerySet):
     def elements_de_distribution(self):
         return get_model(
             'libretto',
-            'ElementDeDistribution').objects.filter(pupitre__in=self)
+            'ElementDeDistribution'
+        ).objects.filter(pupitre__in=self).distinct()
+
+    def oeuvres(self):
+        return (get_model('libretto', 'Oeuvre').objects
+                .filter(pupitres__in=self).distinct()
+                .order_by(*Oeuvre._meta.ordering))
 
 
 class PupitreManager(CommonManager):
-    use_for_related_fields = True
-
-    def get_query_set(self):
-        return PupitreQuerySet(self.model, using=self._db)
+    queryset_class = PupitreQuerySet
 
     def elements_de_distribution(self):
         return self.all().elements_de_distribution()
+
+    def oeuvres(self):
+        return self.all().oeuvres()
 
 
 # TODO: une fois les quantités déplacées en inline, ce modèle ne doit plus être
@@ -437,8 +448,7 @@ class AuteurQuerySet(CommonQuerySet):
 
 
 class AuteurManager(CommonManager):
-    def get_query_set(self):
-        return AuteurQuerySet(self.model, using=self._db)
+    queryset_class = AuteurQuerySet
 
     def individus(self):
         return self.get_query_set().individus()
@@ -506,11 +516,15 @@ class Auteur(CommonModel):
 
 
 class OeuvreQuerySet(CommonTreeQuerySet, PublishedQuerySet):
-    pass
+    def html(self, *args, **kwargs):
+        return str_list_w_last([o.html(*args, **kwargs) for o in self])
 
 
 class OeuvreManager(CommonTreeManager, PublishedManager):
     queryset_class = OeuvreQuerySet
+
+    def html(self, *args, **kwargs):
+        return self.get_query_set().html(*args, **kwargs)
 
 
 @python_2_unicode_compatible
@@ -543,8 +557,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                              related_name='meres', symmetrical=False)
     lilypond = TextField(blank=True, verbose_name='LilyPond')
     description = HTMLField(blank=True)
-    evenements = ManyToManyField('Evenement', through='ElementDeProgramme',
-                                 related_name='oeuvres', db_index=True)
 
     objects = OeuvreManager()
 
@@ -600,6 +612,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def pupitres_html(self, prefix=False, tags=True):
         return self.calc_pupitres(prefix=prefix, tags=tags)
 
+    @model_method_cached()
     def auteurs_html(self, tags=True):
         return self.auteurs.order_by(*Auteur._meta.ordering).html(tags)
     auteurs_html.short_description = _('auteurs')
@@ -615,9 +628,14 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def filles_in_order(self):
         return self.parentes_in_order('filles')
 
+    @property
+    def evenements(self):
+        return get_model('libretto', 'Evenement').objects.filter(
+            programme__oeuvre__in=self.get_descendants(include_self=True))
+
     def calc_referent_ancestors(self, tags=False, links=False):
-        if not self.pk or self.contenu_dans is None or (self.genre
-                                                     and  self.genre.referent):
+        if not self.pk or self.contenu_dans is None or \
+                (self.genre and  self.genre.referent):
             return ''
         return self.contenu_dans.titre_html(tags=tags, links=links)
 
@@ -683,6 +701,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def titre_html(self, tags=True, links=True):
         return self.html(tags, auteurs=False, titre=True, descr=False,
                          ancestors=True, ancestors_links=True, links=links)
+    titre_html.short_description = _('titre')
 
     def titre_descr(self, tags=False):
         return self.html(tags=tags, auteurs=False, titre=True, descr=True,
@@ -726,6 +745,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def __str__(self):
         return strip_tags(self.titre_html(False))  # strip_tags car on autorise
                          # les rédacteurs à mettre des tags dans les CharFields
+
+    _str = __str__
+    _str.short_description = _('œuvre')
 
     @staticmethod
     def autocomplete_search_fields():

@@ -2,12 +2,11 @@
 {% load url from future %}
 {% load crispy_forms_tags i18n %}
 
-{% block title %}
-  {% trans "Déconnexion" %}
+{% block header %}
+  <h1>{% block title %}{% trans "Déconnexion" %}{% endblock %}</h1>
 {% endblock %}
 
-{% block body %}
-  <h1>{% trans "Déconnexion" %}</h1>
+{% block content %}
   <p>
     {% url 'auth_login' as url %}
     {% blocktrans %}

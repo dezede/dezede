@@ -1,26 +1,29 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Manager
-from djcelery_transactions import task
-from .utils import get_object_cache_key, invalidate_object
+from .utils import invalidate_object, get_obj_cache_key
 
 
-__all__ = ('get_stale_objects', 'auto_invalidate',)
+__all__ = ('get_stale_objects', 'auto_invalidate_cache',)
 
 
-def get_stale_objects(instance, explored_instances, all_relations=False):
+def get_stale_objects(instance, explored=None, all_relations=False):
+    if explored is None:
+        explored = []
+
     if instance is None:
         raise StopIteration
 
-    cache_key = get_object_cache_key(instance)
-    if cache_key in explored_instances:
+    obj_cache_key = get_obj_cache_key(instance)
+    if obj_cache_key in explored:
         raise StopIteration
 
     yield instance
 
-    explored_instances.append(cache_key)
+    explored.append(obj_cache_key)
 
     relations = getattr(instance, 'invalidated_relations_when_saved',
                         lambda all_relations: ())(all_relations=all_relations)
@@ -34,15 +37,15 @@ def get_stale_objects(instance, explored_instances, all_relations=False):
         if isinstance(related, Manager):
             for obj in related.all():
                 for sub_obj in get_stale_objects(
-                        obj, explored_instances, all_relations=all_relations):
+                        obj, explored, all_relations=all_relations):
                     yield sub_obj
         else:
             for sub_related in get_stale_objects(
-                    related, explored_instances, all_relations=all_relations):
+                    related, explored, all_relations=all_relations):
                 yield sub_related
 
 
-@task
-def auto_invalidate(instance):
-    for stale_object in get_stale_objects(instance, []):
+@shared_task
+def auto_invalidate_cache(instance):
+    for stale_object in get_stale_objects(instance):
         invalidate_object(stale_object)

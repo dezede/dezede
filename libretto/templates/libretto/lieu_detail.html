@@ -1,38 +1,33 @@
-{% extends "base.html" %}
+{% extends 'libretto/autorite.html' %}
 {% load i18n routines %}
 {% load url from future %}
 
-{% block title %}
-  {{ lieu }}
+
+{% block header %}
+  <h1>
+    <a href="{{ lieu.get_absolute_url }}" title="{{ lieu.nature|capfirst }}">
+      {{ lieu.nom }}
+    </a>
+  </h1>
+  <div class="auto-links">
+    {% if lieu.parent %}
+      <h2>{{ lieu.parent.link }}</h2>
+    {% endif %}
+  </div>
 {% endblock %}
 
-{% block body %}
 
-  {% include "libretto/include/etat.html" with etat=lieu.etat %}
+{% block content %}
 
-  <div class="page-header">
-    {% frontend_admin autorite=1 %}
-    <h1>
-      {{ lieu.nom }}{% if lieu.parent %}, <a href="{{ lieu.parent.get_absolute_url }}">{{ lieu.parent }}</a>{% endif %}
-    </h1>
-    <h2>
-      <span title="{% trans "nature"|capfirst %}">
-        {{ lieu.nature|capfirst }}
-      </span>
-    </h2>
-  </div>
+  {{ block.super }}
 
-  <div class="span3 pull-right">
-    {% include 'libretto/include/illustrations.html' %}
-  </div>
-
-  <table class="data-table">
+  <table class="data-table auto-links">
     {% if lieu.get_children|has_elements:request %}
       <th>{% trans 'Lieux contenus' %}</th>
-      <td>{% jstree 'lieu' 'nom' %}</td>
+      <td>{% jqtree 'libretto.lieu' 'nom' %}</td>
     {% endif %}
     {% data_table_attr 'historique' %}
-    {% include "libretto/evenement_list_def.html" with evenements=lieu.evenements %}
+    {% include 'libretto/evenement_list_def.html' with evenements=lieu.evenements %}
     {% data_table_list lieu.individus_nes verbose_name=_('individu né ici') verbose_name_plural=_('individus nés ici') %}
     {% data_table_list lieu.individus_decedes verbose_name=_('individu décédé ici') verbose_name_plural=_('individus décédés ici') %}
     {% data_table_list lieu.oeuvres_creees verbose_name=_('œuvre créée ici') verbose_name_plural=_('œuvres créées ici') %}

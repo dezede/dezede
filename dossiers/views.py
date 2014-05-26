@@ -5,17 +5,14 @@ from django.contrib.sites.models import get_current_site
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
-from libretto.views import PublishedListView, PublishedDetailView, \
-    EvenementListView
-from .models import DossierDEvenements
+from libretto.views import (
+    PublishedListView, PublishedDetailView, EvenementListView)
+from .models import CategorieDeDossiers, DossierDEvenements
 
 
-class DossierDEvenementsList(PublishedListView):
-    model = DossierDEvenements
-
-    def get_queryset(self):
-        qs = super(DossierDEvenementsList, self).get_queryset()
-        return qs.filter(level=0)
+class CategorieDeDossiersList(PublishedListView):
+    model = CategorieDeDossiers
+    has_frontend_admin = False
 
 
 class DossierDEvenementsDetail(PublishedDetailView):
@@ -25,6 +22,7 @@ class DossierDEvenementsDetail(PublishedDetailView):
 class DossierDEvenementsDataDetail(EvenementListView):
     template_name = 'dossiers/dossierdevenements_data_detail.html'
     view_name = 'dossierdevenements_data_detail'
+    enable_default_page = False
 
     def get_queryset(self):
         self.object = get_object_or_404(DossierDEvenements,

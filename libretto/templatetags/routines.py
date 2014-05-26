@@ -1,12 +1,13 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from copy import copy
 from django.db.models import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template import Library, Template
 from django.template.loader import render_to_string
 from django.contrib.sites.models import get_current_site
-from copy import copy
+from django.utils.encoding import force_text
 from libretto.models.common import PublishedQuerySet
 from libretto.models.functions import capfirst
 
@@ -23,7 +24,7 @@ def build_admin_view_name(perm):
 
 
 @register.simple_tag(takes_context=True)
-def frontend_admin(context, obj=None, autorite=False):
+def frontend_admin(context, obj=None, size='xs'):
     request = context['request']
     if obj is None:
         obj = context['object']
@@ -38,6 +39,9 @@ def frontend_admin(context, obj=None, autorite=False):
     admin_change = build_admin_view_name(change_perm)
     admin_delete = build_admin_view_name(delete_perm)
     domain = get_current_site(request)
+
+    assert size in ('', 'xs', 'sm', 'md', 'lg')
+
     c = {
         'has_change_perm': has_change_perm,
         'has_delete_perm': has_delete_perm,
@@ -45,9 +49,9 @@ def frontend_admin(context, obj=None, autorite=False):
         'admin_delete': admin_delete,
         'domain': domain,
         'object': obj,
+        'size': size,
     }
-    t = 'routines/%sfront-end_admin.html' % ('autorite_' if autorite else '')
-    return render_to_string(t, c)
+    return render_to_string('routines/front-end_admin.html', c)
 
 
 @register.simple_tag(takes_context=True)
@@ -99,6 +103,25 @@ def get_verbose_name_from_object_list(object_list, verbose_name=None,
     return verbose_name, verbose_name_plural
 
 
+@register.assignment_tag(takes_context=True)
+def published(context, qs):
+    return qs.published(context['request'])
+
+
+@register.assignment_tag(takes_context=True)
+def previous_sibling(context, obj):
+    request = context['request']
+    filter_args, filter_kwargs = PublishedQuerySet._get_filters(request)
+    return obj.get_previous_sibling(*filter_args, **filter_kwargs)
+
+
+@register.assignment_tag(takes_context=True)
+def next_sibling(context, obj):
+    request = context['request']
+    filter_args, filter_kwargs = PublishedQuerySet._get_filters(request)
+    return obj.get_next_sibling(*filter_args, **filter_kwargs)
+
+
 @register.filter
 def get_property(obj, attr):
     """
@@ -126,9 +149,23 @@ def has_elements(object_list, request):
 
 
 @register.simple_tag(takes_context=True)
+def data_table_list_header(context):
+    count = context['count']
+    has_count = context['has_count']
+    has_count_if_one = context['has_count_if_one']
+    verbose_name = context['verbose_name']
+    verbose_name_plural = context['verbose_name_plural']
+    out = ''
+    if has_count and (count != 1 or has_count_if_one):
+        out = '%s ' % count
+    out += force_text(verbose_name if count == 1 else verbose_name_plural)
+    return capfirst(out)
+
+
+@register.simple_tag(takes_context=True)
 def data_table_list(context, object_list, attr='link',
                     verbose_name=None, verbose_name_plural=None, per_page=10,
-                    number_if_one=True):
+                    has_count_if_one=True, has_count=True):
 
     if not object_list:
         return ''
@@ -157,19 +194,23 @@ def data_table_list(context, object_list, attr='link',
         'verbose_name_plural': verbose_name_plural,
         'per_page': per_page,
         'page_variable': verbose_name + '_page',
-        'number_if_one': number_if_one,
+        'has_count_if_one': has_count_if_one,
+        'has_count': has_count,
     }
     return render_to_string('routines/data_table_list.html', c)
 
 
 @register.simple_tag(takes_context=True)
-def jstree(context, model_name, attr='__str__'):
+def jqtree(context, model_path, attr='__str__', id=None):
+    app_label, model_name = model_path.split('.')
     c = {
+        'app_label': app_label,
         'model_name': model_name,
         'attr': attr,
         'object': context.get('object'),
+        'id': id,
     }
-    return render_to_string('routines/jstree.html', c)
+    return render_to_string('routines/jqtree.html', c)
 
 
 @register.filter

@@ -2,12 +2,13 @@
 
 from __future__ import unicode_literals
 from django.conf.urls import patterns, url
-from dossiers.views import DossierDEvenementsList, DossierDEvenementsDetail,\
-    DossierDEvenementsDataDetail, DossierDEvenementsDetailXeLaTeX
+from dossiers.views import (
+    CategorieDeDossiersList, DossierDEvenementsDetail,
+    DossierDEvenementsDataDetail, DossierDEvenementsDetailXeLaTeX)
 
 
 urlpatterns = patterns('',
-    url(r'^$', DossierDEvenementsList.as_view(),
+    url(r'^$', CategorieDeDossiersList.as_view(),
         name='dossierdevenements_index'),
     url(r'^(?P<pk>\d+)/$', DossierDEvenementsDetail.as_view(),
         name='dossierdevenements_detail'),

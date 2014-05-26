@@ -2,34 +2,100 @@
 {% load url from future %}
 {% load i18n routines endless sekizai_tags %}
 
+
 {% block title %}
   {{ object|striptags }} | {% trans 'Présentation' %}
 {% endblock %}
 
 
+{% block breadcrumb %}
+  {% include 'dossiers/dossierdevenements_breadcrumb.html' %}
+{% endblock %}
+
+
+{% block header_extra_class %}no-separator{% endblock %}
+
+
+{% block header %}
+  <h1>{{ object.titre|safe }}</h1>
+{% endblock %}
+
+
+{% block header-aside %}{% frontend_admin %}{% endblock %}
+
+
+{% block tabs %}{% include 'dossiers/tabs.html' %}{% endblock %}
+
+
 {% block content %}
 
-  {% include 'dossiers/dossierdevenements_detail_head.html' %}
+  <div class="row">
 
-  <div class="container-fluid">
-
-    <div class="row-fluid">
-
-      <div class="span3">
-        {% include 'dossiers/dossierdevenements_detail_affix.html' %}
-      </div>
-
-      <div class="span9">
-
-        <h2>{% trans 'Présentation' %}</h2>
-        {{ object.contenu }}
-
-        {% include 'dossiers/dossierdevenements_detail_cite.html' %}
-
-      </div>
-
+    <div class="col-xs-12 col-sm-6 col-md-4">
+      {% include 'dossiers/dossierdevenements_detail_sidebar.html' %}
     </div>
 
+    <div class="col-xs-12 col-sm-6 col-md-8">
+      <div class="dossier">
+        <div class="presentation">
+        {{ object.presentation }}
+        </div>
+        {% if object.contexte %}{# FIXME: Retirer cette condition quand ces champs auront été remplis après la migration #}
+          <h2>{% trans 'Contexte historique' %}</h2>
+          {{ object.contexte }}
+        {% endif %}
+        {% if object.sources %}{# FIXME: Comme au-dessus, retirer ceci #}
+          <h2>{% trans 'Sources et protocole' %}</h2>
+          {{ object.sources }}
+        {% endif %}
+        {% if object.bibliographie %}
+          <h2>{% trans 'Bibliographie indicative' %}</h2>
+          {{ object.bibliographie }}
+        {% endif %}
+      </div>
+
+      <div id="reference-dossier" class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{% trans 'Pour citer ce dossier' %}</h3>
+        </div>
+        <div class="panel-body">
+          {{ object.editeurs_scientifiques.html }}{% if object.get_contributors.count > object.editeurs_scientifiques.count %} (dir.){% endif %},
+          « {{ object }} »,
+          <em>Dezède</em> [en ligne].
+          {{ request.build_absolute_uri }}
+          (consulté le {% now 'DATE_FORMAT' %}).
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12 col-md-offset-4 col-md-8">
+      <nav id="dossier-switcher">
+        <div class="btn-group btn-group-justified">
+          {% previous_sibling object as prev %}
+          <a href="{{ prev.get_absolute_url|default:'#' }}" role="button"
+             {% if not prev %}disabled="disabled"{% endif %}
+             class="btn btn-primary">
+            <i class="fa fa-angle-left"></i>
+            {% trans 'Dossier précédent' %}
+          </a>
+          <a href="#" class="btn btn-default" role="button">
+            <i class="fa fa-angle-double-up"></i>
+            {% trans 'Retourner en haut' %}
+            <i class="fa fa-angle-double-up"></i>
+          </a>
+          {% next_sibling object as next %}
+          <a href="{{ next.get_absolute_url|default:'#' }}" role="button"
+             {% if not next %}disabled="disabled"{% endif %}
+             class="btn btn-primary">
+            {% trans 'Dossier suivant' %}
+            <i class="fa fa-angle-right"></i>
+          </a>
+        </div>
+      </nav>
+    </div>
   </div>
 
 {% endblock %}

@@ -10,7 +10,7 @@ from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import DetailView, TemplateView, ListView
 from registration.backends.default.views import RegistrationView
 from cache_tools import cached_ugettext_lazy as _
 from libretto.models import AncrageSpatioTemporel
@@ -25,7 +25,7 @@ class GrantToAdmin(DetailView):
     def grant_user(self, user):
         user.is_staff = True
         user.save()
-        site_url = 'http://' + get_current_site(self.request).domain
+        site_url = 'https://' + get_current_site(self.request).domain
         email_content = render_to_string(
             'accounts/granted_to_admin_email.txt',
             {'user': user, 'site_url': site_url})
@@ -72,7 +72,7 @@ class EvenementsGraph(TemplateView):
     # When we set the font size, the figures are smaller than
     # the specified size.
     figure_size_factor = 0.8
-    hue = 0  # degrees
+    hue = 17  # degrees
     legend_levels = 6
 
     def get_context_data(self, **kwargs):
@@ -157,6 +157,76 @@ class EvenementsGraph(TemplateView):
             levels_iterator(0, 1, self.legend_levels))
 
         return context
+
+
+class HierarchicUserList(ListView):
+    model = HierarchicUser
+    title = _('Liste des utilisateurs')
+
+    def get_context_data(self, **kwargs):
+        context = super(HierarchicUserList, self).get_context_data(**kwargs)
+        context['title'] = self.title
+        return context
+
+
+class EquipeView(HierarchicUserList):
+    membres = ()
+
+    def get_queryset(self):
+        qs = super(EquipeView, self).get_queryset()
+        return qs.filter(
+            pk__in=self.membres).order_by(*self.model._meta.ordering)
+
+
+class ComiteEditorialeView(EquipeView):
+    membres = (
+        5,  # Joann
+        6,  # Yannick
+        7,  # Patrick
+    )
+    title = _('Comité éditorial')
+
+
+class ContributeursView(EquipeView):
+    membres = (
+        5,  # Joann
+        6,  # Yannick
+        7,  # Patrick
+        80,  # Lucille Brunel
+        85,  # Denis Tchorek
+        95,  # Christine Carrère-Saucède
+        102,  # Thomas Bacquet
+        168,  # Thomas Vernet
+    )
+    title = _('Contributeurs')
+
+
+class EquipeDeveloppementView(EquipeView):
+    membres = (
+        1,  # Bertrand
+        5,  # Joann
+        6,  # Yannick
+        7,  # Patrick
+    )
+    title = _('Équipe de développement')
+
+
+class ProprietairesView(EquipeView):
+    membres = (
+        194,  # Université de Rouen
+        195,  # Université de Montpellier 3
+        196,  # CÉRÉdI
+        197,  # GRHis
+        198,  # IRCL
+    )
+    title = _('Propriétaires')
+
+
+class PartenairesView(EquipeView):
+    membres = (
+        157,  # AFO
+    )
+    title = _('Partenaires')
 
 
 class HierarchicUserDetail(DetailView):

@@ -30,7 +30,7 @@ class UserRegistrationForm(RegistrationForm):
     last_name = CharField(label=_('Nom'))
     mentor = TreeNodeChoiceField(queryset=get_mentors(), label=_('Mentor'))
     willing_to_be_mentor = BooleanField(
-        required=False, label=_('Veut être mentor'))
+        required=False, label=_('Souhaite devenir mentor'))
     groups = ModelMultipleChoiceField(
         queryset=get_groups(), widget=CheckboxSelectMultiple,
         label=_('Groupes'))
@@ -38,25 +38,26 @@ class UserRegistrationForm(RegistrationForm):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-2'
+        self.helper.field_class = 'col-sm-8'
         self.helper.layout = Layout(
             Fieldset(
                 _('Général'),
-                Field('first_name', 'last_name', css_class='input-xlarge'),
-                PrependedText('email', '<i class="icon-envelope"></i>',
-                              active=True),
-                PrependedText('username', '<i class="icon-user"></i>',
-                              active=True),
-                'password1', 'password2',
+                Field('first_name', 'last_name'),
+                PrependedText('email',
+                              '<i class="fa fa-envelope-o fa-fw"></i>'),
+                PrependedText('username', '<i class="fa fa-user fa-fw"></i>'),
+                PrependedText('password1', '<i class="fa fa-key fa-fw"></i>'),
+                PrependedText('password2', '<i class="fa fa-key fa-fw"></i>'),
             ),
             Fieldset(
                 _('Mentorat'),
                 'mentor',
-                'willing_to_be_mentor',
+                Field('willing_to_be_mentor', wrapper_class='col-sm-offset-2'),
                 'groups',
             ),
             FormActions(
-                Submit('save_changes', _('Enregistrer'),
-                       css_class="btn-primary"),
+                Submit('save_changes', _('Enregistrer')),
                 Reset('reset', _('Réinitialiser')),
             ),
         )
@@ -72,7 +73,7 @@ class UserRegistrationForm(RegistrationForm):
         user.willing_to_be_mentor = data['willing_to_be_mentor']
         user.save()
 
-        site_url = 'http://' + get_current_site(request).domain
+        site_url = 'https://' + get_current_site(request).domain
         email_content = render_to_string(
             'accounts/grant_to_admin_demand_email.txt',
             {'user': user, 'site_url': site_url, 'mentor': user.mentor})

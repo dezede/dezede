@@ -1,0 +1,806 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block header %}
+  <h1>
+    <a href="{% url 'presentation' %}">
+      {% block title %}Présentation{% endblock %}
+    </a>
+  </h1>
+{% endblock %}
+
+
+{% block content %}
+  <div class="static-page">
+
+    <ul class="nav nav-tabs" style="margin: 0 0 20px;">
+      <li class="active"><a href="#presentation" data-toggle="tab">Présentation</a></li>
+      <li><a href="#contenus" data-toggle="tab">Contenus</a></li>
+      <li><a href="#utilisateurs" data-toggle="tab">Utilisateurs</a></li>
+      <li><a href="#identite" data-toggle="tab">Identité</a></li>
+      <li><a href="#historique" data-toggle="tab">Historique</a></li>
+      <li><a href="#developpement" data-toggle="tab">Développement</a></li>
+    </ul>
+
+    <div class="tab-content">
+
+      <div class="tab-pane active" id="presentation">
+
+        <h3>Sa philosophie</h3>
+        <p>
+          <span class="lead">Une ressource numérique <em>open source</em>.</span>
+          Dezède est une application web qui offre un accès gratuit
+          et dématérialisé aux données publiées.
+          Elle est consultable sur différents supports
+          (ordinateurs, tablettes numériques, mobiles),
+          chez soi ou à proximité des sources en bibliothèque,
+          et par tous les utilisateurs (chercheurs, étudiants, organismes de recherche ou institutions culturelles)
+          et lecteurs (internautes).
+          L’outil de recherche est également un portail de valorisation :
+          si Dezède seconde en effet les chercheurs dans leurs travaux
+          (outils d’édition et de transcription, organisation du corpus,
+          exploitation du fonds d’autorités, indexation automatique des matières,
+          moteur de recherche, suivi du travail, sauvegarde et sécurisation des données),
+          le programme facilite l’édition des résultats, tout en les plaçant
+          dans une perspective contributive plus large.
+        </p>
+
+        <h3>Ses fonctions</h3>
+        <p>
+          <span class="lead">Un outil de recherche et de valorisation sur la chronologie et l’histoire des spectacles.</span>
+          Dezède permet de reconstituer et d’organiser des corpus documentaires de programmes de spectacle,
+          consacrés à des villes, des institutions, des artistes ou des œuvres.
+          Pour ce faire, il utilise une méthode scientifique originale structurant
+          la publication en ligne, du traitement et de l’analyse des sources
+          à l’édition critique des programmes et à l’agencement des événements entre eux.
+          Le cœur de l’application est doté d’une base relationnelle
+          qui lie les événements à un ensemble d’autorités interrogeables séparément
+          (œuvres, individus, lieux de diffusion, rôles, emplois, etc.)
+          Application unique pour l’édition de chronologies événementielles
+          dans le domaine des humanités numériques, Dezède a vocation à favoriser
+          le développement de recherches sur la circulation des œuvres et des interprètes,
+          en mettant à la disposition des chercheurs et du public
+          une masse importante de données historiques.
+        </p>
+        {#  TODO: Lien vers le mode d’emploi #}
+        {# TODO: Lien vers la méthode scientifique #}
+
+        <h3>Son comité éditorial</h3>
+        <p>
+          <span class="lead">Dezède est une ressource en ligne (ISSN 2269-9473)</span>
+          proposant différents formats de publication (dossier, revue, exposition).
+          Les éditions sont soumises, expertisées, validées et suivies par le comité éditorial,
+          qui a pour autres fonctions de structurer la publication
+          (calendrier, organisation intellectuelle des contenus)
+          et de réfléchir aux aspects méthodologiques (développement informatique, autorités).
+        </p>
+        <p>Le comité éditorial est composé de 3 membres :</p>
+        <p>
+          <a href="{% url 'user_profile' 'joann_elart' %}">Joann <span class="sc">Élart</span></a>,
+          Maître de conférences en musicologie, université de Rouen (fondateur de Dezède)
+        </p>
+        <p>
+          <a href="{% url 'user_profile' 'yannick_simon' %}">Yannick <span class="sc">Simon</span></a>,
+          Professeur des Universités en musicologie, université de Rouen (fondateur de Dezède)
+        </p>
+        <p>
+          <a href="{% url 'user_profile' 'patrick_taieb' %}">Patrick <span class="sc">Taïeb</span></a>,
+          Professeur des Universités en musicologie, université Montpellier III (fondateur de Dezède)
+        </p>
+
+        <h3>Ses propriétaires</h3>
+        <p>
+          <span class="lead">
+            L’invention de trois enseignants-chercheurs :
+            Joann Élart, Yannick Simon
+            et Patrick Taïeb</span>,
+          musicologues aux universités de Rouen et Montpellier III.
+          Ils partagent un accord de co-propriété avec leur laboratoire
+          – le <abbr title="Groupe de Recherche d’Histoire">GRHis</abbr> (<abbr title="Équipe d’accueil">EA</abbr> 3831),
+          le <abbr title="Centre d’Études et de Recherche Éditer/Interpréter">CÉRÉdI</abbr> (EA 3229)
+          et l’<abbr title="Institut de Recherche sur la Renaissance, l’Age Classique et les Lumières">IRCL</abbr>
+          (<abbr title="Unité Mixte de Recherche">UMR</abbr> 5186 du CNRS) –
+          et leur université de rattachement.
+          Hébergé sur les serveurs de la <abbr title="Très Grande Infrastructure de Recherche">TGIR</abbr> Huma-Num,
+          Dezède est une ressource numérique <em>open source</em>
+          référencée par le numéro d’ISSN 2269-9473.
+          La première phase du développement a été rendue possible
+          grâce au soutien financier des universités de Rouen et Montpellier III,
+          des laboratoires associés et de la Région Haute-Normandie
+          via les <abbr title="Grands Réseaux de Recherche">GRR</abbr>.
+        </p>
+        <p>
+          Du point de vue des responsabilités, Joann Élart
+          est chargé de coordonner le développement méthodologique et informatique,
+          Yannick Simon s’occupe plus particulièrement
+          des affaires juridiques (conventions, contrats de licence, accord de copropriété, etc.),
+          Patrick Taïeb est chargé des questions méthodologiques
+          et du projet des répertoires de concert.
+        </p>
+        <p>
+          <a href="{% url 'user_profile' 'joann_elart' %}">Joann <span class="sc">Élart</span></a> −
+          <a href="{% url 'user_profile' 'yannick_simon' %}">Yannick <span class="sc">Simon</span></a> −
+          <a href="{% url 'user_profile' 'patrick_taieb' %}">Patrick <span class="sc">Taïeb</span></a><br />
+          <a href="http://www.univ-rouen.fr/">université de Rouen</a> −
+          <a href="http://www.univ-montp3.fr/">université de Montpellier III</a><br />
+          <a href="http://grhis.univ-rouen.fr/">GRHis</a> −
+          <a href="http://ceredi.labos.univ-rouen.fr/">CÉRÉdI</a> −
+          <a href="http://www.ircl.cnrs.fr/">IRCL</a>
+        </p>
+
+        <a href="{% url 'contribuer' %}"
+           class="btn btn-primary btn-lg btn-block sc no-padding"
+           style="margin-top: 20px;">Contribuer</a>
+
+      </div>
+
+      <div class="tab-pane" id="contenus">
+
+        <h3>Les dossiers</h3>
+        <p>
+          <span class="lead">
+            Réalisez une chronologie de spectacles sur un territoire,
+            une institution, une carrière ou une œuvre.
+          </span>
+          {% include 'pages/include/dossiers.html' %}
+        </p>
+        <p><a href="{% url 'dossierdevenements_index' %}">Liste des dossiers</a></p>
+        <p><a href="{% url 'contribuer' %}">Soumettre un projet</a></p>
+        {# TODO: Lien vers la fiche comité éditorial (voir ci-dessus) #}
+
+    {#    <h3>Les classeurs</h3>#}
+    {#    <p>#}
+    {#      <span class="lead">Archivez vos spectacles (à l’étude).</span>#}
+    {#      Vous souhaitez conserver une archive de vos spectacles ?#}
+    {#      Rien de plus simple grâce aux classeurs Dezède !#}
+    {#      Cette application disponible gratuitement permet de créer un compte personnel#}
+    {#      – que l’on soit utilisateur ou simple lecteur – et de constituer#}
+    {#      un panier de spectacles à partir des événements déjà mis en ligne.#}
+    {#    </p>#}
+        {# TODO: Lien vers le formulaire de création de classeur #}
+
+    {#    <h3>La revue</h3>#}
+    {#    <p>#}
+    {#      <span class="lead">Publiez des études scientifiques (à l’étude).</span>#}
+    {#      La revue en ligne permettra d’associer un article à un dossier d’événements,#}
+    {#      de constituer des numéros spéciaux sur une thématique donnée#}
+    {#      ou encore de rassembler les actes des journées d’étude et des colloques#}
+    {#      consacrés à des chronologies en ligne.#}
+    {#      Elle sera le support des études critiques que les dossiers ont vocation à générer.#}
+    {#      Toutes les propositions sont soumises à l’avis du comité éditorial.#}
+    {#    </p>#}
+        {# TODO: Lien vers la revue #}
+    {#    <p><a href="{% url 'contribuer' %}">Soumettre un projet</a></p>#}
+        {# TODO: Lien vers la fiche comité éditorial (voir ci-dessus) #}
+
+    {#    <h3>Les expositions</h3>#}
+    {#    <p>#}
+    {#      <span class="lead">Exposez (à l’étude).</span>#}
+    {#      Les expositions virtuelles pourront mettre en relief par l’image#}
+    {#      certains contenus des dossiers et de la revue,#}
+    {#      ou valoriser des collections publiques déposées dans Dezède.#}
+    {#    </p>#}
+        {# TODO: Lien vers les expositions #}
+        {# TODO: Lien vers la fiche comité éditorial (voir ci-dessus) #}
+
+        <h3>Les autorités</h3>
+        <p>
+          <span class="lead">Au cœur de Dezède, des milliers d’autorités mises à la disposition de tous !</span>
+          La souplesse de l’application et l’homogénéisation de l’édition sont
+          la conséquence de la mise en commun d’autorités liées entre elles
+          et aux événements par un système de gestion relationnelle et récursive :
+          œuvres, individus, lieux, rôles, etc.
+          Elles font l’objet d’un contrôle scientifique basé sur le recoupement
+          d’ouvrages de référence.
+        </p>
+        <p><a href="{% url 'bibliographie' %}">Bibliographie des autorités</a></p>
+
+        <h3>Les sources</h3>
+        <p>
+          <span class="lead">La règle : au moins une source par événement.</span>
+          L’édition d’une chronologie suit dans Dezède un principe cher à l’historien :
+          la transparence critique.
+          C’est pourquoi le programme impose une condition <em>sine qua none</em>
+          à l’utilisateur : la création d’un événement n’est possible que
+          si elle est associée <em>a minima</em> à la création d’une source.
+          La procédure éditoriale suggère d’ailleurs de démarrer le travail
+          par la création d’une source qu’il faut ensuite associer
+          à la création d’un événement.
+          Les sources sont de différentes natures : périodiques, archives,
+          correspondances, mémoires, éphémères, images, sons, vidéos.
+          Elles se présentent de différentes manières :
+          de la simple référence bibliographique (notamment pour les archives)
+          à la transcription diplomatique partielle ou intégrale
+          (interrogeable en plein texte via le moteur de recherche).
+        </p>
+        {# TODO: Lien vers les rubriques « sources » et « événements » dans le mode d’emploi. #}
+
+        <h3>Le filtre et les événements</h3>
+        <p>
+          <span class="lead">Rechercher des événements dans Dezède, rien de plus simple !</span>
+          Il suffit de se rendre dans le menu « événements » et d’utiliser le filtre.
+          Celui-ci permet de croiser différentes requêtes de tri :
+          recherche libre, période, lieu, œuvre, individu.
+          Pour améliorer une recherche, les mots-clés sont toujours plus efficaces.
+          Filtrer implique l’affichage de données croisées :
+          des événements produits par différentes personnes, isolés ou associés à un dossier.
+        </p>
+        <p><a href="{% url 'evenements' %}">Chercher et filter des événements</a></p>
+
+        <h3>Le moteur de recherche</h3>
+        <p>
+          <span class="lead">Rechercher dans l’ensemble des contenus.</span>
+          Le moteur de recherche est affiché en permanence dans la barre des menus
+          et permet à tout moment d’interroger les contenus de Dezède :
+          individus, œuvres, lieux et institutions, sources, événements,
+          rôles et instruments, professions.
+          L’interrogation se fait en deux temps :
+          tout d’abord, par une recherche libre en tapant
+          un ou plusieurs mots caractéristiques ;
+          ensuite, par une recherche avancée en sélectionnant un ou plusieurs filtres.
+        </p>
+        <p><a href="{% url 'haystack_search' %}">Rechercher sur Dezède</a></p>
+
+      </div>
+
+      <div class="tab-pane" id="utilisateurs">
+
+        <h3>Des chercheurs aux étudiants</h3>
+        <p>
+          <span class="lead">Dezède est à la disposition des chercheurs et des étudiants</span>
+          qui souhaitent publier des corpus documentaires sur un artiste,
+          une œuvre, un lieu de spectacle, un phénomène musical ou théâtral.
+          Dezède se veut pluridisciplinaire et peut intéresser les chercheurs
+          inscrits dans différents champs disciplinaires en sciences des arts :
+          musicologie, lettres modernes, histoire culturelle moderne et contemporaine,
+          arts du spectacle, histoire de l’art, histoire de la danse, etc.
+        </p>
+        <p>
+          Dezède propose aux jeunes chercheurs inscrits en master
+          ou en thèse de doctorat une aide à l’édition
+          (mise à disposition des autorités, module d’exportation des annexes
+          avec mise en page et indexation automatique) et à la valorisation
+          des travaux universitaires (confidentialité des données personnelles,
+          possibilité de différer la publication en ligne).
+        </p>
+        <p>
+          Tourné vers le développement de pratiques pédagogiques innovantes,
+          Dezède est également un support pour l’enseignement universitaire,
+          en particulier de la méthodologique et des
+          <abbr title="Nouvelles Technologies de l’Information et de la Communication">NTIC</abbr>.
+          Les comptes personnels des étudiants sont liés à un groupe placé
+          sous la responsabilité d’un enseignant.
+        </p>
+        <p>Tous les projets sont à soumettre au comité éditorial.</p>
+        {# TODO: Lien vers l’équipe #}
+        <p><a href="{% url 'contribuer' %}">Soumettre un projet</a></p>
+        {# TODO: Lien vers le formulaire « Mes premiers pas sur Dezède » #}
+
+        <h3>Des partenaires</h3>
+        <p>
+          <span class="lead">Dezède propose aux institutions d’archiver leur histoire et de promouvoir le spectacle vivant.</span>
+          L’application est à la disposition des institutions qui chercherent un portail sécurisé
+          pour la valorisation de leur histoire.
+          En 2014, les saisons de concerts et les archives audiovisuelles des trente orchestres
+          membres de l’<abbr title="Association Française des Orchestres">AFO</abbr>
+          seront publiés et accessibles gratuitement dans Dezède.
+          Une convention de partenariat en cours de rédaction propose un accueil
+          en 2015 des archives et de la chronologie complète de l’Opéra-Comique,
+          dans le cadre de la célébration de son tricentenaire.
+        </p>
+        {# TODO: Lien vers les partenaires #}
+        {# TODO: Lien vers la « page des logos » #}
+        <p>Pour devenir partenaire, un contact : {{ 'institution@dezede.org'|urlize }}</p>
+
+        <h3>Des auteurs</h3>
+        <p>
+          <span class="lead">Chaque utilisateur est propriétaire de ses données.</span>
+          En les produisant à partir de son compte,
+          l’utilisateur (chercheur, étudiant, institution, etc.) en devient automatiquement
+          l’auteur et le propriétaire.
+          Cet affichage offre une transparence totale sur l’appartenance
+          et la provenance des données, en même temps qu’il laisse une traçabilité et un historique.
+        </p>
+
+      </div>
+
+      <div class="tab-pane" id="identite">
+
+        <h3>Le choix du nom</h3>
+        <div class="row">
+          <div class="col-md-8">
+            <p>
+              <span class="lead">« Dezède » est le nom d’un compositeur qui ne connaissait pas son nom.</span>
+              <em>Les Trois fermiers</em> (1777),
+              <em>Blaise et Babet</em> (1783) et <em>Alexis et Justine</em> (1785)
+              figurent parmi les plus grands succès de Nicolas Dezède (1740/5-1792)
+              et du répertoire de l’Opéra-Comique entre la fin de l’Ancien Régime
+              et la Restauration.
+              De ses vingt opéras, <em>Julie</em> (1772) a également été rendu célèbre
+              par les variations que Mozart composa sur l’air
+              « Lison dormait dans un bocage » (K. 264).
+              Fétis écrivait en 1837 qu’« on ignore quelle fut sa patrie »
+              (<em>Biographie générale de la musique</em>, Bruxelles, Méline,
+              Cans et compagnie, 1837, t. III, p. 302) :
+              était-il le fils illégitime d’un prince allemand
+              – de Frédéric II de Prusse, comme on peut le lire parfois –
+              ou était-il né à Lyon ?
+              Lui-même signait ses partitions « De Z. », « D. Z. » ou encore « Dezède »
+              car il ne connaissait pas ses origines.
+              Fétis publie d’ailleurs cette anecdote :
+              à son arrivée à Paris, « il jouissait […] d’une pension de vingt-cinq mille francs,
+              qui fut doublée à sa majorité.
+              Désirant connaître les auteurs de ses jours, il s’adressa à son notaire ;
+              mais celui-ci le prévint que ses démarches seraient inutiles,
+              et qu’en les continuant il s’exposerait à perdre son revenu.
+              Il ne tint compte de cet avis, continua ses recherches,
+              ne découvrit rien, et fut privé de sa pension.
+              Ce fut alors qu’il songea à tirer parti de ses talents
+              pour assurer son existence. » (<em>op. cit.</em>)
+            </p>
+            <p>
+              Ce choix s’est imposé pendant le déjeuner du 23 février 2012,
+              quand Joann Élart, Étienne Jardin, Yannick Simon, Patrick Taïeb
+              et Bertrand Bordage ont abordé la question du nom
+              à donner à l’application. Il fallait un mot qui puisse incarner le projet :
+              la séduisante Carmen et l’emblématique Boieldieu furent évoqués avant de laisser place à Dezède,
+              proposition de Patrick Taïeb apparue évidente à tous :
+              le nom est une énigme en soi…
+              Et il fallait inventer un outil informatique pour parvenir, peut-être un jour, à la résoudre !
+            </p>
+            <p>
+              <a href="{% url 'individu_detail' 'dezede' %}">
+                En savoir plus sur <span class="sc">Dezède</span> dans Dezède
+              </a>
+            </p>
+          </div>
+          <div class="col-md-4">
+            <div class="thumbnail">
+              <img src="{% static 'images/dezede-portrait.png' %}" />
+              <div class="caption">
+                Jean-Baptiste Greuze, <em>Nicolas Dezède</em>, huile sur toile, Galerie Saphir.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3>Le logo</h3>
+        <p>
+          <span class="lead">Le logo est inspiré d’un manuscrit conservé à Rouen.</span>
+          Il reproduit la mention d’auteur tirée de la page de titre d’<em>Auguste et Théodore</em>,
+          plus particulièrement de l’exemplaire conservé à la Bibliothèque municipale de Rouen
+          en copie manuscrite sous la cote [Théâtre 52.
+          Il s’agissait de rendre hommage à cette bibliothèque théâtrale
+          qui a joué un rôle fondateur dans l’installation du projet Dezède.
+          Le logo n’est pas une reproduction à proprement parler,
+          mais une réalisation de Bertrand Bordage en dessin vectoriel
+          inspirée de cette mention.
+        </p>
+        <p>
+          <a href="{% static 'images/logo-source.jpg' %}" target="_blank">Source du logo</a>
+        </p>
+        <p>
+          Pour utiliser le logo, contactez {{ 'contact@dezede.org'|urlize }}. Il est décliné en quatre versions :
+        </p>
+        <div class="row text-center">
+          <div class="col-md-2 text-right" style="padding-top: 12px;">
+            Complet
+          </div>
+          <div class="col-md-3">
+            <img src="{% static 'images/logo.png' %}" style="padding-top: 5px;" />
+          </div>
+          <div class="col-md-3" style="background-color: black; border-radius: 5px 5px 0 0; padding-top: 5px;">
+            <img src="{% static 'images/logo-light.png' %}" />
+          </div>
+        </div>
+        <div class="row text-center">
+          <div class="col-md-2 text-right" style="padding-top: 6px;">
+            Réduit
+          </div>
+          <div class="col-md-3">
+            <img src="{% static 'images/logo-mini.png' %}" />
+          </div>
+          <div class="col-md-3" style="background-color: black; padding-bottom: 5px;">
+            <img src="{% static 'images/logo-mini-light.png' %}" />
+          </div>
+        </div>
+        <div class="row text-center">
+          <div class="col-md-3 col-md-offset-2">
+            Supports clairs
+          </div>
+          <div class="col-md-3" style="background-color: black; color: #fffbe6; border-radius: 0 0 5px 5px; padding-bottom: 2px;">
+            Supports sombres
+          </div>
+        </div>
+
+        <h3>La marque</h3>
+        <p>
+          <span class="lead">
+            Dezède est une marque déposée à
+            l’<abbr title="Institut national de la propriété industrielle">INPI</abbr>
+          </span>
+          depuis le 12 décembre 2013 sous le numéro national 13 4 056 592.
+        </p>
+
+      </div>
+
+      <div class="tab-pane" id="historique">
+
+        <h3>Origines</h3>
+        <p>
+          <span class="lead">
+            Dezède puise ses origines dans un programme de recherche sur
+            <em>l’histoire du concert en France</em>
+          </span>
+          dirigé par Patrick Taïeb et Hervé Lacombe,
+          et dans la méthode d’investigation historique fondée sur
+          la reconstitution de programmes de concert à partir de la presse et des archives.
+          Constitué autour du détachement de Patrick Taïeb à
+          l’<abbr title="Institut universitaire de France">IUF</abbr> entre 2000 et 2005,
+          puis autour de l’<abbr title="Agence nationale de la recherche">ANR</abbr> 06-BLAN-03448
+          entre 2006 et 2009, ce programme de recherche a été partagé
+          par plusieurs dizaines de chercheurs du monde entier pendant une décennie,
+          parmi lesquels Joann Élart et Yannick Simon ont été très actifs.
+          Si les efforts menés pour concevoir un outil informatique n’ont pas abouti à cette époque,
+          les expériences acquises ont permis toutefois d’établir un cahier des charges pour le réaliser :
+          la solution attendue devait être pérenne, gratuite, sécurisée, souple, illimitée, contributive et dématérialisée.
+          Partant de cet acquis et souhaitant élargir la méthode à l’ensemble des spectacles,
+          Joann Élart pouvait annoncer à ses collaborateurs le lancement du projet
+          Dezède en octobre 2011, suite aux premiers contacts pris avec Bertrand Bordage,
+          le concepteur du programme informatique.
+        </p>
+
+        <h3>Dezède en quelques dates</h3>
+
+        <table class="table table-condensed">
+          <thead>
+            <tr><th style="width: 130px;">2011</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Juin</td>
+              <td>
+                <p>
+                  Première rencontre entre Joann Élart
+                  et Bertrand Bordage au Conservatoire de Rouen
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>Août</td>
+              <td>
+                <p>Première évocation du projet à Arques-la-Bataille</p>
+              </td>
+            </tr>
+            <tr>
+              <td>Septembre</td>
+              <td>
+                <p>Premier déjeuner de travail à Rouen</p>
+              </td>
+            </tr>
+            <tr>
+              <td>Octobre</td>
+              <td>
+                <p>Début de l’aventure</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-condensed">
+          <thead>
+            <tr><th style="width: 130px;">2012</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>23 février</td>
+              <td>
+                <p>
+                  Journée d’étude à l’Opéra de Rouen Haute-Normandie :
+                  <em>Rendez-vous au Théâtre des Arts de Rouen !</em><br />
+                  Présentation publique du prototype<br />
+                  Première rencontre avec Florent Girard, secrétaire générale
+                  de l’<abbr title="Association Française des Orchestres">AFO</abbr>
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>28 septembre</td>
+              <td>
+                <p>
+                  Mise en ligne en version alpha sur un serveur Webfaction
+                  à l’adresse alpha.dezede.org
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>25 octobre</td>
+              <td>
+                <p>1 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>21 novembre</td>
+              <td>
+                <p>
+                  Journée d’étude à l’université du Havre :
+                  <em>Quand la politique s’invite au spectacle</em><br />
+                  Inauguration de la version bêta et passage à l’adresse beta.dezede.org
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>5 décembre</td>
+              <td>
+                <p>
+                  Premiers échanges avec la <abbr title="Direction de la Recherche et de la Valorisation">DRV</abbr>
+                  de l’université de Rouen pour la mise en place d’un accord de copropriété
+                  entre les universités de Rouen et de Montpellier III,
+                  les laboratoires
+                  <abbr title="Centre d’Études et de Recherche Éditer/Interpréter">CÉRÉdI</abbr>,
+                  <abbr title="Groupe de Recherche d’Histoire">GRHis</abbr>
+                  et <abbr title="Institut de Recherche sur la Renaissance, l’Age Classique et les Lumières">IRCL</abbr>,
+                  les trois enseignants-chercheurs inventeurs Joann Élart,
+                  Yannick Simon et Patrick Taïeb
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>20 décembre</td>
+              <td>
+                <p>2 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-condensed">
+          <thead>
+            <tr><th style="width: 130px;">2013</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>21 février</td>
+              <td>
+                <p>
+                  Colloque à l’Opéra-Comique :
+                  <em>Les emplois dans l’art lyrique français</em><br />
+                  Inauguration de la version 1.0 sur l’adresse définitive dezede.org
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>14 mars</td>
+              <td>
+                <p>3 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>3 juin</td>
+              <td>
+                <p>
+                  Dezède est hébergé à la
+                  <abbr title="Très Grande Infrastructure de Recherche">TGIR</abbr> Huma-Num
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>24 juin</td>
+              <td>
+                <p>4 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>2 juillet</td>
+              <td>
+                <p>
+                  Présentation publique aux journées annuelles du groupe Francophone Music Criticism
+                  à la <abbr title="Bibliothèque Historique de la Ville de Paris">BHVP</abbr>
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>16 juillet</td>
+              <td>
+                <p>5 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>21 octobre</td>
+              <td>
+                <p>La <abbr title="Bibliothèque nationale de France">BnF</abbr> attribue à Dezède l’ISSN 2269-9473</p>
+              </td>
+            </tr>
+            <tr>
+              <td>26 octobre</td>
+              <td>
+                <p>6 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>1<sup>er</sup> décembre</td>
+              <td>
+                <p>7 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>9 décembre</td>
+              <td>
+                <p>
+                  Présentation publique aux journées d’études du groupe français
+                  de l’<abbr title="Association Internationale des Bibliothèques Musicales">AIBN</abbr>
+                  au Centre de documentation de la musique contemporaine
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>12 décembre</td>
+              <td>
+                <p>
+                  Dezède est une marque déposée à
+                  l’<abbr title="Institut national de la propriété industrielle">INPI</abbr> − Île-de-France
+                  sous le numéro national 13 4 056 592
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>18 décembre</td>
+              <td>
+                <p>Signature de la convention avec l’<abbr title="Association Française des Orchestres">AFO</abbr> au Sénat</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-condensed">
+          <thead>
+            <tr><th style="width: 130px;">2014</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>31 janvier</td>
+              <td>
+                <p>8 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>17 mars</td>
+              <td>
+                <p>9 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>7 avril</td>
+              <td>
+                <p>10 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>27 avril</td>
+              <td>
+                <p>11 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>17 mai</td>
+              <td>
+                <p>12 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>21 mai</td>
+              <td>
+                <p>
+                  Colloque à l’Opéra-Comique : <em>Le répertoire en question</em><br />
+                  Inauguration de la version 2.0
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <div class="tab-pane" id="developpement">
+
+        <p>
+          Dezède a été exclusivement développé par
+          <a href="https://github.com/BertrandBordage">Bertrand <span class="sc">Bordage</span></a>,
+          développeur indépendant, suivant les consignes scientifiques de
+          <a href="{% url 'user_profile' 'joann_elart' %}">Joann <span class="sc">Élart</span></a>.
+          Le design a été réalisé par Bertrand Bordage
+          et Joann Élart.
+        </p>
+        <p>La conception de Dezède repose sur quatre idées fondatrices :</p>
+        <ul>
+          <li>
+            <p>
+              la volonté de rendre l’outil très ergonomique,
+              tant pour le lecteur que pour le contributeur ;
+            </p>
+          </li>
+          <li>
+            <p>
+              le recours à des solutions 100 % <em>open source</em> (le code est accessible
+              <a href="https://github.com/dezede/dezede">dans notre dépôt GitHub</a>) ;
+            </p>
+          </li>
+          <li>
+            <p>
+              le choix de solutions techniques les plus pérennes.
+              Notamment le langage de programmation <a href="https://www.python.org/">Python</a>,
+              en permettant d’écrire du code extrêmement lisible, simplifie nettement la maintenance ;
+            </p>
+          </li>
+          <li>
+            <p>
+              la recherche d’une grande stabilité par la mise en place
+              d’une suite de tests automatiques couvrant la majeure partie de ses fonctionnalités.
+              À titre d’exemple, avant chaque publication d’une nouvelle version de Dezède,
+              cette suite de tests est exécutée afin de s’assurer qu’aucun bug
+              important ne puisse se produire.  Dans les rares cas où un bug
+              advient toutefois, Bertrand Bordage
+              reçoit automatiquement un rapport d’erreur par mail afin de le corriger rapidement.
+            </p>
+          </li>
+        </ul>
+
+        <p>
+          Dezède est hébergé sur la grille de services de la
+          <abbr title="Très Grande Infrastructure de Recherche">TGIR</abbr>
+          <a href="http://www.huma-num.fr/" target="_blank">Huma-Num</a>.
+        </p>
+
+        <h3>Solutions techniques</h3>
+
+        <p>
+          Cette liste de solutions techniques n’est pas exhaustive,
+          elle ne contient que les plus déterminantes.<br />
+          Voir <a href="https://github.com/dezede/dezede">notre dépôt GitHub</a> pour plus de détails.
+        </p>
+
+        <dl>
+          <dt>Langage de programmation</dt>
+          <dd>
+            <a href="https://www.python.org/">Python</a>, un des langages
+            les plus complets au monde et probablement le plus simple
+          </dd>
+
+          <dt>Boîte à outils web</dt>
+          <dd>
+            <a href="https://www.djangoproject.com/">Django</a>,
+            qui permet de vous écouter, dialoguer avec la base de données et vous répondre
+          </dd>
+
+          <dt>Base de données</dt>
+          <dd>
+            <a href="http://www.postgresql.org/">PostgreSQL</a>, le plus complet système de base de données <em>open source</em> au monde
+          </dd>
+          <dd>
+            <a href="http://redis.io/">Redis</a>, un stockage simple et performant de données pour faire des mises en cache
+          </dd>
+
+          <dt>Moteur de recherche</dt>
+          <dd>
+            <a href="http://www.elasticsearch.org/">Elasticsearch</a>, demandez et il trouve. Vite.
+          </dd>
+
+          <dt>Design</dt>
+          <dd>
+            <a href="http://getbootstrap.com/">Bootstrap</a>
+            contient de splendides boutons, menus & autres éléments interactifs
+            rendant agréable la navigation
+          </dd>
+          <dd>
+            <a href="http://lesscss.org/">Less</a> permet d’écrire de manière
+            procédurale le design du site, ainsi que de modifier proprement Bootstrap
+          </dd>
+        </dl>
+
+      </div>
+
+    </div>
+
+  </div>
+{% endblock %}

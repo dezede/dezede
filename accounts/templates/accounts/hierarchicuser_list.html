@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load i18n routines sekizai_tags %}
+
+
+{% block header %}
+  <h1>{% block title %}{{ title }}{% endblock %}</h1>
+{% endblock %}
+
+
+{% block content %}
+
+  {% for object in object_list %}
+    <div class="well container-fluid">
+      <div class="row">
+        <div class="col-md-2{% cycle '' ' pull-right' %}">
+          {% include 'accounts/include/avatar.html' with size='avatar' %}
+        </div>
+
+        <div class="col-md-10{% cycle '' ' text-right' %}" style="margin-top: 3px;">
+          <h3>{{ object.link }}</h3>
+          {% if object.fonctions %}
+            {{ object.fonctions }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+{% endblock %}
