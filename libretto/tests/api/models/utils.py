@@ -3,10 +3,13 @@
 from __future__ import unicode_literals
 from django.db.models import Manager
 from django.test import TestCase
+from django.test.utils import override_settings
 from libretto.api.models.utils import update_or_create
 from libretto.models import *
 
 
+@override_settings(
+    CELERY_ALWAYS_EAGER=True, CELERY_EAGER_PROPAGATES_EXCEPTIONS=True)
 class UpdateOrCreateTestCase(TestCase):
     cleans_up_after_itself = True
 
