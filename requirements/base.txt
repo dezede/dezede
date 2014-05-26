@@ -3,7 +3,7 @@ Django==1.5.8
 psycopg2==2.5.3
 
 # Database fields
-django-mptt==0.6.0
+django-mptt==0.6.1
 -e git+https://github.com/BertrandBordage/django_polymorphic@6569725ad66bd9fb5248098c614a0f3b2a41a80a#egg=django-polymorphic
 django-polymorphic-tree==0.8.11
 django-autoslug==1.7.2
@@ -55,16 +55,12 @@ South==0.8.4
 beautifulsoup4==4.3.2
 BeautifulSoup<4.0
 lxml==3.3.5
-simplejson==3.4.1
+simplejson==3.5.2
 defusedxml==0.4.1
 PyYAML==3.11
 
 # Website temporary shutdown
 django-maintenancemode==0.10
-
-# Testing
-django-nose==1.2
-selenium==2.41.0
 
 # C optimization
 Cython==0.20.1
