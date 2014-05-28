@@ -40,11 +40,11 @@
         <div class="presentation">
         {{ object.presentation }}
         </div>
-        {% if object.contexte %}{# FIXME: Retirer cette condition quand ces champs auront été remplis après la migration #}
+        {% if object.contexte %}
           <h2>{% trans 'Contexte historique' %}</h2>
           {{ object.contexte }}
         {% endif %}
-        {% if object.sources %}{# FIXME: Comme au-dessus, retirer ceci #}
+        {% if object.sources %}
           <h2>{% trans 'Sources et protocole' %}</h2>
           {{ object.sources }}
         {% endif %}

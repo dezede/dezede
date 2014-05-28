@@ -1,5 +1,5 @@
 {% extends 'libretto/base.tex' %}
-{% load i18n routines endless sekizai_tags extras %}
+{% load i18n %}
 
 {% block declarations %}
   \newcounter{evenements-counter}
@@ -8,7 +8,7 @@
 
 {% block document %}
   \title{ {{ object.titre|safe }} }
-  \author{ {{ object.owner.first_name }} \bsc{ {{ object.owner.last_name }} } }
+  \author{ {{ object.editeurs_scientifiques.html|safe }} }
 
   \maketitle
 
@@ -16,10 +16,34 @@
 
   \onecolumn
 
-  \chapter*{Présentation}
-  \addcontentsline{toc}{chapter}{Présentation}
+  \part*{ {% trans 'Présentation' %} }
+  \addcontentsline{toc}{part}{ {% trans 'Présentation' %} }
 
-  {{ object.contenu|safe }}
+  {\large
+    {{ object.presentation|safe }}
+  }
+
+  {% if object.contexte %}
+    \section*{ {% trans 'Contexte historique' %} }
+    \addcontentsline{toc}{section}{ {% trans 'Contexte historique' %} }
+
+    {{ object.contexte|safe }}
+  {% endif %}
+
+  {% if object.sources %}
+    \section*{ {% trans 'Sources et protocole' %} }
+    \addcontentsline{toc}{section}{ {% trans 'Sources et protocole' %} }
+
+    {{ object.sources|safe }}
+  {% endif %}
+
+
+  {% if object.bibliographie %}
+    \section*{ {% trans 'Bibliographie indicative' %} }
+    \addcontentsline{toc}{section}{ {% trans 'Bibliographie indicative' %} }
+
+    {{ object.bibliographie|safe }}
+  {% endif %}
 
 
   \twocolumn
@@ -27,11 +51,10 @@
   \setlength{\parindent}{0pt}
   \setlength{\parskip}{0pt}
 
-  \chapter*{Données}
-  \addcontentsline{toc}{chapter}{Données}
+  \part*{ {% trans 'Événements' %} }
+  \addcontentsline{toc}{part}{ {% trans 'Événements' %} }
 
   {% with object.get_queryset as evenements %}
-    {#{% paginate 5 evenements %}#}
     {% for evenement in evenements %}
       {% include 'libretto/evenement_item.tex' %}
     {% endfor %}
