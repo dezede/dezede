@@ -71,8 +71,8 @@ class SeleniumTest(LiveServerTestCase):
             element).click_and_hold().release().perform()
 
     def wait_until_ready(self):
-        self.wait.until(lambda driver: WebDriver.execute_script(
-            driver, 'return document.readyState;') == 'complete')
+        self.wait.until(lambda driver: driver.execute_script(
+            'return document.readyState;') == 'complete')
 
     def switch(self, i=None):
         """

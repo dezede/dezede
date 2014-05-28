@@ -2,10 +2,13 @@ from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.utils import six
 import johnny.cache
 
 
+@override_settings(
+    CELERY_ALWAYS_EAGER=True, CELERY_EAGER_PROPAGATES_EXCEPTIONS=True)
 def new(Model, **kwargs):
     return Model.objects.get_or_create(**kwargs)[0]
 
@@ -14,6 +17,8 @@ class CommonTestCase(TestCase):
     cleans_up_after_itself = True
     model = None
 
+    @override_settings(
+        CELERY_ALWAYS_EAGER=True, CELERY_EAGER_PROPAGATES_EXCEPTIONS=True)
     def log_as_superuser(self):
         username = 'test_superuser'
         password = 'test_password'
