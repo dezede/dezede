@@ -2,13 +2,16 @@
 
 from __future__ import unicode_literals, division
 from django.conf import settings
+from django.db.models import Q
 from django.utils import translation
 from celery_haystack.indexes import CelerySearchIndex as SearchIndex
 from haystack.indexes import (
     Indexable, CharField, EdgeNgramField, DateField, BooleanField,
     IntegerField)
+from haystack.query import SearchQuerySet
 from .models import (
     Oeuvre, Source, Individu, Lieu, Evenement, Partie, Profession, Ensemble)
+from typography.utils import replace
 
 
 class CommonSearchIndex(SearchIndex):
@@ -36,7 +39,7 @@ class PolymorphicCommonSearchIndex(CommonSearchIndex):
 
 
 class OeuvreIndex(CommonSearchIndex, Indexable):
-    content_auto = EdgeNgramField(model_attr='titre_descr')
+    content_auto = EdgeNgramField(model_attr='titre_html')
 
     def get_model(self):
         return Oeuvre
@@ -74,6 +77,11 @@ class LieuIndex(PolymorphicCommonSearchIndex, Indexable):
     def get_model(self):
         return Lieu
 
+    def prepare(self, obj):
+        prepared_data = super(LieuIndex, self).prepare(obj)
+        prepared_data['boost'] *= 5.0 / (obj.level + 1)
+        return prepared_data
+
 
 class EvenementIndex(CommonSearchIndex, Indexable):
     def get_model(self):
@@ -92,3 +100,21 @@ class ProfessionIndex(CommonSearchIndex, Indexable):
 
     def get_model(self):
         return Profession
+
+
+def filter_published(sqs, request):
+    user_id = request.user.id
+    filters = Q(public=True)
+    if user_id is not None:
+        filters |= Q(user_id=user_id)
+    return sqs.filter(filters)
+
+
+def autocomplete_search(request, q, model=None, max_results=7):
+    q = replace(q)
+    sqs = SearchQuerySet()
+    sqs = filter_published(sqs, request)
+    if model is not None:
+        sqs = sqs.models(model)
+    sqs = sqs.autocomplete(content_auto=q).filter(content_auto__icontains=q)[:max_results]
+    return [r.object for r in sqs]

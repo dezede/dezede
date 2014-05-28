@@ -20,9 +20,8 @@ django-image-cropping==0.8.2
 -e hg+https://bitbucket.org/mszamot/django-registration@ae1d07e2518e548e3f41a0617de2f7498827191a#egg=django-registration
 
 # Search engine
-# FIXME: Revenir à toastdriven/django-haystack quand https://github.com/toastdriven/django-haystack/pull/868 sera résolu.
--e git+https://github.com/greenkahuna/django-haystack@378eaf6d0a94d6da89ccbfe15db7b23a0eb3a801#egg=django-haystack
-pyelasticsearch==0.6.1
+-e git+https://github.com/phlax/django-haystack@d2f989307facdb582ae726b0f5c7c196d7461b6d#egg=django-haystack
+elasticsearch==0.4.5
 
 # Caching
 django-redis==3.6.2

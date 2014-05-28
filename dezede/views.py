@@ -9,6 +9,7 @@ from django.views.generic import ListView, TemplateView
 from haystack.query import SearchQuerySet
 from haystack.views import SearchView
 from libretto.models import Oeuvre, Lieu, Individu
+from libretto.search_indexes import autocomplete_search
 from .models import Diapositive
 
 
@@ -47,9 +48,8 @@ class CustomSearchView(SearchView):
 
 def autocomplete(request):
     q = request.GET.get('q', '')
-    sqs = SearchQuerySet().autocomplete(content_auto=q)[:5]
-    suggestions = [smart_text(result.object) for result in sqs]
-    data = json.dumps(suggestions)
+    suggestions = autocomplete_search(request, q)
+    data = json.dumps(map(smart_text, suggestions))
     return HttpResponse(data, content_type='application/json')
 
 
