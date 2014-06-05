@@ -13,6 +13,10 @@ class CeleryAutoInvalidator(CelerySignalProcessor):
         if sender in (LogEntry, Session, Revision, Version):
             return
 
-        auto_invalidate.delay(
-            action, instance._meta.app_label,
-            instance.__class__.__name__, instance.pk)
+        auto_invalidate.apply_async(
+            (action, instance._meta.app_label,
+             instance.__class__.__name__, instance.pk),
+            countdown=1,  # The countdown ensures that the current transaction
+                          # is finished, otherwise celery can't find the object
+                          # FIXME: Remove it when we use Django 1.6.
+            ignore_result=True)
