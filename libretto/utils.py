@@ -71,10 +71,9 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
                 general_case = is_vowel(c1) and not is_vowel(c0)
                 particular_case = j0 == 0 and vowel_first
                 if general_case or particular_case:
-                    if vowels_count <= 0:
-                        if min_len <= j1:
-                            sub = sub[:j1] + '.'
-                            break
+                    if vowels_count <= 0 and min_len <= j1:
+                        sub = sub[:j1] + '.'
+                        break
                     if general_case:
                         vowels_count -= 1
         out += sub
