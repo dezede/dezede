@@ -265,6 +265,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'UTC'
+CELERY_SEND_TASK_ERROR_EMAILS = True
 
 SOUTH_MIGRATION_MODULES = {
     'easy_thumbnails': 'easy_thumbnails.south_migrations',
