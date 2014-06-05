@@ -7,7 +7,6 @@ from django.db.models.query import QuerySet
 from django.utils import six
 from django.utils.encoding import smart_text
 from libretto.api.utils.console import info, colored_diff, error
-from libretto.models import Oeuvre
 from typography.utils import replace
 from ..utils import notify_send, print_info
 
