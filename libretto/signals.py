@@ -16,7 +16,7 @@ class CeleryAutoInvalidator(CelerySignalProcessor):
         auto_invalidate.apply_async(
             (action, instance._meta.app_label,
              instance.__class__.__name__, instance.pk),
-            countdown=3,  # The countdown ensures that the current transaction
+            countdown=5,  # The countdown ensures that the current transaction
                           # is finished, otherwise celery can't find the object
                           # FIXME: Remove it when we use Django 1.6.
             ignore_result=True)
