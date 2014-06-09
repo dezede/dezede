@@ -1,9 +1,9 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Manager
+from django_rq import job
 from .utils import invalidate_object, get_obj_cache_key
 
 
@@ -45,7 +45,7 @@ def get_stale_objects(instance, explored=None, all_relations=False):
                 yield sub_related
 
 
-@shared_task
+@job
 def auto_invalidate_cache(instance):
     for stale_object in get_stale_objects(instance):
         invalidate_object(stale_object)

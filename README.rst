@@ -267,18 +267,18 @@ Configuration de nginx
       stdout_logfile=[[/chemin/du/projet]]/supervisor_django.log
       stdout_logfile_maxbytes=10MB
 
-      [program:dezede_celery]
+      [program:dezede_rq]
       directory=[[/chemin/du/projet]]
-      command=celery -A dezede worker
+      command=python manage.py rqworker --settings=dezede.settings.prod
       user=[[utilisateur]]
       autostart=true
       autorestart=true
       redirect_stderror=true
-      stdout_logfile=[[/chemin/du/projet]]/supervisor_celery.log
+      stdout_logfile=[[/chemin/du/projet]]/supervisor_rq.log
       stdout_logfile_maxbytes=10MB
 
       [group:dezede]
-      programs=dezede_django,dezede_celery
+      programs=dezede_django,dezede_rq
 
 
 #. Relancer le serveur avec :

@@ -4,9 +4,8 @@ from __future__ import unicode_literals, division
 from django.conf import settings
 from django.db.models import Q
 from django.utils import translation
-from celery_haystack.indexes import CelerySearchIndex as SearchIndex
 from haystack.indexes import (
-    Indexable, CharField, EdgeNgramField, DateField, BooleanField,
+    SearchIndex, Indexable, CharField, EdgeNgramField, DateField, BooleanField,
     IntegerField)
 from haystack.query import SearchQuerySet
 from .models import (

@@ -38,8 +38,8 @@ django-viewsets==0.1.7
 Unipath==1.0
 
 # Asynchronous tasks
-celery==3.1.11
-celery-haystack==0.7.2
+django-rq==0.6.2
+-e git+https://github.com/BertrandBordage/rq@4818036e61fa5bfce1b11b6d1d565a74f3f5f4ca#egg=rq
 
 # CSS/JS handling
 django_compressor==1.3

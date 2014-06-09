@@ -95,7 +95,7 @@ INSTALLED_APPS = (
     'accounts',
     'dezede',
     'haystack',
-    'celery_haystack',
+    'django_rq',
     'libretto',
     'dossiers',
     'polymorphic_tree',
@@ -200,8 +200,7 @@ HAYSTACK_CONNECTIONS = {
         'INCLUDE_SPELLING': True,
     },
 }
-HAYSTACK_SIGNAL_PROCESSOR = 'libretto.signals.CeleryAutoInvalidator'
-CELERY_HAYSTACK_DEFAULT_TASK = 'libretto.tasks.CeleryHaystackSignalHandler'
+HAYSTACK_SIGNAL_PROCESSOR = 'libretto.signals.AutoInvalidatorSignalProcessor'
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
 
@@ -258,14 +257,41 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 10,
 }
 
-BROKER_URL = 'redis://127.0.0.1:6379/1'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/1'
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_ENABLE_UTC = True
-CELERY_TIMEZONE = 'UTC'
-CELERY_SEND_TASK_ERROR_EMAILS = True
+RQ_QUEUES = {
+    'default': {
+        'USE_REDIS_CACHE': 'default',
+    },
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'rq_console': {
+            'format': '%(asctime)s %(message)s',
+            'datefmt': '%H:%M:%S',
+        },
+    },
+    'handlers': {
+        'rq_console': {
+            'level': 'DEBUG',
+            'class': 'rq.utils.ColorizingStreamHandler',
+            'formatter': 'rq_console',
+            'exclude': ['%(asctime)s'],
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+        },
+    },
+    'loggers': {
+        'rq.worker': {
+            'handlers': ['rq_console', 'mail_admins'],
+            'level': 'DEBUG'
+        }
+    }
+}
 
 SOUTH_MIGRATION_MODULES = {
     'easy_thumbnails': 'easy_thumbnails.south_migrations',

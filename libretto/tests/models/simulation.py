@@ -20,8 +20,7 @@ PATH = os.path.abspath(os.path.dirname(__file__))
 # étrange : Firefox se déconnecte intempestivement quand le mode DEBUG est
 # globalement False.  INTERNAL_IPS vide permet de désactiver la debug toolbar.
 @override_settings(
-    DEBUG=True, INTERNAL_IPS=(),
-    CELERY_ALWAYS_EAGER=True, CELERY_EAGER_PROPAGATES_EXCEPTIONS=True)
+    DEBUG=True, INTERNAL_IPS=())
 class SeleniumTest(LiveServerTestCase):
     cleans_up_after_itself = True
     fixtures = [

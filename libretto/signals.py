@@ -1,22 +1,113 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from celery_haystack.signals import CelerySignalProcessor
+from time import sleep
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
+from django.db.models import get_model
+from django.db.models.signals import post_save, pre_delete
+from django_rq import job
+import django_rq
+from haystack import connections
+from haystack.exceptions import NotHandled
+from haystack.signals import BaseSignalProcessor
+from polymorphic import PolymorphicModel
 from reversion.models import Version, Revision
-from .tasks import auto_invalidate
+from cache_tools.jobs import auto_invalidate_cache, get_stale_objects
 
 
-class CeleryAutoInvalidator(CelerySignalProcessor):
+def is_polymorphic_model(model):
+    return issubclass(model, PolymorphicModel)
+
+
+def get_polymorphic_parent_model(model):
+    if is_polymorphic_model(model):
+        parent_model = [p for p in model.__bases__ if is_polymorphic_model(p)]
+        assert len(parent_model) == 1
+        parent_model = parent_model[0]
+        if not parent_model._meta.abstract:
+            return parent_model
+    return model
+
+
+def is_polymorphic_child_model(model):
+    return get_polymorphic_parent_model(model) != model
+
+
+def get_haystack_index(model):
+    return connections['default'].get_unified_index().get_index(model)
+
+
+def auto_update_haystack(action, instance):
+    for obj in get_stale_objects(instance, all_relations=True):
+        model = obj.__class__
+
+        if is_polymorphic_child_model(model):
+            model = get_polymorphic_parent_model(model)
+            obj = model._default_manager.non_polymorphic().get(pk=obj.pk)
+
+        try:
+            index = get_haystack_index(model)
+        except NotHandled:
+            continue
+
+        if action == 'delete':
+            index.remove_object(obj)
+        else:
+            index.update_object(obj)
+
+
+@job
+def auto_invalidate(action, app_label, model_name, pk):
+    model = get_model(app_label, model_name)
+
+    if action == 'delete':
+        # Quand un objet est supprimé, la seule chose à faire est de supprimer
+        # l'entrée du moteur de recherche.  En effet, aucun autre objet ne
+        # de devrait être impacté car on a protégé les FK pour éviter
+        # les suppressions en cascade.
+        # WARNING: À surveiller tout de même.
+        index = get_haystack_index(model)
+        index.remove_object('%s.%s.%s' % (app_label, model_name, pk))
+        return
+
+    if action == 'create':
+        # Ce sleep permet d'attendre que la transaction d'admin de Django
+        # soit finie.
+        # FIXME: Retirer lors du passage à Django 1.6
+        sleep(5)
+
+    instance = model._default_manager.get(pk=pk)
+    auto_invalidate_cache(instance)
+    auto_update_haystack(action, instance)
+
+
+class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
+    def setup(self):
+        post_save.connect(self.enqueue_save)
+        pre_delete.connect(self.enqueue_delete)
+
+    def teardown(self):
+        post_save.disconnect(self.enqueue_save)
+        pre_delete.disconnect(self.enqueue_delete)
+
+    def enqueue_save(self, sender, instance, created, **kwargs):
+        if created:
+            return self.enqueue('create', instance, sender, **kwargs)
+        return self.enqueue('save', instance, sender, **kwargs)
+
+    def enqueue_delete(self, sender, instance, **kwargs):
+        return self.enqueue('delete', instance, sender, **kwargs)
+
     def enqueue(self, action, instance, sender, **kwargs):
         if sender in (LogEntry, Session, Revision, Version):
             return
 
-        auto_invalidate.apply_async(
-            (action, instance._meta.app_label,
-             instance.__class__.__name__, instance.pk),
-            countdown=5,  # The countdown ensures that the current transaction
-                          # is finished, otherwise celery can't find the object
-                          # FIXME: Remove it when we use Django 1.6.
-            ignore_result=True)
+        django_rq.enqueue(
+            auto_invalidate,
+            args=(action,
+                  instance._meta.app_label, instance._meta.module_name,
+                  instance.pk),
+            result_ttl=0,  # Doesn't store result
+            timeout=3600,  # Avoids never-ending jobs
+        )
