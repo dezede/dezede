@@ -24,7 +24,3 @@ pygraphviz
 
 # Translation helper
 transifex-client==0.10
-
-# Importation tools
-pandas
-python-dateutil
