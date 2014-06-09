@@ -35,7 +35,10 @@ def is_polymorphic_child_model(model):
 
 
 def get_haystack_index(model):
-    return connections['default'].get_unified_index().get_index(model)
+    try:
+        return connections['default'].get_unified_index().get_index(model)
+    except NotHandled:
+        return
 
 
 def auto_update_haystack(action, instance):
@@ -46,9 +49,8 @@ def auto_update_haystack(action, instance):
             model = get_polymorphic_parent_model(model)
             obj = model._default_manager.non_polymorphic().get(pk=obj.pk)
 
-        try:
-            index = get_haystack_index(model)
-        except NotHandled:
+        index = get_haystack_index(model)
+        if index is None:
             continue
 
         if action == 'delete':
@@ -68,7 +70,8 @@ def auto_invalidate(action, app_label, model_name, pk):
         # les suppressions en cascade.
         # WARNING: À surveiller tout de même.
         index = get_haystack_index(model)
-        index.remove_object('%s.%s.%s' % (app_label, model_name, pk))
+        if index is not None:
+            index.remove_object('%s.%s.%s' % (app_label, model_name, pk))
         return
 
     if action == 'create':
