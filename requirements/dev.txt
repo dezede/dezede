@@ -19,8 +19,5 @@ pyzmq
 jinja2
 tornado
 
-# For manage.py graph_models
-pygraphviz
-
 # Translation helper
 transifex-client==0.10
