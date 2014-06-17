@@ -2,10 +2,11 @@
 
 from __future__ import unicode_literals
 import os
-from django.core.cache import cache
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.test import LiveServerTestCase
 from django.test.utils import override_settings
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver import PhantomJS, Firefox
 from selenium.webdriver.common.keys import Keys
@@ -28,7 +29,6 @@ class SeleniumTest(LiveServerTestCase):
     ]
 
     def _pre_setup(self):
-        cache.clear()
         self.screenshot_id = 0
         super(SeleniumTest, self)._pre_setup()
 
@@ -81,8 +81,8 @@ class SeleniumTest(LiveServerTestCase):
                                 if h != self.current_window_handle]
         if i is None:
             self.assertEqual(len(other_window_handles), 1)
-        self.selenium.switch_to_window(other_window_handles[i or 0])
         self.current_window_handle = other_window_handles[i or 0]
+        self.selenium.switch_to.window(self.current_window_handle)
 
     def get_screenshot_filename(self, i=None):
         return os.path.join(PATH, 'test%s.png' % (i or self.screenshot_id))
@@ -93,6 +93,9 @@ class SeleniumTest(LiveServerTestCase):
         """
         self.screenshot_id += 1
         self.wait_until_ready()
+        # FIXME: Ceci est un workaround pour éviter que PhantomJS
+        # redimensionne la fenêtre intempestivement.
+        self.selenium.set_window_size(1366, 768)
         self.selenium.save_screenshot(self.get_screenshot_filename())
 
     def write_to_tinymce(self, field_name, content):
@@ -100,18 +103,16 @@ class SeleniumTest(LiveServerTestCase):
         Écrit ``content`` dans le widget TinyMCE du champ de formulaire nommé
         ``field_name``.
         """
-        self.selenium.switch_to_frame(
-            self.get_by_id('id_%s_ifr' % field_name))
+        self.selenium.switch_to.frame(self.get_by_id('id_%s_ifr' % field_name))
         self.get_by_id('tinymce').send_keys(content)
-        self.selenium.switch_to_default_content()
+        self.selenium.switch_to.default_content()
 
     def click_tinymce_button(self, field_name, button_name):
         """
         Clique sur le bouton nommé ``button_name`` du widget TinyMCE du
         champ de formulaire nommé ``field_name``.
         """
-        self.get_by_id(
-            'id_%s_%s' % (field_name, button_name)).click()
+        self.get_by_id('id_%s_%s' % (field_name, button_name)).click()
 
     def autocomplete(self, element, query, link_text):
         ActionChains(self.selenium).move_to_element(
@@ -120,7 +121,11 @@ class SeleniumTest(LiveServerTestCase):
         self.get_link(link_text).click()
 
     def save(self, input_name='_save'):
-        self.get_by_name(input_name).click()
+        try:
+            self.get_by_name(input_name).click()
+        except NoSuchElementException:
+            self.screenshot()
+            raise
 
     def save_popup(self):
         self.save()
@@ -156,27 +161,8 @@ class SeleniumTest(LiveServerTestCase):
         username_input = self.get_by_name('username')
         username_input.send_keys(username)
         password_input = self.get_by_name('password')
-        password_input.send_keys(password + Keys.RETURN)
-
-    def rewrite_site(self):
-        """
-        Réécrit l'objet Site préexistant pour qu'il contienne comme nom de
-        domaine l'adresse du serveur de test.
-        """
-        self.get_by_xpath(
-            '//*[text()="Utilisateurs et groupes"]').click()
-        self.get_link('Sites').click()
-        self.get_link('example.com').click()
-
-        domain = self.get_by_name('domain')
-        domain.clear()
-        domain.send_keys(self.live_server_url[7:])
-
-        name = self.get_by_name('name')
-        name.clear()
-        name.send_keys(self.live_server_url[7:])
-
-        self.get_by_name('_save').click()
+        password_input.send_keys(password)
+        self.get_by_css('input[value="Connexion"]').click()
 
     def setUp(self):
         # La réponse du serveur et l'interprétation peuvent être lents.
@@ -185,8 +171,11 @@ class SeleniumTest(LiveServerTestCase):
 
         self.current_window_handle = self.selenium.current_window_handle
 
+        site = Site.objects.get_current()
+        site.domain = self.live_server_url[7:]
+        site.save()
+
         self.log_as_superuser()
-        self.rewrite_site()
 
     def testSimulation(self):
         # Décide d'ajouter une nouvelle source.
