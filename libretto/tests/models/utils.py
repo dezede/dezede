@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import six
-import johnny.cache
 
 
 def new(Model, **kwargs):
@@ -29,11 +28,10 @@ class CommonTestCase(TestCase):
         self.assertTrue(is_logged)
 
     def _pre_setup(self):
-        johnny.cache.disable()
         super(CommonTestCase, self)._pre_setup()
         self.log_as_superuser()
         if self.model is not None:
-            self.model_name = self.model.__name__.lower()
+            self.model_name = self.model._meta.module_name
 
     def assertURL(self, url, data=None, method='get', status_codes=(200,),
                   follow=False):
