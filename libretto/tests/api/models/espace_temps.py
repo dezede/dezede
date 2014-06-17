@@ -3,11 +3,15 @@
 from __future__ import unicode_literals
 from django.test import TestCase
 from django.utils.encoding import force_text
-from libretto.api import build_ancrage
+import johnny.cache
+from ....api import build_ancrage
 
 
 class BuildAncrageTestCase(TestCase):
     cleans_up_after_itself = True
+
+    def setUp(self):
+        johnny.cache.disable()
 
     def test_function(self):
         with self.assertNumQueries(24):
