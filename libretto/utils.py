@@ -19,17 +19,16 @@ def is_vowel(string):
     return remove_diacritics(string) in b'AEIOUYaeiouy'
 
 
-def chars_iterator(s):
+def is_vowel_iterator(s):
     i0 = 0
-    c0 = s[0]
+    is_vowel0 = is_vowel(s[0])
     i1 = 1
-    out = []
     for c1 in s[1:-1]:
-        out.append((i0, c0, i1, c1))
+        is_vowel1 = is_vowel(c1)
+        yield i0, is_vowel0, i1, is_vowel1
         i0 = i1
-        c0 = c1
+        is_vowel0 = is_vowel1
         i1 += 1
-    return out
 
 
 # TODO: créer un catalogue COMPLET de ponctuations de séparation.
@@ -59,22 +58,27 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
         return string
 
     out = ''
-    for i, sub in enumerate(ABBREVIATION_RE.split(string)):
-        if not i % 2:
+    is_word = True
+    for sub in ABBREVIATION_RE.split(string):
+        if is_word:
             if not sub:
                 continue
-            vowels_count = min_vowels
-            vowel_first = is_vowel(sub[0])
-            if vowel_first:
-                vowels_count -= 1
-            for j0, c0, j1, c1 in chars_iterator(sub):
-                general_case = is_vowel(c1) and not is_vowel(c0)
-                particular_case = j0 == 0 and vowel_first
+
+            vowels_count = 0
+            for j0, is_vowel0, j1, is_vowel1 in is_vowel_iterator(sub):
+                general_case = is_vowel1 and not is_vowel0
+                particular_case = j0 == 0 and is_vowel0
                 if general_case or particular_case:
-                    if vowels_count <= 0 and min_len <= j1:
+                    if particular_case:
+                        vowels_count += 1
+                    if vowels_count >= min_vowels and j1 >= min_len:
                         sub = sub[:j1] + '.'
                         break
                     if general_case:
-                        vowels_count -= 1
+                        vowels_count += 1
+
+            is_word = False
+        else:
+            is_word = True
         out += sub
     return hlp(out, string, tags)
