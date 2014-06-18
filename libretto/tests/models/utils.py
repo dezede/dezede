@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import six
@@ -29,6 +30,7 @@ class CommonTestCase(TestCase):
         self.assertTrue(is_logged)
 
     def _pre_setup(self):
+        cache.clear()
         johnny.cache.disable()
         super(CommonTestCase, self)._pre_setup()
         self.log_as_superuser()
