@@ -15,43 +15,10 @@ from .common import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
     PublishedManager, PublishedQuerySet)
 from .evenement import Evenement
-from .functions import str_list, str_list_w_last, href, sc
+from .functions import str_list, str_list_w_last, href, sc, ex
 
 
-__all__ = (b'Prenom', b'TypeDeParenteDIndividus', b'ParenteDIndividus',
-           b'Individu')
-
-
-@python_2_unicode_compatible
-class Prenom(CommonModel):
-    prenom = CharField(_('prénom'), max_length=100, db_index=True)
-    classement = SmallIntegerField(_('classement'), default=1, db_index=True)
-    favori = BooleanField(_('favori'), default=True, db_index=True)
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('prénom', 'prénoms', 1)
-        verbose_name_plural = ungettext_lazy('prénom', 'prénoms', 2)
-        # FIXME: Fusionner ce qui ne vérifie pas cette contrainte, puis
-        # Décommenter cette ligne.
-        # unique_together = ('prenom', 'classement', 'favori')
-        ordering = ('classement', 'prenom')
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('individus',)
-
-    def has_individu(self):
-        return self.individus.exists()
-    has_individu.short_description = _('individu(s) lié(s)')
-    has_individu.boolean = True
-
-    def __str__(self):
-        return self.prenom
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return 'prenom__icontains',
+__all__ = (b'TypeDeParenteDIndividus', b'ParenteDIndividus', b'Individu')
 
 
 class TypeDeParenteDIndividus(TypeDeParente):
@@ -140,9 +107,13 @@ class Individu(AutoriteModel, UniqueSlugModel):
     nom_naissance = CharField(
         _('nom de naissance'), max_length=200, blank=True, db_index=True,
         help_text=_('Ne remplir que s’il est différent du nom d’usage.'))
-    prenoms = ManyToManyField('Prenom', related_name='individus', blank=True,
-                              null=True, db_index=True,
-                              verbose_name=_('prénoms'))
+    prenoms = CharField(_('prénoms'), max_length=50, blank=True,
+                        db_index=True, help_text=ex('Antonio'))
+    prenoms_complets = CharField(
+        _('prénoms complets'), max_length=100, blank=True, db_index=True,
+        help_text=
+        ex('Antonio Lucio') + ' Ne remplir que s’il existe un ou des prénoms '
+                              'peu usités pour cet individu.')
     pseudonyme = CharField(_('pseudonyme'), max_length=200, blank=True,
                            db_index=True)
     DESIGNATIONS = (
@@ -237,22 +208,6 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return Evenement.objects.filter(
             programme__oeuvre__auteurs__individu=self).distinct()
 
-    def calc_prenoms_methode(self, fav):
-        if not self.pk:
-            return ''
-        prenoms = self.prenoms.order_by('classement', 'prenom')
-        if fav:
-            prenoms = prenoms.filter(favori=True)
-        return ' '.join(prenoms.values_list('prenom', flat=True))
-
-    def calc_prenoms(self):
-        return self.calc_prenoms_methode(False)
-    calc_prenoms.short_description = _('prénoms')
-    calc_prenoms.admin_order_field = 'prenoms__prenom'
-
-    def calc_fav_prenoms(self):
-        return self.calc_prenoms_methode(True)
-
     def calc_titre(self, tags=False):
         if tags:
             titres = {
@@ -316,7 +271,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     calc_professions.allow_tags = True
 
     @model_method_cached()
-    def html(self, tags=True, lon=False, prenoms_fav=True,
+    def html(self, tags=True, lon=False,
              show_prenoms=True, designation=None, abbr=True, links=True):
         def add_particule(nom, lon, naissance=False):
             particule = self.get_particule(naissance)
@@ -327,7 +282,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
         if designation is None:
             designation = self.designation
         titre = self.calc_titre(tags)
-        prenoms = self.calc_prenoms_methode(prenoms_fav)
+        prenoms = (self.prenoms_complets if lon and self.prenoms_complets
+                   else self.prenoms)
         nom = self.nom
         nom = add_particule(nom, lon)
         pseudonyme = self.pseudonyme
@@ -378,9 +334,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return self.html(tags=tags, lon=False, show_prenoms=False,
                          abbr=abbr, links=links)
 
-    def nom_complet(self, tags=True, prenoms_fav=False, designation='S',
+    def nom_complet(self, tags=True, designation='S',
                     abbr=False, links=True):
-        return self.html(tags=tags, lon=True, prenoms_fav=prenoms_fav,
+        return self.html(tags=tags, lon=True,
                          designation=designation, abbr=abbr, links=links)
 
     def related_label(self, tags=False):
@@ -410,5 +366,5 @@ class Individu(AutoriteModel, UniqueSlugModel):
             'nom__icontains',
             'nom_naissance__icontains',
             'pseudonyme__icontains',
-            'prenoms__prenom__icontains',
+            'prenoms__icontains',
         )

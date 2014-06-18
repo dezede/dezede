@@ -593,38 +593,33 @@ class AncrageSpatioTemporelAdmin(VersionAdmin, CommonAdmin):
     )
 
 
-class PrenomAdmin(VersionAdmin, CommonAdmin):
-    list_display = ('__str__', 'prenom', 'classement', 'favori',
-                    'has_individu')
-    search_fields = ('prenom',)
-    list_editable = ('prenom', 'classement', 'favori',)
-
-
 class IndividuAdmin(VersionAdmin, AutoriteAdmin):
     list_per_page = 20
-    list_display = ('__str__', 'nom', 'calc_prenoms',
+    list_display = ('__str__', 'nom', 'prenoms',
                     'pseudonyme', 'titre', 'ancrage_naissance',
                     'ancrage_deces', 'calc_professions', 'link',)
     list_editable = ('nom', 'titre',)
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',
-                     'prenoms__prenom',)
+                     'prenoms',)
     list_filter = ('titre',)
     form = IndividuForm
-    raw_id_fields = ('prenoms', 'ancrage_naissance', 'ancrage_deces',
+    raw_id_fields = ('ancrage_naissance', 'ancrage_deces',
                      'professions', 'ancrage_approx',
                      'illustrations', 'documents',)
     related_lookup_fields = {
         'fk': ('ancrage_naissance', 'ancrage_deces', 'ancrage_approx'),
     }
     autocomplete_lookup_fields = {
-        'm2m': ('prenoms', 'professions', 'parentes', 'illustrations',
+        'm2m': ('professions', 'parentes', 'illustrations',
                 'documents'),
     }
     readonly_fields = ('__str__', 'html', 'link',)
     inlines = (IndividuParentInline, IndividuEnfantInline)
     fieldsets = (
         (COMMON_FIELDSET_LABEL, {
-            'fields': (('particule_nom', 'nom',), ('prenoms', 'pseudonyme',),
+            'fields': (('particule_nom', 'nom',),
+                       ('prenoms', 'prenoms_complets'),
+                       'pseudonyme',
                        ('particule_nom_naissance', 'nom_naissance',),
                        ('titre', 'designation',),
                        ('ancrage_naissance', 'ancrage_deces',),
@@ -913,7 +908,7 @@ class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
     form = ElementDeDistributionForm
     list_display = ('__str__', 'pupitre', 'profession',)
     list_editable = ('pupitre', 'profession',)
-    search_fields = ('individus__nom', 'individus__prenoms__prenom',
+    search_fields = ('individus__nom', 'individus__prenoms',
                      'pupitre__partie__nom', 'profession__nom')
     fields = ('individus', 'ensembles', 'pupitre', 'profession',)
     raw_id_fields = ('individus', 'ensembles', 'pupitre', 'profession',)
@@ -1008,7 +1003,6 @@ site.register(Institution, InstitutionAdmin)
 site.register(Saison, SaisonAdmin)
 site.register(Profession, ProfessionAdmin)
 site.register(AncrageSpatioTemporel, AncrageSpatioTemporelAdmin)
-site.register(Prenom, PrenomAdmin)
 site.register(TypeDeParente, TypeDeParenteAdmin)
 site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)

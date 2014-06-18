@@ -4,7 +4,8 @@
   {% autoescape off %}
     {{ object.nom }}
     {{ object.pseudonyme }}
-    {{ object.calc_prenoms }}
+    {{ object.prenoms }}
+    {{ object.prenoms_complets }}
     {{ object.calc_professions }}
     {{ object }}
     {{ object.notes }}

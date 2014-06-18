@@ -12,7 +12,7 @@ from libretto.api.models.utils import update_or_create, get_or_create, \
                                        enlarged_get
 from libretto.api.utils import notify_send, print_error, print_success, \
                                 print_warning
-from libretto.models import Oeuvre, Prenom, Individu, Auteur, Profession, \
+from libretto.models import Oeuvre, Individu, Auteur, Profession, \
     GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, \
     CaracteristiqueDOeuvre, Etat
 
@@ -49,32 +49,26 @@ def build_individu(individu_str):
     if not match:
         return
     nom = title(match.group('nom'))
-    prenom_str = match.group('prenoms')
+    prenoms = match.group('prenoms')
     dates = match.group('dates')
     pseudonyme = ''
     particule = ''
     sexe = ''
 
-    match_pseudonyme = PSEUDONYME_RE.match(prenom_str)
+    match_pseudonyme = PSEUDONYME_RE.match(prenoms)
     if match_pseudonyme:
-        prenom_str = match_pseudonyme.group('prenoms')
+        prenoms = match_pseudonyme.group('prenoms')
         pseudonyme = match_pseudonyme.group('pseudonyme')
         if match_pseudonyme.group('feminin'):
             sexe = 'F'
 
-    match_particule = PARTICULE_RE.match(prenom_str)
+    match_particule = PARTICULE_RE.match(prenoms)
     if match_particule:
-        prenom_str = match_particule.group('prenoms')
+        prenoms = match_particule.group('prenoms')
         particule = match_particule.group('particule')
-    elif prenom_str.lower() in PARTICULES:
-        particule = prenom_str.lower()
-        prenom_str = ''
-
-    prenom_strs = [p for p in prenom_str.split() if p]
-    prenoms = [get_or_create(Prenom,
-                             {'prenom': prenom_str, 'classement': i},
-                             unique_keys=('prenom', 'classement'))[0]
-               for i, prenom_str in enumerate(prenom_strs)]
+    elif prenoms.lower() in PARTICULES:
+        particule = prenoms.lower()
+        prenoms = ''
 
     naissance, deces = dates.split('-')
     try:
@@ -97,7 +91,7 @@ def build_individu(individu_str):
         'ancrage_naissance': ancrage_naissance,
         'ancrage_deces': ancrage_deces,
         'titre': sexe,
-    }, unique_keys=['nom', 'prenoms__prenom'])
+    }, unique_keys=['nom', 'prenoms'])
     return individu
 
 

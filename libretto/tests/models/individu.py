@@ -10,15 +10,11 @@ class IndividuTestCase(CommonTestCase):
     model = Oeuvre
 
     def setUp(self):
-        jb = new(Prenom, prenom='Jean-Baptiste', favori=True, classement=1.0)
-        self.moliere = new(Individu, nom='Poquelin', pseudonyme='Molière',
-                           designation='P')
-        self.moliere.prenoms.add(jb)
-        edith = new(Prenom, prenom='Édith', favori=True, classement=1.0)
-        giovanna = new(Prenom, prenom='Giovanna', favori=False, classement=2.0)
-        self.piaf = new(Individu, nom='Gassion', pseudonyme='La Môme Piaf',
-                        designation='S', titre='F')
-        self.piaf.prenoms.add(edith, giovanna)
+        self.moliere = new(Individu, nom='Poquelin', prenoms='Jean-Baptiste',
+                           pseudonyme='Molière', designation='P')
+        self.piaf = new(Individu, nom='Gassion', prenoms='Édith',
+                        prenoms_complets='Édith Giovanna',
+                        pseudonyme='La Môme Piaf', designation='S', titre='F')
 
     def testComputedNames(self):
         self.assertEqual(smart_text(self.moliere), 'Molière')

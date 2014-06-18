@@ -13,10 +13,8 @@ class UpdateOrCreateTestCase(TestCase):
     def setUp(self):
         self.objects = []
 
-        nicolas = Prenom.objects.create(prenom='nicolas')
-
         self.data = data = dict(
-            nom='Dezède', pseudonyme='Dezède', prenoms=[nicolas])
+            nom='Dezède', pseudonyme='Dezède', prenoms='Nicolas')
 
         self.objects.append(update_or_create(Individu, data))
         # Tests if the following line does nothing.
@@ -25,7 +23,7 @@ class UpdateOrCreateTestCase(TestCase):
         data.update(nom_naissance='inconnu')
         self.objects.append(
             update_or_create(Individu, data,
-                             unique_keys=['nom', 'prenoms__prenom']))
+                             unique_keys=['nom', 'prenoms']))
 
     def testException(self):
         self.assertRaisesMessage(

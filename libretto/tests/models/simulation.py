@@ -264,12 +264,7 @@ class SeleniumTest(LiveServerTestCase):
                     '.individu .related-lookup').click()
                 with self.new_popup(add='individu'):
                     self.get_by_name('nom').send_keys('Vivaldi')
-
-                    # Créé le prénom de l'individu.
-                    self.get_by_css(
-                        '.grp-cell.prenoms .related-lookup').click()
-                    with self.new_popup(add='prénom'):
-                        self.get_by_name('prenom').send_keys('Antonio')
+                    self.get_by_name('prenoms').send_keys('Antonio')
 
                     select = Select(self.get_by_name('titre'))
                     select.select_by_visible_text('M.')

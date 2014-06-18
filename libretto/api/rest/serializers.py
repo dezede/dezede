@@ -16,7 +16,6 @@ class AncrageSpatioTemporelSerializer(ModelSerializer):
 
 class IndividuSerializer(HyperlinkedModelSerializer):
     displayed_name = Field(source='__str__')
-    prenoms = RelatedField(many=True)
     ancrage_naissance = AncrageSpatioTemporelSerializer()
     ancrage_deces = AncrageSpatioTemporelSerializer()
     ancrage_approx = AncrageSpatioTemporelSerializer()
