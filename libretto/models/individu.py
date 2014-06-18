@@ -2,8 +2,8 @@
 
 from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, BooleanField, ForeignKey, \
-    ManyToManyField, OneToOneField, permalink, Q, SmallIntegerField, PROTECT
+from django.db.models import CharField, ForeignKey, \
+    ManyToManyField, OneToOneField, permalink, Q, PROTECT
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import pgettext_lazy, ungettext_lazy
@@ -209,30 +209,35 @@ class Individu(AutoriteModel, UniqueSlugModel):
             programme__oeuvre__auteurs__individu=self).distinct()
 
     def calc_titre(self, tags=False):
+        titre = self.titre
+        if not titre:
+            return ''
+
         if tags:
-            titres = {
-                'M': ugettext('M.'),
-                'J': ugettext('M<sup>lle</sup>'),
-                'F': ugettext('M<sup>me</sup>'),
-            }
-        else:
-            titres = {
-                'M': ugettext('Monsieur'),
-                'J': ugettext('Mademoiselle'),
-                'F': ugettext('Madame'),
-            }
-        if self.titre:
-            return titres[self.titre]
-        return ''
+            if titre == 'M':
+                return ugettext('M.')
+            elif titre == 'J':
+                return ugettext('M<sup>lle</sup>')
+            elif titre == 'F':
+                return ugettext('M<sup>me</sup>')
+
+        if titre == 'M':
+            return ugettext('Monsieur')
+        elif titre == 'J':
+            return ugettext('Mademoiselle')
+        elif titre == 'F':
+            return ugettext('Madame')
+
+        raise ValueError('Type de titre inconnu, il devrait être M, J, ou F.')
 
     def is_feminin(self):
         return self.titre in ('J', 'F',)
 
     def get_particule(self, naissance=False, lon=True):
-        particule = self.particule_nom_naissance if naissance \
-            else self.particule_nom
-        if lon and particule != '' and particule[-1] not in ("'", '’'):
-            particule += ' '
+        particule = (self.particule_nom_naissance if naissance
+                     else self.particule_nom)
+        if lon and particule and particule[-1] not in "'’":
+            return particule + ' '
         return particule
 
     def naissance(self):
@@ -270,31 +275,22 @@ class Individu(AutoriteModel, UniqueSlugModel):
     calc_professions.admin_order_field = 'professions__nom'
     calc_professions.allow_tags = True
 
-    @model_method_cached()
     def html(self, tags=True, lon=False,
              show_prenoms=True, designation=None, abbr=True, links=True):
-        def add_particule(nom, lon, naissance=False):
-            particule = self.get_particule(naissance)
-            if lon:
-                nom = particule + nom
-            return nom
-
         if designation is None:
             designation = self.designation
         titre = self.calc_titre(tags)
         prenoms = (self.prenoms_complets if lon and self.prenoms_complets
                    else self.prenoms)
         nom = self.nom
-        nom = add_particule(nom, lon)
+        if lon:
+            nom = self.get_particule() + nom
         pseudonyme = self.pseudonyme
-        nom_naissance = self.nom_naissance
-        nom_naissance = add_particule(nom_naissance, lon, naissance=True)
-        particule = self.get_particule(naissance=(designation == 'B'), lon=lon)
 
-        def main_style(s):
-            return sc(s, tags)
+        def standard(main, prenoms):
+            particule = self.get_particule(naissance=(designation == 'B'),
+                                           lon=lon)
 
-        def standard(main):
             l = []
             if nom and not prenoms:
                 l.append(titre)
@@ -303,29 +299,36 @@ class Individu(AutoriteModel, UniqueSlugModel):
                 if lon:
                     l.insert(max(len(l) - 1, 0), prenoms)
                 else:
-                    s = str_list((abbreviate(prenoms, tags=tags,
-                                             enabled=abbr),
-                                  sc(particule, tags)),
-                                 ' ')
-                    l.append('(%s)' % s)
+                    if prenoms:
+                        prenoms = abbreviate(prenoms, tags=tags, enabled=abbr)
+                    if particule:
+                        particule = sc(particule, tags)
+                    l.append('(%s)' % ('%s %s' % (prenoms, particule)
+                                       if prenoms and particule
+                                       else (prenoms or particule)))
             out = str_list(l, ' ')
             if pseudonyme:
-                alias = ugettext('dite') if self.is_feminin() \
-                    else ugettext('dit')
+                alias = (ugettext('dite') if self.is_feminin()
+                         else ugettext('dit'))
                 out += ' %s\u00A0%s' % (alias, pseudonyme)
             return out
 
-        main_choices = {
-            'S': nom,
-            'F': prenoms,
-            'L': nom,
-            'P': pseudonyme,
-            'B': nom_naissance,
-        }
-        main = main_style(main_choices[designation])
-        out = standard(main) if designation in ('S', 'B',) else main
-        url = None if not tags else self.get_absolute_url()
-        out = href(url, out, tags & links)
+        if designation in 'SL':
+            main = nom
+        elif designation == 'F':
+            main = prenoms
+        elif designation == 'P':
+            main = pseudonyme
+        elif designation == 'B':
+            nom_naissance = self.nom_naissance
+            if lon:
+                nom_naissance = self.get_particule(True) + nom_naissance
+            main = nom_naissance
+
+        main = sc(main, tags)
+        out = standard(main, prenoms) if designation in 'SB' else main
+        if tags:
+            return href(self.get_absolute_url(), out, links)
         return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
