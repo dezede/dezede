@@ -15,24 +15,35 @@ def remove_diacritics(string):
     return normalize('NFKD', string).encode('ASCII', 'ignore')
 
 
-def is_vowel(string):
-    return remove_diacritics(string) in b'AEIOUYaeiouy'
+VOWELS = frozenset(b'AEIOUYaeiouy')
 
 
-def is_vowel_iterator(s):
-    i0 = 0
-    is_vowel0 = is_vowel(s[0])
-    i1 = 1
-    for c1 in s[1:-1]:
-        is_vowel1 = is_vowel(c1)
-        yield i0, is_vowel0, i1, is_vowel1
-        i0 = i1
-        is_vowel0 = is_vowel1
-        i1 += 1
+def abbreviate_word(word, min_vowels, min_len):
+    ascii_word = remove_diacritics(word)
+    prev_is_vowel = ascii_word[0] in VOWELS
+
+    if prev_is_vowel:
+        if min_vowels <= 1 and min_len <= 1:
+            return word[0] + '.'
+        vowels_count = 1
+    else:
+        vowels_count = 0
+
+    i = 1
+    for c in ascii_word[1:-1]:
+        is_vowel = c in VOWELS
+        if is_vowel and not prev_is_vowel:
+            if vowels_count >= min_vowels and i >= min_len:
+                return word[:i] + '.'
+            vowels_count += 1
+        prev_is_vowel = is_vowel
+        i += 1
+
+    return word
 
 
 # TODO: créer un catalogue COMPLET de ponctuations de séparation.
-ABBREVIATION_RE = re.compile('(-|\.|\s)')
+SEPARATOR_RE = re.compile(r'([-\.\s]+)')
 
 
 def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
@@ -59,26 +70,12 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
 
     out = ''
     is_word = True
-    for sub in ABBREVIATION_RE.split(string):
+    for sub in SEPARATOR_RE.split(string):
         if is_word:
-            if not sub:
-                continue
-
-            vowels_count = 0
-            for j0, is_vowel0, j1, is_vowel1 in is_vowel_iterator(sub):
-                general_case = is_vowel1 and not is_vowel0
-                particular_case = j0 == 0 and is_vowel0
-                if general_case or particular_case:
-                    if particular_case:
-                        vowels_count += 1
-                    if vowels_count >= min_vowels and j1 >= min_len:
-                        sub = sub[:j1] + '.'
-                        break
-                    if general_case:
-                        vowels_count += 1
-
-            is_word = False
+            if sub:
+                out += abbreviate_word(sub, min_vowels, min_len)
         else:
-            is_word = True
-        out += sub
+            out += sub
+        is_word = not is_word
+
     return hlp(out, string, tags)
