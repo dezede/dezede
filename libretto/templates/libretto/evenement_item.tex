@@ -5,7 +5,7 @@
   \begin{center}
     {\large \bfseries
       \addtocounter{evenements-counter}{1}
-      \fbox{\arabic{evenements-counter}}
+      \arabic{evenements-counter}
 
       \nopagebreak
 
@@ -83,10 +83,8 @@
   {% for source in sources %}
     {% if source.contenu %}
       \enquote{% templatetag openbrace %}{{ source.contenu|safe|html_to_latex|compact_paragraph }}}
-      \nopagebreak
+      ({{ source.html }})
     {% endif %}
-
-    {{ source.html }}
 
     {% if not forloop.last %}
       \medskip
