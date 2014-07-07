@@ -140,14 +140,14 @@ class DossierDEvenements(MPTTModel, PublishedModel):
         args = []
         kwargs = {}
         if self.debut:
-            kwargs['ancrage_debut__date__gte'] = self.debut
+            kwargs['debut_date__gte'] = self.debut
         if self.fin:
-            kwargs['ancrage_debut__date__lte'] = self.fin
+            kwargs['debut_date__lte'] = self.fin
         if self.pk:
             if self.lieux.exists():
                 lieux = self.lieux.non_polymorphic() \
                     .get_descendants(include_self=True)
-                kwargs['ancrage_debut__lieu__in'] = lieux
+                kwargs['debut_lieu__in'] = lieux
             if self.oeuvres.exists():
                 oeuvres = self.oeuvres.get_descendants(include_self=True)
                 kwargs['programme__oeuvre__in'] = oeuvres

@@ -6,19 +6,10 @@ from rest_framework.serializers import *
 from libretto.models import *
 
 
-class AncrageSpatioTemporelSerializer(ModelSerializer):
-    lieu = HyperlinkedRelatedField(view_name='lieu-detail')
-
-    class Meta(object):
-        model = AncrageSpatioTemporel
-        exclude = ('owner', 'id')
-
-
 class IndividuSerializer(HyperlinkedModelSerializer):
     displayed_name = Field(source='__str__')
-    ancrage_naissance = AncrageSpatioTemporelSerializer()
-    ancrage_deces = AncrageSpatioTemporelSerializer()
-    ancrage_approx = AncrageSpatioTemporelSerializer()
+    naissance_lieu = RelatedField()
+    deces_lieu = RelatedField()
     professions = RelatedField(many=True)
     parents = RelatedField(many=True)
     front_url = Field(source='get_absolute_url')
@@ -26,8 +17,12 @@ class IndividuSerializer(HyperlinkedModelSerializer):
     class Meta(object):
         model = Individu
         fields = (
-            'id', 'displayed_name', 'ancrage_naissance', 'ancrage_deces',
-            'ancrage_approx', 'professions', 'parents', 'enfants',
+            'id', 'displayed_name', 
+            'naissance_date', 'naissance_date_approx',
+            'naissance_lieu', 'naissance_lieu_approx',
+            'deces_date', 'deces_date_approx',
+            'deces_lieu', 'deces_lieu_approx',
+            'professions', 'parents', 'enfants',
             'front_url', 'url'
         )
 
@@ -35,8 +30,6 @@ class IndividuSerializer(HyperlinkedModelSerializer):
 class LieuSerializer(HyperlinkedModelSerializer):
     displayed_name = Field(source='__str__')
     nature = RelatedField()
-    individus_nes = IndividuSerializer(many=True)
-    individus_decedes = IndividuSerializer(many=True)
     front_url = Field(source='get_absolute_url')
 
     class Meta(object):
@@ -51,7 +44,7 @@ class OeuvreSerializer(HyperlinkedModelSerializer):
     displayed_name = Field(source='__str__')
     genre = RelatedField()
     caracteristiques = RelatedField(many=True)
-    ancrage_creation = AncrageSpatioTemporelSerializer()
+    creation_lieu = RelatedField()
     evenements = RelatedField(many=True)
     pupitres = RelatedField(many=True)
     front_url = Field(source='get_absolute_url')
@@ -60,6 +53,9 @@ class OeuvreSerializer(HyperlinkedModelSerializer):
         model = Oeuvre
         fields = (
             'id', 'displayed_name', 'titre', 'titre_secondaire', 'genre',
-            'caracteristiques', 'ancrage_creation', 'pupitres', 'contenu_dans',
+            'caracteristiques', 'pupitres', 'contenu_dans',
+            'creation_date', 'creation_date_approx',
+            'creation_heure', 'creation_heure_approx',
+            'creation_lieu', 'creation_lieu_approx',
             'meres', 'filles', 'front_url', 'url'
         )

@@ -11,15 +11,11 @@
     <h3>
       {% if individu.naissance or individu.deces %}
         <span title="{% trans "naissance"|capfirst %}">
-          {{ individu.naissance_html }}
+          {{ individu.naissance.short_html }}
         </span>
         &ndash;
         <span title="{% trans "décès"|capfirst %}">
-          {{ individu.deces_html }}
-        </span>
-      {% elif individu.ancrage %}
-        <span title="{% trans "ancrage spatio-temporel"|capfirst %}">
-          {{ individu.ancrage }}
+          {{ individu.deces.short_html }}
         </span>
       {% endif %}
     </h3>

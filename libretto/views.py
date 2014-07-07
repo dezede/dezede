@@ -55,7 +55,7 @@ class EvenementListView(AjaxListView, PublishedListView):
     enable_default_page = True
 
     BINDINGS = {
-        'lieu': ('ancrage_debut__lieu__in', 'ancrage_fin__lieu__in'),
+        'lieu': ('debut_lieu__in', 'fin_lieu__in'),
         'oeuvre': 'programme__oeuvre__in',
         'individu': ('distribution__individus__in',
                      'programme__distribution__individus__in',
@@ -124,7 +124,7 @@ class EvenementListView(AjaxListView, PublishedListView):
         qs = qs.filter(filters).distinct()
         try:
             start, end = int(data.get('dates_0')), int(data.get('dates_1'))
-            qs = qs.filter(ancrage_debut__date__range=(
+            qs = qs.filter(debut_date__range=(
                 date(start, 1, 1), date(end, 12, 31)))
         except (TypeError, ValueError):
             pass
@@ -326,8 +326,8 @@ class IndividuViewSet(CommonViewSet):
     table_fields = (
         ('related_label', '{nom} {prenoms}'),
         ('calc_professions', 'professions'),
-        ('ancrage_naissance', 'ancrage_naissance'),
-        ('ancrage_deces', 'ancrage_deces')
+        ('naissance', '{naissance_date}'),
+        ('deces', '{deces_date}')
     )
 
 
@@ -354,6 +354,7 @@ class OeuvreViewSet(CommonViewSet):
         ('_str', '{titre} {genre}'),
         ('genre', 'genre'),
         ('auteurs_html', 'auteurs__individu'),
+        ('creation', '{creation_date}'),
     )
 
     def __init__(self):

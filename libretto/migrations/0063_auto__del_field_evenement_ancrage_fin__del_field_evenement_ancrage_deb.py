@@ -1,20 +1,67 @@
 # -*- coding: utf-8 -*-
 from south.utils import datetime_utils as datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-class Migration(DataMigration):
+
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        for i in orm.Individu.objects.prefetch_related('prenoms'):
-            i.prenoms_str = ' '.join([p.prenom for p in i.prenoms.all() if p.favori])
-            if any(not p.favori for p in i.prenoms.all()):
-                i.prenoms_complets = ' '.join([p.prenom for p in i.prenoms.all()])
-            i.save()
+        # Deleting field 'Evenement.ancrage_fin'
+        db.delete_column(u'libretto_evenement', 'ancrage_fin_id')
+
+        # Deleting field 'Evenement.ancrage_debut'
+        db.delete_column(u'libretto_evenement', 'ancrage_debut_id')
+
+        # Deleting field 'Individu.ancrage_deces'
+        db.delete_column(u'libretto_individu', 'ancrage_deces_id')
+
+        # Deleting field 'Individu.ancrage_naissance'
+        db.delete_column(u'libretto_individu', 'ancrage_naissance_id')
+
+        # Deleting field 'Individu.ancrage_approx'
+        db.delete_column(u'libretto_individu', 'ancrage_approx_id')
+
+        # Deleting field 'Oeuvre.ancrage_creation'
+        db.delete_column(u'libretto_oeuvre', 'ancrage_creation_id')
+
 
     def backwards(self, orm):
-        raise RuntimeError("Cannot reverse this migration.")
+        # Adding field 'Evenement.ancrage_fin'
+        db.add_column(u'libretto_evenement', 'ancrage_fin',
+                      self.gf('django.db.models.fields.related.OneToOneField')(related_name=u'evenements_fins', null=True, on_delete=models.PROTECT, to=orm['libretto.AncrageSpatioTemporel'], blank=True, unique=True),
+                      keep_default=False)
+
+
+        # User chose to not deal with backwards NULL issues for 'Evenement.ancrage_debut'
+        raise RuntimeError("Cannot reverse this migration. 'Evenement.ancrage_debut' and its values cannot be restored.")
+        
+        # The following code is provided here to aid in writing a correct migration        # Adding field 'Evenement.ancrage_debut'
+        db.add_column(u'libretto_evenement', 'ancrage_debut',
+                      self.gf('django.db.models.fields.related.OneToOneField')(related_name=u'evenements_debuts', unique=True, on_delete=models.PROTECT, to=orm['libretto.AncrageSpatioTemporel']),
+                      keep_default=False)
+
+        # Adding field 'Individu.ancrage_deces'
+        db.add_column(u'libretto_individu', 'ancrage_deces',
+                      self.gf('django.db.models.fields.related.OneToOneField')(related_name=u'individus_decedes', null=True, on_delete=models.PROTECT, to=orm['libretto.AncrageSpatioTemporel'], blank=True, unique=True),
+                      keep_default=False)
+
+        # Adding field 'Individu.ancrage_naissance'
+        db.add_column(u'libretto_individu', 'ancrage_naissance',
+                      self.gf('django.db.models.fields.related.OneToOneField')(related_name=u'individus_nes', null=True, on_delete=models.PROTECT, to=orm['libretto.AncrageSpatioTemporel'], blank=True, unique=True),
+                      keep_default=False)
+
+        # Adding field 'Individu.ancrage_approx'
+        db.add_column(u'libretto_individu', 'ancrage_approx',
+                      self.gf('django.db.models.fields.related.OneToOneField')(related_name=u'individus', null=True, on_delete=models.PROTECT, to=orm['libretto.AncrageSpatioTemporel'], blank=True, unique=True),
+                      keep_default=False)
+
+        # Adding field 'Oeuvre.ancrage_creation'
+        db.add_column(u'libretto_oeuvre', 'ancrage_creation',
+                      self.gf('django.db.models.fields.related.OneToOneField')(related_name=u'oeuvres_creees', null=True, on_delete=models.PROTECT, to=orm['libretto.AncrageSpatioTemporel'], blank=True, unique=True),
+                      keep_default=False)
+
 
     models = {
         u'accounts.hierarchicuser': {
@@ -192,13 +239,23 @@ class Migration(DataMigration):
             'slug': ('autoslug.fields.AutoSlugField', [], {'unique': 'True', 'max_length': '50', 'populate_from': "u'get_slug'", 'unique_with': '()'})
         },
         u'libretto.evenement': {
-            'Meta': {'ordering': "(u'ancrage_debut',)", 'object_name': 'Evenement'},
-            'ancrage_debut': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "u'evenements_debuts'", 'unique': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.AncrageSpatioTemporel']"}),
-            'ancrage_fin': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "u'evenements_fins'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.AncrageSpatioTemporel']", 'blank': 'True', 'unique': 'True'}),
+            'Meta': {'ordering': "(u'debut_date', u'debut_heure', u'debut_lieu', u'debut_date_approx', u'debut_heure_approx', u'debut_lieu_approx')", 'object_name': 'Evenement'},
             'caracteristiques': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "u'evenements'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['libretto.CaracteristiqueDeProgramme']"}),
             'circonstance': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '500', 'blank': 'True'}),
+            u'debut_date': ('django.db.models.fields.DateField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            u'debut_date_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
+            u'debut_heure': ('django.db.models.fields.TimeField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            u'debut_heure_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
+            u'debut_lieu': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'evenement_debut_set'", 'null': 'True', 'to': u"orm['libretto.Lieu']"}),
+            u'debut_lieu_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
             'documents': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "u'evenement_set'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['libretto.Document']"}),
             'etat': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['libretto.Etat']", 'on_delete': 'models.PROTECT'}),
+            u'fin_date': ('django.db.models.fields.DateField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            u'fin_date_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
+            u'fin_heure': ('django.db.models.fields.TimeField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            u'fin_heure_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
+            u'fin_lieu': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'evenement_fin_set'", 'null': 'True', 'to': u"orm['libretto.Lieu']"}),
+            u'fin_lieu_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'illustrations': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "u'evenement_set'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['libretto.Illustration']"}),
             'notes': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
@@ -225,25 +282,29 @@ class Migration(DataMigration):
         },
         u'libretto.individu': {
             'Meta': {'ordering': "(u'nom',)", 'object_name': 'Individu'},
-            'ancrage_approx': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "u'individus'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.AncrageSpatioTemporel']", 'blank': 'True', 'unique': 'True'}),
-            'ancrage_deces': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "u'individus_decedes'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.AncrageSpatioTemporel']", 'blank': 'True', 'unique': 'True'}),
-            'ancrage_naissance': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "u'individus_nes'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.AncrageSpatioTemporel']", 'blank': 'True', 'unique': 'True'}),
             'biographie': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
+            u'deces_date': ('django.db.models.fields.DateField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            u'deces_date_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
+            u'deces_lieu': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'individu_deces_set'", 'null': 'True', 'to': u"orm['libretto.Lieu']"}),
+            u'deces_lieu_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
             'designation': ('django.db.models.fields.CharField', [], {'default': "u'S'", 'max_length': '1'}),
             'documents': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "u'individu_set'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['libretto.Document']"}),
             'enfants': ('django.db.models.fields.related.ManyToManyField', [], {'db_index': 'True', 'related_name': "u'parents'", 'symmetrical': 'False', 'through': u"orm['libretto.ParenteDIndividus']", 'to': u"orm['libretto.Individu']"}),
             'etat': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['libretto.Etat']", 'on_delete': 'models.PROTECT'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'illustrations': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "u'individu_set'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['libretto.Illustration']"}),
+            u'naissance_date': ('django.db.models.fields.DateField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            u'naissance_date_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
+            u'naissance_lieu': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'individu_naissance_set'", 'null': 'True', 'to': u"orm['libretto.Lieu']"}),
+            u'naissance_lieu_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
             'nom': ('django.db.models.fields.CharField', [], {'max_length': '200', 'db_index': 'True'}),
             'nom_naissance': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
             'notes': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'individu'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['accounts.HierarchicUser']"}),
             'particule_nom': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '10', 'blank': 'True'}),
             'particule_nom_naissance': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '10', 'blank': 'True'}),
-            'prenoms': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "u'individus'", 'to': u"orm['libretto.Prenom']", 'blank': 'True', 'symmetrical': 'False', 'null': 'True', 'db_index': 'True'}),
+            'prenoms': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
             'prenoms_complets': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '100', 'blank': 'True'}),
-            'prenoms_str': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
             'professions': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "u'individus'", 'to': u"orm['libretto.Profession']", 'blank': 'True', 'symmetrical': 'False', 'null': 'True', 'db_index': 'True'}),
             'pseudonyme': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
             'slug': ('autoslug.fields.AutoSlugField', [], {'unique': 'True', 'max_length': '50', 'populate_from': "u'get_slug'", 'unique_with': '()'}),
@@ -304,10 +365,15 @@ class Migration(DataMigration):
         },
         u'libretto.oeuvre': {
             'Meta': {'ordering': "(u'titre', u'genre', u'slug')", 'object_name': 'Oeuvre'},
-            'ancrage_creation': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "u'oeuvres_creees'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.AncrageSpatioTemporel']", 'blank': 'True', 'unique': 'True'}),
             'caracteristiques': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "u'oeuvres'", 'to': u"orm['libretto.CaracteristiqueDOeuvre']", 'blank': 'True', 'symmetrical': 'False', 'null': 'True', 'db_index': 'True'}),
             'contenu_dans': ('mptt.fields.TreeForeignKey', [], {'blank': 'True', 'related_name': "u'enfants'", 'null': 'True', 'to': u"orm['libretto.Oeuvre']"}),
             'coordination': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '20', 'blank': 'True'}),
+            u'creation_date': ('django.db.models.fields.DateField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            u'creation_date_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
+            u'creation_heure': ('django.db.models.fields.TimeField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            u'creation_heure_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
+            u'creation_lieu': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'oeuvre_creation_set'", 'null': 'True', 'to': u"orm['libretto.Lieu']"}),
+            u'creation_lieu_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
             'description': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
             'documents': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "u'oeuvre_set'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['libretto.Document']"}),
             'etat': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['libretto.Etat']", 'on_delete': 'models.PROTECT'}),
@@ -372,14 +438,6 @@ class Migration(DataMigration):
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'personnel'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['accounts.HierarchicUser']"}),
             'saison': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'personnels'", 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.Saison']"}),
             'type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'personnels'", 'on_delete': 'models.PROTECT', 'to': u"orm['libretto.TypeDePersonnel']"})
-        },
-        u'libretto.prenom': {
-            'Meta': {'ordering': "(u'classement', u'prenom')", 'object_name': 'Prenom'},
-            'classement': ('django.db.models.fields.SmallIntegerField', [], {'default': '1', 'db_index': 'True'}),
-            'favori': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_index': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'prenom'", 'null': 'True', 'on_delete': 'models.PROTECT', 'to': u"orm['accounts.HierarchicUser']"}),
-            'prenom': ('django.db.models.fields.CharField', [], {'max_length': '100', 'db_index': 'True'})
         },
         u'libretto.profession': {
             'Meta': {'ordering': "(u'classement', u'nom')", 'object_name': 'Profession'},
@@ -494,4 +552,3 @@ class Migration(DataMigration):
     }
 
     complete_apps = ['libretto']
-    symmetrical = True

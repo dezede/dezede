@@ -13,7 +13,7 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
 from ..utils import abbreviate
 from .common import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
-    PublishedManager, PublishedQuerySet)
+    PublishedManager, PublishedQuerySet, AncrageSpatioTemporel)
 from .evenement import Evenement
 from .functions import str_list, str_list_w_last, href, sc, ex
 
@@ -121,7 +121,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
         ('P', _('Pseudonyme (uniquement)')),
         ('L', _('Nom d’usage (uniquement)')),  # L pour Last name
         ('B', _('Nom de naissance (standard)')),  # B pour Birth name
-        ('F', _('Prénom(s) favori(s) (uniquement)')),  # F pour First name
+        ('F', _('Prénom(s) (uniquement)')),  # F pour First name
     )
     designation = CharField(_('désignation'), max_length=1,
                             choices=DESIGNATIONS, default='S')
@@ -132,19 +132,10 @@ class Individu(AutoriteModel, UniqueSlugModel):
     )
     titre = CharField(pgettext_lazy('individu', 'titre'), max_length=1,
                       choices=TITRES, blank=True, db_index=True)
-    ancrage_naissance = OneToOneField(
-        'AncrageSpatioTemporel', blank=True, null=True,
-        related_name='individus_nes', verbose_name=_('ancrage de naissance'),
-        db_index=True, on_delete=PROTECT)
-    ancrage_deces = OneToOneField(
-        'AncrageSpatioTemporel', blank=True, null=True,
-        related_name='individus_decedes', verbose_name=_('ancrage du décès'),
-        db_index=True, on_delete=PROTECT)
-    ancrage_approx = OneToOneField(
-        'AncrageSpatioTemporel', blank=True, null=True,
-        related_name='individus', verbose_name=_('ancrage approximatif'),
-        help_text=_('Ne remplir que si on ne connaît aucune date précise.'),
-        db_index=True, on_delete=PROTECT)
+    naissance = AncrageSpatioTemporel(has_heure=False,
+                                      short_description=_('naissance'))
+    deces = AncrageSpatioTemporel(has_heure=False,
+                                  short_description=_('décès'))
     professions = ManyToManyField(
         'Profession', related_name='individus', blank=True, null=True,
         verbose_name=_('professions'), db_index=True)
@@ -240,31 +231,6 @@ class Individu(AutoriteModel, UniqueSlugModel):
             return particule + ' '
         return particule
 
-    def naissance(self):
-        if self.ancrage_naissance:
-            return smart_text(self.ancrage_naissance)
-        return ''
-
-    def naissance_html(self, tags=True):
-        if self.ancrage_naissance:
-            return self.ancrage_naissance.short_html(tags)
-        return ''
-
-    def deces(self):
-        if self.ancrage_deces:
-            return smart_text(self.ancrage_deces)
-        return ''
-
-    def deces_html(self, tags=True):
-        if self.ancrage_deces:
-            return self.ancrage_deces.short_html(tags)
-        return ''
-
-    def ancrage(self):
-        if self.ancrage_approx:
-            return smart_text(self.ancrage_approx)
-        return ''
-
     def calc_professions(self, tags=True):
         if not self.pk:
             return ''
@@ -350,15 +316,11 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return self.related_label(tags=True)
 
     def clean(self):
-        try:
-            naissance = getattr(self.ancrage_naissance, 'date')
-            deces = getattr(self.ancrage_deces, 'date')
-        except AttributeError:
-            pass
-        else:
-            if naissance and deces and deces < naissance:
-                raise ValidationError(_('Le décès ne peut précéder '
-                                        'la naissance.'))
+        naissance = self.naissance.date
+        deces = self.deces.date
+        if naissance and deces and deces < naissance:
+            raise ValidationError(_('Le décès ne peut précéder '
+                                    'la naissance.'))
 
     def __str__(self):
         return strip_tags(self.html(tags=False))

@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from django.views.generic import DetailView, TemplateView, ListView
 from registration.backends.default.views import RegistrationView
 from cache_tools import cached_ugettext_lazy as _
-from libretto.models import AncrageSpatioTemporel
+from libretto.models import Evenement
 from .models import HierarchicUser
 from .forms import UserRegistrationForm
 
@@ -78,7 +78,7 @@ class EvenementsGraph(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(EvenementsGraph, self).get_context_data(**kwargs)
 
-        qs = AncrageSpatioTemporel.objects.exclude(date=None)
+        qs = Evenement.objects.exclude(debut_date=None)
 
         username = self.request.GET.get('username')
 
@@ -87,14 +87,13 @@ class EvenementsGraph(TemplateView):
             if not User.objects.filter(username=username).exists():
                 raise Http404
 
-            qs = qs.filter(evenements_debuts__owner__username=username)
-        else:
-            qs = qs.exclude(evenements_debuts=None)
+            qs = qs.filter(owner__username=username)
 
         context['data'] = data = list(
             qs
-            .extra({'year': connection.ops.date_trunc_sql('year', 'date')})
-            .values('year').annotate(n=Count('evenements_debuts'))
+            .extra({'year': connection.ops.date_trunc_sql('year',
+                                                          'debut_date')})
+            .values('year').annotate(n=Count('pk'))
             .order_by('year'))
 
         for d in data:

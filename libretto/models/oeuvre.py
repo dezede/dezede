@@ -28,7 +28,8 @@ from .common import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
     OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,
-    CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique)
+    CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique,
+    AncrageSpatioTemporel)
 from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
@@ -368,10 +369,16 @@ class TypeDeParenteDOeuvres(TypeDeParente):
 
 class ParenteDOeuvresManager(CommonManager):
     def meres_en_ordre(self):
-        return self.all().order_by('mere__ancrage_creation')
+        return self.all().order_by(
+            'mere__creation_date', 'mere__creation_heure',
+            'mere__creation_lieu', 'mere__creation_date_approx',
+            'mere__creation_heure_approx', 'mere__creation_lieu_approx')
 
     def filles_en_ordre(self):
-        return self.all().order_by('fille__ancrage_creation')
+        return self.all().order_by(
+            'fille__creation_date', 'fille__creation_heure',
+            'fille__creation_lieu', 'fille__creation_date_approx',
+            'fille__creation_heure_approx', 'fille__creation_lieu_approx')
 
 
 @python_2_unicode_compatible
@@ -544,10 +551,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         null=True, verbose_name=_('caractéristiques'), related_name='oeuvres',
         db_index=True)
     auteurs = GenericRelation('Auteur')
-    ancrage_creation = OneToOneField('AncrageSpatioTemporel',
-        related_name='oeuvres_creees', blank=True, null=True, db_index=True,
-        verbose_name=_('ancrage spatio-temporel de création'),
-        on_delete=PROTECT)
+    creation = AncrageSpatioTemporel(short_description=_('création'))
     pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
         null=True, verbose_name=_('effectif'), db_index=True)
     contenu_dans = TreeForeignKey('self', null=True, blank=True, db_index=True,
@@ -620,7 +624,10 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     auteurs_html.admin_order_field = 'auteurs__individu__nom'
 
     def parentes_in_order(self, relation):
-        return getattr(self, relation).order_by('ancrage_creation')
+        return getattr(self, relation).order_by(
+            'creation_date', 'creation_heure', 'creation_lieu',
+            'creation_date_approx', 'creation_heure_approx',
+            'creation_lieu_approx')
 
     def meres_in_order(self):
         return self.parentes_in_order('meres')

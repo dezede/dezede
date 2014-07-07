@@ -57,7 +57,7 @@ class CustomBaseModel(BaseModelAdmin):
                                      self).has_delete_permission(request, obj)
         return self.check_user_ownership(request, obj, has_class_permission)
 
-    # FIXME: renommer cette méthode en get_queryset en passan à Django 1.6.
+    # FIXME: renommer cette méthode en get_queryset en passant à Django 1.6.
     def queryset(self, request):
         user = request.user
         qs = super(CustomBaseModel, self).queryset(request)
@@ -71,7 +71,7 @@ class CustomBaseModel(BaseModelAdmin):
 
 
 COMMON_FIELDSET_LABEL = _('Champs courants')
-ADVANCED_FIELDSET_LABEL = _('Champs courants')
+ADVANCED_FIELDSET_LABEL = _('Champs avancés')
 PERIODE_D_ACTIVITE_FIELDSET = (_('Période d’activité'), {
     'fields': (('debut', 'debut_precision'), ('fin', 'fin_precision'))
 })
@@ -158,11 +158,6 @@ class CustomTabularInline(TabularInline, CustomBaseModel):
 class CustomStackedInline(StackedInline, CustomBaseModel):
     extra = 0
     exclude = ('owner',)
-
-
-class AncrageSpatioTemporelInline(CustomTabularInline):
-    model = AncrageSpatioTemporel
-    classes = ('grp-collapse grp-closed',)
 
 
 class OeuvreMereInline(CustomTabularInline):
@@ -509,7 +504,6 @@ class LieuCommonAdmin(AutoriteAdmin):
     }
     filter_horizontal = ('illustrations', 'documents',)
     readonly_fields = ('__str__', 'html', 'link',)
-#    inlines = (AncrageSpatioTemporelInline,)
     fieldsets = (
         (COMMON_FIELDSET_LABEL, {
             'fields': ('nom', 'parent', 'nature', 'historique',),
@@ -576,40 +570,20 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
     )
 
 
-class AncrageSpatioTemporelAdmin(VersionAdmin, CommonAdmin):
-    list_display = ('__str__', 'calc_date', 'calc_heure', 'calc_lieu',)
-    date_hierarchy = 'date'
-    search_fields = ('lieu__nom', 'lieu_approx', 'date_approx',
-                     'lieu__parent__nom', 'heure_approx',)
-    raw_id_fields = ('lieu',)
-    autocomplete_lookup_fields = {
-        'fk': ['lieu'],
-    }
-    fieldsets = (
-        (None, {
-            'fields': (('date', 'date_approx',), ('heure', 'heure_approx',),
-                       ('lieu', 'lieu_approx',))
-        }),
-    )
-
-
 class IndividuAdmin(VersionAdmin, AutoriteAdmin):
     list_per_page = 20
     list_display = ('__str__', 'nom', 'prenoms',
-                    'pseudonyme', 'titre', 'ancrage_naissance',
-                    'ancrage_deces', 'calc_professions', 'link',)
+                    'pseudonyme', 'titre', 'naissance',
+                    'deces', 'calc_professions', 'link',)
     list_editable = ('nom', 'titre',)
     search_fields = ('nom', 'pseudonyme', 'nom_naissance',
                      'prenoms',)
     list_filter = ('titre',)
     form = IndividuForm
-    raw_id_fields = ('ancrage_naissance', 'ancrage_deces',
-                     'professions', 'ancrage_approx',
+    raw_id_fields = ('naissance_lieu', 'deces_lieu', 'professions',
                      'illustrations', 'documents',)
-    related_lookup_fields = {
-        'fk': ('ancrage_naissance', 'ancrage_deces', 'ancrage_approx'),
-    }
     autocomplete_lookup_fields = {
+        'fk': ('naissance_lieu', 'deces_lieu'),
         'm2m': ('professions', 'parentes', 'illustrations',
                 'documents'),
     }
@@ -622,20 +596,35 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
                        'pseudonyme',
                        ('particule_nom_naissance', 'nom_naissance',),
                        ('titre', 'designation',),
-                       ('ancrage_naissance', 'ancrage_deces',),
                        'professions',),
+        }),
+        (_('Naissance'), {
+            'fields': (
+                ('naissance_date', 'naissance_date_approx'),
+                ('naissance_lieu', 'naissance_lieu_approx'))
+        }),
+        (_('Décès'), {
+            'fields': (
+                ('deces_date', 'deces_date_approx'),
+                ('deces_lieu', 'deces_lieu_approx'))
         }),
         FILES_FIELDSET,
         (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed',),
-            'fields': ('ancrage_approx', 'biographie',),
+            'fields': ('biographie',),
         }),
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
-    fieldsets_and_inlines_order = ('f', 'i', 'i')
+    fieldsets_and_inlines_order = ('f', 'f', 'f', 'i', 'i')
+
+    def queryset(self, request):
+        qs = super(IndividuAdmin, self).queryset(request)
+        return qs.select_related(
+            'naissance_lieu', 'deces_lieu', 'etat', 'owner'
+        ).prefetch_related('professions')
 
 
 class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
@@ -863,19 +852,16 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     form = OeuvreForm
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
                     'caracteristiques_html', 'auteurs_html',
-                    'ancrage_creation', 'link',)
+                    'creation', 'link',)
     list_editable = ('genre',)
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',
                      'auteurs__individu__nom')
     list_filter = ('genre',)
     raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
-                     'ancrage_creation', 'pupitres', 'documents',
+                     'creation_lieu', 'pupitres', 'documents',
                      'illustrations',)
-    related_lookup_fields = {
-        'fk': ('ancrage_creation',)
-    }
     autocomplete_lookup_fields = {
-        'fk': ('genre', 'contenu_dans'),
+        'fk': ('genre', 'contenu_dans', 'creation_lieu'),
         'm2m': ('caracteristiques', 'pupitres',
                 'documents', 'illustrations'),
     }
@@ -889,7 +875,14 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
         }),
         (_('Autres champs courants'), {
             'fields': ('genre', 'caracteristiques',
-                       'ancrage_creation', 'pupitres', 'contenu_dans',),
+                       'pupitres', 'contenu_dans',),
+        }),
+        (_('Création'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': (
+                ('creation_date', 'creation_date_approx'),
+                ('creation_heure', 'creation_heure_approx'),
+                ('creation_lieu', 'creation_lieu_approx'))
         }),
         FILES_FIELDSET,
         (ADVANCED_FIELDSET_LABEL, {
@@ -901,7 +894,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
 #            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
-    fieldsets_and_inlines_order = ('f', 'i', 'f', 'i', 'i')
+    fieldsets_and_inlines_order = ('f', 'i', 'f', 'f', 'i', 'i')
 
 
 class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
@@ -922,28 +915,34 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'link',)
     list_editable = ('relache', 'circonstance',)
-    search_fields = ('circonstance', 'ancrage_debut__lieu__nom')
+    search_fields = ('circonstance', 'debut_lieu__nom')
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
-    raw_id_fields = ('ancrage_debut', 'ancrage_fin', 'caracteristiques',
+    raw_id_fields = ('debut_lieu', 'fin_lieu', 'caracteristiques',
                      'documents', 'illustrations',)
-    related_lookup_fields = {
-        'fk': ('ancrage_debut', 'ancrage_fin'),
-    }
     autocomplete_lookup_fields = {
+        'fk': ('debut_lieu', 'fin_lieu'),
         'm2m': ('caracteristiques', 'documents', 'illustrations'),
     }
     readonly_fields = ('__str__', 'html', 'link')
     inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,
                SourceInline)
     fieldsets = (
+        (_('Début'), {
+            'fields': (
+                ('debut_date', 'debut_date_approx'),
+                ('debut_heure', 'debut_heure_approx'),
+                ('debut_lieu', 'debut_lieu_approx'))
+        }),
+        (_('Fin'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': (
+                ('fin_date', 'fin_date_approx'),
+                ('fin_heure', 'fin_heure_approx'),
+                ('fin_lieu', 'fin_lieu_approx'))
+        }),
         (COMMON_FIELDSET_LABEL, {
-            'description': _(
-                'Commencez par <strong>saisir ces quelques champs</strong> '
-                'avant d’ajouter des <em>éléments de programme</em> '
-                'plus bas.'),
-            'fields': (('ancrage_debut', 'ancrage_fin',),
-                       ('circonstance', 'relache',), 'caracteristiques',),
+            'fields': (('circonstance', 'relache',), 'caracteristiques',),
         }),
         FILES_FIELDSET,
 #        (_('Champs générés (Méthodes)'), {
@@ -951,7 +950,7 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
 #            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
-    fieldsets_and_inlines_order = ('f', 'i', 'i')
+    fieldsets_and_inlines_order = ('f', 'f', 'f', 'i', 'i')
 
 
 class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
@@ -1002,7 +1001,6 @@ site.register(LieuDivers, LieuDiversAdmin)
 site.register(Institution, InstitutionAdmin)
 site.register(Saison, SaisonAdmin)
 site.register(Profession, ProfessionAdmin)
-site.register(AncrageSpatioTemporel, AncrageSpatioTemporelAdmin)
 site.register(TypeDeParente, TypeDeParenteAdmin)
 site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)

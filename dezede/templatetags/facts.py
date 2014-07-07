@@ -57,16 +57,16 @@ def event_oeuvres(event):
 def on_this_day():
     now = datetime.now()
     events = valid_events().filter(
-        ancrage_debut__date__month=now.month,
-        ancrage_debut__date__day=now.day,
-        ancrage_debut__lieu__isnull=False)
+        debut_date__month=now.month,
+        debut_date__day=now.day,
+        debut_lieu__isnull=False)
 
     e = events[randrange(events.count())]
 
     out = h3(ugettext('Il y a %s ans aujourd’hui')
-             % (now.year - e.ancrage_debut.date.year))
+             % (now.year - e.debut_date.year))
     out += h4(ugettext('On donnait %s') % event_oeuvres(e))
-    out += p('à %s' % e.ancrage_debut.lieu.ancestors_until_referent()[0])
+    out += p('à %s' % e.debut_lieu.ancestors_until_referent()[0])
     out += read_more(e)
     return out
 
@@ -96,8 +96,8 @@ def famous_event(n=10):
         else:
             break
 
-    out += h4(capfirst(e.ancrage_debut.calc_moment()))
-    out += h4(e.ancrage_debut.calc_lieu(tags=False))
+    out += h4(capfirst(e.debut.moment_str()))
+    out += h4(e.debut.lieu_str(tags=False))
     out += p(ugettext('On donnait %s') % event_oeuvres(e))
     out += read_more(e)
     return out
@@ -110,10 +110,10 @@ def traveller():
     Lieu.objects.values('ancrages')
     travellers = valid_individus().order_by(
         'elements_de_distribution__elements_de_programme__'
-        'evenement__ancrage_debut__lieu'
+        'evenement__debut_lieu'
     ).annotate(
         n_lieux=Count('elements_de_distribution__elements_de_programme__'
-                      'evenement__ancrage_debut__lieu')).filter(n_lieux__gte=5)
+                      'evenement__debut_lieu')).filter(n_lieux__gte=5)
     t = travellers[randrange(travellers.count())]
     out += h4(t.nom_complet(links=False))
     subject = ugettext('Elle') if t.is_feminin() else ugettext('Il')
@@ -227,9 +227,9 @@ def centenarian():
     dpy = 365.25
     an = timedelta(days=100*dpy).days
     centenarians = Individu.objects.filter(
-        ancrage_deces__date__gte=F('ancrage_naissance__date') + an)
+        deces_date__gte=F('naissance_date') + an)
     c = centenarians[randrange(centenarians.count())]
-    age = int((c.ancrage_deces.date - c.ancrage_naissance.date).days / dpy)
+    age = int((c.deces_date - c.naissance_date).days / dpy)
 
     out += h4(c.nom_complet(links=False))
     subject = ugettext('Elle') if c.is_feminin() else ugettext('Il')

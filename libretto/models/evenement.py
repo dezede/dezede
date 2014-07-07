@@ -5,10 +5,9 @@ import warnings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey, \
                                                 GenericRelation
-from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
-    OneToOneField, BooleanField, PositiveSmallIntegerField, permalink, Q, \
+    BooleanField, PositiveSmallIntegerField, permalink, Q, \
     PositiveIntegerField, get_model, PROTECT, Count
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
@@ -17,8 +16,8 @@ from cache_tools import model_method_cached, cached_ugettext as ugettext, \
     cached_ugettext_lazy as _
 from .common import (
     CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
-    OrderedDefaultDict, PublishedManager, PublishedQuerySet,
-    TypeDeCaracteristique, Caracteristique)
+    PublishedManager, PublishedQuerySet,
+    TypeDeCaracteristique, Caracteristique, AncrageSpatioTemporel)
 from .functions import capfirst, str_list, str_list_w_last, href, hlp, \
     microdata
 
@@ -292,11 +291,11 @@ class ElementDeProgramme(AutoriteModel):
 
 class EvenementQuerySet(PublishedQuerySet):
     def yearly_counts(self):
-        return get_model('libretto', 'AncrageSpatioTemporel').objects.filter(
-            Q(evenements_debuts__in=self) | Q(evenements_fins__in=self)) \
-            .extra({'year': connection.ops.date_trunc_sql('year', 'date')}) \
-            .values('year').annotate(count=Count('evenements_debuts')) \
-            .order_by('year')
+        return (
+            self.extra({'year': connection.ops.date_trunc_sql('year',
+                                                              'debut_date')})
+            .values('year').annotate(count=Count('pk'))
+            .order_by('year'))
 
 
 class EvenementManager(PublishedManager):
@@ -308,14 +307,9 @@ class EvenementManager(PublishedManager):
 
 @python_2_unicode_compatible
 class Evenement(AutoriteModel):
-    ancrage_debut = OneToOneField(
-        'AncrageSpatioTemporel', related_name='evenements_debuts',
-        db_index=True, on_delete=PROTECT,
-        verbose_name=_('ancrage spatio-temporel de début'))
-    ancrage_fin = OneToOneField(
-        'AncrageSpatioTemporel', related_name='evenements_fins', blank=True,
-        null=True, db_index=True, on_delete=PROTECT,
-        verbose_name=_('ancrage spatio-temporel de fin'))
+    debut = AncrageSpatioTemporel(('date', 'lieu'),
+                                  short_description=_('début'))
+    fin = AncrageSpatioTemporel(short_description=_('fin'))
     relache = BooleanField(_('relâche'), db_index=True)
     circonstance = CharField(_('circonstance'), max_length=500, blank=True,
                              db_index=True)
@@ -334,7 +328,9 @@ class Evenement(AutoriteModel):
     class Meta(object):
         verbose_name = ungettext_lazy('événement', 'événements', 1)
         verbose_name_plural = ungettext_lazy('événement', 'événements', 2)
-        ordering = ('ancrage_debut',)
+        ordering = ('debut_date', 'debut_heure', 'debut_lieu',
+                    'debut_date_approx', 'debut_heure_approx',
+                    'debut_lieu_approx')
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
@@ -386,11 +382,11 @@ class Evenement(AutoriteModel):
         if self.relache:
             relache = microdata(ugettext('Relâche'), 'eventType', tags=tags)
 
-        lieu = microdata(self.ancrage_debut.calc_lieu(tags), 'location',
+        lieu = microdata(self.debut.lieu_str(tags), 'location',
                          tags=tags)
 
         return str_list((lieu, circonstance,
-                         self.ancrage_debut.calc_heure(), relache))
+                         self.debut.heure_str(), relache))
 
     html.short_description = _('rendu HTML')
     html.allow_tags = True
@@ -412,7 +408,7 @@ class Evenement(AutoriteModel):
             elements_de_programme__evenement=self)
 
     def __str__(self):
-        out = self.ancrage_debut.calc_date(False)
+        out = self.debut.date_str(False)
         out = capfirst(out)
         out += '\u00A0> ' + self.html(False)
         return strip_tags(out)
@@ -421,11 +417,11 @@ class Evenement(AutoriteModel):
     def autocomplete_search_fields():
         return (
             'circonstance__icontains',
-            'ancrage_debut__lieu__nom__icontains',
-            'ancrage_debut__lieu__parent__nom__icontains',
-            'ancrage_debut__date__icontains',
-            'ancrage_debut__heure__icontains',
-            'ancrage_debut__lieu_approx__icontains',
-            'ancrage_debut__date_approx__icontains',
-            'ancrage_debut__heure_approx__icontains',
+            'debut_lieu__nom__icontains',
+            'debut_lieu__parent__nom__icontains',
+            'debut_date__icontains',
+            'debut_heure__icontains',
+            'debut_lieu_approx__icontains',
+            'debut_date_approx__icontains',
+            'debut_heure_approx__icontains',
         )

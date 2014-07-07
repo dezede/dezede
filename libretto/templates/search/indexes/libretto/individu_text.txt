@@ -7,6 +7,8 @@
     {{ object.prenoms }}
     {{ object.prenoms_complets }}
     {{ object.calc_professions }}
+    {{ object.naissance }}
+    {{ object.deces }}
     {{ object }}
     {{ object.notes }}
   {% endautoescape %}

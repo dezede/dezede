@@ -2,19 +2,22 @@
 
 from __future__ import unicode_literals
 from collections import OrderedDict
+import datetime
 from django.conf import settings
 from django.contrib.contenttypes.generic import GenericRelation
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import (
     Model, CharField, BooleanField, ManyToManyField, ForeignKey, TextField,
-    Manager, PROTECT, Q, SmallIntegerField, Count)
+    Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
+    get_model)
 from django.db.models.query import EmptyQuerySet
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.template.defaultfilters import time
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext_lazy
+from django.utils.translation import ungettext_lazy, ugettext
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
 from mptt.managers import TreeManager
@@ -22,9 +25,9 @@ from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
 from tinymce.models import HTMLField
 from cache_tools import cached_ugettext_lazy as _
-from .functions import href, ex, hlp, capfirst, str_list
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
+from .functions import href, ex, hlp, capfirst, str_list, date_html
 
 
 __all__ = (
@@ -80,6 +83,8 @@ class CommonEmptyQuerySet(EmptyQuerySet):
         return self
 
 
+# TODO: Personnaliser order_by pour simuler automatiquement NULLS LAST
+# en faisant comme https://coderwall.com/p/cjluxg
 class CommonQuerySet(TypographicQuerySet):
     def _get_no_related_objects_filter_kwargs(self):
         meta = self.model._meta
@@ -323,6 +328,177 @@ class CommonTreeManager(CommonManager, TreeManager):
 
     def get_descendants(self, *args, **kwargs):
         return self.get_query_set().get_descendants(*args, **kwargs)
+
+
+@python_2_unicode_compatible
+class AncrageSpatioTemporel(object):
+    def __init__(self, not_null_fields=(),
+                 has_date=True, has_heure=True, has_lieu=True, approx=True,
+                 short_description=None):
+        self.not_null_fields = not_null_fields
+        self.has_date = has_date
+        self.has_heure = has_heure
+        self.has_lieu = has_lieu
+        self.approx = approx
+        if short_description is not None:
+            self.short_description = short_description
+
+    def create_fields(self):
+        fields = []
+        if self.has_date:
+            is_null = 'date' not in self.not_null_fields
+            fields.append(('date', DateField(
+                _('date'), blank=is_null, null=is_null, db_index=True,
+                help_text=DATE_MSG)))
+            if self.approx:
+                is_null = 'date_approx' not in self.not_null_fields
+                fields.append(('date_approx', CharField(
+                    _('date (approximative)'), max_length=200, blank=is_null,
+                    db_index=True,
+                    help_text=_('Ne remplir que si la date est imprécise.'))))
+        if self.has_heure:
+            is_null = 'heure' not in self.not_null_fields
+            fields.append(('heure', TimeField(
+                _('heure'), blank=is_null, null=is_null, db_index=True)))
+            if self.approx:
+                is_null = 'heure_approx' not in self.not_null_fields
+                fields.append(('heure_approx', CharField(
+                    _('heure (approximative)'), max_length=200, blank=is_null,
+                    db_index=True,
+                    help_text=_('Ne remplir que si l’heure est imprécise.'))))
+        if self.has_lieu:
+            is_null = 'lieu' not in self.not_null_fields
+            fields.append(('lieu', ForeignKey(
+                'Lieu', blank=is_null, null=is_null, verbose_name=_('lieu'),
+                related_name='%s_%s_set' % (self.model._meta.module_name,
+                                            self.name))))
+            if self.approx:
+                is_null = 'lieu_approx' not in self.not_null_fields
+                fields.append(('lieu_approx', CharField(
+                    _('lieu (approximatif)'), max_length=200,
+                    blank=is_null, db_index=is_null,
+                    help_text=_('Ne remplir que si le lieu (ou institution) '
+                                'est imprécis(e).'))))
+        return fields
+
+    def contribute_to_class(self, model, name):
+        self.name = name
+        self.model = model
+        self.prefix = name + '_'
+
+        self.fields = self.create_fields()
+
+        self.admin_order_field = self.prefix + self.fields[0][0]
+
+        model._meta.add_virtual_field(self)
+        setattr(model, name, self)
+
+        for fieldname, field in self.fields:
+            field.contribute_to_class(model, self.prefix+fieldname)
+
+        self.fields = dict(self.fields)
+
+    def instance_bound(self):
+        return hasattr(self, 'instance') and self.instance is not None
+
+    def __getattr__(self, key):
+        try:
+            return object.__getattribute__(self, key)
+        except AttributeError:
+            if self.instance_bound() and key in self.fields:
+                return getattr(self.instance, self.prefix+key)
+            raise
+
+    def __setattr__(self, key, value):
+        if self.instance_bound() and key in self.fields:
+            setattr(self.instance, self.prefix + key, value)
+        else:
+            super(AncrageSpatioTemporel, self).__setattr__(key, value)
+
+    def __get__(self, instance, owner):
+        self.owner = owner
+        self.instance = instance
+        return self
+
+    def __set__(self, instance, value):
+        self.instance = instance
+        super(AncrageSpatioTemporel, self).__set__(instance, value)
+
+    def __nonzero__(self):
+        return (self.instance_bound()
+                and any(getattr(self, k) for k in self.fields))
+
+    def __str__(self):
+        return strip_tags(self.html(tags=False, short=True))
+
+    def __repr__(self):
+        return '<AncrageSpatioTemporel: %s>' % self.name
+
+    def date_str(self, tags=True, short=False):
+        if not self.has_date:
+            return ''
+        if self.approx and self.date_approx:
+            return self.date_approx
+        return date_html(self.date, tags, short)
+
+    def heure_str(self):
+        if not self.has_heure:
+            return ''
+        if self.approx and self.heure_approx:
+            return self.heure_approx
+        return time(self.heure, ugettext('H\hi'))
+
+    def moment_str(self, tags=True, short=False):
+        l = []
+        date = self.date_str(tags, short)
+        heure = self.heure_str()
+        pat_date = (ugettext('%(date)s') if self.has_date and self.date
+                    else ugettext('%(date)s'))
+        pat_heure = (ugettext('à %(heure)s') if self.has_heure and self.heure
+                     else ugettext('%(heure)s'))
+        l.append(pat_date % {'date': date})
+        l.append(pat_heure % {'heure': heure})
+        return str_list(l, ' ')
+
+    def lieu_str(self, tags=True, short=False):
+        try:
+            if self.has_lieu and self.lieu:
+                return self.lieu.html(tags, short)
+        except get_model('libretto', 'Lieu').DoesNotExist:
+            pass
+        if self.has_lieu and self.approx:
+            return self.lieu_approx
+        return ''
+
+    def isoformat(self):
+        if not (self.has_date and self.date):
+            return ''
+        if self.has_heure and self.heure:
+            return datetime.datetime.combine(self.date, self.heure).isoformat()
+        return self.date.isoformat()
+
+    def html(self, tags=True, short=False):
+        out = str_list((self.lieu_str(tags, short),
+                        self.moment_str(tags, short)))
+        return capfirst(out)
+
+    def short_html(self, tags=True):
+        return self.html(tags, short=True)
+
+    def get_preciseness(self):
+        score = 0
+        for k in ('date', 'date_approx', 'lieu', 'lieu_approx'):
+            if getattr(self, k):
+                score += 1 if '_approx' in k else 2
+        return score
+
+    def is_more_precise_than(self, other):
+        if other.__class__ is not self.__class__:
+            return False
+
+        if self.get_preciseness() > other.get_preciseness():
+            return True
+        return False
 
 
 #

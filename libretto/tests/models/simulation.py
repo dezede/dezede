@@ -206,24 +206,21 @@ class SeleniumTest(LiveServerTestCase):
         with self.new_popup():
             self.get_link('Ajouter événement').click()
 
-            # Créé son ancrage de début.
-            self.get_by_css('.ancrage_debut .related-lookup').click()
-            with self.new_popup(add='ancrage spatio-temporel'):
-                self.get_by_name('date').send_keys('1/1/1901')
+            self.get_by_name('debut_date').send_keys('1/1/1901')
 
-                # Créé le lieu de l'ancrage de début.
-                self.get_by_css('.lieu .related-lookup').click()
-                with self.new_popup(add='lieu ou institution'):
-                    self.save()  # Choisit "lieu" parmi les polymorphes.
-                    self.get_by_name('nom').send_keys('Rouen')
+            # Créé le lieu de l'ancrage de début.
+            self.get_by_css('.debut_lieu .related-lookup').click()
+            with self.new_popup(add='lieu ou institution'):
+                self.save()  # Choisit "lieu" parmi les polymorphes.
+                self.get_by_name('nom').send_keys('Rouen')
 
-                    # Créé la nature du lieu de l'ancrage de début.
-                    self.get_by_css('.nature .add-another').click()
-                    with self.new_popup():
-                        self.get_by_name('nom').send_keys('ville')
-                        self.get_by_name('referent').click()
-                    select = Select(self.get_by_name('nature'))
-                    select.select_by_visible_text('ville')
+                # Créé la nature du lieu de l'ancrage de début.
+                self.get_by_css('.nature .add-another').click()
+                with self.new_popup():
+                    self.get_by_name('nom').send_keys('ville')
+                    self.get_by_name('referent').click()
+                select = Select(self.get_by_name('nature'))
+                select.select_by_visible_text('ville')
 
             # Ajoute un élément de programme.
 

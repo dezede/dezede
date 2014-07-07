@@ -11,9 +11,9 @@
 
       \medskip
 
-      {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
-      {% if evenement.ancrage_fin %}
-        − {{ evenement.ancrage_debut.calc_date|capfirst|safe }}
+      {{ evenement.debut.date_str|capfirst|safe }}
+      {% if evenement.fin %}
+        − {{ evenement.fin.date_str|capfirst|safe }}
       {% endif %}
     }
   \end{center}

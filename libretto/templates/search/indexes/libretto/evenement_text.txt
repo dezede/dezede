@@ -3,8 +3,8 @@
 {% filter striptags_n_chars %}
   {% autoescape off %}
     {{ object.circonstance }}
-    {{ object.ancrage_debut|default_if_none:'' }}
-    {{ object.ancrage_fin|default_if_none:'' }}
+    {{ object.debut }}
+    {{ object.fin }}
     {{ object.html }}
     {{ object.distribution.prefetch.html|safe }}
     {% for element in object.programme.all %}

@@ -3,48 +3,78 @@
 from __future__ import unicode_literals
 from django.test import TestCase
 from django.utils.encoding import force_text
-import johnny.cache
-from ....api import build_ancrage
+from libretto.api import build_ancrage
+from libretto.models import Evenement
 
 
 class BuildAncrageTestCase(TestCase):
     cleans_up_after_itself = True
 
     def setUp(self):
-        johnny.cache.disable()
+        self.evenement = Evenement()
+        self.ancrage = self.evenement.debut
 
-    def test_function(self):
-        with self.assertNumQueries(24):
-            a = build_ancrage('Paris, Concert Spirituel, ca. 1852')
-        self.assertIsNotNone(a.pk)
-        self.assertEqual(force_text(a), 'Concert Spirituel, ca. 1852')
+    def test_lieu_with_parent_and_date_approx(self):
+        txt = 'Paris, Concert Spirituel, ca. 1852'
+        out = 'Concert Spirituel, ca. 1852'
 
-        with self.assertNumQueries(15):
-            a = build_ancrage('Concert Spirituel, 5/7/1852')
-        self.assertIsNotNone(a.pk)
-        self.assertEqual(force_text(a), 'Concert Spirituel, 5 juillet 1852')
+        with self.assertNumQueries(12):
+            build_ancrage(self.ancrage, txt, commit=False)
+        self.assertEqual(force_text(self.ancrage), out)
 
-        with self.assertNumQueries(14):
-            a = build_ancrage('Concert Spirituel, 1852-7-5')
-        self.assertIsNotNone(a.pk)
-        self.assertEqual(force_text(a), 'Concert Spirituel, 5 juillet 1852')
+        with self.assertNumQueries(23):
+            build_ancrage(self.ancrage, txt)
+        self.assertEqual(force_text(self.ancrage), out)
 
-        with self.assertNumQueries(14):
-            a = build_ancrage('Concert Spirituel, 5 juillet 1852')
-        self.assertIsNotNone(a.pk)
-        self.assertEqual(force_text(a), 'Concert Spirituel, 5 juillet 1852')
+    def test_lieu_and_date(self):
+        txt = 'Concert Spirituel, 5/7/1852'
+        out = 'Concert Spirituel, 5 juillet 1852'
 
-        with self.assertNumQueries(1):
-            a = build_ancrage('5/7/1852')
-        self.assertIsNotNone(a.pk)
-        self.assertEqual(force_text(a), '5 juillet 1852')
+        with self.assertNumQueries(10):
+            build_ancrage(self.ancrage, txt, commit=False)
+        self.assertEqual(force_text(self.ancrage), out)
 
-        with self.assertNumQueries(1):
-            a = build_ancrage('1852')
-        self.assertIsNotNone(a.pk)
-        self.assertEqual(force_text(a), '1852')
+        with self.assertNumQueries(17):
+            build_ancrage(self.ancrage, txt)
+        self.assertEqual(force_text(self.ancrage), out)
 
+    def test_lieu_and_date_iso(self):
+        txt = 'Concert Spirituel, 1852-7-5'
+        out = 'Concert Spirituel, 5 juillet 1852'
+
+        with self.assertNumQueries(9):
+            build_ancrage(self.ancrage, txt, commit=False)
+        self.assertEqual(force_text(self.ancrage), out)
+
+        with self.assertNumQueries(17):
+            build_ancrage(self.ancrage, txt)
+        self.assertEqual(force_text(self.ancrage), out)
+
+    def test_lieu_and_date_fr(self):
+        txt = 'Concert Spirituel, 5 juillet 1852'
+
+        with self.assertNumQueries(9):
+            build_ancrage(self.ancrage, txt, commit=False)
+        self.assertEqual(force_text(self.ancrage), txt)
+
+        with self.assertNumQueries(17):
+            build_ancrage(self.ancrage, txt)
+        self.assertEqual(force_text(self.ancrage), txt)
+
+    def test_date_only(self):
         with self.assertNumQueries(0):
-            a = build_ancrage('18..', commit=False)
-        self.assertIsNone(a.pk)
-        self.assertEqual(force_text(a), '18..')
+            build_ancrage(self.ancrage, '5/7/1852', commit=False)
+        self.assertEqual(force_text(self.ancrage), '5 juillet 1852')
+
+        with self.assertNumQueries(1):
+            build_ancrage(self.ancrage, '5/7/1852')
+        self.assertEqual(force_text(self.ancrage), '5 juillet 1852')
+
+    def test_date_approx_only(self):
+        with self.assertNumQueries(0):
+            build_ancrage(self.ancrage, '18..', commit=False)
+        self.assertEqual(force_text(self.ancrage), '18..')
+
+        with self.assertNumQueries(1):
+            build_ancrage(self.ancrage, '1852')
+        self.assertEqual(force_text(self.ancrage), '1852')

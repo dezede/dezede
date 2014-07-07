@@ -143,9 +143,9 @@ def parse_ancrage(ancrage_str, commit=False):
     return {'date_approx': ancrage_str}
 
 
-def build_ancrage(ancrage_str, commit=True):
+def build_ancrage(ancrage, ancrage_str, commit=True):
     kwargs = parse_ancrage(ancrage_str, commit=commit)
-    ancrage = AncrageSpatioTemporel(**kwargs)
+    for k, v in kwargs.items():
+        setattr(ancrage, k, v)
     if commit:
-        ancrage.save()
-    return ancrage
+        ancrage.instance.save()

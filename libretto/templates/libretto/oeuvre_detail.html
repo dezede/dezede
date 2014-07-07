@@ -14,11 +14,13 @@
     <h3>
       {{ oeuvre.auteurs_html }}
     </h3>
-    <h4>
-      <span title="{% trans 'Création' %}">
-        {{ oeuvre.ancrage_creation.html|default:'' }}
-      </span>
-    </h4>
+    {% if oeuvre.creation %}
+      <h4>
+        <span title="{% trans 'Création' %}">
+          {{ oeuvre.creation.html }}
+        </span>
+      </h4>
+    {% endif %}
   </div>
 {% endblock %}
 

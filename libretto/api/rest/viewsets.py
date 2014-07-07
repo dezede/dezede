@@ -16,11 +16,6 @@ class LieuViewSet(ReadOnlyModelViewSet):
     serializer_class = LieuSerializer
 
 
-class AncrageSpatioTemporelViewSet(ReadOnlyModelViewSet):
-    model = AncrageSpatioTemporel
-    serializer_class = AncrageSpatioTemporelSerializer
-
-
 class OeuvreViewSet(ReadOnlyModelViewSet):
     model = Oeuvre
     serializer_class = OeuvreSerializer
