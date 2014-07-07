@@ -1,5 +1,6 @@
 from ajax_select import LookupChannel
 from bs4 import BeautifulSoup
+from django.db.models import Count
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags
 from libretto.search_indexes import autocomplete_search
@@ -60,18 +61,20 @@ class CharFieldLookupChannel(LookupChannel):
         model = self.model
         attr = self.attr
         filters = {attr + '__istartswith': q}
-        all_results = model.objects.filter(**filters) \
-                                   .values_list(attr, flat=True) \
-                                   .distinct().order_by(attr)
-        results = sorted(all_results,
-                       key=lambda r: model.objects.filter(**{attr: r}).count())
-        results.reverse()
-        return results[:7]
+        all_results = (model.objects.filter(**filters)
+                       .values_list(attr).order_by(attr)
+                       .annotate(n=Count('pk')).order_by('-n'))
+        return [v for v, n in all_results[:7]]
 
 
 class SourceNomLookup(CharFieldLookupChannel):
     model = Source
     attr = 'nom'
+
+
+class IndividuPrenomsLookup(CharFieldLookupChannel):
+    model = Individu
+    attr = 'prenoms'
 
 
 class EnsembleParticuleNomLookup(CharFieldLookupChannel):

@@ -590,12 +590,8 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
     readonly_fields = ('__str__', 'html', 'link',)
     inlines = (IndividuParentInline, IndividuEnfantInline)
     fieldsets = (
-        (COMMON_FIELDSET_LABEL, {
-            'fields': (('particule_nom', 'nom',),
-                       ('prenoms', 'prenoms_complets'),
-                       'pseudonyme',
-                       ('particule_nom_naissance', 'nom_naissance',),
-                       ('titre', 'designation',),
+        (None, {
+            'fields': (('titre', 'prenoms'), ('particule_nom', 'nom'),
                        'professions',),
         }),
         (_('Naissance'), {
@@ -608,17 +604,20 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
                 ('deces_date', 'deces_date_approx'),
                 ('deces_lieu', 'deces_lieu_approx'))
         }),
-        FILES_FIELDSET,
-        (ADVANCED_FIELDSET_LABEL, {
+        (_('Informations complémentaires'), {
             'classes': ('grp-collapse grp-closed',),
-            'fields': ('biographie',),
+            'fields': ('pseudonyme',
+                       'prenoms_complets',
+                       ('particule_nom_naissance', 'nom_naissance'),
+                       'designation', 'biographie',),
         }),
+        FILES_FIELDSET,
 #        (_('Champs générés (Méthodes)'), {
 #            'classes': ('grp-collapse grp-closed',),
 #            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
-    fieldsets_and_inlines_order = ('f', 'f', 'f', 'i', 'i')
+    fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'i', 'i')
 
     def queryset(self, request):
         qs = super(IndividuAdmin, self).queryset(request)

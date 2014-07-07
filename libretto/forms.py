@@ -21,6 +21,20 @@ __all__ = (b'IndividuForm', b'EnsembleForm', b'OeuvreForm',
 class IndividuForm(ModelForm):
     class Meta(object):
         model = Individu
+        widgets = {
+            b'prenoms':
+                AutoCompleteWidget('individu__prenoms',
+                                   attrs={'style': 'width: 300px;'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(IndividuForm, self).__init__(*args, **kwargs)
+
+        def apply_style(fieldname, style):
+            self.fields[fieldname].widget.attrs['style'] = style
+
+        apply_style('particule_nom', 'width: 50px;')
+        apply_style('particule_nom_naissance', 'width: 50px;')
 
     def clean_designation(self):
         # Anticipe si la désignation donnera un résultat nul.
