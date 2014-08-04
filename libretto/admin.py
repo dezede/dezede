@@ -9,6 +9,7 @@ from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
 from django.contrib.contenttypes.generic import GenericStackedInline
+from django.contrib.gis.admin import OSMGeoAdmin
 from django.db.models import Q
 from django.forms.models import modelformset_factory
 from polymorphic.admin import (
@@ -492,7 +493,7 @@ class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
     search_fields = ('nom', 'nom_pluriel')
 
 
-class LieuCommonAdmin(AutoriteAdmin):
+class LieuCommonAdmin(OSMGeoAdmin, AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom', 'parent__nom',)
@@ -506,7 +507,7 @@ class LieuCommonAdmin(AutoriteAdmin):
     readonly_fields = ('__str__', 'html', 'link',)
     fieldsets = (
         (COMMON_FIELDSET_LABEL, {
-            'fields': ('nom', 'parent', 'nature', 'historique',),
+            'fields': ('nom', 'parent', 'nature', 'historique', 'point'),
         }),
         FILES_FIELDSET,
 #        (_('Champs générés (Méthodes)'), {
@@ -514,6 +515,13 @@ class LieuCommonAdmin(AutoriteAdmin):
 #            'fields': ('__str__', 'html', 'link',),
 #        }),
     )
+    layerswitcher = False
+    default_lon = 300000
+    default_lat = 5900000
+    default_zoom = 5
+    point_zoom = default_zoom
+    openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.11' \
+                     '/OpenLayers.js'
 
 
 class LieuAdmin(VersionAdmin, LieuCommonAdmin, PolymorphicParentModelAdmin):

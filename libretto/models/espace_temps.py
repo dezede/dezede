@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.contrib.gis.db.models import PointField
 from django.core.exceptions import ValidationError
 from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
                               permalink, Q, PROTECT)
@@ -90,6 +91,7 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     # TODO: Parentés d'institution avec périodes d'activité pour l'histoire des
     # institutions.
     historique = HTMLField(_('historique'), blank=True)
+    point = PointField(blank=True, null=True)
 
     objects = LieuManager()
 

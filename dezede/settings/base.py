@@ -36,7 +36,7 @@ MAINTENANCE_IGNORE_URLS = (
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'dezede',
         'USER': 'dezede',
         'OPTIONS': {
@@ -92,6 +92,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django.contrib.gis',
     'accounts',
     'dezede',
     'haystack',
