@@ -307,7 +307,7 @@ class EvenementManager(PublishedManager):
 
 @python_2_unicode_compatible
 class Evenement(AutoriteModel):
-    debut = AncrageSpatioTemporel(('date', 'lieu'),
+    debut = AncrageSpatioTemporel(('date',),
                                   short_description=_('début'))
     fin = AncrageSpatioTemporel(short_description=_('fin'))
     relache = BooleanField(_('relâche'), db_index=True)
