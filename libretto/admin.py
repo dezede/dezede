@@ -885,7 +885,6 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                        'pupitres', 'contenu_dans',),
         }),
         (_('Création'), {
-            'classes': ('grp-collapse grp-closed',),
             'fields': (
                 ('creation_date', 'creation_date_approx'),
                 ('creation_heure', 'creation_heure_approx'),
