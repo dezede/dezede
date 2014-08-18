@@ -318,10 +318,18 @@ class Evenement(AutoriteModel):
         related_name='evenements', blank=True, null=True,
         verbose_name=_('caractéristiques'))
     distribution = GenericRelation(ElementDeDistribution)
-    # TODO: Ajouter code de programme au événements pour faire des
-    # rapprochements entre événements et faciliter la copie de programmes ?
-    # TODO: Ajouter jauge et jauge variable (petit entier + booléen)
-    # TODO: Ajouter les fréquentations, entrées.
+
+    code_programme = CharField(_('code du programme'), max_length=55,
+                               blank=True)
+    exoneres = PositiveIntegerField(_('entrées exonérées'), null=True,
+                                    blank=True)
+    payantes = PositiveIntegerField(_('entrées payantes'), null=True,
+                                    blank=True)
+    frequentation = PositiveIntegerField(_('fréquentation totale'), null=True,
+                                         blank=True)
+    scolaires = PositiveIntegerField(_('entrées scolaires'), null=True,
+                                     blank=True)
+    jauge = PositiveIntegerField(_('jauge'), null=True, blank=True)
 
     objects = EvenementManager()
 

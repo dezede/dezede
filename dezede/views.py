@@ -6,7 +6,6 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.utils.encoding import smart_text
 from django.views.generic import ListView, TemplateView
-from haystack.query import SearchQuerySet
 from haystack.views import SearchView
 from libretto.models import Oeuvre, Lieu, Individu
 from libretto.search_indexes import autocomplete_search

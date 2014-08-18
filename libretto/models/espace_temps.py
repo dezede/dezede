@@ -92,6 +92,7 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     # institutions.
     historique = HTMLField(_('historique'), blank=True)
     point = PointField(blank=True, null=True)
+    code_postal = CharField(_('code postal'), max_length=10, blank=True)
 
     objects = LieuManager()
 
