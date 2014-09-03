@@ -35,8 +35,8 @@ def read_more(obj):
                                     ugettext('En savoir plus…'))
 
 
-def valid_events():
-    return Evenement.objects.exclude(
+def valid_events(request):
+    return Evenement.objects.published(request).exclude(
         programme__oeuvre__titre=''
     ).filter(
         programme__isnull=False,
@@ -44,8 +44,8 @@ def valid_events():
     ).distinct()
 
 
-def valid_individus():
-    return Individu.objects.exclude(nom='Anonyme')
+def valid_individus(request):
+    return Individu.objects.published(request).exclude(nom='Anonyme')
 
 
 def event_oeuvres(event):
@@ -53,10 +53,11 @@ def event_oeuvres(event):
                               ancestors=False, links=False)
 
 
-@register.simple_tag
-def on_this_day():
+@register.simple_tag(takes_context=True)
+def on_this_day(context):
+    request = context['request']
     now = datetime.now()
-    events = valid_events().filter(
+    events = valid_events(request).filter(
         debut_date__month=now.month,
         debut_date__day=now.day,
         debut_lieu__isnull=False)
@@ -71,14 +72,16 @@ def on_this_day():
     return out
 
 
-@register.simple_tag
-def famous_event(n=10):
+@register.simple_tag(takes_context=True)
+def famous_event(context, n=10):
     """
     Affiche l’un des ``n`` événements les plus documentés.
 
     Or les événements les plus documentés sont généralement
     les plus remarquable.
     """
+
+    request = context['request']
 
     out = h3(ugettext('Événement à la une'))
 
@@ -90,7 +93,7 @@ def famous_event(n=10):
     while True:
         pk, n_sources = data[randrange(n)]
         try:
-            e = valid_events().get(pk=pk)
+            e = valid_events(request).get(pk=pk)
         except Evenement.DoesNotExist:
             continue
         else:
@@ -104,11 +107,12 @@ def famous_event(n=10):
 
 
 # FIXME: La requête de ce fact est cassée.
-#@register.simple_tag
-def traveller():
+#@register.simple_tag(takes_context=True)
+def traveller(context):
+    request = context['request']
     out = h3(ugettext('Interprète voyageur'))
     Lieu.objects.values('ancrages')
-    travellers = valid_individus().order_by(
+    travellers = valid_individus(request).order_by(
         'elements_de_distribution__elements_de_programme__'
         'evenement__debut_lieu'
     ).annotate(
@@ -124,8 +128,9 @@ def traveller():
     return out
 
 
-@register.simple_tag
-def prolific_author(n=40):
+@register.simple_tag(takes_context=True)
+def prolific_author(context, n=40):
+    request = context['request']
     out = h3(ugettext('Rencontre avec'))
 
     data = Oeuvre.objects \
@@ -138,7 +143,7 @@ def prolific_author(n=40):
     while True:
         pk, n_oeuvres = data[randrange(n)]
         try:
-            a = valid_individus().get(pk=pk)
+            a = valid_individus(request).get(pk=pk)
         except Individu.DoesNotExist:
             # FIXME: Ici, on cherche un nouvel individu si on tombe
             #        sur Anonyme.  Il faut donc chercher parmi n+1 individus.
