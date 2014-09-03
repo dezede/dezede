@@ -627,6 +627,7 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
     )
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'i', 'i')
 
+    # FIXME: renommer cette méthode en get_queryset en passant à Django 1.6.
     def queryset(self, request):
         qs = super(IndividuAdmin, self).queryset(request)
         return qs.select_related(
@@ -847,7 +848,7 @@ class PupitreAdmin(VersionAdmin, CommonAdmin):
 
     # N'affiche que les pupitres différents pour éviter de flooder les
     # admins de doublons (qui sont pourtant nécessaires).
-    # FIXME: renommer cette méthode en get_queryset en passan à Django 1.6.
+    # FIXME: renommer cette méthode en get_queryset en passant à Django 1.6.
     def queryset(self, request):
         qs = super(PupitreAdmin, self).queryset(request)
         return (qs.order_by('quantite_min', 'quantite_max')
