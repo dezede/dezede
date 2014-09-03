@@ -191,8 +191,6 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
 
 class LieuDivers(Lieu):
-    # TODO: Stocker les codes postaux ?
-
     class Meta(object):
         verbose_name = ungettext_lazy('lieu', 'lieux', 1)
         verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
