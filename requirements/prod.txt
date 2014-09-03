@@ -1,2 +1,2 @@
 # Deployment
-gunicorn==19.0.0
+gunicorn==19.1.1
