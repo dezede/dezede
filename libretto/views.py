@@ -66,7 +66,7 @@ class EvenementListView(AjaxListView, PublishedListView):
     def get_filters(cls, data):
         filters = Q()
         for key, value in data.items():
-            if not value or key not in cls.BINDINGS:
+            if not value or value == '|' or key not in cls.BINDINGS:
                 continue
             if '|' in value:
                 # Sépare les différents objets à partir d'une liste de pk.
