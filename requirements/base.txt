@@ -1,5 +1,5 @@
 # Basics
-Django==1.5.10
+Django==1.6.7
 psycopg2==2.5.4
 
 # Database fields
@@ -9,7 +9,7 @@ django-polymorphic-tree==0.8.11
 django-autoslug==1.7.2
 
 # User interface
-django-grappelli==2.4.10
+django-grappelli==2.5.3
 django-filebrowser==3.5.6
 django-tinymce==1.5.2
 django-crispy-forms==1.4.0
@@ -32,7 +32,7 @@ djangorestframework==2.4.2
 -e git+https://github.com/noirbizarre/django-eztables@daeff682d5113684770c153455410bef160c581b#egg=django-eztables
 
 # Small but powerful tools
-django-reversion==1.8.0
+django-reversion==1.8.2
 django-endless-pagination==2.0
 django-viewsets==0.1.7
 Unipath==1.0

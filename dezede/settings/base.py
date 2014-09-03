@@ -39,11 +39,9 @@ DATABASES = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'dezede',
         'USER': 'dezede',
-        'OPTIONS': {
-            'autocommit': True,
-        },
     },
 }
+CONN_MAX_AGE = None
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

@@ -87,11 +87,11 @@ class IndividuQuerySet(PublishedQuerySet):
 
 
 class IndividuManager(PublishedManager):
-    def get_query_set(self):
+    def get_queryset(self):
         return IndividuQuerySet(self.model, using=self._db)
 
     def are_feminins(self):
-        return self.get_query_set().are_feminins()
+        return self.get_queryset().are_feminins()
 
 
 @python_2_unicode_compatible

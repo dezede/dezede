@@ -10,7 +10,6 @@ from django.db.models import (
     Model, CharField, BooleanField, ManyToManyField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
     get_model)
-from django.db.models.query import EmptyQuerySet
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.template.defaultfilters import time
@@ -75,14 +74,6 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
 #
 
 
-class CommonEmptyQuerySet(EmptyQuerySet):
-    def with_related_objects(self):
-        return self
-
-    def without_related_objects(self):
-        return self
-
-
 # TODO: Personnaliser order_by pour simuler automatiquement NULLS LAST
 # en faisant comme https://coderwall.com/p/cjluxg
 class CommonQuerySet(TypographicQuerySet):
@@ -102,10 +93,6 @@ class CommonQuerySet(TypographicQuerySet):
 class CommonManager(TypographicManager):
     use_for_related_fields = True
     queryset_class = CommonQuerySet
-    empty_queryset_class = CommonEmptyQuerySet
-
-    def get_empty_query_set(self):
-        return self.empty_queryset_class(self.model, using=self._db)
 
 
 class CommonModel(TypographicModel):
@@ -202,24 +189,22 @@ class CommonModel(TypographicModel):
         return smart_text(self)
 
 
-class PublishedEmptyQuerySet(CommonEmptyQuerySet):
-    def published(self, request=None):
-        return self
-
-
 class PublishedQuerySet(CommonQuerySet):
     @staticmethod
     def _get_filters(request=None):
-        if request is None or not request.user.is_authenticated:
-            return (), {'etat__public': True}
-        elif not request.user.is_superuser:
-            return (Q(etat__public=True) | Q(owner=request.user.pk),), {}
-        return (), {}
+        filters = Q(etat__public=True)
+        if request is None:
+            return filters
+
+        if request.user.is_superuser:
+            return Q()
+
+        if request.user.is_authenticated():
+            filters |= Q(owner=request.user.pk)
+        return filters
 
     def published(self, request=None):
-        filter_args, filter_kwargs = self._get_filters(request)
-
-        qs = self.filter(*filter_args, **filter_kwargs)
+        qs = self.filter(self._get_filters(request))
 
         # Automatically orders by the correct ordering.
         ordering = []
@@ -235,10 +220,9 @@ class PublishedQuerySet(CommonQuerySet):
 
 class PublishedManager(CommonManager):
     queryset_class = PublishedQuerySet
-    empty_queryset_class = PublishedEmptyQuerySet
 
     def published(self, request=None):
-        return self.get_query_set().published(request=request)
+        return self.get_queryset().published(request=request)
 
 
 def _get_default_etat():
@@ -322,12 +306,12 @@ class CommonTreeQuerySet(CommonQuerySet):
 class CommonTreeManager(CommonManager, TreeManager):
     queryset_class = CommonTreeQuerySet
 
-    def get_query_set(self):
+    def get_queryset(self):
         return self.queryset_class(self.model, using=self._db).order_by(
             self.tree_id_attr, self.left_attr)
 
     def get_descendants(self, *args, **kwargs):
-        return self.get_query_set().get_descendants(*args, **kwargs)
+        return self.get_queryset().get_descendants(*args, **kwargs)
 
 
 @python_2_unicode_compatible
@@ -370,7 +354,7 @@ class AncrageSpatioTemporel(object):
             is_null = 'lieu' not in self.not_null_fields
             fields.append(('lieu', ForeignKey(
                 'Lieu', blank=is_null, null=is_null, verbose_name=_('lieu'),
-                related_name='%s_%s_set' % (self.model._meta.module_name,
+                related_name='%s_%s_set' % (self.model._meta.model_name,
                                             self.name))))
             if self.approx:
                 is_null = 'lieu_approx' not in self.not_null_fields
@@ -573,10 +557,10 @@ class CaracteristiqueManager(PolymorphicManager, CommonManager):
     queryset_class = CaracteristiqueQuerySet
 
     def html_list(self, tags=True):
-        return self.get_query_set().html_list(tags=tags)
+        return self.get_queryset().html_list(tags=tags)
 
     def html(self, tags=True, caps=True):
-        return self.get_query_set().html(tags=tags, caps=caps)
+        return self.get_queryset().html(tags=tags, caps=caps)
 
 
 @python_2_unicode_compatible

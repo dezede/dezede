@@ -53,8 +53,7 @@ class TypographicManager(Manager):
 
     queryset_class = TypographicQuerySet
 
-    # TODO: Implement get_empty_query_set.
-    def get_query_set(self):
+    def get_queryset(self):
         return self.queryset_class(self.model, using=self._db)
 
 

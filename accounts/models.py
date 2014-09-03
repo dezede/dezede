@@ -53,7 +53,7 @@ class HierarchicUserManager(CommonTreeManager, UserManager):
     queryset_class = HierarchicUserQuerySet
 
     def html(self, tags=True):
-        return self.get_query_set().html(tags=tags)
+        return self.get_queryset().html(tags=tags)
 
 
 def _is_polymorphic_child(models, model):

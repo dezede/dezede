@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from time import sleep
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
 from django.db.models import get_model
@@ -74,12 +73,6 @@ def auto_invalidate(action, app_label, model_name, pk):
             index.remove_object('%s.%s.%s' % (app_label, model_name, pk))
         return
 
-    if action == 'create':
-        # Ce sleep permet d'attendre que la transaction d'admin de Django
-        # soit finie.
-        # FIXME: Retirer lors du passage à Django 1.6
-        sleep(5)
-
     instance = model._default_manager.get(pk=pk)
     auto_invalidate_cache(instance)
     auto_update_haystack(action, instance)
@@ -109,7 +102,7 @@ class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
         django_rq.enqueue(
             auto_invalidate,
             args=(action,
-                  instance._meta.app_label, instance._meta.module_name,
+                  instance._meta.app_label, instance._meta.model_name,
                   instance.pk),
             result_ttl=0,  # Doesn't store result
             timeout=3600,  # Avoids never-ending jobs

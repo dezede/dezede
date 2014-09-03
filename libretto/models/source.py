@@ -66,7 +66,7 @@ class SourceManager(PublishedManager):
     queryset_class = SourceQuerySet
 
     def group_by_type(self):
-        return self.get_query_set().group_by_type()
+        return self.get_queryset().group_by_type()
 
 
 @python_2_unicode_compatible

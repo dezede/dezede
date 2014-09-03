@@ -52,16 +52,16 @@ class ElementDeDistributionManager(CommonManager):
     queryset_class = ElementDeDistributionQuerySet
 
     def individus(self):
-        return self.get_query_set().individus()
+        return self.get_queryset().individus()
 
     def evenements(self):
-        return self.get_query_set().evenements()
+        return self.get_queryset().evenements()
 
     def prefetch(self):
-        return self.get_query_set().prefetch()
+        return self.get_queryset().prefetch()
 
     def html(self, tags=True):
-        return self.get_query_set().html(tags=tags)
+        return self.get_queryset().html(tags=tags)
 
 
 @python_2_unicode_compatible
@@ -302,7 +302,7 @@ class EvenementManager(PublishedManager):
     queryset_class = EvenementQuerySet
 
     def yearly_counts(self):
-        return self.get_query_set().yearly_counts()
+        return self.get_queryset().yearly_counts()
 
 
 @python_2_unicode_compatible

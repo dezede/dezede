@@ -35,7 +35,7 @@
           sDom: "<'text-right'f><'table-container't><'row table-footer'<'col-xs-12 col-sm-6'i><'col-xs-12 col-sm-6'p>>",
           bLengthChange: false,
           sPaginationType: 'bootstrap',
-          sAjaxSource: '{% url model.meta.module_name|add:'_ajax' %}',
+          sAjaxSource: '{% url model.meta.model_name|add:'_ajax' %}',
           bServerSide: true,
           bDeferRender: true,
           aoColumns: [

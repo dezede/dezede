@@ -458,19 +458,19 @@ class AuteurManager(CommonManager):
     queryset_class = AuteurQuerySet
 
     def individus(self):
-        return self.get_query_set().individus()
+        return self.get_queryset().individus()
 
     def professions(self):
-        return self.get_query_set().professions()
+        return self.get_queryset().professions()
 
     def oeuvres(self):
-        return self.get_query_set().oeuvres()
+        return self.get_queryset().oeuvres()
 
     def sources(self):
-        return self.get_query_set().sources()
+        return self.get_queryset().sources()
 
     def html(self, tags=True):
-        return self.get_query_set().html(tags)
+        return self.get_queryset().html(tags)
 
 
 @python_2_unicode_compatible
@@ -531,7 +531,7 @@ class OeuvreManager(CommonTreeManager, PublishedManager):
     queryset_class = OeuvreQuerySet
 
     def html(self, *args, **kwargs):
-        return self.get_query_set().html(*args, **kwargs)
+        return self.get_queryset().html(*args, **kwargs)
 
 
 @python_2_unicode_compatible
