@@ -111,15 +111,13 @@ def published(context, qs):
 @register.assignment_tag(takes_context=True)
 def previous_sibling(context, obj):
     request = context['request']
-    filter_args, filter_kwargs = PublishedQuerySet._get_filters(request)
-    return obj.get_previous_sibling(*filter_args, **filter_kwargs)
+    return obj.get_previous_sibling(PublishedQuerySet._get_filters(request))
 
 
 @register.assignment_tag(takes_context=True)
 def next_sibling(context, obj):
     request = context['request']
-    filter_args, filter_kwargs = PublishedQuerySet._get_filters(request)
-    return obj.get_next_sibling(*filter_args, **filter_kwargs)
+    return obj.get_next_sibling(PublishedQuerySet._get_filters(request))
 
 
 @register.filter
