@@ -1,5 +1,5 @@
 # Basics
-Django==1.5.10
+Django==1.6.7
 psycopg2==2.5.4
 
 # Database fields
@@ -9,7 +9,7 @@ django-polymorphic-tree==0.8.11
 django-autoslug==1.7.2
 
 # User interface
-django-grappelli==2.4.10
+django-grappelli==2.5.3
 django-filebrowser==3.5.6
 django-tinymce==1.5.2
 django-crispy-forms==1.4.0
@@ -25,14 +25,14 @@ elasticsearch==0.4.5
 
 # Caching
 django-redis==3.7.1
--e git+https://github.com/jmoiron/johnny-cache@37e75019625979487f17b47050da7f0af3fea42c#egg=johnny-cache
+johnny-cache==1.6.1a
 
 # Data visualization frameworks
 djangorestframework==2.4.2
 -e git+https://github.com/noirbizarre/django-eztables@daeff682d5113684770c153455410bef160c581b#egg=django-eztables
 
 # Small but powerful tools
-django-reversion==1.8.0
+django-reversion==1.8.2
 django-endless-pagination==2.0
 django-viewsets==0.1.7
 Unipath==1.0
@@ -49,7 +49,7 @@ cssmin==0.2.0
 rjsmin==1.0.9
 
 # Database migrations
-South==0.8.4
+South==1.0
 
 # Data parsing/serialization
 beautifulsoup4==4.3.2
