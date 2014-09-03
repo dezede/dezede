@@ -207,7 +207,7 @@ HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
 
 CACHES = {
     'default': {
-        'BACKEND': 'redis_cache.cache.RedisCache',  # FIXME: Peut-être faire mix avec le backend johnny cache.
+        'BACKEND': 'johnny.backends.redis.RedisCache',
         'LOCATION': 'unix:/var/run/redis/redis.sock:1',
         'KEY_PREFIX': '2Z',
         'TIMEOUT': 24 * 60 * 60,  # seconds

@@ -25,7 +25,7 @@ elasticsearch==0.4.5
 
 # Caching
 django-redis==3.7.1
--e git+https://github.com/jmoiron/johnny-cache@37e75019625979487f17b47050da7f0af3fea42c#egg=johnny-cache
+johnny-cache==1.6.1a
 
 # Data visualization frameworks
 djangorestframework==2.4.2
