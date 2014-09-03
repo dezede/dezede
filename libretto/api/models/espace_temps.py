@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from datetime import datetime
 import re
-from ...models import NatureDeLieu, Lieu, AncrageSpatioTemporel
+from ...models import NatureDeLieu, Lieu
 from .utils import get_or_create, update_or_create
 
 

@@ -113,8 +113,12 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     def invalidated_relations_when_saved(all_relations=False):
         relations = ('get_real_instance',)
         if all_relations:
-            relations += ('enfants', 'saisons', 'ancrages',
-                          'dossiers',)
+            relations += (
+                'enfants', 'saisons',
+                'evenement_debut_set', 'evenement_fin_set',
+                'individu_naissance_set', 'individu_deces_set',
+                'oeuvre_creation_set', 'dossiers',
+            )
         return relations
 
     @permalink
