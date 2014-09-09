@@ -985,6 +985,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     form = SourceForm
     list_display = ('nom', 'date', 'type', 'has_events', 'has_program', 'link')
     list_editable = ('type', 'date',)
+    list_select_related = ('type', 'etat', 'owner')
     date_hierarchy = 'date'
     search_fields = ('nom', 'date', 'type__nom', 'numero', 'contenu',
                      'owner__username', 'owner__first_name',
@@ -1012,6 +1013,39 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
         #        }),
     )
     fieldsets_and_inlines_order = ('f', 'i')
+
+    def get_queryset(self, request):
+        qs = super(SourceAdmin, self).get_queryset(request)
+        qs = qs.extra(
+            select={
+                '_has_events':
+                'EXISTS ('
+                '    SELECT 1 FROM %(evenement)s '
+                '    INNER JOIN %(m2m)s ON %(evenement)s.id '
+                '                          = %(m2m)s.evenement_id '
+                '    WHERE %(m2m)s.source_id = %(source)s.id)' % {
+                    'evenement': Evenement._meta.db_table,
+                    'm2m': Source.evenements.field.m2m_db_table(),
+                    'source': Source._meta.db_table,
+                },
+                '_has_program':
+                'EXISTS ('
+                '    SELECT 1 FROM %(evenement)s '
+                '    INNER JOIN %(m2m)s ON %(evenement)s.id '
+                '                          = %(m2m)s.evenement_id '
+                '    WHERE (%(m2m)s.source_id = %(source)s.id '
+                '           AND (%(evenement)s.relache = true '
+                '                OR EXISTS (SELECT 1 FROM %(programme)s '
+                '                           WHERE %(programme)s.evenement_id '
+                '                                 = %(evenement)s.id))))' % {
+                    'evenement': Evenement._meta.db_table,
+                    'm2m': Source.evenements.field.m2m_db_table(),
+                    'source': Source._meta.db_table,
+                    'programme': ElementDeProgramme._meta.db_table,
+                }
+            }
+        )
+        return qs
 
 
 site.register(Document, DocumentAdmin)

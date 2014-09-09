@@ -148,12 +148,16 @@ class Source(AutoriteModel):
         return self.html(pretty_title=True)
 
     def has_events(self):
+        if hasattr(self, '_has_events'):
+            return self._has_events
         return self.evenements.exists()
     has_events.short_description = _('Événements')
     has_events.boolean = True
     has_events.admin_order_field = 'evenements'
 
     def has_program(self):
+        if hasattr(self, '_has_program'):
+            return self._has_program
         return self.evenements.with_program().exists()
     has_program.short_description = _('Programme')
     has_program.boolean = True
