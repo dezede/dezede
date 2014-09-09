@@ -400,11 +400,17 @@ class Evenement(AutoriteModel):
     html.allow_tags = True
 
     def has_program(self):
-        return self.relache or self.programme.exists()
+        if self.relache:
+            return True
+        if hasattr(self, '_has_program'):
+            return self._has_program
+        return self.programme.exists()
     has_program.short_description = _('programme')
     has_program.boolean = True
 
     def has_source(self):
+        if hasattr(self, '_has_source'):
+            return self._has_source
         return self.sources.exists()
     has_source.short_description = _('source')
     has_source.boolean = True

@@ -922,6 +922,8 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
     search_fields = ('circonstance', 'debut_lieu__nom')
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
+    list_select_related = ('debut_lieu', 'debut_lieu__nature', 'etat', 'owner')
+    date_hierarchy = 'debut_date'
     raw_id_fields = ('debut_lieu', 'fin_lieu', 'caracteristiques',
                      'documents', 'illustrations',)
     autocomplete_lookup_fields = {
@@ -955,6 +957,21 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
 #        }),
     )
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'i', 'i')
+
+    def get_queryset(self, request):
+        qs = super(EvenementAdmin, self).get_queryset(request)
+        qs = qs.extra(select={
+            '_has_program':
+            'EXISTS (SELECT 1 FROM %s WHERE evenement_id = %s.id)'
+            % (ElementDeProgramme._meta.db_table, Evenement._meta.db_table),
+            '_has_source':
+            'EXISTS (SELECT 1 FROM %(source)s '
+            'INNER JOIN %(m2m)s ON %(source)s.id = %(m2m)s.source_id '
+            'WHERE %(m2m)s.evenement_id = %(evenement)s.id)'
+            % {'source': Source._meta.db_table,
+               'm2m': Source.evenements.field.m2m_db_table(),
+               'evenement': Evenement._meta.db_table}})
+        return qs
 
 
 class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
