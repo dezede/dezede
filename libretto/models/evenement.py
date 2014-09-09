@@ -297,12 +297,18 @@ class EvenementQuerySet(PublishedQuerySet):
             .values('year').annotate(count=Count('pk'))
             .order_by('year'))
 
+    def with_program(self):
+        return self.filter(Q(relache=True) | Q(programme__isnull=False))
+
 
 class EvenementManager(PublishedManager):
     queryset_class = EvenementQuerySet
 
     def yearly_counts(self):
         return self.get_queryset().yearly_counts()
+
+    def with_program(self):
+        return self.get_queryset().with_program()
 
 
 @python_2_unicode_compatible

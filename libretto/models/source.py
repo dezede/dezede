@@ -154,12 +154,6 @@ class Source(AutoriteModel):
     has_events.admin_order_field = 'evenements'
 
     def has_program(self):
-        evenements = self.evenements.all()
-        if not evenements:
-            return False
-        for e in evenements:
-            if not e.has_program():
-                return False
-        return True
+        return self.evenements.with_program().exists()
     has_program.short_description = _('Programme')
     has_program.boolean = True
