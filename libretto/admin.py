@@ -862,6 +862,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     search_fields = ('titre', 'titre_secondaire', 'genre__nom',
                      'auteurs__individu__nom')
     list_filter = ('genre',)
+    list_select_related = ('genre', 'etat', 'owner')
     raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
                      'creation_lieu', 'pupitres', 'documents',
                      'illustrations',)
