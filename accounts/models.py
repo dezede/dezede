@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from caching.base import CachingMixin
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -76,7 +77,7 @@ def _get_valid_modelnames_func(autorites_only=True):
 
 
 @python_2_unicode_compatible
-class HierarchicUser(MPTTModel, AbstractUser):
+class HierarchicUser(CachingMixin, MPTTModel, AbstractUser):
     show_email = BooleanField(_('afficher l’email'), default=False)
     website = URLField(_('site internet'), blank=True)
     website_verbose = CharField(

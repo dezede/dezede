@@ -25,7 +25,7 @@ elasticsearch==0.4.5
 
 # Caching
 django-redis==3.7.1
-johnny-cache==1.6.1a
+django-cache-machine==0.8
 
 # Data visualization frameworks
 djangorestframework==2.4.2

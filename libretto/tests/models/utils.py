@@ -4,7 +4,6 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import six
-import johnny.cache
 
 
 def new(Model, **kwargs):
@@ -31,7 +30,6 @@ class CommonTestCase(TestCase):
 
     def _pre_setup(self):
         cache.clear()
-        johnny.cache.disable()
         super(CommonTestCase, self)._pre_setup()
         self.log_as_superuser()
         if self.model is not None:

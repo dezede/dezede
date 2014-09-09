@@ -120,8 +120,6 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'johnny.middleware.LocalStoreClearMiddleware',
-    'johnny.middleware.QueryCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -202,14 +200,14 @@ HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
 
 CACHES = {
     'default': {
-        'BACKEND': 'johnny.backends.redis.RedisCache',
+        'BACKEND': 'redis_cache.cache.RedisCache',
         'LOCATION': 'unix:/var/run/redis/redis.sock:1',
         'KEY_PREFIX': '2Z',
         'TIMEOUT': 24 * 60 * 60,  # seconds
-        'JOHNNY_CACHE': True,
     }
 }
-JOHNNY_MIDDLEWARE_KEY_PREFIX = '2Z'
+CACHE_EMPTY_QUERYSETS = True
+CACHE_COUNT_TIMEOUT = 60*60
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
