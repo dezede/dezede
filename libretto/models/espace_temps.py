@@ -14,7 +14,8 @@ from polymorphic_tree.managers import PolymorphicMPTTQuerySet, \
 from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
-from cache_tools import cached_pgettext as pgettext, cached_ugettext_lazy as _
+from cache_tools import cached_pgettext as pgettext, cached_ugettext_lazy as _, \
+    model_method_cached
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
@@ -111,11 +112,12 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
-        relations = ('get_real_instance',)
+        relations = (
+            'get_real_instance', 'enfants', 'saisons',
+            'evenement_debut_set', 'evenement_fin_set',
+        )
         if all_relations:
             relations += (
-                'enfants', 'saisons',
-                'evenement_debut_set', 'evenement_fin_set',
                 'individu_naissance_set', 'individu_deces_set',
                 'oeuvre_creation_set', 'dossiers',
             )
@@ -170,6 +172,7 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
                 break
         return l[::-1]
 
+    @model_method_cached()
     def html(self, tags=True, short=False):
         if short or self.parent_id is None or self.nature.referent:
             out = self.nom
