@@ -171,7 +171,7 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         return l[::-1]
 
     def html(self, tags=True, short=False):
-        if short or self.parent is None or self.nature.referent:
+        if short or self.parent_id is None or self.nature.referent:
             out = self.nom
         else:
             out = ', '.join(self.ancestors_until_referent())
