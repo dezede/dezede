@@ -167,7 +167,12 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     get_queryset.short_description = _('ensemble de données')
 
     def get_count(self):
-        return self.get_queryset().count()
+        qs = self.get_queryset()
+        # TODO: Remove this check when switching to Django 1.7
+        #       (see https://code.djangoproject.com/ticket/10181)
+        if not qs:
+            return 0
+        return qs.count()
     get_count.short_description = _('quantité de données sélectionnées')
 
     def get_queryset_url(self):
