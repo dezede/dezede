@@ -863,6 +863,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                      'auteurs__individu__nom')
     list_filter = ('genre',)
     list_select_related = ('genre', 'etat', 'owner')
+    date_hierarchy = 'creation_date'
     raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
                      'creation_lieu', 'pupitres', 'documents',
                      'illustrations',)
