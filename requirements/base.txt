@@ -54,7 +54,7 @@ South==1.0
 # Data parsing/serialization
 beautifulsoup4==4.3.2
 BeautifulSoup<4.0
-lxml==3.3.6
+lxml==3.4.0
 simplejson==3.6.3
 defusedxml==0.4.1
 PyYAML==3.11
@@ -63,7 +63,7 @@ PyYAML==3.11
 django-maintenancemode==0.10
 
 # C optimization
-Cython==0.20.2
+Cython==0.21
 
 # Dependencies
 # For django-image-cropping
