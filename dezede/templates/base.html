@@ -30,7 +30,7 @@
       <script src="{% static 'js/jquery-ui-1.9.2.min.js' %}"></script>
       {# Attention, l'ordre des JS de bootstrap importe ! #}
       <script src="{% static 'bootstrap/js/transition.js' %}"></script>
-{#      <script src="{% static 'bootstrap/js/alert.js' %}"></script>#}
+      <script src="{% static 'bootstrap/js/alert.js' %}"></script>
       <script src="{% static 'bootstrap/js/button.js' %}"></script>
       <script src="{% static 'bootstrap/js/carousel.js' %}"></script>
       <script src="{% static 'bootstrap/js/collapse.js' %}"></script>
@@ -76,6 +76,18 @@
               {% endblocktrans %}
             </div>
           </noscript>
+
+          <div class="messages">
+            {% for message in messages %}
+              <div class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert">
+                  <span aria-hidden="true">&times;</span>
+                  <span class="sr-only">Close</span>
+                </button>
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
 
           <section {% block microdata_attrs %}{% endblock %}>
 
