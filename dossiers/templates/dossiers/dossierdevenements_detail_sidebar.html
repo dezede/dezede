@@ -59,6 +59,15 @@
         <dd>{{ object.developpements }}</dd>
       {% endif %}
     </dl>
+
+    {% if user.is_authenticated %}
+      <a id="export"
+         href="{% url 'dossierdevenements_detail_xelatex' object.pk %}"
+         class="btn btn-default btn-block">
+        <i class="fa fa-book"></i> {% trans 'Exporter en PDF' %}
+      </a>
+    {% endif %}
+
   </div>
 
 </aside>

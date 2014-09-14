@@ -16,7 +16,7 @@ except ImportError:
     compat.register()
 
 
-SITE_ROOT = Path(__file__).ancestor(3)
+BASE_DIR = Path(__file__).ancestor(3)
 SITE_URL = '/'
 
 ADMINS = (
@@ -25,6 +25,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 SEND_BROKEN_LINK_EMAILS = True
+EMAIL_SUBJECT_PREFIX = u'[Dezède] '
 IGNORABLE_404_URLS = (
     re.compile(r'^/favicon\.ico/?$'),
 )
@@ -59,7 +60,7 @@ USE_TZ = True
 
 SITE_ID = 1
 
-MEDIA_ROOT = SITE_ROOT.child('media')
+MEDIA_ROOT = BASE_DIR.child('media')
 MEDIA_URL = SITE_URL + 'media/'
 
 # Make this unique, and don't share it with anybody.
@@ -70,7 +71,7 @@ WSGI_APPLICATION = 'dezede.wsgi.application'
 ROOT_URLCONF = 'dezede.urls'
 
 
-STATIC_ROOT = SITE_ROOT.child('static')
+STATIC_ROOT = BASE_DIR.child('static')
 STATIC_URL = SITE_URL + 'static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -78,7 +79,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 STATICFILES_DIRS = (
-    SITE_ROOT.child('dezede', 'static'),
+    BASE_DIR.child('dezede', 'static'),
 )
 
 
@@ -255,6 +256,7 @@ REST_FRAMEWORK = {
 RQ_QUEUES = {
     'default': {
         'USE_REDIS_CACHE': 'default',
+        'DEFAULT_TIMEOUT': 60*30,  # seconds
     },
 }
 
@@ -279,12 +281,21 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
         },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR.child('xelatex.log'),
+        },
     },
     'loggers': {
         'rq.worker': {
             'handlers': ['rq_console', 'mail_admins'],
             'level': 'DEBUG'
-        }
+        },
+        'dossiers.utils': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+        },
     }
 }
 

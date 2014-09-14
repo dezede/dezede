@@ -1,13 +1,17 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.contrib import messages
 from django.contrib.sites.models import get_current_site
+from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
-from django.utils.text import slugify
+from django.shortcuts import get_object_or_404, redirect
 from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementListView)
+from .jobs import send_pdf
 from .models import CategorieDeDossiers, DossierDEvenements
+from .utils import get_user_limit_cache_key
 
 
 class CategorieDeDossiersList(PublishedListView):
@@ -41,18 +45,23 @@ class DossierDEvenementsDataDetail(EvenementListView):
 
 
 class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
-    template_name = 'dossiers/dossierdevenements_detail.tex'
-    content_type = 'text/plain'
-
-    def get_context_data(self, **kwargs):
-        context = super(DossierDEvenementsDetailXeLaTeX, self) \
-            .get_context_data(**kwargs)
-        context['SITE'] = get_current_site(self.request)
-        return context
-
-    def render_to_response(self, context, **response_kwargs):
-        response = super(DossierDEvenementsDetailXeLaTeX,
-                         self).render_to_response(context, **response_kwargs)
-        response['Content-Disposition'] = 'filename="%s.tex"' \
-                                          % slugify(self.object.titre)
-        return response
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        cache_key = get_user_limit_cache_key(request.user)
+        has_job = cache.get(cache_key, False)
+        if has_job:
+            messages.error(request,
+                           'Un export de votre part est déjà en cours. '
+                           'Veuillez attendre la fin de celui-ci avant d’en '
+                           'lancer un autre.')
+        else:
+            cache.set(cache_key, True)
+            site = get_current_site(request)
+            send_pdf.delay(self.object.pk, request.user.pk, site.pk,
+                           request.LANGUAGE_CODE)
+            messages.info(request,
+                          'La génération de l’export PDF du dossier « %s » '
+                          'est en cours. Un courriel le contenant vous sera '
+                          'envoyé d’ici quelques minutes.' % self.object)
+        return redirect(reverse('dossierdevenements_detail',
+                                args=(self.object.pk,)))

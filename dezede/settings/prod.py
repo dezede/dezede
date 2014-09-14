@@ -14,6 +14,7 @@ ALLOWED_HOSTS = ('dezede.org',)
 
 EMAIL_HOST = 'mail.gandi.net'
 EMAIL_HOST_USER = 'noreply@dezede.org'
+EMAIL_PORT = 587
 EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'noreply@dezede.org'
 SERVER_EMAIL = 'noreply@dezede.org'
