@@ -10,7 +10,7 @@ from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
 from django.contrib.contenttypes.generic import GenericStackedInline
 from django.contrib.gis.admin import OSMGeoAdmin
-from django.db.models import Q
+from django.db.models import Q, FieldDoesNotExist
 from django.forms.models import modelformset_factory
 from polymorphic.admin import (
     PolymorphicChildModelAdmin, PolymorphicParentModelAdmin,
@@ -43,6 +43,39 @@ class CustomBaseModel(BaseModelAdmin):
                 and obj.owner not in user.get_descendants(include_self=True):
             return False
         return True
+
+    # FIXME: Retirer cette méthode quand ce commit sera dans une release de Django :
+    #        https://github.com/django/django/commit/342ccbddc1f2362f867e030befaeb10449cf4539
+    def to_field_allowed(self, request, to_field):
+        """
+        Returns True if the model associated with this admin should be
+        allowed to be referenced by the specified field.
+        """
+        opts = self.model._meta
+
+        try:
+            field = opts.get_field(to_field)
+        except FieldDoesNotExist:
+            return False
+
+        # Make sure at least one of the models registered for this site
+        # references this field through a FK or a M2M relationship.
+        registered_models = set()
+        for model, admin in self.admin_site._registry.items():
+            registered_models.add(model)
+            for inline in admin.inlines:
+                registered_models.add(inline.model)
+
+        for related_object in (
+                    opts.get_all_related_objects(include_hidden=True) +
+                    opts.get_all_related_many_to_many_objects()):
+            related_model = related_object.model
+            if (any(issubclass(model, related_model) for model in
+                    registered_models) and
+                        related_object.field.rel.get_related_field() == field):
+                return True
+
+        return False
 
     def has_change_permission(self, request, obj=None):
         has_class_permission = super(CustomBaseModel,
