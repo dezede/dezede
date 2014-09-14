@@ -1,10 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from HTMLParser import HTMLParser
 import re
 from bs4 import BeautifulSoup, Comment
 from django.template import Library
 from django.utils.encoding import smart_text
+from django.utils.safestring import mark_safe
 from ..utils import abbreviate as abbreviate_func
 
 
@@ -13,7 +15,7 @@ register = Library()
 
 @register.filter
 def stripchars(text):
-    return smart_text(BeautifulSoup(text, 'html.parser'))
+    return HTMLParser().unescape(text)
 
 
 @register.filter
@@ -21,18 +23,21 @@ def striptags_n_chars(text):
     return smart_text(BeautifulSoup(text, 'html.parser').get_text())
 
 
+def fix_strange_characters(text):
+    return text.replace('...\x1f', '…').replace('\x1c', '').replace('\x1b', '')
+
+
 compact_paragraph_re = re.compile(r'(?<![\n\s ])\n+[\s\n ]*\n+(?![\n\s ])')
 
 
 @register.filter
 def compact_paragraph(text):
-    return compact_paragraph_re.sub(r'\u00A0/ ', text.strip('\n'))
+    return mark_safe(compact_paragraph_re.sub(r'\u00A0/ ', text.strip('\n')))
 
 
-escaped_chars_re = re.compile(r'([#$%&_])')
+escaped_chars_re = re.compile(r'([#$%&_{}])')
 
 
-@register.filter
 def escape_latex(text):
     return escaped_chars_re.sub(r'\\\1', text)
 
@@ -48,6 +53,7 @@ html_latex_bindings = (
     (dict(name='strong'), r'\textbf{', r'}'),
     (dict(name='b'), r'\textbf{', r'}'),
     (dict(name='small'), r'\small{', r'}'),
+    (dict(name='sup'), r'\textsuperscript{', r'}'),
     (dict(class_='sc'), r'\textsc{', r'}'),
     (dict(style=re.compile(r'.*font-variant:\s*'
                            r'small-caps;.*')), r'\textsc{', r'}'),
@@ -55,7 +61,7 @@ html_latex_bindings = (
 
 
 @register.filter
-def html_to_latex(text):
+def html_to_latex(html):
     r"""
     Permet de convertir du HTML en syntaxe LaTeX.
 
@@ -70,14 +76,15 @@ def html_to_latex(text):
     >>> print(html_to_latex('Vive les <!-- cons -->poilus !'))
     Vive les poilus !
     """
-    soup = BeautifulSoup(text, 'html.parser')
+    html = escape_latex(stripchars(fix_strange_characters(html)))
+    soup = BeautifulSoup(html, 'html.parser')
     for html_selectors, latex_open_tag, latex_close_tag in html_latex_bindings:
         for tag in soup.find_all(**html_selectors):
             tag.insert(0, latex_open_tag)
             tag.append(latex_close_tag)
     for comment in soup.find_all(text=lambda text: isinstance(text, Comment)):
         comment.extract()
-    return smart_text(soup.get_text())
+    return mark_safe(smart_text(soup.get_text()))
 
 
 @register.filter

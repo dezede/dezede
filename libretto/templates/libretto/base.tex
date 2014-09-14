@@ -1,5 +1,3 @@
-{% load extras %}
-
 % Généré sur Dezède ({{ SITE }}{{ request.get_full_path }})
 % le {% now 'DATE_FORMAT' %}.
 % À compiler avec XeLaTeX.
@@ -30,7 +28,5 @@
 {% block declarations %}{% endblock %}
 
 \begin{document}
-  {% filter html_to_latex|escape_latex %}
-    {% block document %}{% endblock %}
-  {% endfilter %}
+  {% block document %}{% endblock %}
 \end{document}

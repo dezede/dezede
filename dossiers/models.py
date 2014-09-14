@@ -8,6 +8,7 @@ from django.db.models import (
     TextField, permalink, PositiveSmallIntegerField, Q,
     ForeignKey)
 from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy
 from mptt.fields import TreeForeignKey
@@ -115,7 +116,7 @@ class DossierDEvenements(MPTTModel, PublishedModel):
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     def __str__(self):
-        return self.html()
+        return strip_tags(self.html())
 
     def html(self):
         return mark_safe(self.titre)

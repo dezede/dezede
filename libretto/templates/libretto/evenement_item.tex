@@ -1,4 +1,4 @@
-{% load i18n cache routines extras %}
+{% load i18n routines extras %}
 
 \begin{samepage}
 
@@ -11,22 +11,22 @@
 
       \medskip
 
-      {{ evenement.debut.date_str|capfirst|safe }}
+      {{ evenement.debut.date_str|capfirst|html_to_latex }}
       {% if evenement.fin %}
-        − {{ evenement.fin.date_str|capfirst|safe }}
+        − {{ evenement.fin.date_str|capfirst|html_to_latex }}
       {% endif %}
     }
   \end{center}
 
-  {{ evenement.html|safe }}
+  {{ evenement.html|html_to_latex }}
 
-  {{ evenement.caracteristiques.html|safe }}
+  {{ evenement.caracteristiques.html|html_to_latex }}
 
 \end{samepage}
 
 \medskip
 
-{{ evenement.distribution.prefetch.html|safe }}
+{{ evenement.distribution.prefetch.html|html_to_latex }}
 
 \medskip
 
@@ -50,7 +50,7 @@
             \item[•]
           {% endif %}
         {% endif %}
-        {{ element.html|safe }}
+        {{ element.html|html_to_latex }}
       {% endspaceless %}
     {% if forloop.last and elements.count > 1 %}
       \end{itemize}
@@ -64,7 +64,7 @@
   \textbf{% templatetag openbrace %}{% trans 'notes'|capfirst %}}
   \nopagebreak
 
-  {{ evenement.notes|safe }}
+  {{ evenement.notes|html_to_latex }}
   \bigskip
 {% endif %}
 
@@ -82,8 +82,8 @@
 
   {% for source in sources %}
     {% if source.contenu %}
-      \enquote{% templatetag openbrace %}{{ source.contenu|safe|html_to_latex|compact_paragraph }}}
-      ({{ source.html }})
+      \enquote{% templatetag openbrace %}{{ source.contenu|html_to_latex|compact_paragraph }}}
+      ({{ source.html|html_to_latex }})
     {% endif %}
 
     {% if not forloop.last %}

@@ -1,5 +1,5 @@
 {% extends 'libretto/base.tex' %}
-{% load i18n %}
+{% load i18n extras %}
 
 {% block declarations %}
   \newcounter{evenements-counter}
@@ -7,8 +7,8 @@
 
 
 {% block document %}
-  \title{ {{ object.titre|safe }} }
-  \author{ {{ object.editeurs_scientifiques.html|safe }} }
+  \title{ {{ object.titre|html_to_latex }} }
+  \author{ {{ object.editeurs_scientifiques.html|html_to_latex }} }
 
   \maketitle
 
@@ -20,21 +20,21 @@
   \addcontentsline{toc}{part}{ {% trans 'Présentation' %} }
 
   {\large
-    {{ object.presentation|safe }}
+    {{ object.presentation|html_to_latex }}
   }
 
   {% if object.contexte %}
     \section*{ {% trans 'Contexte historique' %} }
     \addcontentsline{toc}{section}{ {% trans 'Contexte historique' %} }
 
-    {{ object.contexte|safe }}
+    {{ object.contexte|html_to_latex }}
   {% endif %}
 
   {% if object.sources %}
     \section*{ {% trans 'Sources et protocole' %} }
     \addcontentsline{toc}{section}{ {% trans 'Sources et protocole' %} }
 
-    {{ object.sources|safe }}
+    {{ object.sources|html_to_latex }}
   {% endif %}
 
 
@@ -42,7 +42,7 @@
     \section*{ {% trans 'Bibliographie indicative' %} }
     \addcontentsline{toc}{section}{ {% trans 'Bibliographie indicative' %} }
 
-    {{ object.bibliographie|safe }}
+    {{ object.bibliographie|html_to_latex }}
   {% endif %}
 
 
