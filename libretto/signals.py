@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from time import sleep
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
 from django.db.models import get_model
@@ -72,6 +73,12 @@ def auto_invalidate(action, app_label, model_name, pk):
         if index is not None:
             index.remove_object('%s.%s.%s' % (app_label, model_name, pk))
         return
+
+    if action == 'create':
+        # Ce sleep permet d'attendre que la transaction d'admin de Django
+        # soit finie.
+        # FIXME: Trouver une meilleure solution
+        sleep(5)
 
     instance = model._default_manager.get(pk=pk)
     auto_invalidate_cache(instance)
