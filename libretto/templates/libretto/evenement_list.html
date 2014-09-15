@@ -58,59 +58,72 @@
   {% endaddtoblock %}
   {% addtoblock 'js' %}
     <script>
-      $.endlessPaginate({
-        paginateOnScroll: true,
-        paginateOnScrollMargin: 200,
-        onCompleted: tooltips_reload
-      });
+      $(function () {
+        $.endlessPaginate({
+          paginateOnScroll: true,
+          paginateOnScrollMargin: 200,
+          onCompleted: tooltips_reload
+        });
 
-      function get_url_kwarg(name, default_value) {
-        return decodeURI(
-          (new RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)
-           || [,default_value])[1]
-        );
-      }
-
-      function is_current_page($object) {
-        if ($object[0] == undefined) {
-          return false;
+        function get_url_kwarg(name, default_value) {
+          return decodeURI(
+            (new RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)
+             || [,default_value])[1]
+          );
         }
-        var scroll = $(window).scrollTop();
-        var top = $object.offset().top;
-        var height = $object.height();
-        {# When the window scroll is above the first page, we consider #}
-        {# we're in the first page #}
-        if (scroll < top && $object.prev('.page')[0] == undefined) {
-          return true
+
+        function is_current_page($object) {
+          if ($object[0] == undefined) {
+            return false;
+          }
+          var scroll = $(window).scrollTop();
+          var top = $object.offset().top;
+          var height = $object.height();
+          {# When the window scroll is above the first page, we consider #}
+          {# we're in the first page #}
+          if (scroll < top && $object.prev('.page')[0] == undefined) {
+            return true;
+          }
+          return top <= scroll && scroll < top + height;
         }
-        return top <= scroll && scroll < top + height;
-      }
 
-      {# Dynamically updates URL page number #}
-      $(window).scroll(function () {
-        {# Adds a timeout to update URL after a small idle moment #}
-        $.doTimeout('scroll', 500, function() {
+        var $current_page = $('.page').first();
 
+        function update_url() {
           {# Checks whether the current page according to the URL is #}
           {# the real current page, in order to avoid useless updates #}
           var selector = '.page[data-page=' + get_url_kwarg('page', 1) + ']';
           if (is_current_page($(selector))) {
-            return false;
+            return;
           }
           {# Iterates over pages to find the current page and update URL #}
           $('.page').each(function () {
-            if (is_current_page($(this))) {
+            var $page = $(this);
+            if (is_current_page($page)) {
+              $current_page = $page;
               {# Updates URL #}
               window.history.replaceState(
                 {},
                 '',  {# title, unused for now in any browser #}
-                $.query.set('page', $(this).data('page')));
+                $.query.set('page', $page.data('page')));
               return false;  {# breaks the `each` loop #}
             }
             return true;  {# continues the `each` loop #}
           });
-          return false;
+        }
 
+        {# Dynamically updates URL page number #}
+        $(window).scroll(function () {
+          {# Adds a timeout to update URL after a small idle moment #}
+          $.doTimeout('scroll', 300, update_url);
+        });
+
+        {# Avoids anoying jumps when reloading the page #}
+        $(window).bind('unload', function() {
+          var $window = $(this);
+          var current_page_offset = ($current_page.offset().top
+                                     - $('.page').first().offset().top);
+          $window.scrollTop($window.scrollTop() - current_page_offset);
         });
       });
     </script>
