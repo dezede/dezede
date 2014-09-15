@@ -22,6 +22,7 @@ from .models import *
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
     ElementDeDistributionForm, EnsembleForm)
+from typography.utils import replace
 
 
 __all__ = ()
@@ -444,6 +445,11 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
                     self.list_editable = list_editable
 
         return NewChangeList
+
+    def get_search_results(self, request, queryset, search_term):
+        search_term = replace(search_term)
+        return super(CommonAdmin, self).get_search_results(request, queryset,
+                                                           search_term)
 
 
 class PublishedAdmin(CommonAdmin):
