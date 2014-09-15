@@ -9,6 +9,7 @@ from django.views.generic import ListView, TemplateView
 from haystack.views import SearchView
 from libretto.models import Oeuvre, Lieu, Individu
 from libretto.search_indexes import autocomplete_search
+from typography.utils import replace
 from .models import Diapositive
 
 
@@ -25,6 +26,12 @@ class CustomSearchView(SearchView):
     """
     Custom SearchView to fix spelling suggestions.
     """
+
+    def build_form(self, form_kwargs=None):
+        self.request.GET = GET = self.request.GET.copy()
+        GET['q'] = replace(GET.get('q', ''))
+        return super(CustomSearchView, self).build_form(form_kwargs)
+
     def extra_context(self):
         context = {'suggestion': None}
 
@@ -38,10 +45,10 @@ class CustomSearchView(SearchView):
 
     def get_results(self):
         sqs = super(CustomSearchView, self).get_results()
-        user_id = self.request.user.id
+        user = self.request.user
         filters = Q(public=True)
-        if user_id is not None:
-            filters |= Q(owner_id=user_id)
+        if user is not None:
+            filters |= Q(owner=user)
         return sqs.filter(filters)
 
 
