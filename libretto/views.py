@@ -117,7 +117,9 @@ class EvenementListView(AjaxListView, PublishedListView):
             # Le slicing est là pour compenser un bug de haystack, qui va
             # chercher les valeurs par paquets de 10, faisant parfois ainsi
             # des centaines de requêtes à elasticsearch.
-            pk_list = sqs.values_list('pk', flat=True)[:10 ** 6]
+            # FIXME: Utiliser une values_list quand cette issue sera résolue :
+            # https://github.com/toastdriven/django-haystack/issues/1019
+            pk_list = [r.pk for r in sqs[:10**6]]
             qs = qs.filter(pk__in=pk_list)
 
         filters = self.get_filters(data)
@@ -223,7 +225,9 @@ class CommonDatatablesView(PublishedMixin, DatatablesView):
         # Le slicing est là pour compenser un bug de haystack, qui va
         # chercher les valeurs par paquets de 10, faisant parfois ainsi
         # des centaines de requêtes à elasticsearch.
-        pk_list = sqs.values_list('pk', flat=True)[:10 ** 6]
+        # FIXME: Utiliser une values_list quand cette issue sera résolue :
+        #        https://github.com/toastdriven/django-haystack/issues/1019
+        pk_list = [r.pk for r in sqs[:10**6]]
         return queryset.filter(pk__in=pk_list).order_by(*self.get_orders())
 
     def column_search(self, queryset):
