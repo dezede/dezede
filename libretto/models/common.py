@@ -28,6 +28,7 @@ from cache_tools import cached_ugettext_lazy as _
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 from .functions import href, ex, hlp, capfirst, str_list, date_html
+from typography.utils import replace
 
 
 __all__ = (
@@ -188,6 +189,10 @@ class CommonModel(CachingMixin, TypographicModel):
 
     def related_label(self):
         return smart_text(self)
+
+    @staticmethod
+    def autocomplete_term_adjust(term):
+        return replace(term)
 
 
 class PublishedQuerySet(CommonQuerySet):
