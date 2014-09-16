@@ -48,6 +48,8 @@
             \item[{[{{ element.numero }}.]}]
           {% elif element.numerotation == 'U' %}
             \item[•]
+          {% else %}
+            \item[]
           {% endif %}
         {% endif %}
         {{ element.html|html_to_latex }}
