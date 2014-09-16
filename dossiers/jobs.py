@@ -74,8 +74,6 @@ def send_pdf(dossier_pk, user_pk, site_pk, language_code):
         {'object': dossier, 'user': user, 'SITE': Site.objects.get(pk=site_pk)}
     )
     tex = render_to_string('dossiers/dossierdevenements_detail.tex', context)
-    import io
-    tex = io.open('tmp/tmp.tex').read()
 
     try:
         pdf_content = xelatex_to_pdf(tex).read()
