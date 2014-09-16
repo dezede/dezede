@@ -39,7 +39,7 @@ escaped_chars_re = re.compile(r'([#$%&_{}])')
 
 
 def escape_latex(text):
-    return escaped_chars_re.sub(r'\\\1', text)
+    return escaped_chars_re.sub(r'\\\1', text.replace('\\', '\\textbackslash'))
 
 
 html_latex_bindings = (
