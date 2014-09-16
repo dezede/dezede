@@ -5,7 +5,6 @@ import io
 from logging import getLogger
 import os
 from subprocess import Popen, PIPE
-from time import sleep
 from django.conf import settings
 from rq.timeouts import JobTimeoutException
 
@@ -21,7 +20,7 @@ def remove_windows_newlines(text):
     return text.replace('\r\n', '\n').replace('\r', '\n')
 
 
-def xelatex_to_pdf(source_code, sleep_step=0.05):
+def xelatex_to_pdf(source_code):
     """
     :param source_code: XeLaTeX source
     :type source_code: unicode
@@ -42,17 +41,18 @@ def xelatex_to_pdf(source_code, sleep_step=0.05):
     with io.open(file_abspath % 'tex', 'w', encoding='utf-8') as f:
         f.write(source_code)
 
-    p = Popen(['xelatex', tmp_filename % 'tex'], stdout=PIPE, cwd=tmp_dir)
+    p = Popen(['xelatex', tmp_filename % 'tex'],
+              stdout=PIPE, stdin=PIPE, cwd=tmp_dir)
 
     try:
-        while True:
-            sleep(sleep_step)
-            p.communicate()
-            if p.poll() is not None:
-                break
+        out, err = p.communicate()
     except JobTimeoutException:
         p.kill()
-        logger.error(''.join(p.stdout))
-        raise ValueError('Error while generating PDF using XeLaTeX.')
+        out = ''.join(p.stdout)
+
+    if p.returncode:
+        e = RuntimeError('Error while generating PDF using XeLaTeX.')
+        e.body = out
+        raise e
 
     return open(file_abspath % 'pdf', 'rb')

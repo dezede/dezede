@@ -281,20 +281,11 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
         },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR.child('xelatex.log'),
-        },
     },
     'loggers': {
         'rq.worker': {
             'handlers': ['rq_console', 'mail_admins'],
             'level': 'DEBUG'
-        },
-        'dossiers.utils': {
-            'handlers': ['file'],
-            'level': 'ERROR',
         },
     }
 }
