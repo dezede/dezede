@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 from django.contrib import messages
 from django.contrib.sites.models import get_current_site
-from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
@@ -11,7 +10,7 @@ from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementListView)
 from .jobs import send_pdf
 from .models import CategorieDeDossiers, DossierDEvenements
-from .utils import get_user_limit_cache_key
+from .utils import is_user_locked, lock_user
 
 
 class CategorieDeDossiersList(PublishedListView):
@@ -47,15 +46,13 @@ class DossierDEvenementsDataDetail(EvenementListView):
 class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        cache_key = get_user_limit_cache_key(request.user)
-        has_job = cache.get(cache_key, False)
-        if has_job:
+        if is_user_locked(request.user):
             messages.error(request,
                            'Un export de votre part est déjà en cours. '
                            'Veuillez attendre la fin de celui-ci avant d’en '
                            'lancer un autre.')
         else:
-            cache.set(cache_key, True)
+            lock_user(request.user)
             site = get_current_site(request)
             send_pdf.delay(self.object.pk, request.user.pk, site.pk,
                            request.LANGUAGE_CODE)

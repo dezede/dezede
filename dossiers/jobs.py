@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 from django.contrib.sites.models import Site
-from django.core.cache import cache
 from django.core.mail import EmailMessage, mail_admins
 from django.http import HttpRequest
 from django.template import RequestContext
@@ -10,10 +9,11 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.encoding import force_text
 from django_rq import job
+from rq.timeouts import JobTimeoutException
 from slugify import slugify
 from accounts.models import HierarchicUser
 from .models import DossierDEvenements
-from .utils import xelatex_to_pdf, get_user_limit_cache_key
+from .utils import xelatex_to_pdf, unlock_user
 
 
 def get_success_mail(dossier, user, pdf_content):
@@ -73,7 +73,12 @@ def send_pdf(dossier_pk, user_pk, site_pk, language_code):
         request,
         {'object': dossier, 'user': user, 'SITE': Site.objects.get(pk=site_pk)}
     )
-    tex = render_to_string('dossiers/dossierdevenements_detail.tex', context)
+    try:
+        tex = render_to_string('dossiers/dossierdevenements_detail.tex', context)
+    except JobTimeoutException:
+        get_failure_mail(dossier, user).send()
+        unlock_user(user)
+        raise
 
     try:
         pdf_content = xelatex_to_pdf(tex).read()
@@ -85,4 +90,4 @@ def send_pdf(dossier_pk, user_pk, site_pk, language_code):
 
     mail.send()
 
-    cache.set(get_user_limit_cache_key(user), False)
+    unlock_user(user)
