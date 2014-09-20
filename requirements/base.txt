@@ -21,14 +21,14 @@ django-image-cropping==0.8.3
 
 # Search engine
 django-haystack==2.2.1
-elasticsearch==0.4.5
+elasticsearch==1.2.0
 
 # Caching
 django-redis==3.7.1
 -e git+https://github.com/jbalogh/django-cache-machine@4355f47dce1f29d7f485ac4a1adb14e0a1f79d93#egg=django-cache-machine
 
 # Data visualization frameworks
-djangorestframework==2.4.2
+djangorestframework==2.4.3
 -e git+https://github.com/noirbizarre/django-eztables@daeff682d5113684770c153455410bef160c581b#egg=django-eztables
 
 # Small but powerful tools
