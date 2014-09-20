@@ -316,7 +316,7 @@ class Evenement(AutoriteModel):
     debut = AncrageSpatioTemporel(('date',),
                                   short_description=_('début'))
     fin = AncrageSpatioTemporel(short_description=_('fin'))
-    relache = BooleanField(_('relâche'), db_index=True)
+    relache = BooleanField(_('relâche'), default=False, db_index=True)
     circonstance = CharField(_('circonstance'), max_length=500, blank=True,
                              db_index=True)
     caracteristiques = ManyToManyField(

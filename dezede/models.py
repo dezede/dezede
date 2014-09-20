@@ -65,7 +65,7 @@ class Diapositive(PublishedModel):
     text_align = CharField(_('alignement du texte'), max_length=11,
                            choices=ALIGNEMENT_CHOICES, default='text-left')
     text_background = BooleanField(
-        _('cadre derrière le texte'),
+        _('cadre derrière le texte'), default=False,
         help_text=_('Ajoute un cadre semi-transparent derrière le texte '
                     'pour faciliter la lecture.'))
     image = ImageField(_('image'), upload_to='accueil')
