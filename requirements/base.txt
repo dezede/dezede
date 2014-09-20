@@ -4,7 +4,7 @@ psycopg2==2.5.4
 
 # Database fields
 django-mptt==0.6.1
--e git+https://github.com/BertrandBordage/django_polymorphic@6569725ad66bd9fb5248098c614a0f3b2a41a80a#egg=django-polymorphic
+-e git+https://github.com/BertrandBordage/django_polymorphic@46118af7dc8486a2f1f6615a2f5b7e150a7e6705#egg=django-polymorphic
 django-polymorphic-tree==0.9
 django-autoslug==1.7.2
 
