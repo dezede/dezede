@@ -963,6 +963,9 @@ MAX_EXPORTED_EVENTS = 200
 
 
 def events_to_pdf(modeladmin, request, queryset):
+    # Ensures the user is not trying to see something he should not.
+    queryset = queryset.published(request)
+
     n = queryset.count()
     if n > MAX_EXPORTED_EVENTS:
         modeladmin.message_user(
