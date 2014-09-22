@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup, Comment
 from django.template import Library
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
+from ..models.functions import date_html as date_html_util
 from ..utils import abbreviate as abbreviate_func
 
 
@@ -85,6 +86,21 @@ def html_to_latex(html):
     for comment in soup.find_all(text=lambda text: isinstance(text, Comment)):
         comment.extract()
     return mark_safe(smart_text(soup.get_text()))
+
+
+@register.assignment_tag(takes_context=True)
+def get_prev_event_counter(context, source, event_counter):
+    if 'source_dict' not in context:
+        context['source_dict'] = {}
+    source_dict = context['source_dict']
+    if source.pk not in source_dict:
+        source_dict[source.pk] = event_counter
+    return source_dict[source.pk]
+
+
+@register.filter
+def date_html(date):
+    return date_html_util(date)
 
 
 @register.filter

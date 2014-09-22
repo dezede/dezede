@@ -10,7 +10,8 @@
   \title{ {{ object.titre|html_to_latex }} }
   \author{ {{ object.editeurs_scientifiques.html|html_to_latex }} }
   \date{
-    Publié dans \textit{Dezède} le {{ object.date_publication }} \\
+    Publié dans \textit{Dezède}
+    le {{ object.date_publication|date_html|html_to_latex }} \\
     Exporté le \today
   }
 
@@ -55,7 +56,8 @@
   Dossier dirigé par {{ object.editeurs_scientifiques.html|html_to_latex }},
   avec la contribution de {{ object.get_contributors.html|html_to_latex }}.
 
-  Publié dans \textit{Dezède} le {{ object.date_publication }} à l’adresse
+  Publié dans \textit{Dezède}
+  le {{ object.date_publication|date_html|html_to_latex }} à l’adresse
   {{ SITE }}{{ object.get_absolute_url }}
 
   \twocolumn
@@ -63,9 +65,11 @@
 
   \addcontentsline{toc}{part}{ {% trans 'Événements' %} }
 
-  {% with object.get_queryset as evenements %}
+  {% with evenements=object.get_queryset %}
     {% for evenement in evenements %}
-      {% include 'libretto/evenement_item.tex' %}
+      {% with event_counter=forloop.counter %}
+        {% include 'libretto/evenement_item.tex' %}
+      {% endwith %}
     {% endfor %}
   {% endwith %}
 

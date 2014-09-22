@@ -83,15 +83,18 @@
   \nopagebreak
 
   {% for source in sources %}
+    \medskip
     {% if source.contenu %}
-      \enquote{% templatetag openbrace %}{{ source.contenu|html_to_latex|compact_paragraph }}}
-      ({{ source.html|html_to_latex }})
+      {% get_prev_event_counter source event_counter as prev_event_counter %}
+      {% if prev_event_counter == event_counter %}
+        \enquote{% templatetag openbrace %}{{ source.contenu|html_to_latex|compact_paragraph }}}
+        ({{ source.html|html_to_latex }})
+      {% else %}
+        Voir : notice \textbf{% templatetag openbrace %}{{ prev_event_counter }}},
+        {{ source.html|html_to_latex }}.
+      {% endif %}
     {% else %}
       {{ source.html|html_to_latex }}
-    {% endif %}
-
-    {% if not forloop.last %}
-      \medskip
     {% endif %}
   {% endfor %}
 

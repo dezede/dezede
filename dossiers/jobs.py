@@ -71,7 +71,8 @@ def send_pdf(dossier_pk, user_pk, site_pk, language_code):
     request.user = user
     context = RequestContext(
         request,
-        {'object': dossier, 'user': user, 'SITE': Site.objects.get(pk=site_pk)}
+        {'object': dossier, 'user': user, 'SITE': Site.objects.get(pk=site_pk),
+         'source_dict': {}}
     )
     try:
         tex = render_to_string('dossiers/dossierdevenements_detail.tex', context)

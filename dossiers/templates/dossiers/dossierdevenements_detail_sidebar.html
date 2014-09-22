@@ -1,4 +1,4 @@
-{% load i18n sekizai_tags static %}
+{% load i18n sekizai_tags static extras %}
 
 <aside id="sidebar">
 
@@ -43,7 +43,7 @@
         {% endif %}
       {% endwith %}
       <dt>{% trans 'Date de mise en ligne' %}</dt>
-      <dd>{{ object.date_publication }}</dd>
+      <dd>{{ object.date_publication|date_html }}</dd>
       {# FIXME: Revoir cette condition quand le "voir aussi sera implémenté #}
       {% if object.publications or object.developpements %}
         <hr />
