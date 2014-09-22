@@ -25,7 +25,9 @@ def striptags_n_chars(text):
 
 
 def fix_strange_characters(text):
-    return text.replace('...\x1f', '…').replace('\x1c', '').replace('\x1b', '')
+    return (text
+            .replace('...\x1f', '…').replace('\x1c', '').replace('\x1b', '')
+            .replace('\u2500', '—'))
 
 
 compact_paragraph_re = re.compile(r'(?<![\n\s ])\n+[\s\n ]*\n+(?![\n\s ])')
