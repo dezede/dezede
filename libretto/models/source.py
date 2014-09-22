@@ -127,7 +127,7 @@ class Source(AutoriteModel):
         return no_func(self.numero)
 
     def p(self):
-        return ugettext('p. %s') % self.page
+        return ugettext('p. %s') % self.page
 
     def html(self, tags=True, pretty_title=False):
         url = None if not tags else self.get_absolute_url()

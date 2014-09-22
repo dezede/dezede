@@ -91,10 +91,10 @@ def str_list_w_last(iterable, infix=None, last_infix=None,
     if oxford_comma and len(l) > 2:
         if oxfordian_last_infix is None:
             oxfordian_last_infix = pgettext(
-                'dernier infix pour plus de 2 éléments', ' et ')
+                'dernier infix pour plus de 2 éléments', ' et ')
         last_infix = oxfordian_last_infix
     elif last_infix is None:
-        last_infix = pgettext('dernier infix pour 2 éléments', ' et ')
+        last_infix = pgettext('dernier infix pour 2 éléments', ' et ')
 
     return str_list(l, infix, last_infix)
 
