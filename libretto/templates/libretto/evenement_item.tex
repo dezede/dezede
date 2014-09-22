@@ -86,6 +86,8 @@
     {% if source.contenu %}
       \enquote{% templatetag openbrace %}{{ source.contenu|html_to_latex|compact_paragraph }}}
       ({{ source.html|html_to_latex }})
+    {% else %}
+      {{ source.html|html_to_latex }}
     {% endif %}
 
     {% if not forloop.last %}
