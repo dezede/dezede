@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from django.contrib import messages
 from django.contrib.sites.models import get_current_site
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
@@ -30,6 +31,8 @@ class DossierDEvenementsDataDetail(EvenementListView):
     def get_queryset(self):
         self.object = get_object_or_404(DossierDEvenements,
                                         pk=self.kwargs['pk'])
+        if not self.object.can_be_viewed(self.request):
+            raise PermissionDenied
         return super(DossierDEvenementsDataDetail, self).get_queryset(
             base_filter=Q(pk__in=self.object.get_queryset()))
 
@@ -44,6 +47,12 @@ class DossierDEvenementsDataDetail(EvenementListView):
 
 
 class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
+    def get_object(self, queryset=None):
+        if not self.request.user.is_authenticated():
+            raise PermissionDenied
+        return super(DossierDEvenementsDetailXeLaTeX,
+                     self).get_object(queryset)
+
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         if is_user_locked(request.user):

@@ -253,6 +253,14 @@ class PublishedModel(CommonModel):
     def is_public(self):
         return self.etat.public
 
+    def can_be_viewed(self, request=None):
+        public = self.is_public
+        if request is None or not request.user.is_authenticated():
+            return public
+        if request.user.is_superuser:
+            return True
+        return request.user.pk == self.owner_id
+
 
 class AutoriteModel(PublishedModel):
     documents = ManyToManyField(
