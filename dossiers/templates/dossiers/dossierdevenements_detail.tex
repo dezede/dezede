@@ -1,17 +1,13 @@
 {% extends 'libretto/base.tex' %}
 {% load i18n extras %}
 
-{% block declarations %}
-  \newcounter{evenements-counter}
-{% endblock %}
-
 
 {% block document %}
   \title{ {{ object.titre|html_to_latex }} }
   \author{ {{ object.editeurs_scientifiques.html|html_to_latex }} }
   \date{
     Publié dans \textit{Dezède}
-    le {{ object.date_publication|date_html|html_to_latex }} \\
+    le {{ object.date_publication|date_html:True|html_to_latex }} \\
     Exporté le \today
   }
 
@@ -57,7 +53,7 @@
   avec la contribution de {{ object.get_contributors.html|html_to_latex }}.
 
   Publié dans \textit{Dezède}
-  le {{ object.date_publication|date_html|html_to_latex }} à l’adresse
+  le {{ object.date_publication|date_html:True|html_to_latex }} à l’adresse
   {{ SITE }}{{ object.get_absolute_url }}
 
   \twocolumn

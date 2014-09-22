@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 import copy
 from functools import partial
+from django.contrib import messages
 from django.contrib.admin import (site, TabularInline, StackedInline,
                                   ModelAdmin)
 from django.contrib.admin.options import BaseModelAdmin
@@ -22,6 +23,8 @@ from .models import *
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
     ElementDeDistributionForm, EnsembleForm)
+from dossiers.jobs import events_to_pdf as events_to_pdf_job
+from dossiers.utils import launch_pdf_export
 from typography.utils import replace
 
 
@@ -956,6 +959,25 @@ class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
     }
 
 
+MAX_EXPORTED_EVENTS = 200
+
+
+def events_to_pdf(modeladmin, request, queryset):
+    n = queryset.count()
+    if n > MAX_EXPORTED_EVENTS:
+        modeladmin.message_user(
+            request,
+            'Trop d’événements sélectionnés pour l’export ; '
+            'seuls les %s premiers seront exportés' % MAX_EXPORTED_EVENTS,
+            messages.WARNING)
+        queryset = queryset[:MAX_EXPORTED_EVENTS]
+        n = MAX_EXPORTED_EVENTS
+    launch_pdf_export(
+        events_to_pdf_job, request,
+        list(queryset.values_list('pk', flat=True)), 'de %s événements' % n)
+events_to_pdf.short_description = _('Exporter en PDF')
+
+
 class EvenementAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'link',)
@@ -974,6 +996,7 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
     readonly_fields = ('__str__', 'html', 'link')
     inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,
                SourceInline)
+    actions = [events_to_pdf]
     fieldsets = (
         (_('Début'), {
             'fields': (

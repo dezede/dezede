@@ -43,7 +43,7 @@
         {% endif %}
       {% endwith %}
       <dt>{% trans 'Date de mise en ligne' %}</dt>
-      <dd>{{ object.date_publication|date_html }}</dd>
+      <dd>{{ object.date_publication|date_html:True }}</dd>
       {# FIXME: Revoir cette condition quand le "voir aussi sera implémenté #}
       {% if object.publications or object.developpements %}
         <hr />

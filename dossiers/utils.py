@@ -6,6 +6,8 @@ from logging import getLogger
 import os
 from subprocess import Popen, PIPE
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.sites.models import get_current_site
 from django.core.cache import cache
 from rq.timeouts import JobTimeoutException
 
@@ -69,3 +71,19 @@ def xelatex_to_pdf(source_code):
         raise e
 
     return open(file_abspath % 'pdf', 'rb')
+
+
+def launch_pdf_export(job, request, data, subject):
+    if is_user_locked(request.user):
+        messages.error(request,
+                       'Un export de votre part est déjà en cours. '
+                       'Veuillez attendre la fin de celui-ci avant d’en '
+                       'lancer un autre.')
+    else:
+        lock_user(request.user)
+        site = get_current_site(request)
+        job.delay(data, request.user.pk, site.pk, request.LANGUAGE_CODE)
+        messages.info(request,
+                      'La génération de l’export PDF %s '
+                      'est en cours. Un courriel le contenant vous sera '
+                      'envoyé d’ici quelques minutes.' % subject)

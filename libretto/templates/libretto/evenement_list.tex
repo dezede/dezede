@@ -1,0 +1,17 @@
+{% extends 'libretto/base.tex' %}
+{% load i18n extras %}
+
+
+{% block document %}
+
+  \twocolumn
+  \fontsize{10pt}{12pt}\selectfont
+  \setlength{\parskip}{0pt}
+
+  {% for evenement in evenements %}
+    {% with event_counter=forloop.counter %}
+      {% include 'libretto/evenement_item.tex' %}
+    {% endwith %}
+  {% endfor %}
+
+{% endblock %}

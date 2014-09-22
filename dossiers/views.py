@@ -1,17 +1,16 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.contrib import messages
-from django.contrib.sites.models import get_current_site
+
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
 from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementListView)
-from .jobs import send_pdf
+from .jobs import dossier_to_pdf
 from .models import CategorieDeDossiers, DossierDEvenements
-from .utils import is_user_locked, lock_user
+from .utils import launch_pdf_export
 
 
 class CategorieDeDossiersList(PublishedListView):
@@ -55,19 +54,7 @@ class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if is_user_locked(request.user):
-            messages.error(request,
-                           'Un export de votre part est déjà en cours. '
-                           'Veuillez attendre la fin de celui-ci avant d’en '
-                           'lancer un autre.')
-        else:
-            lock_user(request.user)
-            site = get_current_site(request)
-            send_pdf.delay(self.object.pk, request.user.pk, site.pk,
-                           request.LANGUAGE_CODE)
-            messages.info(request,
-                          'La génération de l’export PDF du dossier « %s » '
-                          'est en cours. Un courriel le contenant vous sera '
-                          'envoyé d’ici quelques minutes.' % self.object)
+        launch_pdf_export(dossier_to_pdf, request, self.object.pk,
+                          'du dossier « %s »' % self.object)
         return redirect(reverse('dossierdevenements_detail',
                                 args=(self.object.pk,)))

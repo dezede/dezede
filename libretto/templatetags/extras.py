@@ -99,8 +99,8 @@ def get_prev_event_counter(context, source, event_counter):
 
 
 @register.filter
-def date_html(date):
-    return date_html_util(date)
+def date_html(date, short=False):
+    return date_html_util(date, short=short)
 
 
 @register.filter
