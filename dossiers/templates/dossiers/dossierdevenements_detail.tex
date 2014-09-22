@@ -9,6 +9,10 @@
 {% block document %}
   \title{ {{ object.titre|html_to_latex }} }
   \author{ {{ object.editeurs_scientifiques.html|html_to_latex }} }
+  \date{
+    Publié dans \textit{Dezède} le {{ object.date_publication }} \\
+    Exporté le \today
+  }
 
   \maketitle
 
@@ -16,22 +20,19 @@
 
   \onecolumn
 
-  \part*{ {% trans 'Présentation' %} }
   \addcontentsline{toc}{part}{ {% trans 'Présentation' %} }
 
-  {\large
-    {{ object.presentation|html_to_latex }}
-  }
+  {{ object.presentation|html_to_latex }}
 
   {% if object.contexte %}
-    \section*{ {% trans 'Contexte historique' %} }
+    \section*{% templatetag openbrace %}{% trans 'Contexte historique' %}}
     \addcontentsline{toc}{section}{ {% trans 'Contexte historique' %} }
 
     {{ object.contexte|html_to_latex }}
   {% endif %}
 
   {% if object.sources %}
-    \section*{ {% trans 'Sources et protocole' %} }
+    \section*{% templatetag openbrace %}{% trans 'Sources et protocole' %}}
     \addcontentsline{toc}{section}{ {% trans 'Sources et protocole' %} }
 
     {{ object.sources|html_to_latex }}
@@ -39,19 +40,27 @@
 
 
   {% if object.bibliographie %}
-    \section*{ {% trans 'Bibliographie indicative' %} }
+    \section*{% templatetag openbrace %}{% trans 'Bibliographie indicative' %}}
     \addcontentsline{toc}{section}{ {% trans 'Bibliographie indicative' %} }
 
     {{ object.bibliographie|html_to_latex }}
   {% endif %}
 
+  \begin{center}
+    \rule{0.25\linewidth}{0.5pt}
+  \end{center}
+
+  \fontsize{10pt}{12pt}\selectfont
+
+  Dossier dirigé par {{ object.editeurs_scientifiques.html|html_to_latex }},
+  avec la contribution de {{ object.get_contributors.html|html_to_latex }}.
+
+  Publié dans \textit{Dezède} le {{ object.date_publication }} à l’adresse
+  {{ SITE }}{{ object.get_absolute_url }}
 
   \twocolumn
-  \fontsize{10pt}{12pt}\selectfont
-  \setlength{\parindent}{0pt}
   \setlength{\parskip}{0pt}
 
-  \part*{ {% trans 'Événements' %} }
   \addcontentsline{toc}{part}{ {% trans 'Événements' %} }
 
   {% with object.get_queryset as evenements %}
@@ -59,7 +68,5 @@
       {% include 'libretto/evenement_item.tex' %}
     {% endfor %}
   {% endwith %}
-
-  \tableofcontents
 
 {% endblock %}

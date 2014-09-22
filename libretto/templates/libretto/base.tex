@@ -3,13 +3,13 @@
 % À compiler avec XeLaTeX.
 % Le paquet libertineotf doit être installé.
 
-\documentclass[12pt, a4paper, french]{book}
+\documentclass[12pt, a4paper, french]{report}
 \usepackage{fontspec}
 \usepackage{xunicode}
 \usepackage{graphicx}
 \usepackage{babel}
 \usepackage{csquotes}
-\usepackage[margin=0.75in]{geometry}
+\usepackage[margin=0.75in, left=1in]{geometry}
 \usepackage{libertineotf}
 \usepackage{enumitem}
 
@@ -22,8 +22,11 @@
 \vfuzz \hfuzz
 
 \setlength{\columnsep}{0.75cm}
+\setlength{\parindent}{0pt}
 
 \setlist[itemize]{leftmargin=*}
+
+\pagenumbering{gobble}
 
 {% block declarations %}{% endblock %}
 
