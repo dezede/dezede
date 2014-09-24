@@ -8,7 +8,7 @@ from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.db.models import CharField, ManyToManyField, \
-    PositiveIntegerField, ForeignKey, OneToOneField, IntegerField, TextField, \
+    PositiveIntegerField, ForeignKey, IntegerField, TextField, \
     BooleanField, permalink, get_model, SmallIntegerField, PROTECT
 from django.utils.encoding import python_2_unicode_compatible, smart_text, \
     force_text
