@@ -37,6 +37,7 @@
           });
           suggestions.initialize();
           $('input[name="q"]').typeahead({
+            minLength: 2,
             highlight: true
           }, {
             source: suggestions.ttAdapter(),
