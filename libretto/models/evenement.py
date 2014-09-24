@@ -42,7 +42,7 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
     def prefetch(self):
         return self.select_related(
             'pupitre', 'pupitre__partie',
-            'profession').prefetch_related('individus')
+            'profession').prefetch_related('individus', 'ensembles')
 
     def html(self, tags=True):
         return str_list(e.html(tags=tags) for e in self)
