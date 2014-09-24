@@ -63,7 +63,6 @@ libxml2-dev
 libxslt1-dev
 openjdk-7-jre
 elasticsearch             0.90.7
-rabbitmq-server           3.0.2
 nodejs                    0.10.22
 ========================= =======
 
