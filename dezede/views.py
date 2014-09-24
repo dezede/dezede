@@ -43,7 +43,7 @@ class CustomSearchView(SearchView):
 
         if self.results.query.backend.include_spelling:
             q = self.query or ''
-            suggestion = self.form.searchqueryset.spelling_suggestion(q)
+            suggestion = self.form.searchqueryset.spelling_suggestion(q) or ''
             if clean_query(suggestion) != clean_query(q):
                 context['suggestion'] = suggestion
 

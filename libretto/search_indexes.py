@@ -86,6 +86,15 @@ class EvenementIndex(CommonSearchIndex, Indexable):
     def get_model(self):
         return Evenement
 
+    def index_queryset(self, using=None):
+        qs = super(EvenementIndex, self).index_queryset(using)
+        return qs.select_related(
+            'debut_lieu', 'debut_lieu__nature',
+            'debut_lieu__lieudivers', 'debut_lieu__institution',
+            'fin_lieu', 'fin_lieu__nature',
+            'fin_lieu__lieudivers', 'fin_lieu__institution'
+        )
+
 
 class PartieIndex(PolymorphicCommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='html')
@@ -109,11 +118,11 @@ def filter_published(sqs, request):
     return sqs.filter(filters)
 
 
-def autocomplete_search(request, q, model=None, max_results=7):
+def autocomplete_search(request, q, model=None, max_results=5):
     q = replace(q)
     sqs = SearchQuerySet()
     sqs = filter_published(sqs, request)
     if model is not None:
         sqs = sqs.models(model)
-    sqs = sqs.autocomplete(content_auto=q).filter(content_auto__icontains=q)[:max_results]
+    sqs = sqs.autocomplete(content_auto=q)[:max_results]
     return [r.object for r in sqs]

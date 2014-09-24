@@ -189,7 +189,7 @@ IMAGE_CROPPING_THUMB_SIZE = (800, 600)
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'ENGINE': 'dezede.elasticsearch_backend.ConfigurableElasticSearchEngine',
         'URL': 'http://127.0.0.1:9200/',
         'INDEX_NAME': 'dezede',
         'INCLUDE_SPELLING': True,
@@ -198,6 +198,81 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_SIGNAL_PROCESSOR = 'libretto.signals.AutoInvalidatorSignalProcessor'
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
+ELASTICSEARCH_INDEX_SETTINGS = {
+    'settings': {
+        'analysis': {
+            'analyzer': {
+                'ngram_analyzer': {
+                    'type': 'custom',
+                    'tokenizer': 'nGram',
+                    'filter': [
+                        'haystack_ngram',
+                        'stopwords',
+                        'asciifolding',
+                        'lowercase',
+                        'snowball',
+                        'elision',
+                        'worddelimiter',
+                    ],
+                },
+                'edgengram_analyzer': {
+                    'type': 'custom',
+                    'tokenizer': 'standard',
+                    'filter': [
+                        'haystack_edgengram',
+                        'stopwords',
+                        'asciifolding',
+                        'lowercase',
+                        'snowball',
+                        'elision',
+                        'worddelimiter',
+                    ],
+                }
+            },
+            'tokenizer': {
+                'haystack_ngram_tokenizer': {
+                    'type': 'nGram',
+                    'min_gram': 3,
+                    'max_gram': 15,
+                },
+                'haystack_edgengram_tokenizer': {
+                    'type': 'edgeNGram',
+                    'min_gram': 2,
+                    'max_gram': 15,
+                    'side': 'front'
+                }
+            },
+            'filter': {
+                'snowball': {
+                    'type': 'snowball',
+                    'language': 'French',
+                },
+                'elision': {
+                    'type': 'elision',
+                    'articles': ['l', 'm', 't', 'qu', 'n', 's', 'j', 'd'],
+                },
+                'stopwords': {
+                    'type': 'stop',
+                    'stopwords': '_french_',
+                    'ignore_case': True,
+                },
+                'worddelimiter': {
+                    'type': 'word_delimiter',
+                },
+                'haystack_ngram': {
+                    'type': 'nGram',
+                    'min_gram': 3,
+                    'max_gram': 15,
+                },
+                'haystack_edgengram': {
+                    'type': 'edgeNGram',
+                    'min_gram': 2,
+                    'max_gram': 15,
+                }
+            }
+        }
+    }
+}
 
 CACHES = {
     'default': {
@@ -286,6 +361,10 @@ LOGGING = {
         'rq.worker': {
             'handlers': ['rq_console', 'mail_admins'],
             'level': 'DEBUG'
+        },
+        'elasticsearch': {
+            'handlers': ['rq_console', 'mail_admins'],
+            'level': 'WARNING'
         },
     }
 }
