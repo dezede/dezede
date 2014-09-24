@@ -950,14 +950,29 @@ body>footer {
       }
     }
   }
-  .tt-suggestion p {
-    text-align: inherit;
+  .tt-suggestion {
+    p {
+      text-align: left;
+    }
+    &.tt-cursor {
+      color: @dropdown-link-hover-color;
+      background-color: @dropdown-link-hover-bg;
+      cursor: pointer;
+      a {
+        color: @dropdown-bg;
+      }
+    }
+  }
+  .tt-empty {
+    text-align: center;
+    color: @text-muted;
+    cursor: default;
   }
   // FIXME: Ceci est un hack pour corriger la position du bouton de validation
   //        de recherche cassée par typeahead.
   &+.input-group-btn .btn {
-    top: -3px;
-    height: 35px;
+    top: -2px;
+    height: 34px;
   }
 }
 

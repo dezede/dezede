@@ -30,16 +30,27 @@
       </form>
       {% addtoblock 'js' %}
         <script>
-          $('input[name="q"]').typeahead({
+          var suggestions = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: '{% url 'autocomplete' %}?q=%QUERY'
-          }).on('typeahead:initialized', function (e) {
-            {# FIXME: Retirer quand https://github.com/twitter/typeahead.js/pull/325 sera résolu. #}
-            $(this).prev('.tt-hint').addClass(this.className);
+          });
+          suggestions.initialize();
+          $('input[name="q"]').typeahead({
+            highlight: true
+          }, {
+            source: suggestions.ttAdapter(),
+            displayKey: 'value',
+            templates: {
+              empty: '<div class="tt-empty">{% trans 'Aucun résultat' %}</div>'
+            }
           }).keypress(function (e) {
             if (e.which == 13) {
               $(this).parents('form').submit();
-              return false;
+              e.preventDefault();
             }
+          }).on('typeahead:selected', function (e, object) {
+            document.location = object.url;
           });
         </script>
       {% endaddtoblock %}

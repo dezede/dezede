@@ -22,6 +22,12 @@ class HomeView(ListView):
         return qs.published(self.request)
 
 
+# TODO: Use the search engine filters to do this
+def clean_query(q):
+    return (q.lower().replace('(', '').replace(')', '').replace(',', '')
+            .replace('-', ' '))
+
+
 class CustomSearchView(SearchView):
     """
     Custom SearchView to fix spelling suggestions.
@@ -37,8 +43,8 @@ class CustomSearchView(SearchView):
 
         if self.results.query.backend.include_spelling:
             q = self.query or ''
-            suggestion = self.form.get_suggestion() or ''
-            if suggestion.lower() != q.lower():
+            suggestion = self.form.searchqueryset.spelling_suggestion(q)
+            if clean_query(suggestion) != clean_query(q):
                 context['suggestion'] = suggestion
 
         return context
@@ -55,7 +61,10 @@ class CustomSearchView(SearchView):
 def autocomplete(request):
     q = request.GET.get('q', '')
     suggestions = autocomplete_search(request, q)
-    data = json.dumps(map(smart_text, suggestions))
+    suggestions = [{'value': (s.related_label() if hasattr(s, 'related_label')
+                              else smart_text(s)),
+                    'url': s.get_absolute_url()} for s in suggestions]
+    data = json.dumps(suggestions)
     return HttpResponse(data, content_type='application/json')
 
 
