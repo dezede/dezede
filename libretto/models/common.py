@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 from collections import OrderedDict
 import datetime
-from caching.base import CachingManager, CachingQuerySet, CachingMixin
 from django.conf import settings
 from django.contrib.contenttypes.generic import GenericRelation
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
@@ -78,7 +77,7 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
 
 # TODO: Personnaliser order_by pour simuler automatiquement NULLS LAST
 # en faisant comme https://coderwall.com/p/cjluxg
-class CommonQuerySet(CachingQuerySet, TypographicQuerySet):
+class CommonQuerySet(TypographicQuerySet):
     def _get_no_related_objects_filter_kwargs(self):
         meta = self.model._meta
         return {r.get_accessor_name(): None for r in
@@ -92,12 +91,12 @@ class CommonQuerySet(CachingQuerySet, TypographicQuerySet):
         return self.filter(**self._get_no_related_objects_filter_kwargs())
 
 
-class CommonManager(TypographicManager, CachingManager):
+class CommonManager(TypographicManager):
     use_for_related_fields = True
     queryset_class = CommonQuerySet
 
 
-class CommonModel(CachingMixin, TypographicModel):
+class CommonModel(TypographicModel):
     """
     Modèle commun à l’application, ajoutant diverses possibilités.
     """

@@ -121,6 +121,8 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -276,14 +278,14 @@ ELASTICSEARCH_INDEX_SETTINGS = {
 
 CACHES = {
     'default': {
-        'BACKEND': 'redis_cache.cache.RedisCache',
+        'BACKEND': 'johnny.backends.redis.RedisCache',
         'LOCATION': 'unix:/var/run/redis/redis.sock:1',
         'KEY_PREFIX': '2Z',
         'TIMEOUT': 24 * 60 * 60,  # seconds
+        'JOHNNY_CACHE': True,
     }
 }
-CACHE_EMPTY_QUERYSETS = True
-CACHE_COUNT_TIMEOUT = 60*60
+JOHNNY_MIDDLEWARE_KEY_PREFIX = '2Z'
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
