@@ -4,6 +4,8 @@ from __future__ import unicode_literals, division
 from django.conf import settings
 from django.db.models import Q
 from django.utils import translation
+from haystack import connections
+from haystack.exceptions import NotHandled
 from haystack.indexes import (
     SearchIndex, Indexable, CharField, EdgeNgramField, DateField, BooleanField,
     IntegerField)
@@ -17,17 +19,20 @@ class CommonSearchIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
     public = BooleanField(model_attr='etat__public')
     owner_id = IntegerField(model_attr='owner_id', null=True)
+    BASE_BOOST = 0.5
+    MAXIMUM_BOOST = 5.0
 
     def prepare(self, obj):
         translation.activate(settings.LANGUAGE_CODE)
         prepared_data = super(CommonSearchIndex, self).prepare(obj)
         # Booste chaque objet en fonction du nombre de données liées.
-        # le plus petit boost possible est `min_boost`, et une racine de base
-        # `root_base` est appliquée pour niveler les résultats.
-        root_base = 5
-        min_boost = 0.5
+        # `growth` est le nombre d’objets liés nécessaires pour atteindre
+        # les 2/3 de la distance entre `min_boost` et `max_boost`.
+        n = obj.get_related_count()
+        min_boost, max_boost = self.BASE_BOOST, self.MAXIMUM_BOOST
+        growth = 100
         prepared_data['boost'] = (
-            (1 + obj.get_related_count()) ** (1 / root_base) - (1 - min_boost))
+            min_boost + (max_boost-min_boost) * (1 - 1 / (1 + n / growth)))
         return prepared_data
 
 
@@ -39,18 +44,20 @@ class PolymorphicCommonSearchIndex(CommonSearchIndex):
 
 class OeuvreIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='titre_html')
+    BASE_BOOST = 1.5
 
     def get_model(self):
         return Oeuvre
 
     def prepare(self, obj):
         prepared_data = super(OeuvreIndex, self).prepare(obj)
-        prepared_data['boost'] *= 1.0 / (obj.level + 1)
+        prepared_data['boost'] /= (obj.level + 1)
         return prepared_data
 
 
 class SourceIndex(CommonSearchIndex, Indexable):
     date = DateField(model_attr='date', null=True)
+    BASE_BOOST = 0.25
 
     def get_model(self):
         return Source
@@ -58,6 +65,7 @@ class SourceIndex(CommonSearchIndex, Indexable):
 
 class IndividuIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='related_label')
+    BASE_BOOST = 2.0
 
     def get_model(self):
         return Individu
@@ -65,6 +73,7 @@ class IndividuIndex(CommonSearchIndex, Indexable):
 
 class EnsembleIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='related_label')
+    BASE_BOOST = 2.0
 
     def get_model(self):
         return Ensemble
@@ -72,14 +81,10 @@ class EnsembleIndex(CommonSearchIndex, Indexable):
 
 class LieuIndex(PolymorphicCommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='html')
+    BASE_BOOST = 1.5
 
     def get_model(self):
         return Lieu
-
-    def prepare(self, obj):
-        prepared_data = super(LieuIndex, self).prepare(obj)
-        prepared_data['boost'] *= 5.0 / (obj.level + 1)
-        return prepared_data
 
 
 class EvenementIndex(CommonSearchIndex, Indexable):
@@ -98,6 +103,7 @@ class EvenementIndex(CommonSearchIndex, Indexable):
 
 class PartieIndex(PolymorphicCommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='html')
+    BASE_BOOST = 1.0
 
     def get_model(self):
         return Partie
@@ -105,6 +111,7 @@ class PartieIndex(PolymorphicCommonSearchIndex, Indexable):
 
 class ProfessionIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='html')
+    BASE_BOOST = 1.0
 
     def get_model(self):
         return Profession
@@ -114,15 +121,47 @@ def filter_published(sqs, request):
     user_id = request.user.id
     filters = Q(public=True)
     if user_id is not None:
-        filters |= Q(user_id=user_id)
+        filters |= Q(owner_id=user_id)
     return sqs.filter(filters)
+
+
+def get_haystack_unified_index():
+    return connections['default'].get_unified_index()
+
+
+def get_haystack_index(model):
+    try:
+        return get_haystack_unified_index().get_index(model)
+    except NotHandled:
+        return
+
+
+MINIMUM_SCORE = 5.0
+
+
+def result_iterator(sqs):
+    results = list(sqs)
+
+    if results:
+        min_score = max(results[0].score * 1/3, MINIMUM_SCORE)
+        for result in results:
+            if result.score < min_score:
+                break
+            yield result.object
 
 
 def autocomplete_search(request, q, model=None, max_results=5):
     q = replace(q)
     sqs = SearchQuerySet()
-    sqs = filter_published(sqs, request)
-    if model is not None:
+    if model is None:
+        unified_index = get_haystack_unified_index()
+        models = unified_index.get_indexed_models()
+        models = [model for model in models
+                  if 'content_auto' in unified_index.get_index(model).fields]
+        sqs = sqs.models(*models)
+    else:
         sqs = sqs.models(model)
+    sqs = filter_published(sqs, request)
     sqs = sqs.autocomplete(content_auto=q)[:max_results]
-    return [r.object for r in sqs]
+
+    return list(result_iterator(sqs))

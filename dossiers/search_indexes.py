@@ -8,11 +8,12 @@ from .models import DossierDEvenements
 
 class DossierDEvenementsIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='titre')
+    BASE_BOOST = 4.0
 
     def get_model(self):
         return DossierDEvenements
 
     def prepare(self, obj):
         prepared_data = super(DossierDEvenementsIndex, self).prepare(obj)
-        prepared_data['boost'] *= 5.0 / (obj.level + 1)
+        prepared_data['boost'] /= (obj.level + 1)
         return prepared_data

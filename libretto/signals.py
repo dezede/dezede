@@ -8,12 +8,11 @@ from django.db.models import get_model
 from django.db.models.signals import post_save, pre_delete
 from django_rq import job
 import django_rq
-from haystack import connections
-from haystack.exceptions import NotHandled
 from haystack.signals import BaseSignalProcessor
 from polymorphic import PolymorphicModel
 from reversion.models import Version, Revision
 from cache_tools.jobs import auto_invalidate_cache, get_stale_objects
+from .search_indexes import get_haystack_index
 
 
 def is_polymorphic_model(model):
@@ -32,13 +31,6 @@ def get_polymorphic_parent_model(model):
 
 def is_polymorphic_child_model(model):
     return get_polymorphic_parent_model(model) != model
-
-
-def get_haystack_index(model):
-    try:
-        return connections['default'].get_unified_index().get_index(model)
-    except NotHandled:
-        return
 
 
 def auto_update_haystack(action, instance):
