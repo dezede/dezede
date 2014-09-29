@@ -68,7 +68,7 @@ def auto_invalidate(action, app_label, model_name, pk):
 
     start = time()
     while True:
-        instance = model._default_manager.no_cache().filter(pk=pk).first()
+        instance = model._default_manager.filter(pk=pk).first()
         if instance is not None:
             break
         if time() - start > 20:
