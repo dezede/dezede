@@ -11,6 +11,7 @@ import django_rq
 from haystack.signals import BaseSignalProcessor
 from polymorphic import PolymorphicModel
 from reversion.models import Version, Revision
+from cachalot.settings import cachalot_settings
 from cache_tools.jobs import auto_invalidate_cache, get_stale_objects
 from .search_indexes import get_haystack_index
 
@@ -52,6 +53,8 @@ def auto_update_haystack(action, instance):
 
 
 @job
+# FIXME: On ne devrait pas avoir à désactiver django-cachalot
+@cachalot_settings(CACHALOT_ENABLED=False)
 def auto_invalidate(action, app_label, model_name, pk):
     model = get_model(app_label, model_name)
 
