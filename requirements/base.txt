@@ -25,7 +25,7 @@ elasticsearch==1.2.0
 
 # Caching
 django-redis==3.7.1
--e git+https://github.com/BertrandBordage/django-cachalot@bcdc9c580ce309d00d9dc953cd15fb8997948b24#egg=django-cachalot
+-e git+https://github.com/BertrandBordage/django-cachalot@263af6cfb2dd1c03614cbd28f6b9ff5ad24704be#egg=django-cachalot
 
 # Data visualization frameworks
 djangorestframework==2.4.3
@@ -50,7 +50,7 @@ cssmin==0.2.0
 rjsmin==1.0.9
 
 # Database migrations
-South==1.0
+South==1.0.1
 
 # Data parsing/serialization
 beautifulsoup4==4.3.2
