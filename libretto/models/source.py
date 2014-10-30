@@ -57,9 +57,21 @@ class SourceQuerySet(PublishedQuerySet):
             ordering.remove('type')
         ordering.insert(0, 'type')
 
-        for source in self.select_related('type').order_by(*ordering):
+        for source in self.order_by(*ordering):
             sources[source.type].append(source)
         return sources.items()
+
+    def prefetch(self):
+        return self.select_related('type', 'owner', 'etat').extra(
+            select={
+                '_has_document':
+                'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id)'
+                % (Source.documents.field.m2m_db_table(),
+                   Source._meta.db_table),
+                '_has_illustration':
+                'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id)'
+                % (Source.illustrations.field.m2m_db_table(),
+                   Source._meta.db_table)})
 
 
 class SourceManager(PublishedManager):
@@ -67,6 +79,9 @@ class SourceManager(PublishedManager):
 
     def group_by_type(self):
         return self.get_queryset().group_by_type()
+
+    def prefetch(self):
+        return self.get_queryset().prefetch()
 
 
 @python_2_unicode_compatible
@@ -161,3 +176,13 @@ class Source(AutoriteModel):
         return self.evenements.with_program().exists()
     has_program.short_description = _('Programme')
     has_program.boolean = True
+
+    def has_document(self):
+        if hasattr(self, '_has_document'):
+            return self._has_document
+        return self.documents.exists()
+
+    def has_illustration(self):
+        if hasattr(self, '_has_illustration'):
+            return self._has_illustration
+        return self.illustrations.exists()

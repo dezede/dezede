@@ -46,7 +46,7 @@
 {% endif %}
 
 {% published evenement.sources as sources %}
-{% for type, sources in sources.group_by_type %}
+{% for type, sources in sources.prefetch.group_by_type %}
   <h3>
     {% if sources|length > 1 %}
       {{ type.pluriel|capfirst }}
@@ -59,7 +59,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <div class="row">
-            {% if source.contenu or source.documents.exists or source.illustrations.exists %}
+            {% if source.contenu or source.has_document or source.has_illustration %}
               <a class="col-xs-8 col-sm-9" data-toggle="collapse"
                  data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
                  href="#source_{{ evenement.pk }}_{{ source.pk }}"
