@@ -11,11 +11,10 @@ from django.db.models import (
 from django.db.models.signals import class_prepared
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ungettext_lazy
+from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from filebrowser.fields import FileBrowseField
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-from cache_tools import cached_ugettext_lazy as _
 from libretto.models.common import AutoriteModel, CommonTreeManager, \
     CommonTreeQuerySet
 from libretto.models.functions import href, str_list_w_last, sc

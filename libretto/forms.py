@@ -7,7 +7,7 @@ from ajax_select.fields import AutoCompleteSelectMultipleField, \
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
 from django.forms import ValidationError, ModelForm, Form, CharField, TextInput
-from cache_tools import cached_ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from .models import (
     Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
     Ensemble)

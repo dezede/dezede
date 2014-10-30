@@ -2,8 +2,7 @@
 
 from __future__ import unicode_literals
 from django.core.cache import cache
-from django.utils.functional import lazy
-from django.utils.translation import get_language, ugettext, pgettext
+from django.utils.translation import get_language
 
 
 __all__ = (
@@ -34,33 +33,3 @@ def invalidate_object(obj, id_attr=b'pk'):
     object_keys = cache.get(object_cache_key, [])
     cache.delete_many(object_keys)
     cache.delete(object_cache_key)
-
-
-UGETTEXT_CACHE = {}
-
-
-def cached_ugettext(message):
-    lang = get_language()
-    cache_key = (lang, message)
-    try:
-        return UGETTEXT_CACHE[cache_key]
-    except KeyError:
-        out = UGETTEXT_CACHE[cache_key] = ugettext(message)
-        return out
-
-
-PGETTEXT_CACHE = {}
-
-
-def cached_pgettext(context, message):
-    lang = get_language()
-    cache_key = (lang, context, message)
-    try:
-        return PGETTEXT_CACHE[cache_key]
-    except KeyError:
-        out = PGETTEXT_CACHE[cache_key] = pgettext(context, message)
-        return out
-
-
-cached_ugettext_lazy = lazy(cached_ugettext, unicode)
-cached_pgettext_lazy = lazy(cached_pgettext, unicode)

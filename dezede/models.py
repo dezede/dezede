@@ -11,10 +11,10 @@ from django.db.models import (
     PositiveIntegerField, PositiveSmallIntegerField, Max)
 from django.template import Template, Context
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from image_cropping import ImageRatioField
 from accounts.models import _get_valid_modelnames_func
-from cache_tools import cached_ugettext_lazy as _
 from libretto.models.common import PublishedModel
 
 

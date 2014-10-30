@@ -10,9 +10,9 @@ from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, TemplateView, ListView
 from registration.backends.default.views import RegistrationView
-from cache_tools import cached_ugettext_lazy as _
 from libretto.models import Evenement
 from .models import HierarchicUser
 from .forms import UserRegistrationForm

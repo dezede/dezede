@@ -16,14 +16,14 @@ from django.template.defaultfilters import time
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext_lazy, ugettext
+from django.utils.translation import (
+    ungettext_lazy, ugettext, ugettext_lazy as _)
 from autoslug import AutoSlugField
 from filebrowser.fields import FileBrowseField
 from mptt.managers import TreeManager
 from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
 from tinymce.models import HTMLField
-from cache_tools import cached_ugettext_lazy as _
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 from .functions import href, ex, hlp, capfirst, str_list, date_html

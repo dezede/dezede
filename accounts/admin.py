@@ -5,9 +5,9 @@ from django.contrib.admin import site
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 from reversion import VersionAdmin
 from tinymce.widgets import TinyMCE
-from cache_tools.utils import cached_ugettext_lazy as _
 from .models import HierarchicUser
 
 

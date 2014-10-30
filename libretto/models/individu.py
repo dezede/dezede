@@ -3,13 +3,12 @@
 from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
 from django.db.models import CharField, ForeignKey, \
-    ManyToManyField, OneToOneField, permalink, Q, PROTECT
+    ManyToManyField, permalink, Q, PROTECT
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
-from django.utils.translation import pgettext_lazy, ungettext_lazy
+from django.utils.translation import (
+    pgettext_lazy, ungettext_lazy, ugettext, ugettext_lazy as _)
 from tinymce.models import HTMLField
-from cache_tools import model_method_cached, cached_ugettext as ugettext, \
-    cached_ugettext_lazy as _
 from ..utils import abbreviate
 from .common import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,

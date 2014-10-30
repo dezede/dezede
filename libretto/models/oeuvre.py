@@ -14,7 +14,8 @@ from django.utils.encoding import python_2_unicode_compatible, smart_text, \
     force_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext_lazy
+from django.utils.translation import (
+    ungettext_lazy, ugettext, ugettext_lazy as _)
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from polymorphic_tree.managers import PolymorphicMPTTModelManager, \
@@ -22,8 +23,7 @@ from polymorphic_tree.managers import PolymorphicMPTTModelManager, \
 from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
-from cache_tools import model_method_cached, cached_ugettext as ugettext, \
-    cached_ugettext_lazy as _
+from cache_tools import model_method_cached
 from .common import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,

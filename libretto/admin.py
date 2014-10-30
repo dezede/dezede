@@ -13,12 +13,12 @@ from django.contrib.contenttypes.generic import GenericStackedInline
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.db.models import Q, FieldDoesNotExist
 from django.forms.models import modelformset_factory
+from django.utils.translation import ugettext_lazy as _
 from polymorphic.admin import (
     PolymorphicChildModelAdmin, PolymorphicParentModelAdmin,
     PolymorphicChildModelFilter)
 from reversion import VersionAdmin
 import reversion
-from cache_tools import cached_ugettext_lazy as _
 from .models import *
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,

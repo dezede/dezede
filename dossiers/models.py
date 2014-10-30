@@ -10,11 +10,10 @@ from django.db.models import (
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext_lazy
+from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from accounts.models import HierarchicUser
-from cache_tools import cached_ugettext_lazy as _
 from libretto.models import Lieu, Oeuvre, Evenement, Individu, Ensemble
 from libretto.models.common import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet

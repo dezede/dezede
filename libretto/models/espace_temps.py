@@ -8,14 +8,14 @@ from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
 from django.utils.encoding import python_2_unicode_compatible, smart_text, \
     force_text
 from django.utils.html import strip_tags
-from django.utils.translation import ungettext_lazy
+from django.utils.translation import (
+    ungettext_lazy, pgettext, ugettext_lazy as _)
 from polymorphic_tree.managers import PolymorphicMPTTQuerySet, \
     PolymorphicMPTTModelManager
 from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
-from cache_tools import cached_pgettext as pgettext, cached_ugettext_lazy as _, \
-    model_method_cached
+from cache_tools import model_method_cached
 from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \

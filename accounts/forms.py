@@ -10,11 +10,11 @@ from django.contrib.sites.models import get_current_site
 from django.forms import CharField, ModelMultipleChoiceField, BooleanField
 from django.forms.widgets import CheckboxSelectMultiple
 from django.template.loader import render_to_string
+from django.utils.translation import ugettext_lazy as _
 from mptt.forms import TreeNodeChoiceField
 # FIXME: Remplacer ceci par RegistrationFormUniqueEmail quand Joann aura fini
 # de faire mumuse.
 from registration.forms import RegistrationForm
-from cache_tools import cached_ugettext_lazy as _
 
 
 def get_mentors():
