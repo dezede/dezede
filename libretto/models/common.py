@@ -548,19 +548,20 @@ class TypeDeCaracteristique(PolymorphicModel, CommonModel):
 
 class CaracteristiqueQuerySet(PolymorphicQuerySet, CommonQuerySet):
     def html_list(self, tags=True):
-        return [hlp(valeur, type, tags)
-                for type, valeur in self.values_list('type__nom', 'valeur')]
+        return [hlp(c.valeur, c.type, tags)
+                for c in self]
 
     def html(self, tags=True, caps=False):
         l = []
         first = True
-        for type, valeur in self.values_list('type__nom', 'valeur'):
+        for c in self:
+            valeur = c.valeur
             if first and caps:
                 valeur = capfirst(valeur)
                 first = False
             valeur = mark_safe(valeur)
-            if type:
-                l.append(hlp(valeur, type, tags=tags))
+            if c.type:
+                l.append(hlp(valeur, c.type, tags=tags))
             else:
                 l.append(valeur)
         return str_list(l)
