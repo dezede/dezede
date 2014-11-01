@@ -37,15 +37,14 @@ class NatureDeLieu(CommonModel, SlugModel):
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
                             help_text=PLURAL_MSG)
-    referent = BooleanField(_('référent'), default=False, db_index=True,
-        help_text=_('L’affichage d’un lieu remonte jusqu’au lieu référent.') \
-        + ' ' \
-        + ex(force_text(_('ville, institution, salle')),
-             pre=force_text(_('dans une architecture de pays, villes, théâtres, '
-                           'etc, ')),
-             post=force_text(_(' sera affiché car on remonte jusqu’à un lieu '
-                            'référent, ici choisi comme étant ceux de nature '
-                            '« ville »'))))
+    referent = BooleanField(
+        _('référent'), default=False, db_index=True,
+        help_text=_(
+            'L’affichage d’un lieu remonte jusqu’au lieu référent. '
+            'Exemple : dans une architecture de pays, villes, théâtres, etc, '
+            '« ville, institution, salle » sera affiché car on remonte '
+            'jusqu’à un lieu référent, ici choisi comme étant ceux de nature '
+            '« ville »'))
 
     class Meta(object):
         verbose_name = ungettext_lazy('nature de lieu', 'natures de lieu', 1)

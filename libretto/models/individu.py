@@ -111,8 +111,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
     prenoms_complets = CharField(
         _('prénoms complets'), max_length=100, blank=True, db_index=True,
         help_text=
-        ex('Antonio Lucio') + ' Ne remplir que s’il existe un ou des prénoms '
-                              'peu usités pour cet individu.')
+        ex('Antonio Lucio',
+           post=' Ne remplir que s’il existe un ou des prénoms '
+                'peu usités pour cet individu.'))
     pseudonyme = CharField(_('pseudonyme'), max_length=200, blank=True,
                            db_index=True)
     DESIGNATIONS = (

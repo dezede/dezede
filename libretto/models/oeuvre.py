@@ -49,15 +49,14 @@ class GenreDOeuvre(CommonModel, SlugModel):
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
         help_text=PLURAL_MSG)
-    referent = BooleanField(_('référent'), default=False, db_index=True,
-        help_text=_('L’affichage d’une œuvre remonte jusqu’à l’œuvre '
-                    'référente la contenant.') \
-            + ' ' \
-            + ex(force_text(_('Le jeune Henri, acte 2, scène 3')),
-                 pre=force_text(_('le rendu d’une scène sera du type ')),
-                 post=force_text(_(' car on remonte jusqu’à l’œuvre référente, '
-                                'ici choisie comme étant celle de nature '
-                                '« opéra »'))))
+    referent = BooleanField(
+        _('référent'), default=False, db_index=True,
+        help_text=_(
+            'L’affichage d’une œuvre remonte jusqu’à l’œuvre référente '
+            'la contenant. Exemple : le rendu d’une scène sera du type '
+            '« Le jeune Henri, acte 2, scène 3 » car on remonte jusqu’à '
+            'l’œuvre référente, ici choisie comme étant celle de nature '
+            '« opéra »'))
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
         blank=True, null=True)
 

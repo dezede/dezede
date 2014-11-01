@@ -2,8 +2,9 @@
 
 from __future__ import unicode_literals
 from django.template.defaultfilters import date
+from django.utils import six
 from django.utils.encoding import smart_text
-from django.utils.functional import allow_lazy
+from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, pgettext, ugettext_lazy as _
 
@@ -108,7 +109,7 @@ def ex(txt, pre='', post=''):
         'txt': txt,
         'post': post,
     }
-ex = allow_lazy(ex, unicode)
+ex = lazy(ex, six.text_type)
 
 
 def no(txt):

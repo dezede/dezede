@@ -91,11 +91,11 @@ class Source(AutoriteModel):
     nom = CharField(_('nom'), max_length=200, db_index=True,
                     help_text=ex(_('Journal de Rouen')))
     numero = CharField(_('numéro'), max_length=50, blank=True, db_index=True,
-                       help_text=_('Sans « № »') + '. ' + ex('52'))
+                       help_text=_('Sans « № ». Exemple : « 52 »'))
     date = DateField(_('date'), db_index=True, help_text=DATE_MSG,
                      null=True, blank=True)
     page = CharField(_('page'), max_length=50, blank=True,
-                     help_text=_('Sans « p. »') + '. ' + ex('3'))
+                     help_text=_('Sans « p. ». Exemple : « 3 »'))
     type = ForeignKey('TypeDeSource', related_name='sources', db_index=True,
                       help_text=ex(_('compte rendu')), verbose_name=_('type'),
                       on_delete=PROTECT)
