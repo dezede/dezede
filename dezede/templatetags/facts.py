@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from random import randrange, choice
 from django.db.models import Count, F
 from django.template import Library
-from cache_tools import cached_ugettext as ugettext
+from django.utils.translation import ugettext
 from libretto.models import (
     Evenement, Individu, Source, Oeuvre, Lieu, Role, Instrument)
 from libretto.models.functions import capfirst
@@ -62,7 +62,11 @@ def on_this_day(context):
         debut_date__day=now.day,
         debut_lieu__isnull=False)
 
-    e = events[randrange(events.count())]
+    n = events.count()
+    if n == 0:
+        return ''
+
+    e = events[randrange(n)]
 
     out = h3(ugettext('Il y a %s ans aujourd’hui')
              % (now.year - e.debut_date.year))
@@ -89,6 +93,10 @@ def famous_event(context, n=10):
         .filter(evenements__isnull=False).values('evenements') \
         .annotate(n_sources=Count('pk')).order_by('-n_sources') \
         .values_list('evenements', 'n_sources')
+
+    n = min(data.count(), n)
+    if n == 0:
+        return ''
 
     while True:
         pk, n_sources = data[randrange(n)]
@@ -137,6 +145,10 @@ def prolific_author(context, n=40):
         .filter(auteurs__isnull=False).values('auteurs__individu') \
         .annotate(n_oeuvres=Count('pk')).order_by('-n_oeuvres') \
         .values_list('auteurs__individu', 'n_oeuvres')
+
+    n = min(data.count(), n)
+    if n == 0:
+        return ''
 
     a = None
     anonyme_found = False
