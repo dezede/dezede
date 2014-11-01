@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block header %}
+  <h1>
+    {% block title %}
+      {% trans 'Vérification de votre adresse e-mail' %}
+    {% endblock %}
+  </h1>
+{% endblock %}
+
+{% block content %}
+  <p>
+    {% blocktrans %}
+      Nous vous avons envoyé un e-mail de vérification.
+      Suivez le lien fourni pour finaliser la procédure de création de compte.
+      Veuillez nous contactez si vous ne le recevez pas
+      dans les minutes qui viennent.
+    {% endblocktrans %}
+  </p>
+
+{% endblock %}

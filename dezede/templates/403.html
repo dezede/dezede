@@ -7,9 +7,15 @@
 {% endblock %}
 
 {% block content %}
-  {% url 'auth_login' as login_url %}
-  {% blocktrans %}
-    Vous n’avez pas l’autorisation d’accéder à cette page.<br />
-    Souhaitez-vous <a href="{{ login_url }}">vous connecter</a> ?
-  {% endblocktrans %}
+  {% trans 'Vous n’avez pas l’autorisation d’accéder à cette page.' %}
+  <br />
+  {% if not user.is_authenticated %}
+    {% url 'account_login' as login_url %}
+    {% with path=request.path %}
+      {% blocktrans %}
+        Souhaitez-vous
+        <a href="{{ login_url }}?next={{ path }}">vous connecter</a> ?
+      {% endblocktrans %}
+    {% endwith %}
+  {% endif %}
 {% endblock %}

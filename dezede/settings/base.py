@@ -93,8 +93,14 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.gis',
+
     'accounts',
     'dezede',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
     'haystack',
     'django_rq',
     'libretto',
@@ -107,7 +113,6 @@ INSTALLED_APPS = (
     'tinymce',
     'grappelli.dashboard',
     'grappelli',
-    'registration',
     'rest_framework',
     'crispy_forms',
     'ajax_select',
@@ -140,6 +145,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'django.contrib.messages.context_processors.messages',
     'sekizai.context_processors.sekizai',
+    'allauth.account.context_processors.account',
+    'allauth.socialaccount.context_processors.socialaccount',
 )
 
 LOCALE_PATHS = (
@@ -153,9 +160,25 @@ TIME_FORMAT = 'H:i'
 GRAPPELLI_INDEX_DASHBOARD = 'dezede.dashboard.CustomIndexDashboard'
 GRAPPELLI_ADMIN_TITLE = u'<a href="/">Dezède</a>'
 
-ACCOUNT_ACTIVATION_DAYS = 7
 AUTH_USER_MODEL = 'accounts.HierarchicUser'
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+ACCOUNT_ADAPTER = 'accounts.adapter.HierarchicUserAdapter'
+ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.HierarchicUserSignupForm'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = False
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
+ACCOUNT_EMAIL_SUBJECT_PREFIX = EMAIL_SUBJECT_PREFIX
+ACCOUNT_FORMS = {
+    'login': 'accounts.forms.LoginForm',
+}
+LOGIN_URL = '/connexion'
 LOGIN_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_ON_GET = True
 
 TINYMCE_FILEBROWSER = True
 TINYMCE_DEFAULT_CONFIG = {
@@ -191,7 +214,7 @@ IMAGE_CROPPING_THUMB_SIZE = (800, 600)
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'dezede.elasticsearch_backend.ConfigurableElasticSearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
+        'URL': '127.0.0.1:9200',
         'INDEX_NAME': 'dezede',
         'INCLUDE_SPELLING': True,
     },

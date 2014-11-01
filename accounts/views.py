@@ -8,14 +8,11 @@ from django.core.exceptions import PermissionDenied
 from django.db import connection
 from django.db.models import Count
 from django.http import Http404
-from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, TemplateView, ListView
-from registration.backends.default.views import RegistrationView
 from libretto.models import Evenement
 from .models import HierarchicUser
-from .forms import UserRegistrationForm
 
 
 class GrantToAdmin(DetailView):
@@ -44,22 +41,6 @@ class GrantToAdmin(DetailView):
         else:
             self.grant_user(user_to_be_granted)
         return context
-
-
-class MyRegistrationView(RegistrationView):
-    form_class = UserRegistrationForm
-
-    def form_valid(self, request, form):
-        # Taken from the overriden method.
-        new_user = self.register(request, **form.cleaned_data)
-        form.save(request, new_user)
-        success_url = self.get_success_url(request, new_user)
-
-        try:
-            to, args, kwargs = success_url
-            return redirect(to, *args, **kwargs)
-        except ValueError:
-            return redirect(success_url)
 
 
 class EvenementsGraph(TemplateView):

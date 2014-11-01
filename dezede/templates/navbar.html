@@ -132,6 +132,22 @@
               </a>
             </li>
 
+            {% if user.is_authenticated %}
+              <li>
+                <a href="{% url 'account_logout' %}?next={{ request.path }}">
+                  <b class="fa fa-sign-out fa-fw"></b>
+                  {% trans 'Déconnexion' %}
+                </a>
+              </li>
+            {% else %}
+              <li>
+                <a href="{% url 'account_login' %}?next={{ request.path }}">
+                  <b class="fa fa-sign-in fa-fw"></b>
+                  {% trans 'Connexion' %}
+                </a>
+              </li>
+            {% endif %}
+
             <li>
               <a href="https://groups.google.com/forum/?fromgroups=#!forum/dezede">
                 <b class="fa fa-comments fa-fw"></b>

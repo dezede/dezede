@@ -1,10 +1,10 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from allauth.account.models import EmailConfirmation
 from django.contrib.auth.models import Group, Permission
 from django.core import mail
 from django.core.urlresolvers import reverse
-from registration.models import RegistrationProfile
 from libretto.tests.models.utils import CommonTestCase
 from ..models import HierarchicUser
 
@@ -24,14 +24,17 @@ class RegisterTestCase(CommonTestCase):
         self.group = Group.objects.create(name='test')
         self.group.permissions.add(*Permission.objects.all()[:2])
 
+        # We ensure no-one is logged in as we may fetch a non-test session.
+        self.client.get(reverse('account_logout'))
+
     def testRegister(self):
         user_data = {
             'first_name': 'This-Is',
             'last_name': 'A-Test',
             'email': 'a@b.com',
             'username': 'this-is-a-test',
-            'password1': 'empty',
-            'password2': 'empty',
+            'password1': 'empty-password',
+            'password2': 'empty-password',
             'mentor': self.mentor.pk,
             'groups': [self.group.pk],
         }
@@ -40,7 +43,7 @@ class RegisterTestCase(CommonTestCase):
             return HierarchicUser.objects.get(username=user_data['username'])
 
         # Tests the empty form.
-        form_url = reverse('registration_register')
+        form_url = reverse('account_signup')
         self.client.get(form_url)
 
         # Fills and sends the form.
@@ -58,8 +61,8 @@ class RegisterTestCase(CommonTestCase):
         # Does the same as opening both mails and clicking on links.
         # New user mail:
         activation_url = reverse(
-            'registration_activate',
-            args=[RegistrationProfile.objects.get().activation_key])
+            'account_confirm_email',
+            args=[EmailConfirmation.objects.get().key])
         self.assertURL(activation_url, follow=True)
         new_user = get_new_user()
         self.assertTrue(new_user.is_active)
@@ -76,5 +79,5 @@ class RegisterTestCase(CommonTestCase):
         self.assertTrue(new_user.is_staff)
         self.assertFalse(new_user.is_superuser)
         # Tests if both links are useless now :
-        self.assertURL(activation_url)
+        self.assertURL(activation_url, follow=True)
         self.assertURL(grant_url)

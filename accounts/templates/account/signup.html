@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags i18n static sekizai_tags %}
+
+{% block header %}
+  <h1>{% block title %}{% trans "Sign Up" %}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+  <p>
+    {% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}
+  </p>
+
+  {% crispy form %}
+
+  {% addtoblock 'js' %}
+    <script>
+      $('#id_next').val('{{ request.GET.next }}');
+    </script>
+  {% endaddtoblock %}
+
+{% endblock %}
