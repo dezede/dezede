@@ -7,8 +7,6 @@ from django.utils.translation import get_language
 
 __all__ = (
     'get_cache_key', 'get_cache_pattern', 'invalidate', 'invalidate_object',
-    'cached_ugettext', 'cached_pgettext', 'cached_ugettext_lazy',
-    'cached_pgettext_lazy',
 )
 
 
