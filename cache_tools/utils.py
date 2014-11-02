@@ -16,14 +16,14 @@ def get_cache_key(method, obj, args, kwargs, id_attr=b'pk'):
         return None
     meta = obj._meta
     return b'%s:%s.%s.%s:%s(%s,%s)' % (
-        get_language(), meta.app_label, meta.module_name,
+        get_language(), meta.app_label, meta.model_name,
         method.__name__, _id, args, kwargs)
 
 
 def get_obj_cache_key(obj, id_attr=b'pk'):
     meta = obj._meta
     return b'%s.%s.%s' % (
-        meta.app_label, meta.module_name, getattr(obj, id_attr))
+        meta.app_label, meta.model_name, getattr(obj, id_attr))
 
 
 def invalidate_object(obj, id_attr=b'pk'):
