@@ -307,21 +307,19 @@ class ElementDeProgrammeInline(CustomStackedInline):
             'fields': (('oeuvre', 'autre',), 'caracteristiques',
                        'distribution', 'numerotation',),
         }),
-        FILES_FIELDSET,
         (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed',),
             'fields': ('position',),
         }),
     )
     sortable_field_name = 'position'
-    raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',
-                     'illustrations', 'documents')
+    raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',)
     related_lookup_fields = {
         'm2m': ('distribution',),
     }
     autocomplete_lookup_fields = {
         'fk': ('oeuvre',),
-        'm2m': ('caracteristiques', 'illustrations', 'documents'),
+        'm2m': ('caracteristiques',),
     }
     classes = ('grp-collapse grp-open',)
 

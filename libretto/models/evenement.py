@@ -182,7 +182,7 @@ class CaracteristiqueDeProgramme(Caracteristique):
 
 
 @python_2_unicode_compatible
-class ElementDeProgramme(AutoriteModel):
+class ElementDeProgramme(CommonModel):
     evenement = ForeignKey('Evenement', related_name='programme',
                            db_index=True, verbose_name=_('événement'))
     oeuvre = ForeignKey('Oeuvre', related_name='elements_de_programme',
