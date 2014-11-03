@@ -549,10 +549,6 @@ class LieuCommonAdmin(OSMGeoAdmin, AutoriteAdmin):
             'fields': ('nom', 'parent', 'nature', 'historique', 'point'),
         }),
         FILES_FIELDSET,
-#        (_('Champs générés (Méthodes)'), {
-#            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__str__', 'html', 'link',),
-#        }),
     )
     layerswitcher = False
     default_lon = 300000
@@ -610,10 +606,6 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
                        'classement'),
         }),
         FILES_FIELDSET,
-#        (_('Champs générés (Méthodes)'), {
-#            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__str__', 'html', 'link',),
-#        }),
     )
 
 
@@ -659,10 +651,6 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
                        'designation', 'biographie',),
         }),
         FILES_FIELDSET,
-#        (_('Champs générés (Méthodes)'), {
-#            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__str__', 'html', 'link',),
-#        }),
     )
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'i', 'i')
 
@@ -839,10 +827,6 @@ class PartieCommonAdmin(AutoriteAdmin):
                        'classement'),
         }),
         FILES_FIELDSET,
-#        (_('Champs générés (Méthodes)'), {
-#            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__str__', 'html', 'link',),
-#        }),
     )
 
 
@@ -935,10 +919,6 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
             'classes': ('grp-collapse grp-closed', 'wide',),
             'fields': ('lilypond', 'description',),
         }),
-#        (_('Champs générés (Méthodes)'), {
-#            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__str__', 'html', 'link',),
-#        }),
     )
     fieldsets_and_inlines_order = ('f', 'i', 'f', 'f', 'i', 'i')
 
@@ -1016,10 +996,6 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
             'fields': (('circonstance', 'relache',), 'caracteristiques',),
         }),
         FILES_FIELDSET,
-#        (_('Champs générés (Méthodes)'), {
-#            'classes': ('grp-collapse grp-closed',),
-#            'fields': ('__str__', 'html', 'link',),
-#        }),
     )
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'i', 'i')
 
@@ -1068,10 +1044,6 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
                        'contenu', 'evenements',),
         }),
         FILES_FIELDSET,
-        #        (_('Champs générés (Méthodes)'), {
-        #            'classes': ('grp-collapse grp-closed',),
-        #            'fields': ('__str__', 'html',),
-        #        }),
     )
     fieldsets_and_inlines_order = ('f', 'i')
 
