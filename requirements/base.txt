@@ -5,7 +5,7 @@ psycopg2==2.5.4
 # Database fields
 django-mptt==0.6.1
 -e git+https://github.com/BertrandBordage/django_polymorphic@46118af7dc8486a2f1f6615a2f5b7e150a7e6705#egg=django-polymorphic
-django-polymorphic-tree==0.9
+django-polymorphic-tree==1.0.1
 django-autoslug==1.7.2
 
 # User interface
@@ -24,7 +24,7 @@ django-haystack==2.3.1
 elasticsearch==1.2.0
 
 # Caching
-django-redis==3.7.1
+django-redis==3.7.2
 -e git+https://github.com/BertrandBordage/django-cachalot@263af6cfb2dd1c03614cbd28f6b9ff5ad24704be#egg=django-cachalot
 
 # Data visualization frameworks
@@ -32,7 +32,7 @@ djangorestframework==2.4.3
 -e git+https://github.com/noirbizarre/django-eztables@daeff682d5113684770c153455410bef160c581b#egg=django-eztables
 
 # Small but powerful tools
-django-reversion==1.8.4
+django-reversion==1.8.5
 django-endless-pagination==2.0
 django-viewsets==0.1.7
 Unipath==1.0
