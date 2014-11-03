@@ -74,7 +74,6 @@ class CustomBaseModel(BaseModelAdmin):
 # Common fieldsets
 
 
-COMMON_FIELDSET_LABEL = _('Champs courants')
 ADVANCED_FIELDSET_LABEL = _('Champs avancés')
 PERIODE_D_ACTIVITE_FIELDSET = (_('Période d’activité'), {
     'fields': (('debut', 'debut_precision'), ('fin', 'fin_precision'))
@@ -270,7 +269,7 @@ class ElementDeProgrammeInline(CustomStackedInline):
     form = ElementDeProgrammeForm
     verbose_name_plural = _('programme')
     fieldsets = (
-        (COMMON_FIELDSET_LABEL, {
+        (None, {
             'fields': (('oeuvre', 'autre',), 'caracteristiques',
                        'distribution', 'numerotation',),
         }),
@@ -512,7 +511,7 @@ class LieuCommonAdmin(OSMGeoAdmin, AutoriteAdmin):
     filter_horizontal = ('illustrations', 'documents',)
     readonly_fields = ('__str__', 'html', 'link',)
     fieldsets = (
-        (COMMON_FIELDSET_LABEL, {
+        (None, {
             'fields': ('nom', 'parent', 'nature', 'historique', 'point'),
         }),
         FILES_FIELDSET,
@@ -568,7 +567,7 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
         'm2m': ('illustrations', 'documents'),
     }
     fieldsets = (
-        (COMMON_FIELDSET_LABEL, {
+        (None, {
             'fields': ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
                        'classement'),
         }),
@@ -639,7 +638,7 @@ class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
         'm2m': ('caracteristiques', 'documents', 'illustrations'),
     }
     fieldsets = (
-        (COMMON_FIELDSET_LABEL, {
+        (None, {
             'fields': (('particule_nom', 'nom'), 'caracteristiques', 'siege'),
         }),
         PERIODE_D_ACTIVITE_FIELDSET,
@@ -789,7 +788,7 @@ class PartieCommonAdmin(AutoriteAdmin):
         'fk': ('parent',),
     }
     fieldsets = (
-        (COMMON_FIELDSET_LABEL, {
+        (None, {
             'fields': ('nom', 'nom_pluriel', 'professions', 'parent',
                        'classement'),
         }),
@@ -959,7 +958,7 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
                 ('fin_heure', 'fin_heure_approx'),
                 ('fin_lieu', 'fin_lieu_approx'))
         }),
-        (COMMON_FIELDSET_LABEL, {
+        (None, {
             'fields': (('circonstance', 'relache',), 'caracteristiques',),
         }),
         FILES_FIELDSET,
@@ -1006,7 +1005,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     readonly_fields = ('__str__', 'html',)
     inlines = (AuteurInline,)
     fieldsets = (
-        (COMMON_FIELDSET_LABEL, {
+        (None, {
             'fields': ('nom', ('numero', 'page',), ('date', 'type',),
                        'contenu', 'evenements',),
         }),
