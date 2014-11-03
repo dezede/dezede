@@ -9,7 +9,7 @@ django-polymorphic-tree==0.9
 django-autoslug==1.7.2
 
 # User interface
-django-grappelli==2.5.3
+django-grappelli==2.5.5
 django-filebrowser==3.5.7
 django-tinymce==1.5.3
 django-crispy-forms==1.4.0
