@@ -6,6 +6,6 @@
     {{ object.date_str }}
     {{ object }}
     {{ object.contenu }}
-    {{ object.notes }}
+    {{ object.notes_publiques }}
   {% endautoescape %}
 {% endfilter %}

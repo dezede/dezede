@@ -11,7 +11,7 @@ from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
 from django.contrib.contenttypes.generic import GenericStackedInline
 from django.contrib.gis.admin import OSMGeoAdmin
-from django.db.models import Q, FieldDoesNotExist
+from django.db.models import Q
 from django.forms.models import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
 from polymorphic.admin import (
@@ -428,7 +428,7 @@ class PublishedAdmin(CommonAdmin):
 
 
 class AutoriteAdmin(PublishedAdmin):
-    additional_fields = ('etat', 'notes', 'owner')
+    additional_fields = ('etat', 'notes_publiques', 'notes_privees', 'owner')
 
 
 class TypeDeParenteCommonAdmin(CommonAdmin):

@@ -266,7 +266,8 @@ class AutoriteModel(PublishedModel):
         'Document', blank=True, null=True, related_name='%(class)s_set')
     illustrations = ManyToManyField(
         'Illustration', blank=True, null=True, related_name='%(class)s_set')
-    notes = HTMLField(blank=True)
+    notes_publiques = HTMLField(blank=True, verbose_name='notes publiques')
+    notes_privees = HTMLField(blank=True, verbose_name='notes privées')
 
     class Meta(object):
         abstract = True

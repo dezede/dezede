@@ -7,6 +7,6 @@
     {{ object.parent|default_if_none:'' }}
     {{ object.html }}
     {{ object.historique }}
-    {{ object.notes }}
+    {{ object.notes_publiques }}
   {% endautoescape %}
 {% endfilter %}

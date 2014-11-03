@@ -6,6 +6,6 @@
     {{ object.parent|default_if_none:'' }}
     {{ object.nom_pluriel }}
     {{ object.feminin }}
-    {{ object.notes }}
+    {{ object.notes_publiques }}
   {% endautoescape %}
 {% endfilter %}

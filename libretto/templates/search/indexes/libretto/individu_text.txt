@@ -10,6 +10,6 @@
     {{ object.naissance }}
     {{ object.deces }}
     {{ object }}
-    {{ object.notes }}
+    {{ object.notes_publiques }}
   {% endautoescape %}
 {% endfilter %}

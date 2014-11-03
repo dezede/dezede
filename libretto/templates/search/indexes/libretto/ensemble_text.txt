@@ -6,6 +6,6 @@
     {{ object.calc_caracteristiques }}
     {{ object.membres_html }}
     {{ object }}
-    {{ object.notes }}
+    {{ object.notes_publiques }}
   {% endautoescape %}
 {% endfilter %}

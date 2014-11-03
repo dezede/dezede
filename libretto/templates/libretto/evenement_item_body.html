@@ -38,10 +38,10 @@
 
 </div>
 
-{% if evenement.notes %}
+{% if evenement.notes_publiques %}
   <h4>{% trans 'notes'|capfirst %}</h4>
   <small>
-    {{ evenement.notes|safe }}
+    {{ evenement.notes_publiques|safe }}
   </small>
 {% endif %}
 

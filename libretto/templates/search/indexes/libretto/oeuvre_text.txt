@@ -8,6 +8,6 @@
     {{ object.caracteristiques_html }}
     {{ object.html }}
     {{ object.auteurs.individus.nom_complet }}
-    {{ object.notes }}
+    {{ object.notes_publiques }}
   {% endautoescape %}
 {% endfilter %}
