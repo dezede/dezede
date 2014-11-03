@@ -303,7 +303,7 @@ CACHES = {
         'BACKEND': 'redis_cache.cache.RedisCache',
         'LOCATION': 'unix:/var/run/redis/redis.sock:1',
         'KEY_PREFIX': '2Z',
-        'TIMEOUT': 24 * 60 * 60,  # seconds
+        'TIMEOUT': None,  # seconds
     }
 }
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
