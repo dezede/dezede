@@ -63,7 +63,7 @@
               <a class="col-xs-8 col-sm-9" data-toggle="collapse"
                  data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
                  href="#source_{{ evenement.pk }}_{{ source.pk }}"
-                 onmouseover="load_source_content(this, {{ source.pk }});">
+                 onclick="load_source_content(this, {{ source.pk }});">
                 {{ source.html|removetags:'a' }}
               </a>
             {% else %}

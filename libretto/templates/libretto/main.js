@@ -10,6 +10,7 @@ function load_source_content(object, pk) {
     data: {pk: pk}
   }).done(function (data) {
     inner.html(data);
-    $(object).removeAttr('onmouseover');
+    $(object).removeAttr('onclick');
+    tooltip_reload();
   });
 }
