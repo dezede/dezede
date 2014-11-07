@@ -10,8 +10,7 @@ from django.contrib.humanize.templatetags.humanize import apnumber
 from django.db.models import CharField, ManyToManyField, \
     PositiveIntegerField, ForeignKey, IntegerField, TextField, \
     BooleanField, permalink, get_model, SmallIntegerField, PROTECT
-from django.utils.encoding import python_2_unicode_compatible, smart_text, \
-    force_text
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import (
@@ -30,7 +29,7 @@ from .common import (
     OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,
     CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique,
     AncrageSpatioTemporel)
-from .functions import capfirst, ex, hlp, str_list, str_list_w_last, href, cite
+from .functions import capfirst, hlp, str_list, str_list_w_last, href, cite
 from .individu import Individu
 from .personnel import Profession
 from .source import Source
