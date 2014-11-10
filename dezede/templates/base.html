@@ -116,6 +116,7 @@
     {% compress js file %}
       <script>
         {% include 'base.execution.js' %}
+        {% include 'libretto/reader.js' %}
       </script>
     {% endcompress %}
     {% render_block 'js' postprocessor 'compressor.contrib.sekizai.compress' %}

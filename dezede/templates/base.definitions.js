@@ -1,7 +1,6 @@
 {# Gestion des tooltips #}
 function tooltips_reload() {
   $('*[title]').tooltip({
-    placement: 'top',
     container: 'body'
   });
 }

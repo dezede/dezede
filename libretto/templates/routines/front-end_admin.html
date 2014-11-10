@@ -7,14 +7,16 @@
 
     {% if has_change_perm %}
       <a class="btn btn-primary" href="{% url admin_change object.pk %}"
-         title="{% trans "modifier"|capfirst %}" role="button">
+         title="{% trans "modifier"|capfirst %}" data-placement="bottom"
+         role="button">
         <i class="fa fa-pencil"></i>
       </a>
     {% endif %}
 
     {% if has_delete_perm %}
       <a class="btn btn-danger" href="{% url admin_delete object.pk %}"
-         title="{% trans "supprimer"|capfirst %}" role="button">
+         title="{% trans "supprimer"|capfirst %}" data-placement="bottom"
+         role="button">
         <i class="fa fa-trash-o"></i>
       </a>
     {% endif %}

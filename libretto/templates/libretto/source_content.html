@@ -1,4 +1,57 @@
-{% load thumbnail %}
+{% load thumbnail i18n %}
+
+{% with fichiers=source.fichiers.all %}
+  {% if fichiers %}
+    {% for fichier in fichiers %}
+      {% if fichier.is_image %}
+        <script>
+          $(function () {
+            var $reader = $('#reader-{{ source.pk }}');
+            var images = $reader.data('images');
+            if (typeof images == 'undefined') {
+              images = [];
+            }
+            images.push('{% thumbnail fichier.fichier 'medium' %}');
+            $reader.data('images', images);
+          });
+        </script>
+      {% elif fichier.is_audio %}
+        <audio controls preload="auto">
+          <source src="{{ fichier.fichier.url }}"
+                  type="audio/{{ fichier.format }}" />
+        </audio>
+      {% elif fichier.is_video %}
+        <video width="640" height="480" controls preload="auto">
+          <source src="{{ fichier.fichier.url }}"
+                  type="video/{{ fichier.format }}" />
+        </video>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+
+{% if source.has_images %}
+  <div id="reader-{{ source.pk }}" class="reader-wrapper">
+    <a href="#" class="zoom btn btn-primary">
+      <i class="fa fa-search-plus"></i>
+    </a>
+    <div class="row">
+      <a href="#" class="prev col-xs-1 btn btn-default">
+        <i class="fa fa-angle-left fa-5x"></i>
+      </a>
+      <div class="reader col-xs-10">
+        <img src="" />
+      </div>
+      <a href="#" class="next col-xs-1 btn btn-default">
+        <i class="fa fa-angle-right fa-5x"></i>
+      </a>
+    </div>
+  </div>
+  <script>
+    $(function () { createReader($('#reader-{{ source.pk }}')); });
+  </script>
+{% endif %}
 
 {% if source.transcription %}
   <blockquote class="source">
@@ -15,24 +68,6 @@
   </blockquote>
 {% endif %}
 
-{% with fichiers=source.fichiers.all %}
-  {% if fichiers %}
-    {% for fichier in fichiers %}
-      {% if fichier.is_image %}
-        <a href="{{ fichier.fichier.url }}">
-          <img src="{% thumbnail fichier.fichier 'thumbnail' %}" />
-        </a>
-      {% elif fichier.is_audio %}
-        <audio controls preload="auto">
-          <source src="{{ fichier.fichier.url }}"
-                  type="audio/{{ fichier.format }}" />
-        </audio>
-      {% elif fichier.is_video %}
-        <video width="640" height="480" controls preload="auto">
-          <source src="{{ fichier.fichier.url }}"
-                  type="video/{{ fichier.format }}" />
-        </video>
-      {% endif %}
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+<script>
+  tooltips_reload();
+</script>

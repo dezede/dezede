@@ -198,6 +198,7 @@ THUMBNAIL_ALIASES = {
     '': {
         'avatar': {'size': (96, 96)},
         'thumbnail': {'size': (192, 192)},
+        'medium': {'size': (2000, 2000)},
     },
 }
 THUMBNAIL_PROCESSORS = (
