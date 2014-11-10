@@ -10,7 +10,6 @@ django-autoslug==1.7.2
 
 # User interface
 django-grappelli==2.5.5
-django-filebrowser==3.5.7
 django-tinymce==1.5.3
 django-crispy-forms==1.4.0
 django-ajax-selects==1.3.5
@@ -25,7 +24,7 @@ elasticsearch==1.2.0
 
 # Caching
 django-redis==3.7.2
--e git+https://github.com/BertrandBordage/django-cachalot@263af6cfb2dd1c03614cbd28f6b9ff5ad24704be#egg=django-cachalot
+-e git+https://github.com/BertrandBordage/django-cachalot@fbef9448b9086cb809b9bd0d1aa0eeadb5d6c8d3#egg=django-cachalot
 
 # Data visualization frameworks
 djangorestframework==2.4.3
