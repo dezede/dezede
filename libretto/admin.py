@@ -14,6 +14,7 @@ from django.contrib.gis.admin import OSMGeoAdmin
 from django.db.models import Q
 from django.forms.models import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
+from grappelli.forms import GrappelliSortableHiddenMixin
 from polymorphic.admin import (
     PolymorphicChildModelAdmin, PolymorphicParentModelAdmin,
     PolymorphicChildModelFilter)
@@ -77,10 +78,6 @@ class CustomBaseModel(BaseModelAdmin):
 ADVANCED_FIELDSET_LABEL = _('Champs avancés')
 PERIODE_D_ACTIVITE_FIELDSET = (_('Période d’activité'), {
     'fields': (('debut', 'debut_precision'), ('fin', 'fin_precision'))
-})
-FILES_FIELDSET = (_('Fichiers'), {
-    'classes': ('grp-collapse grp-closed',),
-    'fields': ('illustrations', 'documents',),
 })
 
 
@@ -264,21 +261,17 @@ class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
     classes = ('grp-collapse grp-open',)
 
 
-class ElementDeProgrammeInline(CustomStackedInline):
+class ElementDeProgrammeInline(GrappelliSortableHiddenMixin,
+                               CustomStackedInline):
     model = ElementDeProgramme
     form = ElementDeProgrammeForm
     verbose_name_plural = _('programme')
     fieldsets = (
         (None, {
             'fields': (('oeuvre', 'autre',), 'caracteristiques',
-                       'distribution', 'numerotation',),
-        }),
-        (ADVANCED_FIELDSET_LABEL, {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('position',),
+                       'distribution', 'numerotation', 'position'),
         }),
     )
-    sortable_field_name = 'position'
     raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',)
     related_lookup_fields = {
         'm2m': ('distribution',),
@@ -288,6 +281,84 @@ class ElementDeProgrammeInline(CustomStackedInline):
         'm2m': ('caracteristiques',),
     }
     classes = ('grp-collapse grp-open',)
+
+
+class FichierInline(GrappelliSortableHiddenMixin, CustomTabularInline):
+    model = Fichier
+    classes = ('grp-collapse grp-closed',)
+    fields = ('fichier', 'folio', 'page', 'position')
+
+
+class SourceEvenementInline(TabularInline):
+    model = SourceEvenement
+    verbose_name = _('événement lié')
+    verbose_name_plural = _('événements liés')
+    classes = ('grp-collapse grp-closed',)
+    extra = 0
+    raw_id_fields = ('evenement',)
+    related_lookup_fields = {
+        'fk': ('evenement',),
+    }
+
+
+class SourceOeuvreInline(TabularInline):
+    model = SourceOeuvre
+    verbose_name = _('œuvre liée')
+    verbose_name_plural = _('œuvres liées')
+    classes = ('grp-collapse grp-closed',)
+    extra = 0
+    raw_id_fields = ('oeuvre',)
+    autocomplete_lookup_fields = {
+        'fk': ('oeuvre',),
+    }
+
+
+class SourceIndividuInline(TabularInline):
+    model = SourceIndividu
+    verbose_name = _('individu lié')
+    verbose_name_plural = _('individus liés')
+    classes = ('grp-collapse grp-closed',)
+    extra = 0
+    raw_id_fields = ('individu',)
+    autocomplete_lookup_fields = {
+        'fk': ('individu',),
+    }
+
+
+class SourceEnsembleInline(TabularInline):
+    model = SourceEnsemble
+    verbose_name = _('ensemble lié')
+    verbose_name_plural = _('ensembles liés')
+    classes = ('grp-collapse grp-closed',)
+    extra = 0
+    raw_id_fields = ('ensemble',)
+    autocomplete_lookup_fields = {
+        'fk': ('ensemble',),
+    }
+
+
+class SourceLieuInline(TabularInline):
+    model = SourceLieu
+    verbose_name = _('lieu lié')
+    verbose_name_plural = _('lieux liés')
+    classes = ('grp-collapse grp-closed',)
+    extra = 0
+    raw_id_fields = ('lieu',)
+    autocomplete_lookup_fields = {
+        'fk': ('lieu',),
+    }
+
+
+class SourcePartieInline(TabularInline):
+    model = SourcePartie
+    verbose_name = _('rôle ou instrument lié')
+    verbose_name_plural = _('rôles ou instruments liés')
+    classes = ('grp-collapse grp-closed',)
+    extra = 0
+    raw_id_fields = ('partie',)
+    autocomplete_lookup_fields = {
+        'fk': ('partie',),
+    }
 
 
 class SourceInline(TabularInline):
@@ -358,7 +429,7 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
             request, 'additional_fields', excluded=self.exclude or ())
         if added_fields:
             self.added_fieldsets = (
-                (_('Champs d’administration'), {
+                (_('Notes'), {
                     'classes': ('grp-collapse grp-closed',),
                     'fields': added_fields,
                 }),
@@ -376,7 +447,7 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
-            if getattr(instance, 'owner') is None:
+            if getattr(instance, 'owner', None) is None:
                 instance.owner = request.user
             instance.save()
         formset.save_m2m()
@@ -471,20 +542,6 @@ reversion.register(TypeDeParenteDOeuvres, follow=('typedeparente_ptr',))
 reversion.register(TypeDeParenteDIndividus, follow=('typedeparente_ptr',))
 
 
-class DocumentAdmin(VersionAdmin, CommonAdmin):
-    list_display = ('__str__', 'nom', 'document', 'has_related_objects',)
-    list_editable = ('nom', 'document',)
-    search_fields = ('nom',)
-    inlines = (AuteurInline,)
-
-
-class IllustrationAdmin(VersionAdmin, CommonAdmin):
-    list_display = ('__str__', 'legende', 'image', 'has_related_objects')
-    list_editable = ('legende', 'image',)
-    search_fields = ('legende',)
-    inlines = (AuteurInline,)
-
-
 class EtatAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'public',
                     'has_related_objects')
@@ -503,18 +560,15 @@ class LieuCommonAdmin(OSMGeoAdmin, AutoriteAdmin):
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom', 'parent__nom',)
     list_filter = (PolymorphicChildModelFilter, 'nature',)
-    raw_id_fields = ('parent', 'illustrations', 'documents',)
+    raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ['parent'],
-        'm2m': ['illustrations', 'documents'],
     }
-    filter_horizontal = ('illustrations', 'documents',)
     readonly_fields = ('__str__', 'html', 'link',)
     fieldsets = (
         (None, {
             'fields': ('nom', 'parent', 'nature', 'historique', 'point'),
         }),
-        FILES_FIELDSET,
     )
     layerswitcher = False
     default_lon = 300000
@@ -561,17 +615,15 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
                      'classement')
     search_fields = ('nom', 'nom_pluriel', 'nom_feminin')
-    raw_id_fields = ('parent', 'illustrations', 'documents')
+    raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ('parent',),
-        'm2m': ('illustrations', 'documents'),
     }
     fieldsets = (
         (None, {
             'fields': ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
                        'classement'),
         }),
-        FILES_FIELDSET,
     )
 
 
@@ -585,12 +637,10 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
                      'prenoms',)
     list_filter = ('titre',)
     form = IndividuForm
-    raw_id_fields = ('naissance_lieu', 'deces_lieu', 'professions',
-                     'illustrations', 'documents',)
+    raw_id_fields = ('naissance_lieu', 'deces_lieu', 'professions')
     autocomplete_lookup_fields = {
         'fk': ('naissance_lieu', 'deces_lieu'),
-        'm2m': ('professions', 'parentes', 'illustrations',
-                'documents'),
+        'm2m': ('professions', 'parentes'),
     }
     readonly_fields = ('__str__', 'html', 'link',)
     inlines = (IndividuParentInline, IndividuEnfantInline)
@@ -616,7 +666,6 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
                        ('particule_nom_naissance', 'nom_naissance'),
                        'designation', 'biographie',),
         }),
-        FILES_FIELDSET,
     )
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'i', 'i')
 
@@ -632,17 +681,16 @@ class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'calc_caracteristiques', 'membres_count')
     search_fields = ('nom', 'membres__individu__nom')
     inlines = (MembreInline,)
-    raw_id_fields = ('caracteristiques', 'siege', 'documents', 'illustrations')
+    raw_id_fields = ('caracteristiques', 'siege')
     autocomplete_lookup_fields = {
         'fk': ('siege',),
-        'm2m': ('caracteristiques', 'documents', 'illustrations'),
+        'm2m': ('caracteristiques',),
     }
     fieldsets = (
         (None, {
             'fields': (('particule_nom', 'nom'), 'caracteristiques', 'siege'),
         }),
         PERIODE_D_ACTIVITE_FIELDSET,
-        FILES_FIELDSET,
     )
     fieldsets_and_inlines_order = ('f', 'f', 'i')
 
@@ -782,9 +830,9 @@ class PartieCommonAdmin(AutoriteAdmin):
     list_editable = ('nom', 'parent', 'classement',)
     search_fields = ('nom',)
     list_filter = (PolymorphicChildModelFilter,)
-    raw_id_fields = ('professions', 'parent', 'documents', 'illustrations')
+    raw_id_fields = ('professions', 'parent')
     autocomplete_lookup_fields = {
-        'm2m': ('professions', 'documents', 'illustrations'),
+        'm2m': ('professions',),
         'fk': ('parent',),
     }
     fieldsets = (
@@ -792,7 +840,6 @@ class PartieCommonAdmin(AutoriteAdmin):
             'fields': ('nom', 'nom_pluriel', 'professions', 'parent',
                        'classement'),
         }),
-        FILES_FIELDSET,
     )
 
 
@@ -855,22 +902,19 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
     raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
-                     'creation_lieu', 'pupitres', 'documents',
-                     'illustrations',)
+                     'creation_lieu', 'pupitres')
     autocomplete_lookup_fields = {
         'fk': ('genre', 'contenu_dans', 'creation_lieu'),
-        'm2m': ('caracteristiques', 'pupitres',
-                'documents', 'illustrations'),
+        'm2m': ('caracteristiques', 'pupitres'),
     }
     readonly_fields = ('__str__', 'html', 'link',)
     inlines = (AuteurInline, OeuvreMereInline, OeuvreFilleInline)
-#    inlines = (ElementDeProgrammeInline,)
     fieldsets = (
         (_('Titre'), {
             'fields': (('prefixe_titre', 'titre',), 'coordination',
                        ('prefixe_titre_secondaire', 'titre_secondaire',),),
         }),
-        (_('Autres champs courants'), {
+        (None, {
             'fields': ('genre', 'caracteristiques',
                        'pupitres', 'contenu_dans',),
         }),
@@ -880,7 +924,6 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                 ('creation_heure', 'creation_heure_approx'),
                 ('creation_lieu', 'creation_lieu_approx'))
         }),
-        FILES_FIELDSET,
         (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed', 'wide',),
             'fields': ('lilypond', 'description',),
@@ -934,11 +977,10 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
                    EventHasProgramListFilter)
     list_select_related = ('debut_lieu', 'debut_lieu__nature', 'etat', 'owner')
     date_hierarchy = 'debut_date'
-    raw_id_fields = ('debut_lieu', 'fin_lieu', 'caracteristiques',
-                     'documents', 'illustrations',)
+    raw_id_fields = ('debut_lieu', 'fin_lieu', 'caracteristiques')
     autocomplete_lookup_fields = {
         'fk': ('debut_lieu', 'fin_lieu'),
-        'm2m': ('caracteristiques', 'documents', 'illustrations'),
+        'm2m': ('caracteristiques',),
     }
     readonly_fields = ('__str__', 'html', 'link')
     inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,
@@ -961,7 +1003,6 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
         (None, {
             'fields': (('circonstance', 'relache',), 'caracteristiques',),
         }),
-        FILES_FIELDSET,
     )
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'i', 'i')
 
@@ -986,32 +1027,44 @@ class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
 
 class SourceAdmin(VersionAdmin, AutoriteAdmin):
     form = SourceForm
-    list_display = ('nom', 'date', 'type', 'has_events', 'has_program', 'link')
+    list_display = ('titre', 'date', 'type', 'has_events', 'has_program', 'link')
     list_editable = ('type', 'date',)
     list_select_related = ('type', 'etat', 'owner')
     date_hierarchy = 'date'
-    search_fields = ('nom', 'date', 'type__nom', 'numero', 'contenu',
+    search_fields = ('titre', 'date', 'type__nom', 'numero', 'transcription',
                      'owner__username', 'owner__first_name',
                      'owner__last_name')
-    list_filter = ('type', 'nom', SourceHasEventsListFilter,
+    list_filter = ('type', 'titre', SourceHasEventsListFilter,
                    SourceHasProgramListFilter)
-    raw_id_fields = ('evenements', 'documents', 'illustrations',)
+    raw_id_fields = ('evenements',)
     related_lookup_fields = {
         'm2m': ['evenements'],
     }
-    autocomplete_lookup_fields = {
-        'm2m': ['documents', 'illustrations'],
-    }
     readonly_fields = ('__str__', 'html',)
-    inlines = (AuteurInline,)
+    inlines = (
+        FichierInline, AuteurInline, SourceEvenementInline, SourceOeuvreInline,
+        SourceIndividuInline, SourceEnsembleInline, SourceLieuInline,
+        SourcePartieInline,
+    )
     fieldsets = (
         (None, {
-            'fields': ('nom', ('numero', 'page',), ('date', 'type',),
-                       'contenu', 'evenements',),
+            'fields': ('type', 'titre', 'legende',),
         }),
-        FILES_FIELDSET,
+        (None, {
+            'fields': (
+                ('date', 'date_approx'),
+                ('numero', 'folio', 'page',),
+                ('lieu_conservation', 'cote',),
+                'url',
+            )
+        }),
+        (_('Transcription'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': ('transcription',),
+        }),
     )
-    fieldsets_and_inlines_order = ('f', 'i')
+    fieldsets_and_inlines_order = ('f', 'f', 'f', 'i', 'i',
+                                   'i', 'i', 'i', 'i', 'i', 'i')
 
     def get_queryset(self, request):
         qs = super(SourceAdmin, self).get_queryset(request)
@@ -1047,8 +1100,6 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
         return qs
 
 
-site.register(Document, DocumentAdmin)
-site.register(Illustration, IllustrationAdmin)
 site.register(Etat, EtatAdmin)
 site.register(NatureDeLieu, NatureDeLieuAdmin)
 site.register(Lieu, LieuAdmin)

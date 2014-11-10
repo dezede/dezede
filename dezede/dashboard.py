@@ -56,33 +56,6 @@ class CustomIndexDashboard(Dashboard):
             models=('dossiers.*', 'dezede.*'),
         ))
 
-        self.children.append(modules.Group(
-            _('Fichiers'),
-            column=1,
-            collapsible=True,
-            css_classes=('grp-collapse grp-closed',),
-            children=[
-                modules.LinkList(
-                    _('Gestionnaire de fichiers bruts'),
-                    column=1,
-                    collapsible=False,
-                    children=[
-                        {
-                            'title': 'FileBrowser',
-                            'url': '/admin/filebrowser/browse/',
-                            'external': False,
-                        },
-                    ]
-                ),
-                modules.ModelList(
-                    _('Intégration à la base de données'),
-                    collapsible=False,
-                    models=('libretto.models.common.Document',
-                            'libretto.models.common.Illustration',),
-                )
-            ]
-        ))
-
         self.children.append(modules.RecentActions(
             _('Actions récentes'),
             limit=5,

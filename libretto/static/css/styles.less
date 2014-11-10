@@ -45,6 +45,9 @@
 @carousel-indicator-border-color: white;
 @carousel-indicator-active-bg: @carousel-indicator-border-color;
 
+@modal-lg: @screen-lg-min - @grid-gutter-width * 4;
+@modal-backdrop-opacity: 0.8;
+
 
 //
 // Custom variables
@@ -53,6 +56,8 @@
 @default-font-features: 'kern', 'liga', 'dlig', 'clig', 'hlig';
 
 @content-padding-bottom: @grid-gutter-width;
+
+@modal-backdrop-zindex: @zindex-modal - 1;
 
 @footer-padding-y:   15px;
 @footer-line-height: 50px;
@@ -197,8 +202,10 @@ html, body {
 }
 
 body {
-  overflow-y: scroll;
   .font-feature-settings(@default-font-features);
+  &, &.modal-open {
+    overflow-y: scroll;
+  }
   // For TinyMCE only: #content exists in front office, but not body#content.
   &.mceContentBody, &#main {
     margin: 5px;
@@ -620,7 +627,7 @@ ul {
   }
 }
 
-blockquote.source .contenu {
+blockquote.source .transcription {
   font-family: @font-family-serif;
   text-align: justify;
   margin: .5em 0;
@@ -997,4 +1004,12 @@ body>footer {
 
 .alert-error {
   .alert-variant(@alert-danger-bg; @alert-danger-border; @alert-danger-text);
+}
+
+.modal-backdrop {
+  z-index: @modal-backdrop-zindex;
+}
+
+.modal-header .close {
+  margin-left: @grid-gutter-width / 2;
 }

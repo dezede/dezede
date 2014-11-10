@@ -116,7 +116,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'crispy_forms',
     'ajax_select',
-    'filebrowser',
     'easy_thumbnails',
     'image_cropping',
     'reversion',
@@ -180,7 +179,6 @@ LOGIN_URL = '/connexion'
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_ON_GET = True
 
-TINYMCE_FILEBROWSER = True
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
     'plugins': 'contextmenu,fullscreen,inlinepopups,nonbreaking,paste,preview,searchreplace,table,smallcaps',
@@ -196,16 +194,12 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_resizing_max_width': '1024',
 }
 
-FILEBROWSER_VERSIONS = {
-    'avatar': {'verbose_name': ugettext('Avatar'),
-               'width': 96, 'height': 96, 'opts': ''},
-    'thumbnail': {'verbose_name': ugettext('Standard thumbnail'),
-                  'width': 192, 'height': 192, 'opts': ''}
+THUMBNAIL_ALIASES = {
+    '': {
+        'avatar': {'size': (96, 96)},
+        'thumbnail': {'size': (192, 192)},
+    },
 }
-FILEBROWSER_ADMIN_THUMBNAIL = 'thumbnail'
-FILEBROWSER_ADMIN_VERSIONS = ['avatar']
-FILEBROWSER_MAX_UPLOAD_SIZE = 50 * (1024 ** 2)  # octets
-
 THUMBNAIL_PROCESSORS = (
     'image_cropping.thumbnail_processors.crop_corners',
 ) + thumbnail_settings.THUMBNAIL_PROCESSORS
@@ -332,7 +326,7 @@ AJAX_LOOKUP_CHANNELS = {
                                          'OeuvrePrefixeTitreSecondaireLookup'),
     'elementdeprogramme__autre': ('libretto.lookups',
                                   'ElementDeProgrammeAutreLookup'),
-    'source__nom': ('libretto.lookups', 'SourceNomLookup'),
+    'source__titre': ('libretto.lookups', 'SourceTitreLookup'),
 }
 
 REST_FRAMEWORK = {

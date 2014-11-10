@@ -1,8 +1,10 @@
-{% if source.contenu %}
+{% load thumbnail %}
+
+{% if source.transcription %}
   <blockquote class="source">
 
-    <div class="contenu">
-      {{ source.contenu|safe }}
+    <div class="transcription">
+      {{ source.transcription|safe }}
     </div>
     {% if source.auteurs.exists %}
       <footer class="auteurs">
@@ -13,4 +15,24 @@
   </blockquote>
 {% endif %}
 
-{% include 'libretto/include/illustrations.html' %}
+{% with fichiers=source.fichiers.all %}
+  {% if fichiers %}
+    {% for fichier in fichiers %}
+      {% if fichier.is_image %}
+        <a href="{{ fichier.fichier.url }}">
+          <img src="{% thumbnail fichier.fichier 'thumbnail' %}" />
+        </a>
+      {% elif fichier.is_audio %}
+        <audio controls preload="auto">
+          <source src="{{ fichier.fichier.url }}"
+                  type="audio/{{ fichier.format }}" />
+        </audio>
+      {% elif fichier.is_video %}
+        <video width="640" height="480" controls preload="auto">
+          <source src="{{ fichier.fichier.url }}"
+                  type="video/{{ fichier.format }}" />
+        </video>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endwith %}

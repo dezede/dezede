@@ -11,9 +11,13 @@
     <h2>
       {{ oeuvre.description_html }}
     </h2>
-    <h3>
-      {{ oeuvre.auteurs_html }}
-    </h3>
+    {% with auteurs_html=oeuvre.auteurs_html %}
+      {% if auteurs_html %}
+        <h3>
+          {{ auteurs_html }}
+        </h3>
+      {% endif %}
+    {% endwith %}
     {% if oeuvre.creation %}
       <h4>
         <span title="{% trans 'Création' %}">
@@ -25,9 +29,7 @@
 {% endblock %}
 
 
-{% block content %}
-
-  {{ block.super }}
+{% block autorite-content %}
 
   <table class="data-table auto-links">
     {% data_table_attr 'pupitres_html' _('effectif') %}
@@ -49,9 +51,6 @@
     {% for parentes in parentes_list %}
       {% data_table_list parentes.list 'fille.html' verbose_name=parentes.grouper.nom_relatif verbose_name_plural=parentes.grouper.relatif_pluriel has_count=False %}
     {% endfor %}
-
-
-    {% data_table_list oeuvre.documents.all %}
   </table>
 
 {% endblock %}

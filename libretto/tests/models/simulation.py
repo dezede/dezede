@@ -184,7 +184,7 @@ class SeleniumTest(LiveServerTestCase):
         self.get_link('Ajouter source').click()
 
         # Remplit deux champs.
-        self.get_by_name('nom').send_keys('L’épisodique')
+        self.get_by_name('titre').send_keys('L’épisodique')
         self.get_by_name('date').send_keys('1/1/1901')
 
         # Ajoute un nouveau type de source.
@@ -195,11 +195,11 @@ class SeleniumTest(LiveServerTestCase):
         # Teste la saisie dans TinyMCE ainsi que le bouton de petites capitales
         # fait maison.
         self.write_to_tinymce(
-            'contenu', 'Aujourd’hui, quelques œuvres du maître ')
-        self.click_tinymce_button('contenu', 'smallcaps')
-        self.write_to_tinymce('contenu', 'Vivaldi')
-        self.click_tinymce_button('contenu', 'smallcaps')
-        self.write_to_tinymce('contenu', '.')
+            'transcription', 'Aujourd’hui, quelques œuvres du maître ')
+        self.click_tinymce_button('transcription', 'smallcaps')
+        self.write_to_tinymce('transcription', 'Vivaldi')
+        self.click_tinymce_button('transcription', 'smallcaps')
+        self.write_to_tinymce('transcription', '.')
 
         # Ajoute un événement et tous les objets lui étant lié.
         self.get_by_css('.evenements .related-lookup').click()

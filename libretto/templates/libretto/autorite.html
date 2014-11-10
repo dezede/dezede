@@ -18,11 +18,13 @@
 {% endblock %}
 
 {% block content %}
-  {% include "libretto/include/etat.html" with etat=object.etat %}
+  {% include 'libretto/include/etat.html' with etat=object.etat %}
 
-  {% if object.illustrations.exists %}
-    <div class="col-xs-1 pull-right">
-      {% include 'libretto/include/illustrations.html' %}
-    </div>
-  {% endif %}
+  {% block autorite-content %}{% endblock %}
+
+  {% block sources %}
+    {% with sources=object.sources.all %}
+      {% include 'libretto/include/sources.html' %}
+    {% endwith %}
+  {% endblock %}
 {% endblock %}

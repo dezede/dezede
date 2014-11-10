@@ -1,9 +1,0 @@
-{% load routines %}
-
-{% include 'libretto/source_content.html' %}
-
-{% if not source.contenu %}
-  <table class="data-table">
-    {% data_table_list source.documents.all %}
-  </table>
-{% endif %}

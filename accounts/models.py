@@ -7,12 +7,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MaxLengthValidator
 from django.db.models import (
     BooleanField, permalink, TextField, URLField,
-    CharField, ForeignKey, PositiveIntegerField, get_models)
+    CharField, ForeignKey, PositiveIntegerField, get_models, ImageField)
 from django.db.models.signals import class_prepared
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
-from filebrowser.fields import FileBrowseField
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from libretto.models.common import AutoriteModel, CommonTreeManager, \
@@ -99,8 +98,8 @@ class HierarchicUser(MPTTModel, AbstractUser):
     willing_to_be_mentor = BooleanField(
         _('Veut être mentor'), default=False)
 
-    avatar = FileBrowseField(_('avatar'), max_length=400, directory='avatars/',
-                             blank=True, null=True)
+    avatar = ImageField(_('avatar'), upload_to='avatars/',
+                        blank=True, null=True)
 
     presentation = TextField(
         _('présentation'), blank=True, validators=[MaxLengthValidator(5000)])

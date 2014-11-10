@@ -1,6 +1,5 @@
 from .common import (
-    Document, Illustration, Etat, TypeDeParente, TypeDeCaracteristique,
-    Caracteristique)
+    Fichier, Etat, TypeDeParente, TypeDeCaracteristique, Caracteristique)
 from .espace_temps import NatureDeLieu, Lieu, LieuDivers, Institution, Saison
 from .individu import (TypeDeParenteDIndividus, ParenteDIndividus,
                        Individu)
@@ -14,4 +13,6 @@ from .oeuvre import (GenreDOeuvre, TypeDeCaracteristiqueDOeuvre,
 from .evenement import (
     ElementDeDistribution, TypeDeCaracteristiqueDeProgramme,
     CaracteristiqueDeProgramme, ElementDeProgramme, Evenement)
-from .source import TypeDeSource, Source
+from .source import (
+    TypeDeSource, Source, SourceEvenement, SourceOeuvre, SourceIndividu,
+    SourceEnsemble, SourceLieu, SourcePartie)

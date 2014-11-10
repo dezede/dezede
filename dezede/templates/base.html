@@ -35,7 +35,7 @@
       <script src="{% static 'bootstrap/js/carousel.js' %}"></script>
       <script src="{% static 'bootstrap/js/collapse.js' %}"></script>
       <script src="{% static 'bootstrap/js/dropdown.js' %}"></script>
-{#      <script src="{% static 'bootstrap/js/modal.js' %}"></script>#}
+      <script src="{% static 'bootstrap/js/modal.js' %}"></script>
       <script src="{% static 'bootstrap/js/tooltip.js' %}"></script>
 {#      <script src="{% static 'bootstrap/js/popover.js' %}"></script>#}
 {#      <script src="{% static 'bootstrap/js/scrollspy.js' %}"></script>#}
@@ -50,7 +50,6 @@
       <script src="{% static 'js/jquery.query.js' %}"></script>
       <script>
         {% include 'base.definitions.js' %}
-        {% include 'libretto/main.js' %}
       </script>
     {% endcompress %}
 
@@ -95,14 +94,8 @@
             <header class="page-header {% block header_extra_class %}{% endblock %}">
               {% block full_header %}
                 {% block breadcrumb %}{% endblock %}
-                <div class="row">
-                  <div class="col-xs-8 col-sm-9 col-md-10">
-                    {% block header %}{% endblock %}
-                  </div>
-                  <aside class="col-xs-4 col-sm-3 col-md-2">
-                    {% block header-aside %}{% endblock %}
-                  </aside>
-                </div>
+                {% block header-aside %}{% endblock %}
+                {% block header %}{% endblock %}
                 {% block tabs %}{% endblock %}
               {% endblock %}
             </header>

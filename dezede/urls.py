@@ -6,7 +6,6 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import TemplateView
 from ajax_select import urls as ajax_select_urls
-from filebrowser.sites import site
 from .views import (
     HomeView, CustomSearchView, autocomplete, ErrorView, BibliographieView)
 
@@ -30,7 +29,6 @@ urlpatterns = patterns('',
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^tinymce/', include('tinymce.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
-    url(r'^admin/filebrowser/', include(site.urls)),
     url(r'^recherche/', CustomSearchView(), name='haystack_search'),
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),

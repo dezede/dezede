@@ -112,14 +112,6 @@ def ex(txt, pre='', post=''):
 ex = lazy(ex, six.text_type)
 
 
-def no(txt):
-    """
-    >>> print(no('13'))
-    n°\u00A013
-    """
-    return _('n° %s') % txt
-
-
 #
 # Fonctions HTML
 #

@@ -45,44 +45,6 @@
   </small>
 {% endif %}
 
-{% published evenement.sources as sources %}
-{% for type, sources in sources.prefetch.group_by_type %}
-  <h3>
-    {% if sources|length > 1 %}
-      {{ type.pluriel|capfirst }}
-    {% else %}
-      {{ type|capfirst }}
-    {% endif %}
-  </h3>
-  <div class="panel-group" id="type_{{ evenement.pk }}_{{ type.pk }}">
-    {% for source in sources %}
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <div class="row">
-            {% if source.contenu or source.has_document or source.has_illustration %}
-              <a class="col-xs-8 col-sm-9" data-toggle="collapse"
-                 data-parent="#type_{{ evenement.pk }}_{{ type.pk }}"
-                 href="#source_{{ evenement.pk }}_{{ source.pk }}"
-                 onclick="load_source_content(this, {{ source.pk }});">
-                {{ source.html|removetags:'a' }}
-              </a>
-            {% else %}
-              <span class="col-xs-8 col-sm-9">
-                {{ source.html|removetags:'a' }}
-              </span>
-            {% endif %}
-
-            <aside class="col-xs-4 col-sm-3">
-              {% frontend_admin source %}
-            </aside>
-          </div>
-        </div>
-        <div id="source_{{ evenement.pk }}_{{ source.pk }}"
-             class="panel-collapse collapse">
-          <div class="panel-body">
-          </div>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-{% endfor %}
+{% with sources=evenement.sources %}
+  {% include 'libretto/include/sources.html' %}
+{% endwith %}

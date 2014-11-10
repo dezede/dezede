@@ -3,13 +3,14 @@
 from __future__ import unicode_literals
 from collections import OrderedDict
 import datetime
+import json
+from subprocess import check_output, CalledProcessError, PIPE
 from django.conf import settings
-from django.contrib.contenttypes.generic import GenericRelation
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.db.models import (
-    Model, CharField, BooleanField, ManyToManyField, ForeignKey, TextField,
+    Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
-    get_model)
+    get_model, FileField, PositiveSmallIntegerField)
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.template.defaultfilters import time
@@ -19,7 +20,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from autoslug import AutoSlugField
-from filebrowser.fields import FileBrowseField
 from mptt.managers import TreeManager
 from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
@@ -34,8 +34,8 @@ __all__ = (
     b'LOWER_MSG', b'PLURAL_MSG', b'DATE_MSG', b'calc_pluriel',
     b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
     b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'CommonTreeQuerySet',
-    b'CommonTreeManager', b'Document', b'Illustration', b'Etat',
-    b'OrderedDefaultDict', b'TypeDeParente', b'TypeDeCaracteristique',
+    b'CommonTreeManager', b'Etat', b'OrderedDefaultDict',
+    b'TypeDeParente', b'TypeDeCaracteristique',
 )
 
 
@@ -54,6 +54,9 @@ PLURAL_MSG = _('À remplir si le pluriel n’est pas un simple '
                'ajout de « s ». Exemple : « animal » devient « animaux » '
                'et non « animals ».')
 DATE_MSG = _('Exemple : « 6/6/1944 » pour le 6 juin 1944.')
+DATE_MSG_EXTENDED = _('Exemple : « 6/6/1944 » pour le 6 juin 1944. '
+                      'En cas de date approximative, saisir ici le début de '
+                      'l’intervalle, par exemple « 1/1/1678 » pour 1678.')
 
 
 def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
@@ -262,10 +265,6 @@ class PublishedModel(CommonModel):
 
 
 class AutoriteModel(PublishedModel):
-    documents = ManyToManyField(
-        'Document', blank=True, null=True, related_name='%(class)s_set')
-    illustrations = ManyToManyField(
-        'Illustration', blank=True, null=True, related_name='%(class)s_set')
     notes_publiques = HTMLField(blank=True, verbose_name='notes publiques')
     notes_privees = HTMLField(blank=True, verbose_name='notes privées')
 
@@ -345,9 +344,10 @@ class AncrageSpatioTemporel(object):
         fields = []
         if self.has_date:
             is_null = 'date' not in self.not_null_fields
+            date_msg = DATE_MSG_EXTENDED if self.approx else DATE_MSG
             fields.append(('date', DateField(
                 _('date'), blank=is_null, null=is_null, db_index=True,
-                help_text=DATE_MSG)))
+                help_text=date_msg)))
             if self.approx:
                 is_null = 'date_approx' not in self.not_null_fields
                 fields.append(('date_approx', CharField(
@@ -382,7 +382,7 @@ class AncrageSpatioTemporel(object):
     def contribute_to_class(self, model, name):
         self.name = name
         self.model = model
-        self.prefix = name + '_'
+        self.prefix = '' if name == 'ancrage' else name + '_'
 
         self.fields = self.create_fields()
 
@@ -475,10 +475,12 @@ class AncrageSpatioTemporel(object):
             return datetime.datetime.combine(self.date, self.heure).isoformat()
         return self.date.isoformat()
 
-    def html(self, tags=True, short=False):
+    def html(self, tags=True, short=False, caps=True):
         out = str_list((self.lieu_str(tags, short),
                         self.moment_str(tags, short)))
-        return capfirst(out)
+        if caps:
+            return capfirst(out)
+        return out
 
     def short_html(self, tags=True):
         return self.html(tags, short=True)
@@ -678,62 +680,148 @@ class TypeDeParente(PolymorphicModel, CommonModel):
 #
 
 
+class FichierQuerySet(CommonQuerySet):
+    def others(self):
+        return self.filter(type=self.model.OTHER)
+
+    def images(self):
+        return self.filter(type=self.model.IMAGE)
+
+    def audios(self):
+        return self.filter(type=self.model.AUDIO)
+
+    def videos(self):
+        return self.filter(type=self.model.VIDEO)
+
+
+class FichierManager(CommonManager):
+    queryset_class = FichierQuerySet
+
+    def others(self):
+        return self.get_queryset().others()
+
+    def images(self):
+        return self.get_queryset().images()
+
+    def audios(self):
+        return self.get_queryset().audios()
+
+    def videos(self):
+        return self.get_queryset().videos()
+
+
 @python_2_unicode_compatible
-class Document(CommonModel):
-    nom = CharField(_('nom'), max_length=300, blank=True)
-    document = FileBrowseField(
-        _('document'), max_length=400, directory='documents/',
-        format='document')
-    description = HTMLField(_('description'), blank=True)
-    auteurs = GenericRelation('Auteur')
+class Fichier(CommonModel):
+    source = ForeignKey('Source', related_name='fichiers')
+    fichier = FileField(upload_to='files/')
+    folio = CharField(max_length=10, blank=True)
+    page = CharField(max_length=10, blank=True)
+
+    # Internal fields
+    OTHER = 0
+    IMAGE = 1
+    AUDIO = 2
+    VIDEO = 3
+    TYPES = (
+        (OTHER, 'autre'),
+        (IMAGE, 'image'),
+        (AUDIO, 'audio'),
+        (VIDEO, 'vidéo'),
+    )
+    type = PositiveSmallIntegerField(choices=TYPES, null=True, blank=True)
+    format = CharField(max_length=10, blank=True)
+    width = PositiveSmallIntegerField(_('largeur'), null=True, blank=True)
+    height = PositiveSmallIntegerField(_('hauteur'), null=True, blank=True)
+    duration = PositiveSmallIntegerField(_('durée (en secondes)'),
+                                         null=True, blank=True)
+
+    position = PositiveSmallIntegerField(_('position'))
+
+    objects = FichierManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('document', 'documents', 1)
-        verbose_name_plural = ungettext_lazy('document', 'documents', 2)
-        ordering = ('document',)
+        verbose_name = ungettext_lazy('fichier', 'fichiers', 1)
+        verbose_name_plural = ungettext_lazy('fichier', 'fichiers', 2)
+        ordering = ('source', 'position',)
         app_label = 'libretto'
 
     def __str__(self):
-        if self.nom:
-            return self.nom
-        return smart_text(self.document)
+        return smart_text(self.fichier)
 
     def link(self):
-        return href(self.document.url, smart_text(self))
+        return href(self.fichier.url, smart_text(self))
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return ('nom__icontains', 'document__icontains',
-                'description__icontains', 'auteurs__individu__nom',)
+    FORMAT_BINDINGS = {
+        'matroska,webm': 'webm',
+        'mov,mp4,m4a,3gp,3g2,mj2': 'mp4',
+    }
+    HTML5_AV_FORMATS = {
+        'mp3': (('mp3',),),
+        'webm': (('vorbis',), ('vp8', 'vorbis'), ('vp9', 'opus')),
+        'ogg': (('vorbis',), ('opus',),
+                ('theora', 'vorbis'),),
+        'mp4': (('aac',), ('h264', 'mp3'), ('h264', 'aac')),
+    }
 
+    def get_media_info(self):
+        # Force le fichier à être enregistré pour qu’il puisse être analysé.
+        self._meta.get_field('fichier').pre_save(self, False)
 
-@python_2_unicode_compatible
-class Illustration(CommonModel):
-    legende = CharField(_('légende'), max_length=300, blank=True)
-    image = FileBrowseField(
-        _('image'), max_length=400, directory='images/', format='image')
-    commentaire = HTMLField(_('commentaire'), blank=True)
-    auteurs = GenericRelation('Auteur')
+        try:
+            stdout = check_output([
+                'avprobe', '-of', 'json', '-show_format', '-show_streams',
+                self.fichier.path], stderr=PIPE)
+        except CalledProcessError:
+            return
 
-    class Meta(object):
-        verbose_name = ungettext_lazy('illustration', 'illustrations', 1)
-        verbose_name_plural = ungettext_lazy('illustration',
-                                             'illustrations', 2)
-        ordering = ('image',)
-        app_label = 'libretto'
+        data = json.loads(stdout)
 
-    def __str__(self):
-        if self.legende:
-            return self.legende
-        return smart_text(self.image)
+        format = data['format']['format_name']
+        if format in self.FORMAT_BINDINGS:
+            format = self.FORMAT_BINDINGS[format]
+        codecs = tuple(s['codec_name'] for s in data['streams'])
 
-    def link(self):
-        return href(self.image.url, smart_text(self))
+        props = {}
+        if data['streams'][0]['codec_type'] == 'video':
+            props.update(width=data['streams'][0]['width'],
+                         height=data['streams'][0]['height'])
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return ('legende__icontains', 'image__icontains',
-                'commentaire__icontains',)
+        if format == 'image2':
+            assert len(codecs) == 1
+            return self.IMAGE, codecs[0], props
+
+        if format in self.HTML5_AV_FORMATS \
+                and codecs in self.HTML5_AV_FORMATS[format]:
+            props['duration'] = int(float(data['format']['duration']))
+            if len(codecs) == 1:
+                return self.AUDIO, format, props
+            elif len(codecs) == 2:
+                return self.VIDEO, format, props
+
+    def update_media_info(self):
+        if getattr(self, 'updated_media_info', False):
+            return
+        data = self.get_media_info()
+        if data is None:
+            self.type = self.OTHER
+        else:
+            self.type, self.format, props = data
+            for k, v in props.items():
+                setattr(self, k, v)
+        self.updated_media_info = True
+
+    def is_image(self):
+        return self.type == self.IMAGE
+
+    def is_audio(self):
+        return self.type == self.AUDIO
+
+    def is_video(self):
+        return self.type == self.VIDEO
+
+    def save(self, *args, **kwargs):
+        self.update_media_info()
+        super(Fichier, self).save(*args, **kwargs)
 
 
 @python_2_unicode_compatible

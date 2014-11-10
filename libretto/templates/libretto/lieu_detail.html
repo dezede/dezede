@@ -17,9 +17,7 @@
 {% endblock %}
 
 
-{% block content %}
-
-  {{ block.super }}
+{% block autorite-content %}
 
   <table class="data-table auto-links">
     {% if lieu.get_children|has_elements:request %}
@@ -32,8 +30,6 @@
     {% data_table_list lieu.individus_decedes verbose_name=_('individu décédé ici') verbose_name_plural=_('individus décédés ici') %}
     {% data_table_list lieu.oeuvres_creees verbose_name=_('œuvre créée ici') verbose_name_plural=_('œuvres créées ici') %}
     {% data_table_attr 'notes_publiques' %}
-
-    {% data_table_list lieu.documents.all %}
   </table>
 
 {% endblock %}

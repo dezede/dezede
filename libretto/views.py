@@ -267,16 +267,6 @@ class CommonViewSet(ModelViewSet):
         super(CommonViewSet, self).__init__()
 
 
-class GETDetailView(PublishedDetailView):
-    def get_object(self, queryset=None):
-        try:
-            pk = int(self.request.REQUEST[b'pk'])
-        except (KeyError, ValueError):
-            raise Http404
-        self.kwargs[self.pk_url_kwarg] = pk
-        return super(GETDetailView, self).get_object(queryset=queryset)
-
-
 class SourceViewSet(CommonViewSet):
     model = Source
     base_url_name = b'source'
@@ -284,11 +274,11 @@ class SourceViewSet(CommonViewSet):
 
     def __init__(self):
         self.views[b'content_view'] = {
-            b'view': GETDetailView,
-            b'pattern': br'content',
-            b'name': b'content',
+            b'view': PublishedDetailView,
+            b'pattern': br'modal/(?P<pk>\d+)/',
+            b'name': b'modal',
             b'kwargs': {
-                b'template_name': 'libretto/source_ajax_content.html'
+                b'template_name': 'libretto/source_modal.html'
             },
         }
         super(SourceViewSet, self).__init__()

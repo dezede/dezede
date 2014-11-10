@@ -1,0 +1,60 @@
+{% load routines %}
+
+
+{% published sources as sources %}
+{% for type, sources in sources.prefetch.group_by_type %}
+
+  <h3>
+    {% if sources|length > 1 %}
+      {{ type.pluriel|capfirst }}
+    {% else %}
+      {{ type|capfirst }}
+    {% endif %}
+  </h3>
+
+  <div class="list-group">
+    {% for source in sources %}
+      {% if source.transcription or source.has_fichiers %}
+        <a class="list-group-item" data-toggle="modal"
+           data-target="#source-modal-{{ source.pk }}"
+           href="{% url 'source_modal' source.pk %}">
+          {% if source.has_videos %}
+            <i class="fa fa-fw fa-video-camera"></i>
+          {% endif %}
+          {% if source.has_audios %}
+            <i class="fa fa-fw fa-volume-up"></i>
+          {% endif %}
+          {% if source.has_images %}
+            <i class="fa fa-fw fa-photo"></i>
+          {% endif %}
+          {% if source.has_others %}
+            <i class="fa fa-fw fa-paperclip"></i>
+          {% endif %}
+          {% if source.transcription %}
+            <i class="fa fa-fw fa-file-text-o"></i>
+          {% endif %}
+          {{ source.html|removetags:'a' }}
+        </a>
+      {% else %}
+        <span class="list-group-item disabled">
+          {{ source.html|removetags:'a' }}
+        </span>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {% for source in sources %}
+    {% if source.transcription or source.has_fichiers %}
+      <div class="modal" id="source-modal-{{ source.pk }}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="text-center">
+              <i class="fa fa-spinner fa-spin fa-5x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+
+{% endfor %}

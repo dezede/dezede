@@ -15,17 +15,22 @@
 {% endblock %}
 
 
-{% block content %}
-
-  {% include "libretto/include/etat.html" with etat=source.etat %}
+{% block autorite-content %}
 
   {% include 'libretto/source_content.html' %}
 
   <table class="data-table auto-links">
-    {% data_table_list source.documents.all %}
     {% data_table_list source.evenements.all %}
+    {% data_table_list source.oeuvres.all %}
+    {% data_table_list source.individus.all %}
+    {% data_table_list source.ensembles.all %}
+    {% data_table_list source.lieux.all %}
+    {% data_table_list source.parties.all %}
 
     {% data_table_attr 'notes_publiques' %}
   </table>
 
 {% endblock %}
+
+
+{% block sources %}{% endblock %}

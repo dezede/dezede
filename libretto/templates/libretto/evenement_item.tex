@@ -83,10 +83,10 @@
 
   {% for source in sources %}
     \medskip
-    {% if source.contenu %}
+    {% if source.transcription %}
       {% get_prev_event_counter source event_counter as prev_event_counter %}
       {% if prev_event_counter == event_counter %}
-        \enquote{% templatetag openbrace %}{{ source.contenu|html_to_latex|compact_paragraph }}}
+        \enquote{% templatetag openbrace %}{{ source.transcription|html_to_latex|compact_paragraph }}}
         ({{ source.html|html_to_latex }})
       {% else %}
         Voir : notice \textbf{% templatetag openbrace %}{{ prev_event_counter }}},

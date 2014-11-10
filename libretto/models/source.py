@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import (
-    CharField, DateField, ForeignKey, ManyToManyField, permalink, PROTECT)
+    CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField)
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -11,13 +11,18 @@ from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from tinymce.models import HTMLField
 from .common import (
-    CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, DATE_MSG, calc_pluriel,
-    SlugModel, PublishedManager, PublishedQuerySet, OrderedDefaultDict)
-from .functions import (ex, cite, no as no_func, date_html as date_html_func,
-                        href, small, str_list)
+    CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
+    SlugModel, PublishedManager, PublishedQuerySet, OrderedDefaultDict,
+    AncrageSpatioTemporel, Fichier)
+from .functions import (ex, cite, date_html as date_html_func,
+                        href, small, str_list, hlp)
+from typography.models import TypographicModel
 
 
-__all__ = (b'TypeDeSource', b'Source')
+__all__ = (
+    b'TypeDeSource', b'Source', b'SourceEvenement', b'SourceOeuvre',
+    b'SourceIndividu', b'SourceEnsemble', b'SourceLieu', b'SourcePartie'
+)
 
 
 @python_2_unicode_compatible
@@ -62,16 +67,24 @@ class SourceQuerySet(PublishedQuerySet):
         return sources.items()
 
     def prefetch(self):
-        return self.select_related('type', 'owner', 'etat').extra(
-            select={
-                '_has_document':
-                'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id)'
-                % (Source.documents.field.m2m_db_table(),
-                   Source._meta.db_table),
-                '_has_illustration':
-                'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id)'
-                % (Source.illustrations.field.m2m_db_table(),
-                   Source._meta.db_table)})
+        fichiers = Fichier._meta.db_table
+        sources = Source._meta.db_table
+        return self.select_related('type', 'owner', 'etat').extra(select={
+            '_has_fichiers':
+            'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id)'
+            % (fichiers, sources),
+            '_has_others':
+            'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id AND type = %s)'
+            % (fichiers, sources, Fichier.OTHER),
+            '_has_images':
+            'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id AND type = %s)'
+            % (fichiers, sources, Fichier.IMAGE),
+            '_has_audios':
+            'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id AND type = %s)'
+            % (fichiers, sources, Fichier.AUDIO),
+            '_has_videos':
+            'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id AND type = %s)'
+            % (fichiers, sources, Fichier.VIDEO)})
 
 
 class SourceManager(PublishedManager):
@@ -86,34 +99,49 @@ class SourceManager(PublishedManager):
 
 @python_2_unicode_compatible
 class Source(AutoriteModel):
-    # TODO: Rendre les sources polymorphes.  On trouve des périodiques, mais
-    # également des registres, des catalogues, etc.
-    nom = CharField(_('nom'), max_length=200, db_index=True,
-                    help_text=ex(_('Journal de Rouen')))
-    numero = CharField(_('numéro'), max_length=50, blank=True, db_index=True,
-                       help_text=_('Sans « № ». Exemple : « 52 »'))
-    date = DateField(_('date'), db_index=True, help_text=DATE_MSG,
-                     null=True, blank=True)
-    page = CharField(_('page'), max_length=50, blank=True,
-                     help_text=_('Sans « p. ». Exemple : « 3 »'))
     type = ForeignKey('TypeDeSource', related_name='sources', db_index=True,
                       help_text=ex(_('compte rendu')), verbose_name=_('type'),
                       on_delete=PROTECT)
-    contenu = HTMLField(_('contenu'), blank=True,
+    titre = CharField(_('titre'), max_length=200, blank=True, db_index=True,
+                      help_text=ex(_('Journal de Rouen')))
+    legende = CharField(_('légende'), max_length=100, blank=True)
+
+    ancrage = AncrageSpatioTemporel(has_heure=False, has_lieu=False)
+    numero = CharField(_('numéro'), max_length=50, blank=True, db_index=True,
+                       help_text=_('Sans « № ». Exemple : « 52 »'))
+    folio = CharField(_('folio'), max_length=10, blank=True)
+    page = CharField(_('page'), max_length=10, blank=True,
+                     help_text=_('Sans « p. ». Exemple : « 3 »'))
+    lieu_conservation = CharField(_('lieu de conservation'), max_length=50,
+                                  blank=True)
+    cote = CharField(_('cote'), max_length=30, blank=True)
+    url = URLField(blank=True)
+
+    transcription = HTMLField(_('transcription'), blank=True,
         help_text=_('Recopié tel quel, avec les fautes d’orthographe suivies '
                     'de « [<em>sic</em>] » le cas échéant.'))
+
     auteurs = GenericRelation('Auteur')
-    # TODO: Permettre les sources d'autres données que des événements :
-    # œuvres, lieux, individus, etc.
-    evenements = ManyToManyField('Evenement', related_name='sources',
-        blank=True, null=True, db_index=True, verbose_name=_('événements'))
+
+    evenements = ManyToManyField('Evenement', through='SourceEvenement',
+                                 related_name='sources')
+    oeuvres = ManyToManyField('Oeuvre', through='SourceOeuvre',
+                              related_name='sources')
+    individus = ManyToManyField('Individu', through='SourceIndividu',
+                                related_name='sources')
+    ensembles = ManyToManyField('Ensemble', through='SourceEnsemble',
+                                related_name='sources')
+    lieux = ManyToManyField('Lieu', through='SourceLieu',
+                            related_name='sources')
+    parties = ManyToManyField('Partie', through='SourcePartie',
+                              related_name='sources')
 
     objects = SourceManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('source', 'sources', 1)
         verbose_name_plural = ungettext_lazy('source', 'sources', 2)
-        ordering = ('date', 'nom', 'numero', 'page', 'type')
+        ordering = ('date', 'titre', 'numero', 'page', 'type')
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
@@ -139,20 +167,36 @@ class Source(AutoriteModel):
         return date_html_func(self.date, tags)
 
     def no(self):
-        return no_func(self.numero)
+        return ugettext('n° %s') % self.numero
+
+    def f(self):
+        return ugettext('f. %s') % self.folio
 
     def p(self):
-        return ugettext('p. %s') % self.page
+        return ugettext('p. %s') % self.page
 
     def html(self, tags=True, pretty_title=False):
         url = None if not tags else self.get_absolute_url()
-        l = [cite(self.nom, tags)]
-        if self.numero:
-            l.append(self.no())
-        if self.date:
-            l.append(self.date_html(tags))
-        if self.page:
-            l.append(self.p())
+        conservation = hlp(self.lieu_conservation,
+                           'Lieu de conservation', tags)
+        if self.cote:
+            conservation += ', ' + hlp(self.cote, 'cote', tags)
+        if self.titre:
+            l = [cite(self.titre, tags)]
+            if self.numero:
+                l.append(self.no())
+            if self.ancrage.date or self.ancrage.date_approx:
+                l.append(self.ancrage.html(tags, caps=False))
+            if self.folio:
+                l.append(hlp(self.f(), ugettext('folio'), tags))
+            if self.page:
+                l.append(hlp(self.p(), ugettext('page'), tags))
+            if self.lieu_conservation:
+                l[-1] += ' (%s)' % conservation
+        else:
+            l = [conservation]
+            if self.ancrage.date or self.ancrage.date_approx:
+                l.append(self.ancrage.html(tags))
         l = (l[0], small(str_list(l[1:]), tags=tags)) if pretty_title else l
         out = str_list(l)
         return mark_safe(href(url, out, tags))
@@ -177,12 +221,87 @@ class Source(AutoriteModel):
     has_program.short_description = _('Programme')
     has_program.boolean = True
 
-    def has_document(self):
-        if hasattr(self, '_has_document'):
-            return self._has_document
-        return self.documents.exists()
+    def has_fichiers(self):
+        if hasattr(self, '_has_fichiers'):
+            return self._has_fichiers
+        return self.fichiers.exists()
 
-    def has_illustration(self):
-        if hasattr(self, '_has_illustration'):
-            return self._has_illustration
-        return self.illustrations.exists()
+    def has_others(self):
+        if hasattr(self, '_has_others'):
+            return self._has_others
+        return self.fichiers.others().exists()
+
+    def has_images(self):
+        if hasattr(self, '_has_images'):
+            return self._has_images
+        return self.fichiers.images().exists()
+
+    def has_audios(self):
+        if hasattr(self, '_has_audios'):
+            return self._has_audios
+        return self.fichiers.audios().exists()
+
+    def has_videos(self):
+        if hasattr(self, '_has_videos'):
+            return self._has_videos
+        return self.fichiers.videos().exists()
+
+
+class SourceEvenement(TypographicModel):
+    source = ForeignKey(Source)
+    evenement = ForeignKey('Evenement', verbose_name=_('événement'))
+
+    class Meta(object):
+        app_label = 'libretto'
+        db_table = 'libretto_source_evenements'
+        unique_together = ('source', 'evenement')
+
+
+class SourceOeuvre(TypographicModel):
+    source = ForeignKey(Source)
+    oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'))
+
+    class Meta(object):
+        app_label = 'libretto'
+        db_table = 'libretto_source_oeuvres'
+        unique_together = ('source', 'oeuvre')
+
+
+class SourceIndividu(TypographicModel):
+    source = ForeignKey(Source)
+    individu = ForeignKey('Individu', verbose_name=_('individu'))
+
+    class Meta(object):
+        app_label = 'libretto'
+        db_table = 'libretto_source_individus'
+        unique_together = ('source', 'individu')
+
+
+class SourceEnsemble(TypographicModel):
+    source = ForeignKey(Source)
+    ensemble = ForeignKey('Ensemble', verbose_name=_('ensemble'))
+
+    class Meta(object):
+        app_label = 'libretto'
+        db_table = 'libretto_source_ensembles'
+        unique_together = ('source', 'ensemble')
+
+
+class SourceLieu(TypographicModel):
+    source = ForeignKey(Source)
+    lieu = ForeignKey('Lieu', verbose_name=_('lieu'))
+
+    class Meta(object):
+        app_label = 'libretto'
+        db_table = 'libretto_source_lieux'
+        unique_together = ('source', 'lieu')
+
+
+class SourcePartie(TypographicModel):
+    source = ForeignKey(Source)
+    partie = ForeignKey('Partie', verbose_name=_('rôle ou instrument'))
+
+    class Meta(object):
+        app_label = 'libretto'
+        db_table = 'libretto_source_parties'
+        unique_together = ('source', 'partie')

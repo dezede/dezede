@@ -33,6 +33,7 @@ djangorestframework==2.4.3
 # Small but powerful tools
 django-reversion==1.8.5
 django-endless-pagination==2.0
+easy-thumbnails==2.2
 django-viewsets==0.1.7
 Unipath==1.0
 tqdm==1.0
@@ -66,9 +67,7 @@ django-maintenancemode==0.10
 Cython==0.21.1
 
 # Dependencies
-# For django-image-cropping
-easy-thumbnails==2.2
-# For django-filebrowser (mandatory)
+# For easy-thumbnails
 Pillow==2.6.1
 # For djangorestframework (optionals)
 Pygments==1.6

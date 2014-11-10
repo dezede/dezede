@@ -201,7 +201,7 @@ class ElementDeProgramme(CommonModel):
     )
     numerotation = CharField(
         _('numérotation'), choices=NUMEROTATIONS, max_length=1, default='O')
-    position = PositiveSmallIntegerField(_('Position'))
+    position = PositiveSmallIntegerField(_('position'))
     # TODO: Quand les nested inlines seront possibles avec Django, remplacer
     # ceci par un GenericRelation.
     distribution = ManyToManyField(

@@ -67,9 +67,9 @@ class CharFieldLookupChannel(LookupChannel):
         return [v for v, n in all_results[:7]]
 
 
-class SourceNomLookup(CharFieldLookupChannel):
+class SourceTitreLookup(CharFieldLookupChannel):
     model = Source
-    attr = 'nom'
+    attr = 'titre'
 
 
 class IndividuPrenomsLookup(CharFieldLookupChannel):

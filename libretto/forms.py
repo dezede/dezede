@@ -132,11 +132,21 @@ class SourceForm(ModelForm):
     class Meta(object):
         model = Source
         widgets = {
-            b'nom': AutoCompleteWidget('source__nom',
-                                       attrs={'style': 'width: 600px;'}),
+            b'titre': AutoCompleteWidget('source__titre',
+                                         attrs={'style': 'width: 600px;'}),
             b'numero': TextInput(attrs={'cols': 10}),
+            b'folio': TextInput(attrs={'cols': 10}),
             b'page': TextInput(attrs={'cols': 10}),
         }
+
+    def clean(self):
+        data = super(SourceForm, self).clean()
+
+        if not (data['titre'] or (data['lieu_conservation'] and data['cote'])):
+            raise ValidationError(_('Vous devez remplir « Titre » ou '
+                                    '« Lieu de conservation » et « Cote ».'))
+
+        return data
 
 
 class EvenementListForm(Form):

@@ -25,13 +25,13 @@
         <div class="col-xs-11">
           <h4>{{ result.object.link|default:result.object.html }}</h4>
           <small>
-            {% if result.object.contenu %}
-              {% with result.object.contenu|stripchars as contenu %}
-                {% highlight contenu with query html_tag 'mark' max_length 500 %}
+            {% if result.object.transcription %}
+              {% with result.object.transcription|stripchars as content %}
+                {% highlight content with query html_tag 'mark' max_length 500 %}
               {% endwith %}
             {% else %}
-              {% with result.object.html|stripchars as contenu %}
-                {% highlight contenu with query html_tag 'mark' %}
+              {% with result.object.html|stripchars as content %}
+                {% highlight content with query html_tag 'mark' %}
               {% endwith %}
             {% endif %}
           </small>

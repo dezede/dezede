@@ -13,9 +13,7 @@
   </div>
 {% endblock %}
 
-{% block content %}
-
-  {{ block.super }}
+{% block autorite-content %}
 
   <table class="data-table auto-links">
     {% data_table_attr 'caracteristiques.html' %}
@@ -25,8 +23,6 @@
     {% data_table_list object.apparitions %}
 
     {% data_table_attr 'notes_publiques' %}
-
-    {% data_table_list object.documents.all %}
   </table>
 
 {% endblock %}
