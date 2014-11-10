@@ -25,8 +25,7 @@ function changeImage ($reader, inc) {
 function createReader($reader) {
   $reader.find('.btn.zoom').off().click(function (e) {
     e.preventDefault();
-    $reader.find('.reader').toggleClass('zoomed');
-    $(this).find('.fa').toggleClass('fa-search-plus').toggleClass('fa-search-minus');
+    $reader.find('.reader img').click();
   });
 
   $reader.find('.prev').off().click(function (e) {
@@ -38,8 +37,28 @@ function createReader($reader) {
     changeImage($reader, 1);
   }).click();
 
-  $reader.find('.reader img').off().dblclick(function () {
-    $(this).parents('.reader-wrapper').find('.btn.zoom').click();
+  $reader.find('.reader img').off().click(function (e) {
+    var $div = $(this).parent();
+
+    if ($div.hasClass('zoomed')) {
+      if ($(this).hasClass('dragged')) {
+        $(this).removeClass('dragged');
+        if ($(this).data('moved')) {
+          $(this).data('moved', false);
+          return;
+        }
+      }
+      $div.removeClass('zoomed')
+    } else {
+      var previousWidth = $(this).width();
+      var previousHeight = $(this).height();
+      $div.addClass('zoomed');
+      $div.scrollLeft((e.offsetX * $(this).width() / previousWidth)
+                      - $div.width() / 2);
+      $div.scrollTop((e.offsetY * $(this).height() / previousHeight)
+                     - $div.height() / 2);
+    }
+    $reader.find('.btn.zoom .fa').toggleClass('fa-search-plus').toggleClass('fa-search-minus');
   }).mousedown(function (e) {
     e.preventDefault();
     var $div = $(this).parent();
@@ -48,10 +67,9 @@ function createReader($reader) {
       $(this).data('Y', $div.scrollTop() + e.pageY);
       $(this).addClass('dragged');
     }
-  }).mouseup(function () {
-    $(this).removeClass('dragged');
   }).mousemove(function (e) {
     if ($(this).hasClass('dragged')) {
+      $(this).data('moved', true);
       var $div = $(this).parent();
       $div.scrollLeft(parseInt($(this).data('X')) - e.pageX);
       $div.scrollTop(parseInt($(this).data('Y')) - e.pageY);
