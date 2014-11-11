@@ -104,7 +104,7 @@ class Source(AutoriteModel):
                       on_delete=PROTECT)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True,
                       help_text=ex(_('Journal de Rouen')))
-    legende = CharField(_('légende'), max_length=100, blank=True)
+    legende = CharField(_('légende'), max_length=600, blank=True)
 
     ancrage = AncrageSpatioTemporel(has_heure=False, has_lieu=False)
     numero = CharField(_('numéro'), max_length=50, blank=True, db_index=True,
@@ -114,7 +114,7 @@ class Source(AutoriteModel):
                      help_text=_('Sans « p. ». Exemple : « 3 »'))
     lieu_conservation = CharField(_('lieu de conservation'), max_length=50,
                                   blank=True)
-    cote = CharField(_('cote'), max_length=30, blank=True)
+    cote = CharField(_('cote'), max_length=35, blank=True)
     url = URLField(blank=True)
 
     transcription = HTMLField(_('transcription'), blank=True,
