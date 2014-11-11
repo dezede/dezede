@@ -11,11 +11,6 @@ from typography.utils import replace
 from ..utils import notify_send, print_info
 
 
-# Python 2 & 3 compatibility.
-if not six.PY3:
-    input = raw_input
-
-
 def get_obj_contents(obj):
     contents = {}
     for k in [f.name for f in obj._meta.fields if f is not obj._meta.pk]:
@@ -48,8 +43,9 @@ def ask_for_choice(intro, choices, start=1, allow_empty=False, default=None):
             out += ' ' + pprintable_dict(get_obj_contents(obj))
         print(out)
 
+    input_func = raw_input if six.PY2 else input
     while True:
-        choice = input(info(question).encode('utf-8'))
+        choice = input_func(info(question).encode('utf-8'))
         if choice.isdigit():
             choice = int(choice)
             if 0 <= choice - start < len(choices):
