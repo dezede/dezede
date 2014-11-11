@@ -47,6 +47,8 @@ DATE_RE_PATTERNS = (
     r'\d{1,2}/\d{1,2}/\d{4}',
     # Matches format "1841-9-1".
     r'\d{4}-\d{1,2}-\d{1,2}',
+    # Matches format "1841/9/1".
+    r'\d{4}/\d{1,2}/\d{1,2}',
     # Matches format "1 septembre 1841".
     r'\d{1,2}\s+\S+\s+\d{4}',
     # Matches anything else.
@@ -57,6 +59,8 @@ DATE_STRP_PATTERNS = (
     r'%d/%m/%Y',
     # Matches format "1841-9-1".
     r'%Y-%m-%d',
+    # Matches format "1841/9/1".
+    r'%Y/%m/%d',
     # Matches format "1 septembre 1841".
     r'%d %B %Y',
     # Matches anything else.
