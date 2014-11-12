@@ -92,11 +92,16 @@ def build_lieu(lieu_str, commit=True):
                for s in NATURE_DE_LIEU_NOMS]
     lieu = None
     for i, lieu_nom in enumerate(lieux):
-        lieu = update_or_create(Lieu, {
+        data = {
             'nom': lieu_nom,
             'nature': natures[i],
-            'parent': lieu,
-        }, unique_keys=['nom', 'parent'], commit=commit)
+        }
+        unique_keys = ['nom']
+        if lieu is not None:
+            data['parent'] = lieu
+            unique_keys.append('parent')
+        lieu = update_or_create(Lieu, data, unique_keys=unique_keys,
+                                commit=commit)
     return lieu
 
 
