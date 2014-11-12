@@ -1021,29 +1021,29 @@ body>footer {
   }
   .row {
     margin: 0;
-    & > * {
+    .prev, .next, .reader {
       height: 700px;
       line-height: 700px;
       vertical-align: middle;
     }
-  }
-  .reader {
-    padding: 0;
-    &.zoomed {
-      overflow: scroll;
-      img {
-        max-width: none;
-        max-height: none;
-        cursor: zoom-out;
-        &.dragged {
-          cursor: move;
+    .reader {
+      padding: 0;
+      &.zoomed {
+        overflow: scroll;
+        img {
+          max-width: none;
+          max-height: none;
+          cursor: zoom-out;
+          &.dragged {
+            cursor: move;
+          }
         }
       }
-    }
-    img {
-      max-width: 100%;
-      max-height: 100%;
-      cursor: zoom-in;
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        cursor: zoom-in;
+      }
     }
   }
 }

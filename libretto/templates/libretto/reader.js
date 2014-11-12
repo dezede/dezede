@@ -91,6 +91,10 @@ function createReader($reader) {
       $div.scrollLeft(parseInt($(this).data('X')) - e.pageX);
       $div.scrollTop(parseInt($(this).data('Y')) - e.pageY);
     }
+  }).mouseout(function() {
+    $(this).removeClass('dragged');
+  }).focusout(function() {
+    $(this).removeClass('dragged');
   });
 
   $(document).keydown(function (e) {
