@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from collections import OrderedDict
 import json
 from django.contrib.contenttypes.generic import GenericRelation
 from django.core import serializers
@@ -69,6 +70,13 @@ def serialize(l):
             serializations.append(serializers.serialize('json', item))
         elif isinstance(item, Model):
             serializations.append(serializers.serialize('json', [item]))
+        elif isinstance(item, (list, tuple)):
+            serializations.append(serialize(item))
+        elif isinstance(item, dict):
+            item = OrderedDict(item)
+            serializations.append(
+                '{%s}' % ', '.join('%s: %s' % (k, v) for k, v in
+                                   zip(item.keys(), serialize(item.values()))))
         else:
             serializations.append(json.dumps(item))
     return ','.join(serializations)
