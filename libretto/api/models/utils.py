@@ -1,7 +1,9 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import json
 from django.contrib.contenttypes.generic import GenericRelation
+from django.core import serializers
 from django.db.models import ManyToManyField, Manager, Model
 from django.db.models.query import QuerySet
 from django.db.models.related import RelatedObject
@@ -56,7 +58,26 @@ def ask_for_choice(intro, choices, start=1, allow_empty=False, default=None):
         print(error('Choix invalide !'))
 
 
+def serialize(l):
+    serializations = []
+    for item in l:
+        if isinstance(item, QuerySet):
+            serializations.append(serializers.serialize('json', item))
+        elif isinstance(item, Model):
+            serializations.append(serializers.serialize('json', [item]))
+        else:
+            serializations.append(json.dumps(item))
+    return ','.join(serializations)
+
+
+OLD_NOW_OR_CREATE_CACHE = {}
+
+
 def ask_for_old_new_or_create(obj, k, v, new_v):
+    cache_key = serialize([obj, k, v, new_v])
+    if cache_key in OLD_NOW_OR_CREATE_CACHE:
+        return OLD_NOW_OR_CREATE_CACHE[cache_key]
+
     intro = 'Deux possibilités pour le champ {0} de {1}'.format(k, obj)
     v, new_v = colored_diff(smart_text(v), smart_text(new_v))
     choices = (
@@ -64,7 +85,9 @@ def ask_for_old_new_or_create(obj, k, v, new_v):
         (new_v, 'valeur importable'),
         'Créer un nouvel objet',
     )
-    return ask_for_choice(intro, choices, allow_empty=True, default=1)
+    result = ask_for_choice(intro, choices, allow_empty=True, default=1)
+    OLD_NOW_OR_CREATE_CACHE[cache_key] = result
+    return result
 
 
 MANY_RELATED_FIELDS = (ManyToManyField, GenericRelation)
@@ -131,14 +154,23 @@ def enlarged_filter(Model, filter_kwargs):
     return qs.exclude(pk__in=excluded_pk_list)
 
 
+ENLARGED_GET_CACHE = {}
+
+
 def enlarged_get(Model, filter_kwargs):
     qs = enlarged_filter(Model, filter_kwargs)
     n = qs.count()
     if n <= 1:
         return qs.get()
+
+    cache_key = serialize([filter_kwargs, qs])
+    if cache_key in ENLARGED_GET_CACHE:
+        return ENLARGED_GET_CACHE[cache_key]
+
     intro = '%d objets trouvés pour les arguments %s' \
             % (n, pprintable_dict(filter_kwargs))
-    return qs[ask_for_choice(intro, qs)]
+    ENLARGED_GET_CACHE[cache_key] = result = qs[ask_for_choice(intro, qs)]
+    return result
 
 
 def enlarged_create(Model, filter_kwargs, commit=True):
