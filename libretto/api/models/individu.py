@@ -7,7 +7,7 @@ from .utils import update_or_create, clean_string
 from ...models import Individu
 
 
-PARTICULES = 'de|d’|d\'|di|da|van|von|ben'
+PARTICULES = 'de|d’|d\'|di|da|van|van der|von|ben'
 INDIVIDU_RE = re.compile(
     r'^'
     r'(?P<nom>[^,(]+?)'
