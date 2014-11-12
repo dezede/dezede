@@ -180,7 +180,7 @@ class Source(AutoriteModel):
         conservation = hlp(self.lieu_conservation,
                            'Lieu de conservation', tags)
         if self.ancrage.date or self.ancrage.date_approx:
-            ancrage = hlp(self.ancrage.html(tags), ugettext('date'))
+            ancrage = hlp(self.ancrage.html(tags, caps=False), ugettext('date'))
         else:
             ancrage = None
         if self.cote:
