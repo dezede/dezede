@@ -43,13 +43,13 @@ Reader.prototype.toggleZoom = function (e) {
 Reader.prototype.zoom = function (e) {
   var previousWidth = this.$img.width(), previousHeight = this.$img.height();
   this.currentSize = 'medium';
-  this.changeImage(0);
   this.$container.addClass('zoomed');
-  this.$img.load(function () {
-    this.$container.scrollLeft((e.offsetX * this.$img.width() / previousWidth)
-                         - this.$container.width() / 2);
-    this.$container.scrollTop((e.offsetY * this.$img.height() / previousHeight)
-                        - this.$container.height() / 2);
+  this.changeImage(0, function () {
+    this.$container.scrollLeft(
+      (e.offsetX * this.$img.width() / previousWidth)
+      - this.$container.width() / 2).scrollTop(
+      (e.offsetY * this.$img.height() / previousHeight)
+      - this.$container.height() / 2);
   }.bind(this));
   this.$zoom.find('.fa').removeClass('fa-search-plus').addClass('fa-search-minus');
 };
@@ -64,14 +64,12 @@ Reader.prototype.unzoom = function () {
   }
   this.$container.removeClass('zoomed')
   this.currentSize = 'small';
-  this.changeImage(0);
   this.$zoom.find('.fa').removeClass('fa-search-minus').addClass('fa-search-plus');
 };
 
 Reader.prototype.save = function () {
   var src = this.images[this.current]['original'];
-  this.$save.attr('href', src);
-  this.$save.attr('download', src.replace(/^.*[\\\/]/, ''));
+  this.$save.attr('href', src).attr('download', src.replace(/^.*[\\\/]/, ''));
 };
 
 Reader.prototype.print = function (e) {
@@ -86,13 +84,21 @@ Reader.prototype.print = function (e) {
   );
 };
 
-Reader.prototype.changeImage = function (inc) {
+Reader.prototype.changeImage = function (inc, loadHandler) {
+  if (typeof loadHandler == 'undefined') {
+    loadHandler = function () {};
+  }
   var current = this.current;
   current += inc;
   if (current < 0 || current >= this.images.length ) {
     return;
   }
-  this.$img.attr('src', this.images[current][this.currentSize]);
+  var src = this.images[current][this.currentSize];
+  if (this.$img.attr('src') != src) {
+    this.$img.attr('src', src).load(loadHandler);
+  } else {
+    loadHandler();
+  }
   this.current = current;
   if (current == 0) {
     this.$prev.addClass('invisible');
@@ -132,8 +138,9 @@ Reader.prototype.undrag = function () {
 Reader.prototype.move = function (e) {
   if (this.$img.hasClass('dragged')) {
     this.moving = true;
-    this.$container.scrollLeft(parseInt(this.zoomX) - e.pageX);
-    this.$container.scrollTop(parseInt(this.zoomY) - e.pageY);
+    this.$container.scrollLeft(
+      this.zoomX - e.pageX).scrollTop(
+      this.zoomY - e.pageY);
   }
 };
 
