@@ -117,6 +117,8 @@ def build_date(date_str, date_strp_pattern=None):
 def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern,
                         commit=False):
     match = ancrage_re.match(ancrage_str)
+    if match is None:
+        return
     kwargs = {}
 
     lieu_str = match.group('lieux')
@@ -146,11 +148,10 @@ def parse_ancrage(ancrage_str, commit=False):
                 return {'date': build_date(ancrage_str, date_strp_pattern)}
             except ValueError:
                 pass
-        try:
-            return parse_ancrage_inner(ancrage_str, ancrage_re,
-                                       date_strp_pattern, commit=commit)
-        except AttributeError:
-            continue
+        data = parse_ancrage_inner(ancrage_str, ancrage_re,
+                                   date_strp_pattern, commit=commit)
+        if data is not None:
+            return data
 
     return {'date_approx': ancrage_str}
 
