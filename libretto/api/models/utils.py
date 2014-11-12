@@ -2,17 +2,19 @@
 
 from __future__ import unicode_literals
 from collections import OrderedDict
+from functools import wraps
 import json
 from django.contrib.contenttypes.generic import GenericRelation
 from django.core import serializers
-from django.db.models import ManyToManyField, Manager, Model
+from django.db.models import ManyToManyField, Manager, Model, get_models
 from django.db.models.query import QuerySet
 from django.db.models.related import RelatedObject
 from django.utils import six
 from django.utils.encoding import smart_text
-from libretto.api.utils.console import info, colored_diff, error
 from typography.utils import replace
+from ...models.common import PublishedModel, CommonModel
 from ..utils import notify_send, print_info
+from ..utils.console import info, colored_diff, error
 
 
 def clean_string(string):
@@ -322,3 +324,37 @@ def update_or_create(Model, filter_kwargs, unique_keys=(), commit=True,
     if commit:
         obj.save()
     return obj
+
+
+class SetDefaultOwner(object):
+    model = CommonModel
+    fieldname = 'owner'
+
+    def __init__(self, obj):
+        self.obj = obj
+
+    def field_iterator(self):
+        for model in get_models(include_auto_created=True):
+            if issubclass(model, self.model):
+                yield model._meta.get_field(self.fieldname)
+
+    def __enter__(self):
+        for field in self.field_iterator():
+            field.original_default = field.default
+            field.default = lambda: self.obj
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        for field in self.field_iterator():
+            field.default = field.original_default
+
+    def __call__(self, func):
+        @wraps(func)
+        def inner(*args, **kwargs):
+            with self:
+                return func(*args, **kwargs)
+        return inner
+
+
+class SetDefaultEtat(SetDefaultOwner):
+    model = PublishedModel
+    fieldname = 'etat'
