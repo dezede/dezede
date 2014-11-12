@@ -11,14 +11,14 @@ function changeImage ($reader, inc) {
   $reader.find('.reader img').attr('src', images[current]);
   $reader.data('current', current);
   if (current == 0) {
-    $reader.find('.prev').addClass('disabled');
+    $reader.find('.prev').addClass('invisible');
   } else {
-    $reader.find('.prev').removeClass('disabled');
+    $reader.find('.prev').removeClass('invisible');
   }
   if (current == (images.length - 1)) {
-    $reader.find('.next').addClass('disabled');
+    $reader.find('.next').addClass('invisible');
   } else {
-    $reader.find('.next').removeClass('disabled');
+    $reader.find('.next').removeClass('invisible');
   }
 }
 
