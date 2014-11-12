@@ -1,4 +1,4 @@
-function Reader ($div) {
+function Reader ($div, images) {
   this.$div = $div;
   this.$container = this.$div.find('.img-container');
   this.$img = this.$container.find('img');
@@ -8,9 +8,9 @@ function Reader ($div) {
   this.$prev = this.$div.find('.prev');
   this.$next = this.$div.find('.next');
 
+  this.images = images;
   this.current = 0;
-  this.X = 0;
-  this.Y = 0;
+  this.zoomX = 0, this.zoomY = 0;
   this.currentSize = 'small';
   this.moving = false;
 
@@ -26,20 +26,9 @@ function Reader ($div) {
 
   this.$prev.off().click(this.previous.bind(this));
   this.$next.off().click(this.next.bind(this));
+  $(document).keydown(this.keydown.bind(this));
 
   this.changeImage(0);
-
-  $(document).keydown(function (e) {
-    if (!this.$div.is(':visible')) {
-      return;
-    }
-
-    if (e.keyCode == 37) {
-      this.previous(e);
-    } else if (e.keyCode == 39) {
-      this.next(e);
-    }
-  }.bind(this));
 };
 
 Reader.prototype.toggleZoom = function (e) {
@@ -80,8 +69,7 @@ Reader.prototype.unzoom = function () {
 };
 
 Reader.prototype.save = function () {
-  var images = this.$div.data('images'),
-      src = images[this.current]['original'];
+  var src = this.images[this.current]['original'];
   this.$save.attr('href', src);
   this.$save.attr('download', src.replace(/^.*[\\\/]/, ''));
 };
@@ -90,27 +78,28 @@ Reader.prototype.print = function (e) {
   e.preventDefault();
   var popup = window.open();
   popup.document.write(
-    '<style>img { max-width: 100%; max-height: 100%; }</style>'
-    + this.$img[0].outerHTML
+    '<html><head>'
+    + '<style>img { max-width: 100%; max-height: 100%; }</style>'
+    + '</head><body>'
+    + '<img src="' + this.images[this.current]['original'] + '"'
+    + ' onload="window.print(); window.close();" /></body></html>'
   );
-  popup.print();
-  popup.close()
 };
 
 Reader.prototype.changeImage = function (inc) {
-  var images = this.$div.data('images'), current = this.current;
+  var current = this.current;
   current += inc;
-  if (current < 0 || current >= images.length ) {
+  if (current < 0 || current >= this.images.length ) {
     return;
   }
-  this.$img.attr('src', images[current][this.currentSize]);
+  this.$img.attr('src', this.images[current][this.currentSize]);
   this.current = current;
   if (current == 0) {
     this.$prev.addClass('invisible');
   } else {
     this.$prev.removeClass('invisible');
   }
-  if (current == (images.length - 1)) {
+  if (current == (this.images.length - 1)) {
     this.$next.addClass('invisible');
   } else {
     this.$next.removeClass('invisible');
@@ -130,8 +119,8 @@ Reader.prototype.next = function (e) {
 Reader.prototype.drag = function (e) {
   e.preventDefault();
   if (this.$container.hasClass('zoomed')) {
-    this.X = this.$container.scrollLeft() + e.pageX;
-    this.Y = this.$container.scrollTop() + e.pageY;
+    this.zoomX = this.$container.scrollLeft() + e.pageX;
+    this.zoomY = this.$container.scrollTop() + e.pageY;
     this.$img.addClass('dragged');
   }
 };
@@ -143,7 +132,19 @@ Reader.prototype.undrag = function () {
 Reader.prototype.move = function (e) {
   if (this.$img.hasClass('dragged')) {
     this.moving = true;
-    this.$container.scrollLeft(parseInt(this.X) - e.pageX);
-    this.$container.scrollTop(parseInt(this.Y) - e.pageY);
+    this.$container.scrollLeft(parseInt(this.zoomX) - e.pageX);
+    this.$container.scrollTop(parseInt(this.zoomY) - e.pageY);
+  }
+};
+
+Reader.prototype.keydown = function (e) {
+  if (!this.$div.is(':visible')) {
+    return;
+  }
+
+  if (e.keyCode == 37) {
+    this.previous(e);
+  } else if (e.keyCode == 39) {
+    this.next(e);
   }
 };
