@@ -179,14 +179,18 @@ class Source(AutoriteModel):
         url = None if not tags else self.get_absolute_url()
         conservation = hlp(self.lieu_conservation,
                            'Lieu de conservation', tags)
+        if self.ancrage.date or self.ancrage.date_approx:
+            ancrage = hlp(self.ancrage.html(tags), ugettext('date'))
+        else:
+            ancrage = None
         if self.cote:
             conservation += ', ' + hlp(self.cote, 'cote', tags)
         if self.titre:
             l = [cite(self.titre, tags)]
             if self.numero:
                 l.append(self.no())
-            if self.ancrage.date or self.ancrage.date_approx:
-                l.append(self.ancrage.html(tags, caps=False))
+            if ancrage is not None:
+                l.append(ancrage)
             if self.folio:
                 l.append(hlp(self.f(), ugettext('folio'), tags))
             if self.page:
@@ -195,8 +199,8 @@ class Source(AutoriteModel):
                 l[-1] += ' (%s)' % conservation
         else:
             l = [conservation]
-            if self.ancrage.date or self.ancrage.date_approx:
-                l.append(self.ancrage.html(tags))
+            if ancrage is not None:
+                l.append(ancrage)
         l = (l[0], small(str_list(l[1:]), tags=tags)) if pretty_title else l
         out = str_list(l)
         return mark_safe(href(url, out, tags))
