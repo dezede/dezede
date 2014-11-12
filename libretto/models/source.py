@@ -141,7 +141,8 @@ class Source(AutoriteModel):
     class Meta(object):
         verbose_name = ungettext_lazy('source', 'sources', 1)
         verbose_name_plural = ungettext_lazy('source', 'sources', 2)
-        ordering = ('date', 'titre', 'numero', 'page', 'type')
+        ordering = ('type', 'date', 'titre', 'numero', 'page',
+                    'lieu_conservation', 'cote')
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
