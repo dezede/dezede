@@ -111,11 +111,11 @@ def build_date(date_str, date_strp_pattern=None):
         try:
             return datetime.strptime(date_str, date_strp_pattern).date()
         except ValueError:
-            raise ValueError('Unable to parse "%s"' % date_str)
+            raise ValueError(b'Unable to parse "%s"' % date_str)
 
 
 def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern,
-                        commit=False):
+                        prefix, commit=False):
     match = ancrage_re.match(ancrage_str)
     if match is None:
         return
@@ -124,36 +124,39 @@ def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern,
     lieu_str = match.group('lieux')
     lieu = build_lieu(lieu_str, commit=commit)
     if lieu is None:
-        kwargs['lieu_approx'] = lieu_str
+        kwargs[prefix + 'lieu_approx'] = lieu_str
     else:
-        kwargs['lieu'] = lieu
+        kwargs[prefix + 'lieu'] = lieu
 
     date_str = match.group('date')
     date = build_date(date_str, date_strp_pattern)
     if date is None:
-        kwargs['date_approx'] = date_str
+        kwargs[prefix + 'date_approx'] = date_str
     else:
-        kwargs['date'] = date
+        kwargs[prefix + 'date'] = date
 
     return kwargs
 
 
-def parse_ancrage(ancrage_str, commit=False):
+def parse_ancrage(ancrage_str, prefix='', commit=False):
+    if prefix:
+        prefix += '_'
     if ancrage_str.isdigit():
-        return {'date_approx': ancrage_str}
+        return {prefix + 'date_approx': ancrage_str}
 
     for ancrage_re, date_strp_pattern in ancrage_re_iterator():
         if date_strp_pattern is not None:
             try:
-                return {'date': build_date(ancrage_str, date_strp_pattern)}
+                return {prefix + 'date': build_date(ancrage_str,
+                                                    date_strp_pattern)}
             except ValueError:
                 pass
         data = parse_ancrage_inner(ancrage_str, ancrage_re,
-                                   date_strp_pattern, commit=commit)
+                                   date_strp_pattern, prefix, commit=commit)
         if data is not None:
             return data
 
-    return {'date_approx': ancrage_str}
+    return {prefix + 'date_approx': ancrage_str}
 
 
 def build_ancrage(ancrage, ancrage_str, commit=True):
