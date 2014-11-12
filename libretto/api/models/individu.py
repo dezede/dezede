@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 import re
 from libretto.api import parse_ancrage
-from .utils import update_or_create
+from .utils import update_or_create, clean_string
 from ...models import Individu
 
 
@@ -12,13 +12,14 @@ INDIVIDU_RE = re.compile(
     r'^'
     r'(?P<nom>[^,(]+?)'
     r'(?:, (?P<prenoms>[^,(]+?)(?: (?P<particule_nom>%s))?)?'
-    r'(?:, dite? (?P<pseudonyme>[^(]+?))?'
     r'(?: \((?P<dates>[^)]+)\))?'
+    r'(?:, dite? (?P<pseudonyme>.+?))?'
     r'$'
     % PARTICULES, flags=re.IGNORECASE)
 
 
 def get_individu(individu_str, dates_sep='-', commit=True):
+    individu_str = clean_string(individu_str)
     if individu_str.isdigit():
         return Individu.objects.get(pk=individu_str)
     else:
@@ -42,7 +43,9 @@ def get_individu(individu_str, dates_sep='-', commit=True):
                 if len(date_strs) == 2:
                     data.update(parse_ancrage(date_strs[1],
                                               prefix='deces', commit=commit))
-        return update_or_create(Individu, data, commit=commit)
+        return update_or_create(
+            Individu, data, unique_keys=['nom', 'prenoms', 'particule_nom'],
+            commit=commit)
 
 
 def get_individus(individus_str, sep=';', dates_sep='-', commit=True):

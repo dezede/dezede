@@ -14,6 +14,10 @@ from typography.utils import replace
 from ..utils import notify_send, print_info
 
 
+def clean_string(string):
+    return string.strip()
+
+
 def get_obj_contents(obj):
     contents = {}
     for k in [f.name for f in obj._meta.fields if f is not obj._meta.pk]:
@@ -211,6 +215,8 @@ def get_or_create(Model, filter_kwargs, unique_keys=(), commit=True):
         for k in unique_keys:
             base_k = k.split('__')[0]
             lookup = '__'.join(k.split('__')[1:])
+            if base_k not in filter_kwargs:
+                continue
             v = filter_kwargs[base_k]
             if lookup:
                 v = access_related(v, lookup)

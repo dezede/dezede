@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 import re
 from ...models import NatureDeLieu, Lieu
-from .utils import get_or_create, update_or_create
+from .utils import get_or_create, update_or_create, clean_string
 
 
 MONTH_BINDINGS_FR = {
@@ -139,6 +139,7 @@ def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern,
 
 
 def parse_ancrage(ancrage_str, prefix='', commit=False):
+    ancrage_str = clean_string(ancrage_str)
     if prefix:
         prefix += '_'
     if ancrage_str.isdigit():
