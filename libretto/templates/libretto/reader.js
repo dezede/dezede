@@ -28,6 +28,23 @@ function createReader($reader) {
     $reader.find('.reader img').click();
   });
 
+  $reader.find('.btn.save').off().click(function () {
+    var src = $reader.find('.reader img').attr('src');
+    $(this).attr('href', src);
+    $(this).attr('download', src.replace(/^.*[\\\/]/, ''));
+  });
+
+  $reader.find('.btn.print').off().click(function (e) {
+    e.preventDefault();
+    var popup = window.open();
+    popup.document.write(
+      '<style>img{max-width: 100%; max-height: 100%;}</style>'
+      + $reader.find('.reader img')[0].outerHTML
+    );
+    popup.print();
+    popup.close()
+  });
+
   $reader.find('.prev').off().click(function (e) {
     e.preventDefault();
     changeImage($reader, -1);
@@ -74,10 +91,6 @@ function createReader($reader) {
       $div.scrollLeft(parseInt($(this).data('X')) - e.pageX);
       $div.scrollTop(parseInt($(this).data('Y')) - e.pageY);
     }
-  }).mouseout(function() {
-    $(this).removeClass('dragged');
-  }).focusout(function() {
-    $(this).removeClass('dragged');
   });
 
   $(document).keydown(function (e) {
