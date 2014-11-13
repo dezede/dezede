@@ -90,9 +90,10 @@ def get_oeuvres(row):
                         ['' if v is None else v for v in TITRE_RE.match(row[TITRE]).groups()]))
         if row[GENRE]:
             genre, decoupage = GENRE_RE.match(row[GENRE]).groups()
-            genre, decoupage = genre.strip(), decoupage.strip()
+            genre = genre.strip()
             data['genre'] = GenreDOeuvre.objects.get_or_create(nom=genre)[0]
-            if decoupage:
+            if decoupage and decoupage.strip():
+                decoupage = decoupage.strip()
                 type_decoupage = TypeDeCaracteristiqueDOeuvre.objects.get(nom='découpage')
                 c = CaracteristiqueDOeuvre.objects.filter(type=type_decoupage, valeur=decoupage).first()
                 if c is None:
