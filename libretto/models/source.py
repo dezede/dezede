@@ -254,7 +254,8 @@ class Source(AutoriteModel):
 
 class SourceEvenement(TypographicModel):
     source = ForeignKey(Source)
-    evenement = ForeignKey('Evenement', verbose_name=_('événement'))
+    evenement = ForeignKey('Evenement', verbose_name=_('événement'),
+                           related_name='sourceevenement_set')
 
     class Meta(object):
         app_label = 'libretto'
@@ -264,7 +265,8 @@ class SourceEvenement(TypographicModel):
 
 class SourceOeuvre(TypographicModel):
     source = ForeignKey(Source)
-    oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'))
+    oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'),
+                        related_name='sourceoeuvre_set')
 
     class Meta(object):
         app_label = 'libretto'
@@ -274,7 +276,8 @@ class SourceOeuvre(TypographicModel):
 
 class SourceIndividu(TypographicModel):
     source = ForeignKey(Source)
-    individu = ForeignKey('Individu', verbose_name=_('individu'))
+    individu = ForeignKey('Individu', verbose_name=_('individu'),
+                          related_name='sourceindividu_set')
 
     class Meta(object):
         app_label = 'libretto'
@@ -284,7 +287,8 @@ class SourceIndividu(TypographicModel):
 
 class SourceEnsemble(TypographicModel):
     source = ForeignKey(Source)
-    ensemble = ForeignKey('Ensemble', verbose_name=_('ensemble'))
+    ensemble = ForeignKey('Ensemble', verbose_name=_('ensemble'),
+                          related_name='sourceensemble_set')
 
     class Meta(object):
         app_label = 'libretto'
@@ -294,7 +298,8 @@ class SourceEnsemble(TypographicModel):
 
 class SourceLieu(TypographicModel):
     source = ForeignKey(Source)
-    lieu = ForeignKey('Lieu', verbose_name=_('lieu'))
+    lieu = ForeignKey('Lieu', verbose_name=_('lieu'),
+                      related_name='sourcelieu_set')
 
     class Meta(object):
         app_label = 'libretto'
@@ -304,7 +309,8 @@ class SourceLieu(TypographicModel):
 
 class SourcePartie(TypographicModel):
     source = ForeignKey(Source)
-    partie = ForeignKey('Partie', verbose_name=_('rôle ou instrument'))
+    partie = ForeignKey('Partie', verbose_name=_('rôle ou instrument'),
+                        related_name='sourcepartie_set')
 
     class Meta(object):
         app_label = 'libretto'
