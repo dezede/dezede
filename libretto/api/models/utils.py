@@ -332,20 +332,23 @@ class SetDefaultOwner(object):
 
     def __init__(self, obj):
         self.obj = obj
+        self.originals = {}
 
     def field_iterator(self):
         for model in get_models(include_auto_created=True):
             if issubclass(model, self.model):
-                yield model._meta.get_field(self.fieldname)
+                field = model._meta.get_field(self.fieldname)
+                key = (model._meta.app_label, model._meta.model_name, field)
+                yield key, field
 
     def __enter__(self):
-        for field in self.field_iterator():
-            field.original_default = field.default
+        for key, field in self.field_iterator():
+            self.originals[key] = field.default
             field.default = lambda: self.obj
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        for field in self.field_iterator():
-            field.default = field.original_default
+        for key, field in self.field_iterator():
+            field.default = self.originals[key]
 
     def __call__(self, func):
         @wraps(func)
