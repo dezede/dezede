@@ -59,7 +59,7 @@ les_pat = r'(L\'|L’|L’|La |Le |Les )?'
 TITRE_RE = re.compile(r'^%s(.+?)(?:(, ou )%s(.+))?$' % (les_pat, les_pat.lower()))
 GENRE_RE = re.compile(r'^(.+?)(?: (en (?:un|une|deux|trois|quatre|cinq|six|sept) .+))?$')
 IMAGE_RE = re.compile(r'FRAN_(0140|0141)_(\d{5})')
-JPG_FOLDER = '/home/bertrand/Dropbox/OC_compressed/'
+JPG_FOLDER = '/~/OC/OC_compressed/'
 
 
 def create_oeuvre_notes(row):
@@ -147,7 +147,7 @@ def run():
         BaseDatabaseWrapper.make_debug_cursor = lambda self, cursor: CursorWrapper(cursor, self)
     cache.clear()
 
-    df = pd.read_excel('/home/bertrand/Téléchargements/ARCH_OC.xls').fillna('')
+    df = pd.read_excel('~/ARCH_OC.xls').fillna('')
     for col in df.columns:
         for _, row in df.iterrows():
             if isinstance(row[col], datetime):
