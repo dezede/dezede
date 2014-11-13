@@ -135,7 +135,7 @@ def get_artistes(individus_str):
 
 
 etat = Etat.objects.get_or_create(nom='importé automatiquement (public)',
-                                  public=True)
+                                  public=True)[0]
 
 
 @SetDefaultOwner(HierarchicUser.objects.get(last_name='Opéra-Comique'))
