@@ -134,8 +134,10 @@ def get_artistes(individus_str):
     return individus
 
 
-etat = Etat.objects.get_or_create(nom='importé automatiquement (public)',
-                                  public=True)[0]
+etat = Etat.objects.get_or_create(
+    nom='importé(e) automatiquement (public)', public=True,
+    message='<p>Les données ci-dessous ont été importées '
+            'automatiquement et sont en attente de relecture.</p>')[0]
 
 
 @SetDefaultOwner(HierarchicUser.objects.get(last_name='Opéra-Comique'))
