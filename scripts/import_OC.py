@@ -59,7 +59,7 @@ les_pat = r'(L\'|L’|L’|La |Le |Les )?'
 TITRE_RE = re.compile(r'^%s(.+?)(?:(, ou )%s(.+))?$' % (les_pat, les_pat.lower()))
 GENRE_RE = re.compile(r'^(.+?)(?: (en (?:un|une|deux|trois|quatre|cinq|six|sept) .+))?$')
 IMAGE_RE = re.compile(r'FRAN_(0140|0141)_(\d{5})')
-JPG_FOLDER = '/~/OC/OC_compressed/'
+JPG_FOLDER = '/home/admin/OC/OC_compressed/'
 
 
 def create_oeuvre_notes(row):
@@ -90,6 +90,7 @@ def get_oeuvres(row):
                         ['' if v is None else v for v in TITRE_RE.match(row[TITRE]).groups()]))
         if row[GENRE]:
             genre, decoupage = GENRE_RE.match(row[GENRE]).groups()
+            genre, decoupage = genre.strip(), decoupage.strip()
             data['genre'] = GenreDOeuvre.objects.get_or_create(nom=genre)[0]
             if decoupage:
                 type_decoupage = TypeDeCaracteristiqueDOeuvre.objects.get(nom='découpage')
@@ -147,7 +148,7 @@ def run():
         BaseDatabaseWrapper.make_debug_cursor = lambda self, cursor: CursorWrapper(cursor, self)
     cache.clear()
 
-    df = pd.read_excel('~/ARCH_OC.xls').fillna('')
+    df = pd.read_excel('/home/admin/ARCH_OC.xls').fillna('')
     for col in df.columns:
         for _, row in df.iterrows():
             if isinstance(row[col], datetime):
