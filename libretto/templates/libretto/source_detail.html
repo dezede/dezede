@@ -11,6 +11,11 @@
     <h3>
       {{ source.type|capfirst }}
     </h3>
+    {% if source.legende %}
+      <h4 class="modal-title">
+        {{ source.legende }}
+      </h4>
+    {% endif %}
   </div>
 {% endblock %}
 

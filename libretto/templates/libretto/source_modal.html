@@ -11,6 +11,11 @@
   <h4 class="modal-title">
     {{ source.type|capfirst }}
   </h4>
+  {% if source.legende %}
+    <h5 class="modal-title">
+      {{ source.legende }}
+    </h5>
+  {% endif %}
 </div>
 <div class="modal-body">
   {% include 'libretto/source_content.html' %}
