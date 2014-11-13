@@ -4,13 +4,13 @@
 {% published sources as sources %}
 {% for type, sources in sources.prefetch.group_by_type %}
 
-  <h3>
+  <h4>
     {% if sources|length > 1 %}
       {{ type.pluriel|capfirst }}
     {% else %}
       {{ type|capfirst }}
     {% endif %}
-  </h3>
+  </h4>
 
   <div class="list-group">
     {% for source in sources %}

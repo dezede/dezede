@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
+from libretto.models import Source, Oeuvre
 from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementListView)
 from .jobs import dossier_to_pdf
@@ -58,3 +59,26 @@ class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
                           'du dossier « %s »' % self.object)
         return redirect(reverse('dossierdevenements_detail',
                                 args=(self.object.pk,)))
+
+
+class OperaComiqueListView(PublishedListView):
+    model = Source
+    template_name = 'dossiers/opera_comique.html'
+
+    def get_queryset(self):
+        qs = super(OperaComiqueListView, self).get_queryset()
+        return qs.filter(owner_id=103)
+
+    def get_context_data(self, **kwargs):
+        context = super(OperaComiqueListView, self).get_context_data(**kwargs)
+        qs = context['object_list']
+        oeuvres = (
+            Oeuvre.objects.filter(sources__in=qs).distinct()
+            .select_related('genre').prefetch_related(
+                'auteurs', 'auteurs__individu', 'auteurs__profession'))
+        if self.request.GET.get('order_by') == 'creation_date':
+            oeuvres = oeuvres.order_by('creation_date')
+        else:
+            oeuvres = oeuvres.order_by(*Oeuvre._meta.ordering)
+        context['oeuvres'] = oeuvres
+        return context

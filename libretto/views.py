@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 from datetime import date
 from django.db.models import get_model, Q, FieldDoesNotExist
-from django.http import Http404, HttpResponseBadRequest
+from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.utils.encoding import force_text
 from django.views.generic import ListView, DetailView, TemplateView
