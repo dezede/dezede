@@ -755,6 +755,9 @@ class Fichier(CommonModel):
     def get_filename(self):
         return os.path.basename(self.fichier.url)
 
+    def get_stem(self):
+        return os.path.splitext(self.get_filename())[0]
+
     FORMAT_BINDINGS = {
         'matroska,webm': 'webm',
         'mov,mp4,m4a,3gp,3g2,mj2': 'mp4',

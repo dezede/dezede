@@ -1,26 +1,45 @@
 {% load thumbnail i18n %}
 
-{% with fichiers=source.fichiers.all %}
-  {% for fichier in fichiers %}
-    {% if fichier.is_audio %}
-      <audio controls preload="auto">
-        <source src="{{ fichier.fichier.url }}"
-                type="audio/{{ fichier.format }}" />
-      </audio>
-    {% elif fichier.is_video %}
-      <video width="640" height="480" controls preload="auto">
-        <source src="{{ fichier.fichier.url }}"
-                type="video/{{ fichier.format }}" />
-      </video>
-    {% else %}
-      <a href="{{ fichier.fichier.url }}">
-        <i class="fa fa-paperclip"></i>
-        {{ fichier.get_filename }} ({{ fichier.fichier.size|filesizeformat }})
-      </a>
-    {% endif %}
-  {% endfor %}
+{% with fichiers=source.fichiers_by_type %}
 
-  {% if source.has_images %}
+  {% if fichiers.audios or fichier.videos or fichiers.others %}
+    <ul class="list-unstyled">
+
+      {% for audio in fichiers.audios %}
+        <li>
+          <audio controls preload="auto">
+            {% for src in audio %}
+              <source src="{{ src.fichier.url }}"
+                      type="audio/{{ src.format }}" />
+            {% endfor %}
+          </audio>
+        </li>
+      {% endfor %}
+
+      {% for video in fichiers.videos %}
+        <li>
+          <video width="640" height="360" controls preload="auto">
+            {% for src in video %}
+              <source src="{{ src.fichier.url }}"
+                      type="video/{{ src.format }}" />
+            {% endfor %}
+          </video>
+        </li>
+      {% endfor %}
+
+      {% for other in fichiers.others %}
+        <li>
+          <a href="{{ other.fichier.url }}">
+            <i class="fa fa-paperclip"></i>
+            {{ other.get_filename }} ({{ other.fichier.size|filesizeformat }})
+          </a>
+        </li>
+      {% endfor %}
+
+    </ul>
+  {% endif %}
+
+  {% if fichiers.images %}
     <div id="reader-{{ source.pk }}" class="reader">
       <div class="btn-group">
         <a href="#" class="zoom btn btn-default">
@@ -48,11 +67,11 @@
     <script>
       $(function () {
         var images = [
-          {% for fichier in fichiers %}
-            {% if fichier.is_image %}
-              {small: '{% thumbnail fichier.fichier 'small' %}',
-               medium: '{% thumbnail fichier.fichier 'medium' %}',
-               original: '{{ fichier.fichier.url }}'}{% if not forloop.last %},{% endif %}
+          {% for image in fichiers.images %}
+            {% if image.is_image %}
+              {small: '{% thumbnail image.fichier 'small' %}',
+               medium: '{% thumbnail image.fichier 'medium' %}',
+               original: '{{ image.fichier.url }}'}{% if not forloop.last %},{% endif %}
             {% endif %}
           {% endfor %}
         ];
