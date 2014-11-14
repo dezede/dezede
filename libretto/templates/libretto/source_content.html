@@ -12,6 +12,11 @@
         <source src="{{ fichier.fichier.url }}"
                 type="video/{{ fichier.format }}" />
       </video>
+    {% else %}
+      <a href="{{ fichier.fichier.url }}">
+        <i class="fa fa-paperclip"></i>
+        {{ fichier.get_filename }} ({{ fichier.fichier.size|filesizeformat }})
+      </a>
     {% endif %}
   {% endfor %}
 

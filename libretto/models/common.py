@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 import datetime
 import json
+import os
 from subprocess import check_output, CalledProcessError, PIPE
 from django.conf import settings
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
@@ -750,6 +751,9 @@ class Fichier(CommonModel):
 
     def link(self):
         return href(self.fichier.url, smart_text(self))
+
+    def get_filename(self):
+        return os.path.basename(self.fichier.url)
 
     FORMAT_BINDINGS = {
         'matroska,webm': 'webm',
