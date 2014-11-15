@@ -2,20 +2,26 @@
 
 from __future__ import unicode_literals
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from libretto.models import *
+from ...models import *
+from ...views import PublishedMixin
 from .serializers import *
 
 
-class IndividuViewSet(ReadOnlyModelViewSet):
+class IndividuViewSet(PublishedMixin, ReadOnlyModelViewSet):
     model = Individu
     serializer_class = IndividuSerializer
 
 
-class LieuViewSet(ReadOnlyModelViewSet):
+class EnsembleViewSet(PublishedMixin, ReadOnlyModelViewSet):
+    model = Ensemble
+    serializer_class = EnsembleSerializer
+
+
+class LieuViewSet(PublishedMixin, ReadOnlyModelViewSet):
     model = Lieu
     serializer_class = LieuSerializer
 
 
-class OeuvreViewSet(ReadOnlyModelViewSet):
+class OeuvreViewSet(PublishedMixin, ReadOnlyModelViewSet):
     model = Oeuvre
     serializer_class = OeuvreSerializer
