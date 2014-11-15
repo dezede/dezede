@@ -4,8 +4,10 @@ from __future__ import unicode_literals
 from collections import defaultdict, OrderedDict
 
 from django.utils.encoding import force_text
-from rest_framework.fields import *
-from rest_framework.serializers import *
+from rest_framework.fields import Field, SerializerMethodField
+from rest_framework.relations import RelatedField, HyperlinkedIdentityField
+from rest_framework.reverse import reverse
+from rest_framework.serializers import HyperlinkedModelSerializer
 
 from ...models import *
 
@@ -23,7 +25,7 @@ class AncrageSpatioTemporelSerializer(Field):
 
 
 class IndividuSerializer(HyperlinkedModelSerializer):
-    displayed_name = Field(source='__str__')
+    str = Field(source='__str__')
     naissance = AncrageSpatioTemporelSerializer()
     deces = AncrageSpatioTemporelSerializer()
     professions = RelatedField(many=True)
@@ -33,7 +35,7 @@ class IndividuSerializer(HyperlinkedModelSerializer):
     class Meta(object):
         model = Individu
         fields = (
-            'id', 'displayed_name', 'nom', 'prenoms',
+            'id', 'str', 'nom', 'prenoms',
             'naissance', 'deces',
             'professions', 'parents', 'enfants',
             'front_url', 'url'
@@ -41,31 +43,30 @@ class IndividuSerializer(HyperlinkedModelSerializer):
 
 
 class EnsembleSerializer(HyperlinkedModelSerializer):
-    displayed_name = Field(source='__str__')
+    str = Field(source='__str__')
     front_url = HyperlinkedIdentityField(view_name='ensemble_detail')
 
     class Meta(object):
         model = Individu
         fields = (
-            'id', 'displayed_name',
-            'front_url', 'url'
+            'id', 'str', 'front_url', 'url'
         )
 
 
 class LieuSerializer(HyperlinkedModelSerializer):
-    displayed_name = Field(source='__str__')
-    nature = RelatedField()
+    str = Field(source='__str__')
+    nature = Field()
     front_url = HyperlinkedIdentityField(view_name='lieu_detail')
 
     class Meta(object):
         model = Lieu
         fields = (
-            'id', 'displayed_name', 'nom', 'nature', 'parent', 'enfants',
+            'id', 'str', 'nom', 'nature', 'parent', 'enfants',
             'front_url', 'url'
         )
 
 
-class CaracteristiquesSerializer(RelatedField):
+class CaracteristiquesSerializer(Field):
     def to_native(self, value):
         d = defaultdict(list)
         for c in value.all():
@@ -82,9 +83,9 @@ class AuteurSerializer(HyperlinkedModelSerializer):
 
 
 class OeuvreSerializer(HyperlinkedModelSerializer):
-    displayed_name = Field(source='__str__')
+    str = Field(source='__str__')
     titre = SerializerMethodField('get_titre')
-    genre = RelatedField()
+    genre = Field()
     caracteristiques = CaracteristiquesSerializer()
     auteurs = AuteurSerializer()
     creation = AncrageSpatioTemporelSerializer()
@@ -94,7 +95,7 @@ class OeuvreSerializer(HyperlinkedModelSerializer):
     class Meta(object):
         model = Oeuvre
         fields = (
-            'id', 'displayed_name', 'titre', 'genre', 'caracteristiques',
+            'id', 'str', 'titre', 'genre', 'caracteristiques',
             'auteurs', 'creation', 'contenu_dans',
             'front_url', 'url'
         )
