@@ -58,7 +58,6 @@ BeautifulSoup<4.0
 lxml==3.4.0
 simplejson==3.6.5
 defusedxml==0.4.1
-PyYAML==3.11
 
 # Website temporary shutdown
 django-maintenancemode==0.10
