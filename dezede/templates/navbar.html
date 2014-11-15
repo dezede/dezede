@@ -31,7 +31,7 @@
       {% addtoblock 'js' %}
         <script>
           var suggestions = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('str'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: '{% url 'autocomplete' %}?q=%QUERY'
           });
@@ -41,10 +41,7 @@
             highlight: true
           }, {
             source: suggestions.ttAdapter(),
-            displayKey: 'value',
-            templates: {
-              empty: '<div class="tt-empty">{% trans 'Aucun résultat' %}</div>'
-            }
+            displayKey: 'str'
           }).keypress(function (e) {
             if (e.which == 13) {
               $(this).parents('form').submit();
