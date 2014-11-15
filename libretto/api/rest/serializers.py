@@ -29,7 +29,6 @@ class IndividuSerializer(HyperlinkedModelSerializer):
     naissance = AncrageSpatioTemporelSerializer()
     deces = AncrageSpatioTemporelSerializer()
     professions = RelatedField(many=True)
-    parents = RelatedField(many=True)
     front_url = HyperlinkedIdentityField(view_name='individu_detail')
 
     class Meta(object):
