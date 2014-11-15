@@ -1,8 +1,9 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from collections import OrderedDict
 import json
-from django.db.models import Q
+from django.db.models import Q, get_model
 from django.http import HttpResponse
 from django.utils.encoding import smart_text
 from django.views.generic import ListView, TemplateView
@@ -60,10 +61,18 @@ class CustomSearchView(SearchView):
 
 def autocomplete(request):
     q = request.GET.get('q', '')
-    suggestions = autocomplete_search(request, q)
-    suggestions = [{'value': (s.related_label() if hasattr(s, 'related_label')
-                              else smart_text(s)),
-                    'url': s.get_absolute_url()} for s in suggestions]
+    model = None
+    if 'model' in request.GET:
+        model = get_model('libretto', request.GET.get('model'))
+        if model is None:
+            return HttpResponse('Invalid “model” argument.', status=400)
+    suggestions = autocomplete_search(request, q, model=model) if q else []
+    suggestions = [
+        OrderedDict((
+            ('id', s.pk),
+            ('str', (s.related_label() if hasattr(s, 'related_label')
+                     else smart_text(s))),
+            ('url', s.get_absolute_url()))) for s in suggestions]
     data = json.dumps(suggestions)
     return HttpResponse(data, content_type='application/json')
 
