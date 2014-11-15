@@ -340,9 +340,14 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.XMLRenderer',
     ),
     'DEFAULT_FILTER_BACKENDS': ['rest_framework.filters.DjangoFilterBackend'],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser'
-    ],
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '600/day',
+    },
     'PAGINATE_BY': 10,
 }
 
