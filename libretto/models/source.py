@@ -271,7 +271,7 @@ class Source(AutoriteModel):
 
 
 class SourceEvenement(TypographicModel):
-    source = ForeignKey(Source)
+    source = ForeignKey(Source, related_name='sourceevenement_set')
     evenement = ForeignKey('Evenement', verbose_name=_('événement'),
                            related_name='sourceevenement_set')
 
@@ -282,7 +282,7 @@ class SourceEvenement(TypographicModel):
 
 
 class SourceOeuvre(TypographicModel):
-    source = ForeignKey(Source)
+    source = ForeignKey(Source, related_name='sourceoeuvre_set')
     oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'),
                         related_name='sourceoeuvre_set')
 
@@ -293,7 +293,7 @@ class SourceOeuvre(TypographicModel):
 
 
 class SourceIndividu(TypographicModel):
-    source = ForeignKey(Source)
+    source = ForeignKey(Source, related_name='sourceindividu_set')
     individu = ForeignKey('Individu', verbose_name=_('individu'),
                           related_name='sourceindividu_set')
 
@@ -304,7 +304,7 @@ class SourceIndividu(TypographicModel):
 
 
 class SourceEnsemble(TypographicModel):
-    source = ForeignKey(Source)
+    source = ForeignKey(Source, related_name='sourceensemble_set')
     ensemble = ForeignKey('Ensemble', verbose_name=_('ensemble'),
                           related_name='sourceensemble_set')
 
@@ -315,7 +315,7 @@ class SourceEnsemble(TypographicModel):
 
 
 class SourceLieu(TypographicModel):
-    source = ForeignKey(Source)
+    source = ForeignKey(Source, related_name='sourcelieu_set')
     lieu = ForeignKey('Lieu', verbose_name=_('lieu'),
                       related_name='sourcelieu_set')
 
@@ -326,7 +326,7 @@ class SourceLieu(TypographicModel):
 
 
 class SourcePartie(TypographicModel):
-    source = ForeignKey(Source)
+    source = ForeignKey(Source, related_name='sourcepartie_set')
     partie = ForeignKey('Partie', verbose_name=_('rôle ou instrument'),
                         related_name='sourcepartie_set')
 
