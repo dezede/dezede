@@ -62,9 +62,6 @@ defusedxml==0.4.1
 # Website temporary shutdown
 django-maintenancemode==0.10
 
-# C optimization
-Cython==0.21.1
-
 # Dependencies
 # For easy-thumbnails
 Pillow==2.6.1
