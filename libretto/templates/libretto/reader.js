@@ -7,7 +7,7 @@ function Reader ($div, images) {
   this.$print = this.$div.find('.print');
   this.$prev = this.$div.find('.prev');
   this.$next = this.$div.find('.next');
-  this.$spinner = this.$container.find('.spinner-container');
+  this.$spinner = this.$div.find('.spinner-container');
 
   this.images = images;
   this.current = 0;
@@ -139,17 +139,11 @@ Reader.prototype.changeImage = function (inc, loadHandler) {
 
 Reader.prototype.previous = function (e) {
   e.preventDefault();
-  if (this.zoomed) {
-    this.unzoom();
-  }
   this.changeImage(-1);
 };
 
 Reader.prototype.next = function (e) {
   e.preventDefault();
-  if (this.zoomed) {
-    this.unzoom();
-  }
   this.changeImage(1);
 };
 

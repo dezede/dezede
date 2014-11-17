@@ -1012,10 +1012,15 @@ body>footer {
   }
   .row {
     margin: 0;
-    .prev, .next, .img-container {
+    .prev, .next, .spinner-container, .img-container {
       height: 700px;
       line-height: 700px;
       vertical-align: middle;
+    }
+    .spinner-container {
+      position: absolute;
+      width: 100%;
+      text-shadow: 0 0 40px white;
     }
     .img-container {
       padding: 0;
@@ -1029,11 +1034,6 @@ body>footer {
             cursor: move;
           }
         }
-      }
-      .spinner-container {
-        position: absolute;
-        width: 100%;
-        text-shadow: 0 0 40px white;
       }
       img {
         max-width: 100%;
