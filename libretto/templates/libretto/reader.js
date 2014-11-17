@@ -50,9 +50,9 @@ Reader.prototype.zoom = function (e) {
   this.changeImage(0, function () {
     this.zoomed = true;
     this.$container.addClass('zoomed').scrollLeft(
-      (e.offsetX * this.$img.width() / previousWidth)
+      (e.originalEvent.layerX * this.$img.width() / previousWidth)
       - this.$container.width() / 2).scrollTop(
-      (e.offsetY * this.$img.height() / previousHeight)
+      (e.originalEvent.layerY * this.$img.height() / previousHeight)
       - this.$container.height() / 2);
     this.$zoom.find('.fa').removeClass('fa-search-plus').addClass('fa-search-minus');
   }.bind(this));
