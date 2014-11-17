@@ -267,6 +267,14 @@ class CommonViewSet(ModelViewSet):
         super(CommonViewSet, self).__init__()
 
 
+class SourceModalView(PublishedDetailView):
+    def get(self, request, *args, **kwargs):
+        is_ajax = request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+        if not is_ajax:
+            return redirect('source_permanent_detail', kwargs['pk'])
+        return super(SourceModalView, self).get(request, *args, **kwargs)
+
+
 class SourceViewSet(CommonViewSet):
     model = Source
     base_url_name = b'source'
@@ -274,7 +282,7 @@ class SourceViewSet(CommonViewSet):
 
     def __init__(self):
         self.views[b'content_view'] = {
-            b'view': PublishedDetailView,
+            b'view': SourceModalView,
             b'pattern': br'modal/(?P<pk>\d+)/',
             b'name': b'modal',
             b'kwargs': {
