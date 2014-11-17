@@ -29,6 +29,9 @@
 @navbar-default-link-hover-color:  @gray-darker;
 @navbar-default-link-active-color: black;
 
+@panel-body-padding: 12px;
+@panel-heading-padding: 6px @panel-body-padding 5px;
+
 @breadcrumb-separator: '\00A0/';
 
 @body-bg: hsv(50, 10%, 100%);
@@ -1048,4 +1051,8 @@ body>footer {
 
 video {
   background: black;
+}
+
+.list-group-item {
+  padding: @panel-heading-padding;
 }
