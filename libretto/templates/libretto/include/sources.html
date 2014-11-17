@@ -14,37 +14,34 @@
 
   <div class="list-group">
     {% for source in sources %}
-      {% if source.transcription or source.has_fichiers %}
-        <a class="list-group-item" data-toggle="modal"
-           data-target="#source-modal-{{ source.pk }}"
-           href="{% url 'source_modal' source.pk %}">
-          {% if source.has_videos %}
-            <i class="fa fa-fw fa-video-camera"></i>
-          {% endif %}
-          {% if source.has_audios %}
-            <i class="fa fa-fw fa-volume-up"></i>
-          {% endif %}
-          {% if source.has_images %}
-            <i class="fa fa-fw fa-photo"></i>
-          {% endif %}
-          {% if source.has_others %}
-            <i class="fa fa-fw fa-paperclip"></i>
-          {% endif %}
-          {% if source.transcription %}
-            <i class="fa fa-fw fa-file-text-o"></i>
-          {% endif %}
-          {{ source.html|removetags:'a' }}
-        </a>
-      {% else %}
-        <span class="list-group-item disabled">
-          {{ source.html|removetags:'a' }}
-        </span>
-      {% endif %}
+      <a class="list-group-item{% if source.is_empty %} disabled{% endif %}" data-toggle="modal"
+         data-target="#source-modal-{{ source.pk }}"
+         href="{% url 'source_modal' source.pk %}">
+        {% if source.has_videos %}
+          <i class="fa fa-fw fa-video-camera"></i>
+        {% endif %}
+        {% if source.has_audios %}
+          <i class="fa fa-fw fa-volume-up"></i>
+        {% endif %}
+        {% if source.has_images %}
+          <i class="fa fa-fw fa-photo"></i>
+        {% endif %}
+        {% if source.has_others %}
+          <i class="fa fa-fw fa-paperclip"></i>
+        {% endif %}
+        {% if source.transcription %}
+          <i class="fa fa-fw fa-file-text-o"></i>
+        {% endif %}
+        {% if source.url %}
+          <i class="fa fa-fw fa-external-link"></i>
+        {% endif %}
+        {{ source.html|removetags:'a' }}
+      </a>
     {% endfor %}
   </div>
 
   {% for source in sources %}
-    {% if source.transcription or source.has_fichiers %}
+    {% if not source.is_empty %}
       <div class="modal" id="source-modal-{{ source.pk }}" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">

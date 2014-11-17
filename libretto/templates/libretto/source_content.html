@@ -102,6 +102,12 @@
   </blockquote>
 {% endif %}
 
+{% if source.url %}
+  <a href="{{ source.url }}">
+    <i class="fa fa-external-link fa-fw"></i> {{ source.url }}
+  </a>
+{% endif %}
+
 <script>
   tooltips_reload();
 </script>

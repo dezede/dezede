@@ -71,9 +71,6 @@ class SourceQuerySet(PublishedQuerySet):
         fichiers = Fichier._meta.db_table
         sources = Source._meta.db_table
         return self.select_related('type', 'owner', 'etat').extra(select={
-            '_has_fichiers':
-            'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id)'
-            % (fichiers, sources),
             '_has_others':
             'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id AND type = %s)'
             % (fichiers, sources, Fichier.OTHER),
@@ -116,7 +113,8 @@ class Source(AutoriteModel):
     lieu_conservation = CharField(_('lieu de conservation'), max_length=50,
                                   blank=True)
     cote = CharField(_('cote'), max_length=35, blank=True)
-    url = URLField(blank=True)
+    url = URLField(blank=True,
+                   help_text=_('Adresse de référence externe à Dezède.'))
 
     transcription = HTMLField(_('transcription'), blank=True,
         help_text=_('Recopié tel quel, avec les fautes d’orthographe suivies '
@@ -216,7 +214,7 @@ class Source(AutoriteModel):
         if hasattr(self, '_has_events'):
             return self._has_events
         return self.evenements.exists()
-    has_events.short_description = _('Événements')
+    has_events.short_description = _('événements')
     has_events.boolean = True
     has_events.admin_order_field = 'evenements'
 
@@ -224,12 +222,13 @@ class Source(AutoriteModel):
         if hasattr(self, '_has_program'):
             return self._has_program
         return self.evenements.with_program().exists()
-    has_program.short_description = _('Programme')
+    has_program.short_description = _('programme')
     has_program.boolean = True
 
     def has_fichiers(self):
-        if hasattr(self, '_has_fichiers'):
-            return self._has_fichiers
+        attrs = ('_has_others', '_has_images', '_has_audios', '_has_videos')
+        if all(hasattr(self, attr) for attr in attrs):
+            return any(getattr(self, attr) for attr in attrs)
         return self.fichiers.exists()
 
     def has_others(self):
@@ -251,6 +250,9 @@ class Source(AutoriteModel):
         if hasattr(self, '_has_videos'):
             return self._has_videos
         return self.fichiers.videos().exists()
+
+    def is_empty(self):
+        return not (self.transcription or self.url or self.has_fichiers())
 
     def fichiers_by_type(self):
         groups = defaultdict(list)
