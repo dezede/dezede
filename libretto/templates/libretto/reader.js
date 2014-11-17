@@ -46,13 +46,16 @@ Reader.prototype.toggleZoom = function (e) {
 
 Reader.prototype.zoom = function (e) {
   var previousWidth = this.$img.width(), previousHeight = this.$img.height();
+  var offsetX = e.pageX - this.$img.offset()['left'];
+  var offsetY = e.pageY - this.$img.offset()['top'];
+
   this.currentSize = 'medium';
   this.changeImage(0, function () {
     this.zoomed = true;
     this.$container.addClass('zoomed').scrollLeft(
-      (e.originalEvent.layerX * this.$img.width() / previousWidth)
+      (offsetX * this.$img.width() / previousWidth)
       - this.$container.width() / 2).scrollTop(
-      (e.originalEvent.layerY * this.$img.height() / previousHeight)
+      (offsetY * this.$img.height() / previousHeight)
       - this.$container.height() / 2);
     this.$zoom.find('.fa').removeClass('fa-search-plus').addClass('fa-search-minus');
   }.bind(this));
