@@ -7,6 +7,7 @@ function Reader ($div, images) {
   this.$print = this.$div.find('.print');
   this.$prev = this.$div.find('.prev');
   this.$next = this.$div.find('.next');
+  this.$spinner = this.$container.find('.spinner-container');
 
   this.images = images;
   this.current = 0;
@@ -84,32 +85,50 @@ Reader.prototype.print = function (e) {
   );
 };
 
-Reader.prototype.changeImage = function (inc, loadHandler) {
-  if (typeof loadHandler == 'undefined') {
-    loadHandler = function () {};
+Reader.prototype.wait = function () {
+  this.$spinner.removeClass('hidden');
+};
+
+Reader.prototype.unwait = function () {
+  this.$spinner.addClass('hidden');
+};
+
+Reader.prototype.updateControls = function () {
+  if (this.current == 0) {
+    this.$prev.addClass('invisible');
+  } else {
+    this.$prev.removeClass('invisible');
   }
+  if (this.current == (this.images.length - 1)) {
+    this.$next.addClass('invisible');
+  } else {
+    this.$next.removeClass('invisible');
+  }
+};
+
+Reader.prototype.changeImage = function (inc, loadHandler) {
+  var completeLoadHandler = function () {
+    this.unwait();
+    if (typeof loadHandler != 'undefined') {
+      loadHandler();
+    }
+  }.bind(this);
+
   var current = this.current;
   current += inc;
   if (current < 0 || current >= this.images.length ) {
     return;
   }
+  this.current = current;
+
+  this.wait();
   var src = this.images[current][this.currentSize];
   if (this.$img.attr('src') != src) {
-    this.$img.attr('src', src).load(loadHandler);
+    this.$img.attr('src', src).load(completeLoadHandler);
   } else {
-    loadHandler();
+    completeLoadHandler();
   }
-  this.current = current;
-  if (current == 0) {
-    this.$prev.addClass('invisible');
-  } else {
-    this.$prev.removeClass('invisible');
-  }
-  if (current == (this.images.length - 1)) {
-    this.$next.addClass('invisible');
-  } else {
-    this.$next.removeClass('invisible');
-  }
+  this.updateControls();
 };
 
 Reader.prototype.previous = function (e) {
