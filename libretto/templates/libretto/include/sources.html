@@ -2,56 +2,69 @@
 
 
 {% published sources as sources %}
-{% for type, sources in sources.prefetch.group_by_type %}
 
-  <h4>
-    {% if sources|length > 1 %}
-      {{ type.pluriel|capfirst }}
-    {% else %}
-      {{ type|capfirst }}
-    {% endif %}
-  </h4>
+<div class="panel-group">
 
-  <div class="list-group">
+  {% for type, sources in sources.prefetch.group_by_type %}
+
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          {% if sources|length > 1 %}
+            {{ type.pluriel|capfirst }}
+          {% else %}
+            {{ type|capfirst }}
+          {% endif %}
+        </h4>
+      </div>
+
+      <div class="list-group">
+        {% for source in sources %}
+          <a class="list-group-item{% if source.is_empty %} disabled{% endif %}" data-toggle="modal"
+             data-target="#source-modal-{{ source.pk }}"
+             href="{% url 'source_modal' source.pk %}">
+            {% if source.has_videos %}
+              <i class="fa fa-fw fa-video-camera"></i>
+            {% endif %}
+            {% if source.has_audios %}
+              <i class="fa fa-fw fa-volume-up"></i>
+            {% endif %}
+            {% if source.has_images %}
+              <i class="fa fa-fw fa-photo"></i>
+            {% endif %}
+            {% if source.has_others %}
+              <i class="fa fa-fw fa-paperclip"></i>
+            {% endif %}
+            {% if source.transcription %}
+              <i class="fa fa-fw fa-file-text-o"></i>
+            {% endif %}
+            {% if source.url %}
+              <i class="fa fa-fw fa-external-link"></i>
+            {% endif %}
+            {{ source.html|removetags:'a' }}
+          </a>
+        {% endfor %}
+      </div>
+
+    </div>
+
+  {% endfor %}
+
+</div>
+
+
+
     {% for source in sources %}
-      <a class="list-group-item{% if source.is_empty %} disabled{% endif %}" data-toggle="modal"
-         data-target="#source-modal-{{ source.pk }}"
-         href="{% url 'source_modal' source.pk %}">
-        {% if source.has_videos %}
-          <i class="fa fa-fw fa-video-camera"></i>
-        {% endif %}
-        {% if source.has_audios %}
-          <i class="fa fa-fw fa-volume-up"></i>
-        {% endif %}
-        {% if source.has_images %}
-          <i class="fa fa-fw fa-photo"></i>
-        {% endif %}
-        {% if source.has_others %}
-          <i class="fa fa-fw fa-paperclip"></i>
-        {% endif %}
-        {% if source.transcription %}
-          <i class="fa fa-fw fa-file-text-o"></i>
-        {% endif %}
-        {% if source.url %}
-          <i class="fa fa-fw fa-external-link"></i>
-        {% endif %}
-        {{ source.html|removetags:'a' }}
-      </a>
-    {% endfor %}
-  </div>
-
-  {% for source in sources %}
-    {% if not source.is_empty %}
-      <div class="modal" id="source-modal-{{ source.pk }}" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="text-center">
-              <i class="fa fa-spinner fa-spin fa-5x"></i>
+      {% if not source.is_empty %}
+        <div class="modal" id="source-modal-{{ source.pk }}" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="text-center">
+                <i class="fa fa-spinner fa-spin fa-5x"></i>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    {% endif %}
-  {% endfor %}
-
-{% endfor %}
+      {% endif %}
+    {% endfor %}
