@@ -11,7 +11,10 @@ function Reader ($div, images) {
 
   this.images = images;
   this.current = 0;
-  this.zoomX = 0, this.zoomY = 0;
+  this.zoomed = false;
+  this.dragged = false;
+  this.zoomX = 0;
+  this.zoomY = 0;
   this.currentSize = 'small';
   this.moving = false;
 
@@ -30,11 +33,11 @@ function Reader ($div, images) {
   $(document).keydown(this.keydown.bind(this));
 
   this.changeImage(0);
-};
+}
 
 Reader.prototype.toggleZoom = function (e) {
   e.preventDefault();
-  if (this.$container.hasClass('zoomed')) {
+  if (this.zoomed) {
     this.unzoom();
   } else {
     this.zoom(e);
@@ -44,26 +47,27 @@ Reader.prototype.toggleZoom = function (e) {
 Reader.prototype.zoom = function (e) {
   var previousWidth = this.$img.width(), previousHeight = this.$img.height();
   this.currentSize = 'medium';
-  this.$container.addClass('zoomed');
   this.changeImage(0, function () {
-    this.$container.scrollLeft(
+    this.zoomed = true;
+    this.$container.addClass('zoomed').scrollLeft(
       (e.offsetX * this.$img.width() / previousWidth)
       - this.$container.width() / 2).scrollTop(
       (e.offsetY * this.$img.height() / previousHeight)
       - this.$container.height() / 2);
+    this.$zoom.find('.fa').removeClass('fa-search-plus').addClass('fa-search-minus');
   }.bind(this));
-  this.$zoom.find('.fa').removeClass('fa-search-plus').addClass('fa-search-minus');
 };
 
 Reader.prototype.unzoom = function () {
-  if (this.$img.hasClass('dragged')) {
+  if (this.dragged) {
     this.undrag();
     if (this.moving) {
       this.moving = false;
       return;
     }
   }
-  this.$container.removeClass('zoomed')
+  this.zoomed = false;
+  this.$container.removeClass('zoomed');
   this.currentSize = 'small';
   this.$zoom.find('.fa').removeClass('fa-search-minus').addClass('fa-search-plus');
 };
@@ -107,19 +111,21 @@ Reader.prototype.updateControls = function () {
 };
 
 Reader.prototype.changeImage = function (inc, loadHandler) {
-  var completeLoadHandler = function () {
-    this.unwait();
-    if (typeof loadHandler != 'undefined') {
-      loadHandler();
-    }
-  }.bind(this);
-
   var current = this.current;
   current += inc;
   if (current < 0 || current >= this.images.length ) {
     return;
   }
   this.current = current;
+
+
+  var completeLoadHandler = function () {
+    this.unwait();
+    if (typeof loadHandler != 'undefined') {
+      loadHandler();
+    }
+    this.$img.unbind('load');
+  }.bind(this);
 
   this.wait();
   var src = this.images[current][this.currentSize];
@@ -133,17 +139,24 @@ Reader.prototype.changeImage = function (inc, loadHandler) {
 
 Reader.prototype.previous = function (e) {
   e.preventDefault();
+  if (this.zoomed) {
+    this.unzoom();
+  }
   this.changeImage(-1);
 };
 
 Reader.prototype.next = function (e) {
   e.preventDefault();
+  if (this.zoomed) {
+    this.unzoom();
+  }
   this.changeImage(1);
 };
 
 Reader.prototype.drag = function (e) {
   e.preventDefault();
-  if (this.$container.hasClass('zoomed')) {
+  if (this.zoomed) {
+    this.dragged = true;
     this.zoomX = this.$container.scrollLeft() + e.pageX;
     this.zoomY = this.$container.scrollTop() + e.pageY;
     this.$img.addClass('dragged');
@@ -151,11 +164,12 @@ Reader.prototype.drag = function (e) {
 };
 
 Reader.prototype.undrag = function () {
+  this.dragged = false;
   this.$img.removeClass('dragged');
 };
 
 Reader.prototype.move = function (e) {
-  if (this.$img.hasClass('dragged')) {
+  if (this.dragged) {
     this.moving = true;
     this.$container.scrollLeft(
       this.zoomX - e.pageX).scrollTop(
