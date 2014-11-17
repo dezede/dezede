@@ -1,7 +1,8 @@
 {% load i18n %}
 
 {% if not object.is_public %}
-  <span class="btn btn-warning disabled" title="{% trans 'Privé' %}">
+  <span class="btn btn-warning disabled" title="{% trans 'Privé' %}"
+        data-placement="bottom">
     <i class="fa fa-lock"></i>
   </span>
 {% endif %}
