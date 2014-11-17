@@ -1,12 +1,13 @@
 {# Copie du base_site.html de grappelli pour ajouter jQuery = django.jQuery #}
 {# FIXME: Ce fichier est une bidouille pour que django-ajax-selects fonctionne correctement. #}
 {#        Corriger cela peut-être avec AjaxSelectAdmin. #}
-{% extends "admin/base.html" %}
-{% load i18n %}
+{% extends 'admin/base.html' %}
+{% load i18n static %}
 
 {% block title %}{{ title }} | {% trans 'Django site admin' %}{% endblock %}
 
 {% block extrastyle %}
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}" />
   <style>
     .grp-fixed-footer {
       z-index: 1100;
