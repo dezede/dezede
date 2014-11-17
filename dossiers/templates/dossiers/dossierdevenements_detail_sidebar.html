@@ -19,13 +19,13 @@
           <div class="panel-heading">
             <h3 class="panel-title">{% trans 'Dans ce dossier' %}</h3>
           </div>
-          <ul class="list-group">
+          <div class="list-group">
             {% for child in children %}
-              <li class="list-group-item">
-                <a href="{{ child.get_absolute_url }}">{{ child }}</a>
-              </li>
+              <a class="list-group-item" href="{{ child.get_absolute_url }}">
+                {{ child }}
+              </a>
             {% endfor %}
-          </ul>
+          </div>
         </div>
       {% endif %}
     {% endwith %}
