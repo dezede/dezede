@@ -41,7 +41,7 @@ function Reader ($div, images) {
   this.changeImage(0);
 
   this.$page.attr('max', this.images.length);
-  this.$div.find('.count').text(' / ' + this.images.length);
+  this.$div.find('.count').text('/ ' + this.images.length);
 }
 
 Reader.prototype.toggleZoom = function (e) {
