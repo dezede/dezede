@@ -8,6 +8,7 @@ function Reader ($div, images) {
   this.$prev = this.$div.find('.prev');
   this.$next = this.$div.find('.next');
   this.$spinner = this.$div.find('.spinner-container');
+  this.$page = this.$div.find('input[name="page"]');
 
   this.images = images;
   this.current = 0;
@@ -32,7 +33,15 @@ function Reader ($div, images) {
   this.$next.off().click(this.next.bind(this));
   $(document).keydown(this.keydown.bind(this));
 
+  this.$page.change(function () {
+    this.current = this.limitPage(this.$page.val() - 1);
+    this.changeImage(0);
+  }.bind(this));
+
   this.changeImage(0);
+
+  this.$page.attr('max', this.images.length);
+  this.$div.find('.count').text(' / ' + this.images.length);
 }
 
 Reader.prototype.toggleZoom = function (e) {
@@ -111,16 +120,25 @@ Reader.prototype.updateControls = function () {
   } else {
     this.$next.removeClass('invisible');
   }
+  this.$page.val(this.current+1);
+};
+
+Reader.prototype.limitPage = function (i) {
+  if (i < 0) {
+    return 0;
+  }
+  if (i >= this.images.length) {
+    return this.images.length - 1;
+  }
+  return i;
 };
 
 Reader.prototype.changeImage = function (inc, loadHandler) {
-  var current = this.current;
-  current += inc;
-  if (current < 0 || current >= this.images.length ) {
+  var current = this.limitPage(this.current + inc);
+  if (inc != 0 && current == this.current) {
     return;
   }
   this.current = current;
-
 
   var completeLoadHandler = function () {
     this.unwait();
