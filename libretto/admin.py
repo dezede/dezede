@@ -1027,7 +1027,7 @@ class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
 
 class SourceAdmin(VersionAdmin, AutoriteAdmin):
     form = SourceForm
-    list_display = ('titre', 'date', 'type', 'has_events', 'has_program', 'link')
+    list_display = ('__str__', 'date', 'type', 'has_events', 'has_program', 'link')
     list_editable = ('type', 'date',)
     list_select_related = ('type', 'etat', 'owner')
     date_hierarchy = 'date'
