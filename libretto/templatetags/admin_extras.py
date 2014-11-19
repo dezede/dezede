@@ -11,15 +11,17 @@ register = Library()
 def get_fieldsets_and_inlines(context):
     adminform = context['adminform']
     model_admin = adminform.model_admin
-    adminform = iter(adminform)
-    inlines = iter(context['inline_admin_formsets'])
+    adminform = list(adminform)
+    inlines = list(context['inline_admin_formsets'])
 
     fieldsets_and_inlines = []
     for choice in getattr(model_admin, 'fieldsets_and_inlines_order', ()):
         if choice == 'f':
-            fieldsets_and_inlines.append(('f', adminform.next()))
+            if adminform:
+                fieldsets_and_inlines.append(('f', adminform.pop(0)))
         elif choice == 'i':
-            fieldsets_and_inlines.append(('i', inlines.next()))
+            if inlines:
+                fieldsets_and_inlines.append(('i', inlines.pop(0)))
 
     for fieldset in adminform:
         fieldsets_and_inlines.append(('f', fieldset))
