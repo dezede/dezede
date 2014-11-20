@@ -5,11 +5,13 @@ import warnings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey, \
                                                 GenericRelation
+from django.core.urlresolvers import reverse
 from django.db import connection
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
     BooleanField, PositiveSmallIntegerField, permalink, Q, \
     PositiveIntegerField, get_model, PROTECT, Count
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import (
+    python_2_unicode_compatible, smart_text, force_text)
 from django.utils.html import strip_tags
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
@@ -432,6 +434,10 @@ class Evenement(AutoriteModel):
         out = capfirst(out)
         out += '\u00A0> ' + self.html(False)
         return strip_tags(out)
+
+    def related_label(self):
+        return href(reverse('admin:libretto_evenement_change',
+                            args=(self.pk,)), force_text(self), new_tab=True)
 
     @staticmethod
     def autocomplete_search_fields():
