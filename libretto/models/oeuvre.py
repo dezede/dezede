@@ -534,13 +534,13 @@ class OeuvreManager(CommonTreeManager, PublishedManager):
 
 @python_2_unicode_compatible
 class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
-    prefixe_titre = CharField(_('préfixe du titre'), max_length=20, blank=True,
+    prefixe_titre = CharField(_('article'), max_length=20, blank=True,
                               db_index=True)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True)
     coordination = CharField(_('coordination'), max_length=20, blank=True,
                              db_index=True)
-    prefixe_titre_secondaire = CharField(_('préfixe du titre secondaire'),
-         max_length=20, blank=True, db_index=True)
+    prefixe_titre_secondaire = CharField(
+        _('article'), max_length=20, blank=True, db_index=True)
     titre_secondaire = CharField(_('titre secondaire'), max_length=200,
                                  blank=True, db_index=True)
     genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True,
