@@ -3,58 +3,61 @@
 
 {% published sources as sources %}
 
-<div class="panel-group">
+{% with grouped_sources=sources.prefetch.group_by_type %}
 
-  {% for type, sources in sources.prefetch.group_by_type %}
+  <div class="panel-group">
 
-    <div class="panel panel-default">
+    {% for type, sources in grouped_sources %}
 
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          {% if sources|length > 1 %}
-            {{ type.pluriel|capfirst }}
-          {% else %}
-            {{ type|capfirst }}
-          {% endif %}
-        </h4>
+      <div class="panel panel-default">
+
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            {% if sources|length > 1 %}
+              {{ type.pluriel|capfirst }}
+            {% else %}
+              {{ type|capfirst }}
+            {% endif %}
+          </h4>
+        </div>
+
+        <div class="list-group">
+          {% for source in sources %}
+            <a class="list-group-item{% if source.is_empty %} disabled{% endif %}" data-toggle="modal"
+               data-target="#source-modal-{{ source.pk }}"
+               href="{% url 'source_modal' source.pk %}">
+              {% if source.has_videos %}
+                <i class="fa fa-fw fa-video-camera"></i>
+              {% endif %}
+              {% if source.has_audios %}
+                <i class="fa fa-fw fa-volume-up"></i>
+              {% endif %}
+              {% if source.has_images %}
+                <i class="fa fa-fw fa-photo"></i>
+              {% endif %}
+              {% if source.has_others %}
+                <i class="fa fa-fw fa-paperclip"></i>
+              {% endif %}
+              {% if source.transcription %}
+                <i class="fa fa-fw fa-file-text-o"></i>
+              {% endif %}
+              {% if source.url %}
+                <i class="fa fa-fw fa-external-link"></i>
+              {% endif %}
+              {{ source.html|removetags:'a' }}
+            </a>
+          {% endfor %}
+        </div>
+
       </div>
 
-      <div class="list-group">
-        {% for source in sources %}
-          <a class="list-group-item{% if source.is_empty %} disabled{% endif %}" data-toggle="modal"
-             data-target="#source-modal-{{ source.pk }}"
-             href="{% url 'source_modal' source.pk %}">
-            {% if source.has_videos %}
-              <i class="fa fa-fw fa-video-camera"></i>
-            {% endif %}
-            {% if source.has_audios %}
-              <i class="fa fa-fw fa-volume-up"></i>
-            {% endif %}
-            {% if source.has_images %}
-              <i class="fa fa-fw fa-photo"></i>
-            {% endif %}
-            {% if source.has_others %}
-              <i class="fa fa-fw fa-paperclip"></i>
-            {% endif %}
-            {% if source.transcription %}
-              <i class="fa fa-fw fa-file-text-o"></i>
-            {% endif %}
-            {% if source.url %}
-              <i class="fa fa-fw fa-external-link"></i>
-            {% endif %}
-            {{ source.html|removetags:'a' }}
-          </a>
-        {% endfor %}
-      </div>
+    {% endfor %}
 
-    </div>
-
-  {% endfor %}
-
-</div>
+  </div>
 
 
 
+  {% for _, sources in grouped_sources %}
     {% for source in sources %}
       {% if not source.is_empty %}
         <div class="modal" id="source-modal-{{ source.pk }}" tabindex="-1" role="dialog" aria-hidden="true">
@@ -68,3 +71,6 @@
         </div>
       {% endif %}
     {% endfor %}
+  {% endfor %}
+
+{% endwith %}
