@@ -96,6 +96,7 @@ class ElementDeDistribution(CommonModel):
         #       La solution la plus sage est sans doute de transformer le M2M
         #       'individus' en un FK 'individu'.
         ordering = ('pupitre', 'profession',)
+        index_together = (('content_type', 'object_id'),)
         app_label = 'libretto'
 
     @staticmethod

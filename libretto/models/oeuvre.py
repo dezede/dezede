@@ -489,6 +489,7 @@ class Auteur(CommonModel):
         verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
         verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
         ordering = ('profession', 'individu__nom')
+        index_together = (('content_type', 'object_id'),)
         app_label = 'libretto'
 
     @staticmethod
