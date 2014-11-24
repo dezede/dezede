@@ -1031,9 +1031,9 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     list_editable = ('type', 'date',)
     list_select_related = ('type', 'etat', 'owner')
     date_hierarchy = 'date'
-    search_fields = ('titre', 'date', 'type__nom', 'numero', 'transcription',
-                     'owner__username', 'owner__first_name',
-                     'owner__last_name')
+    search_fields = (
+        'type__nom', 'titre', 'date', 'date_approx', 'numero',
+        'lieu_conservation', 'cote')
     list_filter = ('type', 'titre', SourceHasEventsListFilter,
                    SourceHasProgramListFilter)
     raw_id_fields = ('evenements',)
