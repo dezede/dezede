@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from collections import OrderedDict
 import json
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q, get_model
 from django.http import HttpResponse
 from django.utils.encoding import smart_text
@@ -14,13 +15,36 @@ from typography.utils import replace
 from .models import Diapositive
 
 
+# Taken from https://gist.github.com/justinfx/3095246
+def cache_generics(queryset):
+    generics = {}
+    for item in queryset:
+        if item.object_id is not None:
+            generics.setdefault(item.content_type_id, set()).add(item.object_id)
+
+    content_types = ContentType.objects.in_bulk(generics.keys())
+
+    relations = {}
+    for ct, fk_list in generics.items():
+        ct_model = content_types[ct].model_class()
+        relations[ct] = ct_model.objects.in_bulk(list(fk_list))
+
+    for item in queryset:
+        try:
+            cached_val = relations[item.content_type_id][item.object_id]
+        except KeyError:
+            cached_val = None
+        setattr(item, '_content_object_cache', cached_val)
+
+
 class HomeView(ListView):
     model = Diapositive
     template_name = 'home.html'
 
     def get_queryset(self):
-        qs = super(HomeView, self).get_queryset()
-        return qs.published(self.request)
+        qs = super(HomeView, self).get_queryset().published(self.request)
+        cache_generics(qs)
+        return qs
 
 
 # TODO: Use the search engine filters to do this
