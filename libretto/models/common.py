@@ -551,6 +551,13 @@ class TypeDeCaracteristique(PolymorphicModel, CommonModel):
 
 
 class CaracteristiqueQuerySet(PolymorphicQuerySet, CommonQuerySet):
+    # FIXME: Ceci est un hack en attendant que cette issue soit résolue :
+    #        https://github.com/chrisglass/django_polymorphic/issues/68
+    #        En passant à Django 1.7 il faut remplacer ça par un Prefetch.
+    def _next_is_sticky(self):
+        self.polymorphic_disabled = True
+        return super(CaracteristiqueQuerySet, self)._next_is_sticky()
+
     def html_list(self, tags=True):
         return [hlp(c.valeur, c.type, tags)
                 for c in self]

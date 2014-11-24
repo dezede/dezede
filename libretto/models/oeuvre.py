@@ -442,7 +442,7 @@ class AuteurQuerySet(CommonQuerySet):
         return self.__get_related(Source)
 
     def html(self, tags=True):
-        auteurs = self.select_related('individu', 'profession')
+        auteurs = self
         d = OrderedDefaultDict()
         for auteur in auteurs:
             d[auteur.profession].append(auteur.individu)
@@ -617,7 +617,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     @model_method_cached()
     def auteurs_html(self, tags=True):
-        return self.auteurs.order_by(*Auteur._meta.ordering).html(tags)
+        return self.auteurs.html(tags)
     auteurs_html.short_description = _('auteurs')
     auteurs_html.allow_tags = True
     auteurs_html.admin_order_field = 'auteurs__individu__nom'

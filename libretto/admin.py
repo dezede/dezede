@@ -931,6 +931,12 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     )
     fieldsets_and_inlines_order = ('f', 'i', 'f', 'f', 'i', 'i')
 
+    def get_queryset(self, request):
+        qs = super(OeuvreAdmin, self).get_queryset(request)
+        return qs.prefetch_related(
+            'auteurs__individu', 'auteurs__profession', 'pupitres__partie',
+            'caracteristiques__type')
+
 
 class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
     form = ElementDeDistributionForm
@@ -975,7 +981,9 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
     search_fields = ('circonstance', 'debut_lieu__nom')
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
-    list_select_related = ('debut_lieu', 'debut_lieu__nature', 'etat', 'owner')
+    list_select_related = ('debut_lieu', 'debut_lieu__nature',
+                           'fin_lieu', 'fin_lieu__nature',
+                           'etat', 'owner')
     date_hierarchy = 'debut_date'
     raw_id_fields = ('debut_lieu', 'fin_lieu', 'caracteristiques')
     autocomplete_lookup_fields = {
