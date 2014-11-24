@@ -40,7 +40,7 @@
     {% endif %}
 
     {% include "libretto/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
-    {% data_table_attr 'notes_publiques' %}
+    {% data_table_attr 'notes_publiques' _('notes') %}
 
     {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}
     {% for parentes in parentes_list %}
