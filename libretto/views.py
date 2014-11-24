@@ -208,6 +208,13 @@ class CommonTableView(TemplateView):
 class CommonDatatablesView(PublishedMixin, DatatablesView):
     undefined_str = '−'
     link_on_column = 0
+    select_related = ()
+    prefetch_related = ()
+
+    def get_queryset(self):
+        qs = super(CommonDatatablesView, self).get_queryset()
+        return (qs.select_related(*self.select_related)
+                .prefetch_related(*self.prefetch_related))
 
     def process_dt_response(self, data):
         self.form = DatatablesForm(data)
@@ -275,12 +282,16 @@ class CommonViewSet(ModelViewSet):
         },
     }
     table_fields = ()
+    table_select_related = ()
+    table_prefetch_related = ()
 
     def __init__(self):
         fields = OrderedDict(self.table_fields)
         self.views[b'list_view'][b'kwargs'] = {b'fields': fields}
         self.views[b'list_view_data'][b'kwargs'] = {
-            b'model': self.model, b'fields': fields}
+            b'model': self.model, b'fields': fields,
+            b'select_related': self.table_select_related,
+            b'prefetch_related': self.table_prefetch_related}
         super(CommonViewSet, self).__init__()
 
 
@@ -348,6 +359,8 @@ class IndividuViewSet(CommonViewSet):
         ('naissance', '{naissance_date}'),
         ('deces', '{deces_date}')
     )
+    table_select_related = ('naissance_lieu', 'deces_lieu')
+    table_prefetch_related = ('professions',)
 
 
 class EnsembleViewSet(CommonViewSet):
@@ -375,6 +388,10 @@ class OeuvreViewSet(CommonViewSet):
         ('auteurs_html', 'auteurs__individu'),
         ('creation', '{creation_date}'),
     )
+    table_select_related = (
+        'genre', 'creation_lieu')
+    table_prefetch_related = (
+        'caracteristiques__type', 'auteurs__individu', 'auteurs__profession')
 
     def __init__(self):
         super(OeuvreViewSet, self).__init__()
