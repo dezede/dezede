@@ -12,8 +12,8 @@ from dossiers.views import (
 urlpatterns = patterns('',
     url(r'^$', CategorieDeDossiersList.as_view(),
         name='dossierdevenements_index'),
-    url(r'^62/?$', RedirectView.as_view(pattern_name='dossier_opera_comique',
-                                        permanent=False)),
+    url(r'^62/?$', RedirectView.as_view(
+        pattern_name='dossier_opera_comique_presentation', permanent=False)),
     url(r'^archives[-\.]opera-comique$', OperaComiquePresentation.as_view(),
         name='dossier_opera_comique_presentation'),
     url(r'^archives[-\.]opera-comique/data$', OperaComiqueListView.as_view(),
