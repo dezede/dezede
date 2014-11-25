@@ -6,6 +6,8 @@ from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import TemplateView
+from accounts.models import HierarchicUser
 from libretto.models import Source, Oeuvre
 from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementListView)
@@ -59,6 +61,16 @@ class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
                           'du dossier « %s »' % self.object)
         return redirect(reverse('dossierdevenements_detail',
                                 args=(self.object.pk,)))
+
+
+class OperaComiquePresentation(TemplateView):
+    template_name = 'dossiers/opera_comique_presentation.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(OperaComiquePresentation,
+                        self).get_context_data(**kwargs)
+        context['oc_user'] = HierarchicUser.objects.get(pk=103)
+        return context
 
 
 class OperaComiqueListView(PublishedListView):

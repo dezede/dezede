@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+
+{% block breadcrumb %}
+  {% spaceless %}
+    <ol class="breadcrumb">
+      <li class="active">Archives de l’Opéra Comique</li>
+    </ol>
+  {% endspaceless %}
+{% endblock %}
+
+
+{% block header_extra_class %}no-separator{% endblock %}
+
+
+{% block header %}
+  <img class="pull-right" src="{% static 'images/opera-comique.png' %}" style="height: 50px;" />
+  <h1>
+    {% block title %}
+      Archives de l’Opéra Comique
+    {% endblock %}
+  </h1>
+
+  <div class="alert alert-info" role="alert">
+    Travail en cours de réalisation. Les données,
+    la navigation à travers les archives ainsi que les URLs vont changer
+    dans les semaines à venir.
+  </div>
+{% endblock %}
+
+
+{% block tabs %}
+  <ul class="nav nav-tabs nav-justified">
+    {% url 'dossier_opera_comique_presentation' as text_url %}
+    <li{% if request.path == text_url %} class="active"{% endif %}>
+      <a href="{{ text_url }}">
+        {% trans 'Présentation' %}
+      </a>
+    </li>
+    {% url 'dossier_opera_comique' as data_url %}
+    <li{% if request.path == data_url %} class="active"{% endif %}>
+      <a href="{{ data_url }}">
+        Archives
+      </a>
+    </li>
+  </ul>
+{% endblock %}

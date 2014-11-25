@@ -1,0 +1,123 @@
+{% extends 'dossiers/opera_comique_base.html' %}
+{% load static i18n %}
+
+
+{% block content %}
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-4">
+      <aside id="sidebar">
+
+        <div class="well">
+          <dl class="auto-links">
+            <dt>
+              Éditeur scientifique
+            </dt>
+            <dd>{{ oc_user.html }}</dd>
+          </dl>
+          <dl class="auto-links">
+            <dt>{% trans 'Date de mise en ligne' %}</dt>
+            <dd>13 novembre 2014</dd>
+          </dl>
+
+        </div>
+
+      </aside>
+    </div>
+
+    <div class="col-xs-12 col-sm-6 col-md-8">
+      <div class="dossier">
+        <div class="presentation">
+          <p>
+            Tricentenaire en 2015, l’Opéra Comique est la troisième plus ancienne institution théâtrale de France après l’Opéra de Paris et la Comédie-Française. L’Opéra Comique a créé au Siècle des Lumières un genre original – l’opéra-comique – et produit le répertoire français qui s’est le mieux diffusé en région et à l’étranger, jusqu’au cœur du XX<sup>e</sup> siècle. Parmi les chefs-d’œuvre créés dans ses murs figurent <em>La Fille du régiment</em>, <em>La Damnation de Faust</em>, <em>Carmen</em>, <em>Les Contes d’Hoffmann</em>, <em>Manon</em>, <em>Pelléas et Mélisande</em> ou <em>La Voix humaine</em>.
+          </p>
+
+          <p>
+            Contrairement à ses deux aînés, l’Opéra Comique n’a jamais pu centraliser ni traiter ses fonds d’archives. Elles sont aujourd’hui dispersées entre différentes parties de fonds des Archives nationales, de la Bibliothèque nationale de France et de la Bibliothèque historique de la ville de Paris. Certaines archives des périodes les plus récentes sont restées <em>in situ</em> mais ne sont pas consultables par le public.
+          </p>
+
+          <p>
+            Jérôme Deschamps dirige l’institution depuis 2007 avec la volonté de convier le public à se réapproprier l’Opéra Comique dans une perspective historique. Il a mis à l’honneur la programmation du répertoire maison, la restauration du bâtiment, le développement de la pédagogie autour des spectacles, le partenariat avec la recherche, la publication d’ouvrages collectifs et de programmes de salle ambitieux.
+          </p>
+
+          <p>
+            Cette démarche, qui remporte un vif succès public, a incité l’Opéra Comique à concevoir, dans la perspective du tricentenaire de 2015, le rassemblement virtuel de ses archives.
+          </p>
+        </div>
+
+        <h2>Contexte</h2>
+
+        <p>
+          En 2012, l’Opéra Comique a présenté sa candidature à l’appel à projet de numérisation 2013 dans le cadre du plan national de numérisation du patrimoine et de la création, coordonné par le DREST, département de la recherche, de l’enseignement supérieur et de la technologie au sein du ministère de la Culture et de la Communication. Le projet, retenu par le ministère, portait sur la numérisation de deux ensembles d’archives :
+        </p>
+
+        <ol>
+          <li>
+            des archives artistiques conservées aux Archives nationales : livrets manuscrits, dossiers de censure, affiches, dessins, gravures et photographies, documents couvrant la période de 1800 à 2007. Cet ensemble constitue environ un tiers des archives globales relatives à l’Opéra Comique, les autres portant sur l’administration et l’architecture ;
+          </li>
+          <li>
+            des archives conservées à l’Opéra Comique : programmes de salle et brochures de saison de 1911 à 2007, affiches pour la période 1985-2007, photographies du début du XX<sup>e</sup> siècle. Au sein de cet ensemble figure un don conséquent réalisé en 2012 par Madame Jeannine Desplobins.
+          </li>
+        </ol>
+
+        <p>
+          Les documents ont été numérisés par Archimaine. En 2013, l’Opéra Comique a décidé de travailler avec l’équipe Dezède, en accord avec les Archives nationales, afin de permettre la mise en ligne et l’accessibilité au plus grand nombre de sa chronologie et de ses archives numérisées, ceci en bénéficiant des garanties scientifiques et techniques qu’offre le portail Dezède.
+        </p>
+
+        <p>Ont contribué à la réalisation de ce projet :</p>
+
+        <h4>À l’Opéra Comique</h4>
+        <blockquote>
+          Agnès <span class="sc">Terrier</span>, dramaturge et conseillère artistique<br />
+          Laure <span class="sc">Mercatello</span> puis Nathalie <span class="sc">Lefèvre</span>, directrice administrative et financière<br />
+          Albane <span class="sc">de Chatellus</span>, secrétaire générale<br />
+          Laure <span class="sc">Salefranque</span>, adjointe de la secrétaire générale en charge de la communication<br />
+          Juliette <span class="sc">Tissot-Vidal</span>, chargée de communication web<br />
+          Emmanuel <span class="sc">Hervé</span>, chargé de mission archives<br />
+          Nicola <span class="sc">Ross</span>, assistant dramaturge<br />
+          Jérôme <span class="sc">Avenas</span>, Yann <span class="sc">Breton</span> et Emmanuel <span class="sc">Quinchez</span> stagiaires à la dramaturgie
+        </blockquote>
+
+        <h4>Aux Archives nationales</h4>
+        <blockquote>
+          Catherine <span class="sc">Mérot</span>, conservateur général du Patrimoine, responsable du Département Éducation-Culture-Affaires sociales (DECAS)<br />
+          Yvette <span class="sc">Isselin</span>, chargée d’études documentaires, responsable des fonds Spectacles, DECAS<br />
+          Nicole <span class="sc">Brondel</span>, chargée d’études documentaires, responsable des fonds de la Censure, Département Justice-Intérieur<br />
+          Charlotte <span class="sc">Renaud</span>, chargée d’études documentaires, pôle Image, Département de la Conservation<br />
+          Marc <span class="sc">Paturange</span>, photographe, responsable du pôle Photographie, Département de la Conservation<br />
+          Pascal <span class="sc">Tanésie</span>, chargé d’études documentaires, chef de mission SIA, Département de la Maîtrise d’ouvrage et du service d’information<br />
+          Laurent <span class="sc">Martin</span>, responsable des ateliers de Restauration, Département de la Conservation
+        </blockquote>
+
+        <h4>De l’université de Rouen ou l’équipe Dezède</h4>
+        <blockquote>
+          Joann <span class="sc">Élart</span>, Maître de conférences en musicologie à l’université de Rouen (GRHIS), chargé dans le cadre d’un accueil en délégation au CNRS (IRCL UMR 5186) en 2014-2015 du suivi de l’importation des données dans Dezède (relecture, préparation des fichiers, coordination du développement informatique)<br />
+          Nawal <span class="sc">Bouin-El Boustani</span>, Chargée de Valorisation à la Direction de la Recherche et de la Valorisation à l’université de Rouen (convention entre l’Opéra Comique et l’université de Rouen)<br />
+          Bertrand <span class="sc">Bordage</span>, développeur informatique
+        </blockquote>
+
+        <h2>Sources</h2>
+
+        <h3>Historique des archives de l’Opéra Comique</h3>
+
+        <p>
+          Si l’Opéra de Paris, chargé dès son origine d’une fonction politique de centralisation de l’art musical, sauvegarda ses archives de manière quasi exhaustive, l’Opéra Comique conserva les siennes de façon irrégulière. De nos jours, l’institution conserve ses archives courantes et intermédiaires, tandis que le Code du patrimoine prévoit qu’en qualité d’établissement public, elle verse ses archives définitives aux Archives nationales. Mais il n’en a pas toujours été ainsi. Il en résulte aujourd’hui une dispersion et une fragmentation des fonds, dont l’exploration s’apparente souvent à une chasse au trésor.
+        </p>
+        <p>
+          Archiviste de l’Opéra à partir de 1866, Charles Nuitter y apporta de la Salle Ventadour, qu’avait occupé l’Opéra Comique de 1829 à 1832, un ensemble de sources qui remontaient jusqu’au XVIII<sup>e</sup> siècle. Cette collection fut ensuite enrichie par le don effectué par Émile Perrin, qui avait dirigé l’Opéra Comique de 1848 à 1857. En 1935, la Bibliothèque-musée de l’Opéra fut rattachée à la Bibliothèque nationale de France, puis intégrée au département de la Musique lors de sa création en 1942. Les archives administratives de l’Opéra Comique furent dès lors récupérées par les Archives nationales, tandis que la Bibliothèque-musée conservait ses archives artistiques. Ce fonds s’est enrichi entre 1939 et 1972 suite à la réunion de l’Opéra Comique et de l’Opéra, au sein de la Réunion des Théâtres Lyriques Nationaux (RTLN). Il comporte partitions, manuscrits, maquettes de décors et de costumes.
+        </p>
+
+        <p>
+          Aux Archives nationales sont distinguées les sources produites par l’Opéra Comique (sous-série AJ/13) de celles produites par les administrations de tutelle de l’État (sous-séries F/18 et F/21). L’ensemble porte sur des aspects institutionnels, économiques, sociaux et artistiques, du XVIII<sup>e</sup> siècle à nos jours. Notons l’importance des livrets manuscrits, ceux issus du fonds du théâtre (AJ/13) et ceux soumis à la censure (F/18) qui s’exerça jusqu’en 1906. Ces documents, que complètent les procès-verbaux de censure (F/21), témoignent des modifications apportées aux œuvres pendant les répétitions puis les représentations. Ils nous renseignent sur la vitalité du répertoire.
+        </p>
+
+        <p>
+          Deux autres institutions comptent dans la reconstitution des trois siècles d’histoire culturelle de l’Opéra Comique. Au Centre national du costume de scène, à Moulins, des costumes exceptionnels produits par le théâtre aux XIX<sup>e</sup> et XX<sup>e</sup> siècles ont été déposés avec les collections de l’Opéra et de la Bibliothèque nationale de France. En 2015, l’exposition « L’Opéra Comique et ses trésors » motivera le dépôt à Moulins de nouvelles pièces à haute valeur patrimoniale. À la Bibliothèque historique de la ville de Paris, une riche collection de livrets de mise en scène et de photographies des XIX<sup>e</sup> et XX<sup>e</sup> siècles achève de reconstituer la dimension visuelle des spectacles du passé.
+        </p>
+
+        <p>
+          Parce que la conservation et l’accès de tous aux archives sont des questions d’avenir, ces divers fonds sont aujourd’hui en cours d’inventaire et/ou de numérisation. Quant aux archives audiovisuelles de l’Opéra Comique, elles font l’objet, en accord avec le ministère de la Culture, d’une convention avec la Bibliothèque nationale de France pour la mise en place d’un fonds Opéra Comique au sein de son département de l’Audiovisuel.
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

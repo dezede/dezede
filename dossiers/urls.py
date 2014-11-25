@@ -6,7 +6,7 @@ from django.views.generic import RedirectView
 from dossiers.views import (
     CategorieDeDossiersList, DossierDEvenementsDetail,
     DossierDEvenementsDataDetail, DossierDEvenementsDetailXeLaTeX,
-    OperaComiqueListView)
+    OperaComiquePresentation, OperaComiqueListView)
 
 
 urlpatterns = patterns('',
@@ -14,7 +14,9 @@ urlpatterns = patterns('',
         name='dossierdevenements_index'),
     url(r'^62/?$', RedirectView.as_view(pattern_name='dossier_opera_comique',
                                         permanent=False)),
-    url(r'^archives[-\.]opera-comique$', OperaComiqueListView.as_view(),
+    url(r'^archives[-\.]opera-comique$', OperaComiquePresentation.as_view(),
+        name='dossier_opera_comique_presentation'),
+    url(r'^archives[-\.]opera-comique/data$', OperaComiqueListView.as_view(),
         name='dossier_opera_comique'),
     url(r'^(?P<pk>\d+)/$', DossierDEvenementsDetail.as_view(),
         name='dossierdevenements_detail'),
