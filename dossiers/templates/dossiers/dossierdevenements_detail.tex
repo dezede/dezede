@@ -61,7 +61,7 @@
 
   \addcontentsline{toc}{part}{ {% trans 'Événements' %} }
 
-  {% with evenements=object.get_queryset %}
+  {% with evenements=object.get_queryset.prefetch_all %}
     {% for evenement in evenements %}
       {% with event_counter=forloop.counter %}
         {% include 'libretto/evenement_item.tex' %}

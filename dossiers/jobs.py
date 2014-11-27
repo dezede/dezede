@@ -108,7 +108,7 @@ def dossier_to_pdf(dossier_pk, user_pk, site_pk, language_code):
 @job
 def events_to_pdf(pk_list, user_pk, site_pk, language_code):
     evenements = Evenement.objects.filter(pk__in=pk_list)
-    context = {'evenements': evenements}
+    context = {'evenements': evenements.prefetch_all}
     template_name = 'libretto/evenement_list.tex'
     n = len(pk_list)
     subject = 'de %s événements' % n

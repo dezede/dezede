@@ -93,12 +93,7 @@ class EvenementIndex(CommonSearchIndex, Indexable):
 
     def index_queryset(self, using=None):
         qs = super(EvenementIndex, self).index_queryset(using)
-        return qs.select_related(
-            'debut_lieu', 'debut_lieu__nature',
-            'debut_lieu__lieudivers', 'debut_lieu__institution',
-            'fin_lieu', 'fin_lieu__nature',
-            'fin_lieu__lieudivers', 'fin_lieu__institution'
-        )
+        return qs.prefetch_all()
 
 
 class PartieIndex(PolymorphicCommonSearchIndex, Indexable):

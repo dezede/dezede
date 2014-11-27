@@ -303,6 +303,27 @@ class EvenementQuerySet(PublishedQuerySet):
     def with_program(self):
         return self.filter(Q(relache=True) | Q(programme__isnull=False))
 
+    def prefetch_all(self):
+        return (
+            self.select_related(
+                'debut_lieu', 'debut_lieu__nature',
+                'fin_lieu', 'fin_lieu__nature',
+                'owner', 'etat')
+            .prefetch_related(
+                'caracteristiques__type',
+                'distribution__individus', 'distribution__ensembles',
+                'distribution__profession', 'distribution__pupitre__partie',
+                'programme__caracteristiques__type',
+                'programme__oeuvre__genre',
+                'programme__oeuvre__caracteristiques__type',
+                'programme__oeuvre__auteurs__individu',
+                'programme__oeuvre__auteurs__profession',
+                'programme__oeuvre__pupitres__partie',
+                'programme__distribution__individus',
+                'programme__distribution__ensembles',
+                'programme__distribution__profession',
+                'programme__distribution__pupitre__partie'))
+
 
 class EvenementManager(PublishedManager):
     queryset_class = EvenementQuerySet
@@ -312,6 +333,9 @@ class EvenementManager(PublishedManager):
 
     def with_program(self):
         return self.get_queryset().with_program()
+
+    def prefetch_all(self):
+        return self.get_queryset().prefetch_all()
 
 
 @python_2_unicode_compatible
