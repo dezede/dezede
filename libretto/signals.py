@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from time import sleep, time
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
+from django.db import connection
 from django.db.models import get_model
 from django.db.models.signals import post_save, pre_delete
 from django_rq import job
@@ -100,11 +101,13 @@ class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
         if sender in (LogEntry, Session, Revision, Version):
             return
 
-        django_rq.enqueue(
-            auto_invalidate,
-            args=(action,
-                  instance._meta.app_label, instance._meta.model_name,
-                  instance.pk),
-            result_ttl=0,  # Doesn't store result
-            timeout=3600,  # Avoids never-ending jobs
+        connection.on_commit(lambda:
+            django_rq.enqueue(
+                auto_invalidate,
+                args=(action,
+                      instance._meta.app_label, instance._meta.model_name,
+                      instance.pk),
+                result_ttl=0,  # Doesn't store result
+                timeout=3600,  # Avoids never-ending jobs
+            )
         )

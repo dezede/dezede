@@ -37,12 +37,13 @@ MAINTENANCE_IGNORE_URLS = (
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'ENGINE': 'dezede.backends.postgis',
         'NAME': 'dezede',
         'USER': 'dezede',
     },
 }
 CONN_MAX_AGE = None
+SOUTH_DATABASE_ADAPTERS = {'default': 'south.db.postgresql_psycopg2'}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

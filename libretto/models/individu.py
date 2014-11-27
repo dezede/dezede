@@ -9,6 +9,7 @@ from django.utils.html import strip_tags
 from django.utils.translation import (
     pgettext_lazy, ungettext_lazy, ugettext, ugettext_lazy as _)
 from tinymce.models import HTMLField
+from cache_tools import invalidate_object
 from ..utils import abbreviate
 from .common import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
@@ -161,6 +162,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return relations
 
     def get_slug(self):
+        invalidate_object(self)
         return self.nom or smart_text(self)
 
     @permalink

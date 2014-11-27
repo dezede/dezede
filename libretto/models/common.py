@@ -25,6 +25,7 @@ from mptt.managers import TreeManager
 from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
 from tinymce.models import HTMLField
+from cache_tools import invalidate_object
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 from .functions import href, ex, hlp, capfirst, str_list, date_html
@@ -280,6 +281,7 @@ class SlugModel(Model):
         abstract = True
 
     def get_slug(self):
+        invalidate_object(self)
         return smart_text(self)
 
 
@@ -291,6 +293,7 @@ class UniqueSlugModel(Model):
         abstract = True
 
     def get_slug(self):
+        invalidate_object(self)
         return smart_text(self)
 
 

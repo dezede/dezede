@@ -641,7 +641,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     def calc_referent_ancestors(self, tags=False, links=False):
         if not self.pk or self.contenu_dans is None or \
-                (self.genre and  self.genre.referent):
+                (self.genre and self.genre.referent):
             return ''
         return self.contenu_dans.titre_html(tags=tags, links=links)
 
