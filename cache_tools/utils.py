@@ -1,6 +1,8 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from time import time
+
 from django.core.cache import cache
 from django.utils.translation import get_language
 
@@ -13,7 +15,7 @@ __all__ = (
 def get_cache_key(method, obj, args, kwargs, id_attr=b'pk'):
     _id = getattr(obj, id_attr)
     if _id is None:
-        return None
+        return
     meta = obj._meta
     return b'%s:%s.%s.%s:%s(%s,%s)' % (
         get_language(), meta.app_label, meta.model_name,
@@ -28,6 +30,4 @@ def get_obj_cache_key(obj, id_attr=b'pk'):
 
 def invalidate_object(obj, id_attr=b'pk'):
     object_cache_key = get_obj_cache_key(obj, id_attr)
-    object_keys = cache.get(object_cache_key, [])
-    cache.delete_many(object_keys)
-    cache.delete(object_cache_key)
+    cache.set(object_cache_key, time(), None)
