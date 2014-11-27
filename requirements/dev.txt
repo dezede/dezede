@@ -2,7 +2,7 @@
 django-debug-toolbar==1.2.2
 django-debug-toolbar-template-timings==0.6.4
 django-haystack-panel==0.2.1
-django-extensions==1.4.5
+django-extensions==1.4.6
 
 # Testing
 django-nose==1.2
