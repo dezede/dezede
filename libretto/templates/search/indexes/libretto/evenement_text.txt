@@ -6,7 +6,7 @@
     {{ object.debut }}
     {{ object.fin }}
     {{ object.html }}
-    {{ object.distribution.prefetch.html|safe }}
+    {{ object.distribution.html|safe }}
     {% for element in object.programme.all %}
       {{ element.html|safe }}
     {% endfor %}

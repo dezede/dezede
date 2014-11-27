@@ -251,7 +251,7 @@ class ElementDeProgramme(CommonModel):
         distribution = ''
         add_distribution = False
         if has_pk:
-            distribution = self.distribution.prefetch()
+            distribution = self.distribution.all()
             if distribution:
                 distribution = distribution.html(tags=tags)
                 add_distribution = True
@@ -378,7 +378,7 @@ class Evenement(AutoriteModel):
         if self.circonstance:
             out = self.circonstance
         else:
-            distribution = self.distribution.prefetch()
+            distribution = self.distribution.all()
             if distribution:
                 out = distribution.html(tags=tags)
             else:

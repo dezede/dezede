@@ -2,7 +2,7 @@
 
 <div class="auto-links">
 
-  {% with distribution=evenement.distribution.prefetch.html|safe %}
+  {% with distribution=evenement.distribution.html|safe %}
     {% if distribution %}
       <p class="text-left">{{ distribution }}</p>
     {% endif %}
@@ -11,13 +11,11 @@
   {% with elements=evenement.programme.all %}
     {% if elements %}
       <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
-      {% if elements|length == 1 %}
-        {{ elements.0.html|safe }}
-      {% else %}
-        <table class="programme">
-          {% for element in elements %}
-            <tr>
-              <td>
+      <table class="programme">
+        {% for element in elements %}
+          <tr>
+            <td>
+              {% if elements|length > 1 %}
                 {% if element.numerotation == 'O' %}
                   {{ element.numero }}.
                 {% elif element.numerotation == 'B' %}
@@ -25,14 +23,14 @@
                 {% elif element.numerotation == 'U' %}
                   •&nbsp;
                 {% endif %}
-              </td>
-              <td>
-                {{ element.html|safe }}
-              </td>
-            </tr>
-          {% endfor %}
-        </table>
-      {% endif %}
+              {% endif %}
+            </td>
+            <td>
+              {{ element.html|safe }}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
     {% endif %}
   {% endwith %}
 
