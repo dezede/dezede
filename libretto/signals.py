@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from time import sleep, time
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
 from django.db import connection
@@ -67,14 +66,7 @@ def auto_invalidate(action, app_label, model_name, pk):
             index.remove_object('%s.%s.%s' % (app_label, model_name, pk))
         return
 
-    start = time()
-    while True:
-        instance = model._default_manager.filter(pk=pk).first()
-        if instance is not None:
-            break
-        if time() - start > 20:
-            raise RuntimeError
-        sleep(1)
+    instance = model._default_manager.get(pk=pk)
 
     auto_invalidate_cache(instance)
     auto_update_haystack(action, instance)
