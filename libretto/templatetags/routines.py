@@ -5,6 +5,7 @@ from copy import copy
 from django.db.models import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template import Library, Template
+from django.template.loader import render_to_string
 from django.contrib.sites.models import get_current_site
 from django.utils.encoding import force_text
 from libretto.models.common import PublishedQuerySet
@@ -22,7 +23,7 @@ def build_admin_view_name(perm):
     return 'admin:%s' % perm.replace('.', '_')
 
 
-@register.inclusion_tag('routines/front-end_admin.html', takes_context=True)
+@register.simple_tag(takes_context=True)
 def frontend_admin(context, obj=None, size='xs'):
     request = context['request']
     if obj is None:
@@ -41,7 +42,7 @@ def frontend_admin(context, obj=None, size='xs'):
 
     assert size in ('', 'xs', 'sm', 'md', 'lg')
 
-    return {
+    c = {
         'has_change_perm': has_change_perm,
         'has_delete_perm': has_delete_perm,
         'admin_change': admin_change,
@@ -50,9 +51,10 @@ def frontend_admin(context, obj=None, size='xs'):
         'object': obj,
         'size': size,
     }
+    return render_to_string('routines/front-end_admin.html', c)
 
 
-@register.inclusion_tag('routines/data_table_attr.html', takes_context=True)
+@register.simple_tag(takes_context=True)
 def data_table_attr(context, attr, verbose_name=None, obj=None, caps=False):
     if obj is None:
         obj = context['object']
@@ -80,10 +82,11 @@ def data_table_attr(context, attr, verbose_name=None, obj=None, caps=False):
 
     if caps:
         value = capfirst(value.strip())
-    return {
+    c = {
         'verbose_name': verbose_name,
         'value': value,
     }
+    return render_to_string('routines/data_table_attr.html', c)
 
 
 def get_verbose_name_from_object_list(object_list, verbose_name=None,
@@ -157,7 +160,7 @@ def data_table_list_header(context):
     return capfirst(out)
 
 
-@register.inclusion_tag('routines/data_table_list.html', takes_context=True)
+@register.simple_tag(takes_context=True)
 def data_table_list(context, object_list, attr='link',
                     verbose_name=None, verbose_name_plural=None, per_page=10,
                     has_count_if_one=True, has_count=True):
@@ -179,7 +182,7 @@ def data_table_list(context, object_list, attr='link',
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         object_list, verbose_name=verbose_name,
         verbose_name_plural=verbose_name_plural)
-    return {
+    c = {
         'request': context['request'],
         'attr': attr,
         'count': len(object_list),
@@ -192,18 +195,20 @@ def data_table_list(context, object_list, attr='link',
         'has_count_if_one': has_count_if_one,
         'has_count': has_count,
     }
+    return render_to_string('routines/data_table_list.html', c)
 
 
-@register.inclusion_tag('routines/jqtree.html', takes_context=True)
+@register.simple_tag(takes_context=True)
 def jqtree(context, model_path, attr='__str__', id=None):
     app_label, model_name = model_path.split('.')
-    return {
+    c = {
         'app_label': app_label,
         'model_name': model_name,
         'attr': attr,
         'object': context.get('object'),
         'id': id,
     }
+    return render_to_string('routines/jqtree.html', c)
 
 
 @register.filter
