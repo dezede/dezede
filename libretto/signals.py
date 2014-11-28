@@ -90,9 +90,11 @@ class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
         pre_delete.disconnect(self.enqueue_delete)
 
     def enqueue_save(self, sender, instance, created, **kwargs):
-        if created:
-            return self.enqueue('create', instance, sender, **kwargs)
-        return self.enqueue('save', instance, sender, **kwargs)
+        def inner():
+            if created:
+                return self.enqueue('create', instance, sender, **kwargs)
+            return self.enqueue('save', instance, sender, **kwargs)
+        return connection.on_commit(inner)
 
     def enqueue_delete(self, sender, instance, **kwargs):
         return self.enqueue('delete', instance, sender, **kwargs)
@@ -101,13 +103,11 @@ class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
         if sender in (LogEntry, Session, Revision, Version):
             return
 
-        connection.on_commit(lambda:
-            django_rq.enqueue(
-                auto_invalidate,
-                args=(action,
-                      instance._meta.app_label, instance._meta.model_name,
-                      instance.pk),
-                result_ttl=0,  # Doesn't store result
-                timeout=3600,  # Avoids never-ending jobs
-            )
+        django_rq.enqueue(
+            auto_invalidate,
+            args=(action,
+                  instance._meta.app_label, instance._meta.model_name,
+                  instance.pk),
+            result_ttl=0,  # Doesn't store result
+            timeout=3600,  # Avoids never-ending jobs
         )
