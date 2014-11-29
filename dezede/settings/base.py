@@ -37,7 +37,7 @@ MAINTENANCE_IGNORE_URLS = (
 
 DATABASES = {
     'default': {
-        'ENGINE': 'dezede.backends.postgis',
+        'ENGINE': 'transaction_hooks.backends.postgis',
         'NAME': 'dezede',
         'USER': 'dezede',
     },

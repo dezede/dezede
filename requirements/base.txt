@@ -42,7 +42,7 @@ awesome-slugify==1.6
 # Asynchronous tasks
 django-rq==0.7.0
 -e git+https://github.com/BertrandBordage/rq@4818036e61fa5bfce1b11b6d1d565a74f3f5f4ca#egg=rq
-django-transaction-hooks==0.1.4
+-e git+https://github.com/carljm/django-transaction-hooks@d6995be383fbfde68bb3869d460bbb5be7b896a9#egg=django-transaction-hooks
 
 # CSS/JS handling
 django_compressor==1.4
