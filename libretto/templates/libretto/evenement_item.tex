@@ -30,17 +30,16 @@
 \medskip
 
 {% with elements=evenement.programme.fill_numeros %}
-  {% for element in elements %}
-    {% if forloop.first %}
-      {\bfseries {% trans "programme"|capfirst %}}
-      \nopagebreak
+  {% if elements %}
+    {\bfseries {% trans "programme"|capfirst %}}
+    \nopagebreak
 
-      {% if elements.count > 1 %}
-        \begin{itemize}
-      {% endif %}
+    {% if elements|length > 1 %}
+      \begin{itemize}
     {% endif %}
+    {% for element in elements %}
       {% spaceless %}
-        {% if elements.count > 1 %}
+        {% if elements|length > 1 %}
           {% if element.numerotation == 'O' %}
             \item[{{ element.numero }}.]
           {% elif element.numerotation == 'B' %}
@@ -53,10 +52,11 @@
         {% endif %}
         {{ element.html|html_to_latex }}
       {% endspaceless %}
-    {% if forloop.last and elements.count > 1 %}
+    {% endfor %}
+    {% if elements|length > 1 %}
       \end{itemize}
     {% endif %}
-  {% endfor %}
+  {% endif %}
 {% endwith %}
 
 \bigskip
