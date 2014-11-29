@@ -184,6 +184,26 @@ class CaracteristiqueDeProgramme(Caracteristique):
         return ('caracteristique_ptr', 'elements_de_programme',)
 
 
+class ElementDeProgrammeQueryset(CommonQuerySet):
+    def fill_numeros(self):
+        numbered = [e for e in self
+                    if e.numerotation not in e.NUMEROTATIONS_SANS_ORDRE]
+        for element in self:
+            if element.numerotation in element.NUMEROTATIONS_SANS_ORDRE:
+                element._numero = ''
+            else:
+                element._numero = len([e for e in numbered
+                                       if e.position <= element.position])
+        return self
+
+
+class ElementDeProgrammeManager(CommonManager):
+    queryset_class = ElementDeProgrammeQueryset
+
+    def fill_numeros(self):
+        return self.get_queryset().fill_numeros()
+
+
 @python_2_unicode_compatible
 class ElementDeProgramme(CommonModel):
     evenement = ForeignKey('Evenement', related_name='programme',
@@ -204,6 +224,7 @@ class ElementDeProgramme(CommonModel):
     )
     numerotation = CharField(
         _('numérotation'), choices=NUMEROTATIONS, max_length=1, default='O')
+    NUMEROTATIONS_SANS_ORDRE = ('U', 'E',)
     position = PositiveSmallIntegerField(_('position'))
     # TODO: Quand les nested inlines seront possibles avec Django, remplacer
     # ceci par un GenericRelation.
@@ -213,6 +234,8 @@ class ElementDeProgramme(CommonModel):
     # FIXME: Retirer ceci si on supprime Personnel.
     personnels = ManyToManyField('Personnel', blank=True, null=True,
                                  related_name='elements_de_programme')
+
+    objects = ElementDeProgrammeManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('élément de programme',
@@ -238,11 +261,13 @@ class ElementDeProgramme(CommonModel):
     @property
     @model_method_cached()
     def numero(self):
-        numerotations_exclues = ('U', 'E',)
-        if self.numerotation in numerotations_exclues:
+        if hasattr(self, '_numero'):
+            return self._numero
+        if self.numerotation in self.NUMEROTATIONS_SANS_ORDRE:
             return ''
-        return self.evenement.programme.exclude(Q(position__gt=self.position)
-                           | Q(numerotation__in=numerotations_exclues)).count()
+        return self.evenement.programme.exclude(
+            Q(position__gt=self.position)
+            | Q(numerotation__in=self.NUMEROTATIONS_SANS_ORDRE)).count()
 
     @model_method_cached()
     def html(self, tags=True):
@@ -319,6 +344,9 @@ class EvenementQuerySet(PublishedQuerySet):
                 'programme__oeuvre__auteurs__individu',
                 'programme__oeuvre__auteurs__profession',
                 'programme__oeuvre__pupitres__partie',
+                'programme__oeuvre__contenu_dans__genre',
+                'programme__oeuvre__contenu_dans__caracteristiques__type',
+                'programme__oeuvre__contenu_dans__pupitres__partie',
                 'programme__distribution__individus',
                 'programme__distribution__ensembles',
                 'programme__distribution__profession',

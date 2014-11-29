@@ -8,7 +8,7 @@
     {% endif %}
   {% endwith %}
 
-  {% with elements=evenement.programme.all %}
+  {% with elements=evenement.programme.fill_numeros %}
     {% if elements %}
       <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
       <table class="programme">

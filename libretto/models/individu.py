@@ -82,8 +82,7 @@ class ParenteDIndividus(CommonModel):
 
 class IndividuQuerySet(PublishedQuerySet):
     def are_feminins(self):
-        return all([titre in ('J', 'F',)
-                    for titre in self.values_list('titre', flat=True)])
+        return all(i.is_feminin() for i in self)
 
 
 class IndividuManager(PublishedManager):

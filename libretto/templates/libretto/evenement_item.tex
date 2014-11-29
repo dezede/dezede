@@ -29,7 +29,7 @@
 
 \medskip
 
-{% with elements=evenement.programme.all %}
+{% with elements=evenement.programme.fill_numeros %}
   {% for element in elements %}
     {% if forloop.first %}
       {\bfseries {% trans "programme"|capfirst %}}

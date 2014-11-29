@@ -108,7 +108,7 @@ class EvenementListView(AjaxListView, PublishedListView):
             self.default_page = False
 
         if not self.valid_form:
-            return qs
+            return qs.prefetch_all()
 
         search_query = data.get('q')
         if search_query:
