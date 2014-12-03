@@ -26,8 +26,8 @@
   <script type="text/javascript" src="{% static 'bootstrap/js/dropdown.js' %}"></script>
   <script type="text/javascript" src="{% static 'bootstrap/js/modal.js' %}"></script>
   <script type="text/javascript" src="{% static 'bootstrap/js/tooltip.js' %}"></script>
-{#      <script type="text/javascript" src="{% static 'bootstrap/js/popover.js' %}"></script>#}
-{#      <script type="text/javascript" src="{% static 'bootstrap/js/scrollspy.js' %}"></script>#}
+{#  <script type="text/javascript" src="{% static 'bootstrap/js/popover.js' %}"></script>#}
+{#  <script type="text/javascript" src="{% static 'bootstrap/js/scrollspy.js' %}"></script>#}
   <script type="text/javascript" src="{% static 'bootstrap/js/tab.js' %}"></script>
   <script type="text/javascript" src="{% static 'bootstrap/js/affix.js' %}"></script>
   <script type="text/javascript" src="{% static 'jqTree/tree.jquery.js' %}"></script>
@@ -78,9 +78,9 @@
 
   <body>
 
-    {% block navbar %}
+    <header>
       {% include 'navbar.html' %}
-    {% endblock %}
+    </header>
 
     <div id="main" class="container">
 

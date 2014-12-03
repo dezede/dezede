@@ -60,14 +60,9 @@
 
 @content-padding-bottom: @grid-gutter-width;
 
-@footer-padding-y:   15px;
 @footer-line-height: 50px;
-@footer-height:      @footer-line-height + @footer-padding-y * 2 + @footer-border-width;
-@footer-height-sm:   @footer-height + @footer-line-height;
-@footer-bg:          @navbar-default-bg;
-@footer-color:       darken(@footer-bg, 40%);
+@footer-height:      @footer-line-height + @navbar-padding-vertical * 2 + @footer-border-width;
 @footer-border-width: 1px;
-@footer-border-color: @navbar-default-border;
 
 //
 // Mixins
@@ -198,8 +193,9 @@
 // Custom styling
 //
 
-html, body {
-  height: 100%;
+html {
+  position: relative;
+  min-height: 100%;
 }
 
 body {
@@ -216,12 +212,11 @@ body {
   }
 }
 
-// Both for front office and TinyMCE
+//Both for front office and TinyMCE
 #main, .mceContentBody {
   min-height: 100%;
   height: auto !important;  // Those two lines are a min-height hack for IE.
   height: 100%;             //
-  margin-bottom: -@footer-height;
 }
 
 #content {
@@ -782,31 +777,13 @@ form .results_on_deck {
   .opacity(60);
 }
 
-body>footer {
-  width: 100%;
-  color: @footer-color;
-  background: @footer-bg;
-  border-top: @footer-border-width solid @footer-border-color;
-  &>.container {
-    padding-top: @footer-padding-y;
-    padding-bottom: @footer-padding-y;
-    .row {
-      &>* {
-        height: @footer-line-height;
-        line-height: @footer-line-height;
-      }
-      #softwares {
-        line-height: @footer-line-height / 2;
-        p {
-          margin: 0;
-        }
-      }
-      #logos {
-        a:not(:first-child) {
-          margin-left: 10px;
-        }
-      }
-    }
+#footer {
+  position: absolute;
+  height: @footer-height;
+  border-top-width: @footer-border-width;
+  line-height: @footer-line-height;
+  .navbar-nav > li > a {
+    line-height: @footer-line-height;
   }
 }
 
@@ -821,18 +798,6 @@ body>footer {
 }
 
 @media (max-width: @screen-sm-max) {
-  #main {
-    margin-bottom: -@footer-height-sm;
-  }
-
-  #content {
-    padding-bottom: @footer-height-sm + @content-padding-bottom;
-  }
-
-  footer .container .row>* {
-    height: @footer-line-height * 2;
-  }
-
   .title-header {
     #slogan {
       text-align: center;

@@ -8,7 +8,7 @@ $(function () {
         return (this.top = (offset_top - navbar_height));
       },
       bottom: function() {
-        return (this.bottom = $('body>footer').outerHeight(true));
+        return (this.bottom = $('#footer').outerHeight(true));
       }
     }
   });
