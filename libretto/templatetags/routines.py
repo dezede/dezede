@@ -174,7 +174,7 @@ def data_table_list(context, object_list, attr='link',
         is_published_queryset = False
 
     if not object_list:
-        return ''
+        return {}
 
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         object_list, verbose_name=verbose_name,
