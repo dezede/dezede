@@ -140,7 +140,7 @@ def get_property(obj, attr):
 def has_elements(object_list, request):
     if isinstance(object_list, PublishedQuerySet):
         object_list = object_list.published(request=request)
-    return bool(object_list)
+    return object_list.exists()
 
 
 @register.simple_tag(takes_context=True)
@@ -162,9 +162,6 @@ def data_table_list(context, object_list, attr='link',
                     verbose_name=None, verbose_name_plural=None, per_page=10,
                     has_count_if_one=True, has_count=True):
 
-    if not object_list:
-        return {}
-
     # Only show what the connected user is allowed to see.
     if isinstance(object_list, PublishedQuerySet):
         object_list = object_list.published(request=context['request'])
@@ -173,16 +170,20 @@ def data_table_list(context, object_list, attr='link',
     else:
         is_published_queryset = False
 
-    if not object_list:
-        return {}
+    if isinstance(object_list, QuerySet):
+        count = object_list.count()
+        object_list = object_list.select_related('etat')
+    else:
+        count = len(object_list)
 
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         object_list, verbose_name=verbose_name,
         verbose_name_plural=verbose_name_plural)
-    return {
-        'request': context['request'],
+
+    c = context.__copy__()
+    c.update({
         'attr': attr,
-        'count': len(object_list),
+        'count': count,
         'object_list': object_list,
         'is_published_queryset': is_published_queryset,
         'verbose_name': verbose_name,
@@ -191,7 +192,8 @@ def data_table_list(context, object_list, attr='link',
         'page_variable': verbose_name + '_page',
         'has_count_if_one': has_count_if_one,
         'has_count': has_count,
-    }
+    })
+    return c
 
 
 @register.inclusion_tag('routines/jqtree.html', takes_context=True)
