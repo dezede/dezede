@@ -57,13 +57,7 @@ class TypeDeSource(CommonModel, SlugModel):
 class SourceQuerySet(PublishedQuerySet):
     def group_by_type(self):
         sources = OrderedDefaultDict()
-
-        ordering = list(self.model._meta.ordering)
-        if 'type' in ordering:
-            ordering.remove('type')
-        ordering.insert(0, 'type')
-
-        for source in self.order_by(*ordering):
+        for source in self:
             sources[source.type].append(source)
         return sources.items()
 
