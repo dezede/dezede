@@ -32,7 +32,7 @@
         {% endfor %}
       </div>
     </div>
-    {% addtoblock 'js' %}
+    {% addtoblock 'js' strip %}
       <script>
         var handles_checkboxes = function() {
           var self = $(this);

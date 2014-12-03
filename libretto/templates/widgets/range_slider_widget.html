@@ -1,72 +1,19 @@
 {% load static compress i18n %}
 
-{#<link rel="stylesheet" type="text/css"#}
-{#      href="{% static 'css/custom-theme/jquery-ui-1.9.2.min.css' %}">#}
-{#<script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>#}
-{#<script src="{% static 'js/jquery-ui-1.9.2.min.js' %}"></script>#}
-
-
-<div class="form-group">
+<div class="date-range-widget"
+     data-min-year="{{ min_year }}" data-max-year="{{ max_year }}">
   <div class="row">
     <div class="input-group form-group col-xs-10 col-xs-offset-1"
          title="{% trans 'Période chronologique' %}">
       <input type="text" name="{{ name }}_0" id="id_{{ name }}_0"
-             value="{{ start }}" class="form-control text-center" />
+             value="{{ start }}" class="start form-control text-center" />
       <span class="input-group-addon">-</span>
       <input type="text" name="{{ name }}_1" id="id_{{ name }}_1"
-             value="{{ end }}" class="form-control text-center" />
+             value="{{ end }}" class="end form-control text-center" />
     </div>
   </div>
 
   <div class="row">
-    <div id="id_{{ name }}_slider-range"
-         class="col-xs-10 col-xs-offset-1"></div>
+    <div class="slider col-xs-10 col-xs-offset-1"></div>
   </div>
 </div>
-
-{% compress js file %}
-  <script>
-    $(function() {
-      var slider_div = $("#id_{{ name }}_slider-range");
-      var slider_start = $("#id_{{ name }}_0");
-      var slider_end = $("#id_{{ name }}_1");
-
-      bounded_value = function(value, bound) {
-        var new_val = Math.min(Math.max({{ min_year }}, value), {{ max_year }});
-        var bound_value = slider_div.slider("values", bound);
-        if(bound == 0) {
-          new_val = Math.max(new_val, bound_value);
-        }
-        if(bound == 1) {
-          new_val = Math.min(new_val, bound_value);
-        }
-        return new_val;
-      };
-
-      slider_div.slider({
-        range: true,
-        min: {{ min_year }},
-        max: {{ max_year }},
-        values: [{{ start }}, {{ end }}],
-        slide: function(event, ui) {
-          slider_start.val(ui.values[0]);
-          slider_end.val(ui.values[1]);
-        }
-      });
-      slider_start.change(function() {
-        var new_val = bounded_value($(this).val(), 1);
-        slider_div.slider("values", 0, new_val);
-        $(this).val(new_val);
-      });
-      slider_end.change(function() {
-        var new_val = bounded_value($(this).val(), 0);
-        slider_div.slider("values", 1, new_val);
-        $(this).val(new_val);
-      });
-      {% if not value %}
-        slider_start.val(slider_div.slider("values", 0));
-        slider_end.val(slider_div.slider("values", 1));
-      {% endif %}
-    });
-  </script>
-{% endcompress %}

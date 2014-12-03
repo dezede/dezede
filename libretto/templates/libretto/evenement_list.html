@@ -18,12 +18,13 @@
       </aside>
     </div>
 
-    {% addtoblock 'js' %}
-      {{ form.media.js }}
-    {% endaddtoblock %}
-    {% addtoblock 'css' %}
-      {{ form.media.css }}
-    {% endaddtoblock %}
+    {% for css in form.media.render_js %}
+      {% addtoblock 'css' %}{{ css }}{% endaddtoblock %}
+    {% endfor %}
+
+    {% for js in form.media.render_js %}
+      {% addtoblock 'js' %}{{ js }}{% endaddtoblock %}
+    {% endfor %}
 
     <div class="col-xs-12 col-sm-8 col-lg-9">
 
@@ -53,10 +54,10 @@
 
   </div>
 
-  {% addtoblock 'js' %}
+  {% addtoblock 'js' strip %}
     <script src="{% static 'js/run_affix.js' %}"></script>
   {% endaddtoblock %}
-  {% addtoblock 'js' %}
+  {% addtoblock 'js' strip %}
     <script>
       $(function () {
         $.endlessPaginate({

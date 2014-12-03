@@ -22,13 +22,13 @@
     </thead>
   </table>
 
-  {% addtoblock 'js' %}
+  {% addtoblock 'js' strip %}
     {% datatables_js %}
   {% endaddtoblock %}
-  {% addtoblock 'js' %}
+  {% addtoblock 'js' strip %}
     {% datatables_bootstrap_js %}
   {% endaddtoblock %}
-  {% addtoblock 'js' %}
+  {% addtoblock 'js' strip %}
     <script>
       $(document).ready(function() {
         $('#data-table').dataTable({

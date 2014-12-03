@@ -46,12 +46,24 @@ class RangeSliderWidget(MultiWidget):
             value = min_year, max_year
         start, end = value
         t = b'widgets/range_slider_widget.html'
-        return render_to_string(t, locals())
+        return render_to_string(t, {
+            'name': name,
+            'start': start, 'end': end,
+            'min_year': min_year, 'max_year': max_year
+        })
 
     def decompress(self, value):
         if value:
             return value.split('-')
         return [None, None]
+
+    class Media(object):
+        css = {
+            'all': ('css/custom-theme/jquery-ui-1.9.2.min.css',),
+        }
+        js = ('js/jquery-1.10.2.min.js',
+              'js/jquery-ui-1.9.2.min.js',
+              'js/range_slider_widget.js',)
 
 
 class RangeSliderField(MultiValueField):

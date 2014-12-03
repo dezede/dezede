@@ -13,7 +13,7 @@
 
   {% crispy form %}
 
-  {% addtoblock 'js' %}
+  {% addtoblock 'js' strip %}
     <script>
       $('#id_next').val('{{ request.GET.next }}');
     </script>

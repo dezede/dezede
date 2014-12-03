@@ -198,17 +198,17 @@ def data_table_list(context, object_list, attr='link',
     return render_to_string('routines/data_table_list.html', c)
 
 
-@register.simple_tag(takes_context=True)
+@register.inclusion_tag('routines/jqtree.html', takes_context=True)
 def jqtree(context, model_path, attr='__str__', id=None):
     app_label, model_name = model_path.split('.')
-    c = {
+    c = context.__copy__()
+    c.update({
         'app_label': app_label,
         'model_name': model_name,
         'attr': attr,
-        'object': context.get('object'),
         'id': id,
-    }
-    return render_to_string('routines/jqtree.html', c)
+    })
+    return c
 
 
 @register.filter

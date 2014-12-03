@@ -28,7 +28,7 @@
         <input id="navbar-search" type="search" name="q" class="form-control"
                placeholder="{% trans "Rechercher…" %}" />
       </form>
-      {% addtoblock 'js' %}
+      {% addtoblock 'js' strip %}
         <script>
           var suggestions = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('str'),

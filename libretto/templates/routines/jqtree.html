@@ -1,10 +1,10 @@
-{% load i18n static compress %}
+{% load i18n static sekizai_tags %}
 
 <div id="{% if id %}{{ id }}{% else %}{{ model_name }}-tree{% endif %}"
      data-url="{% url 'tree_node' app_label model_name attr object.pk %}">
 </div>
 
-{% compress js file %}
+{% addtoblock 'js' strip %}
   <script>
     $(function () {
       $('#{% if id %}{{ id }}{% else %}{{ model_name }}-tree{% endif %}').tree({
@@ -17,4 +17,4 @@
       });
     });
   </script>
-{% endcompress %}
+{% endaddtoblock %}

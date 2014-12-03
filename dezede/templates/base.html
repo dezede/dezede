@@ -1,4 +1,60 @@
 {% load i18n static compress sekizai_tags %}
+
+{% addtoblock 'css' strip %}
+  <link rel="stylesheet" href="{% static 'css/custom-theme/jquery-ui-1.9.2.min.css' %}" />
+{% endaddtoblock %}
+{% addtoblock 'css' strip %}
+  <link rel="stylesheet" href="{% static 'jqTree/jqtree.css' %}" />
+{% endaddtoblock %}
+{% addtoblock 'css' strip %}
+  <link rel="stylesheet" type="text/less" href="{% static 'css/styles.less' %}"/>
+{% endaddtoblock %}
+
+{% addtoblock 'js' strip %}
+  <script type="text/javascript" src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
+{% endaddtoblock %}
+{% addtoblock 'js' strip %}
+  <script type="text/javascript" src="{% static 'js/jquery-ui-1.9.2.min.js' %}"></script>
+{% endaddtoblock %}
+{% addtoblock 'js' strip %}
+  {# Attention, l'ordre des JS de bootstrap importe ! #}
+  <script type="text/javascript" src="{% static 'bootstrap/js/transition.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bootstrap/js/alert.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bootstrap/js/button.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bootstrap/js/carousel.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bootstrap/js/collapse.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bootstrap/js/dropdown.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bootstrap/js/modal.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bootstrap/js/tooltip.js' %}"></script>
+{#      <script type="text/javascript" src="{% static 'bootstrap/js/popover.js' %}"></script>#}
+{#      <script type="text/javascript" src="{% static 'bootstrap/js/scrollspy.js' %}"></script>#}
+  <script type="text/javascript" src="{% static 'bootstrap/js/tab.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bootstrap/js/affix.js' %}"></script>
+  <script type="text/javascript" src="{% static 'jqTree/tree.jquery.js' %}"></script>
+{% endaddtoblock %}
+{% addtoblock 'js' strip %}
+  <script type="text/javascript" src="{% static 'js/typeahead/dist/bloodhound.min.js' %}"></script>
+{% endaddtoblock %}
+{% addtoblock 'js' strip %}
+  <script type="text/javascript" src="{% static 'js/typeahead/dist/typeahead.jquery.min.js' %}"></script>
+{% endaddtoblock %}
+  {# Les trois modules suivants servent à la pagination infinie #}
+{% addtoblock 'js' strip %}
+  <script type="text/javascript" src="{% static 'endless_pagination/js/endless-pagination.js' %}"></script>
+{% endaddtoblock %}
+{% addtoblock 'js' strip %}
+  <script type="text/javascript" src="{% static 'js/jquery-dotimeout/jquery.ba-dotimeout.js' %}"></script>
+{% endaddtoblock %}
+{% addtoblock 'js' strip %}
+  <script type="text/javascript" src="{% static 'js/jquery.query.js' %}"></script>
+{% endaddtoblock %}
+{% addtoblock 'js' strip %}
+  <script type="text/javascript" src="{% static 'js/reader.js' %}"></script>
+{% endaddtoblock %}
+{% addtoblock 'js' strip %}
+  <script>{% include 'base.js' %}</script>
+{% endaddtoblock %}
+
 <!DOCTYPE HTML>
 <html lang="{{ LANGUAGE_CODE }}">
 
@@ -14,44 +70,8 @@
 
     <link rel="shortcut icon" type="image/x-icon"
           href="{% static 'images/favicon.ico' %}">
-    {% compress css %}
-      <link rel="stylesheet"
-            href="{% static 'css/custom-theme/jquery-ui-1.9.2.min.css' %}" />
-      <link rel="stylesheet"
-            href="{% static 'jqTree/jqtree.css' %}" />
-      <link rel="stylesheet" type="text/less"
-            href="{% static 'css/styles.less' %}"/>
-    {% endcompress %}
 
     {% render_block 'css' postprocessor 'compressor.contrib.sekizai.compress' %}
-
-    {% compress js %}
-      <script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
-      <script src="{% static 'js/jquery-ui-1.9.2.min.js' %}"></script>
-      {# Attention, l'ordre des JS de bootstrap importe ! #}
-      <script src="{% static 'bootstrap/js/transition.js' %}"></script>
-      <script src="{% static 'bootstrap/js/alert.js' %}"></script>
-      <script src="{% static 'bootstrap/js/button.js' %}"></script>
-      <script src="{% static 'bootstrap/js/carousel.js' %}"></script>
-      <script src="{% static 'bootstrap/js/collapse.js' %}"></script>
-      <script src="{% static 'bootstrap/js/dropdown.js' %}"></script>
-      <script src="{% static 'bootstrap/js/modal.js' %}"></script>
-      <script src="{% static 'bootstrap/js/tooltip.js' %}"></script>
-{#      <script src="{% static 'bootstrap/js/popover.js' %}"></script>#}
-{#      <script src="{% static 'bootstrap/js/scrollspy.js' %}"></script>#}
-      <script src="{% static 'bootstrap/js/tab.js' %}"></script>
-      <script src="{% static 'bootstrap/js/affix.js' %}"></script>
-      <script src="{% static 'jqTree/tree.jquery.js' %}"></script>
-      <script src="{% static 'js/typeahead/dist/bloodhound.min.js' %}"></script>
-      <script src="{% static 'js/typeahead/dist/typeahead.jquery.min.js' %}"></script>
-      {# Les trois modules suivants servent à la pagination infinie #}
-      <script src="{% static 'endless_pagination/js/endless-pagination.js' %}"></script>
-      <script src="{% static 'js/jquery-dotimeout/jquery.ba-dotimeout.js' %}"></script>
-      <script src="{% static 'js/jquery.query.js' %}"></script>
-      <script>
-        {% include 'base.definitions.js' %}
-      </script>
-    {% endcompress %}
 
   </head>
 
@@ -113,12 +133,6 @@
       {% include 'footer.html' %}
     </footer>
 
-    {% compress js file %}
-      <script>
-        {% include 'base.execution.js' %}
-        {% include 'libretto/reader.js' %}
-      </script>
-    {% endcompress %}
     {% render_block 'js' postprocessor 'compressor.contrib.sekizai.compress' %}
 
   </body>

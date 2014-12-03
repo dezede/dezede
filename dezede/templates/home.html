@@ -16,7 +16,7 @@
                               col-md-12 col-md-offset-0 col-lg-10"
              src="{% static 'images/logo.svg' %}" alt="Dezède" />
       </div>
-      {% addtoblock 'js' %}
+      {% addtoblock 'js' strip %}
         <script>
           {# Empêche l'utilisateur de faire un cliquer-glisser par erreur #}
           {# sur le logo pendant qu'il utilise le carousel #}
