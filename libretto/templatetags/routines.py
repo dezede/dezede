@@ -163,7 +163,7 @@ def data_table_list(context, object_list, attr='link',
                     has_count_if_one=True, has_count=True):
 
     if not object_list:
-        return ''
+        return {}
 
     # Only show what the connected user is allowed to see.
     if isinstance(object_list, PublishedQuerySet):
