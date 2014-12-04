@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 import datetime
-from django.db.models import Q, Min, Max
+from django.db.models import Min, Max
 from django.forms.fields import MultiValueField
 from django.forms.widgets import MultiWidget, TextInput
 from django.template.loader import render_to_string
