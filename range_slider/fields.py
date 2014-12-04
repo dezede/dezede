@@ -6,7 +6,7 @@ from django.db.models import Min, Max
 from django.forms.fields import MultiValueField
 from django.forms.widgets import MultiWidget, TextInput
 from django.template.loader import render_to_string
-from .models import Evenement
+from libretto.models import Evenement
 
 
 __all__ = (b'RangeSliderWidget', b'RangeSliderField')
@@ -45,8 +45,7 @@ class RangeSliderWidget(MultiWidget):
         except (ValueError, TypeError):
             value = min_year, max_year
         start, end = value
-        t = b'widgets/range_slider_widget.html'
-        return render_to_string(t, {
+        return render_to_string('widgets/range_slider.html', {
             'name': name,
             'start': start, 'end': end,
             'min_year': min_year, 'max_year': max_year

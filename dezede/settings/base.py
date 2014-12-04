@@ -117,6 +117,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'crispy_forms',
     'ajax_select',
+    'range_slider',
     'easy_thumbnails',
     'image_cropping',
     'reversion',

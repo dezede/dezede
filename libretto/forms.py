@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from .models import (
     Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
     Ensemble)
-from .fields import RangeSliderField
+from range_slider.fields import RangeSliderField
 
 
 __all__ = (b'IndividuForm', b'EnsembleForm', b'OeuvreForm',
