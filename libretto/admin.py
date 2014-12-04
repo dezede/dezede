@@ -567,7 +567,7 @@ class LieuCommonAdmin(OSMGeoAdmin, AutoriteAdmin):
     readonly_fields = ('__str__', 'html', 'link',)
     fieldsets = (
         (None, {
-            'fields': ('nom', 'parent', 'nature', 'historique', 'point'),
+            'fields': ('nom', 'parent', 'nature', 'historique', 'geometry'),
         }),
     )
     layerswitcher = False

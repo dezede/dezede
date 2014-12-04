@@ -1,12 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.contrib.gis.db.models import PointField
+from django.contrib.gis.db.models import GeometryField
 from django.core.exceptions import ValidationError
 from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
                               permalink, Q, PROTECT)
-from django.utils.encoding import python_2_unicode_compatible, smart_text, \
-    force_text
+from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import (
     ungettext_lazy, pgettext, ugettext_lazy as _)
@@ -21,7 +20,7 @@ from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
     CommonTreeManager
 from .evenement import Evenement
-from .functions import href, ex
+from .functions import href
 from .individu import Individu
 from .oeuvre import Oeuvre
 
@@ -91,7 +90,7 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     # TODO: Parentés d'institution avec périodes d'activité pour l'histoire des
     # institutions.
     historique = HTMLField(_('historique'), blank=True)
-    point = PointField(blank=True, null=True)
+    geometry = GeometryField(_('point, tracé ou polygone'), blank=True, null=True)
     code_postal = CharField(_('code postal'), max_length=10, blank=True)
 
     objects = LieuManager()
