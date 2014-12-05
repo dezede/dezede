@@ -311,8 +311,7 @@ class CommonTreeQuerySet(CommonQuerySet):
                 left += 1
                 right -= 1
             filters |= Q(**{tree_id_attr: tree_id,
-                            left_attr + '__gte': left,
-                            left_attr + '__lte': right})
+                            left_attr + '__range': (left, right)})
 
         qs = self.model._tree_manager.filter(filters)
         if getattr(self, 'polymorphic_disabled', False):
