@@ -90,7 +90,8 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     # TODO: Parentés d'institution avec périodes d'activité pour l'histoire des
     # institutions.
     historique = HTMLField(_('historique'), blank=True)
-    geometry = GeometryField(_('point, tracé ou polygone'), blank=True, null=True)
+    geometry = GeometryField(
+        _('point, tracé ou polygone'), blank=True, null=True, db_index=True)
     code_postal = CharField(_('code postal'), max_length=10, blank=True)
 
     objects = LieuManager()
@@ -106,6 +107,7 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         ordering = ('nom',)
         app_label = 'libretto'
         unique_together = ('nom', 'parent',)
+        index_together = (('tree_id', 'level', 'lft', 'rght'),)
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod
