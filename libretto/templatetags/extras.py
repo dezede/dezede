@@ -4,9 +4,12 @@ from __future__ import unicode_literals
 from HTMLParser import HTMLParser
 import re
 from bs4 import BeautifulSoup, Comment
+from django.contrib.gis.geos import GEOSGeometry
+from django.db import connection
 from django.template import Library
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
+from ..models import Evenement
 from ..models.functions import date_html as date_html_util
 from ..utils import abbreviate as abbreviate_func
 
@@ -111,3 +114,51 @@ def date_html(date, short=False):
 def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
     return abbreviate_func(string, min_vowels=min_vowels, min_len=min_len,
                            tags=tags, enabled=enabled)
+
+
+def get_data(evenements_qs=None, level=2):
+    if evenements_qs is None:
+        evenements_qs = Evenement.objects.all()
+    evenements_qs = evenements_qs.order_by().values_list('pk', flat=True)
+    evenements_query, params = evenements_qs.query.get_compiler(connection=connection).as_sql()
+
+    cursor = connection.cursor()
+    cursor.execute("""
+    SELECT ancetre.id, ancetre.nom, ancetre.geometry, COUNT(evenement.id) as n FROM libretto_lieu AS lieu
+    INNER JOIN libretto_evenement AS evenement ON lieu.id = evenement.debut_lieu_id
+    INNER JOIN libretto_lieu AS ancetre ON (ancetre.tree_id = lieu.tree_id AND ancetre.level = %s
+                                            AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght)
+    WHERE evenement.id IN (%s) AND ancetre.geometry IS NOT NULL
+    GROUP BY ancetre.id
+    ORDER BY n DESC;
+    """ % (level, evenements_query), params)
+    return cursor.fetchall()
+
+
+@register.filter
+def get_map_data(evenement_qs):
+    level = 0
+    previous_data = []
+    while True:
+        data = [(pk, nom, GEOSGeometry(geometry), n)
+                for pk, nom, geometry, n in get_data(evenement_qs, level)]
+        if not data:
+            return previous_data
+        if len(data) > 1:
+            break
+        previous_data = data
+        level += 1
+    return data
+
+
+@register.simple_tag(takes_context=True)
+def map_request(context, lieu_pk=None, show_map=True):
+    request = context['request']
+    new_request = request.GET.copy()
+    if lieu_pk is not None:
+        new_request['lieu'] = '|%s|' % lieu_pk
+    if show_map:
+        new_request['show_map'] = 'true'
+    else:
+        del new_request['show_map']
+    return '?' + new_request.urlencode()

@@ -1,0 +1,68 @@
+{% load sekizai_tags static extras i18n %}
+
+<div id='map'></div>
+
+{% addtoblock 'css' strip %}
+  <link rel="stylesheet" type="text/css" href="{% static 'leaflet-0.7.3/leaflet.css' %}" />
+{% endaddtoblock %}
+
+{% addtoblock 'js' strip %}
+  <script type="text/javascript" src="{% static 'leaflet-0.7.3/leaflet.js' %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock 'js' %}
+  <script>
+    var map = L.map('map', {
+      layers: [L.tileLayer('//{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png')],
+      minZoom: 2,
+      maxZoom: 15,
+      attributionControl: false
+    });
+
+    {% language 'en' %}
+      var geoJsonData = [];
+      var maxValue = 0;
+      {% for pk, nom, geometry, n in evenements|get_map_data %}
+        geoJsonData.push({
+          type: 'Feature',
+          properties: {
+            url: '{% map_request pk %}',
+            tooltip: '{{ nom|escapejs }} ({{ n }})',
+            n: {{ n }}},
+          geometry: {{ geometry.json }}
+        });
+        maxValue = Math.max(maxValue, {{ n }});
+      {% endfor %}
+    {% endlanguage %}
+
+    function normalize(v, min, max) {
+      return min + max * (v / maxValue);
+    }
+
+    function getOptions(radius) {
+      return {
+        radius: radius,
+        fillColor: 'red',
+        color: 'darkgrey',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.7
+      };
+    }
+
+    var geoJson = L.geoJson(geoJsonData, {
+      pointToLayer: function (feature, latlng) {
+        var count = feature.properties.n;
+        return L.circleMarker(latlng, getOptions(normalize(count, 8, 20))
+        ).on('add', function () {
+          $(this._container).attr('title', feature.properties.tooltip);
+          $(this._container).tooltip({container: 'body'});
+        }).on('click', function () {
+          document.location.search = feature.properties.url;
+        });
+      }
+    }).addTo(map);
+
+    map.fitBounds(geoJson.getBounds(), {padding: [70, 70]});
+  </script>
+{% endaddtoblock %}

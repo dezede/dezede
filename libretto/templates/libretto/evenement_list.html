@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static sekizai_tags crispy_forms_tags humanize %}
+{% load i18n static sekizai_tags crispy_forms_tags humanize extras %}
 {% load url from future %}
 
 
@@ -37,15 +37,29 @@
           en cliquant sur « Filtrer » sans remplir les champs. Bonne lecture !
         </p>
       {% else %}
-        <h3>
-          {% with count=evenements.count %}
-            {% if count %}
+        {% with count=evenements.count %}
+          {% if count %}
+            {% if user.is_authenticated %}
+              {% if request.GET.show_map == 'true' %}
+                <a href="{% map_request show_map=False %}" class="btn btn-default pull-right">
+                  {% trans 'Masquer la carte' %}
+                </a>
+              {% else %}
+                <a href="{% map_request %}" class="btn btn-primary pull-right">
+                  {% trans 'Afficher sur une carte' %}
+                </a>
+              {% endif %}
+            {% endif %}
+            <h3>
               {{ count|apnumber }}
               {% blocktrans count counter=count %}résultat{% plural %}résultats
               {% endblocktrans %}
+            </h3>
+            {% if user.is_authenticated and request.GET.show_map == 'true' %}
+              {% include 'libretto/include/map.html' %}
             {% endif %}
-          {% endwith %}
-        </h3>
+          {% endif %}
+        {% endwith %}
 
         {% include page_template %}
       {% endif %}
