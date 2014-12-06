@@ -120,11 +120,35 @@ def get_raw_query(qs):
     return qs.query.get_compiler(connection=connection).as_sql()
 
 
-def get_data(evenements_qs, level):
-    evenements_qs = evenements_qs.order_by().values('pk', 'debut_lieu_id')
-    evenements_query, params = get_raw_query(evenements_qs)
+def get_data(evenements_qs):
+    evenements_qs = evenements_qs.order_by()
 
     cursor = connection.cursor()
+
+    evenements_query, params = get_raw_query(
+        evenements_qs.values('debut_lieu_id'))
+
+    cursor.execute("""
+    SELECT ancetre.level, COUNT(DISTINCT ancetre.id) FROM libretto_lieu AS lieu
+    INNER JOIN libretto_lieu AS ancetre ON (
+        ancetre.geometry IS NOT NULL
+        AND ancetre.tree_id = lieu.tree_id
+        AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght)
+    WHERE lieu.id IN (%s)
+    GROUP BY ancetre.level;
+    """ % evenements_query, params)
+
+    for level, count in cursor.fetchall():
+        if count > 1:
+            break
+        if count == 0:
+            if level > 0:
+                level -= 1
+            break
+
+    evenements_query, params = get_raw_query(
+        evenements_qs.values('pk', 'debut_lieu_id'))
+
     cursor.execute("""
     SELECT ancetre.id, ancetre.nom, ancetre.geometry, COUNT(evenement.id) AS n
     FROM (%s) AS evenement
@@ -141,18 +165,8 @@ def get_data(evenements_qs, level):
 
 @register.filter
 def get_map_data(evenement_qs):
-    level = 0
-    previous_data = []
-    while True:
-        data = [(pk, nom, GEOSGeometry(geometry), n)
-                for pk, nom, geometry, n in get_data(evenement_qs, level)]
-        if not data:
-            return previous_data
-        if len(data) > 1:
-            break
-        previous_data = data
-        level += 1
-    return data
+    return [(pk, nom, GEOSGeometry(geometry), n)
+            for pk, nom, geometry, n in get_data(evenement_qs)]
 
 
 @register.simple_tag(takes_context=True)
