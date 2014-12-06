@@ -116,22 +116,26 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
                            tags=tags, enabled=enabled)
 
 
-def get_data(evenements_qs=None, level=2):
-    if evenements_qs is None:
-        evenements_qs = Evenement.objects.all()
-    evenements_qs = evenements_qs.order_by().values_list('pk', flat=True)
-    evenements_query, params = evenements_qs.query.get_compiler(connection=connection).as_sql()
+def get_raw_query(qs):
+    return qs.query.get_compiler(connection=connection).as_sql()
+
+
+def get_data(evenements_qs, level):
+    evenements_qs = evenements_qs.order_by().values('pk', 'debut_lieu_id')
+    evenements_query, params = get_raw_query(evenements_qs)
 
     cursor = connection.cursor()
     cursor.execute("""
-    SELECT ancetre.id, ancetre.nom, ancetre.geometry, COUNT(evenement.id) as n FROM libretto_lieu AS lieu
-    INNER JOIN libretto_evenement AS evenement ON lieu.id = evenement.debut_lieu_id
-    INNER JOIN libretto_lieu AS ancetre ON (ancetre.tree_id = lieu.tree_id AND ancetre.level = %s
-                                            AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght)
-    WHERE evenement.id IN (%s) AND ancetre.geometry IS NOT NULL
+    SELECT ancetre.id, ancetre.nom, ancetre.geometry, COUNT(evenement.id) AS n
+    FROM (%s) AS evenement
+    INNER JOIN libretto_lieu AS lieu ON lieu.id = evenement.debut_lieu_id
+    INNER JOIN libretto_lieu AS ancetre ON (
+        ancetre.geometry IS NOT NULL
+        AND ancetre.tree_id = lieu.tree_id AND ancetre.level = %s
+        AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght)
     GROUP BY ancetre.id
     ORDER BY n DESC;
-    """ % (level, evenements_query), params)
+    """ % (evenements_query, level), params)
     return cursor.fetchall()
 
 
