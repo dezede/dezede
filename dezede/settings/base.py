@@ -194,6 +194,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'height': '350',
     'theme_advanced_resizing': 'true',
     'theme_advanced_resizing_max_width': '1024',
+    'entity_encoding': 'raw',
 }
 
 THUMBNAIL_ALIASES = {
