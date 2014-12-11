@@ -263,7 +263,7 @@ class PublishedModel(CommonModel):
             return public
         if request.user.is_superuser:
             return True
-        return request.user.pk == self.owner_id
+        return public or request.user.pk == self.owner_id
 
 
 class AutoriteModel(PublishedModel):
