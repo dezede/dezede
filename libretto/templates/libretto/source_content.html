@@ -1,4 +1,4 @@
-{% load thumbnail i18n %}
+{% load thumbnail i18n sekizai_tags %}
 
 {% with fichiers=source.fichiers_by_type %}
 
@@ -73,20 +73,22 @@
         <span class="count input-group-addon"></span>
       </div>
     </div>
-    <script>
-      $(function () {
-        var images = [
-          {% for image in fichiers.images %}
-            {% if image.is_image %}
-              {small: '{% thumbnail image.fichier 'small' %}',
-               medium: '{% thumbnail image.fichier 'medium' %}',
-               original: '{{ image.fichier.url }}'}{% if not forloop.last %},{% endif %}
-            {% endif %}
-          {% endfor %}
-        ];
-        new Reader($('#reader-{{ source.pk }}'), images);
-      });
-    </script>
+    {% addtoblock 'js' %}
+      <script>
+        $(function () {
+          var images = [
+            {% for image in fichiers.images %}
+              {% if image.is_image %}
+                {small: '{% thumbnail image.fichier 'small' %}',
+                 medium: '{% thumbnail image.fichier 'medium' %}',
+                 original: '{{ image.fichier.url }}'}{% if not forloop.last %},{% endif %}
+              {% endif %}
+            {% endfor %}
+          ];
+          new Reader($('#reader-{{ source.pk }}'), images);
+        });
+      </script>
+    {% endaddtoblock %}
   {% endif %}
 {% endwith %}
 
@@ -112,6 +114,8 @@
   </a>
 {% endif %}
 
-<script>
-  tooltips_reload();
-</script>
+{% addtoblock 'js' %}
+  <script>
+    tooltips_reload();
+  </script>
+{% endaddtoblock %}
