@@ -1061,7 +1061,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
         (None, {
             'fields': (
                 ('date', 'date_approx'),
-                ('numero', 'folio', 'page',),
+                ('numero', 'page', 'folio',),
                 ('lieu_conservation', 'cote',),
                 'url',
             )
