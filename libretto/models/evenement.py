@@ -329,8 +329,14 @@ class EvenementQuerySet(PublishedQuerySet):
         return self.filter(Q(relache=True) | Q(programme__isnull=False))
 
     def prefetch_all(self):
+        qs = self._clone()
+        qs.query.distinct = False
+        new_qs = Evenement.objects.filter(id__in=qs)
+        new_qs.query.order_by = qs.query.order_by
+        new_qs.query.default_ordering = qs.query.default_ordering
+        new_qs.query.standard_ordering = qs.query.standard_ordering
         return (
-            self.select_related(
+            new_qs.select_related(
                 'debut_lieu', 'debut_lieu__nature',
                 'fin_lieu', 'fin_lieu__nature',
                 'owner', 'etat')
@@ -350,7 +356,30 @@ class EvenementQuerySet(PublishedQuerySet):
                 'programme__distribution__individus',
                 'programme__distribution__ensembles',
                 'programme__distribution__profession',
-                'programme__distribution__pupitre__partie'))
+                'programme__distribution__pupitre__partie')
+            .only(
+                'notes_publiques', 'relache', 'circonstance',
+                'debut_date', 'debut_date_approx',
+                'debut_heure', 'debut_heure_approx', 'debut_lieu_approx',
+                'fin_date', 'fin_date_approx',
+                'fin_heure', 'fin_heure_approx', 'fin_lieu_approx',
+                'owner', 'owner__is_superuser', 'owner__username',
+                'owner__first_name', 'owner__last_name', 'owner__mentor',
+                'etat', 'etat__message', 'etat__public',
+                'debut_lieu', 'debut_lieu__slug',
+                'debut_lieu__lft', 'debut_lieu__rght', 'debut_lieu__tree_id',
+                'debut_lieu__nom', 'debut_lieu__parent',
+                'debut_lieu__nature', 'debut_lieu__nature__referent',
+                'fin_lieu', 'fin_lieu__slug',
+                'fin_lieu__lft', 'fin_lieu__rght', 'fin_lieu__tree_id',
+                'fin_lieu__nom', 'fin_lieu__parent',
+                'fin_lieu__nature', 'fin_lieu__nature__referent',
+                # FIXME: The following fields are not used in rendering,
+                #        but an IndexError occurs when removing them…
+                'notes_privees', 'code_programme', 'exoneres', 'payantes',
+                'frequentation', 'scolaires', 'jauge',
+            )
+        )
 
 
 class EvenementManager(PublishedManager):

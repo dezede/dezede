@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 from datetime import date
 from django.db.models import get_model, Q, FieldDoesNotExist
+from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.utils.encoding import force_text
@@ -78,7 +79,7 @@ class EvenementListView(AjaxListView, PublishedListView):
                 if hasattr(objects, 'get_descendants'):
                     objects = objects.get_descendants(include_self=True)
                 value = objects
-            if value:
+            if (isinstance(value, QuerySet) and value.exists()) or value:
                 accessors = cls.BINDINGS[key]
                 if not isinstance(accessors, (tuple, list)):
                     accessors = [accessors]
@@ -108,7 +109,7 @@ class EvenementListView(AjaxListView, PublishedListView):
             self.default_page = False
 
         if not self.valid_form:
-            return qs.prefetch_all()
+            return qs
 
         search_query = data.get('q')
         if search_query:
@@ -130,7 +131,7 @@ class EvenementListView(AjaxListView, PublishedListView):
                 date(start, 1, 1), date(end, 12, 31)))
         except (TypeError, ValueError):
             pass
-        return qs.prefetch_all()
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super(EvenementListView, self).get_context_data(**kwargs)

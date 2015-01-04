@@ -5,7 +5,7 @@
 
 <div class="page" data-page="{{ page_number }}">
   {% show_pages %}
-  {% for evenement in evenements %}
+  {% for evenement in evenements.prefetch_all %}
     {% include 'libretto/evenement_item.html' %}
   {% empty %}
     {% trans 'Aucun événement n’a été trouvé selon ces critères.' %}
