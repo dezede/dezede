@@ -40,9 +40,9 @@ DATABASES = {
         'ENGINE': 'transaction_hooks.backends.postgis',
         'NAME': 'dezede',
         'USER': 'dezede',
+        'CONN_MAX_AGE': None,
     },
 }
-CONN_MAX_AGE = None
 SOUTH_DATABASE_ADAPTERS = {'default': 'south.db.postgresql_psycopg2'}
 
 # Internationalization
