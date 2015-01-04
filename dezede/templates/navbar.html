@@ -131,14 +131,14 @@
 
             {% if user.is_authenticated %}
               <li>
-                <a href="{% url 'account_logout' %}?next={{ request.path }}">
+                <a href="{% url 'account_logout' %}?next={{ request.get_full_path|urlencode }}">
                   <b class="fa fa-sign-out fa-fw"></b>
                   {% trans 'Déconnexion' %}
                 </a>
               </li>
             {% else %}
               <li>
-                <a href="{% url 'account_login' %}?next={{ request.path }}">
+                <a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}">
                   <b class="fa fa-sign-in fa-fw"></b>
                   {% trans 'Connexion' %}
                 </a>
