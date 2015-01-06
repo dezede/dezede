@@ -145,7 +145,7 @@ def has_elements(object_list, request):
 
 @register.simple_tag(takes_context=True)
 def data_table_list_header(context):
-    count = context['count']
+    count = context['pages'].total_count()
     has_count = context['has_count']
     has_count_if_one = context['has_count_if_one']
     verbose_name = context['verbose_name']
@@ -171,10 +171,7 @@ def data_table_list(context, object_list, attr='link',
         is_published_queryset = False
 
     if isinstance(object_list, QuerySet):
-        count = object_list.count()
         object_list = object_list.select_related('etat')
-    else:
-        count = len(object_list)
 
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         object_list, verbose_name=verbose_name,
@@ -183,7 +180,6 @@ def data_table_list(context, object_list, attr='link',
     c = context.__copy__()
     c.update({
         'attr': attr,
-        'count': count,
         'object_list': object_list,
         'is_published_queryset': is_published_queryset,
         'verbose_name': verbose_name,
