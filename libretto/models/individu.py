@@ -1,9 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db.models import CharField, ForeignKey, \
-    ManyToManyField, permalink, Q, PROTECT
+from django.db import connection
+from django.db.models import (
+    CharField, ForeignKey, ManyToManyField, permalink, PROTECT)
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.translation import (
@@ -189,12 +191,37 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def apparitions(self):
         # FIXME: Gérer la période d’activité des membres d’un groupe.
+        sql = """
+        SELECT DISTINCT evenement.id FROM (
+            SELECT distribution.id, distribution.object_id,
+                   distribution.content_type_id
+            FROM libretto_elementdedistribution AS distribution
+            LEFT OUTER JOIN libretto_elementdedistribution_individus
+                            AS distribution_individus
+                ON (distribution_individus.elementdedistribution_id = distribution.id)
+            WHERE distribution_individus.individu_id = %(individu)s
+        ) AS distribution
+        LEFT JOIN libretto_elementdeprogramme_distribution
+                  AS programme_distribution
+            ON (programme_distribution.elementdedistribution_id = distribution.id)
+        LEFT JOIN libretto_elementdeprogramme AS programme
+            ON (programme.id = programme_distribution.elementdeprogramme_id)
+        INNER JOIN libretto_evenement AS evenement
+            ON ((evenement.id = distribution.object_id
+                 AND distribution.content_type_id = %(ct)s)
+                OR evenement.id = programme.evenement_id)
+        """
+        params = {
+            'individu': self.pk,
+            'ct': ContentType.objects.get_for_model(Evenement).pk
+        }
+        cursor = connection.cursor()
+        cursor.execute(sql, params)
+        evenement_ids = [t[0] for t in cursor.fetchall()]
+        cursor.close()
         return Evenement.objects.filter(
-            Q(distribution__individus=self)
-            | Q(programme__distribution__individus=self)
-            | Q(distribution__ensembles__individus=self)
-            | Q(programme__distribution__ensembles__individus=self)
-        ).distinct()
+            id__in=evenement_ids
+        )
 
     def evenements_referents(self):
         return Evenement.objects.filter(
