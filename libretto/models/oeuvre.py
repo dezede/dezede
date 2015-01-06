@@ -425,9 +425,9 @@ class ParenteDOeuvres(CommonModel):
 
 
 class AuteurQuerySet(CommonQuerySet):
-    def __get_related(self, Model):
-        qs = Model._default_manager.filter(auteurs__in=self)
-        return qs.distinct().order_by(*Model._meta.ordering)
+    def __get_related(self, model):
+        qs = model._default_manager.filter(auteurs__id__in=self)
+        return qs.distinct().order_by(*model._meta.ordering)
 
     def individus(self):
         return self.__get_related(Individu)
