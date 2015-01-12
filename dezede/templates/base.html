@@ -66,6 +66,13 @@
           content="Dezède, {% trans "musicologie, base de données" %}" />
     <meta name="author" content="Bertrand Bordage" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="og:site_name" content="Dezède" />
+    <meta name="og:url" content="{{ request.build_absolute_uri }}" />
+    {% render_block 'metadata' %}
+    <meta name="og:image" content="{% static 'images/logo-large.png' %}" />
+    <meta name="og:image:type" content="image/png" />
+    <meta name="og:image:width" content="915" />
+    <meta name="og:image:height" content="355" />
     <title>{% block full_title %}{% block title %}{% endblock %} | Dezède{% endblock %}</title>
 
     <link rel="shortcut icon" type="image/x-icon"
