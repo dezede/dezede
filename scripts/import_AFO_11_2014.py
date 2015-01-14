@@ -49,6 +49,7 @@ ORCHESTRE_OBJ = 'orchestre'
 SOURCE_OBJ = 'source'
 SOURCE_INDEXES = 'source_indexes'
 
+EXCL_MSG = "Ne pas importer dans Dezède ; ces morceaux sont interprétés par d'autres artistes invités des folles journées"
 
 ORCHESTRE_USERS = {
     'Orchestre français des jeunes': 'ofj',
@@ -309,8 +310,7 @@ def run(root_path):
                                          (EVENEMENT, N_SUPPORT, N_PLAGE)})
 
     record_df.drop(['Support', 'Durée œuvre', 'Durée extrait', 'Format pivot', 'Format compressé', 'ordre'], axis=1, inplace=True)
-    excl_msg = "Ne pas importer dans Dezède ; ces morceaux sont interprétés par d'autres artistes invités des folles journées"
-    record_df = record_df[record_df[NOM_FICHIER].notnull() & (record_df[REMARQUE] != excl_msg)]
+    record_df = record_df[record_df[NOM_FICHIER].notnull() & (record_df[REMARQUE] != EXCL_MSG)]
     record_df[SOURCE_PK] = record_df.apply(create_source_id_column, axis=1)
     record_df.drop([N_SUPPORT, N_PLAGE], axis=1, inplace=True)
 
