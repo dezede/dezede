@@ -147,6 +147,7 @@ def get_data(evenements_qs, bbox):
     """ % (valid_ancestors_query, evenements_query),
         valid_ancestors_params + params)
 
+    level = None
     for level, count in cursor.fetchall():
         if count > 5:
             break
@@ -154,6 +155,8 @@ def get_data(evenements_qs, bbox):
             if level > 0:
                 level -= 1
             break
+    if level is None:
+        return ()
 
     evenements_query, params = get_raw_query(
         evenements_qs.values('pk', 'debut_lieu_id'))
