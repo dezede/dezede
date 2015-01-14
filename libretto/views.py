@@ -3,6 +3,8 @@
 from __future__ import unicode_literals
 from collections import OrderedDict
 from datetime import date
+from django.contrib.gis.geos import Polygon
+from django.core.urlresolvers import reverse
 from django.db.models import get_model, Q, FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.http import HttpResponseBadRequest
@@ -21,10 +23,12 @@ from .models.common import PublishedQuerySet
 from .forms import *
 
 
-__all__ = (b'PublishedDetailView', b'PublishedListView',
-           b'EvenementListView', b'EvenementDetailView',
-           b'SourceViewSet', b'PartieViewSet', b'ProfessionViewSet',
-           b'LieuViewSet', b'IndividuViewSet', b'OeuvreViewSet')
+__all__ = (
+    b'PublishedDetailView', b'PublishedListView',
+    b'EvenementListView', b'EvenementGeoJson', b'EvenementDetailView',
+    b'SourceViewSet', b'PartieViewSet', b'ProfessionViewSet',
+    b'LieuViewSet', b'IndividuViewSet', b'OeuvreViewSet'
+)
 
 
 class PublishedMixin(object):
@@ -48,7 +52,7 @@ class PublishedListView(PublishedMixin, ListView):
     pass
 
 
-class EvenementListView(AjaxListView, PublishedListView):
+class BaseEvenementListView(PublishedListView):
     model = Evenement
     context_object_name = 'evenements'
     view_name = 'evenements'
@@ -90,7 +94,7 @@ class EvenementListView(AjaxListView, PublishedListView):
         return filters
 
     def get_queryset(self, base_filter=None):
-        qs = super(EvenementListView, self).get_queryset()
+        qs = super(BaseEvenementListView, self).get_queryset()
         if base_filter is not None:
             qs = qs.filter(base_filter)
 
@@ -133,11 +137,15 @@ class EvenementListView(AjaxListView, PublishedListView):
             pass
         return qs
 
+    def get_geojson_url(self):
+        return reverse('evenements_geojson')
+
     def get_context_data(self, **kwargs):
-        context = super(EvenementListView, self).get_context_data(**kwargs)
+        context = super(BaseEvenementListView, self).get_context_data(**kwargs)
         context.update(
             form=self.form,
             default_page=self.default_page,
+            geojson_url=self.get_geojson_url(),
         )
         return context
 
@@ -152,13 +160,31 @@ class EvenementListView(AjaxListView, PublishedListView):
         return new_qd
 
     def get(self, request, *args, **kwargs):
-        response = super(EvenementListView, self).get(request, *args, **kwargs)
+        response = super(BaseEvenementListView, self).get(request, *args, **kwargs)
         new_GET = self.get_cleaned_GET()
         if new_GET.dict() != self.request.GET.dict() or not self.valid_form:
             response = redirect(*self.get_success_view())
             if self.valid_form:
                 response['Location'] += '?' + new_GET.urlencode(safe=b'|')
         return response
+
+
+class EvenementListView(AjaxListView, BaseEvenementListView):
+    pass
+
+
+class EvenementGeoJson(BaseEvenementListView):
+    template_name = 'libretto/lieu_list.geojson'
+    content_type = 'application/json'
+
+    def get_context_data(self, **kwargs):
+        context = super(EvenementGeoJson, self).get_context_data(**kwargs)
+        bbox = self.request.GET.get('bbox')
+        if bbox is not None:
+            bbox = Polygon.from_bbox([float(coord)
+                                      for coord in bbox.split(',')])
+        context['bbox'] = bbox
+        return context
 
 
 class EvenementDetailView(PublishedDetailView):

@@ -9,7 +9,7 @@ from django.db import connection
 from django.template import Library
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
-from ..models import Evenement
+from ..models import Evenement, Lieu
 from ..models.functions import date_html as date_html_util
 from ..utils import abbreviate as abbreviate_func
 
@@ -120,10 +120,17 @@ def get_raw_query(qs):
     return qs.query.get_compiler(connection=connection).as_sql()
 
 
-def get_data(evenements_qs):
+def get_data(evenements_qs, bbox):
     evenements_qs = evenements_qs.order_by()
 
     cursor = connection.cursor()
+
+    valid_ancestors = Lieu.objects.filter(geometry__isnull=False).order_by()
+    if bbox is not None:
+        valid_ancestors = valid_ancestors.filter(geometry__contained=bbox)
+
+    valid_ancestors_query, valid_ancestors_params = get_raw_query(
+        valid_ancestors.values('pk'))
 
     evenements_query, params = get_raw_query(
         evenements_qs.values('debut_lieu_id'))
@@ -131,15 +138,17 @@ def get_data(evenements_qs):
     cursor.execute("""
     SELECT ancetre.level, COUNT(DISTINCT ancetre.id) FROM libretto_lieu AS lieu
     INNER JOIN libretto_lieu AS ancetre ON (
-        ancetre.geometry IS NOT NULL
+        ancetre.id IN (%s)
         AND ancetre.tree_id = lieu.tree_id
         AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght)
     WHERE lieu.id IN (%s)
-    GROUP BY ancetre.level;
-    """ % evenements_query, params)
+    GROUP BY ancetre.level
+    ORDER BY ancetre.level ASC;
+    """ % (valid_ancestors_query, evenements_query),
+        valid_ancestors_params + params)
 
     for level, count in cursor.fetchall():
-        if count > 1:
+        if count > 5:
             break
         if count == 0:
             if level > 0:
@@ -154,25 +163,28 @@ def get_data(evenements_qs):
     FROM (%s) AS evenement
     INNER JOIN libretto_lieu AS lieu ON lieu.id = evenement.debut_lieu_id
     INNER JOIN libretto_lieu AS ancetre ON (
-        ancetre.geometry IS NOT NULL
+        ancetre.id IN (%s)
         AND ancetre.tree_id = lieu.tree_id AND ancetre.level = %s
         AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght)
     GROUP BY ancetre.id
     ORDER BY n DESC;
-    """ % (evenements_query, level), params)
+    """ % (evenements_query, valid_ancestors_query, level),
+        params + valid_ancestors_params)
     return cursor.fetchall()
 
 
 @register.filter
-def get_map_data(evenement_qs):
+def get_map_data(evenement_qs, bbox):
     return [(pk, nom, GEOSGeometry(geometry), n)
-            for pk, nom, geometry, n in get_data(evenement_qs)]
+            for pk, nom, geometry, n in get_data(evenement_qs, bbox)]
 
 
 @register.simple_tag(takes_context=True)
 def map_request(context, lieu_pk=None, show_map=True):
     request = context['request']
     new_request = request.GET.copy()
+    if 'bbox' in new_request:
+        del new_request['bbox']
     if lieu_pk is not None:
         new_request['lieu'] = '|%s|' % lieu_pk
     if show_map:

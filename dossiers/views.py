@@ -10,7 +10,8 @@ from django.views.generic import TemplateView
 from accounts.models import HierarchicUser
 from libretto.models import Source, Oeuvre
 from libretto.views import (
-    PublishedListView, PublishedDetailView, EvenementListView)
+    PublishedListView, PublishedDetailView, EvenementListView,
+    EvenementGeoJson)
 from .jobs import dossier_to_pdf
 from .models import CategorieDeDossiers, DossierDEvenements
 from .utils import launch_pdf_export
@@ -38,6 +39,10 @@ class DossierDEvenementsDataDetail(EvenementListView):
         return super(DossierDEvenementsDataDetail, self).get_queryset(
             base_filter=Q(pk__in=self.object.get_queryset()))
 
+    def get_geojson_url(self):
+        return reverse('dossierdevenements_data_geojson',
+                       args=(self.kwargs['pk'],))
+
     def get_context_data(self, **kwargs):
         data = super(DossierDEvenementsDataDetail, self) \
             .get_context_data(**kwargs)
@@ -46,6 +51,16 @@ class DossierDEvenementsDataDetail(EvenementListView):
 
     def get_success_view(self):
         return self.view_name, int(self.kwargs['pk'])
+
+
+class DossierDEvenementsDataGeoJson(EvenementGeoJson):
+    def get_queryset(self):
+        self.object = get_object_or_404(DossierDEvenements,
+                                        pk=self.kwargs['pk'])
+        if not self.object.can_be_viewed(self.request):
+            raise PermissionDenied
+        return super(DossierDEvenementsDataGeoJson, self).get_queryset(
+            base_filter=Q(pk__in=self.object.get_queryset()))
 
 
 class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):

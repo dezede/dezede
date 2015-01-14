@@ -1,8 +1,17 @@
 {# Gestion des tooltips #}
-function tooltips_reload() {
+function tooltips_delete() {
+  $('*[data-original-title]').tooltip('destroy');
+}
+
+function tooltips_create() {
   $('*[title]').tooltip({
     container: 'body'
   });
+}
+
+function tooltips_reload() {
+  tooltips_delete();
+  tooltips_create();
 }
 
 tooltips_reload();

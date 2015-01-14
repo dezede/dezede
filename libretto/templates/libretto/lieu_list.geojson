@@ -1,0 +1,13 @@
+{% load extras %}
+[
+  {% for pk, nom, geometry, n in evenements|get_map_data:bbox %}
+    {
+      "type": "Feature",
+      "properties": {
+        "url": "{% map_request pk %}",
+        "tooltip": "{{ nom|escapejs }} ({{ n }})",
+        "n": {{ n }}},
+      "geometry": {{ geometry.json|safe }}
+    }{% if not forloop.last %},{% endif %}
+  {% endfor %}
+]

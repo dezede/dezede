@@ -1,4 +1,4 @@
-{% load sekizai_tags static extras i18n %}
+{% load sekizai_tags static i18n %}
 
 <div id='map'></div>
 
@@ -19,29 +19,16 @@
       attributionControl: false
     });
 
-    {% language 'en' %}
-      var geoJsonData = [];
-      var maxValue = 0;
-      {% for pk, nom, geometry, n in evenements|get_map_data %}
-        geoJsonData.push({
-          type: 'Feature',
-          properties: {
-            url: '{% map_request pk %}',
-            tooltip: '{{ nom|escapejs }} ({{ n }})',
-            n: {{ n }}},
-          geometry: {{ geometry.json }}
-        });
-        maxValue = Math.max(maxValue, {{ n }});
-      {% endfor %}
-    {% endlanguage %}
+    var maxValue = 0;
+    var slope = 0.01;
 
     function normalize(v, min, max) {
-      return min + max * (v / maxValue);
+      return min + max * Math.max(0, Math.log(v * slope) / Math.log((maxValue - min) * slope));
     }
 
-    function getOptions(radius) {
+    function getOptions(count) {
       return {
-        radius: radius,
+        radius: normalize(count, 7, 30),
         fillColor: 'red',
         color: 'darkgrey',
         weight: 1,
@@ -50,19 +37,45 @@
       };
     }
 
-    var geoJson = L.geoJson(geoJsonData, {
-      pointToLayer: function (feature, latlng) {
-        var count = feature.properties.n;
-        return L.circleMarker(latlng, getOptions(normalize(count, 8, 20))
-        ).on('add', function () {
-          $(this._container).attr('title', feature.properties.tooltip);
-          $(this._container).tooltip({container: 'body'});
-        }).on('click', function () {
-          document.location.search = feature.properties.url;
-        });
-      }
-    }).addTo(map);
+    var geoJson;
 
-    map.fitBounds(geoJson.getBounds(), {padding: [70, 70]});
+    map.on('moveend', function () {
+      var url = '{{ geojson_url }}' + document.location.search;
+      try {
+        url += '&bbox=' + map.getBounds().toBBoxString();
+      } catch(err) {}
+      $.ajax({
+        url: url
+      }).done(function (data) {
+        tooltips_delete();
+        var empty = false;
+        if (typeof geoJson == 'undefined') {
+          empty = true;
+        } else {
+          map.removeLayer(geoJson);
+        }
+        data.forEach(function (feature) {
+          maxValue = Math.max(maxValue, feature.properties.n);
+        });
+        geoJson = L.geoJson(data, {
+          pointToLayer: function (feature, latlng) {
+            var count = feature.properties.n;
+            return L.circleMarker(latlng, getOptions(count)
+            ).on('add', function () {
+              $(this._container).attr('title', feature.properties.tooltip);
+              $(this._container).tooltip({container: 'body'});
+            }).on('click', function () {
+              document.location.search = feature.properties.url;
+            });
+          }
+        }).addTo(map);
+        tooltips_create();
+        if (empty) {
+          map.fitBounds(geoJson.getBounds(), {padding: [70, 70]});
+        }
+      });
+    });
+
+    map.fire('moveend');
   </script>
 {% endaddtoblock %}

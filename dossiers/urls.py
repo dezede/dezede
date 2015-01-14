@@ -6,7 +6,8 @@ from django.views.generic import RedirectView
 from dossiers.views import (
     CategorieDeDossiersList, DossierDEvenementsDetail,
     DossierDEvenementsDataDetail, DossierDEvenementsDetailXeLaTeX,
-    OperaComiquePresentation, OperaComiqueListView)
+    OperaComiquePresentation, OperaComiqueListView,
+    DossierDEvenementsDataGeoJson)
 
 
 urlpatterns = patterns('',
@@ -22,6 +23,8 @@ urlpatterns = patterns('',
         name='dossierdevenements_detail'),
     url(r'^(?P<pk>\d+)/data$', DossierDEvenementsDataDetail.as_view(),
         name='dossierdevenements_data_detail'),
+    url(r'^(?P<pk>\d+)/geojson$', DossierDEvenementsDataGeoJson.as_view(),
+        name='dossierdevenements_data_geojson'),
     url(r'^(?P<pk>\d+)/export',
         DossierDEvenementsDetailXeLaTeX.as_view(),
         name='dossierdevenements_detail_xelatex'),

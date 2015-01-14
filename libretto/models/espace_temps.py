@@ -1,7 +1,8 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.contrib.gis.db.models import GeometryField
+from django.contrib.gis.db.models import GeometryField, GeoManager
+from django.contrib.gis.db.models.query import GeoQuerySet
 from django.core.exceptions import ValidationError
 from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
                               permalink, Q, PROTECT)
@@ -70,12 +71,12 @@ class NatureDeLieu(CommonModel, SlugModel):
 
 
 class LieuQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet,
-                   CommonTreeQuerySet):
+                   CommonTreeQuerySet, GeoQuerySet):
     pass
 
 
 class LieuManager(CommonTreeManager, PolymorphicMPTTModelManager,
-                  PublishedManager):
+                  PublishedManager, GeoManager):
     queryset_class = LieuQuerySet
 
 
