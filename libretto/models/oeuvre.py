@@ -248,9 +248,8 @@ class Role(Partie):
 
     def related_label(self):
         txt = super(Role, self).related_label()
-        oeuvre = smart_text(self.oeuvre)
-        if oeuvre:
-            txt += ' (' + oeuvre + ')'
+        if self.oeuvre is not None:
+            txt += ' (' + smart_text(self.oeuvre) + ')'
         return txt
 
     @staticmethod
@@ -340,6 +339,12 @@ class Pupitre(CommonModel):
 
     def html(self, tags=True):
         return href(self.get_absolute_url(), smart_text(self), tags=tags)
+
+    def related_label(self):
+        out = smart_text(self)
+        if isinstance(self.partie, Role) and self.partie.oeuvre is not None:
+            out += ' (' + smart_text(self.partie.oeuvre) + ')'
+        return out
 
     @staticmethod
     def autocomplete_search_fields():
