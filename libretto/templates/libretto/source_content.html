@@ -37,6 +37,27 @@
         </li>
       {% endfor %}
 
+      {% addtoblock 'js' %}
+        <script>
+          function getModalOpener (media) {
+            var modalId = $(media).parents('.modal')[0].id;
+            return $('[data-target="#' + modalId + '"]');
+          }
+          $(function () {
+            $('audio, video').off('play').on('play', function (e) {
+              $('audio, video').not(this).trigger('pause');
+              getModalOpener(this).addClass('active');
+              this.play();
+              e.preventDefault();
+            }).off('pause').on('pause', function (e) {
+              this.pause();
+              getModalOpener(this).removeClass('active');
+              e.preventDefault();
+            });
+          });
+        </script>
+      {% endaddtoblock %}
+
       {% for other in fichiers.others %}
         <li>
           <a href="{{ other.fichier.url }}">
