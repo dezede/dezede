@@ -43,7 +43,7 @@ def abbreviate_word(word, min_vowels, min_len):
 
 
 # TODO: créer un catalogue COMPLET de ponctuations de séparation.
-SEPARATOR_RE = re.compile(r'([-\.\s]+)')
+SEPARATOR_RE = re.compile(r'([-\s]+)')
 
 
 def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
@@ -63,6 +63,8 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
     Fait à Quincamp.
     >>> print(abbreviate('ceci est un test bidon', enabled=False))
     ceci est un test bidon
+    >>> print(abbreviate('A.-J.'))
+    A.-J.
     """
 
     if not enabled:
@@ -78,4 +80,6 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
             out += sub
         is_word = not is_word
 
+    if out == string:
+        return string
     return hlp(out, string, tags)
