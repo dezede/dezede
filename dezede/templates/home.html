@@ -105,20 +105,66 @@
     </div>
   {% endif %}
 
-  <div class="row facts">
-    <div class="fact-container col-xs-8 col-xs-offset-2 col-md-4 col-md-offset-0">
-      <div class="fact well well-sm">
-        {% on_this_day %}
+  <div class="row">
+    <div class="col-xs-8 col-xs-offset-2 col-md-4 col-md-offset-0">
+      <div class="well text-center">
+        <img style="height: 60px;" src="{% static 'images/opera-comique-mini.png' %}" title="Opéra Comique" />
+        <h3>
+          Archives de l’Opéra Comique
+        </h3>
+        <p>
+          Temps fort du tricentenaire
+        </p>
+        <div style="margin-left: 19px;">
+          <a class="btn btn-primary" href="/dossiers/archives-opera-comique">
+            Dossier
+          </a>
+          <a class="btn btn-link" title="Fiche partenaire" href="/utilisateurs/oc">
+            <i class="fa fa-info-circle fa-2x"></i>
+          </a>
+        </div>
+        <div class="clearfix"></div>
       </div>
     </div>
-    <div class="fact-container col-xs-8 col-xs-offset-2 col-md-4 col-md-offset-0">
-      <div class="fact well well-sm">
-        {% prolific_author %}
+    <div class="col-xs-8 col-xs-offset-2 col-md-4 col-md-offset-0">
+      <div class="well text-center">
+        <img style="height: 60px;" src="{% static 'images/afo-mini.png' %}" title="Association Française des Orchestres" />
+        <h3>
+          Grands orchestres français
+        </h3>
+        <p>
+          Saisons 2010-2013
+        </p>
+        <div style="margin-left: 19px;">
+          <a class="btn btn-primary" href="/dossiers/38/">
+            Dossier
+          </a>
+          <a class="btn btn-link" title="Fiche partenaire" href="/utilisateurs/afo">
+            <i class="fa fa-info-circle fa-2x"></i>
+          </a>
+        </div>
+        <div class="clearfix"></div>
       </div>
     </div>
-    <div class="fact-container col-xs-8 col-xs-offset-2 col-md-4 col-md-offset-0">
-      <div class="fact well well-sm">
-        {% famous_event %}
+    <div class="col-xs-8 col-xs-offset-2 col-md-4 col-md-offset-0">
+      <div class="well text-center">
+        <img style="height: 60px;" src="{% static 'images/royaumont.png' %}" title="Royaumont abbaye & fondation" />
+        <h3>
+          Concerts à Royaumont
+        </h3>
+        <p>
+          1936-1950
+        </p>
+        <div>
+          <a class="btn btn-primary" href="/dossiers/24/">
+            Dossier
+          </a>
+          {# FIXME: À remplir #}
+{#          <a class="btn btn-link" title="Fiche partenaire" href="">#}
+{#            <i class="fa fa-info-circle fa-2x"></i>#}
+{#          </a>#}
+        </div>
+        <div class="clearfix"></div>
       </div>
     </div>
   </div>
