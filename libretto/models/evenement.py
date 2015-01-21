@@ -329,7 +329,11 @@ class EvenementQuerySet(PublishedQuerySet):
         return self.filter(Q(relache=True) | Q(programme__isnull=False))
 
     def prefetch_all(self):
-        qs = self._clone()
+        # TODO: Retirer ceci quand https://code.djangoproject.com/ticket/24196
+        #       sera corrigé et dans notre version de Django.
+        if self.query.low_mark == self.query.high_mark:
+            return self
+        qs = self.all()
         qs.query.distinct = False
         new_qs = Evenement.objects.filter(id__in=qs)
         new_qs.query.order_by = qs.query.order_by
