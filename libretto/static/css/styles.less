@@ -24,6 +24,8 @@
 @input-color:             @text-color;
 @input-color-placeholder: lighten(desaturate(@text-color, 100%), 45%);
 @input-border-focus:      fadeout(@link-hover-color, 20%);
+@btn-link-color:          @btn-primary-bg;
+@btn-link-hover-color:    darken(@btn-link-color, 10%);
 
 @navbar-default-link-color:        @gray;
 @navbar-default-link-hover-color:  @gray-darker;
@@ -316,6 +318,15 @@ cite {
 
 .btn.disabled {
   pointer-events: auto;
+}
+
+.btn-link {
+  color: @btn-link-color;
+  &, &.disabled {
+    &:hover, &:focus {
+      color: @btn-link-hover-color;
+    }
+  }
 }
 
 .fa.fa-square-o {
