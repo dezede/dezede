@@ -120,7 +120,7 @@ def get_raw_query(qs):
     return qs.query.get_compiler(connection=connection).as_sql()
 
 
-def get_data(evenements_qs, bbox):
+def get_data(evenements_qs, min_places, bbox):
     evenements_qs = evenements_qs.order_by()
 
     cursor = connection.cursor()
@@ -149,7 +149,7 @@ def get_data(evenements_qs, bbox):
 
     level = None
     for level, count in cursor.fetchall():
-        if count > 5:
+        if count >= min_places:
             break
         if count == 0:
             if level > 0:
@@ -176,10 +176,11 @@ def get_data(evenements_qs, bbox):
     return cursor.fetchall()
 
 
-@register.filter
-def get_map_data(evenement_qs, bbox):
+@register.assignment_tag
+def get_map_data(evenement_qs, min_places, bbox):
     return [(pk, nom, GEOSGeometry(geometry), n)
-            for pk, nom, geometry, n in get_data(evenement_qs, bbox)]
+            for pk, nom, geometry, n in get_data(evenement_qs, min_places,
+                                                 bbox)]
 
 
 @register.simple_tag(takes_context=True)
@@ -188,6 +189,8 @@ def map_request(context, lieu_pk=None, show_map=True):
     new_request = request.GET.copy()
     if 'bbox' in new_request:
         del new_request['bbox']
+    if 'min_places' in new_request:
+        del new_request['min_places']
     if lieu_pk is not None:
         new_request['lieu'] = '|%s|' % lieu_pk
     if show_map:

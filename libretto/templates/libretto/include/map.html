@@ -48,6 +48,7 @@
       try {
         url += '&bbox=' + map.getBounds().toBBoxString();
       } catch(err) {}
+      url += '&min_places=' + $('#min-places-slider').slider('value');
       $.ajax({
         url: url
       }).done(function (data) {
@@ -63,8 +64,7 @@
         });
         geoJson = L.geoJson(data, {
           pointToLayer: function (feature, latlng) {
-            var count = feature.properties.n;
-            return L.circleMarker(latlng, getOptions(count)
+            return L.circleMarker(latlng, getOptions(feature.properties.n)
             ).on('add', function () {
               $(this._container).attr('title', feature.properties.tooltip);
               $(this._container).tooltip({container: 'body'});
@@ -79,13 +79,17 @@
         }
       });
     });
-
-    map.fire('moveend');
   </script>
 {% endaddtoblock %}
 
 <div class="row">
-  <span class="col-xs-3">{% trans 'Proportion des points' %}</span>
+  <div class="col-xs-3">{% trans 'Nombre de lieux minimum' %}</div>
+  <div class="col-xs-9">
+    <div id="min-places-slider"></div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-3">{% trans 'Proportion des points' %}</div>
   <div class="col-xs-9">
     <div id="growth-slider"></div>
   </div>
@@ -94,10 +98,22 @@
 {% addtoblock 'js' %}
   <script>
     $(function() {
+      $('#min-places-slider').slider({
+        min: 1,
+        max: {{ MAX_MIN_PLACES }},
+        step: 1,
+        value: {{ DEFAULT_MIN_PLACES }},
+        create: function () {
+          map.fire('moveend');
+        },
+        change: function () {
+          map.fire('moveend');
+        }
+      });
       $('#growth-slider').slider({
         min: 0,
         max: 2,
-        step: 0.1,
+        step: 0.05,
         value: 0.5,
         change: function () {
           map.fire('moveend');

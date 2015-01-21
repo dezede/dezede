@@ -1,6 +1,7 @@
 {% load extras %}
+{% get_map_data evenements min_places bbox as map_data %}
 [
-  {% for pk, nom, geometry, n in evenements|get_map_data:bbox %}
+  {% for pk, nom, geometry, n in map_data %}
     {
       "type": "Feature",
       "properties": {

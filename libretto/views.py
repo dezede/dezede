@@ -30,6 +30,10 @@ __all__ = (
 )
 
 
+DEFAULT_MIN_PLACES = 5
+MAX_MIN_PLACES = 100
+
+
 class PublishedMixin(object):
     has_frontend_admin = False
 
@@ -145,6 +149,8 @@ class BaseEvenementListView(PublishedListView):
             form=self.form,
             default_page=self.default_page,
             geojson_url=self.get_geojson_url(),
+            DEFAULT_MIN_PLACES=DEFAULT_MIN_PLACES,
+            MAX_MIN_PLACES=MAX_MIN_PLACES,
         )
         return context
 
@@ -183,6 +189,11 @@ class EvenementGeoJson(BaseEvenementListView):
             bbox = Polygon.from_bbox([float(coord)
                                       for coord in bbox.split(',')])
         context['bbox'] = bbox
+        min_places = self.request.GET.get('min_places',
+                                          str(DEFAULT_MIN_PLACES))
+        min_places = (int(min_places) if min_places.isdigit()
+                      else DEFAULT_MIN_PLACES)
+        context['min_places'] = min(min_places, MAX_MIN_PLACES)
         return context
 
 
