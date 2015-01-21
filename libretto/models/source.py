@@ -15,8 +15,7 @@ from .common import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
     SlugModel, PublishedManager, PublishedQuerySet, OrderedDefaultDict,
     AncrageSpatioTemporel, Fichier)
-from .functions import (ex, cite, date_html as date_html_func,
-                        href, small, str_list, hlp)
+from .functions import (ex, cite, href, small, str_list, hlp)
 from typography.models import TypographicModel
 
 
@@ -156,9 +155,6 @@ class Source(AutoriteModel):
 
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
-
-    def date_html(self, tags=True):
-        return date_html_func(self.date, tags)
 
     def no(self):
         return ugettext('n° %s') % self.numero
