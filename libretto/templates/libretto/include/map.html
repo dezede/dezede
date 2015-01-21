@@ -19,16 +19,20 @@
       attributionControl: false
     });
 
-    var maxValue = 0;
-    var slope = 0.01;
+    var minValue = 1;
+    var maxValue = 2;
+    var minRadius = 5;
+    var maxRadius = 30;
 
-    function normalize(v, min, max) {
-      return min + max * Math.max(0, Math.log(v * slope) / Math.log((maxValue - min) * slope));
+    function normalize(x) {
+      var growth = $('#growth-slider').slider('value');
+      return minRadius + Math.pow((x - minValue) / (maxValue - minValue),
+                                  growth) * (maxRadius - minRadius);
     }
 
     function getOptions(count) {
       return {
-        radius: normalize(count, 7, 30),
+        radius: normalize(count),
         fillColor: 'red',
         color: 'darkgrey',
         weight: 1,
@@ -77,5 +81,28 @@
     });
 
     map.fire('moveend');
+  </script>
+{% endaddtoblock %}
+
+<div class="row">
+  <span class="col-xs-3">{% trans 'Proportion des points' %}</span>
+  <div class="col-xs-9">
+    <div id="growth-slider"></div>
+  </div>
+</div>
+
+{% addtoblock 'js' %}
+  <script>
+    $(function() {
+      $('#growth-slider').slider({
+        min: 0,
+        max: 2,
+        step: 0.1,
+        value: 0.5,
+        change: function () {
+          map.fire('moveend');
+        }
+      });
+    });
   </script>
 {% endaddtoblock %}
