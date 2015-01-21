@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 from collections import OrderedDict
-from datetime import date
 from django.contrib.gis.geos import Polygon
 from django.core.urlresolvers import reverse
 from django.db.models import get_model, Q, FieldDoesNotExist
@@ -131,8 +130,8 @@ class BaseEvenementListView(PublishedListView):
         qs = qs.filter(filters).distinct()
         try:
             start, end = int(data.get('dates_0')), int(data.get('dates_1'))
-            qs = qs.filter(debut_date__range=(
-                date(start, 1, 1), date(end, 12, 31)))
+            qs = qs.filter(debut_date__range=('%s-1-1' % start,
+                                              '%s-12-31' % end))
         except (TypeError, ValueError):
             pass
         return qs
