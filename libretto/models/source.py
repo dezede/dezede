@@ -63,7 +63,7 @@ class SourceQuerySet(PublishedQuerySet):
     def prefetch(self):
         fichiers = Fichier._meta.db_table
         sources = Source._meta.db_table
-        return self.select_related('type', 'owner', 'etat').extra(select={
+        return self.select_related('type').extra(select={
             '_has_others':
             'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id AND type = %s)'
             % (fichiers, sources, Fichier.OTHER),
