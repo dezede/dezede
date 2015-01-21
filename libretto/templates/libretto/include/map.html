@@ -24,8 +24,10 @@
     var minRadius = 5;
     var maxRadius = 30;
 
-    function normalize(x) {
-      var growth = $('#growth-slider').slider('value');
+    function normalize(x, growth) {
+      if (typeof growth == 'undefined') {
+        growth = $('#growth-slider').slider('value');
+      }
       return minRadius + Math.pow((x - minValue) / (maxValue - minValue),
                                   growth) * (maxRadius - minRadius);
     }
@@ -111,12 +113,14 @@
         }
       });
       $('#growth-slider').slider({
-        min: 0,
+        min: 0.01,
         max: 2,
-        step: 0.05,
+        step: 0.01,
         value: 0.5,
-        change: function () {
-          map.fire('moveend');
+        slide: function (event, ui) {
+          $.each(geoJson.getLayers(), function (i, el) {
+            el.setRadius(normalize(el.feature.properties.n, ui.value));
+          });
         }
       });
     });
