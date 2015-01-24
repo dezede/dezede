@@ -333,14 +333,14 @@ class EvenementQuerySet(PublishedQuerySet):
         #       sera corrigé et dans notre version de Django.
         if self.query.low_mark == self.query.high_mark:
             return self
-        qs = self.all()
-        qs.query.distinct = False
-        new_qs = Evenement.objects.filter(id__in=qs)
-        new_qs.query.order_by = qs.query.order_by
-        new_qs.query.default_ordering = qs.query.default_ordering
-        new_qs.query.standard_ordering = qs.query.standard_ordering
+
+        qs = Evenement.objects.filter(
+            pk__in=list(self.values_list('pk', flat=True)))
+        qs.query.order_by = self.query.order_by
+        qs.query.default_ordering = self.query.default_ordering
+        qs.query.standard_ordering = self.query.standard_ordering
         return (
-            new_qs.select_related(
+            qs.select_related(
                 'debut_lieu', 'debut_lieu__nature',
                 'fin_lieu', 'fin_lieu__nature',
                 'owner', 'etat')
