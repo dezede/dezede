@@ -1,17 +1,17 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 import datetime
 import json
 import os
 from subprocess import check_output, CalledProcessError, PIPE
 from django.conf import settings
-from django.core.exceptions import NON_FIELD_ERRORS, FieldError
+from django.core.exceptions import NON_FIELD_ERRORS, FieldError, ValidationError
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
-    get_model, FileField, PositiveSmallIntegerField)
+    get_model, FileField, PositiveSmallIntegerField, OneToOneField, SET_NULL)
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.template.defaultfilters import time
@@ -703,6 +703,28 @@ class FichierQuerySet(CommonQuerySet):
     def videos(self):
         return self.filter(type=self.model.VIDEO)
 
+    def group_by_type(self):
+        groups = defaultdict(list)
+        groups.update(audios=OrderedDefaultDict(),
+                      videos=OrderedDefaultDict())
+        for fichier in self:
+            if fichier.is_image():
+                groups['images'].append(fichier)
+            elif fichier.is_audio():
+                groups['audios'][fichier.get_stem()].append(fichier)
+            elif fichier.is_video():
+                groups['videos'][fichier.get_stem()].append(fichier)
+            else:
+                groups['others'].append(fichier)
+        groups.update(audios=groups['audios'].values(),
+                      videos=groups['videos'].values())
+        return groups
+
+    def published(self, request=None):
+        if request is None or not request.user.is_authenticated():
+            return self.filter(extract=None)
+        return self.filter(Q(extract__isnull=False) | Q(extract_from=None))
+
 
 class FichierManager(CommonManager):
     queryset_class = FichierQuerySet
@@ -718,6 +740,9 @@ class FichierManager(CommonManager):
 
     def videos(self):
         return self.get_queryset().videos()
+
+    def group_by_type(self):
+        return self.get_queryset().group_by_type()
 
 
 @python_2_unicode_compatible
@@ -744,7 +769,10 @@ class Fichier(CommonModel):
     height = PositiveSmallIntegerField(_('hauteur'), null=True, blank=True)
     duration = PositiveSmallIntegerField(_('durée (en secondes)'),
                                          null=True, blank=True)
-
+    EXTRACT_INFIX = '.extrait'
+    extract = OneToOneField(
+        'self', related_name='extract_from', null=True, blank=True,
+        verbose_name=_('extrait'), on_delete=SET_NULL)
     position = PositiveSmallIntegerField(_('position'))
 
     objects = FichierManager()
@@ -760,6 +788,15 @@ class Fichier(CommonModel):
 
     def link(self):
         return href(self.fichier.url, smart_text(self))
+
+    def is_image(self):
+        return self.type == self.IMAGE
+
+    def is_audio(self):
+        return self.type == self.AUDIO
+
+    def is_video(self):
+        return self.type == self.VIDEO
 
     def get_filename(self):
         return os.path.basename(self.fichier.url)
@@ -778,6 +815,34 @@ class Fichier(CommonModel):
                 ('theora', 'vorbis'),),
         'mp4': (('aac',), ('h264', 'mp3'), ('h264', 'aac')),
     }
+
+    def _get_normalized_filename(self, filename):
+        return self._meta.get_field('fichier').get_filename(filename)
+
+    def get_fichier_complet(self):
+        l = self.fichier.name.split(self.EXTRACT_INFIX, 1)
+        if len(l) == 2:
+            fichier_complet_filename = self._get_normalized_filename(''.join(l))
+            print fichier_complet_filename
+            qs = self.source.fichiers.exclude(
+                pk=self.pk).filter(
+                fichier__regex=r'^(?:.+/)?%s$' % fichier_complet_filename)
+            if len(qs) < 1:
+                raise ValidationError(_('Il n’y a pas d’enregistrement entier '
+                                        'pour cet extrait.'))
+            elif len(qs) == 1:
+                try:
+                    list(qs)[0].extract_from
+                except Fichier.DoesNotExist:
+                    pass
+                else:
+                    raise ValidationError(
+                        _('L’enregistrement dont ce fichier est extrait est '
+                          'déjà un extrait.'))
+            return list(qs)[0]
+
+    def clean(self):
+        self.get_fichier_complet()
 
     def get_media_info(self):
         # Force le fichier à être enregistré pour qu’il puisse être analysé.
@@ -826,18 +891,16 @@ class Fichier(CommonModel):
                 setattr(self, k, v)
         self.updated_media_info = True
 
-    def is_image(self):
-        return self.type == self.IMAGE
-
-    def is_audio(self):
-        return self.type == self.AUDIO
-
-    def is_video(self):
-        return self.type == self.VIDEO
+    def update_extract_from(self):
+        fichier_complet = self.get_fichier_complet()
+        if fichier_complet is not None:
+            fichier_complet.extract = self
+            fichier_complet.save()
 
     def save(self, *args, **kwargs):
         self.update_media_info()
         super(Fichier, self).save(*args, **kwargs)
+        self.update_extract_from()
 
 
 @python_2_unicode_compatible

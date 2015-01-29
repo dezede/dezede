@@ -1,6 +1,7 @@
-{% load thumbnail i18n sekizai_tags %}
+{% load thumbnail i18n sekizai_tags routines %}
 
-{% with fichiers=source.fichiers_by_type %}
+{% published source.fichiers.all as filtered_fichiers %}
+{% with fichiers=filtered_fichiers.group_by_type %}
 
   {% if fichiers.audios or fichier.videos or fichiers.others %}
     <ul class="list-unstyled">

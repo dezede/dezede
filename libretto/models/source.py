@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from collections import defaultdict
 from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField)
@@ -243,23 +242,6 @@ class Source(AutoriteModel):
 
     def is_empty(self):
         return not (self.transcription or self.url or self.has_fichiers())
-
-    def fichiers_by_type(self):
-        groups = defaultdict(list)
-        groups.update(audios=OrderedDefaultDict(),
-                      videos=OrderedDefaultDict())
-        for fichier in self.fichiers.all():
-            if fichier.is_image():
-                groups['images'].append(fichier)
-            elif fichier.is_audio():
-                groups['audios'][fichier.get_stem()].append(fichier)
-            elif fichier.is_video():
-                groups['videos'][fichier.get_stem()].append(fichier)
-            else:
-                groups['others'].append(fichier)
-        groups.update(audios=groups['audios'].values(),
-                      videos=groups['videos'].values())
-        return groups
 
 
 class SourceEvenement(TypographicModel):
