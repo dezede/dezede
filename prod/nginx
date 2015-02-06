@@ -6,22 +6,22 @@ limit_req_zone $binary_remote_addr zone=dezede_static_req:10m rate=100r/s;
 
 server {
   listen 80;
-  server_name [[address_or_domain]];
+  server_name {{ server_name }};
   rewrite ^(.*) https://$host$1 permanent;
 }
 
 server {
   listen 443 ssl;
-  server_name [[address_ou_domain]];
-  ssl_certificate     [[/path/to/certificate.crt]];
-  ssl_certificate_key [[/path/to/key.key]];
+  server_name {{ server_name }};
+  ssl_certificate     {{ ssl_certificate }};
+  ssl_certificate_key {{ ssl_key }};
 
   error_page 403 404 =404 /404;
   error_page 502 /502.html;
   error_page 503 /503.html;
 
   location ~ /50\d\.html {
-    root [[/path/to/project]]/nginx;
+    root {{ project_path }}/prod;
     allow all;
     internal;
   }
@@ -66,19 +66,19 @@ server {
   limit_req zone=dezede_static_req burst=500;
 
   location /media {
-    alias [[/path/to/project]]/media;
+    alias {{ project_path }}/media;
     allow all;
     expires 1y;
   }
 
   location /static {
-    alias [[/path/to/project]]/static;
+    alias {{ project_path }}/static;
     allow all;
     expires 1w;
   }
 
   location / {
-    proxy_pass http://127.0.0.1:[[gunicorn_port]];
+    proxy_pass http://{{ ip }}:{{ port }};
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Host $http_host;

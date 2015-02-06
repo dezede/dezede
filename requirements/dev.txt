@@ -4,6 +4,9 @@ django-debug-toolbar-template-timings==0.6.4
 django-haystack-panel==0.2.1
 django-extensions==1.4.9
 
+# Deployment tools
+Fabric==1.10.0
+
 # Testing
 django-nose==1.3
 selenium==2.44.0
