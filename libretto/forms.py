@@ -149,6 +149,24 @@ class SourceForm(ModelForm):
         return data
 
 
+class SaisonForm(ModelForm):
+    class Meta(object):
+        model = Source
+
+    def clean(self):
+        data = super(SaisonForm, self).clean()
+
+        if data['ensemble'] and data['lieu'] or \
+                not data['ensemble'] and not data['lieu']:
+            raise ValidationError(_('Vous devez remplir un seul des deux'
+                                    ' champs : « Ensemble » ou « Lieu ou '
+                                    'Institution »'))
+
+        if data['debut'] and data['fin'] and data['debut'] > data['fin']:
+            raise ValidationError(_('La fin ne peut précéder le début.'))
+        return data
+
+
 class EvenementListForm(Form):
     q = CharField(label=_('Recherche libre'), required=False)
     dates = RangeSliderField(required=False)

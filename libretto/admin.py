@@ -23,7 +23,7 @@ import reversion
 from .models import *
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
-    ElementDeDistributionForm, EnsembleForm)
+    ElementDeDistributionForm, EnsembleForm, SaisonForm)
 from dossiers.jobs import events_to_pdf as events_to_pdf_job
 from dossiers.utils import launch_pdf_export
 from typography.utils import replace
@@ -601,11 +601,12 @@ reversion.register(Institution, follow=('lieu_ptr',))
 
 
 class SaisonAdmin(VersionAdmin, CommonAdmin):
-    list_display = ('__str__', 'lieu', 'debut', 'fin',)
+    form = SaisonForm
+    list_display = ('__str__', 'lieu', 'ensemble', 'debut', 'fin',)
     date_hierarchy = 'debut'
-    raw_id_fields = ('lieu',)
+    raw_id_fields = ('lieu', 'ensemble')
     autocomplete_lookup_fields = {
-        'fk': ['lieu'],
+        'fk': ['lieu', 'ensemble'],
     }
 
 

@@ -222,8 +222,9 @@ class Institution(Lieu):
 
 @python_2_unicode_compatible
 class Saison(CommonModel):
-    # TODO: Permettre de faire des saisons d'ensemble et non seulement de lieu.
-    lieu = ForeignKey('Lieu', related_name='saisons',
+    ensemble = ForeignKey('Ensemble', related_name='saisons',
+                          verbose_name=_('ensemble'), blank=True, null=True)
+    lieu = ForeignKey('Lieu', related_name='saisons', blank=True, null=True,
                       verbose_name=_('lieu ou institution'))
     debut = DateField(_('début'), help_text=DATE_MSG)
     fin = DateField(_('fin'))
@@ -236,9 +237,9 @@ class Saison(CommonModel):
 
     def __str__(self):
         d = {
-            'lieu': smart_text(self.lieu),
+            'fk': smart_text(self.ensemble or self.lieu),
             'debut': self.debut.year,
             'fin': self.fin.year
         }
         return pgettext('saison : pattern d’affichage',
-                        '%(lieu)s, %(debut)d–%(fin)d') % d
+                        '%(fk)s, %(debut)d–%(fin)d') % d
