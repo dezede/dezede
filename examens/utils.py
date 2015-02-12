@@ -266,8 +266,8 @@ def get_diffs_per_normalizer(a, b):
             #     translation.add(*rc.to_translations())
             for _, comparator in lcs:
                 comparator.add(*sorted(rc.to_translations()))
-        print(left_translations)
-        print(name.ljust(20).encode('utf-8'), a.ljust(25).encode('utf-8'), b'|', m.ljust(30).encode('utf-8'), b'|', b.encode('utf-8'))
+        # print(left_translations)
+        # print(name.ljust(20).encode('utf-8'), a.ljust(25).encode('utf-8'), b'|', m.ljust(30).encode('utf-8'), b'|', b.encode('utf-8'))
         lc = Comparator(m, a)
         lcs.append((name, lc))
         # for _, lc in lcs:
@@ -282,6 +282,20 @@ def get_diffs_per_normalizer(a, b):
 
 
 def highlight_diffs(a, b):
+    """
+    >>> print(highlight_diffs('<p><span class="sc">théâtre des arts.</span></p>',
+    ...                       '<p>Théâtre des arts.</p>'))
+    <p><mark title="majuscules t">T</mark>héâtre des arts.</p>
+    >>> print(highlight_diffs('<p>Aujourd’hui, relâche.</p>',
+    ...                       '<p>aujourd’hui, relache.</p>'))
+    <p><mark title="majuscules A">a</mark>ujourd’hui, rel<mark title="accents â">a</mark>che.</p>
+    >>> print(highlight_diffs(
+    ...     '<p><span class="sc">théâtre des arts.</span></p>\\n'
+    ...     '<p>Aujourd’hui, relâche.</p>',
+    ...     '<p>Théâtre des arts.</p>\\n<p>aujourd’hui, relache.</p>'))
+    <p><mark title="majuscules t">T</mark>héâtre des arts.</p>
+    <p><mark title="majuscules A">a</mark>ujourd’hui, rel<mark title="accents â">a</mark>che.</p>
+    """
     translations = []
     diffs = [(name, diff) for name, diffs in
              get_diffs_per_normalizer(a, b)[:-1] for diff in diffs]
