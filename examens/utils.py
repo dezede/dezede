@@ -250,7 +250,19 @@ def get_diffs_per_normalizer(a, b):
     """
     >>> from pprint import pprint
     >>> pprint(get_diffs_per_normalizer('<p>Théâtre des arts.</p>', '<div> tèatre  des atrs, </div>'))
-
+    [(u'texte',
+      [<Diff: at 5 delete ' '>,
+       <Diff: at 6 insert 'h'>,
+       <Diff: at 19 insert 'r'>,
+       <Diff: at 21 delete 'r'>,
+       <Diff: at 23 delete ' '>]),
+     (u'majuscules', [<Diff: at 5 replace 't' with 'T'>]),
+     (u'espaces', [<Diff: at 12 delete ' '>]),
+     (u'ponctuation', [<Diff: at 21 delete ','>, <Diff: at 21 insert '.'>]),
+     (u'accents', [<Diff: at 7 replace 'èa' with 'éâ'>]),
+     (u'mise en forme',
+      [<Diff: at 1 replace 'div' with 'p'>,
+       <Diff: at 22 replace 'div' with 'p'>])]
     """
     m = None
     left_translations = []
