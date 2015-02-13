@@ -29,13 +29,25 @@
     <div class="col-xs-12 col-sm-8 col-lg-9">
 
       {% if default_page %}
-        <p class="static-page">
-          Ce menu permet de consulter librement les événements publiés dans Dezède par les
-          chercheurs, qu’ils soient rattachés ou non à un dossier. Le filtre qui lui est associé permet
-          de croiser différentes requêtes de tri : recherche libre, période chronologique, lieu, œuvre,
-          individu. Il est également possible de consulter toutes les données dans l’ordre chronologique
-          en cliquant sur « Filtrer » sans remplir les champs. Bonne lecture !
-        </p>
+        <div class="row">
+          <div class="col-md-5 col-md-offset-7">
+            <div class="well">
+              <h3>Comment filtrer ?</h3>
+              <p>
+                Consultez ici les événements publiés dans Dezède,
+                qu’ils soient rattachés ou non à un dossier.
+                L’ensemble de champs à gauche permet de croiser les critères de sélection de l’ensemble d’événements.
+              </p>
+              <p>
+                Vous pouvez sélectionner plusieurs éléments dans les champs « Lieu », « Œuvre » et « Individu ».
+              </p>
+              <p>
+                Pour consulter la totalité de la chronologie,
+                cliquez sur « Filtrer » sans remplir les champs.
+              </p>
+            </div>
+          </div>
+        </div>
       {% else %}
         {% with count=evenements.count %}
           {% if count %}
