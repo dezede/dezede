@@ -75,7 +75,7 @@
           (calendrier, organisation intellectuelle des contenus)
           et de réfléchir aux aspects méthodologiques (développement informatique, autorités).
         </p>
-        <p>Le comité éditorial est composé de 3 membres :</p>
+        <p>Le comité éditorial est composé de trois membres :</p>
         <p>
           <a href="{% url 'user_profile' 'joann_elart' %}">Joann <span class="sc">Élart</span></a>,
           Maître de conférences en musicologie, université de Rouen (fondateur de Dezède)
@@ -265,9 +265,10 @@
           possibilité de différer la publication en ligne).
         </p>
         <p>
-          Tourné vers le développement de pratiques pédagogiques innovantes,
-          Dezède est également un support pour l’enseignement universitaire,
-          en particulier de la méthodologique et des
+          Tourné vers le développement de pratiques pédagogiques innovantes
+          en partie financées par un <abbr title="Bonus Qualité Enseignement">BQE</abbr>
+          obtenu en 2014 à l’université de Rouen, Dezède est également
+          un support pour l’enseignement universitaire, en particulier de la méthodologie et des
           <abbr title="Nouvelles Technologies de l’Information et de la Communication">NTIC</abbr>.
           Les comptes personnels des étudiants sont liés à un groupe placé
           sous la responsabilité d’un enseignant.
@@ -280,14 +281,24 @@
         <h3>Des partenaires</h3>
         <p>
           <span class="lead">Dezède propose aux institutions d’archiver leur histoire et de promouvoir le spectacle vivant.</span>
-          L’application est à la disposition des institutions qui chercherent un portail sécurisé
+          L’application est à la disposition des institutions qui cherchent un portail sécurisé
           pour la valorisation de leur histoire.
-          En 2014, les saisons de concerts et les archives audiovisuelles des trente orchestres
+          Depuis 2013, le département de musicologie de l’université de Rouen
+          est accueilli par la Fondation Royaumont pour la réalisation du dossier de ses concerts.
+          Depuis 2014, les saisons de concerts et les archives audiovisuelles des trente orchestres
           membres de l’<abbr title="Association Française des Orchestres">AFO</abbr>
-          seront publiés et accessibles gratuitement dans Dezède.
-          Une convention de partenariat en cours de rédaction propose un accueil
-          en 2015 des archives et de la chronologie complète de l’Opéra-Comique,
-          dans le cadre de la célébration de son tricentenaire.
+          sont publiés et accessibles gratuitement dans Dezède.
+          Depuis le 13 novembre 2014, les archives de l’Opéra Comique sont consultables dans Dezède.
+          À cette publication, rendue possible dans le cadre d’une délégation au CNRS,
+          est associée celle de la chronologie des créations à l’Opéra Comique,
+          qui constitue un autre temps fort de son tricentenaire.
+        </p>
+        <p>
+          <a href="{% url 'dossierdevenements_detail' 24 %}">Concerts à l’abbaye de Royaumont</a>
+          –
+          <a href="{% url 'dossierdevenements_detail' 38 %}">Association Française des Orchestres</a>
+          –
+          <a href="/dossiers/archives-opera-comique">Archives de l’Opéra Comique</a>
         </p>
         {# TODO: Lien vers les partenaires #}
         {# TODO: Lien vers la « page des logos » #}
@@ -628,8 +639,8 @@
               <td>9 décembre</td>
               <td>
                 <p>
-                  Présentation publique aux journées d’études du groupe français
-                  de l’<abbr title="Association Internationale des Bibliothèques Musicales">AIBN</abbr>
+                  Présentation publique aux journées professionelles du groupe français
+                  de l’<abbr title="Association Internationale des Bibliothèques Musicales">AIBM</abbr>
                   au Centre de documentation de la musique contemporaine
                 </p>
               </td>
@@ -647,7 +658,11 @@
             <tr>
               <td>18 décembre</td>
               <td>
-                <p>Signature de la convention avec l’<abbr title="Association Française des Orchestres">AFO</abbr> au Sénat</p>
+                <p>
+                  Signature d’un contrat de licence
+                  avec l’<abbr title="Association Française des Orchestres">AFO</abbr> au Sénat
+                  et création du dossier <a href="{% url 'dossierdevenements_detail' 38 %}">Association Française des Orchestres</a>
+                </p>
               </td>
             </tr>
           </tbody>
@@ -682,6 +697,59 @@
                 <p>
                   Colloque à l’Opéra-Comique : <em>Le répertoire en question</em><br />
                   Inauguration de la version 2.0
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>23 novembre</td>
+              <td>
+                <p>
+                  Signature de la convention avec la Fondation Royaumont
+                  pour l’accueil d’étudiants de master du département
+                  de musicologie de l’université de Rouen
+                  (réalisation du dossier
+                  <a href="{% url 'dossierdevenements_detail' 24 %}">
+                    Concerts à l’abbaye de Royaumont</a>)</p>
+              </td>
+            </tr>
+            <tr>
+              <td>12 août</td>
+              <td>
+                <p>15 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>13 novembre</td>
+              <td>
+                <p>Inauguration du dossier <a href="/dossiers/archives-opera-comique">Archives de l’Opéra Comique</a></p>
+              </td>
+            </tr>
+            <tr>
+              <td>18 décembre</td>
+              <td>
+                <p>Signature d’un contrat de licence avec l’Opéra Comique</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-condensed">
+          <thead>
+            <tr><th style="width: 130px;">2015</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>12 février</td>
+              <td>
+                <p>20 000<sup>e</sup> événement</p>
+              </td>
+            </tr>
+            <tr>
+              <td>mars-avril</td>
+              <td>
+                <p>
+                  Inauguration des outils pédagogiques financés par un
+                  <abbr title="Bonus Qualité Enseignement">BQE</abbr> de l’université de Rouen en 2014
                 </p>
               </td>
             </tr>
