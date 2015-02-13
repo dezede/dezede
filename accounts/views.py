@@ -177,6 +177,7 @@ class ContributeursView(EquipeView):
         95,  # Christine Carrère-Saucède
         102,  # Thomas Bacquet
         168,  # Thomas Vernet
+        330,  # Jean-Christophe Branger
     )
     title = _('Contributeurs')
 
@@ -205,6 +206,8 @@ class ProprietairesView(EquipeView):
 class PartenairesView(EquipeView):
     membres = (
         157,  # AFO
+        103,  # Opéra Comique
+        332,  # Fondation Royaumont
     )
     title = _('Partenaires')
 
