@@ -100,11 +100,11 @@ class Source(AutoriteModel):
     numero = CharField(_('numéro'), max_length=50, blank=True, db_index=True,
                        help_text=_('Sans « № ». Exemple : « 52 »'))
     folio = CharField(_('folio'), max_length=10, blank=True)
-    page = CharField(_('page'), max_length=10, blank=True,
+    page = CharField(_('page'), max_length=10, blank=True, db_index=True,
                      help_text=_('Sans « p. ». Exemple : « 3 »'))
     lieu_conservation = CharField(_('lieu de conservation'), max_length=50,
-                                  blank=True)
-    cote = CharField(_('cote'), max_length=35, blank=True)
+                                  blank=True, db_index=True)
+    cote = CharField(_('cote'), max_length=35, blank=True, db_index=True)
     url = URLField(blank=True,
                    help_text=_('Adresse de référence externe à Dezède.'))
 
@@ -132,7 +132,7 @@ class Source(AutoriteModel):
     class Meta(object):
         verbose_name = ungettext_lazy('source', 'sources', 1)
         verbose_name_plural = ungettext_lazy('source', 'sources', 2)
-        ordering = ('type', 'date', 'titre', 'numero', 'page',
+        ordering = ('date', 'titre', 'numero', 'page',
                     'lieu_conservation', 'cote')
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
@@ -168,6 +168,7 @@ class Source(AutoriteModel):
         url = None if not tags else self.get_absolute_url()
         conservation = hlp(self.lieu_conservation,
                            'Lieu de conservation', tags)
+        print repr(self.ancrage.date), self.date
         if self.ancrage.date or self.ancrage.date_approx:
             ancrage = hlp(self.ancrage.html(tags, caps=False), ugettext('date'))
         else:

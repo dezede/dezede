@@ -10,7 +10,12 @@
 
   {% with elements=evenement.programme.fill_numeros %}
     {% if elements %}
-      <h3 class="programme_titre">{% trans "programme"|capfirst %}</h3>
+      <h3 class="programme_titre">
+        {% trans 'programme'|capfirst %}
+        {% if evenement.programme_incomplet %}
+          <small>[{% trans 'incomplet' %}]</small>
+        {% endif %}
+      </h3>
       <table class="programme">
         {% for element in elements %}
           <tr>

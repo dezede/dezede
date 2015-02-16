@@ -31,7 +31,9 @@
 
 {% with elements=evenement.programme.fill_numeros %}
   {% if elements %}
-    {\bfseries {% trans "programme"|capfirst %}}
+    {\bfseries {% trans 'programme'|capfirst %}}
+    {% if evenement.programme_incomplet %}[{% trans 'incomplet' %}]{% endif %}
+
     \nopagebreak
 
     {% if elements|length > 1 %}

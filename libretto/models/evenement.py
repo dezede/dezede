@@ -1,15 +1,18 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import re
 import warnings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey, \
                                                 GenericRelation
 from django.core.urlresolvers import reverse
+from django.core.validators import RegexValidator
 from django.db import connection
-from django.db.models import CharField, ForeignKey, ManyToManyField, \
-    BooleanField, PositiveSmallIntegerField, permalink, Q, \
-    PositiveIntegerField, get_model, PROTECT, Count
+from django.db.models import (
+    CharField, ForeignKey, ManyToManyField, BooleanField,
+    PositiveSmallIntegerField, permalink, Q, PositiveIntegerField, get_model,
+    PROTECT, Count, DecimalField)
 from django.utils.encoding import (
     python_2_unicode_compatible, smart_text, force_text)
 from django.utils.html import strip_tags
@@ -225,7 +228,7 @@ class ElementDeProgramme(CommonModel):
     numerotation = CharField(
         _('numérotation'), choices=NUMEROTATIONS, max_length=1, default='O')
     NUMEROTATIONS_SANS_ORDRE = ('U', 'E',)
-    position = PositiveSmallIntegerField(_('position'))
+    position = PositiveSmallIntegerField(_('position'), db_index=True)
     # TODO: Quand les nested inlines seront possibles avec Django, remplacer
     # ceci par un GenericRelation.
     distribution = ManyToManyField(
@@ -234,6 +237,8 @@ class ElementDeProgramme(CommonModel):
     # FIXME: Retirer ceci si on supprime Personnel.
     personnels = ManyToManyField('Personnel', blank=True, null=True,
                                  related_name='elements_de_programme')
+    part_d_auteur = DecimalField(_('P. A.'), max_digits=6, decimal_places=2,
+                                 blank=True, null=True)
 
     objects = ElementDeProgrammeManager()
 
@@ -325,6 +330,29 @@ class EvenementQuerySet(PublishedQuerySet):
             .values('year').annotate(count=Count('pk'))
             .order_by('year'))
 
+    def get_distributions(self):
+        return ElementDeDistribution.objects.filter(
+            Q(elements_de_programme__evenement__in=self)
+            | (Q(content_type=ContentType.objects.get_for_model(Evenement))
+               & Q(object_id__in=self.values('pk')))
+        )
+
+    def ensembles(self):
+        distributions = self.get_distributions()
+        qs = get_model('libretto', 'Ensemble').objects.filter(
+            elements_de_distribution__in=distributions).distinct()
+        return qs.only('particule_nom', 'nom', 'slug')
+
+    def individus(self):
+        distributions = self.get_distributions()
+        qs = get_model('libretto', 'individu').objects.filter(
+            elements_de_distribution__in=distributions).distinct()
+        return qs.only(
+            'particule_nom', 'nom', 'prenoms', 'prenoms_complets',
+            'particule_nom_naissance', 'nom_naissance', 'pseudonyme',
+            'designation', 'titre', 'slug',
+        )
+
     def with_program(self):
         return self.filter(Q(relache=True) | Q(programme__isnull=False))
 
@@ -363,6 +391,7 @@ class EvenementQuerySet(PublishedQuerySet):
                 'programme__distribution__pupitre__partie')
             .only(
                 'notes_publiques', 'relache', 'circonstance',
+                'programme_incomplet',
                 'debut_date', 'debut_date_approx',
                 'debut_heure', 'debut_heure_approx', 'debut_lieu_approx',
                 'fin_date', 'fin_date_approx',
@@ -382,6 +411,7 @@ class EvenementQuerySet(PublishedQuerySet):
                 #        but an IndexError occurs when removing them…
                 'notes_privees', 'code_programme', 'exoneres', 'payantes',
                 'frequentation', 'scolaires', 'jauge',
+                'recette_generale', 'recette_par_billets',
             )
         )
 
@@ -399,11 +429,18 @@ class EvenementManager(PublishedManager):
         return self.get_queryset().prefetch_all()
 
 
+plus_separated_integers_re = re.compile(r'^\d+(?:\+\d+)*$')
+plus_separated_integers_validator = RegexValidator(
+    plus_separated_integers_re,
+    _('Entrez uniquement des entiers séparés par des « + ».'), 'invalid')
+
+
 @python_2_unicode_compatible
 class Evenement(AutoriteModel):
     debut = AncrageSpatioTemporel(('date',),
                                   short_description=_('début'))
     fin = AncrageSpatioTemporel(short_description=_('fin'))
+    programme_incomplet = BooleanField(_('programme incomplet'), default=False)
     relache = BooleanField(_('relâche'), default=False, db_index=True)
     circonstance = CharField(_('circonstance'), max_length=500, blank=True,
                              db_index=True)
@@ -424,6 +461,12 @@ class Evenement(AutoriteModel):
     scolaires = PositiveIntegerField(_('entrées scolaires'), null=True,
                                      blank=True)
     jauge = PositiveIntegerField(_('jauge'), null=True, blank=True)
+    recette_generale = DecimalField(_('recette générale'), max_digits=7,
+                                    decimal_places=2, blank=True, null=True)
+    recette_par_billets = CharField(
+        _('recette par titre de billets'),
+        max_length=30,
+        validators=[plus_separated_integers_validator], blank=True)
 
     objects = EvenementManager()
 
