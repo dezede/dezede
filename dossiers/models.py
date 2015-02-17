@@ -14,7 +14,7 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from accounts.models import HierarchicUser
-from libretto.models import Lieu, Oeuvre, Evenement, Individu, Ensemble
+from libretto.models import Lieu, Oeuvre, Evenement, Individu, Ensemble, Source
 from libretto.models.common import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from libretto.models.functions import str_list_w_last, href
@@ -78,7 +78,7 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     # Article
     presentation = TextField(_('présentation'))
     contexte = TextField(_('contexte historique'), blank=True)
-    sources = TextField(_('sources et protocole'), blank=True)
+    sources_et_protocole = TextField(_('sources et protocole'), blank=True)
     bibliographie = TextField(_('bibliographie indicative'), blank=True)
 
     # Sélecteurs
@@ -99,6 +99,9 @@ class DossierDEvenements(MPTTModel, PublishedModel):
         related_name='dossiers')
     ensembles = ManyToManyField(
         Ensemble, verbose_name=_('ensembles'), blank=True, null=True,
+        related_name='dossiers')
+    sources = ManyToManyField(
+        Source, verbose_name=_('sources'), blank=True, null=True,
         related_name='dossiers')
 
     objects = DossierDEvenementsManager()
@@ -135,6 +138,8 @@ class DossierDEvenements(MPTTModel, PublishedModel):
         return 'dossierdevenements_data_detail', (self.pk,)
 
     def get_queryset(self, dynamic=False):
+        if hasattr(self, '_evenement_queryset'):
+            return self._evenement_queryset
         if not dynamic and self.pk and self.evenements.exists():
             return self.evenements.all()
         args = []
@@ -152,25 +157,31 @@ class DossierDEvenements(MPTTModel, PublishedModel):
                 oeuvres = self.oeuvres.get_descendants(include_self=True)
                 kwargs['programme__oeuvre__in'] = oeuvres
             auteurs = self.auteurs.all()
-            if auteurs:
+            if auteurs.exists():
                 kwargs['programme__oeuvre__auteurs__individu__in'] = auteurs
             ensembles = self.ensembles.all()
-            if ensembles:
+            if ensembles.exists():
                 args.append(
                     Q(distribution__ensembles__in=ensembles)
                     | Q(programme__distribution__ensembles__in=ensembles))
+            sources = self.sources.all()
+            if sources.exists():
+                kwargs['sources__in'] = sources
         if self.circonstance:
             kwargs['circonstance__icontains'] = self.circonstance
         if args or kwargs:
-            return Evenement.objects.filter(*args, **kwargs).distinct()
-        return Evenement.objects.none()
+            self._evenement_queryset = Evenement.objects.filter(
+                *args, **kwargs).distinct()
+        else:
+            self._evenement_queryset = Evenement.objects.none()
+        return self._evenement_queryset
     get_queryset.short_description = _('ensemble de données')
 
     def get_count(self):
         qs = self.get_queryset()
         # TODO: Remove this check when switching to Django 1.7
         #       (see https://code.djangoproject.com/ticket/10181)
-        if not qs:
+        if not qs.exists():
             return 0
         return qs.count()
     get_count.short_description = _('quantité de données sélectionnées')

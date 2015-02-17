@@ -29,7 +29,7 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
     search_fields = ('titre', 'titre_court',)
     readonly_fields = ('get_count', 'get_queryset')
     raw_id_fields = ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs',
-                     'ensembles', 'evenements')
+                     'ensembles', 'sources', 'evenements')
     autocomplete_lookup_fields = {
         'm2m': ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs',
                 'ensembles'),
@@ -46,12 +46,15 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
             'classes': ('grp-collapse grp-open',),
         }),
         (_('Article'), {
-            'fields': ('presentation', 'contexte', 'sources', 'bibliographie'),
+            'fields': (
+                'presentation', 'contexte', 'sources_et_protocole',
+                'bibliographie'
+            ),
             'classes': ('grp-collapse grp-open',),
         }),
         (_('Sélection dynamique'), {
             'fields': (('debut', 'fin'), 'lieux', 'oeuvres', 'auteurs',
-                       'ensembles', 'circonstance'),
+                       'ensembles', 'sources', 'circonstance'),
         }),
         (_('Sélection manuelle'), {
             'fields': ('evenements', 'statique', 'get_count', 'get_queryset'),
