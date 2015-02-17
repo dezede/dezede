@@ -269,7 +269,8 @@ class ElementDeProgrammeInline(GrappelliSortableHiddenMixin,
     fieldsets = (
         (None, {
             'fields': (('oeuvre', 'autre',), 'caracteristiques',
-                       'distribution', 'numerotation', 'position'),
+                       'distribution', ('numerotation', 'part_d_auteur'),
+                       'position'),
         }),
     )
     raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',)
@@ -1010,7 +1011,12 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
                 ('fin_lieu', 'fin_lieu_approx'))
         }),
         (None, {
-            'fields': (('circonstance', 'relache',), 'caracteristiques',),
+            'fields': (('circonstance', 'programme_incomplet', 'relache',),
+                       'caracteristiques',),
+        }),
+        (_('Données économiques'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': (('recette_generale', 'recette_par_billets'),),
         }),
     )
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'i', 'i')
