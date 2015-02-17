@@ -23,9 +23,7 @@ class CategorieDeDossierAdmin(VersionAdmin, PublishedAdmin):
 
 class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
     form = DossierDEvenementsForm
-    list_display = ('__str__', 'circonstance', 'debut', 'fin',
-                    'lieux_html', 'oeuvres_html', 'auteurs_html',
-                    'ensembles_html', 'get_count')
+    list_display = ('__str__',)
     search_fields = ('titre', 'titre_court',)
     readonly_fields = ('get_count', 'get_queryset')
     raw_id_fields = ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs',
