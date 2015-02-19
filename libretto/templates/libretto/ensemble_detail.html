@@ -20,7 +20,7 @@
     {% data_table_attr 'siege.link' %}
     {% data_table_attr 'smart_period' caps=True %}
     {% data_table_list object.membres.all %}
-    {% data_table_list object.apparitions %}
+    {% include "libretto/include/evenement_list_def.html" with evenements=object.apparitions %}
 
     {% data_table_attr 'notes_publiques' _('notes') %}
   </table>

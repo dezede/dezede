@@ -25,7 +25,7 @@
   {% include 'libretto/source_content.html' %}
 
   <table class="data-table auto-links">
-    {% data_table_list source.evenements.all %}
+    {% include "libretto/include/evenement_list_def.html" with evenements=source.evenements.all %}
     {% data_table_list source.oeuvres.all %}
     {% data_table_list source.individus.all %}
     {% data_table_list source.ensembles.all %}
