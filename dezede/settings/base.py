@@ -321,6 +321,7 @@ COMPRESS_PRECOMPILERS = (
 
 AJAX_LOOKUP_CHANNELS = {
     'lieu': ('libretto.lookups', 'LieuLookup'),
+    'ensemble': ('libretto.lookups', 'EnsembleLookup'),
     'individu': ('libretto.lookups', 'IndividuLookup'),
     'individu__prenoms': ('libretto.lookups', 'IndividuPrenomsLookup'),
     'ensemble__particule_nom': ('libretto.lookups', 'EnsembleParticuleNomLookup'),

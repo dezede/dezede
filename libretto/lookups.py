@@ -44,6 +44,10 @@ class LieuLookup(PublicLookup):
     model = Lieu
 
 
+class EnsembleLookup(PublicLookup):
+    model = Ensemble
+
+
 class OeuvreLookup(PublicLookup):
     model = Oeuvre
     displayed_attr = 'titre_descr_html'

@@ -15,7 +15,8 @@ from range_slider.fields import RangeSliderField
 
 
 __all__ = (b'IndividuForm', b'EnsembleForm', b'OeuvreForm',
-           b'ElementDeProgrammeForm', b'SourceForm', b'EvenementListForm')
+           b'ElementDeDistributionForm', b'ElementDeProgrammeForm',
+           b'SourceForm', b'SaisonForm', b'EvenementListForm')
 
 
 class IndividuForm(ModelForm):
@@ -176,6 +177,8 @@ class EvenementListForm(Form):
         'oeuvre', required=False, label=_('Œuvre'), help_text='')
     individu = AutoCompleteSelectMultipleField(
         'individu', required=False, label=_('Individu'), help_text='')
+    ensemble = AutoCompleteSelectMultipleField(
+        'ensemble', required=False, label=_('Ensemble'), help_text='')
 
     def __init__(self, *args, **kwargs):
         queryset = kwargs.pop('queryset')
@@ -188,7 +191,7 @@ class EvenementListForm(Form):
             HTML('<hr/>'),
             'dates',
             HTML('<hr/>'),
-            'lieu', 'oeuvre', 'individu',
+            'lieu', 'oeuvre', 'individu', 'ensemble',
             HTML('<hr/>'),
             Submit('', _('Filtrer'), css_class='btn-lg btn-block',
                    data_loading_text=_('Chargement…')),
