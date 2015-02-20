@@ -40,6 +40,7 @@ TONALITES = {
 class Migration(DataMigration):
 
     def forwards(self, orm):
+        Caracteristique = orm['libretto.Caracteristique']
         TypeDeCaracteristique = orm['libretto.TypeDeCaracteristique']
         Oeuvre = orm['libretto.Oeuvre']
 
@@ -81,6 +82,10 @@ class Migration(DataMigration):
         for oeuvre, valeur in oeuvres_iterator(nom_courant):
             oeuvre.nom_courant = valeur
             oeuvre.save()
+
+        for type in (numero, opus, tonalite, ict, surnom, incipit, nom_courant):
+            Caracteristique.objects.filter(type=type).delete()
+            type.delete()
 
     def backwards(self, orm):
         raise NotImplementedError
