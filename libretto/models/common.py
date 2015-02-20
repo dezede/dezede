@@ -529,10 +529,10 @@ class TypeDeCaracteristique(PolymorphicModel, CommonModel):
 
     class Meta(object):
         verbose_name = ungettext_lazy('type de caractéristique',
-                                      'types de caracteristique', 1)
+                                      'types de caractéristique', 1)
         verbose_name_plural = ungettext_lazy(
             'type de caractéristique',
-            'types de caracteristique',
+            'types de caractéristique',
             2)
         ordering = ('classement',)
         app_label = 'libretto'

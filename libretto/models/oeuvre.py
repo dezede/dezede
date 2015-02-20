@@ -1,12 +1,14 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from collections import OrderedDict
 import re
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import apnumber
+from django.core.validators import RegexValidator
 from django.db.models import CharField, ManyToManyField, \
     PositiveIntegerField, ForeignKey, IntegerField, TextField, \
     BooleanField, permalink, get_model, SmallIntegerField, PROTECT
@@ -29,7 +31,7 @@ from .common import (
     OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,
     CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique,
     AncrageSpatioTemporel)
-from .functions import capfirst, hlp, str_list, str_list_w_last, href, cite
+from .functions import capfirst, hlp, str_list, str_list_w_last, href, cite, em
 from .individu import Individu
 from .personnel import Profession
 from .source import Source
@@ -551,9 +553,78 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                                  blank=True, db_index=True)
     genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True,
         null=True, verbose_name=_('genre'), db_index=True, on_delete=PROTECT)
-    caracteristiques = ManyToManyField('CaracteristiqueDOeuvre', blank=True,
-        null=True, verbose_name=_('caractéristiques'), related_name='oeuvres',
-        db_index=True)
+    numero = CharField(
+        _('numéro'), max_length=5, blank=True,
+        validators=[RegexValidator(
+            r'^[\d\w\-]+$', _('Vous ne pouvez saisir que des chiffres, '
+                              'lettres non accentuées et tiret, '
+                              'le tout sans espace.'))],
+        help_text=_('Exemple : « 5 » pour n° 5, « 7a » pour n° 7 a, '
+                    'ou encore « 3-7 » pour n° 3 à 7'))
+    opus = CharField(
+        _('opus'), max_length=5, blank=True,
+        validators=[RegexValidator(
+            r'^[\d\w\-/]+$', _('Vous ne pouvez saisir que des chiffres, '
+                              'lettres non accentuées, tiret '
+                              'et barre oblique, le tout sans espace.'))],
+        help_text=_('Exemple : « 12 » pour op. 12, « 27/3 » pour op. 27 n° 3, '
+                    '« 8b » pour op. 8 b, ou encore « 12-15 » pour '
+                    'op. 12 à 15.'))
+    NOTES = OrderedDict((
+        ('c', 'do'),
+        ('d', 'ré'),
+        ('e', 'mi'),
+        ('f', 'fa'),
+        ('g', 'sol'),
+        ('a', 'la'),
+        ('b', 'si'),
+        ('u', 'ut'),  # C’est un do, mais on le déprécie.
+    ))
+    ALTERATIONS = OrderedDict((
+        ('-', 'bémol'),
+        ('0', ''),
+        ('+', 'dièse'),
+    ))
+    GAMMES = OrderedDict((
+        ('C', 'majeur'),
+        ('A', 'mineur'),
+        ('0', ''),
+        # ('c', 'mode de do'),
+        # ('d', 'mode de ré'),
+        # ('e', 'mode de mi'),
+        # ('f', 'mode de fa'),
+        # ('g', 'mode de sol'),
+        # ('a', 'mode de la'),
+        # ('b', 'mode de si'),
+    ))
+    TONALITES = [
+        (gamme_k + note_k + alter_k, str_list((note_v, alter_v, gamme_v), ' '))
+        for gamme_k, gamme_v in GAMMES.items()
+        for note_k, note_v in NOTES.items()
+        for alter_k, alter_v in ALTERATIONS.items()
+    ]
+    tonalite = CharField(_('tonalité'), max_length=3, choices=TONALITES,
+                         blank=True)
+    ict = CharField(
+        _('ICT'), max_length=25, blank=True,
+        help_text='Indice Catalogue Thématique. Exemple : « RV 42 », '
+                  '« K. 299d » ou encore « Hob. XVI:24 ».')
+    surnom = CharField(
+        _('surnom'), max_length=50, blank=True,
+        help_text=_('Exemple : « Jupiter » pour la symphonie n° 41 '
+                    'de Mozart.'))
+    incipit = CharField(
+        _('incipit'), max_length=100, blank=True,
+        help_text=_('Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 '
+                    'de l’acte III des <em>Contes d’Hoffmann</em> '
+                    'd’Offenbach.'))
+    nom_courant = CharField(
+        _('nom courant'), max_length=70, blank=True,
+        help_text=_('Exemple : « barcarolle » pour le n° 13 de l’acte III des '
+                    '<em>Contes d’Hoffmann</em> d’Offenbach.'))
+    caracteristiques = ManyToManyField(
+        'CaracteristiqueDOeuvre', blank=True, null=True, db_index=True,
+        verbose_name=_('autres caractéristiques'), related_name='oeuvres')
     auteurs = GenericRelation('Auteur')
     creation = AncrageSpatioTemporel(short_description=_('création'))
     pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
@@ -599,10 +670,44 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     link.short_description = _('lien')
     link.allow_tags = True
 
+    def get_caracteristiques(self, tags=False):
+        caracteristiques = []
+        if self.numero:
+            caracteristiques.append(hlp('n° ' + self.numero, 'numéro', tags))
+        if self.opus:
+            caracteristiques.append(hlp('op. ' + self.opus, 'opus', tags))
+        if self.tonalite:
+            gamme, note, alteration = self.tonalite
+            if gamme == 'C':
+                gamme = 'majeur'
+            elif gamme == 'A':
+                gamme = 'mineur'
+            elif gamme == '0':
+                gamme = ''
+            note = self.NOTES[note]
+            alteration = self.ALTERATIONS[alteration]
+            tonalite = 'en ' + str_list((em(note, tags), alteration, gamme),
+                                        ' ')
+            caracteristiques.append(hlp(tonalite, 'tonalité', tags))
+        if self.ict:
+            caracteristiques.append(hlp(self.ict,
+                                        'Indice Catalogue Thématique', tags))
+        if self.surnom:
+            caracteristiques.append(
+                hlp(em(self.surnom, tags), 'surnom', tags))
+        if self.incipit:
+            caracteristiques.append(hlp('« ' + self.incipit + ' »', 'incipit',
+                                        tags))
+        if self.nom_courant:
+            caracteristiques.append(hlp(self.nom_courant, 'nom courant', tags))
+        if self.pk:
+            caracteristiques.extend(self.caracteristiques.html_list(tags=tags))
+        return caracteristiques
+
     def caracteristiques_html(self, tags=True):
         if not self.pk:
             return ''
-        return str_list(self.caracteristiques.html_list(tags=tags))
+        return str_list(self.get_caracteristiques(tags=tags))
     caracteristiques_html.allow_tags = True
     caracteristiques_html.short_description = _('caractéristiques')
     caracteristiques_html.admin_order_field = 'caracteristiques__valeur'
@@ -663,8 +768,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         out = ''
         titre_complet = self.titre_complet()
         genre = self.genre
-        caracteristiques = [] if not self.pk \
-            else self.caracteristiques.html_list(tags=tags)
+        caracteristiques = self.get_caracteristiques(tags=tags)
         url = None if not tags else self.get_absolute_url()
         if auteurs:
             auts = self.auteurs_html(tags)

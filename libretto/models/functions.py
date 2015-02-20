@@ -11,7 +11,7 @@ from django.utils.translation import ugettext, pgettext, ugettext_lazy as _
 
 __all__ = (b'capfirst', b'date_html', b'str_list', b'str_list_w_last', b'ex',
            b'no', b'html_decorator', b'cite', b'href', b'sc', b'hlp', b'small',
-           b'strong')
+           b'strong', b'em')
 
 
 def capfirst(text):
@@ -219,3 +219,12 @@ def strong(txt):
     <strong>I are STROOoOONG!!!</strong>
     """
     return '<strong>' + txt + '</strong>'
+
+
+@html_decorator
+def em(txt):
+    """
+    >>> print('en ' + em('do') + ' mineur')
+    en <em>do</em> mineur
+    """
+    return '<em>' + txt + '</em>'

@@ -917,8 +917,20 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                        ('prefixe_titre_secondaire', 'titre_secondaire',),),
         }),
         (None, {
-            'fields': ('genre', 'caracteristiques',
-                       'pupitres', 'contenu_dans',),
+            'fields': ('genre',
+                       ('numero', 'opus',),
+                       ('tonalite', 'ict',),
+                       ('surnom', 'nom_courant'),
+                       'incipit',),
+        }),
+        (None, {
+            'fields': ('caracteristiques',),
+        }),
+        (None, {
+            'fields': ('pupitres',),
+        }),
+        (None, {
+            'fields': ('contenu_dans',),
         }),
         (_('Création'), {
             'fields': (
@@ -931,7 +943,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
             'fields': ('lilypond', 'description',),
         }),
     )
-    fieldsets_and_inlines_order = ('f', 'i', 'f', 'f', 'i', 'i')
+    fieldsets_and_inlines_order = ('i', 'f', 'f', 'f', 'f', 'f', 'i', 'i')
 
     def get_queryset(self, request):
         qs = super(OeuvreAdmin, self).get_queryset(request)
