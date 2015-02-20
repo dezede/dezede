@@ -192,6 +192,21 @@ def data_table_list(context, object_list, attr='link',
     return c
 
 
+@register.inclusion_tag('routines/evenement_list_def.html', takes_context=True)
+def evenement_list_def(context, evenements, verbose_name=None,
+                       verbose_name_plural=None):
+    verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
+        evenements, verbose_name=verbose_name,
+        verbose_name_plural=verbose_name_plural)
+    counter = evenements.count
+    name = force_text(verbose_name if counter == 1 else verbose_name_plural)
+    c = context.__copy__()
+    c.update({'name': name,
+              'counter': counter,
+              'evenements': evenements})
+    return c
+
+
 @register.inclusion_tag('routines/jqtree.html', takes_context=True)
 def jqtree(context, model_path, attr='__str__', id=None):
     app_label, model_name = model_path.split('.')

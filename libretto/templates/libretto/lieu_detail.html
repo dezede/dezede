@@ -25,7 +25,7 @@
       <td>{% jqtree 'libretto.lieu' 'nom' %}</td>
     {% endif %}
     {% data_table_attr 'historique' %}
-    {% include 'libretto/include/evenement_list_def.html' with evenements=lieu.evenements %}
+    {% evenement_list_def lieu.evenements %}
     {% data_table_list lieu.individus_nes verbose_name=_('individu né ici') verbose_name_plural=_('individus nés ici') %}
     {% data_table_list lieu.individus_decedes verbose_name=_('individu décédé ici') verbose_name_plural=_('individus décédés ici') %}
     {% data_table_list lieu.oeuvres_creees verbose_name=_('œuvre créée ici') verbose_name_plural=_('œuvres créées ici') %}

@@ -39,7 +39,7 @@
       <td>{% jqtree 'libretto.oeuvre' 'short_html' %}</td>
     {% endif %}
 
-    {% include "libretto/include/evenement_list_def.html" with evenements=oeuvre.evenements.distinct %}
+    {% evenement_list_def oeuvre.evenements.distinct %}
     {% data_table_attr 'notes_publiques' _('notes') %}
 
     {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}

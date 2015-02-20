@@ -39,8 +39,8 @@
     {% data_table_attr 'biographie' %}
 
     {% data_table_list individu.oeuvres %}
-    {% data_table_list individu.apparitions verbose_name=_('apparition') verbose_name_plural=_('apparitions') %}
-    {% include 'libretto/include/evenement_list_def.html' with evenements=individu.evenements_referents %}
+    {% evenement_list_def individu.apparitions verbose_name=_('apparition') verbose_name_plural=_('apparitions') %}
+    {% evenement_list_def individu.evenements_referents %}
     {% data_table_list individu.publications 'html' %}
 
 

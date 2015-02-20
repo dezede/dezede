@@ -1,21 +1,19 @@
-{% load i18n extras endless %}
+{% load i18n extras routines endless %}
 {% load url from future %}
 
-{% with counter=evenements.count %}
-  {% if counter %}
-    <tr>
-      <th>
-        {{ counter }}
-        {% blocktrans count counter=counter %}événement{% plural %}événements{% endblocktrans %}
-      </th>
-      <td>
-        <a href="{% url 'evenements' %}?{{ object.class_name|lower }}=|{{ object.pk }}|">
-          <strong>{% trans 'Afficher tous les événements' %}</strong>
-        </a>
-      </td>
-    </tr>
-  {% endif %}
-{% endwith %}
+{% if counter %}
+  <tr>
+    <th>
+      {{ counter }}
+      {{ name }}
+    </th>
+    <td>
+      <a href="{% url 'evenements' %}?{{ object.class_name|lower }}=|{{ object.pk }}|">
+        <strong>{% trans 'Afficher tous les événements' %}</strong>
+      </a>
+    </td>
+  </tr>
+{% endif %}
 
 {% paginate 10 evenements.yearly_counts as yearly_counts %}
 {% for yearly_count in yearly_counts %}
