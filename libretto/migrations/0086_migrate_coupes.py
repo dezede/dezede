@@ -1,42 +1,10 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
 from django.db.models.signals import pre_save
 from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 from libretto.models.common import handle_whitespaces
-
-
-NOTES = (
-    ('c', 'do'),
-    ('d', 'ré'),
-    ('e', 'mi'),
-    ('f', 'fa'),
-    ('g', 'sol'),
-    ('a', 'la'),
-    ('b', 'si'),
-    ('u', 'ut'),  # C’est un do, mais on le déprécie.
-)
-ALTERATIONS = (
-    ('-', 'bémol'),
-    ('0', ''),
-    ('+', 'dièse'),
-)
-GAMMES = (
-    ('C', 'majeur'),
-    ('A', 'mineur'),
-    ('0', ''),
-)
-
-TONALITES = {
-    ' '.join(filter(bool, ('en', '<em>' + note + '</em>',
-                           alteration, gamme))): gamme_k + note_k + alteration_k
-    for alteration_k, alteration in ALTERATIONS
-    for note_k, note in NOTES
-    for gamme_k, gamme in GAMMES
-}
 
 
 class Migration(DataMigration):
@@ -51,43 +19,27 @@ class Migration(DataMigration):
         def oeuvres_iterator(type):
             for oeuvre in Oeuvre.objects.filter(
                     caracteristiques__type=type).distinct():
-                caracteristiques_du_type = list(oeuvre.caracteristiques.filter(type=type))
+                caracteristiques_du_type = list(
+                    oeuvre.caracteristiques.filter(type=type))
                 if len(caracteristiques_du_type) != 1:
                     raise ValueError(
                         "L'oeuvre %s a trop de caracteristiques %s!" % (
-                        oeuvre.pk, repr(type.nom)))
+                            oeuvre.pk, repr(type.nom)))
                 yield oeuvre, caracteristiques_du_type[0].valeur
 
-        numero = TypeDeCaracteristique.objects.get(pk=3)
-        opus = TypeDeCaracteristique.objects.get(pk=4)
-        tonalite = TypeDeCaracteristique.objects.get(pk=5)
-        ict = TypeDeCaracteristique.objects.get(pk=11)
-        surnom = TypeDeCaracteristique.objects.get(pk=6)
-        incipit = TypeDeCaracteristique.objects.get(pk=10)
-        nom_courant = TypeDeCaracteristique.objects.get(pk=18)
-        for oeuvre, valeur in oeuvres_iterator(numero):
-            oeuvre.numero = valeur.replace('n° ', '').replace('n° ', '')
-            oeuvre.save()
-        for oeuvre, valeur in oeuvres_iterator(tonalite):
-            oeuvre.tonalite = TONALITES[valeur]
-            oeuvre.save()
-        for oeuvre, valeur in oeuvres_iterator(opus):
-            oeuvre.opus = valeur.replace('op. ', '').replace('op. ', '')
-            oeuvre.save()
-        for oeuvre, valeur in oeuvres_iterator(ict):
-            oeuvre.ict = valeur
-            oeuvre.save()
-        for oeuvre, valeur in oeuvres_iterator(surnom):
-            oeuvre.surnom = valeur.replace('<em>', '').replace('</em>', '')
-            oeuvre.save()
-        for oeuvre, valeur in oeuvres_iterator(incipit):
-            oeuvre.incipit = valeur.replace('“ ', '').replace(' ”', '')
-            oeuvre.save()
-        for oeuvre, valeur in oeuvres_iterator(nom_courant):
-            oeuvre.nom_courant = valeur
+        decoupage1 = TypeDeCaracteristique.objects.get(pk=1)
+        decoupage2 = TypeDeCaracteristique.objects.get(pk=13)
+        decoupage3 = TypeDeCaracteristique.objects.get(pk=14)
+        data = list(oeuvres_iterator(decoupage1))
+        data.extend(oeuvres_iterator(decoupage2))
+        data.extend(oeuvres_iterator(decoupage3))
+        for oeuvre, valeur in data:
+            if valeur.startswith('en '):
+                valeur = valeur[3:]
+            oeuvre.coupe = valeur
             oeuvre.save()
 
-        for type in (numero, opus, tonalite, ict, surnom, incipit, nom_courant):
+        for type in (decoupage1, decoupage2, decoupage3):
             Caracteristique.objects.filter(type=type).delete()
             type.delete()
 
@@ -392,6 +344,7 @@ class Migration(DataMigration):
             'caracteristiques': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "u'oeuvres'", 'to': u"orm['libretto.CaracteristiqueDOeuvre']", 'blank': 'True', 'symmetrical': 'False', 'null': 'True', 'db_index': 'True'}),
             'contenu_dans': ('mptt.fields.TreeForeignKey', [], {'blank': 'True', 'related_name': "u'enfants'", 'null': 'True', 'to': u"orm['libretto.Oeuvre']"}),
             'coordination': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '20', 'blank': 'True'}),
+            'coupe': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             u'creation_date': ('django.db.models.fields.DateField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             u'creation_date_approx': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '200', 'blank': 'True'}),
             u'creation_heure': ('django.db.models.fields.TimeField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),

@@ -101,6 +101,11 @@ class OeuvrePrefixeTitreSecondaireLookup(CharFieldLookupChannel):
     attr = 'prefixe_titre_secondaire'
 
 
+class OeuvreCoupeLookup(CharFieldLookupChannel):
+    model = Oeuvre
+    attr = 'coupe'
+
+
 class ElementDeProgrammeAutreLookup(CharFieldLookupChannel):
     model = ElementDeProgramme
     attr = 'autre'

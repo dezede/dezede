@@ -917,7 +917,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                        ('prefixe_titre_secondaire', 'titre_secondaire',),),
         }),
         (None, {
-            'fields': ('genre',
+            'fields': ('genre', 'coupe',
                        ('numero', 'opus',),
                        ('tonalite', 'ict',),
                        ('surnom', 'nom_courant'),

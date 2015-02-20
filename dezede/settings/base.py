@@ -330,6 +330,7 @@ AJAX_LOOKUP_CHANNELS = {
     'oeuvre__coordination': ('libretto.lookups', 'OeuvreCoordinationLookup'),
     'oeuvre__prefixe_titre_secondaire': ('libretto.lookups',
                                          'OeuvrePrefixeTitreSecondaireLookup'),
+    'oeuvre__coupe': ('libretto.lookups', 'OeuvreCoupeLookup'),
     'elementdeprogramme__autre': ('libretto.lookups',
                                   'ElementDeProgrammeAutreLookup'),
     'source__titre': ('libretto.lookups', 'SourceTitreLookup'),

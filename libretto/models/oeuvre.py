@@ -553,6 +553,12 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                                  blank=True, db_index=True)
     genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True,
         null=True, verbose_name=_('genre'), db_index=True, on_delete=PROTECT)
+    coupe = CharField(
+        _('coupe'), max_length=100, blank=True,
+        validators=[RegexValidator(
+            r'^\D+$', _('Vous devez saisir les quantités '
+                        'en toutes lettres.'))],
+        help_text=_('Exemple : « trois actes » pour un opéra en trois actes.'))
     numero = CharField(
         _('numéro'), max_length=5, blank=True,
         validators=[RegexValidator(
@@ -672,6 +678,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     def get_caracteristiques(self, tags=False):
         caracteristiques = []
+        if self.coupe:
+            caracteristiques.append(hlp('en ' + self.coupe, 'coupe', tags))
         if self.numero:
             caracteristiques.append(hlp('n° ' + self.numero, 'numéro', tags))
         if self.opus:

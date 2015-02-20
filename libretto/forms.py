@@ -72,6 +72,8 @@ class OeuvreForm(ModelForm):
             b'prefixe_titre_secondaire':
                 AutoCompleteWidget('oeuvre__prefixe_titre_secondaire',
                                    attrs={'style': 'width: 50px;'}),
+            b'coupe': AutoCompleteWidget('oeuvre__coupe',
+                                         attrs={'style': 'width: 500px;'}),
         }
 
 
