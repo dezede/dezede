@@ -648,7 +648,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     class Meta(object):
         verbose_name = ungettext_lazy('œuvre', 'œuvres', 1)
         verbose_name_plural = ungettext_lazy('œuvre', 'œuvres', 2)
-        ordering = ('titre', 'genre', 'slug')
+        ordering = ('titre', 'genre', 'coupe', 'numero', 'opus', 'tonalite',
+                    'ict', 'surnom', 'incipit', 'nom_courant')
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
