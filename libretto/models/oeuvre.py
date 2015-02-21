@@ -719,7 +719,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return str_list(self.get_caracteristiques(tags=tags))
     caracteristiques_html.allow_tags = True
     caracteristiques_html.short_description = _('caractéristiques')
-    caracteristiques_html.admin_order_field = 'caracteristiques__valeur'
 
     def calc_pupitres(self, prefix=True, tags=False):
         if not self.pk:
