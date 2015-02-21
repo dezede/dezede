@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator, RegexValidator
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT)
@@ -145,6 +146,13 @@ class Individu(AutoriteModel, UniqueSlugModel):
         'self', through='ParenteDIndividus', related_name='parents',
         symmetrical=False, db_index=True)
     biographie = HTMLField(_('biographie'), blank=True)
+
+    isni = CharField(
+        _('Identifiant ISNI'), max_length=16, blank=True,
+        validators=[MinLengthValidator(16),
+                    RegexValidator(r'^\d{15}[\dxX]$',
+                                   _('Numéro d’ISNI invalide.'))],
+        help_text=_('Exemple : « 0000000121269154 » pour Mozart.'))
 
     objects = IndividuManager()
 

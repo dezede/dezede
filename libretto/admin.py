@@ -570,6 +570,10 @@ class LieuCommonAdmin(OSMGeoAdmin, AutoriteAdmin):
         (None, {
             'fields': ('nom', 'parent', 'nature', 'historique', 'geometry'),
         }),
+        (_('Données politiques'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': ('type_de_scene',),
+        }),
     )
     layerswitcher = False
     default_lon = 300000
@@ -666,7 +670,7 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
             'fields': ('pseudonyme',
                        'prenoms_complets',
                        ('particule_nom_naissance', 'nom_naissance'),
-                       'designation', 'biographie',),
+                       'designation', 'biographie', 'isni'),
         }),
     )
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'i', 'i')
