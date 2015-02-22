@@ -6,11 +6,13 @@ from ajax_select.fields import AutoCompleteSelectMultipleField, \
     AutoCompleteWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
+from datetime import timedelta
+from django.db.models import Q
 from django.forms import ValidationError, ModelForm, Form, CharField, TextInput
 from django.utils.translation import ugettext_lazy as _
 from .models import (
     Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
-    Ensemble)
+    Ensemble, Saison)
 from range_slider.fields import RangeSliderField
 
 
@@ -165,8 +167,23 @@ class SaisonForm(ModelForm):
                                     ' champs : « Ensemble » ou « Lieu ou '
                                     'Institution »'))
 
-        if data['debut'] and data['fin'] and data['debut'] > data['fin']:
-            raise ValidationError(_('La fin ne peut précéder le début.'))
+        if data['debut'] and data['fin']:
+            if data['debut'] > data['fin']:
+                raise ValidationError(_('La fin ne peut précéder le début.'))
+            elif data['fin'] - data['debut'] > timedelta(365):
+                raise ValidationError(_('La durée d’une saison ne peut excéder '
+                                        'un an.'))
+
+        filters = Q()
+        for s in ('debut', 'fin'):
+            filters |= Q(**{'debut__lte': data[s]}) & Q(**{'fin__gte': data[s]})
+        for k in ('ensemble', 'lieu'):
+            if data[k]:
+                filters &= Q(**{k: data[k]})
+        if Saison.objects.filter(filters).exists():
+            raise ValidationError(_('Les « Saison » liées au même  « Ensemble »'
+                                    ' ou « Lieu ou Institution » ne peuvent se '
+                                    'chevaucher.'))
         return data
 
 
