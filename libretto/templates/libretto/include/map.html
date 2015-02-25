@@ -24,9 +24,22 @@
       layers: [L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')],
       minZoom: 2,
       maxZoom: 15,
-      attributionControl: false,
-      fullscreenControl: true
+      zoomControl: false,
+      attributionControl: false
     });
+
+    map.addControl(L.control.fullscreen({
+      position: 'topright',
+      title: {
+        'false': '{% trans 'Voir en plein écran' %}',
+        'true': '{% trans 'Quitter le plein écran' %}'
+      }
+    }));
+    map.addControl(L.control.zoom({
+      position: 'topright',
+      zoomInTitle: '{% trans 'Zoomer' %}',
+      zoomOutTitle: '{% trans 'Dézoomer' %}'
+    }));
 
     var minValue = 1;
     var maxValue = 2;
@@ -53,6 +66,9 @@
     }
 
     var geoJson;
+    var $map = $('#map');
+    $map.find('[title]').tooltip({container: $map, placement: 'left'});
+    var $mapData = $map.find('.leaflet-objects-pane');
 
     map.on('moveend', function () {
       var url = '{{ geojson_url }}' + document.location.search;
@@ -63,7 +79,7 @@
       $.ajax({
         url: url
       }).done(function (data) {
-        tooltips_delete();
+        $mapData.find('[data-original-title]').tooltip('destroy');
         var empty = false;
         if (typeof geoJson == 'undefined') {
           empty = true;
@@ -77,14 +93,14 @@
           pointToLayer: function (feature, latlng) {
             return L.circleMarker(latlng, getOptions(feature.properties.n)
             ).on('add', function () {
-              $(this._container).attr('title', feature.properties.tooltip);
-              $(this._container).tooltip({container: '#map'});
+              this._container.setAttribute('title',
+                                           feature.properties.tooltip);
             }).on('click', function () {
               document.location.search = feature.properties.url;
             });
           }
         }).addTo(map);
-        tooltips_create();
+        $mapData.find('[title]').tooltip({container: $map});
         if (empty) {
           map.fitBounds(geoJson.getBounds(), {padding: [70, 70]});
         }
