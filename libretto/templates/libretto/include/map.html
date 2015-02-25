@@ -6,8 +6,16 @@
   <link rel="stylesheet" type="text/css" href="{% static 'leaflet-0.7.3/leaflet.css' %}" />
 {% endaddtoblock %}
 
+{% addtoblock 'css' strip %}
+  <link rel="stylesheet" type="text/css" href="{% static 'leaflet.fullscreen/dist/leaflet.fullscreen.css' %}" />
+{% endaddtoblock %}
+
 {% addtoblock 'js' strip %}
   <script type="text/javascript" src="{% static 'leaflet-0.7.3/leaflet.js' %}"></script>
+{% endaddtoblock %}
+
+{% addtoblock 'js' strip %}
+  <script src="{% static 'leaflet.fullscreen/dist/Leaflet.fullscreen.min.js' %}"></script>
 {% endaddtoblock %}
 
 {% addtoblock 'js' %}
@@ -16,7 +24,8 @@
       layers: [L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')],
       minZoom: 2,
       maxZoom: 15,
-      attributionControl: false
+      attributionControl: false,
+      fullscreenControl: true
     });
 
     var minValue = 1;
@@ -69,7 +78,7 @@
             return L.circleMarker(latlng, getOptions(feature.properties.n)
             ).on('add', function () {
               $(this._container).attr('title', feature.properties.tooltip);
-              $(this._container).tooltip({container: 'body'});
+              $(this._container).tooltip({container: '#map'});
             }).on('click', function () {
               document.location.search = feature.properties.url;
             });

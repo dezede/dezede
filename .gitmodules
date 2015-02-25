@@ -16,3 +16,6 @@
 [submodule "libretto/static/css/typeahead-bootstrap"]
 	path = libretto/static/css/typeahead-bootstrap
 	url = https://github.com/cviebrock/typeahead.js-bootstrap.css
+[submodule "libretto/static/leaflet.fullscreen"]
+	path = libretto/static/leaflet.fullscreen
+	url = https://github.com/Leaflet/Leaflet.fullscreen
