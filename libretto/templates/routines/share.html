@@ -1,0 +1,27 @@
+{% load i18n %}
+
+<div class="btn-group" role="group">
+  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="{% trans 'Partager' %}" data-placement="bottom">
+    <i class="fa fa-share-alt"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+    <li>
+      <a href="http://www.facebook.com/sharer.php?u={{ absolute_permalink|urlencode }}"
+         onclick="window.open(this.href, '', 'width=700, height=309'); return false;">
+        <i class="fa fa-fw fa-facebook"></i> {% trans 'sur Facebook' %}
+      </a>
+    </li>
+    <li>
+      <a href="https://twitter.com/share?url={{ absolute_permalink|urlencode }}&text={{ object|urlencode }}&via=DezedeOrg"
+         onclick="window.open(this.href, '', 'width=700, height=350'); return false;">
+        <i class="fa fa-fw fa-twitter"></i> {% trans 'sur Twitter' %}
+      </a>
+    </li>
+    <li>
+      <a href="https://plus.google.com/share?url={{ absolute_permalink|urlencode }}"
+         onclick="window.open(this.href, '', 'width=700, height=500'); return false;">
+        <i class="fa fa-fw fa-google-plus"></i> {% trans 'sur Google +' %}
+      </a>
+    </li>
+  </ul>
+</div>

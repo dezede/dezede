@@ -3,28 +3,32 @@
 
 <div class="btn-toolbar pull-right" role="toolbar">
 
+  {% if has_change_perm or has_delete_perm %}
+    <div class="btn-group{% if size %} btn-group-{{ size }}{% endif %}">
+
+      {% if has_change_perm %}
+        <a class="btn btn-primary" href="{% url admin_change object.pk %}"
+           title="{% trans "modifier"|capfirst %}" data-placement="bottom"
+           role="button">
+          <i class="fa fa-pencil"></i>
+        </a>
+      {% endif %}
+
+      {% if has_delete_perm %}
+        <a class="btn btn-danger" href="{% url admin_delete object.pk %}"
+           title="{% trans "supprimer"|capfirst %}" data-placement="bottom"
+           role="button">
+          <i class="fa fa-trash-o"></i>
+        </a>
+      {% endif %}
+
+      {% include 'routines/ownership.html' %}
+
+    </div>
+  {% endif %}
+
   <div class="btn-group{% if size %} btn-group-{{ size }}{% endif %}">
-
-    {% if has_change_perm %}
-      <a class="btn btn-primary" href="{% url admin_change object.pk %}"
-         title="{% trans "modifier"|capfirst %}" data-placement="bottom"
-         role="button">
-        <i class="fa fa-pencil"></i>
-      </a>
-    {% endif %}
-
-    {% if has_delete_perm %}
-      <a class="btn btn-danger" href="{% url admin_delete object.pk %}"
-         title="{% trans "supprimer"|capfirst %}" data-placement="bottom"
-         role="button">
-        <i class="fa fa-trash-o"></i>
-      </a>
-    {% endif %}
-
-  </div>
-
-  <div class="btn-group{% if size %} btn-group-{{ size }}{% endif %}">
-    {% include 'routines/ownership.html' %}
+    {% include 'routines/share.html' %}
     {% include 'routines/permalink.html' %}
   </div>
 

@@ -6,7 +6,7 @@
   {% if owner %}
     <a class="btn btn-default"
        href="{% url 'user_profile' owner.username %}" role="button"
-       title="{% trans 'Auteur :' %} {{ owner.get_full_name|default:owner }}"
+       title="{% trans 'Auteur :' %} {{ owner }}"
        data-placement="bottom">
       <i class="fa fa-user"></i>
     </a>

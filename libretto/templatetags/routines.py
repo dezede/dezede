@@ -5,7 +5,6 @@ from copy import copy
 from django.db.models import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template import Library, Template
-from django.contrib.sites.models import get_current_site
 from django.utils.encoding import force_text
 from libretto.models.common import PublishedQuerySet
 from libretto.models.functions import capfirst
@@ -37,7 +36,9 @@ def frontend_admin(context, obj=None, size='xs'):
     has_delete_perm = user.has_perm(delete_perm)
     admin_change = build_admin_view_name(change_perm)
     admin_delete = build_admin_view_name(delete_perm)
-    domain = get_current_site(request)
+    permalink = obj.permalien()
+    absolute_permalink = 'http%s://%s%s' % ('s' if request.is_secure() else '',
+                                            request.get_host(), permalink)
 
     assert size in ('', 'xs', 'sm', 'md', 'lg')
 
@@ -46,7 +47,8 @@ def frontend_admin(context, obj=None, size='xs'):
         'has_delete_perm': has_delete_perm,
         'admin_change': admin_change,
         'admin_delete': admin_delete,
-        'domain': domain,
+        'permalink': permalink,
+        'absolute_permalink': absolute_permalink,
         'object': obj,
         'size': size,
     }
