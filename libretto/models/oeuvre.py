@@ -9,9 +9,10 @@ from django.contrib.contenttypes.generic import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator
-from django.db.models import CharField, ManyToManyField, \
-    PositiveIntegerField, ForeignKey, IntegerField, TextField, \
-    BooleanField, permalink, get_model, SmallIntegerField, PROTECT
+from django.db.models import (
+    CharField, ManyToManyField, PositiveIntegerField, ForeignKey, IntegerField,
+    TextField, BooleanField, permalink, get_model, SmallIntegerField, PROTECT,
+    Count)
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -756,6 +757,18 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def evenements(self):
         return get_model('libretto', 'Evenement').objects.filter(
             programme__oeuvre__in=self.get_descendants(include_self=True))
+
+    def oeuvres_associees(self):
+        return (
+            Oeuvre.objects.exclude(
+                pk__in=self.get_descendants(include_self=True))
+            .filter(elements_de_programme__evenement__programme__oeuvre=self)
+            .annotate(n=Count('elements_de_programme__evenement'))
+            .order_by('-n', *self._meta.ordering)).distinct()
+
+    def _link_with_number(self):
+        return ugettext('œuvre jouée %s fois avec : %s') % (
+            self.n, self.link())
 
     def calc_referent_ancestors(self, tags=False, links=False):
         if not self.pk or self.contenu_dans is None or \
