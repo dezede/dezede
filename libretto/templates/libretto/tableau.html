@@ -53,7 +53,9 @@
             $('.dataTables_filter input').attr('placeholder', 'Rechercher...')
                 .addClass('form-control');
           },
-          fnDrawCallback: tooltips_reload
+          fnDrawCallback: function () {
+            tooltips_reload();
+          }
         });
       });
     </script>

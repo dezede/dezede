@@ -67,8 +67,9 @@
 
     var geoJson;
     var $map = $('#map');
-    $map.find('[title]').tooltip({container: $map, placement: 'left'});
-    var $mapData = $map.find('.leaflet-objects-pane');
+    var $mapControls = $map.find('.leaflet-control-container');
+    $mapControls.find('[title]').data('placement', 'left');
+    tooltips_create($mapControls);
 
     map.on('moveend', function () {
       var url = '{{ geojson_url }}' + document.location.search;
@@ -79,7 +80,7 @@
       $.ajax({
         url: url
       }).done(function (data) {
-        $mapData.find('[data-original-title]').tooltip('destroy');
+        tooltips_delete($map);
         var empty = false;
         if (typeof geoJson == 'undefined') {
           empty = true;
@@ -100,11 +101,13 @@
             });
           }
         }).addTo(map);
-        $mapData.find('[title]').tooltip({container: $map});
+        tooltips_create($map);
         if (empty) {
           map.fitBounds(geoJson.getBounds(), {padding: [70, 70]});
         }
       });
+    }).on('fullscreenchange', function () {
+      tooltips_reload($mapControls);
     });
   </script>
 {% endaddtoblock %}

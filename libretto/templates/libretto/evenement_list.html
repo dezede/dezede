@@ -91,7 +91,9 @@
         $.endlessPaginate({
           paginateOnScroll: true,
           paginateOnScrollMargin: 200,
-          onCompleted: tooltips_reload
+          onCompleted: function () {
+            tooltips_create();
+          }
         });
 
         function get_url_kwarg(name, default_value) {

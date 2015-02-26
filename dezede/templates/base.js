@@ -1,17 +1,21 @@
 {# Gestion des tooltips #}
-function tooltips_delete() {
-  $('*[data-original-title]').tooltip('destroy');
+function tooltips_delete($container) {
+  if (typeof $container === 'undefined') {
+    $container = $('body');
+  }
+  $container.find('[data-original-title]').tooltip('destroy');
 }
 
-function tooltips_create() {
-  $('*[title]').tooltip({
-    container: 'body'
-  });
+function tooltips_create($container) {
+  if (typeof $container === 'undefined') {
+    $container = $('body');
+  }
+  $container.find('[title]').tooltip({container: $container});
 }
 
-function tooltips_reload() {
-  tooltips_delete();
-  tooltips_create();
+function tooltips_reload($container) {
+  tooltips_delete($container);
+  tooltips_create($container);
 }
 
 tooltips_reload();
