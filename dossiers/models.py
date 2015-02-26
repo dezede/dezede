@@ -133,6 +133,9 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     def get_absolute_url(self):
         return 'dossierdevenements_detail', (self.pk,)
 
+    def permalien(self):
+        return self.get_absolute_url()
+
     @permalink
     def get_data_absolute_url(self):
         return 'dossierdevenements_data_detail', (self.pk,)
