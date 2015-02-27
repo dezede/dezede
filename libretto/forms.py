@@ -161,29 +161,31 @@ class SaisonForm(ModelForm):
     def clean(self):
         data = super(SaisonForm, self).clean()
 
-        if data['ensemble'] and data['lieu'] or \
-                not data['ensemble'] and not data['lieu']:
-            raise ValidationError(_('Vous devez remplir un seul des deux'
-                                    ' champs : « Ensemble » ou « Lieu ou '
-                                    'Institution »'))
+        debut = data['debut']
+        fin = data['fin']
+        ensemble = data['ensemble']
+        lieu = data['lieu']
 
-        if data['debut'] and data['fin']:
-            if data['debut'] > data['fin']:
+        if not ((ensemble is None) ^ (lieu is None)):
+            raise ValidationError(
+                _('Vous devez remplir « Ensemble » '
+                  'ou « Lieu ou Institution »'))
+
+        if debut and fin:
+            if debut > fin:
                 raise ValidationError(_('La fin ne peut précéder le début.'))
-            elif data['fin'] - data['debut'] > timedelta(365):
+            elif fin - debut > timedelta(365):
                 raise ValidationError(_('La durée d’une saison ne peut excéder '
                                         'un an.'))
 
-        filters = Q()
-        for s in ('debut', 'fin'):
-            filters |= Q(**{'debut__lte': data[s]}) & Q(**{'fin__gte': data[s]})
-        for k in ('ensemble', 'lieu'):
-            if data[k]:
-                filters &= Q(**{k: data[k]})
-        if Saison.objects.filter(filters).exists():
-            raise ValidationError(_('Les « Saison » liées au même  « Ensemble »'
-                                    ' ou « Lieu ou Institution » ne peuvent se '
-                                    'chevaucher.'))
+        overlapping_seasons = Saison.objects.filter(
+            Q(debut__range=(debut, fin)) | Q(fin__range=(debut, fin))
+            | Q(debut__lt=debut, fin__gt=fin),
+            ensemble=ensemble, lieu=lieu)
+        if overlapping_seasons.exists():
+            raise ValidationError(
+                _('Une saison existe déjà sur cette période pour « %s ».')
+                % (ensemble or lieu))
         return data
 
 
