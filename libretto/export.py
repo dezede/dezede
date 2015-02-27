@@ -32,9 +32,6 @@ class LieuExporter(Exporter):
         return force_text(obj.owner)
 
 
-TITRES = dict(Individu.TITRES)
-
-
 @exporter_registry.add
 class IndividuExporter(Exporter):
     model = Individu
@@ -45,13 +42,8 @@ class IndividuExporter(Exporter):
         'notes_publiques', 'notes_privees', 'etat__nom', 'owner',
     )
     verbose_overrides = {
-        'evenement__etat__nom': 'état',
-        'evenement__owner': 'propriétaire',
+        'owner': 'propriétaire',
     }
-
-    @staticmethod
-    def get_titre(obj):
-        return force_text(TITRES.get(obj.titre, ''))
 
     @staticmethod
     def get_naissance(obj):
@@ -168,7 +160,6 @@ class EvenementExporter(Exporter):
         'id', 'debut_date', 'debut_heure', 'debut_lieu', 'debut_lieu__nom',
         'programme', 'code_programme', 'distribution',
         'exoneres', 'payantes', 'frequentation', 'scolaires', 'jauge',
-        'recette_generale', 'recette_par_billets',
         'notes_publiques', 'notes_privees', 'etat__nom', 'owner',
     )
     verbose_overrides = {
@@ -188,4 +179,3 @@ class EvenementExporter(Exporter):
     @staticmethod
     def get_owner(obj):
         return force_text(obj.owner)
-

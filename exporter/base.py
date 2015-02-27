@@ -79,19 +79,32 @@ class Exporter(object):
                 return ''
             return int(x)
 
+        # Avoids float representation of nullable integer fields
         for lookup in self.null_int_lookups:
             df[lookup] = df[lookup].apply(clean_null_int)
 
-        methods_data = defaultdict(list)
-        for obj in self.get_queryset():
-            for method_name in self.method_names:
-                v = getattr(self, 'get_' + method_name)(obj)
-                methods_data[method_name].append(v)
-        for method_name in self.method_names:
-            df[method_name] = methods_data[method_name]
+        # Display verbose value of fields with `choices`
+        for lookup, field in self.fields.items():
+            if field.choices:
+                df[lookup] = df[lookup].replace({k: force_text(v)
+                                                 for k, v in
+                                                 field.choices})
 
+        # Adds columns calculated from methods
+        if self.method_names:
+            methods_data = defaultdict(list)
+            for obj in self.get_queryset():
+                for method_name in self.method_names:
+                    v = getattr(self, 'get_' + method_name)(obj)
+                    methods_data[method_name].append(v)
+            for method_name in self.method_names:
+                df[method_name] = methods_data[method_name]
+
+        # Reordes columns after adding those using methods
         df = df[list(self.columns)]
+        # Adds verbose column names
         df.columns = [self.get_verbose_name(column) for column in df.columns]
+        # Sets the first column (usually pk) as index
         df.set_index(df.columns[0], inplace=True)
         return df
 
