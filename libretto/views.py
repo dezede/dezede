@@ -16,6 +16,7 @@ from eztables.views import DatatablesView
 from haystack.query import SearchQuerySet
 from polymorphic import PolymorphicQuerySet
 from viewsets import ModelViewSet
+from libretto.export import EvenementExporter
 from libretto.models.functions import href
 from .models import *
 from .models.common import PublishedQuerySet
@@ -174,6 +175,8 @@ class BaseEvenementListView(PublishedListView):
             response = redirect(*self.get_success_view())
             if self.valid_form:
                 response['Location'] += '?' + new_GET.urlencode(safe=b'|')
+        if new_GET.get('as_csv'):
+            return EvenementExporter(self.get_queryset()).to_csv_response()
         return response
 
 

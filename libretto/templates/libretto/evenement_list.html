@@ -54,6 +54,9 @@
         {% with count=evenements.count %}
           {% if count %}
             {% if user.is_authenticated %}
+              <a href="{% csv_request %}" class="btn btn-primary pull-right">
+                {% trans 'Exporter en CSV' %}
+              </a>
               {% if request.GET.show_map == 'true' %}
                 <a href="{% map_request show_map=False %}" class="btn btn-default pull-right">
                   {% trans 'Masquer la carte' %}

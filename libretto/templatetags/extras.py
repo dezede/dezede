@@ -198,3 +198,11 @@ def map_request(context, lieu_pk=None, show_map=True):
     else:
         del new_request['show_map']
     return '?' + new_request.urlencode()
+
+
+@register.simple_tag(takes_context=True)
+def csv_request(context):
+    request = context['request']
+    new_request = request.GET.copy()
+    new_request['as_csv'] = 'true'
+    return '?' + new_request.urlencode()
