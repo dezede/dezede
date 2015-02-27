@@ -46,6 +46,7 @@ def run():
     start = min(date for v in data.values() for n, date in v)
     start -= datetime.timedelta(days=start.weekday())
     end = max(date for v in data.values() for n, date in v)
+    end += datetime.timedelta(days=6-end.weekday())
     svg_width = rect_size * (end - start).total_seconds() / step.total_seconds()
 
     with io.open('stats.html', 'w') as f:
