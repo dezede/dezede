@@ -100,7 +100,7 @@ class Exporter(object):
             for method_name in self.method_names:
                 df[method_name] = methods_data[method_name]
 
-        # Reordes columns after adding those using methods
+        # Reorders columns after adding those using methods
         df = df[list(self.columns)]
         # Adds verbose column names
         df.columns = [self.get_verbose_name(column) for column in df.columns]
