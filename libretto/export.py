@@ -29,6 +29,8 @@ class LieuExporter(Exporter):
 
     @staticmethod
     def get_owner(obj):
+        if obj.owner is None:
+            return ''
         return force_text(obj.owner)
 
 
@@ -59,6 +61,8 @@ class IndividuExporter(Exporter):
 
     @staticmethod
     def get_owner(obj):
+        if obj.owner is None:
+            return ''
         return force_text(obj.owner)
 
 
@@ -84,7 +88,7 @@ class OeuvreExporter(Exporter):
 
     @staticmethod
     def get_caracteristiques(obj):
-        return obj.caracteristiques_html(tags=False)
+        return ', '.join(obj.caracteristiques.html_list(tags=False))
 
     @staticmethod
     def get_auteurs(obj):
@@ -95,12 +99,14 @@ class OeuvreExporter(Exporter):
         return obj.pupitres_html(tags=False)
 
     @staticmethod
-    def get_owner(obj):
-        return force_text(obj.owner)
-
-    @staticmethod
     def get_creation(obj):
         return obj.creation.html(tags=False)
+
+    @staticmethod
+    def get_owner(obj):
+        if obj.owner is None:
+            return ''
+        return force_text(obj.owner)
 
 
 @exporter_registry.add
@@ -150,6 +156,8 @@ class ElementDeProgrammeExporter(Exporter):
 
     @staticmethod
     def get_evenement__owner(obj):
+        if obj.evenement.owner is None:
+            return ''
         return force_text(obj.evenement.owner)
 
 
@@ -178,4 +186,6 @@ class EvenementExporter(Exporter):
 
     @staticmethod
     def get_owner(obj):
+        if obj.owner is None:
+            return ''
         return force_text(obj.owner)
