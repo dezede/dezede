@@ -5,7 +5,7 @@ from django.utils.encoding import force_text
 
 from exporter import Exporter, exporter_registry
 
-from .models import Lieu, ElementDeProgramme, Evenement
+from .models import Lieu, ElementDeProgramme, Evenement, Oeuvre, Individu
 
 
 @exporter_registry.add
@@ -14,12 +14,11 @@ class LieuExporter(Exporter):
     columns = (
         'id', 'nom', 'parent', 'parent__nom', 'nature__nom', 'code_postal',
         'geometry', 'historique',
-        'notes_publiques', 'notes_privees', 'etat__nom', 'owner__last_name',
+        'notes_publiques', 'notes_privees', 'etat__nom', 'owner'
     )
     verbose_overrides = {
-        'parent': 'ID parent',
-        'parent__nom': 'nom du parent',
-        'geometry': 'coordonnées GPS',
+        'parent': 'ID parent', 'parent__nom': 'nom du parent',
+        'geometry': 'coordonnées GPS', 'owner': 'propriétaire',
     }
 
     @staticmethod
@@ -27,6 +26,89 @@ class LieuExporter(Exporter):
         if obj.geometry is None:
             return
         return force_text(obj.geometry)
+
+    @staticmethod
+    def get_owner(obj):
+        return force_text(obj.owner)
+
+
+TITRES = dict(Individu.TITRES)
+
+
+@exporter_registry.add
+class IndividuExporter(Exporter):
+    model = Individu
+    columns = (
+        'id', 'particule_nom', 'nom', 'particule_nom_naissance',
+        'nom_naissance', 'prenoms', 'prenoms_complets', 'pseudonyme', 'titre',
+        'naissance', 'deces', 'professions', 'isni',
+        'notes_publiques', 'notes_privees', 'etat__nom', 'owner',
+    )
+    verbose_overrides = {
+        'evenement__etat__nom': 'état',
+        'evenement__owner': 'propriétaire',
+    }
+
+    @staticmethod
+    def get_titre(obj):
+        return force_text(TITRES.get(obj.titre, ''))
+
+    @staticmethod
+    def get_naissance(obj):
+        return obj.naissance.html(tags=False)
+
+    @staticmethod
+    def get_deces(obj):
+        return obj.deces.html(tags=False)
+
+    @staticmethod
+    def get_professions(obj):
+        return obj.calc_professions(tags=False)
+
+    @staticmethod
+    def get_owner(obj):
+        return force_text(obj.owner)
+
+
+@exporter_registry.add
+class OeuvreExporter(Exporter):
+    model = Oeuvre
+    columns = (
+        'id', 'str', 'genre__nom', 'coupe', 'numero', 'opus', 'tonalite',
+        'surnom', 'incipit', 'nom_courant', 'caracteristiques', 'auteurs',
+        'pupitres', 'creation',
+        'notes_publiques', 'notes_privees', 'etat__nom', 'owner',
+    )
+    verbose_overrides = {
+        'str': 'nom',
+        'caracteristiques': 'autres caractéristiques',
+        'etat__nom': 'état',
+        'owner': 'propriétaire', 'creation': 'création',
+    }
+
+    @staticmethod
+    def get_str(obj):
+        return force_text(obj)
+
+    @staticmethod
+    def get_caracteristiques(obj):
+        return obj.caracteristiques_html(tags=False)
+
+    @staticmethod
+    def get_auteurs(obj):
+        return obj.auteurs_html(tags=False)
+
+    @staticmethod
+    def get_pupitres(obj):
+        return obj.pupitres_html(tags=False)
+
+    @staticmethod
+    def get_owner(obj):
+        return force_text(obj.owner)
+
+    @staticmethod
+    def get_creation(obj):
+        return obj.creation.html(tags=False)
 
 
 @exporter_registry.add
@@ -84,13 +166,14 @@ class EvenementExporter(Exporter):
     model = Evenement
     columns = (
         'id', 'debut_date', 'debut_heure', 'debut_lieu', 'debut_lieu__nom',
-        'programme', 'distribution',
+        'programme', 'code_programme', 'distribution',
+        'exoneres', 'payantes', 'frequentation', 'scolaires', 'jauge',
+        'recette_generale', 'recette_par_billets',
         'notes_publiques', 'notes_privees', 'etat__nom', 'owner',
     )
     verbose_overrides = {
         'debut_lieu': 'ID lieu',
         'debut_lieu__nom': 'nom du lieu',
-        'distribution': 'distribution générale de l’événement',
         'owner': 'propriétaire',
     }
 
