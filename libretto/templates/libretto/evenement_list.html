@@ -54,7 +54,7 @@
         {% with count=evenements.count %}
           {% if count %}
             {% if user.is_authenticated %}
-              <div class="btn-toolbar pull-right" role="toolbar">
+              <div class="pull-right">
                 <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                     Exporter <span class="caret"></span>
@@ -65,12 +65,12 @@
                     <li><a href="{% export_request 'xlsx' %}">XLSX</a></li>
                   </ul>
                 </div>
-                {% if request.GET.show_map == 'true' %}
+                {% if request.GET.show_map == 'True' %}
                   <a href="{% map_request show_map=False %}" class="btn btn-default">
                     {% trans 'Masquer la carte' %}
                   </a>
                 {% else %}
-                  <a href="{% map_request %}" class="btn btn-primary pull-right">
+                  <a href="{% map_request %}" class="btn btn-primary">
                     {% trans 'Afficher sur une carte' %}
                   </a>
                 {% endif %}
@@ -81,7 +81,7 @@
               {% blocktrans count counter=count %}résultat{% plural %}résultats
               {% endblocktrans %}
             </h3>
-            {% if user.is_authenticated and request.GET.show_map == 'true' %}
+            {% if user.is_authenticated and request.GET.show_map == 'True' %}
               {% include 'libretto/include/map.html' %}
             {% endif %}
           {% endif %}
