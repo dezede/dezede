@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.utils.html import strip_tags
 from slugify import slugify_url
 from south.utils import datetime_utils as datetime
 from south.db import db
@@ -16,7 +17,7 @@ SLUG_OVERRIDES = {
 def get_titre(dossier):
     if dossier.pk in SLUG_OVERRIDES:
         return SLUG_OVERRIDES[dossier.pk]
-    return dossier.titre_court or dossier.titre
+    return strip_tags(dossier.titre_court or dossier.titre)
 
 
 class Migration(DataMigration):
@@ -27,13 +28,14 @@ class Migration(DataMigration):
             parent = dossier
             titre = ''
             while parent is not None:
-                titre = get_titre(parent) + ' ' + titre
+                titre_parent = get_titre(parent)
+                if titre_parent not in titre:
+                    titre = titre_parent + ' ' + titre
                 parent = parent.parent
             dossier.slug = slugify_url(titre.strip())
             dossier.save()
 
     def backwards(self, orm):
-        return
         raise NotImplementedError
 
     models = {
