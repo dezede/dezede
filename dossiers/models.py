@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import (
     CharField, DateField, ManyToManyField,
     TextField, permalink, PositiveSmallIntegerField, Q,
-    ForeignKey)
+    ForeignKey, SlugField)
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -65,6 +65,7 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children', verbose_name=_('parent'))
     position = PositiveSmallIntegerField(_('position'), default=1)
+    slug = SlugField(unique=True)
 
     # Métadonnées
     editeurs_scientifiques = ManyToManyField(
@@ -131,14 +132,15 @@ class DossierDEvenements(MPTTModel, PublishedModel):
 
     @permalink
     def get_absolute_url(self):
-        return 'dossierdevenements_detail', (self.pk,)
+        return 'dossierdevenements_detail', (self.slug,)
 
+    @permalink
     def permalien(self):
-        return self.get_absolute_url()
+        return 'dossierdevenements_permanent_detail', (self.pk,)
 
     @permalink
     def get_data_absolute_url(self):
-        return 'dossierdevenements_data_detail', (self.pk,)
+        return 'dossierdevenements_data_detail', (self.slug,)
 
     def get_queryset(self, dynamic=False):
         if hasattr(self, '_evenement_queryset'):

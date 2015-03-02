@@ -32,20 +32,18 @@ class DossierDEvenementsDataDetail(EvenementListView):
     enable_default_page = False
 
     def get_queryset(self):
-        self.object = get_object_or_404(DossierDEvenements,
-                                        pk=self.kwargs['pk'])
+        self.object = get_object_or_404(DossierDEvenements, **self.kwargs)
         if not self.object.can_be_viewed(self.request):
             raise PermissionDenied
         return super(DossierDEvenementsDataDetail, self).get_queryset(
             base_filter=Q(pk__in=self.object.get_queryset()))
 
     def get_geojson_url(self):
-        return reverse('dossierdevenements_data_geojson',
-                       args=(self.kwargs['pk'],))
+        return reverse('dossierdevenements_data_geojson', kwargs=self.kwargs)
 
     def get_context_data(self, **kwargs):
-        data = super(DossierDEvenementsDataDetail, self) \
-            .get_context_data(**kwargs)
+        data = super(DossierDEvenementsDataDetail,
+                     self).get_context_data(**kwargs)
         data['object'] = self.object
         return data
 
@@ -55,8 +53,7 @@ class DossierDEvenementsDataDetail(EvenementListView):
 
 class DossierDEvenementsDataGeoJson(EvenementGeoJson):
     def get_queryset(self):
-        self.object = get_object_or_404(DossierDEvenements,
-                                        pk=self.kwargs['pk'])
+        self.object = get_object_or_404(DossierDEvenements, **self.kwargs)
         if not self.object.can_be_viewed(self.request):
             raise PermissionDenied
         return super(DossierDEvenementsDataGeoJson, self).get_queryset(

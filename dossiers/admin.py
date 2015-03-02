@@ -25,6 +25,7 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
     form = DossierDEvenementsForm
     list_display = ('__str__',)
     search_fields = ('titre', 'titre_court',)
+    prepopulated_fields = {'slug': ('titre',)}
     readonly_fields = ('get_count', 'get_queryset')
     raw_id_fields = ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs',
                      'ensembles', 'sources', 'evenements')
@@ -35,7 +36,8 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
     fieldsets = (
         (None, {
             'fields': ('titre', 'titre_court', 'categorie',
-                       ('parent', 'position'))
+                       ('parent', 'position'),
+                       'slug')
         }),
         (_('Métadonnées'), {
             'fields': (
