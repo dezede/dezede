@@ -194,20 +194,21 @@ class EvenementExport(BaseEvenementListView):
             return qs
         return qs.filter(owner=self.request.user)
 
+    def get_cleaned_GET(self):
+        query_dict = super(EvenementExport, self).get_cleaned_GET()
+        del query_dict['format']
+        return query_dict
+
     def get(self, request, *args, **kwargs):
         data = self.request.GET.copy()
-        export_format = data.get('format', '')
-        print(export_format)
+        export_format = data.get('format')
         jobs = {'csv': events_to_csv, 'xlsx': events_to_xlsx,
                 'json': events_to_json}
         pk_list = list(self.get_queryset().values_list('pk', flat=True))
-        if not (self.valid_form or export_format in jobs):
-            return redirect(*self.get_success_view())
-        launch_export(jobs[export_format], request, pk_list,
-                      export_format, 'de %s événements' % len(pk_list))
-        del data['format']
-        return HttpResponseRedirect(
-            reverse('evenements') + '?' + data.urlencode())
+        if self.valid_form and export_format in jobs:
+            launch_export(jobs[export_format], request, pk_list,
+                          export_format, 'de %s événements' % len(pk_list))
+        return super(EvenementExport, self).get(request, *args, **kwargs)
 
 
 class EvenementGeoJson(BaseEvenementListView):

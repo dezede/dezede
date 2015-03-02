@@ -17,6 +17,12 @@ class Exporter(object):
     model = None
     columns = ()
     verbose_overrides = {}
+    CONTENT_TYPES = {
+        'json': 'application/json',
+        'csv': 'text/csv',
+        'xlsx': 'application/vnd.openxmlformats-officedocument'
+                '.spreadsheetml.sheet',
+    }
 
     def __init__(self, queryset=None):
         self.queryset = queryset
@@ -140,8 +146,8 @@ class Exporter(object):
         f.close()
         return out
 
-    def _to_response(self, content, content_type, extension,
-                     attachment=True):
+    def _to_response(self, content, extension, attachment=True):
+        content_type = self.CONTENT_TYPES[extension]
         response = HttpResponse(content, content_type=content_type)
         filename = '[%s] %s %s' % (Site.objects.get_current().name,
                                    self.get_queryset().count(),
@@ -153,14 +159,10 @@ class Exporter(object):
         return response
 
     def to_json_response(self):
-        return self._to_response(self.to_json(), 'application/json', 'json',
-                                 attachment=False)
+        return self._to_response(self.to_json(), 'json')
 
     def to_csv_response(self):
-        return self._to_response(self.to_csv(), 'text/csv', 'csv')
+        return self._to_response(self.to_csv(), 'csv')
 
     def to_xlsx_response(self):
-        return self._to_response(
-            self.to_xlsx(),
-            'application/vnd.openxmlformats-officedocument'
-            '.spreadsheetml.sheet', 'xlsx')
+        return self._to_response(self.to_xlsx(), 'xlsx')

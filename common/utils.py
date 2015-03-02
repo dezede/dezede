@@ -91,7 +91,7 @@ def launch_export(job, request, data, file_extension, subject):
                       'quelques minutes.' % (file_extension, subject))
 
 
-def get_success_mail(subject, user, filename, pdf_content):
+def get_success_mail(subject, user, filename, file_content, content_type):
     body = """
         <p>Bonjour,</p>
 
@@ -109,8 +109,7 @@ def get_success_mail(subject, user, filename, pdf_content):
     mail = EmailMessage('[Dezède] Export %s' % subject,
                         body=body, to=(user.email,))
     mail.content_subtype = 'html'
-    mail.attach('%s.pdf' % filename,
-                pdf_content, 'application/pdf')
+    mail.attach(filename, file_content, content_type)
     return mail
 
 
@@ -160,7 +159,8 @@ def send_pdf(context, template_name, subject, filename, user_pk, site_pk,
         mail = get_failure_mail(subject, user)
         mail_admins('Error while generating `%s`' % filename, e.body)
     else:
-        mail = get_success_mail(subject, user, filename, pdf_content)
+        mail = get_success_mail(subject, user, filename + '.pdf', pdf_content,
+                                'application/pdf')
 
     mail.send()
 
@@ -168,7 +168,7 @@ def send_pdf(context, template_name, subject, filename, user_pk, site_pk,
 
 
 def send_export(exporter_instance, extension, subject, filename, user_pk,
-                site_pk, language_code):
+                language_code):
     translation.activate(language_code)
     user = HierarchicUser.objects.get(pk=user_pk)
     request = HttpRequest()
@@ -179,5 +179,7 @@ def send_export(exporter_instance, extension, subject, filename, user_pk,
         get_failure_mail(subject, user).send()
         unlock_user(user)
         raise
-    get_success_mail(subject, user, filename, file_content).send()
+    filename += '.' + extension
+    get_success_mail(subject, user, filename, file_content,
+                     exporter_instance.CONTENT_TYPES[extension]).send()
     unlock_user(user)
