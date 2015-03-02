@@ -5,7 +5,6 @@ from StringIO import StringIO
 
 from collections import defaultdict
 from math import isnan
-from django.conf import settings
 from django.contrib.sites.models import Site
 from django.db.models import IntegerField, ForeignKey, DateTimeField
 from django.http import HttpResponse
@@ -29,7 +28,7 @@ class Exporter(object):
                                  'the model defined in the exporter')
 
         if not self.columns:
-            self.columns = [f.name for f in self.model._meta.fields]
+            self.columns = [field.name for field in self.model._meta.fields]
 
         self.method_names = []
         self.lookups = []
@@ -43,12 +42,12 @@ class Exporter(object):
         self.final_fields = {lookup: self.get_final_field(lookup)
                              for lookup in self.lookups}
         self.null_int_lookups = []
-        self.timezone_lookups = []
-        for l, f in self.final_fields.items():
-            if isinstance(f, (IntegerField, ForeignKey)) and f.null:
-                self.null_int_lookups.append(l)
-            elif isinstance(f, DateTimeField) and settings.USE_TZ:
-                self.timezone_lookups.append(l)
+        self.datetime_lookups = []
+        for lookup, field in self.final_fields.items():
+            if isinstance(field, (IntegerField, ForeignKey)) and field.null:
+                self.null_int_lookups.append(lookup)
+            elif isinstance(field, DateTimeField):
+                self.datetime_lookups.append(lookup)
 
     def get_field(self, lookup):
         return self.model._meta.get_field(lookup.split('__')[0])
@@ -94,15 +93,14 @@ class Exporter(object):
             return dt.replace(tzinfo=None)
 
         # Removes timezones to allow datetime serialization in some formats
-        for lookup in self.timezone_lookups:
+        for lookup in self.datetime_lookups:
             df[lookup] = df[lookup].apply(remove_timezone)
 
         # Display verbose value of fields with `choices`
         for lookup, field in self.fields.items():
             if field.choices:
                 df[lookup] = df[lookup].replace({k: force_text(v)
-                                                 for k, v in
-                                                 field.choices})
+                                                 for k, v in field.choices})
 
         # Adds columns calculated from methods
         if self.method_names:
