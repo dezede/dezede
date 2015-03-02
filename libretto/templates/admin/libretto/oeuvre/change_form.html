@@ -1,0 +1,12 @@
+{% extends 'admin/libretto/change_form.html' %}
+{% load i18n %}
+
+{% block object-tools-items %}
+  <li>
+    <a href="{% url 'admin:libretto_oeuvre_add' %}?contenu_dans={{ original.pk }}"
+       class="addlink">
+      {% trans 'Ajouter un extrait' %}
+    </a>
+  </li>
+  {{ block.super }}
+{% endblock %}

@@ -224,6 +224,29 @@ class AuteurInline(CustomTabularInline, GenericStackedInline):
         'fk': ['profession', 'individu'],
     }
 
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super(AuteurInline,
+                        self).get_formset(request, obj=obj, **kwargs)
+        if request.method == 'POST' or 'contenu_dans' not in request.GET:
+            return formset
+
+        # Lorsqu’on saisit un extrait, il faut que les auteurs
+        # soient déjà remplis, l’utilisateur n’aura qu’à les modifier dans les
+        # cas où cela ne correspondrait pas à l’œuvre mère (par exemple
+        # pour une ouverture d’opéra où le librettiste n’est pas auteur).
+
+        contenu_dans = Oeuvre.objects.get(pk=request.GET['contenu_dans'])
+        initial = list(contenu_dans.auteurs.values('individu', 'profession'))
+
+        class TmpFormset(formset):
+            extra = len(initial)
+
+            def __init__(self, *args, **kwargs):
+                kwargs['initial'] = initial
+                super(TmpFormset, self).__init__(*args, **kwargs)
+
+        return TmpFormset
+
 
 class MembreInline(CustomStackedInline):
     model = Membre
