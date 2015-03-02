@@ -24,8 +24,8 @@ from .models import *
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
     ElementDeDistributionForm, EnsembleForm, SaisonForm)
-from dossiers.jobs import events_to_pdf as events_to_pdf_job
-from dossiers.utils import launch_pdf_export
+from .jobs import events_to_pdf as events_to_pdf_job
+from common.utils import launch_export
 from typography.utils import replace
 
 
@@ -986,9 +986,9 @@ def events_to_pdf(modeladmin, request, queryset):
             messages.WARNING)
         queryset = queryset[:MAX_EXPORTED_EVENTS]
         n = MAX_EXPORTED_EVENTS
-    launch_pdf_export(
+    launch_export(
         events_to_pdf_job, request,
-        list(queryset.values_list('pk', flat=True)), 'de %s événements' % n)
+        list(queryset.values_list('pk', flat=True)), 'PDF', 'de %s événements' % n)
 events_to_pdf.short_description = _('Exporter en PDF')
 
 

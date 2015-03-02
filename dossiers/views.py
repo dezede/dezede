@@ -7,14 +7,15 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView
+
 from accounts.models import HierarchicUser
+from .jobs import dossier_to_pdf
 from libretto.models import Source, Oeuvre
 from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementListView,
     EvenementGeoJson)
-from .jobs import dossier_to_pdf
 from .models import CategorieDeDossiers, DossierDEvenements
-from .utils import launch_pdf_export
+from common.utils import launch_export
 
 
 class CategorieDeDossiersList(PublishedListView):
@@ -69,8 +70,8 @@ class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        launch_pdf_export(dossier_to_pdf, request, self.object.pk,
-                          'du dossier « %s »' % self.object)
+        launch_export(dossier_to_pdf, request, self.object.pk, 'PDF',
+                      'du dossier « %s »' % self.object)
         return redirect(reverse('dossierdevenements_detail',
                                 args=(self.object.pk,)))
 

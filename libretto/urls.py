@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.conf.urls import *
 from .api.rest import router as api_router
-from libretto.views import TreeNode, EnsembleViewSet
+from libretto.views import TreeNode, EnsembleViewSet, EvenementExport
 from .views import *
 
 
@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     url(br'^', include(EnsembleViewSet().urls)),
     url(br'^', include(OeuvreViewSet().urls)),
     url(br'^evenements/$', EvenementListView.as_view(), name=b'evenements'),
+    url(br'^evenements/export$', EvenementExport.as_view(),
+        name=b'evenements_export'),
     url(br'^evenements/geojson$', EvenementGeoJson.as_view(),
         name=b'evenements_geojson'),
     url(br'^evenements/id/(?P<pk>\d+)/$', EvenementDetailView.as_view(),

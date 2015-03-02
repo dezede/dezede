@@ -5,11 +5,12 @@ from HTMLParser import HTMLParser
 import re
 from bs4 import BeautifulSoup, Comment
 from django.contrib.gis.geos import GEOSGeometry
+from django.core.urlresolvers import reverse
 from django.db import connection
 from django.template import Library
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
-from ..models import Evenement, Lieu
+from ..models import Lieu
 from ..models.functions import date_html as date_html_util
 from ..utils import abbreviate as abbreviate_func
 
@@ -186,23 +187,23 @@ def get_map_data(evenement_qs, min_places, bbox):
 @register.simple_tag(takes_context=True)
 def map_request(context, lieu_pk=None, show_map=True):
     request = context['request']
-    new_request = request.GET.copy()
-    if 'bbox' in new_request:
-        del new_request['bbox']
-    if 'min_places' in new_request:
-        del new_request['min_places']
+    query_dict = request.GET.copy()
+    if 'bbox' in query_dict:
+        del query_dict['bbox']
+    if 'min_places' in query_dict:
+        del query_dict['min_places']
     if lieu_pk is not None:
-        new_request['lieu'] = '|%s|' % lieu_pk
+        query_dict['lieu'] = '|%s|' % lieu_pk
     if show_map:
-        new_request['show_map'] = 'true'
+        query_dict['show_map'] = True
     else:
-        del new_request['show_map']
-    return '?' + new_request.urlencode()
+        del query_dict['show_map']
+    return '?' + query_dict.urlencode()
 
 
 @register.simple_tag(takes_context=True)
-def export_request(context, format):
+def export_request(context, export_format):
     request = context['request']
-    new_request = request.GET.copy()
-    new_request['format'] = format
-    return '?' + new_request.urlencode()
+    query_dict = request.GET.copy()
+    query_dict['format'] = export_format
+    return reverse('evenements_export') + '?' + query_dict.urlencode()

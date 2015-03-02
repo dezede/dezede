@@ -3,10 +3,11 @@
 from __future__ import unicode_literals
 from collections import OrderedDict
 from django.contrib.gis.geos import Polygon
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import get_model, Q, FieldDoesNotExist
 from django.db.models.query import QuerySet
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.utils.encoding import force_text
 from django.views.generic import ListView, DetailView, TemplateView
@@ -16,8 +17,9 @@ from eztables.views import DatatablesView
 from haystack.query import SearchQuerySet
 from polymorphic import PolymorphicQuerySet
 from viewsets import ModelViewSet
-from libretto.export import EvenementExporter
-from libretto.models.functions import href
+from common.utils import launch_export
+from .jobs import events_to_csv, events_to_xlsx, events_to_json
+from .models.functions import href
 from .models import *
 from .models.common import PublishedQuerySet
 from .forms import *
@@ -175,18 +177,37 @@ class BaseEvenementListView(PublishedListView):
             response = redirect(*self.get_success_view())
             if self.valid_form:
                 response['Location'] += '?' + new_GET.urlencode(safe=b'|')
-        format = new_GET.get('format')
-        if format == 'json':
-            return EvenementExporter(self.get_queryset()).to_json_response()
-        elif format == 'csv':
-            return EvenementExporter(self.get_queryset()).to_csv_response()
-        elif format == 'xlsx':
-            return EvenementExporter(self.get_queryset()).to_xlsx_response()
         return response
 
 
 class EvenementListView(AjaxListView, BaseEvenementListView):
     pass
+
+
+class EvenementExport(BaseEvenementListView):
+
+    def get_queryset(self, base_filter=None):
+        if not self.request.user.is_authenticated():
+            raise PermissionDenied
+        qs = super(EvenementExport, self).get_queryset()
+        if self.request.user.is_superuser:
+            return qs
+        return qs.filter(owner=self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        data = self.request.GET.copy()
+        export_format = data.get('format', '')
+        print(export_format)
+        jobs = {'csv': events_to_csv, 'xlsx': events_to_xlsx,
+                'json': events_to_json}
+        pk_list = list(self.get_queryset().values_list('pk', flat=True))
+        if not (self.valid_form or export_format in jobs):
+            return redirect(*self.get_success_view())
+        launch_export(jobs[export_format], request, pk_list,
+                      export_format, 'de %s événements' % len(pk_list))
+        del data['format']
+        return HttpResponseRedirect(
+            reverse('evenements') + '?' + data.urlencode())
 
 
 class EvenementGeoJson(BaseEvenementListView):
