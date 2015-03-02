@@ -176,9 +176,11 @@ class BaseEvenementListView(PublishedListView):
             if self.valid_form:
                 response['Location'] += '?' + new_GET.urlencode(safe=b'|')
         format = new_GET.get('format')
-        if format == 'csv':
+        if format == 'json':
+            return EvenementExporter(self.get_queryset()).to_json_response()
+        elif format == 'csv':
             return EvenementExporter(self.get_queryset()).to_csv_response()
-        if format == 'xlsx':
+        elif format == 'xlsx':
             return EvenementExporter(self.get_queryset()).to_xlsx_response()
         return response
 

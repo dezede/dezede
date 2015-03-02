@@ -5,8 +5,9 @@ from StringIO import StringIO
 
 from collections import defaultdict
 from math import isnan
+from django.conf import settings
 from django.contrib.sites.models import Site
-from django.db.models import IntegerField, ForeignKey
+from django.db.models import IntegerField, ForeignKey, DateTimeField
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 import pandas
@@ -41,9 +42,13 @@ class Exporter(object):
                        for lookup in self.lookups}
         self.final_fields = {lookup: self.get_final_field(lookup)
                              for lookup in self.lookups}
-        self.null_int_lookups = [l for l, f in self.final_fields.items()
-                                 if isinstance(f, (IntegerField, ForeignKey))
-                                 and f.null]
+        self.null_int_lookups = []
+        self.timezone_lookups = []
+        for l, f in self.final_fields.items():
+            if isinstance(f, (IntegerField, ForeignKey)) and f.null:
+                self.null_int_lookups.append(l)
+            elif isinstance(f, DateTimeField) and settings.USE_TZ:
+                self.timezone_lookups.append(l)
 
     def get_field(self, lookup):
         return self.model._meta.get_field(lookup.split('__')[0])
@@ -83,6 +88,15 @@ class Exporter(object):
         for lookup in self.null_int_lookups:
             df[lookup] = df[lookup].apply(clean_null_int)
 
+        def remove_timezone(dt):
+            if dt is None:
+                return ''
+            return dt.replace(tzinfo=None)
+
+        # Removes timezones to allow datetime serialization in some formats
+        for lookup in self.timezone_lookups:
+            df[lookup] = df[lookup].apply(remove_timezone)
+
         # Display verbose value of fields with `choices`
         for lookup, field in self.fields.items():
             if field.choices:
@@ -107,6 +121,10 @@ class Exporter(object):
         # Sets the first column (usually pk) as index
         df.set_index(df.columns[0], inplace=True)
         return df
+
+    def to_json(self):
+        return self.to_dataframe().to_json(None, orient='records',
+                                           date_format='iso')
 
     def to_csv(self):
         return self.to_dataframe().to_csv(None, encoding='utf-8')
@@ -135,6 +153,10 @@ class Exporter(object):
             disposition += '; attachment'
         response['Content-Disposition'] = disposition
         return response
+
+    def to_json_response(self):
+        return self._to_response(self.to_json(), 'application/json', 'json',
+                                 attachment=False)
 
     def to_csv_response(self):
         return self._to_response(self.to_csv(), 'text/csv', 'csv')
