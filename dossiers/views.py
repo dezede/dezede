@@ -72,8 +72,7 @@ class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
         self.object = self.get_object()
         launch_export(dossier_to_pdf, request, self.object.pk, 'PDF',
                       'du dossier « %s »' % self.object)
-        return redirect(reverse('dossierdevenements_detail',
-                                args=(self.object.pk,)))
+        return redirect(self.object.get_absolute_url())
 
 
 class OperaComiquePresentation(TemplateView):
