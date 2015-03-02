@@ -54,18 +54,26 @@
         {% with count=evenements.count %}
           {% if count %}
             {% if user.is_authenticated %}
-              <a href="{% csv_request %}" class="btn btn-primary pull-right">
-                {% trans 'Exporter en CSV' %}
-              </a>
-              {% if request.GET.show_map == 'true' %}
-                <a href="{% map_request show_map=False %}" class="btn btn-default pull-right">
-                  {% trans 'Masquer la carte' %}
-                </a>
-              {% else %}
-                <a href="{% map_request %}" class="btn btn-primary pull-right">
-                  {% trans 'Afficher sur une carte' %}
-                </a>
-              {% endif %}
+              <div class="btn-toolbar pull-right" role="toolbar">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    Exporter <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% export_request 'csv' %}">CSV</a></li>
+                    <li><a href="{% export_request 'xlsx' %}">XLSX</a></li>
+                  </ul>
+                </div>
+                {% if request.GET.show_map == 'true' %}
+                  <a href="{% map_request show_map=False %}" class="btn btn-default">
+                    {% trans 'Masquer la carte' %}
+                  </a>
+                {% else %}
+                  <a href="{% map_request %}" class="btn btn-primary pull-right">
+                    {% trans 'Afficher sur une carte' %}
+                  </a>
+                {% endif %}
+              </div>
             {% endif %}
             <h3>
               {{ count|apnumber }}

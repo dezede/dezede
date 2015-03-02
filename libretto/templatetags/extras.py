@@ -201,8 +201,8 @@ def map_request(context, lieu_pk=None, show_map=True):
 
 
 @register.simple_tag(takes_context=True)
-def csv_request(context):
+def export_request(context, format):
     request = context['request']
     new_request = request.GET.copy()
-    new_request['as_csv'] = 'true'
+    new_request['format'] = format
     return '?' + new_request.urlencode()
