@@ -7,13 +7,14 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView
+from endless_pagination.views import AjaxListView
 
 from accounts.models import HierarchicUser
 from .jobs import dossier_to_pdf
 from libretto.models import Source, Oeuvre
 from libretto.views import (
-    PublishedListView, PublishedDetailView, EvenementListView,
-    EvenementGeoJson)
+    PublishedListView, PublishedDetailView, EvenementGeoJson, EvenementExport,
+    BaseEvenementListView)
 from .models import CategorieDeDossiers, DossierDEvenements
 from common.utils import launch_export
 
@@ -27,8 +28,7 @@ class DossierDEvenementsDetail(PublishedDetailView):
     model = DossierDEvenements
 
 
-class DossierDEvenementsDataDetail(EvenementListView):
-    template_name = 'dossiers/dossierdevenements_data_detail.html'
+class DossierDEvenementsViewMixin(object):
     view_name = 'dossierdevenements_data_detail'
     enable_default_page = False
 
@@ -36,29 +36,38 @@ class DossierDEvenementsDataDetail(EvenementListView):
         self.object = get_object_or_404(DossierDEvenements, **self.kwargs)
         if not self.object.can_be_viewed(self.request):
             raise PermissionDenied
-        return super(DossierDEvenementsDataDetail, self).get_queryset(
+        return super(DossierDEvenementsViewMixin, self).get_queryset(
             base_filter=Q(pk__in=self.object.get_queryset()))
+
+    def get_export_url(self):
+        return reverse('dossierdevenements_data_export', kwargs=self.kwargs)
 
     def get_geojson_url(self):
         return reverse('dossierdevenements_data_geojson', kwargs=self.kwargs)
 
     def get_context_data(self, **kwargs):
-        data = super(DossierDEvenementsDataDetail,
+        data = super(DossierDEvenementsViewMixin,
                      self).get_context_data(**kwargs)
         data['object'] = self.object
         return data
 
-    def get_success_view(self):
-        return self.view_name, int(self.kwargs['pk'])
+    def get_success_url(self):
+        return reverse(self.view_name, kwargs=self.kwargs)
 
 
-class DossierDEvenementsDataGeoJson(EvenementGeoJson):
-    def get_queryset(self):
-        self.object = get_object_or_404(DossierDEvenements, **self.kwargs)
-        if not self.object.can_be_viewed(self.request):
-            raise PermissionDenied
-        return super(DossierDEvenementsDataGeoJson, self).get_queryset(
-            base_filter=Q(pk__in=self.object.get_queryset()))
+class DossierDEvenementsDataDetail(DossierDEvenementsViewMixin,
+                                   AjaxListView, BaseEvenementListView):
+    template_name = 'dossiers/dossierdevenements_data_detail.html'
+
+
+class DossierDEvenementsDataExport(DossierDEvenementsViewMixin,
+                                   EvenementExport):
+    pass
+
+
+class DossierDEvenementsDataGeoJson(DossierDEvenementsViewMixin,
+                                    EvenementGeoJson):
+    pass
 
 
 class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):

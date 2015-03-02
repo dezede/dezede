@@ -33,7 +33,7 @@ __all__ = (
 )
 
 
-DEFAULT_MIN_PLACES = 5
+DEFAULT_MIN_PLACES = 10
 MAX_MIN_PLACES = 100
 
 
@@ -146,6 +146,9 @@ class BaseEvenementListView(PublishedListView):
             pass
         return qs
 
+    def get_export_url(self):
+        return reverse('evenements_export')
+
     def get_geojson_url(self):
         return reverse('evenements_geojson')
 
@@ -154,14 +157,15 @@ class BaseEvenementListView(PublishedListView):
         context.update(
             form=self.form,
             default_page=self.default_page,
+            export_url=self.get_export_url(),
             geojson_url=self.get_geojson_url(),
             DEFAULT_MIN_PLACES=DEFAULT_MIN_PLACES,
             MAX_MIN_PLACES=MAX_MIN_PLACES,
         )
         return context
 
-    def get_success_view(self):
-        return self.view_name,
+    def get_success_url(self):
+        return reverse(self.view_name)
 
     def get_cleaned_GET(self):
         new_qd = self.request.GET.copy()
@@ -174,7 +178,7 @@ class BaseEvenementListView(PublishedListView):
         response = super(BaseEvenementListView, self).get(request, *args, **kwargs)
         new_GET = self.get_cleaned_GET()
         if new_GET.dict() != self.request.GET.dict() or not self.valid_form:
-            response = redirect(*self.get_success_view())
+            response = HttpResponseRedirect(self.get_success_url())
             if self.valid_form:
                 response['Location'] += '?' + new_GET.urlencode(safe=b'|')
         return response
@@ -185,11 +189,10 @@ class EvenementListView(AjaxListView, BaseEvenementListView):
 
 
 class EvenementExport(BaseEvenementListView):
-
     def get_queryset(self, base_filter=None):
         if not self.request.user.is_authenticated():
             raise PermissionDenied
-        qs = super(EvenementExport, self).get_queryset()
+        qs = super(EvenementExport, self).get_queryset(base_filter=base_filter)
         if self.request.user.is_superuser:
             return qs
         return qs.filter(owner=self.request.user)

@@ -206,4 +206,4 @@ def export_request(context, export_format):
     request = context['request']
     query_dict = request.GET.copy()
     query_dict['format'] = export_format
-    return reverse('evenements_export') + '?' + query_dict.urlencode()
+    return context['export_url'] + '?' + query_dict.urlencode()
