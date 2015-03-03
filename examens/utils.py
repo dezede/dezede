@@ -5,6 +5,7 @@ from difflib import SequenceMatcher
 import re
 import string
 from bs4 import BeautifulSoup
+from common.utils.text import remove_diacritics
 
 
 class Translatable(object):
@@ -206,11 +207,6 @@ PUNCTUATION_RE = re.compile(r'[^\s  \w]')
 normalize_punctuation = lambda text: PUNCTUATION_RE.sub(b'', text)
 MULTI_WHITESPACE_RE = re.compile(r'[\s  ]{2,}')
 normalize_spaces = lambda text: MULTI_WHITESPACE_RE.sub(b' ', text)
-
-
-def remove_diacritics(string):
-    from unicodedata import normalize as normalize_unicode
-    return normalize_unicode('NFKD', string).encode('ASCII', 'ignore')
 
 
 def striptags_n_chars(text):
