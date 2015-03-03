@@ -1,9 +1,10 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.utils import six
+from unicodedata import normalize
 
-from django.utils.encoding import smart_text
+from django.utils import six
+from django.utils.encoding import force_text
 from django.utils.functional import lazy
 from django.utils.translation import pgettext, ugettext_lazy as _
 
@@ -12,8 +13,12 @@ def remove_windows_newlines(text):
     return text.replace('\r\n', '\n').replace('\r', '\n')
 
 
+def remove_diacritics(string):
+    return normalize('NFKD', string).encode('ASCII', 'ignore')
+
+
 def capfirst(text):
-    out = smart_text(text)
+    out = force_text(text)
     if not out:
         return out
     return out[0].upper() + out[1:]

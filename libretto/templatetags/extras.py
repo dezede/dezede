@@ -12,7 +12,7 @@ from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
 from ..models import Lieu
 from common.utils.html import date_html as date_html_util
-from ..utils import abbreviate as abbreviate_func
+from common.utils.abbreviate import abbreviate as abbreviate_func
 
 
 register = Library()

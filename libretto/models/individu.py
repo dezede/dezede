@@ -13,7 +13,7 @@ from django.utils.translation import (
     pgettext_lazy, ungettext_lazy, ugettext, ugettext_lazy as _)
 from tinymce.models import HTMLField
 from cache_tools import invalidate_object
-from ..utils import abbreviate
+from common.utils.abbreviate import abbreviate
 from common.utils.html import href, sc
 from common.utils.text import str_list, str_list_w_last, ex
 from .base import (
