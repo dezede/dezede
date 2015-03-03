@@ -16,12 +16,12 @@ from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
 from cache_tools import model_method_cached
-from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+from .base import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
     CommonTreeManager
+from common.utils.html import href
 from .evenement import Evenement
-from .functions import href
 from .individu import Individu
 from .oeuvre import Oeuvre
 

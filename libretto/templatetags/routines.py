@@ -6,8 +6,8 @@ from django.db.models import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template import Library, Template
 from django.utils.encoding import force_text
-from libretto.models.common import PublishedQuerySet
-from libretto.models.functions import capfirst
+from libretto.models.base import PublishedQuerySet
+from common.utils.text import capfirst
 
 
 register = Library()

@@ -1,19 +1,8 @@
 # coding: utf-8
-
 from __future__ import unicode_literals
 import re
-from unicodedata import normalize
-from .models.functions import hlp
-
-
-__all__ = (
-    'abbreviate',
-)
-
-
-def remove_diacritics(string):
-    return normalize('NFKD', string).encode('ASCII', 'ignore')
-
+from common.utils.html import hlp
+from common.utils.text import remove_diacritics
 
 VOWELS = frozenset(b'AEIOUYaeiouy')
 

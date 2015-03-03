@@ -19,12 +19,12 @@ from django.utils.html import strip_tags
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from cache_tools import model_method_cached
-from .common import (
+from .base import (
     CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
     PublishedManager, PublishedQuerySet,
     TypeDeCaracteristique, Caracteristique, AncrageSpatioTemporel)
-from .functions import capfirst, str_list, str_list_w_last, href, hlp, \
-    microdata
+from common.utils.html import capfirst, href, hlp, microdata
+from common.utils.text import str_list, str_list_w_last
 
 
 __all__ = (b'ElementDeDistribution', b'CaracteristiqueDeProgramme',

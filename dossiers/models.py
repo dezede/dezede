@@ -15,9 +15,10 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from accounts.models import HierarchicUser
 from libretto.models import Lieu, Oeuvre, Evenement, Individu, Ensemble, Source
-from libretto.models.common import PublishedModel, PublishedManager, \
+from libretto.models.base import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
-from libretto.models.functions import str_list_w_last, href
+from common.utils.html import href
+from common.utils.text import str_list_w_last
 
 
 @python_2_unicode_compatible

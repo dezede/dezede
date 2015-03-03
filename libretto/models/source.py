@@ -10,11 +10,12 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from tinymce.models import HTMLField
-from .common import (
+from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
     SlugModel, PublishedManager, PublishedQuerySet, OrderedDefaultDict,
     AncrageSpatioTemporel, Fichier)
-from .functions import (ex, cite, href, small, str_list, hlp)
+from common.utils.html import cite, href, small, hlp
+from common.utils.text import ex, str_list
 from typography.models import TypographicModel
 
 

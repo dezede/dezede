@@ -16,7 +16,7 @@ from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementGeoJson, EvenementExport,
     BaseEvenementListView)
 from .models import CategorieDeDossiers, DossierDEvenements
-from common.utils import launch_export
+from common.utils.export import launch_export
 
 
 class CategorieDeDossiersList(PublishedListView):

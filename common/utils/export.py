@@ -7,7 +7,6 @@ from subprocess import Popen, PIPE
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.sites.models import Site, get_current_site
-from django.core.cache import cache
 from django.core.mail import EmailMessage, mail_admins
 from django.http import HttpRequest
 from django.template import RequestContext
@@ -15,26 +14,8 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from rq.timeouts import JobTimeoutException
 from accounts.models import HierarchicUser
-
-
-def get_user_lock_cache_key(user):
-    return 'dossiers__export_en_cours__%s' % user.username
-
-
-def is_user_locked(user):
-    return cache.get(get_user_lock_cache_key(user), False)
-
-
-def lock_user(user):
-    cache.set(get_user_lock_cache_key(user), True)
-
-
-def unlock_user(user):
-    cache.set(get_user_lock_cache_key(user), False)
-
-
-def remove_windows_newlines(text):
-    return text.replace('\r\n', '\n').replace('\r', '\n')
+from common.utils.cache import is_user_locked, lock_user, unlock_user
+from common.utils.text import remove_windows_newlines
 
 
 def xelatex_to_pdf(source_code):

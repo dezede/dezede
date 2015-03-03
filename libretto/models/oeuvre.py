@@ -26,13 +26,14 @@ from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
 from cache_tools import model_method_cached
-from .common import (
+from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
     OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,
     CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique,
     AncrageSpatioTemporel)
-from .functions import capfirst, hlp, str_list, str_list_w_last, href, cite, em
+from common.utils.html import capfirst, hlp, href, cite, em
+from common.utils.text import str_list, str_list_w_last
 from .individu import Individu
 from .personnel import Profession
 from .source import Source

@@ -15,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from image_cropping import ImageRatioField
 from accounts.models import _get_valid_modelnames_func
-from libretto.models.common import PublishedModel
+from libretto.models.base import PublishedModel
 
 
 # FIXME: Ceci est un hack pour avoir les styles compilés dans TinyMCE.

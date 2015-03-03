@@ -11,13 +11,14 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import (
     ungettext_lazy, ugettext_lazy as _, ugettext)
 from mptt.models import MPTTModel, TreeForeignKey
-from ..utils import abbreviate
-from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
+from common.utils.abbreviate import abbreviate
+from common.utils.html import capfirst, href, date_html, sc
+from common.utils.text import ex, str_list
+from .base import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
     UniqueSlugModel, PublishedManager, AutoriteModel, CommonTreeManager, \
     PublishedQuerySet, CommonTreeQuerySet, Caracteristique, \
     TypeDeCaracteristique
 from .evenement import Evenement
-from .functions import capfirst, ex, href, date_html, sc, str_list
 
 
 __all__ = (
