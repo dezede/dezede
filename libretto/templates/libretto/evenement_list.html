@@ -78,8 +78,7 @@
             {% endif %}
             <h3>
               {{ count|apnumber }}
-              {% blocktrans count counter=count %}résultat{% plural %}résultats
-              {% endblocktrans %}
+              {% blocktrans count counter=count %}résultat{% plural %}résultats{% endblocktrans %}
             </h3>
             {% if user.is_authenticated and request.GET.show_map == 'True' %}
               {% include 'libretto/include/map.html' %}
