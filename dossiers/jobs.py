@@ -1,10 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
 from django.utils.encoding import force_text
 from django_rq import job
 from slugify import slugify
-from common.utils import send_pdf
+
+from common.utils.export import send_pdf
 from .models import DossierDEvenements
 
 
