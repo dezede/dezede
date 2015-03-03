@@ -116,7 +116,7 @@ class SeleniumTest(LiveServerTestCase):
 
     def autocomplete(self, element, query, link_text):
         ActionChains(self.selenium).move_to_element(
-            element.find_element_by_css_selector('input:first-child')
+            element.find_element_by_css_selector('input:first-of-type')
         ).click().send_keys(query + Keys.DOWN).perform()
         self.get_link(link_text).click()
 
@@ -194,6 +194,7 @@ class SeleniumTest(LiveServerTestCase):
 
         # Teste la saisie dans TinyMCE ainsi que le bouton de petites capitales
         # fait maison.
+        self.get_by_xpath('//*[text()="Transcription"]').click()
         self.write_to_tinymce(
             'transcription', 'Aujourd’hui, quelques œuvres du maître ')
         self.click_tinymce_button('transcription', 'smallcaps')
@@ -202,7 +203,9 @@ class SeleniumTest(LiveServerTestCase):
         self.write_to_tinymce('transcription', '.')
 
         # Ajoute un événement et tous les objets lui étant lié.
-        self.get_by_css('.evenements .related-lookup').click()
+        self.get_by_xpath('//*[text()="Événements liés"]').click()
+        self.get_link('Ajouter un objet événement lié supplémentaire').click()
+        self.get_by_css('.evenement .related-lookup').click()
         with self.new_popup():
             self.get_link('Ajouter événement').click()
 
@@ -285,10 +288,10 @@ class SeleniumTest(LiveServerTestCase):
                 auteur = self.get_by_id(
                     'libretto-auteur-content_type-object_id0')
                 self.autocomplete(
-                    auteur.find_element_by_css_selector('.individu'),
+                    auteur.find_element_by_css_selector('.grp-td.individu'),
                     'viv', 'Vivaldi (Antonio)')
                 self.autocomplete(
-                    auteur.find_element_by_css_selector('.profession'),
+                    auteur.find_element_by_css_selector('.grp-td.profession'),
                     'com', 'Compositeur')
 
             # Ajoute une distribution à cet élément de programme.
@@ -329,6 +332,8 @@ class SeleniumTest(LiveServerTestCase):
                 self.get_by_css('.individus .related-lookup').click()
                 with self.new_popup(add='individu'):
                     self.get_by_name('nom').send_keys('Balensi')
+                    self.get_by_xpath(
+                        '//*[text()="Informations complémentaires"]').click()
                     self.get_by_name('pseudonyme').send_keys('petite renarde')
                     select = Select(self.get_by_name('titre'))
                     select.select_by_visible_text('Mlle')
@@ -344,7 +349,7 @@ class SeleniumTest(LiveServerTestCase):
         # Supprime la source…
         self.get_by_css('.page-header '
                         'a[data-original-title="Supprimer"]').click()
-        self.get_by_css('input[value="Oui, j\'en suis sûr."]').click()
+        self.get_by_css('input[value="Oui, je suis sûr"]').click()
         # … avant de finalement la restaurer avec django-reversion.
         self.get_link('Récupérer sources supprimés').click()
         self.get_by_css('#grp-change-history a').click()
