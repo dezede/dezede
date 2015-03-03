@@ -78,9 +78,9 @@ def str_list_w_last(iterable, infix=None, last_infix=None,
 
     >>> l = ['Jeanne', 'Marion', 'Lola', 'Perrine']
     >>> print(str_list_w_last(l))
-    Jeanne, Marion, Lola\u00A0et\u00A0Perrine
+    Jeanne, Marion, Lola et\u00A0Perrine
     >>> print(str_list_w_last(l[:2]))
-    Jeanne\u00A0et\u00A0Marion
+    Jeanne et\u00A0Marion
     """
 
     l = [e for e in iterable if e]
