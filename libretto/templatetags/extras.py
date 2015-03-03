@@ -168,11 +168,12 @@ def get_data(evenements_qs, min_places, bbox):
     INNER JOIN libretto_lieu AS lieu ON lieu.id = evenement.debut_lieu_id
     INNER JOIN libretto_lieu AS ancetre ON (
         ancetre.id IN (%s)
-        AND ancetre.tree_id = lieu.tree_id AND ancetre.level = %s
-        AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght)
+        AND ancetre.tree_id = lieu.tree_id AND ancetre.level <= %s
+        AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght
+        AND (ancetre.level = %s OR ancetre.rght = ancetre.lft + 1))
     GROUP BY ancetre.id
     ORDER BY n DESC;
-    """ % (evenements_query, valid_ancestors_query, level),
+    """ % (evenements_query, valid_ancestors_query, level, level),
         params + valid_ancestors_params)
     return cursor.fetchall()
 
