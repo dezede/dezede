@@ -32,7 +32,8 @@ from .base import (
     OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,
     CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique,
     AncrageSpatioTemporel)
-from .functions import capfirst, hlp, str_list, str_list_w_last, href, cite, em
+from common.utils.html import capfirst, hlp, href, cite, em
+from common.utils.text import str_list, str_list_w_last
 from .individu import Individu
 from .personnel import Profession
 from .source import Source

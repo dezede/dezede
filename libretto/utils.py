@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 import re
 from unicodedata import normalize
-from .models.functions import hlp
+from common.utils.html import hlp
 
 
 __all__ = (

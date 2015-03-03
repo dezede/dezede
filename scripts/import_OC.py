@@ -23,7 +23,7 @@ from libretto.models import (
     Oeuvre, GenreDOeuvre, TypeDeCaracteristiqueDOeuvre, CaracteristiqueDOeuvre,
     Auteur, Profession, Source, SourceOeuvre, SourceIndividu, Fichier,
     TypeDeSource, Etat)
-from libretto.models.functions import str_list
+from common.utils.text import str_list
 
 
 ID = 'Id Dezède'

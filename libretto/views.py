@@ -20,8 +20,8 @@ from polymorphic import PolymorphicQuerySet
 from viewsets import ModelViewSet
 
 from common.utils.export import launch_export
+from common.utils.html import href
 from .jobs import events_to_csv, events_to_xlsx, events_to_json
-from .models.functions import href
 from .models import *
 from .models.base import PublishedQuerySet
 from .forms import *

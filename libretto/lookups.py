@@ -4,7 +4,7 @@ from django.db.models import Count
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags
 from libretto.search_indexes import autocomplete_search
-from .models.functions import hlp
+from common.utils.html import hlp
 from .models import *
 
 

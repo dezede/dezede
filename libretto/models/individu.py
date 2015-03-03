@@ -14,11 +14,12 @@ from django.utils.translation import (
 from tinymce.models import HTMLField
 from cache_tools import invalidate_object
 from ..utils import abbreviate
+from common.utils.html import href, sc
+from common.utils.text import str_list, str_list_w_last, ex
 from .base import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
     PublishedManager, PublishedQuerySet, AncrageSpatioTemporel)
 from .evenement import Evenement
-from .functions import str_list, str_list_w_last, href, sc, ex
 
 
 __all__ = (b'TypeDeParenteDIndividus', b'ParenteDIndividus', b'Individu')

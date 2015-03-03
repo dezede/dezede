@@ -8,7 +8,7 @@ from django.template import Library
 from django.utils.translation import ugettext
 from libretto.models import (
     Evenement, Individu, Source, Oeuvre, Lieu, Role, Instrument)
-from libretto.models.functions import capfirst
+from common.utils.text import capfirst
 
 
 register = Library()

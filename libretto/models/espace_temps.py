@@ -20,8 +20,8 @@ from .base import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
     CommonTreeManager
+from common.utils.html import href
 from .evenement import Evenement
-from .functions import href
 from .individu import Individu
 from .oeuvre import Oeuvre
 

@@ -28,7 +28,8 @@ from tinymce.models import HTMLField
 from cache_tools import invalidate_object
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
-from .functions import href, ex, hlp, capfirst, str_list, date_html
+from common.utils.html import href, hlp, capfirst, date_html
+from common.utils.text import ex, str_list
 from typography.utils import replace
 
 
