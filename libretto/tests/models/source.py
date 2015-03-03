@@ -13,7 +13,7 @@ class SourceTestCase(CommonTestCase):
     def setUp(self):
         type_de_source = new(TypeDeSource, nom='compte rendu',
                              nom_pluriel='comptes rendus')
-        self.journal = new(Source, nom='Journal de Rouen',
+        self.journal = new(Source, titre='Journal de Rouen',
                            date=date(1828, 1, 15),
                            type=type_de_source)
 
