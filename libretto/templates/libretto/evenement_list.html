@@ -53,11 +53,11 @@
       {% else %}
         {% with count=evenements.count %}
           {% if count %}
-            {% if user.is_authenticated %}
-              <div class="pull-right">
+            <div class="pull-right">
+              {% if user.is_authenticated %}
                 <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    Exporter <span class="caret"></span>
+                    {% trans 'Exporter' %} <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" role="menu">
                     <li><a href="{% export_request 'json' %}">JSON</a></li>
@@ -65,6 +65,21 @@
                     <li><a href="{% export_request 'xlsx' %}">XLSX</a></li>
                   </ul>
                 </div>
+              {% endif %}
+              <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                  {% trans 'Ordonner par' %} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                  <li class="{% if request.GET.order_by == None %}active{% endif %}">
+                      <a href="{% change_results_order %}">{% trans 'Date puis lieu' %}</a>
+                  </li>
+                  <li class="{% if request.GET.order_by == 'reversed' %}active{% endif %}">
+                    <a href="{% change_results_order 'reversed' %}">{% trans 'Date puis lieu, inversé' %}</a>
+                  </li>
+                </ul>
+              </div>
+              {% if user.is_authenticated %}
                 {% if request.GET.show_map == 'True' %}
                   <a href="{% map_request show_map=False %}" class="btn btn-default">
                     {% trans 'Masquer la carte' %}
@@ -74,8 +89,8 @@
                     {% trans 'Afficher sur une carte' %}
                   </a>
                 {% endif %}
-              </div>
-            {% endif %}
+              {% endif %}
+            </div>
             <h3>
               {{ count|apnumber }}
               {% blocktrans count counter=count %}résultat{% plural %}résultats{% endblocktrans %}

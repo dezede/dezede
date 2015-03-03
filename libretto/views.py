@@ -146,6 +146,10 @@ class BaseEvenementListView(PublishedListView):
                                               '%s-12-31' % end))
         except (TypeError, ValueError):
             pass
+
+        if data.get('order_by') == 'reversed':
+            qs = qs.reverse()
+
         return qs
 
     def get_export_url(self):
