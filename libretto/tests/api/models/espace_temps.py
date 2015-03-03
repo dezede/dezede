@@ -22,10 +22,6 @@ class BuildAncrageTestCase(TestCase):
             build_ancrage(self.ancrage, txt, commit=False)
         self.assertEqual(force_text(self.ancrage), out)
 
-        with self.assertNumQueries(23):
-            build_ancrage(self.ancrage, txt)
-        self.assertEqual(force_text(self.ancrage), out)
-
     def test_lieu_and_date(self):
         txt = 'Concert Spirituel, 5/7/1852'
         out = 'Concert Spirituel, 5 juillet 1852'
@@ -74,7 +70,3 @@ class BuildAncrageTestCase(TestCase):
         with self.assertNumQueries(0):
             build_ancrage(self.ancrage, '18..', commit=False)
         self.assertEqual(force_text(self.ancrage), '18..')
-
-        with self.assertNumQueries(1):
-            build_ancrage(self.ancrage, '1852')
-        self.assertEqual(force_text(self.ancrage), '1852')
