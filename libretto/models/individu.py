@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, RegexValidator
@@ -13,10 +12,9 @@ from django.utils.html import strip_tags
 from django.utils.translation import (
     pgettext_lazy, ungettext_lazy, ugettext, ugettext_lazy as _)
 from tinymce.models import HTMLField
-
 from cache_tools import invalidate_object
 from ..utils import abbreviate
-from common.models import (
+from .common import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
     PublishedManager, PublishedQuerySet, AncrageSpatioTemporel)
 from .evenement import Evenement

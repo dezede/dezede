@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 from datetime import datetime
-
 from django.core.urlresolvers import reverse
 from django.db.models import (
     CharField, DateField, ManyToManyField,
@@ -14,10 +13,9 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-
 from accounts.models import HierarchicUser
 from libretto.models import Lieu, Oeuvre, Evenement, Individu, Ensemble, Source
-from common.models import PublishedModel, PublishedManager, \
+from libretto.models.common import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from libretto.models.functions import str_list_w_last, href
 

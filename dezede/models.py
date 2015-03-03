@@ -3,7 +3,6 @@
 from __future__ import unicode_literals, division
 from decimal import Decimal
 import re
-
 from django.conf import settings
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -15,10 +14,8 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from image_cropping import ImageRatioField
-
 from accounts.models import _get_valid_modelnames_func
-from common.models import PublishedModel
-
+from libretto.models.common import PublishedModel
 
 
 # FIXME: Ceci est un hack pour avoir les styles compilés dans TinyMCE.

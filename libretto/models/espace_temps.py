@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-
 from django.contrib.gis.db.models import GeometryField, GeoManager
 from django.contrib.gis.db.models.query import GeoQuerySet
 from django.core.exceptions import ValidationError
@@ -16,13 +15,11 @@ from polymorphic_tree.managers import PolymorphicMPTTQuerySet, \
 from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
-
 from cache_tools import model_method_cached
-from common.models import (
-    CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, PublishedManager,
-    DATE_MSG, calc_pluriel, SlugModel, UniqueSlugModel, PublishedQuerySet,
-    CommonTreeQuerySet, CommonTreeManager,
-)
+from .common import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
+                    PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
+                    UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
+    CommonTreeManager
 from .evenement import Evenement
 from .functions import href
 from .individu import Individu

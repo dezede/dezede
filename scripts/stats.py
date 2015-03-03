@@ -5,16 +5,14 @@ import datetime
 import io
 import os
 import time
-
 from django.db import connection
 from django.db.models import Count
 from django.template import Context
 from django.template.base import Template
 from django.utils.safestring import mark_safe
 from reversion.models import Revision
-
 from accounts.templatetags.accounts_extra import log_ratio, hsv_to_hex
-from common.models import OrderedDefaultDict
+from libretto.models.common import OrderedDefaultDict
 
 
 def run():

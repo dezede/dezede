@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -15,11 +14,9 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-
-from common.models import AutoriteModel, CommonTreeManager, \
+from libretto.models.common import AutoriteModel, CommonTreeManager, \
     CommonTreeQuerySet
 from libretto.models.functions import href, str_list_w_last, sc
-
 
 
 #

@@ -1,3 +1,5 @@
+from .common import (
+    Fichier, Etat, TypeDeParente, TypeDeCaracteristique, Caracteristique)
 from .espace_temps import NatureDeLieu, Lieu, LieuDivers, Institution, Saison
 from .individu import (TypeDeParenteDIndividus, ParenteDIndividus,
                        Individu)

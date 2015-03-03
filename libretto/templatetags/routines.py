@@ -2,13 +2,11 @@
 
 from __future__ import unicode_literals
 from copy import copy
-
 from django.db.models import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template import Library, Template
 from django.utils.encoding import force_text
-
-from common.models import PublishedQuerySet
+from libretto.models.common import PublishedQuerySet
 from libretto.models.functions import capfirst
 
 
