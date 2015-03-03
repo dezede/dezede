@@ -79,7 +79,7 @@ def str_list_w_last(iterable, infix=None, last_infix=None,
 
 def ex(txt, pre='', post=''):
     """
-    >>> print(ex('30/01/1989'))
+    >>> print(force_text(ex('30/01/1989')))
     Exemple : « 30/01/1989 ».
     """
     return _('Exemple : %(pre)s« %(txt)s »%(post)s.') % {
