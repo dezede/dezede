@@ -8,8 +8,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
 from datetime import timedelta
 from django.db.models import Q
-from django.forms import ValidationError, ModelForm, Form, CharField, TextInput, \
-    ChoiceField
+from django.forms import ValidationError, ModelForm, Form, CharField, TextInput
 from django.utils.translation import ugettext_lazy as _
 from .models import (
     Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
@@ -162,10 +161,10 @@ class SaisonForm(ModelForm):
     def clean(self):
         data = super(SaisonForm, self).clean()
 
-        debut = data['debut']
-        fin = data['fin']
-        ensemble = data['ensemble']
-        lieu = data['lieu']
+        debut = data.get('debut')
+        fin = data.get('fin')
+        ensemble = data.get('ensemble')
+        lieu = data.get('lieu')
 
         if not ((ensemble is None) ^ (lieu is None)):
             raise ValidationError(
