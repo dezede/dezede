@@ -23,7 +23,7 @@ from common.utils.export import launch_export
 from .jobs import events_to_csv, events_to_xlsx, events_to_json
 from .models.functions import href
 from .models import *
-from .models.common import PublishedQuerySet
+from .models.base import PublishedQuerySet
 from .forms import *
 
 

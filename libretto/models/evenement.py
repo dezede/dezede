@@ -19,7 +19,7 @@ from django.utils.html import strip_tags
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from cache_tools import model_method_cached
-from .common import (
+from .base import (
     CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
     PublishedManager, PublishedQuerySet,
     TypeDeCaracteristique, Caracteristique, AncrageSpatioTemporel)

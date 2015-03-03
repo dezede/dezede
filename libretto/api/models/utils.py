@@ -12,7 +12,7 @@ from django.db.models.related import RelatedObject
 from django.utils import six
 from django.utils.encoding import smart_text
 from typography.utils import replace
-from ...models.common import PublishedModel, CommonModel
+from ...models.base import PublishedModel, CommonModel
 from ..utils import notify_send, print_info
 from ..utils.console import info, colored_diff, error
 

@@ -14,7 +14,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-from libretto.models.common import AutoriteModel, CommonTreeManager, \
+from libretto.models.base import AutoriteModel, CommonTreeManager, \
     CommonTreeQuerySet
 from libretto.models.functions import href, str_list_w_last, sc
 

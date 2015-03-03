@@ -14,7 +14,7 @@ from django.utils.translation import (
 from tinymce.models import HTMLField
 from cache_tools import invalidate_object
 from ..utils import abbreviate
-from .common import (
+from .base import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
     PublishedManager, PublishedQuerySet, AncrageSpatioTemporel)
 from .evenement import Evenement
