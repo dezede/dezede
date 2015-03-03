@@ -170,7 +170,6 @@ class Source(AutoriteModel):
         url = None if not tags else self.get_absolute_url()
         conservation = hlp(self.lieu_conservation,
                            'Lieu de conservation', tags)
-        print repr(self.ancrage.date), self.date
         if self.ancrage.date or self.ancrage.date_approx:
             ancrage = hlp(self.ancrage.html(tags, caps=False), ugettext('date'))
         else:

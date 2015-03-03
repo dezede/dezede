@@ -824,7 +824,6 @@ class Fichier(CommonModel):
         l = self.fichier.name.split(self.EXTRACT_INFIX, 1)
         if len(l) == 2:
             fichier_complet_filename = self._get_normalized_filename(''.join(l))
-            print fichier_complet_filename
             qs = self.source.fichiers.exclude(
                 pk=self.pk).filter(
                 fichier__regex=r'^(?:.+/)?%s$' % fichier_complet_filename)
