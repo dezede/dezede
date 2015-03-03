@@ -11,6 +11,7 @@ SLUG_OVERRIDES = {
     21: 'theatre-des-arts-rouen',
     38: 'afo',
     70: 'orap',
+    62: 'archives-opera-comique',
 }
 
 
