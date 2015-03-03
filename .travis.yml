@@ -10,7 +10,7 @@ before_install:
   - sudo service redis-server restart
 install:
   - pip install -r requirements.txt
-  - npm install -g less
+  - npm install -g less phantomjs
   - pip install coveralls
 before_script:
   - psql -c 'DROP DATABASE IF EXISTS dezede;' -U postgres
