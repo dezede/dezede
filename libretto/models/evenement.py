@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 import re
 import warnings
+
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey, \
                                                 GenericRelation
@@ -18,8 +19,9 @@ from django.utils.encoding import (
 from django.utils.html import strip_tags
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
+
 from cache_tools import model_method_cached
-from .common import (
+from common.models import (
     CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
     PublishedManager, PublishedQuerySet,
     TypeDeCaracteristique, Caracteristique, AncrageSpatioTemporel)

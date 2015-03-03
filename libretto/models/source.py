@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
 from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField)
@@ -10,7 +11,8 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from tinymce.models import HTMLField
-from .common import (
+
+from common.models import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
     SlugModel, PublishedManager, PublishedQuerySet, OrderedDefaultDict,
     AncrageSpatioTemporel, Fichier)

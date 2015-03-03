@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from collections import OrderedDict
 import re
+
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.generic import GenericRelation
@@ -25,8 +26,9 @@ from polymorphic_tree.managers import PolymorphicMPTTModelManager, \
 from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
+
 from cache_tools import model_method_cached
-from .common import (
+from common.models import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
     OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,

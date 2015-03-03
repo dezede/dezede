@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.db.models.signals import pre_save
-from south.utils import datetime_utils as datetime
-from south.db import db
 from south.v2 import DataMigration
-from django.db import models
-from libretto.models.common import handle_whitespaces
+
+from common.models import handle_whitespaces
 
 
 class Migration(DataMigration):

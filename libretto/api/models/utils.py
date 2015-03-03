@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 from functools import wraps
 import json
+
 from django.contrib.contenttypes.generic import GenericRelation
 from django.core import serializers
 from django.db.models import ManyToManyField, Manager, Model, get_models
@@ -11,8 +12,9 @@ from django.db.models.query import QuerySet
 from django.db.models.related import RelatedObject
 from django.utils import six
 from django.utils.encoding import smart_text
+
 from typography.utils import replace
-from ...models.common import PublishedModel, CommonModel
+from common.models import PublishedModel, CommonModel
 from ..utils import notify_send, print_info
 from ..utils.console import info, colored_diff, error
 

@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import warnings
+
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
      FloatField, permalink, SmallIntegerField, PROTECT, DateField, \
     PositiveSmallIntegerField, Model, Q
@@ -11,8 +12,9 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import (
     ungettext_lazy, ugettext_lazy as _, ugettext)
 from mptt.models import MPTTModel, TreeForeignKey
+
 from ..utils import abbreviate
-from .common import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
+from common.models import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
     UniqueSlugModel, PublishedManager, AutoriteModel, CommonTreeManager, \
     PublishedQuerySet, CommonTreeQuerySet, Caracteristique, \
     TypeDeCaracteristique
