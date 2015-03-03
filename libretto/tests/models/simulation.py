@@ -34,7 +34,7 @@ class SeleniumTest(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        timeout = 60
+        timeout = 5 * 60
         try:
             cls.selenium = PhantomJS(
                 desired_capabilities={
