@@ -23,7 +23,7 @@
     var map = L.map('map', {
       layers: [L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')],
       minZoom: 2,
-      maxZoom: 15,
+      maxZoom: 16,
       zoomControl: false,
       attributionControl: false
     });
@@ -113,7 +113,7 @@
 {% endaddtoblock %}
 
 <div class="row">
-  <div class="col-xs-3">{% trans 'Nombre de lieux minimum' %}</div>
+  <div class="col-xs-3">{% trans 'Niveau de détail' %}</div>
   <div class="col-xs-9">
     <div id="min-places-slider"></div>
   </div>
