@@ -22,6 +22,6 @@ before_script:
   - psql -c 'CREATE DATABASE dezede OWNER dezede;' -U postgres
   - psql -c 'CREATE EXTENSION postgis;' -U postgres dezede
 script:
-  - coverage run --source=dezede,common,accounts,libretto,dossiers,typography,cache_tools,exporter manage.py test dezede common accounts libretto dossiers typography cache_tools exporter
+  - coverage run --source=accounts,dezede,common,libretto,dossiers,typography,cache_tools,exporter manage.py test accounts dezede common libretto dossiers typography cache_tools exporter
 after_success:
   - coveralls
