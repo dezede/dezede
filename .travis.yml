@@ -8,9 +8,6 @@ before_install:
   # Starts Redis in a socket file.
   - sudo sh -c "echo 'unixsocket /var/run/redis/redis.sock\nunixsocketperm 777' >> /etc/redis/redis.conf"
   - sudo service redis-server restart
-  # Starts a virtual desktop for Selenium tests.
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
 install:
   - pip install -r requirements.txt
   - npm install -g less
