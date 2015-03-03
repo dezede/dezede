@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.utils import six
 
 
@@ -10,6 +11,7 @@ def new(Model, **kwargs):
     return Model.objects.get_or_create(**kwargs)[0]
 
 
+@override_settings(CACHALOT_ENABLED=False)
 class CommonTestCase(TestCase):
     cleans_up_after_itself = True
     model = None
@@ -29,6 +31,7 @@ class CommonTestCase(TestCase):
         self.assertTrue(is_logged)
 
     def _pre_setup(self):
+        # We clear the cache in order to clear cached methods
         cache.clear()
         super(CommonTestCase, self)._pre_setup()
         self.log_as_superuser()
