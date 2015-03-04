@@ -476,7 +476,10 @@ class TreeNode(PublishedDetailView):
             children = self.object.get_children()
 
         if isinstance(children, PublishedQuerySet):
-            children = children.published(self.request)
+            children = list(children.published(self.request))
+            for child in children:
+                child.is_leaf_node = not (child.get_children()
+                                          .published(self.request).exists())
 
         context.update(children=children, attr=self.kwargs['attr'])
         return context
