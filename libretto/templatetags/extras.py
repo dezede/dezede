@@ -214,9 +214,7 @@ def export_request(context, export_format):
 def change_results_order(context, order_by='default'):
     query_dict = context['request'].GET.copy()
     if order_by == 'default' and 'order_by' in query_dict:
-        print(order_by)
         del query_dict['order_by']
     elif order_by == 'reversed':
-        print(order_by)
         query_dict['order_by'] = order_by
     return '?' + query_dict.urlencode()
