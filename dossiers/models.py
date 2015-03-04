@@ -168,8 +168,8 @@ class DossierDEvenements(MPTTModel, PublishedModel):
             ensembles = self.ensembles.all()
             if ensembles.exists():
                 args.append(
-                    Q(distribution__ensembles__in=ensembles)
-                    | Q(programme__distribution__ensembles__in=ensembles))
+                    Q(distribution__ensemble__in=ensembles)
+                    | Q(programme__distribution__ensemble__in=ensembles))
             sources = self.sources.all()
             if sources.exists():
                 kwargs['sources__in'] = sources
