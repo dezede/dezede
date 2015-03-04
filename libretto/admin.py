@@ -387,16 +387,6 @@ class SourcePartieInline(TabularInline):
     }
 
 
-class SourceInline(TabularInline):
-    model = Source.evenements.through
-    verbose_name = Source._meta.verbose_name
-    verbose_name_plural = Source._meta.verbose_name_plural
-    readonly_fields = ('source',)
-    max_num = 0
-    exclude = ()
-    classes = ('grp-collapse grp-closed',)
-
-
 #
 # ModelAdmins
 #
@@ -1034,8 +1024,7 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
         'm2m': ('caracteristiques',),
     }
     readonly_fields = ('__str__', 'html', 'link')
-    inlines = (ElementDeDistributionInline, ElementDeProgrammeInline,
-               SourceInline)
+    inlines = (ElementDeDistributionInline, ElementDeProgrammeInline)
     actions = [events_to_pdf]
     fieldsets = (
         (_('Début'), {
