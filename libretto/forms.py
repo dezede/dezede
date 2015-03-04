@@ -24,6 +24,7 @@ __all__ = (b'IndividuForm', b'EnsembleForm', b'OeuvreForm',
 class IndividuForm(ModelForm):
     class Meta(object):
         model = Individu
+        exclude = ()
         widgets = {
             b'prenoms':
                 AutoCompleteWidget('individu__prenoms',
@@ -54,6 +55,7 @@ class IndividuForm(ModelForm):
 class EnsembleForm(ModelForm):
     class Meta(object):
         model = Ensemble
+        exclude = ()
         widgets = {
             b'particule_nom':
                 AutoCompleteWidget('ensemble__particule_nom',
@@ -64,6 +66,7 @@ class EnsembleForm(ModelForm):
 class OeuvreForm(ModelForm):
     class Meta(object):
         model = Oeuvre
+        exclude = ()
         widgets = {
             b'prefixe_titre':
                 AutoCompleteWidget('oeuvre__prefixe_titre',
@@ -82,6 +85,7 @@ class OeuvreForm(ModelForm):
 class ElementDeDistributionForm(ModelForm):
     class Meta(object):
         model = ElementDeDistribution
+        exclude = ()
 
     def clean(self):
         data = super(ElementDeDistributionForm, self).clean()
@@ -119,6 +123,7 @@ class ElementDeDistributionForm(ModelForm):
 class ElementDeProgrammeForm(ModelForm):
     class Meta(object):
         model = ElementDeProgramme
+        exclude = ()
         # FIXME: Rendre fonctionnel ce qui suit.
         # widgets = {
         #     b'autre': AutoCompleteWidget('elementdeprogramme__autre',
@@ -142,6 +147,7 @@ class ElementDeProgrammeForm(ModelForm):
 class SourceForm(ModelForm):
     class Meta(object):
         model = Source
+        exclude = ()
         widgets = {
             b'titre': AutoCompleteWidget('source__titre',
                                          attrs={'style': 'width: 600px;'}),
@@ -163,6 +169,7 @@ class SourceForm(ModelForm):
 class SaisonForm(ModelForm):
     class Meta(object):
         model = Source
+        exclude = ()
 
     def clean(self):
         data = super(SaisonForm, self).clean()

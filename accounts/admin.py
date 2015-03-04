@@ -29,6 +29,7 @@ class HierarchicUserCreationForm(UserCreationForm):
 class HierarchicUserChangeForm(UserChangeForm):
     class Meta(object):
         model = HierarchicUser
+        exclude = ()
         widgets = {
             'presentation': TinyMCE,
             'fonctions': TinyMCE,

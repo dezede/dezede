@@ -11,6 +11,7 @@ class DossierDEvenementsForm(MPTTAdminForm):
 
     class Meta(object):
         model = DossierDEvenements
+        exclude = ()
 
     class Media(object):
         css = {
