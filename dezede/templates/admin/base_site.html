@@ -2,9 +2,11 @@
 {# FIXME: Ce fichier est une bidouille pour que django-ajax-selects fonctionne correctement. #}
 {#        Corriger cela peut-être avec AjaxSelectAdmin. #}
 {% extends 'admin/base.html' %}
-{% load i18n static %}
+{% load i18n static grp_tags %}
 
-{% block title %}{{ title }} | Dezède{% endblock %}
+{% block title %}
+  {{ title }} | {% filter removetags:'a' %}{% get_site_title %}{% endfilter %}
+{% endblock %}
 
 {% block extrastyle %}
   <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}" />

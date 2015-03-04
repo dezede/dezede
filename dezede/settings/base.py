@@ -126,7 +126,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'compressor',
     'sekizai',
-    'south',
 )
 
 MIDDLEWARE_CLASSES = (

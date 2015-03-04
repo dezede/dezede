@@ -409,18 +409,9 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
         self.added_fieldsets = ()
         super(CommonAdmin, self).__init__(*args, **kwargs)
 
-    @property
-    def declared_fieldsets(self):
-        declared_fieldsets = self._declared_fieldsets()
-        if declared_fieldsets is None:
-            return
-        return tuple(declared_fieldsets) + self.added_fieldsets
-
     def get_fieldsets(self, request, obj=None):
         fieldsets = super(CommonAdmin, self).get_fieldsets(request, obj=obj)
-        if self.declared_fieldsets is None:
-            return tuple(fieldsets) + self.added_fieldsets
-        return fieldsets
+        return tuple(fieldsets) + self.added_fieldsets
 
     def _get_added_fields(self, request, additional_fields_attname,
                           excluded=()):
