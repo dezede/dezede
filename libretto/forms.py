@@ -91,13 +91,13 @@ class ElementDeDistributionForm(ModelForm):
             msg = _('Vous devez remplir au moins un individu ou un ensemble.')
             error_msgs[b'individus'].append(msg)
             error_msgs[b'ensembles'].append(msg)
-        if data.get(b'pupitre') and data[b'profession']:
+        if data.get(b'pupitre') and data.get(b'profession'):
             msg = _('Vous ne pouvez remplir à la fois '
                     '« Pupitre » et « Profession ».')
             error_msgs[b'pupitre'].append(msg)
             error_msgs[b'profession'].append(msg)
         if data.get(b'pupitre', '') != '' \
-                and data[b'profession'] \
+                and data.get(b'profession') \
                 and data[b'profession'].parties.exists():
             msg = _('Au moins un rôle ou instrument est lié à cette '
                     'profession. Remplissez donc « Pupitre » à la place.')

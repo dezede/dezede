@@ -262,10 +262,10 @@ class MembreInline(CustomStackedInline):
     )
 
 
-class ElementDeDistributionInline(CustomStackedInline, GenericStackedInline):
+class ElementDeDistributionInline(CustomStackedInline):
     """
     Utilisé uniquement pour les distributions de tête d'événement.
-    La restriction est que l'on utilise pas de champ 'pupitre'.
+    La restriction est que l’on n’utilise pas de champ 'pupitre'.
     """
     model = ElementDeDistribution
     form = ElementDeDistributionForm

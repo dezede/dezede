@@ -3,9 +3,6 @@
 from __future__ import unicode_literals
 import re
 import warnings
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.generic import GenericForeignKey, \
-                                                GenericRelation
 from django.core.urlresolvers import reverse
 from django.core.validators import RegexValidator
 from django.db import connection
@@ -37,12 +34,9 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
             pk__in=self.values_list('individus', flat=True))
 
     def evenements(self):
-        distributions_evenements = self.filter(
-            content_type__app_label='libretto',
-            content_type__model='evenement')
-        pk_list = distributions_evenements.values_list('object_id', flat=True)
-        return Evenement.objects.filter(Q(pk__in=pk_list)
-                              | Q(programme__distribution__in=self)).distinct()
+        return Evenement.objects.filter(
+            Q(distribution__in=self)
+            | Q(programme__distribution__in=self)).distinct()
 
     def prefetch(self):
         return self.select_related(
@@ -71,6 +65,10 @@ class ElementDeDistributionManager(CommonManager):
 
 @python_2_unicode_compatible
 class ElementDeDistribution(CommonModel):
+    evenement = ForeignKey(
+        'Evenement', null=True, blank=True, related_name='distribution',
+        verbose_name=_('événement'), on_delete=PROTECT)
+
     individus = ManyToManyField(
         'Individu', blank=True, null=True,
         related_name='elements_de_distribution', verbose_name=_('individus'))
@@ -84,9 +82,6 @@ class ElementDeDistribution(CommonModel):
         'Profession', verbose_name=_('profession'), null=True, blank=True,
         related_name='elements_de_distribution', on_delete=PROTECT)
     # TODO: Ajouter une FK (ou M2M?) vers Individu pour les remplacements.
-    content_type = ForeignKey(ContentType, null=True, on_delete=PROTECT)
-    object_id = PositiveIntegerField(null=True)
-    content_object = GenericForeignKey()
 
     objects = ElementDeDistributionManager()
 
@@ -99,12 +94,11 @@ class ElementDeDistribution(CommonModel):
         #       La solution la plus sage est sans doute de transformer le M2M
         #       'individus' en un FK 'individu'.
         ordering = ('pupitre', 'profession',)
-        index_together = (('content_type', 'object_id'),)
         app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
-        return ('content_object', 'elements_de_programme')
+        return ('evenement', 'elements_de_programme')
 
     def __str__(self):
         return self.html(tags=False)
@@ -230,7 +224,7 @@ class ElementDeProgramme(CommonModel):
     NUMEROTATIONS_SANS_ORDRE = ('U', 'E',)
     position = PositiveSmallIntegerField(_('position'), db_index=True)
     # TODO: Quand les nested inlines seront possibles avec Django, remplacer
-    # ceci par un GenericRelation.
+    # ceci par une ForeignKey dans ElementDeDistribution.
     distribution = ManyToManyField(
         ElementDeDistribution, related_name='elements_de_programme',
         blank=True, null=True)
@@ -332,10 +326,8 @@ class EvenementQuerySet(PublishedQuerySet):
 
     def get_distributions(self):
         return ElementDeDistribution.objects.filter(
-            Q(elements_de_programme__evenement__in=self)
-            | (Q(content_type=ContentType.objects.get_for_model(Evenement))
-               & Q(object_id__in=self.values('pk')))
-        )
+            Q(evenement__in=self)
+            | Q(element_de_programme__evenement__in=self))
 
     def ensembles(self):
         distributions = self.get_distributions()
@@ -448,7 +440,6 @@ class Evenement(AutoriteModel):
         CaracteristiqueDeProgramme,
         related_name='evenements', blank=True, null=True,
         verbose_name=_('caractéristiques'))
-    distribution = GenericRelation(ElementDeDistribution)
 
     code_programme = CharField(_('code du programme'), max_length=55,
                                blank=True)
