@@ -4,15 +4,11 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 import re
 from django.core.exceptions import ValidationError
-from django.contrib.contenttypes.generic import GenericForeignKey
-from django.contrib.contenttypes.generic import GenericRelation
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator
 from django.db.models import (
-    CharField, ManyToManyField, PositiveIntegerField, ForeignKey, IntegerField,
-    TextField, BooleanField, permalink, get_model, SmallIntegerField, PROTECT,
-    Count)
+    CharField, ManyToManyField, ForeignKey, IntegerField, TextField,
+    BooleanField, permalink, get_model, SmallIntegerField, PROTECT, Count)
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -482,9 +478,12 @@ class AuteurManager(CommonManager):
 
 @python_2_unicode_compatible
 class Auteur(CommonModel):
-    content_type = ForeignKey(ContentType, db_index=True, on_delete=PROTECT)
-    object_id = PositiveIntegerField(db_index=True)
-    content_object = GenericForeignKey()
+    oeuvre = ForeignKey(
+        'Oeuvre', null=True, blank=True, on_delete=PROTECT,
+        related_name='auteurs', verbose_name=_('œuvre'))
+    source = ForeignKey(
+        'Source', null=True, blank=True, on_delete=PROTECT,
+        related_name='auteurs', verbose_name=_('source'))
     individu = ForeignKey('Individu', related_name='auteurs',
                           verbose_name=_('individu'), db_index=True,
                           on_delete=PROTECT)
@@ -498,7 +497,6 @@ class Auteur(CommonModel):
         verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
         verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
         ordering = ('profession', 'individu__nom')
-        index_together = (('content_type', 'object_id'),)
         app_label = 'libretto'
 
     @staticmethod
@@ -633,7 +631,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     caracteristiques = ManyToManyField(
         'CaracteristiqueDOeuvre', blank=True, null=True, db_index=True,
         verbose_name=_('autres caractéristiques'), related_name='oeuvres')
-    auteurs = GenericRelation('Auteur')
     creation = AncrageSpatioTemporel(short_description=_('création'))
     pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
         null=True, verbose_name=_('effectif'), db_index=True)

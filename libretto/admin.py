@@ -219,12 +219,13 @@ class OeuvreLieesInline(StackedInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class AuteurInline(CustomTabularInline, GenericStackedInline):
+class AuteurInline(CustomTabularInline):
     model = Auteur
     raw_id_fields = ('profession', 'individu',)
     autocomplete_lookup_fields = {
         'fk': ['profession', 'individu'],
     }
+    fields = ('individu', 'profession')
 
     def get_formset(self, request, obj=None, **kwargs):
         formset = super(AuteurInline,

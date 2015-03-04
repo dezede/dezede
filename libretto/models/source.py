@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.contrib.contenttypes.generic import GenericRelation
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField)
 from django.utils.encoding import python_2_unicode_compatible
@@ -112,8 +111,6 @@ class Source(AutoriteModel):
     transcription = HTMLField(_('transcription'), blank=True,
         help_text=_('Recopié tel quel, avec les fautes d’orthographe suivies '
                     'de « [<em>sic</em>] » le cas échéant.'))
-
-    auteurs = GenericRelation('Auteur')
 
     evenements = ManyToManyField('Evenement', through='SourceEvenement',
                                  related_name='sources')
