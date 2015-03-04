@@ -339,17 +339,20 @@ class EvenementQuerySet(PublishedQuerySet):
     def with_program(self):
         return self.filter(Q(relache=True) | Q(programme__isnull=False))
 
-    def prefetch_all(self):
-        # TODO: Retirer ceci quand https://code.djangoproject.com/ticket/24196
-        #       sera corrigé et dans notre version de Django.
-        if self.query.low_mark == self.query.high_mark:
-            return self
+    def prefetch_all(self, create_subquery=True):
+        if create_subquery:
+            # TODO: Retirer ceci quand https://code.djangoproject.com/ticket/24196
+            #       sera corrigé et dans notre version de Django.
+            if self.query.low_mark == self.query.high_mark:
+                return self
 
-        qs = Evenement.objects.filter(
-            pk__in=list(self.values_list('pk', flat=True)))
-        qs.query.order_by = self.query.order_by
-        qs.query.default_ordering = self.query.default_ordering
-        qs.query.standard_ordering = self.query.standard_ordering
+            qs = Evenement.objects.filter(
+                pk__in=list(self.values_list('pk', flat=True)))
+            qs.query.order_by = self.query.order_by
+            qs.query.default_ordering = self.query.default_ordering
+            qs.query.standard_ordering = self.query.standard_ordering
+        else:
+            qs = self
         return (
             qs.select_related(
                 'debut_lieu', 'debut_lieu__nature',

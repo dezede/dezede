@@ -242,6 +242,10 @@ class EvenementGeoJson(BaseEvenementListView):
 class EvenementDetailView(PublishedDetailView):
     model = Evenement
 
+    def get_queryset(self):
+        qs = super(EvenementDetailView, self).get_queryset()
+        return qs.prefetch_all(create_subquery=False)
+
 
 class CommonTableView(TemplateView):
     template_name = 'libretto/tableau.html'
