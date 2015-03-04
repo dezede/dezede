@@ -270,17 +270,16 @@ class ElementDeDistributionInline(CustomStackedInline):
     model = ElementDeDistribution
     form = ElementDeDistributionForm
     verbose_name_plural = _('distribution')
-    raw_id_fields = ('individus', 'ensembles', 'profession')
+    raw_id_fields = ('individu', 'ensemble', 'profession')
     autocomplete_lookup_fields = {
-        'fk': ['profession'],
-        'm2m': ['individus', 'ensembles'],
+        'fk': ['individu', 'ensemble', 'profession'],
     }
     fieldsets = (
         (None, {
             'description': _('Distribution commune à l’ensemble de '
                              'l’événement. Une distribution plus précise peut '
                              'être saisie avec le programme.'),
-            'fields': ('individus', 'ensembles', 'profession',),
+            'fields': ('individu', 'ensemble', 'profession',),
         }),
     )
     classes = ('grp-collapse grp-open',)
@@ -975,13 +974,12 @@ class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
     form = ElementDeDistributionForm
     list_display = ('__str__', 'pupitre', 'profession',)
     list_editable = ('pupitre', 'profession',)
-    search_fields = ('individus__nom', 'individus__prenoms',
+    search_fields = ('individu__nom', 'individu__prenoms', 'ensemble__nom',
                      'pupitre__partie__nom', 'profession__nom')
-    fields = ('individus', 'ensembles', 'pupitre', 'profession',)
-    raw_id_fields = ('individus', 'ensembles', 'pupitre', 'profession',)
+    fields = ('individu', 'ensemble', 'pupitre', 'profession')
+    raw_id_fields = ('individu', 'ensemble', 'pupitre', 'profession')
     autocomplete_lookup_fields = {
-        'fk': ['pupitre', 'profession'],
-        'm2m': ['individus', 'ensembles'],
+        'fk': ['individu', 'ensemble', 'pupitre', 'profession'],
     }
 
 

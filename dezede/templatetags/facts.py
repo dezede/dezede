@@ -184,7 +184,7 @@ def prolific_author(context, n=40):
 def transformist(n=10):
     out = h3(ugettext('« Transformiste »'))
 
-    individu_accessor = 'pupitres__elements_de_distribution__individus'
+    individu_accessor = 'pupitres__elements_de_distribution__individu'
     data = Role.objects \
         .values(individu_accessor) \
         .exclude(**{individu_accessor: None}) \
@@ -215,7 +215,7 @@ def transformist(n=10):
 def multi_instrumentalist(n=10):
     out = h3(ugettext('Multi-instrumentiste'))
 
-    individu_accessor = 'pupitres__elements_de_distribution__individus'
+    individu_accessor = 'pupitres__elements_de_distribution__individu'
     data = Instrument.objects \
         .values(individu_accessor) \
         .exclude(**{individu_accessor: None}) \

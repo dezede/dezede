@@ -70,11 +70,11 @@ class BaseEvenementListView(PublishedListView):
     BINDINGS = {
         'lieu': ('debut_lieu__in', 'fin_lieu__in'),
         'oeuvre': 'programme__oeuvre__in',
-        'individu': ('distribution__individus__in',
-                     'programme__distribution__individus__in',
+        'individu': ('distribution__individu__in',
+                     'programme__distribution__individu__in',
                      'programme__oeuvre__auteurs__individu__in'),
-        'ensemble': ('distribution__ensembles__in',
-                     'programme__distribution__ensembles__in'),
+        'ensemble': ('distribution__ensemble__in',
+                     'programme__distribution__ensemble__in'),
         'source': ('sources__in',),
     }
 

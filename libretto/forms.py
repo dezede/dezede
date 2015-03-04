@@ -87,10 +87,15 @@ class ElementDeDistributionForm(ModelForm):
         data = super(ElementDeDistributionForm, self).clean()
 
         error_msgs = defaultdict(list)
-        if not (data[b'individus'] or data[b'ensembles']):
-            msg = _('Vous devez remplir au moins un individu ou un ensemble.')
-            error_msgs[b'individus'].append(msg)
-            error_msgs[b'ensembles'].append(msg)
+        if not (data[b'individu'] or data[b'ensemble']):
+            msg = _('Vous devez remplir « Individu » ou « Ensemble ».')
+            error_msgs[b'individu'].append(msg)
+            error_msgs[b'ensemble'].append(msg)
+        if data[b'individu'] and data[b'ensemble']:
+            msg = _('Vous ne pouvez remplir à la fois '
+                    '« Individu » et « Ensemble ».')
+            error_msgs[b'individu'].append(msg)
+            error_msgs[b'ensemble'].append(msg)
         if data.get(b'pupitre') and data.get(b'profession'):
             msg = _('Vous ne pouvez remplir à la fois '
                     '« Pupitre » et « Profession ».')
@@ -105,7 +110,8 @@ class ElementDeDistributionForm(ModelForm):
 
         for k, v in error_msgs.items():
             self._errors[k] = self.error_class(v)
-            del data[k]
+            if k in data:
+                del data[k]
 
         return data
 

@@ -21,7 +21,7 @@ from .base import (
     PublishedManager, PublishedQuerySet,
     TypeDeCaracteristique, Caracteristique, AncrageSpatioTemporel)
 from common.utils.html import capfirst, href, hlp, microdata
-from common.utils.text import str_list, str_list_w_last
+from common.utils.text import str_list
 
 
 __all__ = (b'ElementDeDistribution', b'CaracteristiqueDeProgramme',
@@ -31,7 +31,7 @@ __all__ = (b'ElementDeDistribution', b'CaracteristiqueDeProgramme',
 class ElementDeDistributionQuerySet(CommonQuerySet):
     def individus(self):
         return get_model('libretto', 'Individu').objects.filter(
-            pk__in=self.values_list('individus', flat=True))
+            pk__in=self.values_list('individu', flat=True))
 
     def evenements(self):
         return Evenement.objects.filter(
@@ -40,8 +40,7 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
 
     def prefetch(self):
         return self.select_related(
-            'pupitre', 'pupitre__partie',
-            'profession').prefetch_related('individus', 'ensembles')
+            'individu', 'ensemble', 'pupitre', 'pupitre__partie', 'profession')
 
     def html(self, tags=True):
         return str_list(e.html(tags=tags) for e in self)
@@ -69,12 +68,12 @@ class ElementDeDistribution(CommonModel):
         'Evenement', null=True, blank=True, related_name='distribution',
         verbose_name=_('événement'), on_delete=PROTECT)
 
-    individus = ManyToManyField(
-        'Individu', blank=True, null=True,
-        related_name='elements_de_distribution', verbose_name=_('individus'))
-    ensembles = ManyToManyField(
-        'Ensemble', blank=True, null=True,
-        related_name='elements_de_distribution', verbose_name=_('ensembles'))
+    individu = ForeignKey(
+        'Individu', blank=True, null=True, on_delete=PROTECT,
+        related_name='+', verbose_name=_('individu'))
+    ensemble = ForeignKey(
+        'Ensemble', blank=True, null=True, on_delete=PROTECT,
+        related_name='+', verbose_name=_('ensemble'))
     pupitre = ForeignKey(
         'Pupitre', verbose_name=_('pupitre'), null=True, blank=True,
         related_name='elements_de_distribution', on_delete=PROTECT)
@@ -90,10 +89,7 @@ class ElementDeDistribution(CommonModel):
                                       'éléments de distribution', 1)
         verbose_name_plural = ungettext_lazy('élément de distribution',
                                              'éléments de distribution', 2)
-        # TODO: Trouver une solution pour pouvoir ordonner par nom d'individu.
-        #       La solution la plus sage est sans doute de transformer le M2M
-        #       'individus' en un FK 'individu'.
-        ordering = ('pupitre', 'profession',)
+        ordering = ('pupitre', 'profession', 'individu', 'ensemble')
         app_label = 'libretto'
 
     @staticmethod
@@ -105,25 +101,19 @@ class ElementDeDistribution(CommonModel):
 
     def html(self, tags=True):
         l = []
-        pluriel = False
         feminin = False
-        if self.pk:
-            individus = self.individus.all()
-            interpretes = [individu.html(tags=tags)
-                           for individu in individus]
-            ensembles = self.ensembles.all()
-            interpretes += [ensemble.html(tags=tags)
-                            for ensemble in ensembles]
-            if not ensembles:
-                feminin = individus.are_feminins()
-            l.append(str_list_w_last(interpretes))
-            pluriel = len(interpretes) > 1
+
+        assert not (self.individu and self.ensemble)
+        if self.individu:
+            l.append(self.individu.html(tags=tags))
+            feminin = self.individu.is_feminin()
+        elif self.ensemble:
+            l.append(self.ensemble.html(tags=tags))
 
         if self.pupitre:
             l.append('[' + self.pupitre.html() + ']')
         elif self.profession:
-            l.append('[' + self.profession.html(feminin=feminin,
-                                                pluriel=pluriel) + ']')
+            l.append('[' + self.profession.html(feminin=feminin) + ']')
 
         out = str_list(l, infix=' ')
         if not tags:
@@ -144,8 +134,9 @@ class ElementDeDistribution(CommonModel):
     def autocomplete_search_fields():
         return (
             'pupitre__partie__nom__icontains',
-            'individus__nom__icontains',
-            'individus__pseudonyme__icontains',
+            'individu__nom__icontains',
+            'individu__pseudonyme__icontains',
+            'ensemble__nom__icontains',
         )
 
 
@@ -366,7 +357,7 @@ class EvenementQuerySet(PublishedQuerySet):
                 'owner', 'etat')
             .prefetch_related(
                 'caracteristiques__type',
-                'distribution__individus', 'distribution__ensembles',
+                'distribution__individu', 'distribution__ensemble',
                 'distribution__profession', 'distribution__pupitre__partie',
                 'programme__caracteristiques__type',
                 'programme__oeuvre__genre',
@@ -377,8 +368,8 @@ class EvenementQuerySet(PublishedQuerySet):
                 'programme__oeuvre__contenu_dans__genre',
                 'programme__oeuvre__contenu_dans__caracteristiques__type',
                 'programme__oeuvre__contenu_dans__pupitres__partie',
-                'programme__distribution__individus',
-                'programme__distribution__ensembles',
+                'programme__distribution__individu',
+                'programme__distribution__ensemble',
                 'programme__distribution__profession',
                 'programme__distribution__pupitre__partie')
             .only(
