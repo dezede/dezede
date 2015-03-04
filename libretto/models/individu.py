@@ -14,7 +14,7 @@ from django.utils.translation import (
 from tinymce.models import HTMLField
 from cache_tools import invalidate_object
 from common.utils.abbreviate import abbreviate
-from common.utils.html import href, sc
+from common.utils.html import href, sc, hlp
 from common.utils.text import str_list, str_list_w_last, ex
 from .base import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
@@ -236,11 +236,11 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
         if tags:
             if titre == 'M':
-                return ugettext('M.')
+                return hlp(ugettext('M.'), 'Monsieur')
             elif titre == 'J':
-                return ugettext('M<sup>lle</sup>')
+                return hlp(ugettext('M<sup>lle</sup>'), 'Mademoiselle')
             elif titre == 'F':
-                return ugettext('M<sup>me</sup>')
+                return hlp(ugettext('M<sup>me</sup>'), 'Madame')
 
         if titre == 'M':
             return ugettext('Monsieur')
