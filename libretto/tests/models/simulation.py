@@ -304,7 +304,7 @@ class SeleniumTest(LiveServerTestCase):
                 '.distribution .related-lookup').click()
             with self.new_popup(add='élément de distribution'):
                 # Ajoute l'individu de cette distribution.
-                self.get_by_css('.individus .related-lookup').click()
+                self.get_by_css('.individu .related-lookup').click()
                 with self.new_popup(add='individu'):
                     self.get_by_name('nom').send_keys('Désile')
                     select = Select(self.get_by_name('titre'))
@@ -331,10 +331,10 @@ class SeleniumTest(LiveServerTestCase):
                 '.distribution .related-lookup').click()
             with self.new_popup(add='élément de distribution'):
                 self.autocomplete(
-                    self.get_by_css('.individus'),
+                    self.get_by_css('.individu'),
                     'dés', 'Mademoiselle Désile')
                 # Ajoute un autre individu de cette distribution.
-                self.get_by_css('.individus .related-lookup').click()
+                self.get_by_css('.individu .related-lookup').click()
                 with self.new_popup(add='individu'):
                     self.get_by_name('nom').send_keys('Balensi')
                     self.get_by_xpath(
