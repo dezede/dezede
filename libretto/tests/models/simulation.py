@@ -9,11 +9,7 @@ from django.test.utils import override_settings
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver import PhantomJS, Firefox
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.expected_conditions import (
-    element_to_be_clickable
-)
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -155,10 +151,7 @@ class SeleniumTest(LiveServerTestCase):
         return NewPopup()
 
     def show_on_site(self):
-        link = self.get_link('Voir sur le site')
-        self.wait.until(element_to_be_clickable((By.LINK_TEXT,
-                                                 'Voir sur le site')))
-        link.click()
+        self.get_link('Voir sur le site').click()
         self.selenium.close()
         self.switch()
 
