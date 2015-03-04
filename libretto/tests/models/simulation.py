@@ -262,7 +262,7 @@ class SeleniumTest(LiveServerTestCase):
                 self.get_link(
                     'Ajouter un objet auteur supplémentaire').click()
                 auteur = self.get_by_id(
-                    'libretto-auteur-content_type-object_id0')
+                    'auteurs0')
 
                 # Créé l'individu auteur de l'œuvre.
                 auteur.find_element_by_css_selector(
@@ -291,7 +291,7 @@ class SeleniumTest(LiveServerTestCase):
                 self.get_by_name('titre').send_keys('Gloria e Himeneo')
                 self.get_link('Ajouter un objet auteur supplémentaire').click()
                 auteur = self.get_by_id(
-                    'libretto-auteur-content_type-object_id0')
+                    'auteurs0')
                 self.autocomplete(
                     auteur.find_element_by_css_selector('.grp-td.individu'),
                     'viv', 'Vivaldi (Antonio)')
