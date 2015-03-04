@@ -5,4 +5,5 @@ from __future__ import unicode_literals
 
 __version__ = 2, 4, 0
 get_version = lambda: '.'.join(str(i) for i in __version__)
-__verbose_name__ = 'Dezède'
+
+default_app_config = 'dezede.apps.DezedeConfig'

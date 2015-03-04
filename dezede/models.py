@@ -2,34 +2,18 @@
 
 from __future__ import unicode_literals, division
 from decimal import Decimal
-import re
-from django.conf import settings
+
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
     CharField, ImageField, DecimalField, BooleanField, ForeignKey,
     PositiveIntegerField, PositiveSmallIntegerField, Max)
-from django.template import Template, Context
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from image_cropping import ImageRatioField
 from accounts.models import _get_valid_modelnames_func
 from libretto.models.base import PublishedModel
-
-
-# FIXME: Ceci est un hack pour avoir les styles compilés dans TinyMCE.
-#        À déplacer dans "apps" au passage à Django 1.7.
-def set_tinymce_css():
-    html = ('{% load compress static %}'
-            '{% compress css %}'
-            '  <link rel="stylesheet" type="text/less"'
-            '        href="{% static "css/styles.less" %}" />'
-            '{% endcompress %}')
-
-    html = Template(html).render(Context())
-    settings.TINYMCE_DEFAULT_CONFIG['content_css'] = re.search(r'href="([^"]+)"', html).group(1)
-set_tinymce_css()
 
 
 def get_default_position():
