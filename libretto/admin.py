@@ -10,7 +10,6 @@ from django.contrib.admin import (site, TabularInline, StackedInline,
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
-from django.contrib.contenttypes.generic import GenericStackedInline
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.db.models import Q
 from django.forms.models import modelformset_factory
@@ -175,19 +174,6 @@ class OeuvreMereInline(CustomTabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class OeuvreFilleInline(CustomTabularInline):
-    model = ParenteDOeuvres
-    verbose_name = model._meta.get_field('fille').verbose_name
-    verbose_name_plural = _('œuvres filles')
-    fk_name = 'mere'
-    raw_id_fields = ('fille',)
-    autocomplete_lookup_fields = {
-        'fk': ('fille',),
-    }
-    fields = ('type', 'fille')
-    classes = ('grp-collapse grp-closed',)
-
-
 class IndividuParentInline(CustomTabularInline):
     model = ParenteDIndividus
     verbose_name = model._meta.get_field('parent').verbose_name
@@ -198,19 +184,6 @@ class IndividuParentInline(CustomTabularInline):
         'fk': ('parent',),
     }
     fields = ('parent', 'type',)
-    classes = ('grp-collapse grp-closed',)
-
-
-class IndividuEnfantInline(CustomTabularInline):
-    model = ParenteDIndividus
-    verbose_name = model._meta.get_field('enfant').verbose_name
-    verbose_name_plural = _('individus enfants')
-    fk_name = 'parent'
-    raw_id_fields = ('enfant',)
-    autocomplete_lookup_fields = {
-        'fk': ('enfant',),
-    }
-    fields = ('type', 'enfant')
     classes = ('grp-collapse grp-closed',)
 
 
@@ -664,7 +637,7 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
         'm2m': ('professions', 'parentes'),
     }
     readonly_fields = ('__str__', 'html', 'link',)
-    inlines = (IndividuParentInline, IndividuEnfantInline)
+    inlines = (IndividuParentInline,)
     fieldsets = (
         (None, {
             'fields': (('titre', 'prenoms'), ('particule_nom', 'nom'),
@@ -929,7 +902,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
         'm2m': ('caracteristiques', 'pupitres'),
     }
     readonly_fields = ('__str__', 'html', 'link',)
-    inlines = (AuteurInline, OeuvreMereInline, OeuvreFilleInline)
+    inlines = (AuteurInline, OeuvreMereInline)
     fieldsets = (
         (_('Titre'), {
             'fields': (('prefixe_titre', 'titre',), 'coordination',
