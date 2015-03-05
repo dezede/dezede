@@ -566,7 +566,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                               'lettres non accentuées et tiret, '
                               'le tout sans espace.'))],
         help_text=_('Exemple : « 5 » pour n° 5, « 7a » pour n° 7 a, '
-                    'ou encore « 3-7 » pour n° 3 à 7'))
+                    'ou encore « 3-7 » pour n° 3 à 7.'))
     opus = CharField(
         _('opus'), max_length=5, blank=True,
         validators=[RegexValidator(
@@ -619,6 +619,15 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         _('surnom'), max_length=50, blank=True,
         help_text=_('Exemple : « Jupiter » pour la symphonie n° 41 '
                     'de Mozart.'))
+    sujet = CharField(
+        _('sujet'), max_length=80, blank=True,
+        help_text=_(
+            'Exemple : « un thème de Beethoven » pour une variation sur un '
+            'thème de Beethoven, « des motifs de '
+            '&lt;em&gt;Lucia di Lammermoor&lt;/em&gt; » pour une fantaisie '
+            'sur des motifs de <em>Lucia di Lammermoor</em> '
+            '(&lt;em&gt; et &lt;/em&gt; sont les balises HTML '
+            'pour mettre en emphase).'))
     incipit = CharField(
         _('incipit'), max_length=100, blank=True,
         help_text=_('Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 '
@@ -679,11 +688,14 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def get_caracteristiques(self, tags=False):
         caracteristiques = []
         if self.coupe:
-            caracteristiques.append(hlp('en ' + self.coupe, 'coupe', tags))
+            caracteristiques.append(hlp(ugettext('en %s') % self.coupe,
+                                        ugettext('coupe'), tags))
         if self.numero:
-            caracteristiques.append(hlp('n° ' + self.numero, 'numéro', tags))
+            caracteristiques.append(hlp(ugettext('n° %s') % self.numero,
+                                        ugettext('numéro'), tags))
         if self.opus:
-            caracteristiques.append(hlp('op. ' + self.opus, 'opus', tags))
+            caracteristiques.append(hlp(ugettext('op. %s') % self.opus,
+                                        ugettext('opus'), tags))
         if self.tonalite:
             gamme, note, alteration = self.tonalite
             if gamme == 'C':
@@ -694,20 +706,24 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                 gamme = ''
             note = self.NOTES[note]
             alteration = self.ALTERATIONS[alteration]
-            tonalite = 'en ' + str_list((em(note, tags), alteration, gamme),
-                                        ' ')
-            caracteristiques.append(hlp(tonalite, 'tonalité', tags))
+            tonalite = ugettext('en %s') % str_list(
+                (em(note, tags), alteration, gamme), ' ')
+            caracteristiques.append(hlp(tonalite, ugettext('tonalité'), tags))
         if self.ict:
-            caracteristiques.append(hlp(self.ict,
-                                        'Indice Catalogue Thématique', tags))
+            caracteristiques.append(
+                hlp(self.ict, ugettext('Indice Catalogue Thématique'), tags))
         if self.surnom:
             caracteristiques.append(
-                hlp(em(self.surnom, tags), 'surnom', tags))
+                hlp(em(self.surnom, tags), ugettext('surnom'), tags))
         if self.incipit:
-            caracteristiques.append(hlp('« ' + self.incipit + ' »', 'incipit',
-                                        tags))
+            caracteristiques.append(hlp(ugettext('« %s »') % self.incipit,
+                                        ugettext('incipit'), tags))
         if self.nom_courant:
-            caracteristiques.append(hlp(self.nom_courant, 'nom courant', tags))
+            caracteristiques.append(hlp(self.nom_courant,
+                                        ugettext('nom courant'), tags))
+        if self.sujet:
+            caracteristiques.append(
+                hlp(ugettext('sur %s') % self.sujet, ugettext('sujet'), tags))
         if self.pk:
             caracteristiques.extend(self.caracteristiques.html_list(tags=tags))
         return caracteristiques
@@ -757,6 +773,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             programme__oeuvre__in=self.get_descendants(include_self=True))
 
     def oeuvres_associees(self):
+        # TODO: Limiter à ce que l’utilisateur peut voir.
         return (
             Oeuvre.objects.exclude(
                 pk__in=self.get_descendants(include_self=True))
