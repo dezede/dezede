@@ -19,8 +19,8 @@
       <table class="programme">
         {% for element in elements %}
           <tr>
-            <td>
-              {% if elements|length > 1 %}
+            {% if elements|length > 1 %}
+              <td>
                 {% if element.numerotation == 'O' %}
                   {{ element.numero }}.
                 {% elif element.numerotation == 'B' %}
@@ -28,8 +28,8 @@
                 {% elif element.numerotation == 'U' %}
                   •&nbsp;
                 {% endif %}
-              {% endif %}
-            </td>
+              </td>
+            {% endif %}
             <td>
               {{ element.html|safe }}
             </td>
