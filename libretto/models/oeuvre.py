@@ -565,8 +565,10 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             r'^[\d\w\-]+$', _('Vous ne pouvez saisir que des chiffres, '
                               'lettres non accentuées et tiret, '
                               'le tout sans espace.'))],
-        help_text=_('Exemple : « 5 » pour n° 5, « 7a » pour n° 7 a, '
-                    'ou encore « 3-7 » pour n° 3 à 7.'))
+        help_text=_(
+            'Exemple : « 5 » pour symphonie n° 5, « 7a » pour valse n° 7 a, '
+            'ou encore « 3-7 » pour sonates n° 3 à 7. '
+            '<strong>Ne pas confondre avec le sous-numéro d’opus.</strong>'))
     opus = CharField(
         _('opus'), max_length=5, blank=True,
         validators=[RegexValidator(
