@@ -502,7 +502,7 @@ class Auteur(CommonModel):
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
         return (
-            'content_object',
+            'oeuvre', 'source',
         )
 
     def html(self, tags=True):
