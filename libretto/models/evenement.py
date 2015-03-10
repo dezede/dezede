@@ -336,6 +336,11 @@ class EvenementQuerySet(PublishedQuerySet):
             'designation', 'titre', 'slug',
         )
 
+    def individus_auteurs(self):
+        return get_model('libretto', 'individu').objects.filter(
+            auteurs__oeuvre__elements_de_programme__evenement__in=self
+        ).distinct()
+
     def with_program(self):
         return self.filter(Q(relache=True) | Q(programme__isnull=False))
 
@@ -407,6 +412,15 @@ class EvenementManager(PublishedManager):
 
     def yearly_counts(self):
         return self.get_queryset().yearly_counts()
+
+    def ensembles(self):
+        return self.get_queryset().ensembles()
+
+    def individus(self):
+        return self.get_queryset().individus()
+
+    def individus_auteurs(self):
+        return self.get_queryset().individus_auteurs()
 
     def with_program(self):
         return self.get_queryset().with_program()
