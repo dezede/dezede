@@ -372,6 +372,7 @@ class AncrageSpatioTemporel(object):
             is_null = 'lieu' not in self.not_null_fields
             fields.append(('lieu', ForeignKey(
                 'Lieu', blank=is_null, null=is_null, verbose_name=_('lieu'),
+                on_delete=PROTECT,
                 related_name='%s_%s_set' % (self.model._meta.model_name,
                                             self.name))))
             if self.approx:
