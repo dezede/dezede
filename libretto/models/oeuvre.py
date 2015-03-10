@@ -691,8 +691,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             caracteristiques.append(hlp(ugettext('en %s') % self.coupe,
                                         ugettext('coupe'), tags))
         if self.numero:
-            caracteristiques.append(hlp(ugettext('n° %s') % self.numero,
-                                        ugettext('numéro'), tags))
+            caracteristiques.append(ugettext('n° %s') % self.numero)
         if self.opus:
             caracteristiques.append(hlp(ugettext('op. %s') % self.opus,
                                         ugettext('opus'), tags))
