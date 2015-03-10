@@ -20,7 +20,7 @@
         {% for element in elements %}
           <tr>
             {% if elements|length > 1 %}
-              <td>
+              <th>
                 {% if element.numerotation == 'O' %}
                   {{ element.numero }}.
                 {% elif element.numerotation == 'B' %}
@@ -28,7 +28,7 @@
                 {% elif element.numerotation == 'U' %}
                   •&nbsp;
                 {% endif %}
-              </td>
+              </th>
             {% endif %}
             <td>
               {{ element.html|safe }}
