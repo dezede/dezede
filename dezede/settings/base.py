@@ -217,6 +217,7 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'dezede.elasticsearch_backend.ConfigurableElasticSearchEngine',
         'URL': '127.0.0.1:9200',
         'INDEX_NAME': 'dezede',
+        'TIMEOUT': 60*5,  # seconds
         'INCLUDE_SPELLING': True,
     },
 }
