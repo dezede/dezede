@@ -70,10 +70,10 @@ class ElementDeDistribution(CommonModel):
 
     individu = ForeignKey(
         'Individu', blank=True, null=True, on_delete=PROTECT,
-        related_name='+', verbose_name=_('individu'))
+        related_name='elements_de_distribution', verbose_name=_('individu'))
     ensemble = ForeignKey(
         'Ensemble', blank=True, null=True, on_delete=PROTECT,
-        related_name='+', verbose_name=_('ensemble'))
+        related_name='elements_de_distribution', verbose_name=_('ensemble'))
     pupitre = ForeignKey(
         'Pupitre', verbose_name=_('pupitre'), null=True, blank=True,
         related_name='elements_de_distribution', on_delete=PROTECT)
@@ -318,7 +318,7 @@ class EvenementQuerySet(PublishedQuerySet):
     def get_distributions(self):
         return ElementDeDistribution.objects.filter(
             Q(evenement__in=self)
-            | Q(element_de_programme__evenement__in=self))
+            | Q(elements_de_programme__evenement__in=self))
 
     def ensembles(self):
         distributions = self.get_distributions()
