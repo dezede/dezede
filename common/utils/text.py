@@ -88,3 +88,67 @@ def ex(txt, pre='', post=''):
         'post': post,
     }
 ex = lazy(ex, six.text_type)
+
+
+ROMAN_BINDINGS = (
+    (1000, 'M'),
+    (900, 'CM'),
+    (500,  'D'),
+    (400, 'CD'),
+    (100,  'C'),
+    (90,  'XC'),
+    (50,   'L'),
+    (40,  'XL'),
+    (10,   'X'),
+    (9,   'IX'),
+    (5,    'V'),
+    (4,   'IV'),
+    (1,    'I'),
+)
+
+
+def to_roman(integer):
+    """
+    >>> for s in map(to_roman, (1, 2, 4, 5, 6, 7, 9,
+    ...                         10, 11, 40, 49, 50, 55, 100, 900)):
+    ...     print(s)
+    I
+    II
+    IV
+    V
+    VI
+    VII
+    IX
+    X
+    XI
+    XL
+    XLIX
+    L
+    LV
+    C
+    CM
+    """
+    if integer < 1:
+        raise ValueError('%s is not strictly positive.' % integer)
+    roman = ''
+    for n, s in ROMAN_BINDINGS:
+        while integer >= n:
+            integer -= n
+            roman += s
+    return roman
+
+
+def from_roman(roman):
+    """
+    >>> map(from_roman, ('I', 'II', 'IV', 'V', 'VI', 'VII', 'IX', 'X', 'XI',
+    ...                  'XL', 'XLIX', 'L', 'LV', 'C', 'CM'))
+    [1, 2, 4, 5, 6, 7, 9, 10, 11, 40, 49, 50, 55, 100, 900]
+    >>> for i in range(1, 1500):
+    ...     assert from_roman(to_roman(i)) == i
+    """
+    integer = 0
+    for n, s in ROMAN_BINDINGS:
+        while roman[:len(s)] == s:
+            integer += n
+            roman = roman[len(s):]
+    return integer
