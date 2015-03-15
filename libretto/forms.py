@@ -92,8 +92,8 @@ class OeuvreForm(ModelForm):
                 self._errors['numero_extrait'] = self.error_class([
                     _('Ce champ doit être rempli '
                       'pour pouvoir utiliser « Type d’extrait ».')])
-            if not data['contenu_dans']:
-                self._errors['contenu_dans'] = self.error_class([
+            if not data['extrait_de']:
+                self._errors['extrait_de'] = self.error_class([
                     _('Ce champ doit être rempli pour pouvoir utiliser '
                       '« Type d’extrait » et « Numéro d’extrait ».')])
 

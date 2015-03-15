@@ -190,7 +190,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def oeuvres(self):
         oeuvres = self.auteurs.oeuvres()
-        return oeuvres.exclude(contenu_dans__in=oeuvres)
+        return oeuvres.exclude(extrait_de__in=oeuvres)
 
     def oeuvres_with_descendants(self):
         return self.auteurs.oeuvres()

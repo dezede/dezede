@@ -649,9 +649,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     creation = AncrageSpatioTemporel(short_description=_('création'))
     pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
         null=True, verbose_name=_('effectif'), db_index=True)
-    contenu_dans = TreeForeignKey('self', null=True, blank=True, db_index=True,
-                                  related_name='enfants',
-                                  verbose_name=_('contenu dans'))
+    extrait_de = TreeForeignKey(
+        'self', null=True, blank=True,
+        related_name='enfants', verbose_name=_('extrait de'))
     ACTE = 1
     TABLEAU = 2
     SCENE = 3
@@ -715,7 +715,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return relations
 
     class MPTTMeta(object):
-        parent_attr = 'contenu_dans'
+        parent_attr = 'extrait_de'
 
     @permalink
     def get_absolute_url(self):
@@ -845,10 +845,10 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             self.n, self.link())
 
     def calc_referent_ancestors(self, tags=False, links=False):
-        if not self.pk or self.contenu_dans is None or \
+        if not self.pk or self.extrait_de is None or \
                 (self.genre and self.genre.referent):
             return ''
-        return self.contenu_dans.titre_html(tags=tags, links=links)
+        return self.extrait_de.titre_html(tags=tags, links=links)
 
     def titre_complet(self):
         l = (self.prefixe_titre, self.titre, self.coordination,

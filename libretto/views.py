@@ -441,7 +441,7 @@ class EnsembleViewSet(CommonViewSet):
 class OeuvreTableView(CommonTableView):
     def get_queryset(self):
         return super(OeuvreTableView,
-                     self).get_queryset().filter(contenu_dans=None)
+                     self).get_queryset().filter(extrait_de=None)
 
 
 class OeuvreViewSet(CommonViewSet):

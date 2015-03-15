@@ -203,7 +203,7 @@ class AuteurInline(CustomTabularInline):
     def get_formset(self, request, obj=None, **kwargs):
         formset = super(AuteurInline,
                         self).get_formset(request, obj=obj, **kwargs)
-        if request.method == 'POST' or 'contenu_dans' not in request.GET:
+        if request.method == 'POST' or 'extrait_de' not in request.GET:
             return formset
 
         # Lorsqu’on saisit un extrait, il faut que les auteurs
@@ -211,8 +211,8 @@ class AuteurInline(CustomTabularInline):
         # cas où cela ne correspondrait pas à l’œuvre mère (par exemple
         # pour une ouverture d’opéra où le librettiste n’est pas auteur).
 
-        contenu_dans = Oeuvre.objects.get(pk=request.GET['contenu_dans'])
-        initial = list(contenu_dans.auteurs.values('individu', 'profession'))
+        extrait_de = Oeuvre.objects.get(pk=request.GET['contenu_dans'])
+        initial = list(extrait_de.auteurs.values('individu', 'profession'))
 
         class TmpFormset(formset):
             extra = len(initial)
@@ -895,10 +895,10 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     list_filter = ('genre',)
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
-    raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
+    raw_id_fields = ('genre', 'caracteristiques', 'extrait_de',
                      'creation_lieu', 'pupitres')
     autocomplete_lookup_fields = {
-        'fk': ('genre', 'contenu_dans', 'creation_lieu'),
+        'fk': ('genre', 'extrait_de', 'creation_lieu'),
         'm2m': ('caracteristiques', 'pupitres'),
     }
     readonly_fields = ('__str__', 'html', 'link',)
@@ -929,7 +929,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
             'fields': ('pupitres',),
         }),
         (None, {
-            'fields': ('contenu_dans', ('type_extrait', 'numero_extrait')),
+            'fields': ('extrait_de', ('type_extrait', 'numero_extrait')),
         }),
         (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed', 'wide',),

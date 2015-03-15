@@ -3,7 +3,7 @@
 
 {% block object-tools-items %}
   <li>
-    <a href="{% url 'admin:libretto_oeuvre_add' %}?contenu_dans={{ original.pk }}"
+    <a href="{% url 'admin:libretto_oeuvre_add' %}?extrait_de={{ original.pk }}"
        class="addlink">
       {% trans 'Ajouter un extrait' %}
     </a>
