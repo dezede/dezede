@@ -10,6 +10,7 @@ from datetime import timedelta
 from django.db.models import Q
 from django.forms import ValidationError, ModelForm, Form, CharField, TextInput
 from django.utils.translation import ugettext_lazy as _
+from common.utils.text import capfirst
 from .models import (
     Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
     Ensemble, Saison)
@@ -62,6 +63,42 @@ class EnsembleForm(ModelForm):
 
 
 class OeuvreForm(ModelForm):
+    def clean(self):
+        data = super(OeuvreForm, self).clean()
+
+        type_extrait = data['type_extrait']
+        type_extrait_affiche = (
+            type_extrait and type_extrait not in Oeuvre.TYPES_EXTRAIT_CACHES)
+
+        if not type_extrait_affiche and not data['titre'] and not data['genre'] and not data['tempo']:
+            msg = _('Un titre, un genre ou un tempo '
+                    'doit au moins être précisé.')
+            self._errors['titre'] = self.error_class([msg])
+            self._errors['genre'] = self.error_class([msg])
+            self._errors['tempo'] = self.error_class([msg])
+
+        # Ensures title look like "Le Tartuffe, ou l’Imposteur.".
+        data['prefixe_titre'] = capfirst(data['prefixe_titre'])
+        data['titre'] = capfirst(data['titre'])
+        data['prefixe_titre_secondaire'] = data['prefixe_titre_secondaire'].lower()
+        data['titre_secondaire'] = capfirst(data['titre_secondaire'])
+
+        if type_extrait or data['numero_extrait']:
+            if not type_extrait:
+                self._errors['type_extrait'] = self.error_class([
+                    _('Ce champ doit être rempli '
+                      'pour pouvoir utiliser « Numéro d’extrait ».')])
+            if not data['numero_extrait']:
+                self._errors['numero_extrait'] = self.error_class([
+                    _('Ce champ doit être rempli '
+                      'pour pouvoir utiliser « Type d’extrait ».')])
+            if not data['contenu_dans']:
+                self._errors['contenu_dans'] = self.error_class([
+                    _('Ce champ doit être rempli pour pouvoir utiliser '
+                      '« Type d’extrait » et « Numéro d’extrait ».')])
+
+        return data
+
     class Meta(object):
         model = Oeuvre
         widgets = {
@@ -76,6 +113,9 @@ class OeuvreForm(ModelForm):
                                    attrs={'style': 'width: 50px;'}),
             b'coupe': AutoCompleteWidget('oeuvre__coupe',
                                          attrs={'style': 'width: 500px;'}),
+            b'tempo': AutoCompleteWidget('oeuvre__tempo',
+                                         attrs={'style': 'width: 500px;'}),
+            b'numero_extrait': TextInput(attrs={'cols': 10})
         }
 
 

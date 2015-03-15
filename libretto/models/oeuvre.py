@@ -8,7 +8,8 @@ from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator
 from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField, TextField,
-    BooleanField, permalink, get_model, SmallIntegerField, PROTECT, Count)
+    BooleanField, permalink, get_model, SmallIntegerField, PROTECT, Count,
+    PositiveSmallIntegerField)
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -29,7 +30,7 @@ from .base import (
     CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique,
     AncrageSpatioTemporel)
 from common.utils.html import capfirst, hlp, href, cite, em
-from common.utils.text import str_list, str_list_w_last
+from common.utils.text import str_list, str_list_w_last, to_roman
 from .individu import Individu
 from .personnel import Profession
 from .source import Source
@@ -578,6 +579,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         help_text=_('Exemple : « 12 » pour op. 12, « 27/3 » pour op. 27 n° 3, '
                     '« 8b » pour op. 8 b, ou encore « 12-15 » pour '
                     'op. 12 à 15.'))
+    # FIXME: Réduire la longueur maximale des tempi dès qu’un nettoyage y aura
+    #        été fait
+    tempo = CharField(max_length=92, blank=True)
     NOTES = OrderedDict((
         ('c', 'do'),
         ('d', 'ré'),
@@ -648,6 +652,46 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     contenu_dans = TreeForeignKey('self', null=True, blank=True, db_index=True,
                                   related_name='enfants',
                                   verbose_name=_('contenu dans'))
+    ACTE = 1
+    TABLEAU = 2
+    SCENE = 3
+    MORCEAU = 4
+    PARTIE = 5
+    LIVRE = 6
+    ALBUM = 7
+    VOLUME = 8
+    CAHIER = 9
+    ORDRE = 10
+    MOUVEMENT = 11
+    TYPES_EXTRAIT_ROMAINS = (ACTE, LIVRE, ORDRE)
+    TYPES_EXTRAIT_CACHES = (MORCEAU, MOUVEMENT)
+    TYPES_EXTRAIT = (
+        (ACTE,      _('acte')),
+        (TABLEAU,   _('tableau')),
+        (SCENE,     _('scène')),
+        (MORCEAU,   _('morceau chanté')),
+        (PARTIE,    _('partie d’oratorio')),
+        (LIVRE,     _('livre')),
+        (ALBUM,     _('album')),
+        (VOLUME,    _('volume')),
+        (CAHIER,    _('cahier')),
+        (ORDRE,     _('ordre')),
+        (MOUVEMENT, _('mouvement')),
+    )
+    type_extrait = PositiveSmallIntegerField(
+        _('type d’extrait'), choices=TYPES_EXTRAIT, blank=True, null=True)
+    NUMERO_EXTRAIT_PATTERN = r'^([1-9]\d*)([^\d\.\-]*)$'
+    NUMERO_EXTRAIT_RE = re.compile(NUMERO_EXTRAIT_PATTERN)
+    numero_extrait = CharField(
+        _('numéro d’extrait'), max_length=5, blank=True,
+        help_text=_(
+            'Le numéro de l’extrait au sein de l’œuvre, par exemple « 3 » '
+            'pour le 3<sup>e</sup> mouvement d’un concerto, « 4 » pour '
+            'l’acte IV d’un opéra, ou encore « 12b ».'),
+        validators=[RegexValidator(
+            NUMERO_EXTRAIT_PATTERN,
+            _('Vous devez saisir un nombre en chiffres arabes '
+              'éventellement suivi de lettres.'))])
     filles = ManyToManyField('self', through='ParenteDOeuvres', db_index=True,
                              related_name='meres', symmetrical=False)
     lilypond = TextField(blank=True, verbose_name='LilyPond')
@@ -686,6 +730,22 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                          ancestors=True)
     link.short_description = _('lien')
     link.allow_tags = True
+
+    def get_extrait(self):
+        if not self.type_extrait:
+            return ''
+        digits, suffix = self.NUMERO_EXTRAIT_RE.match(
+            self.numero_extrait).groups()
+        if self.type_extrait in self.TYPES_EXTRAIT_ROMAINS:
+            digits = to_roman(int(digits))
+        out = digits + suffix
+        if self.type_extrait == self.MORCEAU:
+            out = _('№ ') + out + ' '
+        elif self.type_extrait == self.MOUVEMENT:
+            out += '. '
+        else:
+            out = self.get_type_extrait_display() + ' ' + out
+        return out
 
     def get_caracteristiques(self, tags=False):
         caracteristiques = []
@@ -730,8 +790,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return caracteristiques
 
     def caracteristiques_html(self, tags=True):
-        if not self.pk:
-            return ''
         return str_list(self.get_caracteristiques(tags=tags))
     caracteristiques_html.allow_tags = True
     caracteristiques_html.short_description = _('caractéristiques')
@@ -797,13 +855,14 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
              self.prefixe_titre_secondaire, self.titre_secondaire)
         return str_list(l, infix='')
 
-    @model_method_cached()
+    # @model_method_cached()
     def html(self, tags=True, auteurs=True, titre=True,
              descr=True, genre_caps=False, ancestors=True,
              ancestors_links=False, links=True):
         # FIXME: Nettoyer cette horreur
         out = ''
         titre_complet = self.titre_complet()
+        extrait = self.get_extrait()
         genre = self.genre
         caracteristiques = self.get_caracteristiques(tags=tags)
         url = None if not tags else self.get_absolute_url()
@@ -821,10 +880,13 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                 out += href(url, cite(titre_complet, tags=tags), tags & links)
                 if descr and genre:
                     out += ', '
-        if genre:
-            genre = genre.html(tags, caps=genre_caps)
+        if genre or extrait:
             if not titre_complet:
-                titre_complet = self.genre.html(tags, caps=True)
+                titre_complet = extrait
+                if genre is not None:
+                    titre_complet += self.genre.html(tags, caps=True)
+                if self.tempo:
+                    out += ' ' + self.tempo
                 pupitres = self.calc_pupitres()
                 if pupitres:
                     titre_complet += ' ' + pupitres
@@ -835,7 +897,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                     if descr and caracteristiques:
                         out += ','
             elif descr:
-                out += genre
+                out += genre.html(tags, caps=genre_caps)
         if descr and caracteristiques:
             if out:
                 # TODO: BUG : le validateur HTML supprime l'espace qu'on ajoute
@@ -866,16 +928,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return self.html(tags, auteurs=False, titre=False, descr=True,
                          genre_caps=True)
 
-    def clean(self):
-        if not self.titre and not self.genre:
-            raise ValidationError(_('Un titre ou un genre doit au moins '
-                                    'être précisé.'))
-        # Ensures title look like "Le Tartuffe, ou l’Imposteur.".
-        self.prefixe_titre = capfirst(self.prefixe_titre)
-        self.titre = capfirst(self.titre)
-        self.prefixe_titre_secondaire = self.prefixe_titre_secondaire.lower()
-        self.titre_secondaire = capfirst(self.titre_secondaire)
-
     def handle_whitespaces(self):
         match = re.match(r'^,\s*(.+)$', self.coordination)
         v = self.coordination if match is None else match.group(1)
@@ -903,9 +955,13 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('prefixe_titre__icontains', 'titre__icontains',
-                'prefixe_titre_secondaire__icontains',
-                'titre_secondaire__icontains', 'genre__nom__icontains',
-                'auteurs__individu__nom__icontains',
-                'caracteristiques__valeur__icontains',
-                'pupitres__partie__nom__icontains')
+        return (
+            'auteurs__individu__nom__icontains',
+            'prefixe_titre__icontains', 'titre__icontains',
+            'prefixe_titre_secondaire__icontains',
+            'titre_secondaire__icontains',
+            'genre__nom__icontains',
+            'coupe__icontains', 'numero__icontains', 'opus__icontains',
+            'ict__icontains', 'surnom__icontains', 'nom_courant__icontains',
+            'caracteristiques__valeur__icontains',
+            'pupitres__partie__nom__icontains')

@@ -904,14 +904,15 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     readonly_fields = ('__str__', 'html', 'link',)
     inlines = (AuteurInline, OeuvreMereInline)
     fieldsets = (
-        (_('Titre'), {
+        (_('Titre significatif'), {
             'fields': (('prefixe_titre', 'titre',), 'coordination',
                        ('prefixe_titre_secondaire', 'titre_secondaire',),),
         }),
         (None, {
-            'fields': ('genre', 'coupe',
+            'fields': (('genre', 'coupe'),
                        ('numero', 'opus',),
-                       ('tonalite', 'ict',),
+                       ('tempo', 'tonalite'),
+                       'ict',
                        ('surnom', 'nom_courant'),
                        'incipit', 'sujet'),
         }),
@@ -928,7 +929,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
             'fields': ('pupitres',),
         }),
         (None, {
-            'fields': ('contenu_dans',),
+            'fields': ('contenu_dans', ('type_extrait', 'numero_extrait')),
         }),
         (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed', 'wide',),
