@@ -702,8 +702,11 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     class Meta(object):
         verbose_name = ungettext_lazy('œuvre', 'œuvres', 1)
         verbose_name_plural = ungettext_lazy('œuvre', 'œuvres', 2)
-        ordering = ('titre', 'genre', 'coupe', 'numero', 'opus', 'tonalite',
-                    'ict', 'surnom', 'incipit', 'nom_courant')
+        ordering = ('type_extrait', 'numero_extrait', 'titre',
+                    'genre', 'numero', 'coupe',
+                    'tempo', 'tonalite',
+                    'surnom', 'nom_courant', 'incipit',
+                    'opus', 'ict')
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
@@ -886,7 +889,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                 if genre is not None:
                     titre_complet += self.genre.html(tags, caps=True)
                 if self.tempo:
-                    out += ' ' + self.tempo
+                    titre_complet += ' ' + self.tempo
                 pupitres = self.calc_pupitres()
                 if pupitres:
                     titre_complet += ' ' + pupitres
@@ -954,14 +957,17 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     _str.short_description = _('œuvre')
 
     @staticmethod
-    def autocomplete_search_fields():
-        return (
-            'auteurs__individu__nom__icontains',
-            'prefixe_titre__icontains', 'titre__icontains',
-            'prefixe_titre_secondaire__icontains',
-            'titre_secondaire__icontains',
-            'genre__nom__icontains',
-            'coupe__icontains', 'numero__icontains', 'opus__icontains',
-            'ict__icontains', 'surnom__icontains', 'nom_courant__icontains',
-            'caracteristiques__valeur__icontains',
-            'pupitres__partie__nom__icontains')
+    def autocomplete_search_fields(add_icontains=True):
+        lookups = (
+            'auteurs__individu__nom',
+            'prefixe_titre', 'titre',
+            'prefixe_titre_secondaire', 'titre_secondaire',
+            'genre__nom', 'numero', 'coupe',
+            'tempo', 'sujet',
+            'surnom', 'nom_courant', 'incipit',
+            'opus', 'ict',
+            'caracteristiques__valeur',
+            'pupitres__partie__nom')
+        if add_icontains:
+            return [lookup + '__icontains' for lookup in lookups]
+        return lookups

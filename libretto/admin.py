@@ -890,8 +890,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                     'caracteristiques_html', 'auteurs_html',
                     'creation', 'link',)
     list_editable = ('genre',)
-    search_fields = ('titre', 'titre_secondaire', 'genre__nom',
-                     'auteurs__individu__nom')
+    search_fields = Oeuvre.autocomplete_search_fields(add_icontains=False)
     list_filter = ('genre',)
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
@@ -904,17 +903,24 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     readonly_fields = ('__str__', 'html', 'link',)
     inlines = (AuteurInline, OeuvreMereInline)
     fieldsets = (
+        (None, {
+            'fields': ('extrait_de', ('type_extrait', 'numero_extrait')),
+        }),
         (_('Titre significatif'), {
             'fields': (('prefixe_titre', 'titre',), 'coordination',
                        ('prefixe_titre_secondaire', 'titre_secondaire',),),
         }),
         (None, {
-            'fields': (('genre', 'coupe'),
-                       ('numero', 'opus',),
-                       ('tempo', 'tonalite'),
-                       'ict',
-                       ('surnom', 'nom_courant'),
-                       'incipit', 'sujet'),
+            'fields': (('genre', 'numero'), 'coupe'),
+        }),
+        (_('Données musicales'), {
+            'fields': (('tempo', 'tonalite'), 'sujet'),
+        }),
+        (None, {
+            'fields': (('surnom', 'nom_courant'), 'incipit'),
+        }),
+        (None, {
+            'fields': (('opus', 'ict'),),
         }),
         (None, {
             'fields': ('caracteristiques',),
@@ -927,9 +933,6 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
         }),
         (None, {
             'fields': ('pupitres',),
-        }),
-        (None, {
-            'fields': ('extrait_de', ('type_extrait', 'numero_extrait')),
         }),
         (ADVANCED_FIELDSET_LABEL, {
             'classes': ('grp-collapse grp-closed', 'wide',),
