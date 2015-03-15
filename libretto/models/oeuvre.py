@@ -858,7 +858,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
              self.prefixe_titre_secondaire, self.titre_secondaire)
         return str_list(l, infix='')
 
-    # @model_method_cached()
+    @model_method_cached()
     def html(self, tags=True, auteurs=True, titre=True,
              descr=True, genre_caps=False, ancestors=True,
              ancestors_links=False, links=True):
