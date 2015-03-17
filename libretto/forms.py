@@ -70,7 +70,8 @@ class OeuvreForm(ModelForm):
         type_extrait_affiche = (
             type_extrait and type_extrait not in Oeuvre.TYPES_EXTRAIT_CACHES)
 
-        if not type_extrait_affiche and not data['titre'] and not data['genre'] and not data['tempo']:
+        if not type_extrait_affiche and \
+                not data['titre'] and not data['genre'] and not data['tempo']:
             msg = _('Un titre, un genre ou un tempo '
                     'doit au moins être précisé.')
             self._errors['titre'] = self.error_class([msg])
@@ -82,6 +83,29 @@ class OeuvreForm(ModelForm):
         data['titre'] = capfirst(data['titre'])
         data['prefixe_titre_secondaire'] = data['prefixe_titre_secondaire'].lower()
         data['titre_secondaire'] = capfirst(data['titre_secondaire'])
+
+        if data['titre_secondaire'] and not data['titre']:
+            self._errors['titre_secondaire'] = self.error_class([
+                _('« Titre secondaire » ne peut être saisi sans « Titre ».')
+            ])
+        if data['titre_secondaire'] and not data['coordination']:
+            self._errors['titre_secondaire'] = self.error_class([
+                _('« Titre secondaire » ne peut être saisi '
+                  'sans « Coordination ».')
+            ])
+        if data['coordination'] and not data['titre_secondaire']:
+            self._errors['coordination'] = self.error_class([
+                _('« Coordination » ne peut être saisi '
+                  'sans « Titre secondaire ».')
+            ])
+        if data['prefixe_titre'] and not data['titre']:
+            self._errors['prefixe_titre'] = self.error_class([
+                _('« Article » ne peut être saisi sans « Titre ».')
+            ])
+        if data['prefixe_titre_secondaire'] and not data['titre_secondaire']:
+            self._errors['prefixe_titre_secondaire'] = self.error_class([
+                _('« Article » ne peut être saisi sans « Titre secondaire ».')
+            ])
 
         if type_extrait or data['numero_extrait']:
             if not type_extrait:
