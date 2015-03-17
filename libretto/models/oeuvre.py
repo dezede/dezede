@@ -814,6 +814,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     @property
     def evenements(self):
+        # We use a subquery, otherwise yearly_counts counts the number of
+        # program elements instead of events.
         return get_model('libretto', 'Evenement').objects.filter(
             pk__in=get_model('libretto', 'Evenement').objects.filter(
                 programme__oeuvre__in=self.get_descendants(include_self=True))
