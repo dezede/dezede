@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 from django import template
+from django.apps import apps
 from django.core.urlresolvers import reverse
 from django.utils.text import capfirst
 import dezede
@@ -12,7 +13,7 @@ register = template.Library()
 
 @register.simple_tag
 def dezede_version():
-    name = capfirst(dezede.__verbose_name__)
+    name = capfirst(apps.get_app_config('dezede').verbose_name)
     version = dezede.get_version()
     return '%s\u00A0%s' % (name, version)
 
