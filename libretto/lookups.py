@@ -106,6 +106,11 @@ class OeuvreCoupeLookup(CharFieldLookupChannel):
     attr = 'coupe'
 
 
+class OeuvreTempoLookup(CharFieldLookupChannel):
+    model = Oeuvre
+    attr = 'tempo'
+
+
 class ElementDeProgrammeAutreLookup(CharFieldLookupChannel):
     model = ElementDeProgramme
     attr = 'autre'

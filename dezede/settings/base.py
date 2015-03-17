@@ -216,6 +216,7 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'dezede.elasticsearch_backend.ConfigurableElasticSearchEngine',
         'URL': '127.0.0.1:9200',
         'INDEX_NAME': 'dezede',
+        'TIMEOUT': 60*5,  # seconds
         'INCLUDE_SPELLING': True,
     },
 }
@@ -332,6 +333,7 @@ AJAX_LOOKUP_CHANNELS = {
     'oeuvre__prefixe_titre_secondaire': ('libretto.lookups',
                                          'OeuvrePrefixeTitreSecondaireLookup'),
     'oeuvre__coupe': ('libretto.lookups', 'OeuvreCoupeLookup'),
+    'oeuvre__tempo': ('libretto.lookups', 'OeuvreTempoLookup'),
     'elementdeprogramme__autre': ('libretto.lookups',
                                   'ElementDeProgrammeAutreLookup'),
     'source__titre': ('libretto.lookups', 'SourceTitreLookup'),

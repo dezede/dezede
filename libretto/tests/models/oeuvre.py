@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.core.exceptions import ValidationError
 from django.utils.encoding import smart_text
 from ...models import *
 from .utils import new, CommonTestCase
@@ -11,8 +10,6 @@ class OeuvreTestCase(CommonTestCase):
     model = Oeuvre
 
     def setUp(self):
-        # Invalid
-        self.invalid = new(Oeuvre, titre_secondaire='l’essai infructeux')
         # Carmen
         opera = new(GenreDOeuvre, nom='opéra')
         violon = new(Partie, nom='violon')
@@ -28,58 +25,41 @@ class OeuvreTestCase(CommonTestCase):
         self.sonate.pupitres.add(violon_solo)
         # Symphonie n° 5
         symphonie = new(GenreDOeuvre, nom='symphonie')
-        numero = new(TypeDeCaracteristiqueDOeuvre, nom='numéro',
-                     classement=1.0)
-        n_5 = new(CaracteristiqueDOeuvre, valeur='n°\u00A05', type=numero)
-        opus = new(TypeDeCaracteristiqueDOeuvre, nom='opus', classement=2.0)
-        op_107 = new(CaracteristiqueDOeuvre, valeur='op.\u00A0107', type=opus)
-        self.symphonie = new(Oeuvre, genre=symphonie)
-        self.symphonie.caracteristiques.add(n_5, op_107)
+        self.symphonie = new(Oeuvre, genre=symphonie, numero='5', opus='107')
         # Tartufe
         comedie = new(GenreDOeuvre, nom='comédie')
-        decoupage = new(TypeDeCaracteristiqueDOeuvre, nom='découpage',
-                        classement=1.0)
-        cinq_actes_vers = new(CaracteristiqueDOeuvre, type=decoupage,
-                              valeur='en cinq actes et en vers')
         self.tartuffe = new(Oeuvre,
                             prefixe_titre='Le', titre='Tartuffe',
                             coordination='ou',
                             prefixe_titre_secondaire="l'",
                             titre_secondaire='Imposteur',
-                            genre=comedie)
-        self.tartuffe.caracteristiques.add(cinq_actes_vers)
-
-    def testClean(self, excluded=()):
-        with self.assertRaises(ValidationError):
-            self.invalid.clean()
-
-        super(OeuvreTestCase, self).testClean(excluded=[self.invalid])
+                            genre=comedie, coupe='cinq actes et en vers')
 
     def testComputedNames(self):
         # Carmen
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(0):
             self.assertEqual(smart_text(self.carmen), 'Carmen')
         with self.assertNumQueries(1):
             self.assertEqual(
-                self.carmen.calc_pupitres(),
+                self.carmen.get_pupitres_str(),
                 'pour deux violons et\xa0quatre à huit voix')
         # Sonate
         with self.assertNumQueries(2):
             self.assertEqual(smart_text(self.sonate), 'Sonate pour violon')
         # Symphonie n° 5
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(1):
             self.assertEqual(smart_text(self.symphonie), 'Symphonie n°\u00A05')
         with self.assertNumQueries(0):
             self.assertEqual(self.symphonie.titre_html(tags=False),
                              'Symphonie n°\u00A05')
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(2):
             self.assertEqual(self.symphonie.titre_descr(),
                              'Symphonie n°\xa05, op.\xa0107')
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(1):
             self.assertEqual(self.symphonie.description_html(tags=False),
                              'op.\xa0107')
         # Tartufe
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(0):
             self.assertEqual(smart_text(self.tartuffe),
                              'Le Tartuffe, ou l’Imposteur')
 
@@ -88,42 +68,40 @@ class OeuvreTestCase(CommonTestCase):
         carmen_url = self.carmen.get_absolute_url()
         carmen_titre_html = '<a href="%(url)s"><cite>Carmen</cite></a>'\
                             % {'url': carmen_url}
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(0):
             self.assertHTMLEqual(self.carmen.titre_html(), carmen_titre_html)
-        with self.assertNumQueries(1):
-            self.assertHTMLEqual(self.carmen.description_html(),
-                                 '<span title="Genre">Opéra</span>')
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
+            self.assertHTMLEqual(
+                self.carmen.description_html(),
+                'opéra pour deux violons et quatre à huit voix')
+        with self.assertNumQueries(4):
             self.assertHTMLEqual(
                 self.carmen.html(),
                 '%s, %s' % (carmen_titre_html,
-                            '<span title="Genre">opéra</span>'))
+                            'opéra pour deux violons et quatre à huit voix'))
         # Symphonie n° 5
         symphonie_url = self.symphonie.get_absolute_url()
-        symphonie_titre_html = (
-            '<a href="%(url)s"><span title="Genre">'
-            'Symphonie</span> <span title="Numéro">n°\u00A05'
-            '</span></a>') % {'url': symphonie_url}
-        with self.assertNumQueries(6):
+        symphonie_titre_html = '<a href="%(url)s">Symphonie n°\u00A05</a>' \
+                               % {'url': symphonie_url}
+        with self.assertNumQueries(1):
             self.assertHTMLEqual(self.symphonie.titre_html(),
                                  symphonie_titre_html)
         symphonie_description_html = '<span title="Opus">op.\u00A0107</span>'
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(1):
             self.assertHTMLEqual(self.symphonie.description_html(),
                                  symphonie_description_html)
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(3):
             self.assertHTMLEqual(self.symphonie.html(),
-                                 '%s,&#32;%s' % (symphonie_titre_html,
-                                                 symphonie_description_html))
+                                 '%s, %s' % (symphonie_titre_html,
+                                             symphonie_description_html))
         # Tartufe
         tartuffe_url = self.tartuffe.get_absolute_url()
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(0):
             self.assertHTMLEqual(self.tartuffe.titre_html(),
                                  '<a href="%(url)s"><cite>Le Tartuffe, ou '
                                  'l’Imposteur</cite></a>'
                                  % {'url': tartuffe_url})
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             self.assertHTMLEqual(self.tartuffe.description_html(),
-                                 '<span title="Genre">Comédie</span>&#32;'
-                                 '<span title="Découpage">'
+                                 'comédie <span title="Coupe">'
                                  'en cinq actes et en vers</span>')

@@ -183,7 +183,6 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
                 break
         return l[::-1]
 
-    @model_method_cached()
     def html(self, tags=True, short=False):
         if short or self.parent_id is None or self.nature.referent:
             out = self.nom

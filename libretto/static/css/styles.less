@@ -650,15 +650,13 @@ blockquote.source .transcription {
 }
 
 table.programme {
-  tr+tr {
-    margin-top: 5px;
-  }
-  tr td {
+  tr {
     vertical-align: baseline;
-  }
-  tr td:first-child {
-    text-align: right;
-    padding-right: 6px;
+    th {
+      text-align: right;
+      padding-right: 6px;
+      font-weight: normal;
+    }
   }
 }
 
@@ -1030,4 +1028,7 @@ video {
 #map {
   height: 600px;
   margin-bottom: 15px;
+  &.leaflet-fullscreen-on {
+    margin-bottom: 0;
+  }
 }

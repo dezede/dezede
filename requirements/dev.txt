@@ -1,8 +1,8 @@
 # Developer tools
-django-debug-toolbar==1.2.2
+django-debug-toolbar==1.3.0
 django-debug-toolbar-template-timings==0.6.4
 django-haystack-panel==0.2.1
-django-extensions==1.5.0
+django-extensions==1.5.1
 
 # Deployment tools
 Fabric==1.10.1

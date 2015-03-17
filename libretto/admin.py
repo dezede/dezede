@@ -10,7 +10,6 @@ from django.contrib.admin import (site, TabularInline, StackedInline,
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
-from django.contrib.contenttypes.generic import GenericStackedInline
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.db.models import Q
 from django.forms.models import modelformset_factory
@@ -77,7 +76,6 @@ class CustomBaseModel(BaseModelAdmin):
 # Common fieldsets
 
 
-ADVANCED_FIELDSET_LABEL = _('Champs avancés')
 PERIODE_D_ACTIVITE_FIELDSET = (_('Période d’activité'), {
     'fields': (('debut', 'debut_precision'), ('fin', 'fin_precision'))
 })
@@ -175,19 +173,6 @@ class OeuvreMereInline(CustomTabularInline):
     classes = ('grp-collapse grp-closed',)
 
 
-class OeuvreFilleInline(CustomTabularInline):
-    model = ParenteDOeuvres
-    verbose_name = model._meta.get_field('fille').verbose_name
-    verbose_name_plural = _('œuvres filles')
-    fk_name = 'mere'
-    raw_id_fields = ('fille',)
-    autocomplete_lookup_fields = {
-        'fk': ('fille',),
-    }
-    fields = ('type', 'fille')
-    classes = ('grp-collapse grp-closed',)
-
-
 class IndividuParentInline(CustomTabularInline):
     model = ParenteDIndividus
     verbose_name = model._meta.get_field('parent').verbose_name
@@ -198,19 +183,6 @@ class IndividuParentInline(CustomTabularInline):
         'fk': ('parent',),
     }
     fields = ('parent', 'type',)
-    classes = ('grp-collapse grp-closed',)
-
-
-class IndividuEnfantInline(CustomTabularInline):
-    model = ParenteDIndividus
-    verbose_name = model._meta.get_field('enfant').verbose_name
-    verbose_name_plural = _('individus enfants')
-    fk_name = 'parent'
-    raw_id_fields = ('enfant',)
-    autocomplete_lookup_fields = {
-        'fk': ('enfant',),
-    }
-    fields = ('type', 'enfant')
     classes = ('grp-collapse grp-closed',)
 
 
@@ -230,7 +202,7 @@ class AuteurInline(CustomTabularInline):
     def get_formset(self, request, obj=None, **kwargs):
         formset = super(AuteurInline,
                         self).get_formset(request, obj=obj, **kwargs)
-        if request.method == 'POST' or 'contenu_dans' not in request.GET:
+        if request.method == 'POST' or 'extrait_de' not in request.GET:
             return formset
 
         # Lorsqu’on saisit un extrait, il faut que les auteurs
@@ -238,8 +210,8 @@ class AuteurInline(CustomTabularInline):
         # cas où cela ne correspondrait pas à l’œuvre mère (par exemple
         # pour une ouverture d’opéra où le librettiste n’est pas auteur).
 
-        contenu_dans = Oeuvre.objects.get(pk=request.GET['contenu_dans'])
-        initial = list(contenu_dans.auteurs.values('individu', 'profession'))
+        extrait_de = Oeuvre.objects.get(pk=request.GET['extrait_de'])
+        initial = list(extrait_de.auteurs.values('individu', 'profession'))
 
         class TmpFormset(formset):
             extra = len(initial)
@@ -655,7 +627,7 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
         'm2m': ('professions', 'parentes'),
     }
     readonly_fields = ('__str__', 'html', 'link',)
-    inlines = (IndividuParentInline, IndividuEnfantInline)
+    inlines = (IndividuParentInline,)
     fieldsets = (
         (None, {
             'fields': (('titre', 'prenoms'), ('particule_nom', 'nom'),
@@ -908,39 +880,40 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                     'caracteristiques_html', 'auteurs_html',
                     'creation', 'link',)
     list_editable = ('genre',)
-    search_fields = ('titre', 'titre_secondaire', 'genre__nom',
-                     'auteurs__individu__nom')
+    search_fields = Oeuvre.autocomplete_search_fields(add_icontains=False)
     list_filter = ('genre',)
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
-    raw_id_fields = ('genre', 'caracteristiques', 'contenu_dans',
+    raw_id_fields = ('genre', 'caracteristiques', 'extrait_de',
                      'creation_lieu', 'pupitres')
     autocomplete_lookup_fields = {
-        'fk': ('genre', 'contenu_dans', 'creation_lieu'),
+        'fk': ('genre', 'extrait_de', 'creation_lieu'),
         'm2m': ('caracteristiques', 'pupitres'),
     }
     readonly_fields = ('__str__', 'html', 'link',)
-    inlines = (AuteurInline, OeuvreMereInline, OeuvreFilleInline)
+    inlines = (AuteurInline, OeuvreMereInline)
     fieldsets = (
-        (_('Titre'), {
+        (None, {
+            'fields': ('extrait_de', ('type_extrait', 'numero_extrait')),
+        }),
+        (_('Titre significatif'), {
             'fields': (('prefixe_titre', 'titre',), 'coordination',
                        ('prefixe_titre_secondaire', 'titre_secondaire',),),
         }),
         (None, {
-            'fields': ('genre', 'coupe',
-                       ('numero', 'opus',),
-                       ('tonalite', 'ict',),
-                       ('surnom', 'nom_courant'),
-                       'incipit',),
+            'fields': (('genre', 'numero'), 'coupe'),
+        }),
+        (_('Données musicales'), {
+            'fields': (('tempo', 'tonalite'), 'pupitres', 'sujet'),
+        }),
+        (None, {
+            'fields': (('surnom', 'nom_courant'), 'incipit'),
+        }),
+        (None, {
+            'fields': (('opus', 'ict'),),
         }),
         (None, {
             'fields': ('caracteristiques',),
-        }),
-        (None, {
-            'fields': ('pupitres',),
-        }),
-        (None, {
-            'fields': ('contenu_dans',),
         }),
         (_('Création'), {
             'fields': (
@@ -948,12 +921,8 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                 ('creation_heure', 'creation_heure_approx'),
                 ('creation_lieu', 'creation_lieu_approx'))
         }),
-        (ADVANCED_FIELDSET_LABEL, {
-            'classes': ('grp-collapse grp-closed', 'wide',),
-            'fields': ('lilypond', 'description',),
-        }),
     )
-    fieldsets_and_inlines_order = ('i', 'f', 'f', 'f', 'f', 'f', 'i', 'i')
+    fieldsets_and_inlines_order = ('i', 'f', 'f', 'f', 'f', 'f', 'f', 'i', 'i')
 
     def get_queryset(self, request):
         qs = super(OeuvreAdmin, self).get_queryset(request)

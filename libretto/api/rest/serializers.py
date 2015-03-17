@@ -95,7 +95,7 @@ class OeuvreSerializer(HyperlinkedModelSerializer):
         model = Oeuvre
         fields = (
             'id', 'str', 'titre', 'genre', 'caracteristiques',
-            'auteurs', 'creation', 'contenu_dans',
+            'auteurs', 'creation', 'extrait_de',
             'front_url', 'url'
         )
 

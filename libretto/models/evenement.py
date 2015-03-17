@@ -70,10 +70,10 @@ class ElementDeDistribution(CommonModel):
 
     individu = ForeignKey(
         'Individu', blank=True, null=True, on_delete=PROTECT,
-        related_name='+', verbose_name=_('individu'))
+        related_name='elements_de_distribution', verbose_name=_('individu'))
     ensemble = ForeignKey(
         'Ensemble', blank=True, null=True, on_delete=PROTECT,
-        related_name='+', verbose_name=_('ensemble'))
+        related_name='elements_de_distribution', verbose_name=_('ensemble'))
     pupitre = ForeignKey(
         'Pupitre', verbose_name=_('pupitre'), null=True, blank=True,
         related_name='elements_de_distribution', on_delete=PROTECT)
@@ -318,7 +318,7 @@ class EvenementQuerySet(PublishedQuerySet):
     def get_distributions(self):
         return ElementDeDistribution.objects.filter(
             Q(evenement__in=self)
-            | Q(element_de_programme__evenement__in=self))
+            | Q(elements_de_programme__evenement__in=self))
 
     def ensembles(self):
         distributions = self.get_distributions()
@@ -335,6 +335,11 @@ class EvenementQuerySet(PublishedQuerySet):
             'particule_nom_naissance', 'nom_naissance', 'pseudonyme',
             'designation', 'titre', 'slug',
         )
+
+    def individus_auteurs(self):
+        return get_model('libretto', 'individu').objects.filter(
+            auteurs__oeuvre__elements_de_programme__evenement__in=self
+        ).distinct()
 
     def with_program(self):
         return self.filter(Q(relache=True) | Q(programme__isnull=False))
@@ -368,9 +373,9 @@ class EvenementQuerySet(PublishedQuerySet):
                 'programme__oeuvre__auteurs__individu',
                 'programme__oeuvre__auteurs__profession',
                 'programme__oeuvre__pupitres__partie',
-                'programme__oeuvre__contenu_dans__genre',
-                'programme__oeuvre__contenu_dans__caracteristiques__type',
-                'programme__oeuvre__contenu_dans__pupitres__partie',
+                'programme__oeuvre__extrait_de__genre',
+                'programme__oeuvre__extrait_de__caracteristiques__type',
+                'programme__oeuvre__extrait_de__pupitres__partie',
                 'programme__distribution__individu',
                 'programme__distribution__ensemble',
                 'programme__distribution__profession',
@@ -407,6 +412,15 @@ class EvenementManager(PublishedManager):
 
     def yearly_counts(self):
         return self.get_queryset().yearly_counts()
+
+    def ensembles(self):
+        return self.get_queryset().ensembles()
+
+    def individus(self):
+        return self.get_queryset().individus()
+
+    def individus_auteurs(self):
+        return self.get_queryset().individus_auteurs()
 
     def with_program(self):
         return self.get_queryset().with_program()

@@ -10,6 +10,7 @@ from datetime import timedelta
 from django.db.models import Q
 from django.forms import ValidationError, ModelForm, Form, CharField, TextInput
 from django.utils.translation import ugettext_lazy as _
+from common.utils.text import capfirst
 from .models import (
     Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
     Ensemble, Saison)
@@ -64,6 +65,79 @@ class EnsembleForm(ModelForm):
 
 
 class OeuvreForm(ModelForm):
+    def clean(self):
+        data = super(OeuvreForm, self).clean()
+
+        type_extrait = data['type_extrait']
+        type_extrait_affiche = (
+            type_extrait and type_extrait not in Oeuvre.TYPES_EXTRAIT_CACHES)
+
+        if not type_extrait_affiche and \
+                not data['titre'] and not data['genre'] and not data['tempo']:
+            msg = _('Un titre, un genre ou un tempo '
+                    'doit au moins être précisé.')
+            self._errors['titre'] = self.error_class([msg])
+            self._errors['genre'] = self.error_class([msg])
+            self._errors['tempo'] = self.error_class([msg])
+
+        # Ensures title look like "Le Tartuffe, ou l’Imposteur.".
+        data['prefixe_titre'] = capfirst(data['prefixe_titre'])
+        data['titre'] = capfirst(data['titre'])
+        data['prefixe_titre_secondaire'] = data['prefixe_titre_secondaire'].lower()
+        data['titre_secondaire'] = capfirst(data['titre_secondaire'])
+
+        if data['titre_secondaire'] and not data['titre']:
+            self._errors['titre_secondaire'] = self.error_class([
+                _('« Titre secondaire » ne peut être saisi sans « Titre ».')
+            ])
+        if data['titre_secondaire'] and not data['coordination']:
+            self._errors['titre_secondaire'] = self.error_class([
+                _('« Titre secondaire » ne peut être saisi '
+                  'sans « Coordination ».')
+            ])
+        if data['coordination'] and not data['titre_secondaire']:
+            self._errors['coordination'] = self.error_class([
+                _('« Coordination » ne peut être saisi '
+                  'sans « Titre secondaire ».')
+            ])
+        if data['prefixe_titre'] and not data['titre']:
+            self._errors['prefixe_titre'] = self.error_class([
+                _('« Article » ne peut être saisi sans « Titre ».')
+            ])
+        if data['prefixe_titre_secondaire'] and not data['titre_secondaire']:
+            self._errors['prefixe_titre_secondaire'] = self.error_class([
+                _('« Article » ne peut être saisi sans « Titre secondaire ».')
+            ])
+
+        if type_extrait or data['numero_extrait']:
+            if data['titre']:
+                self._errors['titre'] = self.error_class([
+                    _('Impossible de saisir un titre significatif '
+                      'pour un extrait.')
+                ])
+            if not type_extrait:
+                self._errors['type_extrait'] = self.error_class([
+                    _('Ce champ doit être rempli '
+                      'pour pouvoir utiliser « Numéro d’extrait ».')])
+            if not data['numero_extrait']:
+                self._errors['numero_extrait'] = self.error_class([
+                    _('Ce champ doit être rempli '
+                      'pour pouvoir utiliser « Type d’extrait ».')])
+            if not data['extrait_de']:
+                self._errors['extrait_de'] = self.error_class([
+                    _('Ce champ doit être rempli pour pouvoir utiliser '
+                      '« Type d’extrait » et « Numéro d’extrait ».')])
+
+        if not data['genre']:
+            if data['numero']:
+                self._errors['numero'] = self.error_class([
+                    _('Vous ne pouvez remplir « Numéro » sans « Genre »')])
+            if data['coupe']:
+                self._errors['coupe'] = self.error_class([
+                    _('Vous ne pouvez remplir « Coupe » sans « Genre »')])
+
+        return data
+
     class Meta(object):
         model = Oeuvre
         exclude = ()
@@ -79,6 +153,9 @@ class OeuvreForm(ModelForm):
                                    attrs={'style': 'width: 50px;'}),
             b'coupe': AutoCompleteWidget('oeuvre__coupe',
                                          attrs={'style': 'width: 500px;'}),
+            b'tempo': AutoCompleteWidget('oeuvre__tempo',
+                                         attrs={'style': 'width: 500px;'}),
+            b'numero_extrait': TextInput(attrs={'cols': 10})
         }
 
 
