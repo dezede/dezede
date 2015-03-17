@@ -211,7 +211,7 @@ class AuteurInline(CustomTabularInline):
         # cas où cela ne correspondrait pas à l’œuvre mère (par exemple
         # pour une ouverture d’opéra où le librettiste n’est pas auteur).
 
-        extrait_de = Oeuvre.objects.get(pk=request.GET['contenu_dans'])
+        extrait_de = Oeuvre.objects.get(pk=request.GET['extrait_de'])
         initial = list(extrait_de.auteurs.values('individu', 'profession'))
 
         class TmpFormset(formset):
