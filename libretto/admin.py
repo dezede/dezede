@@ -76,7 +76,6 @@ class CustomBaseModel(BaseModelAdmin):
 # Common fieldsets
 
 
-ADVANCED_FIELDSET_LABEL = _('Champs avancés')
 PERIODE_D_ACTIVITE_FIELDSET = (_('Période d’activité'), {
     'fields': (('debut', 'debut_precision'), ('fin', 'fin_precision'))
 })
@@ -914,7 +913,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
             'fields': (('genre', 'numero'), 'coupe'),
         }),
         (_('Données musicales'), {
-            'fields': (('tempo', 'tonalite'), 'sujet'),
+            'fields': (('tempo', 'tonalite'), 'pupitres', 'sujet'),
         }),
         (None, {
             'fields': (('surnom', 'nom_courant'), 'incipit'),
@@ -930,13 +929,6 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                 ('creation_date', 'creation_date_approx'),
                 ('creation_heure', 'creation_heure_approx'),
                 ('creation_lieu', 'creation_lieu_approx'))
-        }),
-        (None, {
-            'fields': ('pupitres',),
-        }),
-        (ADVANCED_FIELDSET_LABEL, {
-            'classes': ('grp-collapse grp-closed', 'wide',),
-            'fields': ('lilypond', 'description',),
         }),
     )
     fieldsets_and_inlines_order = ('i', 'f', 'f', 'f', 'f', 'f', 'f', 'i', 'i')

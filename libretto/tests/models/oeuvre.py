@@ -49,7 +49,7 @@ class OeuvreTestCase(CommonTestCase):
         # Symphonie n° 5
         with self.assertNumQueries(1):
             self.assertEqual(smart_text(self.symphonie), 'Symphonie n°\u00A05')
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(0):
             self.assertEqual(self.symphonie.titre_html(tags=False),
                              'Symphonie n°\u00A05')
         with self.assertNumQueries(2):

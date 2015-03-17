@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator
 from django.db.models import (
-    CharField, ManyToManyField, ForeignKey, IntegerField, TextField,
+    CharField, ManyToManyField, ForeignKey, IntegerField,
     BooleanField, permalink, get_model, SmallIntegerField, PROTECT, Count,
     PositiveSmallIntegerField)
 from django.utils.encoding import python_2_unicode_compatible, smart_text
@@ -21,7 +21,6 @@ from polymorphic_tree.managers import PolymorphicMPTTModelManager, \
     PolymorphicMPTTQuerySet
 from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
-from tinymce.models import HTMLField
 from cache_tools import model_method_cached
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
@@ -545,12 +544,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                                  blank=True, db_index=True)
     genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True,
         null=True, verbose_name=_('genre'), db_index=True, on_delete=PROTECT)
-    coupe = CharField(
-        _('coupe'), max_length=100, blank=True,
-        validators=[RegexValidator(
-            r'^\D+$', _('Vous devez saisir les quantités '
-                        'en toutes lettres.'))],
-        help_text=_('Exemple : « trois actes » pour un opéra en trois actes.'))
     numero = CharField(
         _('numéro'), max_length=5, blank=True,
         validators=[RegexValidator(
@@ -561,15 +554,12 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             'Exemple : « 5 » pour symphonie n° 5, « 7a » pour valse n° 7 a, '
             'ou encore « 3-7 » pour sonates n° 3 à 7. '
             '<strong>Ne pas confondre avec le sous-numéro d’opus.</strong>'))
-    opus = CharField(
-        _('opus'), max_length=5, blank=True,
+    coupe = CharField(
+        _('coupe'), max_length=100, blank=True,
         validators=[RegexValidator(
-            r'^[\d\w\-/]+$', _('Vous ne pouvez saisir que des chiffres, '
-                              'lettres non accentuées, tiret '
-                              'et barre oblique, le tout sans espace.'))],
-        help_text=_('Exemple : « 12 » pour op. 12, « 27/3 » pour op. 27 n° 3, '
-                    '« 8b » pour op. 8 b, ou encore « 12-15 » pour '
-                    'op. 12 à 15.'))
+            r'^\D+$', _('Vous devez saisir les quantités '
+                        'en toutes lettres.'))],
+        help_text=_('Exemple : « trois actes » pour un opéra en trois actes.'))
     # FIXME: Réduire la longueur maximale des tempi dès qu’un nettoyage y aura
     #        été fait
     tempo = CharField(max_length=92, blank=True)
@@ -608,14 +598,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     ]
     tonalite = CharField(_('tonalité'), max_length=3, choices=TONALITES,
                          blank=True)
-    ict = CharField(
-        _('ICT'), max_length=25, blank=True,
-        help_text='Indice Catalogue Thématique. Exemple : « RV 42 », '
-                  '« K. 299d » ou encore « Hob. XVI:24 ».')
-    surnom = CharField(
-        _('surnom'), max_length=50, blank=True,
-        help_text=_('Exemple : « Jupiter » pour la symphonie n° 41 '
-                    'de Mozart.'))
+    pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
+                               null=True, verbose_name=_('effectif'),
+                               db_index=True)
     sujet = CharField(
         _('sujet'), max_length=80, blank=True,
         help_text=_(
@@ -625,21 +610,36 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             'sur des motifs de <em>Lucia di Lammermoor</em> '
             '(&lt;em&gt; et &lt;/em&gt; sont les balises HTML '
             'pour mettre en emphase).'))
+    surnom = CharField(
+        _('surnom'), max_length=50, blank=True,
+        help_text=_('Exemple : « Jupiter » pour la symphonie n° 41 '
+                    'de Mozart.'))
+    nom_courant = CharField(
+        _('nom courant'), max_length=70, blank=True,
+        help_text=_('Exemple : « barcarolle » pour le n° 13 de l’acte III des '
+                    '<em>Contes d’Hoffmann</em> d’Offenbach.'))
     incipit = CharField(
         _('incipit'), max_length=100, blank=True,
         help_text=_('Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 '
                     'de l’acte III des <em>Contes d’Hoffmann</em> '
                     'd’Offenbach.'))
-    nom_courant = CharField(
-        _('nom courant'), max_length=70, blank=True,
-        help_text=_('Exemple : « barcarolle » pour le n° 13 de l’acte III des '
-                    '<em>Contes d’Hoffmann</em> d’Offenbach.'))
+    opus = CharField(
+        _('opus'), max_length=5, blank=True,
+        validators=[RegexValidator(
+            r'^[\d\w\-/]+$', _('Vous ne pouvez saisir que des chiffres, '
+                               'lettres non accentuées, tiret '
+                               'et barre oblique, le tout sans espace.'))],
+        help_text=_('Exemple : « 12 » pour op. 12, « 27/3 » pour op. 27 n° 3, '
+                    '« 8b » pour op. 8 b, ou encore « 12-15 » pour '
+                    'op. 12 à 15.'))
+    ict = CharField(
+        _('ICT'), max_length=25, blank=True,
+        help_text='Indice Catalogue Thématique. Exemple : « RV 42 », '
+                  '« K. 299d » ou encore « Hob. XVI:24 ».')
     caracteristiques = ManyToManyField(
         'CaracteristiqueDOeuvre', blank=True, null=True, db_index=True,
         verbose_name=_('autres caractéristiques'), related_name='oeuvres')
     creation = AncrageSpatioTemporel(short_description=_('création'))
-    pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
-        null=True, verbose_name=_('effectif'), db_index=True)
     extrait_de = TreeForeignKey(
         'self', null=True, blank=True,
         related_name='enfants', verbose_name=_('extrait de'))
@@ -686,8 +686,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     filles = ManyToManyField('self', through='ParenteDOeuvres',
                              related_name='meres', symmetrical=False,
                              blank=True, null=True)
-    lilypond = TextField(blank=True, verbose_name='LilyPond')
-    description = HTMLField(blank=True)
 
     objects = OeuvreManager()
 
@@ -743,12 +741,10 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return out
 
     def caracteristiques_iterator(self, tags=False):
-        if self.coupe:
-            yield hlp(ugettext('en %s') % self.coupe, ugettext('coupe'), tags)
         if self.numero:
             yield ugettext('n° %s') % self.numero
-        if self.opus:
-            yield hlp(ugettext('op. %s') % self.opus, ugettext('opus'), tags)
+        if self.coupe:
+            yield hlp(ugettext('en %s') % self.coupe, ugettext('coupe'), tags)
         if self.tonalite:
             gamme, note, alteration = self.tonalite
             if gamme == 'C':
@@ -762,17 +758,19 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             tonalite = ugettext('en %s') % str_list(
                 (em(note, tags), alteration, gamme), ' ')
             yield tonalite
-        if self.ict:
-            yield hlp(self.ict, ugettext('Indice Catalogue Thématique'), tags)
+        if self.sujet:
+            yield hlp(ugettext('sur %s') % self.sujet, ugettext('sujet'), tags)
         if self.surnom:
             yield hlp(em(self.surnom, tags), ugettext('surnom'), tags)
+        if self.nom_courant:
+            yield hlp(self.nom_courant, ugettext('nom courant'), tags)
         if self.incipit:
             yield hlp(ugettext('« %s »') % self.incipit,
                       ugettext('incipit'), tags)
-        if self.nom_courant:
-            yield hlp(self.nom_courant, ugettext('nom courant'), tags)
-        if self.sujet:
-            yield hlp(ugettext('sur %s') % self.sujet, ugettext('sujet'), tags)
+        if self.opus:
+            yield hlp(ugettext('op. %s') % self.opus, ugettext('opus'), tags)
+        if self.ict:
+            yield hlp(self.ict, ugettext('Indice Catalogue Thématique'), tags)
         if self.pk:
             for caracteristique in self.caracteristiques.html_list(tags=tags):
                 yield caracteristique
@@ -817,7 +815,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     @property
     def evenements(self):
         return get_model('libretto', 'Evenement').objects.filter(
-            programme__oeuvre__in=self.get_descendants(include_self=True))
+            pk__in=get_model('libretto', 'Evenement').objects.filter(
+                programme__oeuvre__in=self.get_descendants(include_self=True))
+        )
 
     def oeuvres_associees(self):
         # TODO: Limiter à ce que l’utilisateur peut voir.

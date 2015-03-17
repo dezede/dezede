@@ -126,6 +126,14 @@ class OeuvreForm(ModelForm):
                     _('Ce champ doit être rempli pour pouvoir utiliser '
                       '« Type d’extrait » et « Numéro d’extrait ».')])
 
+        if not data['genre']:
+            if data['numero']:
+                self._errors['numero'] = self.error_class([
+                    _('Vous ne pouvez remplir « Numéro » sans « Genre »')])
+            if data['coupe']:
+                self._errors['coupe'] = self.error_class([
+                    _('Vous ne pouvez remplir « Coupe » sans « Genre »')])
+
         return data
 
     class Meta(object):
