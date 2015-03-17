@@ -692,8 +692,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             NUMERO_EXTRAIT_PATTERN,
             _('Vous devez saisir un nombre en chiffres arabes '
               'éventellement suivi de lettres.'))])
-    filles = ManyToManyField('self', through='ParenteDOeuvres', db_index=True,
-                             related_name='meres', symmetrical=False)
+    filles = ManyToManyField('self', through='ParenteDOeuvres',
+                             related_name='meres', symmetrical=False,
+                             blank=True, null=True)
     lilypond = TextField(blank=True, verbose_name='LilyPond')
     description = HTMLField(blank=True)
 
@@ -867,6 +868,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         titre_complet = self.titre_complet()
         extrait = self.get_extrait()
         genre = self.genre
+        tempo = self.tempo
         caracteristiques = self.get_caracteristiques(tags=tags)
         url = None if not tags else self.get_absolute_url()
         if auteurs:
@@ -883,13 +885,13 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                 out += href(url, cite(titre_complet, tags=tags), tags & links)
                 if descr and genre:
                     out += ', '
-        if genre or extrait:
+        if genre or extrait or tempo:
             if not titre_complet:
                 titre_complet = extrait
                 if genre is not None:
                     titre_complet += self.genre.html(tags, caps=True)
-                if self.tempo:
-                    titre_complet += ' ' + self.tempo
+                if tempo:
+                    titre_complet += ' ' + tempo
                 pupitres = self.calc_pupitres()
                 if pupitres:
                     titre_complet += ' ' + pupitres
@@ -899,7 +901,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                     out += href(url, titre_complet, tags=tags & links)
                     if descr and caracteristiques:
                         out += ','
-            elif descr:
+            elif descr and genre is not None:
                 out += genre.html(tags, caps=genre_caps)
         if descr and caracteristiques:
             if out:
