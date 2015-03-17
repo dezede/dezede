@@ -74,17 +74,8 @@ class GenreDOeuvre(CommonModel, SlugModel):
             relations += ('enfants',)
         return relations
 
-    def html(self, tags=True, caps=False, pluriel=False):
-        nom = self.pluriel() if pluriel else self.nom
-        if caps:
-            nom = capfirst(nom)
-        return hlp(nom, ugettext('genre'), tags)
-
-    def pluriel(self):
-        return calc_pluriel(self)
-
     def __str__(self):
-        return strip_tags(self.html(False))
+        return strip_tags(self.nom)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -744,23 +735,20 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             digits = to_roman(int(digits))
         out = digits + suffix
         if self.type_extrait == self.MORCEAU:
-            out = _('№ ') + out + ' '
+            out = _('№ ') + out
         elif self.type_extrait == self.MOUVEMENT:
-            out += '. '
+            out += '.'
         else:
             out = self.get_type_extrait_display() + ' ' + out
         return out
 
-    def get_caracteristiques(self, tags=False):
-        caracteristiques = []
+    def caracteristiques_iterator(self, tags=False):
         if self.coupe:
-            caracteristiques.append(hlp(ugettext('en %s') % self.coupe,
-                                        ugettext('coupe'), tags))
+            yield hlp(ugettext('en %s') % self.coupe, ugettext('coupe'), tags)
         if self.numero:
-            caracteristiques.append(ugettext('n° %s') % self.numero)
+            yield ugettext('n° %s') % self.numero
         if self.opus:
-            caracteristiques.append(hlp(ugettext('op. %s') % self.opus,
-                                        ugettext('opus'), tags))
+            yield hlp(ugettext('op. %s') % self.opus, ugettext('opus'), tags)
         if self.tonalite:
             gamme, note, alteration = self.tonalite
             if gamme == 'C':
@@ -773,32 +761,28 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             alteration = self.ALTERATIONS[alteration]
             tonalite = ugettext('en %s') % str_list(
                 (em(note, tags), alteration, gamme), ' ')
-            caracteristiques.append(hlp(tonalite, ugettext('tonalité'), tags))
+            yield tonalite
         if self.ict:
-            caracteristiques.append(
-                hlp(self.ict, ugettext('Indice Catalogue Thématique'), tags))
+            yield hlp(self.ict, ugettext('Indice Catalogue Thématique'), tags)
         if self.surnom:
-            caracteristiques.append(
-                hlp(em(self.surnom, tags), ugettext('surnom'), tags))
+            yield hlp(em(self.surnom, tags), ugettext('surnom'), tags)
         if self.incipit:
-            caracteristiques.append(hlp(ugettext('« %s »') % self.incipit,
-                                        ugettext('incipit'), tags))
+            yield hlp(ugettext('« %s »') % self.incipit,
+                      ugettext('incipit'), tags)
         if self.nom_courant:
-            caracteristiques.append(hlp(self.nom_courant,
-                                        ugettext('nom courant'), tags))
+            yield hlp(self.nom_courant, ugettext('nom courant'), tags)
         if self.sujet:
-            caracteristiques.append(
-                hlp(ugettext('sur %s') % self.sujet, ugettext('sujet'), tags))
+            yield hlp(ugettext('sur %s') % self.sujet, ugettext('sujet'), tags)
         if self.pk:
-            caracteristiques.extend(self.caracteristiques.html_list(tags=tags))
-        return caracteristiques
+            for caracteristique in self.caracteristiques.html_list(tags=tags):
+                yield caracteristique
 
     def caracteristiques_html(self, tags=True):
-        return str_list(self.get_caracteristiques(tags=tags))
+        return str_list(self.caracteristiques_iterator(tags=tags))
     caracteristiques_html.allow_tags = True
     caracteristiques_html.short_description = _('caractéristiques')
 
-    def calc_pupitres(self, prefix=True, tags=False):
+    def get_pupitres_str(self, prefix=True, tags=False):
         if not self.pk:
             return ''
         pupitres = self.pupitres.select_related('partie')
@@ -809,7 +793,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return out
 
     def pupitres_html(self, prefix=False, tags=True):
-        return self.calc_pupitres(prefix=prefix, tags=tags)
+        return self.get_pupitres_str(prefix=prefix, tags=tags)
 
     @model_method_cached()
     def auteurs_html(self, tags=True):
@@ -848,68 +832,65 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return ugettext('œuvre jouée %s fois avec : %s') % (
             self.n, self.link())
 
-    def calc_referent_ancestors(self, tags=False, links=False):
+    def get_referent_ancestors_html(self, tags=False, links=False):
         if not self.pk or self.extrait_de is None or \
                 (self.genre and self.genre.referent):
             return ''
         return self.extrait_de.titre_html(tags=tags, links=links)
 
-    def titre_complet(self):
+    def get_titre_significatif(self):
         l = (self.prefixe_titre, self.titre, self.coordination,
              self.prefixe_titre_secondaire, self.titre_secondaire)
         return str_list(l, infix='')
 
+    def get_titre_non_significatif(self, tags=True, caps=False):
+        l = [self.get_extrait()]
+        if self.genre is not None:
+            genre = self.genre.nom
+            if caps and self.type_extrait in self.TYPES_EXTRAIT_CACHES:
+                genre = capfirst(genre)
+            l.append(genre)
+        l.extend((
+            self.tempo,
+            self.get_pupitres_str(tags=False),
+            next(self.caracteristiques_iterator(tags=tags), None),
+        ))
+
+        out = str_list(l, infix=' ')
+        if caps:
+            return capfirst(out)
+        return out
+
+    def get_description(self, tags=True):
+        l = []
+        if self.titre:
+            l.append(self.get_titre_non_significatif(tags=tags))
+        caracteristiques = list(self.caracteristiques_iterator(tags=tags))
+        # La première caractéristique est utilisée dans le titre non
+        # significatif.
+        l.extend(caracteristiques[1:])
+        return str_list(l)
+
     @model_method_cached()
-    def html(self, tags=True, auteurs=True, titre=True,
-             descr=True, genre_caps=False, ancestors=True,
-             ancestors_links=False, links=True):
-        # FIXME: Nettoyer cette horreur
-        out = ''
-        titre_complet = self.titre_complet()
-        extrait = self.get_extrait()
-        genre = self.genre
-        tempo = self.tempo
-        caracteristiques = self.get_caracteristiques(tags=tags)
-        url = None if not tags else self.get_absolute_url()
+    def html(self, tags=True, auteurs=True, titre=True, descr=True,
+             ancestors=True, ancestors_links=False, links=True):
+        l = []
         if auteurs:
-            auts = self.auteurs_html(tags)
-            if auts:
-                out += auts + ', '
+            l.append(self.auteurs_html(tags=tags))
         if titre:
             if ancestors:
-                pars = self.calc_referent_ancestors(
-                    tags=tags, links=ancestors_links)
-                if pars:
-                    out += pars + ', '
-            if titre_complet:
-                out += href(url, cite(titre_complet, tags=tags), tags & links)
-                if descr and genre:
-                    out += ', '
-        if genre or extrait or tempo:
-            if not titre_complet:
-                titre_complet = extrait
-                if genre is not None:
-                    titre_complet += self.genre.html(tags, caps=True)
-                if tempo:
-                    titre_complet += ' ' + tempo
-                pupitres = self.calc_pupitres()
-                if pupitres:
-                    titre_complet += ' ' + pupitres
-                if caracteristiques:
-                    titre_complet += ' ' + caracteristiques.pop(0)
-                if titre:
-                    out += href(url, titre_complet, tags=tags & links)
-                    if descr and caracteristiques:
-                        out += ','
-            elif descr and genre is not None:
-                out += genre.html(tags, caps=genre_caps)
-        if descr and caracteristiques:
-            if out:
-                # TODO: BUG : le validateur HTML supprime l'espace qu'on ajoute
-                #       ci-dessous si on ne le met pas en syntaxe HTML
-                out += '&#32;' if tags else ' '
-            out += str_list(caracteristiques)
-        return mark_safe(out)
+                l.append(self.get_referent_ancestors_html(
+                    tags=tags, links=ancestors_links))
+            if self.titre:
+                titre_complet = cite(self.get_titre_significatif(), tags=tags)
+            else:
+                titre_complet = self.get_titre_non_significatif(tags=tags,
+                                                                caps=True)
+            url = None if not tags else self.get_absolute_url()
+            l.append(href(url, titre_complet, tags & links))
+        if descr:
+            l.append(self.get_description(tags=tags))
+        return mark_safe(str_list(l))
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
@@ -930,8 +911,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return self.titre_descr(tags=True)
 
     def description_html(self, tags=True):
-        return self.html(tags, auteurs=False, titre=False, descr=True,
-                         genre_caps=True)
+        return self.html(tags, auteurs=False, titre=False, descr=True)
 
     def handle_whitespaces(self):
         match = re.match(r'^,\s*(.+)$', self.coordination)
