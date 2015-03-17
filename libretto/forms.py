@@ -108,6 +108,11 @@ class OeuvreForm(ModelForm):
             ])
 
         if type_extrait or data['numero_extrait']:
+            if data['titre']:
+                self._errors['titre'] = self.error_class([
+                    _('Impossible de saisir un titre significatif '
+                      'pour un extrait.')
+                ])
             if not type_extrait:
                 self._errors['type_extrait'] = self.error_class([
                     _('Ce champ doit être rempli '
