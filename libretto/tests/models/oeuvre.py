@@ -70,15 +70,12 @@ class OeuvreTestCase(CommonTestCase):
                             % {'url': carmen_url}
         with self.assertNumQueries(0):
             self.assertHTMLEqual(self.carmen.titre_html(), carmen_titre_html)
+        with self.assertNumQueries(2):
+            self.assertHTMLEqual(
+                self.carmen.description_html(), 'opéra')
         with self.assertNumQueries(3):
             self.assertHTMLEqual(
-                self.carmen.description_html(),
-                'opéra pour deux violons et quatre à huit voix')
-        with self.assertNumQueries(4):
-            self.assertHTMLEqual(
-                self.carmen.html(),
-                '%s, %s' % (carmen_titre_html,
-                            'opéra pour deux violons et quatre à huit voix'))
+                self.carmen.html(), '%s, %s' % (carmen_titre_html, 'opéra'))
         # Symphonie n° 5
         symphonie_url = self.symphonie.get_absolute_url()
         symphonie_titre_html = '<a href="%(url)s">Symphonie n°\u00A05</a>' \
@@ -101,7 +98,7 @@ class OeuvreTestCase(CommonTestCase):
                                  '<a href="%(url)s"><cite>Le Tartuffe, ou '
                                  'l’Imposteur</cite></a>'
                                  % {'url': tartuffe_url})
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             self.assertHTMLEqual(self.tartuffe.description_html(),
                                  'comédie <span title="Coupe">'
                                  'en cinq actes et en vers</span>')

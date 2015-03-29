@@ -899,7 +899,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             else:
                 titre_complet = self.get_titre_non_significatif(
                     tags=tags,
-                    caps=self.type_extrait in self.TYPES_EXTRAIT_CACHES)
+                    caps=(self.type_extrait is None
+                          or self.type_extrait in self.TYPES_EXTRAIT_CACHES))
             extrait = capfirst(self.get_extrait(show_type=show_type_extrait))
             if extrait:
                 if titre_complet:
