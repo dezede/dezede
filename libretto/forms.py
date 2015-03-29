@@ -180,7 +180,7 @@ class OeuvreForm(ConstrainedModelForm):
 class ElementDeDistributionForm(ConstrainedModelForm):
     INCOMPATIBLES = (
         ('individu', 'ensemble'),
-        ('pupitre', 'profession'),
+        ('partie', 'profession'),
     )
 
     class Meta(object):
@@ -193,13 +193,13 @@ class ElementDeDistributionForm(ConstrainedModelForm):
             msg = _('Vous devez remplir « Individu » ou « Ensemble ».')
             self.add_error_1_6('individu', msg)
             self.add_error_1_6('ensemble', msg)
-        if data.get(b'pupitre', '') != '' \
+        if data.get(b'partie', '') != '' \
                 and data.get(b'profession') \
                 and data[b'profession'].parties.exists():
             self.add_error_1_6(
                 'profession',
-                _('Au moins un rôle ou instrument est lié à cette '
-                  'profession. Remplissez donc « Pupitre » à la place.'))
+                _('Au moins un rôle ou instrument est lié à cette profession. '
+                  'Remplissez donc « Rôle ou instrument » à la place.'))
 
         return data
 

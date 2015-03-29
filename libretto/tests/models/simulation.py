@@ -310,18 +310,16 @@ class SeleniumTest(LiveServerTestCase):
                     select = Select(self.get_by_name('titre'))
                     select.select_by_visible_text('Mlle')
 
-                # Ajoute le pupitre de cette distribution.
-                self.get_by_css('.pupitre .related-lookup').click()
-                with self.new_popup(add='pupitre'):
-                    self.get_by_css('.partie .related-lookup').click()
-                    with self.new_popup(add='rôle ou instrument'):
-                        self.get_by_xpath(
-                            '//label[text()=" instrument"]/input').click()
-                        self.save()
-                        self.get_by_name('nom').send_keys('violon')
-                        self.get_by_css('.professions .related-lookup').click()
-                        with self.new_popup(add='profession'):
-                            self.get_by_name('nom').send_keys('violoniste')
+                # Ajoute la partie de cette distribution.
+                self.get_by_css('.partie .related-lookup').click()
+                with self.new_popup(add='rôle ou instrument'):
+                    self.get_by_xpath(
+                        '//label[text()=" instrument"]/input').click()
+                    self.save()
+                    self.get_by_name('nom').send_keys('violon')
+                    self.get_by_css('.professions .related-lookup').click()
+                    with self.new_popup(add='profession'):
+                        self.get_by_name('nom').send_keys('violoniste')
 
             # Ajoute un quatrième élément de programme.
             programme3 = open_new_element_de_programme(3)

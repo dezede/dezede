@@ -181,14 +181,14 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         return unique_checks, date_checks
 
     def interpretes(self):
-        return self.pupitres.elements_de_distribution().individus()
+        return self.elements_de_distribution.individus()
 
     def interpretes_html(self):
-        return str_list(i.html() for i in self.interpretes())
+        return str_list([i.html() for i in self.interpretes()])
     interpretes_html.short_description = _('interprètes')
 
     def evenements(self):
-        return self.pupitres.elements_de_distribution().evenements()
+        return self.elements_de_distribution.evenements()
 
     def repertoire(self):
         return self.pupitres.oeuvres()
@@ -260,12 +260,6 @@ class Instrument(Partie):
 
 
 class PupitreQuerySet(CommonQuerySet):
-    def elements_de_distribution(self):
-        return get_model(
-            'libretto',
-            'ElementDeDistribution'
-        ).objects.filter(pupitre__in=self).distinct()
-
     def oeuvres(self):
         return (get_model('libretto', 'Oeuvre').objects
                 .filter(pupitres__in=self).distinct()
@@ -275,20 +269,17 @@ class PupitreQuerySet(CommonQuerySet):
 class PupitreManager(CommonManager):
     queryset_class = PupitreQuerySet
 
-    def elements_de_distribution(self):
-        return self.all().elements_de_distribution()
-
     def oeuvres(self):
-        return self.all().oeuvres()
+        return self.get_queryset().oeuvres()
 
 
-# TODO: une fois les quantités déplacées en inline, ce modèle ne doit plus être
-# registered dans l'admin.
 @python_2_unicode_compatible
 class Pupitre(CommonModel):
+    oeuvre = ForeignKey('Oeuvre', related_name='pupitres',
+                        verbose_name=_('œuvre'), on_delete=PROTECT)
     partie = ForeignKey(
-        'Partie', related_name='pupitres', verbose_name=_('partie'),
-        db_index=True, on_delete=PROTECT)
+        'Partie', related_name='pupitres',
+        verbose_name=_('rôle ou instrument'), on_delete=PROTECT)
     quantite_min = IntegerField(_('quantité minimale'), default=1,
                                 db_index=True)
     quantite_max = IntegerField(_('quantité maximale'), default=1,
@@ -304,7 +295,7 @@ class Pupitre(CommonModel):
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
-        return ('oeuvres', 'elements_de_distribution')
+        return ('oeuvres',)
 
     def __str__(self):
         out = ''
@@ -601,9 +592,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     ]
     tonalite = CharField(_('tonalité'), max_length=3, choices=TONALITES,
                          blank=True)
-    pupitres = ManyToManyField('Pupitre', related_name='oeuvres', blank=True,
-                               null=True, verbose_name=_('effectif'),
-                               db_index=True)
     sujet = CharField(
         _('sujet'), max_length=80, blank=True,
         help_text=_(

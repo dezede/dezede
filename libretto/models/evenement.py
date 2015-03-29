@@ -40,7 +40,7 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
 
     def prefetch(self):
         return self.select_related(
-            'individu', 'ensemble', 'pupitre', 'pupitre__partie', 'profession')
+            'individu', 'ensemble', 'partie', 'profession')
 
     def html(self, tags=True):
         return str_list(e.html(tags=tags) for e in self)
@@ -74,8 +74,8 @@ class ElementDeDistribution(CommonModel):
     ensemble = ForeignKey(
         'Ensemble', blank=True, null=True, on_delete=PROTECT,
         related_name='elements_de_distribution', verbose_name=_('ensemble'))
-    pupitre = ForeignKey(
-        'Pupitre', verbose_name=_('pupitre'), null=True, blank=True,
+    partie = ForeignKey(
+        'Partie', verbose_name=_('rôle ou instrument'), null=True, blank=True,
         related_name='elements_de_distribution', on_delete=PROTECT)
     profession = ForeignKey(
         'Profession', verbose_name=_('profession'), null=True, blank=True,
@@ -89,7 +89,7 @@ class ElementDeDistribution(CommonModel):
                                       'éléments de distribution', 1)
         verbose_name_plural = ungettext_lazy('élément de distribution',
                                              'éléments de distribution', 2)
-        ordering = ('pupitre', 'profession', 'individu', 'ensemble')
+        ordering = ('partie', 'profession', 'individu', 'ensemble')
         app_label = 'libretto'
 
     @staticmethod
@@ -110,8 +110,8 @@ class ElementDeDistribution(CommonModel):
         elif self.ensemble:
             l.append(self.ensemble.html(tags=tags))
 
-        if self.pupitre:
-            l.append('[' + self.pupitre.html() + ']')
+        if self.partie:
+            l.append('[' + self.partie.html() + ']')
         elif self.profession:
             l.append('[' + self.profession.html(feminin=feminin) + ']')
 
@@ -133,7 +133,7 @@ class ElementDeDistribution(CommonModel):
     @staticmethod
     def autocomplete_search_fields():
         return (
-            'pupitre__partie__nom__icontains',
+            'partie__nom__icontains',
             'individu__nom__icontains',
             'individu__pseudonyme__icontains',
             'ensemble__nom__icontains',
@@ -366,7 +366,7 @@ class EvenementQuerySet(PublishedQuerySet):
             .prefetch_related(
                 'caracteristiques__type',
                 'distribution__individu', 'distribution__ensemble',
-                'distribution__profession', 'distribution__pupitre__partie',
+                'distribution__profession', 'distribution__partie',
                 'programme__caracteristiques__type',
                 'programme__oeuvre__genre',
                 'programme__oeuvre__caracteristiques__type',
@@ -379,7 +379,7 @@ class EvenementQuerySet(PublishedQuerySet):
                 'programme__distribution__individu',
                 'programme__distribution__ensemble',
                 'programme__distribution__profession',
-                'programme__distribution__pupitre__partie')
+                'programme__distribution__partie')
             .only(
                 'notes_publiques', 'relache', 'circonstance',
                 'programme_incomplet',
