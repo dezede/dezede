@@ -72,10 +72,14 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right" role="menu">
                   <li class="{% if request.GET.order_by == None %}active{% endif %}">
-                      <a href="{% change_results_order %}">{% trans 'Date puis lieu' %}</a>
+                      <a href="{% change_results_order %}">
+                        {% trans 'Date puis lieu (croissants)' %}
+                      </a>
                   </li>
                   <li class="{% if request.GET.order_by == 'reversed' %}active{% endif %}">
-                    <a href="{% change_results_order 'reversed' %}">{% trans 'Date puis lieu, inversé' %}</a>
+                    <a href="{% change_results_order 'reversed' %}">
+                      {% trans 'Date puis lieu (décroissants)' %}
+                    </a>
                   </li>
                 </ul>
               </div>
