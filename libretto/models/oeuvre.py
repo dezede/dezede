@@ -562,7 +562,10 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         help_text=_('Exemple : « trois actes » pour un opéra en trois actes.'))
     # FIXME: Réduire la longueur maximale des tempi dès qu’un nettoyage y aura
     #        été fait
-    tempo = CharField(max_length=92, blank=True)
+    tempo = CharField(
+        max_length=92, blank=True,
+        help_text=_('Exemple : « Largo », « Presto ma non troppo », etc. '
+                    'Ne pas saisir d’indication métronomique.'))
     NOTES = OrderedDict((
         ('c', 'do'),
         ('d', 'ré'),
@@ -629,13 +632,13 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             r'^[\d\w\-/]+$', _('Vous ne pouvez saisir que des chiffres, '
                                'lettres non accentuées, tiret '
                                'et barre oblique, le tout sans espace.'))],
-        help_text=_('Exemple : « 12 » pour op. 12, « 27/3 » pour op. 27 n° 3, '
-                    '« 8b » pour op. 8 b, ou encore « 12-15 » pour '
-                    'op. 12 à 15.'))
+        help_text=_('Exemple : « 12 » pour op. 12, « 27/3 » pour op. 27 n° 3, '
+                    '« 8b » pour op. 8 b, ou encore « 12-15 » '
+                    'pour op. 12 à 15.'))
     ict = CharField(
         _('ICT'), max_length=25, blank=True,
-        help_text='Indice Catalogue Thématique. Exemple : « RV 42 », '
-                  '« K. 299d » ou encore « Hob. XVI:24 ».')
+        help_text='Indice Catalogue Thématique. Exemple : « RV 42 », '
+                  '« K. 299d » ou encore « Hob. XVI:24 ».')
     caracteristiques = ManyToManyField(
         'CaracteristiqueDOeuvre', blank=True, null=True, db_index=True,
         verbose_name=_('autres caractéristiques'), related_name='oeuvres')
@@ -724,7 +727,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     link.short_description = _('lien')
     link.allow_tags = True
 
-    def get_extrait(self):
+    def get_extrait(self, show_type=True):
         if not self.type_extrait:
             return ''
         digits, suffix = self.NUMERO_EXTRAIT_RE.match(
@@ -736,8 +739,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             out = _('№ ') + out
         elif self.type_extrait == self.MOUVEMENT:
             out += '.'
-        else:
-            out = self.get_type_extrait_display() + ' ' + out
+        elif show_type:
+            return self.get_type_extrait_display() + ' ' + out
         return out
 
     def caracteristiques_iterator(self, tags=False):
@@ -745,6 +748,10 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             yield ugettext('n° %s') % self.numero
         if self.coupe:
             yield hlp(ugettext('en %s') % self.coupe, ugettext('coupe'), tags)
+        # On ajoute uniquement le tempo s’il n’y a pas besoin de lui dans le
+        # titre non significatif, c’est-à-dire s’il y a déjà un genre.
+        if self.tempo and self.genre_id is not None:
+            yield hlp(self.tempo, ugettext('Tempo'), tags)
         if self.tonalite:
             gamme, note, alteration = self.tonalite
             if gamme == 'C':
@@ -838,44 +845,48 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         if not self.pk or self.extrait_de is None or \
                 (self.genre and self.genre.referent):
             return ''
-        return self.extrait_de.titre_html(tags=tags, links=links)
+        return self.extrait_de.titre_html(tags=tags, links=links,
+                                          show_type_extrait=False)
+
+    def has_titre_significatif(self):
+        return bool(self.titre)
 
     def get_titre_significatif(self):
-        l = (self.prefixe_titre, self.titre, self.coordination,
-             self.prefixe_titre_secondaire, self.titre_secondaire)
-        return str_list(l, infix='')
+        return (self.prefixe_titre + self.titre + self.coordination
+                + self.prefixe_titre_secondaire + self.titre_secondaire)
+
+    def has_titre_non_significatif(self):
+        return self.tempo or self.genre_id is not None
 
     def get_titre_non_significatif(self, tags=True, caps=False):
-        l = [self.get_extrait()]
-        if self.genre is not None:
-            genre = self.genre.nom
-            if caps and self.type_extrait in self.TYPES_EXTRAIT_CACHES:
-                genre = capfirst(genre)
-            l.append(genre)
-        l.extend((
-            self.tempo,
-            self.get_pupitres_str(tags=False),
-            next(self.caracteristiques_iterator(tags=tags), None),
-        ))
+        if not self.has_titre_non_significatif():
+            return ''
+        if self.genre is None:
+            l = [capfirst(self.tempo) if caps else self.tempo]
+        else:
+            l = [capfirst(self.genre.nom) if caps else self.genre.nom]
+            if not self.has_titre_significatif():
+                l.append(self.get_pupitres_str(tags=False))
+        l.append(next(self.caracteristiques_iterator(tags=tags), None))
 
-        out = str_list(l, infix=' ')
-        if caps:
-            return capfirst(out)
-        return out
+        return str_list(l, infix=' ')
 
     def get_description(self, tags=True):
         l = []
-        if self.titre:
+        if self.has_titre_significatif():
             l.append(self.get_titre_non_significatif(tags=tags))
         caracteristiques = list(self.caracteristiques_iterator(tags=tags))
-        # La première caractéristique est utilisée dans le titre non
-        # significatif.
-        l.extend(caracteristiques[1:])
+        if self.has_titre_non_significatif():
+            # La première caractéristique est utilisée dans le titre non
+            # significatif.
+            caracteristiques = caracteristiques[1:]
+        l.extend(caracteristiques)
         return str_list(l)
 
     @model_method_cached()
     def html(self, tags=True, auteurs=True, titre=True, descr=True,
-             ancestors=True, ancestors_links=False, links=True):
+             ancestors=True, ancestors_links=False, links=True,
+             show_type_extrait=True):
         l = []
         if auteurs:
             l.append(self.auteurs_html(tags=tags))
@@ -883,11 +894,19 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             if ancestors:
                 l.append(self.get_referent_ancestors_html(
                     tags=tags, links=ancestors_links))
-            if self.titre:
+            if self.has_titre_significatif():
                 titre_complet = cite(self.get_titre_significatif(), tags=tags)
             else:
-                titre_complet = self.get_titre_non_significatif(tags=tags,
-                                                                caps=True)
+                titre_complet = self.get_titre_non_significatif(
+                    tags=tags,
+                    caps=self.type_extrait in self.TYPES_EXTRAIT_CACHES)
+            extrait = capfirst(self.get_extrait(show_type=show_type_extrait))
+            if extrait:
+                if titre_complet:
+                    titre_complet = extrait + ' ' + titre_complet
+                else:
+                    titre_complet = extrait
+                    assert self.type_extrait not in self.TYPES_EXTRAIT_CACHES
             url = None if not tags else self.get_absolute_url()
             l.append(href(url, titre_complet, tags & links))
         if descr:
@@ -900,9 +919,10 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return self.html(tags=tags, auteurs=False, titre=True, descr=False,
                          ancestors=False, links=links)
 
-    def titre_html(self, tags=True, links=True):
+    def titre_html(self, tags=True, links=True, show_type_extrait=True):
         return self.html(tags, auteurs=False, titre=True, descr=False,
-                         ancestors=True, ancestors_links=True, links=links)
+                         ancestors=True, ancestors_links=True, links=links,
+                         show_type_extrait=show_type_extrait)
     titre_html.short_description = _('titre')
 
     def titre_descr(self, tags=False):
