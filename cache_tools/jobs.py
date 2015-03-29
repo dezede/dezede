@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Manager
+from django.db.models import Manager, QuerySet
 from django_rq import job
 from .utils import invalidate_object, get_obj_cache_key
 
@@ -30,12 +30,14 @@ def get_stale_objects(instance, explored=None, all_relations=False):
     for relation in relations:
         try:
             related = getattr(instance, relation)
-            if callable(related):
-                related = related()
         except ObjectDoesNotExist:
             continue
         if isinstance(related, Manager):
-            for obj in related.all():
+            related = related.all()
+        if callable(related):
+            related = related()
+        if isinstance(related, QuerySet):
+            for obj in related:
                 for sub_obj in get_stale_objects(
                         obj, explored, all_relations=all_relations):
                     yield sub_obj
