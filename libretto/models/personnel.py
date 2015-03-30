@@ -330,8 +330,8 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
 
     def apparitions(self):
         return Evenement.objects.filter(
-            Q(distribution__ensembles=self)
-            | Q(programme__distribution__ensembles=self)).distinct()
+            Q(distribution__ensemble=self)
+            | Q(programme__distribution__ensemble=self)).distinct()
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
