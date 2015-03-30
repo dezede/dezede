@@ -9,7 +9,7 @@ from django.core.validators import RegexValidator
 from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField,
     BooleanField, permalink, get_model, SmallIntegerField, PROTECT, Count,
-    PositiveSmallIntegerField)
+    PositiveSmallIntegerField, NullBooleanField, Q)
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -280,6 +280,9 @@ class Pupitre(CommonModel):
     partie = ForeignKey(
         'Partie', related_name='pupitres',
         verbose_name=_('rôle ou instrument'), on_delete=PROTECT)
+    # FIXME: Transformer ceci en BooleanField lorsque les valeurs None auront
+    #        été corrigées.
+    soliste = NullBooleanField(_('soliste'), default=True, db_index=True)
     quantite_min = IntegerField(_('quantité minimale'), default=1,
                                 db_index=True)
     quantite_max = IntegerField(_('quantité maximale'), default=1,
@@ -775,18 +778,24 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     caracteristiques_html.allow_tags = True
     caracteristiques_html.short_description = _('caractéristiques')
 
-    def get_pupitres_str(self, prefix=True, tags=False):
+    def get_pupitres_str(self, prefix=True, tags=False, solistes=True):
         if not self.pk:
             return ''
         pupitres = self.pupitres.select_related('partie')
+        if solistes:
+            # FIXME: Retirer la sélection des `soliste=None`
+            #        lorsque du nettoyage aura été fait
+            #        pour déterminer tous les `soliste`.
+            pupitres = pupitres.filter(Q(soliste=True) | Q(soliste=None))
         if not pupitres:
             return ''
         out = ugettext('pour ') if prefix else ''
         out += str_list_w_last(p.html(tags=tags) for p in pupitres)
         return out
 
-    def pupitres_html(self, prefix=False, tags=True):
-        return self.get_pupitres_str(prefix=prefix, tags=tags)
+    def pupitres_html(self, prefix=False, tags=True, solistes=True):
+        return self.get_pupitres_str(prefix=prefix, tags=tags,
+                                     solistes=solistes)
 
     @model_method_cached()
     def auteurs_html(self, tags=True):
