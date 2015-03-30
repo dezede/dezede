@@ -78,7 +78,7 @@ class GenreDOeuvre(CommonModel, SlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'nom__istartswith', 'nom_pluriel__istartswith'
+        return 'nom__icontains', 'nom_pluriel__icontains'
 
 
 class TypeDeCaracteristiqueDOeuvre(TypeDeCaracteristique):
