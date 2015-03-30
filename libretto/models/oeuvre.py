@@ -261,9 +261,9 @@ class Instrument(Partie):
 
 class PupitreQuerySet(CommonQuerySet):
     def oeuvres(self):
-        return (get_model('libretto', 'Oeuvre').objects
-                .filter(pupitres__in=self).distinct()
-                .order_by(*Oeuvre._meta.ordering))
+        return Oeuvre.objects.filter(
+            pk__in=self.values('oeuvre').distinct()
+        ).order_by(*Oeuvre._meta.ordering)
 
 
 class PupitreManager(CommonManager):
