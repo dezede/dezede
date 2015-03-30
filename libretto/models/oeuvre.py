@@ -276,7 +276,7 @@ class PupitreManager(CommonManager):
 @python_2_unicode_compatible
 class Pupitre(CommonModel):
     oeuvre = ForeignKey('Oeuvre', related_name='pupitres',
-                        verbose_name=_('œuvre'), on_delete=PROTECT)
+                        verbose_name=_('œuvre'))
     partie = ForeignKey(
         'Partie', related_name='pupitres',
         verbose_name=_('rôle ou instrument'), on_delete=PROTECT)
@@ -464,10 +464,10 @@ class AuteurManager(CommonManager):
 @python_2_unicode_compatible
 class Auteur(CommonModel):
     oeuvre = ForeignKey(
-        'Oeuvre', null=True, blank=True, on_delete=PROTECT,
+        'Oeuvre', null=True, blank=True,
         related_name='auteurs', verbose_name=_('œuvre'))
     source = ForeignKey(
-        'Source', null=True, blank=True, on_delete=PROTECT,
+        'Source', null=True, blank=True,
         related_name='auteurs', verbose_name=_('source'))
     individu = ForeignKey('Individu', related_name='auteurs',
                           verbose_name=_('individu'), db_index=True,
