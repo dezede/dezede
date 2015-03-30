@@ -34,3 +34,9 @@ def model_method_cached(id_attr=b'pk'):
             return out
         return wrapper
     return decorator
+
+
+def model_method_cached(id_attr=b'pk'):
+    def decorator(method):
+        return method
+    return decorator
