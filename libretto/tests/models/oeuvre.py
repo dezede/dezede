@@ -13,14 +13,14 @@ class OeuvreTestCase(CommonTestCase):
         # Carmen
         opera = new(GenreDOeuvre, nom='opéra')
         violon = new(Partie, nom='violon')
-        violons = new(Pupitre, partie=violon, quantite_min=2, quantite_max=2)
+        violons = Pupitre(partie=violon, quantite_min=2, quantite_max=2)
         voix = new(Partie, nom='voix', nom_pluriel='voix')
-        choeur = new(Pupitre, partie=voix, quantite_min=4, quantite_max=8)
+        choeur = Pupitre(partie=voix, quantite_min=4, quantite_max=8)
         self.carmen = new(Oeuvre, titre='Carmen', genre=opera)
         self.carmen.pupitres.add(violons, choeur)
         # Sonate
         sonate = new(GenreDOeuvre, nom='sonate')
-        violon_solo = new(Pupitre, partie=violon, quantite_max=1)
+        violon_solo = Pupitre(partie=violon, soliste=True)
         self.sonate = new(Oeuvre, genre=sonate)
         self.sonate.pupitres.add(violon_solo)
         # Symphonie n° 5

@@ -35,7 +35,7 @@
     {% data_table_attr 'pupitres_html' _('effectif') %}
 
     {% if oeuvre.get_children|has_elements:request %}
-      <th>{% trans 'Contenu' %}</th>
+      <th>{% trans 'Extraits' %}</th>
       <td>{% jqtree 'libretto.oeuvre' 'short_html' %}</td>
     {% endif %}
 
