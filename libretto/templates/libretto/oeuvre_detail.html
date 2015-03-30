@@ -52,7 +52,9 @@
       {% data_table_list parentes.list 'fille.html' verbose_name=parentes.grouper.nom_relatif verbose_name_plural=parentes.grouper.relatif_pluriel has_count=False %}
     {% endfor %}
 
-    {% data_table_list oeuvre.oeuvres_associees '_link_with_number' _('œuvre associée') _('œuvres associées') %}
+    {% if user.is_authenticated %}
+      {% data_table_list oeuvre.oeuvres_associees '_link_with_number' _('œuvre associée') _('œuvres associées') %}
+    {% endif %}
   </table>
 
 {% endblock %}
