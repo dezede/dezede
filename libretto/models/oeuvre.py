@@ -298,7 +298,7 @@ class Pupitre(CommonModel):
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
-        return ('oeuvres',)
+        return ('oeuvre',)
 
     def __str__(self):
         out = ''
