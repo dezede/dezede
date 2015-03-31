@@ -877,7 +877,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                     'creation', 'link',)
     list_editable = ('genre',)
     search_fields = Oeuvre.autocomplete_search_fields(add_icontains=False)
-    list_filter = ('genre',)
+    list_filter = ('genre', 'type_extrait')
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
     raw_id_fields = ('genre', 'caracteristiques', 'extrait_de',
