@@ -783,7 +783,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     caracteristiques_html.allow_tags = True
     caracteristiques_html.short_description = _('caractéristiques')
 
-    def get_pupitres_str(self, prefix=True, tags=False, solistes=True):
+    def get_pupitres_str(self, prefix=True, tags=False, solistes=False):
         if not self.pk:
             return ''
         pupitres = self.pupitres.select_related('partie')
@@ -798,7 +798,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         out += str_list_w_last(p.html(tags=tags) for p in pupitres)
         return out
 
-    def pupitres_html(self, prefix=False, tags=True, solistes=True):
+    def pupitres_html(self, prefix=False, tags=True, solistes=False):
         return self.get_pupitres_str(prefix=prefix, tags=tags,
                                      solistes=solistes)
 
@@ -868,7 +868,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         else:
             l = [capfirst(self.genre.nom) if caps else self.genre.nom]
             if not self.has_titre_significatif():
-                l.append(self.get_pupitres_str(tags=False))
+                l.append(self.get_pupitres_str(tags=False, solistes=True))
         l.append(next(self.caracteristiques_iterator(tags=tags), None))
 
         return str_list(l, infix=' ')
