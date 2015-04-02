@@ -282,7 +282,7 @@ class Pupitre(CommonModel):
         verbose_name=_('rôle ou instrument'), on_delete=PROTECT)
     # FIXME: Transformer ceci en BooleanField lorsque les valeurs None auront
     #        été corrigées.
-    soliste = NullBooleanField(_('soliste'), default=True, db_index=True)
+    soliste = NullBooleanField(_('soliste'), default=False, db_index=True)
     quantite_min = IntegerField(_('quantité minimale'), default=1,
                                 db_index=True)
     quantite_max = IntegerField(_('quantité maximale'), default=1,
