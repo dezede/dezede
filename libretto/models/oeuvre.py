@@ -703,6 +703,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     class MPTTMeta(object):
         parent_attr = 'extrait_de'
+    MPTTMeta.order_insertion_by = Meta.ordering[:]
 
     @permalink
     def get_absolute_url(self):
