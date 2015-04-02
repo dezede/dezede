@@ -724,7 +724,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     link.allow_tags = True
 
     def get_extrait(self, show_type=True):
-        if not self.type_extrait:
+        if not self.type_extrait or not self.numero_extrait:
             return ''
         digits, suffix = self.NUMERO_EXTRAIT_RE.match(
             self.numero_extrait).groups()
