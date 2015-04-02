@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from collections import OrderedDict
 import re
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator
@@ -792,11 +793,27 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             #        lorsque du nettoyage aura été fait
             #        pour déterminer tous les `soliste`.
             pupitres = pupitres.filter(Q(soliste=True) | Q(soliste=None))
+
         if not pupitres:
             return ''
-        out = ugettext('pour ') if prefix else ''
-        out += str_list_w_last(p.html(tags=tags) for p in pupitres)
-        return out
+        if not prefix:
+            return str_list_w_last([p.html(tags=tags) for p in pupitres])
+
+        role_ct = ContentType.objects.get_for_model(Role)
+        instrument_ct = ContentType.objects.get_for_model(Instrument)
+        pupitres_roles = str_list_w_last([
+            p.html(tags=tags) for p in pupitres
+            if p.partie.polymorphic_ctype_id == role_ct.id])
+        pupitres_instruments = str_list_w_last([
+            p.html(tags=tags) for p in pupitres
+            if p.partie.polymorphic_ctype_id == instrument_ct.id])
+
+        if pupitres_roles:
+            out = ugettext('de ') + pupitres_roles
+            if pupitres_instruments:
+                out += ugettext(' avec ') + pupitres_instruments
+            return out
+        return ugettext('pour ') + pupitres_instruments
 
     def pupitres_html(self, prefix=False, tags=True, solistes=False):
         return self.get_pupitres_str(prefix=prefix, tags=tags,
