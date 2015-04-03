@@ -38,7 +38,7 @@ class SeleniumTest(LiveServerTestCase):
             cls.selenium = PhantomJS()
         except:
             cls.selenium = Firefox()
-        cls.selenium.set_page_load_timeout(30)
+        cls.selenium.set_page_load_timeout(5*60)
         cls.selenium.set_window_size(1366, 768)
         cls.wait = WebDriverWait(cls.selenium, 10)
         super(SeleniumTest, cls).setUpClass()
