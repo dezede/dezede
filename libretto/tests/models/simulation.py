@@ -34,10 +34,12 @@ class SeleniumTest(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        try:
-            cls.selenium = PhantomJS()
-        except:
+        driver_name = os.environ.get('SELENIUM_DRIVER', 'Firefox')
+        assert driver_name in ('Firefox', 'PhantomJS')
+        if driver_name == 'Firefox':
             cls.selenium = Firefox()
+        elif driver_name == 'PhantomJS':
+            cls.selenium = PhantomJS()
         cls.selenium.set_page_load_timeout(5*60)
         cls.selenium.set_window_size(1366, 768)
         cls.wait = WebDriverWait(cls.selenium, 10)
