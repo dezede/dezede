@@ -555,10 +555,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             r'^\D+$', _('Vous devez saisir les quantités '
                         'en toutes lettres.'))],
         help_text=_('Exemple : « trois actes » pour un opéra en trois actes.'))
-    # FIXME: Réduire la longueur maximale des tempi dès qu’un nettoyage y aura
-    #        été fait
     tempo = CharField(
-        max_length=92, blank=True,
+        max_length=50, blank=True,
         help_text=_('Exemple : « Largo », « Presto ma non troppo », etc. '
                     'Ne pas saisir d’indication métronomique.'))
     NOTES = OrderedDict((
