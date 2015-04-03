@@ -34,15 +34,11 @@ class SeleniumTest(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        timeout = 5 * 60
         try:
-            cls.selenium = PhantomJS(
-                desired_capabilities={
-                    'phantomjs.page.settings.resourceTimeout': timeout,
-                }
-            )
+            cls.selenium = PhantomJS()
         except:
-            cls.selenium = Firefox(timeout=timeout)
+            cls.selenium = Firefox()
+        cls.selenium.set_page_load_timeout(30)
         cls.selenium.set_window_size(1366, 768)
         cls.wait = WebDriverWait(cls.selenium, 10)
         super(SeleniumTest, cls).setUpClass()
