@@ -361,20 +361,20 @@ class EvenementQuerySet(PublishedQuerySet):
         return (
             qs.select_related(
                 'debut_lieu', 'debut_lieu__nature',
+                'debut_lieu__parent', 'debut_lieu__parent__nature',
                 'fin_lieu', 'fin_lieu__nature',
                 'owner', 'etat')
             .prefetch_related(
                 'caracteristiques__type',
                 'distribution__individu', 'distribution__ensemble',
-                'distribution__profession', 'distribution__partie',
+                'distribution__profession',
                 'programme__caracteristiques__type',
-                'programme__oeuvre__genre',
-                'programme__oeuvre__caracteristiques__type',
                 'programme__oeuvre__auteurs__individu',
                 'programme__oeuvre__auteurs__profession',
+                'programme__oeuvre__genre',
                 'programme__oeuvre__pupitres__partie',
+                'programme__oeuvre__caracteristiques',
                 'programme__oeuvre__extrait_de__genre',
-                'programme__oeuvre__extrait_de__caracteristiques__type',
                 'programme__oeuvre__extrait_de__pupitres__partie',
                 'programme__distribution__individu',
                 'programme__distribution__ensemble',

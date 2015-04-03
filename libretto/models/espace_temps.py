@@ -174,13 +174,13 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         ).order_by(*Oeuvre._meta.ordering)
 
     def ancestors_until_referent(self):
-        ancestors = self.get_ancestors(include_self=True)
-        values = ancestors.values_list('nom', 'nature__referent')
         l = []
-        for nom, ref in values[::-1]:
-            l.append(nom)
-            if ref:
+        parent = self
+        while parent is not None:
+            l.append(parent.nom)
+            if parent.nature.referent:
                 break
+            parent = parent.parent
         return l[::-1]
 
     def html(self, tags=True, short=False):

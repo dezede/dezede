@@ -10,7 +10,7 @@ from django.core.validators import RegexValidator
 from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField,
     BooleanField, permalink, get_model, SmallIntegerField, PROTECT, Count,
-    PositiveSmallIntegerField, NullBooleanField, Q)
+    PositiveSmallIntegerField, NullBooleanField)
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -787,12 +787,12 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def get_pupitres_str(self, prefix=True, tags=False, solistes=False):
         if not self.pk:
             return ''
-        pupitres = self.pupitres.select_related('partie')
+        pupitres = self.pupitres.all()
         if solistes:
             # FIXME: Retirer la sélection des `soliste=None`
             #        lorsque du nettoyage aura été fait
             #        pour déterminer tous les `soliste`.
-            pupitres = pupitres.filter(Q(soliste=True) | Q(soliste=None))
+            pupitres = [p for p in pupitres if p.soliste or p.soliste is None]
 
         if not pupitres:
             return ''
