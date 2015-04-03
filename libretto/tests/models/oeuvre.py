@@ -12,9 +12,9 @@ class OeuvreTestCase(CommonTestCase):
     def setUp(self):
         # Carmen
         opera = new(GenreDOeuvre, nom='opéra')
-        violon = new(Partie, nom='violon')
+        violon = new(Instrument, nom='violon')
         violons = Pupitre(partie=violon, quantite_min=2, quantite_max=2)
-        voix = new(Partie, nom='voix', nom_pluriel='voix')
+        voix = new(Instrument, nom='voix', nom_pluriel='voix')
         choeur = Pupitre(partie=voix, quantite_min=4, quantite_max=8)
         self.carmen = new(Oeuvre, titre='Carmen', genre=opera)
         self.carmen.pupitres.add(violons, choeur)
@@ -39,17 +39,17 @@ class OeuvreTestCase(CommonTestCase):
         # Carmen
         with self.assertNumQueries(0):
             self.assertEqual(smart_text(self.carmen), 'Carmen')
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(5):
             self.assertEqual(
                 self.carmen.get_pupitres_str(),
-                'pour deux violons et\xa0quatre à huit voix')
+                'pour deux violons et\xa0quatre à huit voix')
         # Sonate
-        with self.assertNumQueries(2):
-            self.assertEqual(smart_text(self.sonate), 'Sonate pour violon')
+        with self.assertNumQueries(4):
+            self.assertEqual(smart_text(self.sonate), 'Sonate pour violon')
         # Symphonie n° 5
         with self.assertNumQueries(1):
             self.assertEqual(smart_text(self.symphonie), 'Symphonie n°\u00A05')
-        with self.assertNumQueries(0):
+        with self.assertNumQueries(1):
             self.assertEqual(self.symphonie.titre_html(tags=False),
                              'Symphonie n°\u00A05')
         with self.assertNumQueries(2):
