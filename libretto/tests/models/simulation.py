@@ -34,7 +34,7 @@ class SeleniumTest(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        driver_name = os.environ.get('SELENIUM_DRIVER', 'Firefox')
+        driver_name = os.environ.get('SELENIUM_DRIVER', 'PhantomJS')
         assert driver_name in ('Firefox', 'PhantomJS')
         if driver_name == 'Firefox':
             cls.selenium = Firefox()
