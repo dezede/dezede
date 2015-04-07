@@ -6,7 +6,7 @@ from django.db.models import CharField, ForeignKey, ManyToManyField, \
      FloatField, permalink, SmallIntegerField, PROTECT, DateField, \
     PositiveSmallIntegerField, Model, Q
 from django.template.defaultfilters import date
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import (
     ungettext_lazy, ugettext_lazy as _, ugettext)
@@ -182,7 +182,7 @@ class PeriodeDActivite(Model):
             return
         precision = getattr(self, attr_precision)
         if precision == self.YEAR:
-            return smart_text(d.year)
+            return force_text(d.year)
         if precision == self.MONTH:
             return date(d, 'F Y')
         if precision == self.DAY:
@@ -442,4 +442,4 @@ class Personnel(CommonModel):
         return ()
 
     def __str__(self):
-        return smart_text(self.type) + smart_text(self.saison)
+        return force_text(self.type) + force_text(self.saison)

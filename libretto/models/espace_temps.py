@@ -6,7 +6,7 @@ from django.contrib.gis.db.models.query import GeoQuerySet
 from django.core.exceptions import ValidationError
 from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
                               permalink, Q, PROTECT)
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
 from django.utils.translation import (
     ungettext_lazy, pgettext, ugettext_lazy as _)
@@ -15,7 +15,6 @@ from polymorphic_tree.managers import PolymorphicMPTTQuerySet, \
 from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
-from cache_tools import model_method_cached
 from .base import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
@@ -246,7 +245,7 @@ class Saison(CommonModel):
 
     def __str__(self):
         d = {
-            'fk': smart_text(self.ensemble or self.lieu),
+            'fk': force_text(self.ensemble or self.lieu),
             'debut': self.debut.year,
             'fin': self.fin.year
         }

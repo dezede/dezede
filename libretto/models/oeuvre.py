@@ -11,8 +11,7 @@ from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField,
     BooleanField, permalink, get_model, SmallIntegerField, PROTECT, Count,
     PositiveSmallIntegerField, NullBooleanField)
-from django.utils.encoding import python_2_unicode_compatible, smart_text, \
-    force_text
+from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import (
@@ -242,7 +241,7 @@ class Role(Partie):
     def related_label(self):
         txt = super(Role, self).related_label()
         if self.oeuvre is not None:
-            txt += ' (' + smart_text(self.oeuvre) + ')'
+            txt += ' (' + force_text(self.oeuvre) + ')'
         return txt
 
     @staticmethod
@@ -318,12 +317,12 @@ class Pupitre(CommonModel):
         return self.partie.get_absolute_url()
 
     def html(self, tags=True):
-        return href(self.get_absolute_url(), smart_text(self), tags=tags)
+        return href(self.get_absolute_url(), force_text(self), tags=tags)
 
     def related_label(self):
-        out = smart_text(self)
+        out = force_text(self)
         if isinstance(self.partie, Role) and self.partie.oeuvre is not None:
-            out += ' (' + smart_text(self.partie.oeuvre) + ')'
+            out += ' (' + force_text(self.partie.oeuvre) + ')'
         return out
 
     @staticmethod
@@ -967,7 +966,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                 setattr(self, attr, v + ' ')
 
     def related_label(self):
-        txt = smart_text(self)
+        txt = force_text(self)
         auteurs = self.auteurs.html(tags=False)
         if auteurs:
             txt += ' (' + auteurs + ')'

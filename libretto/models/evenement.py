@@ -11,7 +11,7 @@ from django.db.models import (
     PositiveSmallIntegerField, permalink, Q, PositiveIntegerField, get_model,
     PROTECT, Count, DecimalField)
 from django.utils.encoding import (
-    python_2_unicode_compatible, smart_text, force_text)
+    python_2_unicode_compatible, force_text)
 from django.utils.html import strip_tags
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
@@ -128,7 +128,7 @@ class ElementDeDistribution(CommonModel):
         return 'admin:libretto_elementdedistribution_change', (self.pk,)
 
     def get_change_link(self):
-        return href(self.get_change_url(), smart_text(self), new_tab=True)
+        return href(self.get_change_url(), force_text(self), new_tab=True)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -491,7 +491,7 @@ class Evenement(AutoriteModel):
         return self.get_absolute_url()
 
     def link(self):
-        return href(self.get_absolute_url(), smart_text(self))
+        return href(self.get_absolute_url(), force_text(self))
     link.short_description = _('lien')
     link.allow_tags = True
 
