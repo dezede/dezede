@@ -64,7 +64,7 @@ class GenreDOeuvre(CommonModel, SlugModel):
         verbose_name = ungettext_lazy('genre d’œuvre', 'genres d’œuvre', 1)
         verbose_name_plural = ungettext_lazy('genre d’œuvre',
                                              'genres d’œuvre', 2)
-        ordering = ('slug',)
+        ordering = ('nom',)
         app_label = 'libretto'
 
     @staticmethod
@@ -482,7 +482,7 @@ class Auteur(CommonModel):
     class Meta(object):
         verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
         verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
-        ordering = ('profession', 'individu__nom')
+        ordering = ('profession', 'individu')
         app_label = 'libretto'
 
     @staticmethod
@@ -518,6 +518,11 @@ class OeuvreQuerySet(CommonTreeQuerySet, PublishedQuerySet):
     def html(self, *args, **kwargs):
         return str_list_w_last([o.html(*args, **kwargs) for o in self])
 
+    def prefetch_all(self):
+        return self.select_related('genre').prefetch_related(
+            'pupitres__partie', 'caracteristiques',
+        )
+
 
 class OeuvreManager(CommonTreeManager, PublishedManager):
     queryset_class = OeuvreQuerySet
@@ -525,22 +530,24 @@ class OeuvreManager(CommonTreeManager, PublishedManager):
     def html(self, *args, **kwargs):
         return self.get_queryset().html(*args, **kwargs)
 
+    def prefetch_all(self):
+        return self.get_queryset().prefetch_all()
+
 
 @python_2_unicode_compatible
 class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
-    prefixe_titre = CharField(_('article'), max_length=20, blank=True,
-                              db_index=True)
+    prefixe_titre = CharField(_('article'), max_length=20, blank=True)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True)
     coordination = CharField(_('coordination'), max_length=20, blank=True,
                              db_index=True)
     prefixe_titre_secondaire = CharField(
-        _('article'), max_length=20, blank=True, db_index=True)
+        _('article'), max_length=20, blank=True)
     titre_secondaire = CharField(_('titre secondaire'), max_length=200,
                                  blank=True, db_index=True)
-    genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True,
-        null=True, verbose_name=_('genre'), db_index=True, on_delete=PROTECT)
+    genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True, null=True,
+                       verbose_name=_('genre'), on_delete=PROTECT)
     numero = CharField(
-        _('numéro'), max_length=5, blank=True,
+        _('numéro'), max_length=5, blank=True, db_index=True,
         validators=[RegexValidator(
             r'^[\d\w\-]+$', _('Vous ne pouvez saisir que des chiffres, '
                               'lettres non accentuées et tiret, '
@@ -550,13 +557,13 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             'ou encore « 3-7 » pour sonates n° 3 à 7. '
             '<strong>Ne pas confondre avec le sous-numéro d’opus.</strong>'))
     coupe = CharField(
-        _('coupe'), max_length=100, blank=True,
+        _('coupe'), max_length=100, blank=True, db_index=True,
         validators=[RegexValidator(
             r'^\D+$', _('Vous devez saisir les quantités '
                         'en toutes lettres.'))],
         help_text=_('Exemple : « trois actes » pour un opéra en trois actes.'))
     tempo = CharField(
-        max_length=50, blank=True,
+        max_length=50, blank=True, db_index=True,
         help_text=_('Exemple : « Largo », « Presto ma non troppo », etc. '
                     'Ne pas saisir d’indication métronomique.'))
     NOTES = OrderedDict((
@@ -593,7 +600,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         for alter_k, alter_v in ALTERATIONS.items()
     ]
     tonalite = CharField(_('tonalité'), max_length=3, choices=TONALITES,
-                         blank=True)
+                         blank=True, db_index=True)
     sujet = CharField(
         _('sujet'), max_length=80, blank=True,
         help_text=_(
@@ -604,20 +611,20 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             '(&lt;em&gt; et &lt;/em&gt; sont les balises HTML '
             'pour mettre en emphase).'))
     surnom = CharField(
-        _('surnom'), max_length=50, blank=True,
+        _('surnom'), max_length=50, blank=True, db_index=True,
         help_text=_('Exemple : « Jupiter » pour la symphonie n° 41 '
                     'de Mozart.'))
     nom_courant = CharField(
-        _('nom courant'), max_length=70, blank=True,
+        _('nom courant'), max_length=70, blank=True, db_index=True,
         help_text=_('Exemple : « barcarolle » pour le n° 13 de l’acte III des '
                     '<em>Contes d’Hoffmann</em> d’Offenbach.'))
     incipit = CharField(
-        _('incipit'), max_length=100, blank=True,
+        _('incipit'), max_length=100, blank=True, db_index=True,
         help_text=_('Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 '
                     'de l’acte III des <em>Contes d’Hoffmann</em> '
                     'd’Offenbach.'))
     opus = CharField(
-        _('opus'), max_length=5, blank=True,
+        _('opus'), max_length=5, blank=True, db_index=True,
         validators=[RegexValidator(
             r'^[\d\w\-/]+$', _('Vous ne pouvez saisir que des chiffres, '
                                'lettres non accentuées, tiret '
@@ -626,11 +633,11 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                     '« 8b » pour op. 8 b, ou encore « 12-15 » '
                     'pour op. 12 à 15.'))
     ict = CharField(
-        _('ICT'), max_length=25, blank=True,
+        _('ICT'), max_length=25, blank=True, db_index=True,
         help_text='Indice Catalogue Thématique. Exemple : « RV 42 », '
                   '« K. 299d » ou encore « Hob. XVI:24 ».')
     caracteristiques = ManyToManyField(
-        'CaracteristiqueDOeuvre', blank=True, null=True, db_index=True,
+        'CaracteristiqueDOeuvre', blank=True, null=True,
         verbose_name=_('autres caractéristiques'), related_name='oeuvres')
     creation = AncrageSpatioTemporel(short_description=_('création'))
     extrait_de = TreeForeignKey(
@@ -663,11 +670,12 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         (MOUVEMENT, _('mouvement')),
     )
     type_extrait = PositiveSmallIntegerField(
-        _('type d’extrait'), choices=TYPES_EXTRAIT, blank=True, null=True)
+        _('type d’extrait'), choices=TYPES_EXTRAIT, blank=True, null=True,
+        db_index=True)
     NUMERO_EXTRAIT_PATTERN = r'^([1-9]\d*)([^\d\.\-]*)$'
     NUMERO_EXTRAIT_RE = re.compile(NUMERO_EXTRAIT_PATTERN)
     numero_extrait = CharField(
-        _('numéro d’extrait'), max_length=5, blank=True,
+        _('numéro d’extrait'), max_length=5, blank=True, db_index=True,
         help_text=_(
             'Le numéro de l’extrait au sein de l’œuvre, par exemple « 3 » '
             'pour le 3<sup>e</sup> mouvement d’un concerto, « 4 » pour '

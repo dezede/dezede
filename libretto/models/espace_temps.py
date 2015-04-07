@@ -84,9 +84,9 @@ class LieuManager(CommonTreeManager, PolymorphicMPTTModelManager,
 class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, db_index=True)
     parent = PolymorphicTreeForeignKey(
-        'self', null=True, blank=True, db_index=True, related_name='enfants',
+        'self', null=True, blank=True, related_name='enfants',
         verbose_name=_('parent'))
-    nature = ForeignKey(NatureDeLieu, related_name='lieux', db_index=True,
+    nature = ForeignKey(NatureDeLieu, related_name='lieux',
                         verbose_name=_('nature'), on_delete=PROTECT)
     # TODO: Parentés d'institution avec périodes d'activité pour l'histoire des
     # institutions.

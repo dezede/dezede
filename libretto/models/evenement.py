@@ -232,7 +232,7 @@ class ElementDeProgramme(CommonModel):
                                       'éléments de programme', 1)
         verbose_name_plural = ungettext_lazy('élément de programme',
                                              'éléments de programme', 2)
-        ordering = ('position', 'oeuvre')
+        ordering = ('position',)
         app_label = 'libretto'
 
     @staticmethod
@@ -473,7 +473,6 @@ class Evenement(AutoriteModel):
         verbose_name = ungettext_lazy('événement', 'événements', 1)
         verbose_name_plural = ungettext_lazy('événement', 'événements', 2)
         ordering = ('debut_date', 'debut_heure', 'debut_lieu',
-                    'debut_date_approx', 'debut_heure_approx',
                     'debut_lieu_approx')
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)

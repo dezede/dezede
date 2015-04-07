@@ -45,7 +45,7 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     nom_feminin = CharField(
         _('nom (au féminin)'), max_length=230, blank=True,
         help_text=_('Ne préciser que s’il est différent du nom.'))
-    parent = TreeForeignKey('Profession', blank=True, null=True, db_index=True,
+    parent = TreeForeignKey('Profession', blank=True, null=True,
                             related_name='enfants', verbose_name=_('parent'))
     classement = SmallIntegerField(default=1, db_index=True)
 
