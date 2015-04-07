@@ -880,11 +880,12 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         if not self.has_titre_non_significatif():
             return ''
         if self.genre is None:
+            assert self.tempo != ''
             l = [capfirst(self.tempo) if caps else self.tempo]
         else:
             l = [capfirst(self.genre.nom) if caps else self.genre.nom]
-            if not self.has_titre_significatif():
-                l.append(self.get_pupitres_str(tags=False, solistes=True))
+        if not self.has_titre_significatif():
+            l.append(self.get_pupitres_str(tags=False, solistes=True))
         l.append(next(self.caracteristiques_iterator(tags=tags), None))
 
         return str_list(l, infix=' ')
