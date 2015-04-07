@@ -11,7 +11,8 @@ from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField,
     BooleanField, permalink, get_model, SmallIntegerField, PROTECT, Count,
     PositiveSmallIntegerField, NullBooleanField)
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import python_2_unicode_compatible, smart_text, \
+    force_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import (
@@ -302,23 +303,16 @@ class Pupitre(CommonModel):
         return ('oeuvre',)
 
     def __str__(self):
-        out = ''
-        partie = self.partie
-        mi = self.quantite_min
-        ma = self.quantite_max
-        if ma > 1:
-            partie = partie.pluriel()
-        else:
-            partie = smart_text(partie)
-        mi_str = apnumber(mi)
-        ma_str = apnumber(ma)
-        if mi != ma:
-            d = {'min': mi_str, 'max': ma_str}
-            out += ugettext('%(min)s à %(max)s ') % d
-        elif mi > 1:
-            out += mi_str + ' '
-        out += partie
-        return out
+        n_min = self.quantite_min
+        n_max = self.quantite_max
+        partie = (force_text(self.partie) if n_max == 1
+                  else self.partie.pluriel())
+        if n_min != n_max:
+            return ugettext('%s à %s %s') % (
+                apnumber(n_min), apnumber(n_max), partie)
+        elif n_min > 1:
+            return '%s %s' % (apnumber(n_min), partie)
+        return partie
 
     def get_absolute_url(self):
         return self.partie.get_absolute_url()
