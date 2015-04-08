@@ -87,7 +87,10 @@ class Exporter(object):
 
         fk_ids = defaultdict(set)
         if parent_fk_ids is None:
-            parent_fk_ids = fk_ids
+            parent_fk_ids = defaultdict(set)
+            parent_fk_ids[self.model].update(
+                self.get_queryset()
+                .order_by().distinct().values_list('pk', flat=True))
         for lookup, field in self.final_fields.items():
             if isinstance(field, ForeignKey):
                 model = field.rel.to
@@ -114,11 +117,11 @@ class Exporter(object):
             return
 
         return [exporter_registry[model](model.objects.filter(pk__in=ids))
-                for model, ids in fk_ids.items()]
+                for model, ids in parent_fk_ids.items()]
 
-    def _get_dataframe(self, qs):
+    def _get_dataframe(self):
         df = pandas.DataFrame.from_records(
-            list(qs.values_list(*self.lookups)),
+            list(self.get_queryset().values_list(*self.lookups)),
             columns=self.lookups,
         )
 
@@ -164,15 +167,9 @@ class Exporter(object):
         df.set_index(df.columns[0], inplace=True)
         return df
 
-    def get_dataframes(self, is_root=True):
-        qs = self.get_queryset()
-        dfs = [(self.model, self._get_dataframe(qs))]
-        if not is_root:
-            return dfs
-
-        for exporter in self._get_related_exporters():
-            dfs.extend(exporter.get_dataframes(is_root=False))
-        return dfs
+    def get_dataframes(self):
+        return [(exporter.model, exporter._get_dataframe())
+                for exporter in self._get_related_exporters()]
 
     @staticmethod
     def _compress_to_zip(contents):
