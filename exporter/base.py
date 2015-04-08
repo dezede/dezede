@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from math import isnan
 from StringIO import StringIO
 from zipfile import ZipFile
@@ -13,6 +13,12 @@ from django.http import HttpResponse
 from django.utils.encoding import force_text
 import pandas
 from slugify import slugify
+
+
+class OrderedDefaultSetDict(OrderedDict):
+    def __missing__(self, k):
+        self[k] = l = set()
+        return l
 
 
 class Exporter(object):
@@ -85,9 +91,9 @@ class Exporter(object):
     def _get_related_exporters(self, parent_fk_ids=None, is_root=True):
         from .registry import exporter_registry
 
-        fk_ids = defaultdict(set)
+        fk_ids = OrderedDefaultSetDict()
         if parent_fk_ids is None:
-            parent_fk_ids = defaultdict(set)
+            parent_fk_ids = OrderedDefaultSetDict()
             parent_fk_ids[self.model].update(
                 self.get_queryset()
                 .order_by().distinct().values_list('pk', flat=True))
