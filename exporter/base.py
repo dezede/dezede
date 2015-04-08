@@ -19,6 +19,7 @@ class Exporter(object):
     model = None
     columns = ()
     verbose_overrides = {}
+    m2ms = ()
     CONTENT_TYPES = {
         'zip': 'application/zip',
         'json': 'application/json',
@@ -93,8 +94,15 @@ class Exporter(object):
                 ids = frozenset(
                     self.get_queryset().exclude(**{lookup: None})
                     .order_by().distinct().values_list(lookup, flat=True))
-                if ids:
+                if ids and not ids.issubset(parent_fk_ids[model]):
                     fk_ids[model].update(ids)
+        for m2m in self.m2ms:
+            model = self.model._meta.get_field_by_name(m2m)[0].model
+            ids = frozenset(
+                self.get_queryset().exclude(**{m2m: None})
+                .order_by().distinct().values_list(m2m, flat=True))
+            if ids and not ids.issubset(parent_fk_ids[model]):
+                fk_ids[model].update(ids)
         for model, ids in fk_ids.items():
             qs = model.objects.filter(pk__in=ids)
             if qs.exists():
