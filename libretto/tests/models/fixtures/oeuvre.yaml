@@ -1,0 +1,187 @@
+- model: libretto.GenreDOeuvre
+  pk: 1
+  fields:
+    nom: opéra
+- model: libretto.Oeuvre
+  pk: 1
+  fields:
+    titre: Carmen
+    genre: 1
+    slug: 1
+    lft: 0
+    rght: 0
+    tree_id: 0
+    level: 0
+- model: libretto.Partie
+  pk: 1
+  fields:
+    nom: violon
+    polymorphic_ctype:
+      - libretto
+      - instrument
+    slug: violon
+    lft: 0
+    rght: 0
+    tree_id: 0
+    level: 0
+- model: libretto.Instrument
+  fields:
+    partie_ptr: 1
+- model: libretto.Partie
+  pk: 2
+  fields:
+    nom: voix
+    nom_pluriel: voix
+    polymorphic_ctype:
+      - libretto
+      - instrument
+    slug: voix
+    lft: 0
+    rght: 0
+    tree_id: 0
+    level: 0
+- model: libretto.Instrument
+  fields:
+    partie_ptr: 2
+- model: libretto.Pupitre
+  fields:
+    oeuvre: 1
+    partie: 1
+    quantite_min: 2
+    quantite_max: 2
+- model: libretto.Pupitre
+  fields:
+    oeuvre: 1
+    partie: 2
+    quantite_min: 4
+    quantite_max: 8
+
+
+- model: libretto.Oeuvre
+  pk: 2
+  fields:
+    extrait_de: 1
+    type_extrait: 1
+    numero_extrait: 1
+    slug: 2
+    lft: 0
+    rght: 0
+    tree_id: 0
+    level: 0
+
+
+- model: libretto.GenreDOeuvre
+  pk: 2
+  fields:
+    nom: habanera
+- model: libretto.Oeuvre
+  pk: 3
+  fields:
+    extrait_de: 2
+    type_extrait: 4
+    numero_extrait: 5
+    genre: 2
+    incipit: L’amour est un oiseau rebelle
+    slug: 3
+    lft: 0
+    rght: 0
+    tree_id: 0
+    level: 0
+- model: libretto.Partie
+  pk: 3
+  fields:
+    nom: Carmen
+    polymorphic_ctype:
+      - libretto
+      - role
+    slug: carmen
+    lft: 0
+    rght: 0
+    tree_id: 0
+    level: 0
+- model: libretto.Role
+  fields:
+    partie_ptr: 3
+    oeuvre: 1
+- model: libretto.Partie
+  pk: 4
+  fields:
+    nom: chœur
+    polymorphic_ctype:
+      - libretto
+      - instrument
+    slug: choeur
+    lft: 0
+    rght: 0
+    tree_id: 0
+    level: 0
+- model: libretto.Instrument
+  fields:
+    partie_ptr: 4
+- model: libretto.Pupitre
+  fields:
+    oeuvre: 3
+    partie: 3
+    soliste: True
+- model: libretto.Pupitre
+  fields:
+    oeuvre: 3
+    partie: 4
+
+
+- model: libretto.GenreDOeuvre
+  pk: 3
+  fields:
+    nom: sonate
+- model: libretto.Oeuvre
+  pk: 4
+  fields:
+    genre: 3
+    slug: 4
+    lft: 0
+    rght: 0
+    tree_id: 0
+    level: 0
+- model: libretto.Pupitre
+  fields:
+    oeuvre: 4
+    partie: 1
+    soliste: True
+
+
+- model: libretto.GenreDOeuvre
+  pk: 4
+  fields:
+    nom: symphonie
+- model: libretto.Oeuvre
+  pk: 5
+  fields:
+    genre: 4
+    numero: 5
+    opus: 107
+    slug: 5
+    lft: 0
+    rght: 0
+    tree_id: 0
+    level: 0
+
+
+- model: libretto.GenreDOeuvre
+  pk: 5
+  fields:
+    nom: comédie
+- model: libretto.Oeuvre
+  pk: 6
+  fields:
+    prefixe_titre: Le
+    titre: Tartuffe
+    coordination: ou
+    prefixe_titre_secondaire: l’
+    titre_secondaire: Imposteur
+    genre: 5
+    coupe: cinq actes et en vers
+    slug: 6
+    lft: 0
+    rght: 0
+    tree_id: 0
+    level: 0

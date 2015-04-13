@@ -1,104 +1,142 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.utils.encoding import smart_text
+import os
+from django.utils.encoding import force_text
 from ...models import *
-from .utils import new, CommonTestCase
+from .utils import CommonTestCase
+
+
+PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class OeuvreTestCase(CommonTestCase):
     model = Oeuvre
+    fixtures = [
+        os.path.join(PATH, 'fixtures/oeuvre.yaml'),
+    ]
 
     def setUp(self):
-        # Carmen
-        opera = new(GenreDOeuvre, nom='opéra')
-        violon = new(Instrument, nom='violon')
-        violons = Pupitre(partie=violon, quantite_min=2, quantite_max=2)
-        voix = new(Instrument, nom='voix', nom_pluriel='voix')
-        choeur = Pupitre(partie=voix, quantite_min=4, quantite_max=8)
-        self.carmen = new(Oeuvre, titre='Carmen', genre=opera)
-        self.carmen.pupitres.add(violons, choeur)
-        # Sonate
-        sonate = new(GenreDOeuvre, nom='sonate')
-        violon_solo = Pupitre(partie=violon, soliste=True)
-        self.sonate = new(Oeuvre, genre=sonate)
-        self.sonate.pupitres.add(violon_solo)
-        # Symphonie n° 5
-        symphonie = new(GenreDOeuvre, nom='symphonie')
-        self.symphonie = new(Oeuvre, genre=symphonie, numero='5', opus='107')
-        # Tartufe
-        comedie = new(GenreDOeuvre, nom='comédie')
-        self.tartuffe = new(Oeuvre,
-                            prefixe_titre='Le', titre='Tartuffe',
-                            coordination='ou',
-                            prefixe_titre_secondaire="l'",
-                            titre_secondaire='Imposteur',
-                            genre=comedie, coupe='cinq actes et en vers')
+        # Force save to rebuild slug & MPTT fields
+        for oeuvre in Oeuvre.objects.all():
+            oeuvre.save()
 
-    def testComputedNames(self):
-        # Carmen
-        with self.assertNumQueries(0):
-            self.assertEqual(smart_text(self.carmen), 'Carmen')
-        with self.assertNumQueries(5):
-            self.assertEqual(
-                self.carmen.get_pupitres_str(),
-                'pour deux violons et\xa0quatre à huit voix')
-        # Sonate
-        with self.assertNumQueries(4):
-            self.assertEqual(smart_text(self.sonate), 'Sonate pour violon')
-        # Symphonie n° 5
-        with self.assertNumQueries(1):
-            self.assertEqual(smart_text(self.symphonie), 'Symphonie n°\u00A05')
-        with self.assertNumQueries(1):
-            self.assertEqual(self.symphonie.titre_html(tags=False),
-                             'Symphonie n°\u00A05')
-        with self.assertNumQueries(2):
-            self.assertEqual(self.symphonie.titre_descr(),
-                             'Symphonie n°\xa05, op.\xa0107')
-        with self.assertNumQueries(1):
-            self.assertEqual(self.symphonie.description_html(tags=False),
-                             'op.\xa0107')
-        # Tartufe
-        with self.assertNumQueries(0):
-            self.assertEqual(smart_text(self.tartuffe),
-                             'Le Tartuffe, ou l’Imposteur')
+    def test_str(self):
+        def test_oeuvre(pk, n_queries, n_queries_prefetched, result):
+            oeuvre = Oeuvre.objects.get(pk=pk)
+            with self.assertNumQueries(n_queries):
+                self.assertEqual(force_text(oeuvre), result)
+            oeuvre = Oeuvre.objects.prefetch_all().get(pk=pk)
+            with self.assertNumQueries(n_queries_prefetched):
+                self.assertEqual(force_text(oeuvre), result)
 
-    def testHTMLRenders(self):
-        # Carmen
-        carmen_url = self.carmen.get_absolute_url()
-        carmen_titre_html = '<a href="%(url)s"><cite>Carmen</cite></a>'\
-                            % {'url': carmen_url}
-        with self.assertNumQueries(0):
-            self.assertHTMLEqual(self.carmen.titre_html(), carmen_titre_html)
-        with self.assertNumQueries(2):
-            self.assertHTMLEqual(
-                self.carmen.description_html(), 'opéra')
-        with self.assertNumQueries(3):
-            self.assertHTMLEqual(
-                self.carmen.html(), '%s, %s' % (carmen_titre_html, 'opéra'))
-        # Symphonie n° 5
-        symphonie_url = self.symphonie.get_absolute_url()
-        symphonie_titre_html = '<a href="%(url)s">Symphonie n°\u00A05</a>' \
-                               % {'url': symphonie_url}
-        with self.assertNumQueries(1):
-            self.assertHTMLEqual(self.symphonie.titre_html(),
-                                 symphonie_titre_html)
-        symphonie_description_html = '<span title="Opus">op.\u00A0107</span>'
-        with self.assertNumQueries(1):
-            self.assertHTMLEqual(self.symphonie.description_html(),
-                                 symphonie_description_html)
-        with self.assertNumQueries(3):
-            self.assertHTMLEqual(self.symphonie.html(),
-                                 '%s, %s' % (symphonie_titre_html,
-                                             symphonie_description_html))
-        # Tartufe
-        tartuffe_url = self.tartuffe.get_absolute_url()
-        with self.assertNumQueries(0):
-            self.assertHTMLEqual(self.tartuffe.titre_html(),
-                                 '<a href="%(url)s"><cite>Le Tartuffe, ou '
-                                 'l’Imposteur</cite></a>'
-                                 % {'url': tartuffe_url})
-        with self.assertNumQueries(1):
-            self.assertHTMLEqual(self.tartuffe.description_html(),
-                                 'comédie <span title="Coupe">'
-                                 'en cinq actes et en vers</span>')
+        test_oeuvre(1, 0, 0, 'Carmen')
+        test_oeuvre(2, 1, 1, 'Carmen, Acte I')
+        test_oeuvre(3, 6, 2, 'Carmen, I, № 5 Habanera de Carmen '
+                             '« L’amour est un oiseau rebelle »')
+        test_oeuvre(4, 5, 0, 'Sonate pour violon')
+        test_oeuvre(5, 2, 0, 'Symphonie n° 5')
+        test_oeuvre(6, 0, 0, 'Le Tartuffe, ou l’Imposteur')
+
+    def test_titre_descr(self):
+        def test_oeuvre(pk, n_queries, n_queries_prefetched, result):
+            oeuvre = Oeuvre.objects.get(pk=pk)
+            with self.assertNumQueries(n_queries):
+                self.assertEqual(oeuvre.titre_descr(), result)
+            oeuvre = Oeuvre.objects.prefetch_all().get(pk=pk)
+            with self.assertNumQueries(n_queries_prefetched):
+                self.assertEqual(oeuvre.titre_descr(), result)
+
+        test_oeuvre(1, 3, 0, 'Carmen, opéra')
+        test_oeuvre(2, 2, 1, 'Carmen, Acte I')
+        test_oeuvre(3, 7, 2, 'Carmen, I, № 5 Habanera de Carmen '
+                             '« L’amour est un oiseau rebelle »')
+        test_oeuvre(4, 6, 0, 'Sonate pour violon')
+        test_oeuvre(5, 3, 0, 'Symphonie n° 5, op. 107')
+        test_oeuvre(6, 2, 0, 'Le Tartuffe, ou l’Imposteur, '
+                             'comédie en cinq actes et en vers')
+
+    def test_titre_html(self):
+        def test_oeuvre(pk, n_queries, n_queries_prefetched, result):
+            oeuvre = Oeuvre.objects.get(pk=pk)
+            with self.assertNumQueries(n_queries):
+                self.assertEqual(oeuvre.titre_html(), result)
+            oeuvre = Oeuvre.objects.prefetch_all().get(pk=pk)
+            with self.assertNumQueries(n_queries_prefetched):
+                self.assertEqual(oeuvre.titre_html(), result)
+
+        test_oeuvre(1, 0, 0,
+                    '<a href="/oeuvres/carmen/"><cite>Carmen</cite></a>')
+        test_oeuvre(
+            2, 1, 1,
+            '<a href="/oeuvres/carmen/"><cite>Carmen</cite></a>, '
+            '<a href="/oeuvres/carmen-acte-i/">Acte I</a>')
+        test_oeuvre(
+            3, 6, 2,
+            '<a href="/oeuvres/carmen/"><cite>Carmen</cite></a>, '
+            '<a href="/oeuvres/carmen-acte-i/">I</a>, '
+            '<a href="/oeuvres/carmen-i-'
+            '5-habanera-de-carmen-l-amour-est-un/">'
+            '№ 5 Habanera de Carmen <span title="Incipit">'
+            '« L’amour est un oiseau rebelle »</span></a>')
+        test_oeuvre(4, 5, 0,
+                    '<a href="/oeuvres/sonate-pour-violon/">'
+                    'Sonate pour violon</a>')
+        test_oeuvre(5, 2, 0,
+                    '<a href="/oeuvres/symphonie-n-5/">Symphonie n° 5</a>')
+        test_oeuvre(
+            6, 0, 0,
+            '<a href="/oeuvres/le-tartuffe-ou-l-imposteur/">'
+            '<cite>Le Tartuffe, ou l’Imposteur</cite></a>')
+
+    def test_description_html(self):
+        def test_oeuvre(pk, n_queries, n_queries_prefetched, result):
+            oeuvre = Oeuvre.objects.get(pk=pk)
+            with self.assertNumQueries(n_queries):
+                self.assertEqual(oeuvre.description_html(), result)
+            oeuvre = Oeuvre.objects.prefetch_all().get(pk=pk)
+            with self.assertNumQueries(n_queries_prefetched):
+                self.assertEqual(oeuvre.description_html(), result)
+
+        test_oeuvre(1, 3, 0, 'opéra')
+        test_oeuvre(2, 1, 0, '')
+        test_oeuvre(3, 1, 0, '')
+        test_oeuvre(4, 1, 0, '')
+        test_oeuvre(5, 1, 0, '<span title="Opus">op. 107</span>')
+        test_oeuvre(
+            6, 2, 0,
+            'comédie <span title="Coupe">en cinq actes et en vers</span>')
+
+    def test_html(self):
+        def test_oeuvre(pk, n_queries, n_queries_prefetched, result):
+            oeuvre = Oeuvre.objects.get(pk=pk)
+            with self.assertNumQueries(n_queries):
+                self.assertEqual(oeuvre.html(), result)
+            oeuvre = Oeuvre.objects.prefetch_all().get(pk=pk)
+            with self.assertNumQueries(n_queries_prefetched):
+                self.assertEqual(oeuvre.html(), result)
+
+        test_oeuvre(
+            1, 4, 1,
+            '<a href="/oeuvres/carmen/"><cite>Carmen</cite></a>, opéra')
+        test_oeuvre(
+            2, 3, 2,
+            '<cite>Carmen</cite>, '
+            '<a href="/oeuvres/carmen-acte-i/">Acte I</a>')
+        test_oeuvre(
+            3, 8, 3,
+            '<cite>Carmen</cite>, I, <a href="/oeuvres/carmen-i-'
+            '5-habanera-de-carmen-l-amour-est-un/">'
+            '№ 5 Habanera de Carmen <span title="Incipit">'
+            '« L’amour est un oiseau rebelle »</span></a>')
+        test_oeuvre(4, 7, 1,
+                    '<a href="/oeuvres/sonate-pour-violon/">'
+                    'Sonate pour violon</a>')
+        test_oeuvre(5, 4, 1,
+                    '<a href="/oeuvres/symphonie-n-5/">Symphonie n° 5</a>, '
+                    '<span title="Opus">op. 107</span>')
+        test_oeuvre(
+            6, 3, 1,
+            '<a href="/oeuvres/le-tartuffe-ou-l-imposteur/">'
+            '<cite>Le Tartuffe, ou l’Imposteur</cite></a>, '
+            'comédie <span title="Coupe">en cinq actes et en vers</span>')
