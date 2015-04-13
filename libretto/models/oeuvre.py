@@ -863,8 +863,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         if not self.pk or self.extrait_de is None or \
                 (self.genre and self.genre.referent):
             return ''
-        return self.extrait_de.titre_html(tags=tags, links=links,
-                                          show_type_extrait=False)
+        return self.extrait_de.titre_html(
+            tags=tags, links=links, ancestors_links=links,
+            show_type_extrait=False)
 
     def has_titre_significatif(self):
         return bool(self.titre)
@@ -939,10 +940,11 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         return self.html(tags=tags, auteurs=False, titre=True, descr=False,
                          ancestors=False, links=links)
 
-    def titre_html(self, tags=True, links=True, show_type_extrait=True):
+    def titre_html(self, tags=True, links=True, ancestors_links=True,
+                   show_type_extrait=True):
         return self.html(tags, auteurs=False, titre=True, descr=False,
-                         ancestors=True, ancestors_links=True, links=links,
-                         show_type_extrait=show_type_extrait)
+                         ancestors=True, ancestors_links=ancestors_links,
+                         links=links, show_type_extrait=show_type_extrait)
     titre_html.short_description = _('titre')
 
     def titre_descr(self, tags=False):
