@@ -169,7 +169,7 @@ class OeuvreMereInline(CustomTabularInline):
     autocomplete_lookup_fields = {
         'fk': ('mere',),
     }
-    fields = ('mere', 'type',)
+    fields = ('type', 'mere')
     classes = ('grp-collapse grp-closed',)
 
 
@@ -194,7 +194,7 @@ class IndividuParentInline(CustomTabularInline):
     autocomplete_lookup_fields = {
         'fk': ('parent',),
     }
-    fields = ('parent', 'type',)
+    fields = ('type', 'parent')
     classes = ('grp-collapse grp-closed',)
 
 

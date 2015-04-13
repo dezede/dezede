@@ -15,7 +15,7 @@ from django.db.models import (
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.template.defaultfilters import time
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import (
@@ -24,6 +24,7 @@ from autoslug import AutoSlugField
 from mptt.managers import TreeManager
 from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
+from slugify import Slugify
 from tinymce.models import HTMLField
 from cache_tools import invalidate_object
 from typography.models import TypographicModel, TypographicManager, \
@@ -65,7 +66,7 @@ DATE_MSG_EXTENDED = _('Exemple : « 6/6/1944 » pour le 6 juin 1944. '
 def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
     """
     Renvoie le nom au pluriel d'obj, si possible.
-    Sinon renvoie smart_text(obj).
+    Sinon renvoie force_text(obj).
     """
     try:
         pluriel = getattr(obj, attr_base + attr_suffix)
@@ -73,7 +74,7 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
             return pluriel
         return getattr(obj, attr_base) + 's'
     except (AttributeError, TypeError):
-        return smart_text(obj)
+        return force_text(obj)
 
 
 #
@@ -186,14 +187,14 @@ class CommonModel(TypographicModel):
 
     @classmethod
     def class_name(cls):
-        return smart_text(cls.__name__)
+        return force_text(cls.__name__)
 
     @classmethod
     def meta(cls):
         return cls._meta
 
     def related_label(self):
-        return smart_text(self)
+        return force_text(self)
 
     @staticmethod
     def autocomplete_term_adjust(term):
@@ -275,27 +276,34 @@ class AutoriteModel(PublishedModel):
         abstract = True
 
 
+slugify_unicode = Slugify(translate=None)
+slugify_unicode.to_lower = True
+slugify_unicode.max_length = 50
+
+
 class SlugModel(Model):
-    slug = AutoSlugField(populate_from='get_slug', always_update=True)
+    slug = AutoSlugField(populate_from='get_slug', always_update=True,
+                         slugify=slugify_unicode)
 
     class Meta(object):
         abstract = True
 
     def get_slug(self):
         invalidate_object(self)
-        return smart_text(self)
+        return force_text(self)
 
 
 class UniqueSlugModel(Model):
     slug = AutoSlugField(
-        populate_from='get_slug', unique=True, always_update=True)
+        populate_from='get_slug', unique=True, always_update=True,
+        slugify=slugify_unicode)
 
     class Meta(object):
         abstract = True
 
     def get_slug(self):
         invalidate_object(self)
-        return smart_text(self)
+        return force_text(self)
 
 
 class CommonTreeQuerySet(CommonQuerySet):
@@ -633,7 +641,7 @@ class Caracteristique(PolymorphicModel, CommonModel):
 
     def __str__(self):
         if self.type:
-            return smart_text(self.type) + ' : ' + strip_tags(self.valeur)
+            return force_text(self.type) + ' : ' + strip_tags(self.valeur)
         return strip_tags(self.valeur)
 
     @staticmethod
@@ -684,7 +692,7 @@ class TypeDeParente(PolymorphicModel, CommonModel):
         return calc_pluriel(self, attr_base='nom_relatif')
 
     def __str__(self):
-        return '< %s | %s >' % (self.nom, self.nom_relatif)
+        return '%s (%s)' % (self.nom, self.nom_relatif)
 
 
 #
@@ -782,14 +790,14 @@ class Fichier(CommonModel):
     class Meta(object):
         verbose_name = ungettext_lazy('fichier', 'fichiers', 1)
         verbose_name_plural = ungettext_lazy('fichier', 'fichiers', 2)
-        ordering = ('source', 'position',)
+        ordering = ('position',)
         app_label = 'libretto'
 
     def __str__(self):
-        return smart_text(self.fichier)
+        return force_text(self.fichier)
 
     def link(self):
-        return href(self.fichier.url, smart_text(self))
+        return href(self.fichier.url, force_text(self))
 
     def is_image(self):
         return self.type == self.IMAGE
