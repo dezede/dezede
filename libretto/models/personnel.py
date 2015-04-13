@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 import warnings
 from django.db.models import CharField, ForeignKey, ManyToManyField, \
-     FloatField, permalink, SmallIntegerField, PROTECT, DateField, \
+    FloatField, permalink, SmallIntegerField, PROTECT, DateField, \
     PositiveSmallIntegerField, Model, Q
 from django.template.defaultfilters import date
 from django.utils.encoding import python_2_unicode_compatible, force_text
@@ -16,14 +16,12 @@ from common.utils.html import capfirst, href, date_html, sc
 from common.utils.text import ex, str_list
 from .base import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
     UniqueSlugModel, PublishedManager, AutoriteModel, CommonTreeManager, \
-    PublishedQuerySet, CommonTreeQuerySet, Caracteristique, \
-    TypeDeCaracteristique
+    PublishedQuerySet, CommonTreeQuerySet
 from .evenement import Evenement
 
 
 __all__ = (
-    b'Profession', b'Devise', b'TypeDeCaracteristiqueDEnsemble',
-    b'CaracteristiqueDEnsemble', b'Membre', b'Ensemble', b'Engagement',
+    b'Profession', b'Devise', b'Membre', b'Ensemble', b'Engagement',
     b'TypeDePersonnel', b'Personnel')
 
 
@@ -127,34 +125,6 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     @staticmethod
     def autocomplete_search_fields():
         return 'nom__icontains', 'nom_pluriel__icontains',
-
-
-class TypeDeCaracteristiqueDEnsemble(TypeDeCaracteristique):
-    class Meta(object):
-        verbose_name = ungettext_lazy(
-            'type de caractéristique d’ensemble',
-            'types de caractéristique d’ensemble', 1)
-        verbose_name_plural = ungettext_lazy(
-            'type de caractéristique d’ensemble',
-            'types de caractéristique d’ensemble', 2)
-        ordering = ('classement',)
-        app_label = 'libretto'
-
-
-class CaracteristiqueDEnsemble(Caracteristique):
-    class Meta(object):
-        verbose_name = ungettext_lazy(
-            'caractéristique d’ensemble',
-            'caractéristiques d’ensemble', 1)
-        verbose_name_plural = ungettext_lazy(
-            'caractéristique d’ensemble',
-            'caractéristiques d’ensemble', 2)
-        ordering = ('type', 'classement', 'valeur')
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('caracteristique_ptr', 'ensembles',)
 
 
 class PeriodeDActivite(Model):
@@ -262,15 +232,33 @@ class Membre(CommonModel, PeriodeDActivite):
 
 
 @python_2_unicode_compatible
+class TypeDEnsemble(MPTTModel, CommonModel):
+    nom = CharField(_('nom'), max_length=30, help_text=LOWER_MSG)
+    nom_pluriel = CharField(_('nom pluriel'), max_length=30, blank=True,
+                            help_text=PLURAL_MSG)
+    parent = TreeForeignKey('TypeDEnsemble', null=True, blank=True,
+                            related_name='enfants', verbose_name=_('parent'))
+
+    class Meta(object):
+        verbose_name = ungettext_lazy('type d’ensemble', 'types d’ensemble', 1)
+        verbose_name_plural = ungettext_lazy('type d’ensemble',
+                                             'types d’ensemble', 2)
+        ordering = ('nom',)
+        app_label = 'libretto'
+
+    def __str__(self):
+        return self.nom
+
+
+@python_2_unicode_compatible
 class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     particule_nom = CharField(
         _('particule du nom'), max_length=5, blank=True, db_index=True)
     nom = CharField(_('nom'), max_length=75, db_index=True)
     # TODO: Ajouter une typologie (orchestre, chœur, groupe de rock)
     # facultative.
-    caracteristiques = ManyToManyField(
-        CaracteristiqueDEnsemble, blank=True, null=True,
-        related_name='ensembles', verbose_name=_('caractéristiques'))
+    # FIXME: retirer null=True quand la base sera nettoyée.
+    type = ForeignKey('TypeDEnsemble', null=True, related_name='ensembles')
     # TODO: Permettre deux villes sièges.
     siege = ForeignKey('Lieu', null=True, blank=True,
                        related_name='ensembles', verbose_name=_('siège'))
@@ -281,6 +269,7 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
 
     class Meta(object):
         app_label = 'libretto'
+        ordering = ('nom',)
 
     def __str__(self):
         return self.html(tags=False)
@@ -308,12 +297,6 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     @permalink
     def permalien(self):
         return b'ensemble_permanent_detail', (self.pk,)
-
-    def calc_caracteristiques(self, tags=True, caps=False):
-        return self.caracteristiques.html(tags=tags, caps=caps)
-    calc_caracteristiques.short_description = _('caractéristiques')
-    calc_caracteristiques.allow_tags = True
-    calc_caracteristiques.admin_order_field = 'caracteristiques'
 
     # TODO: Calculer les apparitions et les ajouter au template, comme pour
     #       les individus.

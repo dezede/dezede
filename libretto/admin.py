@@ -20,6 +20,7 @@ from polymorphic.admin import (
     PolymorphicChildModelFilter)
 from reversion import VersionAdmin
 import reversion
+from libretto.models.personnel import TypeDEnsemble
 
 from .models import *
 from .forms import (
@@ -674,19 +675,28 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
         ).prefetch_related('professions')
 
 
+class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
+    list_display = ('__str__', 'nom', 'nom_pluriel', 'parent')
+    list_editable = ('nom', 'nom_pluriel', 'parent')
+    search_fields = ('nom', 'nom_pluriel',)
+    raw_id_fields = ('parent',)
+    autocomplete_lookup_fields = {
+        'fk': ('parent',),
+    }
+
+
 class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     form = EnsembleForm
-    list_display = ('__str__', 'calc_caracteristiques', 'membres_count')
+    list_display = ('__str__', 'type', 'membres_count')
     search_fields = ('nom', 'membres__individu__nom')
     inlines = (MembreInline,)
-    raw_id_fields = ('caracteristiques', 'siege')
+    raw_id_fields = ('siege', 'type')
     autocomplete_lookup_fields = {
-        'fk': ('siege',),
-        'm2m': ('caracteristiques',),
+        'fk': ('siege', 'type'),
     }
     fieldsets = (
         (None, {
-            'fields': (('particule_nom', 'nom'), 'caracteristiques', 'siege'),
+            'fields': (('particule_nom', 'nom'), 'type', 'siege'),
         }),
         PERIODE_D_ACTIVITE_FIELDSET,
     )
@@ -737,7 +747,6 @@ class TypeDeCaracteristiqueAdmin(
         PolymorphicParentModelAdmin):
     base_model = TypeDeCaracteristique
     child_models = (TypeDeCaracteristiqueDOeuvre,
-                    TypeDeCaracteristiqueDEnsemble,
                     TypeDeCaracteristiqueDeProgramme)
 
 
@@ -751,19 +760,12 @@ class TypeDeCaracteristiqueDOeuvreAdmin(
     pass
 
 
-class TypeDeCaracteristiqueDEnsembleAdmin(
-        VersionAdmin, TypeDeCaracteristiqueChildAdmin):
-    pass
-
-
 class TypeDeCaracteristiqueDeProgrammeAdmin(
         VersionAdmin, TypeDeCaracteristiqueChildAdmin):
     pass
 
 
 reversion.register(TypeDeCaracteristiqueDOeuvre,
-                   follow=('typedecaracteristique_ptr',))
-reversion.register(TypeDeCaracteristiqueDEnsemble,
                    follow=('typedecaracteristique_ptr',))
 reversion.register(TypeDeCaracteristiqueDeProgramme,
                    follow=('typedecaracteristique_ptr',))
@@ -781,7 +783,6 @@ class CaracteristiqueAdmin(VersionAdmin, CaracteristiqueCommonAdmin,
     base_model = Caracteristique
     child_models = (
         CaracteristiqueDOeuvre,
-        CaracteristiqueDEnsemble,
         CaracteristiqueDeProgramme,
     )
 
@@ -791,7 +792,6 @@ class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
     base_model = Caracteristique
     type_to = {
         CaracteristiqueDOeuvre: TypeDeCaracteristiqueDOeuvre,
-        CaracteristiqueDEnsemble: TypeDeCaracteristiqueDEnsemble,
         CaracteristiqueDeProgramme: TypeDeCaracteristiqueDeProgramme,
     }
 
@@ -806,10 +806,6 @@ class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
 
 
 class CaracteristiqueDOeuvreAdmin(VersionAdmin, CaracteristiqueChildAdmin):
-    pass
-
-
-class CaracteristiqueDEnsembleAdmin(VersionAdmin, CaracteristiqueChildAdmin):
     pass
 
 
@@ -1115,6 +1111,7 @@ site.register(TypeDeParente, TypeDeParenteAdmin)
 site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
 site.register(Individu, IndividuAdmin)
+site.register(TypeDEnsemble, TypeDEnsembleAdmin)
 site.register(Ensemble, EnsembleAdmin)
 # site.register(Devise, DeviseAdmin)
 # site.register(Engagement, EngagementAdmin)
@@ -1123,13 +1120,10 @@ site.register(Ensemble, EnsembleAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(TypeDeCaracteristique, TypeDeCaracteristiqueAdmin)
 site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
-site.register(TypeDeCaracteristiqueDEnsemble,
-              TypeDeCaracteristiqueDEnsembleAdmin)
 site.register(TypeDeCaracteristiqueDeProgramme,
               TypeDeCaracteristiqueDeProgrammeAdmin)
 site.register(Caracteristique, CaracteristiqueAdmin)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
-site.register(CaracteristiqueDEnsemble, CaracteristiqueDEnsembleAdmin)
 site.register(CaracteristiqueDeProgramme, CaracteristiqueDeProgrammeAdmin)
 site.register(Partie, PartieAdmin)
 site.register(Role, RoleAdmin)
