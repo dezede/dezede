@@ -78,7 +78,7 @@ class Exporter(object):
 
     def get_verbose_name(self, column):
         if column in self.verbose_overrides:
-            return self.verbose_overrides[column]
+            return force_text(self.verbose_overrides[column])
         if column in self.fields:
             return force_text(self.fields[column].verbose_name)
         return column
