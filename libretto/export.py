@@ -194,6 +194,7 @@ class OeuvreExporter(RenduExporter):
         return obj.creation.lieu_str(tags=False)
 
 
+@exporter_registry.add
 class SourcesEvenementsExporter(Exporter):
     model = Source.evenements.through
 
@@ -201,6 +202,7 @@ class SourcesEvenementsExporter(Exporter):
         return 'sources ↔ evenements'
 
 
+@exporter_registry.add
 class SourcesOeuvresExporter(Exporter):
     model = Source.oeuvres.through
 
@@ -208,6 +210,7 @@ class SourcesOeuvresExporter(Exporter):
         return 'sources ↔ œuvres'
 
 
+@exporter_registry.add
 class SourcesIndividusExporter(Exporter):
     model = Source.individus.through
 
@@ -215,6 +218,7 @@ class SourcesIndividusExporter(Exporter):
         return 'sources ↔ individus'
 
 
+@exporter_registry.add
 class SourcesEnsemblesExporter(Exporter):
     model = Source.ensembles.through
 
@@ -222,6 +226,7 @@ class SourcesEnsemblesExporter(Exporter):
         return 'sources ↔ ensembles'
 
 
+@exporter_registry.add
 class SourcesLieuxExporter(Exporter):
     model = Source.lieux.through
 
@@ -229,6 +234,7 @@ class SourcesLieuxExporter(Exporter):
         return 'sources ↔ lieux'
 
 
+@exporter_registry.add
 class SourcesPartiesExporter(Exporter):
     model = Source.parties.through
 
@@ -276,6 +282,7 @@ class CaracteristiqueDeProgrammeExporter(CommonModelExporter):
     columns = ('id', 'type__nom', 'valeur', 'classement')
 
 
+@exporter_registry.add
 class ProgrammeCaracteristiquesExporter(CommonModelExporter):
     model = ElementDeProgramme.caracteristiques.through
 
@@ -283,6 +290,7 @@ class ProgrammeCaracteristiquesExporter(CommonModelExporter):
         return 'programme ↔ caractéristiques'
 
 
+@exporter_registry.add
 class ProgrammeDistribution(CommonModelExporter):
     model = ElementDeProgramme.distribution.through
 
