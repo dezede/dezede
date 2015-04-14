@@ -168,7 +168,14 @@ class Exporter(object):
         # Reorders columns after adding those using methods
         df = df[list(self.columns)]
         # Adds verbose column names
-        df.columns = [self.get_verbose_name(column) for column in df.columns]
+        verbose_names = []
+        for column in df.columns:
+            verbose_name = self.get_verbose_name(column)
+            if verbose_name in verbose_names:
+                raise KeyError("Multiple columns have the same '%s' name."
+                               % verbose_name)
+            verbose_names.append(verbose_name)
+        df.columns = verbose_names
         # Sets the first column (usually pk) as index
         df.set_index(df.columns[0], inplace=True)
         return df
