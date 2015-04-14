@@ -8,7 +8,8 @@ from StringIO import StringIO
 from zipfile import ZipFile
 
 from django.contrib.sites.models import Site
-from django.db.models import IntegerField, ForeignKey, DateTimeField
+from django.db.models import (IntegerField, ForeignKey, DateTimeField,
+                              FieldDoesNotExist)
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 import pandas
@@ -83,6 +84,10 @@ class Exporter(object):
             return force_text(self.fields[column].verbose_name)
         return column
 
+    def get_verbose_table_name(self):
+        # Note: Excel sheet names can’t be larger than 31 characters.
+        return force_text(self.model._meta.verbose_name_plural)[:31]
+
     def get_queryset(self):
         if self.queryset is not None:
             return self.queryset
@@ -106,10 +111,22 @@ class Exporter(object):
                 if ids and not ids.issubset(parent_fk_ids[model]):
                     fk_ids[model].update(ids)
         for m2m in self.m2ms:
-            model = self.model._meta.get_field_by_name(m2m)[0].model
-            ids = frozenset(
-                self.get_queryset().exclude(**{m2m: None})
-                .order_by().distinct().values_list(m2m, flat=True))
+            try:
+                field = self.model._meta.get_field(m2m)
+            except FieldDoesNotExist:
+                # Complex M2M using a model
+                model = self.model._meta.get_field_by_name(m2m)[0].model
+                ids = frozenset(
+                    self.get_queryset().exclude(**{m2m: None})
+                        .order_by().distinct().values_list(m2m, flat=True))
+            else:
+                # Simple M2M
+                model = field.rel.through
+                original_qs = self.get_queryset().order_by().distinct()
+                ids = frozenset(
+                    model.objects.filter(
+                        **{field.m2m_field_name() + '__in': original_qs})
+                    .order_by().distinct().values_list('pk', flat=True))
             if ids and not ids.issubset(parent_fk_ids[model]):
                 fk_ids[model].update(ids)
         for model, ids in fk_ids.items():
@@ -181,7 +198,7 @@ class Exporter(object):
         return df
 
     def get_dataframes(self):
-        return [(exporter.model, exporter._get_dataframe())
+        return [(exporter.get_verbose_table_name(), exporter._get_dataframe())
                 for exporter in self._get_related_exporters()]
 
     @staticmethod
@@ -202,9 +219,9 @@ class Exporter(object):
         if len(dfs) == 1:
             return extension, format_dataframe(dfs[0][1])
         return self._compress_to_zip([
-            ('%s.%s' % (slugify(force_text(model._meta.verbose_name_plural)),
+            ('%s.%s' % (slugify(verbose_table_name),
                         extension),
-             format_dataframe(df)) for model, df in dfs])
+             format_dataframe(df)) for verbose_table_name, df in dfs])
 
     def to_json(self):
         return self._conditionally_compress(
@@ -221,9 +238,8 @@ class Exporter(object):
         # but no file will be created.
         writer = pandas.ExcelWriter('temp.xlsx', engine='xlsxwriter')
         writer.book.filename = f
-        for model, df in self.get_dataframes():
-            sheet_name = force_text(model._meta.verbose_name_plural)
-            df.to_excel(writer, sheet_name)
+        for verbose_table_name, df in self.get_dataframes():
+            df.to_excel(writer, verbose_table_name)
         writer.save()
         out = f.getvalue()
         f.close()
@@ -234,7 +250,7 @@ class Exporter(object):
         response = HttpResponse(content, content_type=content_type)
         filename = '[%s] %s %s' % (Site.objects.get_current().name,
                                    self.get_queryset().count(),
-                                   self.model._meta.verbose_name_plural)
+                                   self.get_verbose_table_name())
         disposition = 'filename="%s.%s"' % (slugify(filename), extension)
         if attachment:
             disposition += '; attachment'
