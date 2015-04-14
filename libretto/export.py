@@ -283,7 +283,7 @@ class CaracteristiqueDeProgrammeExporter(CommonModelExporter):
 
 
 @exporter_registry.add
-class ProgrammeCaracteristiquesExporter(CommonModelExporter):
+class ProgrammeCaracteristiquesExporter(Exporter):
     model = ElementDeProgramme.caracteristiques.through
 
     def get_verbose_table_name(self):
@@ -291,7 +291,7 @@ class ProgrammeCaracteristiquesExporter(CommonModelExporter):
 
 
 @exporter_registry.add
-class ProgrammeDistribution(CommonModelExporter):
+class ProgrammeDistribution(Exporter):
     model = ElementDeProgramme.distribution.through
 
     def get_verbose_table_name(self):
