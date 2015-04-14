@@ -142,10 +142,10 @@ class Individu(AutoriteModel, UniqueSlugModel):
                                   short_description=_('décès'))
     professions = ManyToManyField(
         'Profession', related_name='individus', blank=True, null=True,
-        verbose_name=_('professions'), db_index=True)
+        verbose_name=_('professions'))
     enfants = ManyToManyField(
         'self', through='ParenteDIndividus', related_name='parents',
-        symmetrical=False, db_index=True)
+        symmetrical=False)
     biographie = HTMLField(_('biographie'), blank=True)
 
     isni = CharField(
