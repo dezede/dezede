@@ -250,20 +250,14 @@ class SourceExporter(CommonModelExporter):
 @exporter_registry.add
 class ElementDeDistribution(CommonModelExporter):
     model = ElementDeDistribution
-    columns = ('id', 'evenement', 'evenement_str', 'elements_de_programme_str',
+    columns = ('id', 'evenement', 'evenement_str',
                'individu', 'individu_str', 'ensemble', 'ensemble_str',
                'partie__nom', 'profession__nom') + CommonModelExporter.columns
-    m2ms = ('elements_de_programme',)
 
     @staticmethod
     def get_evenement_str(obj):
         if obj.evenement:
             return force_text(obj.evenement)
-
-    @staticmethod
-    def get_elements_de_programme_str(obj):
-        return ', '.join(
-            [force_text(o)for o in obj.elements_de_programme.all()])
 
     @staticmethod
     def get_individu_str(obj):
@@ -286,7 +280,14 @@ class EdpCdpExporter(CommonModelExporter):
     model = ElementDeProgramme.caracteristiques.through
 
     def get_verbose_table_name(self):
-        return 'él de prog ↔ caractéristiques'
+        return 'programme ↔ caractéristiques'
+
+
+class EdpEddExporter(CommonModelExporter):
+    model = ElementDeProgramme.distribution.through
+
+    def get_verbose_table_name(self):
+        return 'programme ↔ distribution'
 
 
 @exporter_registry.add
@@ -296,7 +297,7 @@ class ElementDeProgrammeExporter(CommonModelExporter):
                'autre', 'caracteristiques_str', 'distribution_str',
                'numerotation', 'position', 'part_d_auteur')\
         + CommonModelExporter.columns
-    m2ms = ('caracteristiques', 'distribution', 'personnels')
+    m2ms = ('caracteristiques', 'distribution')
 
     @staticmethod
     def get_evenement_str(obj):
