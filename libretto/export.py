@@ -276,14 +276,14 @@ class CaracteristiqueDeProgrammeExporter(CommonModelExporter):
     columns = ('id', 'type__nom', 'valeur', 'classement')
 
 
-class EdpCdpExporter(CommonModelExporter):
+class ProgrammeCaracteristiquesExporter(CommonModelExporter):
     model = ElementDeProgramme.caracteristiques.through
 
     def get_verbose_table_name(self):
         return 'programme ↔ caractéristiques'
 
 
-class EdpEddExporter(CommonModelExporter):
+class ProgrammeDistribution(CommonModelExporter):
     model = ElementDeProgramme.distribution.through
 
     def get_verbose_table_name(self):
