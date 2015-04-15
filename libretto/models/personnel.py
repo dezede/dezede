@@ -239,6 +239,8 @@ class TypeDEnsemble(MPTTModel, CommonModel):
     parent = TreeForeignKey('TypeDEnsemble', null=True, blank=True,
                             related_name='enfants', verbose_name=_('parent'))
 
+    objects = CommonTreeManager()
+
     class Meta(object):
         verbose_name = ungettext_lazy('type d’ensemble', 'types d’ensemble', 1)
         verbose_name_plural = ungettext_lazy('type d’ensemble',
