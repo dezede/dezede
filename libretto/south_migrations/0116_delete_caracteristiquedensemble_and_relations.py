@@ -3,24 +3,74 @@ from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models, transaction, connection
+from libretto.api.models.utils import SetDefaultOwner
+
+
+typedensemble_tuple = (
+    (u'ballet', '', ''),
+    (u'brass band', u'brass band', ''),
+    (u'chœur', '', ''),
+    (u'chœur d’enfants', u'chœurs d’enfants', u'chœur'),
+    (u'collectif', '', ''),
+    (u'compagnie de danse', u'compagnies de danse', ''),
+    (u'compagnie de théâtre', u'compagnies de théâtre', ''),
+    (u'duo de percussionnistes', u'duos de percussionnistes', ''),
+    (u'ensemble', '', ''),
+    (u'ensemble de cuivres', u'ensembles de cuivres', ''),
+    (u'ensemble de musique baroque', u'ensembles de musique baroque', ''),
+    (u'ensemble vocal', u'ensembles vocaux', ''),
+    (u'groupe', '', ''),
+    (u'orchestre', '', ''),
+    (u'pianistes', u'pianistes', ''),
+    (u'quatuor à cordes', u'quatuors à cordes', '')
+)
+
 
 class Migration(DataMigration):
 
-    @transaction.atomic
     def forwards(self, orm):
-        "Write your forwards methods here."
-        # Note: Don't use "from appname.models import ModelName". 
-        # Use orm.ModelName to refer to models in this application,
-        # and orm['appname.ModelName'] for models in other applications.
-        for ens in orm.Ensemble.objects.all():
-            ens.caracteristiques.clear()
-            ens.save()
+        assert orm.TypeDeCaracteristiqueDEnsemble.objects.count() == 1
+
+        bertrand = orm['accounts.HierarchicUser'].objects.get(
+            username='bertrand')
+        with SetDefaultOwner(bertrand):
+            d = {}
+            for type_nom, type_nom_pluriel, type_parent_nom in typedensemble_tuple:
+                d[type_nom] = orm.TypeDEnsemble.objects.create(
+                    nom=type_nom, nom_pluriel=type_nom_pluriel,
+                    parent=d.get(type_parent_nom, None),
+                    lft=0, rght=0, tree_id=0, level=0)
+            for ens in orm.Ensemble.objects.all():
+                if ens.caracteristiques.exists():
+                    type_nom = ens.caracteristiques.get().valeur
+                    if type_nom not in d:
+                        d[type_nom] = orm.TypeDEnsemble.objects.create(
+                            nom=type_nom, lft=0, rght=0, tree_id=0, level=0)
+                    ens.type = d[type_nom]
+                else:
+                    type_nom = ''
+                    nom = ens.nom.lower()
+                    if nom.startswith(u'orchestre'):
+                        type_nom = u'orchestre'
+                    elif u'ballet' not in nom and (
+                            nom.startswith(u'choeur')
+                            or nom.startswith(u'chœur')
+                            or nom.startswith(u'chorale')):
+                        type_nom = u'chœur'
+                    elif nom.startswith(u'ballet'):
+                        type_nom = u'ballet'
+                    if not type_nom:
+                        continue
+                    ens.type = d[type_nom]
+                ens.save()
+                ens.caracteristiques.clear()
         orm.CaracteristiqueDEnsemble.objects.all().delete()
         orm.TypeDeCaracteristiqueDEnsemble.objects.all().delete()
+        assert not orm.TypeDEnsemble.objects.filter(ensembles=None).exists()
+        print u'Pense à faire un `TypeDEnsemble.objects.rebuild()`.'
 
     def backwards(self, orm):
         "Write your backwards methods here."
-        pass
 
     models = {
         u'accounts.hierarchicuser': {
