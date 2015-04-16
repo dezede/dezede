@@ -239,7 +239,13 @@ class Exporter(object):
         writer = pandas.ExcelWriter('temp.xlsx', engine='xlsxwriter')
         writer.book.filename = f
         for verbose_table_name, df in self.get_dataframes():
-            df.to_excel(writer, verbose_table_name)
+            # Workaround: exports the index as a new column
+            # in order to avoid gaps in the header.
+            columns = ('ID',) + tuple(df.columns.values)
+            df['ID'] = df.index
+            df.to_excel(writer, verbose_table_name, columns=columns,
+                        index=False)
+            df.drop('ID', axis=1, inplace=True)
         writer.save()
         out = f.getvalue()
         f.close()
