@@ -51,10 +51,12 @@ class LieuExporter(RenduExporter):
     model = Lieu
     columns = (
         'id', 'rendu', 'nom', 'parent__id', 'nature__nom', 'historique',
-        'geometry', 'code_postal', 'type_de_scene') + AUTORITE_MODEL_COLUMNS
+        'longitude', 'latitude', 'code_postal', 'type_de_scene',
+    ) + AUTORITE_MODEL_COLUMNS
     verbose_overrides = {
         'parent__id': _('ID parent'),
-        'geometry': _('objet GEOSGeometry'),
+        'longitude': _('longitude'),
+        'latitude': _('latitude'),
     }
 
     @staticmethod
@@ -62,10 +64,16 @@ class LieuExporter(RenduExporter):
         return force_text(obj.nature)
 
     @staticmethod
-    def get_geometry(obj):
-        if obj.geometry is None:
+    def get_longitude(obj):
+        if obj.geometry is None or obj.geometry.geom_type != 'Point':
             return
-        return force_text(obj.geometry)
+        return obj.geometry.coords[0]
+
+    @staticmethod
+    def get_latitude(obj):
+        if obj.geometry is None or obj.geometry.geom_type != 'Point':
+            return
+        return obj.geometry.coords[1]
 
 
 @exporter_registry.add
@@ -79,9 +87,11 @@ class EnsembleExporter(RenduExporter):
         if obj.siege:
             return force_text(obj.siege)
 
+
 @exporter_registry.add
 class IndividusProfessionsExporter(Exporter):
     model = Individu.professions.through
+    columns = ('individu', 'profession__nom')
 
     def get_verbose_table_name(self):
         return 'individus ↔ professions'
@@ -142,11 +152,20 @@ class AuteurExporter(CommonModelExporter):
 
 
 @exporter_registry.add
+class PartieProfessionsExporter(Exporter):
+    model = Partie.professions.through
+    columns = ('partie', 'profession__nom')
+
+    def get_verbose_table_name(self):
+        return 'partie ↔ professions'
+
+
+@exporter_registry.add
 class PartieExporter(CommonModelExporter):
     model = Partie
-    columns = (
-        'id', 'nom', 'nom_pluriel', 'professions', 'professions_str'
-        'parent__id', 'classement') + AUTORITE_MODEL_COLUMNS
+    columns = ('id', 'nom', 'nom_pluriel', 'professions_str', 'parent__id',
+               'classement') + AUTORITE_MODEL_COLUMNS
+    m2ms = ('professions',)
 
     @staticmethod
     def get_professions_str(obj):
@@ -277,9 +296,14 @@ class ElementDeDistribution(CommonModelExporter):
 
 
 @exporter_registry.add
-class CaracteristiqueDeProgrammeExporter(CommonModelExporter):
-    model = CaracteristiqueDeProgramme
+class CaracteristiqueExporter(CommonModelExporter):
+    model = Caracteristique
     columns = ('id', 'type__nom', 'valeur', 'classement')
+
+
+@exporter_registry.add
+class CaracteristiqueDeProgrammeExporter(CaracteristiqueExporter):
+    model = CaracteristiqueDeProgramme
 
 
 @exporter_registry.add
