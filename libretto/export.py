@@ -50,11 +50,10 @@ class RenduExporter(CommonModelExporter):
 class LieuExporter(RenduExporter):
     model = Lieu
     columns = (
-        'id', 'rendu', 'nom', 'parent__id', 'nature__nom', 'historique',
+        'id', 'rendu', 'nom', 'parent', 'nature__nom', 'historique',
         'longitude', 'latitude', 'code_postal', 'type_de_scene',
     ) + AUTORITE_MODEL_COLUMNS
     verbose_overrides = {
-        'parent__id': _('ID parent'),
         'longitude': _('longitude'),
         'latitude': _('latitude'),
     }
@@ -106,8 +105,9 @@ class ParenteDIndividuExporter(CommonModelExporter):
 @exporter_registry.add
 class ProfessionExporter(CommonModelExporter):
     model = Profession
-    columns = ('id', 'nom', 'nom_pluriel', 'nom_feminin', 'parent__id',
-               'classement') + AUTORITE_MODEL_COLUMNS
+    columns = (
+        'id', 'nom', 'nom_pluriel', 'nom_feminin', 'parent'
+    ) + AUTORITE_MODEL_COLUMNS
 
 
 @exporter_registry.add
@@ -148,7 +148,7 @@ class IndividuExporter(RenduExporter):
 @exporter_registry.add
 class AuteurExporter(CommonModelExporter):
     model = Auteur
-    columns = ('id', 'oeuvre', 'source', 'individu', 'profession__nom')
+    columns = ('oeuvre', 'source', 'individu', 'profession__nom')
 
 
 @exporter_registry.add
@@ -163,8 +163,9 @@ class PartieProfessionsExporter(Exporter):
 @exporter_registry.add
 class PartieExporter(CommonModelExporter):
     model = Partie
-    columns = ('id', 'nom', 'nom_pluriel', 'professions_str', 'parent__id',
-               'classement') + AUTORITE_MODEL_COLUMNS
+    columns = (
+        'id', 'nom', 'nom_pluriel', 'professions_str', 'parent',
+    ) + AUTORITE_MODEL_COLUMNS
     m2ms = ('professions',)
 
     @staticmethod
@@ -175,7 +176,8 @@ class PartieExporter(CommonModelExporter):
 @exporter_registry.add
 class PupitreExporter(CommonModelExporter):
     model = Pupitre
-    columns = ('id', 'partie__nom', 'soliste', 'quantite_min', 'quantite_max')
+    columns = ('oeuvre', 'partie__nom', 'soliste',
+               'quantite_min', 'quantite_max')
 
 
 @exporter_registry.add
@@ -185,7 +187,7 @@ class OeuvreExporter(RenduExporter):
         'id', 'rendu', 'auteurs_str', 'pupitres_str', 'prefixe_titre', 'titre',
         'coordination', 'prefixe_titre_secondaire', 'titre_secondaire',
         'genre__nom', 'coupe', 'numero', 'tempo', 'tonalite', 'sujet', 'surnom',
-        'incipit', 'nom_courant', 'extrait_de__id', 'type_extrait',
+        'incipit', 'nom_courant', 'extrait_de', 'type_extrait',
         'numero_extrait', 'creation_date', 'creation_date_approx',
         'creation_heure', 'creation_heure_approx', 'creation_lieu',
         'creation_lieu_str', 'creation_lieu_approx') + AUTORITE_MODEL_COLUMNS
@@ -298,7 +300,7 @@ class ElementDeDistribution(CommonModelExporter):
 @exporter_registry.add
 class CaracteristiqueExporter(CommonModelExporter):
     model = Caracteristique
-    columns = ('id', 'type__nom', 'valeur', 'classement')
+    columns = ('id', 'type__nom', 'valeur')
 
 
 @exporter_registry.add
@@ -309,6 +311,11 @@ class CaracteristiqueDeProgrammeExporter(CaracteristiqueExporter):
 @exporter_registry.add
 class ProgrammeCaracteristiquesExporter(Exporter):
     model = ElementDeProgramme.caracteristiques.through
+    columns = ('elementdeprogramme', 'caracteristiquedeprogramme')
+    verbose_overrides = {
+        'elementdeprogramme': _('élément de programme'),
+        'caracteristiquedeprogramme': _('caractéristique de programme')
+    }
 
     def get_verbose_table_name(self):
         return 'programme ↔ caractéristiques'
@@ -317,6 +324,11 @@ class ProgrammeCaracteristiquesExporter(Exporter):
 @exporter_registry.add
 class ProgrammeDistribution(Exporter):
     model = ElementDeProgramme.distribution.through
+    columns = ('elementdeprogramme', 'elementdedistribution')
+    verbose_overrides = {
+        'elementdeprogramme': _('élément de programme'),
+         'elementdedistribution': _('élément de distribution')
+    }
 
     def get_verbose_table_name(self):
         return 'programme ↔ distribution'
