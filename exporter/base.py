@@ -193,8 +193,6 @@ class Exporter(object):
                                % verbose_name)
             verbose_names.append(verbose_name)
         df.columns = verbose_names
-        # Sets the first column (usually pk) as index
-        df.set_index(df.columns[0], inplace=True)
         return df
 
     def get_dataframes(self):
@@ -230,7 +228,7 @@ class Exporter(object):
 
     def to_csv(self):
         return self._conditionally_compress(
-            'csv', lambda df: df.to_csv(None, encoding='utf-8'))
+            'csv', lambda df: df.to_csv(None, index=False, encoding='utf-8'))
 
     def to_xlsx(self):
         f = StringIO()
@@ -239,13 +237,7 @@ class Exporter(object):
         writer = pandas.ExcelWriter('temp.xlsx', engine='xlsxwriter')
         writer.book.filename = f
         for verbose_table_name, df in self.get_dataframes():
-            # Workaround: exports the index as a new column
-            # in order to avoid gaps in the header.
-            columns = ('ID',) + tuple(df.columns.values)
-            df['ID'] = df.index
-            df.to_excel(writer, verbose_table_name, columns=columns,
-                        index=False)
-            df.drop('ID', axis=1, inplace=True)
+            df.to_excel(writer, verbose_table_name, index=False)
         writer.save()
         out = f.getvalue()
         f.close()
