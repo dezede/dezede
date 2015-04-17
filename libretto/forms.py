@@ -258,7 +258,7 @@ class SourceForm(ConstrainedModelForm):
 
 class SaisonForm(ModelForm):
     class Meta(object):
-        model = Source
+        model = Saison
 
     def clean(self):
         data = super(SaisonForm, self).clean()
