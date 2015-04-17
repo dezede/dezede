@@ -250,4 +250,5 @@ class Saison(CommonModel):
             'fin': self.fin.year
         }
         return pgettext('saison : pattern d’affichage',
-                        '%(fk)s, %(debut)d–%(fin)d') % d
+                        '%(fk)s, %(debut)d' if d['debut'] == d['fin']
+                        else '%(fk)s, %(debut)d–%(fin)d') % d
