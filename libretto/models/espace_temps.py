@@ -243,12 +243,11 @@ class Saison(CommonModel):
         ordering = ('lieu', 'debut')
         app_label = 'libretto'
 
+    def get_periode(self):
+        if self.debut.year != self.fin.year:
+            return '%s-%s' % (self.debut.year, self.fin.year)
+        return force_text(self.debut.year)
+
     def __str__(self):
-        d = {
-            'fk': force_text(self.ensemble or self.lieu),
-            'debut': self.debut.year,
-            'fin': self.fin.year
-        }
-        return pgettext('saison : pattern d’affichage',
-                        '%(fk)s, %(debut)d' if d['debut'] == d['fin']
-                        else '%(fk)s, %(debut)d–%(fin)d') % d
+        return '%s, %s' % (force_text(self.ensemble or self.lieu),
+                           self.get_periode())

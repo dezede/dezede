@@ -556,6 +556,25 @@ class Evenement(AutoriteModel):
         return get_model('libretto', 'Oeuvre').objects.filter(
             elements_de_programme__evenement=self)
 
+    def get_saisons(self):
+        # TODO: Gérer les lieux de fin.
+        return get_model('libretto', 'Saison').objects.raw(
+            """ SELECT id, owner_id, ensemble_id, lieu_id, debut, fin
+                FROM libretto_saison
+                WHERE %s BETWEEN debut AND fin AND (
+                    lieu_id = %s OR
+                    ensemble_id IN (
+                        SELECT ensemble_id
+                        FROM libretto_elementdedistribution
+                        WHERE evenement_id = %s)
+                    OR ensemble_id IN (
+                        SELECT distribution.ensemble_id
+                        FROM libretto_elementdeprogramme AS programme
+                        INNER JOIN libretto_elementdeprogramme_distribution AS programme_distribution ON (programme_distribution.elementdeprogramme_id = programme.id)
+                        INNER JOIN libretto_elementdedistribution AS distribution ON (distribution.id = programme_distribution.elementdedistribution_id)
+                        WHERE programme.evenement_id = %s));""",
+            params=(self.debut_date, self.debut_lieu_id, self.pk, self.pk))
+
     def __str__(self):
         out = self.debut.date_str(False)
         out = capfirst(out)

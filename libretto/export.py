@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.db.models import Q
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
@@ -327,7 +328,7 @@ class ProgrammeDistribution(Exporter):
     columns = ('elementdeprogramme', 'elementdedistribution')
     verbose_overrides = {
         'elementdeprogramme': _('élément de programme'),
-         'elementdedistribution': _('élément de distribution')
+        'elementdedistribution': _('élément de distribution')
     }
 
     def get_verbose_table_name(self):
@@ -370,7 +371,7 @@ class ElementDeProgrammeExporter(CommonModelExporter):
 class EvenementExporter(CommonModelExporter):
     model = Evenement
     columns = (
-        'id', 'debut_date', 'debut_date_approx', 'debut_heure',
+        'id', 'saison', 'debut_date', 'debut_date_approx', 'debut_heure',
         'debut_heure_approx', 'debut_lieu', 'debut_lieu_str',
         'debut_lieu_approx', 'fin_date', 'fin_date_approx', 'fin_heure',
         'fin_heure_approx', 'fin_lieu', 'fin_lieu_str', 'fin_lieu_approx',
@@ -389,6 +390,10 @@ class EvenementExporter(CommonModelExporter):
         'debut_lieu_approx': 'date de début (approximatif)',
         'fin_lieu_approx': 'date de fin (approximatif)',
     }
+
+    @staticmethod
+    def get_saison(obj):
+        return ', '.join([saison.get_periode() for saison in obj.get_saisons()])
 
     @staticmethod
     def get_debut_lieu_str(obj):
