@@ -472,14 +472,11 @@ class AncrageSpatioTemporel(object):
         return str_list(l, ' ')
 
     def lieu_str(self, tags=True, short=False):
-        try:
-            if self.has_lieu and self.lieu:
-                return self.lieu.html(tags, short)
-        except get_model('libretto', 'Lieu').DoesNotExist:
-            pass
-        if self.has_lieu and self.approx:
+        if not self.has_lieu or self.lieu is None:
+            return ''
+        if self.approx and self.lieu_approx:
             return self.lieu_approx
-        return ''
+        return self.lieu.html(tags, short)
 
     def isoformat(self):
         if not (self.has_date and self.date):
