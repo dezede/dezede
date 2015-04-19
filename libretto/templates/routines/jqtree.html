@@ -12,8 +12,12 @@
         autoEscape: false,
         useContextMenu: false,
         keyboardSupport: false,
-        openedIcon: '<span class="fa fa-minus-square"></span>',
-        closedIcon: '<span class="fa fa-plus-square"></span>'
+        openedIcon: $('<span class="fa fa-minus-square"></span>'),
+        closedIcon: $('<span class="fa fa-plus-square"></span>')
+      }).on('tree.open', function (event) {
+        var elements = $.map(event.node.children,
+                             function (node) { return node.element; });
+        tooltips_create($(elements))
       });
     });
   </script>

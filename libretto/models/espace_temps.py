@@ -6,7 +6,7 @@ from django.contrib.gis.db.models.query import GeoQuerySet
 from django.core.exceptions import ValidationError
 from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
                               permalink, Q, PROTECT)
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
 from django.utils.translation import (
     ungettext_lazy, pgettext, ugettext_lazy as _)
@@ -15,7 +15,6 @@ from polymorphic_tree.managers import PolymorphicMPTTQuerySet, \
 from polymorphic_tree.models import PolymorphicMPTTModel, \
     PolymorphicTreeForeignKey
 from tinymce.models import HTMLField
-from cache_tools import model_method_cached
 from .base import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
@@ -84,9 +83,9 @@ class LieuManager(CommonTreeManager, PolymorphicMPTTModelManager,
 class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, db_index=True)
     parent = PolymorphicTreeForeignKey(
-        'self', null=True, blank=True, db_index=True, related_name='enfants',
+        'self', null=True, blank=True, related_name='enfants',
         verbose_name=_('parent'))
-    nature = ForeignKey(NatureDeLieu, related_name='lieux', db_index=True,
+    nature = ForeignKey(NatureDeLieu, related_name='lieux',
                         verbose_name=_('nature'), on_delete=PROTECT)
     # TODO: Parentés d'institution avec périodes d'activité pour l'histoire des
     # institutions.
@@ -174,13 +173,13 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         ).order_by(*Oeuvre._meta.ordering)
 
     def ancestors_until_referent(self):
-        ancestors = self.get_ancestors(include_self=True)
-        values = ancestors.values_list('nom', 'nature__referent')
         l = []
-        for nom, ref in values[::-1]:
-            l.append(nom)
-            if ref:
+        parent = self
+        while parent is not None:
+            l.append(parent.nom)
+            if parent.nature.referent:
                 break
+            parent = parent.parent
         return l[::-1]
 
     def html(self, tags=True, short=False):
@@ -244,11 +243,11 @@ class Saison(CommonModel):
         ordering = ('lieu', 'debut')
         app_label = 'libretto'
 
+    def get_periode(self):
+        if self.debut.year != self.fin.year:
+            return '%s-%s' % (self.debut.year, self.fin.year)
+        return force_text(self.debut.year)
+
     def __str__(self):
-        d = {
-            'fk': smart_text(self.ensemble or self.lieu),
-            'debut': self.debut.year,
-            'fin': self.fin.year
-        }
-        return pgettext('saison : pattern d’affichage',
-                        '%(fk)s, %(debut)d–%(fin)d') % d
+        return '%s, %s' % (force_text(self.ensemble or self.lieu),
+                           self.get_periode())

@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import get_model, Q, FieldDoesNotExist
 from django.db.models.query import QuerySet
-from django.http import HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponseBadRequest, HttpResponseRedirect, Http404
 from django.shortcuts import redirect
 from django.utils.encoding import force_text
 from django.views.generic import ListView, DetailView, TemplateView
@@ -209,8 +209,9 @@ class EvenementExport(BaseEvenementListView):
         return query_dict
 
     def get(self, request, *args, **kwargs):
-        data = self.request.GET.copy()
-        export_format = data.get('format')
+        if 'format' not in request.GET:
+            raise Http404
+        export_format = request.GET['format']
         jobs = {'csv': events_to_csv, 'xlsx': events_to_xlsx,
                 'json': events_to_json}
         pk_list = list(self.get_queryset().values_list('pk', flat=True))

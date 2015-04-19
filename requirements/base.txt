@@ -3,32 +3,32 @@ Django==1.7.7
 psycopg2==2.6.0
 
 # Database fields
-django-mptt==0.6.1
--e git+https://github.com/BertrandBordage/django_polymorphic@46118af7dc8486a2f1f6615a2f5b7e150a7e6705#egg=django-polymorphic
+django-mptt==0.7.1
+https://github.com/BertrandBordage/django_polymorphic/archive/46118af7dc8486a2f1f6615a2f5b7e150a7e6705.tar.gz
 django-polymorphic-tree==0.9
 django-autoslug==1.7.2
 
 # User interface
-django-grappelli==2.6.3
+django-grappelli==2.6.4
 django-tinymce==1.5.3
 django-crispy-forms==1.4.0
-django-ajax-selects==1.3.5
-django-image-cropping==1.0.0
+django-ajax-selects==1.3.6
+django-image-cropping==1.0.1
 
 # User authentication
 django-allauth==0.19.1
 
 # Search engine
 django-haystack==2.3.1
-elasticsearch==1.3.0
+elasticsearch==1.4.0
 
 # Caching
 django-redis==3.8.3
-django-cachalot==1.0.0rc
+django-cachalot==1.0.1
 
 # Data visualization frameworks
 djangorestframework==2.4.4
--e git+https://github.com/noirbizarre/django-eztables@daeff682d5113684770c153455410bef160c581b#egg=django-eztables
+https://github.com/noirbizarre/django-eztables/archive/daeff682d5113684770c153455410bef160c581b.tar.gz
 
 # Small but powerful tools
 django-reversion==1.8.5
@@ -37,11 +37,11 @@ easy-thumbnails==2.2
 django-viewsets==0.1.7
 Unipath==1.1
 tqdm==1.0
-awesome-slugify==1.6.2
+awesome-slugify==1.6.4
 
 # Asynchronous tasks
 django-rq==0.7.0
--e git+https://github.com/BertrandBordage/rq@4818036e61fa5bfce1b11b6d1d565a74f3f5f4ca#egg=rq
+https://github.com/BertrandBordage/rq/archive/4818036e61fa5bfce1b11b6d1d565a74f3f5f4ca.tar.gz
 django-transaction-hooks==0.2
 
 # CSS/JS handling
@@ -53,18 +53,18 @@ rjsmin==1.0.10
 # Data parsing/serialization
 beautifulsoup4==4.3.2
 BeautifulSoup<4.0
-lxml==3.4.2
+lxml==3.4.3
 simplejson==3.6.5
 defusedxml==0.4.1
-pandas==0.15.2
-XlsxWriter==0.6.7
+pandas==0.16.0
+XlsxWriter==0.7.2
 
 # Website temporary shutdown
 django-maintenancemode==0.10
 
 # Dependencies
 # For easy-thumbnails
-Pillow==2.7.0
+Pillow==2.8.1
 # For djangorestframework (optionals)
 Pygments==2.0.2
 django-filter==0.8

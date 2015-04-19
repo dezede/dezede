@@ -14,7 +14,8 @@ from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from accounts.models import HierarchicUser
-from libretto.models import Lieu, Oeuvre, Evenement, Individu, Ensemble, Source
+from libretto.models import (Lieu, Oeuvre, Evenement, Individu, Ensemble,
+                             Source, ElementDeDistribution)
 from libretto.models.base import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from common.utils.html import href
@@ -148,7 +149,6 @@ class DossierDEvenements(MPTTModel, PublishedModel):
             return self._evenement_queryset
         if not dynamic and self.pk and self.evenements.exists():
             return self.evenements.all()
-        args = []
         kwargs = {}
         if self.debut:
             kwargs['debut_date__gte'] = self.debut
@@ -165,19 +165,31 @@ class DossierDEvenements(MPTTModel, PublishedModel):
             auteurs = self.auteurs.all()
             if auteurs.exists():
                 kwargs['programme__oeuvre__auteurs__individu__in'] = auteurs
-            ensembles = self.ensembles.all()
-            if ensembles.exists():
-                args.append(
-                    Q(distribution__ensemble__in=ensembles)
-                    | Q(programme__distribution__ensemble__in=ensembles))
+            if self.ensembles.exists():
+                ensembles_evenements = Evenement.objects.extra(where=("""
+                id IN (
+                WITH distribution AS (
+                    SELECT distribution.id, distribution.evenement_id
+                    FROM dossiers_dossierdevenements_ensembles AS dossier_ensembles
+                    INNER JOIN libretto_elementdedistribution AS distribution ON (distribution.ensemble_id = dossier_ensembles.ensemble_id)
+                    WHERE dossier_ensembles.dossierdevenements_id = %s
+                )
+                (SELECT evenement_id FROM distribution)
+                UNION (
+                    SELECT programme.evenement_id
+                    FROM distribution
+                    INNER JOIN libretto_elementdeprogramme_distribution AS programme_distribution ON (programme_distribution.elementdedistribution_id = distribution.id)
+                    INNER JOIN libretto_elementdeprogramme AS programme ON (programme.id = programme_distribution.elementdeprogramme_id)
+                ))""",), params=(self.pk,))
+                kwargs['pk__in'] = ensembles_evenements
             sources = self.sources.all()
             if sources.exists():
                 kwargs['sources__in'] = sources
         if self.circonstance:
             kwargs['circonstance__icontains'] = self.circonstance
-        if args or kwargs:
+        if kwargs:
             self._evenement_queryset = Evenement.objects.filter(
-                *args, **kwargs).distinct()
+                **kwargs).distinct()
         else:
             self._evenement_queryset = Evenement.objects.none()
         return self._evenement_queryset

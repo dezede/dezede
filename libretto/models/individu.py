@@ -7,7 +7,7 @@ from django.core.validators import MinLengthValidator, RegexValidator
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT)
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
 from django.utils.translation import (
     pgettext_lazy, ungettext_lazy, ugettext, ugettext_lazy as _)
@@ -142,10 +142,10 @@ class Individu(AutoriteModel, UniqueSlugModel):
                                   short_description=_('décès'))
     professions = ManyToManyField(
         'Profession', related_name='individus', blank=True, null=True,
-        verbose_name=_('professions'), db_index=True)
+        verbose_name=_('professions'))
     enfants = ManyToManyField(
         'self', through='ParenteDIndividus', related_name='parents',
-        symmetrical=False, db_index=True)
+        symmetrical=False)
     biographie = HTMLField(_('biographie'), blank=True)
 
     isni = CharField(
@@ -173,7 +173,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def get_slug(self):
         invalidate_object(self)
-        return self.nom or smart_text(self)
+        return self.nom or force_text(self)
 
     @permalink
     def get_absolute_url(self):

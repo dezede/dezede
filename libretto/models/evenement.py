@@ -11,7 +11,7 @@ from django.db.models import (
     PositiveSmallIntegerField, permalink, Q, PositiveIntegerField, get_model,
     PROTECT, Count, DecimalField)
 from django.utils.encoding import (
-    python_2_unicode_compatible, smart_text, force_text)
+    python_2_unicode_compatible, force_text)
 from django.utils.html import strip_tags
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
@@ -40,7 +40,7 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
 
     def prefetch(self):
         return self.select_related(
-            'individu', 'ensemble', 'pupitre', 'pupitre__partie', 'profession')
+            'individu', 'ensemble', 'partie', 'profession')
 
     def html(self, tags=True):
         return str_list(e.html(tags=tags) for e in self)
@@ -66,7 +66,7 @@ class ElementDeDistributionManager(CommonManager):
 class ElementDeDistribution(CommonModel):
     evenement = ForeignKey(
         'Evenement', null=True, blank=True, related_name='distribution',
-        verbose_name=_('événement'), on_delete=PROTECT)
+        verbose_name=_('événement'))
 
     individu = ForeignKey(
         'Individu', blank=True, null=True, on_delete=PROTECT,
@@ -74,8 +74,8 @@ class ElementDeDistribution(CommonModel):
     ensemble = ForeignKey(
         'Ensemble', blank=True, null=True, on_delete=PROTECT,
         related_name='elements_de_distribution', verbose_name=_('ensemble'))
-    pupitre = ForeignKey(
-        'Pupitre', verbose_name=_('pupitre'), null=True, blank=True,
+    partie = ForeignKey(
+        'Partie', verbose_name=_('rôle ou instrument'), null=True, blank=True,
         related_name='elements_de_distribution', on_delete=PROTECT)
     profession = ForeignKey(
         'Profession', verbose_name=_('profession'), null=True, blank=True,
@@ -89,7 +89,7 @@ class ElementDeDistribution(CommonModel):
                                       'éléments de distribution', 1)
         verbose_name_plural = ungettext_lazy('élément de distribution',
                                              'éléments de distribution', 2)
-        ordering = ('pupitre', 'profession', 'individu', 'ensemble')
+        ordering = ('partie', 'profession', 'individu', 'ensemble')
         app_label = 'libretto'
 
     @staticmethod
@@ -110,8 +110,8 @@ class ElementDeDistribution(CommonModel):
         elif self.ensemble:
             l.append(self.ensemble.html(tags=tags))
 
-        if self.pupitre:
-            l.append('[' + self.pupitre.html() + ']')
+        if self.partie:
+            l.append('[' + self.partie.html() + ']')
         elif self.profession:
             l.append('[' + self.profession.html(feminin=feminin) + ']')
 
@@ -128,12 +128,12 @@ class ElementDeDistribution(CommonModel):
         return 'admin:libretto_elementdedistribution_change', (self.pk,)
 
     def get_change_link(self):
-        return href(self.get_change_url(), smart_text(self), new_tab=True)
+        return href(self.get_change_url(), force_text(self), new_tab=True)
 
     @staticmethod
     def autocomplete_search_fields():
         return (
-            'pupitre__partie__nom__icontains',
+            'partie__nom__icontains',
             'individu__nom__icontains',
             'individu__pseudonyme__icontains',
             'ensemble__nom__icontains',
@@ -232,7 +232,7 @@ class ElementDeProgramme(CommonModel):
                                       'éléments de programme', 1)
         verbose_name_plural = ungettext_lazy('élément de programme',
                                              'éléments de programme', 2)
-        ordering = ('position', 'oeuvre')
+        ordering = ('position',)
         app_label = 'libretto'
 
     @staticmethod
@@ -361,25 +361,25 @@ class EvenementQuerySet(PublishedQuerySet):
         return (
             qs.select_related(
                 'debut_lieu', 'debut_lieu__nature',
+                'debut_lieu__parent', 'debut_lieu__parent__nature',
                 'fin_lieu', 'fin_lieu__nature',
                 'owner', 'etat')
             .prefetch_related(
                 'caracteristiques__type',
                 'distribution__individu', 'distribution__ensemble',
-                'distribution__profession', 'distribution__pupitre__partie',
+                'distribution__profession',
                 'programme__caracteristiques__type',
-                'programme__oeuvre__genre',
-                'programme__oeuvre__caracteristiques__type',
                 'programme__oeuvre__auteurs__individu',
                 'programme__oeuvre__auteurs__profession',
+                'programme__oeuvre__genre',
                 'programme__oeuvre__pupitres__partie',
+                'programme__oeuvre__caracteristiques',
                 'programme__oeuvre__extrait_de__genre',
-                'programme__oeuvre__extrait_de__caracteristiques__type',
                 'programme__oeuvre__extrait_de__pupitres__partie',
                 'programme__distribution__individu',
                 'programme__distribution__ensemble',
                 'programme__distribution__profession',
-                'programme__distribution__pupitre__partie')
+                'programme__distribution__partie')
             .only(
                 'notes_publiques', 'relache', 'circonstance',
                 'programme_incomplet',
@@ -473,7 +473,6 @@ class Evenement(AutoriteModel):
         verbose_name = ungettext_lazy('événement', 'événements', 1)
         verbose_name_plural = ungettext_lazy('événement', 'événements', 2)
         ordering = ('debut_date', 'debut_heure', 'debut_lieu',
-                    'debut_date_approx', 'debut_heure_approx',
                     'debut_lieu_approx')
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
@@ -492,7 +491,7 @@ class Evenement(AutoriteModel):
         return self.get_absolute_url()
 
     def link(self):
-        return href(self.get_absolute_url(), smart_text(self))
+        return href(self.get_absolute_url(), force_text(self))
     link.short_description = _('lien')
     link.allow_tags = True
 
@@ -556,6 +555,28 @@ class Evenement(AutoriteModel):
     def oeuvres(self):
         return get_model('libretto', 'Oeuvre').objects.filter(
             elements_de_programme__evenement=self)
+
+    def get_saisons(self):
+        # TODO: Gérer les lieux de fin.
+        qs = get_model('libretto', 'Saison').objects.filter(
+            debut__lte=self.debut_date, fin__gte=self.debut_date)
+        extra_where = """
+            ensemble_id IN ((
+                SELECT ensemble_id
+                FROM libretto_elementdedistribution
+                WHERE evenement_id = %s
+            ) UNION (
+                SELECT distribution.ensemble_id
+                FROM libretto_elementdeprogramme AS programme
+                INNER JOIN libretto_elementdeprogramme_distribution AS programme_distribution ON (programme_distribution.elementdeprogramme_id = programme.id)
+                INNER JOIN libretto_elementdedistribution AS distribution ON (distribution.id = programme_distribution.elementdedistribution_id)
+                WHERE programme.evenement_id = %s))"""
+        extra_params = [self.pk, self.pk]
+        if self.debut_lieu_id is not None:
+            extra_where += ' OR lieu_id = %s' + extra_where
+            extra_params.append(self.debut_lieu_id)
+
+        return qs.extra(where=(extra_where,), params=extra_params)
 
     def __str__(self):
         out = self.debut.date_str(False)

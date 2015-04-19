@@ -34,15 +34,13 @@ class SeleniumTest(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        timeout = 5 * 60
-        try:
-            cls.selenium = PhantomJS(
-                desired_capabilities={
-                    'phantomjs.page.settings.resourceTimeout': timeout,
-                }
-            )
-        except:
-            cls.selenium = Firefox(timeout=timeout)
+        driver_name = os.environ.get('SELENIUM_DRIVER', 'PhantomJS')
+        assert driver_name in ('Firefox', 'PhantomJS')
+        if driver_name == 'Firefox':
+            cls.selenium = Firefox()
+        elif driver_name == 'PhantomJS':
+            cls.selenium = PhantomJS()
+        cls.selenium.set_page_load_timeout(5*60)
         cls.selenium.set_window_size(1366, 768)
         cls.wait = WebDriverWait(cls.selenium, 10)
         super(SeleniumTest, cls).setUpClass()
@@ -310,18 +308,16 @@ class SeleniumTest(LiveServerTestCase):
                     select = Select(self.get_by_name('titre'))
                     select.select_by_visible_text('Mlle')
 
-                # Ajoute le pupitre de cette distribution.
-                self.get_by_css('.pupitre .related-lookup').click()
-                with self.new_popup(add='pupitre'):
-                    self.get_by_css('.partie .related-lookup').click()
-                    with self.new_popup(add='rôle ou instrument'):
-                        self.get_by_xpath(
-                            '//label[text()=" instrument"]/input').click()
-                        self.save()
-                        self.get_by_name('nom').send_keys('violon')
-                        self.get_by_css('.professions .related-lookup').click()
-                        with self.new_popup(add='profession'):
-                            self.get_by_name('nom').send_keys('violoniste')
+                # Ajoute la partie de cette distribution.
+                self.get_by_css('.partie .related-lookup').click()
+                with self.new_popup(add='rôle ou instrument'):
+                    self.get_by_xpath(
+                        '//label[text()=" instrument"]/input').click()
+                    self.save()
+                    self.get_by_name('nom').send_keys('violon')
+                    self.get_by_css('.professions .related-lookup').click()
+                    with self.new_popup(add='profession'):
+                        self.get_by_name('nom').send_keys('violoniste')
 
             # Ajoute un quatrième élément de programme.
             programme3 = open_new_element_de_programme(3)

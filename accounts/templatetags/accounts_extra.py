@@ -73,7 +73,7 @@ def hsv_to_hex(h, s, v):
     r, g, b = r2 + m, g2 + m, b2 + m
 
     def to_hex(color):
-        return hex(int(min(255, color * 256)))[2:].upper().rjust(2, b'0')
+        return hex(int(min(255, color * 256)))[2:].upper().zfill(2)
 
     return '#' + to_hex(r) + to_hex(g) + to_hex(b)
 

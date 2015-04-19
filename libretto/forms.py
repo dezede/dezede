@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from collections import defaultdict
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
     AutoCompleteWidget
 from crispy_forms.helper import FormHelper
@@ -10,7 +9,7 @@ from datetime import timedelta
 from django.db.models import Q
 from django.forms import ValidationError, ModelForm, Form, CharField, TextInput
 from django.utils.translation import ugettext_lazy as _
-from common.utils.text import capfirst
+from common.utils.text import capfirst, str_list_w_last
 from .models import (
     Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
     Ensemble, Saison)
@@ -22,7 +21,57 @@ __all__ = (b'IndividuForm', b'EnsembleForm', b'OeuvreForm',
            b'SourceForm', b'SaisonForm', b'EvenementListForm')
 
 
-class IndividuForm(ModelForm):
+class ConstrainedModelForm(ModelForm):
+    REQUIRED_BY = ()
+    INCOMPATIBLES = ()
+
+    def get_field_verbose(self, fieldname):
+        return capfirst(
+            self._meta.model._meta.get_field(fieldname).verbose_name)
+
+    def add_error_1_6(self, field, error):
+        # TODO: Remplacer par add_error avec Django 1.7.
+        if field not in self._errors:
+            self._errors[field] = self.error_class([])
+        self._errors[field].append(error)
+
+    def clean(self):
+        data = super(ConstrainedModelForm, self).clean()
+
+        for required_fieldnames, fieldnames in self.REQUIRED_BY:
+            for required_fieldname in required_fieldnames:
+                verbose_required = self.get_field_verbose(required_fieldname)
+                for fieldname in fieldnames:
+                    verbose = self.get_field_verbose(fieldname)
+                    if data.get(fieldname) and not data.get(required_fieldname):
+                        msg = _('« %(field)s » ne peut être saisi '
+                                'sans « %(required)s ».') % {
+                            'field': verbose,
+                            'required': verbose_required}
+                        for k in (fieldname, required_fieldname):
+                            self.add_error_1_6(k, msg)
+
+        for fieldnames in self.INCOMPATIBLES:
+            if all(data.get(fieldname) for fieldname in fieldnames):
+                for fieldname in fieldnames:
+                    verbose = self.get_field_verbose(fieldname)
+                    other_fields = [_('« %s »') % self.get_field_verbose(k)
+                                    for k in fieldnames if k != fieldname]
+                    msg = _('« %(field)s » ne peut être saisi '
+                            'avec %(other_fields)s.') % {
+                        'field': verbose,
+                        'other_fields': str_list_w_last(other_fields)}
+                    self.add_error_1_6(fieldname, msg)
+
+        return data
+
+
+class IndividuForm(ConstrainedModelForm):
+    REQUIRED_BY = (
+        (('naissance_date',), ('naissance_date_approx',)),
+        (('deces_date',), ('deces_date_approx',)),
+    )
+
     class Meta(object):
         model = Individu
         exclude = ()
@@ -64,7 +113,23 @@ class EnsembleForm(ModelForm):
         }
 
 
-class OeuvreForm(ModelForm):
+class OeuvreForm(ConstrainedModelForm):
+    REQUIRED_BY = (
+        (('titre',), ('prefixe_titre', 'coordination',
+                      'prefixe_titre_secondaire', 'titre_secondaire')),
+        (('titre_secondaire',), ('prefixe_titre_secondaire',
+                                 'coordination')),
+        (('coordination',), ('prefixe_titre_secondaire',
+                             'titre_secondaire')),
+        (('genre',), ('numero', 'coupe')),
+        (('extrait_de', 'numero_extrait',
+          'type_extrait'), ('numero_extrait', 'type_extrait')),
+        (('creation_date',), ('creation_date_approx',)),
+    )
+    INCOMPATIBLES = (
+        ('coupe', 'numero'),
+    )
+
     def clean(self):
         data = super(OeuvreForm, self).clean()
 
@@ -72,69 +137,25 @@ class OeuvreForm(ModelForm):
         type_extrait_affiche = (
             type_extrait and type_extrait not in Oeuvre.TYPES_EXTRAIT_CACHES)
 
-        if not type_extrait_affiche and \
-                not data['titre'] and not data['genre'] and not data['tempo']:
+        if type_extrait_affiche:
+            for fieldname in ('genre', 'tempo'):
+                if data[fieldname]:
+                    msg = _('« %s » ne peut être saisi avec ce type '
+                            'd’extrait.') % self.get_field_verbose(fieldname)
+                    self.add_error_1_6(fieldname, msg)
+                    self.add_error_1_6('type_extrait', msg)
+        elif not data['titre'] and not data['genre'] and not data['tempo']:
             msg = _('Un titre, un genre ou un tempo '
                     'doit au moins être précisé.')
-            self._errors['titre'] = self.error_class([msg])
-            self._errors['genre'] = self.error_class([msg])
-            self._errors['tempo'] = self.error_class([msg])
+            self.add_error_1_6('titre', msg)
+            self.add_error_1_6('genre', msg)
+            self.add_error_1_6('tempo', msg)
 
         # Ensures title look like "Le Tartuffe, ou l’Imposteur.".
         data['prefixe_titre'] = capfirst(data['prefixe_titre'])
         data['titre'] = capfirst(data['titre'])
         data['prefixe_titre_secondaire'] = data['prefixe_titre_secondaire'].lower()
         data['titre_secondaire'] = capfirst(data['titre_secondaire'])
-
-        if data['titre_secondaire'] and not data['titre']:
-            self._errors['titre_secondaire'] = self.error_class([
-                _('« Titre secondaire » ne peut être saisi sans « Titre ».')
-            ])
-        if data['titre_secondaire'] and not data['coordination']:
-            self._errors['titre_secondaire'] = self.error_class([
-                _('« Titre secondaire » ne peut être saisi '
-                  'sans « Coordination ».')
-            ])
-        if data['coordination'] and not data['titre_secondaire']:
-            self._errors['coordination'] = self.error_class([
-                _('« Coordination » ne peut être saisi '
-                  'sans « Titre secondaire ».')
-            ])
-        if data['prefixe_titre'] and not data['titre']:
-            self._errors['prefixe_titre'] = self.error_class([
-                _('« Article » ne peut être saisi sans « Titre ».')
-            ])
-        if data['prefixe_titre_secondaire'] and not data['titre_secondaire']:
-            self._errors['prefixe_titre_secondaire'] = self.error_class([
-                _('« Article » ne peut être saisi sans « Titre secondaire ».')
-            ])
-
-        if type_extrait or data['numero_extrait']:
-            if data['titre']:
-                self._errors['titre'] = self.error_class([
-                    _('Impossible de saisir un titre significatif '
-                      'pour un extrait.')
-                ])
-            if not type_extrait:
-                self._errors['type_extrait'] = self.error_class([
-                    _('Ce champ doit être rempli '
-                      'pour pouvoir utiliser « Numéro d’extrait ».')])
-            if not data['numero_extrait']:
-                self._errors['numero_extrait'] = self.error_class([
-                    _('Ce champ doit être rempli '
-                      'pour pouvoir utiliser « Type d’extrait ».')])
-            if not data['extrait_de']:
-                self._errors['extrait_de'] = self.error_class([
-                    _('Ce champ doit être rempli pour pouvoir utiliser '
-                      '« Type d’extrait » et « Numéro d’extrait ».')])
-
-        if not data['genre']:
-            if data['numero']:
-                self._errors['numero'] = self.error_class([
-                    _('Vous ne pouvez remplir « Numéro » sans « Genre »')])
-            if data['coupe']:
-                self._errors['coupe'] = self.error_class([
-                    _('Vous ne pouvez remplir « Coupe » sans « Genre »')])
 
         return data
 
@@ -159,7 +180,12 @@ class OeuvreForm(ModelForm):
         }
 
 
-class ElementDeDistributionForm(ModelForm):
+class ElementDeDistributionForm(ConstrainedModelForm):
+    INCOMPATIBLES = (
+        ('individu', 'ensemble'),
+        ('partie', 'profession'),
+    )
+
     class Meta(object):
         model = ElementDeDistribution
         exclude = ()
@@ -167,37 +193,24 @@ class ElementDeDistributionForm(ModelForm):
     def clean(self):
         data = super(ElementDeDistributionForm, self).clean()
 
-        error_msgs = defaultdict(list)
         if not (data[b'individu'] or data[b'ensemble']):
             msg = _('Vous devez remplir « Individu » ou « Ensemble ».')
-            error_msgs[b'individu'].append(msg)
-            error_msgs[b'ensemble'].append(msg)
-        if data[b'individu'] and data[b'ensemble']:
-            msg = _('Vous ne pouvez remplir à la fois '
-                    '« Individu » et « Ensemble ».')
-            error_msgs[b'individu'].append(msg)
-            error_msgs[b'ensemble'].append(msg)
-        if data.get(b'pupitre') and data.get(b'profession'):
-            msg = _('Vous ne pouvez remplir à la fois '
-                    '« Pupitre » et « Profession ».')
-            error_msgs[b'pupitre'].append(msg)
-            error_msgs[b'profession'].append(msg)
-        if data.get(b'pupitre', '') != '' \
+            self.add_error_1_6('individu', msg)
+            self.add_error_1_6('ensemble', msg)
+        if data.get(b'partie', '') != '' \
                 and data.get(b'profession') \
                 and data[b'profession'].parties.exists():
-            msg = _('Au moins un rôle ou instrument est lié à cette '
-                    'profession. Remplissez donc « Pupitre » à la place.')
-            error_msgs[b'profession'].append(msg)
-
-        for k, v in error_msgs.items():
-            self._errors[k] = self.error_class(v)
-            if k in data:
-                del data[k]
+            self.add_error_1_6(
+                'profession',
+                _('Au moins un rôle ou instrument est lié à cette profession. '
+                  'Remplissez donc « Rôle ou instrument » à la place.'))
 
         return data
 
 
-class ElementDeProgrammeForm(ModelForm):
+class ElementDeProgrammeForm(ConstrainedModelForm):
+    INCOMPATIBLES = (('oeuvre', 'autre'),)
+
     class Meta(object):
         model = ElementDeProgramme
         exclude = ()
@@ -214,14 +227,15 @@ class ElementDeProgrammeForm(ModelForm):
             raise ValidationError(_('Vous devez remplir au moins « Œuvre », '
                                     '« Autre » ou « Distribution ».'))
 
-        if data[b'autre'] and data[b'oeuvre']:
-            raise ValidationError(_('Vous ne pouvez remplir à la fois '
-                                    '« Œuvre » et « Autre ».'))
-
         return data
 
 
-class SourceForm(ModelForm):
+class SourceForm(ConstrainedModelForm):
+    REQUIRED_BY = (
+        (('date',), ('date_approx',)),
+        (('lieu_conservation', 'cote'), ('lieu_conservation', 'cote')),
+    )
+
     class Meta(object):
         model = Source
         exclude = ()
@@ -236,16 +250,21 @@ class SourceForm(ModelForm):
     def clean(self):
         data = super(SourceForm, self).clean()
 
-        if not (data['titre'] or (data['lieu_conservation'] and data['cote'])):
-            raise ValidationError(_('Vous devez remplir « Titre » ou '
-                                    '« Lieu de conservation » et « Cote ».'))
+        if not (data['titre'] or data['lieu_conservation'] or data['cote']):
+            msg = _('Vous devez remplir « Titre » ou '
+                    '« Lieu de conservation » et « Cote ».')
+            self.add_error_1_6('titre', msg)
+            if not data['lieu_conservation']:
+                self.add_error_1_6('lieu_conservation', msg)
+            if not data['cote']:
+                self.add_error_1_6('cote', msg)
 
         return data
 
 
 class SaisonForm(ModelForm):
     class Meta(object):
-        model = Source
+        model = Saison
         exclude = ()
 
     def clean(self):

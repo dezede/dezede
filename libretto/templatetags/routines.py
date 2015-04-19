@@ -173,7 +173,9 @@ def data_table_list(context, object_list, attr='link',
         is_published_queryset = False
 
     if isinstance(object_list, QuerySet):
-        object_list = object_list.select_related('etat')
+        select_related = object_list.query.select_related
+        if isinstance(select_related, dict):
+            select_related['etat'] = {}
 
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         object_list, verbose_name=verbose_name,

@@ -27,8 +27,7 @@ class EvenementTestCase(CommonTestCase):
                          '« Avez-vous été bien sages les enfants ? »')
         self.assertEqual(smart_text(programme[1]),
                          'Le père Fouettard, ou la correction méritée, '
-                         'mélodrame pour trois à 15 enfants chouineurs '
-                         'et pervers [première représentation]')
+                         'mélodrame [première représentation]')
         self.assertEqual(smart_text(programme[2]),
                          'Distribution de tatanées')
         self.assertEqual(smart_text(programme[3]),

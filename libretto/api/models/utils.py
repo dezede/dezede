@@ -6,6 +6,7 @@ from functools import wraps
 import json
 from django.contrib.contenttypes.generic import GenericRelation
 from django.core import serializers
+from django.db import transaction, connection
 from django.db.models import ManyToManyField, Manager, Model, get_models
 from django.db.models.query import QuerySet
 from django.db.models.related import RelatedObject
@@ -361,3 +362,64 @@ class SetDefaultOwner(object):
 class SetDefaultEtat(SetDefaultOwner):
     model = PublishedModel
     fieldname = 'etat'
+
+
+def _get_queryset(field, obj):
+    return field.model.objects.filter(**{field.name: obj}).distinct()
+
+
+def _related_queryset_iterator(duplicate_relations, reference_relations, duplicate, reference):
+    for relation in duplicate_relations:
+        field = relation.field
+        qs = _get_queryset(field, duplicate)
+        duplicate_n = qs.count()
+        if duplicate_n == 0:
+            continue
+        if relation not in reference_relations:
+            raise TypeError('Relations to the duplicate cannot be moved to the reference.')
+        reference_n = _get_queryset(field, reference).count()
+        yield field, qs
+        assert _get_queryset(field, duplicate).count() == 0
+        assert _get_queryset(field, reference).count() == reference_n + duplicate_n
+
+
+def are_mergeable_models(model_a, model_b):
+    parent_models_a = set(model_a._meta.parents.keys())
+    parent_models_a.add(model_a)
+    parent_models_b = set(model_b._meta.parents.keys())
+    parent_models_b.add(model_b)
+    return not parent_models_a.isdisjoint(parent_models_b)
+
+
+@transaction.atomic
+def merge_duplicate(duplicate, reference, dry_run=False):
+    duplicate_model = duplicate._meta.model
+    reference_model = reference._meta.model
+    if not are_mergeable_models(duplicate_model, reference_model):
+        raise TypeError('Duplicate and reference are from different models.')
+
+    # Updating related ForeignKeys & OneToOneFields.
+    fk_relations = duplicate_model._meta.get_all_related_objects()
+    reference_fk_relations = reference_model._meta.get_all_related_objects()
+    for field, qs in _related_queryset_iterator(
+            fk_relations, reference_fk_relations, duplicate, reference):
+        # We use `obj.save` instead of `qs.update` to trigger save events
+        # such as checks, updates and signals.
+        for obj in qs:
+            setattr(obj, field.name, reference)
+            obj.save()
+
+    # Updating related ManyToManyFields.
+    m2m_relations = duplicate_model._meta.get_all_related_many_to_many_objects()
+    reference_m2m_relations = reference_model._meta.get_all_related_many_to_many_objects()
+    for field, qs in _related_queryset_iterator(
+            m2m_relations, reference_m2m_relations, duplicate, reference):
+        for obj in qs:
+            manager = getattr(obj, field.name)
+            manager.add(reference)
+            manager.remove(duplicate)
+
+    duplicate.delete()
+
+    if dry_run:
+        connection.needs_rollback = True

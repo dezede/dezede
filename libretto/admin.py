@@ -20,6 +20,7 @@ from polymorphic.admin import (
     PolymorphicChildModelFilter)
 from reversion import VersionAdmin
 import reversion
+from libretto.models.personnel import TypeDEnsemble
 
 from .models import *
 from .forms import (
@@ -169,7 +170,19 @@ class OeuvreMereInline(CustomTabularInline):
     autocomplete_lookup_fields = {
         'fk': ('mere',),
     }
-    fields = ('mere', 'type',)
+    fields = ('type', 'mere')
+    classes = ('grp-collapse grp-closed',)
+
+
+class PupitreInline(CustomTabularInline):
+    model = Pupitre
+    verbose_name = model._meta.verbose_name
+    verbose_name_plural = _('effectif')
+    raw_id_fields = ('partie',)
+    autocomplete_lookup_fields = {
+        'fk': ['partie'],
+    }
+    fields = ('partie', 'soliste', 'quantite_min', 'quantite_max',)
     classes = ('grp-collapse grp-closed',)
 
 
@@ -182,7 +195,7 @@ class IndividuParentInline(CustomTabularInline):
     autocomplete_lookup_fields = {
         'fk': ('parent',),
     }
-    fields = ('parent', 'type',)
+    fields = ('type', 'parent')
     classes = ('grp-collapse grp-closed',)
 
 
@@ -235,10 +248,10 @@ class MembreInline(CustomStackedInline):
     )
 
 
-class ElementDeDistributionInline(CustomStackedInline):
+class ElementDeDistributionInline(CustomTabularInline):
     """
     Utilisé uniquement pour les distributions de tête d'événement.
-    La restriction est que l’on n’utilise pas de champ 'pupitre'.
+    La restriction est que l’on n’utilise pas de champ 'partie'.
     """
     model = ElementDeDistribution
     form = ElementDeDistributionForm
@@ -247,14 +260,7 @@ class ElementDeDistributionInline(CustomStackedInline):
     autocomplete_lookup_fields = {
         'fk': ['individu', 'ensemble', 'profession'],
     }
-    fieldsets = (
-        (None, {
-            'description': _('Distribution commune à l’ensemble de '
-                             'l’événement. Une distribution plus précise peut '
-                             'être saisie avec le programme.'),
-            'fields': ('individu', 'ensemble', 'profession',),
-        }),
-    )
+    fields = ('individu', 'ensemble', 'profession',)
     classes = ('grp-collapse grp-open',)
 
 
@@ -660,19 +666,28 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
         ).prefetch_related('professions')
 
 
+class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
+    list_display = ('__str__', 'nom', 'nom_pluriel', 'parent')
+    list_editable = ('nom', 'nom_pluriel', 'parent')
+    search_fields = ('nom', 'nom_pluriel',)
+    raw_id_fields = ('parent',)
+    autocomplete_lookup_fields = {
+        'fk': ('parent',),
+    }
+
+
 class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     form = EnsembleForm
-    list_display = ('__str__', 'calc_caracteristiques', 'membres_count')
+    list_display = ('__str__', 'type', 'membres_count')
     search_fields = ('nom', 'membres__individu__nom')
     inlines = (MembreInline,)
-    raw_id_fields = ('caracteristiques', 'siege')
+    raw_id_fields = ('siege', 'type')
     autocomplete_lookup_fields = {
-        'fk': ('siege',),
-        'm2m': ('caracteristiques',),
+        'fk': ('siege', 'type'),
     }
     fieldsets = (
         (None, {
-            'fields': (('particule_nom', 'nom'), 'caracteristiques', 'siege'),
+            'fields': (('particule_nom', 'nom'), 'type', 'siege'),
         }),
         PERIODE_D_ACTIVITE_FIELDSET,
     )
@@ -723,7 +738,6 @@ class TypeDeCaracteristiqueAdmin(
         PolymorphicParentModelAdmin):
     base_model = TypeDeCaracteristique
     child_models = (TypeDeCaracteristiqueDOeuvre,
-                    TypeDeCaracteristiqueDEnsemble,
                     TypeDeCaracteristiqueDeProgramme)
 
 
@@ -737,19 +751,12 @@ class TypeDeCaracteristiqueDOeuvreAdmin(
     pass
 
 
-class TypeDeCaracteristiqueDEnsembleAdmin(
-        VersionAdmin, TypeDeCaracteristiqueChildAdmin):
-    pass
-
-
 class TypeDeCaracteristiqueDeProgrammeAdmin(
         VersionAdmin, TypeDeCaracteristiqueChildAdmin):
     pass
 
 
 reversion.register(TypeDeCaracteristiqueDOeuvre,
-                   follow=('typedecaracteristique_ptr',))
-reversion.register(TypeDeCaracteristiqueDEnsemble,
                    follow=('typedecaracteristique_ptr',))
 reversion.register(TypeDeCaracteristiqueDeProgramme,
                    follow=('typedecaracteristique_ptr',))
@@ -767,7 +774,6 @@ class CaracteristiqueAdmin(VersionAdmin, CaracteristiqueCommonAdmin,
     base_model = Caracteristique
     child_models = (
         CaracteristiqueDOeuvre,
-        CaracteristiqueDEnsemble,
         CaracteristiqueDeProgramme,
     )
 
@@ -777,7 +783,6 @@ class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
     base_model = Caracteristique
     type_to = {
         CaracteristiqueDOeuvre: TypeDeCaracteristiqueDOeuvre,
-        CaracteristiqueDEnsemble: TypeDeCaracteristiqueDEnsemble,
         CaracteristiqueDeProgramme: TypeDeCaracteristiqueDeProgramme,
     }
 
@@ -792,10 +797,6 @@ class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
 
 
 class CaracteristiqueDOeuvreAdmin(VersionAdmin, CaracteristiqueChildAdmin):
-    pass
-
-
-class CaracteristiqueDEnsembleAdmin(VersionAdmin, CaracteristiqueChildAdmin):
     pass
 
 
@@ -856,24 +857,6 @@ reversion.register(Role, follow=('partie_ptr',))
 reversion.register(Instrument, follow=('partie_ptr',))
 
 
-class PupitreAdmin(VersionAdmin, CommonAdmin):
-    list_display = ('__str__', 'partie', 'quantite_min', 'quantite_max',)
-    list_editable = ('partie', 'quantite_min', 'quantite_max',)
-    search_fields = ('partie__nom', 'quantite_min', 'quantite_max')
-    raw_id_fields = ('partie',)
-    autocomplete_lookup_fields = {
-        'fk': ['partie'],
-    }
-
-    # N'affiche que les pupitres différents pour éviter de flooder les
-    # admins de doublons (qui sont pourtant nécessaires).
-    def get_queryset(self, request):
-        qs = super(PupitreAdmin, self).queryset(request)
-        return (qs.order_by('quantite_min', 'quantite_max')
-                  .distinct('partie__classement', 'partie__nom',
-                            'quantite_min', 'quantite_max'))
-
-
 class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     form = OeuvreForm
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
@@ -881,21 +864,18 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                     'creation', 'link',)
     list_editable = ('genre',)
     search_fields = Oeuvre.autocomplete_search_fields(add_icontains=False)
-    list_filter = ('genre',)
+    list_filter = ('genre', 'type_extrait')
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
     raw_id_fields = ('genre', 'caracteristiques', 'extrait_de',
-                     'creation_lieu', 'pupitres')
+                     'creation_lieu')
     autocomplete_lookup_fields = {
         'fk': ('genre', 'extrait_de', 'creation_lieu'),
-        'm2m': ('caracteristiques', 'pupitres'),
+        'm2m': ('caracteristiques',),
     }
     readonly_fields = ('__str__', 'html', 'link',)
-    inlines = (AuteurInline, OeuvreMereInline)
+    inlines = (AuteurInline, PupitreInline, OeuvreMereInline)
     fieldsets = (
-        (None, {
-            'fields': ('extrait_de', ('type_extrait', 'numero_extrait')),
-        }),
         (_('Titre significatif'), {
             'fields': (('prefixe_titre', 'titre',), 'coordination',
                        ('prefixe_titre_secondaire', 'titre_secondaire',),),
@@ -904,7 +884,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
             'fields': (('genre', 'numero'), 'coupe'),
         }),
         (_('Données musicales'), {
-            'fields': (('tempo', 'tonalite'), 'pupitres', 'sujet'),
+            'fields': (('tempo', 'tonalite'), 'sujet'),
         }),
         (None, {
             'fields': (('surnom', 'nom_courant'), 'incipit'),
@@ -915,6 +895,9 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
         (None, {
             'fields': ('caracteristiques',),
         }),
+        (None, {
+            'fields': ('extrait_de', ('type_extrait', 'numero_extrait')),
+        }),
         (_('Création'), {
             'fields': (
                 ('creation_date', 'creation_date_approx'),
@@ -922,7 +905,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                 ('creation_lieu', 'creation_lieu_approx'))
         }),
     )
-    fieldsets_and_inlines_order = ('i', 'f', 'f', 'f', 'f', 'f', 'f', 'i', 'i')
+    fieldsets_and_inlines_order = ('i', 'f', 'f', 'i', 'f', 'f', 'f', 'f', 'f')
 
     def get_queryset(self, request):
         qs = super(OeuvreAdmin, self).get_queryset(request)
@@ -933,14 +916,18 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
 
 class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
     form = ElementDeDistributionForm
-    list_display = ('__str__', 'pupitre', 'profession',)
-    list_editable = ('pupitre', 'profession',)
+    list_display = ('__str__', 'partie', 'profession',)
+    list_editable = ('partie', 'profession',)
     search_fields = ('individu__nom', 'individu__prenoms', 'ensemble__nom',
-                     'pupitre__partie__nom', 'profession__nom')
-    fields = ('individu', 'ensemble', 'pupitre', 'profession')
-    raw_id_fields = ('individu', 'ensemble', 'pupitre', 'profession')
+                     'partie__nom', 'profession__nom')
+    fieldsets = (
+        (None, {
+            'fields': (('individu', 'ensemble'), ('partie', 'profession')),
+        }),
+    )
+    raw_id_fields = ('individu', 'ensemble', 'partie', 'profession')
     autocomplete_lookup_fields = {
-        'fk': ['individu', 'ensemble', 'pupitre', 'profession'],
+        'fk': ['individu', 'ensemble', 'partie', 'profession'],
     }
 
 
@@ -1115,6 +1102,7 @@ site.register(TypeDeParente, TypeDeParenteAdmin)
 site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
 site.register(Individu, IndividuAdmin)
+site.register(TypeDEnsemble, TypeDEnsembleAdmin)
 site.register(Ensemble, EnsembleAdmin)
 # site.register(Devise, DeviseAdmin)
 # site.register(Engagement, EngagementAdmin)
@@ -1123,18 +1111,14 @@ site.register(Ensemble, EnsembleAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(TypeDeCaracteristique, TypeDeCaracteristiqueAdmin)
 site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
-site.register(TypeDeCaracteristiqueDEnsemble,
-              TypeDeCaracteristiqueDEnsembleAdmin)
 site.register(TypeDeCaracteristiqueDeProgramme,
               TypeDeCaracteristiqueDeProgrammeAdmin)
 site.register(Caracteristique, CaracteristiqueAdmin)
 site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
-site.register(CaracteristiqueDEnsemble, CaracteristiqueDEnsembleAdmin)
 site.register(CaracteristiqueDeProgramme, CaracteristiqueDeProgrammeAdmin)
 site.register(Partie, PartieAdmin)
 site.register(Role, RoleAdmin)
 site.register(Instrument, InstrumentAdmin)
-site.register(Pupitre, PupitreAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(ElementDeDistribution, ElementDeDistributionAdmin)
 site.register(Evenement, EvenementAdmin)
