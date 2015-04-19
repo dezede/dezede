@@ -103,7 +103,6 @@ class ElementDeDistribution(CommonModel):
         l = []
         feminin = False
 
-        assert not (self.individu and self.ensemble)
         if self.individu:
             l.append(self.individu.html(tags=tags))
             feminin = self.individu.is_feminin()
