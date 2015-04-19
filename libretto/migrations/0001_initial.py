@@ -107,6 +107,7 @@ class Migration(migrations.Migration):
                 ('position', models.PositiveSmallIntegerField(verbose_name='position', db_index=True)),
                 ('part_d_auteur', models.DecimalField(null=True, verbose_name='P. A.', max_digits=6, decimal_places=2, blank=True)),
                 ('caracteristiques', models.ManyToManyField(related_name='elements_de_programme', null=True, verbose_name='caract\xe9ristiques', to='libretto.CaracteristiqueDeProgramme', blank=True)),
+                ('distribution', models.ManyToManyField(related_name='elements_de_programme', null=True, to='libretto.ElementDeDistribution', blank=True)),
             ],
             options={
                 'ordering': ('position',),
@@ -1161,12 +1162,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='elementdedistribution',
-            name='element_de_programme',
-            field=models.ForeignKey(related_name='distribution', on_delete=django.db.models.deletion.PROTECT, verbose_name='\xe9l\xe9ment de programme', blank=True, to='libretto.ElementDeProgramme', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='elementdedistribution',
             name='ensemble',
             field=models.ForeignKey(related_name='elements_de_distribution', on_delete=django.db.models.deletion.PROTECT, verbose_name='ensemble', blank=True, to='libretto.Ensemble', null=True),
             preserve_default=True,
@@ -1174,7 +1169,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='elementdedistribution',
             name='evenement',
-            field=models.ForeignKey(related_name='distribution', on_delete=django.db.models.deletion.PROTECT, verbose_name='\xe9v\xe9nement', blank=True, to='libretto.Evenement', null=True),
+            field=models.ForeignKey(related_name='distribution', verbose_name='\xe9v\xe9nement', blank=True, to='libretto.Evenement', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
