@@ -28,7 +28,7 @@ class BuildAncrageTestCase(TestCase):
         txt = 'Concert Spirituel, 5/7/1852'
         out = 'Concert Spirituel, 5 juillet 1852'
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(9):
             build_ancrage(self.ancrage, txt, commit=False)
         self.assertEqual(force_text(self.ancrage), out)
 
