@@ -245,7 +245,7 @@ class Saison(CommonModel):
 
     def get_periode(self):
         if self.debut.year != self.fin.year:
-            return '%s-%s' % (self.debut.year, self.fin.year)
+            return '%s–%s' % (self.debut.year, self.fin.year)
         return force_text(self.debut.year)
 
     def __str__(self):
