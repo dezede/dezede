@@ -558,22 +558,25 @@ class Evenement(AutoriteModel):
 
     def get_saisons(self):
         # TODO: Gérer les lieux de fin.
-        return get_model('libretto', 'Saison').objects.raw(
-            """ SELECT id, owner_id, ensemble_id, lieu_id, debut, fin
-                FROM libretto_saison
-                WHERE %s BETWEEN debut AND fin AND (
-                    lieu_id = %s OR
-                    ensemble_id IN (
-                        SELECT ensemble_id
-                        FROM libretto_elementdedistribution
-                        WHERE evenement_id = %s)
-                    OR ensemble_id IN (
-                        SELECT distribution.ensemble_id
-                        FROM libretto_elementdeprogramme AS programme
-                        INNER JOIN libretto_elementdeprogramme_distribution AS programme_distribution ON (programme_distribution.elementdeprogramme_id = programme.id)
-                        INNER JOIN libretto_elementdedistribution AS distribution ON (distribution.id = programme_distribution.elementdedistribution_id)
-                        WHERE programme.evenement_id = %s));""",
-            params=(self.debut_date, self.debut_lieu_id, self.pk, self.pk))
+        qs = get_model('libretto', 'Saison').objects.filter(
+            debut__lte=self.debut_date, fin__gte=self.debut_date)
+        extra_where = """
+            ensemble_id IN ((
+                SELECT ensemble_id
+                FROM libretto_elementdedistribution
+                WHERE evenement_id = %s
+            ) UNION (
+                SELECT distribution.ensemble_id
+                FROM libretto_elementdeprogramme AS programme
+                INNER JOIN libretto_elementdeprogramme_distribution AS programme_distribution ON (programme_distribution.elementdeprogramme_id = programme.id)
+                INNER JOIN libretto_elementdedistribution AS distribution ON (distribution.id = programme_distribution.elementdedistribution_id)
+                WHERE programme.evenement_id = %s))"""
+        extra_params = [self.pk, self.pk]
+        if self.debut_lieu_id is not None:
+            extra_where += ' OR lieu_id = %s' + extra_where
+            extra_params.append(self.debut_lieu_id)
+
+        return qs.extra(where=(extra_where,), params=extra_params)
 
     def __str__(self):
         out = self.debut.date_str(False)
