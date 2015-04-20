@@ -925,9 +925,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             if extrait:
                 if titre_complet:
                     titre_complet = extrait + ' ' + titre_complet
-                else:
+                elif self.type_extrait not in self.TYPES_EXTRAIT_CACHES:
                     titre_complet = extrait
-                    assert self.type_extrait not in self.TYPES_EXTRAIT_CACHES
             url = None if not tags else self.get_absolute_url()
             l.append(href(url, titre_complet, tags & links))
         if descr:
