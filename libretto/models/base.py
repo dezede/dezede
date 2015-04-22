@@ -395,6 +395,14 @@ class AncrageSpatioTemporel(object):
     def contribute_to_class(self, model, name):
         self.name = name
         self.model = model
+        if self.model._meta.abstract:
+            return
+        for parent in self.model._meta.parents:
+            if (not parent._meta.abstract
+                and hasattr(parent, name)
+                    and isinstance(getattr(parent, name),
+                                   AncrageSpatioTemporel)):
+                return
         self.prefix = '' if name == 'ancrage' else name + '_'
 
         self.fields = self.create_fields()
