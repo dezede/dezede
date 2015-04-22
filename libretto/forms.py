@@ -29,12 +29,6 @@ class ConstrainedModelForm(ModelForm):
         return capfirst(
             self._meta.model._meta.get_field(fieldname).verbose_name)
 
-    def add_error_1_6(self, field, error):
-        # TODO: Remplacer par add_error avec Django 1.7.
-        if field not in self._errors:
-            self._errors[field] = self.error_class([])
-        self._errors[field].append(error)
-
     def clean(self):
         data = super(ConstrainedModelForm, self).clean()
 
@@ -49,7 +43,7 @@ class ConstrainedModelForm(ModelForm):
                             'field': verbose,
                             'required': verbose_required}
                         for k in (fieldname, required_fieldname):
-                            self.add_error_1_6(k, msg)
+                            self.add_error(k, msg)
 
         for fieldnames in self.INCOMPATIBLES:
             if all(data.get(fieldname) for fieldname in fieldnames):
@@ -142,14 +136,14 @@ class OeuvreForm(ConstrainedModelForm):
                 if data[fieldname]:
                     msg = _('« %s » ne peut être saisi avec ce type '
                             'd’extrait.') % self.get_field_verbose(fieldname)
-                    self.add_error_1_6(fieldname, msg)
-                    self.add_error_1_6('type_extrait', msg)
+                    self.add_error(fieldname, msg)
+                    self.add_error('type_extrait', msg)
         elif not data['titre'] and not data['genre'] and not data['tempo']:
             msg = _('Un titre, un genre ou un tempo '
                     'doit au moins être précisé.')
-            self.add_error_1_6('titre', msg)
-            self.add_error_1_6('genre', msg)
-            self.add_error_1_6('tempo', msg)
+            self.add_error('titre', msg)
+            self.add_error('genre', msg)
+            self.add_error('tempo', msg)
 
         # Ensures title look like "Le Tartuffe, ou l’Imposteur.".
         data['prefixe_titre'] = capfirst(data['prefixe_titre'])
@@ -195,12 +189,12 @@ class ElementDeDistributionForm(ConstrainedModelForm):
 
         if not (data[b'individu'] or data[b'ensemble']):
             msg = _('Vous devez remplir « Individu » ou « Ensemble ».')
-            self.add_error_1_6('individu', msg)
-            self.add_error_1_6('ensemble', msg)
+            self.add_error('individu', msg)
+            self.add_error('ensemble', msg)
         if data.get(b'partie', '') != '' \
                 and data.get(b'profession') \
                 and data[b'profession'].parties.exists():
-            self.add_error_1_6(
+            self.add_error(
                 'profession',
                 _('Au moins un rôle ou instrument est lié à cette profession. '
                   'Remplissez donc « Rôle ou instrument » à la place.'))
@@ -253,11 +247,11 @@ class SourceForm(ConstrainedModelForm):
         if not (data['titre'] or data['lieu_conservation'] or data['cote']):
             msg = _('Vous devez remplir « Titre » ou '
                     '« Lieu de conservation » et « Cote ».')
-            self.add_error_1_6('titre', msg)
+            self.add_error('titre', msg)
             if not data['lieu_conservation']:
-                self.add_error_1_6('lieu_conservation', msg)
+                self.add_error('lieu_conservation', msg)
             if not data['cote']:
-                self.add_error_1_6('cote', msg)
+                self.add_error('cote', msg)
 
         return data
 
