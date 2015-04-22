@@ -131,16 +131,16 @@ def get_data(evenements_qs, min_places, bbox):
         valid_ancestors = valid_ancestors.filter(geometry__contained=bbox)
 
     valid_ancestors_query, valid_ancestors_params = get_raw_query(
-        valid_ancestors.values('pk'))
+        valid_ancestors.values('id', 'tree_id', 'level', 'lft', 'rght'))
 
     evenements_query, params = get_raw_query(
         evenements_qs.values('debut_lieu_id'))
 
     cursor.execute("""
-    SELECT ancetre.level, COUNT(DISTINCT ancetre.id) FROM libretto_lieu AS lieu
-    INNER JOIN libretto_lieu AS ancetre ON (
-        ancetre.id IN (%s)
-        AND ancetre.tree_id = lieu.tree_id
+    SELECT ancetre.level, COUNT(DISTINCT ancetre.id)
+    FROM libretto_lieu AS lieu
+    INNER JOIN (%s) AS ancetre ON (
+        ancetre.tree_id = lieu.tree_id
         AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght)
     WHERE lieu.id IN (%s)
     GROUP BY ancetre.level
@@ -161,20 +161,34 @@ def get_data(evenements_qs, min_places, bbox):
 
     evenements_query, params = get_raw_query(
         evenements_qs.values('pk', 'debut_lieu_id'))
+    params = list(params)
+    if bbox is None:
+        bbox_where = ''
+    else:
+        bbox_where = 'ancetre.geometry @ ST_GeomFromEWKB(%s::bytea) AND '
+        params.append(bbox.ewkb)
+
+    params.append(level)
 
     cursor.execute("""
     SELECT ancetre.id, ancetre.nom, ancetre.geometry, COUNT(evenement.id) AS n
     FROM (%s) AS evenement
     INNER JOIN libretto_lieu AS lieu ON lieu.id = evenement.debut_lieu_id
     INNER JOIN libretto_lieu AS ancetre ON (
-        ancetre.id IN (%s)
-        AND ancetre.tree_id = lieu.tree_id AND ancetre.level <= %s
-        AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght
-        AND (ancetre.level = %s OR ancetre.rght = ancetre.lft + 1))
-    GROUP BY ancetre.id
+        %s
+        ancetre.id = (
+            SELECT ancetre.id
+            FROM libretto_lieu AS ancetre
+            WHERE (
+                geometry IS NOT NULL
+                AND ancetre.tree_id = lieu.tree_id
+                AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght
+                AND level <= %%s)
+            ORDER BY level DESC
+            LIMIT 1))
+    GROUP BY ancetre.id, ancetre.nom, ancetre.geometry
     ORDER BY n DESC;
-    """ % (evenements_query, valid_ancestors_query, level, level),
-        params + valid_ancestors_params)
+    """ % (evenements_query, bbox_where), params)
     return cursor.fetchall()
 
 
