@@ -417,8 +417,9 @@ class EvenementManager(PublishedManager):
     def with_program(self):
         return self.get_queryset().with_program()
 
-    def prefetch_all(self):
-        return self.get_queryset().prefetch_all()
+    def prefetch_all(self, create_subquery=True):
+        return self.get_queryset().prefetch_all(
+            create_subquery=create_subquery)
 
 
 plus_separated_integers_re = re.compile(r'^\d+(?:\+\d+)*$')

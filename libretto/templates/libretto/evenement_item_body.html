@@ -48,6 +48,4 @@
   </small>
 {% endif %}
 
-{% with sources=evenement.sources %}
-  {% include 'libretto/include/sources.html' %}
-{% endwith %}
+{% include 'libretto/include/sources.html' with sources=evenement.sources.all %}

@@ -242,6 +242,9 @@ class EvenementGeoJson(BaseEvenementListView):
 
 class EvenementDetailView(PublishedDetailView):
     model = Evenement
+    # FIXME: Retirer les 2 lignes suivantes quand https://code.djangoproject.com/ticket/24689 sera résolu.
+    template_name = 'libretto/evenement_detail.html'
+    context_object_name = 'evenement'
 
     def get_queryset(self):
         qs = super(EvenementDetailView, self).get_queryset()
