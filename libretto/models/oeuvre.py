@@ -18,17 +18,15 @@ from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-from polymorphic_tree.managers import PolymorphicMPTTModelManager, \
-    PolymorphicMPTTQuerySet
-from polymorphic_tree.models import PolymorphicMPTTModel, \
-    PolymorphicTreeForeignKey
+from polymorphic import (PolymorphicModel, PolymorphicManager,
+                         PolymorphicQuerySet)
 from cache_tools import model_method_cached
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
     OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,
     CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique,
-    AncrageSpatioTemporel)
+    AncrageSpatioTemporel, PolymorphicMPTTModelBase)
 from common.utils.html import capfirst, hlp, href, cite, em
 from common.utils.text import str_list, str_list_w_last, to_roman
 from .individu import Individu
@@ -112,24 +110,25 @@ class CaracteristiqueDOeuvre(Caracteristique):
         return ('caracteristique_ptr', 'oeuvres',)
 
 
-class PartieQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet,
+class PartieQuerySet(PolymorphicQuerySet, PublishedQuerySet,
                      CommonTreeQuerySet):
     pass
 
 
-class PartieManager(CommonTreeManager, PolymorphicMPTTModelManager,
+class PartieManager(CommonTreeManager, PolymorphicManager,
                     PublishedManager):
     queryset_class = PartieQuerySet
 
 
 @python_2_unicode_compatible
-class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
+class Partie(MPTTModel, PolymorphicModel, AutoriteModel, UniqueSlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
     une œuvre musicale.
     Pour plus de compréhensibilité, on affiche « rôle ou instrument » au lieu
     de « partie ».
     """
+    __metaclass__ = PolymorphicMPTTModelBase
 
     nom = CharField(_('nom'), max_length=200, db_index=True,
                     help_text=_('Le nom d’une partie de la partition, '
@@ -142,7 +141,7 @@ class Partie(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
         verbose_name=_('professions'), db_index=True, blank=True, null=True,
         help_text=_('La ou les profession(s) capable(s) '
                     'de jouer ce rôle ou cet instrument.'))
-    parent = PolymorphicTreeForeignKey(
+    parent = TreeForeignKey(
         'self', related_name='enfant', blank=True, null=True, db_index=True,
         verbose_name=_('rôle ou instrument parent')
     )

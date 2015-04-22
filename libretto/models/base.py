@@ -22,8 +22,11 @@ from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from autoslug import AutoSlugField
 from mptt.managers import TreeManager
+from mptt.models import MPTTModelBase
+from mptt.querysets import TreeQuerySet
 from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
+from polymorphic.base import PolymorphicModelBase
 from slugify import Slugify
 from tinymce.models import HTMLField
 from cache_tools import invalidate_object
@@ -80,6 +83,10 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
 #
 # Modélisation abstraite
 #
+
+
+class PolymorphicMPTTModelBase(MPTTModelBase, PolymorphicModelBase):
+    pass
 
 
 # TODO: Personnaliser order_by pour simuler automatiquement NULLS LAST
@@ -306,26 +313,8 @@ class UniqueSlugModel(Model):
         return force_text(self)
 
 
-class CommonTreeQuerySet(CommonQuerySet):
-    def get_descendants(self, include_self=False):
-        manager = self.model._default_manager
-        tree_id_attr = manager.tree_id_attr
-        left_attr = manager.left_attr
-        right_attr = manager.right_attr
-        filters = Q()
-
-        for tree_id, left, right in self.values_list(
-                tree_id_attr, left_attr, right_attr):
-            if not include_self:
-                left += 1
-                right -= 1
-            filters |= Q(**{tree_id_attr: tree_id,
-                            left_attr + '__range': (left, right)})
-
-        qs = self.model._tree_manager.filter(filters)
-        if getattr(self, 'polymorphic_disabled', False):
-            qs = qs.non_polymorphic()
-        return qs
+class CommonTreeQuerySet(CommonQuerySet, TreeQuerySet):
+    pass
 
 
 class CommonTreeManager(CommonManager, TreeManager):
@@ -334,10 +323,6 @@ class CommonTreeManager(CommonManager, TreeManager):
     def get_queryset(self):
         return self.queryset_class(self.model, using=self._db).order_by(
             self.tree_id_attr, self.left_attr)
-
-    def get_descendants(self, *args, **kwargs):
-        return self.get_queryset().get_descendants(*args, **kwargs)
-
 
 @python_2_unicode_compatible
 class AncrageSpatioTemporel(object):

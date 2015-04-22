@@ -4,8 +4,8 @@ psycopg2==2.6.0
 
 # Database fields
 django-mptt==0.7.1
+# FIXME: Se débarasser de polymorphic
 https://github.com/BertrandBordage/django_polymorphic/archive/46118af7dc8486a2f1f6615a2f5b7e150a7e6705.tar.gz
-django-polymorphic-tree==0.9
 django-autoslug==1.7.2
 
 # User interface

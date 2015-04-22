@@ -10,15 +10,15 @@ from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
 from django.utils.translation import (
     ungettext_lazy, pgettext, ugettext_lazy as _)
-from polymorphic_tree.managers import PolymorphicMPTTQuerySet, \
-    PolymorphicMPTTModelManager
-from polymorphic_tree.models import PolymorphicMPTTModel, \
-    PolymorphicTreeForeignKey
+from mptt.fields import TreeForeignKey
+from mptt.models import MPTTModel
+from polymorphic import PolymorphicQuerySet, PolymorphicManager, \
+    PolymorphicModel
 from tinymce.models import HTMLField
 from .base import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
                     PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
                     UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
-    CommonTreeManager
+    CommonTreeManager, PolymorphicMPTTModelBase
 from common.utils.html import href
 from .evenement import Evenement
 from .individu import Individu
@@ -69,20 +69,22 @@ class NatureDeLieu(CommonModel, SlugModel):
         return 'nom__icontains',
 
 
-class LieuQuerySet(PolymorphicMPTTQuerySet, PublishedQuerySet,
+class LieuQuerySet(PolymorphicQuerySet, PublishedQuerySet,
                    CommonTreeQuerySet, GeoQuerySet):
     pass
 
 
-class LieuManager(CommonTreeManager, PolymorphicMPTTModelManager,
+class LieuManager(CommonTreeManager, PolymorphicManager,
                   PublishedManager, GeoManager):
     queryset_class = LieuQuerySet
 
 
 @python_2_unicode_compatible
-class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
+class Lieu(MPTTModel, PolymorphicModel, AutoriteModel, UniqueSlugModel):
+    __metaclass__ = PolymorphicMPTTModelBase
+
     nom = CharField(_('nom'), max_length=200, db_index=True)
-    parent = PolymorphicTreeForeignKey(
+    parent = TreeForeignKey(
         'self', null=True, blank=True, related_name='enfants',
         verbose_name=_('parent'))
     nature = ForeignKey(NatureDeLieu, related_name='lieux',
@@ -207,6 +209,8 @@ class Lieu(PolymorphicMPTTModel, AutoriteModel, UniqueSlugModel):
 
 
 class LieuDivers(Lieu):
+    objects = LieuManager()
+
     class Meta(object):
         verbose_name = ungettext_lazy('lieu', 'lieux', 1)
         verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
@@ -218,6 +222,8 @@ class LieuDivers(Lieu):
 
 
 class Institution(Lieu):
+    objects = LieuManager()
+
     class Meta(object):
         verbose_name = ungettext_lazy('institution', 'institutions', 1)
         verbose_name_plural = ungettext_lazy('institution', 'institutions', 2)
