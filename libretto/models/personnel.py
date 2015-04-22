@@ -257,8 +257,6 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     particule_nom = CharField(
         _('particule du nom'), max_length=5, blank=True, db_index=True)
     nom = CharField(_('nom'), max_length=75, db_index=True)
-    # TODO: Ajouter une typologie (orchestre, chœur, groupe de rock)
-    # facultative.
     # FIXME: retirer null=True quand la base sera nettoyée.
     type = ForeignKey('TypeDEnsemble', null=True, related_name='ensembles')
     # TODO: Permettre deux villes sièges.
