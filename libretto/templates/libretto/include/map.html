@@ -68,6 +68,7 @@
     var geoJson;
     var $map = $('#map');
     var $mapControls = $map.find('.leaflet-control-container');
+    var ajaxCall;
     $mapControls.find('[title]').data('placement', 'left');
     tooltips_create($mapControls);
 
@@ -77,9 +78,13 @@
         url += '&bbox=' + map.getBounds().toBBoxString();
       } catch(err) {}
       url += '&min_places=' + $('#min-places-slider').slider('value');
-      $.ajax({
+      if (typeof ajaxCall !== 'undefined') {
+        ajaxCall.abort();
+      }
+      ajaxCall = $.ajax({
         url: url
       }).done(function (data) {
+        ajaxCall = undefined;
         tooltips_delete($map);
         var empty = false;
         if (typeof geoJson == 'undefined') {
