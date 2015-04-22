@@ -74,7 +74,12 @@ class SourceQuerySet(PublishedQuerySet):
             % (fichiers, sources, Fichier.AUDIO),
             '_has_videos':
             'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id AND type = %s)'
-            % (fichiers, sources, Fichier.VIDEO)})
+            % (fichiers, sources, Fichier.VIDEO)}
+        ).only(
+            'titre', 'numero', 'folio', 'page', 'lieu_conservation',
+            'cote', 'url', 'transcription', 'date', 'date_approx',
+            'type__nom', 'type__nom_pluriel',
+        )
 
 
 class SourceManager(PublishedManager):
