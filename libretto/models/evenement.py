@@ -66,7 +66,7 @@ class ElementDeDistributionManager(CommonManager):
 class ElementDeDistribution(CommonModel):
     evenement = ForeignKey(
         'Evenement', null=True, blank=True, related_name='distribution',
-        verbose_name=_('événement'))
+        verbose_name=_('événement'), on_delete=PROTECT)
 
     individu = ForeignKey(
         'Individu', blank=True, null=True, on_delete=PROTECT,
