@@ -6,7 +6,6 @@ import re
 import django.contrib.gis.db.models.fields
 import autoslug.fields
 import mptt.fields
-import polymorphic_tree.models
 from django.conf import settings
 import django.db.models.deletion
 import tinymce.models
@@ -70,6 +69,16 @@ class Migration(migrations.Migration):
                 'verbose_name': 'caract\xe9ristique d\u2019\u0153uvre',
                 'verbose_name_plural': 'caract\xe9ristiques d\u2019\u0153uvre',
             },
+            bases=('libretto.caracteristique',),
+        ),
+        migrations.CreateModel(
+            name='CaracteristiqueDEnsemble',
+            fields=[
+                ('caracteristique_ptr',
+                 models.OneToOneField(parent_link=True, auto_created=True,
+                                      primary_key=True, serialize=False,
+                                      to='libretto.Caracteristique')),
+            ],
             bases=('libretto.caracteristique',),
         ),
         migrations.CreateModel(
@@ -142,6 +151,7 @@ class Migration(migrations.Migration):
                 ('fin_precision', models.PositiveSmallIntegerField(default=0, verbose_name='pr\xe9cision de la fin', choices=[(0, 'Ann\xe9e'), (1, 'Mois'), (2, 'Jour')])),
                 ('particule_nom', models.CharField(db_index=True, max_length=5, verbose_name='particule du nom', blank=True)),
                 ('nom', models.CharField(max_length=75, verbose_name='name', db_index=True)),
+                ('caracteristiques', models.ManyToManyField(related_name='elements_de_programme', null=True, verbose_name='caract\xe9ristiques', to='libretto.CaracteristiqueDEnsemble', blank=True)),
             ],
             options={
                 'ordering': ('nom',),
@@ -694,24 +704,18 @@ class Migration(migrations.Migration):
             bases=('libretto.typedecaracteristique',),
         ),
         migrations.CreateModel(
-            name='TypeDEnsemble',
+            name='TypeDeCaracteristiqueDEnsemble',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('nom', models.CharField(help_text='In lowercase.', max_length=30, verbose_name='name')),
-                ('nom_pluriel', models.CharField(help_text='\xc0 remplir si le pluriel n\u2019est pas un simple ajout de \xab s \xbb. Exemple : \xab animal \xbb devient \xab animaux \xbb et non \xab animals \xbb.', max_length=30, verbose_name='nom pluriel', blank=True)),
-                ('lft', models.PositiveIntegerField(editable=False, db_index=True)),
-                ('rght', models.PositiveIntegerField(editable=False, db_index=True)),
-                ('tree_id', models.PositiveIntegerField(editable=False, db_index=True)),
-                ('level', models.PositiveIntegerField(editable=False, db_index=True)),
-                ('owner', models.ForeignKey(related_name='typedensemble', on_delete=django.db.models.deletion.PROTECT, verbose_name='propri\xe9taire', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('parent', mptt.fields.TreeForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.TypeDEnsemble', null=True)),
+                ('typedecaracteristique_ptr',
+                 models.OneToOneField(parent_link=True, auto_created=True,
+                                      primary_key=True, serialize=False,
+                                      to='libretto.TypeDeCaracteristique')),
             ],
             options={
-                'ordering': ('nom',),
-                'verbose_name': 'type d\u2019ensemble',
-                'verbose_name_plural': 'types d\u2019ensemble',
+                'ordering': ('classement',),
+
             },
-            bases=(models.Model,),
+            bases=('libretto.typedecaracteristique',),
         ),
         migrations.CreateModel(
             name='TypeDeParente',
@@ -923,7 +927,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partie',
             name='parent',
-            field=polymorphic_tree.models.PolymorphicTreeForeignKey(related_name='enfant', verbose_name='r\xf4le ou instrument parent', blank=True, to='libretto.Partie', null=True),
+            field=mptt.fields.TreeForeignKey(related_name='enfant', verbose_name='r\xf4le ou instrument parent', blank=True, to='libretto.Partie', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1005,7 +1009,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='lieu',
             name='parent',
-            field=polymorphic_tree.models.PolymorphicTreeForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Lieu', null=True),
+            field=mptt.fields.TreeForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Lieu', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1110,12 +1114,6 @@ class Migration(migrations.Migration):
             model_name='ensemble',
             name='siege',
             field=models.ForeignKey(related_name='ensembles', verbose_name='si\xe8ge', blank=True, to='libretto.Lieu', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='ensemble',
-            name='type',
-            field=models.ForeignKey(related_name='ensembles', to='libretto.TypeDEnsemble', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
