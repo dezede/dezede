@@ -26,9 +26,11 @@ def frontend_admin(context, obj=None, size='xs'):
     request = context['request']
     if obj is None:
         obj = context['object']
-    Model = obj.__class__
+    Model = obj._meta.model
+    if Model._deferred:
+        Model = Model._meta.proxy_for_model
     app_label = Model._meta.app_label
-    model_slug = Model.__name__.lower()
+    model_slug = Model._meta.model_name
     change_perm = build_permission(app_label, model_slug, 'change')
     delete_perm = build_permission(app_label, model_slug, 'delete')
     user = request.user

@@ -386,22 +386,15 @@ class EvenementQuerySet(PublishedQuerySet):
                 'debut_heure', 'debut_heure_approx', 'debut_lieu_approx',
                 'fin_date', 'fin_date_approx',
                 'fin_heure', 'fin_heure_approx', 'fin_lieu_approx',
-                'owner', 'owner__is_superuser', 'owner__username',
+                'owner__is_superuser', 'owner__username',
                 'owner__first_name', 'owner__last_name', 'owner__mentor',
-                'etat', 'etat__message', 'etat__public',
-                'debut_lieu', 'debut_lieu__slug',
-                'debut_lieu__lft', 'debut_lieu__rght', 'debut_lieu__tree_id',
+                'etat__message', 'etat__public',
+                'debut_lieu__slug',
                 'debut_lieu__nom', 'debut_lieu__parent',
-                'debut_lieu__nature', 'debut_lieu__nature__referent',
-                'fin_lieu', 'fin_lieu__slug',
-                'fin_lieu__lft', 'fin_lieu__rght', 'fin_lieu__tree_id',
+                'debut_lieu__nature__referent',
+                'fin_lieu__slug',
                 'fin_lieu__nom', 'fin_lieu__parent',
-                'fin_lieu__nature', 'fin_lieu__nature__referent',
-                # FIXME: The following fields are not used in rendering,
-                #        but an IndexError occurs when removing them…
-                'notes_privees', 'code_programme', 'exoneres', 'payantes',
-                'frequentation', 'scolaires', 'jauge',
-                'recette_generale', 'recette_par_billets',
+                'fin_lieu__nature__referent',
             )
         )
 
