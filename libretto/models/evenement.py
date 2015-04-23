@@ -8,7 +8,7 @@ from django.core.validators import RegexValidator
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, BooleanField,
-    PositiveSmallIntegerField, permalink, Q, PositiveIntegerField, get_model,
+    PositiveSmallIntegerField, permalink, Q, get_model,
     PROTECT, Count, DecimalField)
 from django.utils.encoding import (
     python_2_unicode_compatible, force_text)

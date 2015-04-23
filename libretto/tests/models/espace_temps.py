@@ -13,10 +13,10 @@ class LieuTestCase(CommonTestCase):
     def setUp(self):
         theatre = new(NatureDeLieu, nom='théâtre')
         ville = new(NatureDeLieu, nom='ville')
-        self.rouen = new(LieuDivers, nom='Rouen', nature=ville)
-        self.theatre_des_arts = new(Institution,
-                                    nom='Théâtre des Arts', nature=theatre,
-                                    parent=self.rouen)
+        self.rouen = Lieu.objects.create(nom='Rouen', nature=ville)
+        self.theatre_des_arts = Lieu.objects.create(
+            nom='Théâtre des Arts', parent=self.rouen,
+            nature=theatre, is_institution=True)
 
     def testComputedNames(self):
         self.assertEqual(smart_text(self.rouen), 'Rouen')

@@ -1,1 +1,940 @@
-[{"pk": 1, "model": "libretto.typedecaracteristique", "fields": {"owner": null, "nom": "num\u00e9ro", "nom_pluriel": "", "classement": 1, "polymorphic_ctype": ["libretto", "typedecaracteristiquedoeuvre"]}}, {"pk": 2, "model": "libretto.typedecaracteristique", "fields": {"owner": null, "nom": "opus", "nom_pluriel": "", "classement": 2, "polymorphic_ctype": ["libretto", "typedecaracteristiquedoeuvre"]}}, {"pk": 3, "model": "libretto.typedecaracteristique", "fields": {"owner": null, "nom": "d\u00e9coupage", "nom_pluriel": "", "classement": 1, "polymorphic_ctype": ["libretto", "typedecaracteristiquedoeuvre"]}}, {"pk": 1, "model": "libretto.caracteristique", "fields": {"owner": null, "classement": 1, "type": 1, "valeur": "n\u00b0\u00a05", "polymorphic_ctype": ["libretto", "caracteristiquedoeuvre"]}}, {"pk": 2, "model": "libretto.caracteristique", "fields": {"owner": null, "classement": 1, "type": 2, "valeur": "op.\u00a0107", "polymorphic_ctype": ["libretto", "caracteristiquedoeuvre"]}}, {"pk": 3, "model": "libretto.caracteristique", "fields": {"owner": null, "classement": 1, "type": 3, "valeur": "en cinq actes et en vers", "polymorphic_ctype": ["libretto", "caracteristiquedoeuvre"]}}, {"pk": 4, "model": "libretto.caracteristique", "fields": {"owner": ["name"], "classement": 1, "type": null, "valeur": "premi\u00e8re repr\u00e9sentation", "polymorphic_ctype": ["libretto", "caracteristiquedeprogramme"]}}, {"pk": 1, "model": "libretto.etat", "fields": {"nom": "brouillon", "nom_pluriel": "", "slug": "brouillon", "owner": null, "message": "", "public": false}}, {"pk": 2, "model": "libretto.etat", "fields": {"nom": "nouveau", "nom_pluriel": "nouveaux", "slug": "nouveau", "owner": null, "message": "", "public": true}}, {"pk": 1, "model": "libretto.elementdedistribution", "fields": {"individu": 2, "profession": 4, "evenement": null, "owner": ["name"], "partie": null}}, {"pk": 4, "model": "libretto.caracteristiquedeprogramme", "fields": {}}, {"pk": 1, "model": "libretto.elementdeprogramme", "fields": {"oeuvre": null, "personnels": [], "evenement": 1, "autre": "\u00ab\u00a0Avez-vous \u00e9t\u00e9 bien sages les enfants\u00a0?\u00a0\u00bb", "numerotation": "O", "owner": ["name"], "position": 0, "distribution": [], "caracteristiques": []}}, {"pk": 2, "model": "libretto.elementdeprogramme", "fields": {"oeuvre": 1, "personnels": [], "evenement": 1, "autre": "", "numerotation": "O", "owner": ["name"], "position": 1, "distribution": [], "caracteristiques": [4]}}, {"pk": 3, "model": "libretto.elementdeprogramme", "fields": {"oeuvre": 2, "personnels": [], "evenement": 1, "autre": "", "numerotation": "O", "owner": ["name"], "position": 3, "distribution": [], "caracteristiques": []}}, {"pk": 4, "model": "libretto.elementdeprogramme", "fields": {"oeuvre": null, "personnels": [], "evenement": 1, "autre": "Distribution de tatan\u00e9es", "numerotation": "O", "owner": ["name"], "position": 2, "distribution": [], "caracteristiques": []}}, {"pk": 5, "model": "libretto.elementdeprogramme", "fields": {"oeuvre": null, "personnels": [], "evenement": 1, "autre": "Distribution de pains d\u2019\u00e9pices", "numerotation": "O", "owner": ["name"], "position": 4, "distribution": [], "caracteristiques": []}}, {"pk": 6, "model": "libretto.elementdeprogramme", "fields": {"oeuvre": 7, "personnels": [], "evenement": 1, "autre": "", "numerotation": "O", "owner": ["name"], "position": 5, "distribution": [1], "caracteristiques": []}}, {"pk": 1, "model": "libretto.evenement", "fields": {"etat": 2, "notes_publiques": "", "relache": false, "debut_lieu_approx": "", "debut_heure_approx": "", "debut_date": "2012-12-06", "debut_date_approx": "", "debut_lieu": 2, "debut_heure": null, "owner": ["name"], "circonstance": "Saint-Nicolas"}}, {"pk": 1, "model": "libretto.individu", "fields": {"etat": 2, "nom": "Poquelin", "particule_nom": "", "designation": "P", "professions": [3], "notes_publiques": "", "particule_nom_naissance": "", "pseudonyme": "Moli\u00e8re", "nom_naissance": "", "prenoms": "Jean-Baptiste", "owner": null, "titre": "", "biographie": "", "slug": "poquelin"}}, {"pk": 2, "model": "libretto.individu", "fields": {"etat": 2, "nom": "Gassion", "particule_nom": "", "designation": "S", "professions": [], "notes_publiques": "", "particule_nom_naissance": "", "pseudonyme": "La M\u00f4me Piaf", "nom_naissance": "", "prenoms": "\u00c9dith", "prenoms_complets": "\u00c9dith Giovanna", "owner": null, "titre": "F", "biographie": "", "slug": "gassion"}}, {"pk": 1, "model": "libretto.profession", "fields": {"etat": 2, "nom": "professeur", "classement": 1, "nom_feminin": "", "parent": null, "rght": 0, "nom_pluriel": "", "notes_publiques": "", "level": 0, "lft": 0, "tree_id": 0, "owner": ["name"], "slug": "professeur"}}, {"pk": 2, "model": "libretto.profession", "fields": {"etat": 2, "nom": "\u00e9colier", "classement": 1, "nom_feminin": "", "parent": null, "rght": 0, "nom_pluriel": "", "notes_publiques": "", "level": 0, "lft": 0, "tree_id": 0, "owner": ["name"], "slug": "ecolier"}}, {"pk": 3, "model": "libretto.profession", "fields": {"etat": 2, "nom": "auteur dramatique", "classement": 1, "nom_feminin": "", "parent": null, "rght": 2, "nom_pluriel": "auteurs dramatiques", "notes_publiques": "", "level": 0, "lft": 1, "tree_id": 1, "owner": ["name"], "slug": "auteur-dramatique"}}, {"pk": 4, "model": "libretto.profession", "fields": {"etat": 2, "nom": "chanteur", "classement": 1, "nom_feminin": "chanteuse", "parent": null, "rght": 2, "nom_pluriel": "", "notes_publiques": "", "level": 0, "lft": 1, "tree_id": 2, "owner": ["name"], "slug": "chanteur"}}, {"pk": 1, "model": "libretto.typedesource", "fields": {"owner": null, "nom": "compte rendu", "slug": "compte-rendu", "nom_pluriel": "comptes rendus"}}, {"pk": 1, "model": "libretto.source", "fields": {"etat": 2, "titre": "Journal de Rouen", "transcription": "", "notes_publiques": "", "numero": "", "date": "1828-01-15", "owner": null, "type": 1, "page": ""}}, {"pk": 1, "model": "libretto.genredoeuvre", "fields": {"nom": "m\u00e9lodrame", "nom_pluriel": "", "referent": false, "parents": [], "owner": ["name"], "slug": "melodrame"}}, {"pk": 2, "model": "libretto.genredoeuvre", "fields": {"nom": "op\u00e9ra", "nom_pluriel": "", "referent": false, "parents": [], "owner": null, "slug": "opera"}}, {"pk": 3, "model": "libretto.genredoeuvre", "fields": {"nom": "sonate", "nom_pluriel": "", "referent": false, "parents": [], "owner": null, "slug": "sonate"}}, {"pk": 4, "model": "libretto.genredoeuvre", "fields": {"nom": "symphonie", "nom_pluriel": "", "referent": false, "parents": [], "owner": null, "slug": "symphonie"}}, {"pk": 5, "model": "libretto.genredoeuvre", "fields": {"nom": "com\u00e9die", "nom_pluriel": "", "referent": false, "parents": [], "owner": null, "slug": "comedie"}}, {"pk": 1, "model": "libretto.typedecaracteristiquedoeuvre", "fields": {}}, {"pk": 3, "model": "libretto.typedecaracteristiquedoeuvre", "fields": {}}, {"pk": 2, "model": "libretto.typedecaracteristiquedoeuvre", "fields": {}}, {"pk": 3, "model": "libretto.caracteristiquedoeuvre", "fields": {}}, {"pk": 1, "model": "libretto.caracteristiquedoeuvre", "fields": {}}, {"pk": 2, "model": "libretto.caracteristiquedoeuvre", "fields": {}}, {"pk": 1, "model": "libretto.partie", "fields": {"etat": 2, "rght": 0, "classement": 1, "parent": null, "level": 0, "nom_pluriel": "pervers", "notes_publiques": "", "lft": 0, "nom": "pervers", "tree_id": 0, "owner": ["name"], "slug": "pervers", "professions": [1], "polymorphic_ctype": ["libretto", "instrument"]}}, {"pk": 2, "model": "libretto.partie", "fields": {"etat": 2, "rght": 0, "classement": 1, "parent": null, "level": 0, "nom_pluriel": "enfants chouineurs", "notes_publiques": "", "lft": 0, "nom": "enfant chouineur", "tree_id": 0, "owner": ["name"], "slug": "enfant-chouineur", "professions": [2], "polymorphic_ctype": ["libretto", "instrument"]}}, {"pk": 3, "model": "libretto.partie", "fields": {"etat": 2, "rght": 0, "classement": 1, "parent": null, "level": 0, "nom_pluriel": "", "notes_publiques": "", "lft": 0, "nom": "violon", "tree_id": 0, "owner": null, "slug": "violon", "professions": [], "polymorphic_ctype": ["libretto", "instrument"]}}, {"pk": 4, "model": "libretto.partie", "fields": {"etat": 2, "rght": 0, "classement": 1, "parent": null, "level": 0, "nom_pluriel": "voix", "notes_publiques": "", "lft": 0, "nom": "voix", "tree_id": 0, "owner": null, "slug": "voix", "professions": [], "polymorphic_ctype": ["libretto", "instrument"]}}, {"pk": 2, "model": "libretto.instrument", "fields": {"professions": [2]}}, {"pk": 1, "model": "libretto.instrument", "fields": {"professions": [1]}}, {"pk": 3, "model": "libretto.instrument", "fields": {"professions": []}}, {"pk": 4, "model": "libretto.instrument", "fields": {"professions": []}}, {"pk": 1, "model": "libretto.pupitre", "fields": {"owner": ["name"], "quantite_max": 1, "quantite_min": 1, "partie": 1, "oeuvre": 1}}, {"pk": 2, "model": "libretto.pupitre", "fields": {"owner": ["name"], "quantite_max": 15, "quantite_min": 3, "partie": 2, "oeuvre": 1}}, {"pk": 3, "model": "libretto.pupitre", "fields": {"owner": null, "quantite_max": 2, "quantite_min": 2, "partie": 3, "oeuvre": 4}}, {"pk": 4, "model": "libretto.pupitre", "fields": {"owner": null, "quantite_max": 8, "quantite_min": 4, "partie": 4, "oeuvre": 4}}, {"pk": 5, "model": "libretto.pupitre", "fields": {"owner": null, "quantite_max": 1, "quantite_min": 1, "partie": 3, "oeuvre": 5}}, {"pk": 1, "model": "libretto.auteur", "fields": {"owner": ["name"], "individu": 1, "profession": 3, "oeuvre": 7}}, {"pk": 1, "model": "libretto.oeuvre", "fields": {"rght": 0, "lft": 0, "titre_secondaire": "correction m\u00e9rit\u00e9e", "owner": ["name"], "caracteristiques": [], "coordination": ", ou ", "etat": 2, "tree_id": 0, "titre": "Le p\u00e8re Fouettard", "extrait_de": null, "genre": 1, "slug": "le-pere-fouettard-ou-la-correction-meritee", "level": 0, "notes_publiques": "", "prefixe_titre": "", "prefixe_titre_secondaire": "la "}}, {"pk": 2, "model": "libretto.oeuvre", "fields": {"rght": 0, "lft": 0, "titre_secondaire": "Saint Nicolas vengeur", "owner": ["name"], "caracteristiques": [], "coordination": ", ou ", "etat": 2, "tree_id": 0, "titre": "arriv\u00e9e du p\u00e8re No\u00ebl", "extrait_de": null, "genre": null, "slug": "larrivee-du-pere-noel-ou-le-saint-nicolas-vengeur", "level": 0, "notes_publiques": "", "prefixe_titre": "L\u2019", "prefixe_titre_secondaire": "Le "}}, {"pk": 3, "model": "libretto.oeuvre", "fields": {"rght": 0, "lft": 0, "titre_secondaire": "l\u2019essai infructeux", "owner": null, "caracteristiques": [], "coordination": "", "etat": 2, "tree_id": 0, "titre": "", "extrait_de": null, "genre": null, "slug": "lessai-infructeux", "level": 0, "notes_publiques": "", "prefixe_titre": "", "prefixe_titre_secondaire": ""}}, {"pk": 4, "model": "libretto.oeuvre", "fields": {"rght": 0, "lft": 0, "titre_secondaire": "", "owner": null, "caracteristiques": [], "coordination": "", "etat": 2, "tree_id": 0, "titre": "Carmen", "extrait_de": null, "genre": 2, "slug": "carmen", "level": 0, "notes_publiques": "", "prefixe_titre": "", "prefixe_titre_secondaire": ""}}, {"pk": 5, "model": "libretto.oeuvre", "fields": {"rght": 0, "lft": 0, "titre_secondaire": "", "owner": null, "caracteristiques": [], "coordination": "", "etat": 2, "tree_id": 0, "titre": "", "extrait_de": null, "genre": 3, "slug": "sonate", "level": 0, "notes_publiques": "", "prefixe_titre": "", "prefixe_titre_secondaire": ""}}, {"pk": 6, "model": "libretto.oeuvre", "fields": {"rght": 0, "lft": 0, "titre_secondaire": "", "owner": null, "caracteristiques": [1, 2], "coordination": "", "etat": 2, "tree_id": 0, "titre": "", "extrait_de": null, "genre": 4, "slug": "symphonie", "level": 0, "notes_publiques": "", "prefixe_titre": "", "prefixe_titre_secondaire": ""}}, {"pk": 7, "model": "libretto.oeuvre", "fields": {"rght": 0, "lft": 0, "titre_secondaire": "Imposteur", "owner": ["name"], "caracteristiques": [3], "coordination": ", ou ", "etat": 2, "tree_id": 0, "titre": "Tartuffe", "extrait_de": null, "genre": 5, "slug": "le-tartuffe-ou-limposteur", "level": 0, "notes_publiques": "", "prefixe_titre": "Le ", "prefixe_titre_secondaire": "l\u2019"}}, {"pk": 1, "model": "libretto.naturedelieu", "fields": {"owner": ["name"], "nom": "ville", "referent": true, "slug": "ville", "nom_pluriel": ""}}, {"pk": 2, "model": "libretto.naturedelieu", "fields": {"owner": ["name"], "nom": "th\u00e9\u00e2tre", "referent": false, "slug": "theatre", "nom_pluriel": ""}}, {"pk": 3, "model": "libretto.naturedelieu", "fields": {"owner": null, "nom": "institution", "referent": false, "slug": "institution", "nom_pluriel": ""}}, {"pk": 4, "model": "libretto.naturedelieu", "fields": {"owner": null, "nom": "salle", "referent": false, "slug": "salle", "nom_pluriel": ""}}, {"pk": 1, "model": "libretto.lieu", "fields": {"etat": 2, "rght": 4, "historique": "", "parent": null, "level": 0, "notes_publiques": "", "nature": 1, "lft": 1, "nom": "Rouen", "tree_id": 2, "owner": ["name"], "slug": "rouen", "polymorphic_ctype": ["libretto", "lieudivers"]}}, {"pk": 2, "model": "libretto.lieu", "fields": {"etat": 2, "rght": 3, "historique": "", "parent": 1, "level": 1, "notes_publiques": "", "nature": 2, "lft": 2, "nom": "Th\u00e9\u00e2tre des Arts", "tree_id": 2, "owner": ["name"], "slug": "theatre-des-arts", "polymorphic_ctype": ["libretto", "lieudivers"]}}, {"pk": 3, "model": "libretto.lieu", "fields": {"etat": 2, "rght": 4, "historique": "", "parent": null, "level": 0, "notes_publiques": "", "nature": 1, "lft": 1, "nom": "Paris", "tree_id": 1, "owner": null, "slug": "paris", "polymorphic_ctype": ["libretto", "lieudivers"]}}, {"pk": 4, "model": "libretto.lieu", "fields": {"etat": 2, "rght": 3, "historique": "", "parent": 3, "level": 1, "notes_publiques": "", "nature": 3, "lft": 2, "nom": "Op\u00e9ra-comique", "tree_id": 1, "owner": null, "slug": "opera-comique", "polymorphic_ctype": ["libretto", "institution"]}}, {"pk": 3, "model": "libretto.lieudivers", "fields": {}}, {"pk": 1, "model": "libretto.lieudivers", "fields": {}}, {"pk": 2, "model": "libretto.lieudivers", "fields": {}}, {"pk": 4, "model": "libretto.institution", "fields": {}}, {"pk": 1, "model": "libretto.saison", "fields": {"owner": null, "debut": "2011-09-01", "fin": "2012-08-31", "lieu": 2}}]
+[
+  {
+    "pk": 1,
+    "model": "libretto.typedecaracteristique",
+    "fields": {
+      "owner": null,
+      "nom": "num\u00e9ro",
+      "nom_pluriel": "",
+      "classement": 1,
+      "polymorphic_ctype": [
+        "libretto",
+        "typedecaracteristiquedoeuvre"
+      ]
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.typedecaracteristique",
+    "fields": {
+      "owner": null,
+      "nom": "opus",
+      "nom_pluriel": "",
+      "classement": 2,
+      "polymorphic_ctype": [
+        "libretto",
+        "typedecaracteristiquedoeuvre"
+      ]
+    }
+  },
+  {
+    "pk": 3,
+    "model": "libretto.typedecaracteristique",
+    "fields": {
+      "owner": null,
+      "nom": "d\u00e9coupage",
+      "nom_pluriel": "",
+      "classement": 1,
+      "polymorphic_ctype": [
+        "libretto",
+        "typedecaracteristiquedoeuvre"
+      ]
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.caracteristique",
+    "fields": {
+      "owner": null,
+      "classement": 1,
+      "type": 1,
+      "valeur": "n\u00b0\u00a05",
+      "polymorphic_ctype": [
+        "libretto",
+        "caracteristiquedoeuvre"
+      ]
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.caracteristique",
+    "fields": {
+      "owner": null,
+      "classement": 1,
+      "type": 2,
+      "valeur": "op.\u00a0107",
+      "polymorphic_ctype": [
+        "libretto",
+        "caracteristiquedoeuvre"
+      ]
+    }
+  },
+  {
+    "pk": 3,
+    "model": "libretto.caracteristique",
+    "fields": {
+      "owner": null,
+      "classement": 1,
+      "type": 3,
+      "valeur": "en cinq actes et en vers",
+      "polymorphic_ctype": [
+        "libretto",
+        "caracteristiquedoeuvre"
+      ]
+    }
+  },
+  {
+    "pk": 4,
+    "model": "libretto.caracteristique",
+    "fields": {
+      "owner": ["name"],
+      "classement": 1,
+      "type": null,
+      "valeur": "premi\u00e8re repr\u00e9sentation",
+      "polymorphic_ctype": [
+        "libretto",
+        "caracteristiquedeprogramme"
+      ]
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.etat",
+    "fields": {
+      "nom": "brouillon",
+      "nom_pluriel": "",
+      "slug": "brouillon",
+      "owner": null,
+      "message": "",
+      "public": false
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.etat",
+    "fields": {
+      "nom": "nouveau",
+      "nom_pluriel": "nouveaux",
+      "slug": "nouveau",
+      "owner": null,
+      "message": "",
+      "public": true
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.elementdedistribution",
+    "fields": {
+      "individu": 2,
+      "profession": 4,
+      "evenement": null,
+      "owner": ["name"],
+      "partie": null
+    }
+  },
+  {
+    "pk": 4,
+    "model": "libretto.caracteristiquedeprogramme",
+    "fields": {}
+  },
+  {
+    "pk": 1,
+    "model": "libretto.elementdeprogramme",
+    "fields": {
+      "oeuvre": null,
+      "personnels": [],
+      "evenement": 1,
+      "autre": "\u00ab\u00a0Avez-vous \u00e9t\u00e9 bien sages les enfants\u00a0?\u00a0\u00bb",
+      "numerotation": "O",
+      "owner": ["name"],
+      "position": 0,
+      "distribution": [],
+      "caracteristiques": []
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.elementdeprogramme",
+    "fields": {
+      "oeuvre": 1,
+      "personnels": [],
+      "evenement": 1,
+      "autre": "",
+      "numerotation": "O",
+      "owner": ["name"],
+      "position": 1,
+      "distribution": [],
+      "caracteristiques": [4]
+    }
+  },
+  {
+    "pk": 3,
+    "model": "libretto.elementdeprogramme",
+    "fields": {
+      "oeuvre": 2,
+      "personnels": [],
+      "evenement": 1,
+      "autre": "",
+      "numerotation": "O",
+      "owner": ["name"],
+      "position": 3,
+      "distribution": [],
+      "caracteristiques": []
+    }
+  },
+  {
+    "pk": 4,
+    "model": "libretto.elementdeprogramme",
+    "fields": {
+      "oeuvre": null,
+      "personnels": [],
+      "evenement": 1,
+      "autre": "Distribution de tatan\u00e9es",
+      "numerotation": "O",
+      "owner": ["name"],
+      "position": 2,
+      "distribution": [],
+      "caracteristiques": []
+    }
+  },
+  {
+    "pk": 5,
+    "model": "libretto.elementdeprogramme",
+    "fields": {
+      "oeuvre": null,
+      "personnels": [],
+      "evenement": 1,
+      "autre": "Distribution de pains d\u2019\u00e9pices",
+      "numerotation": "O",
+      "owner": ["name"],
+      "position": 4,
+      "distribution": [],
+      "caracteristiques": []
+    }
+  },
+  {
+    "pk": 6,
+    "model": "libretto.elementdeprogramme",
+    "fields": {
+      "oeuvre": 7,
+      "personnels": [],
+      "evenement": 1,
+      "autre": "",
+      "numerotation": "O",
+      "owner": ["name"],
+      "position": 5,
+      "distribution": [1],
+      "caracteristiques": []
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.evenement",
+    "fields": {
+      "etat": 2,
+      "notes_publiques": "",
+      "relache": false,
+      "debut_lieu_approx": "",
+      "debut_heure_approx": "",
+      "debut_date": "2012-12-06",
+      "debut_date_approx": "",
+      "debut_lieu": 2,
+      "debut_heure": null,
+      "owner": ["name"],
+      "circonstance": "Saint-Nicolas"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.individu",
+    "fields": {
+      "etat": 2,
+      "nom": "Poquelin",
+      "particule_nom": "",
+      "designation": "P",
+      "professions": [3],
+      "notes_publiques": "",
+      "particule_nom_naissance": "",
+      "pseudonyme": "Moli\u00e8re",
+      "nom_naissance": "",
+      "prenoms": "Jean-Baptiste",
+      "owner": null,
+      "titre": "",
+      "biographie": "",
+      "slug": "poquelin"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.individu",
+    "fields": {
+      "etat": 2,
+      "nom": "Gassion",
+      "particule_nom": "",
+      "designation": "S",
+      "professions": [],
+      "notes_publiques": "",
+      "particule_nom_naissance": "",
+      "pseudonyme": "La M\u00f4me Piaf",
+      "nom_naissance": "",
+      "prenoms": "\u00c9dith",
+      "prenoms_complets": "\u00c9dith Giovanna",
+      "owner": null,
+      "titre": "F",
+      "biographie": "",
+      "slug": "gassion"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.profession",
+    "fields": {
+      "etat": 2,
+      "nom": "professeur",
+      "classement": 1,
+      "nom_feminin": "",
+      "parent": null,
+      "rght": 0,
+      "nom_pluriel": "",
+      "notes_publiques": "",
+      "level": 0,
+      "lft": 0,
+      "tree_id": 0,
+      "owner": ["name"],
+      "slug": "professeur"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.profession",
+    "fields": {
+      "etat": 2,
+      "nom": "\u00e9colier",
+      "classement": 1,
+      "nom_feminin": "",
+      "parent": null,
+      "rght": 0,
+      "nom_pluriel": "",
+      "notes_publiques": "",
+      "level": 0,
+      "lft": 0,
+      "tree_id": 0,
+      "owner": ["name"],
+      "slug": "ecolier"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "libretto.profession",
+    "fields": {
+      "etat": 2,
+      "nom": "auteur dramatique",
+      "classement": 1,
+      "nom_feminin": "",
+      "parent": null,
+      "rght": 2,
+      "nom_pluriel": "auteurs dramatiques",
+      "notes_publiques": "",
+      "level": 0,
+      "lft": 1,
+      "tree_id": 1,
+      "owner": ["name"],
+      "slug": "auteur-dramatique"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "libretto.profession",
+    "fields": {
+      "etat": 2,
+      "nom": "chanteur",
+      "classement": 1,
+      "nom_feminin": "chanteuse",
+      "parent": null,
+      "rght": 2,
+      "nom_pluriel": "",
+      "notes_publiques": "",
+      "level": 0,
+      "lft": 1,
+      "tree_id": 2,
+      "owner": ["name"],
+      "slug": "chanteur"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.typedesource",
+    "fields": {
+      "owner": null,
+      "nom": "compte rendu",
+      "slug": "compte-rendu",
+      "nom_pluriel": "comptes rendus"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.source",
+    "fields": {
+      "etat": 2,
+      "titre": "Journal de Rouen",
+      "transcription": "",
+      "notes_publiques": "",
+      "numero": "",
+      "date": "1828-01-15",
+      "owner": null,
+      "type": 1,
+      "page": ""
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.genredoeuvre",
+    "fields": {
+      "nom": "m\u00e9lodrame",
+      "nom_pluriel": "",
+      "referent": false,
+      "parents": [],
+      "owner": ["name"],
+      "slug": "melodrame"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.genredoeuvre",
+    "fields": {
+      "nom": "op\u00e9ra",
+      "nom_pluriel": "",
+      "referent": false,
+      "parents": [],
+      "owner": null,
+      "slug": "opera"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "libretto.genredoeuvre",
+    "fields": {
+      "nom": "sonate",
+      "nom_pluriel": "",
+      "referent": false,
+      "parents": [],
+      "owner": null,
+      "slug": "sonate"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "libretto.genredoeuvre",
+    "fields": {
+      "nom": "symphonie",
+      "nom_pluriel": "",
+      "referent": false,
+      "parents": [],
+      "owner": null,
+      "slug": "symphonie"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "libretto.genredoeuvre",
+    "fields": {
+      "nom": "com\u00e9die",
+      "nom_pluriel": "",
+      "referent": false,
+      "parents": [],
+      "owner": null,
+      "slug": "comedie"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.typedecaracteristiquedoeuvre",
+    "fields": {}
+  },
+  {
+    "pk": 3,
+    "model": "libretto.typedecaracteristiquedoeuvre",
+    "fields": {}
+  },
+  {
+    "pk": 2,
+    "model": "libretto.typedecaracteristiquedoeuvre",
+    "fields": {}
+  },
+  {
+    "pk": 3,
+    "model": "libretto.caracteristiquedoeuvre",
+    "fields": {}
+  },
+  {
+    "pk": 1,
+    "model": "libretto.caracteristiquedoeuvre",
+    "fields": {}
+  },
+  {
+    "pk": 2,
+    "model": "libretto.caracteristiquedoeuvre",
+    "fields": {}
+  },
+  {
+    "pk": 1,
+    "model": "libretto.partie",
+    "fields": {
+      "etat": 2,
+      "rght": 0,
+      "classement": 1,
+      "parent": null,
+      "level": 0,
+      "nom_pluriel": "pervers",
+      "notes_publiques": "",
+      "lft": 0,
+      "nom": "pervers",
+      "tree_id": 0,
+      "owner": ["name"],
+      "slug": "pervers",
+      "professions": [1],
+      "polymorphic_ctype": [
+        "libretto",
+        "instrument"
+      ]
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.partie",
+    "fields": {
+      "etat": 2,
+      "rght": 0,
+      "classement": 1,
+      "parent": null,
+      "level": 0,
+      "nom_pluriel": "enfants chouineurs",
+      "notes_publiques": "",
+      "lft": 0,
+      "nom": "enfant chouineur",
+      "tree_id": 0,
+      "owner": ["name"],
+      "slug": "enfant-chouineur",
+      "professions": [2],
+      "polymorphic_ctype": [
+        "libretto",
+        "instrument"
+      ]
+    }
+  },
+  {
+    "pk": 3,
+    "model": "libretto.partie",
+    "fields": {
+      "etat": 2,
+      "rght": 0,
+      "classement": 1,
+      "parent": null,
+      "level": 0,
+      "nom_pluriel": "",
+      "notes_publiques": "",
+      "lft": 0,
+      "nom": "violon",
+      "tree_id": 0,
+      "owner": null,
+      "slug": "violon",
+      "professions": [],
+      "polymorphic_ctype": [
+        "libretto",
+        "instrument"
+      ]
+    }
+  },
+  {
+    "pk": 4,
+    "model": "libretto.partie",
+    "fields": {
+      "etat": 2,
+      "rght": 0,
+      "classement": 1,
+      "parent": null,
+      "level": 0,
+      "nom_pluriel": "voix",
+      "notes_publiques": "",
+      "lft": 0,
+      "nom": "voix",
+      "tree_id": 0,
+      "owner": null,
+      "slug": "voix",
+      "professions": [],
+      "polymorphic_ctype": [
+        "libretto",
+        "instrument"
+      ]
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.instrument",
+    "fields": {"professions": [2]}
+  },
+  {
+    "pk": 1,
+    "model": "libretto.instrument",
+    "fields": {"professions": [1]}
+  },
+  {
+    "pk": 3,
+    "model": "libretto.instrument",
+    "fields": {"professions": []}
+  },
+  {
+    "pk": 4,
+    "model": "libretto.instrument",
+    "fields": {"professions": []}
+  },
+  {
+    "pk": 1,
+    "model": "libretto.pupitre",
+    "fields": {
+      "owner": ["name"],
+      "quantite_max": 1,
+      "quantite_min": 1,
+      "partie": 1,
+      "oeuvre": 1
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.pupitre",
+    "fields": {
+      "owner": ["name"],
+      "quantite_max": 15,
+      "quantite_min": 3,
+      "partie": 2,
+      "oeuvre": 1
+    }
+  },
+  {
+    "pk": 3,
+    "model": "libretto.pupitre",
+    "fields": {
+      "owner": null,
+      "quantite_max": 2,
+      "quantite_min": 2,
+      "partie": 3,
+      "oeuvre": 4
+    }
+  },
+  {
+    "pk": 4,
+    "model": "libretto.pupitre",
+    "fields": {
+      "owner": null,
+      "quantite_max": 8,
+      "quantite_min": 4,
+      "partie": 4,
+      "oeuvre": 4
+    }
+  },
+  {
+    "pk": 5,
+    "model": "libretto.pupitre",
+    "fields": {
+      "owner": null,
+      "quantite_max": 1,
+      "quantite_min": 1,
+      "partie": 3,
+      "oeuvre": 5
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.auteur",
+    "fields": {
+      "owner": ["name"],
+      "individu": 1,
+      "profession": 3,
+      "oeuvre": 7
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.oeuvre",
+    "fields": {
+      "rght": 0,
+      "lft": 0,
+      "titre_secondaire": "correction m\u00e9rit\u00e9e",
+      "owner": ["name"],
+      "caracteristiques": [],
+      "coordination": ", ou ",
+      "etat": 2,
+      "tree_id": 0,
+      "titre": "Le p\u00e8re Fouettard",
+      "extrait_de": null,
+      "genre": 1,
+      "slug": "le-pere-fouettard-ou-la-correction-meritee",
+      "level": 0,
+      "notes_publiques": "",
+      "prefixe_titre": "",
+      "prefixe_titre_secondaire": "la "
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.oeuvre",
+    "fields": {
+      "rght": 0,
+      "lft": 0,
+      "titre_secondaire": "Saint Nicolas vengeur",
+      "owner": ["name"],
+      "caracteristiques": [],
+      "coordination": ", ou ",
+      "etat": 2,
+      "tree_id": 0,
+      "titre": "arriv\u00e9e du p\u00e8re No\u00ebl",
+      "extrait_de": null,
+      "genre": null,
+      "slug": "larrivee-du-pere-noel-ou-le-saint-nicolas-vengeur",
+      "level": 0,
+      "notes_publiques": "",
+      "prefixe_titre": "L\u2019",
+      "prefixe_titre_secondaire": "Le "
+    }
+  },
+  {
+    "pk": 3,
+    "model": "libretto.oeuvre",
+    "fields": {
+      "rght": 0,
+      "lft": 0,
+      "titre_secondaire": "l\u2019essai infructeux",
+      "owner": null,
+      "caracteristiques": [],
+      "coordination": "",
+      "etat": 2,
+      "tree_id": 0,
+      "titre": "",
+      "extrait_de": null,
+      "genre": null,
+      "slug": "lessai-infructeux",
+      "level": 0,
+      "notes_publiques": "",
+      "prefixe_titre": "",
+      "prefixe_titre_secondaire": ""
+    }
+  },
+  {
+    "pk": 4,
+    "model": "libretto.oeuvre",
+    "fields": {
+      "rght": 0,
+      "lft": 0,
+      "titre_secondaire": "",
+      "owner": null,
+      "caracteristiques": [],
+      "coordination": "",
+      "etat": 2,
+      "tree_id": 0,
+      "titre": "Carmen",
+      "extrait_de": null,
+      "genre": 2,
+      "slug": "carmen",
+      "level": 0,
+      "notes_publiques": "",
+      "prefixe_titre": "",
+      "prefixe_titre_secondaire": ""
+    }
+  },
+  {
+    "pk": 5,
+    "model": "libretto.oeuvre",
+    "fields": {
+      "rght": 0,
+      "lft": 0,
+      "titre_secondaire": "",
+      "owner": null,
+      "caracteristiques": [],
+      "coordination": "",
+      "etat": 2,
+      "tree_id": 0,
+      "titre": "",
+      "extrait_de": null,
+      "genre": 3,
+      "slug": "sonate",
+      "level": 0,
+      "notes_publiques": "",
+      "prefixe_titre": "",
+      "prefixe_titre_secondaire": ""
+    }
+  },
+  {
+    "pk": 6,
+    "model": "libretto.oeuvre",
+    "fields": {
+      "rght": 0,
+      "lft": 0,
+      "titre_secondaire": "",
+      "owner": null,
+      "caracteristiques": [
+        1,
+        2
+      ],
+      "coordination": "",
+      "etat": 2,
+      "tree_id": 0,
+      "titre": "",
+      "extrait_de": null,
+      "genre": 4,
+      "slug": "symphonie",
+      "level": 0,
+      "notes_publiques": "",
+      "prefixe_titre": "",
+      "prefixe_titre_secondaire": ""
+    }
+  },
+  {
+    "pk": 7,
+    "model": "libretto.oeuvre",
+    "fields": {
+      "rght": 0,
+      "lft": 0,
+      "titre_secondaire": "Imposteur",
+      "owner": ["name"],
+      "caracteristiques": [3],
+      "coordination": ", ou ",
+      "etat": 2,
+      "tree_id": 0,
+      "titre": "Tartuffe",
+      "extrait_de": null,
+      "genre": 5,
+      "slug": "le-tartuffe-ou-limposteur",
+      "level": 0,
+      "notes_publiques": "",
+      "prefixe_titre": "Le ",
+      "prefixe_titre_secondaire": "l\u2019"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.naturedelieu",
+    "fields": {
+      "owner": ["name"],
+      "nom": "ville",
+      "referent": true,
+      "slug": "ville",
+      "nom_pluriel": ""
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.naturedelieu",
+    "fields": {
+      "owner": ["name"],
+      "nom": "th\u00e9\u00e2tre",
+      "referent": false,
+      "slug": "theatre",
+      "nom_pluriel": ""
+    }
+  },
+  {
+    "pk": 3,
+    "model": "libretto.naturedelieu",
+    "fields": {
+      "owner": null,
+      "nom": "institution",
+      "referent": false,
+      "slug": "institution",
+      "nom_pluriel": ""
+    }
+  },
+  {
+    "pk": 4,
+    "model": "libretto.naturedelieu",
+    "fields": {
+      "owner": null,
+      "nom": "salle",
+      "referent": false,
+      "slug": "salle",
+      "nom_pluriel": ""
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.lieu",
+    "fields": {
+      "etat": 2,
+      "rght": 4,
+      "historique": "",
+      "parent": null,
+      "level": 0,
+      "notes_publiques": "",
+      "nature": 1,
+      "lft": 1,
+      "nom": "Rouen",
+      "tree_id": 2,
+      "owner": ["name"],
+      "slug": "rouen"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "libretto.lieu",
+    "fields": {
+      "etat": 2,
+      "rght": 3,
+      "historique": "",
+      "parent": 1,
+      "level": 1,
+      "notes_publiques": "",
+      "nature": 2,
+      "lft": 2,
+      "nom": "Th\u00e9\u00e2tre des Arts",
+      "tree_id": 2,
+      "owner": ["name"],
+      "slug": "theatre-des-arts"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "libretto.lieu",
+    "fields": {
+      "etat": 2,
+      "rght": 4,
+      "historique": "",
+      "parent": null,
+      "level": 0,
+      "notes_publiques": "",
+      "nature": 1,
+      "lft": 1,
+      "nom": "Paris",
+      "tree_id": 1,
+      "owner": null,
+      "slug": "paris"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "libretto.lieu",
+    "fields": {
+      "etat": 2,
+      "rght": 3,
+      "historique": "",
+      "parent": 3,
+      "level": 1,
+      "notes_publiques": "",
+      "nature": 3,
+      "lft": 2,
+      "nom": "Op\u00e9ra-comique",
+      "is_institution": true,
+      "tree_id": 1,
+      "owner": null,
+      "slug": "opera-comique"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "libretto.saison",
+    "fields": {
+      "owner": null,
+      "debut": "2011-09-01",
+      "fin": "2012-08-31",
+      "lieu": 2
+    }
+  }
+]

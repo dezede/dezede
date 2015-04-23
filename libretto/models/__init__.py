@@ -1,6 +1,6 @@
 from .base import (
     Fichier, Etat, TypeDeParente, TypeDeCaracteristique, Caracteristique)
-from .espace_temps import NatureDeLieu, Lieu, LieuDivers, Institution, Saison
+from .espace_temps import NatureDeLieu, Lieu, Saison
 from .individu import (TypeDeParenteDIndividus, ParenteDIndividus,
                        Individu)
 from .personnel import (

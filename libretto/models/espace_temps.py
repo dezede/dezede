@@ -9,16 +9,14 @@ from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
 from django.utils.translation import (
-    ungettext_lazy, pgettext, ugettext_lazy as _)
+    ungettext_lazy, ugettext_lazy as _)
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-from polymorphic import PolymorphicQuerySet, PolymorphicManager, \
-    PolymorphicModel
 from tinymce.models import HTMLField
-from .base import CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, \
-                    PublishedManager, DATE_MSG, calc_pluriel, SlugModel, \
-                    UniqueSlugModel, PublishedQuerySet, CommonTreeQuerySet, \
-    CommonTreeManager, PolymorphicMPTTModelBase
+from .base import (
+    CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, PublishedManager,
+    DATE_MSG, calc_pluriel, SlugModel, UniqueSlugModel, PublishedQuerySet,
+    CommonTreeQuerySet, CommonTreeManager)
 from common.utils.html import href
 from .evenement import Evenement
 from .individu import Individu
@@ -26,7 +24,7 @@ from .oeuvre import Oeuvre
 
 
 __all__ = (
-    b'NatureDeLieu', b'Lieu', b'LieuDivers', b'Institution', b'Saison',
+    b'NatureDeLieu', b'Lieu', b'Saison',
 )
 
 
@@ -69,26 +67,24 @@ class NatureDeLieu(CommonModel, SlugModel):
         return 'nom__icontains',
 
 
-class LieuQuerySet(PolymorphicQuerySet, PublishedQuerySet,
+class LieuQuerySet(PublishedQuerySet,
                    CommonTreeQuerySet, GeoQuerySet):
     pass
 
 
-class LieuManager(CommonTreeManager, PolymorphicManager,
-                  PublishedManager, GeoManager):
+class LieuManager(CommonTreeManager, PublishedManager, GeoManager):
     queryset_class = LieuQuerySet
 
 
 @python_2_unicode_compatible
-class Lieu(MPTTModel, PolymorphicModel, AutoriteModel, UniqueSlugModel):
-    __metaclass__ = PolymorphicMPTTModelBase
-
+class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, db_index=True)
     parent = TreeForeignKey(
         'self', null=True, blank=True, related_name='enfants',
         verbose_name=_('parent'))
     nature = ForeignKey(NatureDeLieu, related_name='lieux',
                         verbose_name=_('nature'), on_delete=PROTECT)
+    is_institution = BooleanField(_('institution'), default=False)
     # TODO: Parentés d'institution avec périodes d'activité pour l'histoire des
     # institutions.
     historique = HTMLField(_('historique'), blank=True)
@@ -195,32 +191,6 @@ class Lieu(MPTTModel, PolymorphicModel, AutoriteModel, UniqueSlugModel):
     def autocomplete_search_fields():
         return ('nom__icontains',
                 'parent__nom__icontains')
-
-
-class LieuDivers(Lieu):
-    objects = LieuManager()
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('lieu', 'lieux', 1)
-        verbose_name_plural = ungettext_lazy('lieu', 'lieux', 2)
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('lieu_ptr',)
-
-
-class Institution(Lieu):
-    objects = LieuManager()
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('institution', 'institutions', 1)
-        verbose_name_plural = ungettext_lazy('institution', 'institutions', 2)
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('lieu_ptr',)
 
 
 @python_2_unicode_compatible

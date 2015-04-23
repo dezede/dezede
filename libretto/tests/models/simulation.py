@@ -217,7 +217,6 @@ class SeleniumTest(LiveServerTestCase):
             # Créé le lieu de l'ancrage de début.
             self.get_by_css('.debut_lieu .related-lookup').click()
             with self.new_popup(add='lieu ou institution'):
-                self.save()  # Choisit "lieu" parmi les polymorphes.
                 self.get_by_name('nom').send_keys('Rouen')
 
                 # Créé la nature du lieu de l'ancrage de début.

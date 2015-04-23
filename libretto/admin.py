@@ -536,7 +536,7 @@ class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
     search_fields = ('nom', 'nom_pluriel')
 
 
-class LieuCommonAdmin(OSMGeoAdmin, AutoriteAdmin):
+class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom', 'parent__nom',)
@@ -548,7 +548,8 @@ class LieuCommonAdmin(OSMGeoAdmin, AutoriteAdmin):
     readonly_fields = ('__str__', 'html', 'link',)
     fieldsets = (
         (None, {
-            'fields': ('nom', 'parent', 'nature', 'historique', 'geometry'),
+            'fields': (('nom', 'parent'), ('nature', 'is_institution'),
+                       'historique', 'geometry'),
         }),
     )
     layerswitcher = False
@@ -558,27 +559,6 @@ class LieuCommonAdmin(OSMGeoAdmin, AutoriteAdmin):
     point_zoom = default_zoom
     openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.11' \
                      '/OpenLayers.js'
-
-
-class LieuAdmin(VersionAdmin, LieuCommonAdmin, PolymorphicParentModelAdmin):
-    base_model = Lieu
-    child_models = (LieuDivers, Institution)
-
-
-class LieuChildAdmin(LieuCommonAdmin, PolymorphicChildModelAdmin):
-    base_model = Lieu
-
-
-class LieuDiversAdmin(VersionAdmin, LieuChildAdmin):
-    pass
-
-
-class InstitutionAdmin(VersionAdmin, LieuChildAdmin):
-    pass
-
-
-reversion.register(LieuDivers, follow=('lieu_ptr',))
-reversion.register(Institution, follow=('lieu_ptr',))
 
 
 class SaisonAdmin(VersionAdmin, CommonAdmin):
@@ -1086,8 +1066,6 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
 site.register(Etat, EtatAdmin)
 site.register(NatureDeLieu, NatureDeLieuAdmin)
 site.register(Lieu, LieuAdmin)
-site.register(LieuDivers, LieuDiversAdmin)
-site.register(Institution, InstitutionAdmin)
 site.register(Saison, SaisonAdmin)
 site.register(Profession, ProfessionAdmin)
 site.register(TypeDeParente, TypeDeParenteAdmin)

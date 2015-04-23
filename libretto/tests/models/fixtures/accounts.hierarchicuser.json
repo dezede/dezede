@@ -1,1 +1,36 @@
-[{"pk": 1, "model": "accounts.hierarchicuser", "fields": {"website": "", "last_name": "", "groups": [], "rght": 0, "lft": 0, "is_staff": true, "willing_to_be_mentor": false, "date_joined": "2013-06-12T17:53:03.134", "first_name": "", "object_id": null, "is_superuser": true, "last_login": "2013-06-12T17:53:03.134", "tree_id": 0, "fonctions": "", "presentation": "", "email": "a@b.com", "mentor": null, "username": "name", "legal_person": false, "literature": "", "is_active": true, "show_email": false, "content_type": null, "user_permissions": [], "password": "pbkdf2_sha256$10000$47r6WTc3CkYX$4zwvmLSL83F2kRDsDagztyVh5WxW+ysR8bP8ycOZqK8=", "level": 0, "website_verbose": "", "avatar": null}}]
+[
+  {
+    "pk": 1,
+    "model": "accounts.hierarchicuser",
+    "fields": {
+      "website": "",
+      "last_name": "",
+      "groups": [],
+      "rght": 0,
+      "lft": 0,
+      "is_staff": true,
+      "willing_to_be_mentor": false,
+      "date_joined": "2013-06-12T17:53:03.134",
+      "first_name": "",
+      "object_id": null,
+      "is_superuser": true,
+      "last_login": "2013-06-12T17:53:03.134",
+      "tree_id": 0,
+      "fonctions": "",
+      "presentation": "",
+      "email": "a@b.com",
+      "mentor": null,
+      "username": "name",
+      "legal_person": false,
+      "literature": "",
+      "is_active": true,
+      "show_email": false,
+      "content_type": null,
+      "user_permissions": [],
+      "password": "pbkdf2_sha256$10000$47r6WTc3CkYX$4zwvmLSL83F2kRDsDagztyVh5WxW+ysR8bP8ycOZqK8=",
+      "level": 0,
+      "website_verbose": "",
+      "avatar": null
+    }
+  }
+]
