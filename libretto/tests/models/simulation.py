@@ -4,8 +4,7 @@ from __future__ import unicode_literals
 import os
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-from django.test import LiveServerTestCase
-from django.test.utils import override_settings
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver import PhantomJS, Firefox
@@ -17,12 +16,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 PATH = os.path.abspath(os.path.dirname(__file__))
 
 
-# Ces réglages permettent étrangement d'être épargné d'un bug d'autant plus
-# étrange : Firefox se déconnecte intempestivement quand le mode DEBUG est
-# globalement False.  INTERNAL_IPS vide permet de désactiver la debug toolbar.
-@override_settings(
-    DEBUG=True, INTERNAL_IPS=())
-class SeleniumTest(LiveServerTestCase):
+class SeleniumTest(StaticLiveServerTestCase):
     cleans_up_after_itself = True
     fixtures = [
         os.path.join(PATH, 'fixtures/accounts.hierarchicuser.json'),
