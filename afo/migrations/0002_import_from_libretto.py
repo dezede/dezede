@@ -23,7 +23,7 @@ def fill_evenementafo_fields(apps, schema_editor):
         if len(l) == BATCH_SIZE:
             EvenementAFO.objects.bulk_create(l)
             l = []
-        EvenementAFO.objects.bulk_create(l)
+    EvenementAFO.objects.bulk_create(l)
 
 
 def delete_evenementafo(apps, schema_editor):
