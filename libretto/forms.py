@@ -55,7 +55,7 @@ class ConstrainedModelForm(ModelForm):
                             'avec %(other_fields)s.') % {
                         'field': verbose,
                         'other_fields': str_list_w_last(other_fields)}
-                    self.add_error_1_6(fieldname, msg)
+                    self.add_error(fieldname, msg)
 
         return data
 
