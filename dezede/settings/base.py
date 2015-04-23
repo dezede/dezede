@@ -106,6 +106,7 @@ INSTALLED_APPS = (
     'django_rq',
     'libretto',
     'dossiers',
+    'afo',
     'polymorphic_tree',
     'polymorphic',
     'mptt',

@@ -442,17 +442,6 @@ class Evenement(AutoriteModel):
         related_name='evenements', blank=True, null=True,
         verbose_name=_('caractéristiques'))
 
-    code_programme = CharField(_('code du programme'), max_length=55,
-                               blank=True)
-    exoneres = PositiveIntegerField(_('entrées exonérées'), null=True,
-                                    blank=True)
-    payantes = PositiveIntegerField(_('entrées payantes'), null=True,
-                                    blank=True)
-    frequentation = PositiveIntegerField(_('fréquentation totale'), null=True,
-                                         blank=True)
-    scolaires = PositiveIntegerField(_('entrées scolaires'), null=True,
-                                     blank=True)
-    jauge = PositiveIntegerField(_('jauge'), null=True, blank=True)
     recette_generale = DecimalField(_('recette générale'), max_digits=7,
                                     decimal_places=2, blank=True, null=True)
     recette_par_billets = CharField(

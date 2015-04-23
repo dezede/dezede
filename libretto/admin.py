@@ -554,10 +554,6 @@ class LieuCommonAdmin(OSMGeoAdmin, AutoriteAdmin):
         (None, {
             'fields': ('nom', 'parent', 'nature', 'historique', 'geometry'),
         }),
-        (_('Données politiques'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('type_de_scene',),
-        }),
     )
     layerswitcher = False
     default_lon = 300000

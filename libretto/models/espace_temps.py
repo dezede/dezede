@@ -94,17 +94,6 @@ class Lieu(MPTTModel, PolymorphicModel, AutoriteModel, UniqueSlugModel):
     historique = HTMLField(_('historique'), blank=True)
     geometry = GeometryField(
         _('point, tracé ou polygone'), blank=True, null=True, db_index=True)
-    code_postal = CharField(_('code postal'), max_length=10, blank=True)
-
-    # TODO: Déplacer ce champ dans un champ HStore, JSON ou JSONb en arrivant
-    #       à Django 1.8 ou 1.9.  En effet, ceci n’a rien à faire
-    #       dans la modélisation.
-    TYPES_DE_SCENES = (
-        ('N', 'nationale'),
-        ('C', 'conventionnée'),
-    )
-    type_de_scene = CharField(_('type de scène'), max_length=1, blank=True,
-                              choices=TYPES_DE_SCENES)
 
     objects = LieuManager()
 

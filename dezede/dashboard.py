@@ -44,6 +44,12 @@ class CustomIndexDashboard(Dashboard):
                              'libretto.models.oeuvre.Oeuvre',
                              'libretto.models.individu.Individu',
                              'libretto.models.espace_temps.Lieu',),
+                ),
+                modules.ModelList(
+                    _('AFO'),
+                    column=1,
+                    css_classes=('grp-collapse grp-closed',),
+                    models=('afo.models.*',),
                 )
             ]
         ))
