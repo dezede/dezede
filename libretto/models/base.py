@@ -348,7 +348,7 @@ class AncrageSpatioTemporel(object):
             if self.approx:
                 is_null = 'date_approx' not in self.not_null_fields
                 fields.append(('date_approx', CharField(
-                    _('date (approximative)'), max_length=200, blank=is_null,
+                    _('date (approximative)'), max_length=60, blank=is_null,
                     db_index=True,
                     help_text=_('Ne remplir que si la date est imprécise.'))))
         if self.has_heure:
@@ -358,7 +358,7 @@ class AncrageSpatioTemporel(object):
             if self.approx:
                 is_null = 'heure_approx' not in self.not_null_fields
                 fields.append(('heure_approx', CharField(
-                    _('heure (approximative)'), max_length=200, blank=is_null,
+                    _('heure (approximative)'), max_length=30, blank=is_null,
                     db_index=True,
                     help_text=_('Ne remplir que si l’heure est imprécise.'))))
         if self.has_lieu:
@@ -371,7 +371,7 @@ class AncrageSpatioTemporel(object):
             if self.approx:
                 is_null = 'lieu_approx' not in self.not_null_fields
                 fields.append(('lieu_approx', CharField(
-                    _('lieu (approximatif)'), max_length=200,
+                    _('lieu (approximatif)'), max_length=50,
                     blank=is_null, db_index=is_null,
                     help_text=_('Ne remplir que si le lieu (ou institution) '
                                 'est imprécis(e).'))))
