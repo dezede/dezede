@@ -127,6 +127,13 @@ class OeuvreForm(ConstrainedModelForm):
     def clean(self):
         data = super(OeuvreForm, self).clean()
 
+        # Ensures title look like "Le Tartuffe, ou l’Imposteur.".
+        data['prefixe_titre'] = capfirst(data['prefixe_titre'])
+        data['titre'] = capfirst(data['titre'])
+        data['prefixe_titre_secondaire'] = data[
+            'prefixe_titre_secondaire'].lower()
+        data['titre_secondaire'] = capfirst(data['titre_secondaire'])
+
         type_extrait = data['type_extrait']
         type_extrait_affiche = (
             type_extrait and type_extrait not in Oeuvre.TYPES_EXTRAIT_CACHES)
@@ -138,18 +145,12 @@ class OeuvreForm(ConstrainedModelForm):
                             'd’extrait.') % self.get_field_verbose(fieldname)
                     self.add_error(fieldname, msg)
                     self.add_error('type_extrait', msg)
-        elif not data['titre'] and not data['genre'] and not data['tempo']:
+        elif not (data['titre'] or data.get('genre') or data.get('tempo')):
             msg = _('Un titre, un genre ou un tempo '
                     'doit au moins être précisé.')
             self.add_error('titre', msg)
             self.add_error('genre', msg)
             self.add_error('tempo', msg)
-
-        # Ensures title look like "Le Tartuffe, ou l’Imposteur.".
-        data['prefixe_titre'] = capfirst(data['prefixe_titre'])
-        data['titre'] = capfirst(data['titre'])
-        data['prefixe_titre_secondaire'] = data['prefixe_titre_secondaire'].lower()
-        data['titre_secondaire'] = capfirst(data['titre_secondaire'])
 
         return data
 
