@@ -107,7 +107,6 @@ INSTALLED_APPS = (
     'libretto',
     'dossiers',
     'afo',
-    'polymorphic_tree',
     'polymorphic',
     'mptt',
     'endless_pagination',
