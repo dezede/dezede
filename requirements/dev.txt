@@ -24,3 +24,6 @@ tornado
 
 # Translation helper
 transifex-client==0.10
+
+# Test data deserialization
+PyYaml
