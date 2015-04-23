@@ -554,6 +554,11 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             r'^\D+$', _('Vous devez saisir les quantités '
                         'en toutes lettres.'))],
         help_text=_('Exemple : « trois actes » pour un opéra en trois actes.'))
+    incipit = CharField(
+        _('incipit'), max_length=100, blank=True, db_index=True,
+        help_text=_('Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 '
+                    'de l’acte III des <em>Contes d’Hoffmann</em> '
+                    'd’Offenbach.'))
     tempo = CharField(
         max_length=50, blank=True, db_index=True,
         help_text=_('Exemple : « Largo », « Presto ma non troppo », etc. '
@@ -610,11 +615,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         _('nom courant'), max_length=70, blank=True, db_index=True,
         help_text=_('Exemple : « barcarolle » pour le n° 13 de l’acte III des '
                     '<em>Contes d’Hoffmann</em> d’Offenbach.'))
-    incipit = CharField(
-        _('incipit'), max_length=100, blank=True, db_index=True,
-        help_text=_('Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 '
-                    'de l’acte III des <em>Contes d’Hoffmann</em> '
-                    'd’Offenbach.'))
     opus = CharField(
         _('opus'), max_length=5, blank=True, db_index=True,
         validators=[RegexValidator(
@@ -646,8 +646,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     CAHIER = 9
     ORDRE = 10
     MOUVEMENT = 11
+    PIECE = 12
     TYPES_EXTRAIT_ROMAINS = (ACTE, LIVRE, ORDRE)
-    TYPES_EXTRAIT_CACHES = (MORCEAU, MOUVEMENT)
+    TYPES_EXTRAIT_CACHES = (MORCEAU, MOUVEMENT, PIECE)
     TYPES_EXTRAIT = (
         (ACTE,      _('acte')),
         (TABLEAU,   _('tableau')),
@@ -660,6 +661,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         (CAHIER,    _('cahier')),
         (ORDRE,     _('ordre')),
         (MOUVEMENT, _('mouvement')),
+        (PIECE,     _('pièce de recueil')),
     )
     type_extrait = PositiveSmallIntegerField(
         _('type d’extrait'), choices=TYPES_EXTRAIT, blank=True, null=True,
@@ -732,7 +734,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         out = digits + suffix
         if self.type_extrait == self.MORCEAU:
             out = _('№ ') + out
-        elif self.type_extrait == self.MOUVEMENT:
+        elif self.type_extrait in (self.MOUVEMENT, self.PIECE):
             out += '.'
         elif show_type:
             return self.get_type_extrait_display() + ' ' + out
@@ -743,6 +745,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             yield ugettext('n° %s') % self.numero
         if self.coupe:
             yield hlp(ugettext('en %s') % self.coupe, ugettext('coupe'), tags)
+        if self.incipit:
+            yield hlp(ugettext('« %s »') % self.incipit,
+                      ugettext('incipit'), tags)
         # On ajoute uniquement le tempo s’il n’y a pas besoin de lui dans le
         # titre non significatif, c’est-à-dire s’il y a déjà un genre.
         if self.tempo and self.genre_id is not None:
@@ -766,9 +771,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             yield hlp(em(self.surnom, tags), ugettext('surnom'), tags)
         if self.nom_courant:
             yield hlp(self.nom_courant, ugettext('nom courant'), tags)
-        if self.incipit:
-            yield hlp(ugettext('« %s »') % self.incipit,
-                      ugettext('incipit'), tags)
         if self.opus:
             yield hlp(ugettext('op. %s') % self.opus, ugettext('opus'), tags)
         if self.ict:

@@ -249,18 +249,14 @@ class MembreInline(CustomStackedInline):
 
 
 class ElementDeDistributionInline(CustomTabularInline):
-    """
-    Utilisé uniquement pour les distributions de tête d'événement.
-    La restriction est que l’on n’utilise pas de champ 'partie'.
-    """
     model = ElementDeDistribution
     form = ElementDeDistributionForm
     verbose_name_plural = _('distribution')
-    raw_id_fields = ('individu', 'ensemble', 'profession')
+    raw_id_fields = ('individu', 'ensemble', 'partie', 'profession')
     autocomplete_lookup_fields = {
-        'fk': ['individu', 'ensemble', 'profession'],
+        'fk': ['individu', 'ensemble', 'partie', 'profession'],
     }
-    fields = ('individu', 'ensemble', 'profession',)
+    fields = ('individu', 'ensemble', 'partie', 'profession')
     classes = ('grp-collapse grp-open',)
 
 
@@ -880,10 +876,10 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
             'fields': (('genre', 'numero'), 'coupe'),
         }),
         (_('Données musicales'), {
-            'fields': (('tempo', 'tonalite'), 'sujet'),
+            'fields': ('incipit', ('tempo', 'tonalite'), 'sujet'),
         }),
         (None, {
-            'fields': (('surnom', 'nom_courant'), 'incipit'),
+            'fields': (('surnom', 'nom_courant'),),
         }),
         (None, {
             'fields': (('opus', 'ict'),),
