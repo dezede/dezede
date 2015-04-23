@@ -128,24 +128,24 @@ class OeuvreForm(ConstrainedModelForm):
         data = super(OeuvreForm, self).clean()
 
         # Ensures title look like "Le Tartuffe, ou l’Imposteur.".
-        data['prefixe_titre'] = capfirst(data['prefixe_titre'])
-        data['titre'] = capfirst(data['titre'])
-        data['prefixe_titre_secondaire'] = data[
-            'prefixe_titre_secondaire'].lower()
-        data['titre_secondaire'] = capfirst(data['titre_secondaire'])
+        data['prefixe_titre'] = capfirst(data.get('prefixe_titre'))
+        data['titre'] = capfirst(data.get('titre'))
+        data['prefixe_titre_secondaire'] = data.get(
+            'prefixe_titre_secondaire').lower()
+        data['titre_secondaire'] = capfirst(data.get('titre_secondaire'))
 
-        type_extrait = data['type_extrait']
+        type_extrait = data.get('type_extrait')
         type_extrait_affiche = (
             type_extrait and type_extrait not in Oeuvre.TYPES_EXTRAIT_CACHES)
 
         if type_extrait_affiche:
             for fieldname in ('genre', 'tempo'):
-                if data[fieldname]:
+                if data.get(fieldname):
                     msg = _('« %s » ne peut être saisi avec ce type '
                             'd’extrait.') % self.get_field_verbose(fieldname)
                     self.add_error(fieldname, msg)
                     self.add_error('type_extrait', msg)
-        elif not (data['titre'] or data.get('genre') or data.get('tempo')):
+        elif not (data.get('titre') or data.get('genre') or data.get('tempo')):
             msg = _('Un titre, un genre ou un tempo '
                     'doit au moins être précisé.')
             self.add_error('titre', msg)
@@ -188,7 +188,7 @@ class ElementDeDistributionForm(ConstrainedModelForm):
     def clean(self):
         data = super(ElementDeDistributionForm, self).clean()
 
-        if not (data[b'individu'] or data[b'ensemble']):
+        if not (data.get(b'individu') or data.get(b'ensemble')):
             msg = _('Vous devez remplir « Individu » ou « Ensemble ».')
             self.add_error('individu', msg)
             self.add_error('ensemble', msg)
@@ -218,7 +218,8 @@ class ElementDeProgrammeForm(ConstrainedModelForm):
     def clean(self):
         data = super(ElementDeProgrammeForm, self).clean()
 
-        if not (data[b'autre'] or data[b'oeuvre'] or data[b'distribution']):
+        if not (data.get(b'autre') or data.get(b'oeuvre')
+                or data.get(b'distribution')):
             raise ValidationError(_('Vous devez remplir au moins « Œuvre », '
                                     '« Autre » ou « Distribution ».'))
 
@@ -245,13 +246,14 @@ class SourceForm(ConstrainedModelForm):
     def clean(self):
         data = super(SourceForm, self).clean()
 
-        if not (data['titre'] or data['lieu_conservation'] or data['cote']):
+        if not (data.get('titre') or data.get('lieu_conservation')
+                or data.get('cote')):
             msg = _('Vous devez remplir « Titre » ou '
                     '« Lieu de conservation » et « Cote ».')
             self.add_error('titre', msg)
-            if not data['lieu_conservation']:
+            if not data.get('lieu_conservation'):
                 self.add_error('lieu_conservation', msg)
-            if not data['cote']:
+            if not data.get('cote'):
                 self.add_error('cote', msg)
 
         return data
