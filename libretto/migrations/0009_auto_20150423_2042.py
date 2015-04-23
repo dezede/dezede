@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('afo', '0003_auto_20150423_2042'),
+        ('afo', '0002_import_from_libretto'),
         ('dossiers', '0001_initial'),
         ('libretto', '0008_migrate_institutions'),
     ]

@@ -34,6 +34,9 @@ def migrate_typedensemble(apps, schema_editor):
     TypeDeCaracteristiqueDEnsemble = apps.get_model(
         'libretto', 'TypeDeCaracteristiqueDEnsemble')
 
+    if TypeDeCaracteristiqueDEnsemble.objects.count() == 0:
+        return
+
     assert TypeDeCaracteristiqueDEnsemble.objects.count() == 1
 
     bertrand = HierarchicUser.objects.get(
