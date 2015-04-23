@@ -195,9 +195,12 @@ class ElementDeProgrammeManager(CommonManager):
 class ElementDeProgramme(CommonModel):
     evenement = ForeignKey('Evenement', related_name='programme',
                            db_index=True, verbose_name=_('événement'))
-    oeuvre = ForeignKey('Oeuvre', related_name='elements_de_programme',
-                        verbose_name=_('œuvre'), blank=True, null=True,
-                        db_index=True, on_delete=PROTECT)
+    oeuvre = ForeignKey(
+        'Oeuvre', related_name='elements_de_programme',
+        verbose_name=_('œuvre'), blank=True, null=True, on_delete=PROTECT,
+        help_text=_('Vous pouvez croiser le titre et le nom des auteurs. '
+                    'Évitez les termes généraux comme « de », « la », « le », '
+                    '« avec ».'))
     autre = CharField(max_length=500, blank=True, db_index=True)
     caracteristiques = ManyToManyField(
         CaracteristiqueDeProgramme,
