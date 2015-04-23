@@ -156,8 +156,7 @@ class DossierDEvenements(MPTTModel, PublishedModel):
             kwargs['debut_date__lte'] = self.fin
         if self.pk:
             if self.lieux.exists():
-                lieux = self.lieux.non_polymorphic() \
-                    .get_descendants(include_self=True)
+                lieux = self.lieux.get_descendants(include_self=True)
                 kwargs['debut_lieu__in'] = lieux
             if self.oeuvres.exists():
                 oeuvres = self.oeuvres.get_descendants(include_self=True)

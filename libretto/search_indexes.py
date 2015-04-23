@@ -79,7 +79,7 @@ class EnsembleIndex(CommonSearchIndex, Indexable):
         return Ensemble
 
 
-class LieuIndex(PolymorphicCommonSearchIndex, Indexable):
+class LieuIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='html')
     BASE_BOOST = 1.5
 
