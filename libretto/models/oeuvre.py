@@ -293,7 +293,7 @@ class Pupitre(CommonModel):
     class Meta(object):
         verbose_name = ungettext_lazy('pupitre', 'pupitres', 1)
         verbose_name_plural = ungettext_lazy('pupitre', 'pupitres', 2)
-        ordering = ('partie',)
+        ordering = ('-soliste', 'partie')
         app_label = 'libretto'
 
     @staticmethod
