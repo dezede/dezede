@@ -194,14 +194,14 @@ class ElementDeProgrammeManager(CommonManager):
 @python_2_unicode_compatible
 class ElementDeProgramme(CommonModel):
     evenement = ForeignKey('Evenement', related_name='programme',
-                           db_index=True, verbose_name=_('événement'))
+                           verbose_name=_('événement'))
     oeuvre = ForeignKey(
         'Oeuvre', related_name='elements_de_programme',
         verbose_name=_('œuvre'), blank=True, null=True, on_delete=PROTECT,
         help_text=_('Vous pouvez croiser le titre et le nom des auteurs. '
                     'Évitez les termes généraux comme « de », « la », « le », '
                     '« avec ».'))
-    autre = CharField(max_length=500, blank=True, db_index=True)
+    autre = CharField(max_length=500, blank=True)
     caracteristiques = ManyToManyField(
         CaracteristiqueDeProgramme,
         related_name='elements_de_programme', blank=True, null=True,
@@ -438,8 +438,7 @@ class Evenement(AutoriteModel):
     fin = AncrageSpatioTemporel(short_description=_('fin'))
     programme_incomplet = BooleanField(_('programme incomplet'), default=False)
     relache = BooleanField(_('relâche'), default=False, db_index=True)
-    circonstance = CharField(_('circonstance'), max_length=500, blank=True,
-                             db_index=True)
+    circonstance = CharField(_('circonstance'), max_length=500, blank=True)
     caracteristiques = ManyToManyField(
         CaracteristiqueDeProgramme,
         related_name='evenements', blank=True, null=True,

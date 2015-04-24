@@ -47,13 +47,11 @@ class TypeDeParenteDIndividus(TypeDeParente):
 @python_2_unicode_compatible
 class ParenteDIndividus(CommonModel):
     type = ForeignKey('TypeDeParenteDIndividus', related_name='parentes',
-                      verbose_name=_('type'), db_index=True, on_delete=PROTECT)
+                      verbose_name=_('type'), on_delete=PROTECT)
     parent = ForeignKey('Individu', related_name='enfances',
-                        verbose_name=_('individu parent'), db_index=True,
-                        on_delete=PROTECT)
+                        verbose_name=_('individu parent'), on_delete=PROTECT)
     enfant = ForeignKey('Individu', related_name='parentes',
-                        verbose_name=_('individu enfant'), db_index=True,
-                        on_delete=PROTECT)
+                        verbose_name=_('individu enfant'), on_delete=PROTECT)
 
     class Meta(object):
         verbose_name = ungettext_lazy('parenté d’individus',

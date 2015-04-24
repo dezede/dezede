@@ -349,7 +349,6 @@ class AncrageSpatioTemporel(object):
                 is_null = 'date_approx' not in self.not_null_fields
                 fields.append(('date_approx', CharField(
                     _('date (approximative)'), max_length=60, blank=is_null,
-                    db_index=True,
                     help_text=_('Ne remplir que si la date est imprécise.'))))
         if self.has_heure:
             is_null = 'heure' not in self.not_null_fields
@@ -359,7 +358,6 @@ class AncrageSpatioTemporel(object):
                 is_null = 'heure_approx' not in self.not_null_fields
                 fields.append(('heure_approx', CharField(
                     _('heure (approximative)'), max_length=30, blank=is_null,
-                    db_index=True,
                     help_text=_('Ne remplir que si l’heure est imprécise.'))))
         if self.has_lieu:
             is_null = 'lieu' not in self.not_null_fields
@@ -371,8 +369,7 @@ class AncrageSpatioTemporel(object):
             if self.approx:
                 is_null = 'lieu_approx' not in self.not_null_fields
                 fields.append(('lieu_approx', CharField(
-                    _('lieu (approximatif)'), max_length=50,
-                    blank=is_null, db_index=is_null,
+                    _('lieu (approximatif)'), max_length=50, blank=is_null,
                     help_text=_('Ne remplir que si le lieu (ou institution) '
                                 'est imprécis(e).'))))
         return fields
@@ -593,7 +590,7 @@ class CaracteristiqueManager(PolymorphicManager, CommonManager):
 @python_2_unicode_compatible
 class Caracteristique(PolymorphicModel, CommonModel):
     type = ForeignKey(
-        'TypeDeCaracteristique', null=True, blank=True, db_index=True,
+        'TypeDeCaracteristique', null=True, blank=True,
         on_delete=PROTECT, related_name='caracteristiques',
         verbose_name=_('type'))
     valeur = CharField(_('valeur'), max_length=400,

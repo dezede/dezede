@@ -94,7 +94,7 @@ class SourceManager(PublishedManager):
 
 @python_2_unicode_compatible
 class Source(AutoriteModel):
-    type = ForeignKey('TypeDeSource', related_name='sources', db_index=True,
+    type = ForeignKey('TypeDeSource', related_name='sources',
                       help_text=ex(_('compte rendu')), verbose_name=_('type'),
                       on_delete=PROTECT)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True,

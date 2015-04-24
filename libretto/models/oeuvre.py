@@ -138,11 +138,11 @@ class Partie(MPTTModel, PolymorphicModel, AutoriteModel, UniqueSlugModel):
     # TODO: Changer le verbose_name en un genre de "types de voix"
     # pour les rôles, mais en plus générique (ou un help_text).
     professions = ManyToManyField('Profession', related_name='parties',
-        verbose_name=_('professions'), db_index=True, blank=True, null=True,
+        verbose_name=_('professions'), blank=True, null=True,
         help_text=_('La ou les profession(s) capable(s) '
                     'de jouer ce rôle ou cet instrument.'))
     parent = TreeForeignKey(
-        'self', related_name='enfant', blank=True, null=True, db_index=True,
+        'self', related_name='enfant', blank=True, null=True,
         verbose_name=_('rôle ou instrument parent')
     )
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
@@ -283,10 +283,8 @@ class Pupitre(CommonModel):
     # FIXME: Transformer ceci en BooleanField lorsque les valeurs None auront
     #        été corrigées.
     soliste = NullBooleanField(_('soliste'), default=False, db_index=True)
-    quantite_min = IntegerField(_('quantité minimale'), default=1,
-                                db_index=True)
-    quantite_max = IntegerField(_('quantité maximale'), default=1,
-                                db_index=True)
+    quantite_min = IntegerField(_('quantité minimale'), default=1)
+    quantite_max = IntegerField(_('quantité maximale'), default=1)
 
     objects = PupitreManager()
 
@@ -365,13 +363,11 @@ class ParenteDOeuvresManager(CommonManager):
 @python_2_unicode_compatible
 class ParenteDOeuvres(CommonModel):
     type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes',
-                      verbose_name=_('type'), db_index=True, on_delete=PROTECT)
+                      verbose_name=_('type'), on_delete=PROTECT)
     mere = ForeignKey(
-        'Oeuvre', related_name='parentes_filles', verbose_name=_('œuvre mère'),
-        db_index=True)
+        'Oeuvre', related_name='parentes_filles', verbose_name=_('œuvre mère'))
     fille = ForeignKey(
-        'Oeuvre', related_name='parentes_meres', verbose_name=_('œuvre fille'),
-        db_index=True)
+        'Oeuvre', related_name='parentes_meres', verbose_name=_('œuvre fille'))
 
     objects = ParenteDOeuvresManager()
 
@@ -463,11 +459,9 @@ class Auteur(CommonModel):
         'Source', null=True, blank=True,
         related_name='auteurs', verbose_name=_('source'))
     individu = ForeignKey('Individu', related_name='auteurs',
-                          verbose_name=_('individu'), db_index=True,
-                          on_delete=PROTECT)
+                          verbose_name=_('individu'), on_delete=PROTECT)
     profession = ForeignKey('Profession', related_name='auteurs',
-                            verbose_name=_('profession'), db_index=True,
-                            on_delete=PROTECT)
+                            verbose_name=_('profession'), on_delete=PROTECT)
 
     objects = AuteurManager()
 

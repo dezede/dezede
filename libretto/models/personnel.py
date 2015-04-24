@@ -354,12 +354,11 @@ class Devise(CommonModel):
 # TODO: Peut-être supprimer ce modèle.
 @python_2_unicode_compatible
 class Engagement(CommonModel):
-    individus = ManyToManyField('Individu', related_name='engagements',
-                                db_index=True)
+    individus = ManyToManyField('Individu', related_name='engagements')
     profession = ForeignKey('Profession', related_name='engagements',
-                            db_index=True, on_delete=PROTECT)
+                            on_delete=PROTECT)
     salaire = FloatField(blank=True, null=True, db_index=True)
-    devise = ForeignKey('Devise', blank=True, null=True, db_index=True,
+    devise = ForeignKey('Devise', blank=True, null=True,
                         related_name='engagements', on_delete=PROTECT)
 
     class Meta(object):
@@ -404,11 +403,9 @@ class TypeDePersonnel(CommonModel):
 @python_2_unicode_compatible
 class Personnel(CommonModel):
     type = ForeignKey('TypeDePersonnel', related_name='personnels',
-                      db_index=True, on_delete=PROTECT)
-    saison = ForeignKey('Saison', related_name='personnels', db_index=True,
-                        on_delete=PROTECT)
-    engagements = ManyToManyField('Engagement', related_name='personnels',
-                                  db_index=True)
+                      on_delete=PROTECT)
+    saison = ForeignKey('Saison', related_name='personnels', on_delete=PROTECT)
+    engagements = ManyToManyField('Engagement', related_name='personnels')
 
     class Meta(object):
         verbose_name = ungettext_lazy('personnel', 'personnels', 1)
