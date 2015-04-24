@@ -727,8 +727,11 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def get_extrait(self, show_type=True):
         if not self.type_extrait or not self.numero_extrait:
             return ''
-        digits, suffix = self.NUMERO_EXTRAIT_RE.match(
-            self.numero_extrait).groups()
+        match = self.NUMERO_EXTRAIT_RE.match(
+            self.numero_extrait)
+        if match is None:
+            return ''
+        digits, suffix = match.groups()
         if self.type_extrait in self.TYPES_EXTRAIT_ROMAINS:
             digits = to_roman(int(digits))
         out = digits + suffix
