@@ -375,7 +375,6 @@ class EvenementQuerySet(PublishedQuerySet):
                 'programme__oeuvre__auteurs__profession',
                 'programme__oeuvre__genre',
                 'programme__oeuvre__pupitres__partie',
-                'programme__oeuvre__caracteristiques',
                 'programme__oeuvre__extrait_de__genre',
                 'programme__oeuvre__extrait_de__pupitres__partie',
                 'programme__distribution__individu',

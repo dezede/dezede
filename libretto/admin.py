@@ -67,7 +67,7 @@ class CustomBaseModel(BaseModelAdmin):
 
     def get_queryset(self, request):
         user = request.user
-        qs = super(CustomBaseModel, self).queryset(request)
+        qs = super(CustomBaseModel, self).get_queryset(request)
         if not user.is_superuser and IS_POPUP_VAR not in request.REQUEST:
             qs = qs.filter(
                 owner__in=user.get_descendants(include_self=True))
@@ -632,7 +632,7 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'i', 'i')
 
     def get_queryset(self, request):
-        qs = super(IndividuAdmin, self).queryset(request)
+        qs = super(IndividuAdmin, self).get_queryset(request)
         return qs.select_related(
             'naissance_lieu', 'deces_lieu', 'etat', 'owner'
         ).prefetch_related('professions')
@@ -709,8 +709,7 @@ class TypeDeCaracteristiqueAdmin(
         VersionAdmin, TypeDeCaracteristiqueCommonAdmin,
         PolymorphicParentModelAdmin):
     base_model = TypeDeCaracteristique
-    child_models = (TypeDeCaracteristiqueDOeuvre,
-                    TypeDeCaracteristiqueDeProgramme)
+    child_models = (TypeDeCaracteristiqueDeProgramme,)
 
 
 class TypeDeCaracteristiqueChildAdmin(TypeDeCaracteristiqueCommonAdmin,
@@ -718,18 +717,11 @@ class TypeDeCaracteristiqueChildAdmin(TypeDeCaracteristiqueCommonAdmin,
     base_model = TypeDeCaracteristique
 
 
-class TypeDeCaracteristiqueDOeuvreAdmin(
-        VersionAdmin, TypeDeCaracteristiqueChildAdmin):
-    pass
-
-
 class TypeDeCaracteristiqueDeProgrammeAdmin(
         VersionAdmin, TypeDeCaracteristiqueChildAdmin):
     pass
 
 
-reversion.register(TypeDeCaracteristiqueDOeuvre,
-                   follow=('typedecaracteristique_ptr',))
 reversion.register(TypeDeCaracteristiqueDeProgramme,
                    follow=('typedecaracteristique_ptr',))
 
@@ -745,7 +737,6 @@ class CaracteristiqueAdmin(VersionAdmin, CaracteristiqueCommonAdmin,
                            PolymorphicParentModelAdmin):
     base_model = Caracteristique
     child_models = (
-        CaracteristiqueDOeuvre,
         CaracteristiqueDeProgramme,
     )
 
@@ -754,7 +745,6 @@ class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
                                 PolymorphicChildModelAdmin):
     base_model = Caracteristique
     type_to = {
-        CaracteristiqueDOeuvre: TypeDeCaracteristiqueDOeuvre,
         CaracteristiqueDeProgramme: TypeDeCaracteristiqueDeProgramme,
     }
 
@@ -768,16 +758,10 @@ class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
             .formfield_for_dbfield(db_field, **kwargs)
 
 
-class CaracteristiqueDOeuvreAdmin(VersionAdmin, CaracteristiqueChildAdmin):
-    pass
-
-
 class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CaracteristiqueChildAdmin):
     pass
 
 
-reversion.register(CaracteristiqueDOeuvre,
-                   follow=('caracteristique_ptr',))
 reversion.register(CaracteristiqueDeProgramme,
                    follow=('caracteristique_ptr',))
 
@@ -839,11 +823,9 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     list_filter = ('genre', 'type_extrait')
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
-    raw_id_fields = ('genre', 'caracteristiques', 'extrait_de',
-                     'creation_lieu')
+    raw_id_fields = ('genre', 'extrait_de', 'creation_lieu')
     autocomplete_lookup_fields = {
         'fk': ('genre', 'extrait_de', 'creation_lieu'),
-        'm2m': ('caracteristiques',),
     }
     readonly_fields = ('__str__', 'html', 'link',)
     inlines = (AuteurInline, PupitreInline, OeuvreMereInline)
@@ -863,9 +845,6 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
         }),
         (None, {
             'fields': (('opus', 'ict'),),
-        }),
-        (None, {
-            'fields': ('caracteristiques',),
         }),
         (None, {
             'fields': ('extrait_de', ('type_extrait', 'numero_extrait')),
@@ -1080,11 +1059,9 @@ site.register(Ensemble, EnsembleAdmin)
 # site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(TypeDeCaracteristique, TypeDeCaracteristiqueAdmin)
-site.register(TypeDeCaracteristiqueDOeuvre, TypeDeCaracteristiqueDOeuvreAdmin)
 site.register(TypeDeCaracteristiqueDeProgramme,
               TypeDeCaracteristiqueDeProgrammeAdmin)
 site.register(Caracteristique, CaracteristiqueAdmin)
-site.register(CaracteristiqueDOeuvre, CaracteristiqueDOeuvreAdmin)
 site.register(CaracteristiqueDeProgramme, CaracteristiqueDeProgrammeAdmin)
 site.register(Partie, PartieAdmin)
 site.register(Role, RoleAdmin)

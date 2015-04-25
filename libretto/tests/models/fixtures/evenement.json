@@ -1,89 +1,5 @@
 [
   {
-    "pk": 1,
-    "model": "libretto.typedecaracteristique",
-    "fields": {
-      "owner": null,
-      "nom": "num\u00e9ro",
-      "nom_pluriel": "",
-      "classement": 1,
-      "polymorphic_ctype": [
-        "libretto",
-        "typedecaracteristiquedoeuvre"
-      ]
-    }
-  },
-  {
-    "pk": 2,
-    "model": "libretto.typedecaracteristique",
-    "fields": {
-      "owner": null,
-      "nom": "opus",
-      "nom_pluriel": "",
-      "classement": 2,
-      "polymorphic_ctype": [
-        "libretto",
-        "typedecaracteristiquedoeuvre"
-      ]
-    }
-  },
-  {
-    "pk": 3,
-    "model": "libretto.typedecaracteristique",
-    "fields": {
-      "owner": null,
-      "nom": "d\u00e9coupage",
-      "nom_pluriel": "",
-      "classement": 1,
-      "polymorphic_ctype": [
-        "libretto",
-        "typedecaracteristiquedoeuvre"
-      ]
-    }
-  },
-  {
-    "pk": 1,
-    "model": "libretto.caracteristique",
-    "fields": {
-      "owner": null,
-      "classement": 1,
-      "type": 1,
-      "valeur": "n\u00b0\u00a05",
-      "polymorphic_ctype": [
-        "libretto",
-        "caracteristiquedoeuvre"
-      ]
-    }
-  },
-  {
-    "pk": 2,
-    "model": "libretto.caracteristique",
-    "fields": {
-      "owner": null,
-      "classement": 1,
-      "type": 2,
-      "valeur": "op.\u00a0107",
-      "polymorphic_ctype": [
-        "libretto",
-        "caracteristiquedoeuvre"
-      ]
-    }
-  },
-  {
-    "pk": 3,
-    "model": "libretto.caracteristique",
-    "fields": {
-      "owner": null,
-      "classement": 1,
-      "type": 3,
-      "valeur": "en cinq actes et en vers",
-      "polymorphic_ctype": [
-        "libretto",
-        "caracteristiquedoeuvre"
-      ]
-    }
-  },
-  {
     "pk": 4,
     "model": "libretto.caracteristique",
     "fields": {
@@ -448,36 +364,6 @@
   },
   {
     "pk": 1,
-    "model": "libretto.typedecaracteristiquedoeuvre",
-    "fields": {}
-  },
-  {
-    "pk": 3,
-    "model": "libretto.typedecaracteristiquedoeuvre",
-    "fields": {}
-  },
-  {
-    "pk": 2,
-    "model": "libretto.typedecaracteristiquedoeuvre",
-    "fields": {}
-  },
-  {
-    "pk": 3,
-    "model": "libretto.caracteristiquedoeuvre",
-    "fields": {}
-  },
-  {
-    "pk": 1,
-    "model": "libretto.caracteristiquedoeuvre",
-    "fields": {}
-  },
-  {
-    "pk": 2,
-    "model": "libretto.caracteristiquedoeuvre",
-    "fields": {}
-  },
-  {
-    "pk": 1,
     "model": "libretto.partie",
     "fields": {
       "etat": 2,
@@ -661,7 +547,6 @@
       "lft": 0,
       "titre_secondaire": "correction m\u00e9rit\u00e9e",
       "owner": ["name"],
-      "caracteristiques": [],
       "coordination": ", ou ",
       "etat": 2,
       "tree_id": 0,
@@ -683,7 +568,6 @@
       "lft": 0,
       "titre_secondaire": "Saint Nicolas vengeur",
       "owner": ["name"],
-      "caracteristiques": [],
       "coordination": ", ou ",
       "etat": 2,
       "tree_id": 0,
@@ -705,7 +589,6 @@
       "lft": 0,
       "titre_secondaire": "l\u2019essai infructeux",
       "owner": null,
-      "caracteristiques": [],
       "coordination": "",
       "etat": 2,
       "tree_id": 0,
@@ -727,7 +610,6 @@
       "lft": 0,
       "titre_secondaire": "",
       "owner": null,
-      "caracteristiques": [],
       "coordination": "",
       "etat": 2,
       "tree_id": 0,
@@ -749,7 +631,6 @@
       "lft": 0,
       "titre_secondaire": "",
       "owner": null,
-      "caracteristiques": [],
       "coordination": "",
       "etat": 2,
       "tree_id": 0,
@@ -771,10 +652,8 @@
       "lft": 0,
       "titre_secondaire": "",
       "owner": null,
-      "caracteristiques": [
-        1,
-        2
-      ],
+      "numero": "5",
+      "opus": "107",
       "coordination": "",
       "etat": 2,
       "tree_id": 0,
@@ -796,7 +675,7 @@
       "lft": 0,
       "titre_secondaire": "Imposteur",
       "owner": ["name"],
-      "caracteristiques": [3],
+      "coupe": "cinq actes et en vers",
       "coordination": ", ou ",
       "etat": 2,
       "tree_id": 0,

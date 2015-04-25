@@ -25,7 +25,7 @@ from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
     OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,
-    CommonTreeQuerySet, TypeDeParente, TypeDeCaracteristique, Caracteristique,
+    CommonTreeQuerySet, TypeDeParente,
     AncrageSpatioTemporel, PolymorphicMPTTModelBase)
 from common.utils.html import capfirst, hlp, href, cite, em
 from common.utils.text import str_list, str_list_w_last, to_roman
@@ -35,9 +35,8 @@ from .source import Source
 
 
 __all__ = (
-    b'GenreDOeuvre', b'TypeDeCaracteristiqueDOeuvre',b'CaracteristiqueDOeuvre',
-    b'Partie', b'Role', b'Instrument', b'Pupitre', b'TypeDeParenteDOeuvres',
-    b'ParenteDOeuvres', b'Auteur', b'Oeuvre'
+    b'GenreDOeuvre', b'Partie', b'Role', b'Instrument', b'Pupitre',
+    b'TypeDeParenteDOeuvres', b'ParenteDOeuvres', b'Auteur', b'Oeuvre'
 )
 
 
@@ -78,36 +77,6 @@ class GenreDOeuvre(CommonModel, SlugModel):
     @staticmethod
     def autocomplete_search_fields():
         return 'nom__icontains', 'nom_pluriel__icontains'
-
-
-class TypeDeCaracteristiqueDOeuvre(TypeDeCaracteristique):
-    class Meta(object):
-        verbose_name = ungettext_lazy('type de caractéristique d’œuvre',
-                                      'types de caracteristique d’œuvre', 1)
-        verbose_name_plural = ungettext_lazy(
-            'type de caractéristique d’œuvre',
-            'types de caracteristique d’œuvre',
-            2)
-        ordering = ('classement',)
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('typedecaracteristique_ptr',)
-
-
-class CaracteristiqueDOeuvre(Caracteristique):
-    class Meta(object):
-        verbose_name = ungettext_lazy('caractéristique d’œuvre',
-                                      'caractéristiques d’œuvre', 1)
-        verbose_name_plural = ungettext_lazy('caractéristique d’œuvre',
-                                             'caractéristiques d’œuvre', 2)
-        ordering = ('type', 'classement', 'valeur')
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('caracteristique_ptr', 'oeuvres',)
 
 
 class PartieQuerySet(PolymorphicQuerySet, PublishedQuerySet,
@@ -506,8 +475,7 @@ class OeuvreQuerySet(CommonTreeQuerySet, PublishedQuerySet):
 
     def prefetch_all(self):
         return self.select_related('genre').prefetch_related(
-            'pupitres__partie', 'caracteristiques',
-        )
+            'pupitres__partie')
 
 
 class OeuvreManager(CommonTreeManager, PublishedManager):
@@ -601,6 +569,15 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             'sur des motifs de <em>Lucia di Lammermoor</em> '
             '(&lt;em&gt; et &lt;/em&gt; sont les balises HTML '
             'pour mettre en emphase).'))
+    TRANSCRIPTION = 1
+    ORCHESTRATION = 2
+    ARRANGEMENTS = (
+        (TRANSCRIPTION, _('transcription')),
+        (ORCHESTRATION, _('orchestration'))
+    )
+    arrangement = PositiveSmallIntegerField(
+        _('arrangement'), choices=ARRANGEMENTS, blank=True, null=True,
+        db_index=True)
     surnom = CharField(
         _('surnom'), max_length=50, blank=True, db_index=True,
         help_text=_('Exemple : « Jupiter » pour la symphonie n° 41 '
@@ -622,9 +599,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         _('ICT'), max_length=25, blank=True, db_index=True,
         help_text='Indice Catalogue Thématique. Exemple : « RV 42 », '
                   '« K. 299d » ou encore « Hob. XVI:24 ».')
-    caracteristiques = ManyToManyField(
-        'CaracteristiqueDOeuvre', blank=True, null=True,
-        verbose_name=_('autres caractéristiques'), related_name='oeuvres')
     creation = AncrageSpatioTemporel(short_description=_('création'))
     extrait_de = TreeForeignKey(
         'self', null=True, blank=True,
@@ -764,6 +738,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             yield tonalite
         if self.sujet:
             yield hlp(ugettext('sur %s') % self.sujet, ugettext('sujet'), tags)
+        if self.arrangement is not None:
+            yield '(' + self.get_arrangement_display() + ')'
         if self.surnom:
             yield hlp(em(self.surnom, tags), ugettext('surnom'), tags)
         if self.nom_courant:
@@ -772,9 +748,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             yield hlp(ugettext('op. %s') % self.opus, ugettext('opus'), tags)
         if self.ict:
             yield hlp(self.ict, ugettext('Indice Catalogue Thématique'), tags)
-        if self.pk:
-            for caracteristique in self.caracteristiques.html_list(tags=tags):
-                yield caracteristique
 
     def caracteristiques_html(self, tags=True):
         return str_list(self.caracteristiques_iterator(tags=tags))
@@ -989,7 +962,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             'tempo', 'sujet',
             'surnom', 'nom_courant', 'incipit',
             'opus', 'ict',
-            'caracteristiques__valeur',
             'pupitres__partie__nom')
         if add_icontains:
             return [lookup + '__icontains' for lookup in lookups]

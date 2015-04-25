@@ -6,8 +6,7 @@ from .individu import (TypeDeParenteDIndividus, ParenteDIndividus,
 from .personnel import (
     Profession, Devise, Membre, Ensemble, Engagement, TypeDePersonnel,
     Personnel)
-from .oeuvre import (GenreDOeuvre, TypeDeCaracteristiqueDOeuvre,
-                     CaracteristiqueDOeuvre, Partie, Role, Instrument, Pupitre,
+from .oeuvre import (GenreDOeuvre, Partie, Role, Instrument, Pupitre,
                      TypeDeParenteDOeuvres, ParenteDOeuvres, Auteur, Oeuvre)
 from .evenement import (
     ElementDeDistribution, TypeDeCaracteristiqueDeProgramme,

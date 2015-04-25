@@ -34,7 +34,7 @@ class OeuvreTestCase(CommonTestCase):
         test_oeuvre(2, 1, 1, 'Carmen, Acte I')
         test_oeuvre(3, 6, 2, 'Carmen, I, № 5 Habanera de Carmen '
                              '« L’amour est un oiseau rebelle »')
-        test_oeuvre(4, 5, 0, 'Sonate pour violon')
+        test_oeuvre(4, 4, 0, 'Sonate pour violon')
         test_oeuvre(5, 2, 0, 'Symphonie n° 5')
         test_oeuvre(6, 0, 0, 'Le Tartuffe, ou l’Imposteur')
 
@@ -47,13 +47,13 @@ class OeuvreTestCase(CommonTestCase):
             with self.assertNumQueries(n_queries_prefetched):
                 self.assertEqual(oeuvre.titre_descr(), result)
 
-        test_oeuvre(1, 3, 0, 'Carmen, opéra')
-        test_oeuvre(2, 2, 1, 'Carmen, Acte I')
-        test_oeuvre(3, 7, 2, 'Carmen, I, № 5 Habanera de Carmen '
+        test_oeuvre(1, 1, 0, 'Carmen, opéra')
+        test_oeuvre(2, 1, 1, 'Carmen, Acte I')
+        test_oeuvre(3, 6, 2, 'Carmen, I, № 5 Habanera de Carmen '
                              '« L’amour est un oiseau rebelle »')
-        test_oeuvre(4, 6, 0, 'Sonate pour violon')
-        test_oeuvre(5, 3, 0, 'Symphonie n° 5, op. 107')
-        test_oeuvre(6, 2, 0, 'Le Tartuffe, ou l’Imposteur, '
+        test_oeuvre(4, 4, 0, 'Sonate pour violon')
+        test_oeuvre(5, 2, 0, 'Symphonie n° 5, op. 107')
+        test_oeuvre(6, 1, 0, 'Le Tartuffe, ou l’Imposteur, '
                              'comédie en cinq actes et en vers')
 
     def test_titre_html(self):
@@ -79,7 +79,7 @@ class OeuvreTestCase(CommonTestCase):
             '5-habanera-de-carmen-l-amour-est-un/">'
             '№ 5 Habanera de Carmen <span title="Incipit">'
             '« L’amour est un oiseau rebelle »</span></a>')
-        test_oeuvre(4, 5, 0,
+        test_oeuvre(4, 4, 0,
                     '<a href="/oeuvres/sonate-pour-violon/">'
                     'Sonate pour violon</a>')
         test_oeuvre(5, 2, 0,
@@ -98,13 +98,13 @@ class OeuvreTestCase(CommonTestCase):
             with self.assertNumQueries(n_queries_prefetched):
                 self.assertEqual(oeuvre.description_html(), result)
 
-        test_oeuvre(1, 3, 0, 'opéra')
-        test_oeuvre(2, 1, 0, '')
-        test_oeuvre(3, 1, 0, '')
-        test_oeuvre(4, 1, 0, '')
-        test_oeuvre(5, 1, 0, '<span title="Opus">op. 107</span>')
+        test_oeuvre(1, 1, 0, 'opéra')
+        test_oeuvre(2, 0, 0, '')
+        test_oeuvre(3, 0, 0, '')
+        test_oeuvre(4, 0, 0, '')
+        test_oeuvre(5, 0, 0, '<span title="Opus">op. 107</span>')
         test_oeuvre(
-            6, 2, 0,
+            6, 1, 0,
             'comédie <span title="Coupe">en cinq actes et en vers</span>')
 
     def test_html(self):
@@ -117,26 +117,26 @@ class OeuvreTestCase(CommonTestCase):
                 self.assertEqual(oeuvre.html(), result)
 
         test_oeuvre(
-            1, 4, 1,
+            1, 2, 1,
             '<a href="/oeuvres/carmen/"><cite>Carmen</cite></a>, opéra')
         test_oeuvre(
-            2, 3, 2,
+            2, 2, 2,
             '<cite>Carmen</cite>, '
             '<a href="/oeuvres/carmen-acte-i/">Acte I</a>')
         test_oeuvre(
-            3, 8, 3,
+            3, 7, 3,
             '<cite>Carmen</cite>, I, <a href="/oeuvres/carmen-i-'
             '5-habanera-de-carmen-l-amour-est-un/">'
             '№ 5 Habanera de Carmen <span title="Incipit">'
             '« L’amour est un oiseau rebelle »</span></a>')
-        test_oeuvre(4, 7, 1,
+        test_oeuvre(4, 5, 1,
                     '<a href="/oeuvres/sonate-pour-violon/">'
                     'Sonate pour violon</a>')
-        test_oeuvre(5, 4, 1,
+        test_oeuvre(5, 3, 1,
                     '<a href="/oeuvres/symphonie-n-5/">Symphonie n° 5</a>, '
                     '<span title="Opus">op. 107</span>')
         test_oeuvre(
-            6, 3, 1,
+            6, 2, 1,
             '<a href="/oeuvres/le-tartuffe-ou-l-imposteur/">'
             '<cite>Le Tartuffe, ou l’Imposteur</cite></a>, '
             'comédie <span title="Coupe">en cinq actes et en vers</span>')
