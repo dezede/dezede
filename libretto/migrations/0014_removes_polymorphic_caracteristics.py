@@ -27,6 +27,8 @@ class Migration(migrations.Migration):
                                new_name='CaracteristiqueDeProgramme'),
         migrations.RenameModel(old_name='TypeDeCaracteristique',
                                new_name='TypeDeCaracteristiqueDeProgramme'),
+        migrations.AlterUniqueTogether(name='caracteristiquedeprogramme',
+                                       unique_together={('type', 'valeur')}),
 
         # Mise à jour automatique des métadonnées des champs
         migrations.AlterModelOptions(name='caracteristiquedeprogramme', options={'ordering': ('type', 'classement', 'valeur'), 'verbose_name': 'caract\xe9ristique de programme', 'verbose_name_plural': 'caract\xe9ristiques de programme'}),

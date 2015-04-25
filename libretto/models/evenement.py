@@ -220,8 +220,7 @@ class CaracteristiqueDeProgramme(CommonModel):
     objects = CaracteristiqueManager()
 
     class Meta(object):
-        # FIXME: Retirer les doublons et activer ce qui suit.
-        # unique_together = ('type', 'valeur')
+        unique_together = ('type', 'valeur')
         verbose_name = ungettext_lazy(
             'caractéristique de programme',
             'caractéristiques de programme', 1)
