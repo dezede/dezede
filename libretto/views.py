@@ -458,10 +458,8 @@ class OeuvreViewSet(CommonViewSet):
         ('auteurs_html', 'auteurs__individu'),
         ('creation', '{creation_date}'),
     )
-    table_select_related = (
-        'genre', 'creation_lieu')
-    table_prefetch_related = (
-        'caracteristiques__type', 'auteurs__individu', 'auteurs__profession')
+    table_select_related = ('genre', 'creation_lieu')
+    table_prefetch_related = ('auteurs__individu', 'auteurs__profession')
 
     def __init__(self):
         super(OeuvreViewSet, self).__init__()

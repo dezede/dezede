@@ -698,72 +698,16 @@ class GenreDOeuvreAdmin(VersionAdmin, CommonAdmin):
     }
 
 
-class TypeDeCaracteristiqueCommonAdmin(CommonAdmin):
+class TypeDeCaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
-    list_filter = (PolymorphicChildModelFilter,)
     search_fields = ('nom', 'nom_pluriel')
 
 
-class TypeDeCaracteristiqueAdmin(
-        VersionAdmin, TypeDeCaracteristiqueCommonAdmin,
-        PolymorphicParentModelAdmin):
-    base_model = TypeDeCaracteristique
-    child_models = (TypeDeCaracteristiqueDeProgramme,)
-
-
-class TypeDeCaracteristiqueChildAdmin(TypeDeCaracteristiqueCommonAdmin,
-                                      PolymorphicChildModelAdmin):
-    base_model = TypeDeCaracteristique
-
-
-class TypeDeCaracteristiqueDeProgrammeAdmin(
-        VersionAdmin, TypeDeCaracteristiqueChildAdmin):
-    pass
-
-
-reversion.register(TypeDeCaracteristiqueDeProgramme,
-                   follow=('typedecaracteristique_ptr',))
-
-
-class CaracteristiqueCommonAdmin(CommonAdmin):
+class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
     list_editable = ('valeur', 'classement',)
-    list_filter = (PolymorphicChildModelFilter,)
     search_fields = ('type__nom', 'valeur')
-
-
-class CaracteristiqueAdmin(VersionAdmin, CaracteristiqueCommonAdmin,
-                           PolymorphicParentModelAdmin):
-    base_model = Caracteristique
-    child_models = (
-        CaracteristiqueDeProgramme,
-    )
-
-
-class CaracteristiqueChildAdmin(CaracteristiqueCommonAdmin,
-                                PolymorphicChildModelAdmin):
-    base_model = Caracteristique
-    type_to = {
-        CaracteristiqueDeProgramme: TypeDeCaracteristiqueDeProgramme,
-    }
-
-    def formfield_for_dbfield(self, db_field, **kwargs):
-        if db_field.name == 'type' and db_field.rel is not None \
-                and db_field.rel.to == TypeDeCaracteristique:
-            db_field = copy.copy(db_field)
-            db_field.rel = copy.copy(db_field.rel)
-            db_field.rel.to = self.type_to[self.model]
-        return super(CaracteristiqueChildAdmin, self) \
-            .formfield_for_dbfield(db_field, **kwargs)
-
-
-class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CaracteristiqueChildAdmin):
-    pass
-
-
-reversion.register(CaracteristiqueDeProgramme,
-                   follow=('caracteristique_ptr',))
 
 
 class PartieCommonAdmin(AutoriteAdmin):
@@ -861,8 +805,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     def get_queryset(self, request):
         qs = super(OeuvreAdmin, self).get_queryset(request)
         return qs.prefetch_related(
-            'auteurs__individu', 'auteurs__profession', 'pupitres__partie',
-            'caracteristiques__type')
+            'auteurs__individu', 'auteurs__profession', 'pupitres__partie')
 
 
 class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
@@ -1058,10 +1001,8 @@ site.register(Ensemble, EnsembleAdmin)
 # site.register(TypeDePersonnel, TypeDePersonnelAdmin)
 # site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
-site.register(TypeDeCaracteristique, TypeDeCaracteristiqueAdmin)
 site.register(TypeDeCaracteristiqueDeProgramme,
               TypeDeCaracteristiqueDeProgrammeAdmin)
-site.register(Caracteristique, CaracteristiqueAdmin)
 site.register(CaracteristiqueDeProgramme, CaracteristiqueDeProgrammeAdmin)
 site.register(Partie, PartieAdmin)
 site.register(Role, RoleAdmin)

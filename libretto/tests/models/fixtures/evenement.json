@@ -1,16 +1,12 @@
 [
   {
-    "pk": 4,
-    "model": "libretto.caracteristique",
+    "pk": 1,
+    "model": "libretto.caracteristiquedeprogramme",
     "fields": {
       "owner": ["name"],
       "classement": 1,
       "type": null,
-      "valeur": "premi\u00e8re repr\u00e9sentation",
-      "polymorphic_ctype": [
-        "libretto",
-        "caracteristiquedeprogramme"
-      ]
+      "valeur": "premi\u00e8re repr\u00e9sentation"
     }
   },
   {
@@ -49,11 +45,6 @@
     }
   },
   {
-    "pk": 4,
-    "model": "libretto.caracteristiquedeprogramme",
-    "fields": {}
-  },
-  {
     "pk": 1,
     "model": "libretto.elementdeprogramme",
     "fields": {
@@ -80,7 +71,7 @@
       "owner": ["name"],
       "position": 1,
       "distribution": [],
-      "caracteristiques": [4]
+      "caracteristiques": [1]
     }
   },
   {

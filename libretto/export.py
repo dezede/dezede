@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.db.models import Q
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
@@ -299,14 +298,9 @@ class ElementDeDistribution(CommonModelExporter):
 
 
 @exporter_registry.add
-class CaracteristiqueExporter(CommonModelExporter):
-    model = Caracteristique
-    columns = ('id', 'type__nom', 'valeur')
-
-
-@exporter_registry.add
-class CaracteristiqueDeProgrammeExporter(CaracteristiqueExporter):
+class CaracteristiqueDeProgrammeExporter(CommonModelExporter):
     model = CaracteristiqueDeProgramme
+    columns = ('id', 'type__nom', 'valeur')
 
 
 @exporter_registry.add

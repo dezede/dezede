@@ -17,7 +17,6 @@ from django.dispatch import receiver
 from django.template.defaultfilters import time
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
-from django.utils.safestring import mark_safe
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from autoslug import AutoSlugField
@@ -32,8 +31,8 @@ from tinymce.models import HTMLField
 from cache_tools import invalidate_object
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
-from common.utils.html import href, hlp, capfirst, date_html
-from common.utils.text import ex, str_list
+from common.utils.html import href, capfirst, date_html
+from common.utils.text import str_list
 from typography.utils import replace
 
 
@@ -42,7 +41,7 @@ __all__ = (
     b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
     b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'CommonTreeQuerySet',
     b'CommonTreeManager', b'Etat', b'OrderedDefaultDict',
-    b'TypeDeParente', b'TypeDeCaracteristique',
+    b'TypeDeParente',
 )
 
 
@@ -504,136 +503,6 @@ class AncrageSpatioTemporel(object):
 #
 # Modèles génériques polymorphes.
 #
-
-
-class TypeDeCaracteristiqueQuerySet(PolymorphicQuerySet, CommonQuerySet):
-    pass
-
-
-class TypeDeCaracteristiqueManager(PolymorphicManager, CommonManager):
-    queryset_class = TypeDeCaracteristiqueQuerySet
-
-
-@python_2_unicode_compatible
-class TypeDeCaracteristique(PolymorphicModel, CommonModel):
-    nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
-                    unique=True, db_index=True)
-    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
-                            help_text=PLURAL_MSG)
-    classement = SmallIntegerField(default=1)
-
-    objects = TypeDeCaracteristiqueManager()
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('type de caractéristique',
-                                      'types de caractéristique', 1)
-        verbose_name_plural = ungettext_lazy(
-            'type de caractéristique',
-            'types de caractéristique',
-            2)
-        ordering = ('classement',)
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('get_real_instance', 'caracteristiques',)
-
-    def pluriel(self):
-        return calc_pluriel(self)
-
-    def __str__(self):
-        return self.nom
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return 'nom__icontains', 'nom_pluriel__icontains',
-
-
-class CaracteristiqueQuerySet(PolymorphicQuerySet, CommonQuerySet):
-    # FIXME: Ceci est un hack en attendant que cette issue soit résolue :
-    #        https://github.com/chrisglass/django_polymorphic/issues/68
-    #        En passant à Django 1.7 il faut remplacer ça par un Prefetch.
-    def _next_is_sticky(self):
-        self.polymorphic_disabled = True
-        return super(CaracteristiqueQuerySet, self)._next_is_sticky()
-
-    def html_list(self, tags=True):
-        return [hlp(c.valeur, c.type, tags)
-                for c in self]
-
-    def html(self, tags=True, caps=False):
-        l = []
-        first = True
-        for c in self:
-            valeur = c.valeur
-            if first and caps:
-                valeur = capfirst(valeur)
-                first = False
-            valeur = mark_safe(valeur)
-            if c.type:
-                l.append(hlp(valeur, c.type, tags=tags))
-            else:
-                l.append(valeur)
-        return str_list(l)
-
-
-class CaracteristiqueManager(PolymorphicManager, CommonManager):
-    queryset_class = CaracteristiqueQuerySet
-
-    def html_list(self, tags=True):
-        return self.get_queryset().html_list(tags=tags)
-
-    def html(self, tags=True, caps=True):
-        return self.get_queryset().html(tags=tags, caps=caps)
-
-
-@python_2_unicode_compatible
-class Caracteristique(PolymorphicModel, CommonModel):
-    type = ForeignKey(
-        'TypeDeCaracteristique', null=True, blank=True,
-        on_delete=PROTECT, related_name='caracteristiques',
-        verbose_name=_('type'))
-    valeur = CharField(_('valeur'), max_length=400,
-                       help_text=ex(_('en trois actes')))
-    classement = SmallIntegerField(
-        _('classement'), default=1, db_index=True,
-        help_text=_('Par exemple, on peut choisir de classer '
-                    'les découpages par nombre d’actes.'))
-
-    objects = CaracteristiqueManager()
-
-    class Meta(object):
-        # FIXME: Retirer les doublons et activer ce qui suit.
-        # unique_together = ('type', 'valeur')
-        verbose_name = ungettext_lazy('caractéristique',
-                                      'caractéristiques', 1)
-        verbose_name_plural = ungettext_lazy('caractéristique',
-                                             'caractéristiques', 2)
-        ordering = ('type', 'classement', 'valeur')
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('get_real_instance',)
-
-    def html(self, tags=True, caps=False):
-        value = self.valeur
-        if caps:
-            value = capfirst(self.valeur)
-        value = mark_safe(value)
-        if self.type:
-            return hlp(value, self.type, tags=tags)
-        return value
-    html.allow_tags = True
-
-    def __str__(self):
-        if self.type:
-            return force_text(self.type) + ' : ' + strip_tags(self.valeur)
-        return strip_tags(self.valeur)
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return 'type__nom__icontains', 'valeur__icontains',
 
 
 class TypeDeParenteQuerySet(PolymorphicQuerySet, CommonQuerySet):

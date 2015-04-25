@@ -9,19 +9,20 @@ from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, BooleanField,
     PositiveSmallIntegerField, permalink, Q, get_model,
-    PROTECT, Count, DecimalField)
+    PROTECT, Count, DecimalField, SmallIntegerField)
 from django.utils.encoding import (
     python_2_unicode_compatible, force_text)
 from django.utils.html import strip_tags
+from django.utils.safestring import mark_safe
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from cache_tools import model_method_cached
 from .base import (
     CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
     PublishedManager, PublishedQuerySet,
-    TypeDeCaracteristique, Caracteristique, AncrageSpatioTemporel)
+    AncrageSpatioTemporel, calc_pluriel, PLURAL_MSG)
 from common.utils.html import capfirst, href, hlp, microdata
-from common.utils.text import str_list
+from common.utils.text import str_list, ex
 
 
 __all__ = (b'ElementDeDistribution', b'CaracteristiqueDeProgramme',
@@ -139,7 +140,14 @@ class ElementDeDistribution(CommonModel):
         )
 
 
-class TypeDeCaracteristiqueDeProgramme(TypeDeCaracteristique):
+@python_2_unicode_compatible
+class TypeDeCaracteristiqueDeProgramme(CommonModel):
+    nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
+                    unique=True, db_index=True)
+    nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
+                            help_text=PLURAL_MSG)
+    classement = SmallIntegerField(default=1)
+
     class Meta(object):
         verbose_name = ungettext_lazy(
             "type de caractéristique de programme",
@@ -152,11 +160,68 @@ class TypeDeCaracteristiqueDeProgramme(TypeDeCaracteristique):
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
-        return ('typedecaracteristique_ptr',)
+        return ('caracteristiques',)
+
+    def pluriel(self):
+        return calc_pluriel(self)
+
+    def __str__(self):
+        return self.nom
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'nom__icontains', 'nom_pluriel__icontains',
 
 
-class CaracteristiqueDeProgramme(Caracteristique):
+class CaracteristiqueQuerySet(CommonQuerySet):
+    def html_list(self, tags=True):
+        return [hlp(c.valeur, c.type, tags)
+                for c in self]
+
+    def html(self, tags=True, caps=False):
+        l = []
+        first = True
+        for c in self:
+            valeur = c.valeur
+            if first and caps:
+                valeur = capfirst(valeur)
+                first = False
+            valeur = mark_safe(valeur)
+            if c.type:
+                l.append(hlp(valeur, c.type, tags=tags))
+            else:
+                l.append(valeur)
+        return str_list(l)
+
+
+class CaracteristiqueManager(CommonManager):
+    queryset_class = CaracteristiqueQuerySet
+
+    def html_list(self, tags=True):
+        return self.get_queryset().html_list(tags=tags)
+
+    def html(self, tags=True, caps=True):
+        return self.get_queryset().html(tags=tags, caps=caps)
+
+
+@python_2_unicode_compatible
+class CaracteristiqueDeProgramme(CommonModel):
+    type = ForeignKey(
+        'TypeDeCaracteristiqueDeProgramme', null=True, blank=True,
+        on_delete=PROTECT, related_name='caracteristiques',
+        verbose_name=_('type'))
+    valeur = CharField(_('valeur'), max_length=400,
+                       help_text=ex(_('en trois actes')))
+    classement = SmallIntegerField(
+        _('classement'), default=1, db_index=True,
+        help_text=_('Par exemple, on peut choisir de classer '
+                    'les découpages par nombre d’actes.'))
+
+    objects = CaracteristiqueManager()
+
     class Meta(object):
+        # FIXME: Retirer les doublons et activer ce qui suit.
+        # unique_together = ('type', 'valeur')
         verbose_name = ungettext_lazy(
             'caractéristique de programme',
             'caractéristiques de programme', 1)
@@ -168,7 +233,26 @@ class CaracteristiqueDeProgramme(Caracteristique):
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
-        return ('caracteristique_ptr', 'elements_de_programme',)
+        return ('elements_de_programme',)
+
+    def html(self, tags=True, caps=False):
+        value = self.valeur
+        if caps:
+            value = capfirst(self.valeur)
+        value = mark_safe(value)
+        if self.type:
+            return hlp(value, self.type, tags=tags)
+        return value
+    html.allow_tags = True
+
+    def __str__(self):
+        if self.type:
+            return force_text(self.type) + ' : ' + strip_tags(self.valeur)
+        return strip_tags(self.valeur)
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'type__nom__icontains', 'valeur__icontains',
 
 
 class ElementDeProgrammeQueryset(CommonQuerySet):
