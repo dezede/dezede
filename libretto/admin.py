@@ -762,7 +762,6 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
                     'caracteristiques_html', 'auteurs_html',
                     'creation', 'link',)
-    list_editable = ('genre',)
     search_fields = Oeuvre.autocomplete_search_fields(add_icontains=False)
     list_filter = ('genre', 'type_extrait')
     list_select_related = ('genre', 'etat', 'owner')
@@ -804,8 +803,12 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
 
     def get_queryset(self, request):
         qs = super(OeuvreAdmin, self).get_queryset(request)
-        return qs.prefetch_related(
-            'auteurs__individu', 'auteurs__profession', 'pupitres__partie')
+        return qs.select_related(
+            'genre', 'extrait_de', 'creation_lieu',
+            'etat', 'owner'
+        ).prefetch_related(
+            'auteurs__individu', 'auteurs__profession', 'pupitres__partie'
+        )
 
 
 class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
@@ -901,7 +904,21 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
             'EXISTS (SELECT 1 FROM %s WHERE evenement_id = %s.id)'
             % (Source.evenements.field.m2m_db_table(),
                Evenement._meta.db_table)})
-        return qs
+        return qs.select_related(
+            'debut_lieu', 'debut_lieu__nature',
+            'debut_lieu__parent', 'debut_lieu__parent__nature',
+            'etat', 'owner').only(
+            'debut_date', 'debut_date_approx',
+            'debut_lieu__nom', 'debut_lieu__nature__referent',
+            'debut_lieu__parent__nom', 'debut_lieu__parent__nature__referent',
+            'debut_lieu_approx',
+            'debut_heure', 'debut_heure_approx',
+            'circonstance', 'relache',
+            'etat__nom', 'owner__first_name', 'owner__last_name',
+            # FIXME: Ces champs ne sont pas utiles mais déclenchent une erreur
+            # si on les retire.
+            'owner__username', 'owner__mentor',
+        )
 
 
 class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
