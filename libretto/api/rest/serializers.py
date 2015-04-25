@@ -65,14 +65,6 @@ class LieuSerializer(HyperlinkedModelSerializer):
         )
 
 
-class CaracteristiquesSerializer(Field):
-    def to_native(self, value):
-        d = defaultdict(list)
-        for c in value.all():
-            d[force_text(c.type)].append(c.valeur)
-        return d
-
-
 class AuteurSerializer(HyperlinkedModelSerializer):
     profession = Field()
 
@@ -85,7 +77,6 @@ class OeuvreSerializer(HyperlinkedModelSerializer):
     str = Field(source='__str__')
     titre = SerializerMethodField('get_titre')
     genre = Field()
-    caracteristiques = CaracteristiquesSerializer()
     auteurs = AuteurSerializer()
     creation = AncrageSpatioTemporelSerializer()
     evenements = RelatedField(many=True)
@@ -94,7 +85,7 @@ class OeuvreSerializer(HyperlinkedModelSerializer):
     class Meta(object):
         model = Oeuvre
         fields = (
-            'id', 'str', 'titre', 'genre', 'caracteristiques',
+            'id', 'str', 'titre', 'genre',
             'auteurs', 'creation', 'extrait_de',
             'front_url', 'url'
         )
