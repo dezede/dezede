@@ -763,7 +763,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                     'caracteristiques_html', 'auteurs_html',
                     'creation', 'link',)
     search_fields = Oeuvre.autocomplete_search_fields(add_icontains=False)
-    list_filter = ('genre', 'type_extrait')
+    list_filter = ('genre', 'tonalite', 'arrangement', 'type_extrait')
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
     raw_id_fields = ('genre', 'extrait_de', 'creation_lieu')
@@ -781,7 +781,8 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
             'fields': (('genre', 'numero'), 'coupe'),
         }),
         (_('Données musicales'), {
-            'fields': ('incipit', ('tempo', 'tonalite'), 'sujet'),
+            'fields': ('incipit', ('tempo', 'tonalite'),
+                       ('sujet', 'arrangement')),
         }),
         (None, {
             'fields': (('surnom', 'nom_courant'),),
