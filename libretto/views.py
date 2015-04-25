@@ -2,19 +2,22 @@
 
 from __future__ import unicode_literals
 from collections import OrderedDict
+import json
 
 from django.contrib.gis.geos import Polygon
 from django.core.exceptions import PermissionDenied
+from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 from django.db.models import get_model, Q, FieldDoesNotExist
 from django.db.models.query import QuerySet
-from django.http import HttpResponseBadRequest, HttpResponseRedirect, Http404
+from django.http import (
+    HttpResponseBadRequest, HttpResponseRedirect, Http404, HttpResponse)
 from django.shortcuts import redirect
 from django.utils.encoding import force_text
 from django.views.generic import ListView, DetailView, TemplateView
 from endless_pagination.views import AjaxListView
 from eztables.forms import DatatablesForm
-from eztables.views import DatatablesView
+from eztables.views import DatatablesView, JSON_MIMETYPE
 from haystack.query import SearchQuerySet
 from polymorphic import PolymorphicQuerySet
 from viewsets import ModelViewSet
@@ -275,6 +278,7 @@ class CommonTableView(TemplateView):
         return context
 
 
+# FIXME: Remplacer ceci par une vue entièrement écrite par nos soins.
 class CommonDatatablesView(PublishedMixin, DatatablesView):
     undefined_str = '−'
     link_on_column = 0
@@ -326,6 +330,12 @@ class CommonDatatablesView(PublishedMixin, DatatablesView):
 
     def column_search(self, queryset):
         return queryset
+
+    def json_response(self, data):
+        return HttpResponse(
+            json.dumps(data, cls=DjangoJSONEncoder),
+            content_type=JSON_MIMETYPE
+        )
 
 
 class CommonViewSet(ModelViewSet):
