@@ -186,9 +186,10 @@ class OeuvreExporter(RenduExporter):
     columns = (
         'id', 'rendu', 'auteurs_str', 'pupitres_str', 'prefixe_titre', 'titre',
         'coordination', 'prefixe_titre_secondaire', 'titre_secondaire',
-        'genre__nom', 'coupe', 'numero', 'tempo', 'tonalite', 'sujet', 'surnom',
-        'incipit', 'nom_courant', 'extrait_de', 'type_extrait',
-        'numero_extrait', 'creation_date', 'creation_date_approx',
+        'genre__nom', 'coupe', 'numero', 'incipit', 'tempo', 'tonalite',
+        'sujet', 'arrangement', 'surnom', 'nom_courant',
+        'extrait_de', 'type_extrait', 'numero_extrait',
+        'creation_date', 'creation_date_approx',
         'creation_heure', 'creation_heure_approx', 'creation_lieu',
         'creation_lieu_str', 'creation_lieu_approx') + AUTORITE_MODEL_COLUMNS
     m2ms = ('auteurs', 'pupitres', 'meres')
