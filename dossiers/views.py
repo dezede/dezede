@@ -108,8 +108,7 @@ class OperaComiqueListView(PublishedListView):
         oeuvres = (
             Oeuvre.objects.filter(sources__in=qs).distinct()
             .select_related('genre', 'creation_lieu', 'creation_lieu__nature')
-            .prefetch_related('auteurs__individu', 'auteurs__profession',
-                              'caracteristiques__type'))
+            .prefetch_related('auteurs__individu', 'auteurs__profession'))
         if self.request.GET.get('order_by') == 'creation_date':
             oeuvres = oeuvres.order_by('creation_date')
         else:
