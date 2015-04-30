@@ -631,11 +631,12 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     class MPTTMeta(object):
         parent_attr = 'extrait_de'
-    # FIXME: On ne peut ordonner par type d’extrait ou genre à cause d’un bug
-    #        dans MPTT. Corriger cela lors du passage à django-treebeard ou
-    #        autre solution d’arborescence.
+    # FIXME: On ne peut ordonner par type d’extrait, genre ou arrangement
+    #        à cause d’un bug dans MPTT. Corriger cela lors du passage
+    #        à django-treebeard ou autre solution d’arborescence.
     MPTTMeta.order_insertion_by = [k for k in Meta.ordering
-                                   if k not in ('type_extrait', 'genre')]
+                                   if k not in ('type_extrait', 'genre',
+                                                'arrangement')]
 
     @permalink
     def get_absolute_url(self):
