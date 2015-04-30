@@ -182,7 +182,8 @@ class PupitreInline(CustomTabularInline):
     autocomplete_lookup_fields = {
         'fk': ['partie'],
     }
-    fields = ('partie', 'soliste', 'quantite_min', 'quantite_max',)
+    fields = ('partie', 'soliste', 'quantite_min', 'quantite_max',
+              'facultatif')
     classes = ('grp-collapse grp-closed',)
 
 
