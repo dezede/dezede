@@ -488,7 +488,6 @@ class TypeDeParenteCommonAdmin(CommonAdmin):
                     'nom_relatif_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
                      'nom_relatif_pluriel', 'classement',)
-    list_filter = (PolymorphicChildModelFilter,)
     search_fields = ('nom', 'nom_relatif',
                      'nom_pluriel', 'nom_relatif_pluriel')
     fieldsets = (
@@ -500,27 +499,12 @@ class TypeDeParenteCommonAdmin(CommonAdmin):
     )
 
 
-class TypeDeParenteAdmin(VersionAdmin, TypeDeParenteCommonAdmin,
-                         PolymorphicParentModelAdmin):
-    base_model = TypeDeParente
-    child_models = (TypeDeParenteDOeuvres, TypeDeParenteDIndividus)
-
-
-class TypeDeParenteChildAdmin(TypeDeParenteCommonAdmin,
-                              PolymorphicChildModelAdmin):
-    base_model = TypeDeParente
-
-
-class TypeDeParenteDOeuvresAdmin(VersionAdmin, TypeDeParenteChildAdmin):
+class TypeDeParenteDOeuvresAdmin(VersionAdmin, TypeDeParenteCommonAdmin):
     pass
 
 
-class TypeDeParenteDIndividusAdmin(VersionAdmin, TypeDeParenteChildAdmin):
+class TypeDeParenteDIndividusAdmin(VersionAdmin, TypeDeParenteCommonAdmin):
     pass
-
-
-reversion.register(TypeDeParenteDOeuvres, follow=('typedeparente_ptr',))
-reversion.register(TypeDeParenteDIndividus, follow=('typedeparente_ptr',))
 
 
 class EtatAdmin(VersionAdmin, CommonAdmin):
@@ -540,7 +524,7 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom', 'parent__nom',)
-    list_filter = (PolymorphicChildModelFilter, 'nature',)
+    list_filter = ('nature',)
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ['parent'],
@@ -1008,7 +992,6 @@ site.register(NatureDeLieu, NatureDeLieuAdmin)
 site.register(Lieu, LieuAdmin)
 site.register(Saison, SaisonAdmin)
 site.register(Profession, ProfessionAdmin)
-site.register(TypeDeParente, TypeDeParenteAdmin)
 site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
 site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
 site.register(Individu, IndividuAdmin)

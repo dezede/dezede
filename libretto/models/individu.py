@@ -27,6 +27,7 @@ __all__ = (b'TypeDeParenteDIndividus', b'ParenteDIndividus', b'Individu')
 
 class TypeDeParenteDIndividus(TypeDeParente):
     class Meta(object):
+        unique_together = ('nom', 'nom_relatif')
         verbose_name = ungettext_lazy('type de parenté d’individus',
                                       'types de parenté d’individus', 1)
         verbose_name_plural = ungettext_lazy(
@@ -38,10 +39,9 @@ class TypeDeParenteDIndividus(TypeDeParente):
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
-        relations = ('typedeparente_ptr',)
         if all_relations:
-            relations += ('parentes',)
-        return relations
+            return ('parentes',)
+        return ()
 
 
 @python_2_unicode_compatible

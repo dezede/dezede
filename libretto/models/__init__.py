@@ -1,4 +1,4 @@
-from .base import Fichier, Etat, TypeDeParente
+from .base import Fichier, Etat
 from .espace_temps import NatureDeLieu, Lieu, Saison
 from .individu import (TypeDeParenteDIndividus, ParenteDIndividus, Individu)
 from .personnel import (

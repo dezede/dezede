@@ -22,8 +22,6 @@ from django.utils.translation import (
 from autoslug import AutoSlugField
 from mptt.managers import TreeManager
 from mptt.querysets import TreeQuerySet
-from polymorphic import PolymorphicModel, PolymorphicManager, \
-    PolymorphicQuerySet
 from slugify import Slugify
 from tinymce.models import HTMLField
 from cache_tools import invalidate_object
@@ -494,21 +492,8 @@ class AncrageSpatioTemporel(object):
         return False
 
 
-#
-# Modèles génériques polymorphes.
-#
-
-
-class TypeDeParenteQuerySet(PolymorphicQuerySet, CommonQuerySet):
-    pass
-
-
-class TypeDeParenteManager(PolymorphicManager, CommonManager):
-    queryset_class = TypeDeParenteQuerySet
-
-
 @python_2_unicode_compatible
-class TypeDeParente(PolymorphicModel, CommonModel):
+class TypeDeParente(CommonModel):
     nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=55, blank=True,
@@ -520,20 +505,8 @@ class TypeDeParente(PolymorphicModel, CommonModel):
         help_text=PLURAL_MSG)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
-    objects = TypeDeParenteManager()
-
     class Meta(object):
-        unique_together = ('nom', 'nom_relatif')
-        verbose_name = ungettext_lazy('type de parenté',
-                                      'types de parentés', 1)
-        verbose_name_plural = ungettext_lazy('type de parenté',
-                                             'types de parentés', 2)
-        ordering = ('classement',)
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('get_real_instance',)
+        abstract = True
 
     def pluriel(self):
         return calc_pluriel(self)

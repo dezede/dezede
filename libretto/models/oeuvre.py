@@ -294,19 +294,19 @@ class Pupitre(CommonModel):
 
 class TypeDeParenteDOeuvres(TypeDeParente):
     class Meta(object):
+        unique_together = ('nom', 'nom_relatif')
         verbose_name = ungettext_lazy('type de parenté d’œuvres',
                                       'types de parentés d’œuvres', 1)
         verbose_name_plural = ungettext_lazy('type de parenté d’œuvres',
                                              'types de parentés d’œuvres', 2)
         ordering = ('classement',)
-        app_label = 'libretto'
+        # app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
-        relations = ('typedeparente_ptr',)
         if all_relations:
-            relations += ('parentes',)
-        return relations
+            return ('parentes',)
+        return ()
 
 
 class ParenteDOeuvresManager(CommonManager):
