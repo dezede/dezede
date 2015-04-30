@@ -12,7 +12,7 @@ from django.db.models import (
     BooleanField, permalink, get_model, SmallIntegerField, PROTECT, Count,
     PositiveSmallIntegerField, NullBooleanField)
 from django.utils.encoding import python_2_unicode_compatible, force_text
-from django.utils.html import strip_tags
+from django.utils.html import strip_tags, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
@@ -248,6 +248,7 @@ class Pupitre(CommonModel):
     soliste = NullBooleanField(_('soliste'), default=False, db_index=True)
     quantite_min = IntegerField(_('quantité minimale'), default=1)
     quantite_max = IntegerField(_('quantité maximale'), default=1)
+    facultatif = BooleanField(_('facultatif'), default=False,)
 
     objects = PupitreManager()
 
@@ -267,11 +268,15 @@ class Pupitre(CommonModel):
         partie = (force_text(self.partie) if n_max == 1
                   else self.partie.pluriel())
         if n_min != n_max:
-            return ugettext('%s à %s %s') % (
+            out = ugettext('%s à %s %s') % (
                 apnumber(n_min), apnumber(n_max), partie)
         elif n_min > 1:
-            return '%s %s' % (apnumber(n_min), partie)
-        return partie
+            out = '%s %s' % (apnumber(n_min), partie)
+        else:
+            out = partie
+        if self.facultatif:
+            out = format_html('{} <em>ad libitum</em>', out)
+        return out
 
     def get_absolute_url(self):
         return self.partie.get_absolute_url()
