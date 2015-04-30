@@ -49,7 +49,6 @@
     "model": "libretto.elementdeprogramme",
     "fields": {
       "oeuvre": null,
-      "personnels": [],
       "evenement": 1,
       "autre": "\u00ab\u00a0Avez-vous \u00e9t\u00e9 bien sages les enfants\u00a0?\u00a0\u00bb",
       "numerotation": "O",
@@ -64,7 +63,6 @@
     "model": "libretto.elementdeprogramme",
     "fields": {
       "oeuvre": 1,
-      "personnels": [],
       "evenement": 1,
       "autre": "",
       "numerotation": "O",
@@ -79,7 +77,6 @@
     "model": "libretto.elementdeprogramme",
     "fields": {
       "oeuvre": 2,
-      "personnels": [],
       "evenement": 1,
       "autre": "",
       "numerotation": "O",
@@ -94,7 +91,6 @@
     "model": "libretto.elementdeprogramme",
     "fields": {
       "oeuvre": null,
-      "personnels": [],
       "evenement": 1,
       "autre": "Distribution de tatan\u00e9es",
       "numerotation": "O",
@@ -109,7 +105,6 @@
     "model": "libretto.elementdeprogramme",
     "fields": {
       "oeuvre": null,
-      "personnels": [],
       "evenement": 1,
       "autre": "Distribution de pains d\u2019\u00e9pices",
       "numerotation": "O",
@@ -124,7 +119,6 @@
     "model": "libretto.elementdeprogramme",
     "fields": {
       "oeuvre": 7,
-      "personnels": [],
       "evenement": 1,
       "autre": "",
       "numerotation": "O",

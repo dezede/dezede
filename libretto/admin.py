@@ -20,7 +20,6 @@ from polymorphic.admin import (
     PolymorphicChildModelFilter)
 from reversion import VersionAdmin
 import reversion
-from libretto.models.personnel import TypeDEnsemble
 
 from .models import *
 from .forms import (
@@ -651,28 +650,6 @@ class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     fieldsets_and_inlines_order = ('f', 'f', 'i')
 
 
-class DeviseAdmin(VersionAdmin, CommonAdmin):
-    list_display = ('__str__', 'nom', 'symbole',)
-    list_editable = ('nom', 'symbole',)
-
-
-class EngagementAdmin(VersionAdmin, CommonAdmin):
-    list_display = ('__str__', 'profession', 'salaire', 'devise',)
-    raw_id_fields = ('profession', 'individus',)
-    autocomplete_lookup_fields = {
-        'fk': ['profession'],
-        'm2m': ['individus'],
-    }
-
-
-class TypeDePersonnelAdmin(VersionAdmin, CommonAdmin):
-    list_display = ('nom',)
-
-
-class PersonnelAdmin(VersionAdmin, CommonAdmin):
-    filter_horizontal = ('engagements',)
-
-
 class GenreDOeuvreAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'has_related_objects')
     list_editable = ('nom', 'nom_pluriel',)
@@ -998,10 +975,6 @@ site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
 site.register(Individu, IndividuAdmin)
 site.register(TypeDEnsemble, TypeDEnsembleAdmin)
 site.register(Ensemble, EnsembleAdmin)
-# site.register(Devise, DeviseAdmin)
-# site.register(Engagement, EngagementAdmin)
-# site.register(TypeDePersonnel, TypeDePersonnelAdmin)
-# site.register(Personnel, PersonnelAdmin)
 site.register(GenreDOeuvre, GenreDOeuvreAdmin)
 site.register(TypeDeCaracteristiqueDeProgramme,
               TypeDeCaracteristiqueDeProgrammeAdmin)

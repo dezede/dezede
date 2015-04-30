@@ -357,10 +357,6 @@ class ElementDeProgrammeExporter(CommonModelExporter):
     def get_distribution_str(obj):
         return ', '.join([force_text(o) for o in obj.distribution.all()])
 
-    @staticmethod
-    def get_personnels_str(obj):
-        return ', '.join([force_text(o) for o in obj.personnels.all()])
-
 
 @exporter_registry.add
 class EvenementExporter(CommonModelExporter):

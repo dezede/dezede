@@ -304,9 +304,6 @@ class ElementDeProgramme(CommonModel):
     distribution = ManyToManyField(
         ElementDeDistribution, related_name='elements_de_programme',
         blank=True, null=True)
-    # FIXME: Retirer ceci si on supprime Personnel.
-    personnels = ManyToManyField('Personnel', blank=True, null=True,
-                                 related_name='elements_de_programme')
     part_d_auteur = DecimalField(_('P. A.'), max_digits=6, decimal_places=2,
                                  blank=True, null=True)
 

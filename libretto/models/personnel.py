@@ -2,9 +2,9 @@
 
 from __future__ import unicode_literals
 import warnings
-from django.db.models import CharField, ForeignKey, ManyToManyField, \
-    FloatField, permalink, SmallIntegerField, PROTECT, DateField, \
-    PositiveSmallIntegerField, Model, Q
+from django.db.models import (
+    CharField, ForeignKey, ManyToManyField, permalink, SmallIntegerField,
+    DateField, PositiveSmallIntegerField, Model, Q)
 from django.template.defaultfilters import date
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.safestring import mark_safe
@@ -12,18 +12,17 @@ from django.utils.translation import (
     ungettext_lazy, ugettext_lazy as _, ugettext)
 from common.utils.abbreviate import abbreviate
 from common.utils.html import capfirst, href, date_html, sc
-from common.utils.text import ex, str_list
+from common.utils.text import str_list
 from .base import (CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
                    UniqueSlugModel, AutoriteModel)
 from .evenement import Evenement
 
 
 __all__ = (
-    b'Profession', b'Devise', b'Membre', b'Ensemble', b'Engagement',
-    b'TypeDePersonnel', b'Personnel')
+    b'Profession', b'Membre', b'TypeDEnsemble', b'Ensemble')
 
 
-# TODO: Songer à l’arrivée du polymorphisme "Emploi".
+# TODO: Songer à l’arrivée des Emplois.
 @python_2_unicode_compatible
 class Profession(AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
@@ -307,102 +306,3 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     def autocomplete_search_fields():
         return ('particule_nom__icontains', 'nom__icontains',
                 'siege__nom__icontains')
-
-
-# TODO: Peut-être supprimer ce modèle.
-@python_2_unicode_compatible
-class Devise(CommonModel):
-    """
-    Modélisation naïve d’une unité monétaire.
-    """
-    nom = CharField(max_length=200, blank=True, help_text=ex(_('euro')),
-        unique=True, db_index=True)
-    symbole = CharField(max_length=10, help_text=ex(_('€')), unique=True,
-                        db_index=True)
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('devise', 'devises', 1)
-        verbose_name_plural = ungettext_lazy('devise', 'devises', 2)
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('engagements',)
-        return ()
-
-    def __str__(self):
-        if self.nom:
-            return self.nom
-        return self.symbole
-
-
-# TODO: Peut-être supprimer ce modèle.
-@python_2_unicode_compatible
-class Engagement(CommonModel):
-    individus = ManyToManyField('Individu', related_name='engagements')
-    profession = ForeignKey('Profession', related_name='engagements',
-                            on_delete=PROTECT)
-    salaire = FloatField(blank=True, null=True, db_index=True)
-    devise = ForeignKey('Devise', blank=True, null=True,
-                        related_name='engagements', on_delete=PROTECT)
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('engagement', 'engagements', 1)
-        verbose_name_plural = ungettext_lazy('engagement', 'engagements', 2)
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('personnels',)
-        return ()
-
-    def __str__(self):
-        return self.profession.nom
-
-
-# TODO: Peut-être supprimer ce modèle.
-@python_2_unicode_compatible
-class TypeDePersonnel(CommonModel):
-    nom = CharField(max_length=100, unique=True, db_index=True)
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('type de personnel',
-                                      'types de personnel', 1)
-        verbose_name_plural = ungettext_lazy('type de personnel',
-                                             'types de personnel', 2)
-        ordering = ('nom',)
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('personnels',)
-        return ()
-
-    def __str__(self):
-        return self.nom
-
-
-# TODO: Peut-être supprimer ce modèle.
-@python_2_unicode_compatible
-class Personnel(CommonModel):
-    type = ForeignKey('TypeDePersonnel', related_name='personnels',
-                      on_delete=PROTECT)
-    saison = ForeignKey('Saison', related_name='personnels', on_delete=PROTECT)
-    engagements = ManyToManyField('Engagement', related_name='personnels')
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('personnel', 'personnels', 1)
-        verbose_name_plural = ungettext_lazy('personnel', 'personnels', 2)
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('elements_de_programme',)
-        return ()
-
-    def __str__(self):
-        return force_text(self.type) + force_text(self.saison)
