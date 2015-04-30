@@ -34,7 +34,13 @@ class SeleniumTest(StaticLiveServerTestCase):
             cls.selenium = Firefox()
         elif driver_name == 'PhantomJS':
             cls.selenium = PhantomJS()
-        cls.selenium.set_page_load_timeout(5*60)
+
+        # La réponse du serveur et l'interprétation peuvent être lents.
+        timeout = 60
+        cls.selenium.implicitly_wait(timeout)
+        cls.selenium.set_script_timeout(timeout)
+        cls.selenium.set_page_load_timeout(timeout)
+
         cls.selenium.set_window_size(1366, 768)
         cls.wait = WebDriverWait(cls.selenium, 10)
         super(SeleniumTest, cls).setUpClass()
@@ -162,10 +168,6 @@ class SeleniumTest(StaticLiveServerTestCase):
         self.get_by_css('input[value="Connexion"]').click()
 
     def setUp(self):
-        # La réponse du serveur et l'interprétation peuvent être lents.
-        self.selenium.implicitly_wait(10)
-        self.selenium.set_page_load_timeout(10)
-
         self.current_window_handle = self.selenium.current_window_handle
 
         site = Site.objects.get_current()
