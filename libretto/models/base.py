@@ -21,11 +21,9 @@ from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from autoslug import AutoSlugField
 from mptt.managers import TreeManager
-from mptt.models import MPTTModelBase
 from mptt.querysets import TreeQuerySet
 from polymorphic import PolymorphicModel, PolymorphicManager, \
     PolymorphicQuerySet
-from polymorphic.base import PolymorphicModelBase
 from slugify import Slugify
 from tinymce.models import HTMLField
 from cache_tools import invalidate_object
@@ -82,10 +80,6 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
 #
 # Modélisation abstraite
 #
-
-
-class PolymorphicMPTTModelBase(MPTTModelBase, PolymorphicModelBase):
-    pass
 
 
 # TODO: Personnaliser order_by pour simuler automatiquement NULLS LAST

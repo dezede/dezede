@@ -26,7 +26,7 @@ from .base import (
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
     OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,
     CommonTreeQuerySet, TypeDeParente,
-    AncrageSpatioTemporel, PolymorphicMPTTModelBase)
+    AncrageSpatioTemporel)
 from common.utils.html import capfirst, hlp, href, cite, em
 from common.utils.text import str_list, str_list_w_last, to_roman
 from .individu import Individu
@@ -79,26 +79,22 @@ class GenreDOeuvre(CommonModel, SlugModel):
         return 'nom__icontains', 'nom_pluriel__icontains'
 
 
-class PartieQuerySet(PolymorphicQuerySet, PublishedQuerySet,
-                     CommonTreeQuerySet):
+class PartieQuerySet(PolymorphicQuerySet, PublishedQuerySet):
     pass
 
 
-class PartieManager(CommonTreeManager, PolymorphicManager,
-                    PublishedManager):
+class PartieManager(PolymorphicManager, PublishedManager):
     queryset_class = PartieQuerySet
 
 
 @python_2_unicode_compatible
-class Partie(MPTTModel, PolymorphicModel, AutoriteModel, UniqueSlugModel):
+class Partie(PolymorphicModel, AutoriteModel, UniqueSlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
     une œuvre musicale.
     Pour plus de compréhensibilité, on affiche « rôle ou instrument » au lieu
     de « partie ».
     """
-    __metaclass__ = PolymorphicMPTTModelBase
-
     nom = CharField(_('nom'), max_length=200, db_index=True,
                     help_text=_('Le nom d’une partie de la partition, '
                                 'instrumentale ou vocale.'))
@@ -110,10 +106,8 @@ class Partie(MPTTModel, PolymorphicModel, AutoriteModel, UniqueSlugModel):
         verbose_name=_('professions'), blank=True, null=True,
         help_text=_('La ou les profession(s) capable(s) '
                     'de jouer ce rôle ou cet instrument.'))
-    parent = TreeForeignKey(
-        'self', related_name='enfant', blank=True, null=True,
-        verbose_name=_('rôle ou instrument parent')
-    )
+    parent = ForeignKey('self', related_name='enfant', blank=True, null=True,
+                        verbose_name=_('rôle ou instrument parent'))
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
     objects = PartieManager()

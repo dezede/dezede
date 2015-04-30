@@ -20,10 +20,6 @@
       - libretto
       - instrument
     slug: violon
-    lft: 0
-    rght: 0
-    tree_id: 0
-    level: 0
 - model: libretto.Instrument
   fields:
     partie_ptr: 1
@@ -36,10 +32,6 @@
       - libretto
       - instrument
     slug: voix
-    lft: 0
-    rght: 0
-    tree_id: 0
-    level: 0
 - model: libretto.Instrument
   fields:
     partie_ptr: 2
@@ -95,10 +87,6 @@
       - libretto
       - role
     slug: carmen
-    lft: 0
-    rght: 0
-    tree_id: 0
-    level: 0
 - model: libretto.Role
   fields:
     partie_ptr: 3
@@ -111,10 +99,6 @@
       - libretto
       - instrument
     slug: choeur
-    lft: 0
-    rght: 0
-    tree_id: 0
-    level: 0
 - model: libretto.Instrument
   fields:
     partie_ptr: 4

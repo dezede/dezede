@@ -10,13 +10,11 @@ from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import (
     ungettext_lazy, ugettext_lazy as _, ugettext)
-from mptt.models import MPTTModel, TreeForeignKey
 from common.utils.abbreviate import abbreviate
 from common.utils.html import capfirst, href, date_html, sc
 from common.utils.text import ex, str_list
-from .base import CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,\
-    UniqueSlugModel, PublishedManager, AutoriteModel, CommonTreeManager, \
-    PublishedQuerySet, CommonTreeQuerySet
+from .base import (CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
+                   UniqueSlugModel, AutoriteModel)
 from .evenement import Evenement
 
 
@@ -25,17 +23,9 @@ __all__ = (
     b'TypeDePersonnel', b'Personnel')
 
 
-class ProfessionQuerySet(CommonTreeQuerySet, PublishedQuerySet):
-    pass
-
-
-class ProfessionManager(CommonTreeManager, PublishedManager):
-    queryset_class = ProfessionQuerySet
-
-
 # TODO: Songer à l’arrivée du polymorphisme "Emploi".
 @python_2_unicode_compatible
-class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
+class Profession(AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
@@ -43,11 +33,9 @@ class Profession(MPTTModel, AutoriteModel, UniqueSlugModel):
     nom_feminin = CharField(
         _('nom (au féminin)'), max_length=230, blank=True,
         help_text=_('Ne préciser que s’il est différent du nom.'))
-    parent = TreeForeignKey('Profession', blank=True, null=True,
-                            related_name='enfants', verbose_name=_('parent'))
+    parent = ForeignKey('self', blank=True, null=True,
+                        related_name='enfants', verbose_name=_('parent'))
     classement = SmallIntegerField(default=1, db_index=True)
-
-    objects = ProfessionManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('profession', 'professions', 1)
@@ -232,14 +220,12 @@ class Membre(CommonModel, PeriodeDActivite):
 
 
 @python_2_unicode_compatible
-class TypeDEnsemble(MPTTModel, CommonModel):
+class TypeDEnsemble(CommonModel):
     nom = CharField(_('nom'), max_length=30, help_text=LOWER_MSG)
     nom_pluriel = CharField(_('nom pluriel'), max_length=30, blank=True,
                             help_text=PLURAL_MSG)
-    parent = TreeForeignKey('TypeDEnsemble', null=True, blank=True,
-                            related_name='enfants', verbose_name=_('parent'))
-
-    objects = CommonTreeManager()
+    parent = ForeignKey('self', null=True, blank=True,
+                        related_name='enfants', verbose_name=_('parent'))
 
     class Meta(object):
         verbose_name = ungettext_lazy('type d’ensemble', 'types d’ensemble', 1)
