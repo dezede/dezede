@@ -252,8 +252,7 @@ class SeleniumTest(StaticLiveServerTestCase):
                 self.get_by_name('titre').send_keys('senna festeggiante')
                 self.get_link(
                     'Ajouter un objet auteur supplémentaire').click()
-                auteur = self.get_by_id(
-                    'auteurs0')
+                auteur = self.get_by_id('auteurs0')
 
                 # Créé l'individu auteur de l'œuvre.
                 auteur.find_element_by_css_selector(
@@ -304,9 +303,7 @@ class SeleniumTest(StaticLiveServerTestCase):
                 # Ajoute la partie de cette distribution.
                 self.get_by_css('.partie .related-lookup').click()
                 with self.new_popup(add='rôle ou instrument'):
-                    self.get_by_xpath(
-                        '//label[text()=" instrument"]/input').click()
-                    self.save()
+                    self.get_by_id('id_type_0').click()
                     self.get_by_name('nom').send_keys('violon')
                     self.get_by_css('.professions .related-lookup').click()
                     with self.new_popup(add='profession'):
