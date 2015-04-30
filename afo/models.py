@@ -2,18 +2,18 @@
 
 from __future__ import unicode_literals
 from django.db.models import (
-    Model, OneToOneField, CharField, PositiveIntegerField,
-    TextField)
+    OneToOneField, CharField, PositiveIntegerField, TextField
+)
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.translation import ugettext_lazy as _
 from libretto.models import Evenement, Lieu
+from libretto.models.base import CommonModel
 
 __all__ = ('EvenementAFO', 'LieuAFO')
 
 
-# FIXME inherit at least from CommonModel
 @python_2_unicode_compatible
-class EvenementAFO(Model):
+class EvenementAFO(CommonModel):
     evenement = OneToOneField(Evenement, related_name='afo',
                               verbose_name=_('événement'))
     nom_festival = CharField(_('nom du festival'), max_length=80, blank=True)
@@ -88,7 +88,7 @@ class EvenementAFO(Model):
 
 
 @python_2_unicode_compatible
-class LieuAFO(Model):
+class LieuAFO(CommonModel):
     lieu = OneToOneField(Lieu, related_name='afo',
                          verbose_name=_('lieu ou institution'))
     code_postal = CharField(_('code postal'), max_length=10, blank=True)
