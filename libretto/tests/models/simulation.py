@@ -10,7 +10,6 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver import PhantomJS, Firefox
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.wait import WebDriverWait
 
 
 PATH = os.path.abspath(os.path.dirname(__file__))
@@ -42,7 +41,6 @@ class SeleniumTest(StaticLiveServerTestCase):
         cls.selenium.set_page_load_timeout(timeout)
 
         cls.selenium.set_window_size(1366, 768)
-        cls.wait = WebDriverWait(cls.selenium, 10)
         super(SeleniumTest, cls).setUpClass()
 
     @classmethod
@@ -72,10 +70,6 @@ class SeleniumTest(StaticLiveServerTestCase):
         ActionChains(self.selenium).move_to_element(
             element).click_and_hold().release().perform()
 
-    def wait_until_ready(self):
-        self.wait.until(lambda driver: driver.execute_script(
-            'return document.readyState;') == 'complete')
-
     def switch(self, i=None):
         """
         Passe d'une fenêtre ou onglet à l'autre quand il n'y en a que deux.
@@ -95,7 +89,6 @@ class SeleniumTest(StaticLiveServerTestCase):
         Prend une capture d'écran avec un nom de fichier autoincrémenté.
         """
         self.screenshot_id += 1
-        self.wait_until_ready()
         # FIXME: Ceci est un workaround pour éviter que PhantomJS
         # redimensionne la fenêtre intempestivement.
         self.selenium.set_window_size(1366, 768)
