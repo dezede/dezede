@@ -296,7 +296,7 @@ class TypeDeParenteDOeuvres(TypeDeParente):
     class Meta(object):
         unique_together = ('nom', 'nom_relatif')
         verbose_name = ungettext_lazy('type de parenté d’œuvres',
-                                      'types de parentés d’œuvres', 1)
+                                      'types de parenté d’œuvres', 1)
         verbose_name_plural = ungettext_lazy('type de parenté d’œuvres',
                                              'types de parentés d’œuvres', 2)
         ordering = ('classement',)
