@@ -1,4 +1,4 @@
-{% load thumbnail i18n sekizai_tags routines %}
+{% load thumbnail i18n static_grouper routines %}
 
 {% published source.fichiers.all as filtered_fichiers %}
 {% with fichiers=filtered_fichiers.group_by_type %}
@@ -12,10 +12,10 @@
             {% for src in audio %}
               <source src="{{ src.fichier.url }}"
                       type="audio/{{ src.format }}" />
-              {% addtoblock 'metadata' %}
+              {% addstatic metadata %}
                 <meta property="og:audio" content="http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{{ src.fichier.url }}" />
                 <meta property="og:audio:type" content="audio/{{ src.format }}" />
-              {% endaddtoblock %}
+              {% endaddstatic %}
             {% endfor %}
           </audio>
         </li>
@@ -27,18 +27,18 @@
             {% for src in video %}
               <source src="{{ src.fichier.url }}"
                       type="video/{{ src.format }}" />
-              {% addtoblock 'metadata' %}
+              {% addstatic metadata %}
                 <meta property="og:video" content="http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{{ src.fichier.url }}" />
                 <meta property="og:video:type" content="video/{{ src.format }}" />
                 <meta property="og:video:width" content="{{ src.width }}" />
                 <meta property="og:video:height" content="{{ src.height }}" />
-              {% endaddtoblock %}
+              {% endaddstatic %}
             {% endfor %}
           </video>
         </li>
       {% endfor %}
 
-      {% addtoblock 'js' %}
+      {% addstatic js %}
         <script>
           function getModalOpener (media) {
             var modalId = $(media).parents('.modal')[0].id;
@@ -57,7 +57,7 @@
             });
           });
         </script>
-      {% endaddtoblock %}
+      {% endaddstatic %}
 
       {% for other in fichiers.others %}
         <li>
@@ -105,7 +105,7 @@
         <span class="count input-group-addon"></span>
       </div>
     </div>
-    {% addtoblock 'js' %}
+    {% addstatic js %}
       <script>
         $(function () {
           var images = [
@@ -115,17 +115,17 @@
               {small: '{{ small.url }}',
                medium: '{{ medium.url }}',
                original: '{{ image.fichier.url }}'}{% if not forloop.last %},{% endif %}
-              {% addtoblock 'metadata' %}
+              {% addstatic metadata %}
                 <meta property="og:image" content="http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{{ small.url }}" />
                 <meta property="og:image:width" content="{{ small.width }}" />
                 <meta property="og:image:height" content="{{ small.height }}" />
-              {% endaddtoblock %}
+              {% endaddstatic %}
             {% endfor %}
           ];
           new Reader($('#reader-{{ source.pk }}'), images);
         });
       </script>
-    {% endaddtoblock %}
+    {% endaddstatic %}
   {% endif %}
 {% endwith %}
 
@@ -151,8 +151,8 @@
   </a>
 {% endif %}
 
-{% addtoblock 'js' %}
+{% addstatic js %}
   <script>
     tooltips_reload();
   </script>
-{% endaddtoblock %}
+{% endaddstatic %}

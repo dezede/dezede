@@ -1,4 +1,4 @@
-{% load static i18n dezede_extras sekizai_tags %}
+{% load static i18n dezede_extras static_grouper %}
 {% load url from future %}
 
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -28,7 +28,7 @@
         <input id="navbar-search" type="search" name="q" class="form-control"
                placeholder="{% trans "Rechercher…" %}" />
       </form>
-      {% addtoblock 'js' strip %}
+      {% addstatic js %}
         <script>
           var suggestions = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('str'),
@@ -51,7 +51,7 @@
             document.location = object.url;
           });
         </script>
-      {% endaddtoblock %}
+      {% endaddstatic %}
 
       <ul class="nav navbar-nav navbar-right">
 

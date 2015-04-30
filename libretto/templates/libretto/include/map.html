@@ -1,24 +1,24 @@
-{% load sekizai_tags static i18n %}
+{% load static_grouper static i18n %}
 
 <div id='map'></div>
 
-{% addtoblock 'css' strip %}
+{% addstatic css %}
   <link rel="stylesheet" type="text/css" href="{% static 'leaflet-0.7.3/leaflet.css' %}" />
-{% endaddtoblock %}
+{% endaddstatic %}
 
-{% addtoblock 'css' strip %}
+{% addstatic css %}
   <link rel="stylesheet" type="text/css" href="{% static 'leaflet.fullscreen/dist/leaflet.fullscreen.css' %}" />
-{% endaddtoblock %}
+{% endaddstatic %}
 
-{% addtoblock 'js' strip %}
+{% addstatic js %}
   <script type="text/javascript" src="{% static 'leaflet-0.7.3/leaflet.js' %}"></script>
-{% endaddtoblock %}
+{% endaddstatic %}
 
-{% addtoblock 'js' strip %}
+{% addstatic js %}
   <script src="{% static 'leaflet.fullscreen/dist/Leaflet.fullscreen.min.js' %}"></script>
-{% endaddtoblock %}
+{% endaddstatic %}
 
-{% addtoblock 'js' %}
+{% addstatic js %}
   <script>
     var map = L.map('map', {
       layers: [L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')],
@@ -115,7 +115,7 @@
       tooltips_reload($mapControls);
     });
   </script>
-{% endaddtoblock %}
+{% endaddstatic %}
 
 <div class="row">
   <div class="col-xs-3">{% trans 'Niveau de détail' %}</div>
@@ -130,7 +130,7 @@
   </div>
 </div>
 
-{% addtoblock 'js' %}
+{% addstatic js %}
   <script>
     $(function() {
       $('#min-places-slider').slider({
@@ -158,4 +158,4 @@
       });
     });
   </script>
-{% endaddtoblock %}
+{% endaddstatic %}

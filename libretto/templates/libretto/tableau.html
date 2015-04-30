@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n sekizai_tags eztables static %}
+{% load i18n static_grouper eztables static %}
 {% load url from future %}
 
 {% block header %}
@@ -22,13 +22,13 @@
     </thead>
   </table>
 
-  {% addtoblock 'js' strip %}
+  {% addstatic js %}
     {% datatables_js %}
-  {% endaddtoblock %}
-  {% addtoblock 'js' strip %}
+  {% endaddstatic %}
+  {% addstatic js %}
     {% datatables_bootstrap_js %}
-  {% endaddtoblock %}
-  {% addtoblock 'js' strip %}
+  {% endaddstatic %}
+  {% addstatic js %}
     <script>
       $(document).ready(function() {
         $('#data-table').dataTable({
@@ -59,6 +59,6 @@
         });
       });
     </script>
-  {% endaddtoblock %}
+  {% endaddstatic %}
 
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static sekizai_tags crispy_forms_tags humanize extras %}
+{% load i18n static crispy_forms_tags humanize extras static_grouper %}
 {% load url from future %}
 
 
@@ -18,12 +18,12 @@
       </aside>
     </div>
 
-    {% for css in form.media.render_js %}
-      {% addtoblock 'css' %}{{ css }}{% endaddtoblock %}
+    {% for css in form.media.render_css %}
+      {% addstatic css %}{{ css }}{% endaddstatic %}
     {% endfor %}
 
     {% for js in form.media.render_js %}
-      {% addtoblock 'js' %}{{ js }}{% endaddtoblock %}
+      {% addstatic js %}{{ js }}{% endaddstatic %}
     {% endfor %}
 
     <div class="col-xs-12 col-sm-8 col-lg-9">
@@ -112,10 +112,10 @@
 
   </div>
 
-  {% addtoblock 'js' strip %}
+  {% addstatic js %}
     <script src="{% static 'js/run_affix.js' %}"></script>
-  {% endaddtoblock %}
-  {% addtoblock 'js' strip %}
+  {% endaddstatic %}
+  {% addstatic js %}
     <script>
       $(function () {
         $.endlessPaginate({
@@ -188,6 +188,6 @@
         });
       });
     </script>
-  {% endaddtoblock %}
+  {% endaddstatic %}
 
 {% endblock %}

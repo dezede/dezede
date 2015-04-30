@@ -1,4 +1,4 @@
-{% load routines i18n sekizai_tags %}
+{% load routines i18n static_grouper %}
 
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal"
@@ -21,4 +21,5 @@
   {% include 'libretto/source_content.html' %}
 </div>
 
-{% render_block 'js' postprocessor 'compressor.contrib.sekizai.compress' %}
+{% static_list js compress %}
+R

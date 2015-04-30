@@ -1,22 +1,22 @@
-{% load i18n static compress sekizai_tags %}
+{% load i18n static compress static_grouper %}
 
-{% addtoblock 'css' strip %}
+{% addstatic css %}
   <link rel="stylesheet" href="{% static 'css/custom-theme/jquery-ui-1.9.2.min.css' %}" />
-{% endaddtoblock %}
-{% addtoblock 'css' strip %}
+{% endaddstatic %}
+{% addstatic css %}
   <link rel="stylesheet" href="{% static 'jqTree/jqtree.css' %}" />
-{% endaddtoblock %}
-{% addtoblock 'css' strip %}
+{% endaddstatic %}
+{% addstatic css %}
   <link rel="stylesheet" type="text/less" href="{% static 'css/styles.less' %}"/>
-{% endaddtoblock %}
+{% endaddstatic %}
 
-{% addtoblock 'js' strip %}
+{% addstatic js %}
   <script type="text/javascript" src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
-{% endaddtoblock %}
-{% addtoblock 'js' strip %}
+{% endaddstatic %}
+{% addstatic js %}
   <script type="text/javascript" src="{% static 'js/jquery-ui-1.9.2.min.js' %}"></script>
-{% endaddtoblock %}
-{% addtoblock 'js' strip %}
+{% endaddstatic %}
+{% addstatic js %}
   {# Attention, l'ordre des JS de bootstrap importe ! #}
   <script type="text/javascript" src="{% static 'bootstrap/js/transition.js' %}"></script>
   <script type="text/javascript" src="{% static 'bootstrap/js/alert.js' %}"></script>
@@ -31,29 +31,29 @@
   <script type="text/javascript" src="{% static 'bootstrap/js/tab.js' %}"></script>
   <script type="text/javascript" src="{% static 'bootstrap/js/affix.js' %}"></script>
   <script type="text/javascript" src="{% static 'jqTree/tree.jquery.js' %}"></script>
-{% endaddtoblock %}
-{% addtoblock 'js' strip %}
+{% endaddstatic %}
+{% addstatic js %}
   <script type="text/javascript" src="{% static 'js/typeahead/dist/bloodhound.min.js' %}"></script>
-{% endaddtoblock %}
-{% addtoblock 'js' strip %}
+{% endaddstatic %}
+{% addstatic js %}
   <script type="text/javascript" src="{% static 'js/typeahead/dist/typeahead.jquery.min.js' %}"></script>
-{% endaddtoblock %}
+{% endaddstatic %}
   {# Les trois modules suivants servent à la pagination infinie #}
-{% addtoblock 'js' strip %}
+{% addstatic js %}
   <script type="text/javascript" src="{% static 'endless_pagination/js/endless-pagination.js' %}"></script>
-{% endaddtoblock %}
-{% addtoblock 'js' strip %}
+{% endaddstatic %}
+{% addstatic js %}
   <script type="text/javascript" src="{% static 'js/jquery-dotimeout/jquery.ba-dotimeout.js' %}"></script>
-{% endaddtoblock %}
-{% addtoblock 'js' strip %}
+{% endaddstatic %}
+{% addstatic js %}
   <script type="text/javascript" src="{% static 'js/jquery.query.js' %}"></script>
-{% endaddtoblock %}
-{% addtoblock 'js' strip %}
+{% endaddstatic %}
+{% addstatic js %}
   <script type="text/javascript" src="{% static 'js/reader.js' %}"></script>
-{% endaddtoblock %}
-{% addtoblock 'js' strip %}
+{% endaddstatic %}
+{% addstatic js %}
   <script>{% include 'base.js' %}</script>
-{% endaddtoblock %}
+{% endaddstatic %}
 
 <!DOCTYPE HTML>
 <html lang="{{ LANGUAGE_CODE }}">
@@ -67,7 +67,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta property="og:site_name" content="Dezède" />
     <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-    {% render_block 'metadata' %}
+    {% static_list metadata %}
     <meta property="og:image" content="http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{% static 'images/logo-large.png' %}" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="600" />
@@ -77,7 +77,7 @@
     <link rel="shortcut icon" type="image/x-icon"
           href="{% static 'images/favicon.ico' %}">
 
-    {% render_block 'css' postprocessor 'compressor.contrib.sekizai.compress' %}
+    {% static_list css compress %}
 
   </head>
 
@@ -139,7 +139,7 @@
       {% include 'footer.html' %}
     </footer>
 
-    {% render_block 'js' postprocessor 'compressor.contrib.sekizai.compress' %}
+    {% static_list js compress %}
 
   </body>
 

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n highlight humanize sekizai_tags %}
+{% load i18n highlight humanize static_grouper %}
 
 {% block header %}
   <h1>{% block title %}{% trans "Recherche" %}{% endblock %}</h1>
@@ -32,7 +32,7 @@
         {% endfor %}
       </div>
     </div>
-    {% addtoblock 'js' strip %}
+    {% addstatic js %}
       <script>
         var handles_checkboxes = function() {
           var self = $(this);
@@ -48,7 +48,7 @@
         buttons.ready(handles_checkboxes);
         buttons.click(handles_checkboxes);
       </script>
-    {% endaddtoblock %}
+    {% endaddstatic %}
   </form>
 
   {% if query %}

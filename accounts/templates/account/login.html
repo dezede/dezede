@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n crispy_forms_tags sekizai_tags %}
+{% load i18n crispy_forms_tags static_grouper %}
 
 {% block header %}
   <h1>{% block title %}{% trans 'Sign In' %}{% endblock %}</h1>
@@ -16,10 +16,10 @@
 
   {% crispy form %}
 
-  {% addtoblock 'js' strip %}
+  {% addstatic js %}
     <script>
       $('#id_next').val('{{ request.GET.next }}');
     </script>
-  {% endaddtoblock %}
+  {% endaddstatic %}
 
 {% endblock %}

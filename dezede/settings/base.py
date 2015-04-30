@@ -122,7 +122,7 @@ INSTALLED_APPS = (
     'reversion',
     'django.contrib.admin',
     'compressor',
-    'sekizai',
+    'static_grouper',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -143,7 +143,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.contrib.messages.context_processors.messages',
-    'sekizai.context_processors.sekizai',
     'allauth.account.context_processors.account',
     'allauth.socialaccount.context_processors.socialaccount',
 )
