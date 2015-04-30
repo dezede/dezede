@@ -636,7 +636,7 @@ class Evenement(AutoriteModel):
                 WHERE programme.evenement_id = %s))"""
         extra_params = [self.pk, self.pk]
         if self.debut_lieu_id is not None:
-            extra_where += ' OR lieu_id = %s' + extra_where
+            extra_where += ' OR lieu_id = %s'
             extra_params.append(self.debut_lieu_id)
 
         return qs.extra(where=(extra_where,), params=extra_params)
