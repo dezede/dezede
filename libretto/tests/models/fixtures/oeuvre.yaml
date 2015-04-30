@@ -16,25 +16,15 @@
   pk: 1
   fields:
     nom: violon
-    polymorphic_ctype:
-      - libretto
-      - instrument
+    type: 1
     slug: violon
-- model: libretto.Instrument
-  fields:
-    partie_ptr: 1
 - model: libretto.Partie
   pk: 2
   fields:
     nom: voix
     nom_pluriel: voix
-    polymorphic_ctype:
-      - libretto
-      - instrument
+    type: 1
     slug: voix
-- model: libretto.Instrument
-  fields:
-    partie_ptr: 2
 - model: libretto.Pupitre
   fields:
     oeuvre: 1
@@ -83,25 +73,15 @@
   pk: 3
   fields:
     nom: Carmen
-    polymorphic_ctype:
-      - libretto
-      - role
-    slug: carmen
-- model: libretto.Role
-  fields:
-    partie_ptr: 3
+    type: 2
     oeuvre: 1
+    slug: carmen
 - model: libretto.Partie
   pk: 4
   fields:
     nom: chœur
-    polymorphic_ctype:
-      - libretto
-      - instrument
+    type: 1
     slug: choeur
-- model: libretto.Instrument
-  fields:
-    partie_ptr: 4
 - model: libretto.Pupitre
   fields:
     oeuvre: 3

@@ -19,7 +19,7 @@
     {% data_table_list profession.auteurs.sources %}
     {% data_table_attr 'parent.link' _('parent') %}
 
-    {% if profession.get_children|has_elements:request %}
+    {% if profession.enfants.all|has_elements:request %}
       <th>{% trans 'Contenu' %}</th>
       <td>{% jqtree 'libretto.profession' %}</td>
     {% endif %}

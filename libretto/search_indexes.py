@@ -36,12 +36,6 @@ class CommonSearchIndex(SearchIndex):
         return prepared_data
 
 
-class PolymorphicCommonSearchIndex(CommonSearchIndex):
-    def index_queryset(self, *args, **kwargs):
-        return super(PolymorphicCommonSearchIndex,
-                     self).index_queryset(*args, **kwargs).non_polymorphic()
-
-
 class OeuvreIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='titre_html')
     BASE_BOOST = 1.5
@@ -96,7 +90,7 @@ class EvenementIndex(CommonSearchIndex, Indexable):
         return qs.prefetch_all()
 
 
-class PartieIndex(PolymorphicCommonSearchIndex, Indexable):
+class PartieIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='html')
     BASE_BOOST = 1.0
 

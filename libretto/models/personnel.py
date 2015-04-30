@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import warnings
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, SmallIntegerField,
-    DateField, PositiveSmallIntegerField, Model, Q)
+    DateField, PositiveSmallIntegerField, Model, Q, get_model)
 from django.template.defaultfilters import date
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.safestring import mark_safe
@@ -109,6 +109,12 @@ class Profession(AutoriteModel, UniqueSlugModel):
         return self.auteurs.oeuvres().count()
     oeuvres_count.short_description = _('nombre d’œuvres')
 
+    def get_children(self):
+        return self.enfants.all()
+
+    def is_leaf_node(self):
+        return not self.enfants.exists()
+
     @staticmethod
     def autocomplete_search_fields():
         return 'nom__icontains', 'nom_pluriel__icontains',
@@ -184,6 +190,10 @@ class PeriodeDActivite(Model):
     smart_period.short_description = _('Période d’activité')
 
 
+def limit_choices_to_instruments():
+    return {'type': get_model('libretto', 'Partie').INSTRUMENT}
+
+
 @python_2_unicode_compatible
 class Membre(CommonModel, PeriodeDActivite):
     ensemble = ForeignKey('Ensemble', related_name='membres',
@@ -193,7 +203,8 @@ class Membre(CommonModel, PeriodeDActivite):
     individu = ForeignKey('Individu', related_name='membres',
                           verbose_name=_('individu'))
     instrument = ForeignKey(
-        'Instrument', blank=True, null=True, related_name='membres',
+        'Partie', blank=True, null=True, related_name='membres',
+        limit_choices_to=limit_choices_to_instruments,
         verbose_name=_('instrument'))
     classement = SmallIntegerField(default=1)
 

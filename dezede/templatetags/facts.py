@@ -7,7 +7,7 @@ from django.db.models import Count, F
 from django.template import Library
 from django.utils.translation import ugettext
 from libretto.models import (
-    Evenement, Individu, Source, Oeuvre, Lieu, Role, Instrument)
+    Evenement, Individu, Source, Oeuvre, Lieu, Partie)
 from common.utils.text import capfirst
 
 
@@ -185,7 +185,7 @@ def transformist(n=10):
     out = h3(ugettext('« Transformiste »'))
 
     individu_accessor = 'elements_de_distribution__individu'
-    data = Role.objects \
+    data = Partie.objects.filter(type=Partie.ROLE) \
         .values(individu_accessor) \
         .exclude(**{individu_accessor: None}) \
         .annotate(n_roles=Count('pk')).order_by('-n_roles') \
@@ -216,7 +216,7 @@ def multi_instrumentalist(n=10):
     out = h3(ugettext('Multi-instrumentiste'))
 
     individu_accessor = 'elements_de_distribution__individu'
-    data = Instrument.objects \
+    data = Partie.objects.filter(type=Partie.INSTRUMENT) \
         .values(individu_accessor) \
         .exclude(**{individu_accessor: None}) \
         .annotate(n_instruments=Count('pk')).order_by('-n_instruments') \

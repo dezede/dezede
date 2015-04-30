@@ -344,10 +344,7 @@
       "owner": ["name"],
       "slug": "pervers",
       "professions": [1],
-      "polymorphic_ctype": [
-        "libretto",
-        "instrument"
-      ]
+      "type": 1
     }
   },
   {
@@ -363,10 +360,7 @@
       "owner": ["name"],
       "slug": "enfant-chouineur",
       "professions": [2],
-      "polymorphic_ctype": [
-        "libretto",
-        "instrument"
-      ]
+      "type": 1
     }
   },
   {
@@ -382,10 +376,7 @@
       "owner": null,
       "slug": "violon",
       "professions": [],
-      "polymorphic_ctype": [
-        "libretto",
-        "instrument"
-      ]
+      "type": 1
     }
   },
   {
@@ -401,31 +392,8 @@
       "owner": null,
       "slug": "voix",
       "professions": [],
-      "polymorphic_ctype": [
-        "libretto",
-        "instrument"
-      ]
+      "type": 1
     }
-  },
-  {
-    "pk": 2,
-    "model": "libretto.instrument",
-    "fields": {"professions": [2]}
-  },
-  {
-    "pk": 1,
-    "model": "libretto.instrument",
-    "fields": {"professions": [1]}
-  },
-  {
-    "pk": 3,
-    "model": "libretto.instrument",
-    "fields": {"professions": []}
-  },
-  {
-    "pk": 4,
-    "model": "libretto.instrument",
-    "fields": {"professions": []}
   },
   {
     "pk": 1,

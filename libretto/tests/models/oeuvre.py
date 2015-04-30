@@ -32,9 +32,9 @@ class OeuvreTestCase(CommonTestCase):
 
         test_oeuvre(1, 0, 0, 'Carmen')
         test_oeuvre(2, 1, 1, 'Carmen, Acte I')
-        test_oeuvre(3, 6, 2, 'Carmen, I, № 5 Habanera de Carmen '
+        test_oeuvre(3, 5, 2, 'Carmen, I, № 5 Habanera de Carmen '
                              '« L’amour est un oiseau rebelle »')
-        test_oeuvre(4, 4, 0, 'Sonate pour violon')
+        test_oeuvre(4, 3, 0, 'Sonate pour violon')
         test_oeuvre(5, 2, 0, 'Symphonie n° 5')
         test_oeuvre(6, 0, 0, 'Le Tartuffe, ou l’Imposteur')
 
@@ -49,9 +49,9 @@ class OeuvreTestCase(CommonTestCase):
 
         test_oeuvre(1, 1, 0, 'Carmen, opéra')
         test_oeuvre(2, 1, 1, 'Carmen, Acte I')
-        test_oeuvre(3, 6, 2, 'Carmen, I, № 5 Habanera de Carmen '
+        test_oeuvre(3, 5, 2, 'Carmen, I, № 5 Habanera de Carmen '
                              '« L’amour est un oiseau rebelle »')
-        test_oeuvre(4, 4, 0, 'Sonate pour violon')
+        test_oeuvre(4, 3, 0, 'Sonate pour violon')
         test_oeuvre(5, 2, 0, 'Symphonie n° 5, op. 107')
         test_oeuvre(6, 1, 0, 'Le Tartuffe, ou l’Imposteur, '
                              'comédie en cinq actes et en vers')
@@ -72,14 +72,14 @@ class OeuvreTestCase(CommonTestCase):
             '<a href="/oeuvres/carmen/"><cite>Carmen</cite></a>, '
             '<a href="/oeuvres/carmen-acte-i/">Acte I</a>')
         test_oeuvre(
-            3, 6, 2,
+            3, 5, 2,
             '<a href="/oeuvres/carmen/"><cite>Carmen</cite></a>, '
             '<a href="/oeuvres/carmen-acte-i/">I</a>, '
             '<a href="/oeuvres/carmen-i-'
             '5-habanera-de-carmen-l-amour-est-un/">'
             '№ 5 Habanera de Carmen <span title="Incipit">'
             '« L’amour est un oiseau rebelle »</span></a>')
-        test_oeuvre(4, 4, 0,
+        test_oeuvre(4, 3, 0,
                     '<a href="/oeuvres/sonate-pour-violon/">'
                     'Sonate pour violon</a>')
         test_oeuvre(5, 2, 0,
@@ -124,12 +124,12 @@ class OeuvreTestCase(CommonTestCase):
             '<cite>Carmen</cite>, '
             '<a href="/oeuvres/carmen-acte-i/">Acte I</a>')
         test_oeuvre(
-            3, 7, 3,
+            3, 6, 3,
             '<cite>Carmen</cite>, I, <a href="/oeuvres/carmen-i-'
             '5-habanera-de-carmen-l-amour-est-un/">'
             '№ 5 Habanera de Carmen <span title="Incipit">'
             '« L’amour est un oiseau rebelle »</span></a>')
-        test_oeuvre(4, 5, 1,
+        test_oeuvre(4, 4, 1,
                     '<a href="/oeuvres/sonate-pour-violon/">'
                     'Sonate pour violon</a>')
         test_oeuvre(5, 3, 1,

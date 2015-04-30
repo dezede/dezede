@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from common.utils.text import capfirst, str_list_w_last
 from .models import (
     Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
-    Ensemble, Saison)
+    Ensemble, Saison, Partie)
 from range_slider.fields import RangeSliderField
 
 
@@ -105,6 +105,22 @@ class EnsembleForm(ModelForm):
                 AutoCompleteWidget('ensemble__particule_nom',
                                    attrs={'style': 'width: 50px;'})
         }
+
+
+class PartieForm(ConstrainedModelForm):
+    def clean(self):
+        data = super(PartieForm, self).clean()
+
+        if data.get('oeuvre') and data.get('type') == Partie.INSTRUMENT:
+            self.add_error(
+                'oeuvre',
+                _('« Œuvre » ne peut être saisi que pour les rôles.'))
+
+        return data
+
+    class Meta(object):
+        model = Partie
+        exclude = ()
 
 
 class OeuvreForm(ConstrainedModelForm):

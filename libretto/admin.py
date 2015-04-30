@@ -1,12 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-import copy
 from functools import partial
 
 from django.contrib import messages
 from django.contrib.admin import (site, TabularInline, StackedInline,
-                                  ModelAdmin)
+                                  ModelAdmin, HORIZONTAL)
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
@@ -15,16 +14,12 @@ from django.db.models import Q
 from django.forms.models import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
 from grappelli.forms import GrappelliSortableHiddenMixin
-from polymorphic.admin import (
-    PolymorphicChildModelAdmin, PolymorphicParentModelAdmin,
-    PolymorphicChildModelFilter)
 from reversion import VersionAdmin
-import reversion
 
 from .models import *
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
-    ElementDeDistributionForm, EnsembleForm, SaisonForm)
+    ElementDeDistributionForm, EnsembleForm, SaisonForm, PartieForm)
 from .jobs import events_to_pdf as events_to_pdf_job
 from common.utils.export import launch_export
 from typography.utils import replace
@@ -672,51 +667,25 @@ class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     search_fields = ('type__nom', 'valeur')
 
 
-class PartieCommonAdmin(AutoriteAdmin):
+class PartieAdmin(VersionAdmin, AutoriteAdmin):
+    form = PartieForm
     list_display = ('__str__', 'nom', 'parent', 'classement',)
     list_editable = ('nom', 'parent', 'classement',)
+    list_filter = ('type',)
+    list_select_related = ('parent', 'etat', 'owner')
     search_fields = ('nom',)
-    list_filter = (PolymorphicChildModelFilter,)
-    raw_id_fields = ('professions', 'parent')
+    radio_fields = {'type': HORIZONTAL}
+    raw_id_fields = ('oeuvre', 'professions', 'parent')
     autocomplete_lookup_fields = {
         'm2m': ('professions',),
-        'fk': ('parent',),
+        'fk': ('oeuvre', 'parent'),
     }
     fieldsets = (
         (None, {
-            'fields': ('nom', 'nom_pluriel', 'professions', 'parent',
-                       'classement'),
+            'fields': ('type', ('nom', 'nom_pluriel'),
+                       'oeuvre', 'professions', 'parent', 'classement'),
         }),
     )
-
-
-class PartieAdmin(VersionAdmin, PartieCommonAdmin,
-                  PolymorphicParentModelAdmin):
-    base_model = Partie
-    child_models = (Role, Instrument)
-
-
-class PartieChildAdmin(PartieCommonAdmin, PolymorphicChildModelAdmin):
-    base_model = Partie
-
-
-class RoleAdmin(VersionAdmin, PartieChildAdmin):
-    pass
-RoleAdmin.fieldsets = copy.deepcopy(RoleAdmin.fieldsets)
-RoleAdmin.fieldsets[0][1]['fields'] = (
-    'nom', 'nom_pluriel', 'oeuvre', 'professions', 'parent',
-    'classement',
-)
-RoleAdmin.raw_id_fields += ('oeuvre',)
-RoleAdmin.autocomplete_lookup_fields['fk'] += ('oeuvre',)
-
-
-class InstrumentAdmin(VersionAdmin, PartieChildAdmin):
-    pass
-
-
-reversion.register(Role, follow=('partie_ptr',))
-reversion.register(Instrument, follow=('partie_ptr',))
 
 
 class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
@@ -980,8 +949,6 @@ site.register(TypeDeCaracteristiqueDeProgramme,
               TypeDeCaracteristiqueDeProgrammeAdmin)
 site.register(CaracteristiqueDeProgramme, CaracteristiqueDeProgrammeAdmin)
 site.register(Partie, PartieAdmin)
-site.register(Role, RoleAdmin)
-site.register(Instrument, InstrumentAdmin)
 site.register(Oeuvre, OeuvreAdmin)
 site.register(ElementDeDistribution, ElementDeDistributionAdmin)
 site.register(Evenement, EvenementAdmin)

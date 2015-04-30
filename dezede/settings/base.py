@@ -107,7 +107,6 @@ INSTALLED_APPS = (
     'libretto',
     'dossiers',
     'afo',
-    'polymorphic',
     'mptt',
     'endless_pagination',
     'eztables',

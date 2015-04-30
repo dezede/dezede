@@ -55,22 +55,16 @@ class HierarchicUserManager(CommonTreeManager, UserManager):
         return self.get_queryset().html(tags=tags)
 
 
-def _is_polymorphic_child(models, model):
-    return (getattr(model, 'polymorphic_model_marker', False)
-            and set(model.__bases__) & models)
-
-
 def _get_valid_modelnames_func(autorites_only=True):
-    def is_valid(models, model):
-        b = hasattr(model, 'link') and not _is_polymorphic_child(models, model)
+    def is_valid(model):
+        b = hasattr(model, 'link')
         if autorites_only:
-            b &= AutoriteModel in model.__bases__
+            return b and AutoriteModel in model.__bases__
         return b
 
     def get_valid_modelnames():
         models = frozenset(get_models())
-        return [model.__name__.lower() for model in models
-                if is_valid(models, model)]
+        return [model.__name__.lower() for model in models if is_valid(model)]
     return get_valid_modelnames
 
 

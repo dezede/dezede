@@ -15,13 +15,14 @@
 {% block autorite-content %}
 
   <table class="data-table auto-links">
+    {% data_table_attr 'oeuvre.link' _('œuvre liée') %}
     {% data_table_list partie.professions.all %}
     {% data_table_list partie.interpretes verbose_name=_('interprète') verbose_name_plural=_('interprètes') %}
     {% data_table_list partie.repertoire %}
     {% data_table_list partie.evenements %}
     {% data_table_attr 'parent.link' _('parent') %}
 
-    {% if partie.get_children|has_elements:request %}
+    {% if partie.enfants.all|has_elements:request %}
       <th>{% trans 'Contenu' %}</th>
       <td>{% jqtree 'libretto.partie' %}</td>
     {% endif %}

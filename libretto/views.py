@@ -19,7 +19,6 @@ from endless_pagination.views import AjaxListView
 from eztables.forms import DatatablesForm
 from eztables.views import DatatablesView, JSON_MIMETYPE
 from haystack.query import SearchQuerySet
-from polymorphic import PolymorphicQuerySet
 from viewsets import ModelViewSet
 
 from common.utils.export import launch_export
@@ -47,8 +46,6 @@ class PublishedMixin(object):
 
     def get_queryset(self):
         qs = super(PublishedMixin, self).get_queryset()
-        if isinstance(qs, PolymorphicQuerySet):
-            qs = qs.non_polymorphic()
         if self.has_frontend_admin:
             qs = qs.select_related('owner', 'etat')
         return qs.published(request=self.request) \

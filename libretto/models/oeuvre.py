@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 from collections import OrderedDict
 import re
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator
@@ -18,8 +17,6 @@ from django.utils.translation import (
     ungettext_lazy, ugettext, ugettext_lazy as _)
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-from polymorphic import (PolymorphicModel, PolymorphicManager,
-                         PolymorphicQuerySet)
 from cache_tools import model_method_cached
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
@@ -35,7 +32,7 @@ from .source import Source
 
 
 __all__ = (
-    b'GenreDOeuvre', b'Partie', b'Role', b'Instrument', b'Pupitre',
+    b'GenreDOeuvre', b'Partie', b'Pupitre',
     b'TypeDeParenteDOeuvres', b'ParenteDOeuvres', b'Auteur', b'Oeuvre'
 )
 
@@ -79,16 +76,8 @@ class GenreDOeuvre(CommonModel, SlugModel):
         return 'nom__icontains', 'nom_pluriel__icontains'
 
 
-class PartieQuerySet(PolymorphicQuerySet, PublishedQuerySet):
-    pass
-
-
-class PartieManager(PolymorphicManager, PublishedManager):
-    queryset_class = PartieQuerySet
-
-
 @python_2_unicode_compatible
-class Partie(PolymorphicModel, AutoriteModel, UniqueSlugModel):
+class Partie(AutoriteModel, UniqueSlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
     une œuvre musicale.
@@ -100,48 +89,41 @@ class Partie(PolymorphicModel, AutoriteModel, UniqueSlugModel):
                                 'instrumentale ou vocale.'))
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
         help_text=PLURAL_MSG)
+    INSTRUMENT = 1
+    ROLE = 2
+    TYPES = (
+        (INSTRUMENT, _('instrument')),
+        (ROLE, _('rôle')),
+    )
+    type = PositiveSmallIntegerField(_('type'), choices=TYPES, db_index=True)
+    # TODO: Ajouter automatiquement le rôle à l’effectif.
+    oeuvre = ForeignKey(
+        'Oeuvre', verbose_name=_('œuvre'), blank=True, null=True,
+        related_name='parties',
+        help_text=_('Ne remplir que pour les rôles.'))
     # TODO: Changer le verbose_name en un genre de "types de voix"
     # pour les rôles, mais en plus générique (ou un help_text).
     professions = ManyToManyField('Profession', related_name='parties',
         verbose_name=_('professions'), blank=True, null=True,
         help_text=_('La ou les profession(s) capable(s) '
                     'de jouer ce rôle ou cet instrument.'))
-    parent = ForeignKey('self', related_name='enfant', blank=True, null=True,
+    parent = ForeignKey('self', related_name='enfants', blank=True, null=True,
                         verbose_name=_('rôle ou instrument parent'))
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
-    objects = PartieManager()
-
-    weak_unique_constraint = ('nom', 'parent')
-
     class Meta(object):
+        unique_together = ('nom', 'parent', 'oeuvre')
         verbose_name = ungettext_lazy('rôle ou instrument',
                                       'rôles et instruments', 1)
         verbose_name_plural = ungettext_lazy('rôle ou instrument',
                                              'rôles et instruments', 2)
-        ordering = ('classement', 'nom',)
+        ordering = ('type', 'classement', 'nom',)
         app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
-        return ('get_real_instance', 'pupitres',)
-
-    class MPTTMeta(object):
-        order_insertion_by = ['classement', 'nom']
-
-    def _get_unique_checks(self, exclude=None):
-        # Ajoute une contrainte faible, inexistante dans la base de données,
-        # mais testée par l'administration Django.
-        # On ne peut pas appliquer cette contrainte à la base de données car
-        # les données sont réparties entre plusieurs tables à cause du
-        # polymorphisme.
-        # WARNING: cette contrainte n'est pas testée par l'ORM !  Attention aux
-        # doublons lors de scripts !
-        unique_checks, date_checks = super(
-            Partie, self)._get_unique_checks(exclude=exclude)
-        unique_checks.append((self.__class__, self.weak_unique_constraint))
-        return unique_checks, date_checks
+        return ('pupitres',)
 
     def interpretes(self):
         return self.elements_de_distribution.individus()
@@ -155,6 +137,12 @@ class Partie(PolymorphicModel, AutoriteModel, UniqueSlugModel):
 
     def repertoire(self):
         return self.pupitres.oeuvres()
+
+    def get_children(self):
+        return self.enfants.all()
+
+    def is_leaf_node(self):
+        return not self.enfants.exists()
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -181,45 +169,17 @@ class Partie(PolymorphicModel, AutoriteModel, UniqueSlugModel):
     def __str__(self):
         return self.html(tags=False)
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return ('nom__icontains', 'nom_pluriel__icontains',
-                'professions__nom__icontains',
-                'professions__nom_pluriel__icontains',)
-
-
-class Role(Partie):
-    # TODO: Ajouter automatiquement le rôle à l’effectif.
-    oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'), blank=True,
-                        null=True, related_name='roles')
-
-    weak_unique_constraint = ('nom', 'oeuvre',)
-
-    class Meta(object):
-        verbose_name = ungettext_lazy('rôle', 'rôles', 1)
-        verbose_name_plural = ungettext_lazy('rôle', 'rôles', 2)
-        app_label = 'libretto'
-
     def related_label(self):
-        txt = super(Role, self).related_label()
+        txt = super(Partie, self).related_label()
         if self.oeuvre is not None:
             txt += ' (' + force_text(self.oeuvre) + ')'
         return txt
 
     @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('partie_ptr',)
-
-
-class Instrument(Partie):
-    class Meta(object):
-        verbose_name = ungettext_lazy('instrument', 'instruments', 1)
-        verbose_name_plural = ungettext_lazy('instrument', 'instruments', 2)
-        app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('partie_ptr',)
+    def autocomplete_search_fields():
+        return ('nom__icontains', 'nom_pluriel__icontains',
+                'professions__nom__icontains',
+                'professions__nom_pluriel__icontains',)
 
 
 class PupitreQuerySet(CommonQuerySet):
@@ -286,7 +246,7 @@ class Pupitre(CommonModel):
 
     def related_label(self):
         out = force_text(self)
-        if isinstance(self.partie, Role) and self.partie.oeuvre is not None:
+        if self.partie.oeuvre is not None:
             out += ' (' + force_text(self.partie.oeuvre) + ')'
         return out
 
@@ -768,14 +728,12 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         if not prefix:
             return str_list_w_last([p.html(tags=tags) for p in pupitres])
 
-        role_ct = ContentType.objects.get_for_model(Role)
-        instrument_ct = ContentType.objects.get_for_model(Instrument)
         pupitres_roles = str_list_w_last([
             p.html(tags=tags) for p in pupitres
-            if p.partie.polymorphic_ctype_id == role_ct.id])
+            if p.partie.type == Partie.ROLE])
         pupitres_instruments = str_list_w_last([
             p.html(tags=tags) for p in pupitres
-            if p.partie.polymorphic_ctype_id == instrument_ct.id])
+            if p.partie.type == Partie.INSTRUMENT])
 
         if pupitres_roles:
             out = ugettext('de ') + pupitres_roles

@@ -9,37 +9,14 @@ from django.db.models.signals import post_save, pre_delete
 from django_rq import job
 import django_rq
 from haystack.signals import BaseSignalProcessor
-from polymorphic import PolymorphicModel
 from reversion.models import Version, Revision
 from cache_tools.jobs import auto_invalidate_cache, get_stale_objects
 from .search_indexes import get_haystack_index
 
 
-def is_polymorphic_model(model):
-    return issubclass(model, PolymorphicModel)
-
-
-def get_polymorphic_parent_model(model):
-    if is_polymorphic_model(model):
-        parent_model = [p for p in model.__bases__ if is_polymorphic_model(p)]
-        assert len(parent_model) == 1
-        parent_model = parent_model[0]
-        if not parent_model._meta.abstract:
-            return parent_model
-    return model
-
-
-def is_polymorphic_child_model(model):
-    return get_polymorphic_parent_model(model) != model
-
-
 def auto_update_haystack(action, instance):
     for obj in get_stale_objects(instance, all_relations=True):
         model = obj.__class__
-
-        if is_polymorphic_child_model(model):
-            model = get_polymorphic_parent_model(model)
-            obj = model._default_manager.non_polymorphic().get(pk=obj.pk)
 
         index = get_haystack_index(model)
         if index is None:
