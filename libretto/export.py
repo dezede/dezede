@@ -51,7 +51,7 @@ class LieuExporter(RenduExporter):
     model = Lieu
     columns = (
         'id', 'rendu', 'nom', 'parent', 'nature__nom', 'historique',
-        'longitude', 'latitude', 'code_postal', 'type_de_scene',
+        'longitude', 'latitude', 'afo',
     ) + AUTORITE_MODEL_COLUMNS
     verbose_overrides = {
         'longitude': _('longitude'),
@@ -366,8 +366,7 @@ class EvenementExporter(CommonModelExporter):
         'debut_heure_approx', 'debut_lieu', 'debut_lieu_str',
         'debut_lieu_approx', 'fin_date', 'fin_date_approx', 'fin_heure',
         'fin_heure_approx', 'fin_lieu', 'fin_lieu_str', 'fin_lieu_approx',
-        'exoneres', 'payantes', 'frequentation', 'scolaires', 'jauge',
-        'recette_generale', 'recette_par_billets', 'code_programme',
+        'recette_generale', 'recette_par_billets', 'afo',
     ) + AUTORITE_MODEL_COLUMNS
     m2ms = ('programme', 'distribution')
     verbose_overrides = {
