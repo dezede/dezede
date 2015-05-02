@@ -9,7 +9,9 @@ from zipfile import ZipFile
 
 from django.contrib.sites.models import Site
 from django.db.models import (IntegerField, ForeignKey, DateTimeField,
-                              FieldDoesNotExist)
+                              FieldDoesNotExist, OneToOneField)
+from django.db.models.fields.related import RelatedField
+from django.db.models.related import RelatedObject
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 import pandas
@@ -54,34 +56,52 @@ class Exporter(object):
                 self.method_names.append(column)
             else:
                 self.lookups.append(column)
-        self.fields = {lookup: self.get_field(lookup)
+        self.fields = {lookup: self.get_field(lookup.split('__')[0])
                        for lookup in self.lookups}
         self.final_fields = {lookup: self.get_final_field(lookup)
                              for lookup in self.lookups}
         self.null_int_lookups = []
         self.datetime_lookups = []
-        for lookup, field in self.final_fields.items():
-            if isinstance(field, (IntegerField, ForeignKey)) and field.null:
+        for lookup, (_, field) in self.final_fields.items():
+            if isinstance(field, RelatedObject) \
+                    or (isinstance(field, (IntegerField, ForeignKey))
+                        and field.null):
                 self.null_int_lookups.append(lookup)
             elif isinstance(field, DateTimeField):
                 self.datetime_lookups.append(lookup)
 
-    def get_field(self, lookup):
-        return self.model._meta.get_field(lookup.split('__')[0])
+    def get_field(self, lookup, model=None):
+        if model is None:
+            model = self.model
+        field = model._meta.get_field_by_name(lookup)[0]
+        if (isinstance(field, RelatedField)
+            and not isinstance(field, ForeignKey)) \
+            or (isinstance(field, RelatedObject)
+                and not isinstance(field.field, OneToOneField)):
+            raise ValueError(
+                'You cannot use `%s.%s` in `Exporter.columns`, '
+                'only ForeignKeys and related OneToOneFields '
+                'can be used.' % (model.__name__, lookup))
+        return field
 
     def get_final_field(self, lookup):
         model = self.model
         for part in lookup.split('__'):
-            field = model._meta.get_field(part)
-            if field.rel is not None:
+            field = self.get_field(part, model)
+            if isinstance(field, RelatedObject):
+                model = field.model
+            elif isinstance(field, ForeignKey):
                 model = field.rel.to
-        return field
+        return model, field
 
     def get_verbose_name(self, column):
         if column in self.verbose_overrides:
             return force_text(self.verbose_overrides[column])
         if column in self.fields:
-            return force_text(self.fields[column].verbose_name)
+            field = self.fields[column]
+            if isinstance(field, RelatedObject):
+                return force_text(field.model._meta.verbose_name)
+            return force_text(field.verbose_name)
         return column
 
     def get_verbose_table_name(self):
@@ -102,9 +122,8 @@ class Exporter(object):
             parent_fk_ids[self.model].update(
                 self.get_queryset()
                 .order_by().distinct().values_list('pk', flat=True))
-        for lookup, field in self.final_fields.items():
-            if isinstance(field, ForeignKey):
-                model = field.rel.to
+        for lookup, (model, field) in self.final_fields.items():
+            if isinstance(field, (ForeignKey, RelatedObject)):
                 ids = frozenset(
                     self.get_queryset().exclude(**{lookup: None})
                     .order_by().distinct().values_list(lookup, flat=True))
@@ -168,7 +187,7 @@ class Exporter(object):
 
         # Display verbose value of fields with `choices`
         for lookup, field in self.fields.items():
-            if field.choices:
+            if getattr(field, 'choices', ()):
                 df[lookup] = df[lookup].replace({k: force_text(v)
                                                  for k, v in field.choices})
 
