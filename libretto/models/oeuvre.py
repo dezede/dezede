@@ -208,7 +208,7 @@ class Pupitre(CommonModel):
     soliste = NullBooleanField(_('soliste'), default=False, db_index=True)
     quantite_min = IntegerField(_('quantité minimale'), default=1)
     quantite_max = IntegerField(_('quantité maximale'), default=1)
-    facultatif = BooleanField(_('facultatif'), default=False,)
+    facultatif = BooleanField(_('ad libitum'), default=False,)
 
     objects = PupitreManager()
 
