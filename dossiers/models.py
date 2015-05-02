@@ -156,10 +156,10 @@ class DossierDEvenements(MPTTModel, PublishedModel):
             kwargs['debut_date__lte'] = self.fin
         if self.pk:
             if self.lieux.exists():
-                lieux = self.lieux.get_descendants(include_self=True)
+                lieux = self.lieux.all().get_descendants(include_self=True)
                 kwargs['debut_lieu__in'] = lieux
             if self.oeuvres.exists():
-                oeuvres = self.oeuvres.get_descendants(include_self=True)
+                oeuvres = self.oeuvres.all().get_descendants(include_self=True)
                 kwargs['programme__oeuvre__in'] = oeuvres
             auteurs = self.auteurs.all()
             if auteurs.exists():
