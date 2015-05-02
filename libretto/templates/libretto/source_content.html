@@ -3,7 +3,7 @@
 {% published source.fichiers.all as filtered_fichiers %}
 {% with fichiers=filtered_fichiers.group_by_type %}
 
-  {% if fichiers.audios or fichier.videos or fichiers.others %}
+  {% if fichiers.audios or fichiers.videos or fichiers.others %}
     <ul class="list-unstyled">
 
       {% for audio in fichiers.audios %}
