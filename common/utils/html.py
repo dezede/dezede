@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from bleach import clean
 from django.template.defaultfilters import date
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
@@ -145,3 +146,20 @@ def em(txt):
     en <em>do</em> mineur
     """
     return '<em>' + txt + '</em>'
+
+
+def sanitize_html(html):
+    return clean(
+        html,
+        tags=('h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+              'p', 'ul', 'ol', 'li', 'pre', 'address',
+              'table', 'caption', 'thead', 'tbody', 'tr', 'th', 'td',
+              'span', 'a', 'em', 'strong', 'sub', 'sup'),
+        attributes={
+            'a': ['href', 'target', 'title'],
+            'span': ['class', 'style'],
+            'p': ['style'],
+            'table': ['align'],
+        },
+        styles=('text-decoration', 'text-align')
+    )

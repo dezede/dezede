@@ -27,7 +27,7 @@ from tinymce.models import HTMLField
 from cache_tools import invalidate_object
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
-from common.utils.html import href, capfirst, date_html
+from common.utils.html import href, capfirst, date_html, sanitize_html
 from common.utils.text import str_list
 from typography.utils import replace
 
@@ -770,7 +770,7 @@ def handle_whitespaces(sender, **kwargs):
     for field_name in [f.attname for f in obj._meta.fields]:
         v = getattr(obj, field_name)
         if hasattr(v, 'strip'):
-            setattr(obj, field_name, v.strip())
+            setattr(obj, field_name, sanitize_html(v.strip()))
     # Then we call the specific whitespace handler of the model (if it exists).
     if hasattr(obj, 'handle_whitespaces'):
         obj.handle_whitespaces()

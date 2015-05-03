@@ -56,6 +56,9 @@ defusedxml==0.4.1
 pandas==0.16.0
 XlsxWriter==0.7.2
 
+# HTML cleaning
+bleach==1.4.1
+
 # Website temporary shutdown
 django-maintenancemode==0.10
 
