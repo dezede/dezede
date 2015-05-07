@@ -32,6 +32,7 @@ class CustomIndexDashboard(Dashboard):
                             'libretto.models.evenement.Evenement',
                             'libretto.models.oeuvre.Oeuvre',
                             'libretto.models.individu.Individu',
+                            'libretto.models.personnel.Ensemble',
                             'libretto.models.espace_temps.Lieu',),
                 ),
                 modules.ModelList(
@@ -43,6 +44,7 @@ class CustomIndexDashboard(Dashboard):
                              'libretto.models.evenement.Evenement',
                              'libretto.models.oeuvre.Oeuvre',
                              'libretto.models.individu.Individu',
+                             'libretto.models.personnel.Ensemble',
                              'libretto.models.espace_temps.Lieu',),
                 ),
                 modules.ModelList(
