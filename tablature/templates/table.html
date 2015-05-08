@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static_grouper %}
+{% load static_grouper i18n %}
 
 
 {% block title %}
@@ -9,6 +9,8 @@
 
 {% block content %}
   <div id="table">
+    <input type="text" placeholder="{% trans 'Search' %}" class="form-control" />
+
     <table class="table table-condensed table-striped">
       <thead></thead>
       <tbody></tbody>
@@ -36,7 +38,7 @@
           this.current = -1;
           this.setNumPages(numPages);
           this.margin = 3;  // Number of page links
-                                      // around current page and ends.
+                            // around current page and ends.
           this.switchPageHandler = switchPageHandler;
           $(document).keyup(function (e) {
             var newPage = null;
@@ -61,7 +63,15 @@
         }
 
         Pagination.prototype.setNumPages = function (numPages) {
-          this.last = numPages - 1;
+          var last = numPages - 1;
+          if (last != this.last) {
+            this.last = last;
+            if (this.current > this.last) {
+              this.switchToPage(this.last);
+            } else {
+              this.update();
+            }
+          }
         };
 
         Pagination.prototype.pageOutOfBounds = function (i) {
@@ -91,9 +101,9 @@
         Pagination.prototype.createPageLinks = function () {
           var i;
           var minStart = 0;
-          var maxStart = this.margin;
+          var maxStart = Math.min(this.margin, this.last);
           var maxEnd = this.last;
-          var minEnd = maxEnd - this.margin;
+          var minEnd = Math.max(maxStart, maxEnd - this.margin);
           var minMid = Math.max(maxStart, this.current - this.margin);
           var maxMid = Math.min(minEnd, this.current + this.margin);
 
@@ -134,6 +144,10 @@
           this.$table = $container.find('table');
           this.$head = this.$table.find('thead');
           this.$results = this.$table.find('tbody');
+          this.$input = $container.find('input');
+          this.$input.change(function () {
+            this.update();
+          }.bind(this));
           this.columns = ['{{ columns|join:"','" }}'];
           this.sortables = [{{ sortables|join:"," }}];
           this.orderings = [];
@@ -187,6 +201,7 @@
         Table.prototype.getData = function () {
           return {
             format: 'json',
+            q: this.$input.val(),
             orderings: this.orderings.join(),
             currentPage: this.pagination.current
           };

@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.text import capfirst
 from django.views.generic import ListView
+from haystack.query import SearchQuerySet
 
 
 class TableView(ListView):
@@ -70,8 +71,14 @@ class TableView(ListView):
     def get_queryset(self):
         qs = super(TableView, self).get_queryset()
         GET = self.request.GET
-        if 'currentPage' not in GET or 'orderings' not in GET:
+        if 'currentPage' not in GET or 'orderings' not in GET or 'q' not in GET:
             return qs
+
+        q = GET['q']
+        if q:
+            sqs = SearchQuerySet().models(self.model).auto_query(q)
+            pk_list = [r.pk for r in sqs[:10 ** 6]]
+            qs = qs.filter(pk__in=pk_list)
 
         order_directions = map(int, GET['orderings'].split(','))
         order_by = []
