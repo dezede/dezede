@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static_grouper %}
+
+
+{% block title %}
+
+{% endblock %}
+
+
+{% block content %}
+  <div id="table">
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          {% for column in columns %}
+            <th>{{ column }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <nav>
+      <ul class="pagination">
+      </ul>
+    </nav>
+  </div>
+
+  {% addstatic js %}
+    <script>
+      $(function () {
+        function Pagination ($pagination, numPages, switchPageHandler) {
+          this.$pagination = $pagination;
+          this.current = 0;
+          this.numPages = numPages;
+          this.last = numPages - 1;
+          this.margin = 3;  // Number of page links
+                                      // around current page and ends.
+          this.switchPageHandler = switchPageHandler;
+          $(document).keyup(function (e) {
+            console.log(e.keyCode);
+            var newPage = null;
+            if (e.keyCode == 36) {  // Home key
+              newPage = 0;
+            } else if (e.keyCode == 37) {  // Left arrow key
+              newPage = this.current - 1;
+            } else if (e.keyCode == 39) {  // Right arrow key
+              newPage = this.current + 1;
+            } else if (e.keyCode == 35) {  // End key
+              newPage = this.last;
+            }
+            if (newPage != null) {
+              this.switchToPage(newPage);
+              e.preventDefault();
+            }
+          }.bind(this));
+        }
+
+        Pagination.prototype.pageOutOfBounds = function (i) {
+          return (i < 0) || (i > this.last);
+        };
+
+        Pagination.prototype.createPageLink = function (i, content) {
+          if (typeof content === 'undefined') {
+            content = i + 1;
+          }
+          var $item = $('<li><a href=#>' + content + '</a></li>');
+          this.$pagination.append($item);
+          if (this.pageOutOfBounds(i)) {
+            $item.addClass('disabled');
+          }
+          var $link = $item.find('a');
+          if (i == this.current) {
+            $item.addClass('active');
+            $link.append('<span class="sr-only">(current)</span>');
+          }
+          $link.click(function (e) {
+            e.preventDefault();
+            this.switchToPage(i);
+          }.bind(this));
+        };
+
+        Pagination.prototype.createPageLinks = function () {
+          var i;
+          var minStart = 0;
+          var maxStart = this.margin;
+          var maxEnd = this.last;
+          var minEnd = maxEnd - this.margin;
+          var minMid = Math.max(maxStart, this.current - this.margin);
+          var maxMid = Math.min(minEnd, this.current + this.margin);
+
+          this.createPageLink(this.current - 1, '<');
+          for (i = minStart; i < maxStart; i++) {
+            this.createPageLink(i)
+          }
+          if (minMid > maxStart) {
+            this.createPageLink(-1, '…');
+          }
+          for (i = minMid; i <= maxMid; i++) {
+            this.createPageLink(i);
+          }
+          if (maxMid < minEnd) {
+            this.createPageLink(-1, '…');
+          }
+          for (i = minEnd+1; i <= maxEnd; i++) {
+            this.createPageLink(i);
+          }
+          this.createPageLink(this.current + 1, '>');
+        };
+
+        Pagination.prototype.switchToPage = function (i) {
+          if (!this.pageOutOfBounds(i)) {
+            this.current = i;
+            this.update();
+            this.switchPageHandler();
+          }
+        };
+
+        Pagination.prototype.update = function () {
+          this.$pagination.empty();
+          this.createPageLinks();
+        };
+
+        function Table ($container) {
+          this.$container = $container;
+          this.$table = $container.find('table');
+          this.$results = this.$table.find('tbody');
+          this.count = {{ object_list.count }};
+          this.resultsPerPage = {{ results_per_page }};
+          this.pagination = new Pagination(
+            $container.find('.pagination'),
+            Math.ceil(this.count / this.resultsPerPage),
+            this.update.bind(this));
+          this.pagination.switchToPage(0);
+        }
+
+        Table.prototype.getData = function () {
+          return {
+            format: 'json',
+            currentPage: this.pagination.current
+          };
+        };
+
+        Table.prototype.update = function () {
+          $.ajax({
+            data: this.getData()
+          }).done(function (data) {
+            this.$results.empty();
+            data.forEach(function (dataRow) {
+              var $row = $('<tr></tr>');
+              this.$results.append($row);
+              dataRow.forEach(function (value) {
+                $row.append('<td>' + value + '</td>');
+              });
+            }.bind(this));
+          }.bind(this));
+        };
+
+        var table = new Table($('#table'));
+      });
+    </script>
+  {% endaddstatic %}
+
+{% endblock %}
