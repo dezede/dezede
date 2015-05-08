@@ -31,14 +31,13 @@
       $(function () {
         function Pagination ($pagination, numPages, switchPageHandler) {
           this.$pagination = $pagination;
-          this.current = 0;
+          this.current = -1;
           this.numPages = numPages;
           this.last = numPages - 1;
           this.margin = 3;  // Number of page links
                                       // around current page and ends.
           this.switchPageHandler = switchPageHandler;
           $(document).keyup(function (e) {
-            console.log(e.keyCode);
             var newPage = null;
             if (e.keyCode == 36) {  // Home key
               newPage = 0;
@@ -46,6 +45,10 @@
               newPage = this.current - 1;
             } else if (e.keyCode == 39) {  // Right arrow key
               newPage = this.current + 1;
+            } else if (e.keyCode == 33) {  // Page up key
+              newPage = Math.max(this.current - 5, 0);
+            } else if (e.keyCode == 34) {  // Page down key
+              newPage = Math.min(this.current + 5, this.last);
             } else if (e.keyCode == 35) {  // End key
               newPage = this.last;
             }
@@ -109,7 +112,7 @@
         };
 
         Pagination.prototype.switchToPage = function (i) {
-          if (!this.pageOutOfBounds(i)) {
+          if ((i != this.current) && !this.pageOutOfBounds(i)) {
             this.current = i;
             this.update();
             this.switchPageHandler();
@@ -142,7 +145,10 @@
         };
 
         Table.prototype.update = function () {
-          $.ajax({
+          if (typeof this.currentAjax !== 'undefined') {
+            this.currentAjax.abort();
+          }
+          this.currentAjax = $.ajax({
             data: this.getData()
           }).done(function (data) {
             this.$results.empty();
