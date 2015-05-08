@@ -9,14 +9,8 @@
 
 {% block content %}
   <div id="table">
-    <table class="table table-condensed">
-      <thead>
-        <tr>
-          {% for column in columns %}
-            <th>{{ column }}</th>
-          {% endfor %}
-        </tr>
-      </thead>
+    <table class="table table-condensed table-striped">
+      <thead></thead>
       <tbody></tbody>
     </table>
 
@@ -26,14 +20,21 @@
     </nav>
   </div>
 
+  {% addstatic css %}
+    <style>
+      #table td {
+        width: 25%;
+      }
+    </style>
+  {% endaddstatic %}
+
   {% addstatic js %}
     <script>
       $(function () {
         function Pagination ($pagination, numPages, switchPageHandler) {
           this.$pagination = $pagination;
           this.current = -1;
-          this.numPages = numPages;
-          this.last = numPages - 1;
+          this.setNumPages(numPages);
           this.margin = 3;  // Number of page links
                                       // around current page and ends.
           this.switchPageHandler = switchPageHandler;
@@ -58,6 +59,10 @@
             }
           }.bind(this));
         }
+
+        Pagination.prototype.setNumPages = function (numPages) {
+          this.last = numPages - 1;
+        };
 
         Pagination.prototype.pageOutOfBounds = function (i) {
           return (i < 0) || (i > this.last);
@@ -127,19 +132,62 @@
         function Table ($container) {
           this.$container = $container;
           this.$table = $container.find('table');
+          this.$head = this.$table.find('thead');
           this.$results = this.$table.find('tbody');
+          this.columns = ['{{ columns|join:"','" }}'];
+          this.sortables = [{{ sortables|join:"," }}];
+          this.orderings = [];
+          this.sortIcons = {
+            '-1': 'fa-sort-desc', '0': 'fa-sort', '1': 'fa-sort-asc'
+          };
+          this.createHeaders();
           this.count = {{ object_list.count }};
           this.resultsPerPage = {{ results_per_page }};
           this.pagination = new Pagination(
             $container.find('.pagination'),
-            Math.ceil(this.count / this.resultsPerPage),
+            this.getNumPages(),
             this.update.bind(this));
           this.pagination.switchToPage(0);
         }
 
+        Table.prototype.createHeaders = function () {
+          var $tr = $('<tr></tr>');
+          this.$head.append($tr);
+          this.columns.forEach(function (column, i) {
+            var $cell = $('<th tabindex="0">' + column + '</th>');
+            $tr.append($cell);
+            this.orderings.push(0);
+            if (!this.sortables[i]) {
+              return;
+            }
+            var $icon = $('<i class="pull-right fa fa-sort"></i>');
+            $cell.append($icon);
+            $cell.click(function () {
+              $icon.removeClass(this.sortIcons[this.orderings[i].toString()]);
+              if (this.orderings[i] == 1) {
+                this.orderings[i] = -1;
+              } else {
+                this.orderings[i] += 1;
+              }
+              $icon.addClass(this.sortIcons[this.orderings[i].toString()]);
+              this.update();
+            }.bind(this));
+          }.bind(this));
+        };
+
+        Table.prototype.getNumPages = function () {
+          return Math.ceil(this.count / this.resultsPerPage);
+        };
+
+        Table.prototype.setCount = function (count) {
+          this.count = count;
+          this.pagination.setNumPages(this.getNumPages());
+        };
+
         Table.prototype.getData = function () {
           return {
             format: 'json',
+            orderings: this.orderings.join(),
             currentPage: this.pagination.current
           };
         };
@@ -151,8 +199,9 @@
           this.currentAjax = $.ajax({
             data: this.getData()
           }).done(function (data) {
+            this.setCount(data['count']);
             this.$results.empty();
-            data.forEach(function (dataRow) {
+            data['results'].forEach(function (dataRow) {
               var $row = $('<tr></tr>');
               this.$results.append($row);
               dataRow.forEach(function (value) {
