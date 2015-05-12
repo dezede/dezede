@@ -67,7 +67,10 @@ class ElementDeDistributionManager(CommonManager):
 class ElementDeDistribution(CommonModel):
     evenement = ForeignKey(
         'Evenement', null=True, blank=True, related_name='distribution',
-        verbose_name=_('événement'), on_delete=PROTECT)
+        verbose_name=_('événement'))
+    element_de_programme = ForeignKey(
+        'ElementDeProgramme', null=True, blank=True, related_name='distribution',
+        verbose_name=_('élément de programme'))
 
     individu = ForeignKey(
         'Individu', blank=True, null=True, on_delete=PROTECT,
@@ -95,7 +98,7 @@ class ElementDeDistribution(CommonModel):
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
-        return ('evenement', 'elements_de_programme')
+        return ('evenement', 'element_de_programme')
 
     def __str__(self):
         return self.html(tags=False)
@@ -299,11 +302,6 @@ class ElementDeProgramme(CommonModel):
         _('numérotation'), choices=NUMEROTATIONS, max_length=1, default='O')
     NUMEROTATIONS_SANS_ORDRE = ('U', 'E',)
     position = PositiveSmallIntegerField(_('position'), db_index=True)
-    # TODO: Quand les nested inlines seront possibles avec Django, remplacer
-    # ceci par une ForeignKey dans ElementDeDistribution.
-    distribution = ManyToManyField(
-        ElementDeDistribution, related_name='elements_de_programme',
-        blank=True, null=True)
     part_d_auteur = DecimalField(_('P. A.'), max_digits=6, decimal_places=2,
                                  blank=True, null=True)
 
@@ -400,7 +398,7 @@ class EvenementQuerySet(PublishedQuerySet):
     def get_distributions(self):
         return ElementDeDistribution.objects.filter(
             Q(evenement__in=self)
-            | Q(elements_de_programme__evenement__in=self))
+            | Q(element_de_programme__evenement__in=self))
 
     def ensembles(self):
         distributions = self.get_distributions()
@@ -631,8 +629,7 @@ class Evenement(AutoriteModel):
             ) UNION (
                 SELECT distribution.ensemble_id
                 FROM libretto_elementdeprogramme AS programme
-                INNER JOIN libretto_elementdeprogramme_distribution AS programme_distribution ON (programme_distribution.elementdeprogramme_id = programme.id)
-                INNER JOIN libretto_elementdedistribution AS distribution ON (distribution.id = programme_distribution.elementdedistribution_id)
+                INNER JOIN libretto_elementdedistribution AS distribution ON (distribution.element_de_programme_id = programme.id)
                 WHERE programme.evenement_id = %s))"""
         extra_params = [self.pk, self.pk]
         if self.debut_lieu_id is not None:

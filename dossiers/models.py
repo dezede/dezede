@@ -168,7 +168,7 @@ class DossierDEvenements(MPTTModel, PublishedModel):
                 ensembles_evenements = Evenement.objects.extra(where=("""
                 id IN (
                 WITH distribution AS (
-                    SELECT distribution.id, distribution.evenement_id
+                    SELECT distribution.evenement_id, distribution.element_de_programme_id
                     FROM dossiers_dossierdevenements_ensembles AS dossier_ensembles
                     INNER JOIN libretto_elementdedistribution AS distribution ON (distribution.ensemble_id = dossier_ensembles.ensemble_id)
                     WHERE dossier_ensembles.dossierdevenements_id = %s
@@ -177,8 +177,7 @@ class DossierDEvenements(MPTTModel, PublishedModel):
                 UNION (
                     SELECT programme.evenement_id
                     FROM distribution
-                    INNER JOIN libretto_elementdeprogramme_distribution AS programme_distribution ON (programme_distribution.elementdedistribution_id = distribution.id)
-                    INNER JOIN libretto_elementdeprogramme AS programme ON (programme.id = programme_distribution.elementdeprogramme_id)
+                    INNER JOIN libretto_elementdeprogramme AS programme ON (programme.id = distribution.element_de_programme_id)
                 ))""",), params=(self.pk,))
                 kwargs['pk__in'] = ensembles_evenements
             sources = self.sources.all()

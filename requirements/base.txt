@@ -8,6 +8,7 @@ django-autoslug==1.7.2
 
 # User interface
 django-grappelli==2.6.4
+django-super-inlines==0.1.1
 django-tinymce==1.5.3
 django-crispy-forms==1.4.0
 django-ajax-selects==1.3.6

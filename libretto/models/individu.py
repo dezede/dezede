@@ -200,15 +200,12 @@ class Individu(AutoriteModel, UniqueSlugModel):
         # FIXME: Gérer la période d’activité des membres d’un groupe.
         sql = """
         SELECT DISTINCT evenement.id FROM (
-            SELECT distribution.id, distribution.evenement_id
+            SELECT distribution.evenement_id, distribution.element_de_programme_id
             FROM libretto_elementdedistribution AS distribution
             WHERE distribution.individu_id = %(individu)s
         ) AS distribution
-        LEFT JOIN libretto_elementdeprogramme_distribution
-                  AS programme_distribution
-            ON (programme_distribution.elementdedistribution_id = distribution.id)
         LEFT JOIN libretto_elementdeprogramme AS programme
-            ON (programme.id = programme_distribution.elementdeprogramme_id)
+            ON (programme.id = distribution.element_de_programme_id)
         INNER JOIN libretto_evenement AS evenement
             ON (evenement.id = distribution.evenement_id
                 OR evenement.id = programme.evenement_id)

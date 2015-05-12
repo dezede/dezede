@@ -121,10 +121,10 @@ def traveller(context):
     out = h3(ugettext('Interprète voyageur'))
     Lieu.objects.values('ancrages')
     travellers = valid_individus(request).order_by(
-        'elements_de_distribution__elements_de_programme__'
+        'elements_de_distribution__element_de_programme__'
         'evenement__debut_lieu'
     ).annotate(
-        n_lieux=Count('elements_de_distribution__elements_de_programme__'
+        n_lieux=Count('elements_de_distribution__element_de_programme__'
                       'evenement__debut_lieu')).filter(n_lieux__gte=5)
     t = travellers[randrange(travellers.count())]
     out += h4(t.nom_complet(links=False))

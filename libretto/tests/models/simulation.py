@@ -197,6 +197,7 @@ class SeleniumTest(StaticLiveServerTestCase):
         # Ajoute un événement et tous les objets lui étant lié.
         self.get_by_xpath('//*[text()="Événements liés"]').click()
         self.get_link('Ajouter un objet événement lié supplémentaire').click()
+        self.screenshot()
         self.get_by_css('.evenement .related-lookup').click()
         with self.new_popup():
             self.get_link('Ajouter événement').click()

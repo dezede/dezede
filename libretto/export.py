@@ -278,7 +278,7 @@ class SourceExporter(CommonModelExporter):
 @exporter_registry.add
 class ElementDeDistribution(CommonModelExporter):
     model = ElementDeDistribution
-    columns = ('id', 'evenement', 'evenement_str',
+    columns = ('id', 'evenement', 'evenement_str', 'element_de_programme',
                'individu', 'individu_str', 'ensemble', 'ensemble_str',
                'partie__nom', 'profession__nom') + CommonModelExporter.columns
 
@@ -315,19 +315,6 @@ class ProgrammeCaracteristiquesExporter(Exporter):
 
     def get_verbose_table_name(self):
         return 'programme ↔ caractéristiques'
-
-
-@exporter_registry.add
-class ProgrammeDistribution(Exporter):
-    model = ElementDeProgramme.distribution.through
-    columns = ('elementdeprogramme', 'elementdedistribution')
-    verbose_overrides = {
-        'elementdeprogramme': _('élément de programme'),
-        'elementdedistribution': _('élément de distribution')
-    }
-
-    def get_verbose_table_name(self):
-        return 'programme ↔ distribution'
 
 
 @exporter_registry.add

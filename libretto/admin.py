@@ -15,6 +15,7 @@ from django.forms.models import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
 from grappelli.forms import GrappelliSortableHiddenMixin
 from reversion import VersionAdmin
+from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 
 from .models import *
 from .forms import (
@@ -243,7 +244,7 @@ class MembreInline(CustomStackedInline):
     )
 
 
-class ElementDeDistributionInline(CustomTabularInline):
+class ElementDeDistributionInline(SuperInlineModelAdmin, CustomTabularInline):
     model = ElementDeDistribution
     form = ElementDeDistributionForm
     verbose_name_plural = _('distribution')
@@ -254,8 +255,13 @@ class ElementDeDistributionInline(CustomTabularInline):
     fields = ('individu', 'ensemble', 'partie', 'profession')
     classes = ('grp-collapse grp-open',)
 
+    def get_queryset(self, request):
+        qs = super(ElementDeDistributionInline, self).get_queryset(request)
+        return qs.select_related('individu', 'ensemble', 'partie', 'profession')
 
-class ElementDeProgrammeInline(GrappelliSortableHiddenMixin,
+
+class ElementDeProgrammeInline(SuperInlineModelAdmin,
+                               GrappelliSortableHiddenMixin,
                                CustomStackedInline):
     model = ElementDeProgramme
     form = ElementDeProgrammeForm
@@ -263,19 +269,24 @@ class ElementDeProgrammeInline(GrappelliSortableHiddenMixin,
     fieldsets = (
         (None, {
             'fields': (('oeuvre', 'autre',), 'caracteristiques',
-                       'distribution', ('numerotation', 'part_d_auteur'),
+                       ('numerotation', 'part_d_auteur'),
                        'position'),
         }),
     )
-    raw_id_fields = ('oeuvre', 'caracteristiques', 'distribution',)
-    related_lookup_fields = {
-        'm2m': ('distribution',),
-    }
+    raw_id_fields = ('oeuvre', 'caracteristiques',)
     autocomplete_lookup_fields = {
         'fk': ('oeuvre',),
         'm2m': ('caracteristiques',),
     }
     classes = ('grp-collapse grp-open',)
+    inlines = (ElementDeDistributionInline,)
+
+    def get_queryset(self, request):
+        qs = super(ElementDeProgrammeInline, self).get_queryset(request)
+        return qs.select_related('oeuvre').prefetch_related(
+            'caracteristiques', 'distribution',
+            'distribution__individu', 'distribution__ensemble',
+            'distribution__partie', 'distribution__profession')
 
 
 class FichierInline(GrappelliSortableHiddenMixin, CustomTabularInline):
@@ -426,7 +437,7 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
             if getattr(instance, 'owner', None) is None:
                 instance.owner = request.user
             instance.save()
-        formset.save_m2m()
+        formset.save()
 
     def get_list_editable(self, request, **kwargs):
         added_editable_fields = self._get_added_fields(
@@ -782,7 +793,7 @@ def events_to_pdf(modeladmin, request, queryset):
 events_to_pdf.short_description = _('Exporter en PDF')
 
 
-class EvenementAdmin(VersionAdmin, AutoriteAdmin):
+class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'link',)
     list_editable = ('relache', 'circonstance',)
@@ -839,18 +850,7 @@ class EvenementAdmin(VersionAdmin, AutoriteAdmin):
         return qs.select_related(
             'debut_lieu', 'debut_lieu__nature',
             'debut_lieu__parent', 'debut_lieu__parent__nature',
-            'etat', 'owner').only(
-            'debut_date', 'debut_date_approx',
-            'debut_lieu__nom', 'debut_lieu__nature__referent',
-            'debut_lieu__parent__nom', 'debut_lieu__parent__nature__referent',
-            'debut_lieu_approx',
-            'debut_heure', 'debut_heure_approx',
-            'circonstance', 'relache',
-            'etat__nom', 'owner__first_name', 'owner__last_name',
-            # FIXME: Ces champs ne sont pas utiles mais déclenchent une erreur
-            # si on les retire.
-            'owner__username', 'owner__mentor',
-        )
+            'etat', 'owner')
 
 
 class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
