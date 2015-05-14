@@ -754,23 +754,6 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
         )
 
 
-class ElementDeDistributionAdmin(VersionAdmin, CommonAdmin):
-    form = ElementDeDistributionForm
-    list_display = ('__str__', 'partie', 'profession',)
-    list_editable = ('partie', 'profession',)
-    search_fields = ('individu__nom', 'individu__prenoms', 'ensemble__nom',
-                     'partie__nom', 'profession__nom')
-    fieldsets = (
-        (None, {
-            'fields': (('individu', 'ensemble'), ('partie', 'profession')),
-        }),
-    )
-    raw_id_fields = ('individu', 'ensemble', 'partie', 'profession')
-    autocomplete_lookup_fields = {
-        'fk': ['individu', 'ensemble', 'partie', 'profession'],
-    }
-
-
 MAX_EXPORTED_EVENTS = 200
 
 
@@ -950,7 +933,6 @@ site.register(TypeDeCaracteristiqueDeProgramme,
 site.register(CaracteristiqueDeProgramme, CaracteristiqueDeProgrammeAdmin)
 site.register(Partie, PartieAdmin)
 site.register(Oeuvre, OeuvreAdmin)
-site.register(ElementDeDistribution, ElementDeDistributionAdmin)
 site.register(Evenement, EvenementAdmin)
 site.register(TypeDeSource, TypeDeSourceAdmin)
 site.register(Source, SourceAdmin)
