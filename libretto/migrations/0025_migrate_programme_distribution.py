@@ -51,7 +51,7 @@ def migrate_programme_distribution(apps, schema_editor):
         random_programme.distribution2.values_list('pk', flat=True))
     if random_distribution != new_random_distribution:
         raise ValueError('Les distributions sont différentes (avant/après): '
-                         '%s\n%s' % (random_distribution,
+                         '%s, %s' % (random_distribution,
                                      new_random_distribution))
 
 
