@@ -87,7 +87,7 @@ class EvenementIndex(CommonSearchIndex, Indexable):
 
     def index_queryset(self, using=None):
         qs = super(EvenementIndex, self).index_queryset(using)
-        return qs.prefetch_all()
+        return qs.prefetch_all().defer(None)
 
 
 class PartieIndex(CommonSearchIndex, Indexable):
