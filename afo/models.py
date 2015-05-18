@@ -19,6 +19,7 @@ class EvenementAFO(CommonModel):
     nom_festival = CharField(_('nom du festival'), max_length=80, blank=True)
     tournee = CharField(_('code ou titre de la tournée'), max_length=60,
                         blank=True)
+    cycle = CharField(_('cycle'), max_length=40, blank=True)
     code_programme = CharField(_('code du programme'), max_length=60,
                                blank=True)
     titre_programme = CharField(_('titre du programme'), max_length=200,
@@ -65,6 +66,8 @@ class EvenementAFO(CommonModel):
     permanents = PositiveIntegerField(
         _('nombre de musiciens permanents convoqués (dont remplaçants)'),
         null=True, blank=True)
+    remplacants = PositiveIntegerField(
+        _('nombre de musiciens remplaçants'), null=True, blank=True)
     supplementaires = PositiveIntegerField(
         _('nombre de musiciens supplémentaires convoqués'),
         null=True, blank=True)
