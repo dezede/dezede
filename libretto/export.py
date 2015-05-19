@@ -10,7 +10,6 @@ from .models import *
 
 
 class CommonModelExporter(Exporter):
-    columns = ('owner',)
     RENDU = _('rendu')
 
     def __init__(self, queryset=None):
@@ -30,7 +29,8 @@ class CommonModelExporter(Exporter):
             return ''
         return force_text(obj.owner)
 
-PUBLISHED_MODEL_COLUMNS = CommonModelExporter.columns + ('etat__nom',)
+COMMON_MODEL_COLUMNS = ('owner',)
+PUBLISHED_MODEL_COLUMNS = COMMON_MODEL_COLUMNS + ('etat__nom',)
 AUTORITE_MODEL_COLUMNS = \
     PUBLISHED_MODEL_COLUMNS + ('notes_publiques', 'notes_privees')
 
@@ -50,7 +50,7 @@ class RenduExporter(CommonModelExporter):
 class LieuExporter(RenduExporter):
     model = Lieu
     columns = (
-        'id', 'rendu', 'nom', 'parent', 'nature__nom', 'historique',
+        'id', 'rendu', 'nom', 'parent', 'nature__nom', 'ville', 'historique',
         'longitude', 'latitude', 'afo',
     ) + AUTORITE_MODEL_COLUMNS
     verbose_overrides = {
@@ -59,8 +59,10 @@ class LieuExporter(RenduExporter):
     }
 
     @staticmethod
-    def get_nature_str(obj):
-        return force_text(obj.nature)
+    def get_ville(obj):
+        ville = obj.get_ancestors().filter(nature__nom='ville').first()
+        if ville is not None:
+            return force_text(ville)
 
     @staticmethod
     def get_longitude(obj):
@@ -99,7 +101,7 @@ class IndividusProfessionsExporter(Exporter):
 @exporter_registry.add
 class ParenteDIndividuExporter(CommonModelExporter):
     model = ParenteDIndividus
-    columns = ('parent', 'enfant', 'type__nom') + CommonModelExporter.columns
+    columns = ('parent', 'enfant', 'type__nom') + COMMON_MODEL_COLUMNS
 
 
 @exporter_registry.add
@@ -280,7 +282,7 @@ class ElementDeDistribution(CommonModelExporter):
     model = ElementDeDistribution
     columns = ('id', 'evenement', 'evenement_str', 'element_de_programme',
                'individu', 'individu_str', 'ensemble', 'ensemble_str',
-               'partie__nom', 'profession__nom') + CommonModelExporter.columns
+               'partie__nom', 'profession__nom') + COMMON_MODEL_COLUMNS
 
     @staticmethod
     def get_evenement_str(obj):
@@ -322,8 +324,8 @@ class ElementDeProgrammeExporter(CommonModelExporter):
     model = ElementDeProgramme
     columns = ('id', 'evenement', 'evenement_str', 'oeuvre', 'oeuvre_str',
                'autre', 'caracteristiques_str', 'distribution_str',
-               'numerotation', 'position', 'part_d_auteur')\
-        + CommonModelExporter.columns
+               'numerotation', 'position', 'part_d_auteur') \
+        + COMMON_MODEL_COLUMNS
     m2ms = ('caracteristiques', 'distribution')
 
     @staticmethod

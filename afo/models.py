@@ -103,7 +103,7 @@ class LieuAFO(CommonModel):
         ('P', 'pluridisciplinaire'),
         ('A', 'autre'),
     )
-    type_de_salle = CharField(_('type_de_salle'), max_length=1, blank=True,
+    type_de_salle = CharField(_('type de salle'), max_length=1, blank=True,
                               choices=TYPES_DE_SALLES)
 
     class Meta(object):
