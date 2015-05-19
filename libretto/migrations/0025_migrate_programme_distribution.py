@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import pandas
 from tqdm import tqdm
 
 
@@ -18,12 +19,14 @@ def migrate_programme_distribution(apps, schema_editor):
     if not programmes_distribution.exists():
         return
 
-    random_programme = programmes_distribution.order_by('?')[0]
-    random_distribution = tuple(
-        random_programme.distribution.values_list('pk', flat=True))
+    initial_programmes = tuple(programmes_distribution)
+    initial_distributions = [
+        [set(row) for row in zip(*p.distribution.values_list(
+            'individu', 'ensemble', 'partie', 'profession'))]
+        for p in initial_programmes]
 
     for eld in tqdm(ElementDeDistribution.objects.filter(
-            elements_de_programme__isnull=False)):
+            elements_de_programme__isnull=False), leave=True):
         eld_id = eld.id
         programme = list(eld.elements_de_programme.all())
         if eld.evenement_id is not None:
@@ -47,12 +50,18 @@ def migrate_programme_distribution(apps, schema_editor):
     assert not ElementDeDistribution.objects.filter(
         evenement__isnull=False, element_de_programme__isnull=False).exists()
 
-    new_random_distribution = tuple(
-        random_programme.distribution2.values_list('pk', flat=True))
-    if random_distribution != new_random_distribution:
-        raise ValueError('Les distributions sont différentes (avant/après): '
-                         '%s, %s' % (random_distribution,
-                                     new_random_distribution))
+    new_distributions = [
+        [set(row) for row in zip(*p.distribution2.values_list(
+            'individu', 'ensemble', 'partie', 'profession'))]
+        for p in initial_programmes]
+    if initial_distributions != new_distributions:
+        df1 = pandas.DataFrame.from_records(initial_distributions)
+        df1.columns = ['individu', 'ensemble', 'partie', 'profession']
+        df1.to_csv('initial_distributions.csv')
+        df2 = pandas.DataFrame.from_records(new_distributions)
+        df2.columns = ['individu', 'ensemble', 'partie', 'profession']
+        df2.to_csv('new_distributions.csv')
+        raise ValueError('Les distributions sont différentes !')
 
 
 class Migration(migrations.Migration):
