@@ -9,7 +9,7 @@ from django.core.validators import RegexValidator
 from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField,
     BooleanField, permalink, get_model, SmallIntegerField, PROTECT, Count,
-    PositiveSmallIntegerField, NullBooleanField)
+    PositiveSmallIntegerField)
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags, format_html
 from django.utils.safestring import mark_safe
@@ -203,9 +203,7 @@ class Pupitre(CommonModel):
     partie = ForeignKey(
         'Partie', related_name='pupitres',
         verbose_name=_('rôle ou instrument'), on_delete=PROTECT)
-    # FIXME: Transformer ceci en BooleanField lorsque les valeurs None auront
-    #        été corrigées.
-    soliste = NullBooleanField(_('soliste'), default=False, db_index=True)
+    soliste = BooleanField(_('soliste'), default=False, db_index=True)
     quantite_min = IntegerField(_('quantité minimale'), default=1)
     quantite_max = IntegerField(_('quantité maximale'), default=1)
     facultatif = BooleanField(_('ad libitum'), default=False,)
@@ -719,10 +717,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             return ''
         pupitres = self.pupitres.all()
         if solistes:
-            # FIXME: Retirer la sélection des `soliste=None`
-            #        lorsque du nettoyage aura été fait
-            #        pour déterminer tous les `soliste`.
-            pupitres = [p for p in pupitres if p.soliste or p.soliste is None]
+            pupitres = [p for p in pupitres if p.soliste]
 
         if not pupitres:
             return ''
