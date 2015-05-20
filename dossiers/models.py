@@ -165,21 +165,17 @@ class DossierDEvenements(MPTTModel, PublishedModel):
             if auteurs.exists():
                 kwargs['programme__oeuvre__auteurs__individu__in'] = auteurs
             if self.ensembles.exists():
-                ensembles_evenements = Evenement.objects.extra(where=("""
+                evenements = Evenement.objects.extra(where=("""
                 id IN (
-                WITH distribution AS (
-                    SELECT distribution.evenement_id, distribution.element_de_programme_id
-                    FROM dossiers_dossierdevenements_ensembles AS dossier_ensembles
-                    INNER JOIN libretto_elementdedistribution AS distribution ON (distribution.ensemble_id = dossier_ensembles.ensemble_id)
-                    WHERE dossier_ensembles.dossierdevenements_id = %s
-                )
-                (SELECT evenement_id FROM distribution)
-                UNION (
-                    SELECT programme.evenement_id
-                    FROM distribution
-                    INNER JOIN libretto_elementdeprogramme AS programme ON (programme.id = distribution.element_de_programme_id)
-                ))""",), params=(self.pk,))
-                kwargs['pk__in'] = ensembles_evenements
+                    SELECT DISTINCT COALESCE(distribution.evenement_id, programme.evenement_id)
+                    FROM dossiers_dossierdevenements_ensembles AS dossier_ensemble
+                    INNER JOIN libretto_elementdedistribution AS distribution
+                        ON (distribution.ensemble_id = dossier_ensemble.ensemble_id)
+                    LEFT JOIN libretto_elementdeprogramme AS programme
+                        ON (programme.id = distribution.element_de_programme_id)
+                    WHERE dossier_ensemble.dossierdevenements_id = %s
+                )""",), params=(self.pk,))
+                kwargs['pk__in'] = evenements
             sources = self.sources.all()
             if sources.exists():
                 kwargs['sources__in'] = sources
