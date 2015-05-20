@@ -199,25 +199,15 @@ class Individu(AutoriteModel, UniqueSlugModel):
     def apparitions(self):
         # FIXME: Gérer la période d’activité des membres d’un groupe.
         sql = """
-        SELECT DISTINCT evenement.id FROM (
-            SELECT distribution.evenement_id, distribution.element_de_programme_id
-            FROM libretto_elementdedistribution AS distribution
-            WHERE distribution.individu_id = %(individu)s
-        ) AS distribution
+        SELECT DISTINCT COALESCE(distribution.evenement_id, programme.evenement_id)
+        FROM libretto_elementdedistribution AS distribution
         LEFT JOIN libretto_elementdeprogramme AS programme
             ON (programme.id = distribution.element_de_programme_id)
-        INNER JOIN libretto_evenement AS evenement
-            ON (evenement.id = distribution.evenement_id
-                OR evenement.id = programme.evenement_id)
+        WHERE distribution.individu_id = %s
         """
-        params = {
-            'individu': self.pk,
-            'ct': ContentType.objects.get_for_model(Evenement).pk
-        }
-        cursor = connection.cursor()
-        cursor.execute(sql, params)
-        evenement_ids = [t[0] for t in cursor.fetchall()]
-        cursor.close()
+        with connection.cursor() as cursor:
+            cursor.execute(sql, (self.pk,))
+            evenement_ids = [t[0] for t in cursor.fetchall()]
         return Evenement.objects.filter(id__in=evenement_ids)
 
     def evenements_referents(self):

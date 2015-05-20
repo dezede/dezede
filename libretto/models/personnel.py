@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import warnings
+from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, SmallIntegerField,
     DateField, PositiveSmallIntegerField, Model, Q, get_model)
@@ -291,9 +292,6 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     def permalien(self):
         return b'ensemble_permanent_detail', (self.pk,)
 
-    # TODO: Calculer les apparitions et les ajouter au template, comme pour
-    #       les individus.
-
     def membres_html(self):
         return str_list([
             membre.html() for membre in
@@ -305,9 +303,17 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     membres_count.short_description = _('nombre de membres')
 
     def apparitions(self):
-        return Evenement.objects.filter(
-            Q(distribution__ensemble=self)
-            | Q(programme__distribution__ensemble=self)).distinct()
+        sql = """
+        SELECT DISTINCT COALESCE(distribution.evenement_id, programme.evenement_id)
+        FROM libretto_elementdedistribution AS distribution
+        LEFT JOIN libretto_elementdeprogramme AS programme
+            ON (programme.id = distribution.element_de_programme_id)
+        WHERE distribution.ensemble_id = %s
+        """
+        with connection.cursor() as cursor:
+            cursor.execute(sql, (self.pk,))
+            evenement_ids = [t[0] for t in cursor.fetchall()]
+        return Evenement.objects.filter(id__in=evenement_ids)
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
