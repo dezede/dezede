@@ -87,25 +87,19 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     # Sélecteurs
     debut = DateField(_('début'), blank=True, null=True)
     fin = DateField(_('fin'), blank=True, null=True)
-    lieux = ManyToManyField(
-        Lieu, blank=True, null=True, verbose_name=_('lieux'),
-        related_name='dossiers')
-    oeuvres = ManyToManyField(
-        Oeuvre, blank=True, null=True, verbose_name=_('œuvres'),
-        related_name='dossiers')
-    auteurs = ManyToManyField(
-        Individu, blank=True, null=True, verbose_name=_('auteurs'),
-        related_name='dossiers')
+    lieux = ManyToManyField(Lieu, blank=True, verbose_name=_('lieux'),
+                            related_name='dossiers')
+    oeuvres = ManyToManyField(Oeuvre, blank=True, verbose_name=_('œuvres'),
+                              related_name='dossiers')
+    auteurs = ManyToManyField(Individu, blank=True, verbose_name=_('auteurs'),
+                              related_name='dossiers')
     circonstance = CharField(_('circonstance'), max_length=100, blank=True)
-    evenements = ManyToManyField(
-        Evenement, verbose_name=_('événements'), blank=True, null=True,
-        related_name='dossiers')
-    ensembles = ManyToManyField(
-        Ensemble, verbose_name=_('ensembles'), blank=True, null=True,
-        related_name='dossiers')
-    sources = ManyToManyField(
-        Source, verbose_name=_('sources'), blank=True, null=True,
-        related_name='dossiers')
+    evenements = ManyToManyField(Evenement, verbose_name=_('événements'),
+                                 blank=True, related_name='dossiers')
+    ensembles = ManyToManyField(Ensemble, verbose_name=_('ensembles'),
+                                blank=True, related_name='dossiers')
+    sources = ManyToManyField(Source, verbose_name=_('sources'), blank=True,
+                              related_name='dossiers')
 
     objects = DossierDEvenementsManager()
 
