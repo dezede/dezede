@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
@@ -26,6 +27,12 @@ class CategorieDeDossiersList(PublishedListView):
 
 class DossierDEvenementsDetail(PublishedDetailView):
     model = DossierDEvenements
+
+    def get_context_data(self, **kwargs):
+        context = super(DossierDEvenementsDetail,
+                        self).get_context_data(**kwargs)
+        context['SITE'] = get_current_site(self.request)
+        return context
 
 
 class DossierDEvenementsViewMixin(object):

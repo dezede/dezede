@@ -62,7 +62,7 @@
           {{ object.editeurs_scientifiques.html }}{% if object.get_contributors.count > object.editeurs_scientifiques.count %} (dir.){% endif %},
           « {{ object }} »,
           <em>Dezède</em> [en ligne].
-          {{ request.build_absolute_uri }}
+          {{ SITE }}{{ object.permalien }}
           (consulté le {% now 'DATE_FORMAT' %}).
         </div>
       </div>
