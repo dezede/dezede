@@ -128,13 +128,15 @@ def get_haystack_index(model):
 
 
 MINIMUM_SCORE = 5.0
+RATIO_BETWEEN_FIRST_AND_LAST = 1/3
 
 
 def result_iterator(sqs):
     results = list(sqs)
 
     if results:
-        min_score = max(results[0].score * 1/3, MINIMUM_SCORE)
+        min_score = max(results[0].score * RATIO_BETWEEN_FIRST_AND_LAST,
+                        MINIMUM_SCORE)
         for result in results:
             if result.score < min_score:
                 break
