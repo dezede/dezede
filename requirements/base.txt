@@ -39,8 +39,8 @@ tqdm==1.0
 awesome-slugify==1.6.4
 
 # Asynchronous tasks
-django-rq==0.7.0
-https://github.com/BertrandBordage/rq/archive/4818036e61fa5bfce1b11b6d1d565a74f3f5f4ca.tar.gz
+django-rq==0.8.0
+rq==0.5.2
 django-transaction-hooks==0.2
 
 # CSS/JS handling
