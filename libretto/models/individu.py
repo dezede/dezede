@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, RegexValidator
 from django.db import connection
@@ -139,7 +138,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     deces = AncrageSpatioTemporel(has_heure=False,
                                   short_description=_('décès'))
     professions = ManyToManyField(
-        'Profession', related_name='individus', blank=True, null=True,
+        'Profession', related_name='individus', blank=True,
         verbose_name=_('professions'))
     enfants = ManyToManyField(
         'self', through='ParenteDIndividus', related_name='parents',

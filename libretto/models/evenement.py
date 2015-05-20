@@ -289,9 +289,8 @@ class ElementDeProgramme(CommonModel):
                     '« avec ».'))
     autre = CharField(max_length=500, blank=True)
     caracteristiques = ManyToManyField(
-        CaracteristiqueDeProgramme,
-        related_name='elements_de_programme', blank=True, null=True,
-        verbose_name=_('caractéristiques'))
+        CaracteristiqueDeProgramme, related_name='elements_de_programme',
+        blank=True, verbose_name=_('caractéristiques'))
     NUMEROTATIONS = (
         ('O', _('Numéros')),  # O pour Ordered
         ('B', _('Numéros entre crochets (supposition)')),  # B pour Brackets
@@ -517,8 +516,7 @@ class Evenement(AutoriteModel):
     relache = BooleanField(_('relâche'), default=False, db_index=True)
     circonstance = CharField(_('circonstance'), max_length=500, blank=True)
     caracteristiques = ManyToManyField(
-        CaracteristiqueDeProgramme,
-        related_name='evenements', blank=True, null=True,
+        CaracteristiqueDeProgramme, related_name='evenements', blank=True,
         verbose_name=_('caractéristiques'))
 
     recette_generale = DecimalField(_('recette générale'), max_digits=7,

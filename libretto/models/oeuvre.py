@@ -52,7 +52,7 @@ class GenreDOeuvre(CommonModel, SlugModel):
             'l’œuvre référente, ici choisie comme étant celle de nature '
             '« opéra »'))
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
-        blank=True, null=True)
+                              blank=True)
 
     class Meta(object):
         verbose_name = ungettext_lazy('genre d’œuvre', 'genres d’œuvre', 1)
@@ -103,10 +103,10 @@ class Partie(AutoriteModel, UniqueSlugModel):
         help_text=_('Ne remplir que pour les rôles.'))
     # TODO: Changer le verbose_name en un genre de "types de voix"
     # pour les rôles, mais en plus générique (ou un help_text).
-    professions = ManyToManyField('Profession', related_name='parties',
-        verbose_name=_('professions'), blank=True, null=True,
-        help_text=_('La ou les profession(s) capable(s) '
-                    'de jouer ce rôle ou cet instrument.'))
+    professions = ManyToManyField(
+        'Profession', related_name='parties', verbose_name=_('professions'),
+        blank=True, help_text=_('La ou les profession(s) capable(s) '
+                                'de jouer ce rôle ou cet instrument.'))
     parent = ForeignKey('self', related_name='enfants', blank=True, null=True,
                         verbose_name=_('rôle ou instrument parent'))
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
@@ -603,9 +603,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             NUMERO_EXTRAIT_PATTERN,
             _('Vous devez saisir un nombre en chiffres arabes '
               'éventellement suivi de lettres.'))])
-    filles = ManyToManyField('self', through='ParenteDOeuvres',
-                             related_name='meres', symmetrical=False,
-                             blank=True, null=True)
+    filles = ManyToManyField(
+        'self', through='ParenteDOeuvres', related_name='meres',
+        symmetrical=False, blank=True)
 
     objects = OeuvreManager()
 
