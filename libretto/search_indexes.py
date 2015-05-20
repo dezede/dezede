@@ -108,7 +108,9 @@ class ProfessionIndex(CommonSearchIndex, Indexable):
 
 def filter_published(sqs, request):
     user_id = request.user.id
-    filters = Q(public=True)
+    if request.user.is_superuser:
+        return sqs
+    filters = Q(public='true')
     if user_id is not None:
         filters |= Q(owner_id=user_id)
     return sqs.filter(filters)

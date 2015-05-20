@@ -10,7 +10,7 @@ from django.utils.encoding import smart_text
 from django.views.generic import ListView, TemplateView
 from haystack.views import SearchView
 from libretto.models import Oeuvre, Lieu, Individu
-from libretto.search_indexes import autocomplete_search
+from libretto.search_indexes import autocomplete_search, filter_published
 from typography.utils import replace
 from .models import Diapositive
 
@@ -76,11 +76,7 @@ class CustomSearchView(SearchView):
 
     def get_results(self):
         sqs = super(CustomSearchView, self).get_results()
-        user = self.request.user
-        filters = Q(public=True)
-        if user is not None:
-            filters |= Q(owner=user)
-        return sqs.filter(filters)
+        return filter_published(sqs, self.request)
 
 
 def autocomplete(request):
