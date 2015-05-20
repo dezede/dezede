@@ -66,7 +66,7 @@ class HierarchicUserSignupForm(Form):
         super(HierarchicUserSignupForm, self).__init__(*args, **kwargs)
 
     def signup(self, request, user):
-        site_url = 'https://' + get_current_site(request).domain
+        site_url = request.build_absolute_uri('')
         email_content = render_to_string(
             'accounts/grant_to_admin_demand_email.txt',
             {'user': user, 'site_url': site_url, 'mentor': user.mentor})

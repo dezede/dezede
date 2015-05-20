@@ -556,7 +556,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         _('ICT'), max_length=25, blank=True, db_index=True,
         help_text='Indice Catalogue Thématique. Exemple : « RV 42 », '
                   '« K. 299d » ou encore « Hob. XVI:24 ».')
-    creation = AncrageSpatioTemporel(short_description=_('création'))
+    creation = AncrageSpatioTemporel(verbose_name=_('création'))
     extrait_de = TreeForeignKey(
         'self', null=True, blank=True,
         related_name='enfants', verbose_name=_('extrait de'))

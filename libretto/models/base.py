@@ -151,8 +151,9 @@ class CommonModel(TypographicModel):
         return errors
 
     def _has_related_objects__fallback(self):
-        relations = self._meta.get_all_related_objects() \
-            + self._meta.get_all_related_many_to_many_objects()
+        relations = [f for f in self._meta.get_fields(include_hidden=True)
+                     if (f.many_to_many or f.one_to_many or f.one_to_one)
+                     and f.auto_created]
         for r in relations:
             try:
                 v = getattr(self, r.get_accessor_name())
@@ -175,8 +176,9 @@ class CommonModel(TypographicModel):
 
     def get_related_counts(self):
         attrs = [f.get_accessor_name()
-                 for f in self._meta.get_all_related_objects()
-                        + self._meta.get_all_related_many_to_many_objects()]
+                 for f in self._meta.get_fields(include_hidden=True)
+                 if (f.many_to_many
+                     or f.one_to_many or f.one_to_one) and f.auto_created]
         return self.__class__._default_manager.filter(pk=self.pk) \
             .aggregate(**{attr: Count(attr) for attr in attrs})
 
@@ -317,16 +319,23 @@ class CommonTreeManager(CommonManager, TreeManager):
 
 @python_2_unicode_compatible
 class AncrageSpatioTemporel(object):
+    is_relation = False
+    concrete = False
+    auto_created = False
+    rel = None
+    flatchoices = ()
+    editable = False
+
     def __init__(self, not_null_fields=(),
                  has_date=True, has_heure=True, has_lieu=True, approx=True,
-                 short_description=None):
+                 verbose_name=None):
         self.not_null_fields = not_null_fields
         self.has_date = has_date
         self.has_heure = has_heure
         self.has_lieu = has_lieu
         self.approx = approx
-        if short_description is not None:
-            self.short_description = short_description
+        if verbose_name is not None:
+            self.verbose_name = verbose_name
 
     def create_fields(self):
         fields = []
@@ -366,7 +375,7 @@ class AncrageSpatioTemporel(object):
         return fields
 
     def contribute_to_class(self, model, name):
-        self.name = name
+        self.attname = self.name = name
         self.model = model
         if self.model._meta.abstract:
             return
@@ -382,7 +391,7 @@ class AncrageSpatioTemporel(object):
 
         self.admin_order_field = self.prefix + self.fields[0][0]
 
-        model._meta.add_virtual_field(self)
+        model._meta.add_field(self, virtual=True)
         setattr(model, name, self)
 
         for fieldname, field in self.fields:

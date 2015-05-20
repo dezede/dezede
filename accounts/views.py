@@ -22,7 +22,7 @@ class GrantToAdmin(DetailView):
     def grant_user(self, user):
         user.is_staff = True
         user.save()
-        site_url = 'https://' + get_current_site(self.request).domain
+        site_url = self.request.build_absolute_uri('')
         email_content = render_to_string(
             'accounts/granted_to_admin_email.txt',
             {'user': user, 'site_url': site_url})
