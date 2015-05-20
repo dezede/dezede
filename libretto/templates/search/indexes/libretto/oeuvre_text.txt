@@ -4,7 +4,7 @@
   {% autoescape off %}
     {{ object.titre }}
     {{ object.titre_secondaire }}
-    {{ object.genre }}
+    {{ object.genre|default_if_none:'' }}
     {{ object.caracteristiques_html }}
     {{ object.html }}
     {{ object.auteurs.individus.nom_complet }}

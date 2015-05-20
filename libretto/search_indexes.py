@@ -80,6 +80,10 @@ class LieuIndex(CommonSearchIndex, Indexable):
     def get_model(self):
         return Lieu
 
+    def index_queryset(self, using=None):
+        qs = super(LieuIndex, self).index_queryset(using)
+        return qs.select_related('nature', 'parent', 'parent__nature')
+
 
 class EvenementIndex(CommonSearchIndex, Indexable):
     def get_model(self):

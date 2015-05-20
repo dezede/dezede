@@ -1,1 +1,0 @@
-{% extends 'search/indexes/libretto/lieu_text.txt' %}
