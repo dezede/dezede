@@ -152,7 +152,7 @@ def sanitize_html(html):
     return clean(
         html,
         tags=('h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-              'p', 'ul', 'ol', 'li', 'pre', 'address',
+              'p', 'ul', 'ol', 'li', 'pre', 'address', 'br',
               'table', 'caption', 'thead', 'tbody', 'tr', 'th', 'td',
               'span', 'a', 'em', 'strong', 'sub', 'sup'),
         attributes={
