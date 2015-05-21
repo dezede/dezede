@@ -1,18 +1,21 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
-    <style>
+{% extends 'base.html' %}
+{% load i18n static_grouper static %}
 
-      body {
-        width: 1140px;
-        margin: 0 auto;
-        text-align: center;
-      }
+
+{% block title %}
+  {{ object|striptags }} | {% trans 'Diagramme de cordes' %}
+{% endblock %}
+
+
+{% block header %}
+  <h1>{{ object.titre|safe }}</h1>
+{% endblock %}
+
+
+{% block content %}
+
+  {% addstatic css %}
+    <style>
 
       .arcs path, .labels text {
         cursor: pointer;
@@ -38,32 +41,35 @@
         width: 35px;
         height: 22px;
         vertical-align: bottom;
+      }
+      .legend span + span {
         margin-left: 20px;
       }
 
     </style>
-  </head>
-  <body>
-    <div id="chord-graph"></div>
+  {% endaddstatic %}
 
-    <h1>« {{ object }} »</h1>
+  <h2>Auteurs les plus représentés</h2>
+  <p>
+    La taille des cordes correspond au nombre d’événements où des œuvres des deux
+    auteurs ont été représentés ensemble.
+  </p>
+  <p>
+    Cliquez sur un auteur pour voir uniquement ses cordes.
+    Cliquez à nouveau pour voir uniquement les autres cordes.
+  </p>
+  <h4 class="legend">
+    {% for min_year, max_year, color, verbose in colors_by_period %}
+      <span style="background: {{ color }};"></span> {{ verbose }}
+    {% endfor %}
+  </h4>
 
-    <h2>Auteurs les plus représentés</h2>
-    <h4>
-      La taille des cordes correspond au nombre d’événements où des œuvres des deux
-      auteurs ont été représentés ensemble.
-    </h4>
-    <h4>
-      Cliquez sur un auteur pour voir uniquement ses cordes.
-      Cliquez à nouveau pour voir uniquement les autres cordes.
-    </h4>
-    <h4 class="legend">
-      {% for color, verbose in colors_by_period %}
-        <span style="background: {{ color }};"></span> {{ verbose }}
-      {% endfor %}
-    </h4>
+  <div id="chord-graph"></div>
 
-    <script src="http://d3js.org/d3.v3.min.js"></script>
+  {% addstatic js %}
+    <script src="{% static 'js/d3/d3.min.js' %}"></script>
+  {% endaddstatic %}
+  {% addstatic js %}
     <script>
 
       var matrix = [{% for row in matrix %}[{{ row|join:"," }}],{% endfor %}];
@@ -166,5 +172,5 @@
       svg.selectAll('.arcs path, .labels > g').on('click', clickHandler);
 
     </script>
-  </body>
-</html>
+  {% endaddstatic %}
+{% endblock %}

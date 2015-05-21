@@ -160,13 +160,13 @@ class ChordDiagramView(PublishedDetailView):
     template_name = 'dossiers/chord_diagram.html'
     n_auteurs = 30
     colors_by_period = (
-        (lambda year: year is None, '#E6E6E6', _('Indéterminée')),
-        (lambda year: year < 1580, '#75101C', _('Né avant 1580')),
-        (lambda year: year < 1680, '#FF6523', _('Baroque')),
-        (lambda year: year < 1780, '#FFDD89', _('Classique')),
-        (lambda year: year < 1880, '#4D8E66', _('Romantique')),
-        (lambda year: year < 1930, '#89B4FF', _('Moderne')),
-        (lambda year: year >= 1930, '#80138E', _('Né après 1930')),
+        (float('-inf'), 1580, '#75101C', _('Né avant 1580')),
+        (1580, 1730, '#FF6523', _('Baroque')),
+        (1730, 1780, '#FFDD89', _('Classique')),
+        (1780, 1880, '#4D8E66', _('Romantique')),
+        (1880, 1930, '#89B4FF', _('Moderne')),
+        (1930, float('+inf'), '#80138E', _('Né après 1930')),
+        (None, None, '#E6E6E6', _('Indéterminé')),
     )
 
     def get_context_data(self, **kwargs):
@@ -219,14 +219,16 @@ class ChordDiagramView(PublishedDetailView):
         for individu in individus:
             year = (None if individu.naissance_date is None
                     else individu.naissance_date.year)
-            for cmp_func, color, _ in self.colors_by_period:
-                if cmp_func(year):
+            for min_year, max_year, color, _ in self.colors_by_period:
+                if ((year is not None and (min_year <= year < max_year))
+                    or (year is None
+                        and min_year is None and max_year is None)):
                     colors.append(color)
                     break
         colors_by_period = []
-        for _, color, verbose in self.colors_by_period:
+        for min_year, max_year, color, verbose in self.colors_by_period:
             if color in colors:
-                colors_by_period.append((color, verbose))
+                colors_by_period.append((min_year, max_year, color, verbose))
 
         context.update(
             matrix=matrix, individus=individus,
