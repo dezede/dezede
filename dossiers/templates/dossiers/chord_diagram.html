@@ -44,6 +44,8 @@
     </style>
   </head>
   <body>
+    <div id="chord-graph"></div>
+
     <h1>« {{ object }} »</h1>
 
     <h2>Auteurs les plus représentés</h2>
@@ -56,13 +58,11 @@
       Cliquez à nouveau pour voir uniquement les autres cordes.
     </h4>
     <h4 class="legend">
-      <span style="background: #777777;"></span> Né avant 1700
-      <span style="background: #FFDD89;"></span> Né entre 1700 et 1800
-      <span style="background: #957244;"></span> Né entre 1800 et 1900
-      <span style="background: #F26223;"></span> Né après 1900
+      {% for color, verbose in colors_by_period %}
+        <span style="background: {{ color }};"></span> {{ verbose }}
+      {% endfor %}
     </h4>
 
-    <div id="chord-graph"></div>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script>
 

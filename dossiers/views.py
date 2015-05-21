@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from django.db import connection
 from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404, redirect
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView
 from endless_pagination.views import AjaxListView
 
@@ -159,11 +160,13 @@ class ChordDiagramView(PublishedDetailView):
     template_name = 'dossiers/chord_diagram.html'
     n_auteurs = 30
     colors_by_period = (
-        (lambda year: year is None, '#E6E6E6'),
-        (lambda year: year < 1700, '#777777'),
-        (lambda year: year < 1800, '#FFDD89'),
-        (lambda year: year < 1900, '#957244'),
-        (lambda year: year >= 1900, '#F26223'),
+        (lambda year: year is None, '#E6E6E6', _('Indéterminée')),
+        (lambda year: year < 1580, '#75101C', _('Né avant 1580')),
+        (lambda year: year < 1680, '#FF6523', _('Baroque')),
+        (lambda year: year < 1780, '#FFDD89', _('Classique')),
+        (lambda year: year < 1880, '#4D8E66', _('Romantique')),
+        (lambda year: year < 1930, '#89B4FF', _('Moderne')),
+        (lambda year: year >= 1930, '#80138E', _('Né après 1930')),
     )
 
     def get_context_data(self, **kwargs):
@@ -211,16 +214,21 @@ class ChordDiagramView(PublishedDetailView):
             matrix.append(row)
             for individu2 in individus:
                 row.append(pre_matrix.get((individu1.pk, individu2.pk), 0))
+
         colors = []
         for individu in individus:
             year = (None if individu.naissance_date is None
                     else individu.naissance_date.year)
-            for cmp_func, color in self.colors_by_period:
+            for cmp_func, color, _ in self.colors_by_period:
                 if cmp_func(year):
                     colors.append(color)
                     break
+        colors_by_period = []
+        for _, color, verbose in self.colors_by_period:
+            if color in colors:
+                colors_by_period.append((color, verbose))
+
         context.update(
             matrix=matrix, individus=individus,
-            colors=colors,
-        )
+            colors=colors, colors_by_period=colors_by_period)
         return context
