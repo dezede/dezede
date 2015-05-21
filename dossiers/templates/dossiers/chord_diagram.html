@@ -141,7 +141,7 @@
         .style('opacity', 1)
         .append('title').text(function (d) {
           var title = individus[d.source.index] + ' ↔ ' + individus[d.target.index];
-          return title + '\\n' + d.source.value + ' événements';
+          return title + '\n' + d.source.value + ' événements';
         });
 
       var previous_click_idx = null;
