@@ -110,8 +110,7 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
         relations = (
-            'get_real_instance', 'enfants', 'saisons',
-            'evenement_debut_set', 'evenement_fin_set',
+            'enfants', 'evenement_debut_set', 'evenement_fin_set',
         )
         if all_relations:
             relations += (
