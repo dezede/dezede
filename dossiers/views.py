@@ -5,14 +5,15 @@ from __future__ import unicode_literals
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db import connection
+from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView
 from endless_pagination.views import AjaxListView
 
 from accounts.models import HierarchicUser
 from .jobs import dossier_to_pdf
-from libretto.models import Source, Oeuvre
+from libretto.models import Source, Oeuvre, Individu
 from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementGeoJson, EvenementExport,
     BaseEvenementListView)
@@ -121,4 +122,105 @@ class OperaComiqueListView(PublishedListView):
         else:
             oeuvres = oeuvres.order_by(*Oeuvre._meta.ordering)
         context['oeuvres'] = oeuvres
+        return context
+
+
+SQL_SANS_AUTRES = """
+WITH individus AS (%s)
+SELECT individu1.id, individu2.id, COUNT(DISTINCT programme1.evenement_id) AS n
+FROM individus AS individu1
+LEFT OUTER JOIN individus AS individu2 ON (true)
+LEFT OUTER JOIN libretto_auteur AS auteur1 ON (auteur1.individu_id = individu1.id)
+LEFT OUTER JOIN libretto_auteur AS auteur2 ON (auteur2.individu_id = individu2.id AND auteur2.oeuvre_id != auteur1.oeuvre_id)
+LEFT OUTER JOIN libretto_elementdeprogramme AS programme1 ON (programme1.oeuvre_id = auteur1.oeuvre_id)
+LEFT OUTER JOIN libretto_elementdeprogramme AS programme2 ON (programme2.oeuvre_id = auteur2.oeuvre_id)
+WHERE programme1.evenement_id = programme2.evenement_id AND programme1.evenement_id IN (%s)
+GROUP BY individu1.id, individu2.id;
+"""
+
+SQL_AVEC_AUTRES = """
+WITH individus AS (%s)
+SELECT individu1.id, individu2.id, COUNT(DISTINCT evenement.id) AS n
+FROM (%s) AS evenement
+INNER JOIN libretto_elementdeprogramme AS programme1 ON (programme1.evenement_id = evenement.id)
+INNER JOIN libretto_elementdeprogramme AS programme2 ON (programme2.evenement_id = evenement.id AND programme2.oeuvre_id != programme1.oeuvre_id)
+INNER JOIN libretto_auteur AS auteur1 ON (auteur1.oeuvre_id = programme1.oeuvre_id)
+INNER JOIN libretto_auteur AS auteur2 ON (auteur2.oeuvre_id = programme2.oeuvre_id)
+LEFT OUTER JOIN individus AS individu1 ON (individu1.id = auteur1.individu_id)
+LEFT OUTER JOIN individus AS individu2 ON (individu2.id = auteur2.individu_id)
+GROUP BY individu1.id, individu2.id;
+"""
+
+SQL = SQL_AVEC_AUTRES
+
+
+class ChordDiagramView(PublishedDetailView):
+    model = DossierDEvenements
+    template_name = 'dossiers/chord_diagram.html'
+    n_auteurs = 30
+    colors_by_period = (
+        (lambda year: year is None, '#E6E6E6'),
+        (lambda year: year < 1700, '#777777'),
+        (lambda year: year < 1800, '#FFDD89'),
+        (lambda year: year < 1900, '#957244'),
+        (lambda year: year >= 1900, '#F26223'),
+    )
+
+    def get_context_data(self, **kwargs):
+        context = super(ChordDiagramView, self).get_context_data(**kwargs)
+
+        evenements = self.object.get_queryset()
+        individus = evenements.individus_auteurs()
+
+        n_auteurs = self.n_auteurs
+        n_individus = individus.count()
+        if n_individus == 0:
+            return
+
+        if n_individus == n_auteurs + 1:
+            n_auteurs = n_individus
+
+        individus_par_popularite = individus.annotate(n=Count('pk')).order_by('-n')
+        individus_pks = [pk for pk, n in individus_par_popularite.values_list('pk', 'n')[:n_auteurs]]
+        individus = Individu.objects.filter(pk__in=individus_pks).order_by('naissance_date')
+        evenements = evenements.order_by().values('pk')
+        EVENEMENTS_SQL, EVENEMENTS_PARAMS = evenements.query.get_compiler('default').as_sql()
+        INDIVIDUS_SQL, INDIVIDUS_PARAMS = individus.order_by().values('pk').query.get_compiler('default').as_sql()
+
+        with connection.cursor() as cursor:
+            cursor.execute(SQL % (INDIVIDUS_SQL, EVENEMENTS_SQL), INDIVIDUS_PARAMS + EVENEMENTS_PARAMS)
+            data = cursor.fetchall()
+
+        if len(data) < 3:
+            return
+
+        has_autres = False
+        pre_matrix = {}
+        for id1, id2, n in data:
+            has_autres |= id1 is None or id2 is None
+            pre_matrix[(id1, id2)] = n
+
+        individus = list(individus)
+        if has_autres:
+            individus.append(
+                Individu(nom='%d autres auteurs' % (n_individus - n_auteurs)))
+
+        matrix = []
+        for individu1 in individus:
+            row = []
+            matrix.append(row)
+            for individu2 in individus:
+                row.append(pre_matrix.get((individu1.pk, individu2.pk), 0))
+        colors = []
+        for individu in individus:
+            year = (None if individu.naissance_date is None
+                    else individu.naissance_date.year)
+            for cmp_func, color in self.colors_by_period:
+                if cmp_func(year):
+                    colors.append(color)
+                    break
+        context.update(
+            matrix=matrix, individus=individus,
+            colors=colors,
+        )
         return context
