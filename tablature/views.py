@@ -19,7 +19,7 @@ class TableView(ListView):
     def get_columns(self):
         if self.columns:
             return self.columns
-        return [f.attname for f in self.model._meta.fields]
+        return [f.name for f in self.model._meta.fields]
 
     def get_field(self, column):
         try:
@@ -39,12 +39,13 @@ class TableView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(TableView, self).get_context_data(**kwargs)
-        context['columns'] = [self.get_verbose_columns(column)
-                              for column in self.get_columns()]
-        context['sortables'] = [
-            'true' if self.get_ordering(column, 1) else 'false'
-            for column in self.get_columns()]
-        context['results_per_page'] = self.results_per_page
+        context.update(
+            model=self.model,
+            columns=[self.get_verbose_columns(column)
+                     for column in self.get_columns()],
+            sortables=['true' if self.get_ordering(column, 1) else 'false'
+                       for column in self.get_columns()],
+            results_per_page=self.results_per_page)
         return context
 
     def get_ordering(self, column, direction):

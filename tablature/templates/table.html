@@ -2,30 +2,61 @@
 {% load static_grouper i18n %}
 
 
-{% block title %}
-
+{% block header %}
+  <h1>
+    {% block title %}
+      {{ model.meta.verbose_name_plural|capfirst }}
+    {% endblock %}
+  </h1>
 {% endblock %}
 
 
 {% block content %}
   <div id="table">
-    <input type="text" placeholder="{% trans 'Search' %}" class="form-control" />
+    <header class="row">
+      <form class="col-sm-3">
+        <div class="input-group">
+          <input type="text" placeholder="{% trans 'Search' %}" class="form-control" />
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-default">
+              <i class="fa fa-search"></i>
+            </button>
+          </span>
+        </div>
+      </form>
+      <div id="count" class="col-sm-2 btn disabled center-block"></div>
+      <nav class="col-sm-7">
+        <ul class="pagination pagination-sm pull-right"></ul>
+      </nav>
+    </header>
 
     <table class="table table-condensed table-striped">
       <thead></thead>
       <tbody></tbody>
     </table>
 
-    <nav>
-      <ul class="pagination">
-      </ul>
-    </nav>
   </div>
 
   {% addstatic css %}
     <style>
-      #table td {
-        width: 25%;
+      #table header {
+        margin-bottom: 20px;
+      }
+      #table .pagination {
+        margin: 0;
+      }
+      #table table {
+        table-layout: fixed;
+      }
+      #table th {
+        cursor: default;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+      }
+      #table th.sortable {
+        cursor: pointer;
       }
     </style>
   {% endaddstatic %}
@@ -37,10 +68,15 @@
           this.$pagination = $pagination;
           this.current = -1;
           this.setNumPages(numPages);
-          this.margin = 3;  // Number of page links
+          this.margin = 2;  // Number of page links
                             // around current page and ends.
           this.switchPageHandler = switchPageHandler;
-          $(document).keyup(function (e) {
+          $(document).keydown(function (e) {
+            var boundKeys = [33, 34, 35, 36, 37, 39];
+            if (boundKeys.indexOf(e.keyCode) != -1) {
+              e.preventDefault();
+            }
+          }).keyup(function (e) {
             var newPage = null;
             if (e.keyCode == 36) {  // Home key
               newPage = 0;
@@ -55,9 +91,9 @@
             } else if (e.keyCode == 35) {  // End key
               newPage = this.last;
             }
-            if (newPage != null) {
-              this.switchToPage(newPage);
+            if (newPage !== null) {
               e.preventDefault();
+              this.switchToPage(newPage);
             }
           }.bind(this));
         }
@@ -107,7 +143,8 @@
           var minMid = Math.max(maxStart, this.current - this.margin);
           var maxMid = Math.min(minEnd, this.current + this.margin);
 
-          this.createPageLink(this.current - 1, '<');
+          this.createPageLink(this.current - 1,
+                              '<i class="fa fa-angle-left"></i>');
           for (i = minStart; i < maxStart; i++) {
             this.createPageLink(i)
           }
@@ -123,7 +160,8 @@
           for (i = minEnd+1; i <= maxEnd; i++) {
             this.createPageLink(i);
           }
-          this.createPageLink(this.current + 1, '>');
+          this.createPageLink(this.current + 1,
+                              '<i class="fa fa-angle-right"></i>');
         };
 
         Pagination.prototype.switchToPage = function (i) {
@@ -139,24 +177,28 @@
           this.createPageLinks();
         };
 
-        function Table ($container) {
+        function Table ($container, columns, sortables, resultsPerPage,
+                        resultsString) {
           this.$container = $container;
           this.$table = $container.find('table');
           this.$head = this.$table.find('thead');
           this.$results = this.$table.find('tbody');
           this.$input = $container.find('input');
-          this.$input.change(function () {
+          this.$input.parents('form').submit(function (e) {
+            e.preventDefault();
             this.update();
           }.bind(this));
-          this.columns = ['{{ columns|join:"','" }}'];
-          this.sortables = [{{ sortables|join:"," }}];
+          this.$count = $('#count');
+          this.columns = columns;
+          this.sortables = sortables;
+          this.resultsString = resultsString;
           this.orderings = [];
           this.sortIcons = {
             '-1': 'fa-sort-desc', '0': 'fa-sort', '1': 'fa-sort-asc'
           };
           this.createHeaders();
-          this.count = {{ object_list.count }};
-          this.resultsPerPage = {{ results_per_page }};
+          this.count = 1;  // We set it to 1 so we can load the first page.
+          this.resultsPerPage = resultsPerPage;
           this.pagination = new Pagination(
             $container.find('.pagination'),
             this.getNumPages(),
@@ -168,12 +210,13 @@
           var $tr = $('<tr></tr>');
           this.$head.append($tr);
           this.columns.forEach(function (column, i) {
-            var $cell = $('<th tabindex="0">' + column + '</th>');
+            var $cell = $('<th>' + column + '</th>');
             $tr.append($cell);
             this.orderings.push(0);
             if (!this.sortables[i]) {
               return;
             }
+            $cell.addClass('sortable').attr('tabindex', '0');
             var $icon = $('<i class="pull-right fa fa-sort"></i>');
             $cell.append($icon);
             $cell.click(function () {
@@ -196,6 +239,7 @@
         Table.prototype.setCount = function (count) {
           this.count = count;
           this.pagination.setNumPages(this.getNumPages());
+          this.$count.empty().html(this.count + ' ' + this.resultsString);
         };
 
         Table.prototype.getData = function () {
@@ -226,7 +270,10 @@
           }.bind(this));
         };
 
-        var table = new Table($('#table'));
+        var table = new Table(
+          $('#table'), ['{{ columns|join:"','" }}'],
+          [{{ sortables|join:',' }}], {{ results_per_page }},
+          '{% trans 'results' %}');
       });
     </script>
   {% endaddstatic %}
