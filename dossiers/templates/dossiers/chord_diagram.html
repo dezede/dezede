@@ -87,8 +87,8 @@
           outerRadius = innerRadius * 1.1;
 
       var svg = d3.select('#chord-graph').append('svg')
-        .attr('width', width)
-        .attr('height', height)
+        .attr('width', '100%').attr('height', '100%')
+        .attr('viewBox', '0 0 1140 1140')
         .append('g')
         .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
