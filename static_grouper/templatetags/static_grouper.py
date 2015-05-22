@@ -24,7 +24,9 @@ class AddStaticNode(Node):
         output = self.nodelist.render(context).strip()
         static_grouper_dict = context.get(CONTEXT_VARIABLE_NAME)
         if static_grouper_dict is None:
-            context[CONTEXT_VARIABLE_NAME] = static_grouper_dict = defaultdict(list)
+            root_context = context.dicts[0]
+            root_context[CONTEXT_VARIABLE_NAME] = \
+                static_grouper_dict = defaultdict(list)
         if output not in static_grouper_dict[self.static_type]:
             static_grouper_dict[self.static_type].append(output)
         return ''
