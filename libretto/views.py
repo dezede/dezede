@@ -378,8 +378,7 @@ class CommonViewSet(ModelViewSet):
 
 class SourceModalView(PublishedDetailView):
     def get(self, request, *args, **kwargs):
-        is_ajax = request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
-        if not is_ajax:
+        if not request.is_ajax():
             return redirect('source_permanent_detail', kwargs['pk'])
         return super(SourceModalView, self).get(request, *args, **kwargs)
 
