@@ -553,7 +553,8 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
 
 class SaisonAdmin(VersionAdmin, CommonAdmin):
     form = SaisonForm
-    list_display = ('__str__', 'lieu', 'ensemble', 'debut', 'fin',)
+    list_display = ('__str__', 'lieu', 'ensemble', 'debut', 'fin',
+                    'evenements_count')
     date_hierarchy = 'debut'
     raw_id_fields = ('lieu', 'ensemble')
     autocomplete_lookup_fields = {

@@ -3,11 +3,15 @@
 from __future__ import unicode_literals
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
     AutoCompleteWidget
+from crispy_forms.bootstrap import InlineRadios
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
 from datetime import timedelta
 from django.db.models import Q
-from django.forms import ValidationError, ModelForm, Form, CharField, TextInput
+from django.forms import (
+    ValidationError, ModelForm, Form, CharField, TextInput, TypedChoiceField,
+    BooleanField)
+from django.forms.widgets import RadioInput
 from django.utils.translation import ugettext_lazy as _
 from common.utils.text import capfirst, str_list_w_last
 from .models import (
@@ -311,9 +315,25 @@ class SaisonForm(ModelForm):
         return data
 
 
+SAISON_SELECT = """
+<div class="form-group btn-group btn-group-justified" data-toggle="buttons">
+  <label class="radio-inline btn btn-default{% if not by_season %} active{% endif %}">
+    <input name="par_saison" type="radio" autocomplete="off" disabled />
+    {{ _('Par année civile') }}
+  </label>
+  <label class="radio-inline btn btn-default{% if by_season %} active{% endif %}">
+    <input name="par_saison", type="radio"
+    autocomplete="off" value="True" {% if by_season %}checked {% endif %}/>
+    {{ _('Par saison') }}
+  </label>
+</div>
+"""
+
+
 class EvenementListForm(Form):
     q = CharField(label=_('Recherche libre'), required=False)
     dates = RangeSliderField(required=False)
+    par_saison = BooleanField(required=False, initial=False)
     lieu = AutoCompleteSelectMultipleField('lieu', label=_('Lieu'),
                                            required=False, help_text='')
     oeuvre = AutoCompleteSelectMultipleField(
@@ -333,6 +353,7 @@ class EvenementListForm(Form):
             Field('q', css_class='input-lg'),
             HTML('<hr/>'),
             'dates',
+            HTML(SAISON_SELECT),
             HTML('<hr/>'),
             'lieu', 'oeuvre', 'individu', 'ensemble',
             HTML('<hr/>'),

@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.contrib.gis.db.models import GeometryField, GeoManager
 from django.contrib.gis.db.models.query import GeoQuerySet
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
                               permalink, Q, PROTECT)
 from django.utils.encoding import python_2_unicode_compatible, force_text
@@ -16,7 +17,7 @@ from tinymce.models import HTMLField
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, PublishedManager,
     DATE_MSG, calc_pluriel, SlugModel, UniqueSlugModel, PublishedQuerySet,
-    CommonTreeQuerySet, CommonTreeManager)
+    CommonTreeQuerySet, CommonTreeManager, CommonQuerySet, CommonManager)
 from common.utils.html import href
 from .evenement import Evenement
 from .individu import Individu
@@ -192,6 +193,31 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
                 'parent__nom__icontains')
 
 
+class SaisonQuerySet(CommonQuerySet):
+    def between_years(self, year0, year1):
+        return self.filter(
+            debut__range=('%d-1-1' % year0, '%d-12-31' % year1),
+            fin__range=('%d-1-1' % year0, '%d-12-31' % year1))
+
+    def evenements(self):
+        # FIXME: Implémenter ceci de manière plus performante.
+        evenements = Evenement.objects.none()
+        for saison in self.defer('owner'):
+            evenements |= saison.non_distinct_evenements()
+        evenement_ids = set(evenements.values_list('pk', flat=True))
+        return Evenement.objects.filter(id__in=evenement_ids).distinct()
+
+
+class SaisonManager(CommonManager):
+    queryset_class = SaisonQuerySet
+
+    def between_years(self, year0, year1):
+        return self.get_queryset().between_years(year0, year1)
+
+    def evenements(self):
+        return self.get_queryset().evenements()
+
+
 @python_2_unicode_compatible
 class Saison(CommonModel):
     ensemble = ForeignKey('Ensemble', related_name='saisons',
@@ -200,6 +226,8 @@ class Saison(CommonModel):
                       verbose_name=_('lieu ou institution'))
     debut = DateField(_('début'), help_text=DATE_MSG)
     fin = DateField(_('fin'))
+
+    objects = SaisonManager()
 
     class Meta(object):
         verbose_name = ungettext_lazy('saison', 'saisons', 1)
@@ -215,3 +243,29 @@ class Saison(CommonModel):
     def __str__(self):
         return '%s, %s' % (force_text(self.ensemble or self.lieu),
                            self.get_periode())
+
+    def get_absolute_url(self):
+        q = '?par_saison=True&dates_0=%d&dates_1=%d' % (self.debut.year,
+                                                        self.fin.year)
+        if self.lieu_id is not None:
+            q += '&lieu=|%d|' % self.lieu_id
+        elif self.ensemble_id is not None:
+            q += '&ensemble=|%d|' % self.ensemble_id
+        return reverse('evenements') + q
+
+    def non_distinct_evenements(self):
+        # TODO: Gérer les lieux de fin.
+        evenements = Evenement.objects.filter(
+            debut_date__range=(self.debut, self.fin))
+        if self.lieu_id is not None:
+            return evenements.filter(debut_lieu=self.lieu_id)
+        return evenements.filter(
+            Q(distribution__ensemble=self.ensemble_id)
+            | Q(programme__distribution__ensemble=self.ensemble_id))
+
+    def evenements(self):
+        return self.non_distinct_evenements().distinct()
+
+    def evenements_count(self):
+        return self.evenements().count()
+    evenements_count.short_description = _('Nombre d’événements')

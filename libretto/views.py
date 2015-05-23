@@ -8,7 +8,7 @@ from django.contrib.gis.geos import Polygon
 from django.core.exceptions import PermissionDenied
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
-from django.db.models import get_model, Q, FieldDoesNotExist
+from django.db.models import get_model, Q, FieldDoesNotExist, Min, Max
 from django.db.models.query import QuerySet
 from django.http import (
     HttpResponseBadRequest, HttpResponseRedirect, Http404, HttpResponse)
@@ -142,8 +142,11 @@ class BaseEvenementListView(PublishedListView):
         qs = qs.filter(filters).distinct()
         try:
             start, end = int(data.get('dates_0')), int(data.get('dates_1'))
-            qs = qs.filter(debut_date__range=('%s-1-1' % start,
-                                              '%s-12-31' % end))
+            if data.get('par_saison', 'False') == 'True':
+                qs &= Saison.objects.between_years(start, end).evenements()
+            else:
+                qs = qs.filter(debut_date__range=('%s-1-1' % start,
+                                                  '%s-12-31' % end))
         except (TypeError, ValueError):
             pass
 
@@ -163,6 +166,7 @@ class BaseEvenementListView(PublishedListView):
         context.update(
             form=self.form,
             default_page=self.default_page,
+            by_season=(self.request.GET.get('par_saison', 'False') == 'True'),
             export_url=self.get_export_url(),
             geojson_url=self.get_geojson_url(),
             DEFAULT_MIN_PLACES=DEFAULT_MIN_PLACES,
