@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import io
 import os
 from subprocess import Popen, PIPE
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.sites.models import Site, get_current_site
@@ -13,9 +14,10 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
 from rq.timeouts import JobTimeoutException
+
 from accounts.models import HierarchicUser
-from common.utils.cache import is_user_locked, lock_user, unlock_user
-from common.utils.text import remove_windows_newlines
+from .cache import is_user_locked, lock_user, unlock_user
+from .text import remove_windows_newlines
 
 
 def xelatex_to_pdf(source_code):

@@ -1,8 +1,10 @@
 # coding: utf-8
+
 from __future__ import unicode_literals
 import re
-from common.utils.html import hlp
-from common.utils.text import remove_diacritics
+
+from .html import hlp
+from .text import remove_diacritics
 
 VOWELS = frozenset(b'AEIOUYaeiouy')
 
