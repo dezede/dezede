@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 import json
 from django.db.models import FieldDoesNotExist
+from django.db.models.query import ValuesListQuerySet
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.text import capfirst
@@ -12,9 +13,12 @@ from haystack.query import SearchQuerySet
 
 class TableView(ListView):
     columns = ()
+    verbose_columns = {}
     orderings = {}
+    filters = {}
     template_name = 'table.html'
     results_per_page = 15
+    values_per_filter = 15
 
     def get_columns(self):
         if self.columns:
@@ -28,6 +32,8 @@ class TableView(ListView):
             pass
 
     def get_verbose_columns(self, column):
+        if column in self.verbose_columns:
+            return self.verbose_columns[column]
         field = self.get_field(column)
         if field is None:
             method = getattr(self.model, column)
@@ -45,6 +51,8 @@ class TableView(ListView):
                      for column in self.get_columns()],
             sortables=['true' if self.get_ordering(column, 1) else 'false'
                        for column in self.get_columns()],
+            filters=[self.get_filter(column)
+                     for column in self.get_columns()],
             results_per_page=self.results_per_page)
         return context
 
@@ -69,17 +77,38 @@ class TableView(ListView):
         return [lookup[1:] if lookup[0] == '-' else '-' + lookup
                 for lookup in ordering]
 
-    def get_queryset(self):
-        qs = super(TableView, self).get_queryset()
+    def get_filter(self, column):
+        if column not in self.filters:
+            return ()
+        values = self.filters[column]
+        if isinstance(values, ValuesListQuerySet):
+            values = values.all()
+        values = tuple(values[:self.values_per_filter])
+        assert len(values[0]) == 2, 'Each filter must be a value/verbose pair.'
+        return values
+
+    def search(self, queryset, q):
+        if not q:
+            return queryset
+        sqs = SearchQuerySet().models(self.model).auto_query(q)
+        pk_list = [r.pk for r in sqs[:10 ** 6]]
+        return queryset.filter(pk__in=pk_list)
+
+    def get_results_queryset(self):
+        qs = self.get_queryset()
         GET = self.request.GET
-        if 'currentPage' not in GET or 'orderings' not in GET or 'q' not in GET:
+        if not ('page' in GET and 'orderings' in GET and 'q' in GET
+                and 'choices' in GET):
             return qs
 
-        q = GET['q']
-        if q:
-            sqs = SearchQuerySet().models(self.model).auto_query(q)
-            pk_list = [r.pk for r in sqs[:10 ** 6]]
-            qs = qs.filter(pk__in=pk_list)
+        qs = self.search(qs, GET['q'])
+
+        filter_choices = GET['choices'].split(',')
+        for column, choice in zip(self.columns, filter_choices):
+            if choice:
+                method = getattr(self, 'filter_' + column, None)
+                qs = (qs.filter(**{column: choice}) if method is None
+                      else method(qs, choice))
 
         order_directions = map(int, GET['orderings'].split(','))
         order_by = []
@@ -89,15 +118,15 @@ class TableView(ListView):
             qs = qs.order_by(*order_by)
         return qs
 
-    def get_limited_queryset(self):
-        qs = self.get_queryset()
-        current_page = int(self.request.GET['currentPage'])
+    def get_limited_results_queryset(self):
+        qs = self.get_results_queryset()
+        current_page = int(self.request.GET['page'])
         offset = current_page * self.results_per_page
         return qs[offset:offset + self.results_per_page]
 
     def get_results(self):
         results = []
-        for obj in self.get_limited_queryset():
+        for obj in self.get_limited_results_queryset():
             row = []
             for attr in self.get_columns():
                 verbose_attr = 'get_' + attr + '_display'
@@ -113,10 +142,10 @@ class TableView(ListView):
 
     def get_data(self):
         return {'results': self.get_results(),
-                'count': self.get_queryset().count()}
+                'count': self.get_results_queryset().count()}
 
     def get(self, request, *args, **kwargs):
-        if request.GET.get('format') == 'json':
+        if request.is_ajax():
             return HttpResponse(json.dumps(self.get_data()),
                                 content_type='application/json')
         return super(TableView, self).get(request, *args, **kwargs)

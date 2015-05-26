@@ -16,7 +16,7 @@
     <header class="row">
       <form class="col-sm-3">
         <div class="input-group">
-          <input type="text" placeholder="{% trans 'Search' %}" class="form-control" />
+          <input type="text" placeholder="{% trans 'Search…' %}" class="form-control" />
           <span class="input-group-btn">
             <button type="submit" class="btn btn-default">
               <i class="fa fa-search"></i>
@@ -45,18 +45,38 @@
       #table .pagination {
         margin: 0;
       }
-      #table table {
-        table-layout: fixed;
-      }
       #table th {
+        padding: 0;
         cursor: default;
         user-select: none;
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
       }
-      #table th.sortable {
+      #table .unsortable, #table .sortable, #table .filter {
+        display: inline-block;
+        vertical-align: bottom;
+      }
+      #table .sortable, #table .filter {
         cursor: pointer;
+      }
+      #table .unsortable, #table .sortable {
+        width: calc(100% - 32px);
+        padding: 5px;
+      }
+      #table .sortable:last-child {
+        width: 100%;
+      }
+      #table .filter-button {
+        display: inline-block;
+        width: 32px;
+        height: 30px;
+        line-height: 15px;
+        padding: 7px 10px;
+      }
+      #table .filter.active .filter-button {
+        background: #ec8055;
+        color: white;
       }
     </style>
   {% endaddstatic %}
@@ -68,10 +88,20 @@
   {% addstatic js %}
     <script>
       $(function () {
+        var filters = [
+          {% for filter in filters %}
+            [
+              {% for value, verbose in filter %}
+                ['{{ value|escapejs }}','{{ verbose|escapejs }}']{% if not forloop.last %},{% endif %}
+              {% endfor %}
+            ]{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ];
         new Table(
           $('#table'), ['{{ columns|join:"','" }}'],
-          [{{ sortables|join:',' }}], {{ results_per_page }},
-          '{% trans 'results' %}');
+          [{{ sortables|join:',' }}], filters,
+          {{ results_per_page }}, '{% trans 'results' %}'
+        );
       });
     </script>
   {% endaddstatic %}

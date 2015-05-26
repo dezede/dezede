@@ -111,8 +111,8 @@ Pagination.prototype.update = function () {
   this.createPageLinks();
 };
 
-function Table ($container, columns, sortables, resultsPerPage,
-                resultsString) {
+function Table ($container, columns, sortables, filters,
+                resultsPerPage, resultsString) {
   this.$container = $container;
   this.$table = $container.find('table');
   this.$head = this.$table.find('thead');
@@ -120,16 +120,19 @@ function Table ($container, columns, sortables, resultsPerPage,
   this.$input = $container.find('input');
   this.$input.parents('form').submit(function (e) {
     e.preventDefault();
+    this.pagination.current = 0;
     this.update();
   }.bind(this));
   this.$count = $('#count');
   this.columns = columns;
   this.sortables = sortables;
+  this.filters = filters;
   this.resultsString = resultsString;
   this.orderings = [];
   this.sortIcons = {
     '-1': 'fa-sort-desc', '0': 'fa-sort', '1': 'fa-sort-asc'
   };
+  this.filterChoices = [];
   this.createHeaders();
   this.count = 1;  // We set it to 1 so we can load the first page.
   this.resultsPerPage = resultsPerPage;
@@ -140,29 +143,75 @@ function Table ($container, columns, sortables, resultsPerPage,
   this.pagination.switchToPage(0);
 }
 
+Table.prototype.createSortable = function (column, $cell, i) {
+  this.orderings.push(0);
+
+  if (!this.sortables[i]) {
+    $cell.append($('<div class="unsortable">' + column + '</div>'));
+    return;
+  }
+
+  var $sortable = $('<div class="sortable" tabindex="0">' + column + '</div>');
+  $cell.append($sortable);
+  var $icon = $('<i class="pull-right fa fa-sort"></i>');
+  $sortable.append($icon);
+  $sortable.click(function () {
+    $icon.removeClass(this.sortIcons[this.orderings[i].toString()]);
+    if (this.orderings[i] == 1) {
+      this.orderings[i] = -1;
+    } else {
+      this.orderings[i] += 1;
+    }
+    $icon.addClass(this.sortIcons[this.orderings[i].toString()]);
+    this.update();
+  }.bind(this));
+};
+
+Table.prototype.createFilter = function ($cell, i) {
+  if (this.filters[i].length == 0) {
+    this.filterChoices.push(null);
+    return;
+  }
+
+  var $filter = $(
+    '<span class="filter dropdown">' +
+    '  <span class="filter-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="0">' +
+    '    <i class="fa fa-filter"></i>' +
+    '  </span>' +
+    '  <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">' +
+    '  </ul>' +
+    '</span>');
+  var $filterList = $filter.find('ul');
+  this.filters[i].forEach(function (data) {
+    var value = data[0], verbose = data[1];
+    var $choice = $('<li><a href="#">' + verbose + '</a></li>');
+    $filterList.append($choice);
+    $choice.click(function (e) {
+      e.preventDefault();
+      $filterList.find('li').removeClass('active');
+      if (this.filterChoices[i] == value) {
+        this.filterChoices[i] = null;
+        $filter.removeClass('active');
+      } else {
+        $choice.addClass('active');
+        $filter.addClass('active');
+        this.filterChoices[i] = value;
+      }
+      this.update();
+    }.bind(this))
+  }.bind(this));
+  $cell.append($filter);
+};
+
 Table.prototype.createHeaders = function () {
   var $tr = $('<tr></tr>');
   this.$head.append($tr);
   this.columns.forEach(function (column, i) {
-    var $cell = $('<th>' + column + '</th>');
+    var $cell = $('<th></th>');
     $tr.append($cell);
-    this.orderings.push(0);
-    if (!this.sortables[i]) {
-      return;
-    }
-    $cell.addClass('sortable').attr('tabindex', '0');
-    var $icon = $('<i class="pull-right fa fa-sort"></i>');
-    $cell.append($icon);
-    $cell.click(function () {
-      $icon.removeClass(this.sortIcons[this.orderings[i].toString()]);
-      if (this.orderings[i] == 1) {
-        this.orderings[i] = -1;
-      } else {
-        this.orderings[i] += 1;
-      }
-      $icon.addClass(this.sortIcons[this.orderings[i].toString()]);
-      this.update();
-    }.bind(this));
+
+    this.createSortable(column, $cell, i);
+    this.createFilter($cell, i);
   }.bind(this));
 };
 
@@ -178,10 +227,10 @@ Table.prototype.setCount = function (count) {
 
 Table.prototype.getData = function () {
   return {
-    format: 'json',
     q: this.$input.val(),
     orderings: this.orderings.join(),
-    currentPage: this.pagination.current
+    choices: this.filterChoices.join(),
+    page: this.pagination.current
   };
 };
 
