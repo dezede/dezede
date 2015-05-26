@@ -5,6 +5,7 @@
 {% block header %}
   <h1>
     {% block title %}
+      {# FIXME: Cette ligne créé deux requêtes SQL inutiles. Comme model est callable, Django instancie le modèle et doit aller chercher l’état nouveau. #}
       {{ model.meta.verbose_name_plural|capfirst }}
     {% endblock %}
   </h1>

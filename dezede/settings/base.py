@@ -363,6 +363,9 @@ RQ_QUEUES = {
     },
 }
 
+ENDLESS_PAGINATION_PREVIOUS_LABEL = '<i class="fa fa-angle-left"></i>'
+ENDLESS_PAGINATION_NEXT_LABEL = '<i class="fa fa-angle-right"></i>'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
