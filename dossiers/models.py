@@ -15,7 +15,7 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from accounts.models import HierarchicUser
 from libretto.models import (Lieu, Oeuvre, Evenement, Individu, Ensemble,
-                             Source, ElementDeDistribution)
+                             Source, ElementDeDistribution, Saison)
 from libretto.models.base import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from common.utils.html import href
@@ -100,6 +100,8 @@ class DossierDEvenements(MPTTModel, PublishedModel):
                                 blank=True, related_name='dossiers')
     sources = ManyToManyField(Source, verbose_name=_('sources'), blank=True,
                               related_name='dossiers')
+    saisons = ManyToManyField(Saison, verbose_name=_('saisons'), blank=True,
+                              related_name=_('saisons'))
 
     objects = DossierDEvenementsManager()
 
@@ -173,6 +175,9 @@ class DossierDEvenements(MPTTModel, PublishedModel):
             sources = self.sources.all()
             if sources.exists():
                 kwargs['sources__in'] = sources
+            saisons = self.saisons.all()
+            if saisons.exists():
+                kwargs['pk__in'] = saisons.evenements.all()
         if self.circonstance:
             kwargs['circonstance__icontains'] = self.circonstance
         if kwargs:
