@@ -111,7 +111,7 @@ INSTALLED_APPS = (
     'afo',
     'mptt',
     'endless_pagination',
-    'eztables',
+    'tablature',
     'tinymce',
     'grappelli.dashboard',
     'grappelli',

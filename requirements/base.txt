@@ -4,7 +4,7 @@ psycopg2==2.6.0
 
 # Database fields
 django-mptt==0.7.3
-django-autoslug==1.8.0
+django-autoslug==1.7.0
 
 # User interface
 django-grappelli==2.6.4
@@ -27,7 +27,6 @@ django-cachalot==1.0.1
 
 # Data visualization frameworks
 djangorestframework==2.4.4
-https://github.com/noirbizarre/django-eztables/archive/daeff682d5113684770c153455410bef160c581b.tar.gz
 
 # Small but powerful tools
 django-reversion==1.8.7

@@ -26,24 +26,7 @@
             <a class="list-group-item{% if source.is_empty %} disabled{% endif %}" data-toggle="modal"
                data-target="#source-modal-{{ source.pk }}"
                href="{% url 'source_modal' source.pk %}">
-              {% if source.has_videos %}
-                <i class="fa fa-fw fa-video-camera"></i>
-              {% endif %}
-              {% if source.has_audios %}
-                <i class="fa fa-fw fa-volume-up"></i>
-              {% endif %}
-              {% if source.has_images %}
-                <i class="fa fa-fw fa-photo"></i>
-              {% endif %}
-              {% if source.has_others %}
-                <i class="fa fa-fw fa-paperclip"></i>
-              {% endif %}
-              {% if source.transcription %}
-                <i class="fa fa-fw fa-file-text-o"></i>
-              {% endif %}
-              {% if source.url %}
-                <i class="fa fa-fw fa-external-link"></i>
-              {% endif %}
+              {{ source.icons }}
               {{ source.html|removetags:'a' }}
             </a>
           {% endfor %}

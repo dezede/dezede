@@ -1,28 +1,22 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from collections import OrderedDict
-import json
 
 from django.contrib.gis.geos import Polygon
 from django.core.exceptions import PermissionDenied
-from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
-from django.db.models import get_model, Q, FieldDoesNotExist, Min, Max
+from django.db.models import get_model, Q
 from django.db.models.query import QuerySet
-from django.http import (
-    HttpResponseBadRequest, HttpResponseRedirect, Http404, HttpResponse)
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import redirect
-from django.utils.encoding import force_text
-from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic import ListView, DetailView
 from endless_pagination.views import AjaxListView
-from eztables.forms import DatatablesForm
-from eztables.views import DatatablesView, JSON_MIMETYPE
 from haystack.query import SearchQuerySet
 from viewsets import ModelViewSet
 
 from common.utils.export import launch_export
-from common.utils.html import href
+from common.utils.text import to_roman
+from tablature.views import TableView
 from .jobs import events_to_csv, events_to_xlsx, events_to_json
 from .models import *
 from .models.base import PublishedQuerySet
@@ -255,101 +249,13 @@ class EvenementDetailView(PublishedDetailView):
         return qs.prefetch_all(create_subquery=False)
 
 
-class CommonTableView(TemplateView):
-    template_name = 'libretto/tableau.html'
-    fields = None
-    model = None
-
-    def _get_verbose_name(self, field):
-        try:
-            return self.model._meta.get_field(field).verbose_name
-        except FieldDoesNotExist:
-            try:
-                return getattr(self.model, field).short_description
-            except AttributeError:
-                return field
-
-    def get_context_data(self, **kwargs):
-        context = super(CommonTableView, self).get_context_data(**kwargs)
-        context.update(
-            fields_verbose=[self._get_verbose_name(f) for f in self.fields],
-            fieldnames=self.fields,
-            model=self.model,
-        )
-        return context
-
-
-# FIXME: Remplacer ceci par une vue entièrement écrite par nos soins.
-class CommonDatatablesView(PublishedMixin, DatatablesView):
-    undefined_str = '−'
-    link_on_column = 0
-    select_related = ()
-    prefetch_related = ()
-
-    def get_queryset(self):
-        qs = super(CommonDatatablesView, self).get_queryset()
-        return (qs.select_related(*self.select_related)
-                .prefetch_related(*self.prefetch_related))
-
-    def process_dt_response(self, data):
-        self.form = DatatablesForm(data)
-        if self.form.is_valid():
-            self.object_list = self.get_queryset().order_by(*self.get_orders())
-            return self.render_to_response(self.form)
-        return HttpResponseBadRequest()
-
-    def get_db_fields(self):
-        raise NotImplementedError
-
-    def _get_value(self, obj, attr):
-        out = getattr(obj, attr)
-        if callable(out):
-            out = out()
-        return force_text(out or self.undefined_str)
-
-    def get_row(self, obj):
-        out = {}
-        for i, attr in enumerate(self.fields):
-            v = self._get_value(obj, attr)
-            if self.link_on_column is not None and i == self.link_on_column:
-                v = href(obj.get_absolute_url(), v)
-            out[attr] = v
-        return out
-
-    def global_search(self, queryset):
-        q = self.dt_data['sSearch']
-        if not q:
-            return queryset
-        sqs = SearchQuerySet().models(self.model).auto_query(q)
-        # Le slicing est là pour compenser un bug de haystack, qui va
-        # chercher les valeurs par paquets de 10, faisant parfois ainsi
-        # des centaines de requêtes à elasticsearch.
-        # FIXME: Utiliser une values_list quand cette issue sera résolue :
-        #        https://github.com/toastdriven/django-haystack/issues/1019
-        pk_list = [r.pk for r in sqs[:10**6]]
-        return queryset.filter(pk__in=pk_list).order_by(*self.get_orders())
-
-    def column_search(self, queryset):
-        return queryset
-
-    def json_response(self, data):
-        return HttpResponse(
-            json.dumps(data, cls=DjangoJSONEncoder),
-            content_type=JSON_MIMETYPE
-        )
-
-
-class CommonViewSet(ModelViewSet):
+class CommonViewSet2(ModelViewSet):
+    list_view = TableView
     views = {
         b'list_view': {
-            b'view': CommonTableView,
+            b'view': None,
             b'pattern': br'',
             b'name': b'index',
-        },
-        b'list_view_data': {
-            b'view': CommonDatatablesView,
-            b'pattern': br'ajax',
-            b'name': b'ajax',
         },
         b'detail_view': {
             b'view': PublishedDetailView,
@@ -362,18 +268,46 @@ class CommonViewSet(ModelViewSet):
             b'name': b'permanent_detail',
         },
     }
-    table_fields = ()
-    table_select_related = ()
-    table_prefetch_related = ()
 
     def __init__(self):
-        fields = OrderedDict(self.table_fields)
-        self.views[b'list_view'][b'kwargs'] = {b'fields': fields}
-        self.views[b'list_view_data'][b'kwargs'] = {
-            b'model': self.model, b'fields': fields,
-            b'select_related': self.table_select_related,
-            b'prefetch_related': self.table_prefetch_related}
-        super(CommonViewSet, self).__init__()
+        self.views[b'list_view'][b'view'] = self.list_view
+        super(CommonViewSet2, self).__init__()
+
+
+CENTURIES = tuple(range(11, 22))
+
+CENTURIES_VERBOSES = [
+    (str(i), to_roman(i) + '<sup>e</sup> siècle') for i in CENTURIES
+][::-1]
+
+CENTURIES_DATE_RANGES = {
+    str(i): ('%d00-1-1' % (i-1), '%d99-12-31' % (i-1)) for i in CENTURIES
+}
+
+class SourceTableView(PublishedMixin, TableView):
+    model = Source
+    columns = ('icons', 'html', 'ancrage', 'type')
+    verbose_columns = {
+        'icons': 'Type de contenu',
+        'html': '',
+        'ancrage': 'Date',
+    }
+    orderings = {'ancrage': 'date'}
+    filters = {
+        'ancrage': CENTURIES_VERBOSES,
+        'icons': Source.DATA_TYPES_WITH_ICONS,
+    }
+    queryset = Source.objects.prefetch()
+
+    def filter_ancrage(self, queryset, value):
+        return queryset.filter(date__range=CENTURIES_DATE_RANGES[value])
+
+    def filter_icons(self, queryset, value):
+        return Source.objects.filter(
+            pk__in=queryset.with_data_type(value)).prefetch()
+
+    def search(self, queryset, q):
+        return queryset.filter(titre__icontains=q)
 
 
 class SourceModalView(PublishedDetailView):
@@ -383,10 +317,11 @@ class SourceModalView(PublishedDetailView):
         return super(SourceModalView, self).get(request, *args, **kwargs)
 
 
-class SourceViewSet(CommonViewSet):
+class SourceViewSet(CommonViewSet2):
     model = Source
     base_url_name = b'source'
-    excluded_views = (b'list_view', b'detail_view')
+    excluded_views = (b'detail_view',)
+    list_view = SourceTableView
 
     def __init__(self):
         self.views[b'content_view'] = {
@@ -400,80 +335,116 @@ class SourceViewSet(CommonViewSet):
         super(SourceViewSet, self).__init__()
 
 
-class PartieViewSet(CommonViewSet):
+class PartieTableView(PublishedMixin, TableView):
+    model = Partie
+    columns = ('html', 'type')
+    verbose_columns = {'html': ''}
+    orderings = {'html': 'nom'}
+    filters = {'type': Partie.TYPES}
+
+
+class PartieViewSet(CommonViewSet2):
     model = Partie
     base_url_name = b'partie'
-    table_fields = (
-        ('nom', 'nom'),
-        ('interpretes_html', None),
-    )
+    list_view = PartieTableView
 
 
-class ProfessionViewSet(CommonViewSet):
+class ProfessionTableView(PublishedMixin, TableView):
+    model = Profession
+    columns = ('html', 'individus_count', 'oeuvres_count')
+    verbose_columns = {'html': ''}
+    orderings = {'html': 'nom'}
+
+
+class ProfessionViewSet(CommonViewSet2):
     model = Profession
     base_url_name = b'profession'
-    table_fields = (
-        ('nom', 'nom'),
-        ('parent', 'parent'),
-        ('individus_count', None),
-        ('oeuvres_count', None),
-    )
+    list_view = ProfessionTableView
 
 
-class LieuViewSet(CommonViewSet):
+class LieuViewSet(CommonViewSet2):
     model = Lieu
     base_url_name = b'lieu'
 
     def __init__(self):
         super(LieuViewSet, self).__init__()
         self.views[b'list_view'][b'view'] = PublishedListView
-        del self.views[b'list_view'][b'kwargs']
 
 
-class IndividuViewSet(CommonViewSet):
+class IndividuTableView(PublishedMixin, TableView):
+    model = Individu
+    columns = ('related_label_html', 'calc_professions', 'naissance', 'deces')
+    verbose_columns = {'related_label_html': ''}
+    orderings = {
+        'related_label_html': 'nom',
+        'calc_professions': 'professions',
+        'naissance': 'naissance_date',
+        'deces': 'deces_date',
+    }
+    filters = {'naissance': CENTURIES_VERBOSES, 'deces': CENTURIES_VERBOSES}
+    queryset = Individu.objects.select_related(
+        'naissance_lieu', 'deces_lieu'
+    ).prefetch_related('professions')
+
+    def filter_naissance(self, queryset, value):
+        return queryset.filter(
+            naissance_date__range=CENTURIES_DATE_RANGES[value])
+
+    def filter_deces(self, queryset, value):
+        return queryset.filter(
+            deces_date__range=CENTURIES_DATE_RANGES[value])
+
+
+class IndividuViewSet(CommonViewSet2):
     model = Individu
     base_url_name = b'individu'
-    table_fields = (
-        ('related_label', '{nom} {prenoms}'),
-        ('calc_professions', 'professions'),
-        ('naissance', '{naissance_date}'),
-        ('deces', '{deces_date}')
-    )
-    table_select_related = ('naissance_lieu', 'deces_lieu')
-    table_prefetch_related = ('professions',)
+    list_view = IndividuTableView
 
 
-class EnsembleViewSet(CommonViewSet):
+class EnsembleTableView(PublishedMixin, TableView):
+    model = Ensemble
+    columns = ('html', 'type', 'siege')
+    verbose_columns = {'html': ''}
+    orderings = {'html': 'nom'}
+    filters = {'type': TypeDEnsemble.objects.values_list('pk', 'nom')}
+    values_per_filter = 20
+    queryset = Ensemble.objects.select_related('type', 'siege')
+
+
+class EnsembleViewSet(CommonViewSet2):
     model = Ensemble
     base_url_name = b'ensemble'
-    table_fields = (
-        ('nom', 'nom'),
-        ('membres_html', 'membres'),
+    list_view = EnsembleTableView
+
+
+class OeuvreTableView(PublishedMixin, TableView):
+    model = Oeuvre
+    columns = ('titre_html', 'genre', 'auteurs_html', 'creation')
+    verbose_columns = {'titre_html': ''}
+    orderings = {
+        'titre_html': 'titre',
+        'auteurs_html': 'auteurs__individu',
+        'creation': 'creation_date',
+    }
+    filters = {
+        'creation': CENTURIES_VERBOSES
+    }
+    queryset = (
+        Oeuvre.objects.filter(extrait_de=None)
+        .select_related('genre', 'creation_lieu')
+        .prefetch_related('auteurs__individu', 'auteurs__profession')
     )
 
-
-class OeuvreTableView(CommonTableView):
-    def get_queryset(self):
-        return super(OeuvreTableView,
-                     self).get_queryset().filter(extrait_de=None)
+    def filter_creation(self, queryset, value):
+        return queryset.filter(
+            creation_date__range=CENTURIES_DATE_RANGES[value])
 
 
-class OeuvreViewSet(CommonViewSet):
+class OeuvreViewSet(CommonViewSet2):
     model = Oeuvre
     base_url_pattern = b'oeuvres'
     base_url_name = b'oeuvre'
-    table_fields = (
-        ('_str', '{titre} {genre}'),
-        ('genre', 'genre'),
-        ('auteurs_html', 'auteurs__individu'),
-        ('creation', '{creation_date}'),
-    )
-    table_select_related = ('genre', 'creation_lieu')
-    table_prefetch_related = ('auteurs__individu', 'auteurs__profession')
-
-    def __init__(self):
-        super(OeuvreViewSet, self).__init__()
-        self.views[b'list_view'][b'view'] = OeuvreTableView
+    list_view = OeuvreTableView
 
 
 class TreeNode(PublishedDetailView):

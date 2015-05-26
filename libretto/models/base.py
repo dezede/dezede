@@ -596,7 +596,8 @@ class Fichier(CommonModel):
         (AUDIO, 'audio'),
         (VIDEO, 'vidéo'),
     )
-    type = PositiveSmallIntegerField(choices=TYPES, null=True, blank=True)
+    type = PositiveSmallIntegerField(choices=TYPES, null=True, blank=True,
+                                     db_index=True)
     format = CharField(max_length=10, blank=True)
     width = PositiveSmallIntegerField(_('largeur'), null=True, blank=True)
     height = PositiveSmallIntegerField(_('hauteur'), null=True, blank=True)

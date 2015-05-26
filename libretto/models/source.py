@@ -81,6 +81,39 @@ class SourceQuerySet(PublishedQuerySet):
             'type__nom', 'type__nom_pluriel',
         )
 
+    def with_video(self):
+        return self.filter(fichiers__type=Fichier.VIDEO).distinct()
+
+    def with_audio(self):
+        return self.filter(fichiers__type=Fichier.AUDIO).distinct()
+
+    def with_image(self):
+        return self.filter(fichiers__type=Fichier.IMAGE).distinct()
+
+    def with_other(self):
+        return self.filter(fichiers__type=Fichier.OTHER).distinct()
+
+    def with_text(self):
+        return self.exclude(transcription='')
+
+    def with_link(self):
+        return self.exclude(url='')
+
+    def with_data_type(self, data_type):
+        if data_type == Source.VIDEO:
+            return self.with_video()
+        if data_type == Source.AUDIO:
+            return self.with_audio()
+        if data_type == Source.IMAGE:
+            return self.with_image()
+        if data_type == Source.OTHER:
+            return self.with_other()
+        if data_type == Source.TEXT:
+            return self.with_text()
+        if data_type == Source.LINK:
+            return self.with_link()
+        raise ValueError('Unknown data type.')
+
 
 class SourceManager(PublishedManager):
     queryset_class = SourceQuerySet
@@ -90,6 +123,27 @@ class SourceManager(PublishedManager):
 
     def prefetch(self):
         return self.get_queryset().prefetch()
+
+    def with_video(self):
+        return self.get_queryset().with_video()
+
+    def with_audio(self):
+        return self.get_queryset().with_audio()
+
+    def with_image(self):
+        return self.get_queryset().with_image()
+
+    def with_other(self):
+        return self.get_queryset().with_other()
+
+    def with_text(self):
+        return self.get_queryset().with_text()
+
+    def with_link(self):
+        return self.get_queryset().with_link()
+
+    def with_data_type(self, data_type):
+        return self.get_queryset().with_data_type(data_type)
 
 
 @python_2_unicode_compatible
@@ -245,6 +299,49 @@ class Source(AutoriteModel):
 
     def is_empty(self):
         return not (self.transcription or self.url or self.has_fichiers())
+
+    DATA_TYPES = ('video', 'audio', 'image', 'other', 'text', 'link')
+    VIDEO, AUDIO, IMAGE, OTHER, TEXT, LINK = DATA_TYPES
+
+    @property
+    def data_types(self):
+        data_types = []
+        if self.has_videos():
+            data_types.append(self.VIDEO)
+        if self.has_audios():
+            data_types.append(self.AUDIO)
+        if self.has_images():
+            data_types.append(self.IMAGE)
+        if self.has_others():
+            data_types.append(self.OTHER)
+        if self.transcription:
+            data_types.append(self.TEXT)
+        if self.url:
+            data_types.append(self.LINK)
+        return data_types
+
+    ICONS = {
+        VIDEO: '<i class="fa fa-fw fa-video-camera"></i>',
+        AUDIO: '<i class="fa fa-fw fa-volume-up"></i>',
+        IMAGE: '<i class="fa fa-fw fa-photo"></i>',
+        OTHER: '<i class="fa fa-fw fa-paperclip"></i>',
+        TEXT: '<i class="fa fa-fw fa-file-text-o"></i>',
+        LINK: '<i class="fa fa-fw fa-external-link"></i>',
+    }
+
+    DATA_TYPES_WITH_ICONS = (
+        (VIDEO, _(ICONS[VIDEO] + ' ' + 'Vidéo')),
+        (AUDIO, _(ICONS[AUDIO] + ' ' + 'Audio')),
+        (IMAGE, _(ICONS[IMAGE] + ' ' + 'Image')),
+        (OTHER, _(ICONS[OTHER] + ' ' + 'Autre')),
+        (TEXT, _(ICONS[TEXT] + ' ' + 'Texte')),
+        (LINK, _(ICONS[LINK] + ' ' + 'Lien')),
+    )
+
+    @property
+    def icons(self):
+        return ''.join([self.ICONS[data_type]
+                        for data_type in self.data_types])
 
 
 class SourceEvenement(TypographicModel):
