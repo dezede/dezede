@@ -294,8 +294,9 @@ class SourceTableView(PublishedMixin, TableView):
     }
     orderings = {'ancrage': 'date'}
     filters = {
-        'ancrage': CENTURIES_VERBOSES,
         'icons': Source.DATA_TYPES_WITH_ICONS,
+        'ancrage': CENTURIES_VERBOSES,
+        'type': TypeDeSource.objects.values_list('pk', 'nom')
     }
     queryset = Source.objects.prefetch()
 
