@@ -125,7 +125,8 @@ function Table ($container, columns, sortables, filters,
     e.preventDefault();
     this.update();
   }.bind(this));
-  this.$count = $('#count');
+  this.$count = $container.find('.count');
+  this.$spinner = $container.find('.spinner');
   this.columns = columns;
   this.sortables = sortables;
   this.filters = filters;
@@ -242,6 +243,7 @@ Table.prototype.update = function () {
   if (typeof this.currentAjax !== 'undefined') {
     this.currentAjax.abort();
   }
+  this.$spinner.show();
   this.currentAjax = $.ajax({
     data: this.getData()
   }).done(function (data) {
@@ -254,5 +256,6 @@ Table.prototype.update = function () {
         $row.append('<td>' + value + '</td>');
       });
     }.bind(this));
+    this.$spinner.hide();
   }.bind(this));
 };

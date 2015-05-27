@@ -15,7 +15,7 @@
 {% block content %}
   <div id="table">
     <header class="row">
-      <form class="col-sm-3">
+      <form class="col-md-3">
         <div class="input-group">
           <input type="text" placeholder="{% trans 'Search…' %}" class="form-control" />
           <span class="input-group-btn">
@@ -25,9 +25,15 @@
           </span>
         </div>
       </form>
-      <div id="count" class="col-sm-2 btn disabled center-block"></div>
-      <nav class="col-sm-7">
-        <ul class="pagination pagination-sm pull-right"></ul>
+      <div class="col-md-2">
+        <span class="count"></span>
+        <span class="spinner pull-right" style="display: none;">
+          <i class="fa fa-spinner fa-spin"></i>
+        </span>
+
+      </div>
+      <nav class="col-md-7 text-right">
+        <ul class="pagination pagination-sm"></ul>
       </nav>
     </header>
 
@@ -42,6 +48,17 @@
     <style>
       #table header {
         margin-bottom: 20px;
+      }
+      #table .count, #table .spinner {
+        display: inline-block;
+        height: 34px;
+        padding: 6px 0;
+        vertical-align: middle;
+        cursor: default;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
       }
       #table .pagination {
         margin: 0;
@@ -69,7 +86,7 @@
       #table .sortable:last-child {
         width: 100%;
       }
-      #table .column-name, #table .fa {
+      #table thead .column-name, #table thead .fa {
         vertical-align: middle;
       }
       #table .column-name {
