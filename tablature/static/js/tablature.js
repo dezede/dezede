@@ -74,7 +74,6 @@ Pagination.prototype.createPageLinks = function () {
   var minEnd = Math.max(maxStart, maxEnd - this.margin);
   var minMid = Math.max(maxStart, this.current - this.margin);
   var maxMid = Math.min(minEnd, this.current + this.margin);
-  console.log(minMid, maxMid);
 
   this.createPageLink(this.current - 1,
                       '<i class="fa fa-angle-left"></i>');
