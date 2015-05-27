@@ -15,7 +15,7 @@ django-ajax-selects==1.3.6
 django-image-cropping==1.0.1
 
 # User authentication
-django-allauth==0.19.1
+django-allauth==0.20.0
 
 # Search engine
 django-haystack==2.3.1
@@ -23,7 +23,7 @@ elasticsearch==1.5.0
 
 # Caching
 django-redis==4.0.0
-django-cachalot==1.0.1
+django-cachalot==1.0.2
 
 # Data visualization frameworks
 djangorestframework==2.4.4
