@@ -147,15 +147,17 @@ function Table ($container, columns, sortables, filters,
 
 Table.prototype.createSortable = function (column, $cell, i) {
   this.orderings.push(0);
+  var columnName = '<span class="column-name">' + column + '</span>';
 
   if (!this.sortables[i]) {
-    $cell.append($('<div class="unsortable">' + column + '</div>'));
+    $cell.append($('<div class="unsortable">' + columnName + '</div>'));
     return;
   }
 
-  var $sortable = $('<div class="sortable" tabindex="0">' + column + '</div>');
+  var $sortable = $('<div class="sortable" tabindex="0">'
+                    + columnName + '</div>');
   $cell.append($sortable);
-  var $icon = $('<i class="pull-right fa fa-sort"></i>');
+  var $icon = $('<i class="fa fa-sort"></i>');
   $sortable.append($icon);
   $sortable.click(function () {
     $icon.removeClass(this.sortIcons[this.orderings[i].toString()]);

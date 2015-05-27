@@ -18,7 +18,6 @@ class TableView(ListView):
     filters = {}
     template_name = 'table.html'
     results_per_page = 15
-    values_per_filter = 15
 
     def get_columns(self):
         if self.columns:
@@ -82,8 +81,7 @@ class TableView(ListView):
             return ()
         values = self.filters[column]
         if isinstance(values, ValuesListQuerySet):
-            values = values.all()
-        values = tuple(values[:self.values_per_filter])
+            values = tuple(values.all())
         assert len(values[0]) == 2, 'Each filter must be a value/verbose pair.'
         return values
 

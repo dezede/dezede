@@ -57,6 +57,7 @@
       #table .unsortable, #table .sortable, #table .filter {
         display: inline-block;
         vertical-align: bottom;
+        height: 30px;
       }
       #table .sortable, #table .filter {
         cursor: pointer;
@@ -68,16 +69,37 @@
       #table .sortable:last-child {
         width: 100%;
       }
+      #table .column-name, #table .fa {
+        vertical-align: middle;
+      }
+      #table .column-name {
+        display: inline-block;
+        white-space: nowrap;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+      }
+      #table .sortable .column-name {
+        width: calc(100% - 15px);
+      }
+      #table .unsortable .column-name {
+        width: 100%;
+      }
+      #table .sortable .fa {
+        width: 15px;
+        text-align: right;
+      }
       #table .filter-button {
         display: inline-block;
         width: 32px;
-        height: 30px;
-        line-height: 15px;
-        padding: 7px 10px;
+        padding: 6px 10px 5px;
       }
       #table .filter.active .filter-button {
         background: #ec8055;
         color: white;
+      }
+      #table .filter .dropdown-menu {
+        max-height: 300px;
+        overflow-y: auto;
       }
     </style>
   {% endaddstatic %}
