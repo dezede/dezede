@@ -1,10 +1,11 @@
 function Pagination ($pagination, numPages, switchPageHandler) {
+  this.initialisation = true;
   this.$pagination = $pagination;
-  this.current = -1;
-  this.setNumPages(numPages);
+  this.switchPageHandler = switchPageHandler;
+  this.current = 0;
   this.margin = 2;  // Number of page links
                     // around current page and ends.
-  this.switchPageHandler = switchPageHandler;
+  this.setNumPages(numPages);
   $(document).keydown(function (e) {
     var boundKeys = [33, 34, 35, 36, 37, 39];
     if (boundKeys.indexOf(e.keyCode) != -1) {
@@ -30,17 +31,14 @@ function Pagination ($pagination, numPages, switchPageHandler) {
       this.switchToPage(newPage);
     }
   }.bind(this));
+  this.initialisation = false;
 }
 
 Pagination.prototype.setNumPages = function (numPages) {
   var last = numPages - 1;
   if (last != this.last) {
     this.last = last;
-    if (this.current > this.last) {
-      this.switchToPage(this.last);
-    } else {
-      this.update();
-    }
+    this.switchToPage(0, true);
   }
 };
 
@@ -76,6 +74,7 @@ Pagination.prototype.createPageLinks = function () {
   var minEnd = Math.max(maxStart, maxEnd - this.margin);
   var minMid = Math.max(maxStart, this.current - this.margin);
   var maxMid = Math.min(minEnd, this.current + this.margin);
+  console.log(minMid, maxMid);
 
   this.createPageLink(this.current - 1,
                       '<i class="fa fa-angle-left"></i>');
@@ -85,7 +84,7 @@ Pagination.prototype.createPageLinks = function () {
   if (minMid > maxStart) {
     this.createPageLink(-1, '…');
   }
-  for (i = minMid; i <= maxMid; i++) {
+  for (i = minMid; i >= 0 && i <= maxMid; i++) {
     this.createPageLink(i);
   }
   if (maxMid < minEnd) {
@@ -98,11 +97,16 @@ Pagination.prototype.createPageLinks = function () {
                       '<i class="fa fa-angle-right"></i>');
 };
 
-Pagination.prototype.switchToPage = function (i) {
-  if ((i != this.current) && !this.pageOutOfBounds(i)) {
+Pagination.prototype.switchToPage = function (i, force) {
+  if (typeof force === 'undefined') {
+    force = false;
+  }
+  if (((i != this.current) && !this.pageOutOfBounds(i)) || force) {
     this.current = i;
     this.update();
-    this.switchPageHandler();
+    if (!this.initialisation) {
+      this.switchPageHandler();
+    }
   }
 };
 
@@ -120,7 +124,6 @@ function Table ($container, columns, sortables, filters,
   this.$input = $container.find('input');
   this.$input.parents('form').submit(function (e) {
     e.preventDefault();
-    this.pagination.current = 0;
     this.update();
   }.bind(this));
   this.$count = $('#count');
@@ -134,13 +137,13 @@ function Table ($container, columns, sortables, filters,
   };
   this.filterChoices = [];
   this.createHeaders();
-  this.count = 1;  // We set it to 1 so we can load the first page.
+  this.count = 0;
   this.resultsPerPage = resultsPerPage;
   this.pagination = new Pagination(
     $container.find('.pagination'),
     this.getNumPages(),
     this.update.bind(this));
-  this.pagination.switchToPage(0);
+  this.update();
 }
 
 Table.prototype.createSortable = function (column, $cell, i) {
