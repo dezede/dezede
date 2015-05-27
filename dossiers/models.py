@@ -177,7 +177,7 @@ class DossierDEvenements(MPTTModel, PublishedModel):
                 kwargs['sources__in'] = sources
             saisons = self.saisons.all()
             if saisons.exists():
-                kwargs['pk__in'] = saisons.evenements.all()
+                kwargs['pk__in'] = saisons.evenements()
         if self.circonstance:
             kwargs['circonstance__icontains'] = self.circonstance
         if kwargs:
