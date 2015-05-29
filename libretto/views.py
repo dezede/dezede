@@ -344,6 +344,9 @@ class SourceViewSet(CommonViewSet2):
 class PartieTableView(PublishedMixin, TableView):
     model = Partie
     columns = ('html', 'type')
+    columns_widths = {
+        'type': '10%',
+    }
     verbose_columns = {'html': ''}
     orderings = {'html': 'nom'}
     filters = {'type': Partie.TYPES}
@@ -358,6 +361,10 @@ class PartieViewSet(CommonViewSet2):
 class ProfessionTableView(PublishedMixin, TableView):
     model = Profession
     columns = ('html', 'individus_count', 'oeuvres_count')
+    columns_widths = {
+        'individus_count': '17%',
+        'oeuvres_count': '17%'
+    }
     verbose_columns = {'html': ''}
     orderings = {'html': 'nom'}
 
@@ -380,6 +387,11 @@ class LieuViewSet(CommonViewSet2):
 class IndividuTableView(PublishedMixin, TableView):
     model = Individu
     columns = ('related_label_html', 'calc_professions', 'naissance', 'deces')
+    columns_widths = {
+        'calc_professions': '40%',
+        'naissance': '18%',
+        'deces': '18%',
+    }
     verbose_columns = {'related_label_html': ''}
     orderings = {
         'related_label_html': 'nom',
@@ -410,6 +422,10 @@ class IndividuViewSet(CommonViewSet2):
 class EnsembleTableView(PublishedMixin, TableView):
     model = Ensemble
     columns = ('html', 'type', 'siege')
+    columns_widths = {
+        'type': '20%',
+        'siege': '20%',
+    }
     verbose_columns = {'html': ''}
     orderings = {'html': 'nom'}
     filters = {'type': TypeDEnsemble.objects.values_list('pk', 'nom')}
@@ -426,6 +442,11 @@ class EnsembleViewSet(CommonViewSet2):
 class OeuvreTableView(PublishedMixin, TableView):
     model = Oeuvre
     columns = ('titre_html', 'genre', 'auteurs_html', 'creation')
+    columns_widths = {
+        'genre': '12%',
+        'auteurs_html': '30%',
+        'creation': '26%',
+    }
     verbose_columns = {'titre_html': ''}
     orderings = {
         'titre_html': 'titre',
