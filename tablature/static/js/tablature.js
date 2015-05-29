@@ -114,7 +114,7 @@ Pagination.prototype.update = function () {
   this.createPageLinks();
 };
 
-function Table ($container, columns, sortables, filters,
+function Table ($container, columns, columnsWidths, sortables, filters,
                 resultsPerPage, resultsString) {
   this.$container = $container;
   this.$table = $container.find('table');
@@ -128,6 +128,7 @@ function Table ($container, columns, sortables, filters,
   this.$count = $container.find('.count');
   this.$spinner = $container.find('.spinner');
   this.columns = columns;
+  this.columnsWidths = columnsWidths;
   this.sortables = sortables;
   this.filters = filters;
   this.resultsString = resultsString;
@@ -212,7 +213,7 @@ Table.prototype.createHeaders = function () {
   var $tr = $('<tr></tr>');
   this.$head.append($tr);
   this.columns.forEach(function (column, i) {
-    var $cell = $('<th></th>');
+    var $cell = $('<th style="width: ' + this.columnsWidths[i] + ';"></th>');
     $tr.append($cell);
 
     this.createSortable(column, $cell, i);

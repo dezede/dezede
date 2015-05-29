@@ -139,6 +139,7 @@
         ];
         new Table(
           $('#table'), ['{{ columns|join:"','" }}'],
+          ['{{ columns_widths|join:"','" }}'],
           [{{ sortables|join:',' }}], filters,
           {{ results_per_page }}, '{% trans 'results' %}'
         );

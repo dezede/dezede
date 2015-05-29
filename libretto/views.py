@@ -287,6 +287,11 @@ CENTURIES_DATE_RANGES = {
 class SourceTableView(PublishedMixin, TableView):
     model = Source
     columns = ('icons', 'html', 'ancrage', 'type')
+    columns_widths = {
+        'icons': '14%',
+        'ancrage': '11%',
+        'type': '15%',
+    }
     verbose_columns = {
         'icons': 'Type de contenu',
         'html': '',

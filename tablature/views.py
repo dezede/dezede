@@ -13,6 +13,7 @@ from haystack.query import SearchQuerySet
 
 class TableView(ListView):
     columns = ()
+    columns_widths = {}
     verbose_columns = {}
     orderings = {}
     filters = {}
@@ -42,16 +43,20 @@ class TableView(ListView):
             column = field.verbose_name
         return capfirst(column)
 
+    def get_column_width(self, column):
+        if column in self.columns_widths:
+            return self.columns_widths[column]
+        return 'initial'
+
     def get_context_data(self, **kwargs):
         context = super(TableView, self).get_context_data(**kwargs)
         context.update(
             model=self.model,
-            columns=[self.get_verbose_columns(column)
-                     for column in self.get_columns()],
-            sortables=['true' if self.get_ordering(column, 1) else 'false'
-                       for column in self.get_columns()],
-            filters=[self.get_filter(column)
-                     for column in self.get_columns()],
+            columns=map(self.get_verbose_columns, self.get_columns()),
+            columns_widths=map(self.get_column_width, self.get_columns()),
+            sortables=['true' if self.get_ordering(c, 1) else 'false'
+                       for c in self.get_columns()],
+            filters=map(self.get_filter, self.get_columns()),
             results_per_page=self.results_per_page)
         return context
 
