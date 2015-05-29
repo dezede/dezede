@@ -339,10 +339,10 @@ AJAX_LOOKUP_CHANNELS = {
 }
 
 REST_FRAMEWORK = {
+    'UNICODE_JSON': False,
     'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.BrowsableAPIRenderer',
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.XMLRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ),
     'DEFAULT_FILTER_BACKENDS': ['rest_framework.filters.DjangoFilterBackend'],
     'DEFAULT_THROTTLE_CLASSES': (

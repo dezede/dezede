@@ -1,11 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict
 
-from django.utils.encoding import force_text
-from rest_framework.fields import Field, SerializerMethodField
-from rest_framework.relations import RelatedField, HyperlinkedIdentityField
+from rest_framework.fields import ReadOnlyField, Field
+from rest_framework.relations import (
+    HyperlinkedIdentityField, StringRelatedField)
 from rest_framework.reverse import reverse
 from rest_framework.serializers import HyperlinkedModelSerializer
 
@@ -13,10 +13,10 @@ from ...models import *
 
 
 class AncrageSpatioTemporelSerializer(Field):
-    def to_native(self, value):
+    def to_representation(self, obj):
         d = OrderedDict()
-        for fieldname in sorted(value.fields):
-            d[fieldname] = getattr(value, fieldname)
+        for fieldname in sorted(obj.fields):
+            d[fieldname] = getattr(obj, fieldname)
         lieu = d.get('lieu')
         if lieu is not None:
             d['lieu'] = reverse('lieu-detail', (lieu.pk,),
@@ -25,48 +25,51 @@ class AncrageSpatioTemporelSerializer(Field):
 
 
 class IndividuSerializer(HyperlinkedModelSerializer):
-    str = Field(source='__str__')
+    str = ReadOnlyField(source='__str__')
     naissance = AncrageSpatioTemporelSerializer()
     deces = AncrageSpatioTemporelSerializer()
-    professions = RelatedField(many=True)
-    front_url = HyperlinkedIdentityField(view_name='individu_detail')
+    professions = StringRelatedField(many=True)
+    front_url = HyperlinkedIdentityField(view_name='individu_detail',
+                                         lookup_field='slug')
 
     class Meta(object):
         model = Individu
         fields = (
             'id', 'str', 'nom', 'prenoms',
             'naissance', 'deces',
-            'professions', 'parents', 'enfants',
+            'professions', 'parents',
             'front_url', 'url'
         )
 
 
 class EnsembleSerializer(HyperlinkedModelSerializer):
-    str = Field(source='__str__')
-    front_url = HyperlinkedIdentityField(view_name='ensemble_detail')
+    str = ReadOnlyField(source='__str__')
+    type = StringRelatedField()
+    front_url = HyperlinkedIdentityField(view_name='ensemble_detail',
+                                         lookup_field='slug')
 
     class Meta(object):
-        model = Individu
+        model = Ensemble
         fields = (
-            'id', 'str', 'front_url', 'url'
+            'id', 'str', 'type', 'front_url', 'url'
         )
 
 
 class LieuSerializer(HyperlinkedModelSerializer):
-    str = Field(source='__str__')
-    nature = Field()
-    front_url = HyperlinkedIdentityField(view_name='lieu_detail')
+    str = ReadOnlyField(source='__str__')
+    nature = StringRelatedField()
+    front_url = HyperlinkedIdentityField(view_name='lieu_detail',
+                                         lookup_field='slug')
 
     class Meta(object):
         model = Lieu
         fields = (
-            'id', 'str', 'nom', 'nature', 'parent', 'enfants',
-            'front_url', 'url'
+            'id', 'str', 'nom', 'nature', 'parent', 'front_url', 'url'
         )
 
 
 class AuteurSerializer(HyperlinkedModelSerializer):
-    profession = Field()
+    profession = StringRelatedField()
 
     class Meta(object):
         model = Auteur
@@ -74,27 +77,21 @@ class AuteurSerializer(HyperlinkedModelSerializer):
 
 
 class OeuvreSerializer(HyperlinkedModelSerializer):
-    str = Field(source='__str__')
-    titre = SerializerMethodField('get_titre')
-    genre = Field()
-    auteurs = AuteurSerializer()
+    str = ReadOnlyField(source='__str__')
+    titre_significatif = ReadOnlyField(source='get_titre_significatif')
+    titre_non_significatif = ReadOnlyField(source='get_titre_non_significatif')
+    description = ReadOnlyField(source='get_description')
+    genre = StringRelatedField()
+    auteurs = AuteurSerializer(many=True, read_only=True)
     creation = AncrageSpatioTemporelSerializer()
-    evenements = RelatedField(many=True)
-    front_url = HyperlinkedIdentityField(view_name='oeuvre_detail')
+    front_url = HyperlinkedIdentityField(view_name='oeuvre_detail',
+                                         lookup_field='slug')
 
     class Meta(object):
         model = Oeuvre
         fields = (
-            'id', 'str', 'titre', 'genre',
-            'auteurs', 'creation', 'extrait_de',
+            'id', 'str', 'extrait_de',
+            'titre_significatif', 'titre_non_significatif', 'description',
+            'genre', 'auteurs', 'creation',
             'front_url', 'url'
         )
-
-    def get_titre(self, obj):
-        return OrderedDict((
-            ('prefixe_principal', obj.prefixe_titre),
-            ('principal', obj.titre),
-            ('coordination', obj.coordination),
-            ('prefixe_secondaire', obj.prefixe_titre_secondaire),
-            ('secondaire', obj.titre_secondaire),
-        ))
