@@ -248,6 +248,10 @@ class TypeDEnsemble(CommonModel):
     def __str__(self):
         return self.nom
 
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'nom__icontains', 'nom_pluriel__icontains'
+
 
 @python_2_unicode_compatible
 class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
