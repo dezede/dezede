@@ -33,9 +33,9 @@ class AddStaticNode(Node):
             root_context = context.dicts[0]
             root_context[CONTEXT_VARIABLE_NAME] = \
                 static_grouper_dict = defaultdict(list)
-        if output not in static_grouper_dict[self.static_type]:
-            static_grouper_dict[self.static_type].append(
-                (self.compress, output))
+        item = (self.compress, output)
+        if item not in static_grouper_dict[self.static_type]:
+            static_grouper_dict[self.static_type].append(item)
         return ''
 
 register.tag('addstatic', AddStaticNode)
