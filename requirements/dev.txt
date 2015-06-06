@@ -9,7 +9,7 @@ Fabric==1.10.1
 
 # Testing
 django-nose==1.4
-selenium==2.45.0
+selenium==2.46.0
 
 # For manage.py runserver_plus
 Werkzeug==0.10.4

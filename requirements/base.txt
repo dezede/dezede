@@ -7,7 +7,7 @@ django-mptt==0.7.4
 django-autoslug==1.7.0
 
 # User interface
-django-grappelli==2.6.4
+django-grappelli==2.6.5
 django-super-inlines==0.1.4
 django-tinymce==1.5.3
 django-crispy-forms==1.4.0
@@ -39,7 +39,7 @@ awesome-slugify==1.6.4
 
 # Asynchronous tasks
 django-rq==0.8.0
-rq==0.5.2
+rq==0.5.3
 django-transaction-hooks==0.2
 
 # CSS/JS handling
