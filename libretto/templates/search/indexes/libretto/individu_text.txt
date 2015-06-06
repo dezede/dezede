@@ -1,4 +1,7 @@
+{{ object.calc_titre }}
+{{ object.particule_nom }}
 {{ object.nom }}
+{{ object.particule_nom_naissance }}
 {{ object.nom_naissance }}
 {{ object.pseudonyme }}
 {{ object.prenoms }}
