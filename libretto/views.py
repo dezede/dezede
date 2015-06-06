@@ -249,7 +249,7 @@ class EvenementDetailView(PublishedDetailView):
         return qs.prefetch_all(create_subquery=False)
 
 
-class CommonViewSet2(ModelViewSet):
+class CommonViewSet(ModelViewSet):
     list_view = TableView
     views = {
         b'list_view': {
@@ -271,7 +271,7 @@ class CommonViewSet2(ModelViewSet):
 
     def __init__(self):
         self.views[b'list_view'][b'view'] = self.list_view
-        super(CommonViewSet2, self).__init__()
+        super(CommonViewSet, self).__init__()
 
 
 CENTURIES = tuple(range(11, 22))
@@ -323,7 +323,7 @@ class SourceModalView(PublishedDetailView):
         return super(SourceModalView, self).get(request, *args, **kwargs)
 
 
-class SourceViewSet(CommonViewSet2):
+class SourceViewSet(CommonViewSet):
     model = Source
     base_url_name = b'source'
     excluded_views = (b'detail_view',)
@@ -352,7 +352,7 @@ class PartieTableView(PublishedMixin, TableView):
     filters = {'type': Partie.TYPES}
 
 
-class PartieViewSet(CommonViewSet2):
+class PartieViewSet(CommonViewSet):
     model = Partie
     base_url_name = b'partie'
     list_view = PartieTableView
@@ -369,13 +369,13 @@ class ProfessionTableView(PublishedMixin, TableView):
     orderings = {'html': 'nom'}
 
 
-class ProfessionViewSet(CommonViewSet2):
+class ProfessionViewSet(CommonViewSet):
     model = Profession
     base_url_name = b'profession'
     list_view = ProfessionTableView
 
 
-class LieuViewSet(CommonViewSet2):
+class LieuViewSet(CommonViewSet):
     model = Lieu
     base_url_name = b'lieu'
 
@@ -413,7 +413,7 @@ class IndividuTableView(PublishedMixin, TableView):
             deces_date__range=CENTURIES_DATE_RANGES[value])
 
 
-class IndividuViewSet(CommonViewSet2):
+class IndividuViewSet(CommonViewSet):
     model = Individu
     base_url_name = b'individu'
     list_view = IndividuTableView
@@ -433,7 +433,7 @@ class EnsembleTableView(PublishedMixin, TableView):
     queryset = Ensemble.objects.select_related('type', 'siege')
 
 
-class EnsembleViewSet(CommonViewSet2):
+class EnsembleViewSet(CommonViewSet):
     model = Ensemble
     base_url_name = b'ensemble'
     list_view = EnsembleTableView
@@ -459,7 +459,8 @@ class OeuvreTableView(PublishedMixin, TableView):
     queryset = (
         Oeuvre.objects.filter(extrait_de=None)
         .select_related('genre', 'creation_lieu')
-        .prefetch_related('auteurs__individu', 'auteurs__profession')
+        .prefetch_related(
+            'pupitres__partie', 'auteurs__individu', 'auteurs__profession')
     )
 
     def filter_creation(self, queryset, value):
@@ -467,7 +468,7 @@ class OeuvreTableView(PublishedMixin, TableView):
             creation_date__range=CENTURIES_DATE_RANGES[value])
 
 
-class OeuvreViewSet(CommonViewSet2):
+class OeuvreViewSet(CommonViewSet):
     model = Oeuvre
     base_url_pattern = b'oeuvres'
     base_url_name = b'oeuvre'
