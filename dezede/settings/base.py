@@ -226,15 +226,29 @@ ELASTICSEARCH_INDEX_SETTINGS = {
     'settings': {
         'analysis': {
             'analyzer': {
-                'ngram_analyzer': {
+                'default': {
                     'type': 'custom',
-                    'tokenizer': 'nGram',
+                    'tokenizer': 'standard',
+                    'char_filter': ['html_strip'],
                     'filter': [
-                        'haystack_ngram',
-                        # 'stopwords',
+                        'snowball_fr',
+                        'snowball_de',
                         'asciifolding',
                         'lowercase',
-                        # 'snowball',
+                        'elision',
+                        'worddelimiter',
+                    ],
+                },
+                'ngram_analyzer': {
+                    'type': 'custom',
+                    'tokenizer': 'standard',
+                    'char_filter': ['html_strip'],
+                    'filter': [
+                        'haystack_ngram',
+                        'snowball_fr',
+                        'snowball_de',
+                        'asciifolding',
+                        'lowercase',
                         'elision',
                         'worddelimiter',
                     ],
@@ -242,50 +256,38 @@ ELASTICSEARCH_INDEX_SETTINGS = {
                 'edgengram_analyzer': {
                     'type': 'custom',
                     'tokenizer': 'standard',
+                    'char_filter': ['html_strip'],
                     'filter': [
                         'haystack_edgengram',
-                        # 'stopwords',
+                        'snowball_fr',
+                        'snowball_de',
                         'asciifolding',
                         'lowercase',
-                        # 'snowball',
                         'elision',
                         'worddelimiter',
                     ],
                 }
             },
-            'tokenizer': {
-                'haystack_ngram_tokenizer': {
-                    'type': 'nGram',
-                    'min_gram': 3,
-                    'max_gram': 15,
-                },
-                'haystack_edgengram_tokenizer': {
-                    'type': 'edgeNGram',
-                    'min_gram': 2,
-                    'max_gram': 15,
-                    'side': 'front'
-                }
-            },
             'filter': {
-                'snowball': {
+                'snowball_fr': {
                     'type': 'snowball',
                     'language': 'French',
+                },
+                'snowball_de': {
+                    'type': 'snowball',
+                    'language': 'German2',
                 },
                 'elision': {
                     'type': 'elision',
                     'articles': ['l', 'm', 't', 'qu', 'n', 's', 'j', 'd'],
                 },
-                'stopwords': {
-                    'type': 'stop',
-                    'stopwords': '_french_',
-                    'ignore_case': True,
-                },
                 'worddelimiter': {
                     'type': 'word_delimiter',
+                    'preserve_original': True,
                 },
                 'haystack_ngram': {
                     'type': 'nGram',
-                    'min_gram': 3,
+                    'min_gram': 2,
                     'max_gram': 15,
                 },
                 'haystack_edgengram': {
