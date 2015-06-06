@@ -1,11 +1,3 @@
-{% load extras %}
-
-{% filter striptags_n_chars %}
-  {% autoescape off %}
-    {{ object.nom }}
-    {{ object.type|default_if_none:'' }}
-    {{ object.membres_html }}
-    {{ object }}
-    {{ object.notes_publiques }}
-  {% endautoescape %}
-{% endfilter %}
+{{ object.nom }}
+{{ object.type|default_if_none:'' }}
+{{ object.notes_publiques|safe }}

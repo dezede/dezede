@@ -1,12 +1,5 @@
-{% load extras %}
-
-{% filter striptags_n_chars %}
-  {% autoescape off %}
-    {{ object.nom }}
-    {{ object.parent|default_if_none:'' }}
-    {{ object.nom_pluriel }}
-    {{ object.professions.all|join:' ' }}
-    {{ object.interpretes|join:' ' }}
-    {{ object.notes_publiques }}
-  {% endautoescape %}
-{% endfilter %}
+{{ object.nom|safe }}
+{{ object.parent|default_if_none:'' }}
+{{ object.nom_pluriel|safe }}
+{% for profession in object.professions.all %}{{ profession }}{% endfor %}
+{{ object.notes_publiques|safe }}

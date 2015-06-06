@@ -1,15 +1,9 @@
-{% load extras %}
-
-{% filter striptags_n_chars %}
-  {% autoescape off %}
-    {{ object.circonstance }}
-    {{ object.debut }}
-    {{ object.fin }}
-    {{ object.html }}
-    {{ object.distribution.html|safe }}
-    {% for element in object.programme.all %}
-      {{ element.html|safe }}
-    {% endfor %}
-    {{ object.notes_publiques }}
-  {% endautoescape %}
-{% endfilter %}
+{{ object.circonstance }}
+{{ object.debut }}
+{{ object.fin }}
+{{ object.html }}
+{{ object.distribution.html }}
+{% for element in object.programme.all %}
+  {{ element.html }}
+{% endfor %}
+{{ object.notes_publiques|safe }}

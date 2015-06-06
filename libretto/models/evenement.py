@@ -44,7 +44,7 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
             'individu', 'ensemble', 'partie', 'profession')
 
     def html(self, tags=True):
-        return str_list(e.html(tags=tags) for e in self)
+        return mark_safe(str_list(e.html(tags=tags) for e in self))
 
 
 class ElementDeDistributionManager(CommonManager):
@@ -121,7 +121,7 @@ class ElementDeDistribution(CommonModel):
         out = str_list(l, infix=' ')
         if not tags:
             return strip_tags(out)
-        return out
+        return mark_safe(out)
 
     def related_label(self):
         return self.get_change_link()
@@ -194,7 +194,7 @@ class CaracteristiqueQuerySet(CommonQuerySet):
                 l.append(hlp(valeur, c.type, tags=tags))
             else:
                 l.append(valeur)
-        return str_list(l)
+        return mark_safe(str_list(l))
 
 
 class CaracteristiqueManager(CommonManager):
@@ -369,7 +369,7 @@ class ElementDeProgramme(CommonModel):
         if add_distribution:
             out += '. — ' + distribution
 
-        return out
+        return mark_safe(out)
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
@@ -587,8 +587,8 @@ class Evenement(AutoriteModel):
         lieu = microdata(self.debut.lieu_str(tags), 'location',
                          tags=tags)
 
-        return str_list((lieu, circonstance,
-                         self.debut.heure_str(), relache))
+        return mark_safe(str_list((lieu, circonstance,
+                                   self.debut.heure_str(), relache)))
 
     html.short_description = _('rendu HTML')
     html.allow_tags = True

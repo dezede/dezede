@@ -1,13 +1,5 @@
-{% load extras %}
-
-{% filter striptags_n_chars %}
-  {% autoescape off %}
-    {{ object.titre }}
-    {{ object.titre_secondaire }}
-    {{ object.genre|default_if_none:'' }}
-    {{ object.caracteristiques_html }}
-    {{ object.html }}
-    {{ object.auteurs.individus.nom_complet }}
-    {{ object.notes_publiques }}
-  {% endautoescape %}
-{% endfilter %}
+{{ object.titre_descr }}
+{% for individu in object.auteurs.individus %}
+  {{ individu.nom_complet }}
+{% endfor %}
+{{ object.notes_publiques|safe }}

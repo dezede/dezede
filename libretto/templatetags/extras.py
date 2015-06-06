@@ -23,11 +23,6 @@ def stripchars(text):
     return HTMLParser().unescape(text)
 
 
-@register.filter
-def striptags_n_chars(text):
-    return smart_text(BeautifulSoup(text, 'html.parser').get_text())
-
-
 def fix_strange_characters(text):
     return (text
             .replace('...\x1f', '…').replace('\x1c', '').replace('\x1b', '')

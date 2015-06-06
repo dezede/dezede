@@ -1,11 +1,5 @@
-{% load extras %}
-
-{% filter striptags_n_chars %}
-  {% autoescape off %}
-    {{ object.nom }}
-    {{ object.parent|default_if_none:'' }}
-    {{ object.nom_pluriel }}
-    {{ object.feminin }}
-    {{ object.notes_publiques }}
-  {% endautoescape %}
-{% endfilter %}
+{{ object.nom|safe }}
+{{ object.parent|default_if_none:'' }}
+{{ object.nom_pluriel|safe }}
+{{ object.feminin|safe }}
+{{ object.notes_publiques|safe }}

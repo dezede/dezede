@@ -43,6 +43,11 @@ class OeuvreIndex(CommonSearchIndex, Indexable):
     def get_model(self):
         return Oeuvre
 
+    def index_queryset(self, using=None):
+        qs = super(OeuvreIndex, self).index_queryset(using)
+        return qs.select_related('genre').prefetch_related(
+            'pupitres__partie', 'auteurs__individu', 'auteurs__profession')
+
     def prepare(self, obj):
         prepared_data = super(OeuvreIndex, self).prepare(obj)
         prepared_data['boost'] /= (obj.level + 1)
@@ -64,6 +69,10 @@ class IndividuIndex(CommonSearchIndex, Indexable):
     def get_model(self):
         return Individu
 
+    def index_queryset(self, using=None):
+        qs = super(IndividuIndex, self).index_queryset(using)
+        return qs.prefetch_related('professions')
+
 
 class EnsembleIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='related_label')
@@ -71,6 +80,10 @@ class EnsembleIndex(CommonSearchIndex, Indexable):
 
     def get_model(self):
         return Ensemble
+
+    def index_queryset(self, using=None):
+        qs = super(EnsembleIndex, self).index_queryset(using)
+        return qs.select_related('type')
 
 
 class LieuIndex(CommonSearchIndex, Indexable):

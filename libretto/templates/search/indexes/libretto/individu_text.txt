@@ -1,15 +1,9 @@
-{% load extras %}
-
-{% filter striptags_n_chars %}
-  {% autoescape off %}
-    {{ object.nom }}
-    {{ object.pseudonyme }}
-    {{ object.prenoms }}
-    {{ object.prenoms_complets }}
-    {{ object.calc_professions }}
-    {{ object.naissance }}
-    {{ object.deces }}
-    {{ object }}
-    {{ object.notes_publiques }}
-  {% endautoescape %}
-{% endfilter %}
+{{ object.nom }}
+{{ object.nom_naissance }}
+{{ object.pseudonyme }}
+{{ object.prenoms }}
+{{ object.prenoms_complets }}
+{% for profession in object.professions.all %}
+  {{ object.profession }}
+{% endfor %}
+{{ object.notes_publiques|safe }}
