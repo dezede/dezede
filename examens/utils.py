@@ -218,20 +218,20 @@ def normalize(a, b):
     >>> from pprint import pprint
     >>> pprint(normalize('<p>Théâtre des arts.</p>', '<div> tèatre  des atrs, </div>'))
     [(u'texte', 'theatre des arts', ' teatre des atrs '),
-     (u'majuscules', 'Theatre des arts', ' teatre des atrs '),
-     (u'espaces', 'Theatre des arts', ' teatre  des atrs '),
+     (u'majuscule', 'Theatre des arts', ' teatre des atrs '),
+     (u'espacement', 'Theatre des arts', ' teatre  des atrs '),
      (u'ponctuation', 'Theatre des arts.', ' teatre  des atrs, '),
-     (u'accents', u'Th\\xe9\\xe2tre des arts.', u' t\\xe8atre  des atrs, '),
+     (u'accentuation', u'Th\\xe9\\xe2tre des arts.', u' t\\xe8atre  des atrs, '),
      (u'mise en forme',
       u'<p>Th\\xe9\\xe2tre des arts.</p>',
       u'<div> t\\xe8atre  des atrs, </div>')]
     """
     NORMALIZERS = (
         ('mise en forme', lambda text: text),
-        ('accents', striptags_n_chars),
+        ('accentuation', striptags_n_chars),
         ('ponctuation', remove_diacritics),
-        ('espaces', normalize_punctuation),
-        ('majuscules', normalize_spaces),
+        ('espacement', normalize_punctuation),
+        ('majuscule', normalize_spaces),
         ('texte', string.lower),
     )
 
@@ -252,14 +252,16 @@ def get_diffs_per_normalizer(a, b):
        <Diff: at 19 insert 'r'>,
        <Diff: at 21 delete 'r'>,
        <Diff: at 23 delete ' '>]),
-     (u'majuscules', [<Diff: at 5 replace 't' with 'T'>]),
-     (u'espaces', [<Diff: at 12 delete ' '>]),
+     (u'majuscule', [<Diff: at 5 replace 't' with 'T'>]),
+     (u'espacement', [<Diff: at 12 delete ' '>]),
      (u'ponctuation', [<Diff: at 21 delete ','>, <Diff: at 21 insert '.'>]),
-     (u'accents', [<Diff: at 7 replace 'èa' with 'éâ'>]),
+     (u'accentuation', [<Diff: at 7 replace 'èa' with 'éâ'>]),
      (u'mise en forme',
       [<Diff: at 1 replace 'div' with 'p'>,
        <Diff: at 22 replace 'div' with 'p'>])]
     """
+    if a == b:
+        return ()
     m = None
     left_translations = []
     reverse_left_translations = []
@@ -293,16 +295,16 @@ def highlight_diffs(a, b):
     """
     >>> print(highlight_diffs('<p><span class="sc">théâtre des arts.</span></p>',
     ...                       '<p>Théâtre des arts.</p>'))
-    <p><mark title="majuscules t">T</mark>héâtre des arts.</p>
+    <p><mark title="majuscule t">T</mark>héâtre des arts.</p>
     >>> print(highlight_diffs('<p>Aujourd’hui, relâche.</p>',
     ...                       '<p>aujourd’hui, relache.</p>'))
-    <p><mark title="majuscules A">a</mark>ujourd’hui, rel<mark title="accents â">a</mark>che.</p>
+    <p><mark title="majuscule A">a</mark>ujourd’hui, rel<mark title="accentuation â">a</mark>che.</p>
     >>> print(highlight_diffs(
     ...     '<p><span class="sc">théâtre des arts.</span></p>\\n'
     ...     '<p>Aujourd’hui, relâche.</p>',
     ...     '<p>Théâtre des arts.</p>\\n<p>aujourd’hui, relache.</p>'))
-    <p><mark title="majuscules t">T</mark>héâtre des arts.</p>
-    <p><mark title="majuscules A">a</mark>ujourd’hui, rel<mark title="accents â">a</mark>che.</p>
+    <p><mark title="majuscule t">T</mark>héâtre des arts.</p>
+    <p><mark title="majuscule A">a</mark>ujourd’hui, rel<mark title="accentuation â">a</mark>che.</p>
     """
     translations = []
     diffs = [(name, diff) for name, diffs in
