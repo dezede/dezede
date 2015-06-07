@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static_grouper %}
+
+
+{% block header %}
+  <h1>
+    {% block title %}Formation à la transcription de source{% endblock %}
+  </h1>
+  {% if not success %}
+    <h3>Étape {{ level }} sur {{ max_level }}</h3>
+  {% endif %}
+{% endblock %}
+
+
+{% block content %}
+  {% addstatic css %}
+    {{ form.media.css }}
+  {% endaddstatic %}
+  {% addstatic js nocompress %}
+    <script>var django = {jQuery: $};</script>
+    {{ form.media.js }}
+  {% endaddstatic %}
+
+  {% if success %}
+    <div class="alert alert-success">
+      Félicitations ! La transcription est parfaite :)
+    </div>
+    <a href="{% url 'source_examen' %}" class="btn btn-primary">
+      Passer à l’étape {{ level }} sur {{ max_level }}
+    </a>
+  {% else %}
+
+    <div class="alert alert-info">
+      <h4>Instructions</h4>
+      <p>{{ help }}</p>
+    </div>
+
+{#    <blockquote class="source">#}
+{#      <div class="transcription">#}
+{#        {{ source.transcription }}#}
+{#      </div>#}
+{#      {{ source.pk }}#}
+{#    </blockquote>#}
+
+    <h3>Source à transcrire</h3>
+    {% for fichier in source.fichiers.group_by_type.images %}
+      <img src="{{ fichier.fichier.url }}" />
+    {% endfor %}
+
+    <br /><br />
+
+    {% if errors %}
+      <div class="alert alert-{% if score < 10 %}danger{% else %}warning{% endif %}" role="alert">
+        <h4>
+          {% if score < 5 %}
+            Très insuffisant
+          {% elif score < 10 %}
+            Insuffisant
+          {% elif score < 15 %}
+            Bien ! Plus que quelques erreurs à corriger
+          {% elif score < 20 %}
+            Très bien ! Encore un tout petit effort
+          {% endif %}
+        </h4>
+        Il reste encore des erreurs :
+        <ul>
+          {% for name, diffs in errors %}
+            <li>
+              {{ diffs|length }} erreur{{ diffs|length|pluralize }}
+              {% if name == 'espaces' or name == 'accentuation' %}d’{% else %}de {% endif %}{{ name }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <h3>Transcription</h3>
+
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.level }}
+      {{ form.source }}
+      {{ form.transcription }}
+      <br />
+{#      {{ diff }}#}
+  {#    <br /><br />#}
+      <button type="submit" class="btn btn-primary">Vérifier</button>
+  {#    <hr />#}
+{#      <pre>{{ source.transcription|escape }}</pre>#}
+{#      <pre>{{ form.cleaned_data.transcription|escape }}</pre>#}
+{#      <pre>{{ diff|escape }}</pre>#}
+{#      <hr />#}
+{#      <dl>#}
+{#        {% for name, diffs in errors %}#}
+{#          <dt>{{ name }}</dt>#}
+{#          <dd>#}
+{#            <ul class="list-unstyled">#}
+{#              {% for diff in diffs %}#}
+{#                <li><code>{{ diff|escape }}</code></li>#}
+{#              {% endfor %}#}
+{#            </ul>#}
+{#          </dd>#}
+{#        {% endfor %}#}
+{#      </dl>#}
+    </form>
+  {% endif %}
+{% endblock %}
