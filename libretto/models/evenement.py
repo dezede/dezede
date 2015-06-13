@@ -407,7 +407,7 @@ class EvenementQuerySet(PublishedQuerySet):
 
     def individus(self):
         distributions = self.get_distributions()
-        qs = get_model('libretto', 'individu').objects.filter(
+        qs = get_model('libretto', 'Individu').objects.filter(
             elements_de_distribution__in=distributions).distinct()
         return qs.only(
             'particule_nom', 'nom', 'prenoms', 'prenoms_complets',
@@ -416,9 +416,13 @@ class EvenementQuerySet(PublishedQuerySet):
         )
 
     def individus_auteurs(self):
-        return get_model('libretto', 'individu').objects.filter(
+        return get_model('libretto', 'Individu').objects.filter(
             auteurs__oeuvre__elements_de_programme__evenement__in=self
         ).distinct()
+
+    def oeuvres(self):
+        return get_model('libretto', 'Oeuvre').objects.filter(
+            elements_de_programme__evenement__in=self).distinct()
 
     def with_program(self):
         return self.filter(Q(relache=True) | Q(programme__isnull=False))

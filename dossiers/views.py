@@ -7,6 +7,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db import connection
 from django.db.models import Q, Count
+from django.db.models.sql import EmptyResultSet
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView
@@ -23,6 +24,38 @@ from .models import CategorieDeDossiers, DossierDEvenements
 from common.utils.export import launch_export
 
 
+DEFAULT_PERIOD = -1
+
+PERIODS = {
+    0: (-4713, 1580),
+    1: (1580, 1730),
+    2: (1730, 1780),
+    3: (1780, 1880),
+    4: (1880, 1930),
+    5: (1930, 5874897),
+}
+
+PERIOD_NAMES = {
+    -1: _('Indéterminé'),
+    0: _('Né avant 1580'),
+    1: _('Baroque'),
+    2: _('Classique'),
+    3: _('Romantique'),
+    4: _('Moderne'),
+    5: _('Né après 1930'),
+}
+
+PERIOD_COLORS = {
+    -1: '#E6E6E6',
+    0: '#75101C',
+    1: '#FF6523',
+    2: '#FFDD89',
+    3: '#4D8E66',
+    4: '#89B4FF',
+    5: '#80138E',
+}
+
+
 class CategorieDeDossiersList(PublishedListView):
     model = CategorieDeDossiers
     has_frontend_admin = False
@@ -30,6 +63,40 @@ class CategorieDeDossiersList(PublishedListView):
 
 class DossierDEvenementsDetail(PublishedDetailView):
     model = DossierDEvenements
+
+    def get_oeuvres_par_periode(self, oeuvres_qs):
+        try:
+            oeuvres_sql, oeuvres_params = get_raw_query(
+                oeuvres_qs.order_by().values('pk'))
+        except EmptyResultSet:
+            return ()
+
+        conditions = [
+            'WHEN individu.year >= %s AND individu.year < %s THEN %s'
+            % (min_year, max_year, k)
+            for k, (min_year, max_year) in PERIODS.items()]
+        conditions.insert(
+            0, 'WHEN individu.year IS NULL THEN %s' % DEFAULT_PERIOD)
+        sql = """
+        WITH individus AS (
+            SELECT id, extract(YEAR FROM naissance_date) AS year
+            FROM libretto_individu
+        )
+        SELECT
+            CASE %s END AS period,
+            COUNT(oeuvre.id)
+        FROM (%s) AS oeuvre
+        INNER JOIN libretto_auteur AS auteur ON (auteur.oeuvre_id = oeuvre.id)
+        INNER JOIN individus AS individu ON (individu.id = auteur.individu_id)
+        GROUP BY period
+        ORDER BY period;
+        """ % (' '.join(conditions), oeuvres_sql)
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql, oeuvres_params)
+            data = cursor.fetchall()
+        return [(PERIOD_NAMES[k], PERIOD_COLORS[k], count)
+                for k, count in data]
 
     def get_context_data(self, **kwargs):
         context = super(DossierDEvenementsDetail,
@@ -48,9 +115,14 @@ class DossierDEvenementsDetail(PublishedDetailView):
             None if ensemble is None
             else ensemble.evenements_par_territoire(
                 evenements_qs=self.object.get_queryset()))
+        oeuvres_par_periode = self.get_oeuvres_par_periode(
+            self.object.get_queryset().oeuvres())
+        n_oeuvres = sum([count for _, _, count in oeuvres_par_periode])
         context.update(
             SITE=get_current_site(self.request),
             evenements_par_territoire=evenements_par_territoire,
+            oeuvres_par_periode=oeuvres_par_periode,
+            n_oeuvres=n_oeuvres,
         )
         return context
 
@@ -177,15 +249,6 @@ class ChordDiagramView(PublishedDetailView):
     model = DossierDEvenements
     template_name = 'dossiers/chord_diagram.html'
     n_auteurs = 30
-    colors_by_period = (
-        (float('-inf'), 1580, '#75101C', _('Né avant 1580')),
-        (1580, 1730, '#FF6523', _('Baroque')),
-        (1730, 1780, '#FFDD89', _('Classique')),
-        (1780, 1880, '#4D8E66', _('Romantique')),
-        (1880, 1930, '#89B4FF', _('Moderne')),
-        (1930, float('+inf'), '#80138E', _('Né après 1930')),
-        (None, None, '#E6E6E6', _('Indéterminé')),
-    )
 
     def get_context_data(self, **kwargs):
         context = super(ChordDiagramView, self).get_context_data(**kwargs)
@@ -202,7 +265,7 @@ class ChordDiagramView(PublishedDetailView):
             n_auteurs = n_individus
 
         individus_par_popularite = individus.annotate(n=Count('pk')).order_by('-n')
-        individus_pks = [pk for pk, n in individus_par_popularite.values_list('pk', 'n')[:n_auteurs]]
+        individus_pks = [pk for pk, k in individus_par_popularite.values_list('pk', 'n')[:n_auteurs]]
         individus = Individu.objects.filter(pk__in=individus_pks).order_by('naissance_date')
         evenements = evenements.order_by().values('pk')
         EVENEMENTS_SQL, EVENEMENTS_PARAMS = get_raw_query(evenements)
@@ -217,9 +280,9 @@ class ChordDiagramView(PublishedDetailView):
 
         has_autres = False
         pre_matrix = {}
-        for id1, id2, n in data:
+        for id1, id2, k in data:
             has_autres |= id1 is None or id2 is None
-            pre_matrix[(id1, id2)] = n
+            pre_matrix[(id1, id2)] = k
 
         individus = list(individus)
         if has_autres:
@@ -237,16 +300,19 @@ class ChordDiagramView(PublishedDetailView):
         for individu in individus:
             year = (None if individu.naissance_date is None
                     else individu.naissance_date.year)
-            for min_year, max_year, color, _ in self.colors_by_period:
-                if ((year is not None and (min_year <= year < max_year))
-                    or (year is None
-                        and min_year is None and max_year is None)):
-                    colors.append(color)
+            if year is None:
+                colors.append(PERIOD_COLORS[DEFAULT_PERIOD])
+                continue
+            for k, (min_year, max_year) in PERIODS.items():
+                if min_year <= year < max_year:
+                    colors.append(PERIOD_COLORS[k])
                     break
         colors_by_period = []
-        for min_year, max_year, color, verbose in self.colors_by_period:
+        for k, (min_year, max_year) in PERIODS.items():
+            color = PERIOD_COLORS[k]
             if color in colors:
-                colors_by_period.append((min_year, max_year, color, verbose))
+                colors_by_period.append((min_year, max_year,
+                                         color, PERIOD_NAMES[k]))
 
         context.update(
             matrix=matrix, individus=individus,
