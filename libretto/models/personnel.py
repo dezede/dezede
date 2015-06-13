@@ -328,7 +328,7 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
             evenements_qs = self.apparitions()
         try:
             evenements_sql, evenements_params = get_raw_query(
-                evenements_qs.order_by().values('pk'))
+                evenements_qs.order_by().values('pk', 'debut_lieu_id'))
         except EmptyResultSet:
             return ()
         sql = """
@@ -336,20 +336,18 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
             %s
         )
         (
-            SELECT 'Monde', COUNT(*) FROM evenements
+            SELECT 'Monde', COUNT(id) FROM evenements
         ) UNION ALL (
-            SELECT
-                ancetre.nom, COUNT(evenement.id)
+            SELECT ancetre.nom, COUNT(evenement.id)
             FROM libretto_lieu AS ancetre
             INNER JOIN libretto_lieu AS lieu ON (
                 lieu.tree_id = ancetre.tree_id
                 AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght)
-            INNER JOIN libretto_evenement AS evenement ON (
+            INNER JOIN evenements AS evenement ON (
                 evenement.debut_lieu_id = lieu.id)
             WHERE (
                 ancetre.tree_id = %%s
-                AND %%s BETWEEN ancetre.lft AND ancetre.rght
-                AND evenement.id IN (SELECT * FROM evenements))
+                AND %%s BETWEEN ancetre.lft AND ancetre.rght)
             GROUP BY ancetre.id
             ORDER BY ancetre.level
         );
