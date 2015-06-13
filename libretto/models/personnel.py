@@ -13,6 +13,7 @@ from django.utils.translation import (
     ungettext_lazy, ugettext_lazy as _, ugettext)
 from common.utils.abbreviate import abbreviate
 from common.utils.html import capfirst, href, date_html, sc
+from common.utils.sql import get_raw_query
 from common.utils.text import str_list
 from .base import (CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
                    UniqueSlugModel, AutoriteModel)
@@ -318,6 +319,41 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
             cursor.execute(sql, (self.pk,))
             evenement_ids = [t[0] for t in cursor.fetchall()]
         return Evenement.objects.filter(id__in=evenement_ids)
+
+    def evenements_par_territoire(self, evenements_qs=None):
+        if self.siege is None:
+            return ()
+        if evenements_qs is None:
+            evenements_qs = self.apparitions()
+        evenements_sql, evenements_params = get_raw_query(
+            evenements_qs.order_by().values('pk'))
+        sql = """
+        WITH evenements AS (
+            %s
+        )
+        (
+            SELECT NULL, -1, 'Monde', COUNT(*) FROM evenements
+        ) UNION ALL (
+            SELECT
+                ancetre.id, ancetre.level, ancetre.nom, COUNT(evenement.id)
+            FROM libretto_lieu AS ancetre
+            INNER JOIN libretto_lieu AS lieu ON (
+                lieu.tree_id = ancetre.tree_id
+                AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght)
+            INNER JOIN libretto_evenement AS evenement ON (
+                evenement.debut_lieu_id = lieu.id)
+            WHERE (
+                ancetre.tree_id = %%s
+                AND %%s BETWEEN ancetre.lft AND ancetre.rght
+                AND evenement.id IN (SELECT * FROM evenements))
+            GROUP BY ancetre.id
+            ORDER BY ancetre.level
+        );
+        """ % evenements_sql
+        with connection.cursor() as cursor:
+            cursor.execute(sql, evenements_params + (self.siege.tree_id,
+                                                     self.siege.lft))
+            return cursor.fetchall()
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):

@@ -13,6 +13,7 @@ from django.views.generic import TemplateView
 from endless_pagination.views import AjaxListView
 
 from accounts.models import HierarchicUser
+from common.utils.sql import get_raw_query
 from .jobs import dossier_to_pdf
 from libretto.models import Source, Oeuvre, Individu
 from libretto.views import (
@@ -187,8 +188,8 @@ class ChordDiagramView(PublishedDetailView):
         individus_pks = [pk for pk, n in individus_par_popularite.values_list('pk', 'n')[:n_auteurs]]
         individus = Individu.objects.filter(pk__in=individus_pks).order_by('naissance_date')
         evenements = evenements.order_by().values('pk')
-        EVENEMENTS_SQL, EVENEMENTS_PARAMS = evenements.query.get_compiler('default').as_sql()
-        INDIVIDUS_SQL, INDIVIDUS_PARAMS = individus.order_by().values('pk').query.get_compiler('default').as_sql()
+        EVENEMENTS_SQL, EVENEMENTS_PARAMS = get_raw_query(evenements)
+        INDIVIDUS_SQL, INDIVIDUS_PARAMS = get_raw_query(individus.order_by().values('pk'))
 
         with connection.cursor() as cursor:
             cursor.execute(SQL % (INDIVIDUS_SQL, EVENEMENTS_SQL), INDIVIDUS_PARAMS + EVENEMENTS_PARAMS)

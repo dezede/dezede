@@ -10,6 +10,7 @@ from django.db import connection
 from django.template import Library
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
+from common.utils.sql import get_raw_query
 from ..models import Lieu
 from common.utils.html import date_html as date_html_util
 from common.utils.abbreviate import abbreviate as abbreviate_func
@@ -110,10 +111,6 @@ def date_html(date, short=False):
 def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
     return abbreviate_func(string, min_vowels=min_vowels, min_len=min_len,
                            tags=tags, enabled=enabled)
-
-
-def get_raw_query(qs):
-    return qs.query.get_compiler(connection=connection).as_sql()
 
 
 def get_data(evenements_qs, min_places, bbox):
