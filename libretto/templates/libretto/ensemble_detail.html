@@ -22,4 +22,6 @@
     {% data_table_attr 'notes_publiques' _('notes') %}
   </table>
 
+  {% include 'libretto/include/ensemble_diffusion.html' with evenements_par_territoire=object.evenements_par_territoire %}
+
 {% endblock %}

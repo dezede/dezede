@@ -1,11 +1,10 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, division
 from HTMLParser import HTMLParser
 import re
 from bs4 import BeautifulSoup, Comment
 from django.contrib.gis.geos import GEOSGeometry
-from django.core.urlresolvers import reverse
 from django.db import connection
 from django.template import Library
 from django.utils.encoding import smart_text
@@ -17,6 +16,16 @@ from common.utils.abbreviate import abbreviate as abbreviate_func
 
 
 register = Library()
+
+
+@register.filter
+def divide(a, b):
+    return a / b
+
+
+@register.filter
+def multiply(a, b):
+    return a * b
 
 
 @register.filter

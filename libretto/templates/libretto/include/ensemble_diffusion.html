@@ -1,0 +1,21 @@
+{% load i18n extras %}
+
+{% if evenements_par_territoire %}
+  <h2>
+    {% trans 'Diffusion' %}
+  </h2>
+  {% with size=300 %}
+    {% with real_size=size|add:2 %}
+      <svg width="{{ real_size }}" height="{{ real_size }}">
+        <text text-anchor="middle"></text>
+        {% for lieu_nom, count, exclusive_count in evenements_par_territoire %}
+          <circle cx="{{ real_size|divide:2|stringformat:'f' }}"
+                  cy="{{ real_size|divide:2|stringformat:'f' }}"
+                  r="{{ count|divide:evenements_par_territoire.0.1|multiply:size|divide:2|stringformat:'f' }}"
+                  fill="{% cycle '#5bc0de' '#5cb85c' '#f0ad4e' '#ec8055' '#d9534f' %}" stroke="grey"
+                  title="{% blocktrans %}{{ lieu_nom }} ({{ exclusive_count }} événements){% endblocktrans %}" />
+        {% endfor %}
+      </svg>
+    {% endwith %}
+  {% endwith %}
+{% endif %}

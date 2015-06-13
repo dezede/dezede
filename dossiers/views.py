@@ -34,7 +34,24 @@ class DossierDEvenementsDetail(PublishedDetailView):
     def get_context_data(self, **kwargs):
         context = super(DossierDEvenementsDetail,
                         self).get_context_data(**kwargs)
-        context['SITE'] = get_current_site(self.request)
+
+        ensemble = None
+        ensembles = list(self.object.ensembles.all())
+        if len(ensembles) == 1:
+            ensemble = ensembles[0]
+        else:
+            saisons = list(self.object.saisons.all())
+            if len(saisons) == 1:
+                ensemble = saisons[0].ensemble
+
+        evenements_par_territoire = (
+            None if ensemble is None
+            else ensemble.evenements_par_territoire(
+                evenements_qs=self.object.get_queryset()))
+        context.update(
+            SITE=get_current_site(self.request),
+            evenements_par_territoire=evenements_par_territoire,
+        )
         return context
 
 

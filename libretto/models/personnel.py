@@ -6,6 +6,7 @@ from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, SmallIntegerField,
     DateField, PositiveSmallIntegerField, Model, Q, get_model)
+from django.db.models.sql import EmptyResultSet
 from django.template.defaultfilters import date
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.safestring import mark_safe
@@ -325,17 +326,20 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
             return ()
         if evenements_qs is None:
             evenements_qs = self.apparitions()
-        evenements_sql, evenements_params = get_raw_query(
-            evenements_qs.order_by().values('pk'))
+        try:
+            evenements_sql, evenements_params = get_raw_query(
+                evenements_qs.order_by().values('pk'))
+        except EmptyResultSet:
+            return ()
         sql = """
         WITH evenements AS (
             %s
         )
         (
-            SELECT NULL, -1, 'Monde', COUNT(*) FROM evenements
+            SELECT 'Monde', COUNT(*) FROM evenements
         ) UNION ALL (
             SELECT
-                ancetre.id, ancetre.level, ancetre.nom, COUNT(evenement.id)
+                ancetre.nom, COUNT(evenement.id)
             FROM libretto_lieu AS ancetre
             INNER JOIN libretto_lieu AS lieu ON (
                 lieu.tree_id = ancetre.tree_id
@@ -353,7 +357,15 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
         with connection.cursor() as cursor:
             cursor.execute(sql, evenements_params + (self.siege.tree_id,
                                                      self.siege.lft))
-            return cursor.fetchall()
+            data = cursor.fetchall()
+        new_data = []
+        for i, (name, count) in enumerate(data):
+            try:
+                exclusive_count = count - data[i+1][1]
+            except IndexError:
+                exclusive_count = count
+            new_data.append((name, count, exclusive_count))
+        return new_data
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
