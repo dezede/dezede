@@ -96,6 +96,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.gis',
 
+    'common',
     'accounts',
     'dezede',
     'exporter',

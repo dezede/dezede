@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, division
-import math
 from django.template import Library
 
 
@@ -76,41 +75,3 @@ def hsv_to_hex(h, s, v):
         return hex(int(min(255, color * 256)))[2:].upper().zfill(2)
 
     return '#' + to_hex(r) + to_hex(g) + to_hex(b)
-
-
-@register.filter
-def substract(x, y):
-    return x - y
-
-
-@register.filter
-def multiply(x, y):
-    return x * y
-
-
-@register.filter
-def divide(x, y):
-    return x / y
-
-
-@register.filter
-def idivide(x, y):
-    return x // y
-
-
-@register.filter
-def log_ratio(x, y, z=math.e):
-    if x == 0:
-        return 0
-
-    def log(n):
-        if n > 0:
-            return pow(n, 1 / z)
-        return -pow(-n, 1 / z)
-
-    return log(x) / log(y)
-
-
-@register.filter
-def modulo(x, y):
-    return x % y

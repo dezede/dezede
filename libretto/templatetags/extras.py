@@ -19,16 +19,6 @@ register = Library()
 
 
 @register.filter
-def divide(a, b):
-    return a / b
-
-
-@register.filter
-def multiply(a, b):
-    return a * b
-
-
-@register.filter
 def stripchars(text):
     return HTMLParser().unescape(text)
 

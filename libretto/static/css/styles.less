@@ -253,6 +253,12 @@ p {
   }
 }
 
+mark, .mark {
+  background-color: @brand-danger;
+  color: white;
+  padding: 0;
+}
+
 .lead {
   color: @link-color;
   margin-bottom: inherit;
@@ -1030,5 +1036,16 @@ video {
   margin-bottom: 15px;
   &.leaflet-fullscreen-on {
     margin-bottom: 0;
+  }
+}
+
+svg.diffusion {
+  > g:hover {
+    g {
+      opacity: 0.3;
+      &:hover, &:hover ~ g {
+        opacity: 1;
+      }
+    }
   }
 }
