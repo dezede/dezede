@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n routines endless extras %}
+{% load i18n routines endless math_tags %}
 
 
 {% block title %}
@@ -39,9 +39,9 @@
         {% include 'libretto/include/ensemble_diffusion.html' %}
         <h2>Œuvres par période</h2>
         <div class="progress">
-          {% for period, color, count in oeuvres_par_periode %}
+          {% for period, background_color, color, count in oeuvres_par_periode %}
             <div class="progress-bar"
-                 style="width: {{ count|divide:n_oeuvres|multiply:100|stringformat:'f' }}%; background-color: {{ color }};"
+                 style="width: {{ count|divide:n_oeuvres|multiply:100|stringformat:'f' }}%; background-color: {{ background_color }}; color: {{ color }};"
                  title="{% blocktrans %}{{ period }} ({{ count }} œuvres){% endblocktrans %}">
               {{ period }}
             </div>

@@ -55,6 +55,16 @@ PERIOD_COLORS = {
     5: '#80138E',
 }
 
+PERIOD_TEXT_COLORS = {
+    -1: 'black',
+    0: 'white',
+    1: 'white',
+    2: 'black',
+    3: 'white',
+    4: 'black',
+    5: 'white',
+}
+
 
 class CategorieDeDossiersList(PublishedListView):
     model = CategorieDeDossiers
@@ -95,7 +105,8 @@ class DossierDEvenementsDetail(PublishedDetailView):
         with connection.cursor() as cursor:
             cursor.execute(sql, oeuvres_params)
             data = cursor.fetchall()
-        return [(PERIOD_NAMES[k], PERIOD_COLORS[k], count)
+        return [(PERIOD_NAMES[k], PERIOD_COLORS[k], PERIOD_TEXT_COLORS[k],
+                 count)
                 for k, count in data]
 
     def get_context_data(self, **kwargs):
@@ -117,7 +128,7 @@ class DossierDEvenementsDetail(PublishedDetailView):
                 evenements_qs=self.object.get_queryset()))
         oeuvres_par_periode = self.get_oeuvres_par_periode(
             self.object.get_queryset().oeuvres())
-        n_oeuvres = sum([count for _, _, count in oeuvres_par_periode])
+        n_oeuvres = sum([count for _, _, _, count in oeuvres_par_periode])
         context.update(
             SITE=get_current_site(self.request),
             evenements_par_territoire=evenements_par_territoire,
