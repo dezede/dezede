@@ -5,10 +5,10 @@ from django.conf.urls import patterns, url
 from django.views.generic import RedirectView
 from dossiers.views import (
     CategorieDeDossiersList, DossierDEvenementsDetail,
-    DossierDEvenementsDataDetail, DossierDEvenementsDetailXeLaTeX,
+    DossierDEvenementsStatsDetail, DossierDEvenementsDataDetail,
+    DossierDEvenementsDetailXeLaTeX,
     OperaComiquePresentation, OperaComiqueListView,
-    DossierDEvenementsDataGeoJson, DossierDEvenementsDataExport,
-    ChordDiagramView)
+    DossierDEvenementsDataGeoJson, DossierDEvenementsDataExport)
 
 
 urlpatterns = patterns('',
@@ -24,10 +24,10 @@ urlpatterns = patterns('',
         name='dossierdevenements_detail'),
     url(r'^id/(?P<pk>\d+)/$', DossierDEvenementsDetail.as_view(),
         name='dossierdevenements_permanent_detail'),
-    url(r'^(?P<slug>[\w-]+)/chord-diagram$', ChordDiagramView.as_view(),
-        name='dossierdevenements_chord_diagram'),
-    url(r'^id/(?P<pk>\d+)/chord-diagram$', ChordDiagramView.as_view(),
-        name='dossierdevenements_permanent_chord_diagram'),
+    url(r'^(?P<slug>[\w-]+)/stats$', DossierDEvenementsStatsDetail.as_view(),
+        name='dossierdevenements_stats_detail'),
+    url(r'^id/(?P<pk>\d+)/stats$', DossierDEvenementsStatsDetail.as_view(),
+        name='dossierdevenements_stats_permanent_detail'),
     url(r'^(?P<slug>[\w-]+)/data$', DossierDEvenementsDataDetail.as_view(),
         name='dossierdevenements_data_detail'),
     url(r'^id/(?P<pk>\d+)/data$', DossierDEvenementsDataDetail.as_view(),

@@ -73,7 +73,11 @@
     tooltips_create($mapControls);
 
     map.on('moveend', function () {
-      var url = '{{ geojson_url }}' + document.location.search;
+      var search = document.location.search;
+      if (search == '') {
+        search = '?';
+      }
+      var url = '{{ geojson_url }}' + search;
       try {
         url += '&bbox=' + map.getBounds().toBBoxString();
       } catch(err) {}

@@ -8,6 +8,12 @@
         {% trans 'Présentation' %}
       </a>
     </li>
+    {% url 'dossierdevenements_stats_detail' object.slug as stats_url %}
+    <li{% if request.path == stats_url %} class="active"{% endif %}>
+      <a href="{{ stats_url }}">
+        {% trans 'Visualisations' %}
+      </a>
+    </li>
     <li{% if request.path == data_url %} class="active"{% endif %}>
       <a href="{{ data_url }}">
         {% trans 'Événements' %}

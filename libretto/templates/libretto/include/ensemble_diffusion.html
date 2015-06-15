@@ -11,8 +11,7 @@
           <g>
           {% for lieu_nom, count, exclusive_count in evenements_par_territoire %}
             {% if exclusive_count %}
-              <g title="{% blocktrans %}{{ lieu_nom }} ({{ exclusive_count }} événements){% endblocktrans %}"
-                 data-placement="right">
+              <g title="{% blocktrans %}{{ lieu_nom }} ({{ exclusive_count }} événements){% endblocktrans %}">
                 {% with c=real_size|divide:2 r=count|divide:evenements_par_territoire.0.1|multiply:size|divide:2 %}
                   <path d="M {{ c }} {{ c }} m -{{ r }}, 0
                            a {{ r }},{{ r }} 0 1,{% cycle 0 0 1 1 %} {{ r|multiply:2 }},0

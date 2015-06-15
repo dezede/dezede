@@ -1,176 +1,163 @@
-{% extends 'base.html' %}
 {% load i18n static_grouper static %}
 
 
-{% block title %}
-  {{ object|striptags }} | {% trans 'Diagramme de cordes' %}
-{% endblock %}
+{% addstatic css %}
+  <style>
 
+    .arcs path, .labels text {
+      cursor: pointer;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      -o-user-select: none;
+      user-select: none;
+    }
 
-{% block header %}
-  <h1>{{ object.titre|safe }}</h1>
-{% endblock %}
+    .chord path {
+      fill-opacity: 1;
+      stroke: #000;
+      stroke-width: .2px;
+    }
 
+    path:focus {
+      outline: none;
+    }
 
-{% block content %}
+    .legend span {
+      display: inline-block;
+      width: 35px;
+      height: 22px;
+      vertical-align: bottom;
+    }
+    .legend span + span {
+      margin-left: 20px;
+    }
 
-  {% addstatic css %}
-    <style>
+  </style>
+{% endaddstatic %}
 
-      .arcs path, .labels text {
-        cursor: pointer;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-        -o-user-select: none;
-        user-select: none;
-      }
+<h2>Auteurs les plus représentés</h2>
 
-      .chord path {
-        fill-opacity: 1;
-        stroke: #000;
-        stroke-width: .2px;
-      }
+<div id="chord-graph"></div>
 
-      path:focus {
-        outline: none;
-      }
+<p>
+  La taille des cordes correspond au nombre d’événements où des œuvres des deux
+  auteurs ont été représentés ensemble.
+</p>
+<p>
+  Cliquez sur un auteur pour voir uniquement ses cordes.
+  Cliquez à nouveau pour voir uniquement les autres cordes.
+</p>
+<h4 class="legend">
+  {% for min_year, max_year, color, verbose in colors_by_period %}
+    <span style="background: {{ color }};"></span> {{ verbose }}
+  {% endfor %}
+</h4>
 
-      .legend span {
-        display: inline-block;
-        width: 35px;
-        height: 22px;
-        vertical-align: bottom;
-      }
-      .legend span + span {
-        margin-left: 20px;
-      }
+{% addstatic js %}
+  <script src="{% static 'js/d3/d3.min.js' %}"></script>
+{% endaddstatic %}
+{% addstatic js %}
+  <script>
 
-    </style>
-  {% endaddstatic %}
+    var matrix = [{% for row in matrix %}[{{ row|join:"," }}],{% endfor %}];
+    var individus = ['{{ individus|join:"','" }}'];
+    var colors = ['{{ colors|join:"','" }}'];
 
-  <h2>Auteurs les plus représentés</h2>
-  <p>
-    La taille des cordes correspond au nombre d’événements où des œuvres des deux
-    auteurs ont été représentés ensemble.
-  </p>
-  <p>
-    Cliquez sur un auteur pour voir uniquement ses cordes.
-    Cliquez à nouveau pour voir uniquement les autres cordes.
-  </p>
-  <h4 class="legend">
-    {% for min_year, max_year, color, verbose in colors_by_period %}
-      <span style="background: {{ color }};"></span> {{ verbose }}
-    {% endfor %}
-  </h4>
+    var chord = d3.layout.chord()
+      .padding(.05)
+      .sortSubgroups(d3.descending)
+      .matrix(matrix);
 
-  <div id="chord-graph"></div>
+    var width = 1140,
+        height = 1140,
+        innerRadius = Math.min(width, height) * .3,
+        outerRadius = innerRadius * 1.1;
 
-  {% addstatic js %}
-    <script src="{% static 'js/d3/d3.min.js' %}"></script>
-  {% endaddstatic %}
-  {% addstatic js %}
-    <script>
+    var svg = d3.select('#chord-graph').append('svg')
+      .attr('width', '100%').attr('height', '100%')
+      .attr('viewBox', '0 0 1140 1140')
+      .append('g')
+      .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
-      var matrix = [{% for row in matrix %}[{{ row|join:"," }}],{% endfor %}];
-      var individus = ['{{ individus|join:"','" }}'];
-      var colors = ['{{ colors|join:"','" }}'];
+    svg.append('g').attr('class', 'arcs').selectAll('path')
+      .data(chord.groups)
+      .enter().append('path')
+      .style('fill', function (d) {
+               return colors[d.index];
+             })
+      .attr('d', d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius));
 
-      var chord = d3.layout.chord()
-        .padding(.05)
-        .sortSubgroups(d3.descending)
-        .matrix(matrix);
-
-      var width = 1140,
-          height = 1140,
-          innerRadius = Math.min(width, height) * .3,
-          outerRadius = innerRadius * 1.1;
-
-      var svg = d3.select('#chord-graph').append('svg')
-        .attr('width', '100%').attr('height', '100%')
-        .attr('viewBox', '0 0 1140 1140')
-        .append('g')
-        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
-
-      svg.append('g').attr('class', 'arcs').selectAll('path')
-        .data(chord.groups)
-        .enter().append('path')
-        .style('fill', function (d) {
-                 return colors[d.index];
-               })
-        .attr('d', d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius));
-
-      var ticks = svg.append('g').attr('class', 'labels').selectAll('g')
-        .data(function () {
-          var groups = chord.groups();
-          groups.forEach(function (d) {
-            d.angle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-          });
-          return groups;
-        }).enter().append('g')
-        .attr('transform', function (d) {
-          return 'rotate(' + (d.angle * 180 / Math.PI - 90) + ')'
-                  + 'translate(' + outerRadius + ',0)';
+    var ticks = svg.append('g').attr('class', 'labels').selectAll('g')
+      .data(function () {
+        var groups = chord.groups();
+        groups.forEach(function (d) {
+          d.angle = d.startAngle + (d.endAngle - d.startAngle) / 2;
         });
+        return groups;
+      }).enter().append('g')
+      .attr('transform', function (d) {
+        return 'rotate(' + (d.angle * 180 / Math.PI - 90) + ')'
+                + 'translate(' + outerRadius + ',0)';
+      });
 
-      ticks.append('text')
-        .attr('x', 8)
-        .attr('dy', '.35em')
-        .attr('transform', function (d) {
-          return d.angle > Math.PI ? 'rotate(180) translate(-16)' : null;
-        })
-        .style('text-anchor', function (d) {
-          return d.angle > Math.PI ? 'end' : null;
-        })
-        .text(function (d) {
-          return individus[d.index];
-        });
+    ticks.append('text')
+      .attr('x', 8)
+      .attr('dy', '.35em')
+      .attr('transform', function (d) {
+        return d.angle > Math.PI ? 'rotate(180) translate(-16)' : null;
+      })
+      .style('text-anchor', function (d) {
+        return d.angle > Math.PI ? 'end' : null;
+      })
+      .text(function (d) {
+        return individus[d.index];
+      });
 
-      var defs = d3.select('#chord-graph svg').append('svg:defs');
+    var defs = d3.select('#chord-graph svg').append('svg:defs');
 
-      svg.append('g')
-        .attr('class', 'chord')
-        .selectAll('path')
-        .data(chord.chords)
-        .enter().append('path')
-        .attr('d', d3.svg.chord().radius(innerRadius))
-        .style('fill', function (d) {
-          var c1 = d3.rgb(colors[d.source.index]), c2 = d3.rgb(colors[d.target.index]);
-          return d3.rgb((c1.r + c2.r) / 2, (c1.g + c2.g) / 2, (c1.b + c2.b) / 2).toString();
-        })
-        .style('opacity', 1)
-        .append('title').text(function (d) {
-          var title = individus[d.source.index] + ' ↔ ' + individus[d.target.index];
-          return title + '\n' + d.source.value + ' événements';
-        });
+    svg.append('g')
+      .attr('class', 'chord')
+      .selectAll('path')
+      .data(chord.chords)
+      .enter().append('path')
+      .attr('d', d3.svg.chord().radius(innerRadius))
+      .style('fill', function (d) {
+        var c1 = d3.rgb(colors[d.source.index]), c2 = d3.rgb(colors[d.target.index]);
+        return d3.rgb((c1.r + c2.r) / 2, (c1.g + c2.g) / 2, (c1.b + c2.b) / 2).toString();
+      })
+      .style('opacity', 1)
+      .append('title').text(function (d) {
+        var title = individus[d.source.index] + ' ↔ ' + individus[d.target.index];
+        return title + '\n' + d.source.value + ' événements';
+      });
 
-      var previous_click_idx = null;
-      var click_idx = null;
+    var previous_click_idx = null;
+    var click_idx = null;
 
-      function fade() {
-        var chords = svg.selectAll('.chord path');
-        if (click_idx === null) {
-          chords.style('opacity', 1);
-          previous_click_idx = null;
-        } else {
-          chords.filter(function (d) {
-            return d.source.index != click_idx && d.target.index != click_idx;
-          }).style('opacity', previous_click_idx == click_idx ? 1 : 0);
-          chords.filter(function (d) {
-            return d.source.index == click_idx || d.target.index == click_idx;
-          }).style('opacity', previous_click_idx == click_idx ? 0 : 1);
-          previous_click_idx = previous_click_idx == click_idx ? null : click_idx;
-          click_idx = null;
-        }
+    function fade() {
+      var chords = svg.selectAll('.chord path');
+      if (click_idx === null) {
+        chords.style('opacity', 1);
+        previous_click_idx = null;
+      } else {
+        chords.filter(function (d) {
+          return d.source.index != click_idx && d.target.index != click_idx;
+        }).style('opacity', previous_click_idx == click_idx ? 1 : 0);
+        chords.filter(function (d) {
+          return d.source.index == click_idx || d.target.index == click_idx;
+        }).style('opacity', previous_click_idx == click_idx ? 0 : 1);
+        previous_click_idx = previous_click_idx == click_idx ? null : click_idx;
+        click_idx = null;
       }
+    }
 
-      function clickHandler(d, i) {
-        click_idx = d.index;
-      }
+    function clickHandler(d, i) {
+      click_idx = d.index;
+    }
 
-      d3.select(document).on('click', fade);
-      svg.selectAll('.arcs path, .labels > g').on('click', clickHandler);
+    d3.select(document).on('click', fade);
+    svg.selectAll('.arcs path, .labels > g').on('click', clickHandler);
 
-    </script>
-  {% endaddstatic %}
-{% endblock %}
+  </script>
+{% endaddstatic %}

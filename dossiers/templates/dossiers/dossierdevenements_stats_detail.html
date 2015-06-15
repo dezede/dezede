@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load i18n routines endless math_tags %}
+
+
+{% block title %}
+  {{ object|striptags }} | {% trans 'Visualisations' %}
+{% endblock %}
+
+
+{% block breadcrumb %}
+  {% include 'dossiers/dossierdevenements_breadcrumb.html' %}
+{% endblock %}
+
+
+{% block header_extra_class %}no-separator{% endblock %}
+
+
+{% block header %}
+  <h1>{{ object.titre|safe }}</h1>
+{% endblock %}
+
+
+{% block header-aside %}{% frontend_admin %}{% endblock %}
+
+
+{% block tabs %}{% include 'dossiers/tabs.html' %}{% endblock %}
+
+
+{% block content %}
+
+  <div class="row" id="visualisations">
+    <div class="col-xs-12{% if evenements_par_territoire %} col-md-8{% endif %}">
+      {% url 'dossierdevenements_data_geojson' object.slug as geojson_url %}
+      {% include 'libretto/include/map.html' with geojson_url=geojson_url %}
+    </div>
+    {% if evenements_par_territoire %}
+      <div class="col-xs-12 col-md-4 text-center">
+        {% include 'libretto/include/ensemble_diffusion.html' %}
+      </div>
+    {% endif %}
+    {% if n_oeuvres %}
+      <div class="col-xs-12 text-center">
+        <hr />
+        <h2>{% blocktrans %}{{ n_oeuvres }} œuvres{% endblocktrans %}</h2>
+        <div class="progress">
+          {% for period, background_color, color, count in oeuvres_par_periode %}
+            <div class="progress-bar"
+                 style="width: {{ count|divide:n_oeuvres|multiply:100|stringformat:'f' }}%; background-color: {{ background_color }}; color: {{ color }};"
+                 title="{% blocktrans %}{{ period }} ({{ count }} œuvres){% endblocktrans %}">
+              {{ period }}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% if matrix %}
+        <div class="col-xs-12 text-center">
+          <hr />
+          {% include 'dossiers/chord_diagram.html' %}
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+
+{% endblock %}

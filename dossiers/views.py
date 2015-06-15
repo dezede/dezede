@@ -19,7 +19,7 @@ from .jobs import dossier_to_pdf
 from libretto.models import Source, Oeuvre, Individu
 from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementGeoJson, EvenementExport,
-    BaseEvenementListView)
+    BaseEvenementListView, MAX_MIN_PLACES, DEFAULT_MIN_PLACES)
 from .models import CategorieDeDossiers, DossierDEvenements
 from common.utils.export import launch_export
 
@@ -74,6 +74,47 @@ class CategorieDeDossiersList(PublishedListView):
 class DossierDEvenementsDetail(PublishedDetailView):
     model = DossierDEvenements
 
+    def get_context_data(self, **kwargs):
+        context = super(DossierDEvenementsDetail,
+                        self).get_context_data(**kwargs)
+        context['SITE'] = get_current_site(self.request)
+        return context
+
+
+CHORD_DIAGRAM_SQL_SANS_AUTRES = """
+WITH individus AS (%s)
+SELECT individu1.id, individu2.id, COUNT(DISTINCT programme1.evenement_id) AS n
+FROM individus AS individu1
+LEFT OUTER JOIN individus AS individu2 ON (true)
+LEFT OUTER JOIN libretto_auteur AS auteur1 ON (auteur1.individu_id = individu1.id)
+LEFT OUTER JOIN libretto_auteur AS auteur2 ON (auteur2.individu_id = individu2.id AND auteur2.oeuvre_id != auteur1.oeuvre_id)
+LEFT OUTER JOIN libretto_elementdeprogramme AS programme1 ON (programme1.oeuvre_id = auteur1.oeuvre_id)
+LEFT OUTER JOIN libretto_elementdeprogramme AS programme2 ON (programme2.oeuvre_id = auteur2.oeuvre_id)
+WHERE programme1.evenement_id = programme2.evenement_id AND programme1.evenement_id IN (%s)
+GROUP BY individu1.id, individu2.id;
+"""
+
+CHORD_DIAGRAM_SQL_AVEC_AUTRES = """
+WITH individus AS (%s)
+SELECT individu1.id, individu2.id, COUNT(DISTINCT evenement.id) AS n
+FROM (%s) AS evenement
+INNER JOIN libretto_elementdeprogramme AS programme1 ON (programme1.evenement_id = evenement.id)
+INNER JOIN libretto_elementdeprogramme AS programme2 ON (programme2.evenement_id = evenement.id AND programme2.oeuvre_id != programme1.oeuvre_id)
+INNER JOIN libretto_auteur AS auteur1 ON (auteur1.oeuvre_id = programme1.oeuvre_id)
+INNER JOIN libretto_auteur AS auteur2 ON (auteur2.oeuvre_id = programme2.oeuvre_id)
+LEFT OUTER JOIN individus AS individu1 ON (individu1.id = auteur1.individu_id)
+LEFT OUTER JOIN individus AS individu2 ON (individu2.id = auteur2.individu_id)
+GROUP BY individu1.id, individu2.id;
+"""
+
+CHORD_DIAGRAM_SQL = CHORD_DIAGRAM_SQL_AVEC_AUTRES
+
+
+class DossierDEvenementsStatsDetail(PublishedDetailView):
+    model = DossierDEvenements
+    template_name = 'dossiers/dossierdevenements_stats_detail.html'
+    n_auteurs = 30
+
     def get_oeuvres_par_periode(self, oeuvres_qs):
         try:
             oeuvres_sql, oeuvres_params = get_raw_query(
@@ -109,8 +150,80 @@ class DossierDEvenementsDetail(PublishedDetailView):
                  count)
                 for k, count in data]
 
+    def update_context_with_chord_diagram(self, context):
+        evenements = self.object.get_queryset()
+        individus = evenements.individus_auteurs()
+
+        n_auteurs = self.n_auteurs
+        n_individus = individus.count()
+        if n_individus == 0:
+            return
+
+        if n_individus == n_auteurs + 1:
+            n_auteurs = n_individus
+
+        individus_par_popularite = individus.annotate(
+            n=Count('pk')).order_by('-n')
+        individus_pks = [
+            pk for pk, k in
+            individus_par_popularite.values_list('pk', 'n')[:n_auteurs]]
+        individus = Individu.objects.filter(
+            pk__in=individus_pks).order_by('naissance_date')
+        evenements = evenements.order_by().values('pk')
+        EVENEMENTS_SQL, EVENEMENTS_PARAMS = get_raw_query(evenements)
+        INDIVIDUS_SQL, INDIVIDUS_PARAMS = get_raw_query(
+            individus.order_by().values('pk'))
+
+        with connection.cursor() as cursor:
+            cursor.execute(CHORD_DIAGRAM_SQL % (INDIVIDUS_SQL, EVENEMENTS_SQL),
+                           INDIVIDUS_PARAMS + EVENEMENTS_PARAMS)
+            data = cursor.fetchall()
+
+        if len(data) < 3:
+            return
+
+        has_autres = False
+        pre_matrix = {}
+        for id1, id2, k in data:
+            has_autres |= id1 is None or id2 is None
+            pre_matrix[(id1, id2)] = k
+
+        individus = list(individus)
+        if has_autres:
+            individus.append(
+                Individu(nom='%d autres auteurs' % (n_individus - n_auteurs)))
+
+        matrix = []
+        for individu1 in individus:
+            row = []
+            matrix.append(row)
+            for individu2 in individus:
+                row.append(pre_matrix.get((individu1.pk, individu2.pk), 0))
+
+        colors = []
+        for individu in individus:
+            year = (None if individu.naissance_date is None
+                    else individu.naissance_date.year)
+            if year is None:
+                colors.append(PERIOD_COLORS[DEFAULT_PERIOD])
+                continue
+            for k, (min_year, max_year) in PERIODS.items():
+                if min_year <= year < max_year:
+                    colors.append(PERIOD_COLORS[k])
+                    break
+        colors_by_period = []
+        for k, (min_year, max_year) in PERIODS.items():
+            color = PERIOD_COLORS[k]
+            if color in colors:
+                colors_by_period.append((min_year, max_year,
+                                         color, PERIOD_NAMES[k]))
+
+        context.update(
+            matrix=matrix, individus=individus,
+            colors=colors, colors_by_period=colors_by_period)
+
     def get_context_data(self, **kwargs):
-        context = super(DossierDEvenementsDetail,
+        context = super(DossierDEvenementsStatsDetail,
                         self).get_context_data(**kwargs)
 
         ensemble = None
@@ -130,11 +243,13 @@ class DossierDEvenementsDetail(PublishedDetailView):
             self.object.get_queryset().oeuvres())
         n_oeuvres = sum([count for _, _, _, count in oeuvres_par_periode])
         context.update(
-            SITE=get_current_site(self.request),
+            MAX_MIN_PLACES=MAX_MIN_PLACES,
+            DEFAULT_MIN_PLACES=DEFAULT_MIN_PLACES,
             evenements_par_territoire=evenements_par_territoire,
             oeuvres_par_periode=oeuvres_par_periode,
             n_oeuvres=n_oeuvres,
         )
+        self.update_context_with_chord_diagram(context)
         return context
 
 
@@ -224,108 +339,4 @@ class OperaComiqueListView(PublishedListView):
         else:
             oeuvres = oeuvres.order_by(*Oeuvre._meta.ordering)
         context['oeuvres'] = oeuvres
-        return context
-
-
-SQL_SANS_AUTRES = """
-WITH individus AS (%s)
-SELECT individu1.id, individu2.id, COUNT(DISTINCT programme1.evenement_id) AS n
-FROM individus AS individu1
-LEFT OUTER JOIN individus AS individu2 ON (true)
-LEFT OUTER JOIN libretto_auteur AS auteur1 ON (auteur1.individu_id = individu1.id)
-LEFT OUTER JOIN libretto_auteur AS auteur2 ON (auteur2.individu_id = individu2.id AND auteur2.oeuvre_id != auteur1.oeuvre_id)
-LEFT OUTER JOIN libretto_elementdeprogramme AS programme1 ON (programme1.oeuvre_id = auteur1.oeuvre_id)
-LEFT OUTER JOIN libretto_elementdeprogramme AS programme2 ON (programme2.oeuvre_id = auteur2.oeuvre_id)
-WHERE programme1.evenement_id = programme2.evenement_id AND programme1.evenement_id IN (%s)
-GROUP BY individu1.id, individu2.id;
-"""
-
-SQL_AVEC_AUTRES = """
-WITH individus AS (%s)
-SELECT individu1.id, individu2.id, COUNT(DISTINCT evenement.id) AS n
-FROM (%s) AS evenement
-INNER JOIN libretto_elementdeprogramme AS programme1 ON (programme1.evenement_id = evenement.id)
-INNER JOIN libretto_elementdeprogramme AS programme2 ON (programme2.evenement_id = evenement.id AND programme2.oeuvre_id != programme1.oeuvre_id)
-INNER JOIN libretto_auteur AS auteur1 ON (auteur1.oeuvre_id = programme1.oeuvre_id)
-INNER JOIN libretto_auteur AS auteur2 ON (auteur2.oeuvre_id = programme2.oeuvre_id)
-LEFT OUTER JOIN individus AS individu1 ON (individu1.id = auteur1.individu_id)
-LEFT OUTER JOIN individus AS individu2 ON (individu2.id = auteur2.individu_id)
-GROUP BY individu1.id, individu2.id;
-"""
-
-SQL = SQL_AVEC_AUTRES
-
-
-class ChordDiagramView(PublishedDetailView):
-    model = DossierDEvenements
-    template_name = 'dossiers/chord_diagram.html'
-    n_auteurs = 30
-
-    def get_context_data(self, **kwargs):
-        context = super(ChordDiagramView, self).get_context_data(**kwargs)
-
-        evenements = self.object.get_queryset()
-        individus = evenements.individus_auteurs()
-
-        n_auteurs = self.n_auteurs
-        n_individus = individus.count()
-        if n_individus == 0:
-            return
-
-        if n_individus == n_auteurs + 1:
-            n_auteurs = n_individus
-
-        individus_par_popularite = individus.annotate(n=Count('pk')).order_by('-n')
-        individus_pks = [pk for pk, k in individus_par_popularite.values_list('pk', 'n')[:n_auteurs]]
-        individus = Individu.objects.filter(pk__in=individus_pks).order_by('naissance_date')
-        evenements = evenements.order_by().values('pk')
-        EVENEMENTS_SQL, EVENEMENTS_PARAMS = get_raw_query(evenements)
-        INDIVIDUS_SQL, INDIVIDUS_PARAMS = get_raw_query(individus.order_by().values('pk'))
-
-        with connection.cursor() as cursor:
-            cursor.execute(SQL % (INDIVIDUS_SQL, EVENEMENTS_SQL), INDIVIDUS_PARAMS + EVENEMENTS_PARAMS)
-            data = cursor.fetchall()
-
-        if len(data) < 3:
-            return
-
-        has_autres = False
-        pre_matrix = {}
-        for id1, id2, k in data:
-            has_autres |= id1 is None or id2 is None
-            pre_matrix[(id1, id2)] = k
-
-        individus = list(individus)
-        if has_autres:
-            individus.append(
-                Individu(nom='%d autres auteurs' % (n_individus - n_auteurs)))
-
-        matrix = []
-        for individu1 in individus:
-            row = []
-            matrix.append(row)
-            for individu2 in individus:
-                row.append(pre_matrix.get((individu1.pk, individu2.pk), 0))
-
-        colors = []
-        for individu in individus:
-            year = (None if individu.naissance_date is None
-                    else individu.naissance_date.year)
-            if year is None:
-                colors.append(PERIOD_COLORS[DEFAULT_PERIOD])
-                continue
-            for k, (min_year, max_year) in PERIODS.items():
-                if min_year <= year < max_year:
-                    colors.append(PERIOD_COLORS[k])
-                    break
-        colors_by_period = []
-        for k, (min_year, max_year) in PERIODS.items():
-            color = PERIOD_COLORS[k]
-            if color in colors:
-                colors_by_period.append((min_year, max_year,
-                                         color, PERIOD_NAMES[k]))
-
-        context.update(
-            matrix=matrix, individus=individus,
-            colors=colors, colors_by_period=colors_by_period)
         return context
