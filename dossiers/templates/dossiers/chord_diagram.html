@@ -75,12 +75,11 @@
         outerRadius = innerRadius * 1.1;
 
     var svg = d3.select('#chord-graph').append('svg')
-      .attr('width', '100%').attr('height', '100%')
-      .attr('viewBox', '0 0 1140 1140')
-      .append('g')
-      .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+      .attr('width', '100%').attr('height', '100%');
+    var mainG = svg.append('g');
 
-    svg.append('g').attr('class', 'arcs').selectAll('path')
+    var arcs = mainG.append('g').attr('class', 'arcs');
+    arcs.selectAll('path')
       .data(chord.groups)
       .enter().append('path')
       .style('fill', function (d) {
@@ -88,7 +87,7 @@
              })
       .attr('d', d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius));
 
-    var ticks = svg.append('g').attr('class', 'labels').selectAll('g')
+    var ticks = mainG.append('g').attr('class', 'labels').selectAll('g')
       .data(function () {
         var groups = chord.groups();
         groups.forEach(function (d) {
@@ -116,7 +115,7 @@
 
     var defs = d3.select('#chord-graph svg').append('svg:defs');
 
-    svg.append('g')
+    mainG.append('g')
       .attr('class', 'chord')
       .selectAll('path')
       .data(chord.chords)
@@ -132,11 +131,20 @@
         return title + '\n' + d.source.value + ' événements';
       });
 
+    var bbox = mainG.node().getBBox();
+    var leftMargin = Math.abs(bbox.x - (-outerRadius));
+    var rightMargin = Math.abs((bbox.x + bbox.width) - outerRadius);
+    var horizontalMargin = Math.max(leftMargin, rightMargin);
+    bbox.x = -outerRadius - horizontalMargin;
+    bbox.width = (outerRadius + horizontalMargin) * 2;
+    svg.attr('viewBox',
+             bbox.x + ' ' + bbox.y + ' ' + bbox.width + ' ' + bbox.height);
+
     var previous_click_idx = null;
     var click_idx = null;
 
     function fade() {
-      var chords = svg.selectAll('.chord path');
+      var chords = mainG.selectAll('.chord path');
       if (click_idx === null) {
         chords.style('opacity', 1);
         previous_click_idx = null;
