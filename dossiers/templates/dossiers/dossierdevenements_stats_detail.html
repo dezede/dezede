@@ -46,7 +46,7 @@
           {% for period, background_color, color, count in oeuvres_par_periode %}
             <div class="progress-bar"
                  style="width: {{ count|divide:n_oeuvres|multiply:100|stringformat:'f' }}%; background-color: {{ background_color }}; color: {{ color }};"
-                 title="{% blocktrans %}{{ period }} ({{ count }} œuvres){% endblocktrans %}">
+                 title="{% blocktrans with ratio=count|divide:n_oeuvres|multiply:100|floatformat:1 %}{{ period }} ({{ ratio }} %, soit {{ count }} œuvres){% endblocktrans %}">
               {{ period }}
             </div>
           {% endfor %}

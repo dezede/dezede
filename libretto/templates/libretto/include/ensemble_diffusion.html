@@ -5,43 +5,43 @@
     {% trans 'Diffusion' %}
   </h2>
   {% with size=300 %}
-    {% with real_size=size|add:2 %}
-      {% language 'en' %}
-        <svg width="{{ real_size }}" height="{{ real_size }}" class="diffusion">
-          <g>
+    {% with real_size=size|add:2 total=evenements_par_territoire.0.1 %}
+      <svg width="{{ real_size }}" height="{{ real_size }}" class="diffusion">
+        <g>
           {% for lieu_nom, count, exclusive_count in evenements_par_territoire %}
             {% if exclusive_count %}
-              <g title="{% blocktrans %}{{ lieu_nom }} ({{ exclusive_count }} événements){% endblocktrans %}">
-                {% with c=real_size|divide:2 r=count|divide:evenements_par_territoire.0.1|multiply:size|divide:2 %}
-                  <path d="M {{ c }} {{ c }} m -{{ r }}, 0
-                           a {{ r }},{{ r }} 0 1,{% cycle 0 0 1 1 %} {{ r|multiply:2 }},0
-                           a {{ r }},{{ r }} 0 1,{% cycle 0 0 1 1 %} -{{ r|multiply:2 }},0 Z"
-                        transform="rotate({% cycle 90 0 0 -90 %} {{ c }} {{ c }})"
-                        fill="{% cycle '#5bc0de' '#5cb85c' '#f0ad4e' '#ec8055' '#d9534f' as color %}"
-                        id="circle_{{ forloop.counter0 }}" />
-                  {% if forloop.last %}
-                    <text x="{{ real_size|divide:2|stringformat:'f' }}"
-                          y="{{ real_size|divide:2|stringformat:'f' }}"
-                          text-anchor="middle" alignment-baseline="middle">
-                      {{ lieu_nom }}
-                    </text>
-                  {% else %}
-                    <text>
-                      <textPath text-anchor="middle"
-                                startOffset="37.5%"
-                                xlink:href="#circle_{{ forloop.counter0 }}"
-                                alignment-baseline="{% cycle 'hanging' 'hanging' 'baseline' 'baseline' %}">
+              <g title="{% blocktrans with ratio=exclusive_count|divide:total|multiply:100|floatformat:1 %}{{ lieu_nom }} ({{ ratio }} %, soit {{ exclusive_count }} événements){% endblocktrans %}">
+                {% language 'en' %}
+                  {% with c=real_size|divide:2 r=count|divide:total|multiply:size|divide:2 %}
+                    <path d="M {{ c }} {{ c }} m -{{ r }}, 0
+                             a {{ r }},{{ r }} 0 1,{% cycle 0 0 1 1 %} {{ r|multiply:2 }},0
+                             a {{ r }},{{ r }} 0 1,{% cycle 0 0 1 1 %} -{{ r|multiply:2 }},0 Z"
+                          transform="rotate({% cycle 90 0 0 -90 %} {{ c }} {{ c }})"
+                          fill="{% cycle '#5bc0de' '#5cb85c' '#f0ad4e' '#ec8055' '#d9534f' as color %}"
+                          id="circle_{{ forloop.counter0 }}" />
+                    {% if forloop.last %}
+                      <text x="{{ real_size|divide:2 }}"
+                            y="{{ real_size|divide:2 }}"
+                            text-anchor="middle" alignment-baseline="middle">
                         {{ lieu_nom }}
-                      </textPath>
-                    </text>
-                  {% endif %}
-                {% endwith %}
+                      </text>
+                    {% else %}
+                      <text>
+                        <textPath text-anchor="middle"
+                                  startOffset="37.5%"
+                                  xlink:href="#circle_{{ forloop.counter0 }}"
+                                  alignment-baseline="{% cycle 'hanging' 'hanging' 'baseline' 'baseline' %}">
+                          {{ lieu_nom }}
+                        </textPath>
+                      </text>
+                    {% endif %}
+                  {% endwith %}
+                {% endlanguage %}
               </g>
             {% endif %}
           {% endfor %}
-          </g>
-        </svg>
-      {% endlanguage %}
+        </g>
+      </svg>
     {% endwith %}
   {% endwith %}
 {% endif %}
