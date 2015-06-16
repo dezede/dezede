@@ -16,7 +16,7 @@
                   <path d="M {{ c }} {{ c }} m -{{ r }}, 0
                            a {{ r }},{{ r }} 0 1,{% cycle 0 0 1 1 %} {{ r|multiply:2 }},0
                            a {{ r }},{{ r }} 0 1,{% cycle 0 0 1 1 %} -{{ r|multiply:2 }},0 Z"
-                        transform="rotate({% cycle 0 -90 90 0 %} {{ c }} {{ c }})"
+                        transform="rotate({% cycle 90 0 0 -90 %} {{ c }} {{ c }})"
                         fill="{% cycle '#5bc0de' '#5cb85c' '#f0ad4e' '#ec8055' '#d9534f' as color %}"
                         id="circle_{{ forloop.counter0 }}" />
                   {% if forloop.last %}
@@ -28,7 +28,7 @@
                   {% else %}
                     <text>
                       <textPath text-anchor="middle"
-                                startOffset="12.5%"
+                                startOffset="37.5%"
                                 xlink:href="#circle_{{ forloop.counter0 }}"
                                 alignment-baseline="{% cycle 'hanging' 'hanging' 'baseline' 'baseline' %}">
                         {{ lieu_nom }}
