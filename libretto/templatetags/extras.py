@@ -6,6 +6,7 @@ import re
 from bs4 import BeautifulSoup, Comment
 from django.contrib.gis.geos import GEOSGeometry
 from django.db import connection
+from django.db.models.sql import EmptyResultSet
 from django.template import Library
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
@@ -185,9 +186,12 @@ def get_data(evenements_qs, min_places, bbox):
 
 @register.assignment_tag
 def get_map_data(evenement_qs, min_places, bbox):
-    return [(pk, nom, GEOSGeometry(geometry), n)
-            for pk, nom, geometry, n in get_data(evenement_qs, min_places,
-                                                 bbox)]
+    try:
+        return [(pk, nom, GEOSGeometry(geometry), n)
+                for pk, nom, geometry, n in get_data(evenement_qs, min_places,
+                                                     bbox)]
+    except EmptyResultSet:
+        return ()
 
 
 @register.simple_tag(takes_context=True)
