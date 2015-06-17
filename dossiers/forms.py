@@ -35,11 +35,13 @@ class DossierDEvenementsForm(MPTTAdminForm):
             self.add_error('categorie', msg)
             self.add_error('parent', msg)
 
+        evenements = cleaned_data.get('evenements')
+
         if cleaned_data['statique']:
-            if not cleaned_data['evenements']:
+            if not evenements:
                 cleaned_data['evenements'] = \
                     self.instance.get_queryset(dynamic=True)
-                self.instance.evenements.add(*cleaned_data['evenements'])
+                self.instance.evenements.add(*evenements)
         else:
             cleaned_data['evenements'] = []
             if self.instance.pk is not None:
