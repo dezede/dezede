@@ -301,10 +301,12 @@ class SaisonForm(ModelForm):
             if debut > fin:
                 raise ValidationError(_('La fin ne peut précéder le début.'))
             elif fin - debut > timedelta(365):
-                raise ValidationError(_('La durée d’une saison ne peut excéder '
-                                        'un an.'))
+                raise ValidationError(
+                    _('La durée d’une saison ne peut excéder un an.'))
 
-        overlapping_seasons = Saison.objects.filter(
+        instance = self.save(commit=False)
+
+        overlapping_seasons = Saison.objects.exclude(pk=instance.pk).filter(
             Q(debut__range=(debut, fin)) | Q(fin__range=(debut, fin))
             | Q(debut__lt=debut, fin__gt=fin),
             ensemble=ensemble, lieu=lieu)
