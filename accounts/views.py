@@ -175,6 +175,7 @@ class ContributeursView(EquipeView):
         80,  # Lucille Brunel
         85,  # Denis Tchorek
         95,  # Christine Carrère-Saucède
+        98,  # Julie Graine
         102,  # Thomas Bacquet
         168,  # Thomas Vernet
         330,  # Jean-Christophe Branger
