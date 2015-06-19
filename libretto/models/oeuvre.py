@@ -699,7 +699,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         if self.arrangement is not None:
             yield '(' + self.get_arrangement_display() + ')'
         if self.surnom:
-            yield hlp(em(self.surnom, tags), ugettext('surnom'), tags)
+            yield hlp('(' + self.surnom + ')', ugettext('surnom'), tags)
         if self.nom_courant:
             yield hlp(self.nom_courant, ugettext('nom courant'), tags)
         if self.opus:
