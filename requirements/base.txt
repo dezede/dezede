@@ -23,10 +23,10 @@ elasticsearch==1.6.0
 
 # Caching
 django-redis==4.1.0
-django-cachalot==1.0.2
+django-cachalot==1.0.3
 
 # Data visualization frameworks
-djangorestframework==3.1.2
+djangorestframework==3.1.3
 
 # Small but powerful tools
 django-reversion==1.8.7
