@@ -331,7 +331,7 @@ class ParenteDOeuvres(CommonModel):
 
 class AuteurQuerySet(CommonQuerySet):
     def __get_related(self, model):
-        qs = model._default_manager.filter(auteurs__id__in=self)
+        qs = model._default_manager.filter(auteurs__in=self)
         return qs.distinct().order_by(*model._meta.ordering)
 
     def individus(self):
@@ -347,14 +347,19 @@ class AuteurQuerySet(CommonQuerySet):
         return self.__get_related(Source)
 
     def html(self, tags=True):
-        auteurs = self
-        d = OrderedDefaultDict()
-        for auteur in auteurs:
-            d[auteur.profession].append(auteur.individu)
-        return mark_safe(str_list(
-            '%s [%s]' % (str_list_w_last(i.html(tags=tags) for i in ins),
-                         p.short_html(tags=tags, pluriel=len(ins) > 1))
-                for p, ins in d.items()))
+        individus_professions = OrderedDefaultDict()
+        for auteur in self:
+            individus_professions[auteur.individu].append(auteur.profession)
+        professions_individus = OrderedDefaultDict()
+        for individu, professions in individus_professions.items():
+            professions_individus[tuple(professions)].append(individu)
+        return mark_safe(str_list([
+            '%s [%s]' % (
+                str_list_w_last([i.html(tags=tags) for i in individus]),
+                str_list_w_last([
+                    p.short_html(tags=tags, pluriel=len(individus) > 1)
+                    for p in professions]))
+            for professions, individus in professions_individus.items()]))
 
 
 class AuteurManager(CommonManager):
