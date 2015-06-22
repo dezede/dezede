@@ -559,7 +559,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                     'pour op. 12 à 15.'))
     ict = CharField(
         _('ICT'), max_length=25, blank=True, db_index=True,
-        help_text='Indice Catalogue Thématique. Exemple : « RV 42 », '
+        help_text='Indice de Catalogue Thématique. Exemple : « RV 42 », '
                   '« K. 299d » ou encore « Hob. XVI:24 ».')
     creation = AncrageSpatioTemporel(short_description=_('création'))
     extrait_de = TreeForeignKey(
@@ -667,7 +667,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             digits = to_roman(int(digits))
         out = digits + suffix
         if self.type_extrait == self.MORCEAU:
-            out = _('№ ') + out
+            out = ugettext('№ ') + out
         elif self.type_extrait in (self.MOUVEMENT, self.PIECE):
             out += '.'
         elif show_type:
@@ -710,7 +710,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         if self.opus:
             yield hlp(ugettext('op. %s') % self.opus, ugettext('opus'), tags)
         if self.ict:
-            yield hlp(self.ict, ugettext('Indice Catalogue Thématique'), tags)
+            yield hlp(self.ict,
+                      ugettext('Indice de Catalogue Thématique'), tags)
 
     def caracteristiques_html(self, tags=True):
         return ' '.join(list(self.caracteristiques_iterator(tags=tags)))
