@@ -713,7 +713,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             yield hlp(self.ict, ugettext('Indice Catalogue Thématique'), tags)
 
     def caracteristiques_html(self, tags=True):
-        return str_list(self.caracteristiques_iterator(tags=tags))
+        return ' '.join(list(self.caracteristiques_iterator(tags=tags)))
     caracteristiques_html.allow_tags = True
     caracteristiques_html.short_description = _('caractéristiques')
 
@@ -830,7 +830,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             # significatif.
             caracteristiques = caracteristiques[1:]
         l.extend(caracteristiques)
-        return str_list(l)
+        return str_list(l, infix=' ')
 
     @model_method_cached()
     def html(self, tags=True, auteurs=True, titre=True, descr=True,
