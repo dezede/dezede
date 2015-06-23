@@ -362,7 +362,8 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
                 exclusive_count = count - data[i+1][1]
             except IndexError:
                 exclusive_count = count
-            new_data.append((name, count, exclusive_count))
+            if exclusive_count > 0:
+                new_data.append((name, count, exclusive_count))
         return new_data
 
     @staticmethod

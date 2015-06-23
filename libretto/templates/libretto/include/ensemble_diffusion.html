@@ -1,6 +1,6 @@
 {% load i18n math_tags %}
 
-{% if evenements_par_territoire %}
+{% if evenements_par_territoire|length > 1 %}
   <h2>
     {% trans 'Diffusion' %}
   </h2>
