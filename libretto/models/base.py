@@ -7,6 +7,7 @@ import json
 import os
 from subprocess import check_output, CalledProcessError, PIPE
 from django.conf import settings
+from django.contrib.admin.models import LogEntry
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError, ValidationError
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
@@ -766,6 +767,11 @@ class Etat(CommonModel, UniqueSlugModel):
 
 @receiver(pre_save)
 def handle_whitespaces(sender, **kwargs):
+    # We skip LogEntry because the logged entry has already been saved
+    # (and sanitized).
+    if sender is LogEntry:
+        return
+
     # We start by stripping all leading and trailing whitespaces.
     obj = kwargs['instance']
     for field_name in [f.attname for f in obj._meta.fields]:
