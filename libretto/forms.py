@@ -148,11 +148,11 @@ class OeuvreForm(ConstrainedModelForm):
         data = super(OeuvreForm, self).clean()
 
         # Ensures title look like "Le Tartuffe, ou l’Imposteur.".
-        data['prefixe_titre'] = capfirst(data.get('prefixe_titre'))
-        data['titre'] = capfirst(data.get('titre'))
+        data['prefixe_titre'] = capfirst(data.get('prefixe_titre', ''))
+        data['titre'] = capfirst(data.get('titre', ''))
         data['prefixe_titre_secondaire'] = data.get(
-            'prefixe_titre_secondaire').lower()
-        data['titre_secondaire'] = capfirst(data.get('titre_secondaire'))
+            'prefixe_titre_secondaire', '').lower()
+        data['titre_secondaire'] = capfirst(data.get('titre_secondaire', ''))
 
         type_extrait = data.get('type_extrait')
         type_extrait_affiche = (
