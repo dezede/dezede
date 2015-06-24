@@ -42,7 +42,7 @@ server {
 
   add_header Cache-Control public;
   # HSTS
-  add_header Strict-Transport-Security "max-age=86400; includeSubdomains";
+  add_header Strict-Transport-Security "max-age=86400";
   # Clickjacking protection
   add_header X-Frame-Options SAMEORIGIN;
   # Disables browser content-type sniffing
@@ -83,8 +83,9 @@ server {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Host $http_host;
     proxy_redirect off;
-    proxy_connect_timeout 300s;
+    proxy_connect_timeout 2s;
     proxy_read_timeout 300s;
+    proxy_buffering off;
 
     # Parameters to avoid DDOS attacks on gunicorn
     limit_conn dezede_django_conn 20;
@@ -97,6 +98,7 @@ server {
   server_name {{ server_name }};
   location / {
     proxy_pass http://localhost:9181;
+    proxy_buffering off;
     auth_basic 'Restricted';
     auth_basic_user_file /etc/nginx/htpasswd;
   }
