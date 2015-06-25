@@ -72,12 +72,16 @@ class ElementDeDistribution(CommonModel):
         'ElementDeProgramme', null=True, blank=True, related_name='distribution',
         verbose_name=_('élément de programme'))
 
+    # Une contrainte de base de données existe dans les migrations
+    # pour éviter que les deux soient remplis.
     individu = ForeignKey(
         'Individu', blank=True, null=True, on_delete=PROTECT,
         related_name='elements_de_distribution', verbose_name=_('individu'))
     ensemble = ForeignKey(
         'Ensemble', blank=True, null=True, on_delete=PROTECT,
         related_name='elements_de_distribution', verbose_name=_('ensemble'))
+    # Une contrainte de base de données existe dans les migrations
+    # pour éviter que les deux soient remplis.
     partie = ForeignKey(
         'Partie', verbose_name=_('rôle ou instrument'), null=True, blank=True,
         related_name='elements_de_distribution', on_delete=PROTECT)
@@ -453,6 +457,7 @@ class EvenementQuerySet(PublishedQuerySet):
                 'distribution__profession',
                 'programme__caracteristiques__type',
                 'programme__oeuvre__auteurs__individu',
+                'programme__oeuvre__auteurs__ensemble',
                 'programme__oeuvre__auteurs__profession',
                 'programme__oeuvre__genre',
                 'programme__oeuvre__pupitres__partie',

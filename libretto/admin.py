@@ -202,11 +202,11 @@ class OeuvreLieesInline(StackedInline):
 
 class AuteurInline(CustomTabularInline):
     model = Auteur
-    raw_id_fields = ('profession', 'individu',)
+    raw_id_fields = ('individu', 'ensemble', 'profession')
     autocomplete_lookup_fields = {
-        'fk': ['profession', 'individu'],
+        'fk': ['individu', 'ensemble', 'profession'],
     }
-    fields = ('individu', 'profession')
+    fields = ('individu', 'ensemble', 'profession')
 
     def get_formset(self, request, obj=None, **kwargs):
         formset = super(AuteurInline,
@@ -220,7 +220,8 @@ class AuteurInline(CustomTabularInline):
         # pour une ouverture d’opéra où le librettiste n’est pas auteur).
 
         extrait_de = Oeuvre.objects.get(pk=request.GET['extrait_de'])
-        initial = list(extrait_de.auteurs.values('individu', 'profession'))
+        initial = list(
+            extrait_de.auteurs.values('individu', 'ensemble', 'profession'))
 
         class TmpFormset(formset):
             extra = len(initial)
@@ -751,7 +752,8 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
             'genre', 'extrait_de', 'creation_lieu',
             'etat', 'owner'
         ).prefetch_related(
-            'auteurs__individu', 'auteurs__profession', 'pupitres__partie'
+            'auteurs__individu', 'auteurs__ensemble', 'auteurs__profession',
+            'pupitres__partie'
         )
 
 

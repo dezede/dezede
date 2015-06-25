@@ -347,19 +347,22 @@ class AuteurQuerySet(CommonQuerySet):
         return self.__get_related(Source)
 
     def html(self, tags=True):
-        individus_professions = OrderedDefaultDict()
+        d1 = OrderedDefaultDict()
         for auteur in self:
-            individus_professions[auteur.individu].append(auteur.profession)
-        professions_individus = OrderedDefaultDict()
-        for individu, professions in individus_professions.items():
-            professions_individus[tuple(professions)].append(individu)
+            individu_ou_ensemble = (auteur.individu if auteur.ensemble is None
+                                    else auteur.ensemble)
+            d1[individu_ou_ensemble].append(
+                auteur.profession)
+        d2 = OrderedDefaultDict()
+        for individu_ou_ensemble, professions in d1.items():
+            d2[tuple(professions)].append(individu_ou_ensemble)
         return mark_safe(str_list([
             '%s [%s]' % (
-                str_list_w_last([i.html(tags=tags) for i in individus]),
+                str_list_w_last([obj.html(tags=tags) for obj in objects]),
                 str_list_w_last([
-                    p.short_html(tags=tags, pluriel=len(individus) > 1)
+                    p.short_html(tags=tags, pluriel=len(objects) > 1)
                     for p in professions]))
-            for professions, individus in professions_individus.items()]))
+            for professions, objects in d2.items()]))
 
 
 class AuteurManager(CommonManager):
@@ -389,8 +392,14 @@ class Auteur(CommonModel):
     source = ForeignKey(
         'Source', null=True, blank=True,
         related_name='auteurs', verbose_name=_('source'))
-    individu = ForeignKey('Individu', related_name='auteurs',
-                          verbose_name=_('individu'), on_delete=PROTECT)
+    # Une contrainte de base de données existe dans les migrations
+    # pour éviter que les deux soient remplis.
+    individu = ForeignKey(
+        'Individu', related_name='auteurs', null=True, blank=True,
+        verbose_name=_('individu'), on_delete=PROTECT)
+    ensemble = ForeignKey(
+        'Ensemble', related_name='auteurs', null=True, blank=True,
+        verbose_name=_('ensemble'), on_delete=PROTECT)
     profession = ForeignKey('Profession', related_name='auteurs',
                             verbose_name=_('profession'), on_delete=PROTECT)
 
@@ -399,7 +408,7 @@ class Auteur(CommonModel):
     class Meta(object):
         verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
         verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
-        ordering = ('profession', 'individu')
+        ordering = ('profession', 'ensemble', 'individu')
         app_label = 'libretto'
 
     @staticmethod
@@ -409,17 +418,24 @@ class Auteur(CommonModel):
         )
 
     def html(self, tags=True):
-        return '%s [%s]' % (self.individu.html(tags=tags),
+        individu_ou_ensemble = (self.individu if self.ensemble is None
+                                else self.ensemble)
+        return '%s [%s]' % (individu_ou_ensemble.html(tags=tags),
                             self.profession.short_html(tags=tags))
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
     def clean(self):
-        try:
-            self.individu.professions.add(self.profession)
-        except (Individu.DoesNotExist,
-                Profession.DoesNotExist):
-            pass
+        if self.individu_id is not None and self.ensemble_id is not None:
+            msg = ugettext('« Individu » et « Ensemble » '
+                           'ne peuvent être saisis sur la même ligne.')
+            raise ValidationError({'individu': msg, 'ensemble': msg})
+        if self.individu is not None:
+            try:
+                self.individu.professions.add(self.profession)
+            except (Individu.DoesNotExist,
+                    Profession.DoesNotExist):
+                pass
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -914,7 +930,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     @staticmethod
     def autocomplete_search_fields(add_icontains=True):
         lookups = (
-            'auteurs__individu__nom',
+            'auteurs__individu__nom', 'auteurs__ensemble__nom',
             'prefixe_titre', 'titre',
             'prefixe_titre_secondaire', 'titre_secondaire',
             'genre__nom', 'numero', 'coupe',

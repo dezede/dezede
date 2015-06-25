@@ -68,7 +68,8 @@ class BaseEvenementListView(PublishedListView):
                      'programme__distribution__individu__in',
                      'programme__oeuvre__auteurs__individu__in'),
         'ensemble': ('distribution__ensemble__in',
-                     'programme__distribution__ensemble__in'),
+                     'programme__distribution__ensemble__in',
+                     'programme__oeuvre__auteurs__ensemble__in'),
         'source': ('sources__in',),
     }
 
@@ -460,7 +461,8 @@ class OeuvreTableView(PublishedMixin, TableView):
         Oeuvre.objects.filter(extrait_de=None)
         .select_related('genre', 'creation_lieu')
         .prefetch_related(
-            'pupitres__partie', 'auteurs__individu', 'auteurs__profession')
+            'pupitres__partie',
+            'auteurs__individu', 'auteurs__ensemble', 'auteurs__profession')
     )
 
     def filter_creation(self, queryset, value):

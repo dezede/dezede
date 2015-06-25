@@ -46,7 +46,8 @@ class OeuvreIndex(CommonSearchIndex, Indexable):
     def index_queryset(self, using=None):
         qs = super(OeuvreIndex, self).index_queryset(using)
         return qs.select_related('genre').prefetch_related(
-            'pupitres__partie', 'auteurs__individu', 'auteurs__profession')
+            'pupitres__partie',
+            'auteurs__individu', 'auteurs__ensemble', 'auteurs__profession')
 
     def prepare(self, obj):
         prepared_data = super(OeuvreIndex, self).prepare(obj)
