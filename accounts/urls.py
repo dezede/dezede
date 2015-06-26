@@ -1,7 +1,6 @@
 # coding: utf-8
 from allauth.account import views
-from django.conf.urls import patterns, url, include
-from django.views.generic import TemplateView
+from django.conf.urls import patterns, url
 from .views import (
     GrantToAdmin, EvenementsGraph, HierarchicUserDetail,
     PartenairesView, ComiteEditorialeView, ContributeursView,

@@ -56,7 +56,7 @@ def add_elasticsearch_repo():
 def install_less_css():
     result = run('lessc', warn_only=True, quiet=True)
     if result.return_code:
-        sudo('npm install -g less@2.3.1')
+        sudo('npm install -g less@2.5.1')
 
 
 def upgrade_ubuntu():
@@ -73,7 +73,9 @@ def install_ubuntu():
          'redis-server elasticsearch '
          'python2.7 python-pip python-dev virtualenvwrapper '
          'npm libav-tools '
-         'libxml2-dev libxslt1-dev')
+         'libxml2-dev libxslt1-dev '
+         'texlive-xetex fonts-linuxlibertine texlive-latex-recommended '
+         'texlive-lang-french texlive-latex-extra texlive-fonts-extra')
     install_less_css()
 
 
