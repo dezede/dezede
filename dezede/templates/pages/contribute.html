@@ -14,13 +14,13 @@
   <div class="static-page">
     <p>
       La première étape consiste à <strong>soumettre un projet</strong> en remplissant le formulaire ci-dessous ;
-      il est transmis au <a href="{# FIXME: Créer ce lien #}">comité éditorial</a> en même temps qu’un accusé de réception est envoyé au porteur de projet.
+      il est transmis au <a href="{% url 'comite_editorial' %}">comité éditorial</a> en même temps qu’un accusé de réception est envoyé au porteur de projet.
     </p>
     <p>
       La deuxième étape est celle de l’<strong>expertise par le comité éditorial</strong>,
       au terme de laquelle, si le projet est retenu,
       un compte personnel est attribué au porteur de projet,
-      un tuteur est désigné pour suivre sa formation et une fiche de chercheur associé est ajoutée à l’<a href="{# FIXME: Créer ce lien. #}">équipe</a>.
+      un tuteur est désigné pour suivre sa formation et une fiche de chercheur associé est ajoutée aux <a href="{% url 'contributeurs' %}">contributeurs</a>.
     </p>
     <p>
       La troisième étape est celle de la <strong>réalisation et édition</strong> du projet.
