@@ -722,7 +722,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                        ('prefixe_titre_secondaire', 'titre_secondaire',),),
         }),
         (None, {
-            'fields': (('genre', 'numero'), 'coupe'),
+            'fields': (('genre', 'numero'), ('coupe', 'indeterminee')),
         }),
         (_('Données musicales'), {
             'fields': ('incipit', ('tempo', 'tonalite'),
@@ -739,6 +739,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
         }),
         (_('Création'), {
             'fields': (
+                'creation_type',
                 ('creation_date', 'creation_date_approx'),
                 ('creation_heure', 'creation_heure_approx'),
                 ('creation_lieu', 'creation_lieu_approx'))

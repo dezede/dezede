@@ -386,6 +386,8 @@ class AuteurManager(CommonManager):
 
 @python_2_unicode_compatible
 class Auteur(CommonModel):
+    # Une contrainte de base de données existe dans les migrations
+    # pour éviter que les deux soient remplis.
     oeuvre = ForeignKey(
         'Oeuvre', null=True, blank=True,
         related_name='auteurs', verbose_name=_('œuvre'))
@@ -476,8 +478,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         _('article'), max_length=20, blank=True)
     titre_secondaire = CharField(_('titre secondaire'), max_length=200,
                                  blank=True, db_index=True)
-    genre = ForeignKey('GenreDOeuvre', related_name='oeuvres', blank=True, null=True,
-                       verbose_name=_('genre'), on_delete=PROTECT)
+    genre = ForeignKey(
+        'GenreDOeuvre', related_name='oeuvres', blank=True, null=True,
+        verbose_name=_('genre'), on_delete=PROTECT)
     numero = CharField(
         _('numéro'), max_length=5, blank=True, db_index=True,
         validators=[RegexValidator(
@@ -494,6 +497,10 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             r'^\D+$', _('Vous devez saisir les quantités '
                         'en toutes lettres.'))],
         help_text=_('Exemple : « trois actes » pour un opéra en trois actes.'))
+    indeterminee = BooleanField(
+        _('indéterminée'), default=False,
+        help_text=_('Cocher si l’œuvre n’est pas identifiable, '
+                    'par exemple un quatuor de Haydn, sans savoir lequel.'))
     incipit = CharField(
         _('incipit'), max_length=100, blank=True, db_index=True,
         help_text=_('Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 '
@@ -577,6 +584,13 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         _('ICT'), max_length=25, blank=True, db_index=True,
         help_text='Indice de Catalogue Thématique. Exemple : « RV 42 », '
                   '« K. 299d » ou encore « Hob. XVI:24 ».')
+    CREATION_TYPES = (
+        (1, _('genèse')),
+        (2, _('première mondiale')),
+        (3, _('première édition')),
+    )
+    creation_type = PositiveSmallIntegerField(
+        _('type de création'), choices=CREATION_TYPES, null=True, blank=True)
     creation = AncrageSpatioTemporel(short_description=_('création'))
     extrait_de = TreeForeignKey(
         'self', null=True, blank=True,

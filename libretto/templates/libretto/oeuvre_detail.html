@@ -20,7 +20,7 @@
     {% endwith %}
     {% if oeuvre.creation %}
       <h4>
-        <span title="{% trans 'Création' %}">
+        <span title="{{ oeuvre.get_creation_type_display|capfirst }}">
           {{ oeuvre.creation.html }}
         </span>
       </h4>

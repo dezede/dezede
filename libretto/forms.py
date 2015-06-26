@@ -172,6 +172,15 @@ class OeuvreForm(ConstrainedModelForm):
             self.add_error('genre', msg)
             self.add_error('tempo', msg)
 
+        if data.get('creation_type') is None and any(
+            data.get(k) for k in (
+                    'creation_date', 'creation_date_approx',
+                    'creation_heure', 'creation_heure_approx',
+                    'creation_lieu', 'creation_lieu_approx')):
+            self.add_error('creation_type',
+                           _('« Type de création » doit être rempli '
+                             'lorsqu’on remplit la création.'))
+
         return data
 
     class Meta(object):
