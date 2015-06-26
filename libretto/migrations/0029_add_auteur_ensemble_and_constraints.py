@@ -40,6 +40,10 @@ class Migration(migrations.Migration):
             CHECK (NOT (partie_id IS NOT NULL AND profession_id IS NOT NULL));
 
             ALTER TABLE libretto_auteur
+            ADD CONSTRAINT oeuvre_xor_source
+            CHECK (oeuvre_id IS NOT NULL <> source_id IS NOT NULL);
+
+            ALTER TABLE libretto_auteur
             ADD CONSTRAINT individu_xor_ensemble
             CHECK (individu_id IS NOT NULL <> ensemble_id IS NOT NULL);
         """, """
@@ -48,6 +52,9 @@ class Migration(migrations.Migration):
 
             ALTER TABLE libretto_elementdedistribution
             DROP CONSTRAINT not_partie_and_profession;
+
+            ALTER TABLE libretto_auteur
+            DROP CONSTRAINT oeuvre_xor_source;
 
             ALTER TABLE libretto_auteur
             DROP CONSTRAINT individu_xor_ensemble;
