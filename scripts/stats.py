@@ -12,7 +12,7 @@ from django.template.base import Template
 from django.utils.safestring import mark_safe
 from reversion.models import Revision
 from accounts.templatetags.accounts_extra import log_ratio, hsv_to_hex
-from libretto.models.base import OrderedDefaultDict
+from common.utils.base import OrderedDefaultDict
 
 
 def run():

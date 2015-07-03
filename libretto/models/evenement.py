@@ -22,11 +22,34 @@ from .base import (
     PublishedManager, PublishedQuerySet,
     AncrageSpatioTemporel, calc_pluriel, PLURAL_MSG)
 from common.utils.html import capfirst, href, hlp, microdata
-from common.utils.text import str_list, ex
+from common.utils.text import str_list, ex, BiGrouper
 
 
 __all__ = (b'ElementDeDistribution', b'CaracteristiqueDeProgramme',
            b'ElementDeProgramme', b'Evenement')
+
+
+class ElementDeDistributionBiGrouper(BiGrouper):
+    def __init__(self, iterator, tags=False):
+        self.tags = tags
+        super(ElementDeDistributionBiGrouper, self).__init__(iterator)
+
+    def get_key(self, obj):
+        return obj.partie if obj.profession is None else obj.profession
+
+    def get_value(self, obj):
+        return obj.individu if obj.ensemble is None else obj.ensemble
+
+    def get_verbose_key(self, key, values):
+        if isinstance(key, get_model('libretto.Partie')):
+            return key.html(tags=self.tags, pluriel=len(values) > 1)
+        Individu = get_model('libretto.Individu')
+        return key.html(tags=self.tags, pluriel=len(values) > 1,
+                        feminin=all(isinstance(v, Individu) and v.is_feminin()
+                                    for v in values))
+
+    def get_verbose_value(self, value, keys):
+        return value.html(tags=self.tags)
 
 
 class ElementDeDistributionQuerySet(CommonQuerySet):
@@ -44,7 +67,7 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
             'individu', 'ensemble', 'partie', 'profession')
 
     def html(self, tags=True):
-        return mark_safe(str_list(e.html(tags=tags) for e in self))
+        return force_text(ElementDeDistributionBiGrouper(self, tags=tags))
 
 
 class ElementDeDistributionManager(CommonManager):
@@ -108,21 +131,7 @@ class ElementDeDistribution(CommonModel):
         return self.html(tags=False)
 
     def html(self, tags=True):
-        l = []
-        feminin = False
-
-        if self.individu:
-            l.append(self.individu.html(tags=tags))
-            feminin = self.individu.is_feminin()
-        elif self.ensemble:
-            l.append(self.ensemble.html(tags=tags))
-
-        if self.partie:
-            l.append('[' + self.partie.html() + ']')
-        elif self.profession:
-            l.append('[' + self.profession.html(feminin=feminin) + ']')
-
-        out = str_list(l, infix=' ')
+        out = force_text(ElementDeDistributionBiGrouper((self,), tags=tags))
         if not tags:
             return strip_tags(out)
         return mark_safe(out)

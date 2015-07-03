@@ -4,9 +4,12 @@ from __future__ import unicode_literals
 from unicodedata import normalize
 
 from django.utils import six
-from django.utils.encoding import force_text
+from django.utils.encoding import force_text, python_2_unicode_compatible
 from django.utils.functional import lazy
+from django.utils.safestring import mark_safe
 from django.utils.translation import pgettext, ugettext_lazy as _
+
+from .base import OrderedDefaultDict
 
 
 def remove_windows_newlines(text):
@@ -152,3 +155,39 @@ def from_roman(roman):
             integer += n
             roman = roman[len(s):]
     return integer
+
+
+@python_2_unicode_compatible
+class BiGrouper(object):
+    def __init__(self, iterator):
+        self.iterator = iterator
+
+    def get_key(self, obj):
+        raise NotImplementedError
+
+    def get_value(self, obj):
+        raise NotImplementedError
+
+    def get_verbose_key(self, key, values):
+        raise NotImplementedError
+
+    def get_verbose_value(self, value, keys):
+        raise NotImplementedError
+
+    def __str__(self):
+        keys_grouper = OrderedDefaultDict()
+        for obj in self.iterator:
+            value = self.get_value(obj)
+            keys_grouper[value].append(self.get_key(obj))
+        values_grouper = OrderedDefaultDict()
+        for value, keys in keys_grouper.items():
+            values_grouper[tuple(keys)].append(value)
+        return mark_safe(str_list([
+            ('%s [%s]' % (values, keys) if keys else values)
+            for values, keys in [(
+                str_list_w_last([self.get_verbose_value(value, keys)
+                                 for value in values]),
+                str_list_w_last(['' if key is None
+                                 else self.get_verbose_key(key, values)
+                                 for key in keys]))
+                for keys, values in values_grouper.items()]]))

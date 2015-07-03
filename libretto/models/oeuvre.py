@@ -21,11 +21,11 @@ from cache_tools import model_method_cached
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
-    OrderedDefaultDict, PublishedQuerySet, CommonTreeManager,
+    PublishedQuerySet, CommonTreeManager,
     CommonTreeQuerySet, TypeDeParente,
     AncrageSpatioTemporel)
 from common.utils.html import capfirst, hlp, href, cite, em
-from common.utils.text import str_list, str_list_w_last, to_roman
+from common.utils.text import str_list, str_list_w_last, to_roman, BiGrouper
 from .individu import Individu
 from .personnel import Profession
 from .source import Source
@@ -329,6 +329,28 @@ class ParenteDOeuvres(CommonModel):
             pass
 
 
+class AuteurBiGrouper(BiGrouper):
+    def __init__(self, iterator, tags=False):
+        self.tags = tags
+        super(AuteurBiGrouper, self).__init__(iterator)
+
+    def get_key(self, obj):
+        return obj.profession
+
+    def get_value(self, obj):
+        return obj.individu if obj.ensemble is None else obj.ensemble
+
+    def get_verbose_key(self, key, values):
+        Individu = get_model('libretto.Individu')
+        return key.short_html(
+            tags=self.tags, pluriel=len(values) > 1,
+            feminin=all(isinstance(v, Individu) and v.is_feminin()
+                        for v in values))
+
+    def get_verbose_value(self, value, keys):
+        return value.html(tags=self.tags)
+
+
 class AuteurQuerySet(CommonQuerySet):
     def __get_related(self, model):
         qs = model._default_manager.filter(auteurs__in=self)
@@ -347,22 +369,7 @@ class AuteurQuerySet(CommonQuerySet):
         return self.__get_related(Source)
 
     def html(self, tags=True):
-        d1 = OrderedDefaultDict()
-        for auteur in self:
-            individu_ou_ensemble = (auteur.individu if auteur.ensemble is None
-                                    else auteur.ensemble)
-            d1[individu_ou_ensemble].append(
-                auteur.profession)
-        d2 = OrderedDefaultDict()
-        for individu_ou_ensemble, professions in d1.items():
-            d2[tuple(professions)].append(individu_ou_ensemble)
-        return mark_safe(str_list([
-            '%s [%s]' % (
-                str_list_w_last([obj.html(tags=tags) for obj in objects]),
-                str_list_w_last([
-                    p.short_html(tags=tags, pluriel=len(objects) > 1)
-                    for p in professions]))
-            for professions, objects in d2.items()]))
+        return force_text(AuteurBiGrouper(self, tags=tags))
 
 
 class AuteurManager(CommonManager):
@@ -420,10 +427,7 @@ class Auteur(CommonModel):
         )
 
     def html(self, tags=True):
-        individu_ou_ensemble = (self.individu if self.ensemble is None
-                                else self.ensemble)
-        return '%s [%s]' % (individu_ou_ensemble.html(tags=tags),
-                            self.profession.short_html(tags=tags))
+        return force_text(AuteurBiGrouper((self,), tags=tags))
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
@@ -499,8 +503,13 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         help_text=_('Exemple : « trois actes » pour un opéra en trois actes.'))
     indeterminee = BooleanField(
         _('indéterminée'), default=False,
-        help_text=_('Cocher si l’œuvre n’est pas identifiable, '
-                    'par exemple un quatuor de Haydn, sans savoir lequel.'))
+        help_text=_(
+            'Cocher si l’œuvre n’est pas identifiable, par exemple '
+            'un quatuor de Haydn, sans savoir lequel. '
+            '<strong>Ne pas utiliser pour un extrait indéterminé</strong>, '
+            'sélectionner plutôt dans le programme l’œuvre dont il est tiré '
+            'et joindre une caractéristique le décrivant '
+            '(« un air », « un mouvement », etc.).'))
     incipit = CharField(
         _('incipit'), max_length=100, blank=True, db_index=True,
         help_text=_('Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 '

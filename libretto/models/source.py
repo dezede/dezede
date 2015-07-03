@@ -11,8 +11,9 @@ from django.utils.translation import (
 from tinymce.models import HTMLField
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
-    SlugModel, PublishedManager, PublishedQuerySet, OrderedDefaultDict,
-    AncrageSpatioTemporel, Fichier)
+    SlugModel, PublishedManager, PublishedQuerySet, AncrageSpatioTemporel, Fichier)
+
+from common.utils.base import OrderedDefaultDict
 from common.utils.html import cite, href, small, hlp
 from common.utils.text import ex, str_list
 from typography.models import TypographicModel

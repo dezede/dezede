@@ -1,18 +1,19 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 import datetime
 import json
 import os
 from subprocess import check_output, CalledProcessError, PIPE
+
 from django.conf import settings
 from django.contrib.admin.models import LogEntry
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError, ValidationError
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
-    get_model, FileField, PositiveSmallIntegerField, OneToOneField, SET_NULL)
+    FileField, PositiveSmallIntegerField, OneToOneField, SET_NULL)
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.template.defaultfilters import time
@@ -25,7 +26,9 @@ from mptt.managers import TreeManager
 from mptt.querysets import TreeQuerySet
 from slugify import Slugify
 from tinymce.models import HTMLField
+
 from cache_tools import invalidate_object
+from common.utils.base import OrderedDefaultDict
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 from common.utils.html import href, capfirst, date_html, sanitize_html
@@ -37,15 +40,8 @@ __all__ = (
     b'LOWER_MSG', b'PLURAL_MSG', b'DATE_MSG', b'calc_pluriel',
     b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
     b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'CommonTreeQuerySet',
-    b'CommonTreeManager', b'Etat', b'OrderedDefaultDict',
-    b'TypeDeParente',
+    b'CommonTreeManager', b'Etat', b'TypeDeParente',
 )
-
-
-class OrderedDefaultDict(OrderedDict):
-    def __missing__(self, k):
-        self[k] = l = []
-        return l
 
 
 #
