@@ -92,11 +92,10 @@ class Profession(AutoriteModel, UniqueSlugModel):
         if short:
             nom = abbreviate(nom, min_vowels=1, min_len=4, tags=tags)
         url = '' if not tags else self.get_absolute_url()
-        out = href(url, nom, tags)
-        return out
+        return href(url, nom, tags)
 
-    def short_html(self, tags=True, pluriel=False):
-        return self.html(tags, short=True, pluriel=pluriel)
+    def short_html(self, tags=True, feminin=False, pluriel=False):
+        return self.html(tags, short=True, feminin=feminin, pluriel=pluriel)
 
     def __hash__(self):
         return hash(self.nom)
@@ -214,7 +213,7 @@ class Membre(CommonModel, PeriodeDActivite):
     class Meta(object):
         verbose_name = _('membre')
         verbose_name_plural = _('membres')
-        ordering = ('instrument', 'classement')
+        ordering = ('instrument', 'classement', 'individu__nom')
         app_label = 'libretto'
 
     def html(self, tags=True):
