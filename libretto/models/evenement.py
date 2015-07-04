@@ -88,6 +88,8 @@ class ElementDeDistributionManager(CommonManager):
 
 @python_2_unicode_compatible
 class ElementDeDistribution(CommonModel):
+    # Une contrainte de base de données existe dans les migrations
+    # pour éviter que les deux soient remplis.
     evenement = ForeignKey(
         'Evenement', null=True, blank=True, related_name='distribution',
         verbose_name=_('événement'))
