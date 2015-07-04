@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from collections import defaultdict, OrderedDict
 from math import isnan
-from StringIO import StringIO
+from io import BytesIO
 from zipfile import ZipFile
 
 from django.contrib.sites.models import Site
@@ -220,7 +220,7 @@ class Exporter(object):
 
     @staticmethod
     def _compress_to_zip(contents):
-        f = StringIO()
+        f = BytesIO()
         zip_file = ZipFile(f, 'w')
         for filename, body in contents:
             zip_file.writestr(filename, body)
@@ -250,7 +250,7 @@ class Exporter(object):
             'csv', lambda df: df.to_csv(None, index=False, encoding='utf-8'))
 
     def to_xlsx(self):
-        f = StringIO()
+        f = BytesIO()
         # We have to specify a temporary file name,
         # but no file will be created.
         writer = pandas.ExcelWriter('temp.xlsx', engine='xlsxwriter')
