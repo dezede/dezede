@@ -32,7 +32,7 @@ IGNORABLE_404_URLS = (
 
 MAINTENANCE_MODE = False
 MAINTENANCE_IGNORE_URLS = (
-    r'^(?!/admin/).*$',
+    r'^/admin/.*$',
 )
 
 DATABASES = {

@@ -59,9 +59,6 @@ XlsxWriter==0.7.3
 # HTML cleaning
 bleach==1.4.1
 
-# Website temporary shutdown
-django-maintenancemode==0.10
-
 # Dependencies
 # For easy-thumbnails
 Pillow==2.8.2
