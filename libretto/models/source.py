@@ -20,8 +20,8 @@ from typography.models import TypographicModel
 
 
 __all__ = (
-    b'TypeDeSource', b'Source', b'SourceEvenement', b'SourceOeuvre',
-    b'SourceIndividu', b'SourceEnsemble', b'SourceLieu', b'SourcePartie'
+    'TypeDeSource', 'Source', 'SourceEvenement', 'SourceOeuvre',
+    'SourceIndividu', 'SourceEnsemble', 'SourceLieu', 'SourcePartie'
 )
 
 
@@ -200,7 +200,7 @@ class Source(AutoriteModel):
 
     @permalink
     def get_absolute_url(self):
-        return b'source_permanent_detail', (self.pk,)
+        return 'source_permanent_detail', (self.pk,)
 
     def permalien(self):
         return self.get_absolute_url()

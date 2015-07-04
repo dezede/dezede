@@ -3,15 +3,13 @@
 from __future__ import unicode_literals
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
     AutoCompleteWidget
-from crispy_forms.bootstrap import InlineRadios
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
 from datetime import timedelta
 from django.db.models import Q
 from django.forms import (
-    ValidationError, ModelForm, Form, CharField, TextInput, TypedChoiceField,
+    ValidationError, ModelForm, Form, CharField, TextInput,
     BooleanField)
-from django.forms.widgets import RadioInput
 from django.utils.translation import ugettext_lazy as _
 from common.utils.text import capfirst, str_list_w_last
 from .models import (
@@ -20,9 +18,9 @@ from .models import (
 from range_slider.fields import RangeSliderField
 
 
-__all__ = (b'IndividuForm', b'EnsembleForm', b'OeuvreForm',
-           b'ElementDeDistributionForm', b'ElementDeProgrammeForm',
-           b'SourceForm', b'SaisonForm', b'EvenementListForm')
+__all__ = ('IndividuForm', 'EnsembleForm', 'OeuvreForm',
+           'ElementDeDistributionForm', 'ElementDeProgrammeForm',
+           'SourceForm', 'SaisonForm', 'EvenementListForm')
 
 
 class ConstrainedModelForm(ModelForm):
@@ -375,7 +373,7 @@ class EvenementListForm(Form):
         super(EvenementListForm, self).__init__(*args, **kwargs)
 
         for field in self.fields.values():
-            field.widget.attrs[b'placeholder'] = (field.label or '') + '…'
+            field.widget.attrs['placeholder'] = (field.label or '') + '…'
             field.label = ''
 
         self.fields['dates'].widget.queryset = queryset

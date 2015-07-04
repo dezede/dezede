@@ -11,7 +11,7 @@ from .utils import get_cache_key, get_obj_cache_key
 __all__ = ('model_method_cached',)
 
 
-def model_method_cached(id_attr=b'pk'):
+def model_method_cached(id_attr='pk'):
     def decorator(method):
         def wrapper(self, *args, **kwargs):
             cache_key = get_cache_key(method, self, args, kwargs, id_attr)

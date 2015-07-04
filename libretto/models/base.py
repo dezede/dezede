@@ -37,10 +37,10 @@ from typography.utils import replace
 
 
 __all__ = (
-    b'LOWER_MSG', b'PLURAL_MSG', b'DATE_MSG', b'calc_pluriel',
-    b'PublishedQuerySet', b'PublishedManager', b'PublishedModel',
-    b'AutoriteModel', b'SlugModel', b'UniqueSlugModel', b'CommonTreeQuerySet',
-    b'CommonTreeManager', b'Etat', b'TypeDeParente',
+    'LOWER_MSG', 'PLURAL_MSG', 'DATE_MSG', 'calc_pluriel',
+    'PublishedQuerySet', 'PublishedManager', 'PublishedModel',
+    'AutoriteModel', 'SlugModel', 'UniqueSlugModel', 'CommonTreeQuerySet',
+    'CommonTreeManager', 'Etat', 'TypeDeParente',
 )
 
 
@@ -394,6 +394,8 @@ class AncrageSpatioTemporel(object):
         try:
             return object.__getattribute__(self, key)
         except AttributeError:
+            if key == 'instance':
+                raise
             if self.instance_bound() and key in self.fields:
                 return getattr(self.instance, self.prefix+key)
             raise
@@ -413,9 +415,11 @@ class AncrageSpatioTemporel(object):
         self.instance = instance
         super(AncrageSpatioTemporel, self).__set__(instance, value)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return (self.instance_bound()
                 and any(getattr(self, k) for k in self.fields))
+    # Python 2 compatibility
+    __nonzero__ = __bool__
 
     def __str__(self):
         return strip_tags(self.html(tags=False, short=True))

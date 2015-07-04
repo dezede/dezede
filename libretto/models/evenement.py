@@ -25,8 +25,8 @@ from common.utils.html import capfirst, href, hlp, microdata
 from common.utils.text import str_list, ex, BiGrouper
 
 
-__all__ = (b'ElementDeDistribution', b'CaracteristiqueDeProgramme',
-           b'ElementDeProgramme', b'Evenement')
+__all__ = ('ElementDeDistribution', 'CaracteristiqueDeProgramme',
+           'ElementDeProgramme', 'Evenement')
 
 
 class ElementDeDistributionBiGrouper(BiGrouper):

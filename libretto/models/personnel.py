@@ -22,7 +22,7 @@ from .evenement import Evenement
 
 
 __all__ = (
-    b'Profession', b'Membre', b'TypeDEnsemble', b'Ensemble')
+    'Profession', 'Membre', 'TypeDEnsemble', 'Ensemble')
 
 
 # TODO: Songer à l’arrivée des Emplois.
@@ -55,11 +55,11 @@ class Profession(AutoriteModel, UniqueSlugModel):
 
     @permalink
     def get_absolute_url(self):
-        return b'profession_detail', (self.slug,)
+        return 'profession_detail', (self.slug,)
 
     @permalink
     def permalien(self):
-        return b'profession_permanent_detail', (self.pk,)
+        return 'profession_permanent_detail', (self.pk,)
 
     def pretty_link(self):
         return self.html(caps=True)
@@ -291,11 +291,11 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
 
     @permalink
     def get_absolute_url(self):
-        return b'ensemble_detail', (self.slug,)
+        return 'ensemble_detail', (self.slug,)
 
     @permalink
     def permalien(self):
-        return b'ensemble_permanent_detail', (self.pk,)
+        return 'ensemble_permanent_detail', (self.pk,)
 
     def membres_html(self):
         return str_list([

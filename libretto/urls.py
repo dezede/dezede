@@ -7,25 +7,25 @@ from libretto.views import TreeNode, EnsembleViewSet, EvenementExport
 from .views import *
 
 
-__all__ = (b'urlpatterns',)
+__all__ = ('urlpatterns',)
 
 
 urlpatterns = patterns('',
-    url(br'^', include(LieuViewSet().urls)),
-    url(br'^', include(IndividuViewSet().urls)),
-    url(br'^', include(EnsembleViewSet().urls)),
-    url(br'^', include(OeuvreViewSet().urls)),
-    url(br'^evenements/$', EvenementListView.as_view(), name=b'evenements'),
-    url(br'^evenements/export$', EvenementExport.as_view(),
-        name=b'evenements_export'),
-    url(br'^evenements/geojson$', EvenementGeoJson.as_view(),
-        name=b'evenements_geojson'),
-    url(br'^evenements/id/(?P<pk>\d+)/$', EvenementDetailView.as_view(),
-        name=b'evenement_pk'),
-    url(br'^', include(SourceViewSet().urls)),
-    url(br'^', include(PartieViewSet().urls)),
-    url(br'^', include(ProfessionViewSet().urls)),
+    url(r'^', include(LieuViewSet().urls)),
+    url(r'^', include(IndividuViewSet().urls)),
+    url(r'^', include(EnsembleViewSet().urls)),
+    url(r'^', include(OeuvreViewSet().urls)),
+    url(r'^evenements/$', EvenementListView.as_view(), name='evenements'),
+    url(r'^evenements/export$', EvenementExport.as_view(),
+        name='evenements_export'),
+    url(r'^evenements/geojson$', EvenementGeoJson.as_view(),
+        name='evenements_geojson'),
+    url(r'^evenements/id/(?P<pk>\d+)/$', EvenementDetailView.as_view(),
+        name='evenement_pk'),
+    url(r'^', include(SourceViewSet().urls)),
+    url(r'^', include(PartieViewSet().urls)),
+    url(r'^', include(ProfessionViewSet().urls)),
     url(r'^tree_node/(?P<app_label>[\w_]+)/(?P<model_name>\w+)/(?P<attr>[\w_]+)/(?P<pk>\d+)?$',
         TreeNode.as_view(), name='tree_node'),
-    url(br'^api/', include(api_router.urls)),
+    url(r'^api/', include(api_router.urls)),
 )

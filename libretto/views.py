@@ -24,10 +24,10 @@ from .forms import *
 
 
 __all__ = (
-    b'PublishedDetailView', b'PublishedListView',
-    b'EvenementListView', b'EvenementGeoJson', b'EvenementDetailView',
-    b'SourceViewSet', b'PartieViewSet', b'ProfessionViewSet',
-    b'LieuViewSet', b'IndividuViewSet', b'OeuvreViewSet'
+    'PublishedDetailView', 'PublishedListView',
+    'EvenementListView', 'EvenementGeoJson', 'EvenementDetailView',
+    'SourceViewSet', 'PartieViewSet', 'ProfessionViewSet',
+    'LieuViewSet', 'IndividuViewSet', 'OeuvreViewSet'
 )
 
 
@@ -174,7 +174,7 @@ class BaseEvenementListView(PublishedListView):
 
     def get_cleaned_GET(self):
         new_qd = self.request.GET.copy()
-        for k, v in new_qd.items():
+        for k, v in tuple(new_qd.items()):
             if not v or v == '|':
                 del new_qd[k]
         return new_qd
@@ -253,25 +253,25 @@ class EvenementDetailView(PublishedDetailView):
 class CommonViewSet(ModelViewSet):
     list_view = TableView
     views = {
-        b'list_view': {
-            b'view': None,
-            b'pattern': br'',
-            b'name': b'index',
+        'list_view': {
+            'view': None,
+            'pattern': r'',
+            'name': 'index',
         },
-        b'detail_view': {
-            b'view': PublishedDetailView,
-            b'pattern': br'(?P<slug>[\w-]+)/',
-            b'name': b'detail',
+        'detail_view': {
+            'view': PublishedDetailView,
+            'pattern': r'(?P<slug>[\w-]+)/',
+            'name': 'detail',
         },
-        b'permanent_detail_view': {
-            b'view': PublishedDetailView,
-            b'pattern': br'id/(?P<pk>\d+)/',
-            b'name': b'permanent_detail',
+        'permanent_detail_view': {
+            'view': PublishedDetailView,
+            'pattern': r'id/(?P<pk>\d+)/',
+            'name': 'permanent_detail',
         },
     }
 
     def __init__(self):
-        self.views[b'list_view'][b'view'] = self.list_view
+        self.views['list_view']['view'] = self.list_view
         super(CommonViewSet, self).__init__()
 
 
@@ -326,17 +326,17 @@ class SourceModalView(PublishedDetailView):
 
 class SourceViewSet(CommonViewSet):
     model = Source
-    base_url_name = b'source'
-    excluded_views = (b'detail_view',)
+    base_url_name = 'source'
+    excluded_views = ('detail_view',)
     list_view = SourceTableView
 
     def __init__(self):
-        self.views[b'content_view'] = {
-            b'view': SourceModalView,
-            b'pattern': br'modal/(?P<pk>\d+)/',
-            b'name': b'modal',
-            b'kwargs': {
-                b'template_name': 'libretto/source_modal.html'
+        self.views['content_view'] = {
+            'view': SourceModalView,
+            'pattern': r'modal/(?P<pk>\d+)/',
+            'name': 'modal',
+            'kwargs': {
+                'template_name': 'libretto/source_modal.html'
             },
         }
         super(SourceViewSet, self).__init__()
@@ -355,7 +355,7 @@ class PartieTableView(PublishedMixin, TableView):
 
 class PartieViewSet(CommonViewSet):
     model = Partie
-    base_url_name = b'partie'
+    base_url_name = 'partie'
     list_view = PartieTableView
 
 
@@ -372,17 +372,17 @@ class ProfessionTableView(PublishedMixin, TableView):
 
 class ProfessionViewSet(CommonViewSet):
     model = Profession
-    base_url_name = b'profession'
+    base_url_name = 'profession'
     list_view = ProfessionTableView
 
 
 class LieuViewSet(CommonViewSet):
     model = Lieu
-    base_url_name = b'lieu'
+    base_url_name = 'lieu'
 
     def __init__(self):
         super(LieuViewSet, self).__init__()
-        self.views[b'list_view'][b'view'] = PublishedListView
+        self.views['list_view']['view'] = PublishedListView
 
 
 class IndividuTableView(PublishedMixin, TableView):
@@ -416,7 +416,7 @@ class IndividuTableView(PublishedMixin, TableView):
 
 class IndividuViewSet(CommonViewSet):
     model = Individu
-    base_url_name = b'individu'
+    base_url_name = 'individu'
     list_view = IndividuTableView
 
 
@@ -436,7 +436,7 @@ class EnsembleTableView(PublishedMixin, TableView):
 
 class EnsembleViewSet(CommonViewSet):
     model = Ensemble
-    base_url_name = b'ensemble'
+    base_url_name = 'ensemble'
     list_view = EnsembleTableView
 
 
@@ -472,8 +472,8 @@ class OeuvreTableView(PublishedMixin, TableView):
 
 class OeuvreViewSet(CommonViewSet):
     model = Oeuvre
-    base_url_pattern = b'oeuvres'
-    base_url_name = b'oeuvre'
+    base_url_pattern = 'oeuvres'
+    base_url_name = 'oeuvre'
     list_view = OeuvreTableView
 
 

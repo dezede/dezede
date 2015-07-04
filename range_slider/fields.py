@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from libretto.models import Evenement
 
 
-__all__ = (b'RangeSliderWidget', b'RangeSliderField')
+__all__ = ('RangeSliderWidget', 'RangeSliderField')
 
 
 class RangeSliderWidget(MultiWidget):

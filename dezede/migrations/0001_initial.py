@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('text_align', models.CharField(default='text-left', max_length=11, verbose_name='alignement du texte', choices=[('text-left', 'Gauche'), ('text-center', 'Centre'), ('text-right', 'Droite')])),
                 ('text_background', models.BooleanField(default=False, help_text='Ajoute un cadre semi-transparent derri\xe8re le texte pour faciliter la lecture.', verbose_name='cadre derri\xe8re le texte')),
                 ('image', models.ImageField(upload_to='accueil', verbose_name='image')),
-                (b'cropping', image_cropping.fields.ImageRatioField('image', '450x450', hide_image_field=False, size_warning=True, allow_fullsize=False, free_crop=True, adapt_rotation=False, help_text=None, verbose_name='d\xe9coupage de l\u2019image')),
+                ('cropping', image_cropping.fields.ImageRatioField('image', '450x450', hide_image_field=False, size_warning=True, allow_fullsize=False, free_crop=True, adapt_rotation=False, help_text=None, verbose_name='d\xe9coupage de l\u2019image')),
                 ('image_align', models.CharField(default='text-right', max_length=11, verbose_name='alignement de l\u2019image', choices=[('text-left', 'Gauche'), ('text-center', 'Centre'), ('text-right', 'Droite')])),
                 ('opacity', models.DecimalField(default=0.6, verbose_name='opacit\xe9', max_digits=2, decimal_places=1, choices=[(Decimal('1.0'), 'Opaque'), (Decimal('0.9'), '90 %'), (Decimal('0.8'), '80 %'), (Decimal('0.7'), '70 %'), (Decimal('0.6'), '60 %'), (Decimal('0.5'), '50 %'), (Decimal('0.4'), '40 %'), (Decimal('0.3'), '30 %'), (Decimal('0.2'), '20 %'), (Decimal('0.1'), '10 %')])),
                 ('position', models.PositiveSmallIntegerField(default=1, verbose_name='position')),

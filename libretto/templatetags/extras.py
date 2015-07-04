@@ -1,7 +1,10 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, division
-from HTMLParser import HTMLParser
+try:
+    from html.parser import HTMLParser
+except ImportError:  # Python 2 compatibility
+    from HTMLParser import HTMLParser
 import re
 from bs4 import BeautifulSoup, Comment
 from django.contrib.gis.geos import GEOSGeometry

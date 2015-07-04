@@ -25,7 +25,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 SEND_BROKEN_LINK_EMAILS = True
-EMAIL_SUBJECT_PREFIX = u'[Dezède] '
+EMAIL_SUBJECT_PREFIX = '[Dezède] '
 IGNORABLE_404_URLS = (
     re.compile(r'^/favicon\.ico/?$'),
 )
@@ -50,7 +50,7 @@ DATABASES = {
 LANGUAGE_CODE = 'fr'
 TIME_ZONE = 'Europe/Paris'
 LANGUAGES = (
-    ('fr', ugettext(u'Français')),
+    ('fr', ugettext('Français')),
     # ('en', ugettext('English')),
     # ('de', ugettext('Deutsch')),
 )
@@ -159,7 +159,7 @@ DATE_FORMAT = 'l j F Y'
 TIME_FORMAT = 'H:i'
 
 GRAPPELLI_INDEX_DASHBOARD = 'dezede.dashboard.CustomIndexDashboard'
-GRAPPELLI_ADMIN_TITLE = u'<a href="/">Dezède</a>'
+GRAPPELLI_ADMIN_TITLE = '<a href="/">Dezède</a>'
 
 AUTH_USER_MODEL = 'accounts.HierarchicUser'
 AUTHENTICATION_BACKENDS = (

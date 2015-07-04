@@ -32,8 +32,8 @@ from .source import Source
 
 
 __all__ = (
-    b'GenreDOeuvre', b'Partie', b'Pupitre',
-    b'TypeDeParenteDOeuvres', b'ParenteDOeuvres', b'Auteur', b'Oeuvre'
+    'GenreDOeuvre', 'Partie', 'Pupitre',
+    'TypeDeParenteDOeuvres', 'ParenteDOeuvres', 'Auteur', 'Oeuvre'
 )
 
 
@@ -149,11 +149,11 @@ class Partie(AutoriteModel, UniqueSlugModel):
 
     @permalink
     def get_absolute_url(self):
-        return b'partie_detail', (self.slug,)
+        return 'partie_detail', (self.slug,)
 
     @permalink
     def permalien(self):
-        return b'partie_permanent_detail', (self.pk,)
+        return 'partie_permanent_detail', (self.pk,)
 
     def link(self):
         return self.html()
@@ -472,6 +472,35 @@ class OeuvreManager(CommonTreeManager, PublishedManager):
         return self.get_queryset().prefetch_all()
 
 
+NOTES = OrderedDict((
+    ('c', 'do'),
+    ('d', 'ré'),
+    ('e', 'mi'),
+    ('f', 'fa'),
+    ('g', 'sol'),
+    ('a', 'la'),
+    ('b', 'si'),
+    ('u', 'ut'),  # C’est un do, mais on le déprécie.
+))
+ALTERATIONS = OrderedDict((
+    ('-', 'bémol'),
+    ('0', ''),
+    ('+', 'dièse'),
+))
+GAMMES = OrderedDict((
+    ('C', 'majeur'),
+    ('A', 'mineur'),
+    ('0', ''),
+    # ('c', 'mode de do'),
+    # ('d', 'mode de ré'),
+    # ('e', 'mode de mi'),
+    # ('f', 'mode de fa'),
+    # ('g', 'mode de sol'),
+    # ('a', 'mode de la'),
+    # ('b', 'mode de si'),
+))
+
+
 @python_2_unicode_compatible
 class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(_('article'), max_length=20, blank=True)
@@ -519,33 +548,9 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         max_length=50, blank=True, db_index=True,
         help_text=_('Exemple : « Largo », « Presto ma non troppo », etc. '
                     'Ne pas saisir d’indication métronomique.'))
-    NOTES = OrderedDict((
-        ('c', 'do'),
-        ('d', 'ré'),
-        ('e', 'mi'),
-        ('f', 'fa'),
-        ('g', 'sol'),
-        ('a', 'la'),
-        ('b', 'si'),
-        ('u', 'ut'),  # C’est un do, mais on le déprécie.
-    ))
-    ALTERATIONS = OrderedDict((
-        ('-', 'bémol'),
-        ('0', ''),
-        ('+', 'dièse'),
-    ))
-    GAMMES = OrderedDict((
-        ('C', 'majeur'),
-        ('A', 'mineur'),
-        ('0', ''),
-        # ('c', 'mode de do'),
-        # ('d', 'mode de ré'),
-        # ('e', 'mode de mi'),
-        # ('f', 'mode de fa'),
-        # ('g', 'mode de sol'),
-        # ('a', 'mode de la'),
-        # ('b', 'mode de si'),
-    ))
+    NOTES = NOTES
+    ALTERATIONS = ALTERATIONS
+    GAMMES = GAMMES
     TONALITES = [
         (gamme_k + note_k + alter_k, str_list((note_v, alter_v, gamme_v), ' '))
         for gamme_k, gamme_v in GAMMES.items()
@@ -682,11 +687,11 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     @permalink
     def get_absolute_url(self):
-        return b'oeuvre_detail', [self.slug]
+        return 'oeuvre_detail', [self.slug]
 
     @permalink
     def permalien(self):
-        return b'oeuvre_permanent_detail', [self.pk]
+        return 'oeuvre_permanent_detail', [self.pk]
 
     def link(self):
         return self.html(tags=True, auteurs=False, titre=True, descr=True,
