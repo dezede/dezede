@@ -628,7 +628,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         (TABLEAU,   _('tableau')),
         (SCENE,     _('scène')),
         (MORCEAU,   _('morceau chanté')),
-        (PARTIE,    _('partie d’oratorio')),
+        (PARTIE,    _('partie')),
         (LIVRE,     _('livre')),
         (ALBUM,     _('album')),
         (VOLUME,    _('volume')),
