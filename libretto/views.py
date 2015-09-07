@@ -313,9 +313,6 @@ class SourceTableView(PublishedMixin, TableView):
         return Source.objects.filter(
             pk__in=queryset.with_data_type(value)).prefetch()
 
-    def search(self, queryset, q):
-        return queryset.filter(titre__icontains=q)
-
 
 class SourceModalView(PublishedDetailView):
     def get(self, request, *args, **kwargs):
