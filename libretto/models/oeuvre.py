@@ -599,7 +599,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         help_text='Indice de Catalogue Thématique. Exemple : « RV 42 », '
                   '« K. 299d » ou encore « Hob. XVI:24 ».')
     CREATION_TYPES = (
-        (1, _('genèse')),
+        (1, _('genèse (composition, écriture, etc.)')),
         (2, _('première mondiale')),
         (3, _('première édition')),
     )
