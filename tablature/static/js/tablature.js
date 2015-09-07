@@ -6,31 +6,6 @@ function Pagination ($pagination, numPages, switchPageHandler) {
   this.margin = 2;  // Number of page links
                     // around current page and ends.
   this.setNumPages(numPages);
-  $(document).keydown(function (e) {
-    var boundKeys = [33, 34, 35, 36, 37, 39];
-    if (boundKeys.indexOf(e.keyCode) != -1) {
-      e.preventDefault();
-    }
-  }).keyup(function (e) {
-    var newPage = null;
-    if (e.keyCode == 36) {  // Home key
-      newPage = 0;
-    } else if (e.keyCode == 37) {  // Left arrow key
-      newPage = this.current - 1;
-    } else if (e.keyCode == 39) {  // Right arrow key
-      newPage = this.current + 1;
-    } else if (e.keyCode == 33) {  // Page up key
-      newPage = Math.max(this.current - 5, 0);
-    } else if (e.keyCode == 34) {  // Page down key
-      newPage = Math.min(this.current + 5, this.last);
-    } else if (e.keyCode == 35) {  // End key
-      newPage = this.last;
-    }
-    if (newPage !== null) {
-      e.preventDefault();
-      this.switchToPage(newPage);
-    }
-  }.bind(this));
   this.initialisation = false;
 }
 
@@ -144,6 +119,11 @@ function Table ($container, columns, columnsWidths, sortables, filters,
     $container.find('.pagination'),
     this.getNumPages(),
     this.update.bind(this));
+  $(document).keydown(
+    this.onKeyDown.bind(this)
+  ).keyup(
+    this.onKeyUp.bind(this)
+  );
   this.update();
 }
 
@@ -238,6 +218,40 @@ Table.prototype.getData = function () {
     choices: this.filterChoices.join(),
     page: this.pagination.current
   };
+};
+
+Table.prototype.onKeyDown = function (e) {
+  if (this.$input.is(':focus')) {
+      return;
+  }
+  var boundKeys = [33, 34, 35, 36, 37, 39];
+  if (boundKeys.indexOf(e.keyCode) != -1) {
+    e.preventDefault();
+  }
+};
+
+Table.prototype.onKeyUp = function (e) {
+  if (this.$input.is(':focus')) {
+    return;
+  }
+  var newPage = null;
+  if (e.keyCode == 36) {  // Home key
+    newPage = 0;
+  } else if (e.keyCode == 37) {  // Left arrow key
+    newPage = this.pagination.current - 1;
+  } else if (e.keyCode == 39) {  // Right arrow key
+    newPage = this.pagination.current + 1;
+  } else if (e.keyCode == 33) {  // Page up key
+    newPage = Math.max(this.pagination.current - 5, 0);
+  } else if (e.keyCode == 34) {  // Page down key
+    newPage = Math.min(this.pagination.current + 5, this.pagination.last);
+  } else if (e.keyCode == 35) {  // End key
+    newPage = this.pagination.last;
+  }
+  if (newPage !== null) {
+    e.preventDefault();
+    this.pagination.switchToPage(newPage);
+  }
 };
 
 Table.prototype.update = function () {
