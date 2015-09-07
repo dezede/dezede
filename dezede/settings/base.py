@@ -50,7 +50,7 @@ DATABASES = {
 LANGUAGE_CODE = 'fr'
 TIME_ZONE = 'Europe/Paris'
 LANGUAGES = (
-    ('fr', ugettext('Français')),
+    ('fr', ugettext(u'Français')),
     # ('en', ugettext('English')),
     # ('de', ugettext('Deutsch')),
 )
