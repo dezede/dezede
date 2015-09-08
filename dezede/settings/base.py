@@ -25,7 +25,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 SEND_BROKEN_LINK_EMAILS = True
-EMAIL_SUBJECT_PREFIX = '[Dezède] '
+EMAIL_SUBJECT_PREFIX = u'[Dezède] '
 IGNORABLE_404_URLS = (
     re.compile(r'^/favicon\.ico/?$'),
 )
