@@ -162,5 +162,5 @@ def sanitize_html(html):
             'p': ['style'],
             'table': ['align'],
         },
-        styles=('text-decoration', 'text-align')
+        styles=('text-decoration', 'text-align', 'padding-left')
     )
