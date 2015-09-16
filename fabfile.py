@@ -19,7 +19,7 @@ from django.conf import settings
 
 
 GIT_REPOSITORY = 'https://github.com/dezede/dezede.git'
-RELATIVE_PROJECT_PATH = 'dezede'
+PROJECT_PATH = '/nfs/dezede'
 RELATIVE_WORKON_HOME = '.virtualenvs'
 VIRTUALENV_NAME = 'dezede'
 DB_NAME = settings.DATABASES['default']['NAME']
@@ -31,8 +31,8 @@ REDIS_CONF = '/etc/redis/redis.conf'
 
 
 def set_env():
+    env.project_path = Path(PROJECT_PATH)
     env.home = Path(run('echo $HOME', quiet=True))
-    env.project_path = env.home.child(RELATIVE_PROJECT_PATH)
     env.virtual_env = env.home.child(RELATIVE_WORKON_HOME, VIRTUALENV_NAME)
 
 
@@ -133,10 +133,10 @@ def update_submodules():
 
 
 def clone():
-    if exists(RELATIVE_PROJECT_PATH):
+    if exists(PROJECT_PATH):
         return
 
-    run('git clone %s %s' % (GIT_REPOSITORY, RELATIVE_PROJECT_PATH))
+    run('git clone %s %s' % (GIT_REPOSITORY, PROJECT_PATH))
     update_submodules()
 
 
