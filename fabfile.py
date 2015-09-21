@@ -8,7 +8,7 @@ from fabric.contrib import django
 from fabric.contrib.files import (append, contains, sed, uncomment, exists,
                                   upload_template)
 from fabric.decorators import task
-from fabric.operations import sudo, run, prompt
+from fabric.operations import sudo, run, prompt, local
 from fabric.state import env
 from fabric.utils import abort
 from unipath import Path
@@ -28,6 +28,8 @@ DB_NAME_TEST = settings.DATABASES['default'].get('TEST_NAME',
 DB_USER = settings.DATABASES['default']['USER']
 REDIS_SOCKET = '/var/run/redis/redis.sock'
 REDIS_CONF = '/etc/redis/redis.conf'
+REMOTE_BACKUP = '/nfs/backups/dezede.backup'
+LOCAL_BACKUP = './backups/dezede.backup'
 
 
 def set_env():
@@ -252,7 +254,7 @@ def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=1,
 
 
 @task
-def reset_db():
+def reset_remote_db():
     sure = prompt('Are you sure you want to reset the database?',
                   default='n', validate='[yn]') == 'y'
     if not sure:
@@ -261,3 +263,18 @@ def reset_db():
     sudo("psql -c 'CREATE DATABASE %s OWNER %s;'" % (DB_NAME, DB_USER),
          user='postgres')
     create_db()
+
+
+@task
+def restore_saved_db():
+    local('sudo -u postgres dropdb %s' % DB_NAME)
+    local('sudo -u postgres createdb %s' % DB_NAME)
+    local('sudo -u postgres psql %s -c "create extension postgis;"' % DB_NAME)
+    local('pg_restore -U root -e -d %s -j 5 %s' % (DB_NAME, LOCAL_BACKUP))
+
+
+@task
+def clone_remote_db():
+    run('pg_dump -U %s -Fc -b -v -f %s %s' % (DB_USER, REMOTE_BACKUP, DB_NAME))
+    local('rsync %s:%s %s' % (env.hosts[0], REMOTE_BACKUP, LOCAL_BACKUP))
+    restore_saved_db()
