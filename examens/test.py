@@ -138,27 +138,31 @@ class HTMLAnnotatedCharList(list):
         return l
 
     def annotate(self, start, end, start_tag, end_tag):
-        if start == end:
-            return
-
         text_index = 0
         old_chars = tuple(self)
         del self[:]
+
+        def append_tag(tag, text_char):
+            for tag_c in tag:
+                self.append(HTMLAnnotatedChar(
+                    tag_c, is_tag=True,
+                    names=text_char.names, classes=text_char.classes))
+
         for c in old_chars:
             if c.is_tag:
                 self.append(c)
                 continue
 
-            if text_index == start:
-                for tag_c in start_tag:
-                    self.append(HTMLAnnotatedChar(
-                        tag_c, is_tag=True, names=c.names, classes=c.classes))
+            if text_index == start == end:
+                append_tag(start_tag, c)
+                append_tag(end_tag, c)
+
+            if text_index == start != end:
+                append_tag(start_tag, c)
             self.append(c)
             text_index += 1
-            if text_index == end:
-                for tag_c in end_tag:
-                    self.append(HTMLAnnotatedChar(
-                        tag_c, is_tag=True, names=c.names, classes=c.classes))
+            if text_index == end != start:
+                append_tag(end_tag, c)
 
 
 class AnnotatedDiff:
@@ -193,6 +197,8 @@ class AnnotatedDiff:
         start_tag = ERROR_START_TAG % (error_code, error_message)
         for inc, c in enumerate(s, start=1):
             self.annotated_a.annotate(i, i+inc, start_tag, ERROR_END_TAG)
+        else:
+            self.annotated_a.annotate(i, i, start_tag, ERROR_END_TAG)
         self.errors[error_code] += n_chars
 
     def compare(self, ia, ib, sub_a, sub_b):
@@ -208,10 +214,9 @@ class AnnotatedDiff:
             return
         if not sub_a:
             if force_text(sub_b).strip() == '[sic]':
-                self.add_error(ia, MISSING_SIC_ERROR, '&nbsp;' * len(sub_b))
+                self.add_error(ia, MISSING_SIC_ERROR, '')
                 return
-            self.add_error(ia, MISSING_ERROR,
-                           '&nbsp;' * len(sub_b), len(sub_b))
+            self.add_error(ia, MISSING_ERROR, '', len(sub_b))
             return
         if len(sub_a) == len(sub_b) == 1:
             if sub_a.lower() == sub_b.lower():
@@ -253,11 +258,12 @@ class HTMLAnnotatedCharListTestCase(TestCase):
         self.html_annotated_char_list.annotate(5, 5,
                                                '<i>', '</i>')
         self.assertEqual(str(self.html_annotated_char_list),
-                         '<p><span class="sc"><b>b</b></span>labla</p>')
+                         '<p><span class="sc"><b>b</b></span>labl<i></i>a</p>')
         self.html_annotated_char_list.annotate(5, 6,
                                                '<i>', '</i>')
-        self.assertEqual(str(self.html_annotated_char_list),
-                         '<p><span class="sc"><b>b</b></span>labl<i>a</i></p>')
+        self.assertEqual(
+            str(self.html_annotated_char_list),
+            '<p><span class="sc"><b>b</b></span>labl<i></i><i>a</i></p>')
 
 
 class AnnotatedDiffTestCase(TestCase):
