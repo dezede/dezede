@@ -1060,3 +1060,19 @@ svg.diffusion {
     text-overflow: ellipsis;
   }
 }
+
+//
+// Examens
+//
+
+.submitted-transcription {
+  font-size: 18px;
+  .error {
+    background-color: @btn-danger-bg;
+    color: @btn-danger-color;
+    &.missing::before {
+      content: ' ';
+      background-color: @btn-danger-bg;
+    }
+  }
+}

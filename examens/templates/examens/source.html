@@ -35,20 +35,6 @@
       <p>{{ help }}</p>
     </div>
 
-{#    <blockquote class="source">#}
-{#      <div class="transcription">#}
-{#        {{ source.transcription }}#}
-{#      </div>#}
-{#      {{ source.pk }}#}
-{#    </blockquote>#}
-
-    <h3>Source à transcrire</h3>
-    {% for fichier in source.fichiers.group_by_type.images %}
-      <img src="{{ fichier.fichier.url }}" />
-    {% endfor %}
-
-    <br /><br />
-
     {% if errors %}
       <div class="alert alert-{% if score < 10 %}danger{% else %}warning{% endif %}" role="alert">
         <h4>
@@ -62,19 +48,32 @@
             Très bien ! Encore un tout petit effort
           {% endif %}
         </h4>
-        Il reste encore des erreurs :
+        Vérifiez bien les détails suivants :
         <ul>
-          {% for name, diffs in errors %}
+          {% for name in errors %}
             <li>
-              {{ diffs|length }} erreur{{ diffs|length|pluralize }}
-              {% if name == 'espaces' or name == 'accentuation' %}d’{% else %}de {% endif %}{{ name }}
+              {{ name }}
             </li>
           {% endfor %}
         </ul>
       </div>
     {% endif %}
 
+    <h3>Source à transcrire</h3>
+    {% for fichier in source.fichiers.group_by_type.images %}
+      <img src="{{ fichier.fichier.url }}" />
+    {% endfor %}
+
+    <br /><br />
+
     <h3>Transcription</h3>
+
+
+    {% if request.POST %}
+      <blockquote class="submitted-transcription">
+        {{ diff_html }}
+      </blockquote>
+    {% endif %}
 
     <form method="POST">
       {% csrf_token %}
@@ -82,26 +81,12 @@
       {{ form.source }}
       {{ form.transcription }}
       <br />
-{#      {{ diff }}#}
-  {#    <br /><br />#}
       <button type="submit" class="btn btn-primary">Vérifier</button>
-  {#    <hr />#}
-{#      <pre>{{ source.transcription|escape }}</pre>#}
-{#      <pre>{{ form.cleaned_data.transcription|escape }}</pre>#}
-{#      <pre>{{ diff|escape }}</pre>#}
-{#      <hr />#}
-{#      <dl>#}
-{#        {% for name, diffs in errors %}#}
-{#          <dt>{{ name }}</dt>#}
-{#          <dd>#}
-{#            <ul class="list-unstyled">#}
-{#              {% for diff in diffs %}#}
-{#                <li><code>{{ diff|escape }}</code></li>#}
-{#              {% endfor %}#}
-{#            </ul>#}
-{#          </dd>#}
-{#        {% endfor %}#}
-{#      </dl>#}
+      {% if level > 1 %}
+        <button type="submit" name="previous" value="true" class="btn btn-default">
+          Retour à l’étape précédente
+        </button>
+      {% endif %}
     </form>
   {% endif %}
 {% endblock %}

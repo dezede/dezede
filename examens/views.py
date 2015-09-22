@@ -1,11 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.shortcuts import redirect
 from django.views.generic import FormView
 
 from .forms import SourceExamenForm, LEVELS_DATA, LEVELS, LEVELS_HELPS
 from libretto.models import Source
-from .utils import highlight_diffs, get_diffs_per_normalizer
+from .utils import AnnotatedDiff
 
 
 SOURCE_LEVEL_SESSION_KEY = 'examen_source_level'
@@ -25,7 +26,6 @@ class SourceExamen(FormView):
     SUCCESS_SCORE = 18.0
 
     def get_initial(self):
-        self.request.session[SOURCE_LEVEL_SESSION_KEY] = 4  # FIXME:
         if SOURCE_LEVEL_SESSION_KEY not in self.request.session:
             self.request.session[SOURCE_LEVEL_SESSION_KEY] = 1
         level = self.request.session[SOURCE_LEVEL_SESSION_KEY]
@@ -35,13 +35,6 @@ class SourceExamen(FormView):
             'source': source_qs.order_by('?').first(),
         }
 
-    def get_score(self, errors):
-        score = 20.0
-        for name, diffs in errors:
-            score -= (sum([len(diff.diff_a + diff.diff_b) for diff in diffs])
-                      * self.POINTS_BY_ERROR[name])
-        return max(score, 0.0)
-
     def get_context_data(self, **kwargs):
         context = super(SourceExamen, self).get_context_data(**kwargs)
         form = context['form']
@@ -50,9 +43,9 @@ class SourceExamen(FormView):
         else:
             context['source'] = form.initial['source']
         if hasattr(self, 'diff'):
-            context['diff'] = self.diff
+            context['diff_html'] = self.diff.get_html()
         if hasattr(self, 'errors'):
-            score = self.get_score(self.errors)
+            score = self.diff.get_score()
             success = form.is_valid and score >= self.SUCCESS_SCORE
             if success:
                 self.request.session[SOURCE_LEVEL_SESSION_KEY] = int(
@@ -73,7 +66,12 @@ class SourceExamen(FormView):
     def form_valid(self, form):
         ref = form.cleaned_data['source'].transcription
         txt = form.cleaned_data['transcription']
-        self.diff = highlight_diffs(ref, txt)
-        errors = get_diffs_per_normalizer(ref, txt)
-        self.errors = [(name, diffs) for name, diffs in errors if diffs]
+        self.diff = AnnotatedDiff(txt, ref)
+        self.errors = self.diff.errors
         return self.form_invalid(form)
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('previous') == 'true':
+            request.session[SOURCE_LEVEL_SESSION_KEY] -= 1
+            return redirect('source_examen')
+        return super(SourceExamen, self).post(request, *args, **kwargs)

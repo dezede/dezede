@@ -15,6 +15,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^', include('libretto.urls')),
+    url(r'^examens/', include('examens.urls')),
     url(r'^presentation$',
         TemplateView.as_view(template_name='pages/presentation.html'),
         name='presentation'),

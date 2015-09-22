@@ -109,6 +109,7 @@ INSTALLED_APPS = (
     'django_rq',
     'libretto',
     'dossiers',
+    'examens',
     'afo',
     'mptt',
     'endless_pagination',
