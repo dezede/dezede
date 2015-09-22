@@ -59,21 +59,19 @@
       </div>
     {% endif %}
 
+    {% if request.POST %}
+      <h3>Transcription envoyée</h3>
+      <blockquote class="submitted-transcription">
+        {{ diff_html }}
+      </blockquote>
+    {% endif %}
+
     <h3>Source à transcrire</h3>
     {% for fichier in source.fichiers.group_by_type.images %}
       <img src="{{ fichier.fichier.url }}" />
     {% endfor %}
 
-    <br /><br />
-
     <h3>Transcription</h3>
-
-
-    {% if request.POST %}
-      <blockquote class="submitted-transcription">
-        {{ diff_html }}
-      </blockquote>
-    {% endif %}
 
     <form method="POST">
       {% csrf_token %}
