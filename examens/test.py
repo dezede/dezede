@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.test import TestCase
 
-from .utils import HTMLAnnotatedCharList
+from .utils import HTMLAnnotatedCharList, AnnotatedDiff
 
 
 class HTMLAnnotatedCharListTestCase(TestCase):
