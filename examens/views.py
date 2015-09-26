@@ -64,7 +64,6 @@ class SourceExamen(FormView):
     def post(self, request, *args, **kwargs):
         if request.POST.get('previous') == 'true':
             request.session[SOURCE_LEVEL_SESSION_KEY] = max(
-                1,
-                int(request.session[SOURCE_LEVEL_SESSION_KEY]) + 1)
+                int(request.session[SOURCE_LEVEL_SESSION_KEY]) - 1, 1)
             return redirect('source_examen')
         return super(SourceExamen, self).post(request, *args, **kwargs)
