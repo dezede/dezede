@@ -5,6 +5,7 @@ from __future__ import unicode_literals, division
 from collections import defaultdict
 from difflib import SequenceMatcher
 from itertools import izip_longest
+import re
 
 from bs4 import BeautifulSoup, NavigableString
 from django.utils.encoding import force_text, python_2_unicode_compatible
@@ -16,6 +17,15 @@ from common.utils.text import remove_diacritics
 
 ERROR_START_TAG = '<span class="error %s" title="%s">'
 ERROR_END_TAG = '</span>'
+
+TAG_MERGER_RE = re.compile(
+    r'<span class="error (?P<error_code>[^"]+)" title="(?P<title>[^"]+)">'
+    r'(?P<content>[^<]+)'
+    r'</span>'
+    r'<span class="error (?P=error_code)" title="(?P=title)">')
+TAG_MERGER_SUBSTITUTE = (
+    r'<span class="error \g<error_code>" title="\g<title>">'
+    r'\g<content>')
 
 FORMATTING_ERROR = 'formatting'
 EXTRA_ERROR = 'extra'
@@ -179,7 +189,14 @@ class AnnotatedDiff:
 
     def get_html(self):
         self.parse()
-        return force_text(self.annotated_a)
+        html = force_text(self.annotated_a)
+
+        # Cleans HTML by merging same error tags
+        n = 1
+        while n != 0:
+            html, n = TAG_MERGER_RE.subn(TAG_MERGER_SUBSTITUTE, html)
+
+        return html
 
     def parse(self):
         if self.parsed:
@@ -196,8 +213,9 @@ class AnnotatedDiff:
         if callable(error_message):
             error_message = error_message(n_chars)
         start_tag = ERROR_START_TAG % (error_code, error_message)
-        for inc, c in enumerate(s, start=1):
-            self.annotated_a.annotate(i, i+inc, start_tag, ERROR_END_TAG)
+        if s:
+            for inc, c in enumerate(s, start=1):
+                self.annotated_a.annotate(i, i+inc, start_tag, ERROR_END_TAG)
         else:
             self.annotated_a.annotate(i, i, start_tag, ERROR_END_TAG)
         self.errors[error_code] += n_chars
