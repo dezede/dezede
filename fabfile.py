@@ -216,7 +216,6 @@ def update():
         pip_install()
 
     collectstatic()
-    set_permissions()
 
     restart()
 
