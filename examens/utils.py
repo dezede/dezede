@@ -207,8 +207,17 @@ class AnnotatedDiff:
             for inc, (ca, cb) in enumerate(zip(
                     self.annotated_a.get_chars(ia, ia+len(sub_a)),
                     self.annotated_b.get_chars(ib, ib+len(sub_b)))):
-                if not (ca.names == cb.names and ca.classes == cb.classes):
+                names_differences = set(
+                    ca.names).symmetric_difference(cb.names)
+                names_differences.discard('span')
+                classes_differences = set(
+                    ca.classes).symmetric_difference(cb.classes)
+                if names_differences or classes_differences:
                     if ca in self.IGNORED_FORMATTING_CHARACTERS:
+                        continue
+                    # Ignore small caps errors on upper case letters.
+                    if ca == ca.upper() and not names_differences \
+                            and classes_differences == {'sc'}:
                         continue
                     self.add_error(ia+inc, FORMATTING_ERROR, ca)
             return
