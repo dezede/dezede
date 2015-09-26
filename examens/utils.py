@@ -248,7 +248,6 @@ class AnnotatedDiff:
         self.parse()
         score = len(self.a_text) - sum([PENALITIES[e] * n
                                         for e, n in self.errors.items()])
-        if score < 0:
-            score = 0
+        score = float(max(score, 0))
         max_score = len(self.b_text)
-        return round((score / max_score) * 20)
+        return score / max_score

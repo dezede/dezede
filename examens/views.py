@@ -15,15 +15,6 @@ SOURCE_LEVEL_SESSION_KEY = 'examen_source_level'
 class SourceExamen(FormView):
     form_class = SourceExamenForm
     template_name = 'examens/source.html'
-    POINTS_BY_ERROR = {
-        'texte': 0.5,
-        'majuscule': 0.1,
-        'espacement': 0.05,
-        'ponctuation': 0.25,
-        'accentuation': 0.25,
-        'mise en forme': 0.05,
-    }
-    SUCCESS_SCORE = 18.0
 
     def get_initial(self):
         if SOURCE_LEVEL_SESSION_KEY not in self.request.session:
@@ -46,10 +37,10 @@ class SourceExamen(FormView):
             context['diff_html'] = self.diff.get_html()
         if hasattr(self, 'errors'):
             score = self.diff.get_score()
-            success = form.is_valid and score >= self.SUCCESS_SCORE
+            success = form.is_valid and score == 1.0
             if success:
-                self.request.session[SOURCE_LEVEL_SESSION_KEY] = int(
-                    form.cleaned_data['level']) + 1
+                self.request.session[SOURCE_LEVEL_SESSION_KEY] = min(
+                    int(form.cleaned_data['level']) + 1, max(LEVELS))
             context.update(
                 errors=self.errors,
                 score=score,
@@ -72,6 +63,8 @@ class SourceExamen(FormView):
 
     def post(self, request, *args, **kwargs):
         if request.POST.get('previous') == 'true':
-            request.session[SOURCE_LEVEL_SESSION_KEY] -= 1
+            request.session[SOURCE_LEVEL_SESSION_KEY] = max(
+                1,
+                int(request.session[SOURCE_LEVEL_SESSION_KEY]) + 1)
             return redirect('source_examen')
         return super(SourceExamen, self).post(request, *args, **kwargs)

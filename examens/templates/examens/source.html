@@ -35,32 +35,23 @@
       <p>{{ help }}</p>
     </div>
 
-    {% if errors %}
-      <div class="alert alert-{% if score < 10 %}danger{% else %}warning{% endif %}" role="alert">
-        <h4>
-          {% if score < 5 %}
-            Très insuffisant
-          {% elif score < 10 %}
-            Insuffisant
-          {% elif score < 15 %}
-            Bien ! Plus que quelques erreurs à corriger
-          {% elif score < 20 %}
-            Très bien ! Encore un tout petit effort
-          {% endif %}
-        </h4>
-        Vérifiez bien les détails suivants :
-        <ul>
-          {% for name in errors %}
-            <li>
-              {{ name }}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-
     {% if request.POST %}
       <h3>Transcription envoyée</h3>
+
+      {% if errors %}
+        <div class="alert alert-{% if score < 0.5 %}danger{% else %}warning{% endif %}" role="alert">
+            {% if score < 0.25 %}
+              Très insuffisant
+            {% elif score < 0.5 %}
+              Insuffisant
+            {% elif score < 0.75 %}
+              Bien ! Plus que quelques erreurs à corriger
+            {% elif score < 1.0 %}
+              Très bien ! Encore un tout petit effort
+            {% endif %}
+        </div>
+      {% endif %}
+
       <blockquote class="submitted-transcription">
         {{ diff_html }}
       </blockquote>
