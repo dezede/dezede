@@ -165,6 +165,8 @@ class HTMLAnnotatedCharList(list):
 
 
 class AnnotatedDiff:
+    IGNORED_FORMATTING_CHARACTERS = '   .,:;…?!¿¡«»"\'()[]{}/\\'
+
     def __init__(self, a, b):
         self.a = a
         self.b = b
@@ -205,8 +207,9 @@ class AnnotatedDiff:
             for inc, (ca, cb) in enumerate(zip(
                     self.annotated_a.get_chars(ia, ia+len(sub_a)),
                     self.annotated_b.get_chars(ib, ib+len(sub_b)))):
-                if ca != ' ' and not (ca.names == cb.names
-                                      and ca.classes == cb.classes):
+                if not (ca.names == cb.names and ca.classes == cb.classes):
+                    if ca in self.IGNORED_FORMATTING_CHARACTERS:
+                        continue
                     self.add_error(ia+inc, FORMATTING_ERROR, ca)
             return
         if not sub_b:
