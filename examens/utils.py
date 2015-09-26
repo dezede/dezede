@@ -77,6 +77,11 @@ class HTMLAnnotatedChar(text_type):
         return self
 
 
+class Appended:
+    start = False
+    end = False
+
+
 @python_2_unicode_compatible
 class HTMLAnnotatedCharList(list):
     def __init__(self, html):
@@ -147,9 +152,7 @@ class HTMLAnnotatedCharList(list):
         return l
 
     def annotate(self, start, end, start_tag, end_tag):
-        text_index = 0
-        old_chars = tuple(self)
-        del self[:]
+        appended = Appended()
 
         def append_tag(tag, text_char):
             for tag_c in tag:
@@ -157,21 +160,39 @@ class HTMLAnnotatedCharList(list):
                     tag_c, is_tag=True,
                     names=text_char.names, classes=text_char.classes))
 
+        def append_start(text_c=HTMLAnnotatedChar()):
+            if not appended.start:
+                append_tag(start_tag, text_c)
+                appended.start = True
+
+        def append_end(text_c=HTMLAnnotatedChar()):
+            if not appended.end:
+                if not appended.start:
+                    append_start(text_c)
+                append_tag(end_tag, text_c)
+                appended.end = True
+
+        text_index = 0
+        old_chars = tuple(self)
+        del self[:]
+
         for c in old_chars:
             if c.is_tag:
                 self.append(c)
                 continue
 
-            if text_index == start == end:
-                append_tag(start_tag, c)
-                append_tag(end_tag, c)
+            if text_index == end:
+                append_end(c)
+            if text_index == start:
+                append_start(c)
 
-            if text_index == start != end:
-                append_tag(start_tag, c)
             self.append(c)
             text_index += 1
-            if text_index == end != start:
-                append_tag(end_tag, c)
+
+        if not appended.start:
+            append_start()
+        if not appended.end:
+            append_end()
 
 
 class AnnotatedDiff:
