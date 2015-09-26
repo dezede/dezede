@@ -242,6 +242,7 @@ class AnnotatedDiff:
         self.errors[error_code] += n_chars
 
     def compare(self, ia, ib, sub_a, sub_b):
+        # Equal
         if sub_a == sub_b:
             for inc, (ca, cb) in enumerate(zip(
                     self.annotated_a.get_chars(ia, ia+len(sub_a)),
@@ -260,15 +261,18 @@ class AnnotatedDiff:
                         continue
                     self.add_error(ia+inc, FORMATTING_ERROR, ca)
             return
+        # Insert
         if not sub_b:
             self.add_error(ia, EXTRA_ERROR, sub_a, len(sub_a))
             return
+        # Delete
         if not sub_a:
             if force_text(sub_b).strip() == '[sic]':
                 self.add_error(ia, MISSING_SIC_ERROR, '')
                 return
             self.add_error(ia, MISSING_ERROR, '', len(sub_b))
             return
+        # Replace
         if len(sub_a) == len(sub_b) == 1:
             if sub_a.lower() == sub_b.lower():
                 self.add_error(ia, CASE_ERROR, sub_a)
@@ -281,6 +285,9 @@ class AnnotatedDiff:
         else:
             for inc, (ca, cb) in enumerate(
                     izip_longest(sub_a, sub_b, fillvalue=HTMLAnnotatedChar())):
+                # Don’t compare non-existent chars from a.
+                if ca == '':
+                    break
                 self.compare(ia+inc, ib+inc, ca, cb)
 
     def get_score(self):
