@@ -4,7 +4,10 @@ from __future__ import unicode_literals, division
 
 from collections import defaultdict
 from difflib import SequenceMatcher
-from itertools import izip_longest
+try:
+    from itertools import zip_longest
+except ImportError:  # Python 2
+    from itertools import izip_longest as zip_longest
 import re
 
 from bs4 import BeautifulSoup, NavigableString
@@ -284,7 +287,7 @@ class AnnotatedDiff:
                 self.add_error(ia, TEXT_ERROR, sub_a)
         else:
             for inc, (ca, cb) in enumerate(
-                    izip_longest(sub_a, sub_b, fillvalue=HTMLAnnotatedChar())):
+                    zip_longest(sub_a, sub_b, fillvalue=HTMLAnnotatedChar())):
                 # Don’t compare non-existent chars from a.
                 if ca == '':
                     break
