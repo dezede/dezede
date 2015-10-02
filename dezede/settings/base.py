@@ -84,6 +84,11 @@ STATICFILES_DIRS = (
 
 
 INSTALLED_APPS = (
+    'dezede',
+    'common',
+    'accounts',
+    'exporter',
+
     'super_inlines.grappelli_integration',
     'super_inlines',
     'cachalot',
@@ -95,11 +100,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.gis',
-
-    'common',
-    'accounts',
-    'dezede',
-    'exporter',
 
     'allauth',
     'allauth.account',
