@@ -548,7 +548,7 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     default_lat = 5900000
     default_zoom = 5
     point_zoom = default_zoom
-    openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.11' \
+    openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1' \
                      '/OpenLayers.js'
 
 
