@@ -57,7 +57,7 @@ server {
     style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
     font-src 'self';
     frame-src 'self';
-    object-src 'none'";
+    object-src 'self'";
 
   client_max_body_size 50M;
 
