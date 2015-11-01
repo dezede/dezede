@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-26 00:30+0200\n"
+"POT-Creation-Date: 2015-11-01 22:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,10 +18,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: templates/table.html:19
+#: templates/table.html:20
 msgid "Search…"
 msgstr "Rechercher…"
 
-#: templates/table.html:104
+#: templates/table.html:73
 msgid "results"
 msgstr "résultats"
+
+#: templates/table.html:74
+msgid "Sort by this column"
+msgstr "Ordonner par cette colonne"
+
+#: templates/table.html:75
+msgid "Filter by this column"
+msgstr "Filtrer par cette colonne"
+
+#: templates/table.html:76
+msgid "Clear selection"
+msgstr "Effacer la sélection"
