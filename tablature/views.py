@@ -107,7 +107,7 @@ class TableView(ListView):
         qs = self.search(qs, GET['q'])
 
         filter_choices = GET['choices'].split(',')
-        for column, choice in zip(self.columns, filter_choices):
+        for column, choice in zip(self.get_columns(), filter_choices):
             if choice:
                 method = getattr(self, 'filter_' + column, None)
                 qs = (qs.filter(**{column: choice}) if method is None
@@ -115,11 +115,11 @@ class TableView(ListView):
 
         order_directions = map(int, GET['orderings'].split(','))
         order_by = []
-        for column, direction in zip(self.columns, order_directions):
+        for column, direction in zip(self.get_columns(), order_directions):
             order_by.extend(self.get_ordering(column, direction))
         if order_by:
             qs = qs.order_by(*order_by)
-        return qs
+        return qs.distinct()
 
     def get_limited_results_queryset(self):
         qs = self.get_results_queryset()

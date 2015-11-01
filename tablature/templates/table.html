@@ -37,93 +37,17 @@
       </nav>
     </header>
 
-    <table class="table table-condensed table-striped table-bordered">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-condensed table-striped table-bordered">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
   </div>
 
   {% addstatic css %}
-    <style>
-      #table header {
-        margin-bottom: 20px;
-      }
-      #table .count, #table .spinner {
-        display: inline-block;
-        height: 34px;
-        padding: 6px 0;
-        vertical-align: middle;
-        cursor: default;
-        user-select: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-      }
-      #table .pagination {
-        margin: 0;
-      }
-      #table th {
-        padding: 0;
-        cursor: default;
-        user-select: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-      }
-      #table .unsortable, #table .sortable, #table .filter {
-        display: inline-block;
-        vertical-align: bottom;
-        height: 30px;
-      }
-      #table .sortable, #table .filter {
-        cursor: pointer;
-      }
-      #table .unsortable, #table .sortable {
-        width: calc(100% - 32px);
-        padding: 5px;
-      }
-      #table .sortable:last-child {
-        width: 100%;
-      }
-      #table thead .column-name, #table thead .fa {
-        vertical-align: middle;
-      }
-      #table .column-name {
-        display: inline-block;
-        white-space: nowrap;
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-      }
-      #table .sortable .column-name {
-        width: calc(100% - 15px);
-      }
-      #table .unsortable .column-name {
-        width: 100%;
-      }
-      #table .sortable .fa {
-        width: 15px;
-        text-align: right;
-      }
-      #table .filter-button {
-        display: inline-block;
-        width: 32px;
-        padding: 6px 10px 5px;
-      }
-      #table .filter.active .filter-button {
-        background: #ec8055;
-        color: white;
-      }
-      #table .filter .dropdown-menu {
-        max-height: 300px;
-        overflow-y: auto;
-      }
-      #table td {
-        word-break: break-word;
-        -moz-hyphens: auto;
-        hyphens: auto;
-      }
-    </style>
+    <link rel="stylesheet" type="text/x-scss" href="{% static 'css/tablature.scss' %}" />
   {% endaddstatic %}
 
   {% addstatic js %}
@@ -146,7 +70,10 @@
           $('#table'), ['{{ columns|join:"','" }}'],
           ['{{ columns_widths|join:"','" }}'],
           [{{ sortables|join:',' }}], filters,
-          {{ results_per_page }}, '{% trans 'results' %}'
+          {{ results_per_page }}, '{% trans 'results' %}',
+          '{% trans 'Sort by this column' %}',
+          '{% trans 'Filter by this column' %}',
+          '{% trans 'Clear selection' %}'
         );
       });
     </script>

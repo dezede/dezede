@@ -1,0 +1,119 @@
+// Bootstrap variables
+
+$gray: #555;
+$brand-primary: #ec8055;
+$table-border-color: #ddd;
+$grid-gutter-width: 30px;
+
+// Mixins
+
+@mixin cursorGrab() {
+  cursor: move; /* fallback if grab cursor is unsupported */
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+@mixin noUserSelect() {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+// Styling
+
+#table {
+  $padding: 5px;
+  $header-height: 34px;
+  $dropdown-max-height: 300px;
+  header {
+    @include noUserSelect;
+    margin-bottom: $grid-gutter-width / 2;
+    .count, .spinner {
+      display: inline-block;
+      height: $header-height;
+      line-height: $header-height;
+      vertical-align: middle;
+      cursor: default;
+    }
+    .pagination {
+      margin: 0;
+    }
+  }
+  .table-responsive {
+    border: none;
+    // FIXME: This is a cheap workaround to this issue:
+    //        https://github.com/twbs/bootstrap/issues/11037
+    min-height: $dropdown-max-height * 2;
+    table {
+      border: 1px solid $table-border-color;
+      thead {
+        @include noUserSelect;
+        th {
+          padding: 0;
+          cursor: default;
+          user-select: none;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          .flex {
+            display: flex;
+            flex-flow: row wrap;
+            .column-name {
+              padding: $padding;
+              flex: 2 100%;
+              text-align: center;
+              ~ .sortable, ~ .filter {
+                border-top: 1px solid $table-border-color;
+              }
+            }
+            .sortable, .filter {
+              flex: 1 50%;
+              cursor: pointer;
+              text-align: center;
+              &.disabled {
+                display: none;
+              }
+            }
+            .sortable.active, .filter.active .filter-button {
+              background: $brand-primary;
+              color: white;
+            }
+            .sortable {
+              order: 1;
+              padding: $padding;
+            }
+            .filter {
+              order: 2;
+              .filter-button {
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                padding: $padding;
+              }
+              .dropdown-menu {
+                max-height: $dropdown-max-height;
+                overflow-y: auto;
+              }
+            }
+          }
+        }
+      }
+      tbody {
+        &.grabbable {
+          @include cursorGrab;
+          @include noUserSelect;
+          &.grabbing {
+            cursor: move;
+          }
+        }
+        td {
+          word-break: break-word;
+          -moz-hyphens: auto;
+          hyphens: auto;
+        }
+      }
+    }
+  }
+}

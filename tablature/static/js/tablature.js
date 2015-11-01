@@ -1,12 +1,9 @@
-function Pagination ($pagination, numPages, switchPageHandler) {
-  this.initialisation = true;
+function Pagination ($pagination, switchPageHandler) {
   this.$pagination = $pagination;
   this.switchPageHandler = switchPageHandler;
   this.current = 0;
   this.margin = 2;  // Number of page links
                     // around current page and ends.
-  this.setNumPages(numPages);
-  this.initialisation = false;
 }
 
 Pagination.prototype.setNumPages = function (numPages) {
@@ -78,9 +75,7 @@ Pagination.prototype.switchToPage = function (i, force) {
   if (((i != this.current) && !this.pageOutOfBounds(i)) || force) {
     this.current = i;
     this.update();
-    if (!this.initialisation) {
-      this.switchPageHandler();
-    }
+    this.switchPageHandler();
   }
 };
 
@@ -90,9 +85,11 @@ Pagination.prototype.update = function () {
 };
 
 function Table ($container, columns, columnsWidths, sortables, filters,
-                resultsPerPage, resultsString) {
+                resultsPerPage, resultsString, sortableString, filterString,
+                clearFilterString) {
   this.$container = $container;
-  this.$table = $container.find('table');
+  this.$tableContainer = $container.find('.table-responsive');
+  this.$table = this.$tableContainer.find('table');
   this.$head = this.$table.find('thead');
   this.$results = this.$table.find('tbody');
   this.$input = $container.find('input');
@@ -107,6 +104,9 @@ function Table ($container, columns, columnsWidths, sortables, filters,
   this.sortables = sortables;
   this.filters = filters;
   this.resultsString = resultsString;
+  this.sortableString = sortableString;
+  this.filterString = filterString;
+  this.clearFilterString = clearFilterString;
   this.orderings = [];
   this.sortIcons = {
     '-1': 'fa-sort-desc', '0': 'fa-sort', '1': 'fa-sort-asc'
@@ -116,29 +116,36 @@ function Table ($container, columns, columnsWidths, sortables, filters,
   this.count = 0;
   this.resultsPerPage = resultsPerPage;
   this.pagination = new Pagination(
-    $container.find('.pagination'),
-    this.getNumPages(),
-    this.update.bind(this));
+    $container.find('.pagination'), this.update.bind(this));
+
   $(document).keydown(
     this.onKeyDown.bind(this)
   ).keyup(
     this.onKeyUp.bind(this)
   );
-  this.update();
+
+  $(window).resize(this.updateGrabbable.bind(this));
+  this.pageX = 0;
+  this.$results.mousedown(this.onGrab.bind(this));
+  $(document).mousemove(this.onMove.bind(this));
+  $(document).mouseup(this.onUnGrab.bind(this));
+
+  this.setCount(this.getNumPages());
 }
 
-Table.prototype.createSortable = function (column, $cell, i) {
+Table.prototype.createSortable = function (column, $flex, i) {
   this.orderings.push(0);
-  var columnName = '<span class="column-name">' + column + '</span>';
 
   if (!this.sortables[i]) {
-    $cell.append($('<div class="unsortable">' + columnName + '</div>'));
     return;
   }
 
-  var $sortable = $('<div class="sortable" tabindex="0">'
-                    + columnName + '</div>');
-  $cell.append($sortable);
+  var $sortable = $('<div class="sortable"></div>')
+    .attr({
+      title: this.sortableString, tabindex: 0
+    });
+  $flex.append($sortable);
+
   var $icon = $('<i class="fa fa-sort"></i>');
   $sortable.append($icon);
   $sortable.click(function () {
@@ -148,45 +155,69 @@ Table.prototype.createSortable = function (column, $cell, i) {
     } else {
       this.orderings[i] += 1;
     }
+    $sortable.toggleClass('active', this.orderings[i] != 0);
     $icon.addClass(this.sortIcons[this.orderings[i].toString()]);
     this.update();
   }.bind(this));
 };
 
-Table.prototype.createFilter = function ($cell, i) {
+Table.prototype.createFilter = function ($flex, i) {
   if (this.filters[i].length == 0) {
     this.filterChoices.push(null);
     return;
   }
 
   var $filter = $(
-    '<span class="filter dropdown">' +
-    '  <span class="filter-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="0">' +
-    '    <i class="fa fa-filter"></i>' +
-    '  </span>' +
-    '  <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">' +
-    '  </ul>' +
-    '</span>');
-  var $filterList = $filter.find('ul');
+    '<div class="filter dropdown"></div>');
+  $flex.append($filter);
+  var $filterButton = $('<span class="filter-button"></span>');
+  $filter.append($filterButton);
+
+  $filterButton
+    .append($('<i class="fa fa-filter"></i>'))
+    .attr({
+      title: this.filterString,
+      'data-toggle': 'dropdown', 'aria-haspopup': true, 'aria-expanded': false,
+      tabindex: 0
+    });
+
+  var $menu = $(
+    '<ul class="dropdown-menu" role="menu"></ul>');
+  if ((i+1) > (this.columns.length / 2)) {
+    $menu.addClass('pull-right');
+  }
+  $filter.append($menu);
+  var $clearFilter = $(
+    '<li class="clear-filter">' +
+    '<a href="#">' + this.clearFilterString + '</a>' +
+    '</li>' +
+    '<li class="divider" role="separator"></li>');
+  $clearFilter.hide();
+  $menu.append($clearFilter);
+  $clearFilter.click(function (e) {
+    e.preventDefault();
+    $menu.find('li.active').click();
+  });
   this.filters[i].forEach(function (data) {
     var value = data[0], verbose = data[1];
     var $choice = $('<li><a href="#">' + verbose + '</a></li>');
-    $filterList.append($choice);
+    $menu.append($choice);
     $choice.click(function (e) {
       e.preventDefault();
-      $filterList.find('li').removeClass('active');
+      $menu.find('li.active').removeClass('active');
       if (this.filterChoices[i] == value) {
         this.filterChoices[i] = null;
+        $clearFilter.hide();
         $filter.removeClass('active');
       } else {
         $choice.addClass('active');
+        $clearFilter.show();
         $filter.addClass('active');
         this.filterChoices[i] = value;
       }
       this.update();
     }.bind(this))
   }.bind(this));
-  $cell.append($filter);
 };
 
 Table.prototype.createHeaders = function () {
@@ -195,9 +226,14 @@ Table.prototype.createHeaders = function () {
   this.columns.forEach(function (column, i) {
     var $cell = $('<th style="width: ' + this.columnsWidths[i] + ';"></th>');
     $tr.append($cell);
+    var $flex = $('<div class="flex"></div>');
+    $cell.append($flex);
+    if (column != '') {
+      $flex.append($('<div class="column-name">' + column + '</div>'));
+    }
 
-    this.createSortable(column, $cell, i);
-    this.createFilter($cell, i);
+    this.createSortable(column, $flex, i);
+    this.createFilter($flex, i);
   }.bind(this));
 };
 
@@ -254,13 +290,45 @@ Table.prototype.onKeyUp = function (e) {
   }
 };
 
+Table.prototype.updateGrabbable = function () {
+  this.$results.toggleClass(
+    'grabbable',
+    this.$tableContainer.prop('scrollWidth') > this.$tableContainer.width());
+};
+
+Table.prototype.onGrab = function (e) {
+  var isLeftClick = e.which == 1;
+  if (isLeftClick && this.$results.hasClass('grabbable')) {
+    this.$results.addClass('grabbing');
+    this.pageX = e.pageX;
+  }
+};
+
+Table.prototype.onMove = function (e) {
+  if (!this.$results.hasClass('grabbing')) {
+    return;
+  }
+  e.preventDefault();
+  var $tableContainer = this.$table.parent();
+  if (e.pageX != this.pageX) {
+    $tableContainer.scrollLeft($tableContainer.scrollLeft()
+                               + (this.pageX - e.pageX));
+    this.pageX = e.pageX;
+  }
+};
+
+Table.prototype.onUnGrab = function () {
+  this.$results.removeClass('grabbing');
+};
+
 Table.prototype.update = function () {
   if (typeof this.currentAjax !== 'undefined') {
     this.currentAjax.abort();
   }
   this.$spinner.show();
+  var queryData = this.getData();
   this.currentAjax = $.ajax({
-    data: this.getData()
+    data: queryData
   }).done(function (data) {
     this.setCount(data['count']);
     this.$results.empty();
@@ -271,6 +339,9 @@ Table.prototype.update = function () {
         $row.append('<td>' + value + '</td>');
       });
     }.bind(this));
+    this.updateGrabbable();
+    this.$container.find('[title]').tooltip(
+      {container: 'body', trigger: 'hover'});
     this.$spinner.hide();
   }.bind(this));
 };
