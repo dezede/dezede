@@ -320,6 +320,7 @@ COMPRESS_CSS_FILTERS = (
 )
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
+    ('text/x-scss', 'django_libsass.SassCompiler'),
 )
 
 AJAX_LOOKUP_CHANNELS = {
