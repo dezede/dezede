@@ -2,19 +2,20 @@
 
 from __future__ import unicode_literals
 import json
-from django.db.models import FieldDoesNotExist
+
+from django.db.models import FieldDoesNotExist, Q
 from django.db.models.query import ValuesListQuerySet
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.text import capfirst
 from django.views.generic import ListView
-from haystack.query import SearchQuerySet
 
 
 class TableView(ListView):
     columns = ()
     columns_widths = {}
     verbose_columns = {}
+    search_lookups = ()
     orderings = {}
     filters = {}
     template_name = 'table.html'
@@ -93,9 +94,12 @@ class TableView(ListView):
     def search(self, queryset, q):
         if not q:
             return queryset
-        sqs = SearchQuerySet().models(self.model).auto_query(q)
-        pk_list = [r.pk for r in sqs[:10 ** 6]]
-        return queryset.filter(pk__in=pk_list)
+        filters = Q()
+        for lookup in self.search_lookups:
+            filters |= Q(**{lookup: q})
+        if filters:
+            return queryset.filter(filters)
+        return queryset.none()
 
     def get_results_queryset(self):
         qs = self.get_queryset()

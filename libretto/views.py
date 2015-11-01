@@ -250,8 +250,15 @@ class EvenementDetailView(PublishedDetailView):
         return qs.prefetch_all(create_subquery=False)
 
 
+class CommonTableView(TableView):
+    def search(self, queryset, q):
+        sqs = SearchQuerySet().models(self.model).auto_query(q)
+        pk_list = [r.pk for r in sqs[:10 ** 6]]
+        return queryset.filter(pk__in=pk_list)
+
+
 class CommonViewSet(ModelViewSet):
-    list_view = TableView
+    list_view = CommonTableView
     views = {
         'list_view': {
             'view': None,
@@ -285,7 +292,7 @@ CENTURIES_DATE_RANGES = {
     str(i): ('%d00-1-1' % (i-1), '%d99-12-31' % (i-1)) for i in CENTURIES
 }
 
-class SourceTableView(PublishedMixin, TableView):
+class SourceTableView(PublishedMixin, CommonTableView):
     model = Source
     columns = ('icons', 'html', 'ancrage', 'type')
     columns_widths = {
@@ -339,7 +346,7 @@ class SourceViewSet(CommonViewSet):
         super(SourceViewSet, self).__init__()
 
 
-class PartieTableView(PublishedMixin, TableView):
+class PartieTableView(PublishedMixin, CommonTableView):
     model = Partie
     columns = ('html', 'type')
     columns_widths = {
@@ -356,7 +363,7 @@ class PartieViewSet(CommonViewSet):
     list_view = PartieTableView
 
 
-class ProfessionTableView(PublishedMixin, TableView):
+class ProfessionTableView(PublishedMixin, CommonTableView):
     model = Profession
     columns = ('html', 'individus_count', 'oeuvres_count')
     columns_widths = {
@@ -382,7 +389,7 @@ class LieuViewSet(CommonViewSet):
         self.views['list_view']['view'] = PublishedListView
 
 
-class IndividuTableView(PublishedMixin, TableView):
+class IndividuTableView(PublishedMixin, CommonTableView):
     model = Individu
     columns = ('related_label_html', 'calc_professions', 'naissance', 'deces')
     columns_widths = {
@@ -417,7 +424,7 @@ class IndividuViewSet(CommonViewSet):
     list_view = IndividuTableView
 
 
-class EnsembleTableView(PublishedMixin, TableView):
+class EnsembleTableView(PublishedMixin, CommonTableView):
     model = Ensemble
     columns = ('html', 'type', 'siege')
     columns_widths = {
@@ -437,7 +444,7 @@ class EnsembleViewSet(CommonViewSet):
     list_view = EnsembleTableView
 
 
-class OeuvreTableView(PublishedMixin, TableView):
+class OeuvreTableView(PublishedMixin, CommonTableView):
     model = Oeuvre
     columns = ('titre_html', 'genre', 'auteurs_html', 'creation')
     columns_widths = {
