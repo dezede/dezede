@@ -9,8 +9,12 @@ function Pagination ($pagination, switchPageHandler) {
 Pagination.prototype.setNumPages = function (numPages) {
   var last = numPages - 1;
   if (last != this.last) {
+    var toPage = 0;
+    if (typeof this.last === 'undefined') {
+      toPage = this.current;
+    }
     this.last = last;
-    this.switchToPage(0, true);
+    this.switchToPage(toPage, true);
   }
 };
 
@@ -102,7 +106,9 @@ function Table ($container, columns, columnsWidths, sortables, filters,
   this.columns = columns;
   this.columnsWidths = columnsWidths;
   this.sortables = sortables;
+  this.$sortablesArray = [];
   this.filters = filters;
+  this.$filtersArray = [];
   this.resultsString = resultsString;
   this.sortableString = sortableString;
   this.filterString = filterString;
@@ -130,45 +136,57 @@ function Table ($container, columns, columnsWidths, sortables, filters,
   $(document).mousemove(this.onMove.bind(this));
   $(document).mouseup(this.onUnGrab.bind(this));
 
-  this.setCount(this.getNumPages());
+  this.setData();
+  this.update();
+//  this.setCount(this.getNumPages());
 }
 
 Table.prototype.createSortable = function (column, $flex, i) {
   this.orderings.push(0);
 
   if (!this.sortables[i]) {
+    this.$sortablesArray.push(null);
     return;
   }
 
   var $sortable = $('<div class="sortable"></div>')
-    .attr({
-      title: this.sortableString, tabindex: 0
-    });
+    .attr({title: this.sortableString, tabindex: 0});
+  this.$sortablesArray.push($sortable);
   $flex.append($sortable);
 
   var $icon = $('<i class="fa fa-sort"></i>');
   $sortable.append($icon);
   $sortable.click(function () {
-    $icon.removeClass(this.sortIcons[this.orderings[i].toString()]);
     if (this.orderings[i] == 1) {
       this.orderings[i] = -1;
     } else {
       this.orderings[i] += 1;
     }
+    this.update();
+  }.bind(this));
+};
+
+Table.prototype.updateSortables = function () {
+  this.$sortablesArray.forEach(function ($sortable, i) {
+    if ($sortable === null) {
+      return;
+    }
+    var $icon = $sortable.find('i');
+    $icon.attr('class', 'fa');
     $sortable.toggleClass('active', this.orderings[i] != 0);
     $icon.addClass(this.sortIcons[this.orderings[i].toString()]);
-    this.update();
   }.bind(this));
 };
 
 Table.prototype.createFilter = function ($flex, i) {
   if (this.filters[i].length == 0) {
     this.filterChoices.push(null);
+    this.$filtersArray.push(null);
     return;
   }
 
-  var $filter = $(
-    '<div class="filter dropdown"></div>');
+  var $filter = $('<div class="filter dropdown"></div>');
+  this.$filtersArray.push($filter);
   $flex.append($filter);
   var $filterButton = $('<span class="filter-button"></span>');
   $filter.append($filterButton);
@@ -181,8 +199,7 @@ Table.prototype.createFilter = function ($flex, i) {
       tabindex: 0
     });
 
-  var $menu = $(
-    '<ul class="dropdown-menu" role="menu"></ul>');
+  var $menu = $('<ul class="dropdown-menu" role="menu"></ul>');
   if ((i+1) > (this.columns.length / 2)) {
     $menu.addClass('pull-right');
   }
@@ -207,16 +224,31 @@ Table.prototype.createFilter = function ($flex, i) {
       $menu.find('li.active').removeClass('active');
       if (this.filterChoices[i] == value) {
         this.filterChoices[i] = null;
-        $clearFilter.hide();
-        $filter.removeClass('active');
       } else {
-        $choice.addClass('active');
-        $clearFilter.show();
-        $filter.addClass('active');
         this.filterChoices[i] = value;
       }
       this.update();
     }.bind(this))
+  }.bind(this));
+};
+
+Table.prototype.updateFilters = function () {
+  this.$filtersArray.forEach(function ($filter, i) {
+    if ($filter === null) {
+      return;
+    }
+    var $menu = $filter.find('.dropdown-menu');
+    var $clearFilter = $filter.find('.clear-filter, .divider');
+    $filter.removeClass('active');
+    $clearFilter.hide();
+    $menu.find('li.active').removeClass('active');
+    $menu.find('li').not($clearFilter).each(function (nthChoice, choice) {
+      if (this.filterChoices[i] == this.filters[i][nthChoice][0]) {
+        $(choice).addClass('active');
+        $clearFilter.show();
+        $filter.addClass('active');
+      }
+    }.bind(this));
   }.bind(this));
 };
 
@@ -245,6 +277,29 @@ Table.prototype.setCount = function (count) {
   this.count = count;
   this.pagination.setNumPages(this.getNumPages());
   this.$count.empty().html(this.count + ' ' + this.resultsString);
+};
+
+Table.prototype.setData = function () {
+  document.location.hash.slice(1).split('&').forEach(function (kv) {
+    var t = kv.split('=');
+    var k = t[0], v = t[1];
+    if (k == 'q') {
+      this.$input.val(decodeURIComponent(v));
+    } else if (k == 'orderings') {
+      this.orderings = decodeURIComponent(v).split(',').map(
+        function (s, _) { return parseInt(s); });
+    } else if (k == 'choices') {
+      this.filterChoices = decodeURIComponent(v).split(',').map(
+        function (s, _) {
+          if (s === '') {
+            return null;
+          }
+          return s;
+        });
+    } else if (k == 'page') {
+      this.pagination.current = parseInt(decodeURIComponent(v));
+    }
+  }.bind(this));
 };
 
 Table.prototype.getData = function () {
@@ -325,11 +380,14 @@ Table.prototype.update = function () {
   if (typeof this.currentAjax !== 'undefined') {
     this.currentAjax.abort();
   }
+  this.updateSortables();
+  this.updateFilters();
   this.$spinner.show();
   var queryData = this.getData();
   this.currentAjax = $.ajax({
     data: queryData
   }).done(function (data) {
+    this.$container.find('[data-original-title]').tooltip('destroy');
     this.setCount(data['count']);
     this.$results.empty();
     data['results'].forEach(function (dataRow) {
@@ -342,6 +400,7 @@ Table.prototype.update = function () {
     this.updateGrabbable();
     this.$container.find('[title]').tooltip(
       {container: 'body', trigger: 'hover'});
+    document.location.hash = jQuery.param(queryData);
     this.$spinner.hide();
   }.bind(this));
 };
