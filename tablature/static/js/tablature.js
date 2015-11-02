@@ -221,7 +221,6 @@ Table.prototype.createFilter = function ($flex, i) {
     $menu.append($choice);
     $choice.click(function (e) {
       e.preventDefault();
-      $menu.find('li.active').removeClass('active');
       if (this.filterChoices[i] == value) {
         this.filterChoices[i] = null;
       } else {
@@ -256,7 +255,8 @@ Table.prototype.createHeaders = function () {
   var $tr = $('<tr></tr>');
   this.$head.append($tr);
   this.columns.forEach(function (column, i) {
-    var $cell = $('<th style="width: ' + this.columnsWidths[i] + ';"></th>');
+    var $cell = $(
+      '<th style="min-width: ' + this.columnsWidths[i] + ';"></th>');
     $tr.append($cell);
     var $flex = $('<div class="flex"></div>');
     $cell.append($flex);

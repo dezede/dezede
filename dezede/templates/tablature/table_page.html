@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static_grouper static i18n %}
+
+
+{% block header %}
+  <h1>
+    {% block title %}
+      {# FIXME: Cette ligne créé deux requêtes SQL inutiles. Comme model est callable, Django instancie le modèle et doit aller chercher l’état nouveau. #}
+      {{ verbose_name_plural|capfirst }}
+    {% endblock %}
+  </h1>
+{% endblock %}
+
+
+{% block content %}
+  {% include 'tablature/includes/table.html' with search_lookups=True %}
+
+  {% addstatic css %}
+    <link rel="stylesheet" type="text/x-scss" href="{% static 'css/tablature.scss' %}" />
+  {% endaddstatic %}
+
+  {% addstatic js %}
+    <script src="{% static 'js/tablature.js' %}"></script>
+  {% endaddstatic %}
+
+  {% addstatic js %}
+    <script>
+      {% include 'tablature/includes/table_init.js' %}
+    </script>
+  {% endaddstatic %}
+
+{% endblock %}

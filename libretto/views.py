@@ -252,6 +252,8 @@ class EvenementDetailView(PublishedDetailView):
 
 class CommonTableView(TableView):
     def search(self, queryset, q):
+        if not q:
+            return queryset
         sqs = SearchQuerySet().models(self.model).auto_query(q)
         pk_list = [r.pk for r in sqs[:10 ** 6]]
         return queryset.filter(pk__in=pk_list)
@@ -296,9 +298,10 @@ class SourceTableView(PublishedMixin, CommonTableView):
     model = Source
     columns = ('icons', 'html', 'ancrage', 'type')
     columns_widths = {
-        'icons': '14%',
-        'ancrage': '11%',
-        'type': '15%',
+        'icons': '70px',
+        'html': '599px',
+        'ancrage': '130px',
+        'type': '140px',
     }
     verbose_columns = {
         'icons': 'Type de contenu',
@@ -350,7 +353,8 @@ class PartieTableView(PublishedMixin, CommonTableView):
     model = Partie
     columns = ('html', 'type')
     columns_widths = {
-        'type': '10%',
+        'html': '839px',
+        'type': '100px',
     }
     verbose_columns = {'html': ''}
     orderings = {'html': 'nom'}
@@ -367,8 +371,9 @@ class ProfessionTableView(PublishedMixin, CommonTableView):
     model = Profession
     columns = ('html', 'individus_count', 'oeuvres_count')
     columns_widths = {
-        'individus_count': '17%',
-        'oeuvres_count': '17%'
+        'html': '639px',
+        'individus_count': '150px',
+        'oeuvres_count': '150px'
     }
     verbose_columns = {'html': ''}
     orderings = {'html': 'nom'}
@@ -393,9 +398,10 @@ class IndividuTableView(PublishedMixin, CommonTableView):
     model = Individu
     columns = ('related_label_html', 'calc_professions', 'naissance', 'deces')
     columns_widths = {
-        'calc_professions': '40%',
-        'naissance': '18%',
-        'deces': '18%',
+        'related_label_html': '300px',
+        'calc_professions': '299px',
+        'naissance': '170px',
+        'deces': '170px',
     }
     verbose_columns = {'related_label_html': ''}
     orderings = {
@@ -428,8 +434,9 @@ class EnsembleTableView(PublishedMixin, CommonTableView):
     model = Ensemble
     columns = ('html', 'type', 'siege')
     columns_widths = {
-        'type': '20%',
-        'siege': '20%',
+        'html': '559px',
+        'type': '190px',
+        'siege': '190px',
     }
     verbose_columns = {'html': ''}
     orderings = {'html': 'nom'}
@@ -448,9 +455,10 @@ class OeuvreTableView(PublishedMixin, CommonTableView):
     model = Oeuvre
     columns = ('titre_html', 'genre', 'auteurs_html', 'creation')
     columns_widths = {
-        'genre': '12%',
-        'auteurs_html': '30%',
-        'creation': '26%',
+        'titre_html': '299px',
+        'genre': '120px',
+        'auteurs_html': '280px',
+        'creation': '240px',
     }
     verbose_columns = {'titre_html': ''}
     orderings = {
