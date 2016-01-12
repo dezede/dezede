@@ -56,7 +56,7 @@ server {
     img-src 'self' https://ssl.google-analytics.com https://cdnjs.cloudflare.com https://a.tile.openstreetmap.org https://b.tile.openstreetmap.org https://c.tile.openstreetmap.org;
     style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
     font-src 'self';
-    frame-src 'self';
+    frame-src 'self' https://docs.google.com;
     object-src 'self'";
 
   client_max_body_size 50M;
