@@ -66,5 +66,3 @@ Pillow==2.9.0
 # For djangorestframework (optionals)
 Pygments==2.0.2
 django-filter==0.11.0
-
--r tablature/requirements.txt
