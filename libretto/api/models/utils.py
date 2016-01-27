@@ -4,10 +4,11 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 from functools import wraps
 import json
+from django.apps import apps
 from django.contrib.contenttypes.generic import GenericRelation
 from django.core import serializers
 from django.db import transaction, connection
-from django.db.models import ManyToManyField, Manager, Model, get_models
+from django.db.models import ManyToManyField, Manager, Model
 from django.db.models.query import QuerySet
 from django.db.models.related import RelatedObject
 from django.utils import six
@@ -336,7 +337,7 @@ class SetDefaultOwner(object):
         self.originals = {}
 
     def field_iterator(self):
-        for model in get_models(include_auto_created=True):
+        for model in apps.get_models(include_auto_created=True):
             if issubclass(model, self.model):
                 field = model._meta.get_field(self.fieldname)
                 key = (model._meta.app_label, model._meta.model_name, field)

@@ -1,10 +1,10 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.apps import apps
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
 from django.db import connection
-from django.db.models import get_model
 from django.db.models.signals import post_save, pre_delete
 from django_rq import job
 import django_rq
@@ -30,7 +30,7 @@ def auto_update_haystack(action, instance):
 
 @job
 def auto_invalidate(action, app_label, model_name, pk):
-    model = get_model(app_label, model_name)
+    model = apps.get_model(app_label, model_name)
 
     if action == 'delete':
         # Quand un objet est supprimé, la seule chose à faire est de supprimer

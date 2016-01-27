@@ -2,10 +2,11 @@
 
 from __future__ import unicode_literals
 
+from django.apps import apps
 from django.contrib.gis.geos import Polygon
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
-from django.db.models import get_model, Q
+from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import redirect
@@ -81,7 +82,7 @@ class BaseEvenementListView(PublishedListView):
                 continue
             if '|' in value:
                 # Sépare les différents objets à partir d'une liste de pk.
-                Model = get_model('libretto', key)
+                Model = apps.get_model('libretto', key)
                 pk_list = [pk for pk in value.split('|') if pk]
                 objects = Model._default_manager.filter(pk__in=pk_list)
                 # Inclus tous les événements impliquant les descendants
@@ -519,7 +520,7 @@ class TreeNode(PublishedDetailView):
                 and 'node' in self.request.GET:
             model_name = 'dossierdevenements'
 
-        self.model = get_model(app_label, model_name)
+        self.model = apps.get_model(app_label, model_name)
         if 'node' in self.request.GET:
             self.kwargs['pk'] = self.request.GET['node']
         try:
