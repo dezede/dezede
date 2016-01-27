@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib.admin import site
 from django.db.models import TextField
 from django.utils.translation import ugettext_lazy as _
-from reversion import VersionAdmin
+from reversion.admin import VersionAdmin
 from tinymce.widgets import TinyMCE
 from libretto.admin import PublishedAdmin
 from .forms import DossierDEvenementsForm

@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from django.contrib.admin import site
-from reversion import VersionAdmin
+from reversion.admin import VersionAdmin
 from libretto.admin import CommonAdmin
 from .models import *
 
