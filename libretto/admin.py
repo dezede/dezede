@@ -14,7 +14,7 @@ from django.db.models import Q
 from django.forms.models import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
 from grappelli.forms import GrappelliSortableHiddenMixin
-from reversion import VersionAdmin
+from reversion.admin import VersionAdmin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 
 from .models import *
