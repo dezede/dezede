@@ -2,10 +2,12 @@
 
 from __future__ import unicode_literals
 import warnings
+
+from django.apps import apps
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, SmallIntegerField,
-    DateField, PositiveSmallIntegerField, Model, Q, get_model)
+    DateField, PositiveSmallIntegerField, Model)
 from django.db.models.sql import EmptyResultSet
 from django.template.defaultfilters import date
 from django.utils.encoding import python_2_unicode_compatible, force_text
@@ -193,7 +195,7 @@ class PeriodeDActivite(Model):
 
 
 def limit_choices_to_instruments():
-    return {'type': get_model('libretto', 'Partie').INSTRUMENT}
+    return {'type': apps.get_model('libretto', 'Partie').INSTRUMENT}
 
 
 @python_2_unicode_compatible
@@ -201,7 +203,7 @@ class Membre(CommonModel, PeriodeDActivite):
     ensemble = ForeignKey('Ensemble', related_name='membres',
                           verbose_name=_('ensemble'))
     # TODO: Ajouter nombre pour les membres d'orchestre pouvant être saisi
-    # au lieu d'un individu.
+    #       au lieu d'un individu.
     individu = ForeignKey('Individu', related_name='membres',
                           verbose_name=_('individu'))
     instrument = ForeignKey(

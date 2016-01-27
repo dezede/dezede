@@ -1,13 +1,14 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.apps import apps
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MaxLengthValidator
 from django.db.models import (
     BooleanField, permalink, TextField, URLField,
-    CharField, ForeignKey, PositiveIntegerField, get_models, ImageField)
+    CharField, ForeignKey, PositiveIntegerField, ImageField)
 from django.db.models.signals import class_prepared
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
@@ -63,7 +64,7 @@ def _get_valid_modelnames_func(autorites_only=True):
         return b
 
     def get_valid_modelnames():
-        models = frozenset(get_models())
+        models = frozenset(apps.get_models())
         return [model.__name__.lower() for model in models if is_valid(model)]
     return get_valid_modelnames
 

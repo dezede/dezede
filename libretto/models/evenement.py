@@ -3,12 +3,13 @@
 from __future__ import unicode_literals
 import re
 import warnings
+from django.apps import apps
 from django.core.urlresolvers import reverse
 from django.core.validators import RegexValidator
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, BooleanField,
-    PositiveSmallIntegerField, permalink, Q, get_model,
+    PositiveSmallIntegerField, permalink, Q,
     PROTECT, Count, DecimalField, SmallIntegerField)
 from django.utils.encoding import (
     python_2_unicode_compatible, force_text)
@@ -41,9 +42,9 @@ class ElementDeDistributionBiGrouper(BiGrouper):
         return obj.individu if obj.ensemble is None else obj.ensemble
 
     def get_verbose_key(self, key, values):
-        if isinstance(key, get_model('libretto.Partie')):
+        if isinstance(key, apps.get_model('libretto.Partie')):
             return key.html(tags=self.tags, pluriel=len(values) > 1)
-        Individu = get_model('libretto.Individu')
+        Individu = apps.get_model('libretto.Individu')
         return key.html(tags=self.tags, pluriel=len(values) > 1,
                         feminin=all(isinstance(v, Individu) and v.is_feminin()
                                     for v in values))
@@ -54,7 +55,7 @@ class ElementDeDistributionBiGrouper(BiGrouper):
 
 class ElementDeDistributionQuerySet(CommonQuerySet):
     def individus(self):
-        return get_model('libretto', 'Individu').objects.filter(
+        return apps.get_model('libretto', 'Individu').objects.filter(
             pk__in=self.values_list('individu', flat=True))
 
     def evenements(self):
@@ -416,13 +417,13 @@ class EvenementQuerySet(PublishedQuerySet):
 
     def ensembles(self):
         distributions = self.get_distributions()
-        qs = get_model('libretto', 'Ensemble').objects.filter(
+        qs = apps.get_model('libretto', 'Ensemble').objects.filter(
             elements_de_distribution__in=distributions).distinct()
         return qs.only('particule_nom', 'nom', 'slug')
 
     def individus(self):
         distributions = self.get_distributions()
-        qs = get_model('libretto', 'Individu').objects.filter(
+        qs = apps.get_model('libretto', 'Individu').objects.filter(
             elements_de_distribution__in=distributions).distinct()
         return qs.only(
             'particule_nom', 'nom', 'prenoms', 'prenoms_complets',
@@ -431,12 +432,12 @@ class EvenementQuerySet(PublishedQuerySet):
         )
 
     def individus_auteurs(self):
-        return get_model('libretto', 'Individu').objects.filter(
+        return apps.get_model('libretto', 'Individu').objects.filter(
             auteurs__oeuvre__elements_de_programme__evenement__in=self
         ).distinct()
 
     def oeuvres(self):
-        return get_model('libretto', 'Oeuvre').objects.filter(
+        return apps.get_model('libretto', 'Oeuvre').objects.filter(
             elements_de_programme__evenement__in=self).distinct()
 
     def with_program(self):
@@ -632,12 +633,12 @@ class Evenement(AutoriteModel):
 
     @property
     def oeuvres(self):
-        return get_model('libretto', 'Oeuvre').objects.filter(
+        return apps.get_model('libretto', 'Oeuvre').objects.filter(
             elements_de_programme__evenement=self)
 
     def get_saisons(self):
         # TODO: Gérer les lieux de fin.
-        qs = get_model('libretto', 'Saison').objects.filter(
+        qs = apps.get_model('libretto', 'Saison').objects.filter(
             debut__lte=self.debut_date, fin__gte=self.debut_date)
         extra_where = """
             ensemble_id IN ((

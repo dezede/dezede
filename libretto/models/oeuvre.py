@@ -3,12 +3,14 @@
 from __future__ import unicode_literals
 from collections import OrderedDict
 import re
+
+from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator
 from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField,
-    BooleanField, permalink, get_model, SmallIntegerField, PROTECT, Count,
+    BooleanField, permalink, SmallIntegerField, PROTECT, Count,
     PositiveSmallIntegerField)
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags, format_html
@@ -341,7 +343,7 @@ class AuteurBiGrouper(BiGrouper):
         return obj.individu if obj.ensemble is None else obj.ensemble
 
     def get_verbose_key(self, key, values):
-        Individu = get_model('libretto.Individu')
+        Individu = apps.get_model('libretto.Individu')
         return key.short_html(
             tags=self.tags, pluriel=len(values) > 1,
             feminin=all(isinstance(v, Individu) and v.is_feminin()
@@ -815,8 +817,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     def evenements(self):
         # We use a subquery, otherwise yearly_counts counts the number of
         # program elements instead of events.
-        return get_model('libretto', 'Evenement').objects.filter(
-            pk__in=get_model('libretto', 'Evenement').objects.filter(
+        return apps.get_model('libretto', 'Evenement').objects.filter(
+            pk__in=apps.get_model('libretto', 'Evenement').objects.filter(
                 programme__oeuvre__in=self.get_descendants(include_self=True))
         )
 
