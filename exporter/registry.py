@@ -1,8 +1,9 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from importlib import import_module
+
 from django.conf import settings
-from django.utils.importlib import import_module
 from django.utils.module_loading import module_has_submodule
 
 from .base import Exporter
