@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals, division
+from django.apps import apps
 from django.conf import settings
 from django.db.models import Q
 from django.utils import translation
@@ -10,8 +11,6 @@ from haystack.indexes import (
     SearchIndex, Indexable, CharField, EdgeNgramField, DateField, BooleanField,
     IntegerField)
 from haystack.query import SearchQuerySet
-from .models import (
-    Oeuvre, Source, Individu, Lieu, Evenement, Partie, Profession, Ensemble)
 from typography.utils import replace
 
 
@@ -41,7 +40,7 @@ class OeuvreIndex(CommonSearchIndex, Indexable):
     BASE_BOOST = 1.5
 
     def get_model(self):
-        return Oeuvre
+        return apps.get_model('libretto.Oeuvre')
 
     def index_queryset(self, using=None):
         qs = super(OeuvreIndex, self).index_queryset(using)
@@ -60,7 +59,7 @@ class SourceIndex(CommonSearchIndex, Indexable):
     BASE_BOOST = 0.25
 
     def get_model(self):
-        return Source
+        return apps.get_model('libretto.Source')
 
 
 class IndividuIndex(CommonSearchIndex, Indexable):
@@ -68,7 +67,7 @@ class IndividuIndex(CommonSearchIndex, Indexable):
     BASE_BOOST = 2.0
 
     def get_model(self):
-        return Individu
+        return apps.get_model('libretto.Individu')
 
     def index_queryset(self, using=None):
         qs = super(IndividuIndex, self).index_queryset(using)
@@ -80,7 +79,7 @@ class EnsembleIndex(CommonSearchIndex, Indexable):
     BASE_BOOST = 2.0
 
     def get_model(self):
-        return Ensemble
+        return apps.get_model('libretto.Ensemble')
 
     def index_queryset(self, using=None):
         qs = super(EnsembleIndex, self).index_queryset(using)
@@ -92,7 +91,7 @@ class LieuIndex(CommonSearchIndex, Indexable):
     BASE_BOOST = 1.5
 
     def get_model(self):
-        return Lieu
+        return apps.get_model('libretto.Lieu')
 
     def index_queryset(self, using=None):
         qs = super(LieuIndex, self).index_queryset(using)
@@ -101,7 +100,7 @@ class LieuIndex(CommonSearchIndex, Indexable):
 
 class EvenementIndex(CommonSearchIndex, Indexable):
     def get_model(self):
-        return Evenement
+        return apps.get_model('libretto.Evenement')
 
     def index_queryset(self, using=None):
         qs = super(EvenementIndex, self).index_queryset(using)
@@ -113,7 +112,7 @@ class PartieIndex(CommonSearchIndex, Indexable):
     BASE_BOOST = 1.0
 
     def get_model(self):
-        return Partie
+        return apps.get_model('libretto.Partie')
 
 
 class ProfessionIndex(CommonSearchIndex, Indexable):
@@ -121,7 +120,7 @@ class ProfessionIndex(CommonSearchIndex, Indexable):
     BASE_BOOST = 1.0
 
     def get_model(self):
-        return Profession
+        return apps.get_model('libretto.Profession')
 
 
 def filter_published(sqs, request):

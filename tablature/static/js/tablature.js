@@ -138,7 +138,6 @@ function Table ($container, columns, columnsWidths, sortables, filters,
 
   this.setData();
   this.update();
-//  this.setCount(this.getNumPages());
 }
 
 Table.prototype.createSortable = function (column, $flex, i) {
@@ -294,7 +293,7 @@ Table.prototype.setData = function () {
           if (s === '') {
             return null;
           }
-          return s;
+          return decodeURIComponent(s);
         });
     } else if (k == 'page') {
       this.pagination.current = parseInt(decodeURIComponent(v));
@@ -306,9 +305,27 @@ Table.prototype.getData = function () {
   return {
     q: this.$input.val(),
     orderings: this.orderings.join(),
-    choices: this.filterChoices.join(),
+    choices: this.filterChoices.map(function (s, _) {
+        if (s === null) {
+          return '';
+        }
+        return encodeURIComponent(s);
+      }).join(),
     page: this.pagination.current
   };
+};
+
+Table.prototype.updateLocationHash = function (queryData) {
+  var queryString = '';
+    for (var k in queryData) {
+      if (queryData.hasOwnProperty(k)) {
+        if(queryString != "") {
+          queryString += "&";
+        }
+        queryString += k + '=' + encodeURIComponent(queryData[k]);
+      }
+    }
+    document.location.hash = queryString;
 };
 
 Table.prototype.onKeyDown = function (e) {
@@ -380,6 +397,7 @@ Table.prototype.update = function () {
   if (typeof this.currentAjax !== 'undefined') {
     this.currentAjax.abort();
   }
+  this.$results.find('[data-original-title]').tooltip('destroy');
   this.updateSortables();
   this.updateFilters();
   this.$spinner.show();
@@ -387,7 +405,6 @@ Table.prototype.update = function () {
   this.currentAjax = $.ajax({
     data: queryData
   }).done(function (data) {
-    this.$container.find('[data-original-title]').tooltip('destroy');
     this.setCount(data['count']);
     this.$results.empty();
     data['results'].forEach(function (dataRow) {
@@ -400,7 +417,7 @@ Table.prototype.update = function () {
     this.updateGrabbable();
     this.$container.find('[title]').tooltip(
       {container: 'body', trigger: 'hover'});
-    document.location.hash = jQuery.param(queryData);
+    this.updateLocationHash(queryData);
     this.$spinner.hide();
   }.bind(this));
 };

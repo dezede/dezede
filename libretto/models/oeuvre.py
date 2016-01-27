@@ -607,7 +607,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     )
     creation_type = PositiveSmallIntegerField(
         _('type de création'), choices=CREATION_TYPES, null=True, blank=True)
-    creation = AncrageSpatioTemporel(short_description=_('création'))
+    creation = AncrageSpatioTemporel(verbose_name=_('création'))
     extrait_de = TreeForeignKey(
         'self', null=True, blank=True,
         related_name='enfants', verbose_name=_('extrait de'))

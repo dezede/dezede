@@ -134,9 +134,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
     titre = CharField(pgettext_lazy('individu', 'titre'), max_length=1,
                       choices=TITRES, blank=True, db_index=True)
     naissance = AncrageSpatioTemporel(has_heure=False,
-                                      short_description=_('naissance'))
+                                      verbose_name=_('naissance'))
     deces = AncrageSpatioTemporel(has_heure=False,
-                                  short_description=_('décès'))
+                                  verbose_name=_('décès'))
     professions = ManyToManyField(
         'Profession', related_name='individus', blank=True,
         verbose_name=_('professions'))

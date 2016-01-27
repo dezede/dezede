@@ -3,7 +3,7 @@
 from __future__ import unicode_literals, division
 from decimal import Decimal
 
-from django.contrib.contenttypes.generic import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
     CharField, ImageField, DecimalField, BooleanField, ForeignKey,

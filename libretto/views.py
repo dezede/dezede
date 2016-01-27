@@ -186,7 +186,7 @@ class BaseEvenementListView(PublishedListView):
         if new_GET.dict() != self.request.GET.dict() or not self.valid_form:
             response = HttpResponseRedirect(self.get_success_url())
             if self.valid_form:
-                response['Location'] += '?' + new_GET.urlencode(safe=b'|')
+                response['Location'] += '?' + new_GET.urlencode(safe='|')
         return response
 
 

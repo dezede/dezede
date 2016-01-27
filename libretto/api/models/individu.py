@@ -25,7 +25,7 @@ def get_individu(individu_str, dates_sep='-', commit=True):
     else:
         match = INDIVIDU_RE.match(individu_str)
         if match is None:
-            raise ValueError(b'Unable to parse "%s"' % individu_str)
+            raise ValueError('Unable to parse "%s"' % individu_str)
         data = match.groupdict()
         for k, v in data.items():
             if v is None:

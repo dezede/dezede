@@ -72,7 +72,7 @@ class IndividuForm(ConstrainedModelForm):
         model = Individu
         exclude = ()
         widgets = {
-            b'prenoms':
+            'prenoms':
                 AutoCompleteWidget('individu__prenoms',
                                    attrs={'style': 'width: 300px;'})
         }
@@ -89,10 +89,10 @@ class IndividuForm(ConstrainedModelForm):
     def clean_designation(self):
         # Anticipe si la désignation donnera un résultat nul.
         data = self.cleaned_data
-        designation = data[b'designation']
-        if designation == 'P' and not data[b'pseudonyme'] \
-            or designation == 'B' and not data[b'nom_naissance'] \
-                or designation == 'F' and not data[b'prenoms']:
+        designation = data['designation']
+        if designation == 'P' and not data['pseudonyme'] \
+            or designation == 'B' and not data['nom_naissance'] \
+                or designation == 'F' and not data['prenoms']:
             raise ValidationError(_('Il manque des données pour pouvoir '
                                     'choisir cette désignation.'))
         return designation
@@ -103,7 +103,7 @@ class EnsembleForm(ModelForm):
         model = Ensemble
         exclude = ()
         widgets = {
-            b'particule_nom':
+            'particule_nom':
                 AutoCompleteWidget('ensemble__particule_nom',
                                    attrs={'style': 'width: 50px;'})
         }
@@ -185,20 +185,20 @@ class OeuvreForm(ConstrainedModelForm):
         model = Oeuvre
         exclude = ()
         widgets = {
-            b'prefixe_titre':
+            'prefixe_titre':
                 AutoCompleteWidget('oeuvre__prefixe_titre',
                                    attrs={'style': 'width: 50px;'}),
-            b'coordination':
+            'coordination':
                 AutoCompleteWidget('oeuvre__coordination',
                                    attrs={'style': 'width: 70px;'}),
-            b'prefixe_titre_secondaire':
+            'prefixe_titre_secondaire':
                 AutoCompleteWidget('oeuvre__prefixe_titre_secondaire',
                                    attrs={'style': 'width: 50px;'}),
-            b'coupe': AutoCompleteWidget('oeuvre__coupe',
+            'coupe': AutoCompleteWidget('oeuvre__coupe',
                                          attrs={'style': 'width: 500px;'}),
-            b'tempo': AutoCompleteWidget('oeuvre__tempo',
+            'tempo': AutoCompleteWidget('oeuvre__tempo',
                                          attrs={'style': 'width: 500px;'}),
-            b'numero_extrait': TextInput(attrs={'cols': 10})
+            'numero_extrait': TextInput(attrs={'cols': 10}),
         }
 
 
@@ -215,13 +215,13 @@ class ElementDeDistributionForm(ConstrainedModelForm):
     def clean(self):
         data = super(ElementDeDistributionForm, self).clean()
 
-        if not (data.get(b'individu') or data.get(b'ensemble')):
+        if not (data.get('individu') or data.get('ensemble')):
             msg = _('Vous devez remplir « Individu » ou « Ensemble ».')
             self.add_error('individu', msg)
             self.add_error('ensemble', msg)
-        if data.get(b'partie', '') != '' \
-                and data.get(b'profession') \
-                and data[b'profession'].parties.exists():
+        if data.get('partie', '') != '' \
+                and data.get('profession') \
+                and data['profession'].parties.exists():
             self.add_error(
                 'profession',
                 _('Au moins un rôle ou instrument est lié à cette profession. '
@@ -245,8 +245,8 @@ class ElementDeProgrammeForm(ConstrainedModelForm):
     def clean(self):
         data = super(ElementDeProgrammeForm, self).clean()
 
-        if not (data.get(b'autre') or data.get(b'oeuvre')
-                or data.get(b'distribution')):
+        if not (data.get('autre') or data.get('oeuvre')
+                or data.get('distribution')):
             raise ValidationError(_('Vous devez remplir au moins « Œuvre », '
                                     '« Autre » ou « Distribution ».'))
 
@@ -263,11 +263,11 @@ class SourceForm(ConstrainedModelForm):
         model = Source
         exclude = ()
         widgets = {
-            b'titre': AutoCompleteWidget('source__titre',
+            'titre': AutoCompleteWidget('source__titre',
                                          attrs={'style': 'width: 600px;'}),
-            b'numero': TextInput(attrs={'cols': 10}),
-            b'folio': TextInput(attrs={'cols': 10}),
-            b'page': TextInput(attrs={'cols': 10}),
+            'numero': TextInput(attrs={'cols': 10}),
+            'folio': TextInput(attrs={'cols': 10}),
+            'page': TextInput(attrs={'cols': 10}),
         }
 
     def clean(self):

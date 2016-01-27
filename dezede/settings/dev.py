@@ -41,5 +41,5 @@ DEBUG_TOOLBAR_PANELS = (
     'cachalot.panels.CachalotPanel',
 )
 
-TEST_RUNNER = b'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = ['--with-doctest']

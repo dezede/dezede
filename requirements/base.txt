@@ -1,68 +1,67 @@
 # Basics
-Django==1.7.10
+Django==1.8.8
 psycopg2==2.6.1
 
 # Database fields
-django-mptt==0.7.4
+django-mptt==0.8.0
 django-autoslug==1.7.0
 
 # User interface
-django-grappelli==2.6.5
+django-grappelli==2.7.3
 django-super-inlines==0.1.4
-django-tinymce==2.0.4
-django-crispy-forms==1.5.2
-django-ajax-selects==1.3.6
-django-image-cropping==1.0.2
+django-tinymce==2.2.0
+django-crispy-forms==1.6.0
+django-ajax-selects==1.4.2
+django-image-cropping==1.0.3
 
 # User authentication
-django-allauth==0.23.0
+django-allauth==0.24.1
 
 # Search engine
-django-haystack==2.4.0
+django-haystack==2.4.1
 elasticsearch==1.6.0
 
 # Caching
-django-redis==4.2.0
-django-cachalot==1.0.3
+django-redis==4.3.0
+django-cachalot==1.2.0
 
 # Data visualization frameworks
 djangorestframework==3.1.3
-django-tablature==0.1.3
+django-tablature==0.1.6
 
 # Small but powerful tools
-django-reversion==1.8.7
+django-reversion==1.10.0
 django-endless-pagination==2.0
-easy-thumbnails==2.2
+easy-thumbnails==2.3
 django-viewsets==0.1.9
 Unipath==1.1
-tqdm==2.0
+tqdm==3.7.1
 awesome-slugify==1.6.5
 
 # Asynchronous tasks
-django-rq==0.8.0
-rq==0.5.5
+django-rq==0.9.0
+rq==0.5.6
 django-transaction-hooks==0.2
 
 # CSS/JS handling
-django_compressor==1.4
+django_compressor==2.0
 cssmin==0.2.0
-rjsmin==1.0.10
+rjsmin==1.0.12
 
 # Data parsing/serialization
-beautifulsoup4==4.4.0
-BeautifulSoup<4.0
-lxml==3.4.4
+beautifulsoup4==4.4.1
+lxml==3.5.0
 simplejson==3.7.3
 defusedxml==0.4.1
-pandas==0.16.2
-XlsxWriter==0.7.3
+pandas==0.17.1
+XlsxWriter==0.8.4
 
 # HTML cleaning
 bleach==1.4.2
 
 # Dependencies
 # For easy-thumbnails
-Pillow==2.9.0
+Pillow==3.1.0
 # For djangorestframework (optionals)
-Pygments==2.0.2
+Pygments==2.1
 django-filter==0.11.0

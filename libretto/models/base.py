@@ -316,14 +316,21 @@ class CommonTreeManager(CommonManager, TreeManager):
 class AncrageSpatioTemporel(object):
     def __init__(self, not_null_fields=(),
                  has_date=True, has_heure=True, has_lieu=True, approx=True,
-                 short_description=None):
+                 verbose_name=None):
         self.not_null_fields = not_null_fields
         self.has_date = has_date
         self.has_heure = has_heure
         self.has_lieu = has_lieu
         self.approx = approx
-        if short_description is not None:
-            self.short_description = short_description
+        self.verbose_name = verbose_name
+
+        # Definitions expected by Django.
+        self.rel = None
+        self.is_relation = False
+        self.column = None
+        self.concrete = False
+        self.auto_created = False
+        self.editable = True
 
     def create_fields(self):
         fields = []
@@ -363,7 +370,7 @@ class AncrageSpatioTemporel(object):
         return fields
 
     def contribute_to_class(self, model, name):
-        self.name = name
+        self.name = self.attname = name
         self.model = model
         if self.model._meta.abstract:
             return
@@ -379,7 +386,7 @@ class AncrageSpatioTemporel(object):
 
         self.admin_order_field = self.prefix + self.fields[0][0]
 
-        model._meta.add_virtual_field(self)
+        model._meta.add_field(self, virtual=True)
         setattr(model, name, self)
 
         for fieldname, field in self.fields:

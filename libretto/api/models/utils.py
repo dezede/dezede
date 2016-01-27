@@ -5,12 +5,12 @@ from collections import OrderedDict
 from functools import wraps
 import json
 from django.apps import apps
-from django.contrib.contenttypes.generic import GenericRelation
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core import serializers
 from django.db import transaction, connection
 from django.db.models import ManyToManyField, Manager, Model
+from django.db.models.fields.related import ForeignObjectRel
 from django.db.models.query import QuerySet
-from django.db.models.related import RelatedObject
 from django.utils import six
 from django.utils.encoding import smart_text
 from typography.utils import replace
@@ -110,10 +110,8 @@ MANY_RELATED_FIELDS = (ManyToManyField, GenericRelation)
 
 
 def is_many_related_field(object_or_model, field_name):
-    # FIXME: Due to a bug in Django, we can’t fetch a GenericRelation using
-    #        `model._meta.get_field` since Django 1.6.
-    field = object_or_model._meta.get_field_by_name(field_name)[0]
-    if isinstance(field, RelatedObject):
+    field = object_or_model._meta.get_field(field_name)
+    if isinstance(field, ForeignObjectRel):
         field = field.field
     return isinstance(field, MANY_RELATED_FIELDS)
 

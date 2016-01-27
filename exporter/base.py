@@ -8,10 +8,9 @@ from io import BytesIO
 from zipfile import ZipFile
 
 from django.contrib.sites.models import Site
-from django.db.models import (IntegerField, ForeignKey, DateTimeField,
-                              FieldDoesNotExist, OneToOneField)
-from django.db.models.fields.related import RelatedField
-from django.db.models.related import RelatedObject
+from django.db.models import (
+    IntegerField, ForeignKey, DateTimeField, OneToOneField)
+from django.db.models.fields.related import RelatedField,   ForeignObjectRel
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 import pandas
@@ -63,9 +62,9 @@ class Exporter(object):
         self.null_int_lookups = []
         self.datetime_lookups = []
         for lookup, (_, field) in self.final_fields.items():
-            if isinstance(field, RelatedObject) \
-                    or (isinstance(field, (IntegerField, ForeignKey))
-                        and field.null):
+            if isinstance(field, ForeignObjectRel) \
+                or (isinstance(field, (IntegerField, ForeignKey))
+                    and field.null):
                 self.null_int_lookups.append(lookup)
             elif isinstance(field, DateTimeField):
                 self.datetime_lookups.append(lookup)
@@ -73,10 +72,10 @@ class Exporter(object):
     def get_field(self, lookup, model=None):
         if model is None:
             model = self.model
-        field = model._meta.get_field_by_name(lookup)[0]
+        field = model._meta.get_field(lookup)
         if (isinstance(field, RelatedField)
             and not isinstance(field, ForeignKey)) \
-            or (isinstance(field, RelatedObject)
+            or (isinstance(field, ForeignObjectRel)
                 and not isinstance(field.field, OneToOneField)):
             raise ValueError(
                 'You cannot use `%s.%s` in `Exporter.columns`, '
@@ -88,8 +87,8 @@ class Exporter(object):
         model = self.model
         for part in lookup.split('__'):
             field = self.get_field(part, model)
-            if isinstance(field, RelatedObject):
-                model = field.model
+            if isinstance(field, ForeignObjectRel):
+                model = field.field.model
             elif isinstance(field, ForeignKey):
                 model = field.rel.to
         return model, field
@@ -99,7 +98,7 @@ class Exporter(object):
             return force_text(self.verbose_overrides[column])
         if column in self.fields:
             field = self.fields[column]
-            if isinstance(field, RelatedObject):
+            if isinstance(field, ForeignObjectRel):
                 return force_text(field.model._meta.verbose_name)
             return force_text(field.verbose_name)
         return column
@@ -123,18 +122,17 @@ class Exporter(object):
                 self.get_queryset()
                 .order_by().distinct().values_list('pk', flat=True))
         for lookup, (model, field) in self.final_fields.items():
-            if isinstance(field, (ForeignKey, RelatedObject)):
+            if isinstance(field, (ForeignKey, ForeignObjectRel)):
                 ids = frozenset(
                     self.get_queryset().exclude(**{lookup: None})
                     .order_by().distinct().values_list(lookup, flat=True))
                 if ids and not ids.issubset(parent_fk_ids[model]):
                     fk_ids[model].update(ids)
         for m2m in self.m2ms:
-            try:
-                field = self.model._meta.get_field(m2m)
-            except FieldDoesNotExist:
+            field = self.model._meta.get_field(m2m)
+            if isinstance(field, ForeignObjectRel):
                 # Complex M2M using a model
-                model = self.model._meta.get_field_by_name(m2m)[0].model
+                model = field.field.model
                 ids = frozenset(
                     self.get_queryset().exclude(**{m2m: None})
                         .order_by().distinct().values_list(m2m, flat=True))
@@ -251,13 +249,10 @@ class Exporter(object):
 
     def to_xlsx(self):
         f = BytesIO()
-        # We have to specify a temporary file name,
-        # but no file will be created.
-        writer = pandas.ExcelWriter('temp.xlsx', engine='xlsxwriter')
-        writer.book.filename = f
-        for verbose_table_name, df in self.get_dataframes():
-            df.to_excel(writer, verbose_table_name, index=False)
-        writer.save()
+        with pandas.ExcelWriter(f, engine='xlsxwriter') as writer:
+            for verbose_table_name, df in self.get_dataframes():
+                df.to_excel(writer, verbose_table_name, index=False)
+            writer.save()
         out = f.getvalue()
         f.close()
         return out

@@ -111,7 +111,7 @@ def build_date(date_str, date_strp_pattern=None):
         try:
             return datetime.strptime(date_str, date_strp_pattern).date()
         except ValueError:
-            raise ValueError(b'Unable to parse "%s"' % date_str)
+            raise ValueError('Unable to parse "%s"' % date_str)
 
 
 def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern,

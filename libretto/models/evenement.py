@@ -531,8 +531,8 @@ plus_separated_integers_validator = RegexValidator(
 @python_2_unicode_compatible
 class Evenement(AutoriteModel):
     debut = AncrageSpatioTemporel(('date',),
-                                  short_description=_('début'))
-    fin = AncrageSpatioTemporel(short_description=_('fin'))
+                                  verbose_name=_('début'))
+    fin = AncrageSpatioTemporel(verbose_name=_('fin'))
     programme_incomplet = BooleanField(_('programme incomplet'), default=False)
     relache = BooleanField(_('relâche'), default=False, db_index=True)
     circonstance = CharField(_('circonstance'), max_length=500, blank=True)

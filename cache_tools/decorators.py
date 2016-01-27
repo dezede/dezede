@@ -36,7 +36,7 @@ def model_method_cached(id_attr='pk'):
     return decorator
 
 
-def model_method_cached(id_attr=b'pk'):
+def model_method_cached(id_attr='pk'):
     def decorator(method):
         return method
     return decorator
