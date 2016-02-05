@@ -7,7 +7,7 @@ from subprocess import Popen, PIPE
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.sites.models import Site, get_current_site
+from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage, mail_admins
 from django.http import HttpRequest
 from django.template import RequestContext
@@ -66,7 +66,7 @@ def launch_export(job, request, data, file_extension, subject):
                        'lancer un autre.')
     else:
         lock_user(request.user)
-        site = get_current_site(request)
+        site = Site.objects.get_current(request)
         job.delay(data, request.user.pk, site.pk, request.LANGUAGE_CODE)
         messages.info(request,
                       'La génération de l’export %s %s est en cours. '

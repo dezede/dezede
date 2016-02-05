@@ -3,7 +3,7 @@
 from __future__ import unicode_literals, division
 import datetime
 from django.contrib.auth import get_user_model
-from django.contrib.sites.models import get_current_site
+from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
 from django.db import connection
 from django.db.models import Count
@@ -22,7 +22,7 @@ class GrantToAdmin(DetailView):
     def grant_user(self, user):
         user.is_staff = True
         user.save()
-        site_url = 'https://' + get_current_site(self.request).domain
+        site_url = 'https://' + Site.objects.get_current(self.request).domain
         email_content = render_to_string(
             'accounts/granted_to_admin_email.txt',
             {'user': user, 'site_url': site_url})
