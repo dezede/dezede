@@ -11,7 +11,7 @@ from django.db.models.sql import EmptyResultSet
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView
-from endless_pagination.views import AjaxListView
+from el_pagination.views import AjaxListView
 
 from accounts.models import HierarchicUser
 from common.utils.sql import get_raw_query

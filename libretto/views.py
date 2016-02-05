@@ -11,7 +11,7 @@ from django.db.models.query import QuerySet
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
-from endless_pagination.views import AjaxListView
+from el_pagination.views import AjaxListView
 from haystack.query import SearchQuerySet
 from viewsets import ModelViewSet
 
