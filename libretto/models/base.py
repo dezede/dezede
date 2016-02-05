@@ -13,7 +13,8 @@ from django.core.exceptions import NON_FIELD_ERRORS, FieldError, ValidationError
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
-    FileField, PositiveSmallIntegerField, OneToOneField, SET_NULL)
+    FileField, PositiveSmallIntegerField, OneToOneField, SET_NULL,
+    NOT_PROVIDED)
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.template.defaultfilters import time
@@ -325,12 +326,25 @@ class AncrageSpatioTemporel(object):
         self.verbose_name = verbose_name
 
         # Definitions expected by Django.
+        self.remote_field = None
         self.rel = None
         self.is_relation = False
         self.column = None
         self.concrete = False
         self.auto_created = False
         self.editable = True
+        self.primary_key = False
+        self.unique = False
+        self.blank = True
+        self.null = True
+        self.default = NOT_PROVIDED
+        self.serialize = False
+        self.choices = []
+        self.help_text = None
+        self.db_index = False
+        self.db_column = None
+        self.db_tablespace = settings.DEFAULT_INDEX_TABLESPACE
+        self.auto_created = False
 
     def create_fields(self):
         fields = []
