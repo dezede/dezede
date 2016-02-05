@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import re
+from django.utils.safestring import mark_safe
 from easy_thumbnails.conf import Settings as thumbnail_settings
 from unipath import Path
 
@@ -100,6 +101,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.gis',
+    'django.contrib.postgres',
 
     'allauth',
     'allauth.account',
@@ -112,7 +114,7 @@ INSTALLED_APPS = (
     'examens',
     'afo',
     'mptt',
-    'endless_pagination',
+    'el_pagination',
     'tablature',
     'tinymce',
     'grappelli.dashboard',
@@ -158,7 +160,7 @@ DATE_FORMAT = 'l j F Y'
 TIME_FORMAT = 'H:i'
 
 GRAPPELLI_INDEX_DASHBOARD = 'dezede.dashboard.CustomIndexDashboard'
-GRAPPELLI_ADMIN_TITLE = '<a href="/">Dezède</a>'
+GRAPPELLI_ADMIN_TITLE = mark_safe('<a href="/">Dezède</a>')
 
 AUTH_USER_MODEL = 'accounts.HierarchicUser'
 AUTHENTICATION_BACKENDS = (
@@ -303,7 +305,7 @@ ELASTICSEARCH_INDEX_SETTINGS = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'unix:///var/run/redis/redis.sock?db=1',
+        'LOCATION': 'unix:///tmp/redis.sock?db=1',
         'KEY_PREFIX': '2Z',
         'TIMEOUT': None,  # seconds
     }
@@ -366,8 +368,8 @@ RQ_QUEUES = {
     },
 }
 
-ENDLESS_PAGINATION_PREVIOUS_LABEL = '<i class="fa fa-angle-left"></i>'
-ENDLESS_PAGINATION_NEXT_LABEL = '<i class="fa fa-angle-right"></i>'
+EL_PAGINATION_PREVIOUS_LABEL = '<i class="fa fa-angle-left"></i>'
+EL_PAGINATION_NEXT_LABEL = '<i class="fa fa-angle-right"></i>'
 
 LOGGING = {
     'version': 1,
