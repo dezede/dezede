@@ -2,7 +2,8 @@
 
 from __future__ import unicode_literals
 from accounts.models import HierarchicUser
-from exporter import exporter_registry, Exporter
+from exporter.base import Exporter
+from exporter.registry import exporter_registry
 
 
 @exporter_registry.add

@@ -4,7 +4,8 @@ from __future__ import unicode_literals
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
-from exporter import Exporter, exporter_registry
+from exporter.base import Exporter
+from exporter.registry import exporter_registry
 
 from .models import *
 
