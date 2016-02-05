@@ -10,7 +10,7 @@ from zipfile import ZipFile
 from django.contrib.sites.models import Site
 from django.db.models import (
     IntegerField, ForeignKey, DateTimeField, OneToOneField)
-from django.db.models.fields.related import RelatedField,   ForeignObjectRel
+from django.db.models.fields.related import RelatedField, ForeignObjectRel
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 import pandas
@@ -99,7 +99,7 @@ class Exporter(object):
         if column in self.fields:
             field = self.fields[column]
             if isinstance(field, ForeignObjectRel):
-                return force_text(field.model._meta.verbose_name)
+                return force_text(field.field.model._meta.verbose_name)
             return force_text(field.verbose_name)
         return column
 
@@ -112,9 +112,14 @@ class Exporter(object):
             return self.queryset
         return self.model.objects.all()
 
-    def _get_related_exporters(self, parent_fk_ids=None, is_root=True):
+    def _get_exporter(self, model, qs):
         from .registry import exporter_registry
 
+        if model == self.model:
+            return self
+        return exporter_registry[model](qs)
+
+    def _get_related_exporters(self, parent_fk_ids=None, is_root=True):
         fk_ids = OrderedDefaultSetDict()
         if parent_fk_ids is None:
             parent_fk_ids = OrderedDefaultSetDict()
@@ -150,20 +155,23 @@ class Exporter(object):
             qs = model.objects.filter(pk__in=ids)
             if qs.exists():
                 parent_fk_ids[model].update(ids)
-                exporter = exporter_registry[model](qs)
+                exporter = self._get_exporter(model, qs)
                 exporter._get_related_exporters(parent_fk_ids, is_root=False)
 
         if not is_root:
             return
 
-        return [exporter_registry[model](model.objects.filter(pk__in=ids))
+        return [self._get_exporter(model, model.objects.filter(pk__in=ids))
                 for model, ids in parent_fk_ids.items()]
 
     def _get_dataframe(self):
-        df = pandas.DataFrame.from_records(
-            list(self.get_queryset().values_list(*self.lookups)),
-            columns=self.lookups,
-        )
+        if self.lookups:
+            df = pandas.DataFrame.from_records(
+                list(self.get_queryset().values_list(*self.lookups)),
+                columns=self.lookups,
+            )
+        else:
+            df = pandas.DataFrame()
 
         def clean_null_int(x):
             if x is None or isnan(x):
@@ -184,7 +192,7 @@ class Exporter(object):
             df[lookup] = df[lookup].apply(remove_timezone)
 
         # Display verbose value of fields with `choices`
-        for lookup, field in self.fields.items():
+        for lookup, (model, field) in self.final_fields.items():
             if getattr(field, 'choices', ()):
                 df[lookup] = df[lookup].replace({k: force_text(v)
                                                  for k, v in field.choices})
