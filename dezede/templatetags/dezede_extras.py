@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django import template
 from django.apps import apps
 from django.core.urlresolvers import reverse
+from django.utils.html import format_html
 from django.utils.text import capfirst
 import dezede
 
@@ -24,4 +25,5 @@ def nav_link(context, view_name, text):
     requested_url = '' if request is None else request.path
     url = reverse(view_name)
     css_class = ' class="active"' if requested_url.startswith(url) else ''
-    return '<li%s><a href="%s">%s</a></li>' % (css_class, url, capfirst(text))
+    return format_html('<li%s><a href="{}">{}</a></li>' % css_class,
+                       url, capfirst(text))
