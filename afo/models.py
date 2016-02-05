@@ -28,7 +28,7 @@ class EvenementAFO(CommonModel):
         ('LS', 'lyrique version scénique'),
         ('MC', 'musique de chambre'),
         ('LC', 'lyrique version concert'),
-        ('S', 'symphonique (dont chœur / récital)'),
+        ('S', 'symphonique (dont chœur/récital)'),
         ('C', 'chorégraphique'),
         ('A', 'autre'),
     )
@@ -36,7 +36,7 @@ class EvenementAFO(CommonModel):
                                   max_length=2, blank=True,
                                   choices=TYPES_DE_PROGRAMMES)
     PRESENTATIONS_SPECIFIQUES = (
-        ('C', 'concert commenté / présenté'),
+        ('C', 'concert commenté/présenté'),
         ('P', 'concert participatif'),
         ('A', 'autre'),
     )
@@ -44,7 +44,7 @@ class EvenementAFO(CommonModel):
                                         max_length=1, blank=True,
                                         choices=PRESENTATIONS_SPECIFIQUES)
     PUBLICS_SPECIFIQUES = (
-        ('P', 'puplic de proximité'),
+        ('P', 'public de proximité'),
         ('E', 'public empêché (santé, handicap, justice)'),
         ('S', 'seniors'),
         ('J', 'jeunes'),
