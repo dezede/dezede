@@ -10,7 +10,7 @@ from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, BooleanField,
     PositiveSmallIntegerField, permalink, Q,
-    PROTECT, Count, DecimalField, SmallIntegerField)
+    PROTECT, Count, DecimalField, SmallIntegerField, Max)
 from django.utils.encoding import (
     python_2_unicode_compatible, force_text)
 from django.utils.html import strip_tags
@@ -353,6 +353,13 @@ class ElementDeProgramme(CommonModel):
         return self.evenement.programme.exclude(
             Q(position__gt=self.position)
             | Q(numerotation__in=self.NUMEROTATIONS_SANS_ORDRE)).count()
+
+    def save(self, *args, **kwargs):
+        if self.position is None:
+            n = self.evenement.programme.aggregate(n=Max('position'))['n']
+            self.position = 0 if n is None else n + 1
+
+        super(ElementDeProgramme, self).save(*args, **kwargs)
 
     @model_method_cached()
     def html(self, tags=True):
