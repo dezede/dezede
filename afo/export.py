@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from datetime import timedelta
 from django.utils.encoding import force_text
+from dossiers.models import DossierDEvenements
 from exporter.base import Exporter
 from exporter.registry import exporter_registry
 from libretto.export import CommonModelExporter
@@ -65,7 +66,10 @@ class AFOEvenementExporter(Exporter):
 
     @staticmethod
     def get_ensemble(obj):
+        dossier_afo = DossierDEvenements.objects.get(slug='afo')
+        ensembles_afo = dossier_afo.ensembles.all()
         ensembles = Evenement.objects.filter(pk=obj.pk).ensembles()
+        ensembles = ensembles.filter(pk__in=ensembles_afo)
         return '\n'.join([force_text(e) for e in ensembles])
 
     @staticmethod
@@ -120,13 +124,11 @@ class AFOElementDeProgrammeExporter(Exporter):
 
     @staticmethod
     def get_saison(obj):
-        return ', '.join(
-            [saison.get_periode() for saison in obj.evenement.get_saisons()])
+        return AFOEvenementExporter.get_saison(obj.evenement)
 
     @staticmethod
     def get_ensemble(obj):
-        ensembles = Evenement.objects.filter(pk=obj.evenement_id).ensembles()
-        return '\n'.join([force_text(e) for e in ensembles])
+        return AFOEvenementExporter.get_ensemble(obj.evenement)
 
     @staticmethod
     def get_oeuvre(obj):
