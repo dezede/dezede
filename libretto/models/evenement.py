@@ -152,10 +152,10 @@ class ElementDeDistribution(CommonModel):
     @staticmethod
     def autocomplete_search_fields():
         return (
-            'partie__nom__icontains',
-            'individu__nom__icontains',
-            'individu__pseudonyme__icontains',
-            'ensemble__nom__icontains',
+            'partie__nom__unaccent__icontains',
+            'individu__nom__unaccent__icontains',
+            'individu__pseudonyme__unaccent__icontains',
+            'ensemble__nom__unaccent__icontains',
         )
 
 
@@ -189,7 +189,7 @@ class TypeDeCaracteristiqueDeProgramme(CommonModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'nom__icontains', 'nom_pluriel__icontains',
+        return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
 
 
 class CaracteristiqueQuerySet(CommonQuerySet):
@@ -270,7 +270,7 @@ class CaracteristiqueDeProgramme(CommonModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'type__nom__icontains', 'valeur__icontains',
+        return 'type__nom__unaccent__icontains', 'valeur__unaccent__icontains',
 
 
 class ElementDeProgrammeQueryset(CommonQuerySet):
@@ -402,10 +402,11 @@ class ElementDeProgramme(CommonModel):
     @staticmethod
     def autocomplete_search_fields():
         return (
-            'oeuvre__prefixe_titre__icontains', 'oeuvre__titre__icontains',
-            'oeuvre__prefixe_titre_secondaire__icontains',
-            'oeuvre__titre_secondaire__icontains',
-            'oeuvre__genre__nom__icontains',
+            'oeuvre__prefixe_titre__unaccent__icontains',
+            'oeuvre__titre__unaccent__icontains',
+            'oeuvre__prefixe_titre_secondaire__unaccent__icontains',
+            'oeuvre__titre_secondaire__unaccent__icontains',
+            'oeuvre__genre__nom__unaccent__icontains',
         )
 
 
@@ -677,12 +678,12 @@ class Evenement(AutoriteModel):
     @staticmethod
     def autocomplete_search_fields():
         return (
-            'circonstance__icontains',
-            'debut_lieu__nom__icontains',
-            'debut_lieu__parent__nom__icontains',
-            'debut_date__icontains',
-            'debut_heure__icontains',
-            'debut_lieu_approx__icontains',
-            'debut_date_approx__icontains',
-            'debut_heure_approx__icontains',
+            'circonstance__unaccent__icontains',
+            'debut_lieu__nom__unaccent__icontains',
+            'debut_lieu__parent__nom__unaccent__icontains',
+            'debut_date__unaccent__icontains',
+            'debut_heure__unaccent__icontains',
+            'debut_lieu_approx__unaccent__icontains',
+            'debut_date_approx__unaccent__icontains',
+            'debut_heure_approx__unaccent__icontains',
         )

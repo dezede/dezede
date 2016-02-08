@@ -121,7 +121,7 @@ class Profession(AutoriteModel, UniqueSlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'nom__icontains', 'nom_pluriel__icontains',
+        return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
 
 
 class PeriodeDActivite(Model):
@@ -253,7 +253,7 @@ class TypeDEnsemble(CommonModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'nom__icontains', 'nom_pluriel__icontains'
+        return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains'
 
 
 @python_2_unicode_compatible
@@ -373,5 +373,6 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('particule_nom__icontains', 'nom__icontains',
-                'siege__nom__icontains')
+        return ('particule_nom__unaccent__icontains',
+                'nom__unaccent__icontains',
+                'siege__nom__unaccent__icontains')

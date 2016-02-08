@@ -342,8 +342,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
     @staticmethod
     def autocomplete_search_fields():
         return (
-            'nom__icontains',
-            'nom_naissance__icontains',
-            'pseudonyme__icontains',
-            'prenoms__icontains',
+            'nom__unaccent__icontains',
+            'nom_naissance__unaccent__icontains',
+            'pseudonyme__unaccent__icontains',
+            'prenoms__unaccent__icontains',
         )

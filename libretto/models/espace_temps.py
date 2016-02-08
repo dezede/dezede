@@ -65,7 +65,7 @@ class NatureDeLieu(CommonModel, SlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'nom__icontains',
+        return 'nom__unaccent__icontains',
 
 
 class LieuQuerySet(PublishedQuerySet,
@@ -189,8 +189,8 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('nom__icontains',
-                'parent__nom__icontains')
+        return ('nom__unaccent__icontains',
+                'parent__nom__unaccent__icontains')
 
 
 class SaisonQuerySet(CommonQuerySet):

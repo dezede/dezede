@@ -75,7 +75,7 @@ class GenreDOeuvre(CommonModel, SlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'nom__icontains', 'nom_pluriel__icontains'
+        return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains'
 
 
 @python_2_unicode_compatible
@@ -179,9 +179,9 @@ class Partie(AutoriteModel, UniqueSlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('nom__icontains', 'nom_pluriel__icontains',
-                'professions__nom__icontains',
-                'professions__nom_pluriel__icontains',)
+        return ('nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
+                'professions__nom__unaccent__icontains',
+                'professions__nom_pluriel__unaccent__icontains',)
 
 
 class PupitreQuerySet(CommonQuerySet):
@@ -252,9 +252,10 @@ class Pupitre(CommonModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('partie__nom__icontains', 'partie__nom_pluriel__icontains',
-                'partie__professions__nom__icontains',
-                'partie__professions__nom_pluriel__icontains',)
+        return ('partie__nom__unaccent__icontains',
+                'partie__nom_pluriel__unaccent__icontains',
+                'partie__professions__nom__unaccent__icontains',
+                'partie__professions__nom_pluriel__unaccent__icontains',)
 
 
 class TypeDeParenteDOeuvres(TypeDeParente):
@@ -969,5 +970,5 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             'opus', 'ict',
             'pupitres__partie__nom')
         if add_icontains:
-            return [lookup + '__icontains' for lookup in lookups]
+            return [lookup + '__unaccent__icontains' for lookup in lookups]
         return lookups

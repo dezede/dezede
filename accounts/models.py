@@ -144,4 +144,5 @@ class HierarchicUser(MPTTModel, AbstractUser):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'first_name__icontains', 'last_name__icontains'
+        return ('first_name__unaccent__icontains',
+                'last_name__unaccent__icontains')
