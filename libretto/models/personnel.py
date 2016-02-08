@@ -45,7 +45,6 @@ class Profession(AutoriteModel, UniqueSlugModel):
         verbose_name = ungettext_lazy('profession', 'professions', 1)
         verbose_name_plural = ungettext_lazy('profession', 'professions', 2)
         ordering = ('classement', 'nom')
-        app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod
@@ -216,7 +215,6 @@ class Membre(CommonModel, PeriodeDActivite):
         verbose_name = _('membre')
         verbose_name_plural = _('membres')
         ordering = ('instrument', 'classement', 'individu__nom')
-        app_label = 'libretto'
 
     def html(self, tags=True):
         l = [self.individu.html(tags=tags)]
@@ -246,7 +244,6 @@ class TypeDEnsemble(CommonModel):
         verbose_name_plural = ungettext_lazy('type d’ensemble',
                                              'types d’ensemble', 2)
         ordering = ('nom',)
-        app_label = 'libretto'
 
     def __str__(self):
         return self.nom
@@ -272,7 +269,6 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
                                 related_name='ensembles')
 
     class Meta(object):
-        app_label = 'libretto'
         ordering = ('nom',)
 
     def __str__(self):

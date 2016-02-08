@@ -38,7 +38,6 @@ class TypeDeSource(CommonModel, SlugModel):
         verbose_name_plural = ungettext_lazy('type de source',
                                              'types de source', 2)
         ordering = ('slug',)
-        app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -192,7 +191,6 @@ class Source(AutoriteModel):
         verbose_name_plural = ungettext_lazy('source', 'sources', 2)
         ordering = ('date', 'titre', 'numero', 'page',
                     'lieu_conservation', 'cote')
-        app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     def __str__(self):
@@ -351,7 +349,6 @@ class SourceEvenement(TypographicModel):
                            related_name='sourceevenement_set')
 
     class Meta(object):
-        app_label = 'libretto'
         db_table = 'libretto_source_evenements'
         unique_together = ('source', 'evenement')
 
@@ -362,7 +359,6 @@ class SourceOeuvre(TypographicModel):
                         related_name='sourceoeuvre_set')
 
     class Meta(object):
-        app_label = 'libretto'
         db_table = 'libretto_source_oeuvres'
         unique_together = ('source', 'oeuvre')
 
@@ -373,7 +369,6 @@ class SourceIndividu(TypographicModel):
                           related_name='sourceindividu_set')
 
     class Meta(object):
-        app_label = 'libretto'
         db_table = 'libretto_source_individus'
         unique_together = ('source', 'individu')
 
@@ -384,7 +379,6 @@ class SourceEnsemble(TypographicModel):
                           related_name='sourceensemble_set')
 
     class Meta(object):
-        app_label = 'libretto'
         db_table = 'libretto_source_ensembles'
         unique_together = ('source', 'ensemble')
 
@@ -395,7 +389,6 @@ class SourceLieu(TypographicModel):
                       related_name='sourcelieu_set')
 
     class Meta(object):
-        app_label = 'libretto'
         db_table = 'libretto_source_lieux'
         unique_together = ('source', 'lieu')
 
@@ -406,6 +399,5 @@ class SourcePartie(TypographicModel):
                         related_name='sourcepartie_set')
 
     class Meta(object):
-        app_label = 'libretto'
         db_table = 'libretto_source_parties'
         unique_together = ('source', 'partie')

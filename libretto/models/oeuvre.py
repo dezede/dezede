@@ -61,7 +61,6 @@ class GenreDOeuvre(CommonModel, SlugModel):
         verbose_name_plural = ungettext_lazy('genre d’œuvre',
                                              'genres d’œuvre', 2)
         ordering = ('nom',)
-        app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -120,7 +119,6 @@ class Partie(AutoriteModel, UniqueSlugModel):
         verbose_name_plural = ungettext_lazy('rôle ou instrument',
                                              'rôles et instruments', 2)
         ordering = ('type', 'classement', 'nom',)
-        app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod
@@ -216,7 +214,6 @@ class Pupitre(CommonModel):
         verbose_name = ungettext_lazy('pupitre', 'pupitres', 1)
         verbose_name_plural = ungettext_lazy('pupitre', 'pupitres', 2)
         ordering = ('-soliste', 'partie')
-        app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -306,7 +303,6 @@ class ParenteDOeuvres(CommonModel):
         verbose_name_plural = ungettext_lazy('parenté d’œuvres',
                                              'parentés d’œuvres', 2)
         ordering = ('type',)
-        app_label = 'libretto'
         unique_together = ('type', 'mere', 'fille',)
 
     @staticmethod
@@ -421,7 +417,6 @@ class Auteur(CommonModel):
         verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
         verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
         ordering = ('profession', 'ensemble', 'individu')
-        app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -669,7 +664,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                     'incipit', 'tempo', 'tonalite', 'sujet', 'arrangement',
                     'surnom', 'nom_courant',
                     'opus', 'ict')
-        app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod

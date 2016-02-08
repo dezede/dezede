@@ -124,7 +124,6 @@ class ElementDeDistribution(CommonModel):
         verbose_name_plural = ungettext_lazy('élément de distribution',
                                              'éléments de distribution', 2)
         ordering = ('partie', 'profession', 'individu', 'ensemble')
-        app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -175,7 +174,6 @@ class TypeDeCaracteristiqueDeProgramme(CommonModel):
             "type de caractéristique de programme",
             "types de caractéristique de programme", 2)
         ordering = ('classement',)
-        app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -247,7 +245,6 @@ class CaracteristiqueDeProgramme(CommonModel):
             'caractéristique de programme',
             'caractéristiques de programme', 2)
         ordering = ('type', 'classement', 'valeur')
-        app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -328,7 +325,6 @@ class ElementDeProgramme(CommonModel):
         verbose_name_plural = ungettext_lazy('élément de programme',
                                              'éléments de programme', 2)
         ordering = ('position',)
-        app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -562,7 +558,6 @@ class Evenement(AutoriteModel):
         verbose_name_plural = ungettext_lazy('événement', 'événements', 2)
         ordering = ('debut_date', 'debut_heure', 'debut_lieu',
                     'debut_lieu_approx')
-        app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod

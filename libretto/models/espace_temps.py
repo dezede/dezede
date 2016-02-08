@@ -49,7 +49,6 @@ class NatureDeLieu(CommonModel, SlugModel):
         verbose_name_plural = ungettext_lazy('nature de lieu',
                                              'natures de lieu', 2)
         ordering = ('slug',)
-        app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -103,7 +102,6 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
         verbose_name_plural = ungettext_lazy('lieu ou institution',
                                              'lieux et institutions', 2)
         ordering = ('nom',)
-        app_label = 'libretto'
         unique_together = ('nom', 'parent',)
         index_together = (('tree_id', 'level', 'lft', 'rght'),)
         permissions = (('can_change_status', _('Peut changer l’état')),)
@@ -233,7 +231,6 @@ class Saison(CommonModel):
         verbose_name = ungettext_lazy('saison', 'saisons', 1)
         verbose_name_plural = ungettext_lazy('saison', 'saisons', 2)
         ordering = ('lieu', 'debut')
-        app_label = 'libretto'
 
     def get_periode(self):
         if self.debut.year != self.fin.year:

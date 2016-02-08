@@ -34,7 +34,6 @@ class TypeDeParenteDIndividus(TypeDeParente):
             'types de parenté d’individus',
             2)
         ordering = ('classement',)
-        app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -58,7 +57,6 @@ class ParenteDIndividus(CommonModel):
         verbose_name_plural = ungettext_lazy('parenté d’individus',
                                              'parentés d’individus', 2)
         ordering = ('type', 'parent', 'enfant')
-        app_label = 'libretto'
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -158,7 +156,6 @@ class Individu(AutoriteModel, UniqueSlugModel):
         verbose_name = ungettext_lazy('individu', 'individus', 1)
         verbose_name_plural = ungettext_lazy('individu', 'individus', 2)
         ordering = ('nom',)
-        app_label = 'libretto'
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod

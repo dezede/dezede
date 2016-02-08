@@ -637,7 +637,6 @@ class Fichier(CommonModel):
         verbose_name = ungettext_lazy('fichier', 'fichiers', 1)
         verbose_name_plural = ungettext_lazy('fichier', 'fichiers', 2)
         ordering = ('position',)
-        app_label = 'libretto'
 
     def __str__(self):
         return force_text(self.fichier)
@@ -772,7 +771,6 @@ class Etat(CommonModel, UniqueSlugModel):
         verbose_name = ungettext_lazy('état', 'états', 1)
         verbose_name_plural = ungettext_lazy('état', 'états', 2)
         ordering = ('slug',)
-        app_label = 'libretto'
 
     def __str__(self):
         return self.nom
