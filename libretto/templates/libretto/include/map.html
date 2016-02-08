@@ -66,6 +66,8 @@
     }
 
     var geoJson;
+    var extremeBounds = L.latLngBounds(L.latLng(-85.0, -180.0),
+                                       L.latLng(85.0, 180.0));
     var $map = $('#map');
     var $mapControls = $map.find('.leaflet-control-container');
     var ajaxCall;
@@ -112,7 +114,11 @@
         }).addTo(map);
         tooltips_create($map);
         if (empty) {
-          map.fitBounds(geoJson.getBounds(), {padding: [70, 70]});
+          var bounds = geoJson.getBounds();
+          if (!extremeBounds.contains(bounds)) {
+            bounds = extremeBounds;
+          }
+          map.fitBounds(bounds, {padding: [70, 70]});
         }
       });
     }).on('fullscreenchange', function () {
