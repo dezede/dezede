@@ -239,7 +239,7 @@ def _get_default_etat():
         'message': '<p>Cette donnée a été créée récemment et nécessite '
                    'plusieurs relectures.  À lire avec précaution.</p>',
         'public': True,
-    })[0].pk
+    })[0]
 
 
 class PublishedModel(CommonModel):
