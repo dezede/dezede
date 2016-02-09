@@ -28,7 +28,7 @@ class AFOEvenementExporter(Exporter):
         'afo__code_programme', 'afo__tournee',
         'afo__titre_programme', 'afo__cycle',
         'latitude', 'longitude',
-        'ville', 'debut_lieu__afo__code_postal', 'pays', 'debut_lieu__nom',
+        'ville', 'debut_lieu__afo__code_postal', 'pays', 'debut_lieu',
         'debut_lieu_id', 'afo__nom_festival',
         'afo__modalite_de_production', 'debut_lieu__afo__type_de_salle',
         'debut_lieu__afo__type_de_scene', 'afo__type_de_programme',
@@ -38,12 +38,13 @@ class AFOEvenementExporter(Exporter):
     )
     verbose_overrides = {
         'ensemble': 'Orchestre',
+        'debut_date': 'Date de la représentation',
         'afo__code_programme': 'Code du programme / série',
         'afo__tournee': 'Code ou titre de la tournée',
         'afo__titre_programme': 'Titre du programme 1)',
         'afo__cycle': 'Cycle 1)',
         'debut_lieu__afo__code_postal': 'Code postal',
-        'debut_lieu__nom': 'Nom de la salle',
+        'debut_lieu': 'Nom de la salle',
         'debut_lieu_id': 'ID salle',
         'afo__nom_festival': 'Nom du festival',
         'afo__modalite_de_production': 'Modalité de production',
@@ -61,7 +62,7 @@ class AFOEvenementExporter(Exporter):
 
     @staticmethod
     def get_saison(obj):
-        return ', '.join(
+        return ' / '.join(
             [saison.get_periode() for saison in obj.get_saisons()])
 
     @staticmethod
@@ -70,23 +71,33 @@ class AFOEvenementExporter(Exporter):
         ensembles_afo = dossier_afo.ensembles.all()
         ensembles = Evenement.objects.filter(pk=obj.pk).ensembles()
         ensembles = ensembles.filter(pk__in=ensembles_afo)
-        return '\n'.join([force_text(e) for e in ensembles])
+        return ' / '.join([force_text(e) for e in ensembles])
 
     @staticmethod
-    def get_longitude(obj):
-        obj = obj.debut_lieu
-        if obj is None or obj.geometry is None \
-                or obj.geometry.geom_type != 'Point':
-            return
-        return obj.geometry.coords[0]
+    def get_debut_date(obj):
+        return force_text(obj.debut_date)
 
     @staticmethod
-    def get_latitude(obj):
-        obj = obj.debut_lieu
-        if obj is None or obj.geometry is None \
-                or obj.geometry.geom_type != 'Point':
+    def _get_point(obj):
+        if obj.debut_lieu is None:
             return
-        return obj.geometry.coords[1]
+        lieu = obj.debut_lieu.get_ancestors(
+            include_self=True, ascending=True).filter(
+            geometry__isnull=False).first()
+        if lieu is None or lieu.geometry is None \
+                or lieu.geometry.geom_type != 'Point':
+            return
+        return lieu.geometry
+
+    def get_longitude(self, obj):
+        point = self._get_point(obj)
+        if point is not None:
+            return point.coords[0]
+
+    def get_latitude(self, obj):
+        point = self._get_point(obj)
+        if point is not None:
+            return point.coords[1]
 
     @staticmethod
     def get_ville(obj, nature='ville'):
@@ -99,6 +110,20 @@ class AFOEvenementExporter(Exporter):
 
     def get_pays(self, obj):
         return self.get_ville(obj, 'pays')
+
+    def get_debut_lieu(self, obj):
+        if obj.debut_lieu is None:
+            return
+        path = (obj.debut_lieu.get_ancestors(include_self=True)
+                .select_related('nature'))
+        out = []
+        sub_town = False
+        for lieu in path:
+            if sub_town:
+                out.append(lieu.nom)
+            if lieu.nature.nom == 'ville':
+                sub_town = True
+        return ', '.join(out)
 
 
 class AFOElementDeProgrammeExporter(Exporter):
@@ -150,30 +175,30 @@ class AFOElementDeProgrammeExporter(Exporter):
         return ['' if v is None else v for v in data]
 
     def get_compositeur_nom(self, obj):
-        return '\n'.join(self._get_compositeur_attr(obj, 'nom'))
+        return ' / '.join(self._get_compositeur_attr(obj, 'nom'))
 
     def get_compositeur_prenoms(self, obj):
-        return '\n'.join(self._get_compositeur_attr(obj, 'prenoms'))
+        return ' / '.join(self._get_compositeur_attr(obj, 'prenoms'))
 
     def get_compositeur_nom_complet(self, obj):
-        return '\n'.join(
+        return ' / '.join(
             [m(tags=False, links=False)
              for m in self._get_compositeur_attr(obj, 'nom_complet')])
 
     def get_compositeur_id(self, obj):
-        return '\n'.join(map(force_text,
+        return ' / '.join(map(force_text,
                              self._get_compositeur_attr(obj, 'id')))
 
     def get_compositeur_naissance(self, obj):
-        return '\n'.join(
+        return ' / '.join(
             map(force_text, self._get_compositeur_attr(obj, 'naissance_date')))
 
     def get_compositeur_deces(self, obj):
-        return '\n'.join(
+        return ' / '.join(
             map(force_text, self._get_compositeur_attr(obj, 'deces_date')))
 
     def get_compositeur_naissance_plus_20(self, obj):
-        return '\n'.join([
+        return ' / '.join([
             '' if d == '' else force_text(d + timedelta(days=365.25*20))
             for d in self._get_compositeur_attr(obj, 'naissance_date')])
 
@@ -189,4 +214,4 @@ class AFOElementDeProgrammeExporter(Exporter):
                 if year0 < naissance.year <= year1:
                     out.append(force_text(PERIOD_NAMES[k]))
                     break
-        return '\n'.join(out)
+        return ' / '.join(out)
