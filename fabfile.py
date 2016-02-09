@@ -271,6 +271,12 @@ def reset_remote_db():
 
 
 @task
+def save_remote_db():
+    run('pg_dump -U %s -Fc -b -v -f %s %s' % (DB_USER, REMOTE_BACKUP, DB_NAME))
+    local('rsync %s:%s %s' % (env.hosts[0], REMOTE_BACKUP, LOCAL_BACKUP))
+
+
+@task
 def restore_saved_db():
     local('sudo -u postgres dropdb %s' % DB_NAME)
     local('sudo -u postgres createdb %s' % DB_NAME)
@@ -280,6 +286,5 @@ def restore_saved_db():
 
 @task
 def clone_remote_db():
-    run('pg_dump -U %s -Fc -b -v -f %s %s' % (DB_USER, REMOTE_BACKUP, DB_NAME))
-    local('rsync %s:%s %s' % (env.hosts[0], REMOTE_BACKUP, LOCAL_BACKUP))
+    save_remote_db()
     restore_saved_db()
