@@ -221,6 +221,12 @@ def update():
 
 
 @task
+def update_index():
+    with workon_dezede():
+        run('./manage.py update_index')
+
+
+@task
 def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=1,
            timeout=300):
     set_env()
