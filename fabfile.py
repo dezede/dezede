@@ -165,7 +165,7 @@ def pip_install():
 
 def collectstatic():
     with workon_dezede():
-        run('./manage.py collectstatic --noinput ')
+        run('./manage.py collectstatic --noinput')
 
 
 @task
@@ -177,9 +177,8 @@ def set_permissions():
         run('chmod -R o+rx static media')
 
 
-def create_db():
+def migrate_db():
     with workon_dezede():
-        run('./manage.py syncdb')
         run('./manage.py migrate')
 
 
@@ -195,7 +194,7 @@ def install():
     mkvirtualenv()
     pip_install()
 
-    create_db()
+    migrate_db()
 
     collectstatic()
     set_permissions()
@@ -213,8 +212,10 @@ def update():
     with workon_dezede():
         run('git pull')
         update_submodules()
-        pip_install()
+        run('find . -name "*.pyc" -delete')
 
+    pip_install()
+    migrate_db()
     collectstatic()
 
     restart()
@@ -267,7 +268,7 @@ def reset_remote_db():
     sudo("psql -c 'DROP DATABASE %s;'" % DB_NAME, user='postgres')
     sudo("psql -c 'CREATE DATABASE %s OWNER %s;'" % (DB_NAME, DB_USER),
          user='postgres')
-    create_db()
+    migrate_db()
 
 
 @task
