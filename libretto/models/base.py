@@ -272,9 +272,11 @@ class AutoriteModel(PublishedModel):
         abstract = True
 
 
-slugify_unicode = Slugify(translate=None)
-slugify_unicode.to_lower = True
-slugify_unicode.max_length = 50
+slugify_unicode_class = Slugify(translate=None, to_lower=True, max_length=50)
+
+
+def slugify_unicode(text):
+    return slugify_unicode_class(text)
 
 
 class SlugModel(Model):
