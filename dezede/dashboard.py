@@ -64,6 +64,14 @@ class CustomIndexDashboard(Dashboard):
             models=('dossiers.*', 'dezede.*'),
         ))
 
+        self.children.append(modules.ModelList(
+            _('Examens'),
+            column=1,
+            collapsible=False,
+            css_classes=('grp-open',),
+            models=('examens.*',),
+        ))
+
         self.children.append(modules.RecentActions(
             _('Actions récentes'),
             limit=5,
