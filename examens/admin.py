@@ -38,7 +38,6 @@ class TakenLevelInline(StackedInline):
     get_score.short_description = 'score'
 
 
-
 @register(TakenExam)
 class TakenExamAdmin(ModelAdmin):
     list_display = ('user', 'session', 'current_level', 'is_complete',

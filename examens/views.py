@@ -20,10 +20,8 @@ SOURCE_LEVEL_SESSION_KEY = 'examen_source_level'
 class TakeLevelView(UpdateView):
     form_class = TakenLevelForm
     template_name = 'examens/source.html'
-    success_url = 'account_signup'
 
     def get_object(self, queryset=None):
-        self.taken_exam = TakenExam.objects.get_for_request(self.request)
         self.last_taken_level = self.taken_exam.last_taken_level
         try:
             return self.taken_exam.take_level()
@@ -42,8 +40,6 @@ class TakeLevelView(UpdateView):
         return context
 
     def form_valid(self, form):
-        if self.taken_exam.is_complete():
-            return redirect(self.get_success_url())
         instance = form.save(commit=False)
         instance.end = now()
         instance.save()
@@ -54,10 +50,26 @@ class TakeLevelView(UpdateView):
                   '<i class="fa fa-smile-o"></i>'))
         return redirect('source_examen')
 
+    def check_for_completeness(self):
+        self.taken_exam = TakenExam.objects.get_for_request(self.request)
+        if self.taken_exam.is_complete():
+            messages.add_message(
+                self.request, SUCCESS,
+                _('Excellent, vous avez fini toutes les étapes ! '
+                  'Vous pouvez maintenant créer un compte utilisateur '
+                  'si vous n’en possédez pas.'))
+            return redirect('account_signup')
+
     @transaction.atomic
     def get(self, request, *args, **kwargs):
+        response = self.check_for_completeness()
+        if response is not None:
+            return response
         return super(TakeLevelView, self).get(request, *args, **kwargs)
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
+        response = self.check_for_completeness()
+        if response is not None:
+            return response
         return super(TakeLevelView, self).post(request, *args, **kwargs)
