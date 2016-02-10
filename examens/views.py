@@ -1,69 +1,63 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+from django.contrib import messages
+from django.contrib.messages import SUCCESS
+from django.db import transaction
+from django.http import Http404
 from django.shortcuts import redirect
-from django.views.generic import FormView
+from django.utils.timezone import now
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic import UpdateView
 
-from .forms import SourceExamenForm, LEVELS_DATA, LEVELS, LEVELS_HELPS
-from libretto.models import Source
-from .utils import AnnotatedDiff
+from .forms import TakenLevelForm
+from .models import TakenExam, Level
 
 
 SOURCE_LEVEL_SESSION_KEY = 'examen_source_level'
 
 
-class SourceExamen(FormView):
-    form_class = SourceExamenForm
+class TakeLevelView(UpdateView):
+    form_class = TakenLevelForm
     template_name = 'examens/source.html'
+    success_url = 'account_signup'
 
-    def get_initial(self):
-        if SOURCE_LEVEL_SESSION_KEY not in self.request.session:
-            self.request.session[SOURCE_LEVEL_SESSION_KEY] = 1
-        level = self.request.session[SOURCE_LEVEL_SESSION_KEY]
-        source_qs = Source.objects.filter(pk__in=dict(LEVELS_DATA)[level])
-        return {
-            'level': level,
-            'source': source_qs.order_by('?').first(),
-        }
+    def get_object(self, queryset=None):
+        self.taken_exam = TakenExam.objects.get_for_request(self.request)
+        self.last_taken_level = self.taken_exam.last_taken_level
+        try:
+            return self.taken_exam.take_level()
+        except Level.DoesNotExist:
+            raise Http404('No level yet.')
 
     def get_context_data(self, **kwargs):
-        context = super(SourceExamen, self).get_context_data(**kwargs)
-        form = context['form']
-        if self.request.method == 'POST':
-            context['source'] = form.cleaned_data['source']
-        else:
-            context['source'] = form.initial['source']
-        if hasattr(self, 'diff'):
-            context['diff_html'] = self.diff.get_html()
-        if hasattr(self, 'errors'):
-            score = self.diff.get_score()
-            success = form.is_valid and score == 1.0
-            if success:
-                self.request.session[SOURCE_LEVEL_SESSION_KEY] = min(
-                    int(form.cleaned_data['level']) + 1, max(LEVELS))
-            context.update(
-                errors=self.errors,
-                score=score,
-                success=success,
-            )
-        level = self.request.session[SOURCE_LEVEL_SESSION_KEY]
+        context = super(TakeLevelView, self).get_context_data(**kwargs)
         context.update(
-            level=level,
-            max_level=max(LEVELS),
-            help=LEVELS_HELPS[level],
+            level=self.object.level,
+            source=self.object.source,
+            taken_exam=self.taken_exam,
+            last_taken_level=self.last_taken_level,
+            max_level_number=self.taken_exam.max_level_number,
         )
         return context
 
     def form_valid(self, form):
-        ref = form.cleaned_data['source'].transcription
-        txt = form.cleaned_data['transcription']
-        self.diff = AnnotatedDiff(txt, ref)
-        self.errors = self.diff.errors
-        return self.form_invalid(form)
+        if self.taken_exam.is_complete():
+            return redirect(self.get_success_url())
+        instance = form.save(commit=False)
+        instance.end = now()
+        instance.save()
+        if instance.passed:
+            messages.add_message(
+                self.request, SUCCESS,
+                _('Félicitations ! La transcription était parfaite '
+                  '<i class="fa fa-smile-o"></i>'))
+        return redirect('source_examen')
 
+    @transaction.atomic
+    def get(self, request, *args, **kwargs):
+        return super(TakeLevelView, self).get(request, *args, **kwargs)
+
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
-        if request.POST.get('previous') == 'true':
-            request.session[SOURCE_LEVEL_SESSION_KEY] = max(
-                int(request.session[SOURCE_LEVEL_SESSION_KEY]) - 1, 1)
-            return redirect('source_examen')
-        return super(SourceExamen, self).post(request, *args, **kwargs)
+        return super(TakeLevelView, self).post(request, *args, **kwargs)

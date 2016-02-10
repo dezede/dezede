@@ -6,9 +6,8 @@
   <h1>
     {% block title %}Formation à la transcription de source{% endblock %}
   </h1>
-  {% if not success %}
-    <h3>Étape {{ level }} sur {{ max_level }}</h3>
-  {% endif %}
+
+  <h3>Étape {{ level.number }} sur {{ max_level_number }}</h3>
 {% endblock %}
 
 
@@ -21,61 +20,42 @@
     {{ form.media.js }}
   {% endaddstatic %}
 
-  {% if success %}
-    <div class="alert alert-success">
-      Félicitations ! La transcription est parfaite :)
+  <div class="alert alert-info">
+    <h4>Instructions</h4>
+    <p>{{ level.help_message }}</p>
+  </div>
+
+  {% if last_taken_level.was_sent and not last_taken_level.passed %}
+    <h3>Transcription envoyée</h3>
+
+    <div class="alert alert-{% if last_taken_level.score < 0.5 %}danger{% else %}warning{% endif %}" role="alert">
+        {% if last_taken_level.score < 0.25 %}
+          Très insuffisant
+        {% elif last_taken_level.score < 0.5 %}
+          Insuffisant
+        {% elif last_taken_level.score < 0.75 %}
+          Bien ! Plus que quelques erreurs à corriger
+        {% elif last_taken_level.score < 1.0 %}
+          Très bien ! Encore un tout petit effort
+        {% endif %}
     </div>
-    <a href="{% url 'source_examen' %}" class="btn btn-primary">
-      Passer à l’étape {{ level }} sur {{ max_level }}
-    </a>
-  {% else %}
 
-    <div class="alert alert-info">
-      <h4>Instructions</h4>
-      <p>{{ help }}</p>
-    </div>
-
-    {% if request.POST %}
-      <h3>Transcription envoyée</h3>
-
-      {% if errors %}
-        <div class="alert alert-{% if score < 0.5 %}danger{% else %}warning{% endif %}" role="alert">
-            {% if score < 0.25 %}
-              Très insuffisant
-            {% elif score < 0.5 %}
-              Insuffisant
-            {% elif score < 0.75 %}
-              Bien ! Plus que quelques erreurs à corriger
-            {% elif score < 1.0 %}
-              Très bien ! Encore un tout petit effort
-            {% endif %}
-        </div>
-      {% endif %}
-
-      <blockquote class="submitted-transcription">
-        {{ diff_html }}
-      </blockquote>
-    {% endif %}
-
-    <h3>Source à transcrire</h3>
-    {% for fichier in source.fichiers.group_by_type.images %}
-      <img src="{{ fichier.fichier.url }}" />
-    {% endfor %}
-
-    <h3>Transcription</h3>
-
-    <form method="POST">
-      {% csrf_token %}
-      {{ form.level }}
-      {{ form.source }}
-      {{ form.transcription }}
-      <br />
-      <button type="submit" class="btn btn-primary">Vérifier</button>
-      {% if level > 1 %}
-        <button type="submit" name="previous" value="true" class="btn btn-default">
-          Retour à l’étape précédente
-        </button>
-      {% endif %}
-    </form>
+    <blockquote class="submitted-transcription">
+      {{ object.diff_html }}
+    </blockquote>
   {% endif %}
+
+  <h3>Source à transcrire</h3>
+  {% for fichier in source.fichiers.group_by_type.images %}
+    <img src="{{ fichier.fichier.url }}" />
+  {% endfor %}
+
+  <h3>Transcription</h3>
+
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.transcription }}
+    <br />
+    <button type="submit" class="btn btn-primary">Vérifier</button>
+  </form>
 {% endblock %}

@@ -199,7 +199,8 @@ class HTMLAnnotatedCharList(list):
 
 
 class AnnotatedDiff:
-    IGNORED_FORMATTING_CHARACTERS = '   .,:;…?!¿¡«»"\'()[]{}/\\'
+    WHITESPACES = '   '
+    IGNORED_FORMATTING_CHARACTERS = WHITESPACES + '.,:;…?!¿¡«»"\'()[]{}/\\'
 
     def __init__(self, a, b):
         self.a = a
@@ -277,7 +278,9 @@ class AnnotatedDiff:
             return
         # Replace
         if len(sub_a) == len(sub_b) == 1:
-            if sub_a.lower() == sub_b.lower():
+            if sub_a in self.WHITESPACES and sub_b in self.WHITESPACES:
+                pass
+            elif sub_a.lower() == sub_b.lower():
                 self.add_error(ia, CASE_ERROR, sub_a)
             elif remove_diacritics(sub_a) == remove_diacritics(sub_b):
                 self.add_error(ia, DIACRITIC_ERROR, sub_a)
