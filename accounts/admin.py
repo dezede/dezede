@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.contrib.admin import site
+from django.contrib.admin import register
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.core.exceptions import ValidationError
@@ -37,6 +37,7 @@ class HierarchicUserChangeForm(UserChangeForm):
         }
 
 
+@register(HierarchicUser)
 class HierarchicUserAdmin(VersionAdmin, UserAdmin):
     add_form = HierarchicUserCreationForm
     form = HierarchicUserChangeForm
@@ -45,6 +46,8 @@ class HierarchicUserAdmin(VersionAdmin, UserAdmin):
     list_editable = ('first_name', 'last_name', 'mentor',
                      'willing_to_be_mentor', 'is_active')
     list_filter = ('mentor', 'willing_to_be_mentor') + UserAdmin.list_filter
+    search_fields = ('username__unaccent', 'first_name__unaccent',
+                     'last_name__unaccent', 'email__unaccent')
     related_lookup_fields = {
         'generic': [['content_type', 'object_id'],],
     }
@@ -70,6 +73,3 @@ class HierarchicUserAdmin(VersionAdmin, UserAdmin):
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
     ordering = ('last_name', 'first_name')
-
-
-site.register(HierarchicUser, HierarchicUserAdmin)

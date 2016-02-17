@@ -5,7 +5,7 @@ from functools import partial, reduce
 import operator
 
 from django.contrib import messages
-from django.contrib.admin import (site, TabularInline, StackedInline,
+from django.contrib.admin import (register, TabularInline, StackedInline,
                                   ModelAdmin, HORIZONTAL)
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
@@ -501,9 +501,6 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
 
         return NewChangeList
 
-    def get_search_fields(self, request):
-        return [le + '__unaccent' for le in self.search_fields]
-
     def get_search_results(self, request, queryset, search_term):
         search_term = replace(search_term)
 
@@ -556,8 +553,8 @@ class TypeDeParenteCommonAdmin(CommonAdmin):
                     'nom_relatif_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
                      'nom_relatif_pluriel', 'classement',)
-    search_fields = ('nom', 'nom_relatif',
-                     'nom_pluriel', 'nom_relatif_pluriel')
+    search_fields = ('nom__unaccent', 'nom_relatif__unaccent',
+                     'nom_pluriel__unaccent', 'nom_relatif_pluriel__unaccent')
     fieldsets = (
         (None, {'fields': (
             ('nom', 'nom_pluriel'), ('nom_relatif', 'nom_relatif_pluriel'),
@@ -567,31 +564,36 @@ class TypeDeParenteCommonAdmin(CommonAdmin):
     )
 
 
+@register(TypeDeParenteDOeuvres)
 class TypeDeParenteDOeuvresAdmin(VersionAdmin, TypeDeParenteCommonAdmin):
     pass
 
 
+@register(TypeDeParenteDIndividus)
 class TypeDeParenteDIndividusAdmin(VersionAdmin, TypeDeParenteCommonAdmin):
     pass
 
 
+@register(Etat)
 class EtatAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'public',
                     'has_related_objects')
     list_editable = ('nom', 'nom_pluriel', 'public')
 
 
+@register(NatureDeLieu)
 class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'referent',)
     list_editable = ('nom', 'nom_pluriel', 'referent',)
     list_filter = ('referent',)
-    search_fields = ('nom', 'nom_pluriel')
+    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent')
 
 
+@register(Lieu)
 class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
-    search_fields = ('nom', 'parent__nom',)
+    search_fields = ('nom__unaccent', 'parent__nom__unaccent',)
     list_filter = ('nature',)
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
@@ -613,6 +615,7 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
                      '/OpenLayers.js'
 
 
+@register(Saison)
 class SaisonAdmin(VersionAdmin, CommonAdmin):
     form = SaisonForm
     list_display = ('__str__', 'lieu', 'ensemble', 'debut', 'fin',
@@ -624,12 +627,14 @@ class SaisonAdmin(VersionAdmin, CommonAdmin):
     }
 
 
+@register(Profession)
 class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_feminin',
                     'parent', 'classement')
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
                      'classement')
-    search_fields = ('nom', 'nom_pluriel', 'nom_feminin')
+    search_fields = (
+        'nom__unaccent', 'nom_pluriel__unaccent', 'nom_feminin__unaccent')
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ('parent',),
@@ -642,14 +647,16 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
     )
 
 
+@register(Individu)
 class IndividuAdmin(VersionAdmin, AutoriteAdmin):
     list_per_page = 20
     list_display = ('__str__', 'nom', 'prenoms',
                     'pseudonyme', 'titre', 'naissance',
                     'deces', 'calc_professions', 'link',)
     list_editable = ('nom', 'titre',)
-    search_fields = ('nom', 'pseudonyme', 'nom_naissance',
-                     'prenoms',)
+    search_fields = (
+        'nom__unaccent', 'pseudonyme__unaccent', 'nom_naissance__unaccent',
+        'prenoms__unaccent',)
     list_filter = ('titre',)
     form = IndividuForm
     raw_id_fields = ('naissance_lieu', 'deces_lieu', 'professions')
@@ -690,21 +697,22 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
             'naissance_lieu', 'deces_lieu', 'etat', 'owner'
         ).prefetch_related('professions')
 
-
+@register(TypeDEnsemble)
 class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'parent')
     list_editable = ('nom', 'nom_pluriel', 'parent')
-    search_fields = ('nom', 'nom_pluriel',)
+    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent',)
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ('parent',),
     }
 
 
+@register(Ensemble)
 class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     form = EnsembleForm
     list_display = ('__str__', 'type', 'membres_count')
-    search_fields = ('nom', 'membres__individu__nom')
+    search_fields = ('nom__unaccent', 'membres__individu__nom__unaccent')
     inlines = (MembreInline,)
     raw_id_fields = ('siege', 'type')
     autocomplete_lookup_fields = {
@@ -719,35 +727,39 @@ class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     fieldsets_and_inlines_order = ('f', 'f', 'i')
 
 
+@register(GenreDOeuvre)
 class GenreDOeuvreAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'has_related_objects')
     list_editable = ('nom', 'nom_pluriel',)
-    search_fields = ('nom', 'nom_pluriel',)
+    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent',)
     raw_id_fields = ('parents',)
     autocomplete_lookup_fields = {
         'm2m': ('parents',),
     }
 
 
+@register(TypeDeCaracteristiqueDeProgramme)
 class TypeDeCaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
-    search_fields = ('nom', 'nom_pluriel')
+    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent')
 
 
+@register(CaracteristiqueDeProgramme)
 class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
     list_editable = ('valeur', 'classement',)
-    search_fields = ('type__nom', 'valeur')
+    search_fields = ('type__nom__unaccent', 'valeur__unaccent')
 
 
+@register(Partie)
 class PartieAdmin(VersionAdmin, AutoriteAdmin):
     form = PartieForm
     list_display = ('__str__', 'nom', 'parent', 'classement',)
     list_editable = ('nom', 'parent', 'classement',)
     list_filter = ('type',)
     list_select_related = ('parent', 'etat', 'owner')
-    search_fields = ('nom',)
+    search_fields = ('nom__unaccent',)
     radio_fields = {'type': HORIZONTAL}
     raw_id_fields = ('oeuvre', 'professions', 'parent')
     autocomplete_lookup_fields = {
@@ -762,6 +774,7 @@ class PartieAdmin(VersionAdmin, AutoriteAdmin):
     )
 
 
+@register(Oeuvre)
 class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     form = OeuvreForm
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
@@ -841,11 +854,12 @@ def events_to_pdf(modeladmin, request, queryset):
 events_to_pdf.short_description = _('Exporter en PDF')
 
 
+@register(Evenement)
 class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'link',)
     list_editable = ('relache', 'circonstance',)
-    search_fields = ('circonstance', 'debut_lieu__nom')
+    search_fields = ('circonstance__unaccent', 'debut_lieu__nom__unaccent')
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
     list_select_related = ('debut_lieu', 'debut_lieu__nature',
@@ -901,12 +915,14 @@ class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
             'etat', 'owner')
 
 
+@register(TypeDeSource)
 class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
-    search_fields = ('nom', 'nom_pluriel')
+    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent')
 
 
+@register(Source)
 class SourceAdmin(VersionAdmin, AutoriteAdmin):
     form = SourceForm
     list_display = ('__str__', 'date', 'type', 'has_events', 'has_program', 'link')
@@ -914,8 +930,9 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     list_select_related = ('type', 'etat', 'owner')
     date_hierarchy = 'date'
     search_fields = (
-        'type__nom', 'titre', 'date', 'date_approx', 'numero',
-        'lieu_conservation', 'cote')
+        'type__nom__unaccent', 'titre__unaccent', 'date',
+        'date_approx__unaccent', 'numero__unaccent',
+        'lieu_conservation__unaccent', 'cote__unaccent')
     list_filter = ('type', 'titre', SourceHasEventsListFilter,
                    SourceHasProgramListFilter)
     raw_id_fields = ('evenements',)
@@ -980,24 +997,3 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
             }
         )
         return qs
-
-
-site.register(Etat, EtatAdmin)
-site.register(NatureDeLieu, NatureDeLieuAdmin)
-site.register(Lieu, LieuAdmin)
-site.register(Saison, SaisonAdmin)
-site.register(Profession, ProfessionAdmin)
-site.register(TypeDeParenteDOeuvres, TypeDeParenteDOeuvresAdmin)
-site.register(TypeDeParenteDIndividus, TypeDeParenteDIndividusAdmin)
-site.register(Individu, IndividuAdmin)
-site.register(TypeDEnsemble, TypeDEnsembleAdmin)
-site.register(Ensemble, EnsembleAdmin)
-site.register(GenreDOeuvre, GenreDOeuvreAdmin)
-site.register(TypeDeCaracteristiqueDeProgramme,
-              TypeDeCaracteristiqueDeProgrammeAdmin)
-site.register(CaracteristiqueDeProgramme, CaracteristiqueDeProgrammeAdmin)
-site.register(Partie, PartieAdmin)
-site.register(Oeuvre, OeuvreAdmin)
-site.register(Evenement, EvenementAdmin)
-site.register(TypeDeSource, TypeDeSourceAdmin)
-site.register(Source, SourceAdmin)

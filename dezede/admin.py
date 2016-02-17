@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.contrib import admin
+from django.contrib.admin import register, HORIZONTAL
 from django.utils.translation import ugettext_lazy as _
 from image_cropping import ImageCroppingMixin
 from reversion.admin import VersionAdmin
@@ -9,6 +9,7 @@ from libretto.admin import PublishedAdmin
 from .models import Diapositive
 
 
+@register(Diapositive)
 class DiapositiveAdmin(ImageCroppingMixin, VersionAdmin, PublishedAdmin):
     list_display = ('content_object', 'title', 'subtitle', 'thumbnail',
                     'position')
@@ -17,9 +18,9 @@ class DiapositiveAdmin(ImageCroppingMixin, VersionAdmin, PublishedAdmin):
         'generic': (('content_type', 'object_id'),),
     }
     radio_fields = {
-        'text_align': admin.HORIZONTAL,
-        'image_align': admin.HORIZONTAL,
-        'opacity': admin.HORIZONTAL,
+        'text_align': HORIZONTAL,
+        'image_align': HORIZONTAL,
+        'opacity': HORIZONTAL,
     }
     fieldsets = (
         (_('Objet lié'), {
@@ -37,6 +38,3 @@ class DiapositiveAdmin(ImageCroppingMixin, VersionAdmin, PublishedAdmin):
             'fields': ('position',),
         }),
     )
-
-
-admin.site.register(Diapositive, DiapositiveAdmin)
