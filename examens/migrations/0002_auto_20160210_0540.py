@@ -80,13 +80,18 @@ LEVELS_HELPS = {
 def add_levels(apps, schema_editor):
     Level = apps.get_model('examens.Level')
     LevelSource = apps.get_model('examens.LevelSource')
+    Source = apps.get_model('libretto.Source')
 
     level_sources = []
     for level_number, source_ids in LEVELS_DATA:
         level = Level.objects.create(
             number=level_number, help_message=LEVELS_HELPS[level_number])
-        level_sources.extend([
-            LevelSource(level=level, source_id=pk) for pk in source_ids])
+        for pk in source_ids:
+            try:
+                source = Source.objects.get(pk=pk)
+            except Source.DoesNotExist:
+                continue
+            level_sources.append(LevelSource(level=level, source=source))
     LevelSource.objects.bulk_create(level_sources)
 
 
