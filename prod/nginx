@@ -104,3 +104,10 @@ server {
     auth_basic_user_file /etc/nginx/rq.password;
   }
 }
+
+{# TODO: Do something cleaner about this. #}
+server {
+  listen 80;
+  server_name afo.dezede.org;
+  rewrite ^(.*) https://dezede.org$1 permanent;
+}

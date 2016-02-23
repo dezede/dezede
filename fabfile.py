@@ -19,16 +19,16 @@ from django.conf import settings
 
 
 GIT_REPOSITORY = 'https://github.com/dezede/dezede.git'
-PROJECT_PATH = '/nfs/dezede'
+PROJECT_PATH = '/dezede'
 RELATIVE_WORKON_HOME = '.virtualenvs'
 VIRTUALENV_NAME = 'dezede'
 DB_NAME = settings.DATABASES['default']['NAME']
 DB_NAME_TEST = settings.DATABASES['default'].get('TEST_NAME',
                                                  'test_' + DB_NAME)
 DB_USER = settings.DATABASES['default']['USER']
-REDIS_SOCKET = '/var/run/redis/redis.sock'
+REDIS_SOCKET = '/tmp/redis.sock'
 REDIS_CONF = '/etc/redis/redis.conf'
-REMOTE_BACKUP = '/nfs/backups/dezede.backup'
+REMOTE_BACKUP = '/backups/dezede.backup'
 LOCAL_BACKUP = './backups/dezede.backup'
 
 
@@ -48,17 +48,18 @@ def workon_dezede(settings_module='dezede.settings.prod'):
 
 
 def add_elasticsearch_repo():
-    sudo('wget -qO - http://packages.elasticsearch.org/GPG-KEY-elasticsearch '
+    sudo('wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch '
          '| apt-key add -')
     append('/etc/apt/sources.list.d/elasticsearch.list',
-           'deb http://packages.elasticsearch.org/elasticsearch/1.4/debian '
+           'deb http://packages.elastic.co/elasticsearch/1.7/debian '
            'stable main', use_sudo=True)
 
 
 def install_less_css():
     result = run('lessc', warn_only=True, quiet=True)
     if result.return_code:
-        sudo('npm install -g less@2.5.1')
+        sudo('npm install -g less@2.5.3')
+        sudo('ln -s /usr/bin/nodejs /usr/bin/node', warn_only=True)
 
 
 def upgrade_ubuntu():
@@ -73,9 +74,16 @@ def install_ubuntu():
          'git mercurial '
          'postgresql postgresql-server-dev-all postgis '
          'redis-server elasticsearch '
-         'python2.7 python-pip python-dev virtualenvwrapper '
-         'npm libav-tools '
+         'python3.4 python3-pip python3.4-dev virtualenvwrapper '
+         # For image thumbnailing and conversion.
+         'libjpeg-dev '
+         # For CSS generation.
+         'npm '
+         # For media files analysis.
+         'libav-tools '
+         # For lxml.
          'libxml2-dev libxslt1-dev '
+         # For PDF generation.
          'texlive-xetex fonts-linuxlibertine texlive-latex-recommended '
          'texlive-lang-french texlive-latex-extra texlive-fonts-extra')
     install_less_css()
@@ -88,7 +96,7 @@ def can_connect_postgresql():
 
 
 def can_connect_redis():
-    result = run("redis-cli -s %s ECHO ''" % REDIS_SOCKET,
+    result = run('redis-cli -s "%s" ECHO ""' % REDIS_SOCKET,
                  warn_only=True, quiet=True)
     return not result.return_code
 
@@ -104,27 +112,24 @@ def config_postgresql():
         sed(pg_hba, previous_line, '&\\n' + trust_rule, use_sudo=True)
     sudo('service postgresql restart')
 
-    sudo("psql -c 'CREATE USER %s CREATEDB;'" % DB_USER,
-         user='postgres', warn_only=True)
-    sudo("psql -c 'CREATE DATABASE %s OWNER %s;'" % (DB_NAME, DB_USER),
-         user='postgres', warn_only=True)
-    sudo("psql %s -c 'CREATE EXTENSION postgis;'" % DB_NAME,
-         user='postgres', warn_only=True)
+    for sql_command in (
+            'CREATE USER %s SUPERUSER;' % DB_USER,
+            'CREATE DATABASE %s OWNER %s;' % (DB_NAME, DB_USER),
+            'CREATE EXTENSION postgis;'):
+        sudo('psql -c "%s"' % sql_command, user='postgres', warn_only=True)
 
 
 def config_redis():
     if can_connect_redis():
         return
 
-    uncomment(REDIS_CONF, '^#\s*unixsocket .+$', use_sudo=True)
-    sed(REDIS_CONF,
-        'unixsocket /tmp/redis.sock', 'unixsocket %s' % REDIS_SOCKET,
-        use_sudo=True)
-    uncomment(REDIS_CONF, r'^#\s*unixsocketperm 755$', use_sudo=True)
-    sed(REDIS_CONF, 'unixsocketperm 755', 'unixsocketperm 777',
+    uncomment(REDIS_CONF,
+              r'^#\s*unixsocket %s$' % REDIS_SOCKET.replace('/', '\/'),
+              use_sudo=True)
+    uncomment(REDIS_CONF, r'^#\s*unixsocketperm 700$', use_sudo=True)
+    sed(REDIS_CONF, 'unixsocketperm 700', 'unixsocketperm 777',
         use_sudo=True)
 
-    sudo('mkdir -p %s' % Path(REDIS_SOCKET).parent)
     sudo('service redis-server restart')
 
 
@@ -138,7 +143,9 @@ def clone():
     if exists(PROJECT_PATH):
         return
 
-    run('git clone %s %s' % (GIT_REPOSITORY, PROJECT_PATH))
+    sudo('mkdir -p "%s"' % PROJECT_PATH)
+    sudo('chown %s "%s"' % (env.user, PROJECT_PATH))
+    run('git clone "%s" "%s"' % (GIT_REPOSITORY, PROJECT_PATH))
     update_submodules()
 
 
@@ -149,18 +156,19 @@ def mkvirtualenv():
         return
 
     venv_wrapper = '/usr/share/virtualenvwrapper/virtualenvwrapper.sh'
-    bashrc = ('export WORKON_HOME=%s/.virtualenvs\n'
-              'source %s\n' % (env.home, venv_wrapper))
+    workon_home = env.home.child(RELATIVE_WORKON_HOME)
+    bashrc = ('export WORKON_HOME="%s"\n'
+              'source "%s"\n' % (workon_home, venv_wrapper))
     append(env.home.child('.bashrc'), bashrc)
-    run('mkdir -p ' + env.home.child(RELATIVE_WORKON_HOME))
-    with prefix('source ' + venv_wrapper):
-        run('mkvirtualenv -p /usr/bin/python2.7 %s' % VIRTUALENV_NAME)
+    run('mkdir -p "%s"' % workon_home)
+    with prefix('source "%s"' % venv_wrapper):
+        run('mkvirtualenv -p /usr/bin/python3.4 %s' % VIRTUALENV_NAME)
 
 
 def pip_install():
     with workon_dezede():
-        run('pip2 install -r requirements/base.txt')
-        run('pip2 install -r requirements/prod.txt')
+        run('pip3 install -r requirements/base.txt')
+        run('pip3 install -r requirements/prod.txt')
 
 
 def collectstatic():
@@ -228,14 +236,13 @@ def update_index():
 
 
 @task
-def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=1,
+def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=9,
            timeout=300):
     set_env()
 
     sudo('apt-get install '
          'supervisor '  # Daemonizes Django (using gunicorn) & rq
-         'nginx '  # HTTP server
-         'libevent-dev')  # For gevent (used by gunicorn)
+         'nginx')  # HTTP server
 
     context = env.copy()
     context.update(ip=ip, port=port, workers=int(workers), timeout=timeout)
@@ -243,14 +250,20 @@ def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=1,
         'prod/supervisor.conf', '/etc/supervisor/conf.d/dezede.conf',
         context=context, use_jinja=True, use_sudo=True)
 
+    ssl_folder = '/etc/letsencrypt/live/dezede.org/'
+    ssl_certificate = ssl_folder + 'fullchain.pem'
+    ssl_key = ssl_folder + 'privkey.pem'
+    sudo('mkdir -p "%s"' % ssl_folder)
+    sudo('touch "%s"' % ssl_certificate)
+    sudo('touch "%s"' % ssl_key)
     context.update(server_name=domain,
-                   ssl_certificate='/etc/ssl/dezede.crt',
-                   ssl_key='/etc/ssl/dezede.key')
+                   ssl_certificate=ssl_certificate, ssl_key=ssl_key)
     available = '/etc/nginx/sites-available/dezede'
     upload_template('prod/nginx', available,
                     context=context, use_jinja=True, use_sudo=True)
     sudo('unlink /etc/nginx/sites-enabled/default', warn_only=True)
-    sudo('ln -s %s /etc/nginx/sites-enabled' % available, warn_only=True)
+    sudo('ln -s "%s" /etc/nginx/sites-enabled' % available, warn_only=True)
+    sudo('service nginx restart')
 
     with workon_dezede():
         sed('dezede/settings/prod.py',
@@ -273,8 +286,9 @@ def reset_remote_db():
 
 @task
 def save_remote_db():
-    run('pg_dump -U %s -Fc -b -v -f %s %s' % (DB_USER, REMOTE_BACKUP, DB_NAME))
-    local('rsync %s:%s %s' % (env.hosts[0], REMOTE_BACKUP, LOCAL_BACKUP))
+    run('pg_dump -U %s -Fc -b -v -f "%s" %s'
+        % (DB_USER, REMOTE_BACKUP, DB_NAME))
+    local('rsync "%s":"%s" "%s"' % (env.hosts[0], REMOTE_BACKUP, LOCAL_BACKUP))
 
 
 @task
@@ -282,7 +296,7 @@ def restore_saved_db():
     local('sudo -u postgres dropdb %s' % DB_NAME)
     local('sudo -u postgres createdb %s' % DB_NAME)
     local('sudo -u postgres psql %s -c "create extension postgis;"' % DB_NAME)
-    local('pg_restore -U root -e -d %s -j 5 %s' % (DB_NAME, LOCAL_BACKUP))
+    local('pg_restore -U root -e -d %s -j 5 "%s"' % (DB_NAME, LOCAL_BACKUP))
 
 
 @task
