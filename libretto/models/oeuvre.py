@@ -963,6 +963,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             'surnom', 'nom_courant', 'incipit',
             'opus', 'ict',
             'pupitres__partie__nom')
+        lookups = [lookup + '__unaccent' for lookup in lookups]
         if add_icontains:
-            return [lookup + '__unaccent__icontains' for lookup in lookups]
+            return [lookup + '__icontains' for lookup in lookups]
         return lookups
