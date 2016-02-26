@@ -23,8 +23,9 @@ class Level(Model):
         _('number'), unique=True, default=1,
         validators=[MinValueValidator(1)])
     help_message = TextField(_('help message'))
-    sources = ManyToManyField('libretto.Source', through='LevelSource',
-                              verbose_name=_('sources'))
+    sources = ManyToManyField(
+        'libretto.Source', through='LevelSource', related_name='+',
+        verbose_name=_('sources'))
 
     class Meta:
         verbose_name = _('level')
@@ -45,7 +46,7 @@ class LevelSource(Model):
                        verbose_name=_('level'))
     source = OneToOneField(
         'libretto.source', limit_choices_to=limit_choices_to_possible_sources,
-        verbose_name=_('source'))
+        related_name='+', verbose_name=_('source'))
 
     class Meta:
         verbose_name = _('source of level')
@@ -69,11 +70,12 @@ class TakenExamQuerySet(QuerySet):
 
 @python_2_unicode_compatible
 class TakenExam(Model):
-    user = OneToOneField(settings.AUTH_USER_MODEL, null=True, blank=True,
-                         verbose_name=_('user'))
-    session = OneToOneField('sessions.Session', null=True, blank=True,
-                            verbose_name=_('session'), on_delete=SET_NULL,
-                            editable=False)
+    user = OneToOneField(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        related_name='+', verbose_name=_('user'))
+    session = OneToOneField(
+        'sessions.Session', null=True, blank=True, verbose_name=_('session'),
+        on_delete=SET_NULL, editable=False, related_name='+')
 
     objects = TakenExamQuerySet.as_manager()
     objects.use_for_related_fields = True
@@ -150,9 +152,11 @@ class TakenLevelQuerySet(QuerySet):
 class TakenLevel(Model):
     taken_exam = ForeignKey(TakenExam, related_name='taken_levels',
                             verbose_name=_('taken exam'), editable=False)
-    level = ForeignKey(Level, verbose_name=_('level'), editable=False)
+    level = ForeignKey(
+        Level, verbose_name=_('level'), editable=False, related_name='+')
     source = ForeignKey(
-        'libretto.Source', verbose_name=_('source'), editable=False)
+        'libretto.Source', verbose_name=_('source'), editable=False,
+        related_name='+')
     transcription = TextField(verbose_name=_('transcription'))
     score = FloatField(_('score'), null=True, blank=True, editable=False)
     MAX_SCORE = 1.0
