@@ -711,7 +711,7 @@ class Fichier(CommonModel):
         except CalledProcessError:
             return
 
-        data = json.loads(stdout)
+        data = json.loads(stdout.decode())
 
         format = data['format']['format_name']
         if format in self.FORMAT_BINDINGS:
