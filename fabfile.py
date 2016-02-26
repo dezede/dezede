@@ -19,7 +19,7 @@ from django.conf import settings
 
 
 GIT_REPOSITORY = 'https://github.com/dezede/dezede.git'
-PROJECT_PATH = '/dezede'
+PROJECT_PATH = '/dezede/src'
 RELATIVE_WORKON_HOME = '.virtualenvs'
 VIRTUALENV_NAME = 'dezede'
 DB_NAME = settings.DATABASES['default']['NAME']
@@ -28,7 +28,7 @@ DB_NAME_TEST = settings.DATABASES['default'].get('TEST_NAME',
 DB_USER = settings.DATABASES['default']['USER']
 REDIS_SOCKET = '/tmp/redis.sock'
 REDIS_CONF = '/etc/redis/redis.conf'
-REMOTE_BACKUP = '/backups/dezede.backup'
+REMOTE_BACKUP = '/dezede/backups/dezede.backup'
 LOCAL_BACKUP = './backups/dezede.backup'
 
 
@@ -73,7 +73,7 @@ def install_ubuntu():
     sudo('apt-get install '
          'git mercurial '
          'postgresql postgresql-server-dev-all postgis '
-         'redis-server elasticsearch '
+         'redis-server elasticsearch default-jre '
          'python3.4 python3-pip python3.4-dev virtualenvwrapper '
          # For image thumbnailing and conversion.
          'libjpeg-dev '
@@ -87,6 +87,8 @@ def install_ubuntu():
          'texlive-xetex fonts-linuxlibertine texlive-latex-recommended '
          'texlive-lang-french texlive-latex-extra texlive-fonts-extra')
     install_less_css()
+    sudo('systemctl enable elasticsearch')
+    sudo('systemctl start elasticsearch')
 
 
 def can_connect_postgresql():
@@ -110,7 +112,7 @@ def config_postgresql():
     if not contains(pg_hba, trust_rule, exact=True, use_sudo=True):
         previous_line = '# Database administrative login by Unix domain socket'
         sed(pg_hba, previous_line, '&\\n' + trust_rule, use_sudo=True)
-    sudo('service postgresql restart')
+    sudo('systemctl restart postgresql')
 
     for sql_command in (
             'CREATE USER %s SUPERUSER;' % DB_USER,
@@ -130,7 +132,7 @@ def config_redis():
     sed(REDIS_CONF, 'unixsocketperm 700', 'unixsocketperm 777',
         use_sudo=True)
 
-    sudo('service redis-server restart')
+    sudo('systemctl restart redis-server')
 
 
 def update_submodules():
@@ -263,7 +265,7 @@ def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=9,
                     context=context, use_jinja=True, use_sudo=True)
     sudo('unlink /etc/nginx/sites-enabled/default', warn_only=True)
     sudo('ln -s "%s" /etc/nginx/sites-enabled' % available, warn_only=True)
-    sudo('service nginx restart')
+    sudo('systemctl restart nginx')
 
     with workon_dezede():
         sed('dezede/settings/prod.py',
