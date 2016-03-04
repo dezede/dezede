@@ -7,7 +7,7 @@ from haystack.utils import Highlighter
 class CustomHighlighter(Highlighter):
     def find_window(self, highlight_locations):
         max_length = self.max_length
-        default_margin = max_length / 2
+        default_margin = max_length // 2
         best_start = 0
         best_end = max_length
 
@@ -57,7 +57,7 @@ class CustomHighlighter(Highlighter):
                 # Only replace if we have a bigger (not equal density) so we
                 # give deference to windows earlier in the document.
                 if current_density > highest_density:
-                    margin = (max_length - (end - start)) / 2
+                    margin = (max_length - (end - start)) // 2
                     best_start, best_end = get_ends(start, margin)
                     highest_density = current_density
 
