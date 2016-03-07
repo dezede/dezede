@@ -1,5 +1,5 @@
 # Basics
-Django==1.8.9
+Django==1.8.11
 psycopg2==2.6.1
 
 # Database fields
@@ -7,7 +7,7 @@ django-mptt==0.8.0
 django-autoslug==1.9.3
 
 # User interface
-https://github.com/BertrandBordage/django-grappelli/archive/stable/2.7.x.tar.gz
+django-grappelli==2.8.1
 django-super-inlines==0.1.4
 django-tinymce==2.2.0
 django-crispy-forms==1.6.0
