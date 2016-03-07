@@ -52,9 +52,9 @@ server {
   # Browsers will only load data from these sources
   add_header Content-Security-Policy "
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ssl.google-analytics.com https://cdnjs.cloudflare.com;
-    img-src 'self' https://ssl.google-analytics.com https://cdnjs.cloudflare.com https://a.tile.openstreetmap.org https://b.tile.openstreetmap.org https://c.tile.openstreetmap.org;
-    style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ssl.google-analytics.com https://cdnjs.cloudflare.com https://code.jquery.com;
+    img-src 'self' data: https://ssl.google-analytics.com https://cdnjs.cloudflare.com https://a.tile.openstreetmap.org https://b.tile.openstreetmap.org https://c.tile.openstreetmap.org https://code.jquery.com;
+    style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://code.jquery.com;
     font-src 'self';
     frame-src 'self' https://docs.google.com;
     object-src 'self'";
