@@ -347,6 +347,8 @@ class AuteurBiGrouper(BiGrouper):
                         for v in values))
 
     def get_verbose_value(self, value, keys):
+        if value is None:
+            return ''
         return value.html(tags=self.tags)
 
 
