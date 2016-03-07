@@ -358,7 +358,7 @@ REST_FRAMEWORK = {
         'anon': '100/day',
         'user': '600/day',
     },
-    'PAGINATE_BY': 10,
+    'PAGE_SIZE': 10,
 }
 
 RQ_QUEUES = {
