@@ -7,7 +7,7 @@ django-mptt==0.8.0
 django-autoslug==1.9.3
 
 # User interface
-https://github.com/BertrandBordage/django-grappelli/archive/1d2628f7338bd446cda50214becc34f5b6e244eb.tar.gz
+https://github.com/BertrandBordage/django-grappelli/archive/stable/2.7.x.tar.gz
 django-super-inlines==0.1.4
 django-tinymce==2.2.0
 django-crispy-forms==1.6.0
