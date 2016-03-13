@@ -32,7 +32,7 @@ server {
     text/plain
     text/css
     text/javascript
-    application/x-javascript
+    application/javascript
     image/png
     image/svg+xml
     image/jpeg
