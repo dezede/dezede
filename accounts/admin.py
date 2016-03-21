@@ -73,3 +73,9 @@ class HierarchicUserAdmin(VersionAdmin, UserAdmin):
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
     ordering = ('last_name', 'first_name')
+
+    # FIXME: This is a workaround to https://github.com/etianen/django-reversion/issues/448
+    def user_change_password(self, request, id, form_url=''):
+        with self._create_revision(request):
+            return super(HierarchicUserAdmin, self).user_change_password(
+                request, id, form_url=form_url)
