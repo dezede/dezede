@@ -5,7 +5,7 @@ django-haystack-panel==0.2.1
 django-extensions==1.6.1
 
 # Deployment tools
-Fabric==1.10.2
+Fabric3==1.10.2.post3
 
 # Testing
 django-nose==1.4.3
