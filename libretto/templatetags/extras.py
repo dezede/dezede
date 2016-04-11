@@ -38,7 +38,7 @@ compact_paragraph_re = re.compile(r'(?<![\n\s ])\n+[\s\n ]*\n+(?![\n\s ])')
 
 @register.filter
 def compact_paragraph(text):
-    return mark_safe(compact_paragraph_re.sub(r'\u00A0/ ', text.strip('\n')))
+    return mark_safe(compact_paragraph_re.sub('\u00A0/ ', text.strip('\n')))
 
 
 escaped_chars_re = re.compile(r'([#$%&_{}])')
