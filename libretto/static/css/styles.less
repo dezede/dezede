@@ -62,7 +62,7 @@
 
 @content-padding-bottom: @grid-gutter-width;
 
-@footer-line-height: 50px;
+@footer-line-height: 45px;
 @footer-height:      @footer-line-height + @navbar-padding-vertical * 2 + @footer-border-width;
 @footer-border-width: 1px;
 
@@ -795,9 +795,17 @@ form .results_on_deck {
   position: absolute;
   height: @footer-height;
   border-top-width: @footer-border-width;
-  line-height: @footer-line-height;
-  .navbar-nav > li > a {
-    line-height: @footer-line-height;
+  ul.navbar-nav {
+    &:first-child {
+      margin-left: -@navbar-padding-horizontal;
+    }
+    > li {
+      > p, > a {
+        margin: 0;
+        padding: @navbar-padding-vertical @navbar-padding-horizontal;
+        line-height: @footer-line-height;
+      }
+    }
   }
 }
 

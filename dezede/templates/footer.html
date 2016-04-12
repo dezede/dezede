@@ -13,9 +13,18 @@
     </div>
 
     <div class="collapse navbar-collapse" id="footer-collapse">
-      <p class="navbar-text">ISSN 2269-9473</p>
-      <p class="navbar-text">{% dezede_version %}</p>
       {# La surface de chaque logo est de 1200 px² #}
+      <ul class="nav navbar-nav">
+        <li><p class="navbar-text"><span>ISSN 2269-9473</span></p></li>
+        <li><p class="navbar-text"><span>{% dezede_version %}</span></p></li>
+        <li>
+          <a href="http://noripyt.com/" target="_blank">
+            <img src="{% static 'images/noripyt.png' %}"
+                 style="width: 82px; height: 15px;"
+                 title="Réalisé par NoriPyt" />
+          </a>
+        </li>
+      </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
           <a href="http://www.univ-rouen.fr/" target="_blank">
