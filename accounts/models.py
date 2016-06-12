@@ -15,10 +15,13 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-from libretto.models.base import AutoriteModel, CommonTreeManager, \
-    CommonTreeQuerySet
+from mptt.utils import _get_tree_model
+
 from common.utils.html import href, sc
 from common.utils.text import str_list_w_last
+from libretto.models.base import (
+    AutoriteModel, CommonTreeManager, CommonTreeQuerySet, CommonManager,
+)
 
 
 #
@@ -51,6 +54,19 @@ class HierarchicUserQuerySet(CommonTreeQuerySet):
 
 class HierarchicUserManager(CommonTreeManager, UserManager):
     queryset_class = HierarchicUserQuerySet
+    use_in_migrations = False
+
+    # FIXME: This is a workaround to https://github.com/django-mptt/django-mptt/issues/382
+    #        Remove when fixed upstream.
+    def contribute_to_class(self, model, name):
+        CommonManager.contribute_to_class(self, model, name)
+
+        if not model._meta.abstract:
+            self.tree_model = _get_tree_model(model)
+
+            self._base_manager = None
+            if self.tree_model is not None and self.tree_model is not model:
+                self._base_manager = self.tree_model._tree_manager
 
     def html(self, tags=True):
         return self.get_queryset().html(tags=tags)
