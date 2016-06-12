@@ -44,43 +44,14 @@ Pour installer les dépendances qui suivent :
 Paquets
 -------
 
-Nécessaires à l'exécution
-.........................
-
-========================= =======
-Paquet Ubuntu             Version
-========================= =======
-nano
-mercurial
-postgresql                9.1
-postgresql-server-dev-9.1
-python2.7                 2.7.4
-python-pip                1.3.1
-redis-server              2:2.6.7
-python-dev                2.7.4
-libxml2
-libxml2-dev
-libxslt1-dev
-openjdk-7-jre
-elasticsearch             0.90.7
-nodejs                    0.10.22
-========================= =======
-
-================= =======
-Module javascript Version
-================= =======
-less              1.6.1
-================= =======
-
-
 Nécessaires au déploiement
 ..........................
 
 ========== =======
 Paquet     Version
 ========== =======
-nginx      1.2.6
-supervisor 3.0a8
+nginx      1.10.0
+supervisor 3.2.0
 ========== =======
 
 
@@ -107,7 +78,7 @@ Configuration de PostgreSQL
 
    - Éditer le fichier de configuration :
 
-        ``sudo nano /etc/postgresql/9.1/main/pg_hba.conf``
+        ``sudo nano /etc/postgresql/9.5/main/pg_hba.conf``
 
    - Ajouter cette nouvelle ligne après
      ``# Database administrative login by Unix domain socket`` :
@@ -141,7 +112,7 @@ Configuration de Redis
 
         ::
 
-          unixsocket /var/run/redis/redis.sock
+          unixsocket /run/redis/redis.sock
           unixsocketperm 777
 
 

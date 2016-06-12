@@ -74,7 +74,7 @@ def install_ubuntu():
          'git mercurial '
          'postgresql postgresql-server-dev-all postgis '
          'redis-server elasticsearch default-jre '
-         'python3.4 python3-pip python3.4-dev virtualenvwrapper '
+         'python3.5 python3-pip python3.5-dev virtualenvwrapper '
          # For image thumbnailing and conversion.
          'libjpeg-dev '
          # For CSS generation.

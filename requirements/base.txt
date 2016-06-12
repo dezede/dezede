@@ -1,46 +1,46 @@
 # Basics
-Django==1.8.11
+Django==1.8.13
 psycopg2==2.6.1
 
 # Database fields
-django-mptt==0.8.0
+django-mptt==0.8.4
 django-autoslug==1.9.3
 
 # User interface
-https://github.com/BertrandBordage/django-grappelli/archive/stable/2.7.x.tar.gz
+django-grappelli==2.8.1
 django-super-inlines==0.1.4
-django-tinymce==2.2.0
+django-tinymce==2.3.0
 django-crispy-forms==1.6.0
-django-ajax-selects==1.4.2
+django-ajax-selects==1.4.3
 django-image-cropping==1.0.3
 
 # User authentication
-django-allauth==0.24.1
+django-allauth==0.25.2
 
 # Search engine
 django-haystack==2.4.1
-elasticsearch==2.2.0
+elasticsearch==2.3.0
 
 # Caching
-django-redis==4.3.0
+django-redis==4.4.3
 django-cachalot==1.2.1
 
 # Data visualization frameworks
-djangorestframework==3.3.2
+djangorestframework==3.3.3
 django-tablature==0.1.7
 
 # Small but powerful tools
-django-reversion==1.10.1
-django-el-pagination==2.1.1
+django-reversion==2.0.0
+django-el-pagination==2.1.2
 easy-thumbnails==2.3
 django-viewsets==0.1.9
 Unipath==1.1
-tqdm==3.8.0
+tqdm==4.7.4
 awesome-slugify==1.6.5
 
 # Asynchronous tasks
-django-rq==0.9.0
-rq==0.5.6
+django-rq==0.9.1
+rq==0.6.0
 django-transaction-hooks==0.2
 
 # CSS/JS handling
@@ -50,19 +50,19 @@ rjsmin==1.0.12
 
 # Data parsing/serialization
 beautifulsoup4==4.4.1
-lxml==3.5.0
+lxml==3.6.0
 defusedxml==0.4.1
-pandas==0.17.1
-XlsxWriter==0.8.4
+pandas==0.18.1
+XlsxWriter==0.9.1
 
 # HTML cleaning
-bleach==1.4.2
+bleach==1.4.3
 
 # Dependencies
 # For easy-thumbnails
-Pillow==3.1.0
+Pillow==3.2.0
 # For djangorestframework (optionals)
-Pygments==2.1
+Pygments==2.1.3
 django-filter==0.11.0
 # For bleach
 html5lib==0.9999999
