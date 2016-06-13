@@ -697,6 +697,7 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
             'naissance_lieu', 'deces_lieu', 'etat', 'owner'
         ).prefetch_related('professions')
 
+
 @register(TypeDEnsemble)
 class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'parent')

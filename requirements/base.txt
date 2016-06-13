@@ -30,7 +30,7 @@ djangorestframework==3.3.3
 django-tablature==0.1.7
 
 # Small but powerful tools
-django-reversion==2.0.0
+django-reversion==1.10.2
 django-el-pagination==2.1.2
 easy-thumbnails==2.3
 django-viewsets==0.1.9
