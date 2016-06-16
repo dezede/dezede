@@ -276,7 +276,7 @@ slugify_unicode_class = Slugify(translate=None, to_lower=True, max_length=50)
 
 
 def slugify_unicode(text):
-    return slugify_unicode_class(text)
+    return slugify_unicode_class(force_text(text))
 
 
 class SlugModel(Model):

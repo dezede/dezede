@@ -59,6 +59,7 @@ class EvenementAFO(CommonModel):
         ('Ce', 'contrat de cession'),
         ('Cp', 'contrat de coproduction'),
         ('Cr', 'contrat de coréalisation'),
+        ('L', 'location'),  # TODO: Pas sûr que ce soit une bonne valeur.
     )
     modalite_de_production = CharField(_('modalité de production'),
                                        max_length=2, blank=True,
