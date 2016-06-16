@@ -1,13 +1,13 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import re
 
 from django.apps import apps
 from django.contrib.gis.geos import Polygon
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.db.models.query import QuerySet
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
@@ -61,6 +61,7 @@ class BaseEvenementListView(PublishedListView):
     view_name = 'evenements'
     has_frontend_admin = True
     enable_default_page = True
+    filter_re = re.compile(r'^\|?\d+(?:\|\d+)*\|?$')
 
     BINDINGS = {
         'lieu': ('debut_lieu__in', 'fin_lieu__in'),
@@ -78,19 +79,18 @@ class BaseEvenementListView(PublishedListView):
     def get_filters(cls, data):
         filters = Q()
         for key, value in data.items():
-            if not value or value == '|' or key not in cls.BINDINGS:
+            if key not in cls.BINDINGS:
                 continue
-            if '|' in value:
-                # Sépare les différents objets à partir d'une liste de pk.
-                Model = apps.get_model('libretto', key)
-                pk_list = [pk for pk in value.split('|') if pk]
-                objects = Model._default_manager.filter(pk__in=pk_list)
-                # Inclus tous les événements impliquant les descendants
-                # éventuels de chaque objet de value.
-                if hasattr(objects, 'get_descendants'):
-                    objects = objects.get_descendants(include_self=True)
-                value = objects
-            if (isinstance(value, QuerySet) and value.exists()) or value:
+            # Sépare les différents objets à partir d'une liste de pk.
+            Model = apps.get_model('libretto', key)
+            pk_list = value.strip('|').split('|')
+            objects = Model._default_manager.filter(pk__in=pk_list)
+            # Inclus tous les événements impliquant les descendants
+            # éventuels de chaque objet de value.
+            if hasattr(objects, 'get_descendants'):
+                objects = objects.get_descendants(include_self=True)
+            value = objects
+            if value.exists():
                 accessors = cls.BINDINGS[key]
                 if not isinstance(accessors, (tuple, list)):
                     accessors = [accessors]
@@ -176,18 +176,15 @@ class BaseEvenementListView(PublishedListView):
     def get_cleaned_GET(self):
         new_qd = self.request.GET.copy()
         for k, v in tuple(new_qd.items()):
-            if not v or v == '|':
+            if k in self.BINDINGS and self.filter_re.match(v) is None:
                 del new_qd[k]
         return new_qd
 
     def get(self, request, *args, **kwargs):
-        response = super(BaseEvenementListView, self).get(request, *args, **kwargs)
         new_GET = self.get_cleaned_GET()
-        if new_GET.dict() != self.request.GET.dict() or not self.valid_form:
-            response = HttpResponseRedirect(self.get_success_url())
-            if self.valid_form:
-                response['Location'] += '?' + new_GET.urlencode(safe='|')
-        return response
+        if new_GET.dict() != self.request.GET.dict():
+            return HttpResponseRedirect('?' + new_GET.urlencode(safe='|'))
+        return super(BaseEvenementListView, self).get(request, *args, **kwargs)
 
 
 class EvenementListView(AjaxListView, BaseEvenementListView):
