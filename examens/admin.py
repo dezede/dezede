@@ -1,6 +1,7 @@
 from django.contrib.admin import (
     TabularInline, StackedInline, register, ModelAdmin)
 from django.db.models import Avg
+from django.utils.translation import ugettext_lazy as _
 
 from .forms import LevelAdminForm, TakenLevelForm
 from .models import Level, LevelSource, TakenExam, TakenLevel
@@ -35,12 +36,12 @@ class TakenLevelInline(StackedInline):
     def get_score(self, obj):
         if obj.score is not None:
             return '%.1f / 20' % (obj.score * 20.0)
-    get_score.short_description = 'score'
+    get_score.short_description = _('score')
 
 
 @register(TakenExam)
 class TakenExamAdmin(ModelAdmin):
-    list_display = ('user', 'session', 'current_level', 'is_complete',
+    list_display = ('user', 'session', 'get_current_level', 'is_complete',
                     'get_average_score', 'get_time_spent')
     inlines = (TakenLevelInline,)
 
@@ -49,8 +50,12 @@ class TakenExamAdmin(ModelAdmin):
         return qs.annotate_time_spent().annotate(
             avg_score=Avg('taken_levels__score'))
 
+    def get_current_level(self, obj):
+        return obj.current_level
+    get_current_level.short_description = _('current level')
+
     def get_average_score(self, obj):
         if obj.avg_score is not None:
             return '%.1f / 20' % (obj.avg_score * 20.0)
-    get_average_score.short_description = 'average score'
+    get_average_score.short_description = _('average score')
     get_average_score.admin_order_field = 'avg_score'

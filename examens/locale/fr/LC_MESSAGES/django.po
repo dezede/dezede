@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-26 22:39+0200\n"
+"POT-Creation-Date: 2016-06-20 18:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,38 +18,146 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: utils.py:40
+#: admin.py:39 models.py:162
+msgid "score"
+msgstr "note"
+
+#: admin.py:55
+msgid "current level"
+msgstr "niveau actuel"
+
+#: admin.py:60
+msgid "average score"
+msgstr "note moyenne"
+
+#: models.py:23
+msgid "number"
+msgstr "numéro"
+
+#: models.py:25
+msgid "help message"
+msgstr "message d’aide"
+
+#: models.py:28
+msgid "sources"
+msgstr "sources"
+
+#: models.py:31 models.py:46 models.py:157
+msgid "level"
+msgstr "niveau"
+
+#: models.py:32
+msgid "levels"
+msgstr "niveaux"
+
+#: models.py:49 models.py:159
+msgid "source"
+msgstr "source"
+
+#: models.py:52
+msgid "source of level"
+msgstr "source de niveau"
+
+#: models.py:53
+msgid "sources of level"
+msgstr "sources de niveau"
+
+#: models.py:75
+msgid "user"
+msgstr "utilisateur"
+
+#: models.py:77
+msgid "session"
+msgstr "session"
+
+#: models.py:84 models.py:155
+msgid "taken exam"
+msgstr "examen passé"
+
+#: models.py:85
+msgid "taken exams"
+msgstr "examens passés"
+
+#: models.py:106
+msgid "is complete"
+msgstr "est fini"
+
+#: models.py:121
+msgid "time spent"
+msgstr "temps passé"
+
+#: models.py:161
+msgid "transcription"
+msgstr "transcription"
+
+#: models.py:164
+msgid "passed"
+msgstr "passé"
+
+#: models.py:165
+msgid "start"
+msgstr "début"
+
+#: models.py:166
+msgid "end"
+msgstr "fin"
+
+#: models.py:172
+msgid "taken level"
+msgstr "niveau passé"
+
+#: models.py:173
+msgid "taken levels"
+msgstr "niveaux passés"
+
+#: utils.py:53
 msgid "Bad formatting"
 msgstr "Mauvais formatage"
 
-#: utils.py:41
+#: utils.py:54
 msgid "Extra character"
 msgid_plural "Extra characters"
 msgstr[0] "Caractère en trop"
 msgstr[1] "Caractères en trop"
 
-#: utils.py:42
+#: utils.py:55
 msgid "Missing character"
 msgid_plural "Missing characters"
 msgstr[0] "Caractère manquant"
 msgstr[1] "Caractères manquants"
 
-#: utils.py:44
+#: utils.py:57
 msgid "Missing sic"
 msgstr "Sic manquant"
 
-#: utils.py:45
+#: utils.py:58
 msgid "Wrong case"
 msgstr "Mauvaise casse"
 
-#: utils.py:46
+#: utils.py:59
 msgid "Wrong diacritic"
 msgstr "Mauvais accent"
 
-#: utils.py:47
+#: utils.py:60
 msgid "Wrong case and diacritic"
 msgstr "Mauvaise casse et accent"
 
-#: utils.py:48
+#: utils.py:61
 msgid "Erroneous character"
 msgstr "Caractère erroné"
+
+#: views.py:49
+msgid ""
+"Congratulations! The transcription was perfect <i class=\"fa fa-smile-o\"></"
+"i>"
+msgstr ""
+"Félicitations ! La transcription était parfaite <i class=\"fa fa-smile-o\"></"
+"i>"
+
+#: views.py:58
+msgid ""
+"Excellent, you passed all the levels! You can now create a user account if "
+"you don’t have one yet."
+msgstr ""
+"Excellent, vous avez fini toutes les étapes ! Vous pouvez maintenant créer "
+"un compte utilisateur si vous n’en possédez pas."

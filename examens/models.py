@@ -103,6 +103,7 @@ class TakenExam(Model):
 
     def is_complete(self):
         return self.last_passed_level_number == self.max_level_number
+    is_complete.short_description = _('is complete')
     is_complete.boolean = True
 
     @property

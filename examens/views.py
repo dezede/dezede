@@ -46,7 +46,7 @@ class TakeLevelView(UpdateView):
         if instance.passed:
             messages.add_message(
                 self.request, SUCCESS,
-                _('Félicitations ! La transcription était parfaite '
+                _('Congratulations! The transcription was perfect '
                   '<i class="fa fa-smile-o"></i>'))
         return redirect('source_examen')
 
@@ -55,9 +55,9 @@ class TakeLevelView(UpdateView):
         if self.taken_exam.is_complete():
             messages.add_message(
                 self.request, SUCCESS,
-                _('Excellent, vous avez fini toutes les étapes ! '
-                  'Vous pouvez maintenant créer un compte utilisateur '
-                  'si vous n’en possédez pas.'))
+                _('Excellent, you passed all the levels! '
+                  'You can now create a user account '
+                  'if you don’t have one yet.'))
             return redirect('account_signup')
 
     @transaction.atomic
