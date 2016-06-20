@@ -53,10 +53,18 @@ LOWER_MSG = _('En minuscules.')
 PLURAL_MSG = _('À remplir si le pluriel n’est pas un simple '
                'ajout de « s ». Exemple : « animal » devient « animaux » '
                'et non « animals ».')
-DATE_MSG = _('Exemple : « 6/6/1944 » pour le 6 juin 1944.')
-DATE_MSG_EXTENDED = _('Exemple : « 6/6/1944 » pour le 6 juin 1944. '
-                      'En cas de date approximative, saisir ici le début de '
-                      'l’intervalle, par exemple « 1/1/1678 » pour 1678.')
+DATE_MSG = _('Exemple : « 14/7/1789 » pour le 14 juillet 1789.')
+DATE_MSG_EXTENDED = _(
+    'Exemple : « 14/7/1789 » pour le 14 juillet 1789. '
+    'En cas de date approximative, '
+    'saisir le premier jour du mois (« 1/10/1678 » pour octobre 1678) '
+    'ou de l’année (« 1/1/1830 » pour 1830).')
+DATE_APPROX_MESSAGE = _(
+    'Ne remplir que si la date est approximative. '
+    'Par exemple : « 1870 », « octobre 1812 », « été 1967 ».')
+HEURE_MSG = _('Exemple : « 19:30 » pour 19h30.')
+HEURE_APPROX_MSG = _('Ne remplir que si l’heure est approximative. '
+                     'Par exemple : « matinée », « soirée ».')
 
 
 def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
@@ -360,16 +368,17 @@ class AncrageSpatioTemporel(object):
                 is_null = 'date_approx' not in self.not_null_fields
                 fields.append(('date_approx', CharField(
                     _('date (approximative)'), max_length=60, blank=is_null,
-                    help_text=_('Ne remplir que si la date est imprécise.'))))
+                    help_text=DATE_APPROX_MESSAGE)))
         if self.has_heure:
             is_null = 'heure' not in self.not_null_fields
             fields.append(('heure', TimeField(
-                _('heure'), blank=is_null, null=is_null, db_index=True)))
+                _('heure'), blank=is_null, null=is_null, db_index=True,
+                help_text=HEURE_MSG)))
             if self.approx:
                 is_null = 'heure_approx' not in self.not_null_fields
                 fields.append(('heure_approx', CharField(
                     _('heure (approximative)'), max_length=30, blank=is_null,
-                    help_text=_('Ne remplir que si l’heure est imprécise.'))))
+                    help_text=HEURE_APPROX_MSG)))
         if self.has_lieu:
             is_null = 'lieu' not in self.not_null_fields
             fields.append(('lieu', ForeignKey(
@@ -381,8 +390,8 @@ class AncrageSpatioTemporel(object):
                 is_null = 'lieu_approx' not in self.not_null_fields
                 fields.append(('lieu_approx', CharField(
                     _('lieu (approximatif)'), max_length=50, blank=is_null,
-                    help_text=_('Ne remplir que si le lieu (ou institution) '
-                                'est imprécis(e).'))))
+                    help_text=_('Ne remplir que si le lieu (ou l’institution) '
+                                'est approximatif(ve).'))))
         return fields
 
     def contribute_to_class(self, model, name):

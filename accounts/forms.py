@@ -26,9 +26,10 @@ def get_groups():
 class HierarchicUserSignupForm(Form):
     first_name = CharField(label=_('Prénom(s)'))
     last_name = CharField(label=_('Nom'))
-    mentor = TreeNodeChoiceField(queryset=get_mentors(), label=_('Mentor'))
+    mentor = TreeNodeChoiceField(queryset=get_mentors(),
+                                 label=_('Responsable scientifique'))
     willing_to_be_mentor = BooleanField(
-        required=False, label=_('Souhaite devenir mentor'))
+        required=False, label=_('Veut être responsable scientifique'))
     groups = ModelMultipleChoiceField(
         queryset=get_groups(), widget=CheckboxSelectMultiple,
         label=_('Groupes'))
@@ -51,7 +52,7 @@ class HierarchicUserSignupForm(Form):
                 PrependedText('password2', '<i class="fa fa-key fa-fw"></i>'),
             ),
             Fieldset(
-                _('Mentorat'),
+                _('Responsabilité scientifique'),
                 'mentor',
                 Field('willing_to_be_mentor', wrapper_class='col-sm-offset-2'),
                 'groups',
@@ -70,8 +71,9 @@ class HierarchicUserSignupForm(Form):
         email_content = render_to_string(
             'accounts/grant_to_admin_demand_email.txt',
             {'user': user, 'site_url': site_url, 'mentor': user.mentor})
-        user.mentor.email_user(_('[Dezède] Demande de mentorat'),
-                               email_content)
+        user.mentor.email_user(
+            _('[Dezède] Demande de responsabilité scientifique'),
+            email_content)
 
 
 from allauth.account.forms import LoginForm as OriginalLoginForm

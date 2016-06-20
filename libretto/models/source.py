@@ -153,23 +153,26 @@ class Source(AutoriteModel):
                       on_delete=PROTECT)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True,
                       help_text=ex(_('Journal de Rouen')))
-    legende = CharField(_('légende'), max_length=600, blank=True)
+    legende = CharField(_('légende'), max_length=600, blank=True,
+                        help_text=_('Recommandée pour les images.'))
 
     ancrage = AncrageSpatioTemporel(has_heure=False, has_lieu=False)
     numero = CharField(_('numéro'), max_length=50, blank=True, db_index=True,
                        help_text=_('Sans « № ». Exemple : « 52 »'))
-    folio = CharField(_('folio'), max_length=10, blank=True)
+    folio = CharField(_('folio'), max_length=10, blank=True,
+                      help_text=_('Sans « f. ». Exemple : « 3 ».'))
     page = CharField(_('page'), max_length=10, blank=True, db_index=True,
                      help_text=_('Sans « p. ». Exemple : « 3 »'))
     lieu_conservation = CharField(_('lieu de conservation'), max_length=50,
                                   blank=True, db_index=True)
     cote = CharField(_('cote'), max_length=35, blank=True, db_index=True)
     url = URLField(blank=True,
-                   help_text=_('Adresse de référence externe à Dezède.'))
+                   help_text=_('Uniquement un permalien extérieur à Dezède.'))
 
     transcription = HTMLField(_('transcription'), blank=True,
-        help_text=_('Recopié tel quel, avec les fautes d’orthographe suivies '
-                    'de « [<em>sic</em>] » le cas échéant.'))
+        help_text=_('Recopier la source ou un extrait en suivant les règles '
+                    'définies dans <a href="%s">le didacticiel.</a>')
+                  % '/examens/source/')  # FIXME: Don’t hardcode this.
 
     evenements = ManyToManyField('Evenement', through='SourceEvenement',
                                  related_name='sources')

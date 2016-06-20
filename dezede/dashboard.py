@@ -21,7 +21,7 @@ class CustomIndexDashboard(Dashboard):
 
     def init_with_context(self, context):
         self.children.append(modules.Group(
-            _('Libretto'),
+            None,
             column=1,
             collapsible=False,
             children=[
@@ -57,7 +57,7 @@ class CustomIndexDashboard(Dashboard):
         ))
 
         self.children.append(modules.ModelList(
-            _('Rédaction'),
+            _('Gestion des contenus'),
             column=1,
             collapsible=False,
             css_classes=('grp-open',),
@@ -65,7 +65,7 @@ class CustomIndexDashboard(Dashboard):
         ))
 
         self.children.append(modules.ModelList(
-            _('Examens'),
+            _('Didacticiel'),
             column=1,
             collapsible=False,
             css_classes=('grp-open',),
@@ -96,29 +96,6 @@ class CustomIndexDashboard(Dashboard):
                 {
                     'title': 'Transifex',
                     'url': 'https://www.transifex.com/projects/p/dezede/',
-                    'external': True,
-                },
-            ]
-        ))
-
-        self.children.append(modules.LinkList(
-            _('Support'),
-            column=3,
-            css_classes=('grp-collapse grp-closed',),
-            children=[
-                {
-                    'title': _('Documentation de Django'),
-                    'url': 'http://docs.djangoproject.com/',
-                    'external': True,
-                },
-                {
-                    'title': _('Documentation de Grappelli'),
-                    'url': 'http://packages.python.org/django-grappelli/',
-                    'external': True,
-                },
-                {
-                    'title': _('Grappelli sur Google-Code'),
-                    'url': 'http://code.google.com/p/django-grappelli/',
                     'external': True,
                 },
             ]

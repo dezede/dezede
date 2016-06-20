@@ -89,7 +89,7 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     # institutions.
     historique = HTMLField(_('historique'), blank=True)
     geometry = GeometryField(
-        _('point, tracé ou polygone'), blank=True, null=True, db_index=True)
+        _('géo-positionnement'), blank=True, null=True, db_index=True)
 
     objects = LieuManager()
 

@@ -105,12 +105,12 @@ class HierarchicUser(MPTTModel, AbstractUser):
 
     mentor = TreeForeignKey(
         'self', null=True, blank=True, related_name='disciples',
-        verbose_name=_('mentor'),
+        verbose_name=_('responsable scientifique'),
         limit_choices_to={'willing_to_be_mentor__exact': True})
     willing_to_be_mentor = BooleanField(
-        _('Veut être mentor'), default=False)
+        _('Veut être responsable scientifique'), default=False)
 
-    avatar = ImageField(_('avatar'), upload_to='avatars/',
+    avatar = ImageField(_('photographie d’identité'), upload_to='avatars/',
                         blank=True, null=True)
 
     presentation = TextField(

@@ -28,7 +28,7 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
     list_display = ('__str__',)
     search_fields = ('titre__unaccent', 'titre_court__unaccent',)
     prepopulated_fields = {'slug': ('titre',)}
-    readonly_fields = ('get_count', 'get_queryset')
+    readonly_fields = ('get_count',)
     raw_id_fields = ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs',
                      'ensembles', 'sources', 'evenements', 'saisons')
     autocomplete_lookup_fields = {
@@ -59,7 +59,7 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
                        'auteurs', 'ensembles', 'sources', 'circonstance'),
         }),
         (_('Sélection manuelle'), {
-            'fields': ('evenements', 'statique', 'get_count', 'get_queryset'),
+            'fields': ('evenements', 'statique', 'get_count',),
         })
     )
     formfield_overrides = {

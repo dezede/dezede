@@ -122,7 +122,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
         ('B', _('Nom de naissance (standard)')),  # B pour Birth name
         ('F', _('Prénom(s) (uniquement)')),  # F pour First name
     )
-    designation = CharField(_('désignation'), max_length=1,
+    designation = CharField(_('affichage'), max_length=1,
                             choices=DESIGNATIONS, default='S')
     TITRES = (
         ('M', _('M.')),

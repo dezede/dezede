@@ -67,7 +67,9 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children', verbose_name=_('parent'))
     position = PositiveSmallIntegerField(_('position'), default=1)
-    slug = SlugField(unique=True)
+    slug = SlugField(unique=True,
+                     help_text=_('Personnaliser l’affichage du titre '
+                                 'du dossier dans l’adresse URL.'))
 
     # Métadonnées
     editeurs_scientifiques = ManyToManyField(
