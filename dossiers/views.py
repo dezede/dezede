@@ -77,7 +77,10 @@ class DossierDEvenementsDetail(PublishedDetailView):
     def get_context_data(self, **kwargs):
         context = super(DossierDEvenementsDetail,
                         self).get_context_data(**kwargs)
-        context['SITE'] = get_current_site(self.request)
+        context.update(
+            SITE=get_current_site(self.request),
+            children=self.object.children.published(self.request)
+        )
         return context
 
 

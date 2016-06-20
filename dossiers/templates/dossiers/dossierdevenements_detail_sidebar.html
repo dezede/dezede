@@ -13,22 +13,20 @@
       </dt>{# Auteur(s) pour revue #}
       <dd>{{ object.editeurs_scientifiques.html }}</dd>
     </dl>
-    {% with children=object.children.all %}
-      {% if children %}
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">{% trans 'Dans ce dossier' %}</h3>
-          </div>
-          <div class="list-group">
-            {% for child in children %}
-              <a class="list-group-item" href="{{ child.get_absolute_url }}">
-                {{ child }}
-              </a>
-            {% endfor %}
-          </div>
+    {% if children %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{% trans 'Dans ce dossier' %}</h3>
         </div>
-      {% endif %}
-    {% endwith %}
+        <div class="list-group">
+          {% for child in children %}
+            <a class="list-group-item" href="{{ child.get_absolute_url }}">
+              {{ child }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
     <dl class="auto-links">
       {% with n_contributors=object.get_contributors.count %}
         {% if n_contributors %}
