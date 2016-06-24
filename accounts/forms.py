@@ -27,9 +27,9 @@ class HierarchicUserSignupForm(Form):
     first_name = CharField(label=_('Prénom(s)'))
     last_name = CharField(label=_('Nom'))
     mentor = TreeNodeChoiceField(queryset=get_mentors(),
-                                 label=_('Responsable scientifique'))
+                                 label=_('Responsable'))
     willing_to_be_mentor = BooleanField(
-        required=False, label=_('Veut être responsable scientifique'))
+        required=False, label=_('Souhaite devenir responsable scientifique'))
     groups = ModelMultipleChoiceField(
         queryset=get_groups(), widget=CheckboxSelectMultiple,
         label=_('Groupes'))
@@ -42,19 +42,16 @@ class HierarchicUserSignupForm(Form):
         self.helper.label_class = 'col-sm-2'
         self.helper.field_class = 'col-sm-8'
         self.helper.layout = Layout(
+            Field('first_name', 'last_name'),
+            PrependedText('email',
+                          '<i class="fa fa-envelope-o fa-fw"></i>'),
+            PrependedText('username', '<i class="fa fa-user fa-fw"></i>'),
+            PrependedText('password1', '<i class="fa fa-key fa-fw"></i>'),
+            PrependedText('password2', '<i class="fa fa-key fa-fw"></i>'),
             Fieldset(
-                _('Général'),
-                Field('first_name', 'last_name'),
-                PrependedText('email',
-                              '<i class="fa fa-envelope-o fa-fw"></i>'),
-                PrependedText('username', '<i class="fa fa-user fa-fw"></i>'),
-                PrependedText('password1', '<i class="fa fa-key fa-fw"></i>'),
-                PrependedText('password2', '<i class="fa fa-key fa-fw"></i>'),
-            ),
-            Fieldset(
-                _('Responsabilité scientifique'),
+                _('Responsable scientifique'),
                 'mentor',
-                Field('willing_to_be_mentor', wrapper_class='col-sm-offset-2'),
+                Field('willing_to_be_mentor'),
                 'groups',
             ),
             Field('next'),

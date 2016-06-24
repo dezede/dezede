@@ -25,41 +25,41 @@ class EvenementAFO(CommonModel):
     titre_programme = CharField(_('titre du programme'), max_length=200,
                                 blank=True)
     TYPES_DE_PROGRAMMES = (
-        ('LS', 'lyrique version scénique'),
-        ('MC', 'musique de chambre'),
-        ('LC', 'lyrique version concert'),
-        ('S', 'symphonique (dont chœur/récital)'),
-        ('C', 'chorégraphique'),
-        ('A', 'autre'),
+        ('LS', _('lyrique version scénique')),
+        ('MC', _('musique de chambre')),
+        ('LC', _('lyrique version concert')),
+        ('S', _('symphonique (dont chœur/récital)')),
+        ('C', _('chorégraphique')),
+        ('A', _('autre')),
     )
     type_de_programme = CharField(_('typologie artistique du programme'),
                                   max_length=2, blank=True,
                                   choices=TYPES_DE_PROGRAMMES)
     PRESENTATIONS_SPECIFIQUES = (
-        ('C', 'concert commenté/présenté'),
-        ('P', 'concert participatif'),
-        ('A', 'autre'),
+        ('C', _('concert commenté/présenté')),
+        ('P', _('concert participatif')),
+        ('A', _('autre')),
     )
     presentation_specifique = CharField(_('présentation spécifique'),
                                         max_length=1, blank=True,
                                         choices=PRESENTATIONS_SPECIFIQUES)
     PUBLICS_SPECIFIQUES = (
-        ('P', 'public de proximité'),
-        ('E', 'public empêché (santé, handicap, justice)'),
-        ('S', 'seniors'),
-        ('J', 'jeunes'),
-        ('JS', 'jeunes en temps scolaire'),
-        ('JV', 'jeunes hors temps scolaire'),
+        ('P', _('public de proximité')),
+        ('E', _('public empêché (santé, handicap, justice)')),
+        ('S', _('seniors')),
+        ('J', _('jeunes')),
+        ('JS', _('jeunes en temps scolaire')),
+        ('JV', _('jeunes hors temps scolaire')),
     )
     public_specifique = CharField(_('public spécifique'), max_length=2,
                                   blank=True, choices=PUBLICS_SPECIFIQUES)
     MODALITES_DE_PRODUCTION = (
-        ('P', 'participation aux frais'),
-        ('A', 'autoproduction'),
-        ('Ce', 'contrat de cession'),
-        ('Cp', 'contrat de coproduction'),
-        ('Cr', 'contrat de coréalisation'),
-        ('L', 'location'),  # TODO: Pas sûr que ce soit une bonne valeur.
+        ('P', _('participation aux frais')),
+        ('A', _('autoproduction')),
+        ('Ce', _('contrat de cession')),
+        ('Cp', _('contrat de coproduction')),
+        ('Cr', _('contrat de coréalisation')),
+        ('L', _('location')),  # TODO: Pas sûr que ce soit une bonne valeur.
     )
     modalite_de_production = CharField(_('modalité de production'),
                                        max_length=2, blank=True,
@@ -97,15 +97,15 @@ class LieuAFO(CommonModel):
                          verbose_name=_('lieu ou institution'))
     code_postal = CharField(_('code postal'), max_length=10, blank=True)
     TYPES_DE_SCENES = (
-        ('N', 'nationale'),
-        ('C', 'conventionnée'),
+        ('N', _('nationale')),
+        ('C', _('conventionnée')),
     )
     type_de_scene = CharField(_('type de scène'), max_length=1, blank=True,
                               choices=TYPES_DE_SCENES)
     TYPES_DE_SALLES = (
-        ('M', 'dédiée à la musique'),
-        ('P', 'pluridisciplinaire'),
-        ('A', 'autre'),
+        ('M', _('dédiée à la musique')),
+        ('P', _('pluridisciplinaire')),
+        ('A', _('autre')),
     )
     type_de_salle = CharField(_('type de salle'), max_length=1, blank=True,
                               choices=TYPES_DE_SALLES)

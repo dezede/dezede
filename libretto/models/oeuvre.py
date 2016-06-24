@@ -54,7 +54,7 @@ class GenreDOeuvre(CommonModel, SlugModel):
             'l’œuvre référente, ici choisie comme étant celle de nature '
             '« opéra »'))
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
-                              blank=True)
+                              blank=True, verbose_name=_('parents'))
 
     class Meta(object):
         verbose_name = ungettext_lazy('genre d’œuvre', 'genres d’œuvre', 1)
@@ -499,6 +499,82 @@ GAMMES = OrderedDict((
     # ('a', 'mode de la'),
     # ('b', 'mode de si'),
 ))
+# FIXME: This list of computed values is here for makemessages to detect them.
+#        Remove whenever a system is created to handle computed values.
+TONALITE_I18N_CHOICES = (
+    _('do bémol majeur'),
+    _('do majeur'),
+    _('do dièse majeur'),
+    _('ré bémol majeur'),
+    _('ré majeur'),
+    _('ré dièse majeur'),
+    _('mi bémol majeur'),
+    _('mi majeur'),
+    _('mi dièse majeur'),
+    _('fa bémol majeur'),
+    _('fa majeur'),
+    _('fa dièse majeur'),
+    _('sol bémol majeur'),
+    _('sol majeur'),
+    _('sol dièse majeur'),
+    _('la bémol majeur'),
+    _('la majeur'),
+    _('la dièse majeur'),
+    _('si bémol majeur'),
+    _('si majeur'),
+    _('si dièse majeur'),
+    _('ut bémol majeur'),
+    _('ut majeur'),
+    _('ut dièse majeur'),
+    _('do bémol mineur'),
+    _('do mineur'),
+    _('do dièse mineur'),
+    _('ré bémol mineur'),
+    _('ré mineur'),
+    _('ré dièse mineur'),
+    _('mi bémol mineur'),
+    _('mi mineur'),
+    _('mi dièse mineur'),
+    _('fa bémol mineur'),
+    _('fa mineur'),
+    _('fa dièse mineur'),
+    _('sol bémol mineur'),
+    _('sol mineur'),
+    _('sol dièse mineur'),
+    _('la bémol mineur'),
+    _('la mineur'),
+    _('la dièse mineur'),
+    _('si bémol mineur'),
+    _('si mineur'),
+    _('si dièse mineur'),
+    _('ut bémol mineur'),
+    _('ut mineur'),
+    _('ut dièse mineur'),
+    _('do bémol'),
+    _('do'),
+    _('do dièse'),
+    _('ré bémol'),
+    _('ré'),
+    _('ré dièse'),
+    _('mi bémol'),
+    _('mi'),
+    _('mi dièse'),
+    _('fa bémol'),
+    _('fa'),
+    _('fa dièse'),
+    _('sol bémol'),
+    _('sol'),
+    _('sol dièse'),
+    _('la bémol'),
+    _('la'),
+    _('la dièse'),
+    _('si bémol'),
+    _('si'),
+    _('si dièse'),
+    _('ut bémol'),
+    _('ut'),
+    _('ut dièse'),
+)
 
 
 @python_2_unicode_compatible
@@ -545,14 +621,15 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                     'de l’acte III des <em>Contes d’Hoffmann</em> '
                     'd’Offenbach.'))
     tempo = CharField(
-        max_length=50, blank=True, db_index=True,
+        _('tempo'), max_length=50, blank=True, db_index=True,
         help_text=_('Exemple : « Largo », « Presto ma non troppo », etc. '
                     'Ne pas saisir d’indication métronomique.'))
     NOTES = NOTES
     ALTERATIONS = ALTERATIONS
     GAMMES = GAMMES
     TONALITES = [
-        (gamme_k + note_k + alter_k, str_list((note_v, alter_v, gamme_v), ' '))
+        (gamme_k + note_k + alter_k,
+         _(str_list((note_v, alter_v, gamme_v), ' ')))
         for gamme_k, gamme_v in GAMMES.items()
         for note_k, note_v in NOTES.items()
         for alter_k, alter_v in ALTERATIONS.items()
@@ -586,7 +663,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         help_text=_('Exemple : « barcarolle » pour le n° 13 de l’acte III des '
                     '<em>Contes d’Hoffmann</em> d’Offenbach.'))
     opus = CharField(
-        _('opus'), max_length=5, blank=True, db_index=True,
+        _('opus'), max_length=6, blank=True, db_index=True,
         validators=[RegexValidator(
             r'^[\d\w\-/]+$', _('Vous ne pouvez saisir que des chiffres, '
                                'lettres non accentuées, tiret '
@@ -596,8 +673,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
                     'pour op. 12 à 15.'))
     ict = CharField(
         _('ICT'), max_length=25, blank=True, db_index=True,
-        help_text='Indice de Catalogue Thématique. Exemple : « RV 42 », '
-                  '« K. 299d » ou encore « Hob. XVI:24 ».')
+        help_text=_('Indice de Catalogue Thématique. Exemple : « RV 42 », '
+                    '« K. 299d » ou encore « Hob. XVI:24 ».'))
     CREATION_TYPES = (
         (1, _('genèse (composition, écriture, etc.)')),
         (2, _('première mondiale')),
@@ -654,7 +731,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
               'éventellement suivi de lettres.'))])
     filles = ManyToManyField(
         'self', through='ParenteDOeuvres', related_name='meres',
-        symmetrical=False, blank=True)
+        symmetrical=False, blank=True, verbose_name=_('filles'))
 
     objects = OeuvreManager()
 
@@ -731,12 +808,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
             yield hlp(self.tempo, ugettext('Tempo'), tags)
         if self.tonalite:
             gamme, note, alteration = self.tonalite
-            if gamme == 'C':
-                gamme = 'majeur'
-            elif gamme == 'A':
-                gamme = 'mineur'
-            elif gamme == '0':
-                gamme = ''
+            gamme = GAMMES.get(gamme, '')
             note = self.NOTES[note]
             alteration = self.ALTERATIONS[alteration]
             tonalite = ugettext('en %s') % str_list(
@@ -794,7 +866,7 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     @model_method_cached()
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
-    auteurs_html.short_description = _('auteurs')
+    auteurs_html.short_description = _('auteur(s)')
     auteurs_html.allow_tags = True
     auteurs_html.admin_order_field = 'auteurs__individu__nom'
 

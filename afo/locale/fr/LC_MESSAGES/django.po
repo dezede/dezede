@@ -1,0 +1,223 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-06-24 23:33+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: models.py:18
+msgid "événement"
+msgstr ""
+
+#: models.py:19
+msgid "nom du festival"
+msgstr ""
+
+#: models.py:20
+msgid "code ou titre de la tournée"
+msgstr ""
+
+#: models.py:22
+msgid "cycle"
+msgstr ""
+
+#: models.py:23
+msgid "code du programme"
+msgstr ""
+
+#: models.py:25
+msgid "titre du programme"
+msgstr ""
+
+#: models.py:28
+msgid "lyrique version scénique"
+msgstr ""
+
+#: models.py:29
+msgid "musique de chambre"
+msgstr ""
+
+#: models.py:30
+msgid "lyrique version concert"
+msgstr ""
+
+#: models.py:31
+msgid "symphonique (dont chœur/récital)"
+msgstr ""
+
+#: models.py:32
+msgid "chorégraphique"
+msgstr ""
+
+#: models.py:33 models.py:41 models.py:108
+msgid "autre"
+msgstr ""
+
+#: models.py:35
+msgid "typologie artistique du programme"
+msgstr ""
+
+#: models.py:39
+msgid "concert commenté/présenté"
+msgstr ""
+
+#: models.py:40
+msgid "concert participatif"
+msgstr ""
+
+#: models.py:43
+msgid "présentation spécifique"
+msgstr ""
+
+#: models.py:47
+msgid "public de proximité"
+msgstr ""
+
+#: models.py:48
+msgid "public empêché (santé, handicap, justice)"
+msgstr ""
+
+#: models.py:49
+msgid "seniors"
+msgstr ""
+
+#: models.py:50
+msgid "jeunes"
+msgstr ""
+
+#: models.py:51
+msgid "jeunes en temps scolaire"
+msgstr ""
+
+#: models.py:52
+msgid "jeunes hors temps scolaire"
+msgstr ""
+
+#: models.py:54
+msgid "public spécifique"
+msgstr ""
+
+#: models.py:57
+msgid "participation aux frais"
+msgstr ""
+
+#: models.py:58
+msgid "autoproduction"
+msgstr ""
+
+#: models.py:59
+msgid "contrat de cession"
+msgstr ""
+
+#: models.py:60
+msgid "contrat de coproduction"
+msgstr ""
+
+#: models.py:61
+msgid "contrat de coréalisation"
+msgstr ""
+
+#: models.py:62
+msgid "location"
+msgstr ""
+
+#: models.py:64
+msgid "modalité de production"
+msgstr ""
+
+#: models.py:68
+msgid "nombre de musiciens permanents convoqués (dont remplaçants)"
+msgstr ""
+
+#: models.py:71
+msgid "nombre de musiciens remplaçants"
+msgstr ""
+
+#: models.py:73
+msgid "nombre de musiciens supplémentaires convoqués"
+msgstr ""
+
+#: models.py:75
+msgid "nomenclature"
+msgstr ""
+
+#: models.py:76
+msgid "entrées exonérées"
+msgstr ""
+
+#: models.py:78
+msgid "entrées payantes"
+msgstr ""
+
+#: models.py:80
+msgid "entrées scolaires"
+msgstr ""
+
+#: models.py:82
+msgid "fréquentation totale"
+msgstr ""
+
+#: models.py:84
+msgid "jauge"
+msgstr ""
+
+#: models.py:87
+msgid "événement AFO"
+msgstr ""
+
+#: models.py:88
+msgid "événements AFO"
+msgstr ""
+
+#: models.py:97
+msgid "lieu ou institution"
+msgstr ""
+
+#: models.py:98
+msgid "code postal"
+msgstr ""
+
+#: models.py:100
+msgid "nationale"
+msgstr ""
+
+#: models.py:101
+msgid "conventionnée"
+msgstr ""
+
+#: models.py:103
+msgid "type de scène"
+msgstr ""
+
+#: models.py:106
+msgid "dédiée à la musique"
+msgstr ""
+
+#: models.py:107
+msgid "pluridisciplinaire"
+msgstr ""
+
+#: models.py:110
+msgid "type de salle"
+msgstr ""
+
+#: models.py:114
+msgid "lieu ou institution AFO"
+msgstr ""
+
+#: models.py:115
+msgid "lieux et institutions AFO"
+msgstr ""

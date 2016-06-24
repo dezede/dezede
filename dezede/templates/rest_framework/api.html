@@ -1,9 +1,10 @@
 {% extends 'rest_framework/base.html' %}
+{% load i18n %}
 
-{% block title %}API REST de Dezède{% endblock %}
+{% block title %}{% trans 'API REST de Dezède' %}{% endblock %}
 
 {% block branding %}
-  <span class="navbar-brand">API REST de Dezède</span>
+  <span class="navbar-brand">{% trans 'API REST de Dezède' %}</span>
 {% endblock %}
 
 {% block footer %}{% endblock %}

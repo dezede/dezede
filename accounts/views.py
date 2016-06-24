@@ -27,7 +27,7 @@ class GrantToAdmin(DetailView):
             'accounts/granted_to_admin_email.txt',
             {'user': user, 'site_url': site_url})
         user.email_user(
-            '[Dezède] Accès autorisé à l’administration',
+            _('[Dezède] Accès autorisé à l’administration'),
             email_content)
 
     def get_context_data(self, **kwargs):
@@ -179,6 +179,7 @@ class ContributeursView(EquipeView):
         102,  # Thomas Bacquet
         168,  # Thomas Vernet
         330,  # Jean-Christophe Branger
+        206,  # Maxime Margollé
     )
     title = _('Contributeurs')
 
@@ -233,5 +234,5 @@ class HierarchicUserDetail(DetailView):
         if getattr(self.object.mentor, 'legal_person', False):
             context['verboses']['mentor'] = _('appartenance')
         else:
-            context['verboses']['mentor'] = _('mentor')
+            context['verboses']['mentor'] = _('responsable scientifique')
         return context

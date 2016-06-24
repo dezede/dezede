@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-06 22:08+0100\n"
+"POT-Creation-Date: 2016-06-25 00:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,194 +18,1905 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: dashboard.py:26
+#: admin.py:26
+msgid "Objet lié"
+msgstr ""
+
+#: admin.py:28
+msgid "La diapositive renverra à l’objet que vous devez choisir de lier ici."
+msgstr ""
+
+#: admin.py:31
+msgid "Texte"
+msgstr ""
+
+#: admin.py:34
+msgid "Arrière-plan"
+msgstr ""
+
+#: dashboard.py:29
 msgid "Saisie courante"
 msgstr ""
 
 #: dashboard.py:39
-msgid "Rédaction"
+msgid "Saisie occasionnelle"
 msgstr ""
 
-#: dashboard.py:47
-msgid "Fichiers"
+#: dashboard.py:51
+msgid "AFO"
 msgstr ""
 
-#: dashboard.py:53
-msgid "Gestionnaire de fichiers bruts"
+#: dashboard.py:60
+msgid "Gestion des contenus"
 msgstr ""
 
-#: dashboard.py:65
-msgid "Intégration à la base de données"
+#: dashboard.py:68
+msgid "Didacticiel"
 msgstr ""
 
-#: dashboard.py:74
+#: dashboard.py:76
 msgid "Actions récentes"
 msgstr ""
 
-#: dashboard.py:81
+#: dashboard.py:83
 msgid "Utilisateurs et groupes"
 msgstr ""
 
-#: dashboard.py:90
+#: dashboard.py:92
 msgid "Traduction"
 msgstr ""
 
-#: dashboard.py:103
-msgid "Support"
+#: models.py:37
+msgid "type d’objet lié"
 msgstr ""
 
-#: dashboard.py:108
-msgid "Documentation de Django"
+#: models.py:38
+msgid "identifiant de l’objet lié"
 msgstr ""
 
-#: dashboard.py:113
-msgid "Documentation de Grappelli"
+#: models.py:40
+msgid "objet lié"
 msgstr ""
 
-#: dashboard.py:118
-msgid "Grappelli sur Google-Code"
+#: models.py:42
+msgid "titre"
 msgstr ""
 
-#: settings.py:72
+#: models.py:43
+msgid "sous-titre"
+msgstr ""
+
+#: models.py:45
+msgid "Gauche"
+msgstr ""
+
+#: models.py:46
+msgid "Centre"
+msgstr ""
+
+#: models.py:47
+msgid "Droite"
+msgstr ""
+
+#: models.py:49
+msgid "alignement du texte"
+msgstr ""
+
+#: models.py:52
+msgid "cadre derrière le texte"
+msgstr ""
+
+#: models.py:53
+msgid ""
+"Ajoute un cadre semi-transparent derrière le texte pour faciliter la lecture."
+msgstr ""
+
+#: models.py:55
+msgid "image"
+msgstr ""
+
+#: models.py:58
+msgid "découpage de l’image"
+msgstr ""
+
+#: models.py:59
+msgid "alignement de l’image"
+msgstr ""
+
+#: models.py:62
+msgid "Opaque"
+msgstr ""
+
+#: models.py:63
+msgid "90 %"
+msgstr ""
+
+#: models.py:64
+msgid "80 %"
+msgstr ""
+
+#: models.py:65
+msgid "70 %"
+msgstr ""
+
+#: models.py:66
+msgid "60 %"
+msgstr ""
+
+#: models.py:67
+msgid "50 %"
+msgstr ""
+
+#: models.py:68
+msgid "40 %"
+msgstr ""
+
+#: models.py:69
+msgid "30 %"
+msgstr ""
+
+#: models.py:70
+msgid "20 %"
+msgstr ""
+
+#: models.py:71
+msgid "10 %"
+msgstr ""
+
+#: models.py:73
+msgid "opacité"
+msgstr ""
+
+#: models.py:76
+msgid "position"
+msgstr ""
+
+#: models.py:87
+msgid "diapositive"
+msgstr ""
+
+#: models.py:88
+msgid "diapositives"
+msgstr ""
+
+#: models.py:139
+msgid "miniature"
+msgstr ""
+
+#: settings/base.py:54
 msgid "Français"
 msgstr ""
 
-#: settings.py:73
-msgid "English"
-msgstr ""
-
-#: settings.py:74
-msgid "Deutsch"
-msgstr ""
-
-#: templates/403.html:6 templates/403.html.py:11
+#: templates/403.html:5
 msgid "Erreur 403"
+msgstr ""
+
+#: templates/403.html:9
+msgid "Vous n’avez pas l’autorisation d’accéder à cette page."
 msgstr ""
 
 #: templates/403.html:14
 #, python-format
 msgid ""
 "\n"
-"    Vous n’avez pas l’autorisation d’accéder à cette page.<br />\n"
-"    Souhaitez-vous <a href=\"%(login_url)s\">vous connecter</a> ?\n"
-"  "
+"        Souhaitez-vous\n"
+"        <a href=\"%(login_url)s?next=%(path)s\">vous connecter</a>\\u202f?\n"
+"      "
 msgstr ""
 
-#: templates/404.html:5 templates/404.html.py:10
+#: templates/404.html:5
 msgid "Erreur 404"
 msgstr ""
 
-#: templates/404.html:12
+#: templates/404.html:9
 msgid "La page n’a pu être trouvée."
 msgstr ""
 
-#: templates/500.html:5 templates/500.html.py:10
+#: templates/500.html:5
 msgid "Erreur 500"
 msgstr ""
 
-#: templates/500.html:12
+#: templates/500.html:9
 msgid "Le serveur ne parvient pas à répondre correctement à votre requête."
 msgstr ""
 
-#: templates/base.html:10
+#: templates/503.html:5
+msgid "Maintenance en cours"
+msgstr ""
+
+#: templates/503.html:9
+msgid "Cette partie du site sera de retour d’ici une heure."
+msgstr ""
+
+#: templates/base.html:66
 msgid "musicologie, base de données"
 msgstr ""
 
-#: templates/base.html:65
+#: templates/base.html:99
 msgid ""
 "\n"
-"              Votre navigateur ne peut pas lancer javascript.\n"
-"              Attendez-vous à des défauts de fonctionnement.\n"
-"            "
+"                Votre navigateur ne peut pas lancer javascript.\n"
+"                Attendez-vous à des défauts de fonctionnement.\n"
+"              "
 msgstr ""
 
-#: templates/navbar.html:27
+#: templates/footer.html:24
+msgid "Réalisé par NoriPyt"
+msgstr ""
+
+#: templates/home.html:29
+msgid "Archives et chronologie des spectacles"
+msgstr ""
+
+#: templates/home.html:31
+msgid "Présentation de Dezède"
+msgstr ""
+
+#: templates/home.html:86
+msgid "Lire"
+msgstr ""
+
+#: templates/home.html:113 templates/pages/presentation.html:364
+msgid "Archives de l’Opéra Comique"
+msgstr ""
+
+#: templates/home.html:116
+msgid "Temps fort du tricentenaire"
+msgstr ""
+
+#: templates/home.html:120 templates/home.html.py:137 templates/home.html:157
+msgid "Dossier"
+msgstr ""
+
+#: templates/home.html:122 templates/home.html.py:139
+msgid "Fiche partenaire"
+msgstr ""
+
+#: templates/home.html:133
+msgid "Association Française desOrchestres"
+msgstr ""
+
+#: templates/home.html:150
+msgid "Concerts à Royaumont"
+msgstr ""
+
+#: templates/home.html:168 templates/navbar.html:109
+#: templates/pages/presentation.html:160
+msgid "Contribuer"
+msgstr ""
+
+#: templates/import_ant/includes/errors.html:6
+msgid "Field"
+msgstr ""
+
+#: templates/import_ant/includes/errors.html:7
+msgid "Value"
+msgstr ""
+
+#: templates/import_ant/includes/errors.html:8
+msgid "Error message"
+msgstr ""
+
+#: templates/import_ant/includes/errors.html:9
+msgid "Coordinates"
+msgstr ""
+
+#: templates/import_ant/includes/import_intro.html:33
+#, python-format
+msgid "Importing %(count)s rows from “%(imported_table)s”"
+msgstr ""
+
+#: templates/import_ant/includes/import_intro.html:34
+msgid "dry run"
+msgstr ""
+
+#: templates/import_ant/includes/import_intro.html:36
+msgid "Imports data from these models:"
+msgstr ""
+
+#: templates/import_ant/includes/import_intro.html:42
+msgid "Legend:"
+msgstr ""
+
+#: templates/import_ant/includes/import_intro.html:44
+msgid "created"
+msgstr ""
+
+#: templates/import_ant/includes/import_intro.html:45
+msgid "updated"
+msgstr ""
+
+#: templates/import_ant/includes/import_intro.html:46
+msgid "fetched"
+msgstr ""
+
+#: templates/import_ant/includes/import_intro.html:47
+msgid "skipped"
+msgstr ""
+
+#: templates/import_ant/includes/import_intro.html:48
+msgid "errored"
+msgstr ""
+
+#: templates/import_ant/includes/import_intro.html:49
+msgid "empty"
+msgstr ""
+
+#: templates/import_ant/includes/import_report.html:3
+msgid "Report"
+msgstr ""
+
+#: templates/import_ant/includes/import_report.html:7
+msgid "Model"
+msgstr ""
+
+#: templates/import_ant/includes/import_report.html:8
+msgid "Creations"
+msgstr ""
+
+#: templates/import_ant/includes/import_report.html:9
+msgid "Updates"
+msgstr ""
+
+#: templates/import_ant/includes/import_report.html:10
+msgid "Fetches"
+msgstr ""
+
+#: templates/import_ant/includes/import_report.html:11
+msgid "Skips"
+msgstr ""
+
+#: templates/import_ant/includes/import_report.html:12
+msgid "Empties"
+msgstr ""
+
+#: templates/import_ant/includes/import_report.html:13
+msgid "Errors"
+msgstr ""
+
+#: templates/navbar.html:9
+msgid "Afficher/masquer le menu"
+msgstr ""
+
+#: templates/navbar.html:22
 msgid "dossiers"
 msgstr ""
 
-#: templates/navbar.html:30
+#: templates/navbar.html:23
 msgid "événements"
 msgstr ""
 
-#: templates/navbar.html:35
-msgid "Autorités"
-msgstr ""
-
-#: templates/navbar.html:40
-msgid "lieux et institutions"
-msgstr ""
-
-#: templates/navbar.html:43
-msgid "œuvres"
-msgstr ""
-
-#: templates/navbar.html:46
-msgid "individus"
-msgstr ""
-
-#: templates/navbar.html:49
-msgid "professions"
-msgstr ""
-
-#: templates/navbar.html:52
-msgid "rôles et instruments"
-msgstr ""
-
-#: templates/navbar.html:60
+#: templates/navbar.html:28
 msgid "Rechercher…"
 msgstr ""
 
-#: templates/navbar.html:73
-msgid ""
-"\n"
-"                    Infobulles\n"
-"                  "
+#: templates/navbar.html:59
+msgid "Index"
 msgstr ""
 
-#: templates/navbar.html:113
-msgid "Langue"
+#: templates/navbar.html:62
+msgid "lieux et institutions"
 msgstr ""
 
-#: templates/navbar.html:139
-msgid "Questions/Bugs"
+#: templates/navbar.html:63
+msgid "œuvres"
 msgstr ""
 
-#: templates/navbar.html:144
+#: templates/navbar.html:64
+msgid "individus"
+msgstr ""
+
+#: templates/navbar.html:65
+msgid "ensembles"
+msgstr ""
+
+#: templates/navbar.html:66
+msgid "sources"
+msgstr ""
+
+#: templates/navbar.html:67
+msgid "professions"
+msgstr ""
+
+#: templates/navbar.html:68
+msgid "rôles et instruments"
+msgstr ""
+
+#: templates/navbar.html:74
+msgid "Équipe"
+msgstr ""
+
+#: templates/navbar.html:77
+msgid "Comité éditorial"
+msgstr ""
+
+#: templates/navbar.html:78
+msgid "Contributeurs"
+msgstr ""
+
+#: templates/navbar.html:79
+msgid "Équipe de développement"
+msgstr ""
+
+#: templates/navbar.html:84
+msgid "Partenariats"
+msgstr ""
+
+#: templates/navbar.html:87
+msgid "Propriétaires"
+msgstr ""
+
+#: templates/navbar.html:88
+msgid "Partenaires"
+msgstr ""
+
+#: templates/navbar.html:99 templates/pages/presentation.html:8
+#: templates/pages/presentation.html:20
+msgid "Présentation"
+msgstr ""
+
+#: templates/navbar.html:106 templates/pages/bibliographie.html:8
+msgid "Bibliographie"
+msgstr ""
+
+#: templates/navbar.html:128
 msgid "Administration"
 msgstr ""
 
-#: templates/routines/front-end_admin.html:6
-msgid "Transcripteur"
+#: templates/navbar.html:136
+msgid "Déconnexion"
 msgstr ""
 
-#: templates/routines/front-end_admin.html:18
-msgid "modifier"
+#: templates/navbar.html:143
+msgid "Connexion"
 msgstr ""
 
-#: templates/routines/front-end_admin.html:24
-msgid "supprimer"
+#: templates/navbar.html:151
+msgid "Questions/Bugs"
 msgstr ""
 
-#: templates/search/search.html:5 templates/search/search.html.py:10
+#: templates/navbar.html:158
+msgid "API REST"
+msgstr ""
+
+#: templates/navbar.html:165
+msgid "Source sur"
+msgstr ""
+
+#: templates/pages/bibliographie.html:17
+#, python-format
+msgid ""
+"\n"
+"        Dezède s’appuie sur des tables d’autorités d’individus, "
+"d’ensembles,\n"
+"        d’œuvres, de lieux, de rôles, d’instruments et de professions.\n"
+"        Elles sont présentées sous la forme de fiches consultables par le "
+"menu des index,\n"
+"        le moteur de recherche, le filtre, les événements, les sources ou "
+"les dossiers.\n"
+"        Chaque autorité peut être intégrée dans un ensemble de données "
+"récursives\n"
+"        (dynasties de musiciens, adaptations et révisions d’œuvres,\n"
+"        attachements des lieux aux territoires et des salles aux "
+"institutions, etc.)\n"
+"        Les autorités font l’objet d’un contrôle permanent placé\n"
+"        sous la responsabilité scientifique de Joann Élart.\n"
+"        Actuellement, la base de données contient %(oeuvres_count)s œuvres,\n"
+"        %(individus_count)s individus et %(lieux_count)s lieux.\n"
+"      "
+msgstr ""
+
+#: templates/pages/bibliographie.html:33 templates/pages/presentation.html:515
+msgid "Origines"
+msgstr ""
+
+#: templates/pages/bibliographie.html:34
+msgid "Références bibliographiques"
+msgstr ""
+
+#: templates/pages/bibliographie.html:40
+msgid ""
+"\n"
+"            Cet ensemble enrichi chaque jour par des chercheurs associés et "
+"des étudiants\n"
+"            trouve ses origines dans des travaux antérieurs.\n"
+"          "
+msgstr ""
+
+#: templates/pages/bibliographie.html:47
+msgid ""
+"\n"
+"            Une première importation a permis d’intégrer les index "
+"d’individus et d’œuvres contenus\n"
+"            dans l’ouvrage de Joann Élart intitulé <em>Catalogue des fonds "
+"musicaux conservés en Haute-Normandie.\n"
+"            Tome I: Bibliothèque municipale de Rouen. Volume 1: Fonds du "
+"Théâtre des Arts\n"
+"            (<span class=\"sc\">xviii</span><sup>e</sup> et <span class=\"sc"
+"\">xix</span><sup>e</sup> siècles)</em>,\n"
+"            coll. «Patrimoine musical régional» (Rouen, Presses "
+"universitaires de Rouen et du Havre, 2004, 538 p.)\n"
+"            Issues, pour l’essentiel, du répertoire de l’Opéra-Comique,\n"
+"            ces données ont été associées à celles réalisées dans le cadre\n"
+"            de deux missions financées par les <abbr title=\"Grands Réseaux "
+"de Recherche\">GRR</abbr> haut-normands\n"
+"            et placées sous la direction de Joann Élart.\n"
+"            La première a été confiée à Anne Touverey, doctorante en "
+"musicologie\n"
+"            de l’université de Rouen qui a créé des autorités à partir de "
+"l’index de Castil-Blaze,\n"
+"            <em>Histoire de l’opéra-comique</em>,\n"
+"            publication coordonnée par Alexandre Dratwicki\n"
+"            et Patrick Taïeb (Lyon, Symétrie, 2012, 352 p.);\n"
+"            la seconde à Claire Malandin, étudiante en musicologie de "
+"l’université de Rouen,\n"
+"            qui a établi un ensemble d’autorités nouvelles dans les genres "
+"de la comédie, de la tragédie ou du vaudeville.\n"
+"          "
+msgstr ""
+
+#: templates/pages/bibliographie.html:91
+msgid ""
+"\n"
+"            La deuxième importation a concerné un ensemble de données "
+"relatives au répertoire du concert.\n"
+"            Réalisé dans le cadre du projet de recherche sur l’histoire du "
+"concert\n"
+"            dirigé par Patrick Taïeb et Hervé Lacombe\n"
+"            («Répertoire des programmes de concerts en France»),\n"
+"            il comporte deux parties: les concerts parisiens de la "
+"Révolution à l’Empire,\n"
+"            sous la direction scientifique d’Étienne Jardin et de Patrick "
+"Taïeb;\n"
+"            les Concerts populaires de musique classique (concerts "
+"Pasdeloup) réalisés par Yannick Simon.\n"
+"            L’intégration dans Dezède de ces deux ensembles de données "
+"réalisées entre 2009 et 2010 par Étienne Jardin\n"
+"            a fait l’objet d’une convention entre l’université de Rouen\n"
+"            et les deux autres partenaires qui en ont permis la "
+"réalisation,\n"
+"            le Palazzetto Bru Zane et les éditions Symétrie.\n"
+"          "
+msgstr ""
+
+#: templates/pages/bibliographie.html:123
+msgid ""
+"\n"
+"            La troisième importation a permis de verser en 2014 des données\n"
+"            mises à disposition par\n"
+"            l’<abbr title=\"Association Française des Orchestres\">AFO</"
+"abbr>\n"
+"            dans le cadre d’une convention signée avec l’université de "
+"Rouen.\n"
+"            Fournies par les orchestres membres de cette association,\n"
+"            elles ont été corrigées, complétées et relues par\n"
+"            Claire Morvannou, Julie Graine, Joann Élart et Yannick Simon.\n"
+"            Ce premier chantier coordonné par Florent Girard, secrétaire\n"
+"            général de l’AFO, correspond au traitement complet des saisons\n"
+"            2010-2011, 2011-2012 et 2012-2013 de tous ces orchestres.\n"
+"          "
+msgstr ""
+
+#: templates/pages/bibliographie.html:145
+msgid ""
+"\n"
+"            La quatrième importation correspond au versement des archives de "
+"l’Opéra Comique, numérisées à partir des collections des Archives Nationales "
+"de France et de l’Opéra Comique, dans le cadre d’une convention signée avec "
+"l’université de Rouen. Elles sont consultables dans un dossier inauguré le "
+"13 novembre 2014  et contiennent 2200 documents, soit environ 25000 images.\n"
+"          "
+msgstr ""
+
+#: templates/pages/bibliographie.html:158
+msgid ""
+"\n"
+"            Les autorités sont produites ou vérifiées à partir d’un ou "
+"plusieurs\n"
+"            outils bibliographiques mentionnées ci-dessous.\n"
+"            Toutes les références à des sources ou à des ouvrages différents "
+"sont signalées\n"
+"            directement dans les notes privées des données concernées.\n"
+"          "
+msgstr ""
+
+#: templates/pages/bibliographie.html:169
+msgid "Référence"
+msgstr ""
+
+#: templates/pages/bibliographie.html:170
+msgid "Ouvrage"
+msgstr ""
+
+#: templates/pages/contribute.html:8
+msgid "Pour contribuer"
+msgstr ""
+
+#: templates/pages/contribute.html:18
+#, python-format
+msgid ""
+"\n"
+"        La première étape consiste à <strong>soumettre un projet</strong> en "
+"remplissant le formulaire ci-dessous;\n"
+"        il est transmis au <a href=\"%(comite_editorial_url)s\">comité "
+"éditorial</a> en même temps qu’un accusé de réception est envoyé au porteur "
+"de projet.\n"
+"      "
+msgstr ""
+
+#: templates/pages/contribute.html:25
+#, python-format
+msgid ""
+"\n"
+"        La deuxième étape est celle de l’<strong>expertise par le comité "
+"éditorial</strong>,\n"
+"        au terme de laquelle, si le projet est retenu,\n"
+"        un compte personnel est attribué au porteur de projet,\n"
+"        un tuteur est désigné pour suivre sa formation et une fiche de "
+"chercheur associé est ajoutée aux <a href=\"%(contributeurs_url)s"
+"\">contributeurs</a>.\n"
+"      "
+msgstr ""
+
+#: templates/pages/contribute.html:34
+#, python-format
+msgid ""
+"\n"
+"        La troisième étape est celle de la <strong>réalisation et de "
+"l’édition</strong> du projet.\n"
+"        Celle-ci prendra la forme d’un <a href=\"%(dossiers_url)s\">dossier</"
+"a>, dont la publication pourra être différée.\n"
+"        Elle sera annoncée par différents moyens de communication\n"
+"        (annonce et relances en page d’accueil, relais sur les listes et les "
+"réseaux sociaux, Carnet Dezède).\n"
+"      "
+msgstr ""
+
+#: templates/pages/contribute.html:42
+msgid ""
+"\n"
+"        Le chercheur associé à Dezède conserve la propriété intellectuelle "
+"de son travail:\n"
+"        toutes les données saisies, tous les dossiers constitués,\n"
+"        sont signés et sécurisés. Il peut profiter des outils mis à sa "
+"disposition\n"
+"        (outils statistiques, outil d’exportation d’annexes indexées)\n"
+"        pour faciliter son travail de recherche et d’édition.\n"
+"      "
+msgstr ""
+
+#: templates/pages/contribute.html:52
+msgid "Chargement en cours…"
+msgstr ""
+
+#: templates/pages/presentation.html:25
+msgid "Contenus"
+msgstr ""
+
+#: templates/pages/presentation.html:30
+msgid "Utilisateurs"
+msgstr ""
+
+#: templates/pages/presentation.html:35
+msgid "Identité"
+msgstr ""
+
+#: templates/pages/presentation.html:40
+msgid "Historique"
+msgstr ""
+
+#: templates/pages/presentation.html:45
+msgid "Développement"
+msgstr ""
+
+#: templates/pages/presentation.html:54
+msgid "Ses principes"
+msgstr ""
+
+#: templates/pages/presentation.html:56
+msgid ""
+"\n"
+"            <span class=\"lead\">Une ressource numérique <em>open source</"
+"em>.</span>\n"
+"            Dezède est une application web qui offre aux contributeurs et "
+"lecteurs\n"
+"            un accès gratuit et dématérialisé aux données publiées.\n"
+"            Elle est <em>responsive</em> et s’adapte à différents supports.\n"
+"            Dezède est également un portail de valorisation:\n"
+"            tout en secondant les chercheurs dans leurs travaux,\n"
+"            il facilite l’édition des résultats et les place\n"
+"            dans une perspective contributive plus large.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:68
+msgid "Ses fonctions"
+msgstr ""
+
+#: templates/pages/presentation.html:70
+msgid ""
+"\n"
+"            <span class=\"lead\">Un outil de recherche et de valorisation "
+"dédié à l’archivage et à la chronologie des spectacles.</span>\n"
+"            Dezède permet de reconstituer et d’organiser des corpus "
+"documentaires de programmes de spectacle,\n"
+"            consacrés à des villes, des institutions, des artistes ou des "
+"œuvres.\n"
+"            Pour ce faire, il utilise une méthode scientifique originale "
+"structurant\n"
+"            la publication en ligne: traitement et analyse des sources,\n"
+"            édition critique des programmes et classement des événements.\n"
+"            Le cœur de l’application est une base relationnelle\n"
+"            qui lie les événements à un ensemble d’autorités interrogeables "
+"séparément\n"
+"            (œuvres, individus, ensembles, lieux de diffusion, rôles, "
+"emplois, etc.)\n"
+"            Application unique dans le domaine des humanités numériques, "
+"Dezède a vocation à favoriser\n"
+"            le développement de recherches sur la circulation des œuvres et "
+"des interprètes,\n"
+"            en mettant à la disposition des chercheurs et du public\n"
+"            une masse importante de données historiques.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:89
+msgid "Son comité éditorial"
+msgstr ""
+
+#: templates/pages/presentation.html:91
+msgid ""
+"\n"
+"            <span class=\"lead\">Dezède est une ressource en ligne "
+"identifiée par le numéro d’ISSN 2269-9473</span>,\n"
+"            mettant à la disposition des chercheurs les outils nécessaires\n"
+"            à l’édition de dossiers. Chaque projet est soumis, expertisé,\n"
+"            validé et suivi par le comité éditorial,\n"
+"            qui a aussi pour fonction de structurer la publication\n"
+"            et d’en contrôler l’évolution méthodologique et technologique.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:100
+msgid "Le comité éditorial est composé de trois membres:"
+msgstr ""
+
+#: templates/pages/presentation.html:103
+msgid ""
+"Maître de conférences en musicologie, université de Rouen (fondateur de "
+"Dezède)"
+msgstr ""
+
+#: templates/pages/presentation.html:107
+msgid ""
+"Professeur des Universités en musicologie, université de Rouen (fondateur de "
+"Dezède)"
+msgstr ""
+
+#: templates/pages/presentation.html:111
+msgid ""
+"Professeur des Universités en musicologie, université Paul-Valéry "
+"Montpellier 3 (fondateur de Dezède)"
+msgstr ""
+
+#: templates/pages/presentation.html:114
+msgid "Ses propriétaires"
+msgstr ""
+
+#: templates/pages/presentation.html:116
+msgid ""
+"\n"
+"            <span class=\"lead\">\n"
+"              L’invention de trois enseignants-chercheurs:\n"
+"              Joann Élart, Yannick Simon\n"
+"              et Patrick Taïeb</span>,\n"
+"            musicologues aux universités de Rouen et Paul-Valéry Montpellier "
+"3.\n"
+"            Ils partagent un accord de co-propriété avec leur laboratoire\n"
+"            – le <abbr title=\"Groupe de Recherche d’Histoire\">GRHis</abbr> "
+"(<abbr title=\"Équipe d’accueil\">EA</abbr> 3831),\n"
+"            le <abbr title=\"Centre d’Études et de Recherche Éditer/"
+"Interpréter\">CÉRÉdI</abbr> (EA 3229)\n"
+"            et l’<abbr title=\"Institut de Recherche sur la Renaissance, "
+"l’Age Classique et les Lumières\">IRCL</abbr>\n"
+"            (<abbr title=\"Unité Mixte de Recherche\">UMR</abbr> 5186 du "
+"CNRS) –\n"
+"            et leur université de rattachement.\n"
+"            Hébergé sur les serveurs de la <abbr title=\"Très Grande "
+"Infrastructure de Recherche\">TGIR</abbr> Huma-Num,\n"
+"            Dezède est une ressource numérique <em>open source</em>\n"
+"            référencée par le numéro d’ISSN 2269-9473.\n"
+"            La première phase du développement a été rendue possible\n"
+"            grâce au soutien financier des universités de Rouen et Paul-"
+"Valéry Montpellier 3,\n"
+"            des laboratoires associés et de la Région Normandie\n"
+"            via les <abbr title=\"Grands Réseaux de Recherche\">GRR</abbr>.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:138
+msgid ""
+"\n"
+"            Du point de vue des responsabilités, Joann Élart\n"
+"            est chargé de coordonner le développement méthodologique et "
+"informatique,\n"
+"            Yannick Simon s’occupe plus particulièrement\n"
+"            des affaires juridiques,\n"
+"            Patrick Taïeb est chargé du projet des répertoires de concert.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:166
+msgid "Les dossiers"
+msgstr ""
+
+#: templates/pages/presentation.html:168
+msgid ""
+"\n"
+"            <span class=\"lead\">\n"
+"              Réalisez votre chronologie de spectacles sur un territoire,\n"
+"              une institution, une carrière ou une œuvre.\n"
+"            </span>\n"
+"            Le dossier est la forme aboutie d’une publication dans Dezède:\n"
+"            il s’agit d’un corpus d’événements ou d’images, créé et "
+"rassemblé\n"
+"            par un ou plusieurs éditeurs scientifiques qui en assure(nt) la "
+"présentation.\n"
+"            Le dossier d’événements a pour objectif de reconstituer des "
+"programmes de spectacles\n"
+"            dans un espace géographique et temporel, d’établir la "
+"programmation d’une institution,\n"
+"            d’accompagner la carrière d’un interprète, ou de suivre la "
+"diffusion et la réception d’une œuvre.\n"
+"            Les événements sont présentés de manière chronologique.\n"
+"            Soumis à l’expertise du comité éditorial,\n"
+"            les dossiers sont classés entre eux selon un ordre établi\n"
+"            par une table générale qui évolue en fonction des nouvelles "
+"contributions;\n"
+"            Un ensemble d’outils de visualisation est proposé en marge de\n"
+"            la chronologie événementielle (cartographie, diffusion, frise "
+"chronologique, diagramme de cordes).\n"
+"            Les dossiers réalisés dans Dezède peuvent être exportés "
+"intégralement\n"
+"            en format PDF avec mise en page générée automatiquement,\n"
+"            pour constituer une archive ou une annexe de mémoire "
+"universitaire.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:190
+msgid "Liste des dossiers"
+msgstr ""
+
+#: templates/pages/presentation.html:191 templates/pages/presentation.html:334
+msgid "Soumettre un projet"
+msgstr ""
+
+#: templates/pages/presentation.html:229
+msgid "Les autorités"
+msgstr ""
+
+#: templates/pages/presentation.html:231
+msgid ""
+"\n"
+"            <span class=\"lead\">Au cœur de Dezède, des milliers d’autorités "
+"mises à la disposition de tous\\u202f!</span>\n"
+"            La souplesse de l’application et l’homogénéisation de l’édition\n"
+"            résultent de la mise en commun d’autorités liées entre elles\n"
+"            par un système de gestion relationnelle et récursive:\n"
+"            évenements, œuvres, individus, ensembles, lieux, rôles, "
+"instruments,\n"
+"            professions, etc.\n"
+"            Elles font l’objet d’un contrôle scientifique basé sur le "
+"recoupement\n"
+"            d’ouvrages de référence.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:242
+msgid "Bibliographie des autorités"
+msgstr ""
+
+#: templates/pages/presentation.html:244
+msgid "Les sources"
+msgstr ""
+
+#: templates/pages/presentation.html:246
+msgid ""
+"\n"
+"            <span class=\"lead\">La règle: au moins une source par événement."
+"</span>\n"
+"            L’édition d’une chronologie dans Dezède suit un principe cher à "
+"l’historien:\n"
+"            la transparence critique.\n"
+"            C’est pourquoi le programme impose une condition <em>sine qua "
+"none</em>\n"
+"            à l’utilisateur: la création d’un événement n’est possible que\n"
+"            si elle est associée <em>a minima</em> à une source.\n"
+"            La procédure éditoriale suggère d’ailleurs de démarrer le "
+"travail\n"
+"            par la création d’une source qu’il faut ensuite associer\n"
+"            à un événement.\n"
+"            Les sources sont de différentes natures: périodiques, archives,\n"
+"            correspondances, mémoires, éphémères, images, sons, vidéos.\n"
+"            Elles se présentent de différentes manières:\n"
+"            de la simple référence bibliographique (notamment pour les "
+"archives)\n"
+"            à la transcription diplomatique partielle ou intégrale\n"
+"            (interrogeable en plein texte via le moteur de recherche),\n"
+"            du lien hypertexte vers des ressources électroniques "
+"permanentes\n"
+"            à la publication d’images numériques consultables sur un "
+"feuilleteur.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:268
+msgid "Le filtre et les événements"
+msgstr ""
+
+#: templates/pages/presentation.html:270
+msgid ""
+"\n"
+"            <span class=\"lead\">Rechercher des événements dans Dezède, rien "
+"de plus simple\\u202f!</span>\n"
+"            Il suffit de se rendre dans le menu «événements» et d’utiliser "
+"le filtre.\n"
+"            Celui-ci permet de croiser différentes requêtes de tri:\n"
+"            recherche libre, période, tri par année civile ou par saison, "
+"lieu, œuvre, individu, ensemble.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:277
+msgid "Chercher et filter des événements"
+msgstr ""
+
+#: templates/pages/presentation.html:279
+msgid "Le moteur de recherche"
+msgstr ""
+
+#: templates/pages/presentation.html:281
+msgid ""
+"\n"
+"            <span class=\"lead\">Rechercher dans l’ensemble des contenus.</"
+"span>\n"
+"            Le moteur de recherche est affiché en permanence dans la barre "
+"des menus\n"
+"            et permet à tout moment d’interroger les contenus de Dezède:\n"
+"            dossiers d’événements, événements, individus, ensembles, "
+"œuvres,\n"
+"            lieux et institutions, sources, événements,\n"
+"            rôles et instruments, professions.\n"
+"            L’interrogation se fait de deux manières différentes:\n"
+"            par une recherche libre en tapant\n"
+"            un ou plusieurs mots caractéristiques;\n"
+"            par une recherche avancée en sélectionnant un ou plusieurs "
+"filtres.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:294
+msgid "Rechercher dans Dezède"
+msgstr ""
+
+#: templates/pages/presentation.html:300
+msgid "Des chercheurs aux étudiants"
+msgstr ""
+
+#: templates/pages/presentation.html:302
+msgid ""
+"\n"
+"            <span class=\"lead\">Dezède est mis à la disposition des "
+"chercheurs et des étudiants</span>\n"
+"            qui souhaitent publier des corpus documentaires sur un artiste,\n"
+"            une œuvre, un lieu de spectacle, un phénomène musical ou "
+"théâtral.\n"
+"            Modélisé dans un esprit de pluridisciplinarité, Dezède s’adresse "
+"aux chercheurs\n"
+"            inscrits dans différents champs disciplinaires:\n"
+"            musicologie, lettres modernes, histoire culturelle moderne et "
+"contemporaine,\n"
+"            arts du spectacle, histoire de l’art, histoire de la danse, "
+"etc.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:313
+msgid ""
+"\n"
+"            Dezède propose aux jeunes chercheurs inscrits en master\n"
+"            ou en thèse de doctorat une aide à l’édition\n"
+"            (mise à disposition des autorités, module d’exportation des "
+"annexes\n"
+"            avec mise en page et indexation automatique) et à la "
+"valorisation\n"
+"            des travaux universitaires (confidentialité des données "
+"personnelles,\n"
+"            possibilité de différer la publication en ligne).\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:323
+msgid ""
+"\n"
+"            Tourné vers le développement de pratiques pédagogiques "
+"innovantes\n"
+"            en partie financées par un <abbr title=\"Bonus Qualité "
+"Enseignement\">BQE</abbr>\n"
+"            obtenu en 2014 à l’université de Rouen, Dezède est également\n"
+"            un support pour l’enseignement universitaire,\n"
+"            en particulier de la méthodologie et des technologies de "
+"l’information.\n"
+"            Les comptes personnels des étudiants sont liés à un groupe "
+"placé\n"
+"            sous la responsabilité d’un enseignant.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:335
+msgid "Découvrir l’outil de formation à la transcription"
+msgstr ""
+
+#: templates/pages/presentation.html:338
+msgid "Des partenaires"
+msgstr ""
+
+#: templates/pages/presentation.html:343
+#, python-format
+msgid ""
+"\n"
+"            <span class=\"lead\">Dezède est une solution d’archivage pour "
+"les institutions et de promotion du spectacle vivant.</span>\n"
+"            L’application est à la disposition des institutions qui "
+"cherchent un portail sécurisé\n"
+"            pour la valorisation de leur patrimoine et de leur histoire.\n"
+"            Entre 2013 et 2015, trois partenariats ont été initiés.\n"
+"            Depuis 2013, les étudiants du master de musicologie de "
+"l’université de Rouen travaillent\n"
+"            à la réalisation\n"
+"            <a href=\"%(royaumont_url)s\">du dossier des programmes des "
+"concerts organisés à la Fondation Royaumont</a>.\n"
+"            Depuis 2014, <a href=\"%(afo_url)s\">les saisons de concerts et "
+"les archives audiovisuelles des orchestres\n"
+"            membres de l’<abbr title=\"Association Française des Orchestres"
+"\">AFO</abbr></a> sont\n"
+"            publiés et accessibles gratuitement dans Dezède.\n"
+"            Depuis le 13 novembre 2014, <a href=\"%(oc_url)s\">les archives "
+"de l’Opéra Comique</a>\n"
+"            sont consultables dans Dezède, publication rendue possible\n"
+"            dans le cadre d’une délégation au CNRS (IRCL, UMR 5186).\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:360
+msgid "Concerts à l’abbaye de Royaumont"
+msgstr ""
+
+#: templates/pages/presentation.html:362
+msgid "Association Française des Orchestres"
+msgstr ""
+
+#: templates/pages/presentation.html:368
+msgid "Pour devenir partenaire, un contact:"
+msgstr ""
+
+#: templates/pages/presentation.html:370
+msgid "Des auteurs"
+msgstr ""
+
+#: templates/pages/presentation.html:372
+msgid ""
+"\n"
+"            <span class=\"lead\">Chaque utilisateur est propriétaire de ses "
+"données.</span>\n"
+"            En les produisant à partir de son compte,\n"
+"            l’utilisateur (chercheur, étudiant, institution, etc.) en "
+"devient automatiquement\n"
+"            l’auteur et le propriétaire.\n"
+"            Cet affichage offre une transparence totale sur l’appartenance\n"
+"            et la provenance des données.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:386
+msgid "Le choix du nom"
+msgstr ""
+
+#: templates/pages/presentation.html:390
+msgid ""
+"\n"
+"                <span class=\"lead\">«Dezède» est le nom d’un compositeur "
+"qui ne connaissait pas ses géniteurs.</span>\n"
+"                <em>Les Trois fermiers</em> (1777),\n"
+"                <em>Blaise et Babet</em> (1783) et <em>Alexis et Justine</"
+"em> (1785)\n"
+"                figurent parmi les plus grands succès de Nicolas Dezède "
+"(1740/5-1792)\n"
+"                et du répertoire de l’Opéra-Comique entre la fin de l’Ancien "
+"Régime\n"
+"                et la Restauration.\n"
+"                L’un de ses vingt opéras, <em>Julie</em> (1772) a également "
+"été rendu célèbre\n"
+"                par les variations que Mozart composa sur l’air\n"
+"                «Lison dormait dans un bocage» (K.264).\n"
+"                Fétis écrivait en 1837 qu’«on ignore quelle fut sa patrie»\n"
+"                (<em>Biographie générale de la musique</em>, Bruxelles, "
+"Méline,\n"
+"                Cans et compagnie, 1837, t. III, p. 302):\n"
+"                était-il le fils illégitime d’un prince allemand\n"
+"                – de Frédéric II de Prusse, comme on peut le lire parfois –\n"
+"                ou était-il né à Lyon\\u202f?\n"
+"                Lui-même signait ses partitions «DeZ.», «D.\\u202fZ.», "
+"«Desaides» ou encore «Dezède».\n"
+"                Fétis publie d’ailleurs cette anecdote:\n"
+"                à son arrivée à Paris, «il jouissait […] d’une pension de "
+"vingt-cinq mille francs,\n"
+"                qui fut doublée à sa majorité.\n"
+"                Désirant connaître les auteurs de ses jours, il s’adressa à "
+"son notaire;\n"
+"                mais celui-ci le prévint que ses démarches seraient "
+"inutiles,\n"
+"                et qu’en les continuant il s’exposerait à perdre son "
+"revenu.\n"
+"                Il ne tint compte de cet avis, continua ses recherches,\n"
+"                ne découvrit rien, et fut privé de sa pension.\n"
+"                Ce fut alors qu’il songea à tirer parti de ses talents\n"
+"                pour assurer son existence.» (<em>op. cit.</em>)\n"
+"              "
+msgstr ""
+
+#: templates/pages/presentation.html:420
+msgid ""
+"\n"
+"                Ce choix s’est imposé pendant le déjeuner du 23 février "
+"2012,\n"
+"                quand Joann Élart, Étienne Jardin, Yannick Simon, Patrick "
+"Taïeb\n"
+"                et Bertrand Bordage ont abordé la question du nom\n"
+"                à donner à l’application. Il fallait un mot qui puisse "
+"incarner le projet:\n"
+"                la séduisante Carmen et l’emblématique Boieldieu furent "
+"évoqués avant de laisser place à Dezède,\n"
+"                proposition de Patrick Taïeb apparue évidente à tous:\n"
+"                le nom est une énigme en soi…\n"
+"                Et il fallait inventer un outil informatique pour parvenir, "
+"peut-être un jour, à la résoudre\\u202f!\n"
+"              "
+msgstr ""
+
+#: templates/pages/presentation.html:433
+msgid "En savoir plus sur <span class=\"sc\">Dezède</span> dans Dezède"
+msgstr ""
+
+#: templates/pages/presentation.html:441
+msgid ""
+"Jean-Baptiste<span class=\"sc\">Greuze</span>, <em>NicolasDezède</em>, "
+"huilesurtoile, GalerieSaphir."
+msgstr ""
+
+#: templates/pages/presentation.html:447
+msgid "Le logo"
+msgstr ""
+
+#: templates/pages/presentation.html:449
+msgid ""
+"\n"
+"            <span class=\"lead\">Le logo est inspiré d’un manuscrit conservé "
+"à Rouen.</span>\n"
+"            Il reproduit la mention d’auteur figurant sur la page de titre "
+"d’<em>Auguste et Théodore</em>,\n"
+"            plus particulièrement de l’exemplaire conservé à la Bibliothèque "
+"municipale de Rouen\n"
+"            en copie manuscrite sous la cote [Théâtre 52.\n"
+"            Il s’agissait de rendre hommage à cette bibliothèque théâtrale\n"
+"            qui a joué un rôle fondateur dans l’émergence du projet Dezède.\n"
+"            Le logo n’est pas une reproduction à proprement parler,\n"
+"            mais une réalisation de Bertrand Bordage en dessin vectoriel\n"
+"            inspirée de cette mention.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:462
+msgid "Source du logo"
+msgstr ""
+
+#: templates/pages/presentation.html:465
+#, python-format
+msgid ""
+"\n"
+"            Pour utiliser le logo, contactez %(contact_link)s. Il est "
+"décliné en quatre versions:\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:471
+msgid "Complet"
+msgstr ""
+
+#: templates/pages/presentation.html:482
+msgid "Réduit"
+msgstr ""
+
+#: templates/pages/presentation.html:493
+msgid "Supports clairs"
+msgstr ""
+
+#: templates/pages/presentation.html:496
+msgid "Supports sombres"
+msgstr ""
+
+#: templates/pages/presentation.html:500
+msgid "La marque"
+msgstr ""
+
+#: templates/pages/presentation.html:502
+msgid ""
+"\n"
+"            <span class=\"lead\">\n"
+"              Dezède est une marque déposée à\n"
+"              l’<abbr title=\"Institut national de la propriété industrielle"
+"\">INPI</abbr>\n"
+"            </span>\n"
+"            depuis le 12 décembre 2013 sous le numéro national 134056592.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:517
+msgid ""
+"\n"
+"            <span class=\"lead\">\n"
+"              Dezède puise ses origines dans un programme de recherche sur\n"
+"              <em>l’histoire du concert en France</em>\n"
+"            </span>\n"
+"            dirigé par Patrick Taïeb et Hervé Lacombe,\n"
+"            et dans la méthode d’investigation historique fondée sur\n"
+"            la reconstitution de programmes de concerts à partir de la "
+"presse et des archives.\n"
+"            Constitué autour du détachement de Patrick Taïeb à\n"
+"            l’<abbr title=\"Institut universitaire de France\">IUF</abbr> "
+"entre 2000 et 2005,\n"
+"            puis autour de l’<abbr title=\"Agence nationale de la recherche"
+"\">ANR</abbr> 06-BLAN-03448\n"
+"            entre 2006 et 2009, ce programme de recherche a été partagé\n"
+"            par plusieurs dizaines de chercheurs du monde entier pendant une "
+"décennie,\n"
+"            parmi lesquels Joann Élart et Yannick Simon ont été très "
+"actifs.\n"
+"            Si les efforts menés pour concevoir un outil informatique n’ont "
+"pas abouti à cette époque,\n"
+"            les expériences acquises ont permis toutefois d’établir un "
+"cahier des charges pour le réaliser:\n"
+"            la solution attendue devait être pérenne, gratuite, sécurisée, "
+"souple, illimitée, contributive et dématérialisée.\n"
+"            Partant de cet acquis et souhaitant élargir la méthode à "
+"l’ensemble des spectacles,\n"
+"            Joann Élart pouvait annoncer à ses collaborateurs le lancement "
+"du projet\n"
+"            Dezède en octobre 2011, suite aux premiers contacts pris avec "
+"Bertrand Bordage,\n"
+"            le concepteur du programme informatique.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:541
+msgid "Dezède en quelques dates"
+msgstr ""
+
+#: templates/pages/presentation.html:549
+msgid "Juin"
+msgstr ""
+
+#: templates/pages/presentation.html:552
+msgid ""
+"Première rencontre entre Joann Élart et Bertrand Bordage au Conservatoire de "
+"Rouen"
+msgstr ""
+
+#: templates/pages/presentation.html:557
+msgid "Août"
+msgstr ""
+
+#: templates/pages/presentation.html:559
+msgid "Première évocation du projet à Arques-la-Bataille"
+msgstr ""
+
+#: templates/pages/presentation.html:563
+msgid "Septembre"
+msgstr ""
+
+#: templates/pages/presentation.html:565
+msgid "Premier déjeuner de travail à Rouen"
+msgstr ""
+
+#: templates/pages/presentation.html:569
+msgid "Octobre"
+msgstr ""
+
+#: templates/pages/presentation.html:571
+msgid "Début de l’aventure"
+msgstr ""
+
+#: templates/pages/presentation.html:583
+msgid "23février"
+msgstr ""
+
+#: templates/pages/presentation.html:586
+msgid ""
+"\n"
+"                    Journée d’étude à l’Opéra de Rouen Haute-Normandie:\n"
+"                    <em>Rendez-vous au Théâtre des Arts de Rouen\\u202f!</"
+"em><br />\n"
+"                    Présentation publique du prototype<br />\n"
+"                    Première rencontre avec Florent Girard, secrétaire "
+"général\n"
+"                    de l’<abbr title=\"Association Française des Orchestres"
+"\">AFO</abbr>\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:597
+msgid "28septembre"
+msgstr ""
+
+#: templates/pages/presentation.html:600
+msgid ""
+"\n"
+"                    Mise en ligne en version alpha sur un serveur "
+"Webfaction\n"
+"                    à l’adresse alpha.dezede.org\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:608
+msgid "25octobre"
+msgstr ""
+
+#: templates/pages/presentation.html:610
+msgid "1\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:614
+msgid "21novembre"
+msgstr ""
+
+#: templates/pages/presentation.html:617
+msgid ""
+"\n"
+"                    Journée d’étude à l’université du Havre:\n"
+"                    <em>Quand la politique s’invite au spectacle</em><br />\n"
+"                    Inauguration de la version bêta et passage à l’adresse "
+"beta.dezede.org\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:626
+msgid "5décembre"
+msgstr ""
+
+#: templates/pages/presentation.html:629
+msgid ""
+"\n"
+"                    Premiers échanges avec la <abbr title=\"Direction de la "
+"Recherche et de la Valorisation\">DRV</abbr>\n"
+"                    de l’université de Rouen pour la mise en place d’un "
+"accord de copropriété\n"
+"                    entre les universités de Rouen et de Montpellier III,\n"
+"                    les laboratoires\n"
+"                    <abbr title=\"Centre d’Études et de Recherche Éditer/"
+"Interpréter\">CÉRÉdI</abbr>,\n"
+"                    <abbr title=\"Groupe de Recherche d’Histoire\">GRHis</"
+"abbr>\n"
+"                    et <abbr title=\"Institut de Recherche sur la "
+"Renaissance, l’Age Classique et les Lumières\">IRCL</abbr>,\n"
+"                    les trois enseignants-chercheurs inventeurs Joann "
+"Élart,\n"
+"                    Yannick Simon et Patrick Taïeb\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:644
+msgid "20décembre"
+msgstr ""
+
+#: templates/pages/presentation.html:646
+msgid "2\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:658
+msgid "21février"
+msgstr ""
+
+#: templates/pages/presentation.html:661
+msgid ""
+"\n"
+"                    Colloque à l’Opéra-Comique:\n"
+"                    <em>Les emplois dans l’art lyrique français</em><br />\n"
+"                    Inauguration de la version 1.0 sur l’adresse définitive "
+"dezede.org\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:670
+msgid "14mars"
+msgstr ""
+
+#: templates/pages/presentation.html:672
+msgid "3\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:676
+msgid "3juin"
+msgstr ""
+
+#: templates/pages/presentation.html:679
+msgid ""
+"\n"
+"                    Dezède est hébergé par la\n"
+"                    <abbr title=\"Très Grande Infrastructure de Recherche"
+"\">TGIR</abbr> Huma-Num\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:687
+msgid "24 juin"
+msgstr ""
+
+#: templates/pages/presentation.html:689
+msgid "4\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:693
+msgid "2juillet"
+msgstr ""
+
+#: templates/pages/presentation.html:696
+msgid ""
+"\n"
+"                    Présentation publique aux journées annuelles du groupe "
+"Francophone Music Criticism\n"
+"                    à la <abbr title=\"Bibliothèque Historique de la Ville "
+"de Paris\">BHVP</abbr>\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:704
+msgid "16juillet"
+msgstr ""
+
+#: templates/pages/presentation.html:706
+msgid "5\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:710
+msgid "21octobre"
+msgstr ""
+
+#: templates/pages/presentation.html:712
+msgid ""
+"La <abbr title=\"Bibliothèque nationale de France\">BnF</abbr> attribue à "
+"Dezède l’ISSN 2269-9473"
+msgstr ""
+
+#: templates/pages/presentation.html:716
+msgid "26octobre"
+msgstr ""
+
+#: templates/pages/presentation.html:718
+msgid "6\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:722
+msgid "1<sup>er</sup>décembre"
+msgstr ""
+
+#: templates/pages/presentation.html:724
+msgid "7\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:728
+msgid "9décembre"
+msgstr ""
+
+#: templates/pages/presentation.html:731
+msgid ""
+"\n"
+"                    Présentation publique aux journées professionelles du "
+"groupe français\n"
+"                    de l’<abbr title=\"Association Internationale des "
+"Bibliothèques Musicales\">AIBM</abbr>\n"
+"                    au Centre de documentation de la musique contemporaine\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:740
+msgid "12décembre"
+msgstr ""
+
+#: templates/pages/presentation.html:743
+msgid ""
+"\n"
+"                    Dezède est une marque déposée à\n"
+"                    l’<abbr title=\"Institut national de la propriété "
+"industrielle\">INPI</abbr> − Île-de-France\n"
+"                    sous le numéro national 134056592\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:752 templates/pages/presentation.html:831
+msgid "18décembre"
+msgstr ""
+
+#: templates/pages/presentation.html:755
+#, python-format
+msgid ""
+"\n"
+"                    Signature d’un contrat de licence\n"
+"                    avec l’<abbr title=\"Association Française des Orchestres"
+"\">AFO</abbr> au Sénat\n"
+"                    et création du dossier <a href=\"%(afo_url)s"
+"\">Association Française des Orchestres</a>\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:772
+msgid "31janvier"
+msgstr ""
+
+#: templates/pages/presentation.html:774
+msgid "8\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:778
+msgid "17mars"
+msgstr ""
+
+#: templates/pages/presentation.html:780
+msgid "9\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:784
+msgid "7avril"
+msgstr ""
+
+#: templates/pages/presentation.html:786
+msgid "10\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:790
+msgid "21mai"
+msgstr ""
+
+#: templates/pages/presentation.html:793
+msgid ""
+"\n"
+"                    Colloque à l’Opéra-Comique: <em>Le répertoire en "
+"question</em><br />\n"
+"                    Inauguration de la version 2.0\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:801
+msgid "23 novembre"
+msgstr ""
+
+#: templates/pages/presentation.html:804
+#, python-format
+msgid ""
+"\n"
+"                    Signature de la convention avec la Fondation Royaumont\n"
+"                    pour l’accueil d’étudiants de master du département\n"
+"                    de musicologie de l’université de Rouen\n"
+"                    (réalisation du dossier\n"
+"                    <a href=\"%(royaumont_url)s\">Concerts à l’abbaye de "
+"Royaumont</a>)\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:815
+msgid "12 août"
+msgstr ""
+
+#: templates/pages/presentation.html:817
+msgid "15\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:821
+msgid "13 novembre"
+msgstr ""
+
+#: templates/pages/presentation.html:824
+#, python-format
+msgid ""
+"\n"
+"                    Inauguration du dossier <a href=\"%(oc_url)s\">Archives "
+"de l’Opéra Comique</a>\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:833
+msgid "Signature d’un contrat de licence avec l’Opéra Comique"
+msgstr ""
+
+#: templates/pages/presentation.html:845
+msgid "12 février"
+msgstr ""
+
+#: templates/pages/presentation.html:847
+msgid "20\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:851
+msgid "21-22 mai"
+msgstr ""
+
+#: templates/pages/presentation.html:853
+msgid ""
+"Colloque à Montpellier: <em>Nicolas Dezède et son œuvre. Un compositeur au "
+"temps des lumières</em>"
+msgstr ""
+
+#: templates/pages/presentation.html:857
+msgid "30 septembre"
+msgstr ""
+
+#: templates/pages/presentation.html:860
+msgid ""
+"\n"
+"                    Inauguration des outils pédagogiques financés par un\n"
+"                    <abbr title=\"Bonus Qualité Enseignement\">BQE</abbr> de "
+"l’université de Rouen en 2014\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:868
+msgid "2 décembre"
+msgstr ""
+
+#: templates/pages/presentation.html:870
+msgid ""
+"Inauguration du <a href=\"http://dezede.hypotheses.org/\">carnet de "
+"recherche Dezède</a> (ISSN 2492-9204)"
+msgstr ""
+
+#: templates/pages/presentation.html:882
+msgid "24 mars"
+msgstr ""
+
+#: templates/pages/presentation.html:885
+msgid ""
+"\n"
+"                    Dezède rejoint <a href=\"https://musica.hypotheses.org/"
+"\">le Consortium Musica</a>\n"
+"                    labellisé par la TGIR Huma-Num\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:893
+msgid "9-10 mai"
+msgstr ""
+
+#: templates/pages/presentation.html:896
+msgid ""
+"\n"
+"                    Colloque à l’École nationale des chartes à Paris:\n"
+"                    <em>Nicolas Dezède. Un compositeur des Lumières à Paris</"
+"em>\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:904
+msgid "6 juin"
+msgstr ""
+
+#: templates/pages/presentation.html:906
+msgid "30\\u202f000<sup>e</sup> événement"
+msgstr ""
+
+#: templates/pages/presentation.html:910
+msgid "1er octobre"
+msgstr ""
+
+#: templates/pages/presentation.html:913
+msgid ""
+"\n"
+"                    Internationalisation de Dezède en quatre langues\n"
+"                    (allemand, anglais, espagnol, italien)\n"
+"                    grâce au soutien de <a href=\"http://irihs.univ-rouen.fr/"
+"\">l’IRIHS</a>\n"
+"                    et la Région Normandie\n"
+"                  "
+msgstr ""
+
+#: templates/pages/presentation.html:923
+msgid "Novembre"
+msgstr ""
+
+#: templates/pages/presentation.html:925
+msgid "Inauguration de la revue <em>Florine</em>"
+msgstr ""
+
+#: templates/pages/presentation.html:937
+#, python-format
+msgid ""
+"\n"
+"            Jusqu’à présent, Dezède a été exclusivement développé par\n"
+"            <a href=\"https://noripyt.com/\">NoriPyt</a>, suivant les "
+"consignes scientifiques de\n"
+"            <a href=\"%(elart_url)s\">Joann <span class=\"sc\">Élart</span></"
+"a>.\n"
+"            Le design a été réalisé par Bertrand Bordage et Joann Élart.\n"
+"          "
+msgstr ""
+
+#: templates/pages/presentation.html:944
+msgid "La conception de Dezède repose sur quatre idées fondatrices:"
+msgstr ""
+
+#: templates/pages/presentation.html:948
+msgid ""
+"\n"
+"                la volonté de rendre l’outil très ergonomique,\n"
+"                tant pour le lecteur que pour le contributeur;\n"
+"              "
+msgstr ""
+
+#: templates/pages/presentation.html:956
+#, python-format
+msgid ""
+"\n"
+"                le recours à des solutions 100%% <em>open source</em>(le "
+"code est accessible\n"
+"                <a href=\"https://github.com/dezede/dezede\">dans notre "
+"dépôt GitHub</a>);\n"
+"              "
+msgstr ""
+
+#: templates/pages/presentation.html:964
+msgid ""
+"\n"
+"                le choix de solutions techniques les plus pérennes,\n"
+"                notamment le langage de programmation <a href=\"https://www."
+"python.org/\">Python</a>\n"
+"                qui permet d’écrire du code extrêmement lisible et simplifie "
+"nettement la maintenance;\n"
+"              "
+msgstr ""
+
+#: templates/pages/presentation.html:973
+msgid ""
+"\n"
+"                la recherche d’une grande stabilité par la mise en place\n"
+"                d’une suite de tests automatiques couvrant la majeure partie "
+"de ses fonctionnalités.\n"
+"              "
+msgstr ""
+
+#: templates/pages/presentation.html:981
+msgid "Solutions techniques"
+msgstr ""
+
+#: templates/pages/presentation.html:984
+msgid "Les principales solutions techniques sont:"
+msgstr ""
+
+#: templates/pages/presentation.html:988
+msgid "Langage de programmation"
+msgstr ""
+
+#: templates/pages/presentation.html:989
+msgid "Boîte à outils web"
+msgstr ""
+
+#: templates/pages/presentation.html:990
+msgid "Base de données"
+msgstr ""
+
+#: templates/pages/presentation.html:991
+msgid "Moteur de recherche"
+msgstr ""
+
+#: templates/pages/presentation.html:992
+msgid "Design"
+msgstr ""
+
+#: templates/pages/presentation.html:995
+msgid ""
+"Voir <a href=\"https://github.com/dezede/dezede\">notre dépôt GitHub</a> "
+"pour plus de détails."
+msgstr ""
+
+#: templates/rest_framework/api.html:4 templates/rest_framework/api.html:7
+msgid "API REST de Dezède"
+msgstr ""
+
+#: templates/search/search.html:5
 msgid "Recherche"
 msgstr ""
 
-#: templates/search/search.html:20
-msgid "Filtres :"
-msgstr ""
-
-#: templates/search/search.html:57
+#: templates/search/search.html:59
 msgid "résultat"
 msgid_plural "résultats"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/search/search.html:62
+#: templates/search/search.html:64
 msgid "Essayez aussi :"
 msgstr ""
 
-#: templates/search/search.html:70
-msgid ""
-"Tapez par exemple « chanteuse », « Molière », « opéra » ou encore "
-"« théâtre »."
+#: templates/search/search.html:72
+msgid "Saisir «chanteuse», «Molière», «opéra» ou encore «théâtre»"
+msgstr ""
+
+#: templatetags/facts.py:35
+msgid "En savoir plus…"
+msgstr ""
+
+#: templatetags/facts.py:71
+#, python-format
+msgid "Il y a %s ans aujourd’hui"
+msgstr ""
+
+#: templatetags/facts.py:73 templatetags/facts.py:112
+#, python-format
+msgid "On donnait %s"
+msgstr ""
+
+#: templatetags/facts.py:90
+msgid "Événement à la une"
+msgstr ""
+
+#: templatetags/facts.py:121
+msgid "Interprète voyageur"
+msgstr ""
+
+#: templatetags/facts.py:131 templatetags/facts.py:198
+#: templatetags/facts.py:229 templatetags/facts.py:252
+msgid "Elle"
+msgstr ""
+
+#: templatetags/facts.py:131 templatetags/facts.py:198
+#: templatetags/facts.py:229 templatetags/facts.py:252
+msgid "Il"
+msgstr ""
+
+#: templatetags/facts.py:133
+#, python-format
+msgid "%s a joué dans au moins %s endroits différents"
+msgstr ""
+
+#: templatetags/facts.py:142
+msgid "Rencontre avec"
+msgstr ""
+
+#: templatetags/facts.py:177
+#, python-format
+msgid "%s œuvres dans Dezède"
+msgstr ""
+
+#: templatetags/facts.py:185
+msgid "« Transformiste »"
+msgstr ""
+
+#: templatetags/facts.py:199
+#, python-format
+msgid "%s a joué au moins %s rôles différents"
+msgstr ""
+
+#: templatetags/facts.py:216
+msgid "Multi-instrumentiste"
+msgstr ""
+
+#: templatetags/facts.py:230
+#, python-format
+msgid "%s a joué d’au moins %s instruments différents"
+msgstr ""
+
+#: templatetags/facts.py:240
+msgid "Centenaire"
+msgstr ""
+
+#: templatetags/facts.py:253
+#, python-format
+msgid "%s a vécu %s ans"
 msgstr ""

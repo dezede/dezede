@@ -31,20 +31,21 @@
         <div class="row">
           <div class="col-md-5 col-md-offset-7">
             <div class="well">
-              <h3>Comment filtrer ?</h3>
+              <h3>{% trans 'Comment filtrer ?' %}</h3>
               <p>
-                Consultez ici les événements publiés dans Dezède,
-                qu’ils soient rattachés ou non à un dossier.
-                L’ensemble de champs à gauche permet de croiser les critères
-                de sélection de l’ensemble d’événements.
-              </p>
-              <p>
-                Vous pouvez sélectionner plusieurs éléments dans les champs
-                « Lieu », « Œuvre », « Individu » et « Ensemble ».
-              </p>
-              <p>
-                Pour consulter la totalité de la chronologie,
-                cliquez sur « Filtrer » sans remplir les champs.
+                {% blocktrans %}
+                  Pour consulter les événements publiés dans Dezède,
+                  qu’ils soient intégrés ou non dans un dossier,
+                  il suffit de croiser les critères de sélection
+                  en utilisant les outils et les différents champs :
+                  champs de recherche libre, réglage de la période chronologique,
+                  sélection par année civile ou par saison,
+                  champs de lieu, d’œuvre, d’individu et d’ensemble.
+                  Plusieurs éléments peuvent être sélectionnés
+                  dans chacun des quatre derniers champs.
+                  Pour consulter la totalité de la chronologie,
+                  cliquez sur « Filtrer » sans remplir les champs.
+                {% endblocktrans %}
               </p>
             </div>
           </div>
@@ -89,7 +90,7 @@
                   </a>
                 {% else %}
                   <a href="{% map_request %}" class="btn btn-primary">
-                    {% trans 'Afficher sur une carte' %}
+                    {% trans 'Afficher la carte' %}
                   </a>
                 {% endif %}
               {% endif %}

@@ -13,6 +13,7 @@ from django.http import HttpRequest
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
+from django.utils.translation import ugettext_lazy as _
 from rq.timeouts import JobTimeoutException
 
 from accounts.models import HierarchicUser
@@ -61,21 +62,21 @@ def xelatex_to_pdf(source_code):
 def launch_export(job, request, data, file_extension, subject):
     if is_user_locked(request.user):
         messages.error(request,
-                       'Un export de votre part est déjà en cours. '
-                       'Veuillez attendre la fin de celui-ci avant d’en '
-                       'lancer un autre.')
+                       _('Un export de votre part est déjà en cours. '
+                         'Veuillez attendre la fin de celui-ci avant d’en '
+                         'lancer un autre.'))
     else:
         lock_user(request.user)
         site = Site.objects.get_current(request)
         job.delay(data, request.user.pk, site.pk, request.LANGUAGE_CODE)
         messages.info(request,
-                      'La génération de l’export %s %s est en cours. '
-                      'Un courriel le contenant vous sera envoyé d’ici '
-                      'quelques minutes.' % (file_extension, subject))
+                      _('La génération de l’export %s %s est en cours. '
+                        'Un courriel le contenant vous sera envoyé d’ici '
+                        'quelques minutes.') % (file_extension, subject))
 
 
 def get_success_mail(subject, user, filename, file_content, content_type):
-    body = """
+    body = _("""
         <p>Bonjour,</p>
 
         <p>
@@ -87,9 +88,9 @@ def get_success_mail(subject, user, filename, file_content, content_type):
             Bien cordialement,<br />
             L’équipe Dezède
         </p>
-    """ % subject
+    """) % subject
 
-    mail = EmailMessage('[Dezède] Export %s' % subject,
+    mail = EmailMessage(_('[Dezède] Export %s') % subject,
                         body=body, to=(user.email,))
     mail.content_subtype = 'html'
     mail.attach(filename, file_content, content_type)
@@ -97,7 +98,7 @@ def get_success_mail(subject, user, filename, file_content, content_type):
 
 
 def get_failure_mail(subject, user):
-    body = """
+    body = _("""
         <p>Bonjour,</p>
 
         <p>
@@ -110,9 +111,9 @@ def get_failure_mail(subject, user):
             Bien cordialement,<br />
             L’équipe Dezède
         </p>
-    """ % subject
+    """) % subject
 
-    mail = EmailMessage('[Dezède] Échec de l’export %s'
+    mail = EmailMessage(_('[Dezède] Échec de l’export %s')
                         % subject, body=body, to=(user.email,))
     mail.content_subtype = 'html'
     return mail

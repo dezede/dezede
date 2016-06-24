@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 
 {% block header %}
   <h1>
     <a href="{% url 'contribuer' %}">
-      {% block title %}Pour contribuer{% endblock %}
+      {% block title %}{% trans 'Pour contribuer' %}{% endblock %}
     </a>
   </h1>
 {% endblock %}
@@ -13,29 +14,40 @@
 {% block content %}
   <div class="static-page">
     <p>
-      La première étape consiste à <strong>soumettre un projet</strong> en remplissant le formulaire ci-dessous ;
-      il est transmis au <a href="{% url 'comite_editorial' %}">comité éditorial</a> en même temps qu’un accusé de réception est envoyé au porteur de projet.
+      {% url 'comite_editorial' as comite_editorial_url %}
+      {% blocktrans %}
+        La première étape consiste à <strong>soumettre un projet</strong> en remplissant le formulaire ci-dessous ;
+        il est transmis au <a href="{{ comite_editorial_url }}">comité éditorial</a> en même temps qu’un accusé de réception est envoyé au porteur de projet.
+      {% endblocktrans %}
     </p>
     <p>
-      La deuxième étape est celle de l’<strong>expertise par le comité éditorial</strong>,
-      au terme de laquelle, si le projet est retenu,
-      un compte personnel est attribué au porteur de projet,
-      un tuteur est désigné pour suivre sa formation et une fiche de chercheur associé est ajoutée aux <a href="{% url 'contributeurs' %}">contributeurs</a>.
+      {% url 'contributeurs' as contributeurs_url %}
+      {% blocktrans %}
+        La deuxième étape est celle de l’<strong>expertise par le comité éditorial</strong>,
+        au terme de laquelle, si le projet est retenu,
+        un compte personnel est attribué au porteur de projet,
+        un tuteur est désigné pour suivre sa formation et une fiche de chercheur associé est ajoutée aux <a href="{{ contributeurs_url }}">contributeurs</a>.
+      {% endblocktrans %}
     </p>
     <p>
-      La troisième étape est celle de la <strong>réalisation et édition</strong> du projet.
-      Celle-ci prendra la forme d’un <a href="{% url 'dossierdevenements_index' %}">dossier</a>, dont la publication pourra être différée.
-      Elle sera annoncée par différents moyens de communication
-      (annonce et relances en page d’accueil, relais sur les listes et les réseaux sociaux).
+      {% url 'dossierdevenements_index' as dossiers_url %}
+      {% blocktrans %}
+        La troisième étape est celle de la <strong>réalisation et de l’édition</strong> du projet.
+        Celle-ci prendra la forme d’un <a href="{{ dossiers_url }}">dossier</a>, dont la publication pourra être différée.
+        Elle sera annoncée par différents moyens de communication
+        (annonce et relances en page d’accueil, relais sur les listes et les réseaux sociaux, Carnet Dezède).
+      {% endblocktrans %}
     </p>
     <p>
-      Le chercheur associé à Dezède conserve la propriété intellectuelle de son travail :
-      toutes les données saisies, tous les dossiers constitués,
-      sont signés et sécurisés. Il peut profiter des outils mis à sa disposition
-      (outils statistiques, outil d’exportation d’annexes indexées)
-      pour faciliter son travail de recherche et d’édition.
+      {% blocktrans %}
+        Le chercheur associé à Dezède conserve la propriété intellectuelle de son travail :
+        toutes les données saisies, tous les dossiers constitués,
+        sont signés et sécurisés. Il peut profiter des outils mis à sa disposition
+        (outils statistiques, outil d’exportation d’annexes indexées)
+        pour faciliter son travail de recherche et d’édition.
+      {% endblocktrans %}
     </p>
   </div>
   <iframe src="https://docs.google.com/forms/d/1pJknjmqbbjO8Ld86n6a_Oe44ZAIDlY0seHIfXDhcLZQ/viewform?embedded=true"
-          width="760" height="700" frameborder="0" marginheight="0" marginwidth="0" class="center-block">Chargement en cours…</iframe>
+          width="760" height="700" frameborder="0" marginheight="0" marginwidth="0" class="center-block">{% trans 'Chargement en cours…' %}</iframe>
 {% endblock %}

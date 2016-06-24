@@ -39,7 +39,7 @@ class Profession(AutoriteModel, UniqueSlugModel):
         help_text=_('Ne préciser que s’il est différent du nom.'))
     parent = ForeignKey('self', blank=True, null=True,
                         related_name='enfants', verbose_name=_('parent'))
-    classement = SmallIntegerField(default=1, db_index=True)
+    classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
     class Meta(object):
         verbose_name = ungettext_lazy('profession', 'professions', 1)
@@ -209,7 +209,7 @@ class Membre(CommonModel, PeriodeDActivite):
         'Partie', blank=True, null=True, related_name='membres',
         limit_choices_to=limit_choices_to_instruments,
         verbose_name=_('instrument'))
-    classement = SmallIntegerField(default=1)
+    classement = SmallIntegerField(_('classement'), default=1)
 
     class Meta(object):
         verbose_name = _('membre')
@@ -259,14 +259,17 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
         _('particule du nom'), max_length=5, blank=True, db_index=True)
     nom = CharField(_('nom'), max_length=75, db_index=True)
     # FIXME: retirer null=True quand la base sera nettoyée.
-    type = ForeignKey('TypeDEnsemble', null=True, related_name='ensembles')
+    type = ForeignKey('TypeDEnsemble', null=True, related_name='ensembles',
+                      verbose_name=_('type'))
     # TODO: Permettre deux villes sièges.
     siege = ForeignKey('Lieu', null=True, blank=True,
-                       related_name='ensembles', verbose_name=_('siège'))
+                       related_name='ensembles',
+                       verbose_name=_('localisation'))
     # TODO: Ajouter historique d'ensemble.
 
-    individus = ManyToManyField('Individu', through=Membre,
-                                related_name='ensembles')
+    individus = ManyToManyField(
+        'Individu', through=Membre, related_name='ensembles',
+        verbose_name=_('individus'))
 
     class Meta(object):
         ordering = ('nom',)
@@ -333,7 +336,7 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
             %s
         )
         (
-            SELECT 'Monde', COUNT(id) FROM evenements
+            SELECT %%s, COUNT(id) FROM evenements
         ) UNION ALL (
             SELECT ancetre.nom, COUNT(evenement.id)
             FROM libretto_lieu AS ancetre
@@ -350,8 +353,8 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
         );
         """ % evenements_sql
         with connection.cursor() as cursor:
-            cursor.execute(sql, evenements_params + (self.siege.tree_id,
-                                                     self.siege.lft))
+            cursor.execute(sql, evenements_params + (
+                ugettext('Monde'), self.siege.tree_id, self.siege.lft))
             data = cursor.fetchall()
         new_data = []
         for i, (name, count) in enumerate(data):

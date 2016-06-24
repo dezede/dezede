@@ -58,11 +58,14 @@
           <h3 class="panel-title">{% trans 'Pour citer ce dossier' %}</h3>
         </div>
         <div class="panel-body">
-          {{ object.editeurs_scientifiques.html }}{% if object.get_contributors.count > object.editeurs_scientifiques.count %} (dir.){% endif %},
-          « {{ object }} »,
-          <em>Dezède</em> [en ligne].
-          {{ SITE }}{{ object.permalien }}
-          (consulté le {% now 'DATE_FORMAT' %}).
+          {{ object.editeurs_scientifiques.html }}{% if object.get_contributors.count > object.editeurs_scientifiques.count %} {% trans '(dir.)' %}{% endif %},
+          {% now 'DATE_FORMAT' as now %}
+          {% blocktrans with permalien=object.permalien %}
+            « {{ object }} »,
+            <em>Dezède</em> [en ligne].
+            {{ SITE }}{{ permalien }}
+            (consulté le {{ now }}).
+          {% endblocktrans %}
         </div>
       </div>
     </div>

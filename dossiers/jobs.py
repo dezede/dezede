@@ -15,7 +15,7 @@ def dossier_to_pdf(dossier_pk, user_pk, site_pk, language_code):
     dossier = DossierDEvenements.objects.get(pk=dossier_pk)
     context = {'object': dossier}
     template_name = 'dossiers/dossierdevenements_detail.tex'
-    subject = 'du dossier « %s »' % dossier
+    subject = _('du dossier « %s »') % dossier
     filename = slugify(force_text(dossier))
     send_pdf(context, template_name, subject, filename, user_pk, site_pk,
              language_code)

@@ -1,7 +1,9 @@
+{% load i18n %}
+
 {% if etat.message %}
   <div class="alert alert-info">
     <h4>
-      Attention !
+      {% trans 'Attention !' %}
     </h4>
     {{ etat.message|safe }}
   </div>

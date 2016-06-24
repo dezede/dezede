@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-06 22:01+0100\n"
+"POT-Creation-Date: 2016-06-24 23:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,230 +18,347 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: forms.py:34
+#: admin.py:56
+msgid "Informations personnelles"
+msgstr ""
+
+#: admin.py:61 templates/accounts/hierarchicuser_detail.html:32
+msgid "Autorité associée"
+msgstr ""
+
+#: admin.py:63
+msgid "À saisir s’il existe une autorité sur vous dans la base de données."
+msgstr ""
+
+#: admin.py:66
+msgid "Responsabilité scientifique"
+msgstr ""
+
+#: admin.py:68
+msgid "Informations complémentaires"
+msgstr ""
+
+#: admin.py:71
+msgid "Permissions"
+msgstr ""
+
+#: admin.py:74
+msgid "Important dates"
+msgstr ""
+
+#: forms.py:27
 msgid "Prénom(s)"
 msgstr ""
 
-#: forms.py:35
+#: forms.py:28
 msgid "Nom"
 msgstr ""
 
-#: forms.py:36
-msgid "Professeur"
+#: forms.py:30
+msgid "Responsable"
 msgstr ""
 
-#: forms.py:39
+#: forms.py:32
+msgid "Souhaite devenir responsable scientifique"
+msgstr ""
+
+#: forms.py:35
 msgid "Groupes"
 msgstr ""
 
-#: forms.py:46
-msgid "Général"
+#: forms.py:52
+msgid "Responsable scientifique"
 msgstr ""
 
-#: forms.py:52 models.py:22
-msgid "Utilisateur"
-msgstr ""
-
-#: forms.py:58
-msgid "Étudiant"
-msgstr ""
-
-#: forms.py:63
+#: forms.py:59
 msgid "Enregistrer"
 msgstr ""
 
-#: forms.py:65
+#: forms.py:60
 msgid "Réinitialiser"
 msgstr ""
 
-#: forms.py:88
-msgid "Demande d’accès étudiant"
+#: forms.py:72
+msgid "[Dezède] Demande de responsabilité scientifique"
 msgstr ""
 
-#: models.py:24 models.py:40
-msgid "professeur"
+#: forms.py:94 templates/account/login.html:5
+msgid "Sign In"
 msgstr ""
 
-#: models.py:27 models.py:29
-msgid "profil étudiant"
-msgid_plural "profils étudiants"
+#: models.py:90
+msgid "afficher l’email"
+msgstr ""
+
+#: models.py:91
+msgid "site internet"
+msgstr ""
+
+#: models.py:93
+msgid "nom affiché du site internet"
+msgstr ""
+
+#: models.py:96
+msgid "personne morale"
+msgstr ""
+
+#: models.py:97
+msgid "Cochez si vous êtes une institution ou un ensemble."
+msgstr ""
+
+#: models.py:101
+msgid "type d’autorité associée"
+msgstr ""
+
+#: models.py:102
+msgid "identifiant de l’autorité associée"
+msgstr ""
+
+#: models.py:108 views.py:237
+msgid "responsable scientifique"
+msgstr ""
+
+#: models.py:111
+msgid "Veut être responsable scientifique"
+msgstr ""
+
+#: models.py:113
+msgid "photographie d’identité"
+msgstr ""
+
+#: models.py:117
+msgid "présentation"
+msgstr ""
+
+#: models.py:118
+msgid "fonctions au sein de l’équipe"
+msgstr ""
+
+#: models.py:120
+msgid "publications"
+msgstr ""
+
+#: models.py:130 models.py:131
+msgid "utilisateur"
+msgid_plural "utilisateurs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/accounts/grant_to_admin.html:6
-#: templates/accounts/grant_to_admin.html:10
+#: templates/account/login.html:11
+#, python-format
+msgid ""
+"\n"
+"      Si vous ne possédez pas encore de compte,\n"
+"      <a href=\"%(signup_url)s\">veuillez en créer un</a> d’abord.\n"
+"    "
+msgstr ""
+
+#: templates/account/password_change.html:6
+#: templates/account/password_change.html:14
+#: templates/account/password_reset_from_key.html:10
+#: templates/account/password_reset_from_key_done.html:5
+msgid "Change Password"
+msgstr ""
+
+#: templates/account/password_reset.html:6
+#: templates/account/password_reset_done.html:6
+msgid "Password Reset"
+msgstr ""
+
+#: templates/account/password_reset.html:16
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
+msgstr ""
+
+#: templates/account/password_reset.html:21
+msgid "Reset My Password"
+msgstr ""
+
+#: templates/account/password_reset.html:24
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr ""
+
+#: templates/account/password_reset_done.html:15
+msgid ""
+"We have sent you an e-mail. Please contact us if you do not receive it "
+"within a few minutes."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:8
+msgid "Bad Token"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:19
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:25
+msgid "change password"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:28
+#: templates/account/password_reset_from_key_done.html:9
+msgid "Your password is now changed."
+msgstr ""
+
+#: templates/account/signup.html:5
+msgid "Sign Up"
+msgstr ""
+
+#: templates/account/signup.html:11
+#, python-format
+msgid ""
+"Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+
+#: templates/account/verification_sent.html:7
+msgid "Vérification de votre adresse e-mail"
+msgstr ""
+
+#: templates/account/verification_sent.html:14
+msgid ""
+"\n"
+"      Nous vous avons envoyé un e-mail de vérification.\n"
+"      Suivez le lien fourni pour finaliser la procédure de création de "
+"compte.\n"
+"      Veuillez nous contactez si vous ne le recevez pas\n"
+"      dans les minutes qui viennent.\n"
+"    "
+msgstr ""
+
+#: templates/accounts/grant_to_admin.html:7
 msgid "Accès à l’interface d’administration"
 msgstr ""
 
-#: templates/accounts/grant_to_admin.html:13
+#: templates/accounts/grant_to_admin.html:15
 #, python-format
 msgid ""
 "\n"
-"        L’utilisateur « %(object)s » fait déjà partie de l’équipe !\n"
+"        L’utilisateur «%(object)s» fait déjà partie de l’équipe!\n"
 "      "
 msgstr ""
 
-#: templates/accounts/grant_to_admin.html:18
+#: templates/accounts/grant_to_admin.html:20
 #, python-format
 msgid ""
 "\n"
-"        %(user.get_full_name)s, l’utilisateur « %(object.get_full_name)s »\n"
+"        %(user)s, l’utilisateur «%(object)s»\n"
 "        a été autorisé à accéder à l’interface d'administration suite à "
 "votre\n"
 "        accord. Si vous souhaitez annuler cela,\n"
 "        <a href=\"%(change_user_url)s\">\n"
 "          modifiez l’utilisateur %(object.get_full_name)s</a>,\n"
-"        décochez la case « statut équipe » et enregistrez.\n"
+"        décochez la case «statut équipe» et enregistrez.\n"
 "      "
 msgstr ""
 
-#: templates/profiles/create_profile.html:5
-#: templates/profiles/create_profile.html:9
-msgid "Créer un profil utilisateur"
-msgstr ""
-
-#: templates/profiles/create_profile.html:13
-#: templates/profiles/edit_profile.html:13
-msgid "Valider"
-msgstr ""
-
-#: templates/profiles/edit_profile.html:5
-#: templates/profiles/edit_profile.html:9
-msgid "Modification de votre profil"
-msgstr ""
-
-#: templates/profiles/profile_detail.html:10
-msgid "Profil de"
-msgstr ""
-
-#: templates/profiles/profile_detail.html:12
-msgid "professeur référent"
-msgstr ""
-
-#: templates/profiles/profile_detail.html:14
-msgid "Sources transcrites"
-msgstr ""
-
-#: templates/profiles/profile_list.html:6
-#: templates/profiles/profile_list.html:10
-msgid "Profils utilisateur"
-msgstr ""
-
-#: templates/profiles/profile_list.html:16
-msgid "Créer son profil"
-msgstr ""
-
-#: templates/registration/activate.html:5
-#: templates/registration/activate.html:9
-msgid "Erreur d’activation"
-msgstr ""
-
-#: templates/registration/activate.html:11
+#: templates/accounts/grant_to_admin_demand_email.txt:3
 #, python-format
 msgid ""
 "\n"
-"      L’activation de la clé %(activation_key)s a échoué.\n"
-"    "
-msgstr ""
-
-#: templates/registration/activation_complete.html:5
-#: templates/registration/activation_complete.html:9
-msgid "Bienvenue"
-msgstr ""
-
-#: templates/registration/activation_complete.html:11
-msgid ""
+"Bonjour %(mentor_first_name)s,\n"
 "\n"
-"      La création et l’activation de votre compte ont été un succès !\n"
-"    "
-msgstr ""
-
-#: templates/registration/activation_email.txt:3
-msgid ""
+"L’utilisateur «%(user)s» demande à devenir l'un de vos disciples.\n"
 "\n"
-"Pour que votre compte fonctionne, vous devez l’activer.\n"
-"Voici le lien d’activation :\n"
+"Il a demandé à faire partie du(es) groupe(s):\n"
 msgstr ""
 
-#: templates/registration/activation_email.txt:8
+#: templates/accounts/grant_to_admin_demand_email.txt:16
 #, python-format
 msgid ""
 "\n"
-"Vous disposez d’un délai de %(expiration_days)s jours pour activer ce "
-"compte.\n"
+"Si vous souhaitez l’accepter et ainsi lui autoriser à accéder à l’interface "
+"d’administration, cliquez sur ce lien:\n"
+"%(site_url)s%(grant_to_admin_url)s\n"
+"\n"
+"Vous pouvez consulter et modifier ses données complètes sur %(site_url)s"
+"%(change_user_url)s.\n"
 msgstr ""
 
-#: templates/registration/login.html:6 templates/registration/login.html:19
-msgid "Connexion"
-msgstr ""
-
-#: templates/registration/login.html:11
-msgid "Déjà connecté"
-msgstr ""
-
-#: templates/registration/login.html:13
+#: templates/accounts/granted_to_admin_email.txt:4
 #, python-format
 msgid ""
 "\n"
-"      Vous êtes déjà connecté.  Souhaitez-vous <a href=\"%(url)s\">vous "
-"déconnecter</a> ?\n"
-"    "
-msgstr ""
-
-#: templates/registration/login.html:22
-#, python-format
-msgid ""
+"Bonjour %(user_first_name)s,\n"
 "\n"
-"            Pas de compte utilisateur ?\n"
-"            Vous pouvez <a href=\"%(url)s\">en creer un</a>.\n"
-"          "
+"Vous venez d’être accepté dans l’équipe de Dezède.\n"
+"Vous êtes donc autorisé à accéder à l’interface d’administration sur "
+"%(site_url)s%(admin_index_url)s.\n"
 msgstr ""
 
-#: templates/registration/login.html:31
-msgid "Se connecter"
+#: templates/accounts/hierarchicuser_detail.html:16
+msgid "Présentation"
 msgstr ""
 
-#: templates/registration/logout.html:6 templates/registration/logout.html:10
-msgid "Déconnexion"
+#: templates/accounts/hierarchicuser_detail.html:22
+msgid "Bibliographie"
 msgstr ""
 
-#: templates/registration/logout.html:13
-#, python-format
-msgid ""
-"\n"
-"      Vous venez de vous déconnecter avec succès.\n"
-"      <a href=\"%(url)s\">Se connecter à nouveau</a> ?\n"
-"    "
+#: templates/accounts/hierarchicuser_detail.html:36
+msgid "Fonction(s) au sein de l’équipe"
 msgstr ""
 
-#: templates/registration/registration_closed.html:5
-#: templates/registration/registration_closed.html:9
-msgid "Enregistrement désactivé"
+#: templates/accounts/hierarchicuser_detail.html:40
+msgid "À consulter dans Dezède"
 msgstr ""
 
-#: templates/registration/registration_closed.html:11
-msgid ""
-"\n"
-"      La création de nouveaux comptes utilisateur a été momentanément\n"
-"      désactivée.\n"
-"    "
+#: templates/accounts/hierarchicuser_detail.html:48
+msgid "Site internet"
 msgstr ""
 
-#: templates/registration/registration_complete.html:5
-#: templates/registration/registration_complete.html:9
-msgid "En attente d’activation"
+#: templates/accounts/hierarchicuser_detail.html:52
+msgid "Courriel"
 msgstr ""
 
-#: templates/registration/registration_complete.html:11
-msgid ""
-"\n"
-"      Votre compte a bien été créé mais demande une vérification de votre "
-"part.\n"
-"      Un courriel contenant un lien d’activation vous a été envoyé.\n"
-"    "
+#: views.py:30
+msgid "[Dezède] Accès autorisé à l’administration"
 msgstr ""
 
-#: templates/registration/registration_form.html:5
-#: templates/registration/registration_form.html:9
-msgid "Créer un nouveau compte"
+#: views.py:144
+msgid "Liste des utilisateurs"
+msgstr ""
+
+#: views.py:167
+msgid "Comité éditorial"
+msgstr ""
+
+#: views.py:184
+msgid "Contributeurs"
+msgstr ""
+
+#: views.py:194
+msgid "Équipe de développement"
+msgstr ""
+
+#: views.py:205
+msgid "Propriétaires"
+msgstr ""
+
+#: views.py:214
+msgid "Partenaires"
+msgstr ""
+
+#: views.py:226
+msgid "membre"
+msgstr ""
+
+#: views.py:227
+msgid "membres"
+msgstr ""
+
+#: views.py:231
+msgid "disciple"
+msgstr ""
+
+#: views.py:232
+msgid "disciples"
+msgstr ""
+
+#: views.py:235
+msgid "appartenance"
 msgstr ""

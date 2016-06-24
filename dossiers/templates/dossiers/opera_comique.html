@@ -6,11 +6,11 @@
   <div class="btn-group btn-group-justified" role="group">
     <a class="btn btn-default{% if request.GET.order_by != 'creation_date' %} active{% endif %}"
        href="{% url 'dossier_opera_comique' %}">
-      Ordonner par nom d’œuvre
+      {% trans 'Ordonner par nom d’œuvre' %}
     </a>
     <a class="btn btn-default{% if request.GET.order_by == 'creation_date' %} active{% endif %}"
        href="{% url 'dossier_opera_comique' %}?order_by=creation_date">
-      Ordonner par date de création mondiale
+      {% trans 'Ordonner par date de création mondiale' %}
     </a>
   </div>
 

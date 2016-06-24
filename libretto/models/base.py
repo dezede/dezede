@@ -273,8 +273,8 @@ class PublishedModel(CommonModel):
 
 
 class AutoriteModel(PublishedModel):
-    notes_publiques = HTMLField(blank=True, verbose_name='notes publiques')
-    notes_privees = HTMLField(blank=True, verbose_name='notes privées')
+    notes_publiques = HTMLField(blank=True, verbose_name=_('notes publiques'))
+    notes_privees = HTMLField(blank=True, verbose_name=_('notes privées'))
 
     class Meta(object):
         abstract = True
@@ -322,6 +322,7 @@ class CommonTreeManager(CommonManager, TreeManager):
     def get_queryset(self):
         return self.queryset_class(self.model, using=self._db).order_by(
             self.tree_id_attr, self.left_attr)
+
 
 @python_2_unicode_compatible
 class AncrageSpatioTemporel(object):
@@ -614,9 +615,9 @@ class FichierManager(CommonManager):
 @python_2_unicode_compatible
 class Fichier(CommonModel):
     source = ForeignKey('Source', related_name='fichiers')
-    fichier = FileField(upload_to='files/')
-    folio = CharField(max_length=10, blank=True)
-    page = CharField(max_length=10, blank=True)
+    fichier = FileField(_('fichier'), upload_to='files/')
+    folio = CharField(_('folio'), max_length=10, blank=True)
+    page = CharField(_('page'), max_length=10, blank=True)
 
     # Internal fields
     OTHER = 0
@@ -624,10 +625,10 @@ class Fichier(CommonModel):
     AUDIO = 2
     VIDEO = 3
     TYPES = (
-        (OTHER, 'autre'),
-        (IMAGE, 'image'),
-        (AUDIO, 'audio'),
-        (VIDEO, 'vidéo'),
+        (OTHER, _('autre')),
+        (IMAGE, _('image')),
+        (AUDIO, _('audio')),
+        (VIDEO, _('vidéo')),
     )
     type = PositiveSmallIntegerField(choices=TYPES, null=True, blank=True,
                                      db_index=True)

@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from datetime import datetime
 
+from django.utils.translation import ugettext_lazy as _
 from django_rq import job
 
 from common.utils.export import send_pdf, send_export
@@ -16,7 +17,7 @@ def events_to_pdf(pk_list, user_pk, site_pk, language_code):
     context = {'evenements': evenements.prefetch_all}
     template_name = 'libretto/evenement_list.tex'
     n = len(pk_list)
-    subject = 'de %s événements' % n
+    subject = _('de %s événements') % n
     filename = '%s-evenements_%s' % (n, datetime.today().date().isoformat())
     send_pdf(context, template_name, subject, filename, user_pk, site_pk,
              language_code)
@@ -26,7 +27,7 @@ def export_events(extension):
     def inner(pk_list, user_pk, site_pk, language_code):
         exporter = EvenementExporter(Evenement.objects.filter(pk__in=pk_list))
         n = len(pk_list)
-        subject = 'de %s événements' % n
+        subject = _('de %s événements') % n
         filename = '%s-evenements_%s' % (n, datetime.today().date().isoformat())
         send_export(exporter, extension, subject, filename, user_pk,
                     language_code)

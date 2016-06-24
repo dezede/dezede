@@ -1,4 +1,9 @@
-Bonjour {{ user.first_name }},
+{% load i18n %}
+
+{% url 'admin:index' as admin_index_url %}
+{% blocktrans with user_first_name=user.first_name %}
+Bonjour {{ user_first_name }},
 
 Vous venez d’être accepté dans l’équipe de Dezède.
-Vous êtes donc autorisé à accéder à l’interface d’administration sur {{ site_url }}{% url 'admin:index' %}.
+Vous êtes donc autorisé à accéder à l’interface d’administration sur {{ site_url }}{{ admin_index_url }}.
+{% endblocktrans %}

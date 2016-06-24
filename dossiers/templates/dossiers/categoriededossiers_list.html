@@ -21,9 +21,22 @@
     </div>
     <div class="col-md-4">
       <div class="well">
-        <h3>Qu’est-ce qu’un dossier ?</h3>
+        <h3>{% trans 'Qu’est-ce qu’un dossier ?' %}</h3>
         <p>
-          {% include 'pages/include/dossiers.html' %}
+          {% url 'comite_editorial' as comite_url %}
+          {% blocktrans %}
+            Le dossier est la forme aboutie d’une publication dans Dezède :
+            il s’agit d’un corpus d’événements ou d’images, créé et rassemblé
+            par des éditeurs scientifiques ou des partenaires qui en assurent la présentation.
+            Le dossier d’événements a pour objectif de reconstituer des programmes de spectacles
+            dans un espace géographique et temporel circonscrit, d’établir la programmation d’une institution,
+            de retracer la carrière d’un interprète, ou d’étudier la diffusion et la réception d’une œuvre.
+            Les événements sont présentés de manière chronologique.
+            Les dossiers sont classés selon un ordre établi
+            par une table générale qui évolue en fonction des nouvelles contributions ;
+            leur publication est soumise à l’expertise
+            du <a href="{{ comite_url }}">comité éditorial</a>.
+          {% endblocktrans %}
         </p>
       </div>
     </div>

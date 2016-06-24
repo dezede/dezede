@@ -166,7 +166,7 @@ class Source(AutoriteModel):
     lieu_conservation = CharField(_('lieu de conservation'), max_length=50,
                                   blank=True, db_index=True)
     cote = CharField(_('cote'), max_length=35, blank=True, db_index=True)
-    url = URLField(blank=True,
+    url = URLField(_('URL'), blank=True,
                    help_text=_('Uniquement un permalien extérieur à Dezède.'))
 
     transcription = HTMLField(_('transcription'), blank=True,
@@ -174,18 +174,22 @@ class Source(AutoriteModel):
                     'définies dans <a href="%s">le didacticiel.</a>')
                   % '/examens/source/')  # FIXME: Don’t hardcode this.
 
-    evenements = ManyToManyField('Evenement', through='SourceEvenement',
-                                 related_name='sources')
+    evenements = ManyToManyField(
+        'Evenement', through='SourceEvenement', related_name='sources',
+        verbose_name=_('événements'))
     oeuvres = ManyToManyField('Oeuvre', through='SourceOeuvre',
-                              related_name='sources')
-    individus = ManyToManyField('Individu', through='SourceIndividu',
-                                related_name='sources')
-    ensembles = ManyToManyField('Ensemble', through='SourceEnsemble',
-                                related_name='sources')
+                              related_name='sources', verbose_name=_('œuvres'))
+    individus = ManyToManyField(
+        'Individu', through='SourceIndividu', related_name='sources',
+        verbose_name=_('individus'))
+    ensembles = ManyToManyField(
+        'Ensemble', through='SourceEnsemble', related_name='sources',
+        verbose_name=_('ensembles'))
     lieux = ManyToManyField('Lieu', through='SourceLieu',
-                            related_name='sources')
-    parties = ManyToManyField('Partie', through='SourcePartie',
-                              related_name='sources')
+                            related_name='sources', verbose_name=_('lieux'))
+    parties = ManyToManyField(
+        'Partie', through='SourcePartie', related_name='sources',
+        verbose_name=_('sources'))
 
     objects = SourceManager()
 
@@ -226,7 +230,7 @@ class Source(AutoriteModel):
     def html(self, tags=True, pretty_title=False):
         url = None if not tags else self.get_absolute_url()
         conservation = hlp(self.lieu_conservation,
-                           'Lieu de conservation', tags)
+                           ugettext('Lieu de conservation'), tags)
         if self.ancrage.date or self.ancrage.date_approx:
             ancrage = hlp(self.ancrage.html(tags, caps=False), ugettext('date'))
         else:

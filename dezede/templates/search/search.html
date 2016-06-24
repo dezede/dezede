@@ -9,7 +9,7 @@
   <form method="get" action=".">
     <div class="input-group col-xs-5">
       <input type="text" name="q" value="{{ form.q.data|default:""|escape }}"
-             id="id_q" autofocus="autofocus" placeholder="Tapez ici"
+             id="id_q" autofocus="autofocus"
              class="form-control" />
       <span class="input-group-btn">
         <button type="submit" class="btn btn-default">
@@ -69,6 +69,6 @@
     {% include 'search/search_page.html' with object_list=paginator.object_list %}
 
   {% else %}
-    <p>{% trans "Tapez par exemple « chanteuse », « Molière », « opéra » ou encore « théâtre »." %}</p>
+    <p>{% trans "Saisir « chanteuse », « Molière », « opéra » ou encore « théâtre »" %}</p>
   {% endif %}
 {% endblock %}

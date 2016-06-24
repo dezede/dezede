@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
-{% load static_grouper %}
+{% load static_grouper i18n %}
 
 
 {% block header %}
   <h1>
-    {% block title %}Formation à la transcription de source{% endblock %}
+    {% block title %}{% trans 'Source transcription training' %}{% endblock %}
   </h1>
 
-  <h3>Étape {{ level.number }} sur {{ max_level_number }}</h3>
+  <h3>
+    {% blocktrans with level_number=level.number %}
+      Level {{ level_number }} of {{ max_level_number }}
+    {% endblocktrans %}
+  </h3>
 {% endblock %}
 
 
@@ -21,22 +25,22 @@
   {% endaddstatic %}
 
   <div class="alert alert-info">
-    <h4>Instructions</h4>
+    <h4>{% trans 'Instructions' %}</h4>
     <p>{{ level.help_message }}</p>
   </div>
 
   {% if last_taken_level.was_sent and not last_taken_level.passed %}
-    <h3>Transcription envoyée</h3>
+    <h3>{% trans 'Transcription sent' %}</h3>
 
     <div class="alert alert-{% if last_taken_level.score < 0.5 %}danger{% else %}warning{% endif %}" role="alert">
         {% if last_taken_level.score < 0.25 %}
-          Très insuffisant
+          {% trans 'Very inadequate' %}
         {% elif last_taken_level.score < 0.5 %}
-          Insuffisant
+          {% trans 'Inadequate' %}
         {% elif last_taken_level.score < 0.75 %}
-          Bien ! Plus que quelques erreurs à corriger
+          {% trans 'Good! A few errors left' %}
         {% elif last_taken_level.score < 1.0 %}
-          Très bien ! Encore un tout petit effort
+          {% trans 'Very good! One more effort' %}
         {% endif %}
     </div>
 
@@ -45,17 +49,17 @@
     </blockquote>
   {% endif %}
 
-  <h3>Source à transcrire</h3>
+  <h3>{% trans 'Source to transcribe' %}</h3>
   {% for fichier in source.fichiers.group_by_type.images %}
     <img src="{{ fichier.fichier.url }}" />
   {% endfor %}
 
-  <h3>Transcription</h3>
+  <h3>{% trans 'Transcription' %}</h3>
 
   <form method="POST">
     {% csrf_token %}
     {{ form.transcription }}
     <br />
-    <button type="submit" class="btn btn-primary">Vérifier</button>
+    <button type="submit" class="btn btn-primary">{% trans 'Check' %}</button>
   </form>
 {% endblock %}

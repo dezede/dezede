@@ -10,6 +10,8 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import redirect
+from django.utils.encoding import force_text
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView
 from el_pagination.views import AjaxListView
 from haystack.query import SearchQuerySet
@@ -214,7 +216,7 @@ class EvenementExport(BaseEvenementListView):
         pk_list = list(self.get_queryset().values_list('pk', flat=True))
         if self.valid_form and export_format in jobs:
             launch_export(jobs[export_format], request, pk_list,
-                          export_format, 'de %s événements' % len(pk_list))
+                          export_format, _('de %s événements') % len(pk_list))
         return super(EvenementExport, self).get(request, *args, **kwargs)
 
 
@@ -285,12 +287,14 @@ class CommonViewSet(ModelViewSet):
 CENTURIES = tuple(range(11, 22))
 
 CENTURIES_VERBOSES = [
-    (str(i), to_roman(i) + '<sup>e</sup> siècle') for i in CENTURIES
+    (str(i), to_roman(i) + force_text(_('<sup>e</sup> siècle')))
+    for i in CENTURIES
 ][::-1]
 
 CENTURIES_DATE_RANGES = {
     str(i): ('%d00-1-1' % (i-1), '%d99-12-31' % (i-1)) for i in CENTURIES
 }
+
 
 class SourceTableView(PublishedMixin, CommonTableView):
     model = Source
@@ -302,9 +306,9 @@ class SourceTableView(PublishedMixin, CommonTableView):
         'type': '140px',
     }
     verbose_columns = {
-        'icons': 'Type de contenu',
-        'html': '',
-        'ancrage': 'Date',
+        'icons': _('Type de contenu'),
+        'html': _('Titre'),
+        'ancrage': _('Date'),
     }
     orderings = {'ancrage': 'date'}
     filters = {
@@ -401,7 +405,8 @@ class IndividuTableView(PublishedMixin, CommonTableView):
         'naissance': '170px',
         'deces': '170px',
     }
-    verbose_columns = {'related_label_html': ''}
+    verbose_columns = {'related_label_html': '',
+                       'calc_professions': _('Profession(s)')}
     orderings = {
         'related_label_html': 'nom',
         'calc_professions': 'professions',
@@ -458,7 +463,7 @@ class OeuvreTableView(PublishedMixin, CommonTableView):
         'auteurs_html': '280px',
         'creation': '240px',
     }
-    verbose_columns = {'titre_html': ''}
+    verbose_columns = {'titre_html': '', 'creation': _('Genèse et création')}
     orderings = {
         'titre_html': 'titre',
         'auteurs_html': 'auteurs__individu',

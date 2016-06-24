@@ -164,7 +164,7 @@ class TypeDeCaracteristiqueDeProgramme(CommonModel):
                     unique=True, db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
                             help_text=PLURAL_MSG)
-    classement = SmallIntegerField(default=1)
+    classement = SmallIntegerField(_('classement'), default=1)
 
     class Meta(object):
         verbose_name = ungettext_lazy(
@@ -300,7 +300,7 @@ class ElementDeProgramme(CommonModel):
         help_text=_('Vous pouvez croiser le titre et le nom des auteurs. '
                     'Évitez les termes généraux comme « de », « la », « le », '
                     '« avec ».'))
-    autre = CharField(max_length=500, blank=True)
+    autre = CharField(_('autre'), max_length=500, blank=True)
     caracteristiques = ManyToManyField(
         CaracteristiqueDeProgramme, related_name='elements_de_programme',
         blank=True, verbose_name=_('caractéristiques'))

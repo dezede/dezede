@@ -96,7 +96,7 @@ class IndividusProfessionsExporter(Exporter):
     columns = ('individu', 'profession__nom')
 
     def get_verbose_table_name(self):
-        return 'individus ↔ professions'
+        return _('individus ↔ professions')
 
 
 @exporter_registry.add
@@ -160,7 +160,7 @@ class PartieProfessionsExporter(Exporter):
     columns = ('partie', 'profession__nom')
 
     def get_verbose_table_name(self):
-        return 'partie ↔ professions'
+        return _('partie ↔ professions')
 
 
 @exporter_registry.add
@@ -224,7 +224,7 @@ class SourcesEvenementsExporter(Exporter):
     model = Source.evenements.through
 
     def get_verbose_table_name(self):
-        return 'sources ↔ evenements'
+        return _('sources ↔ evenements')
 
 
 @exporter_registry.add
@@ -232,7 +232,7 @@ class SourcesOeuvresExporter(Exporter):
     model = Source.oeuvres.through
 
     def get_verbose_table_name(self):
-        return 'sources ↔ œuvres'
+        return _('sources ↔ œuvres')
 
 
 @exporter_registry.add
@@ -240,7 +240,7 @@ class SourcesIndividusExporter(Exporter):
     model = Source.individus.through
 
     def get_verbose_table_name(self):
-        return 'sources ↔ individus'
+        return _('sources ↔ individus')
 
 
 @exporter_registry.add
@@ -248,7 +248,7 @@ class SourcesEnsemblesExporter(Exporter):
     model = Source.ensembles.through
 
     def get_verbose_table_name(self):
-        return 'sources ↔ ensembles'
+        return _('sources ↔ ensembles')
 
 
 @exporter_registry.add
@@ -256,7 +256,7 @@ class SourcesLieuxExporter(Exporter):
     model = Source.lieux.through
 
     def get_verbose_table_name(self):
-        return 'sources ↔ lieux'
+        return _('sources ↔ lieux')
 
 
 @exporter_registry.add
@@ -264,7 +264,7 @@ class SourcesPartiesExporter(Exporter):
     model = Source.parties.through
 
     def get_verbose_table_name(self):
-        return 'sources ↔ parties'
+        return _('sources ↔ parties')
 
 
 @exporter_registry.add
@@ -317,7 +317,7 @@ class ProgrammeCaracteristiquesExporter(Exporter):
     }
 
     def get_verbose_table_name(self):
-        return 'programme ↔ caractéristiques'
+        return _('programme ↔ caractéristiques')
 
 
 @exporter_registry.add

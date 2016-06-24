@@ -6,9 +6,11 @@
   \title{ {{ object.titre|html_to_latex }} }
   \author{ {{ object.editeurs_scientifiques.html|html_to_latex }} }
   \date{
-    Publié dans \textit{Dezède}
-    le {{ object.date_publication|date_html:True|html_to_latex }} \\
-    Exporté le \today
+    {% blocktrans with date=object.date_publication|date_html:True|html_to_latex %}
+      Publié dans \textit{Dezède}
+      le {{ date }} \\
+      Exporté le \today
+    {% endblocktrans %}
   }
 
   \maketitle
@@ -49,12 +51,16 @@
 
   \fontsize{10pt}{12pt}\selectfont
 
-  Dossier dirigé par {{ object.editeurs_scientifiques.html|html_to_latex }},
-  avec la contribution de {{ object.get_contributors.html|html_to_latex }}.
+  {% blocktrans with editeurs=object.editeurs_scientifiques.html|html_to_latex contributeurs=object.get_contributors.html|html_to_latex %}
+    Dossier dirigé par {{ editeurs }},
+    avec la contribution de {{ contributeurs }}.
+  {% endblocktrans %}
 
-  Publié dans \textit{Dezède}
-  le {{ object.date_publication|date_html:True|html_to_latex }} à l’adresse
-  {{ SITE }}{{ object.permalien }}
+  {% blocktrans with date=object.date_publication|date_html:True|html_to_latex permalien=object.permalien %}
+    Publié dans \textit{Dezède}
+    le {{ date }} à l’adresse
+    {{ SITE }}{{ permalien }}
+  {% endblocktrans %}
 
   \twocolumn
   \setlength{\parskip}{0pt}

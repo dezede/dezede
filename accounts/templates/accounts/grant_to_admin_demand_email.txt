@@ -1,12 +1,21 @@
-Bonjour {{ mentor.first_name }},
+{% load i18n %}
+
+{% blocktrans with mentor_first_name=mentor.first_name %}
+Bonjour {{ mentor_first_name }},
 
 L’utilisateur « {{ user }} » demande à devenir l'un de vos disciples.
 
 Il a demandé à faire partie du(es) groupe(s) :
+{% endblocktrans %}
+
 {% for group in user.groups.all %}
   {{ group }}{% endfor %}
 
+{% url 'grant_to_admin' user.pk as grant_to_admin_url %}
+{% url 'admin:accounts_hierarchicuser_change' user.pk as change_user_url %}
+{% blocktrans %}
 Si vous souhaitez l’accepter et ainsi lui autoriser à accéder à l’interface d’administration, cliquez sur ce lien :
-{{ site_url }}{% url 'grant_to_admin' user.pk %}
+{{ site_url }}{{ grant_to_admin_url }}
 
-Vous pouvez consulter et modifier ses données complètes sur {{ site_url }}{% url 'admin:accounts_hierarchicuser_change' user.pk %}.
+Vous pouvez consulter et modifier ses données complètes sur {{ site_url }}{{ change_user_url }}.
+{% endblocktrans %}

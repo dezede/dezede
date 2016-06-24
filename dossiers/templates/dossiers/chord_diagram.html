@@ -36,17 +36,24 @@
   </style>
 {% endaddstatic %}
 
-<h2>Auteurs les plus représentés</h2>
+<h2>{% trans 'Auteurs les plus représentés' %}</h2>
 
 <div id="chord-graph"></div>
 
 <p>
-  La taille des cordes correspond au nombre d’événements où des œuvres des deux
-  auteurs ont été représentées ensemble.
+  {% blocktrans %}
+    La taille des cordes est proportionnelle au nombre d’événements
+    comportant des œuvres des deux auteurs reliés entre eux.
+  {% endblocktrans %}
 </p>
 <p>
-  Cliquez sur un auteur pour voir uniquement ses cordes.
-  Cliquez à nouveau pour voir uniquement les autres cordes.
+  {% blocktrans %}
+    Cliquez sur le nom d’un auteur pour visualiser uniquement
+    les cordes auxquelles il est associé.<br />
+    Cliquez une seconde fois pour faire disparaitre
+    les cordes auxquelles ce nom est lié.<br />
+    Cliquez partout ailleurs pour revenir à la position initiale.
+  {% endblocktrans %}
 </p>
 <h4 class="legend">
   {% for min_year, max_year, color, verbose in colors_by_period %}
