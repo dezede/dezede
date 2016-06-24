@@ -36,7 +36,7 @@ class TakenLevelInline(StackedInline):
     def get_score(self, obj):
         if obj.score is not None:
             return '%.1f / 20' % (obj.score * 20.0)
-    get_score.short_description = _('score')
+    get_score.short_description = _('note')
 
 
 @register(TakenExam)
@@ -52,10 +52,10 @@ class TakenExamAdmin(ModelAdmin):
 
     def get_current_level(self, obj):
         return obj.current_level
-    get_current_level.short_description = _('current level')
+    get_current_level.short_description = _('niveau actuel')
 
     def get_average_score(self, obj):
         if obj.avg_score is not None:
             return '%.1f / 20' % (obj.avg_score * 20.0)
-    get_average_score.short_description = _('average score')
+    get_average_score.short_description = _('note moyenne')
     get_average_score.admin_order_field = 'avg_score'

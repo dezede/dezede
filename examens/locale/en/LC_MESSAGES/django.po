@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 23:46+0200\n"
+"POT-Creation-Date: 2016-06-25 00:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,189 +18,196 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: admin.py:39 models.py:162
-msgid "score"
-msgstr ""
+msgid "note"
+msgstr "score"
 
 #: admin.py:55
-msgid "current level"
-msgstr ""
+msgid "niveau actuel"
+msgstr "current level"
 
 #: admin.py:60
-msgid "average score"
-msgstr ""
+msgid "note moyenne"
+msgstr "average score"
 
 #: models.py:23
-msgid "number"
-msgstr ""
+msgid "numéro"
+msgstr "number"
 
 #: models.py:25
-msgid "help message"
-msgstr ""
+msgid "message d’aide"
+msgstr "help message"
 
 #: models.py:28
 msgid "sources"
-msgstr ""
+msgstr "sources"
 
 #: models.py:31 models.py:46 models.py:157
-msgid "level"
-msgstr ""
+msgid "niveau"
+msgstr "level"
 
 #: models.py:32
-msgid "levels"
-msgstr ""
+msgid "niveaux"
+msgstr "levels"
 
 #: models.py:49 models.py:159
 msgid "source"
-msgstr ""
+msgstr "source"
 
 #: models.py:52
-msgid "source of level"
-msgstr ""
+msgid "source de niveau"
+msgstr "source of level"
 
 #: models.py:53
-msgid "sources of level"
-msgstr ""
+msgid "sources de niveau"
+msgstr "sources of level"
 
 #: models.py:75
-msgid "user"
-msgstr ""
+msgid "utilisateur"
+msgstr "user"
 
 #: models.py:77
 msgid "session"
-msgstr ""
+msgstr "session"
 
 #: models.py:84 models.py:155
-msgid "taken exam"
-msgstr ""
+msgid "examen passé"
+msgstr "taken exam"
 
 #: models.py:85
-msgid "taken exams"
-msgstr ""
+msgid "examens passés"
+msgstr "taken exams"
 
 #: models.py:106
-msgid "is complete"
-msgstr ""
+msgid "est fini"
+msgstr "is complete"
 
 #: models.py:121
-msgid "time spent"
-msgstr ""
+msgid "temps passé"
+msgstr "time spent"
 
 #: models.py:161
 msgid "transcription"
-msgstr ""
+msgstr "transcription"
 
 #: models.py:164
-msgid "passed"
-msgstr ""
+msgid "passé"
+msgstr "passed"
 
 #: models.py:165
-msgid "start"
-msgstr ""
+msgid "début"
+msgstr "start"
 
 #: models.py:166
-msgid "end"
-msgstr ""
+msgid "fin"
+msgstr "end"
 
 #: models.py:172
-msgid "taken level"
-msgstr ""
+msgid "niveau passé"
+msgstr "taken level"
 
 #: models.py:173
-msgid "taken levels"
-msgstr ""
+msgid "niveaux passés"
+msgstr "taken levels"
 
 #: templates/examens/source.html:7
-msgid "Source transcription training"
-msgstr ""
+msgid "Formation à la transcription de source"
+msgstr "Source transcription training"
 
 #: templates/examens/source.html:11
 #, python-format
 msgid ""
 "\n"
-"      Level %(level_number)s of %(max_level_number)s\n"
+"      Étape %(level_number)s sur %(max_level_number)s\n"
 "    "
 msgstr ""
+"\n"
+"      Level %(level_number)s of %(max_level_number)s\n"
+"    "
 
 #: templates/examens/source.html:28
 msgid "Instructions"
-msgstr ""
+msgstr "Instructions"
 
 #: templates/examens/source.html:33
-msgid "Transcription sent"
-msgstr ""
+msgid "Transcription envoyée"
+msgstr "Transcription sent"
 
 #: templates/examens/source.html:37
-msgid "Very inadequate"
-msgstr ""
+msgid "Très insuffisant"
+msgstr "Very inadequate"
 
 #: templates/examens/source.html:39
-msgid "Inadequate"
-msgstr ""
+msgid "Insuffisant"
+msgstr "Inadequate"
 
 #: templates/examens/source.html:41
-msgid "Good! A few errors left"
-msgstr ""
+msgid "Bien\\u202f! Plus que quelques erreurs à corriger"
+msgstr "Good! A few errors left"
 
 #: templates/examens/source.html:43
-msgid "Very good! One more effort"
-msgstr ""
+msgid "Très bien\\u202f! Encore un tout petit effort"
+msgstr "Very good! One more effort"
 
 #: templates/examens/source.html:52
-msgid "Source to transcribe"
-msgstr ""
+msgid "Source à transcrire"
+msgstr "Source to transcribe"
 
 #: templates/examens/source.html:57
 msgid "Transcription"
-msgstr ""
+msgstr "Transcription"
 
 #: templates/examens/source.html:63
-msgid "Check"
-msgstr ""
+msgid "Vérifier"
+msgstr "Check"
 
 #: utils.py:53
-msgid "Bad formatting"
-msgstr ""
+msgid "Mauvais formatage"
+msgstr "Bad formatting"
 
 #: utils.py:54
-msgid "Extra character"
-msgid_plural "Extra characters"
-msgstr[0] ""
-msgstr[1] ""
+msgid "Caractère en trop"
+msgid_plural "Caractères en trop"
+msgstr[0] "Extra character"
+msgstr[1] "Extra characters"
 
-#: utils.py:55
-msgid "Missing character"
-msgid_plural "Missing characters"
-msgstr[0] ""
-msgstr[1] ""
-
-#: utils.py:57
-msgid "Missing sic"
-msgstr ""
+#: utils.py:56
+msgid "Caractère manquant"
+msgid_plural "Caractères manquants"
+msgstr[0] "Missing character"
+msgstr[1] "Missing characters"
 
 #: utils.py:58
-msgid "Wrong case"
-msgstr ""
+msgid "Sic manquant"
+msgstr "Missing sic"
 
 #: utils.py:59
-msgid "Wrong diacritic"
-msgstr ""
+msgid "Mauvaise casse"
+msgstr "Wrong case"
 
 #: utils.py:60
-msgid "Wrong case and diacritic"
-msgstr ""
+msgid "Mauvais accent"
+msgstr "Wrong diacritic"
 
 #: utils.py:61
-msgid "Erroneous character"
-msgstr ""
+msgid "Mauvaise casse et accent"
+msgstr "Wrong case and diacritic"
+
+#: utils.py:62
+msgid "Caractère erroné"
+msgstr "Erroneous character"
 
 #: views.py:49
 msgid ""
-"Congratulations! The transcription was perfect <i class=\"fa fa-smile-o\"></"
+"Félicitations ! La transcription était parfaite <i class=\"fa fa-smile-o\"></"
 "i>"
 msgstr ""
+"Congratulations! The transcription was perfect <i class=\"fa fa-smile-o\"></"
+"i>"
 
 #: views.py:58
 msgid ""
+"Excellent, vous avez fini toutes les étapes ! Vous pouvez maintenant créer "
+"un compte utilisateur si vous n’en possédez pas."
+msgstr ""
 "Excellent, you passed all the levels! You can now create a user account if "
 "you don’t have one yet."
-msgstr ""

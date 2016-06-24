@@ -172,7 +172,7 @@ class Source(AutoriteModel):
     transcription = HTMLField(_('transcription'), blank=True,
         help_text=_('Recopier la source ou un extrait en suivant les règles '
                     'définies dans <a href="%s">le didacticiel.</a>')
-                  % '/examens/source/')  # FIXME: Don’t hardcode this.
+                  % '/examens/source')  # FIXME: Don’t hardcode this.
 
     evenements = ManyToManyField(
         'Evenement', through='SourceEvenement', related_name='sources',

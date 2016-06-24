@@ -20,16 +20,16 @@ from libretto.models import Fichier
 @python_2_unicode_compatible
 class Level(Model):
     number = PositiveSmallIntegerField(
-        _('number'), unique=True, default=1,
+        _('numéro'), unique=True, default=1,
         validators=[MinValueValidator(1)])
-    help_message = TextField(_('help message'))
+    help_message = TextField(_('message d’aide'))
     sources = ManyToManyField(
         'libretto.Source', through='LevelSource', related_name='+',
         verbose_name=_('sources'))
 
     class Meta:
-        verbose_name = _('level')
-        verbose_name_plural = _('levels')
+        verbose_name = _('niveau')
+        verbose_name_plural = _('niveaux')
         ordering = ('number',)
 
     def __str__(self):
@@ -43,14 +43,14 @@ def limit_choices_to_possible_sources():
 
 class LevelSource(Model):
     level = ForeignKey(Level, related_name='level_sources',
-                       verbose_name=_('level'))
+                       verbose_name=_('niveau'))
     source = OneToOneField(
         'libretto.source', limit_choices_to=limit_choices_to_possible_sources,
         related_name='+', verbose_name=_('source'))
 
     class Meta:
-        verbose_name = _('source of level')
-        verbose_name_plural = _('sources of level')
+        verbose_name = _('source de niveau')
+        verbose_name_plural = _('sources de niveau')
 
 
 class TakenExamQuerySet(QuerySet):
@@ -72,7 +72,7 @@ class TakenExamQuerySet(QuerySet):
 class TakenExam(Model):
     user = OneToOneField(
         settings.AUTH_USER_MODEL, null=True, blank=True,
-        related_name='+', verbose_name=_('user'))
+        related_name='+', verbose_name=_('utilisateur'))
     session = OneToOneField(
         'sessions.Session', null=True, blank=True, verbose_name=_('session'),
         on_delete=SET_NULL, editable=False, related_name='+')
@@ -81,8 +81,8 @@ class TakenExam(Model):
     objects.use_for_related_fields = True
 
     class Meta:
-        verbose_name = _('taken exam')
-        verbose_name_plural = _('taken exams')
+        verbose_name = _('examen passé')
+        verbose_name_plural = _('examens passés')
         ordering = ('user', 'session')
 
     def __str__(self):
@@ -103,7 +103,7 @@ class TakenExam(Model):
 
     def is_complete(self):
         return self.last_passed_level_number == self.max_level_number
-    is_complete.short_description = _('is complete')
+    is_complete.short_description = _('est fini')
     is_complete.boolean = True
 
     @property
@@ -118,7 +118,7 @@ class TakenExam(Model):
             self._time_spent = self._meta.model.objects.filter(
                 pk=self.pk).annotate_time_spent()[0]._time_spent
         return self._time_spent
-    get_time_spent.short_description = _('time spent')
+    get_time_spent.short_description = _('temps passé')
     get_time_spent.admin_order_field = '_time_spent'
 
     @property
@@ -152,25 +152,25 @@ class TakenLevelQuerySet(QuerySet):
 @python_2_unicode_compatible
 class TakenLevel(Model):
     taken_exam = ForeignKey(TakenExam, related_name='taken_levels',
-                            verbose_name=_('taken exam'), editable=False)
+                            verbose_name=_('examen passé'), editable=False)
     level = ForeignKey(
-        Level, verbose_name=_('level'), editable=False, related_name='+')
+        Level, verbose_name=_('niveau'), editable=False, related_name='+')
     source = ForeignKey(
         'libretto.Source', verbose_name=_('source'), editable=False,
         related_name='+')
     transcription = TextField(verbose_name=_('transcription'))
-    score = FloatField(_('score'), null=True, blank=True, editable=False)
+    score = FloatField(_('note'), null=True, blank=True, editable=False)
     MAX_SCORE = 1.0
-    passed = BooleanField(_('passed'), default=False)
-    start = DateTimeField(_('start'), auto_now_add=True)
-    end = DateTimeField(_('end'), null=True, blank=True, editable=False)
+    passed = BooleanField(_('passé'), default=False)
+    start = DateTimeField(_('début'), auto_now_add=True)
+    end = DateTimeField(_('fin'), null=True, blank=True, editable=False)
 
     objects = TakenLevelQuerySet.as_manager()
     objects.use_for_related_fields = True
 
     class Meta:
-        verbose_name = _('taken level')
-        verbose_name_plural = _('taken levels')
+        verbose_name = _('niveau passé')
+        verbose_name_plural = _('niveaux passés')
         ordering = ('start',)
 
     def __str__(self):

@@ -50,15 +50,16 @@ PENALITIES = {
     TEXT_ERROR: 3,
 }
 PENALITIES_MESSAGES = {
-    FORMATTING_ERROR: _('Bad formatting'),
-    EXTRA_ERROR: lambda n: ungettext('Extra character', 'Extra characters', n),
-    MISSING_ERROR: lambda n: ungettext('Missing character',
-                                       'Missing characters', n),
-    MISSING_SIC_ERROR: _('Missing sic'),
-    CASE_ERROR: _('Wrong case'),
-    DIACRITIC_ERROR: _('Wrong diacritic'),
-    CASE_AND_DIACRITIC_ERROR: _('Wrong case and diacritic'),
-    TEXT_ERROR: _('Erroneous character'),
+    FORMATTING_ERROR: _('Mauvais formatage'),
+    EXTRA_ERROR: lambda n: ungettext('Caractère en trop',
+                                     'Caractères en trop', n),
+    MISSING_ERROR: lambda n: ungettext('Caractère manquant',
+                                       'Caractères manquants', n),
+    MISSING_SIC_ERROR: _('Sic manquant'),
+    CASE_ERROR: _('Mauvaise casse'),
+    DIACRITIC_ERROR: _('Mauvais accent'),
+    CASE_AND_DIACRITIC_ERROR: _('Mauvaise casse et accent'),
+    TEXT_ERROR: _('Caractère erroné'),
 }
 
 
