@@ -163,4 +163,4 @@ def sanitize_html(html):
             'table': ['align'],
         },
         styles=('text-decoration', 'text-align', 'padding-left')
-    )
+    ).replace('&amp;', '&')
