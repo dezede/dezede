@@ -15,6 +15,7 @@ from unipath import Path
 
 
 django.project('dezede')
+from cachalot.api import invalidate as invalidate_cachalot
 from django.conf import settings
 
 
@@ -297,8 +298,9 @@ def save_remote_db():
 def restore_saved_db():
     local('sudo -u postgres dropdb %s' % DB_NAME)
     local('sudo -u postgres createdb %s' % DB_NAME)
-    local('sudo -u postgres psql %s -c "create extension postgis;"' % DB_NAME)
-    local('pg_restore -U root -e -d %s -j 5 "%s"' % (DB_NAME, LOCAL_BACKUP))
+    local('sudo -u postgres pg_restore -e -d %s -j 5 "%s"'
+          % (DB_NAME, LOCAL_BACKUP))
+    invalidate_cachalot()
 
 
 @task
