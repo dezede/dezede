@@ -53,7 +53,7 @@ def xelatex_to_pdf(source_code):
 
     if p.returncode:
         e = RuntimeError('Error while generating PDF using XeLaTeX.')
-        e.body = out
+        e.body = out.decode()
         raise e
 
     return open(file_abspath % 'pdf', 'rb')
