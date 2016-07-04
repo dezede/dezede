@@ -165,7 +165,7 @@ class Source(AutoriteModel):
                      help_text=_('Sans « p. ». Exemple : « 3 »'))
     lieu_conservation = CharField(_('lieu de conservation'), max_length=50,
                                   blank=True, db_index=True)
-    cote = CharField(_('cote'), max_length=35, blank=True, db_index=True)
+    cote = CharField(_('cote'), max_length=60, blank=True, db_index=True)
     url = URLField(_('URL'), blank=True,
                    help_text=_('Uniquement un permalien extérieur à Dezède.'))
 
