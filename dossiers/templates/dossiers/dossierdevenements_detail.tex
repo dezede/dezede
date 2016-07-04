@@ -5,13 +5,11 @@
 {% block document %}
   \title{ {{ object.titre|html_to_latex }} }
   \author{ {{ object.editeurs_scientifiques.html|html_to_latex }} }
-  \date{
-    {% blocktrans with date=object.date_publication|date_html:True|html_to_latex %}
+  \date{{% blocktrans with date=object.date_publication|date_html:True|html_to_latex %}
       Publié dans \textit{Dezède}
       le {{ date }} \\
       Exporté le \today
-    {% endblocktrans %}
-  }
+  {% endblocktrans %}}
 
   \maketitle
 
