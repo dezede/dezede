@@ -36,10 +36,10 @@
             <dt>{% trans 'Fonction(s) au sein de l’équipe' %}</dt>
             <dd>{{ object.fonctions }}</dd>
           {% endif %}
-          {% if object.dossiersdevenements_roots|has_elements:request %}
+          {% if object.dossiers_edites|has_elements:request %}
             <dt>{% trans 'À consulter dans Dezède' %}</dt>
             <dd>
-              {% for dossier in object.dossiersdevenements_roots|order_by:'-pk' %}
+              {% for dossier in object.dossiers_edites|order_by:'-pk' %}
                 {{ dossier.link }}<br />
               {% endfor %}
             </dd>

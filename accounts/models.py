@@ -155,8 +155,10 @@ class HierarchicUser(MPTTModel, AbstractUser):
     def email_link(self):
         return href('mailto:' + self.email, self.email)
 
-    def dossiersdevenements_roots(self):
-        return self.dossierdevenements.exclude(parent__owner=self)
+    def dossiers_edites(self):
+        return apps.get_model('dossiers.DossierDEvenements').objects.filter(
+            editeurs_scientifiques=self
+        ).exclude(parent__editeurs_scientifiques=self)
 
     @staticmethod
     def autocomplete_search_fields():
