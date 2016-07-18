@@ -296,7 +296,10 @@ class SlugModel(Model):
 
     def get_slug(self):
         invalidate_object(self)
-        return force_text(self)
+        s = slugify_unicode(force_text(self))
+        if not s:
+            return force_text(self._meta.verbose_name)
+        return s
 
 
 class UniqueSlugModel(Model):
@@ -309,7 +312,10 @@ class UniqueSlugModel(Model):
 
     def get_slug(self):
         invalidate_object(self)
-        return force_text(self)
+        s = slugify_unicode(force_text(self))
+        if not s:
+            return force_text(self._meta.verbose_name)
+        return s
 
 
 class CommonTreeQuerySet(CommonQuerySet, TreeQuerySet):

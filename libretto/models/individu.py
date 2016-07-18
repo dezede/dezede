@@ -6,18 +6,18 @@ from django.core.validators import MinLengthValidator, RegexValidator
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT)
-from django.utils.encoding import python_2_unicode_compatible, force_text
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import (
     pgettext_lazy, ungettext_lazy, ugettext, ugettext_lazy as _)
 from tinymce.models import HTMLField
-from cache_tools import invalidate_object
 from common.utils.abbreviate import abbreviate
 from common.utils.html import href, sc, hlp
 from common.utils.text import str_list, str_list_w_last, ex
 from .base import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
-    PublishedManager, PublishedQuerySet, AncrageSpatioTemporel)
+    PublishedManager, PublishedQuerySet, AncrageSpatioTemporel,
+    slugify_unicode)
 from .evenement import Evenement
 
 
@@ -166,8 +166,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return relations
 
     def get_slug(self):
-        invalidate_object(self)
-        return self.nom or force_text(self)
+        parent = super(Individu, self).get_slug()
+        return slugify_unicode(self.nom) or parent
 
     @permalink
     def get_absolute_url(self):

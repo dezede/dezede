@@ -17,7 +17,8 @@ from tinymce.models import HTMLField
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, PublishedManager,
     DATE_MSG, calc_pluriel, SlugModel, UniqueSlugModel, PublishedQuerySet,
-    CommonTreeQuerySet, CommonTreeManager, CommonQuerySet, CommonManager)
+    CommonTreeQuerySet, CommonTreeManager, CommonQuerySet, CommonManager,
+    slugify_unicode)
 from common.utils.html import href
 from .evenement import Evenement
 from .individu import Individu
@@ -132,7 +133,8 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     link.allow_tags = True
 
     def get_slug(self):
-        return self.nom
+        parent = super(Individu, self).get_slug()
+        return slugify_unicode(self.nom) or parent
 
     def short_link(self):
         return self.html(short=True)
