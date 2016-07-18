@@ -31,4 +31,4 @@ class LieuAFOAdmin(VersionAdmin, CommonAdmin):
 
     def get_queryset(self, request):
         qs = super(LieuAFOAdmin, self).get_queryset(request)
-        return qs.select_related('evenement', 'owner')
+        return qs.select_related('lieu', 'owner')
