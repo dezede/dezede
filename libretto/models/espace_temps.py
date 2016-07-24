@@ -133,7 +133,7 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
     link.allow_tags = True
 
     def get_slug(self):
-        parent = super(Individu, self).get_slug()
+        parent = super(Lieu, self).get_slug()
         return slugify_unicode(self.nom) or parent
 
     def short_link(self):
