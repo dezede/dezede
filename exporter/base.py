@@ -242,7 +242,7 @@ class Exporter(object):
         if len(dfs) == 1:
             return extension, format_dataframe(dfs[0][1])
         return self._compress_to_zip([
-            ('%s.%s' % (slugify(verbose_table_name),
+            ('%s.%s' % (slugify(force_text(verbose_table_name)),
                         extension),
              format_dataframe(df)) for verbose_table_name, df in dfs])
 
@@ -259,7 +259,8 @@ class Exporter(object):
         f = BytesIO()
         with pandas.ExcelWriter(f, engine='xlsxwriter') as writer:
             for verbose_table_name, df in self.get_dataframes():
-                df.to_excel(writer, verbose_table_name, index=False)
+                df.to_excel(writer, force_text(verbose_table_name),
+                            index=False)
             writer.save()
         out = f.getvalue()
         f.close()
