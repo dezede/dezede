@@ -12,3 +12,27 @@ source_lang = fr
 [dezede.accounts]
 file_filter = accounts/locale/<lang>/LC_MESSAGES/django.po
 source_lang = fr
+
+[dezede.afo]
+file_filter = afo/locale/<lang>/LC_MESSAGES/django.po
+source_lang = fr
+
+[dezede.common]
+file_filter = common/locale/<lang>/LC_MESSAGES/django.po
+source_lang = fr
+
+[dezede.exporter]
+file_filter = exporter/locale/<lang>/LC_MESSAGES/django.po
+source_lang = fr
+
+[dezede.range_slider]
+file_filter = range_slider/locale/<lang>/LC_MESSAGES/django.po
+source_lang = fr
+
+[dezede.examens]
+file_filter = examens/locale/<lang>/LC_MESSAGES/django.po
+source_lang = fr
+
+[dezede.dossiers]
+file_filter = dossiers/locale/<lang>/LC_MESSAGES/django.po
+source_lang = fr

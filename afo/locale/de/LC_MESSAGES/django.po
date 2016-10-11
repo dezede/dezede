@@ -1,0 +1,223 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-06-24 23:33+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Sara Iglesias <saraiglesias@gmx.de>, 2016\n"
+"Language-Team: German (https://www.transifex.com/bertrandbordage/teams/11498/de/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: models.py:18
+msgid "événement"
+msgstr "Ereignis"
+
+#: models.py:19
+msgid "nom du festival"
+msgstr "Name des Festivals"
+
+#: models.py:20
+msgid "code ou titre de la tournée"
+msgstr "Code oder Titel der Tournee"
+
+#: models.py:22
+msgid "cycle"
+msgstr "Zyklus"
+
+#: models.py:23
+msgid "code du programme"
+msgstr "Programmcode"
+
+#: models.py:25
+msgid "titre du programme"
+msgstr "Titel des Programms"
+
+#: models.py:28
+msgid "lyrique version scénique"
+msgstr "Oper, Bühnenfassung"
+
+#: models.py:29
+msgid "musique de chambre"
+msgstr "Kammermusik"
+
+#: models.py:30
+msgid "lyrique version concert"
+msgstr "Oper, Konzertfassung"
+
+#: models.py:31
+msgid "symphonique (dont chœur/récital)"
+msgstr "Sinfonisch (inkl. Chor/Solokonzert)"
+
+#: models.py:32
+msgid "chorégraphique"
+msgstr "choreografisch"
+
+#: models.py:33 models.py:41 models.py:108
+msgid "autre"
+msgstr "Andere"
+
+#: models.py:35
+msgid "typologie artistique du programme"
+msgstr "Künstlerische Typologie des Programms"
+
+#: models.py:39
+msgid "concert commenté/présenté"
+msgstr "Kommentiertes/vorgestelltes Konzert"
+
+#: models.py:40
+msgid "concert participatif"
+msgstr "Interaktives Konzert"
+
+#: models.py:43
+msgid "présentation spécifique"
+msgstr "Spezifische Präsentation"
+
+#: models.py:47
+msgid "public de proximité"
+msgstr "Nachbarschaftspublikum"
+
+#: models.py:48
+msgid "public empêché (santé, handicap, justice)"
+msgstr "Verhindertes Publikum (Gesundheit, Behinderung, Justiz)"
+
+#: models.py:49
+msgid "seniors"
+msgstr "Senioren"
+
+#: models.py:50
+msgid "jeunes"
+msgstr "Jugendliche"
+
+#: models.py:51
+msgid "jeunes en temps scolaire"
+msgstr "Kinder/Jugendliche während der Schulzeit"
+
+#: models.py:52
+msgid "jeunes hors temps scolaire"
+msgstr "Kinder/Jugendliche außerhalb der Schulzeit"
+
+#: models.py:54
+msgid "public spécifique"
+msgstr "Spezifisches Publikum"
+
+#: models.py:57
+msgid "participation aux frais"
+msgstr "Finanzielle Beteiligung"
+
+#: models.py:58
+msgid "autoproduction"
+msgstr "Eigenproduktion"
+
+#: models.py:59
+msgid "contrat de cession"
+msgstr "Abtretungsvertrag"
+
+#: models.py:60
+msgid "contrat de coproduction"
+msgstr "Koproduktions-Vertrag"
+
+#: models.py:61
+msgid "contrat de coréalisation"
+msgstr "Kooperations-Vertrag"
+
+#: models.py:62
+msgid "location"
+msgstr "Ort"
+
+#: models.py:64
+msgid "modalité de production"
+msgstr "Art der Koproduktion"
+
+#: models.py:68
+msgid "nombre de musiciens permanents convoqués (dont remplaçants)"
+msgstr "Zahl der ständig versammelten Musiker (inkl. Vertretungen)"
+
+#: models.py:71
+msgid "nombre de musiciens remplaçants"
+msgstr "Zahl der Vertretungs-Musiker"
+
+#: models.py:73
+msgid "nombre de musiciens supplémentaires convoqués"
+msgstr "Zahl der zusätzlich engagierten Musiker"
+
+#: models.py:75
+msgid "nomenclature"
+msgstr "Besetzungsangaben"
+
+#: models.py:76
+msgid "entrées exonérées"
+msgstr "Freier Eintritt"
+
+#: models.py:78
+msgid "entrées payantes"
+msgstr "Kostenpflichtiger Eintritt"
+
+#: models.py:80
+msgid "entrées scolaires"
+msgstr "Sondertarif für Schulen"
+
+#: models.py:82
+msgid "fréquentation totale"
+msgstr "Besucherzahl gesamt"
+
+#: models.py:84
+msgid "jauge"
+msgstr "Kapazität"
+
+#: models.py:87
+msgid "événement AFO"
+msgstr "Ereignis der AFO"
+
+#: models.py:88
+msgid "événements AFO"
+msgstr "Ereignisse der AFO"
+
+#: models.py:97
+msgid "lieu ou institution"
+msgstr "Ort oder Institution"
+
+#: models.py:98
+msgid "code postal"
+msgstr "Postleitzahl"
+
+#: models.py:100
+msgid "nationale"
+msgstr "Nationale/r"
+
+#: models.py:101
+msgid "conventionnée"
+msgstr "konventional gebunden (z.B. staatl. Förderprogramm)"
+
+#: models.py:103
+msgid "type de scène"
+msgstr "Bühnen-Typ"
+
+#: models.py:106
+msgid "dédiée à la musique"
+msgstr "für Musik"
+
+#: models.py:107
+msgid "pluridisciplinaire"
+msgstr "Pluridisziplinär"
+
+#: models.py:110
+msgid "type de salle"
+msgstr "Saal-Typ"
+
+#: models.py:114
+msgid "lieu ou institution AFO"
+msgstr "Ort oder Institution der AFO"
+
+#: models.py:115
+msgid "lieux et institutions AFO"
+msgstr "Orte oder Institutionen der AFO"
