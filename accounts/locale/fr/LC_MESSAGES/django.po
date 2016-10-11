@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 23:30+0200\n"
+"POT-Creation-Date: 2016-10-11 18:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -138,11 +138,13 @@ msgstr ""
 msgid "publications"
 msgstr ""
 
-#: models.py:130 models.py:131
+#: models.py:130
 msgid "utilisateur"
-msgid_plural "utilisateurs"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
+
+#: models.py:131
+msgid "utilisateurs"
+msgstr ""
 
 #: templates/account/login.html:11
 #, python-format
@@ -239,7 +241,7 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"        L’utilisateur «%(object)s» fait déjà partie de l’équipe!\n"
+"        L’utilisateur « %(object)s » fait déjà partie de l’équipe !\n"
 "      "
 msgstr ""
 
@@ -247,13 +249,13 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"        %(user)s, l’utilisateur «%(object)s»\n"
+"        %(user)s, l’utilisateur « %(object)s »\n"
 "        a été autorisé à accéder à l’interface d'administration suite à "
 "votre\n"
 "        accord. Si vous souhaitez annuler cela,\n"
 "        <a href=\"%(change_user_url)s\">\n"
 "          modifiez l’utilisateur %(object.get_full_name)s</a>,\n"
-"        décochez la case «statut équipe» et enregistrez.\n"
+"        décochez la case « statut équipe » et enregistrez.\n"
 "      "
 msgstr ""
 
@@ -263,9 +265,9 @@ msgid ""
 "\n"
 "Bonjour %(mentor_first_name)s,\n"
 "\n"
-"L’utilisateur «%(user)s» demande à devenir l'un de vos disciples.\n"
+"L’utilisateur « %(user)s » demande à devenir l'un de vos disciples.\n"
 "\n"
-"Il a demandé à faire partie du(es) groupe(s):\n"
+"Il a demandé à faire partie du(es) groupe(s) :\n"
 msgstr ""
 
 #: templates/accounts/grant_to_admin_demand_email.txt:16
@@ -273,7 +275,7 @@ msgstr ""
 msgid ""
 "\n"
 "Si vous souhaitez l’accepter et ainsi lui autoriser à accéder à l’interface "
-"d’administration, cliquez sur ce lien:\n"
+"d’administration, cliquez sur ce lien :\n"
 "%(site_url)s%(grant_to_admin_url)s\n"
 "\n"
 "Vous pouvez consulter et modifier ses données complètes sur %(site_url)s"

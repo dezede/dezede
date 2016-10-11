@@ -15,8 +15,7 @@ from django.db.models import (
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags, format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import (
-    ungettext_lazy, ugettext, ugettext_lazy as _)
+from django.utils.translation import ugettext, ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from cache_tools import model_method_cached
@@ -57,9 +56,8 @@ class GenreDOeuvre(CommonModel, SlugModel):
                               blank=True, verbose_name=_('parents'))
 
     class Meta(object):
-        verbose_name = ungettext_lazy('genre d’œuvre', 'genres d’œuvre', 1)
-        verbose_name_plural = ungettext_lazy('genre d’œuvre',
-                                             'genres d’œuvre', 2)
+        verbose_name = _('genre d’œuvre')
+        verbose_name_plural = _('genres d’œuvre')
         ordering = ('nom',)
 
     @staticmethod
@@ -114,10 +112,8 @@ class Partie(AutoriteModel, UniqueSlugModel):
 
     class Meta(object):
         unique_together = ('nom', 'parent', 'oeuvre')
-        verbose_name = ungettext_lazy('rôle ou instrument',
-                                      'rôles et instruments', 1)
-        verbose_name_plural = ungettext_lazy('rôle ou instrument',
-                                             'rôles et instruments', 2)
+        verbose_name = _('rôle ou instrument')
+        verbose_name_plural = _('rôles et instruments')
         ordering = ('type', 'classement', 'nom',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
@@ -211,8 +207,8 @@ class Pupitre(CommonModel):
     objects = PupitreManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('pupitre', 'pupitres', 1)
-        verbose_name_plural = ungettext_lazy('pupitre', 'pupitres', 2)
+        verbose_name = _('pupitre')
+        verbose_name_plural = _('pupitres')
         ordering = ('-soliste', 'partie')
 
     @staticmethod
@@ -258,10 +254,8 @@ class Pupitre(CommonModel):
 class TypeDeParenteDOeuvres(TypeDeParente):
     class Meta(object):
         unique_together = ('nom', 'nom_relatif')
-        verbose_name = ungettext_lazy('type de parenté d’œuvres',
-                                      'types de parenté d’œuvres', 1)
-        verbose_name_plural = ungettext_lazy('type de parenté d’œuvres',
-                                             'types de parentés d’œuvres', 2)
+        verbose_name = _('type de parenté d’œuvres')
+        verbose_name_plural = _('types de parentés d’œuvres')
         ordering = ('classement',)
         # app_label = 'libretto'
 
@@ -298,10 +292,8 @@ class ParenteDOeuvres(CommonModel):
     objects = ParenteDOeuvresManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('parenté d’œuvres',
-                                      'parentés d’œuvres', 1)
-        verbose_name_plural = ungettext_lazy('parenté d’œuvres',
-                                             'parentés d’œuvres', 2)
+        verbose_name = _('parenté d’œuvres')
+        verbose_name_plural = _('parentés d’œuvres')
         ordering = ('type',)
         unique_together = ('type', 'mere', 'fille',)
 
@@ -416,8 +408,8 @@ class Auteur(CommonModel):
     objects = AuteurManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('auteur', 'auteurs', 1)
-        verbose_name_plural = ungettext_lazy('auteur', 'auteurs', 2)
+        verbose_name = _('auteur')
+        verbose_name_plural = _('auteurs')
         ordering = ('profession', 'ensemble', 'individu')
 
     @staticmethod
@@ -736,8 +728,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     objects = OeuvreManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('œuvre', 'œuvres', 1)
-        verbose_name_plural = ungettext_lazy('œuvre', 'œuvres', 2)
+        verbose_name = _('œuvre')
+        verbose_name_plural = _('œuvres')
         ordering = ('type_extrait', 'numero_extrait', 'titre',
                     'genre', 'numero', 'coupe',
                     'incipit', 'tempo', 'tonalite', 'sujet', 'arrangement',

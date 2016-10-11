@@ -2,20 +2,21 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-25 00:51+0200\n"
+"POT-Creation-Date: 2016-10-11 19:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
-"Language-Team: German (https://www.transifex.com/bertrandbordage/teams/11498/de/)\n"
+"Language-Team: German (https://www.transifex.com/bertrandbordage/teams/11498/"
+"de/)\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: admin.py:39 models.py:162
@@ -142,12 +143,12 @@ msgid "Insuffisant"
 msgstr "Ungenügend"
 
 #: templates/examens/source.html:41
-msgid "Bien\\u202f! Plus que quelques erreurs à corriger"
-msgstr "Bravo\\u202f! Sie müssen nur noch einige Fehler korrigieren."
+msgid "Bien ! Plus que quelques erreurs à corriger"
+msgstr "Bravo ! Sie müssen nur noch einige Fehler korrigieren."
 
 #: templates/examens/source.html:43
-msgid "Très bien\\u202f! Encore un tout petit effort"
-msgstr "Sehr gut\\u202f! Sie haben es fast geschafft."
+msgid "Très bien ! Encore un tout petit effort"
+msgstr "Sehr gut ! Sie haben es fast geschafft."
 
 #: templates/examens/source.html:52
 msgid "Source à transcrire"
@@ -199,8 +200,8 @@ msgstr "Fehlerhaftes Zeichen"
 
 #: views.py:49
 msgid ""
-"Félicitations ! La transcription était parfaite <i class=\"fa fa-"
-"smile-o\"></i>"
+"Félicitations ! La transcription était parfaite <i class=\"fa fa-smile-o\"></"
+"i>"
 msgstr ""
 "Glückwunsch! Die Transkription war perfekt. <i class=\"fa fa-smile-o\"></i>"
 

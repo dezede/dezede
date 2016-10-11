@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-25 01:00+0200\n"
+"POT-Creation-Date: 2016-10-11 19:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -187,6 +187,22 @@ msgstr ""
 msgid "Français"
 msgstr ""
 
+#: settings/base.py:55
+msgid "English"
+msgstr ""
+
+#: settings/base.py:56
+msgid "Italiano"
+msgstr ""
+
+#: settings/base.py:57
+msgid "Español"
+msgstr ""
+
+#: settings/base.py:58
+msgid "Deutsch"
+msgstr ""
+
 #: templates/403.html:5
 msgid "Erreur 403"
 msgstr ""
@@ -200,7 +216,7 @@ msgstr ""
 msgid ""
 "\n"
 "        Souhaitez-vous\n"
-"        <a href=\"%(login_url)s?next=%(path)s\">vous connecter</a>\\u202f?\n"
+"        <a href=\"%(login_url)s?next=%(path)s\">vous connecter</a> ?\n"
 "      "
 msgstr ""
 
@@ -273,7 +289,7 @@ msgid "Fiche partenaire"
 msgstr ""
 
 #: templates/home.html:133
-msgid "Association Française desOrchestres"
+msgid "Association Française des Orchestres"
 msgstr ""
 
 #: templates/home.html:150
@@ -459,27 +475,27 @@ msgstr ""
 msgid "Bibliographie"
 msgstr ""
 
-#: templates/navbar.html:128
+#: templates/navbar.html:134
 msgid "Administration"
 msgstr ""
 
-#: templates/navbar.html:136
+#: templates/navbar.html:142
 msgid "Déconnexion"
 msgstr ""
 
-#: templates/navbar.html:143
+#: templates/navbar.html:149
 msgid "Connexion"
 msgstr ""
 
-#: templates/navbar.html:151
+#: templates/navbar.html:157
 msgid "Questions/Bugs"
 msgstr ""
 
-#: templates/navbar.html:158
+#: templates/navbar.html:164
 msgid "API REST"
 msgstr ""
 
-#: templates/navbar.html:165
+#: templates/navbar.html:171
 msgid "Source sur"
 msgstr ""
 
@@ -530,11 +546,11 @@ msgid ""
 "d’individus et d’œuvres contenus\n"
 "            dans l’ouvrage de Joann Élart intitulé <em>Catalogue des fonds "
 "musicaux conservés en Haute-Normandie.\n"
-"            Tome I: Bibliothèque municipale de Rouen. Volume 1: Fonds du "
+"            Tome I : Bibliothèque municipale de Rouen. Volume 1 : Fonds du "
 "Théâtre des Arts\n"
 "            (<span class=\"sc\">xviii</span><sup>e</sup> et <span class=\"sc"
 "\">xix</span><sup>e</sup> siècles)</em>,\n"
-"            coll. «Patrimoine musical régional» (Rouen, Presses "
+"            coll. « Patrimoine musical régional » (Rouen, Presses "
 "universitaires de Rouen et du Havre, 2004, 538 p.)\n"
 "            Issues, pour l’essentiel, du répertoire de l’Opéra-Comique,\n"
 "            ces données ont été associées à celles réalisées dans le cadre\n"
@@ -547,7 +563,7 @@ msgid ""
 "l’index de Castil-Blaze,\n"
 "            <em>Histoire de l’opéra-comique</em>,\n"
 "            publication coordonnée par Alexandre Dratwicki\n"
-"            et Patrick Taïeb (Lyon, Symétrie, 2012, 352 p.);\n"
+"            et Patrick Taïeb (Lyon, Symétrie, 2012, 352 p.) ;\n"
 "            la seconde à Claire Malandin, étudiante en musicologie de "
 "l’université de Rouen,\n"
 "            qui a établi un ensemble d’autorités nouvelles dans les genres "
@@ -563,11 +579,11 @@ msgid ""
 "            Réalisé dans le cadre du projet de recherche sur l’histoire du "
 "concert\n"
 "            dirigé par Patrick Taïeb et Hervé Lacombe\n"
-"            («Répertoire des programmes de concerts en France»),\n"
-"            il comporte deux parties: les concerts parisiens de la "
+"            (« Répertoire des programmes de concerts en France »),\n"
+"            il comporte deux parties : les concerts parisiens de la "
 "Révolution à l’Empire,\n"
 "            sous la direction scientifique d’Étienne Jardin et de Patrick "
-"Taïeb;\n"
+"Taïeb ;\n"
 "            les Concerts populaires de musique classique (concerts "
 "Pasdeloup) réalisés par Yannick Simon.\n"
 "            L’intégration dans Dezède de ces deux ensembles de données "
@@ -604,7 +620,8 @@ msgid ""
 "l’Opéra Comique, numérisées à partir des collections des Archives Nationales "
 "de France et de l’Opéra Comique, dans le cadre d’une convention signée avec "
 "l’université de Rouen. Elles sont consultables dans un dossier inauguré le "
-"13 novembre 2014  et contiennent 2200 documents, soit environ 25000 images.\n"
+"13 novembre 2014  et contiennent 2 200 documents, soit environ 25 000 "
+"images.\n"
 "          "
 msgstr ""
 
@@ -637,7 +654,7 @@ msgstr ""
 msgid ""
 "\n"
 "        La première étape consiste à <strong>soumettre un projet</strong> en "
-"remplissant le formulaire ci-dessous;\n"
+"remplissant le formulaire ci-dessous ;\n"
 "        il est transmis au <a href=\"%(comite_editorial_url)s\">comité "
 "éditorial</a> en même temps qu’un accusé de réception est envoyé au porteur "
 "de projet.\n"
@@ -676,7 +693,7 @@ msgstr ""
 msgid ""
 "\n"
 "        Le chercheur associé à Dezède conserve la propriété intellectuelle "
-"de son travail:\n"
+"de son travail :\n"
 "        toutes les données saisies, tous les dossiers constitués,\n"
 "        sont signés et sécurisés. Il peut profiter des outils mis à sa "
 "disposition\n"
@@ -722,7 +739,7 @@ msgid ""
 "lecteurs\n"
 "            un accès gratuit et dématérialisé aux données publiées.\n"
 "            Elle est <em>responsive</em> et s’adapte à différents supports.\n"
-"            Dezède est également un portail de valorisation:\n"
+"            Dezède est également un portail de valorisation :\n"
 "            tout en secondant les chercheurs dans leurs travaux,\n"
 "            il facilite l’édition des résultats et les place\n"
 "            dans une perspective contributive plus large.\n"
@@ -744,7 +761,7 @@ msgid ""
 "œuvres.\n"
 "            Pour ce faire, il utilise une méthode scientifique originale "
 "structurant\n"
-"            la publication en ligne: traitement et analyse des sources,\n"
+"            la publication en ligne : traitement et analyse des sources,\n"
 "            édition critique des programmes et classement des événements.\n"
 "            Le cœur de l’application est une base relationnelle\n"
 "            qui lie les événements à un ensemble d’autorités interrogeables "
@@ -778,7 +795,7 @@ msgid ""
 msgstr ""
 
 #: templates/pages/presentation.html:100
-msgid "Le comité éditorial est composé de trois membres:"
+msgid "Le comité éditorial est composé de trois membres :"
 msgstr ""
 
 #: templates/pages/presentation.html:103
@@ -807,7 +824,7 @@ msgstr ""
 msgid ""
 "\n"
 "            <span class=\"lead\">\n"
-"              L’invention de trois enseignants-chercheurs:\n"
+"              L’invention de trois enseignants-chercheurs :\n"
 "              Joann Élart, Yannick Simon\n"
 "              et Patrick Taïeb</span>,\n"
 "            musicologues aux universités de Rouen et Paul-Valéry Montpellier "
@@ -857,7 +874,7 @@ msgid ""
 "              Réalisez votre chronologie de spectacles sur un territoire,\n"
 "              une institution, une carrière ou une œuvre.\n"
 "            </span>\n"
-"            Le dossier est la forme aboutie d’une publication dans Dezède:\n"
+"            Le dossier est la forme aboutie d’une publication dans Dezède :\n"
 "            il s’agit d’un corpus d’événements ou d’images, créé et "
 "rassemblé\n"
 "            par un ou plusieurs éditeurs scientifiques qui en assure(nt) la "
@@ -872,7 +889,7 @@ msgid ""
 "            Soumis à l’expertise du comité éditorial,\n"
 "            les dossiers sont classés entre eux selon un ordre établi\n"
 "            par une table générale qui évolue en fonction des nouvelles "
-"contributions;\n"
+"contributions ;\n"
 "            Un ensemble d’outils de visualisation est proposé en marge de\n"
 "            la chronologie événementielle (cartographie, diffusion, frise "
 "chronologique, diagramme de cordes).\n"
@@ -900,10 +917,10 @@ msgstr ""
 msgid ""
 "\n"
 "            <span class=\"lead\">Au cœur de Dezède, des milliers d’autorités "
-"mises à la disposition de tous\\u202f!</span>\n"
+"mises à la disposition de tous !</span>\n"
 "            La souplesse de l’application et l’homogénéisation de l’édition\n"
 "            résultent de la mise en commun d’autorités liées entre elles\n"
-"            par un système de gestion relationnelle et récursive:\n"
+"            par un système de gestion relationnelle et récursive :\n"
 "            évenements, œuvres, individus, ensembles, lieux, rôles, "
 "instruments,\n"
 "            professions, etc.\n"
@@ -924,22 +941,23 @@ msgstr ""
 #: templates/pages/presentation.html:246
 msgid ""
 "\n"
-"            <span class=\"lead\">La règle: au moins une source par événement."
-"</span>\n"
+"            <span class=\"lead\">La règle : au moins une source par "
+"événement.</span>\n"
 "            L’édition d’une chronologie dans Dezède suit un principe cher à "
-"l’historien:\n"
+"l’historien :\n"
 "            la transparence critique.\n"
 "            C’est pourquoi le programme impose une condition <em>sine qua "
 "none</em>\n"
-"            à l’utilisateur: la création d’un événement n’est possible que\n"
+"            à l’utilisateur : la création d’un événement n’est possible que\n"
 "            si elle est associée <em>a minima</em> à une source.\n"
 "            La procédure éditoriale suggère d’ailleurs de démarrer le "
 "travail\n"
 "            par la création d’une source qu’il faut ensuite associer\n"
 "            à un événement.\n"
-"            Les sources sont de différentes natures: périodiques, archives,\n"
+"            Les sources sont de différentes natures : périodiques, "
+"archives,\n"
 "            correspondances, mémoires, éphémères, images, sons, vidéos.\n"
-"            Elles se présentent de différentes manières:\n"
+"            Elles se présentent de différentes manières :\n"
 "            de la simple référence bibliographique (notamment pour les "
 "archives)\n"
 "            à la transcription diplomatique partielle ou intégrale\n"
@@ -959,10 +977,10 @@ msgstr ""
 msgid ""
 "\n"
 "            <span class=\"lead\">Rechercher des événements dans Dezède, rien "
-"de plus simple\\u202f!</span>\n"
-"            Il suffit de se rendre dans le menu «événements» et d’utiliser "
+"de plus simple !</span>\n"
+"            Il suffit de se rendre dans le menu « événements » et d’utiliser "
 "le filtre.\n"
-"            Celui-ci permet de croiser différentes requêtes de tri:\n"
+"            Celui-ci permet de croiser différentes requêtes de tri :\n"
 "            recherche libre, période, tri par année civile ou par saison, "
 "lieu, œuvre, individu, ensemble.\n"
 "          "
@@ -983,14 +1001,14 @@ msgid ""
 "span>\n"
 "            Le moteur de recherche est affiché en permanence dans la barre "
 "des menus\n"
-"            et permet à tout moment d’interroger les contenus de Dezède:\n"
+"            et permet à tout moment d’interroger les contenus de Dezède :\n"
 "            dossiers d’événements, événements, individus, ensembles, "
 "œuvres,\n"
 "            lieux et institutions, sources, événements,\n"
 "            rôles et instruments, professions.\n"
-"            L’interrogation se fait de deux manières différentes:\n"
+"            L’interrogation se fait de deux manières différentes :\n"
 "            par une recherche libre en tapant\n"
-"            un ou plusieurs mots caractéristiques;\n"
+"            un ou plusieurs mots caractéristiques ;\n"
 "            par une recherche avancée en sélectionnant un ou plusieurs "
 "filtres.\n"
 "          "
@@ -1014,7 +1032,7 @@ msgid ""
 "théâtral.\n"
 "            Modélisé dans un esprit de pluridisciplinarité, Dezède s’adresse "
 "aux chercheurs\n"
-"            inscrits dans différents champs disciplinaires:\n"
+"            inscrits dans différents champs disciplinaires :\n"
 "            musicologie, lettres modernes, histoire culturelle moderne et "
 "contemporaine,\n"
 "            arts du spectacle, histoire de l’art, histoire de la danse, "
@@ -1098,7 +1116,7 @@ msgid "Association Française des Orchestres"
 msgstr ""
 
 #: templates/pages/presentation.html:368
-msgid "Pour devenir partenaire, un contact:"
+msgid "Pour devenir partenaire, un contact :"
 msgstr ""
 
 #: templates/pages/presentation.html:370
@@ -1126,7 +1144,7 @@ msgstr ""
 #: templates/pages/presentation.html:390
 msgid ""
 "\n"
-"                <span class=\"lead\">«Dezède» est le nom d’un compositeur "
+"                <span class=\"lead\">« Dezède » est le nom d’un compositeur "
 "qui ne connaissait pas ses géniteurs.</span>\n"
 "                <em>Les Trois fermiers</em> (1777),\n"
 "                <em>Blaise et Babet</em> (1783) et <em>Alexis et Justine</"
@@ -1139,22 +1157,23 @@ msgid ""
 "                L’un de ses vingt opéras, <em>Julie</em> (1772) a également "
 "été rendu célèbre\n"
 "                par les variations que Mozart composa sur l’air\n"
-"                «Lison dormait dans un bocage» (K.264).\n"
-"                Fétis écrivait en 1837 qu’«on ignore quelle fut sa patrie»\n"
+"                « Lison dormait dans un bocage » (K. 264).\n"
+"                Fétis écrivait en 1837 qu’« on ignore quelle fut sa "
+"patrie »\n"
 "                (<em>Biographie générale de la musique</em>, Bruxelles, "
 "Méline,\n"
-"                Cans et compagnie, 1837, t. III, p. 302):\n"
+"                Cans et compagnie, 1837, t. III, p. 302) :\n"
 "                était-il le fils illégitime d’un prince allemand\n"
 "                – de Frédéric II de Prusse, comme on peut le lire parfois –\n"
-"                ou était-il né à Lyon\\u202f?\n"
-"                Lui-même signait ses partitions «DeZ.», «D.\\u202fZ.», "
-"«Desaides» ou encore «Dezède».\n"
-"                Fétis publie d’ailleurs cette anecdote:\n"
-"                à son arrivée à Paris, «il jouissait […] d’une pension de "
+"                ou était-il né à Lyon ?\n"
+"                Lui-même signait ses partitions « De Z. », « D. Z. », "
+"« Desaides » ou encore « Dezède ».\n"
+"                Fétis publie d’ailleurs cette anecdote :\n"
+"                à son arrivée à Paris, « il jouissait […] d’une pension de "
 "vingt-cinq mille francs,\n"
 "                qui fut doublée à sa majorité.\n"
 "                Désirant connaître les auteurs de ses jours, il s’adressa à "
-"son notaire;\n"
+"son notaire ;\n"
 "                mais celui-ci le prévint que ses démarches seraient "
 "inutiles,\n"
 "                et qu’en les continuant il s’exposerait à perdre son "
@@ -1162,7 +1181,7 @@ msgid ""
 "                Il ne tint compte de cet avis, continua ses recherches,\n"
 "                ne découvrit rien, et fut privé de sa pension.\n"
 "                Ce fut alors qu’il songea à tirer parti de ses talents\n"
-"                pour assurer son existence.» (<em>op. cit.</em>)\n"
+"                pour assurer son existence. » (<em>op. cit.</em>)\n"
 "              "
 msgstr ""
 
@@ -1175,13 +1194,13 @@ msgid ""
 "Taïeb\n"
 "                et Bertrand Bordage ont abordé la question du nom\n"
 "                à donner à l’application. Il fallait un mot qui puisse "
-"incarner le projet:\n"
+"incarner le projet :\n"
 "                la séduisante Carmen et l’emblématique Boieldieu furent "
 "évoqués avant de laisser place à Dezède,\n"
-"                proposition de Patrick Taïeb apparue évidente à tous:\n"
+"                proposition de Patrick Taïeb apparue évidente à tous :\n"
 "                le nom est une énigme en soi…\n"
 "                Et il fallait inventer un outil informatique pour parvenir, "
-"peut-être un jour, à la résoudre\\u202f!\n"
+"peut-être un jour, à la résoudre !\n"
 "              "
 msgstr ""
 
@@ -1191,8 +1210,8 @@ msgstr ""
 
 #: templates/pages/presentation.html:441
 msgid ""
-"Jean-Baptiste<span class=\"sc\">Greuze</span>, <em>NicolasDezède</em>, "
-"huilesurtoile, GalerieSaphir."
+"Jean-Baptiste <span class=\"sc\">Greuze</span>, <em>Nicolas Dezède</em>, "
+"huile sur toile, Galerie Saphir."
 msgstr ""
 
 #: templates/pages/presentation.html:447
@@ -1226,7 +1245,7 @@ msgstr ""
 msgid ""
 "\n"
 "            Pour utiliser le logo, contactez %(contact_link)s. Il est "
-"décliné en quatre versions:\n"
+"décliné en quatre versions :\n"
 "          "
 msgstr ""
 
@@ -1258,7 +1277,8 @@ msgid ""
 "              l’<abbr title=\"Institut national de la propriété industrielle"
 "\">INPI</abbr>\n"
 "            </span>\n"
-"            depuis le 12 décembre 2013 sous le numéro national 134056592.\n"
+"            depuis le 12 décembre 2013 sous le numéro national "
+"13 4 056 592.\n"
 "          "
 msgstr ""
 
@@ -1286,7 +1306,7 @@ msgid ""
 "            Si les efforts menés pour concevoir un outil informatique n’ont "
 "pas abouti à cette époque,\n"
 "            les expériences acquises ont permis toutefois d’établir un "
-"cahier des charges pour le réaliser:\n"
+"cahier des charges pour le réaliser :\n"
 "            la solution attendue devait être pérenne, gratuite, sécurisée, "
 "souple, illimitée, contributive et dématérialisée.\n"
 "            Partant de cet acquis et souhaitant élargir la méthode à "
@@ -1338,15 +1358,15 @@ msgid "Début de l’aventure"
 msgstr ""
 
 #: templates/pages/presentation.html:583
-msgid "23février"
+msgid "23 février"
 msgstr ""
 
 #: templates/pages/presentation.html:586
 msgid ""
 "\n"
-"                    Journée d’étude à l’Opéra de Rouen Haute-Normandie:\n"
-"                    <em>Rendez-vous au Théâtre des Arts de Rouen\\u202f!</"
-"em><br />\n"
+"                    Journée d’étude à l’Opéra de Rouen Haute-Normandie :\n"
+"                    <em>Rendez-vous au Théâtre des Arts de Rouen !</em><br /"
+">\n"
 "                    Présentation publique du prototype<br />\n"
 "                    Première rencontre avec Florent Girard, secrétaire "
 "général\n"
@@ -1356,7 +1376,7 @@ msgid ""
 msgstr ""
 
 #: templates/pages/presentation.html:597
-msgid "28septembre"
+msgid "28 septembre"
 msgstr ""
 
 #: templates/pages/presentation.html:600
@@ -1369,21 +1389,21 @@ msgid ""
 msgstr ""
 
 #: templates/pages/presentation.html:608
-msgid "25octobre"
+msgid "25 octobre"
 msgstr ""
 
 #: templates/pages/presentation.html:610
-msgid "1\\u202f000<sup>e</sup> événement"
+msgid "1 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:614
-msgid "21novembre"
+msgid "21 novembre"
 msgstr ""
 
 #: templates/pages/presentation.html:617
 msgid ""
 "\n"
-"                    Journée d’étude à l’université du Havre:\n"
+"                    Journée d’étude à l’université du Havre :\n"
 "                    <em>Quand la politique s’invite au spectacle</em><br />\n"
 "                    Inauguration de la version bêta et passage à l’adresse "
 "beta.dezede.org\n"
@@ -1391,7 +1411,7 @@ msgid ""
 msgstr ""
 
 #: templates/pages/presentation.html:626
-msgid "5décembre"
+msgid "5 décembre"
 msgstr ""
 
 #: templates/pages/presentation.html:629
@@ -1416,21 +1436,21 @@ msgid ""
 msgstr ""
 
 #: templates/pages/presentation.html:644
-msgid "20décembre"
+msgid "20 décembre"
 msgstr ""
 
 #: templates/pages/presentation.html:646
-msgid "2\\u202f000<sup>e</sup> événement"
+msgid "2 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:658
-msgid "21février"
+msgid "21 février"
 msgstr ""
 
 #: templates/pages/presentation.html:661
 msgid ""
 "\n"
-"                    Colloque à l’Opéra-Comique:\n"
+"                    Colloque à l’Opéra-Comique :\n"
 "                    <em>Les emplois dans l’art lyrique français</em><br />\n"
 "                    Inauguration de la version 1.0 sur l’adresse définitive "
 "dezede.org\n"
@@ -1438,15 +1458,15 @@ msgid ""
 msgstr ""
 
 #: templates/pages/presentation.html:670
-msgid "14mars"
+msgid "14 mars"
 msgstr ""
 
 #: templates/pages/presentation.html:672
-msgid "3\\u202f000<sup>e</sup> événement"
+msgid "3 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:676
-msgid "3juin"
+msgid "3 juin"
 msgstr ""
 
 #: templates/pages/presentation.html:679
@@ -1463,11 +1483,11 @@ msgid "24 juin"
 msgstr ""
 
 #: templates/pages/presentation.html:689
-msgid "4\\u202f000<sup>e</sup> événement"
+msgid "4 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:693
-msgid "2juillet"
+msgid "2 juillet"
 msgstr ""
 
 #: templates/pages/presentation.html:696
@@ -1481,15 +1501,15 @@ msgid ""
 msgstr ""
 
 #: templates/pages/presentation.html:704
-msgid "16juillet"
+msgid "16 juillet"
 msgstr ""
 
 #: templates/pages/presentation.html:706
-msgid "5\\u202f000<sup>e</sup> événement"
+msgid "5 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:710
-msgid "21octobre"
+msgid "21 octobre"
 msgstr ""
 
 #: templates/pages/presentation.html:712
@@ -1499,23 +1519,23 @@ msgid ""
 msgstr ""
 
 #: templates/pages/presentation.html:716
-msgid "26octobre"
+msgid "26 octobre"
 msgstr ""
 
 #: templates/pages/presentation.html:718
-msgid "6\\u202f000<sup>e</sup> événement"
+msgid "6 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:722
-msgid "1<sup>er</sup>décembre"
+msgid "1<sup>er</sup> décembre"
 msgstr ""
 
 #: templates/pages/presentation.html:724
-msgid "7\\u202f000<sup>e</sup> événement"
+msgid "7 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:728
-msgid "9décembre"
+msgid "9 décembre"
 msgstr ""
 
 #: templates/pages/presentation.html:731
@@ -1530,7 +1550,7 @@ msgid ""
 msgstr ""
 
 #: templates/pages/presentation.html:740
-msgid "12décembre"
+msgid "12 décembre"
 msgstr ""
 
 #: templates/pages/presentation.html:743
@@ -1539,12 +1559,12 @@ msgid ""
 "                    Dezède est une marque déposée à\n"
 "                    l’<abbr title=\"Institut national de la propriété "
 "industrielle\">INPI</abbr> − Île-de-France\n"
-"                    sous le numéro national 134056592\n"
+"                    sous le numéro national 13 4 056 592\n"
 "                  "
 msgstr ""
 
 #: templates/pages/presentation.html:752 templates/pages/presentation.html:831
-msgid "18décembre"
+msgid "18 décembre"
 msgstr ""
 
 #: templates/pages/presentation.html:755
@@ -1560,37 +1580,37 @@ msgid ""
 msgstr ""
 
 #: templates/pages/presentation.html:772
-msgid "31janvier"
+msgid "31 janvier"
 msgstr ""
 
 #: templates/pages/presentation.html:774
-msgid "8\\u202f000<sup>e</sup> événement"
+msgid "8 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:778
-msgid "17mars"
+msgid "17 mars"
 msgstr ""
 
 #: templates/pages/presentation.html:780
-msgid "9\\u202f000<sup>e</sup> événement"
+msgid "9 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:784
-msgid "7avril"
+msgid "7 avril"
 msgstr ""
 
 #: templates/pages/presentation.html:786
-msgid "10\\u202f000<sup>e</sup> événement"
+msgid "10 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:790
-msgid "21mai"
+msgid "21 mai"
 msgstr ""
 
 #: templates/pages/presentation.html:793
 msgid ""
 "\n"
-"                    Colloque à l’Opéra-Comique: <em>Le répertoire en "
+"                    Colloque à l’Opéra-Comique : <em>Le répertoire en "
 "question</em><br />\n"
 "                    Inauguration de la version 2.0\n"
 "                  "
@@ -1618,7 +1638,7 @@ msgid "12 août"
 msgstr ""
 
 #: templates/pages/presentation.html:817
-msgid "15\\u202f000<sup>e</sup> événement"
+msgid "15 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:821
@@ -1643,7 +1663,7 @@ msgid "12 février"
 msgstr ""
 
 #: templates/pages/presentation.html:847
-msgid "20\\u202f000<sup>e</sup> événement"
+msgid "20 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:851
@@ -1652,7 +1672,7 @@ msgstr ""
 
 #: templates/pages/presentation.html:853
 msgid ""
-"Colloque à Montpellier: <em>Nicolas Dezède et son œuvre. Un compositeur au "
+"Colloque à Montpellier : <em>Nicolas Dezède et son œuvre. Un compositeur au "
 "temps des lumières</em>"
 msgstr ""
 
@@ -1699,7 +1719,7 @@ msgstr ""
 #: templates/pages/presentation.html:896
 msgid ""
 "\n"
-"                    Colloque à l’École nationale des chartes à Paris:\n"
+"                    Colloque à l’École nationale des chartes à Paris :\n"
 "                    <em>Nicolas Dezède. Un compositeur des Lumières à Paris</"
 "em>\n"
 "                  "
@@ -1710,7 +1730,7 @@ msgid "16 juin"
 msgstr ""
 
 #: templates/pages/presentation.html:906
-msgid "30\\u202f000<sup>e</sup> événement"
+msgid "30 000<sup>e</sup> événement"
 msgstr ""
 
 #: templates/pages/presentation.html:910
@@ -1750,14 +1770,14 @@ msgid ""
 msgstr ""
 
 #: templates/pages/presentation.html:944
-msgid "La conception de Dezède repose sur quatre idées fondatrices:"
+msgid "La conception de Dezède repose sur quatre idées fondatrices :"
 msgstr ""
 
 #: templates/pages/presentation.html:948
 msgid ""
 "\n"
 "                la volonté de rendre l’outil très ergonomique,\n"
-"                tant pour le lecteur que pour le contributeur;\n"
+"                tant pour le lecteur que pour le contributeur ;\n"
 "              "
 msgstr ""
 
@@ -1765,10 +1785,10 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"                le recours à des solutions 100%% <em>open source</em>(le "
+"                le recours à des solutions 100 %% <em>open source</em> (le "
 "code est accessible\n"
 "                <a href=\"https://github.com/dezede/dezede\">dans notre "
-"dépôt GitHub</a>);\n"
+"dépôt GitHub</a>) ;\n"
 "              "
 msgstr ""
 
@@ -1779,7 +1799,7 @@ msgid ""
 "                notamment le langage de programmation <a href=\"https://www."
 "python.org/\">Python</a>\n"
 "                qui permet d’écrire du code extrêmement lisible et simplifie "
-"nettement la maintenance;\n"
+"nettement la maintenance ;\n"
 "              "
 msgstr ""
 
@@ -1797,7 +1817,7 @@ msgid "Solutions techniques"
 msgstr ""
 
 #: templates/pages/presentation.html:984
-msgid "Les principales solutions techniques sont:"
+msgid "Les principales solutions techniques sont :"
 msgstr ""
 
 #: templates/pages/presentation.html:988
@@ -1845,7 +1865,7 @@ msgid "Essayez aussi :"
 msgstr ""
 
 #: templates/search/search.html:72
-msgid "Saisir «chanteuse», «Molière», «opéra» ou encore «théâtre»"
+msgid "Saisir « chanteuse », « Molière », « opéra » ou encore « théâtre »"
 msgstr ""
 
 #: templatetags/facts.py:35

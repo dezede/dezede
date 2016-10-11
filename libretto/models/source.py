@@ -6,8 +6,7 @@ from django.db.models import (
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import (
-    ungettext_lazy, ugettext, ugettext_lazy as _)
+from django.utils.translation import ugettext, ugettext_lazy as _
 from tinymce.models import HTMLField
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
@@ -34,9 +33,8 @@ class TypeDeSource(CommonModel, SlugModel):
     # TODO: Ajouter un classement et changer ordering en conséquence.
 
     class Meta(object):
-        verbose_name = ungettext_lazy('type de source', 'types de source', 1)
-        verbose_name_plural = ungettext_lazy('type de source',
-                                             'types de source', 2)
+        verbose_name = _('type de source')
+        verbose_name_plural = _('types de source')
         ordering = ('slug',)
 
     @staticmethod
@@ -171,8 +169,8 @@ class Source(AutoriteModel):
 
     transcription = HTMLField(_('transcription'), blank=True,
         help_text=_('Recopier la source ou un extrait en suivant les règles '
-                    'définies dans <a href="%s">le didacticiel.</a>')
-                  % '/examens/source')  # FIXME: Don’t hardcode this.
+                    'définies dans '  # FIXME: Don’t hardcode the URL.
+                    '<a href="/examens/source">le didacticiel.</a>'))
 
     evenements = ManyToManyField(
         'Evenement', through='SourceEvenement', related_name='sources',
@@ -194,8 +192,8 @@ class Source(AutoriteModel):
     objects = SourceManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('source', 'sources', 1)
-        verbose_name_plural = ungettext_lazy('source', 'sources', 2)
+        verbose_name = _('source')
+        verbose_name_plural = _('sources')
         ordering = ('date', 'titre', 'numero', 'page',
                     'lieu_conservation', 'cote')
         permissions = (('can_change_status', _('Peut changer l’état')),)

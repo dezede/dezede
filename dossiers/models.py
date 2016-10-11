@@ -10,7 +10,7 @@ from django.db.models import (
 from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from accounts.models import HierarchicUser
@@ -111,10 +111,8 @@ class DossierDEvenements(MPTTModel, PublishedModel):
         order_insertion_by = ('position',)
 
     class Meta(object):
-        verbose_name = ungettext_lazy('dossier d’événements',
-                                      'dossiers d’événements', 1)
-        verbose_name_plural = ungettext_lazy('dossier d’événements',
-                                             'dossiers d’événements', 2)
+        verbose_name = _('dossier d’événements')
+        verbose_name_plural = _('dossiers d’événements')
         ordering = ('tree_id', 'lft')
         permissions = (('can_change_status', _('Peut changer l’état')),)
 

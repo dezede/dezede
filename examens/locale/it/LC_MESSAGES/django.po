@@ -2,20 +2,21 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-25 00:51+0200\n"
+"POT-Creation-Date: 2016-10-11 19:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Rosalba Agresta <rosalbagresta@gmail.com>, 2016\n"
-"Language-Team: Italian (https://www.transifex.com/bertrandbordage/teams/11498/it/)\n"
+"Language-Team: Italian (https://www.transifex.com/bertrandbordage/"
+"teams/11498/it/)\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: admin.py:39 models.py:162
@@ -122,7 +123,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Tappa%(level_number)s su %(max_level_number)s"
+"Tappa %(level_number)s su %(max_level_number)s"
 
 #: templates/examens/source.html:28
 msgid "Instructions"
@@ -141,12 +142,12 @@ msgid "Insuffisant"
 msgstr "Insufficiente"
 
 #: templates/examens/source.html:41
-msgid "Bien\\u202f! Plus que quelques erreurs à corriger"
-msgstr "Bene\\u202f! Solo qualche errore da correggere"
+msgid "Bien ! Plus que quelques erreurs à corriger"
+msgstr "Bene ! Solo qualche errore da correggere"
 
 #: templates/examens/source.html:43
-msgid "Très bien\\u202f! Encore un tout petit effort"
-msgstr "Molto bene\\u202f! Ancora un piccolo sforzo"
+msgid "Très bien ! Encore un tout petit effort"
+msgstr "Molto bene ! Ancora un piccolo sforzo"
 
 #: templates/examens/source.html:52
 msgid "Source à transcrire"
@@ -198,11 +199,11 @@ msgstr "Carattere erroneo"
 
 #: views.py:49
 msgid ""
-"Félicitations ! La transcription était parfaite <i class=\"fa fa-"
-"smile-o\"></i>"
+"Félicitations ! La transcription était parfaite <i class=\"fa fa-smile-o\"></"
+"i>"
 msgstr ""
-"Congratulazioni ! La trascrizione era perfetta <i class=\"fa fa-"
-"smile-o\"></i>"
+"Congratulazioni ! La trascrizione era perfetta <i class=\"fa fa-smile-o\"></"
+"i>"
 
 #: views.py:58
 msgid ""

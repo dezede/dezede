@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 23:46+0200\n"
+"POT-Creation-Date: 2016-10-11 19:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgstr ""
 msgid "Sélection manuelle"
 msgstr ""
 
-#: jobs.py:18
+#: jobs.py:19
 #, python-format
 msgid "du dossier « %s »"
 msgstr ""
@@ -121,15 +121,15 @@ msgstr ""
 msgid "fin"
 msgstr ""
 
-#: models.py:92 models.py:212
+#: models.py:92 models.py:210
 msgid "lieux"
 msgstr ""
 
-#: models.py:94 models.py:217
+#: models.py:94 models.py:215
 msgid "œuvres"
 msgstr ""
 
-#: models.py:96 models.py:222
+#: models.py:96 models.py:220
 msgid "auteurs"
 msgstr ""
 
@@ -141,7 +141,7 @@ msgstr ""
 msgid "événements"
 msgstr ""
 
-#: models.py:101 models.py:227
+#: models.py:101 models.py:225
 msgid "ensembles"
 msgstr ""
 
@@ -153,21 +153,23 @@ msgstr ""
 msgid "saisons"
 msgstr ""
 
-#: models.py:114 models.py:116
+#: models.py:114
 msgid "dossier d’événements"
-msgid_plural "dossiers d’événements"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
-#: models.py:119
+#: models.py:115
+msgid "dossiers d’événements"
+msgstr ""
+
+#: models.py:117
 msgid "Peut changer l’état"
 msgstr ""
 
-#: models.py:191
+#: models.py:189
 msgid "ensemble de données"
 msgstr ""
 
-#: models.py:195
+#: models.py:193
 msgid "quantité de données sélectionnées"
 msgstr ""
 
@@ -176,14 +178,14 @@ msgid "dossiers"
 msgstr ""
 
 #: templates/dossiers/categoriededossiers_list.html:24
-msgid "Qu’est-ce qu’un dossier?"
+msgid "Qu’est-ce qu’un dossier ?"
 msgstr ""
 
 #: templates/dossiers/categoriededossiers_list.html:27
 #, python-format
 msgid ""
 "\n"
-"            Le dossier est la forme aboutie d’une publication dans Dezède:\n"
+"            Le dossier est la forme aboutie d’une publication dans Dezède :\n"
 "            il s’agit d’un corpus d’événements ou d’images, créé et "
 "rassemblé\n"
 "            par des éditeurs scientifiques ou des partenaires qui en "
@@ -197,7 +199,7 @@ msgid ""
 "            Les événements sont présentés de manière chronologique.\n"
 "            Les dossiers sont classés selon un ordre établi\n"
 "            par une table générale qui évolue en fonction des nouvelles "
-"contributions;\n"
+"contributions ;\n"
 "            leur publication est soumise à l’expertise\n"
 "            du <a href=\"%(comite_url)s\">comité éditorial</a>.\n"
 "          "
@@ -227,8 +229,7 @@ msgid ""
 msgstr ""
 
 #: templates/dossiers/dossierdevenements_detail.html:6
-#: templates/dossiers/opera_comique_base.html:32
-#: templates/dossiers/tabs.html:7
+#: templates/dossiers/opera_comique_base.html:32 templates/dossiers/tabs.html:7
 msgid "Présentation"
 msgstr ""
 
@@ -256,7 +257,7 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"            «%(object)s»,\n"
+"            « %(object)s »,\n"
 "            <em>Dezède</em> [en ligne].\n"
 "            %(SITE)s%(permalien)s\n"
 "            (consulté le %(now)s).\n"
@@ -332,7 +333,7 @@ msgstr ""
 
 #: templates/dossiers/dossierdevenements_stats_detail.html:49
 #, python-format
-msgid "%(period)s (%(ratio)s\\u202f%%,soit%(count)sœuvres)"
+msgid "%(period)s (%(ratio)s %%, soit %(count)s œuvres)"
 msgstr ""
 
 #: templates/dossiers/opera_comique.html:9
@@ -344,7 +345,7 @@ msgid "Ordonner par date de création mondiale"
 msgstr ""
 
 #: templates/dossiers/opera_comique.html:33
-msgid "Création mondiale\\u202f:"
+msgid "Création mondiale :"
 msgstr ""
 
 #: templates/dossiers/opera_comique_base.html:8
@@ -424,28 +425,29 @@ msgid ""
 "du patrimoine et de la création, coordonné par le DREST, département de la "
 "recherche, de l’enseignement supérieur et de la technologie au sein du "
 "ministère de la Culture et de la Communication. Le projet, retenu par le "
-"ministère, portait sur la numérisation de deux ensembles d’archives:\n"
+"ministère, portait sur la numérisation de deux ensembles d’archives :\n"
 "          "
 msgstr ""
 
 #: templates/dossiers/opera_comique_presentation.html:65
 msgid ""
 "\n"
-"              des archives artistiques conservées aux Archives nationales: "
+"              des archives artistiques conservées aux Archives nationales : "
 "livrets manuscrits, dossiers de censure, affiches, dessins, gravures et "
 "photographies, documents couvrant la période de 1800 à 2007. Cet ensemble "
 "constitue environ un tiers des archives globales relatives à l’Opéra "
-"Comique, les autres portant sur l’administration et l’architecture;\n"
+"Comique, les autres portant sur l’administration et l’architecture ;\n"
 "            "
 msgstr ""
 
 #: templates/dossiers/opera_comique_presentation.html:70
 msgid ""
 "\n"
-"              des archives conservées à l’Opéra Comique: programmes de salle "
-"et brochures de saison de 1911 à 2007, affiches pour la période 1985-2007, "
-"photographies du début du XX<sup>e</sup> siècle. Au sein de cet ensemble "
-"figure un don conséquent réalisé en 2012 par Madame Jeannine Desplobins.\n"
+"              des archives conservées à l’Opéra Comique : programmes de "
+"salle et brochures de saison de 1911 à 2007, affiches pour la période "
+"1985-2007, photographies du début du XX<sup>e</sup> siècle. Au sein de cet "
+"ensemble figure un don conséquent réalisé en 2012 par Madame Jeannine "
+"Desplobins.\n"
 "            "
 msgstr ""
 
@@ -462,7 +464,7 @@ msgid ""
 msgstr ""
 
 #: templates/dossiers/opera_comique_presentation.html:82
-msgid "Ont contribué à la réalisation de ce projet:"
+msgid "Ont contribué à la réalisation de ce projet :"
 msgstr ""
 
 #: templates/dossiers/opera_comique_presentation.html:84
@@ -511,7 +513,7 @@ msgid ""
 "documentaires, pôle Image, Département de la Conservation<br />\n"
 "            Marc <span class=\"sc\">Paturange</span>, photographe, "
 "responsable du pôle Photographie, Département de la Conservation<br />\n"
-"            Pascal <span class=\"sc\">Tanésie</span>,chargé d’études "
+"            Pascal <span class=\"sc\">Tanésie</span>, chargé d’études "
 "documentaires, chef de mission SIA, Département de la Maîtrise d’ouvrage et "
 "du service d’information<br />\n"
 "            Laurent <span class=\"sc\">Martin</span>, responsable des "
@@ -606,7 +608,7 @@ msgid ""
 "du costume de scène, à Moulins, des costumes exceptionnels produits par le "
 "théâtre aux XIX<sup>e</sup> et XX<sup>e</sup> siècles ont été déposés avec "
 "les collections de l’Opéra et de la Bibliothèque nationale de France. En "
-"2015, l’exposition «L’Opéra Comique et ses trésors» motivera le dépôt à "
+"2015, l’exposition « L’Opéra Comique et ses trésors » motivera le dépôt à "
 "Moulins de nouvelles pièces à haute valeur patrimoniale. À la Bibliothèque "
 "historique de la ville de Paris, une riche collection de livrets de mise en "
 "scène et de photographies des XIX<sup>e</sup> et XX<sup>e</sup> siècles "

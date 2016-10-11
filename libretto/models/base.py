@@ -20,8 +20,7 @@ from django.dispatch import receiver
 from django.template.defaultfilters import time
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
-from django.utils.translation import (
-    ungettext_lazy, ugettext, ugettext_lazy as _)
+from django.utils.translation import ugettext, ugettext_lazy as _
 from autoslug import AutoSlugField
 from mptt.managers import TreeManager
 from mptt.querysets import TreeQuerySet
@@ -652,8 +651,8 @@ class Fichier(CommonModel):
     objects = FichierManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('fichier', 'fichiers', 1)
-        verbose_name_plural = ungettext_lazy('fichier', 'fichiers', 2)
+        verbose_name = _('fichier')
+        verbose_name_plural = _('fichiers')
         ordering = ('position',)
 
     def __str__(self):
@@ -786,8 +785,8 @@ class Etat(CommonModel, UniqueSlugModel):
     public = BooleanField(_('publié'), default=True, db_index=True)
 
     class Meta(object):
-        verbose_name = ungettext_lazy('état', 'états', 1)
-        verbose_name_plural = ungettext_lazy('état', 'états', 2)
+        verbose_name = _('état')
+        verbose_name_plural = _('états')
         ordering = ('slug',)
 
     def __str__(self):

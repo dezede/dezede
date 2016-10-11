@@ -9,8 +9,7 @@ from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
                               permalink, Q, PROTECT)
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
-from django.utils.translation import (
-    ungettext_lazy, ugettext_lazy as _)
+from django.utils.translation import ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from tinymce.models import HTMLField
@@ -46,9 +45,8 @@ class NatureDeLieu(CommonModel, SlugModel):
             '« ville »'))
 
     class Meta(object):
-        verbose_name = ungettext_lazy('nature de lieu', 'natures de lieu', 1)
-        verbose_name_plural = ungettext_lazy('nature de lieu',
-                                             'natures de lieu', 2)
+        verbose_name = _('nature de lieu')
+        verbose_name_plural = _('natures de lieu')
         ordering = ('slug',)
 
     @staticmethod
@@ -98,10 +96,8 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
         order_insertion_by = ('nom',)
 
     class Meta(object):
-        verbose_name = ungettext_lazy('lieu ou institution',
-                                      'lieux et institutions', 1)
-        verbose_name_plural = ungettext_lazy('lieu ou institution',
-                                             'lieux et institutions', 2)
+        verbose_name = _('lieu ou institution')
+        verbose_name_plural = _('lieux et institutions')
         ordering = ('nom',)
         unique_together = ('nom', 'parent',)
         index_together = (('tree_id', 'level', 'lft', 'rght'),)
@@ -230,8 +226,8 @@ class Saison(CommonModel):
     objects = SaisonManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('saison', 'saisons', 1)
-        verbose_name_plural = ungettext_lazy('saison', 'saisons', 2)
+        verbose_name = _('saison')
+        verbose_name_plural = _('saisons')
         ordering = ('lieu', 'debut')
 
     def get_periode(self):

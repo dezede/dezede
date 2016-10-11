@@ -9,7 +9,7 @@ from django.db.models import (
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import (
-    pgettext_lazy, ungettext_lazy, ugettext, ugettext_lazy as _)
+    pgettext_lazy, ugettext, ugettext_lazy as _)
 from tinymce.models import HTMLField
 from common.utils.abbreviate import abbreviate
 from common.utils.html import href, sc, hlp
@@ -27,12 +27,8 @@ __all__ = ('TypeDeParenteDIndividus', 'ParenteDIndividus', 'Individu')
 class TypeDeParenteDIndividus(TypeDeParente):
     class Meta(object):
         unique_together = ('nom', 'nom_relatif')
-        verbose_name = ungettext_lazy('type de parenté d’individus',
-                                      'types de parenté d’individus', 1)
-        verbose_name_plural = ungettext_lazy(
-            'type de parenté d’individus',
-            'types de parenté d’individus',
-            2)
+        verbose_name = _('type de parenté d’individus')
+        verbose_name_plural = _('types de parenté d’individus')
         ordering = ('classement',)
 
     @staticmethod
@@ -52,10 +48,8 @@ class ParenteDIndividus(CommonModel):
                         verbose_name=_('individu enfant'), on_delete=PROTECT)
 
     class Meta(object):
-        verbose_name = ungettext_lazy('parenté d’individus',
-                                      'parentés d’individus', 1)
-        verbose_name_plural = ungettext_lazy('parenté d’individus',
-                                             'parentés d’individus', 2)
+        verbose_name = _('parenté d’individus')
+        verbose_name_plural = _('parentés d’individus')
         ordering = ('type', 'parent', 'enfant')
 
     @staticmethod
@@ -153,8 +147,8 @@ class Individu(AutoriteModel, UniqueSlugModel):
     objects = IndividuManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('individu', 'individus', 1)
-        verbose_name_plural = ungettext_lazy('individu', 'individus', 2)
+        verbose_name = _('individu')
+        verbose_name_plural = _('individus')
         ordering = ('nom',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
 

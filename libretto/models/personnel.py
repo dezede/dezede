@@ -12,8 +12,7 @@ from django.db.models.sql import EmptyResultSet
 from django.template.defaultfilters import date
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.safestring import mark_safe
-from django.utils.translation import (
-    ungettext_lazy, ugettext_lazy as _, ugettext)
+from django.utils.translation import ugettext_lazy as _, ugettext
 from common.utils.abbreviate import abbreviate
 from common.utils.html import capfirst, href, date_html, sc
 from common.utils.sql import get_raw_query
@@ -42,8 +41,8 @@ class Profession(AutoriteModel, UniqueSlugModel):
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
     class Meta(object):
-        verbose_name = ungettext_lazy('profession', 'professions', 1)
-        verbose_name_plural = ungettext_lazy('profession', 'professions', 2)
+        verbose_name = _('profession')
+        verbose_name_plural = _('professions')
         ordering = ('classement', 'nom')
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
@@ -240,9 +239,8 @@ class TypeDEnsemble(CommonModel):
                         related_name='enfants', verbose_name=_('parent'))
 
     class Meta(object):
-        verbose_name = ungettext_lazy('type d’ensemble', 'types d’ensemble', 1)
-        verbose_name_plural = ungettext_lazy('type d’ensemble',
-                                             'types d’ensemble', 2)
+        verbose_name = _('type d’ensemble')
+        verbose_name_plural = _('types d’ensemble')
         ordering = ('nom',)
 
     def __str__(self):
@@ -273,6 +271,8 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
 
     class Meta(object):
         ordering = ('nom',)
+        verbose_name = _('ensemble')
+        verbose_name_plural = _('ensembles')
 
     def __str__(self):
         return self.html(tags=False)

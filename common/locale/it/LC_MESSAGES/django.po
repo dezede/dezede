@@ -2,26 +2,27 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 23:41+0200\n"
+"POT-Creation-Date: 2016-10-11 18:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Rosalba Agresta <rosalbagresta@gmail.com>, 2016\n"
-"Language-Team: Italian (https://www.transifex.com/bertrandbordage/teams/11498/it/)\n"
+"Language-Team: Italian (https://www.transifex.com/bertrandbordage/"
+"teams/11498/it/)\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: utils/export.py:65
 msgid ""
-"Un export de votre part est déjà en cours. Veuillez attendre la fin de "
-"celui-ci avant d’en lancer un autre."
+"Un export de votre part est déjà en cours. Veuillez attendre la fin de celui-"
+"ci avant d’en lancer un autre."
 msgstr ""
 "La tua esportazione è già in corso. Attendere la fine prima di lanciarne "
 "un'altra."
@@ -112,17 +113,17 @@ msgstr "o"
 #: utils/text.py:40 utils/text.py:70
 msgctxt "infix d’une liste"
 msgid ", "
-msgstr ","
+msgstr ", "
 
 #: utils/text.py:75
 msgctxt "dernier infix pour plus de 2 éléments"
 msgid " et "
-msgstr "e"
+msgstr " e "
 
 #: utils/text.py:78
 msgctxt "dernier infix pour 2 éléments"
 msgid " et "
-msgstr "e"
+msgstr " e "
 
 #: utils/text.py:88
 #, python-format

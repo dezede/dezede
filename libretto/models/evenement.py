@@ -15,8 +15,7 @@ from django.utils.encoding import (
     python_2_unicode_compatible, force_text)
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import (
-    ungettext_lazy, ugettext, ugettext_lazy as _)
+from django.utils.translation import ugettext, ugettext_lazy as _
 from cache_tools import model_method_cached
 from .base import (
     CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
@@ -119,10 +118,8 @@ class ElementDeDistribution(CommonModel):
     objects = ElementDeDistributionManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('élément de distribution',
-                                      'éléments de distribution', 1)
-        verbose_name_plural = ungettext_lazy('élément de distribution',
-                                             'éléments de distribution', 2)
+        verbose_name = _('élément de distribution')
+        verbose_name_plural = _('éléments de distribution')
         ordering = ('partie', 'profession', 'individu', 'ensemble')
 
     @staticmethod
@@ -167,12 +164,8 @@ class TypeDeCaracteristiqueDeProgramme(CommonModel):
     classement = SmallIntegerField(_('classement'), default=1)
 
     class Meta(object):
-        verbose_name = ungettext_lazy(
-            "type de caractéristique de programme",
-            "types de caractéristique de programme", 1)
-        verbose_name_plural = ungettext_lazy(
-            "type de caractéristique de programme",
-            "types de caractéristique de programme", 2)
+        verbose_name = _('type de caractéristique de programme')
+        verbose_name_plural = _('types de caractéristique de programme')
         ordering = ('classement',)
 
     @staticmethod
@@ -238,12 +231,8 @@ class CaracteristiqueDeProgramme(CommonModel):
 
     class Meta(object):
         unique_together = ('type', 'valeur')
-        verbose_name = ungettext_lazy(
-            'caractéristique de programme',
-            'caractéristiques de programme', 1)
-        verbose_name_plural = ungettext_lazy(
-            'caractéristique de programme',
-            'caractéristiques de programme', 2)
+        verbose_name = _('caractéristique de programme')
+        verbose_name_plural = _('caractéristiques de programme')
         ordering = ('type', 'classement', 'valeur')
 
     @staticmethod
@@ -320,10 +309,8 @@ class ElementDeProgramme(CommonModel):
     objects = ElementDeProgrammeManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('élément de programme',
-                                      'éléments de programme', 1)
-        verbose_name_plural = ungettext_lazy('élément de programme',
-                                             'éléments de programme', 2)
+        verbose_name = _('élément de programme')
+        verbose_name_plural = _('éléments de programme')
         ordering = ('position',)
 
     @staticmethod
@@ -554,8 +541,8 @@ class Evenement(AutoriteModel):
     objects = EvenementManager()
 
     class Meta(object):
-        verbose_name = ungettext_lazy('événement', 'événements', 1)
-        verbose_name_plural = ungettext_lazy('événement', 'événements', 2)
+        verbose_name = _('événement')
+        verbose_name_plural = _('événements')
         ordering = ('debut_date', 'debut_heure', 'debut_lieu',
                     'debut_lieu_approx')
         permissions = (('can_change_status', _('Peut changer l’état')),)

@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Bertrand Bordage <bordage.bertrand@gmail.com>, 2012
 # Diane Tisdall <diane.tisdall@kcl.ac.uk>, 2016
@@ -11,14 +11,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 23:30+0200\n"
+"POT-Creation-Date: 2016-10-11 18:51+0200\n"
 "PO-Revision-Date: 2016-09-29 18:58+0000\n"
 "Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>\n"
-"Language-Team: English (http://www.transifex.com/bertrandbordage/dezede/language/en/)\n"
+"Language-Team: English (http://www.transifex.com/bertrandbordage/dezede/"
+"language/en/)\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: admin.py:56
@@ -141,11 +142,13 @@ msgstr "functions in the team"
 msgid "publications"
 msgstr "publications"
 
-#: models.py:130 models.py:131
+#: models.py:130
 msgid "utilisateur"
-msgid_plural "utilisateurs"
-msgstr[0] "user"
-msgstr[1] "users"
+msgstr "user"
+
+#: models.py:131
+msgid "utilisateurs"
+msgstr "users"
 
 #: templates/account/login.html:11
 #, python-format
@@ -154,7 +157,10 @@ msgid ""
 "      Si vous ne possédez pas encore de compte,\n"
 "      <a href=\"%(signup_url)s\">veuillez en créer un</a> d’abord.\n"
 "    "
-msgstr "\nIf you still do not have an account,\n<a href=\"%(signup_url)s\">please create one</a> first."
+msgstr ""
+"\n"
+"If you still do not have an account,\n"
+"<a href=\"%(signup_url)s\">please create one</a> first."
 
 #: templates/account/password_change.html:6
 #: templates/account/password_change.html:14
@@ -170,9 +176,11 @@ msgstr "Password Reset"
 
 #: templates/account/password_reset.html:16
 msgid ""
-"Forgotten your password? Enter your e-mail address below, and we'll send you"
-" an e-mail allowing you to reset it."
-msgstr "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail to reset it."
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
+msgstr ""
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail to reset it."
 
 #: templates/account/password_reset.html:21
 msgid "Reset My Password"
@@ -186,7 +194,9 @@ msgstr "Please contact us if you have any trouble resetting your password."
 msgid ""
 "We have sent you an e-mail. Please contact us if you do not receive it "
 "within a few minutes."
-msgstr "We have sent you an e-mail. Please contact us if you do not receive it within a few minutes."
+msgstr ""
+"We have sent you an e-mail. Please contact us if you do not receive it "
+"within a few minutes."
 
 #: templates/account/password_reset_from_key.html:8
 msgid "Bad Token"
@@ -196,9 +206,12 @@ msgstr "Bad token"
 #, python-format
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
-"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
-"reset</a>."
-msgstr "The password reset link was invalid, possibly because it has already been used. Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
+msgstr ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
 
 #: templates/account/password_reset_from_key.html:25
 msgid "change password"
@@ -217,7 +230,8 @@ msgstr "Sign up"
 #, python-format
 msgid ""
 "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
-msgstr "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+"Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
 
 #: templates/account/verification_sent.html:7
 msgid "Vérification de votre adresse e-mail"
@@ -227,11 +241,17 @@ msgstr "Email address verification"
 msgid ""
 "\n"
 "      Nous vous avons envoyé un e-mail de vérification.\n"
-"      Suivez le lien fourni pour finaliser la procédure de création de compte.\n"
+"      Suivez le lien fourni pour finaliser la procédure de création de "
+"compte.\n"
 "      Veuillez nous contactez si vous ne le recevez pas\n"
 "      dans les minutes qui viennent.\n"
 "    "
-msgstr "\nYou have been sent a verification email.\nFollow the link provided to finish creating your account.\nPlease contact us if you do not receive it\nin the next few minutes."
+msgstr ""
+"\n"
+"You have been sent a verification email.\n"
+"Follow the link provided to finish creating your account.\n"
+"Please contact us if you do not receive it\n"
+"in the next few minutes."
 
 #: templates/accounts/grant_to_admin.html:7
 msgid "Accès à l’interface d’administration"
@@ -241,22 +261,32 @@ msgstr "Access to the administrative interface"
 #, python-format
 msgid ""
 "\n"
-"        L’utilisateur «%(object)s» fait déjà partie de l’équipe!\n"
+"        L’utilisateur « %(object)s » fait déjà partie de l’équipe !\n"
 "      "
-msgstr "\nThe user «%(object)s» is already a member of the team!"
+msgstr ""
+"\n"
+"The user «%(object)s» is already a member of the team!"
 
 #: templates/accounts/grant_to_admin.html:20
 #, python-format
 msgid ""
 "\n"
-"        %(user)s, l’utilisateur «%(object)s»\n"
-"        a été autorisé à accéder à l’interface d'administration suite à votre\n"
+"        %(user)s, l’utilisateur « %(object)s »\n"
+"        a été autorisé à accéder à l’interface d'administration suite à "
+"votre\n"
 "        accord. Si vous souhaitez annuler cela,\n"
 "        <a href=\"%(change_user_url)s\">\n"
 "          modifiez l’utilisateur %(object.get_full_name)s</a>,\n"
-"        décochez la case «statut équipe» et enregistrez.\n"
+"        décochez la case « statut équipe » et enregistrez.\n"
 "      "
-msgstr "\n%(user)s, the user «%(object)s»\nhas been authorised to access the administrative interface following your\nagreement. If you wish to cancel this,\n<a href=\"%(change_user_url)s\">\nchange the user %(object.get_full_name)s</a>,\nuntick the box «team status» and save."
+msgstr ""
+"\n"
+"%(user)s, the user «%(object)s»\n"
+"has been authorised to access the administrative interface following your\n"
+"agreement. If you wish to cancel this,\n"
+"<a href=\"%(change_user_url)s\">\n"
+"change the user %(object.get_full_name)s</a>,\n"
+"untick the box «team status» and save."
 
 #: templates/accounts/grant_to_admin_demand_email.txt:3
 #, python-format
@@ -264,20 +294,36 @@ msgid ""
 "\n"
 "Bonjour %(mentor_first_name)s,\n"
 "\n"
-"L’utilisateur «%(user)s» demande à devenir l'un de vos disciples.\n"
+"L’utilisateur « %(user)s » demande à devenir l'un de vos disciples.\n"
 "\n"
-"Il a demandé à faire partie du(es) groupe(s):\n"
-msgstr "\nHello %(mentor_first_name)s,\n\nThe user «%(user)s» requests to become one of your followers.\n\nThey request to become part of the group(s):\n"
+"Il a demandé à faire partie du(es) groupe(s) :\n"
+msgstr ""
+"\n"
+"Hello %(mentor_first_name)s,\n"
+"\n"
+"The user «%(user)s» requests to become one of your followers.\n"
+"\n"
+"They request to become part of the group(s):\n"
 
 #: templates/accounts/grant_to_admin_demand_email.txt:16
 #, python-format
 msgid ""
 "\n"
-"Si vous souhaitez l’accepter et ainsi lui autoriser à accéder à l’interface d’administration, cliquez sur ce lien:\n"
+"Si vous souhaitez l’accepter et ainsi lui autoriser à accéder à l’interface "
+"d’administration, cliquez sur ce lien :\n"
 "%(site_url)s%(grant_to_admin_url)s\n"
 "\n"
-"Vous pouvez consulter et modifier ses données complètes sur %(site_url)s%(change_user_url)s.\n"
-msgstr "\nIf you wish to accept and so authorise them to access the administrative interface, click on this link:\n%(site_url)s%(grant_to_admin_url)s\n\nYou can consult and modify their complete data on %(site_url)s%(change_user_url)s.\n\n"
+"Vous pouvez consulter et modifier ses données complètes sur %(site_url)s"
+"%(change_user_url)s.\n"
+msgstr ""
+"\n"
+"If you wish to accept and so authorise them to access the administrative "
+"interface, click on this link:\n"
+"%(site_url)s%(grant_to_admin_url)s\n"
+"\n"
+"You can consult and modify their complete data on %(site_url)s"
+"%(change_user_url)s.\n"
+"\n"
 
 #: templates/accounts/granted_to_admin_email.txt:4
 #, python-format
@@ -286,8 +332,15 @@ msgid ""
 "Bonjour %(user_first_name)s,\n"
 "\n"
 "Vous venez d’être accepté dans l’équipe de Dezède.\n"
-"Vous êtes donc autorisé à accéder à l’interface d’administration sur %(site_url)s%(admin_index_url)s.\n"
-msgstr "\nHello %(user_first_name)s,\n\nYou have just been accepted into the Dezède team.\nYou are thus authorised to access the administrative interface on %(site_url)s%(admin_index_url)s.\n"
+"Vous êtes donc autorisé à accéder à l’interface d’administration sur "
+"%(site_url)s%(admin_index_url)s.\n"
+msgstr ""
+"\n"
+"Hello %(user_first_name)s,\n"
+"\n"
+"You have just been accepted into the Dezède team.\n"
+"You are thus authorised to access the administrative interface on "
+"%(site_url)s%(admin_index_url)s.\n"
 
 #: templates/accounts/hierarchicuser_detail.html:16
 msgid "Présentation"

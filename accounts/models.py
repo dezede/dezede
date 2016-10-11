@@ -12,7 +12,7 @@ from django.db.models import (
 from django.db.models.signals import class_prepared
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from mptt.utils import _get_tree_model
@@ -127,8 +127,8 @@ class HierarchicUser(MPTTModel, AbstractUser):
 
     class Meta(object):
         ordering = ('last_name', 'first_name')
-        verbose_name = ungettext_lazy('utilisateur', 'utilisateurs', 1)
-        verbose_name_plural = ungettext_lazy('utilisateur', 'utilisateurs', 2)
+        verbose_name = _('utilisateur')
+        verbose_name_plural = _('utilisateurs')
 
     def __str__(self, tags=False):
         return self.html(tags=False)
