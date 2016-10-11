@@ -120,6 +120,12 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <b class="fa fa-cog"></b> <b class="caret"></b>
           </a>
+
+          <form id="language-form" action="{% url 'set_language' %}" method="POST" class="hidden">
+            {% csrf_token %}
+            <input type="text" name="language" value="" />
+          </form>
+
           <ul class="dropdown-menu">
 
             <li>
@@ -165,6 +171,18 @@
                 {% trans 'Source sur' %} GitHub
               </a>
             </li>
+
+            <li role="separator" class="divider"></li>
+
+            {% for lang_code, lang_verbose in LANGUAGES %}
+              {% if lang_code != LANGUAGE_CODE %}
+                <li>
+                  <a href="#" class="language-link" data-language="{{ lang_code }}">
+                    {{ lang_verbose }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
 
           </ul>
         </li>

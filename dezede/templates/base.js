@@ -41,3 +41,12 @@ _gaq.push(['_trackPageview']);
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();
 {# Fin de Google Analytics #}
+
+{# Gestion du changement de langue #}
+$('.language-link').click(function (e) {
+  e.preventDefault();
+  var $form = $('#language-form');
+  $form.find('input[name="language"]').val($(this).data('language'));
+  $form.submit();
+});
+{# Fin de la gestion du changement de langue #}

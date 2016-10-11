@@ -51,9 +51,11 @@ DATABASES = {
 LANGUAGE_CODE = 'fr'
 TIME_ZONE = 'Europe/Paris'
 LANGUAGES = (
-    ('fr', ugettext(u'Français')),
-    # ('en', ugettext('English')),
-    # ('de', ugettext('Deutsch')),
+    ('fr', ugettext('Français')),
+    ('en', ugettext('English')),
+    ('it', ugettext('Italiano')),
+    ('es', ugettext('Español')),
+    ('de', ugettext('Deutsch')),
 )
 USE_I18N = True
 USE_L10N = True
@@ -305,7 +307,7 @@ ELASTICSEARCH_INDEX_SETTINGS = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'unix:///run/redis/redis.sock',
+        'LOCATION': 'unix:///var/run/redis/redis.sock',
         'KEY_PREFIX': '2Z',
         'TIMEOUT': None,  # seconds
     }
