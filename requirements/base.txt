@@ -1,5 +1,5 @@
 # Basics
-Django==1.8.13
+Django==1.8.15
 psycopg2==2.6.1
 
 # Database fields
@@ -23,7 +23,7 @@ elasticsearch==2.3.0
 
 # Caching
 django-redis==4.4.3
-django-cachalot==1.2.1
+django-cachalot==1.4.0
 
 # Data visualization frameworks
 djangorestframework==3.3.3
