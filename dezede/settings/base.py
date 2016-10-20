@@ -51,11 +51,11 @@ DATABASES = {
 LANGUAGE_CODE = 'fr'
 TIME_ZONE = 'Europe/Paris'
 LANGUAGES = (
-    ('fr', ugettext('Français')),
-    ('en', ugettext('English')),
-    ('it', ugettext('Italiano')),
-    ('es', ugettext('Español')),
     ('de', ugettext('Deutsch')),
+    ('en', ugettext('English')),
+    ('es', ugettext('Español')),
+    ('fr', ugettext('Français')),
+    ('it', ugettext('Italiano')),
 )
 USE_I18N = True
 USE_L10N = True
