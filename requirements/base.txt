@@ -1,29 +1,29 @@
 # Basics
-Django==1.8.15
-psycopg2==2.6.1
+Django==1.8.16
+psycopg2==2.6.2
 
 # Database fields
-django-mptt==0.8.4
+django-mptt==0.8.6
 django-autoslug==1.9.3
 
 # User interface
-django-grappelli==2.8.1
+django-grappelli==2.8.2
 django-super-inlines==0.1.4
-django-tinymce==2.3.0
-django-crispy-forms==1.6.0
-django-ajax-selects==1.4.3
+django-tinymce==2.4.0
+django-crispy-forms==1.6.1
+django-ajax-selects==1.5.2
 django-image-cropping==1.0.3
 
 # User authentication
-django-allauth==0.25.2
+django-allauth==0.28.0
 
 # Search engine
-django-haystack==2.4.1
+django-haystack==2.5.1
 elasticsearch==2.3.0
 
 # Caching
-django-redis==4.4.3
-django-cachalot==1.4.0
+django-redis==4.6.0
+django-cachalot==1.4.1
 
 # Data visualization frameworks
 djangorestframework==3.3.3
@@ -35,11 +35,11 @@ django-el-pagination==2.1.2
 easy-thumbnails==2.3
 django-viewsets==0.1.9
 Unipath==1.1
-tqdm==4.7.4
+tqdm==4.9.0
 awesome-slugify==1.6.5
 
 # Asynchronous tasks
-django-rq==0.9.1
+django-rq==0.9.3
 rq==0.6.0
 django-transaction-hooks==0.2
 
@@ -49,18 +49,18 @@ cssmin==0.2.0
 rjsmin==1.0.12
 
 # Data parsing/serialization
-beautifulsoup4==4.4.1
-lxml==3.6.0
+beautifulsoup4==4.5.1
+lxml==3.6.4
 defusedxml==0.4.1
 pandas==0.18.1
 XlsxWriter==0.9.1
 
 # HTML cleaning
-bleach==1.4.3
+bleach==1.5.0
 
 # Dependencies
 # For easy-thumbnails
-Pillow==3.2.0
+Pillow==3.4.2
 # For djangorestframework (optionals)
 Pygments==2.1.3
 django-filter==0.11.0
