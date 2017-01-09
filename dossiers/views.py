@@ -126,22 +126,26 @@ class DossierDEvenementsStatsDetail(PublishedDetailView):
             return ()
 
         conditions = [
-            'WHEN individu.year >= %s AND individu.year < %s THEN %s'
+            'WHEN year >= %s AND year < %s THEN %s'
             % (min_year, max_year, k)
             for k, (min_year, max_year) in PERIODS.items()]
         conditions.insert(
-            0, 'WHEN individu.year IS NULL THEN %s' % DEFAULT_PERIOD)
+            0, 'WHEN year IS NULL THEN %s' % DEFAULT_PERIOD)
         sql = """
-        WITH individus AS (
-            SELECT id, extract(YEAR FROM naissance_date) AS year
-            FROM libretto_individu
-        )
         SELECT
             CASE %s END AS period,
-            COUNT(oeuvre.id)
-        FROM (%s) AS oeuvre
-        INNER JOIN libretto_auteur AS auteur ON (auteur.oeuvre_id = oeuvre.id)
-        INNER JOIN individus AS individu ON (individu.id = auteur.individu_id)
+            COUNT(oeuvre_id)
+        FROM (
+            SELECT
+                extract(YEAR FROM MIN(individu.naissance_date)) AS year,
+                oeuvre.id AS oeuvre_id
+            FROM (%s) AS oeuvre
+            INNER JOIN libretto_auteur AS auteur
+                ON (auteur.oeuvre_id = oeuvre.id)
+            INNER JOIN libretto_individu AS individu
+                ON (individu.id = auteur.individu_id)
+            GROUP BY oeuvre.id
+        ) AS years_and_ids
         GROUP BY period
         ORDER BY period;
         """ % (' '.join(conditions), oeuvres_sql)
