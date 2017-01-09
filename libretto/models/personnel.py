@@ -232,7 +232,7 @@ class Membre(CommonModel, PeriodeDActivite):
 
 @python_2_unicode_compatible
 class TypeDEnsemble(CommonModel):
-    nom = CharField(_('nom'), max_length=30, help_text=LOWER_MSG)
+    nom = CharField(_('nom'), max_length=40, help_text=LOWER_MSG)
     nom_pluriel = CharField(_('nom pluriel'), max_length=30, blank=True,
                             help_text=PLURAL_MSG)
     parent = ForeignKey('self', null=True, blank=True,
