@@ -242,16 +242,6 @@ class ElementDeProgrammeForm(ConstrainedModelForm):
         #                                  attrs={'style': 'width: 600px;'}),
         # }
 
-    def clean(self):
-        data = super(ElementDeProgrammeForm, self).clean()
-
-        if not (data.get('autre') or data.get('oeuvre')
-                or data.get('distribution')):
-            raise ValidationError(_('Vous devez remplir au moins « Œuvre », '
-                                    '« Autre » ou « Distribution ».'))
-
-        return data
-
 
 class SourceForm(ConstrainedModelForm):
     REQUIRED_BY = (
