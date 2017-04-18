@@ -630,19 +630,21 @@ class SaisonAdmin(VersionAdmin, CommonAdmin):
 @register(Profession)
 class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'nom_feminin',
-                    'parent', 'classement')
-    list_editable = ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
-                     'classement')
+                    'nom_feminin_pluriel', 'parent', 'classement')
+    list_editable = ('nom', 'nom_pluriel', 'nom_feminin',
+                     'nom_feminin_pluriel', 'parent', 'classement')
     search_fields = (
-        'nom__unaccent', 'nom_pluriel__unaccent', 'nom_feminin__unaccent')
+        'nom__unaccent', 'nom_pluriel__unaccent',
+        'nom_feminin__unaccent', 'nom_feminin_pluriel__unaccent')
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ('parent',),
     }
     fieldsets = (
         (None, {
-            'fields': ('nom', 'nom_pluriel', 'nom_feminin', 'parent',
-                       'classement'),
+            'fields': ('nom', 'nom_pluriel',
+                       'nom_feminin', 'nom_feminin_pluriel',
+                       'parent', 'classement'),
         }),
     )
 

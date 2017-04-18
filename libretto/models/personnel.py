@@ -36,6 +36,9 @@ class Profession(AutoriteModel, UniqueSlugModel):
     nom_feminin = CharField(
         _('nom (au féminin)'), max_length=230, blank=True,
         help_text=_('Ne préciser que s’il est différent du nom.'))
+    nom_feminin_pluriel = CharField(
+        _('nom (au féminin pluriel)'), max_length=250, blank=True,
+        help_text=PLURAL_MSG)
     parent = ForeignKey('self', blank=True, null=True,
                         related_name='enfants', verbose_name=_('parent'))
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
@@ -77,16 +80,17 @@ class Profession(AutoriteModel, UniqueSlugModel):
         f = self.nom_feminin
         return f or self.nom
 
+    def feminin_pluriel(self):
+        if self.nom_feminin:
+            return calc_pluriel(self, attr_base='nom_feminin')
+        return self.pluriel()
+
     def html(self, tags=True, short=False, caps=False, feminin=False,
              pluriel=False):
         if pluriel:
-            nom = self.pluriel()
-            if feminin:
-                warnings.warn("Pas de feminin pluriel pour l'instant")
-        elif feminin:
-            nom = self.feminin()
+            nom = self.feminin_pluriel() if feminin else self.pluriel()
         else:
-            nom = self.nom
+            nom = self.feminin() if feminin else self.nom
         if caps:
             nom = capfirst(nom)
         if short:
