@@ -36,14 +36,14 @@ LOCAL_BACKUP = './backups/dezede.backup'
 def set_env():
     env.project_path = Path(PROJECT_PATH)
     env.home = Path(run('echo $HOME', quiet=True))
-    env.virtual_env = env.home.child(RELATIVE_WORKON_HOME, VIRTUALENV_NAME)
+    env.virtual_env = env.home / RELATIVE_WORKON_HOME / VIRTUALENV_NAME
 
 
 @contextmanager
 def workon_dezede(settings_module='dezede.settings.prod'):
     set_env()
-    with cd(env.project_path):
-        with path(env.virtual_env.child('bin'), behavior='prepend'):
+    with cd(str(env.project_path)):
+        with path(str(env.virtual_env / 'bin'), behavior='prepend'):
             with shell_env(DJANGO_SETTINGS_MODULE=settings_module):
                 yield
 
@@ -159,10 +159,10 @@ def mkvirtualenv():
         return
 
     venv_wrapper = '/usr/share/virtualenvwrapper/virtualenvwrapper.sh'
-    workon_home = env.home.child(RELATIVE_WORKON_HOME)
+    workon_home = env.home / RELATIVE_WORKON_HOME
     bashrc = ('export WORKON_HOME="%s"\n'
               'source "%s"\n' % (workon_home, venv_wrapper))
-    append(env.home.child('.bashrc'), bashrc)
+    append(str(env.home / '.bashrc'), bashrc)
     run('mkdir -p "%s"' % workon_home)
     with prefix('source "%s"' % venv_wrapper):
         run('mkvirtualenv -p /usr/bin/python3.4 %s' % VIRTUALENV_NAME)

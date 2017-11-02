@@ -63,7 +63,7 @@ USE_TZ = True
 
 SITE_ID = 1
 
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = str(BASE_DIR / 'media')
 MEDIA_URL = SITE_URL + 'media/'
 
 # Make this unique, and don't share it with anybody.
@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'dezede.wsgi.application'
 ROOT_URLCONF = 'dezede.urls'
 
 
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = str(BASE_DIR / 'static')
 STATIC_URL = SITE_URL + 'static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -82,7 +82,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 STATICFILES_DIRS = (
-    BASE_DIR / 'dezede/static',
+    str(BASE_DIR / 'dezede/static'),
 )
 
 
