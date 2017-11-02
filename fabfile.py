@@ -64,8 +64,10 @@ def install_less_css():
 
 
 def upgrade_ubuntu():
-    sudo('apt-get update')
-    sudo('apt-get upgrade')
+    sudo('apt update')
+    sudo('apt upgrade')
+    sudo('apt autoclean')
+    sudo('apt autoremove')
 
 
 def install_ubuntu():
