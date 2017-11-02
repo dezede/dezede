@@ -33,7 +33,7 @@ def xelatex_to_pdf(source_code):
     """
     source_code = remove_windows_newlines(source_code)
 
-    tmp_dir = getattr(settings, 'TMP_DIR', settings.BASE_DIR.child('tmp'))
+    tmp_dir = getattr(settings, 'TMP_DIR', str(settings.BASE_DIR / 'tmp'))
     if not os.path.exists(tmp_dir):
         os.makedirs(tmp_dir)
 

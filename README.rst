@@ -35,7 +35,7 @@ Dépendances
 ===========
 
 :Système d'exploitation:
-  Ubuntu 13.04 « Raring Ringtail »
+  Ubuntu 17.10 « Raring Ringtail »
 
 Pour installer les dépendances qui suivent :
   ``sudo ./dependances.sh``
@@ -50,9 +50,17 @@ Nécessaires au déploiement
 ========== =======
 Paquet     Version
 ========== =======
-nginx      1.10.0
-supervisor 3.2.0
+nginx      1.12.1
+supervisor 3.3.1
 ========== =======
+
+
+Clonage du projet
+=================
+
+- ``git clone https://github.com/dezede/dezede``
+- ``git submodule init``
+- ``git submodule update``
 
 
 
@@ -78,7 +86,7 @@ Configuration de PostgreSQL
 
    - Éditer le fichier de configuration :
 
-        ``sudo nano /etc/postgresql/9.5/main/pg_hba.conf``
+        ``sudo nano /etc/postgresql/9.6/main/pg_hba.conf``
 
    - Ajouter cette nouvelle ligne après
      ``# Database administrative login by Unix domain socket`` :
@@ -95,7 +103,7 @@ Configuration de PostgreSQL
 
 #. Redémarrer PostgreSQL :
 
-    ``sudo service postgresql restart``
+    ``sudo systemctl restart postgresql``
 
 
 
@@ -112,13 +120,13 @@ Configuration de Redis
 
         ::
 
-          unixsocket /run/redis/redis.sock
+          unixsocket /var/run/redis/redis.sock
           unixsocketperm 777
 
 
 #. Redémarrer Redis :
 
-    ``sudo service redis-server restart``
+    ``sudo systemctl restart redis``
 
 
 
@@ -253,8 +261,8 @@ Configuration de nginx
 
 #. Relancer le serveur avec :
 
-    | ``sudo service supervisor restart``
-    | ``sudo service nginx restart``
+    | ``sudo systemctl restart  supervisor``
+    | ``sudo systemctl restart  nginx``
 
 
 

@@ -3,7 +3,7 @@
 import re
 from django.utils.safestring import mark_safe
 from easy_thumbnails.conf import Settings as thumbnail_settings
-from unipath import Path
+from pathlib import Path
 
 ugettext = lambda s: s
 
@@ -17,7 +17,7 @@ except ImportError:
     compat.register()
 
 
-BASE_DIR = Path(__file__).ancestor(3)
+BASE_DIR = Path(__file__).parent.parent.parent
 SITE_URL = '/'
 
 ADMINS = (
@@ -63,7 +63,7 @@ USE_TZ = True
 
 SITE_ID = 1
 
-MEDIA_ROOT = BASE_DIR.child('media')
+MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = SITE_URL + 'media/'
 
 # Make this unique, and don't share it with anybody.
@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'dezede.wsgi.application'
 ROOT_URLCONF = 'dezede.urls'
 
 
-STATIC_ROOT = BASE_DIR.child('static')
+STATIC_ROOT = BASE_DIR / 'static'
 STATIC_URL = SITE_URL + 'static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -82,7 +82,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 STATICFILES_DIRS = (
-    BASE_DIR.child('dezede', 'static'),
+    BASE_DIR / 'dezede/static',
 )
 
 
@@ -322,8 +322,9 @@ COMPRESS_CSS_FILTERS = (
     'compressor.filters.css_default.CssAbsoluteFilter',
     'compressor.filters.cssmin.CSSMinFilter',
 )
+NPM_BINARY_PATH = BASE_DIR / 'node_modules/.bin/'
 COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc {infile} {outfile}'),
+    ('text/less', '%s {infile} {outfile}' % (NPM_BINARY_PATH / 'lessc')),
     ('text/x-scss', 'django_libsass.SassCompiler'),
 )
 

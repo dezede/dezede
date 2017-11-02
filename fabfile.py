@@ -11,7 +11,7 @@ from fabric.decorators import task
 from fabric.operations import sudo, run, prompt, local
 from fabric.state import env
 from fabric.utils import abort
-from unipath import Path
+from pathlib import Path
 
 
 django.project('dezede')
@@ -85,8 +85,8 @@ def install_ubuntu():
          # For lxml.
          'libxml2-dev libxslt1-dev '
          # For PDF generation.
-         'texlive-xetex fonts-linuxlibertine texlive-latex-recommended '
-         'texlive-lang-french texlive-latex-extra texlive-fonts-extra')
+         'texlive-xetex fonts-linuxlibertine '
+         'texlive-lang-french texlive-fonts-extra')
     install_less_css()
     sudo('systemctl enable elasticsearch')
     sudo('systemctl start elasticsearch')
@@ -291,13 +291,17 @@ def reset_remote_db():
 def save_remote_db():
     run('pg_dump -U %s -Fc -b -v -f "%s" %s'
         % (DB_USER, REMOTE_BACKUP, DB_NAME))
-    local('rsync "%s":"%s" "%s"' % (env.hosts[0], REMOTE_BACKUP, LOCAL_BACKUP))
+    local('rsync --info=progress2 "%s":"%s" "%s"'
+          % (env.hosts[0], REMOTE_BACKUP, LOCAL_BACKUP))
 
 
 @task
 def restore_saved_db():
-    local('sudo -u postgres dropdb %s' % DB_NAME)
-    local('sudo -u postgres createdb %s' % DB_NAME)
+    local('sudo -u postgres dropdb --if-exists %s' % DB_NAME)
+    local('sudo -u postgres dropuser --if-exists %s' % DB_USER)
+    local('sudo -u postgres createuser --login -g clients %s'
+          % DB_USER)
+    local('sudo -u postgres createdb --owner %s %s' % (DB_USER, DB_NAME))
     local('sudo -u postgres pg_restore -e -d %s -j 5 "%s"'
           % (DB_NAME, LOCAL_BACKUP))
     invalidate_cachalot()

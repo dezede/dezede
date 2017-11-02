@@ -1,5 +1,4 @@
 *~
-.*
 *.pyc
 apache-solr*
 /static/
@@ -10,3 +9,6 @@ _*/
 *.c
 *.so
 *.h
+/.idea/
+/node_modules/
+/media/
