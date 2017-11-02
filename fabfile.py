@@ -59,7 +59,7 @@ def add_elasticsearch_repo():
 def install_less_css():
     result = run('lessc', warn_only=True, quiet=True)
     if result.return_code:
-        sudo('npm install -g less@2.5.3')
+        sudo('npm install')
         sudo('ln -s /usr/bin/nodejs /usr/bin/node', warn_only=True)
 
 
@@ -176,6 +176,11 @@ def pip_install():
         run('pip3 install -r requirements/prod.txt')
 
 
+def npm_install():
+    with workon_dezede():
+        run('npm install')
+
+
 def collectstatic():
     with workon_dezede():
         run('./manage.py collectstatic --noinput')
@@ -206,6 +211,7 @@ def install():
 
     mkvirtualenv()
     pip_install()
+    npm_install()
 
     migrate_db()
 
@@ -228,6 +234,7 @@ def update():
         run('find . -name "*.pyc" -delete')
 
     pip_install()
+    npm_install()
     migrate_db()
     collectstatic()
 
