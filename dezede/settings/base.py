@@ -344,6 +344,8 @@ AJAX_LOOKUP_CHANNELS = {
     'elementdeprogramme__autre': ('libretto.lookups',
                                   'ElementDeProgrammeAutreLookup'),
     'source__titre': ('libretto.lookups', 'SourceTitreLookup'),
+    'source__lieu_conservation': ('libretto.lookups',
+                                  'SourceLieuConservationLookup'),
 }
 
 REST_FRAMEWORK = {

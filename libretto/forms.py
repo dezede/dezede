@@ -254,10 +254,12 @@ class SourceForm(ConstrainedModelForm):
         exclude = ()
         widgets = {
             'titre': AutoCompleteWidget('source__titre',
-                                         attrs={'style': 'width: 600px;'}),
+                                        attrs={'style': 'width: 600px;'}),
             'numero': TextInput(attrs={'cols': 10}),
             'folio': TextInput(attrs={'cols': 10}),
             'page': TextInput(attrs={'cols': 10}),
+            'lieu_conservation': AutoCompleteWidget(
+                'source__lieu_conservation', attrs={'style': 'width: 600px;'}),
         }
 
     def clean(self):

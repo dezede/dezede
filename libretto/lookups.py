@@ -76,6 +76,11 @@ class SourceTitreLookup(CharFieldLookupChannel):
     attr = 'titre'
 
 
+class SourceLieuConservationLookup(CharFieldLookupChannel):
+    model = Source
+    attr = 'lieu_conservation'
+
+
 class IndividuPrenomsLookup(CharFieldLookupChannel):
     model = Individu
     attr = 'prenoms'
