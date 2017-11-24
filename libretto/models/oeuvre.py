@@ -104,8 +104,7 @@ class Partie(AutoriteModel, UniqueSlugModel):
     # pour les rôles, mais en plus générique (ou un help_text).
     professions = ManyToManyField(
         'Profession', related_name='parties', verbose_name=_('professions'),
-        blank=True, help_text=_('La ou les profession(s) capable(s) '
-                                'de jouer ce rôle ou cet instrument.'))
+        blank=True)
     parent = ForeignKey('self', related_name='enfants', blank=True, null=True,
                         verbose_name=_('rôle ou instrument parent'))
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)

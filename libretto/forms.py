@@ -113,10 +113,18 @@ class PartieForm(ConstrainedModelForm):
     def clean(self):
         data = super(PartieForm, self).clean()
 
-        if data.get('oeuvre') and data.get('type') == Partie.INSTRUMENT:
+        type = data.get('type')
+
+        if data.get('oeuvre') and type == Partie.INSTRUMENT:
             self.add_error(
                 'oeuvre',
                 _('« Œuvre » ne peut être saisi que pour les rôles.'))
+
+        if data.get('professions') and type == Partie.ROLE:
+            self.add_error(
+                'professions',
+                _('« Professions » ne peut être saisi '
+                  'que pour les instruments.'))
 
         return data
 
