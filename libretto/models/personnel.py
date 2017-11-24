@@ -121,9 +121,16 @@ class Profession(AutoriteModel, UniqueSlugModel):
     def is_leaf_node(self):
         return not self.enfants.exists()
 
+    def related_label(self):
+        if self.nom_feminin:
+            return '%s / %s' % (self.nom, self.nom_feminin)
+        return self.nom
+
     @staticmethod
     def autocomplete_search_fields():
-        return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
+        return ('nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
+                'nom_feminin__unaccent__icontains',
+                'nom_feminin_pluriel__unaccent__icontains')
 
 
 class PeriodeDActivite(Model):
