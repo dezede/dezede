@@ -353,8 +353,14 @@ cite {
     .btn {
       position: relative;
       top: -2px;
-      margin-left: @grid-gutter-width / 2;
       padding: 1px 6px;
+      width: 27px;
+      &:first-of-type {
+        margin-left: @grid-gutter-width / 2;
+      }
+      img {
+        vertical-align: -3px;
+      }
     }
   }
 }
