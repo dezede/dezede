@@ -172,14 +172,20 @@ class ContributeursView(EquipeView):
         5,  # Joann
         6,  # Yannick
         7,  # Patrick
+        39,  # Claire Morvannou
         80,  # Lucille Brunel
         85,  # Denis Tchorek
         95,  # Christine Carrère-Saucède
         98,  # Julie Graine
         102,  # Thomas Bacquet
         168,  # Thomas Vernet
-        330,  # Jean-Christophe Branger
         206,  # Maxime Margollé
+        330,  # Jean-Christophe Branger
+        344,  # Stella Rollet
+        375,  # Frédéric Guérin
+        472,  # Gabriella Elgarrista
+        474,  # Pierre Girod
+        482,  # Marion Blanc
     )
     title = _('Contributeurs')
 
