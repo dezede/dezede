@@ -38,6 +38,7 @@
     {% data_table_attr 'biographie' %}
 
     {% data_table_list individu.oeuvres.prefetch_all %}
+    {% data_table_list individu.membre_de 'ensemble_html' verbose_name=_('ensemble') verbose_name_plural=_('ensembles') %}
     {% evenement_list_def individu.apparitions verbose_name=_('apparition') verbose_name_plural=_('apparitions') %}
     {% evenement_list_def individu.evenements_referents %}
     {% data_table_list individu.publications 'html' %}

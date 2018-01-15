@@ -204,6 +204,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return Evenement.objects.filter(
             programme__oeuvre__auteurs__individu=self).distinct()
 
+    def membre_de(self):
+        return self.membres.order_by('-debut', 'instrument', 'classement')
+
     def calc_titre(self, tags=False):
         titre = self.titre
         if not titre:

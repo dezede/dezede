@@ -226,13 +226,17 @@ class Membre(CommonModel, PeriodeDActivite):
         verbose_name_plural = _('membres')
         ordering = ('instrument', 'classement', 'debut')
 
-    def html(self, tags=True):
-        l = [self.individu.html(tags=tags)]
+    def html(self, to_individus=True, tags=True):
+        l = [(self.individu if to_individus
+              else self.ensemble).html(tags=tags)]
         if self.instrument:
             l.append('[%s]' % self.instrument.html(tags=tags))
         if self.debut or self.fin:
             l.append('(%s)' % self.smart_period(tags=tags))
         return mark_safe(' '.join(l))
+
+    def ensemble_html(self, tags=True):
+        return self.html(to_individus=False, tags=tags)
 
     def __str__(self):
         return self.html(tags=False)
