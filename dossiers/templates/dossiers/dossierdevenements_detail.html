@@ -76,7 +76,7 @@
     <div class="col-xs-12 col-md-offset-4 col-md-8">
       <nav id="dossier-switcher">
         <div class="btn-group btn-group-justified">
-          {% previous_sibling object as prev %}
+          {% prev_sibling object as prev %}
           <a href="{{ prev.get_absolute_url|default:'#' }}" role="button"
              {% if not prev %}disabled="disabled"{% endif %}
              class="btn btn-primary">

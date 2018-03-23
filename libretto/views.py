@@ -15,6 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView
 from el_pagination.views import AjaxListView
 from haystack.query import SearchQuerySet
+from tree.query import TreeQuerySetMixin
 from viewsets import ModelViewSet
 
 from common.utils.export import launch_export
@@ -89,7 +90,7 @@ class BaseEvenementListView(PublishedListView):
             objects = Model._default_manager.filter(pk__in=pk_list)
             # Inclus tous les événements impliquant les descendants
             # éventuels de chaque objet de value.
-            if hasattr(objects, 'get_descendants'):
+            if isinstance(objects, TreeQuerySetMixin):
                 objects = objects.get_descendants(include_self=True)
             value = objects
             if value.exists():
@@ -499,7 +500,7 @@ class TreeNode(PublishedDetailView):
         context = super(TreeNode, self).get_context_data(**kwargs)
 
         if self.object is None:
-            children = self.model._tree_manager.root_nodes()
+            children = self.model.get_roots()
         else:
             children = self.object.get_children()
 

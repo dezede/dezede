@@ -10,9 +10,10 @@ from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
-from mptt.fields import TreeForeignKey
-from mptt.models import MPTTModel
 from tinymce.models import HTMLField
+from tree.fields import PathField
+from tree.models import TreeModelMixin
+
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, PublishedManager,
     DATE_MSG, calc_pluriel, SlugModel, UniqueSlugModel, PublishedQuerySet,
@@ -76,11 +77,12 @@ class LieuManager(CommonTreeManager, PublishedManager, GeoManager):
 
 
 @python_2_unicode_compatible
-class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
+class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, db_index=True)
-    parent = TreeForeignKey(
+    parent = ForeignKey(
         'self', null=True, blank=True, related_name='enfants',
         verbose_name=_('parent'))
+    path = PathField(order_by=('nom',), db_index=True)
     nature = ForeignKey(NatureDeLieu, related_name='lieux',
                         verbose_name=_('nature'), on_delete=PROTECT)
     is_institution = BooleanField(_('institution'), default=False)
@@ -92,15 +94,11 @@ class Lieu(MPTTModel, AutoriteModel, UniqueSlugModel):
 
     objects = LieuManager()
 
-    class MPTTMeta(object):
-        order_insertion_by = ('nom',)
-
     class Meta(object):
         verbose_name = _('lieu ou institution')
         verbose_name_plural = _('lieux et institutions')
         ordering = ('nom',)
         unique_together = ('nom', 'parent',)
-        index_together = (('tree_id', 'level', 'lft', 'rght'),)
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod

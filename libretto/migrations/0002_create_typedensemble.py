@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import mptt.fields
 import django.db.models.deletion
 from django.conf import settings
 
@@ -26,7 +25,7 @@ class Migration(migrations.Migration):
                 ('tree_id', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('level', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('owner', models.ForeignKey(related_name='typedensemble', on_delete=django.db.models.deletion.PROTECT, verbose_name='propri\xe9taire', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('parent', mptt.fields.TreeForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.TypeDEnsemble', null=True)),
+                ('parent', models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.TypeDEnsemble', null=True)),
             ],
             options={
                 'ordering': ('nom',),

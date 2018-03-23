@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import django.utils.timezone
-import mptt.fields
 import django.core.validators
 from django.conf import settings
 
@@ -46,7 +45,7 @@ class Migration(migrations.Migration):
                 ('level', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('content_type', models.ForeignKey(verbose_name='type d\u2019autorit\xe9 associ\xe9e', blank=True, to='contenttypes.ContentType', null=True)),
                 ('groups', models.ManyToManyField(related_query_name='user', related_name='user_set', to='auth.Group', blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of his/her group.', verbose_name='groups')),
-                ('mentor', mptt.fields.TreeForeignKey(related_name='disciples', verbose_name='mentor', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('mentor', models.ForeignKey(related_name='disciples', verbose_name='mentor', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
                 ('user_permissions', models.ManyToManyField(related_query_name='user', related_name='user_set', to='auth.Permission', blank=True, help_text='Specific permissions for this user.', verbose_name='user permissions')),
             ],
             options={

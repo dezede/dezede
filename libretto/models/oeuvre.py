@@ -16,8 +16,9 @@ from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
-from mptt.fields import TreeForeignKey
-from mptt.models import MPTTModel
+from tree.fields import PathField
+from tree.models import TreeModelMixin
+
 from cache_tools import model_method_cached
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
@@ -569,7 +570,7 @@ TONALITE_I18N_CHOICES = (
 
 
 @python_2_unicode_compatible
-class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
+class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(_('article'), max_length=20, blank=True)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True)
     coordination = CharField(_('coordination'), max_length=20, blank=True,
@@ -674,9 +675,15 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     creation_type = PositiveSmallIntegerField(
         _('type de création'), choices=CREATION_TYPES, null=True, blank=True)
     creation = AncrageSpatioTemporel(verbose_name=_('création'))
-    extrait_de = TreeForeignKey(
+    ORDERING = ('type_extrait', 'numero_extrait', 'titre',
+                'genre', 'numero', 'coupe',
+                'incipit', 'tempo', 'tonalite', 'sujet', 'arrangement',
+                'surnom', 'nom_courant',
+                'opus', 'ict')
+    extrait_de = ForeignKey(
         'self', null=True, blank=True,
         related_name='enfants', verbose_name=_('extrait de'))
+    path = PathField(order_by=ORDERING, db_index=True)
     ACTE = 1
     TABLEAU = 2
     SCENE = 3
@@ -729,12 +736,8 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
     class Meta(object):
         verbose_name = _('œuvre')
         verbose_name_plural = _('œuvres')
-        ordering = ('type_extrait', 'numero_extrait', 'titre',
-                    'genre', 'numero', 'coupe',
-                    'incipit', 'tempo', 'tonalite', 'sujet', 'arrangement',
-                    'surnom', 'nom_courant',
-                    'opus', 'ict')
         permissions = (('can_change_status', _('Peut changer l’état')),)
+    Meta.ordering = ORDERING
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -742,15 +745,6 @@ class Oeuvre(MPTTModel, AutoriteModel, UniqueSlugModel):
         if all_relations:
             relations += ('dossiers', 'filles',)
         return relations
-
-    class MPTTMeta(object):
-        parent_attr = 'extrait_de'
-    # FIXME: On ne peut ordonner par type d’extrait, genre ou arrangement
-    #        à cause d’un bug dans MPTT. Corriger cela lors du passage
-    #        à django-treebeard ou autre solution d’arborescence.
-    MPTTMeta.order_insertion_by = [k for k in Meta.ordering
-                                   if k not in ('type_extrait', 'genre',
-                                                'arrangement')]
 
     @permalink
     def get_absolute_url(self):

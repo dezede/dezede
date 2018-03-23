@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import datetime
-import mptt.fields
 import django.db.models.deletion
 from django.conf import settings
 import libretto.models.base
@@ -64,7 +63,7 @@ class Migration(migrations.Migration):
                 ('lieux', models.ManyToManyField(related_name='dossiers', null=True, verbose_name='lieux', to='libretto.Lieu', blank=True)),
                 ('oeuvres', models.ManyToManyField(related_name='dossiers', null=True, verbose_name='\u0153uvres', to='libretto.Oeuvre', blank=True)),
                 ('owner', models.ForeignKey(related_name='dossierdevenements', on_delete=django.db.models.deletion.PROTECT, verbose_name='propri\xe9taire', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('parent', mptt.fields.TreeForeignKey(related_name='children', verbose_name='parent', blank=True, to='dossiers.DossierDEvenements', null=True)),
+                ('parent', models.ForeignKey(related_name='children', verbose_name='parent', blank=True, to='dossiers.DossierDEvenements', null=True)),
                 ('sources', models.ManyToManyField(related_name='dossiers', null=True, verbose_name='sources', to='libretto.Source', blank=True)),
             ],
             options={

@@ -5,9 +5,7 @@ from django.db import models, migrations
 import re
 import django.contrib.gis.db.models.fields
 import autoslug.fields
-import mptt.fields
 from django.conf import settings
-import django.db.models.deletion
 import tinymce.models
 import django.core.validators
 import libretto.models.base
@@ -406,7 +404,7 @@ class Migration(migrations.Migration):
                 ('caracteristiques', models.ManyToManyField(related_name='oeuvres', null=True, verbose_name='autres caract\xe9ristiques', to='libretto.CaracteristiqueDOeuvre', blank=True)),
                 ('creation_lieu', models.ForeignKey(related_name='oeuvre_creation_set', on_delete=django.db.models.deletion.PROTECT, verbose_name='lieu', blank=True, to='libretto.Lieu', null=True)),
                 ('etat', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, default=libretto.models.base._get_default_etat, verbose_name='\xe9tat', to='libretto.Etat')),
-                ('extrait_de', mptt.fields.TreeForeignKey(related_name='enfants', verbose_name='extrait de', blank=True, to='libretto.Oeuvre', null=True)),
+                ('extrait_de', models.ForeignKey(related_name='enfants', verbose_name='extrait de', blank=True, to='libretto.Oeuvre', null=True)),
             ],
             options={
                 'ordering': ('type_extrait', 'numero_extrait', 'titre', 'genre', 'numero', 'coupe', 'tempo', 'tonalite', 'surnom', 'nom_courant', 'incipit', 'opus', 'ict'),
@@ -510,7 +508,7 @@ class Migration(migrations.Migration):
                 ('level', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('etat', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, default=libretto.models.base._get_default_etat, verbose_name='\xe9tat', to='libretto.Etat')),
                 ('owner', models.ForeignKey(related_name='profession', on_delete=django.db.models.deletion.PROTECT, verbose_name='propri\xe9taire', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('parent', mptt.fields.TreeForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Profession', null=True)),
+                ('parent', models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Profession', null=True)),
             ],
             options={
                 'ordering': ('classement', 'nom'),
@@ -927,7 +925,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partie',
             name='parent',
-            field=mptt.fields.TreeForeignKey(related_name='enfant', verbose_name='r\xf4le ou instrument parent', blank=True, to='libretto.Partie', null=True),
+            field=models.ForeignKey(related_name='enfant', verbose_name='r\xf4le ou instrument parent', blank=True, to='libretto.Partie', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1009,7 +1007,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='lieu',
             name='parent',
-            field=mptt.fields.TreeForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Lieu', null=True),
+            field=models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Lieu', null=True),
             preserve_default=True,
         ),
         migrations.AddField(

@@ -115,7 +115,7 @@ INSTALLED_APPS = (
     'dossiers',
     'examens',
     'afo',
-    'mptt',
+    'tree',
     'el_pagination',
     'tablature',
     'tinymce',

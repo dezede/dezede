@@ -12,7 +12,7 @@ from django.forms import (
 from django.forms.widgets import CheckboxSelectMultiple, HiddenInput
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
-from mptt.forms import TreeNodeChoiceField
+from tree.forms import TreeChoiceField
 
 
 def get_mentors():
@@ -26,8 +26,7 @@ def get_groups():
 class HierarchicUserSignupForm(Form):
     first_name = CharField(label=_('Prénom(s)'))
     last_name = CharField(label=_('Nom'))
-    mentor = TreeNodeChoiceField(queryset=get_mentors(),
-                                 label=_('Responsable'))
+    mentor = TreeChoiceField(queryset=get_mentors(), label=_('Responsable'))
     willing_to_be_mentor = BooleanField(
         required=False, label=_('Souhaite devenir responsable scientifique'))
     groups = ModelMultipleChoiceField(

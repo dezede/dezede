@@ -9,7 +9,8 @@ from subprocess import check_output, CalledProcessError, PIPE
 
 from django.conf import settings
 from django.contrib.admin.models import LogEntry
-from django.core.exceptions import NON_FIELD_ERRORS, FieldError, ValidationError
+from django.core.exceptions import (
+    NON_FIELD_ERRORS, FieldError, ValidationError)
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
@@ -22,10 +23,10 @@ from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext, ugettext_lazy as _
 from autoslug import AutoSlugField
-from mptt.managers import TreeManager
-from mptt.querysets import TreeQuerySet
 from slugify import Slugify
 from tinymce.models import HTMLField
+from tree.fields import PathField
+from tree.query import TreeQuerySetMixin
 
 from cache_tools import invalidate_object
 from common.utils.base import OrderedDefaultDict
@@ -317,16 +318,17 @@ class UniqueSlugModel(Model):
         return s
 
 
-class CommonTreeQuerySet(CommonQuerySet, TreeQuerySet):
+class CommonTreeQuerySet(TreeQuerySetMixin, CommonQuerySet):
     pass
 
 
-class CommonTreeManager(CommonManager, TreeManager):
+class CommonTreeManager(CommonManager):
     queryset_class = CommonTreeQuerySet
 
     def get_queryset(self):
         return self.queryset_class(self.model, using=self._db).order_by(
-            self.tree_id_attr, self.left_attr)
+            [f.name for f in self.model._meta.fields
+             if isinstance(f, PathField)][0])
 
 
 @python_2_unicode_compatible

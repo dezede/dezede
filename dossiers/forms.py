@@ -1,17 +1,22 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.forms import BooleanField
-from mptt.forms import MPTTAdminForm
+
+from django.forms import BooleanField, ModelForm
+from tree.forms import TreeChoiceField
+
 from .models import DossierDEvenements
 
 
-class DossierDEvenementsForm(MPTTAdminForm):
+class DossierDEvenementsForm(ModelForm):
     statique = BooleanField(required=False)
 
     class Meta(object):
         model = DossierDEvenements
         exclude = ()
+        field_classes = {
+            'parent': TreeChoiceField,
+        }
 
     class Media(object):
         css = {

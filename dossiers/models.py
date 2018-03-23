@@ -11,11 +11,12 @@ from django.utils.encoding import python_2_unicode_compatible, smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from mptt.fields import TreeForeignKey
-from mptt.models import MPTTModel
+from tree.fields import PathField
+from tree.models import TreeModelMixin
+
 from accounts.models import HierarchicUser
 from libretto.models import (Lieu, Oeuvre, Evenement, Individu, Ensemble,
-                             Source, ElementDeDistribution, Saison)
+                             Source, Saison)
 from libretto.models.base import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from common.utils.html import href
@@ -54,7 +55,7 @@ class DossierDEvenementsManager(CommonTreeManager, PublishedManager):
 
 
 @python_2_unicode_compatible
-class DossierDEvenements(MPTTModel, PublishedModel):
+class DossierDEvenements(TreeModelMixin, PublishedModel):
     categorie = ForeignKey(
         CategorieDeDossiers, null=True, blank=True,
         related_name='dossiersdevenements', verbose_name=_('catégorie'),
@@ -64,8 +65,9 @@ class DossierDEvenements(MPTTModel, PublishedModel):
     titre_court = CharField(_('titre court'), max_length=100, blank=True,
                             help_text=_('Utilisé pour le chemin de fer.'))
     # TODO: Ajouter accroche d'environ 150 caractères.
-    parent = TreeForeignKey('self', null=True, blank=True,
-                            related_name='children', verbose_name=_('parent'))
+    parent = ForeignKey('self', null=True, blank=True,
+                        related_name='children', verbose_name=_('parent'))
+    path = PathField(order_by=('position',), db_index=True)
     position = PositiveSmallIntegerField(_('position'), default=1)
     slug = SlugField(unique=True,
                      help_text=_('Personnaliser l’affichage du titre '
@@ -107,13 +109,10 @@ class DossierDEvenements(MPTTModel, PublishedModel):
 
     objects = DossierDEvenementsManager()
 
-    class MPTTMeta(object):
-        order_insertion_by = ('position',)
-
     class Meta(object):
         verbose_name = _('dossier d’événements')
         verbose_name_plural = _('dossiers d’événements')
-        ordering = ('tree_id', 'lft')
+        ordering = ('path',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     def __str__(self):

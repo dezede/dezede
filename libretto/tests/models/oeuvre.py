@@ -17,7 +17,7 @@ class OeuvreTestCase(CommonTestCase):
     ]
 
     def setUp(self):
-        # Force save to rebuild slug & MPTT fields
+        # Force save to rebuild slug & tree fields
         for oeuvre in Oeuvre.objects.all():
             oeuvre.save()
 

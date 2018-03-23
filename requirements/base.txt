@@ -3,7 +3,7 @@ Django==1.8.16
 psycopg2==2.7.3.2
 
 # Database fields
-django-mptt==0.8.6
+django-tree==0.3.0
 django-autoslug==1.9.3
 
 # User interface
