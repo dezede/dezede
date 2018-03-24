@@ -8,7 +8,7 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
        'django.template.loaders.app_directories.Loader',
    ]),
 ]
-del TEMPLATES[1]['APP_DIRS']
+del TEMPLATES[0]['APP_DIRS']
 
 ALLOWED_HOSTS = ('dezede.org',)
 
