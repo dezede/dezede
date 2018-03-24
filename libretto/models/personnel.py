@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-import warnings
 
 from django.apps import apps
 from django.db import connection
@@ -356,20 +355,17 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
             SELECT ancetre.nom, COUNT(evenement.id)
             FROM libretto_lieu AS ancetre
             INNER JOIN libretto_lieu AS lieu ON (
-                lieu.tree_id = ancetre.tree_id
-                AND lieu.lft BETWEEN ancetre.lft AND ancetre.rght)
+                lieu.path LIKE ancetre.path || '%%%%')
             INNER JOIN evenements AS evenement ON (
                 evenement.debut_lieu_id = lieu.id)
-            WHERE (
-                ancetre.tree_id = %%s
-                AND %%s BETWEEN ancetre.lft AND ancetre.rght)
+            WHERE %%s LIKE ancetre.path || '%%%%'
             GROUP BY ancetre.id
-            ORDER BY ancetre.level
+            ORDER BY length(ancetre.path)
         );
         """ % evenements_sql
         with connection.cursor() as cursor:
             cursor.execute(sql, evenements_params + (
-                ugettext('Monde'), self.siege.tree_id, self.siege.lft))
+                ugettext('Monde'), self.siege.path))
             data = cursor.fetchall()
         new_data = []
         for i, (name, count) in enumerate(data):

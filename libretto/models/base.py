@@ -86,14 +86,21 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
 #
 
 
+def get_related_fields(meta):
+    return [
+        f for f in meta.get_fields()
+        if (f.one_to_many or f.one_to_one)
+        and f.auto_created and not f.concrete
+    ] + [f for f in meta.get_fields(include_hidden=True)
+         if f.many_to_many and f.auto_created]
+
+
 # TODO: Personnaliser order_by pour simuler automatiquement NULLS LAST
 # en faisant comme https://coderwall.com/p/cjluxg
 class CommonQuerySet(TypographicQuerySet):
     def _get_no_related_objects_filter_kwargs(self):
         meta = self.model._meta
-        return {r.get_accessor_name(): None for r in
-                meta.get_all_related_objects()
-                + meta.get_all_related_many_to_many_objects()}
+        return {r.get_accessor_name(): None for r in get_related_fields(meta)}
 
     def with_related_objects(self):
         return self.exclude(**self._get_no_related_objects_filter_kwargs())
@@ -157,8 +164,7 @@ class CommonModel(TypographicModel):
         return errors
 
     def _has_related_objects__fallback(self):
-        relations = self._meta.get_all_related_objects() \
-            + self._meta.get_all_related_many_to_many_objects()
+        relations = get_related_fields(self._meta)
         for r in relations:
             try:
                 v = getattr(self, r.get_accessor_name())
@@ -180,9 +186,7 @@ class CommonModel(TypographicModel):
     has_related_objects.short_description = _('a des objets liés')
 
     def get_related_counts(self):
-        attrs = [f.get_accessor_name()
-                 for f in self._meta.get_all_related_objects()
-                        + self._meta.get_all_related_many_to_many_objects()]
+        attrs = [f.get_accessor_name() for f in get_related_fields(self._meta)]
         return self.__class__._default_manager.filter(pk=self.pk) \
             .aggregate(**{attr: Count(attr) for attr in attrs})
 
@@ -350,6 +354,9 @@ class AncrageSpatioTemporel(object):
         self.column = None
         self.concrete = False
         self.auto_created = False
+        self.one_to_many = False
+        self.one_to_one = False
+        self.many_to_many = False
         self.editable = True
         self.primary_key = False
         self.unique = False

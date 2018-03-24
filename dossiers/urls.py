@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.views.generic import RedirectView
 from dossiers.views import (
     CategorieDeDossiersList, DossierDEvenementsDetail,
@@ -11,7 +11,7 @@ from dossiers.views import (
     DossierDEvenementsDataGeoJson, DossierDEvenementsDataExport)
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', CategorieDeDossiersList.as_view(),
         name='dossierdevenements_index'),
     url(r'^id/62/?$', RedirectView.as_view(
@@ -48,4 +48,4 @@ urlpatterns = patterns('',
     url(r'^id/(?P<pk>\d+)/export-pdf$',
         DossierDEvenementsDetailXeLaTeX.as_view(),
         name='dossierdevenements_detail_permanent_xelatex'),
-)
+]

@@ -1,11 +1,15 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
+import re
 from copy import copy
 from django.db.models import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template import Library, Template
 from django.utils.encoding import force_text
+from django.utils.safestring import SafeText, mark_safe
+
 from libretto.models.base import PublishedQuerySet
 from common.utils.text import capfirst
 
@@ -27,8 +31,6 @@ def frontend_admin(context, obj=None, size='xs'):
     if obj is None:
         obj = context['object']
     Model = obj._meta.model
-    if Model._deferred:
-        Model = Model._meta.proxy_for_model
     app_label = Model._meta.app_label
     model_slug = Model._meta.model_name
     change_perm = build_permission(app_label, model_slug, 'change')
@@ -185,7 +187,7 @@ def data_table_list(context, object_list, attr='link',
         object_list, verbose_name=verbose_name,
         verbose_name_plural=verbose_name_plural)
 
-    c = context.__copy__()
+    c = context.flatten()
     c.update({
         'attr': attr,
         'object_list': object_list,
@@ -208,7 +210,7 @@ def evenement_list_def(context, evenements, verbose_name=None,
         verbose_name_plural=verbose_name_plural)
     counter = evenements.count
     name = force_text(verbose_name if counter == 1 else verbose_name_plural)
-    c = context.__copy__()
+    c = context.flatten()
     c.update({'name': name,
               'counter': counter,
               'evenements': evenements})
@@ -218,7 +220,7 @@ def evenement_list_def(context, evenements, verbose_name=None,
 @register.inclusion_tag('routines/jqtree.html', takes_context=True)
 def jqtree(context, model_path, attr='__str__', id=None):
     app_label, model_name = model_path.split('.')
-    c = context.__copy__()
+    c = context.flatten()
     c.update({
         'app_label': app_label,
         'model_name': model_name,
@@ -231,3 +233,16 @@ def jqtree(context, model_path, attr='__str__', id=None):
 @register.filter
 def order_by(qs, fields):
     return qs.order_by(*fields.split(','))
+
+
+@register.filter
+def removetags(html, tags):
+    safe = isinstance(html, SafeText)
+    while True:
+        new_html = re.sub(r'</?(?:%s)[^>]*>' % r'|'.join(tags.split(',')),
+                          '', html)
+        if new_html == html:
+            if safe:
+                new_html = mark_safe(new_html)
+            return new_html
+        html = new_html

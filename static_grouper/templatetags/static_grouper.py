@@ -1,8 +1,8 @@
 from collections import defaultdict
 from compressor.templatetags.compress import CompressorNode
 
-from django.template import Library, Node, Template, TemplateSyntaxError
-
+from django.template import (
+    Library, Node, Template, TemplateSyntaxError, Context)
 
 register = Library()
 

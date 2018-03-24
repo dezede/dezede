@@ -12,7 +12,7 @@ from .views import (
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^', include('libretto.urls')),
     url(r'^examens/', include('examens.urls')),
@@ -35,7 +35,7 @@ urlpatterns = patterns('',
                                namespace='rest_framework')),
     url(r'autocomplete', autocomplete, name='autocomplete'),
     url(r'^404$', ErrorView.as_view(status=404)),
-)
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL,
@@ -45,9 +45,9 @@ if settings.DEBUG:
 
     import debug_toolbar
 
-    urlpatterns += patterns('',
+    urlpatterns += [
         url(r'^__debug__/', include(debug_toolbar.urls)),
         url(r'^403$', ErrorView.as_view(status=403)),
         url(r'^500$', ErrorView.as_view(status=500)),
         url(r'^503$', ErrorView.as_view(status=503)),
-    )
+    ]

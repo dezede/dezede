@@ -50,7 +50,7 @@ class OeuvreIndex(CommonSearchIndex, Indexable):
 
     def prepare(self, obj):
         prepared_data = super(OeuvreIndex, self).prepare(obj)
-        prepared_data['boost'] /= (obj.level + 1)
+        prepared_data['boost'] /= (obj.get_level() + 1)
         return prepared_data
 
 

@@ -57,7 +57,7 @@ class HierarchicUserSignupForm(Form):
             FormActions(
                 Submit('save_changes', _('Enregistrer')),
                 Reset('reset', _('Réinitialiser'), css_class='btn-default'),
-                css_class='col-sm-offset-2',
+                css_class='row',
             ),
         )
         super(HierarchicUserSignupForm, self).__init__(*args, **kwargs)
@@ -95,7 +95,7 @@ class LoginForm(OriginalLoginForm):
                      '<a class="btn btn-link" '
                      'href="{% url "account_reset_password" %}">'
                      '{% trans "Forgot Password?" %}</a>'),
-                css_class='col-sm-offset-2',
+                css_class='row',
             ),
         )
 

@@ -65,10 +65,12 @@ def _get_valid_modelnames_func(autorites_only=True):
             return b and AutoriteModel in model.__bases__
         return b
 
-    def get_valid_modelnames():
-        models = frozenset(apps.get_models())
-        return [model.__name__.lower() for model in models if is_valid(model)]
-    return get_valid_modelnames
+    class ValidModelNames:
+        def __iter__(self):
+            models = frozenset(apps.get_models())
+            yield from [model.__name__.lower() for model in models if
+                        is_valid(model)]
+    return ValidModelNames()
 
 
 @python_2_unicode_compatible

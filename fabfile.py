@@ -15,6 +15,8 @@ from pathlib import Path
 
 
 django.project('dezede')
+import django
+django.setup()
 from cachalot.api import invalidate as invalidate_cachalot
 from django.conf import settings
 

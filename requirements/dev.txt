@@ -1,18 +1,18 @@
 # Developer tools
-django-debug-toolbar==1.5
-django-debug-toolbar-template-timings==0.6.6
+django-debug-toolbar==1.9.1
+django-debug-toolbar-template-timings==0.9
 django-haystack-panel==0.2.1
-django-extensions==1.7.4
+django-extensions==2.0.6
 
 # Deployment tools
-Fabric3==1.12.post1
+Fabric3==1.14.post1
 
 # Testing
-django-nose==1.4.3
-selenium==2.53.5
+django-nose==1.4.5
+selenium==3.11.0
 
 # For manage.py runserver_plus
-Werkzeug==0.11.10
+Werkzeug==0.14.1
 
 # For manage.py shell_plus
 ipython
@@ -23,7 +23,7 @@ jinja2
 tornado
 
 # Translation helper
-transifex-client==0.12.2
+transifex-client==0.13.1
 
 # Test data deserialization
 PyYaml

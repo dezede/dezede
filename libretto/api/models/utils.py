@@ -390,6 +390,17 @@ def are_mergeable_models(model_a, model_b):
     return not parent_models_a.isdisjoint(parent_models_b)
 
 
+def get_related_fks_and_1to1(model):
+    return [f for f in model._meta.get_fields()
+            if (f.one_to_many or f.one_to_one)
+            and f.auto_created and not f.concrete]
+
+
+def get_related_m2ms(model):
+    return [f for f in model._meta.get_fields(include_hidden=True)
+            if f.many_to_many and f.auto_created]
+
+
 @transaction.atomic
 def merge_duplicate(duplicate, reference, dry_run=False):
     duplicate_model = duplicate._meta.model
@@ -398,8 +409,8 @@ def merge_duplicate(duplicate, reference, dry_run=False):
         raise TypeError('Duplicate and reference are from different models.')
 
     # Updating related ForeignKeys & OneToOneFields.
-    fk_relations = duplicate_model._meta.get_all_related_objects()
-    reference_fk_relations = reference_model._meta.get_all_related_objects()
+    fk_relations = get_related_fks_and_1to1(duplicate_model)
+    reference_fk_relations = get_related_fks_and_1to1(reference_model)
     for field, qs in _related_queryset_iterator(
             fk_relations, reference_fk_relations, duplicate, reference):
         # We use `obj.save` instead of `qs.update` to trigger save events
@@ -409,8 +420,8 @@ def merge_duplicate(duplicate, reference, dry_run=False):
             obj.save()
 
     # Updating related ManyToManyFields.
-    m2m_relations = duplicate_model._meta.get_all_related_many_to_many_objects()
-    reference_m2m_relations = reference_model._meta.get_all_related_many_to_many_objects()
+    m2m_relations = get_related_m2ms(duplicate_model)
+    reference_m2m_relations = get_related_m2ms(reference_model)
     for field, qs in _related_queryset_iterator(
             m2m_relations, reference_m2m_relations, duplicate, reference):
         for obj in qs:

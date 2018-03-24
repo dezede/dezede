@@ -1,13 +1,13 @@
 # coding: utf-8
 from allauth.account import views
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from .views import (
     GrantToAdmin, EvenementsGraph, HierarchicUserDetail,
     PartenairesView, ComiteEditorialeView, ContributeursView,
     EquipeDeveloppementView, ProprietairesView)
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^comite-editorial$', ComiteEditorialeView.as_view(),
         name='comite_editorial'),
     url(r'^contributeurs$', ContributeursView.as_view(), name='contributeurs'),
@@ -51,4 +51,4 @@ urlpatterns = patterns('',
         name='account_reset_password_from_key'),
     url(r'^mot-de-passe/reset/key/done/$', views.password_reset_from_key_done,
         name='account_reset_password_from_key_done'),
-)
+]
