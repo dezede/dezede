@@ -215,9 +215,10 @@ def install():
     pip_install()
     npm_install()
 
+    collectstatic()
+
     migrate_db()
 
-    collectstatic()
     set_permissions()
 
 
