@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import re
 import warnings
 from django.apps import apps
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import RegexValidator
 from django.db import connection
@@ -646,6 +647,13 @@ class Evenement(AutoriteModel):
             extra_params.append(self.debut_lieu_id)
 
         return qs.extra(where=(extra_where,), params=extra_params)
+
+    def clean(self):
+        if self.fin_lieu is not None and self.debut_lieu is None:
+            raise ValidationError(
+                _('Le lieu de fin est rempli sans lieu de début. '
+                  'Merci de retirer le lieu de fin '
+                  'ou remplir le lieu de début.'))
 
     def __str__(self):
         out = self.debut.date_str(False)
