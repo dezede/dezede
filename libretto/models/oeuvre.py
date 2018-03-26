@@ -736,8 +736,8 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     class Meta(object):
         verbose_name = _('œuvre')
         verbose_name_plural = _('œuvres')
+        ordering = ('path',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
-    Meta.ordering = ORDERING
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):

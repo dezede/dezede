@@ -97,7 +97,7 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     class Meta(object):
         verbose_name = _('lieu ou institution')
         verbose_name_plural = _('lieux et institutions')
-        ordering = ('nom',)
+        ordering = ('path',)
         unique_together = ('nom', 'parent',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
