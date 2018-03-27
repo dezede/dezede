@@ -309,7 +309,10 @@ ELASTICSEARCH_INDEX_SETTINGS = {
                     'max_gram': 15,
                 }
             }
-        }
+        },
+        'index': {
+            'max_result_window': 1000000,
+        },
     }
 }
 
