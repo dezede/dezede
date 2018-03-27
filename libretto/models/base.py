@@ -251,7 +251,7 @@ def _get_default_etat():
         'message': '<p>Cette donnée a été créée récemment et nécessite '
                    'plusieurs relectures.  À lire avec précaution.</p>',
         'public': True,
-    })[0].pk  # TODO: Remove .pk when switching to Django 1.9.
+    })[0]
 
 
 class PublishedModel(CommonModel):
