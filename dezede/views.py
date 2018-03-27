@@ -93,7 +93,8 @@ def autocomplete(request):
             ('id', s.pk),
             ('str', (s.related_label() if hasattr(s, 'related_label')
                      else smart_text(s))),
-            ('url', s.get_absolute_url()))) for s in suggestions]
+            ('url', s.get_absolute_url()))) for s in suggestions
+        if s is not None]
     data = json.dumps(suggestions)
     return HttpResponse(data, content_type='application/json')
 
