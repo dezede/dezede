@@ -64,7 +64,7 @@ class CustomBaseModel(BaseModelAdmin):
     def get_queryset(self, request):
         user = request.user
         qs = super(CustomBaseModel, self).get_queryset(request)
-        if not user.is_superuser and IS_POPUP_VAR not in request.REQUEST:
+        if not user.is_superuser and IS_POPUP_VAR not in request.GET:
             qs = qs.filter(
                 owner__in=user.get_descendants(include_self=True))
         return qs
