@@ -8,6 +8,8 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from reversion.admin import VersionAdmin
 from tinymce.widgets import TinyMCE
+
+from libretto.admin import CommonAdmin
 from .models import HierarchicUser
 
 
@@ -38,7 +40,7 @@ class HierarchicUserChangeForm(UserChangeForm):
 
 
 @register(HierarchicUser)
-class HierarchicUserAdmin(VersionAdmin, UserAdmin):
+class HierarchicUserAdmin(VersionAdmin, CommonAdmin, UserAdmin):
     add_form = HierarchicUserCreationForm
     form = HierarchicUserChangeForm
     list_display = ('__str__',) + UserAdmin.list_display + (
@@ -46,6 +48,10 @@ class HierarchicUserAdmin(VersionAdmin, UserAdmin):
     list_editable = ('first_name', 'last_name', 'mentor',
                      'willing_to_be_mentor', 'is_active')
     list_filter = ('mentor', 'willing_to_be_mentor') + UserAdmin.list_filter
+    additional_fields = ()
+    additional_readonly_fields = ()
+    additional_list_display = ()
+    additional_list_filters = ()
     search_fields = ('username__unaccent', 'first_name__unaccent',
                      'last_name__unaccent', 'email__unaccent')
     related_lookup_fields = {
@@ -74,9 +80,3 @@ class HierarchicUserAdmin(VersionAdmin, UserAdmin):
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
     ordering = ('last_name', 'first_name')
-
-    # FIXME: This is a workaround to https://github.com/etianen/django-reversion/issues/448
-    def user_change_password(self, request, id, form_url=''):
-        with self._create_revision(request):
-            return super(HierarchicUserAdmin, self).user_change_password(
-                request, id, form_url=form_url)
