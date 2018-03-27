@@ -129,13 +129,7 @@ class BaseEvenementListView(PublishedListView):
         if search_query:
             sqs = SearchQuerySet().models(self.model)
             sqs = sqs.auto_query(search_query)
-            # Le slicing est là pour compenser un bug de haystack, qui va
-            # chercher les valeurs par paquets de 10, faisant parfois ainsi
-            # des centaines de requêtes à elasticsearch.
-            # FIXME: Utiliser une values_list quand cette issue sera résolue :
-            # https://github.com/toastdriven/django-haystack/issues/1019
-            pk_list = [r.pk for r in sqs[:10**6]]
-            qs = qs.filter(pk__in=pk_list)
+            qs = qs.filter(pk__in=sqs.values_list('pk', flat=True))
 
         filters = self.get_filters(data)
         qs = qs.filter(filters).distinct()
@@ -242,9 +236,6 @@ class EvenementGeoJson(BaseEvenementListView):
 
 class EvenementDetailView(PublishedDetailView):
     model = Evenement
-    # FIXME: Retirer les 2 lignes suivantes quand https://code.djangoproject.com/ticket/24689 sera résolu.
-    template_name = 'libretto/evenement_detail.html'
-    context_object_name = 'evenement'
 
     def get_queryset(self):
         qs = super(EvenementDetailView, self).get_queryset()
