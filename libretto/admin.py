@@ -457,14 +457,14 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
         return super(CommonAdmin, self).get_form(request, obj=obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
-        if obj.owner is None:
+        if hasattr(obj, 'owner') and obj.owner is None:
             obj.owner = request.user
         super(CommonAdmin, self).save_model(request, obj, form, change)
 
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
-            if getattr(instance, 'owner', None) is None:
+            if hasattr(instance, 'owner') and instance.owner is None:
                 instance.owner = request.user
             instance.save()
         formset.save()
