@@ -10,7 +10,6 @@ from django.contrib import messages
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage, mail_admins
 from django.http import HttpRequest
-from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
@@ -123,13 +122,13 @@ def send_pdf(context, template_name, subject, filename, user_pk, site_pk,
              language_code):
     translation.activate(language_code)
     user = HierarchicUser.objects.get(pk=user_pk)
+    request = HttpRequest()
+    request.user = user
     context.update(
+        request=request,
         user=user,
         SITE=Site.objects.get(pk=site_pk),
         source_dict={})
-    request = HttpRequest()
-    request.user = user
-    context = RequestContext(request, context)
     try:
         tex = render_to_string(template_name, context)
     except JobTimeoutException:
