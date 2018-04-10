@@ -8,7 +8,7 @@ django-autoslug==1.9.3
 
 # User interface
 django-grappelli==2.10.2
-django-super-inlines==0.1.4
+https://github.com/BertrandBordage/django-super-inlines/archive/bff80128633ac7b5872c660788c4c503a3c15ee2.tar.gz
 django-tinymce==2.6.0
 django-crispy-forms==1.7.2
 django-ajax-selects==1.7.0
