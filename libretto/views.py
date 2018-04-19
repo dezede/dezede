@@ -173,7 +173,9 @@ class BaseEvenementListView(PublishedListView):
     def get_cleaned_GET(self):
         new_qd = self.request.GET.copy()
         for k, v in tuple(new_qd.items()):
-            if k in self.BINDINGS and self.filter_re.match(v) is None:
+            if not v:
+                del new_qd[k]
+            elif k in self.BINDINGS and self.filter_re.match(v) is None:
                 del new_qd[k]
         return new_qd
 
@@ -212,7 +214,8 @@ class EvenementExport(BaseEvenementListView):
         if self.valid_form and export_format in jobs:
             launch_export(jobs[export_format], request, pk_list,
                           export_format, _('de %s événements') % len(pk_list))
-        return super(EvenementExport, self).get(request, *args, **kwargs)
+        return redirect(self.get_success_url()
+                        + '?' + self.get_cleaned_GET().urlencode())
 
 
 class EvenementGeoJson(BaseEvenementListView):
