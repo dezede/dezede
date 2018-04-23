@@ -371,6 +371,9 @@ class AncrageSpatioTemporel(object):
         self.db_tablespace = settings.DEFAULT_INDEX_TABLESPACE
         self.auto_created = False
 
+    def get_col(self, *args, **kwargs):
+        return list(self.fields.values())[0].get_col(*args, **kwargs)
+
     def create_fields(self):
         fields = []
         if self.has_date:
