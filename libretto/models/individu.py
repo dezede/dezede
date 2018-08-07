@@ -2,10 +2,9 @@
 
 from __future__ import unicode_literals
 from django.core.exceptions import ValidationError
-from django.core.validators import MinLengthValidator, RegexValidator
 from django.db import connection
 from django.db.models import (
-    CharField, ForeignKey, ManyToManyField, permalink, PROTECT)
+    CharField, ForeignKey, ManyToManyField, permalink, PROTECT, BooleanField)
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import (
@@ -17,7 +16,7 @@ from common.utils.text import str_list, str_list_w_last, ex
 from .base import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
     PublishedManager, PublishedQuerySet, AncrageSpatioTemporel,
-    slugify_unicode)
+    slugify_unicode, ISNI_VALIDATORS)
 from .evenement import Evenement
 
 
@@ -139,10 +138,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     isni = CharField(
         _('Identifiant ISNI'), max_length=16, blank=True,
-        validators=[MinLengthValidator(16),
-                    RegexValidator(r'^\d{15}[\dxX]$',
-                                   _('Numéro d’ISNI invalide.'))],
+        validators=ISNI_VALIDATORS,
         help_text=_('Exemple : « 0000000121269154 » pour Mozart.'))
+    sans_isni = BooleanField(_('sans ISNI'), default=False)
 
     objects = IndividuManager()
 
@@ -327,8 +325,13 @@ class Individu(AutoriteModel, UniqueSlugModel):
         naissance = self.naissance.date
         deces = self.deces.date
         if naissance and deces and deces < naissance:
-            raise ValidationError(_('Le décès ne peut précéder '
-                                    'la naissance.'))
+            message = _('Le décès ne peut précéder la naissance.')
+            raise ValidationError({'naissance_date': message,
+                                   'deces_date': message})
+        if self.isni and self.sans_isni:
+            message = _('« ISNI » ne peut être rempli '
+                        'lorsque « Sans ISNI » est coché.')
+            raise ValidationError({'isni': message, 'sans_isni': message})
 
     def __str__(self):
         return strip_tags(self.html(tags=False))

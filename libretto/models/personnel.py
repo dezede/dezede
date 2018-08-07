@@ -3,10 +3,11 @@
 from __future__ import unicode_literals
 
 from django.apps import apps
+from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, SmallIntegerField,
-    DateField, PositiveSmallIntegerField, Model)
+    DateField, PositiveSmallIntegerField, Model, BooleanField)
 from django.db.models.sql import EmptyResultSet
 from django.template.defaultfilters import date
 from django.utils.encoding import python_2_unicode_compatible, force_text
@@ -17,7 +18,7 @@ from common.utils.html import capfirst, href, date_html, sc
 from common.utils.sql import get_raw_query
 from common.utils.text import str_list
 from .base import (CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
-                   UniqueSlugModel, AutoriteModel)
+                   UniqueSlugModel, AutoriteModel, ISNI_VALIDATORS)
 from .evenement import Evenement
 
 
@@ -283,6 +284,13 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
         'Individu', through=Membre, related_name='ensembles',
         verbose_name=_('individus'))
 
+    isni = CharField(
+        _('Identifiant ISNI'), max_length=16, blank=True,
+        validators=ISNI_VALIDATORS,
+        help_text=_('Exemple : « 0000000115201575 » '
+                    'pour Le Poème Harmonique.'))
+    sans_isni = BooleanField(_('sans ISNI'), default=False)
+
     class Meta(object):
         ordering = ('nom',)
         verbose_name = _('ensemble')
@@ -376,6 +384,12 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
             if exclusive_count > 0:
                 new_data.append((name, count, exclusive_count))
         return new_data
+
+    def clean(self):
+        if self.isni and self.sans_isni:
+            message = _('« ISNI » ne peut être rempli '
+                        'lorsque « Sans ISNI » est coché.')
+            raise ValidationError({'isni': message, 'sans_isni': message})
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):

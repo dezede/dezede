@@ -688,7 +688,7 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
             'fields': ('pseudonyme',
                        'prenoms_complets',
                        ('particule_nom_naissance', 'nom_naissance'),
-                       'designation', 'biographie', 'isni'),
+                       'designation', 'biographie', ('isni', 'sans_isni')),
         }),
     )
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'i', 'i')
@@ -723,7 +723,8 @@ class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     }
     fieldsets = (
         (None, {
-            'fields': (('particule_nom', 'nom'), 'type', 'siege'),
+            'fields': (('particule_nom', 'nom'), 'type', 'siege',
+                       ('isni', 'sans_isni')),
         }),
         PERIODE_D_ACTIVITE_FIELDSET,
     )

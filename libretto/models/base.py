@@ -11,6 +11,7 @@ from django.conf import settings
 from django.contrib.admin.models import LogEntry
 from django.core.exceptions import (
     NON_FIELD_ERRORS, FieldError, ValidationError)
+from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
@@ -79,6 +80,11 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
         return getattr(obj, attr_base) + 's'
     except (AttributeError, TypeError):
         return force_text(obj)
+
+
+ISNI_VALIDATORS = [
+    MinLengthValidator(16),
+    RegexValidator(r'^\d{15}[\dxX]$', _('Numéro d’ISNI invalide.'))]
 
 
 #
