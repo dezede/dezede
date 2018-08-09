@@ -1,7 +1,7 @@
 <div class="text-center">
   <ul class="pagination pagination-sm">
     {% for page in pages %}
-      <li class="{% if not page %}disabled{% endif %}{% if page.is_current %}active{% endif %} ">{{ page|default_if_none:'<a>…</a>' }}</li>
+      <li class="{% if not page %}disabled{% endif %}{% if page.is_current %}active{% endif %} ">{{ page.render_link|default:'<a>…</a>' }}</li>
     {% endfor %}
   </ul>
 </div>
