@@ -317,7 +317,7 @@ ELASTICSEARCH_INDEX_SETTINGS = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'unix:///var/run/redis/redis.sock',
+        'LOCATION': 'unix:///var/run/redis/redis-server.sock',
         'KEY_PREFIX': '2Z',
         'TIMEOUT': None,  # seconds
     }
