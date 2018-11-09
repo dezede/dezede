@@ -1,7 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
-
 from collections import defaultdict, OrderedDict
 from math import isnan
 from io import BytesIO

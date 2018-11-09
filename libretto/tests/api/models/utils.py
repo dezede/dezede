@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from django.db.models import Manager
 from django.test import TestCase
 from libretto.api.models.utils import update_or_create

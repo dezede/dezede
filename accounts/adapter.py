@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from allauth.account.adapter import DefaultAccountAdapter
 from django.utils.timezone import now
 

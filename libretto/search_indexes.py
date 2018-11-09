@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals, division
 from django.apps import apps
 from django.conf import settings
 from django.db.models import Q

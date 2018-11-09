@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from django.conf import settings
 from django.db.models.signals import pre_init, pre_save
 

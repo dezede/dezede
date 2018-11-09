@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 import re
 from libretto.api import parse_ancrage
 from .utils import update_or_create, clean_string

@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from django.contrib.gis.db.models import GeometryField, GeoManager
 from django.contrib.gis.db.models.query import GeoQuerySet
 from django.core.exceptions import ValidationError

@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from datetime import datetime, timedelta
 from random import randrange, choice
 from django.db.models import Count, F

@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from difflib import SequenceMatcher
 import subprocess
 from django.utils.encoding import smart_text

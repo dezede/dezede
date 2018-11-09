@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 import datetime
 from django.db.models import Min, Max
 from django.forms.fields import MultiValueField

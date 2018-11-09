@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals, division
 from decimal import Decimal
 
 from django.contrib.contenttypes.fields import GenericForeignKey

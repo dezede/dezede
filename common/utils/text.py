@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from unicodedata import normalize
 
 from django.utils import six

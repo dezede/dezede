@@ -1,7 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
-
 from bleach import clean
 from django.template.defaultfilters import date
 from django.utils.encoding import smart_text

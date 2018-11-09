@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from django.conf.urls import *
 from .api.rest import router as api_router
 from libretto.views import TreeNode, EnsembleViewSet, EvenementExport

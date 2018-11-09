@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import re
 from django.utils.safestring import mark_safe
 from easy_thumbnails.conf import Settings as thumbnail_settings

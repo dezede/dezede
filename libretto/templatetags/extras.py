@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals, division
 try:
     from html.parser import HTMLParser
 except ImportError:  # Python 2 compatibility

@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from django.contrib.admin import register
 from django.db.models import TextField
 from django.utils.translation import ugettext_lazy as _

@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import accounts.models
 import django.core.validators
 from django.db import migrations, models

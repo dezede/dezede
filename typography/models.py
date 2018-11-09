@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from django.db.models import CharField, TextField, Manager, Model
 from django.db.models.query import QuerySet
 from django.dispatch import receiver

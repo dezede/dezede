@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from django.contrib.admin import register, HORIZONTAL
 from django.utils.translation import ugettext_lazy as _
 from image_cropping import ImageCroppingMixin

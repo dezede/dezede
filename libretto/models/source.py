@@ -1,6 +1,3 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField)
 from django.utils.encoding import python_2_unicode_compatible
