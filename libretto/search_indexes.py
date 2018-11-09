@@ -8,6 +8,8 @@ from haystack.indexes import (
     SearchIndex, Indexable, CharField, EdgeNgramField, DateField, BooleanField,
     IntegerField)
 from haystack.query import SearchQuerySet
+from tree.models import TreeModelMixin
+
 from typography.utils import replace
 
 
@@ -27,8 +29,11 @@ class CommonSearchIndex(SearchIndex):
         n = obj.get_related_count()
         min_boost, max_boost = self.BASE_BOOST, self.MAXIMUM_BOOST
         growth = 100
-        prepared_data['boost'] = (
+        boost = (
             min_boost + (max_boost-min_boost) * (1 - 1 / (1 + n / growth)))
+        if isinstance(obj, TreeModelMixin):
+            boost /= (obj.get_level() + 1)
+        prepared_data['boost'] = boost
         return prepared_data
 
 
@@ -44,11 +49,6 @@ class OeuvreIndex(CommonSearchIndex, Indexable):
         return qs.select_related('genre').prefetch_related(
             'pupitres__partie',
             'auteurs__individu', 'auteurs__ensemble', 'auteurs__profession')
-
-    def prepare(self, obj):
-        prepared_data = super(OeuvreIndex, self).prepare(obj)
-        prepared_data['boost'] /= (obj.get_level() + 1)
-        return prepared_data
 
 
 class SourceIndex(CommonSearchIndex, Indexable):
