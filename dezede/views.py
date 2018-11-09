@@ -70,10 +70,11 @@ class CustomSearchView(SearchView):
     Custom SearchView to fix spelling suggestions.
     """
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_class = CustomModelSearchForm
+
     def build_form(self, form_kwargs=None):
-        if form_kwargs is None:
-            form_kwargs = {}
-        form_kwargs.setdefault('form_class', CustomModelSearchForm)
         self.request.GET = GET = self.request.GET.copy()
         GET['q'] = replace(GET.get('q', ''))
         return super(CustomSearchView, self).build_form(form_kwargs)
