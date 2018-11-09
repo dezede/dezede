@@ -19,6 +19,7 @@ class CommonSearchIndex(SearchIndex):
     owner_id = IntegerField(model_attr='owner_id', null=True)
     BASE_BOOST = 0.5
     MAXIMUM_BOOST = 5.0
+    LEVEL_ATTENUATION = 0.1
 
     def prepare(self, obj):
         translation.activate(settings.LANGUAGE_CODE)
@@ -27,12 +28,15 @@ class CommonSearchIndex(SearchIndex):
         # `growth` est le nombre d’objets liés nécessaires pour atteindre
         # les 2/3 de la distance entre `min_boost` et `max_boost`.
         n = obj.get_related_count()
+
+        if isinstance(obj, TreeModelMixin):
+            # Sligthly reduces the number of related objects if highly nested.
+            n /= 1 + obj.get_level() * self.LEVEL_ATTENUATION
+
         min_boost, max_boost = self.BASE_BOOST, self.MAXIMUM_BOOST
         growth = 100
         boost = (
             min_boost + (max_boost-min_boost) * (1 - 1 / (1 + n / growth)))
-        if isinstance(obj, TreeModelMixin):
-            boost /= (obj.get_level() + 1)
         prepared_data['boost'] = boost
         return prepared_data
 
@@ -40,6 +44,7 @@ class CommonSearchIndex(SearchIndex):
 class OeuvreIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='titre_html')
     BASE_BOOST = 1.5
+    LEVEL_ATTENUATION = 0.3
 
     def get_model(self):
         return apps.get_model('libretto.Oeuvre')
