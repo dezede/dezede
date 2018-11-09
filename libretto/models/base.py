@@ -188,13 +188,12 @@ class CommonModel(TypographicModel):
     has_related_objects.boolean = True
     has_related_objects.short_description = _('a des objets liés')
 
-    def get_related_counts(self):
-        attrs = [f.get_accessor_name() for f in get_related_fields(self._meta)]
-        return self.__class__._default_manager.filter(pk=self.pk) \
-            .aggregate(**{attr: Count(attr) for attr in attrs})
-
     def get_related_count(self):
-        return sum(self.get_related_counts().values())
+        count = 0
+        for field in get_related_fields(self._meta):
+            count += (self.__class__._default_manager.filter(pk=self.pk)
+                      .aggregate(n=Count(field.get_accessor_name()))['n'])
+        return count
 
     @classmethod
     def class_name(cls):
