@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 
-from fabric.context_managers import cd, path, shell_env, prefix
+from fabric.context_managers import cd, path, shell_env, prefix, warn_only
 from fabric.contrib import django
 from fabric.contrib.files import (append, contains, sed, uncomment, exists,
                                   upload_template)
@@ -311,8 +311,12 @@ def restore_saved_db():
     local('sudo -u postgres createuser --login -g clients %s'
           % DB_USER)
     local('sudo -u postgres createdb --owner %s %s' % (DB_USER, DB_NAME))
+    with warn_only():
+        for parent in Path(LOCAL_BACKUP).resolve().parents:
+            local('chmod o+x %s' % parent)
+    local('chmod o+r %s' % LOCAL_BACKUP)
     local('sudo -u postgres pg_restore -e -d %s -j 5 "%s"'
-          % (DB_NAME, LOCAL_BACKUP))
+          % (DB_NAME, Path(LOCAL_BACKUP).resolve()))
     invalidate_cachalot()
 
 
