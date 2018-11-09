@@ -1,10 +1,9 @@
-from django.contrib.gis.db.models import GeometryField, GeoManager
-from django.contrib.gis.db.models.query import GeoQuerySet
+from django.contrib.gis.db.models import GeometryField
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
 from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
-                              permalink, Q, PROTECT)
-from django.utils.encoding import python_2_unicode_compatible, force_text
+                              permalink, Q, PROTECT, CASCADE)
+from django.urls import reverse
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from tinymce.models import HTMLField
@@ -65,11 +64,11 @@ class NatureDeLieu(CommonModel, SlugModel):
 
 
 class LieuQuerySet(PublishedQuerySet,
-                   CommonTreeQuerySet, GeoQuerySet):
+                   CommonTreeQuerySet):
     pass
 
 
-class LieuManager(CommonTreeManager, PublishedManager, GeoManager):
+class LieuManager(CommonTreeManager, PublishedManager):
     queryset_class = LieuQuerySet
 
 
@@ -78,7 +77,7 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, db_index=True)
     parent = ForeignKey(
         'self', null=True, blank=True, related_name='enfants',
-        verbose_name=_('parent'))
+        verbose_name=_('parent'), on_delete=CASCADE)
     path = PathField(order_by=('nom',), db_index=True)
     nature = ForeignKey(NatureDeLieu, related_name='lieux',
                         verbose_name=_('nature'), on_delete=PROTECT)
@@ -212,9 +211,10 @@ class SaisonManager(CommonManager):
 @python_2_unicode_compatible
 class Saison(CommonModel):
     ensemble = ForeignKey('Ensemble', related_name='saisons',
-                          verbose_name=_('ensemble'), blank=True, null=True)
+                          verbose_name=_('ensemble'), blank=True, null=True,
+                          on_delete=CASCADE)
     lieu = ForeignKey('Lieu', related_name='saisons', blank=True, null=True,
-                      verbose_name=_('lieu ou institution'))
+                      verbose_name=_('lieu ou institution'), on_delete=CASCADE)
     debut = DateField(_('début'), help_text=DATE_MSG)
     fin = DateField(_('fin'))
 

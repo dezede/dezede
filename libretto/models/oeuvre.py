@@ -8,7 +8,7 @@ from django.core.validators import RegexValidator
 from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField,
     BooleanField, permalink, SmallIntegerField, PROTECT, Count,
-    PositiveSmallIntegerField)
+    PositiveSmallIntegerField, CASCADE)
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.html import strip_tags, format_html
 from django.utils.safestring import mark_safe
@@ -97,14 +97,15 @@ class Partie(AutoriteModel, UniqueSlugModel):
     oeuvre = ForeignKey(
         'Oeuvre', verbose_name=_('œuvre'), blank=True, null=True,
         related_name='parties',
-        help_text=_('Ne remplir que pour les rôles.'))
+        help_text=_('Ne remplir que pour les rôles.'), on_delete=CASCADE)
     # TODO: Changer le verbose_name en un genre de "types de voix"
     # pour les rôles, mais en plus générique (ou un help_text).
     professions = ManyToManyField(
         'Profession', related_name='parties', verbose_name=_('professions'),
         blank=True)
     parent = ForeignKey('self', related_name='enfants', blank=True, null=True,
-                        verbose_name=_('rôle ou instrument parent'))
+                        verbose_name=_('rôle ou instrument parent'),
+                        on_delete=CASCADE)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
     class Meta(object):
@@ -192,7 +193,7 @@ class PupitreManager(CommonManager):
 @python_2_unicode_compatible
 class Pupitre(CommonModel):
     oeuvre = ForeignKey('Oeuvre', related_name='pupitres',
-                        verbose_name=_('œuvre'))
+                        verbose_name=_('œuvre'), on_delete=CASCADE)
     partie = ForeignKey(
         'Partie', related_name='pupitres',
         verbose_name=_('rôle ou instrument'), on_delete=PROTECT)
@@ -282,9 +283,11 @@ class ParenteDOeuvres(CommonModel):
     type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes',
                       verbose_name=_('type'), on_delete=PROTECT)
     mere = ForeignKey(
-        'Oeuvre', related_name='parentes_filles', verbose_name=_('œuvre mère'))
+        'Oeuvre', related_name='parentes_filles', verbose_name=_('œuvre mère'),
+        on_delete=CASCADE)
     fille = ForeignKey(
-        'Oeuvre', related_name='parentes_meres', verbose_name=_('œuvre fille'))
+        'Oeuvre', related_name='parentes_meres', verbose_name=_('œuvre fille'),
+        on_delete=CASCADE)
 
     objects = ParenteDOeuvresManager()
 
@@ -387,10 +390,10 @@ class Auteur(CommonModel):
     # pour éviter que les deux soient remplis.
     oeuvre = ForeignKey(
         'Oeuvre', null=True, blank=True,
-        related_name='auteurs', verbose_name=_('œuvre'))
+        related_name='auteurs', verbose_name=_('œuvre'), on_delete=CASCADE)
     source = ForeignKey(
         'Source', null=True, blank=True,
-        related_name='auteurs', verbose_name=_('source'))
+        related_name='auteurs', verbose_name=_('source'), on_delete=CASCADE)
     # Une contrainte de base de données existe dans les migrations
     # pour éviter que les deux soient remplis.
     individu = ForeignKey(
@@ -678,8 +681,8 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
                 'surnom', 'nom_courant',
                 'opus', 'ict')
     extrait_de = ForeignKey(
-        'self', null=True, blank=True,
-        related_name='enfants', verbose_name=_('extrait de'))
+        'self', null=True, blank=True, related_name='enfants',
+        verbose_name=_('extrait de'), on_delete=CASCADE)
     path = PathField(order_by=ORDERING, db_index=True)
     ACTE = 1
     TABLEAU = 2

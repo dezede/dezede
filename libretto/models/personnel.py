@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, SmallIntegerField,
-    DateField, PositiveSmallIntegerField, Model, BooleanField)
+    DateField, PositiveSmallIntegerField, Model, BooleanField, CASCADE)
 from django.db.models.sql import EmptyResultSet
 from django.template.defaultfilters import date
 from django.utils.encoding import python_2_unicode_compatible, force_text
@@ -35,8 +35,8 @@ class Profession(AutoriteModel, UniqueSlugModel):
     nom_feminin_pluriel = CharField(
         _('nom (au féminin pluriel)'), max_length=250, blank=True,
         help_text=PLURAL_MSG)
-    parent = ForeignKey('self', blank=True, null=True,
-                        related_name='enfants', verbose_name=_('parent'))
+    parent = ForeignKey('self', blank=True, null=True, related_name='enfants',
+                        verbose_name=_('parent'), on_delete=CASCADE)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
     class Meta(object):
@@ -206,15 +206,15 @@ def limit_choices_to_instruments():
 @python_2_unicode_compatible
 class Membre(CommonModel, PeriodeDActivite):
     ensemble = ForeignKey('Ensemble', related_name='membres',
-                          verbose_name=_('ensemble'))
+                          verbose_name=_('ensemble'), on_delete=CASCADE)
     # TODO: Ajouter nombre pour les membres d'orchestre pouvant être saisi
     #       au lieu d'un individu.
     individu = ForeignKey('Individu', related_name='membres',
-                          verbose_name=_('individu'))
+                          verbose_name=_('individu'), on_delete=CASCADE)
     instrument = ForeignKey(
         'Partie', blank=True, null=True, related_name='membres',
         limit_choices_to=limit_choices_to_instruments,
-        verbose_name=_('instrument'))
+        verbose_name=_('instrument'), on_delete=CASCADE)
     classement = SmallIntegerField(_('classement'), default=1)
 
     class Meta(object):
@@ -246,8 +246,8 @@ class TypeDEnsemble(CommonModel):
     nom = CharField(_('nom'), max_length=40, help_text=LOWER_MSG)
     nom_pluriel = CharField(_('nom pluriel'), max_length=45, blank=True,
                             help_text=PLURAL_MSG)
-    parent = ForeignKey('self', null=True, blank=True,
-                        related_name='enfants', verbose_name=_('parent'))
+    parent = ForeignKey('self', null=True, blank=True, related_name='enfants',
+                        verbose_name=_('parent'), on_delete=CASCADE)
 
     class Meta(object):
         verbose_name = _('type d’ensemble')
@@ -269,11 +269,11 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=75, db_index=True)
     # FIXME: retirer null=True quand la base sera nettoyée.
     type = ForeignKey('TypeDEnsemble', null=True, related_name='ensembles',
-                      verbose_name=_('type'))
+                      verbose_name=_('type'), on_delete=CASCADE)
     # TODO: Permettre deux villes sièges.
     siege = ForeignKey('Lieu', null=True, blank=True,
                        related_name='ensembles',
-                       verbose_name=_('localisation'))
+                       verbose_name=_('localisation'), on_delete=CASCADE)
     # TODO: Ajouter historique d'ensemble.
 
     individus = ManyToManyField(

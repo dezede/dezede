@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MaxLengthValidator
 from django.db.models import (
     BooleanField, permalink, TextField, URLField,
-    CharField, ForeignKey, PositiveIntegerField, ImageField)
+    CharField, ForeignKey, PositiveIntegerField, ImageField, CASCADE)
 from django.db.models.signals import class_prepared
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
@@ -83,7 +83,7 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
     content_type = ForeignKey(
         ContentType, blank=True, null=True,
         limit_choices_to={'model__in': _get_valid_modelnames_func()},
-        verbose_name=_('type d’autorité associée'))
+        verbose_name=_('type d’autorité associée'), on_delete=CASCADE)
     object_id = PositiveIntegerField(_('identifiant de l’autorité associée'),
                                      blank=True, null=True)
     content_object = GenericForeignKey()
@@ -91,7 +91,8 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
     mentor = ForeignKey(
         'self', null=True, blank=True, related_name='disciples',
         verbose_name=_('responsable scientifique'),
-        limit_choices_to={'willing_to_be_mentor__exact': True})
+        limit_choices_to={'willing_to_be_mentor__exact': True},
+        on_delete=CASCADE)
     path = PathField(order_by=('last_name', 'first_name', 'username'),
                      db_index=True)
     willing_to_be_mentor = BooleanField(

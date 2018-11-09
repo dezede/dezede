@@ -2,13 +2,13 @@ import re
 import warnings
 from django.apps import apps
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
 from django.core.validators import RegexValidator
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, BooleanField,
     PositiveSmallIntegerField, permalink, Q,
-    PROTECT, Count, DecimalField, SmallIntegerField, Max)
+    PROTECT, Count, DecimalField, SmallIntegerField, Max, CASCADE)
+from django.urls import reverse
 from django.utils.encoding import (
     python_2_unicode_compatible, force_text)
 from django.utils.html import strip_tags
@@ -90,10 +90,10 @@ class ElementDeDistribution(CommonModel):
     # pour éviter que les deux soient remplis.
     evenement = ForeignKey(
         'Evenement', null=True, blank=True, related_name='distribution',
-        verbose_name=_('événement'))
+        verbose_name=_('événement'), on_delete=CASCADE)
     element_de_programme = ForeignKey(
         'ElementDeProgramme', null=True, blank=True, related_name='distribution',
-        verbose_name=_('élément de programme'))
+        verbose_name=_('élément de programme'), on_delete=CASCADE)
 
     # Une contrainte de base de données existe dans les migrations
     # pour éviter que les deux soient remplis.
@@ -281,7 +281,7 @@ class ElementDeProgrammeManager(CommonManager):
 @python_2_unicode_compatible
 class ElementDeProgramme(CommonModel):
     evenement = ForeignKey('Evenement', related_name='programme',
-                           verbose_name=_('événement'))
+                           verbose_name=_('événement'), on_delete=CASCADE)
     oeuvre = ForeignKey(
         'Oeuvre', related_name='elements_de_programme',
         verbose_name=_('œuvre'), blank=True, null=True, on_delete=PROTECT,

@@ -3,17 +3,17 @@ import re
 from django.apps import apps
 from django.contrib.gis.geos import Polygon
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, DetailView
 from el_pagination.views import AjaxListView
 from haystack.query import SearchQuerySet
 from tree.query import TreeQuerySetMixin
-from viewsets import ModelViewSet
+from viewsets.model import ModelViewSet
 
 from common.utils.export import launch_export
 from common.utils.text import to_roman

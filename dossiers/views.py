@@ -1,10 +1,10 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
 from django.db import connection
 from django.db.models import Q, Count
 from django.db.models.sql import EmptyResultSet
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView
 from el_pagination.views import AjaxListView

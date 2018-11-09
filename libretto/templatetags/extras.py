@@ -92,7 +92,7 @@ def html_to_latex(html):
     return mark_safe(smart_text(soup.get_text()))
 
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def get_prev_event_counter(context, source, event_counter):
     if 'source_dict' not in context:
         context['source_dict'] = {}
@@ -180,7 +180,7 @@ def get_data(evenements_qs, min_places, bbox):
     return cursor.fetchall()
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_map_data(evenement_qs, min_places, bbox):
     try:
         return [(pk, nom, GEOSGeometry(geometry), n)

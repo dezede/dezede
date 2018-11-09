@@ -4,7 +4,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
     CharField, ImageField, DecimalField, BooleanField, ForeignKey,
-    PositiveIntegerField, PositiveSmallIntegerField, Max)
+    PositiveIntegerField, PositiveSmallIntegerField, Max, CASCADE)
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
@@ -31,7 +31,7 @@ class Diapositive(PublishedModel):
     content_type = ForeignKey(
         ContentType, limit_choices_to={
             'model__in': _get_valid_modelnames_func(autorites_only=False)},
-        verbose_name=_('type d’objet lié'))
+        verbose_name=_('type d’objet lié'), on_delete=CASCADE)
     object_id = PositiveIntegerField(_('identifiant de l’objet lié'))
     content_object = GenericForeignKey()
     content_object.short_description = _('objet lié')

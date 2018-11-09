@@ -1,5 +1,6 @@
 from django.db.models import (
-    CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField)
+    CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField,
+    CASCADE)
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -346,9 +347,11 @@ class Source(AutoriteModel):
 
 
 class SourceEvenement(TypographicModel):
-    source = ForeignKey(Source, related_name='sourceevenement_set')
+    source = ForeignKey(Source, related_name='sourceevenement_set',
+                        on_delete=CASCADE)
     evenement = ForeignKey('Evenement', verbose_name=_('événement'),
-                           related_name='sourceevenement_set')
+                           related_name='sourceevenement_set',
+                           on_delete=CASCADE)
 
     class Meta(object):
         db_table = 'libretto_source_evenements'
@@ -356,9 +359,11 @@ class SourceEvenement(TypographicModel):
 
 
 class SourceOeuvre(TypographicModel):
-    source = ForeignKey(Source, related_name='sourceoeuvre_set')
+    source = ForeignKey(Source, related_name='sourceoeuvre_set',
+                        on_delete=CASCADE)
     oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'),
-                        related_name='sourceoeuvre_set')
+                        related_name='sourceoeuvre_set',
+                        on_delete=CASCADE)
 
     class Meta(object):
         db_table = 'libretto_source_oeuvres'
@@ -366,9 +371,11 @@ class SourceOeuvre(TypographicModel):
 
 
 class SourceIndividu(TypographicModel):
-    source = ForeignKey(Source, related_name='sourceindividu_set')
+    source = ForeignKey(Source, related_name='sourceindividu_set',
+                        on_delete=CASCADE)
     individu = ForeignKey('Individu', verbose_name=_('individu'),
-                          related_name='sourceindividu_set')
+                          related_name='sourceindividu_set',
+                          on_delete=CASCADE)
 
     class Meta(object):
         db_table = 'libretto_source_individus'
@@ -376,9 +383,11 @@ class SourceIndividu(TypographicModel):
 
 
 class SourceEnsemble(TypographicModel):
-    source = ForeignKey(Source, related_name='sourceensemble_set')
+    source = ForeignKey(Source, related_name='sourceensemble_set',
+                        on_delete=CASCADE)
     ensemble = ForeignKey('Ensemble', verbose_name=_('ensemble'),
-                          related_name='sourceensemble_set')
+                          related_name='sourceensemble_set',
+                          on_delete=CASCADE)
 
     class Meta(object):
         db_table = 'libretto_source_ensembles'
@@ -386,9 +395,11 @@ class SourceEnsemble(TypographicModel):
 
 
 class SourceLieu(TypographicModel):
-    source = ForeignKey(Source, related_name='sourcelieu_set')
+    source = ForeignKey(Source, related_name='sourcelieu_set',
+                        on_delete=CASCADE)
     lieu = ForeignKey('Lieu', verbose_name=_('lieu'),
-                      related_name='sourcelieu_set')
+                      related_name='sourcelieu_set',
+                      on_delete=CASCADE)
 
     class Meta(object):
         db_table = 'libretto_source_lieux'
@@ -396,9 +407,10 @@ class SourceLieu(TypographicModel):
 
 
 class SourcePartie(TypographicModel):
-    source = ForeignKey(Source, related_name='sourcepartie_set')
+    source = ForeignKey(Source, related_name='sourcepartie_set',
+                        on_delete=CASCADE)
     partie = ForeignKey('Partie', verbose_name=_('rôle ou instrument'),
-                        related_name='sourcepartie_set')
+                        related_name='sourcepartie_set', on_delete=CASCADE)
 
     class Meta(object):
         db_table = 'libretto_source_parties'
