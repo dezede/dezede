@@ -131,7 +131,7 @@ class Diapositive(PublishedModel):
             'size': (150, 150),
             'box': self.cropping,
         }).url
-        return '<img src="%s" style="width: %s; height: %s;" />' \
-               % (thumbnail_url, width, height)
+        return (f'<img src="{thumbnail_url}" '
+                f'style="width: {width}; height: {height};" />')
     thumbnail.short_description = _('miniature')
     thumbnail.allow_tags = True

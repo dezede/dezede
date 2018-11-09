@@ -165,7 +165,7 @@ class Partie(AutoriteModel, UniqueSlugModel):
     def related_label(self):
         txt = super(Partie, self).related_label()
         if self.oeuvre is not None:
-            txt += ' (' + force_text(self.oeuvre) + ')'
+            txt += f' ({self.oeuvre})'
         return txt
 
     @staticmethod
@@ -221,7 +221,7 @@ class Pupitre(CommonModel):
             out = ugettext('%s à %s %s') % (
                 apnumber(n_min), apnumber(n_max), partie)
         elif n_min > 1:
-            out = '%s %s' % (apnumber(n_min), partie)
+            out = f'{apnumber(n_min)} {partie}'
         else:
             out = partie
         if self.facultatif:
@@ -237,7 +237,7 @@ class Pupitre(CommonModel):
     def related_label(self):
         out = force_text(self)
         if self.partie.oeuvre is not None:
-            out += ' (' + force_text(self.partie.oeuvre) + ')'
+            out += f' ({self.partie.oeuvre})'
         return out
 
     @staticmethod
@@ -301,7 +301,7 @@ class ParenteDOeuvres(CommonModel):
         return ()
 
     def __str__(self):
-        return '%s %s %s' % (self.fille, self.type.nom, self.mere)
+        return f'{self.fille} {self.type.nom} {self.mere}'
 
     def clean(self):
         try:
@@ -617,7 +617,7 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     ALTERATIONS = ALTERATIONS
     GAMMES = GAMMES
     TONALITES = [
-        (gamme_k + note_k + alter_k,
+        (f'{gamme_k}{note_k}{alter_k}',
          _(str_list((note_v, alter_v, gamme_v), ' ')))
         for gamme_k, gamme_v in GAMMES.items()
         for note_k, note_v in NOTES.items()
@@ -767,13 +767,13 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         digits, suffix = match.groups()
         if self.type_extrait in self.TYPES_EXTRAIT_ROMAINS:
             digits = to_roman(int(digits))
-        out = digits + suffix
+        out = f'{digits}{suffix}'
         if self.type_extrait == self.MORCEAU:
             out = ugettext('№ ') + out
         elif self.type_extrait in (self.MOUVEMENT, self.PIECE):
             out += '.'
         elif show_type:
-            return self.get_type_extrait_display() + ' ' + out
+            return f'{self.get_type_extrait_display()} {out}'
         return out
 
     def caracteristiques_iterator(self, tags=False):
@@ -799,9 +799,9 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         if self.sujet:
             yield hlp(ugettext('sur %s') % self.sujet, ugettext('sujet'), tags)
         if self.arrangement is not None:
-            yield '(' + self.get_arrangement_display() + ')'
+            yield f'({self.get_arrangement_display()})'
         if self.surnom:
-            yield hlp('(' + self.surnom + ')', ugettext('surnom'), tags)
+            yield hlp(f'({self.surnom})', ugettext('surnom'), tags)
         if self.nom_courant:
             yield hlp(self.nom_courant, ugettext('nom courant'), tags)
         if self.opus:
@@ -898,8 +898,9 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         return bool(self.titre)
 
     def get_titre_significatif(self):
-        return (self.prefixe_titre + self.titre + self.coordination
-                + self.prefixe_titre_secondaire + self.titre_secondaire)
+        return (f'{self.prefixe_titre}{self.titre}'
+                f'{self.coordination}'
+                f'{self.prefixe_titre_secondaire}{self.titre_secondaire}')
 
     def has_titre_non_significatif(self):
         return self.tempo or self.genre_id is not None
@@ -951,7 +952,7 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
             extrait = capfirst(self.get_extrait(show_type=show_type_extrait))
             if extrait:
                 if titre_complet:
-                    titre_complet = extrait + ' ' + titre_complet
+                    titre_complet = f'{extrait} {titre_complet}'
                 elif self.type_extrait not in self.TYPES_EXTRAIT_CACHES:
                     titre_complet = extrait
             url = None if not tags else self.get_absolute_url()
@@ -987,18 +988,18 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         match = re.match(r'^,\s*(.+)$', self.coordination)
         v = self.coordination if match is None else match.group(1)
         if v:
-            self.coordination = ', %s' % v
+            self.coordination = f', {v}'
         for attr in ('prefixe_titre', 'prefixe_titre_secondaire',
                      'coordination'):
             v = getattr(self, attr)
             if v and v[-1] not in (' ', "'", '’'):
-                setattr(self, attr, v + ' ')
+                setattr(self, attr, f'{v} ')
 
     def related_label(self):
         txt = force_text(self)
         auteurs = self.auteurs.html(tags=False)
         if auteurs:
-            txt += ' (' + auteurs + ')'
+            txt += f' ({auteurs})'
         return txt
 
     def __str__(self):
@@ -1019,7 +1020,7 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
             'surnom', 'nom_courant', 'incipit',
             'opus', 'ict',
             'pupitres__partie__nom')
-        lookups = [lookup + '__unaccent' for lookup in lookups]
+        lookups = [f'{lookup}__unaccent' for lookup in lookups]
         if add_icontains:
-            return [lookup + '__icontains' for lookup in lookups]
+            return [f'{lookup}__icontains' for lookup in lookups]
         return lookups

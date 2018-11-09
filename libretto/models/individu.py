@@ -231,7 +231,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
         particule = (self.particule_nom_naissance if naissance
                      else self.particule_nom)
         if lon and particule and particule[-1] not in "'’":
-            return particule + ' '
+            return f'{particule} '
         return particule
 
     def calc_professions(self, tags=True):
@@ -253,7 +253,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
                    else self.prenoms)
         nom = self.nom
         if lon:
-            nom = self.get_particule() + nom
+            nom = f'{self.get_particule()}{nom}'
         pseudonyme = self.pseudonyme
 
         def standard(main, prenoms):
@@ -272,14 +272,15 @@ class Individu(AutoriteModel, UniqueSlugModel):
                         prenoms = abbreviate(prenoms, tags=tags, enabled=abbr)
                     if particule:
                         particule = sc(particule, tags)
-                    l.append('(%s)' % ('%s %s' % (prenoms, particule)
-                                       if prenoms and particule
-                                       else (prenoms or particule)))
+                    prenom_and_particule = (f'{prenoms} {particule}'
+                                            if prenoms and particule
+                                            else (prenoms or particule))
+                    l.append(f'({prenom_and_particule})')
             out = str_list(l, ' ')
             if pseudonyme:
                 alias = (ugettext('dite') if self.is_feminin()
                          else ugettext('dit'))
-                out += ' %s\u00A0%s' % (alias, pseudonyme)
+                out += f' {alias}\u00A0{pseudonyme}'
             return out
 
         if designation in 'SL':
@@ -291,7 +292,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
         elif designation == 'B':
             nom_naissance = self.nom_naissance
             if lon:
-                nom_naissance = self.get_particule(True) + nom_naissance
+                nom_naissance = f'{self.get_particule(True)}{nom_naissance}'
             main = nom_naissance
 
         main = sc(main, tags)

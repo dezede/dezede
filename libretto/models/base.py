@@ -71,10 +71,10 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
     Sinon renvoie force_text(obj).
     """
     try:
-        pluriel = getattr(obj, attr_base + attr_suffix)
+        pluriel = getattr(obj, f'{attr_base}{attr_suffix}')
         if pluriel:
             return pluriel
-        return getattr(obj, attr_base) + 's'
+        return f'{getattr(obj, attr_base)}s'
     except (AttributeError, TypeError):
         return force_text(obj)
 
@@ -405,8 +405,8 @@ class AncrageSpatioTemporel(object):
             fields.append(('lieu', ForeignKey(
                 'Lieu', blank=is_null, null=is_null, verbose_name=_('lieu'),
                 on_delete=PROTECT,
-                related_name='%s_%s_set' % (self.model._meta.model_name,
-                                            self.name))))
+                related_name=f'{self.model._meta.model_name}_'
+                             f'{self.name}_set')))
             if self.approx:
                 is_null = 'lieu_approx' not in self.not_null_fields
                 fields.append(('lieu_approx', CharField(
@@ -426,17 +426,17 @@ class AncrageSpatioTemporel(object):
                     and isinstance(getattr(parent, name),
                                    AncrageSpatioTemporel)):
                 return
-        self.prefix = '' if name == 'ancrage' else name + '_'
+        self.prefix = '' if name == 'ancrage' else f'{name}_'
 
         self.fields = self.create_fields()
 
-        self.admin_order_field = self.prefix + self.fields[0][0]
+        self.admin_order_field = f'{self.prefix}{self.fields[0][0]}'
 
         model._meta.add_field(self, virtual=True)
         setattr(model, name, self)
 
         for fieldname, field in self.fields:
-            field.contribute_to_class(model, self.prefix+fieldname)
+            field.contribute_to_class(model, f'{self.prefix}{fieldname}')
 
         self.fields = dict(self.fields)
 
@@ -450,12 +450,12 @@ class AncrageSpatioTemporel(object):
             if key == 'instance':
                 raise
             if self.instance_bound() and key in self.fields:
-                return getattr(self.instance, self.prefix+key)
+                return getattr(self.instance, f'{self.prefix}{key}')
             raise
 
     def __setattr__(self, key, value):
         if self.instance_bound() and key in self.fields:
-            setattr(self.instance, self.prefix + key, value)
+            setattr(self.instance, f'{self.prefix}{key}', value)
         else:
             super(AncrageSpatioTemporel, self).__setattr__(key, value)
 
@@ -478,7 +478,7 @@ class AncrageSpatioTemporel(object):
         return strip_tags(self.html(tags=False, short=True))
 
     def __repr__(self):
-        return '<AncrageSpatioTemporel: %s>' % self.name
+        return f'<AncrageSpatioTemporel: {self.name}>'
 
     def date_str(self, tags=True, short=False):
         if not self.has_date:
@@ -569,7 +569,7 @@ class TypeDeParente(CommonModel):
         return calc_pluriel(self, attr_base='nom_relatif')
 
     def __str__(self):
-        return '%s (%s)' % (self.nom, self.nom_relatif)
+        return f'{self.nom} ({self.nom_relatif})'
 
 
 #
@@ -712,7 +712,7 @@ class Fichier(CommonModel):
             fichier_complet_filename = self._get_normalized_filename(''.join(l))
             qs = self.source.fichiers.exclude(
                 pk=self.pk).filter(
-                fichier__regex=r'^(?:.+/)?%s$' % fichier_complet_filename)
+                fichier__regex=fr'^(?:.+/)?{fichier_complet_filename}$')
             if len(qs) < 1:
                 raise ValidationError(_('Il n’y a pas d’enregistrement entier '
                                         'pour cet extrait.'))

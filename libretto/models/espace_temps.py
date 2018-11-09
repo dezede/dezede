@@ -187,8 +187,8 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
 class SaisonQuerySet(CommonQuerySet):
     def between_years(self, year0, year1):
         return self.filter(
-            debut__range=('%d-1-1' % year0, '%d-12-31' % year1),
-            fin__range=('%d-1-1' % year0, '%d-12-31' % year1))
+            debut__range=(f'{year0}-1-1', f'{year1}-12-31'),
+            fin__range=(f'{year0}-1-1', f'{year1}-12-31'))
 
     def evenements(self):
         # FIXME: Implémenter ceci de manière plus performante.
@@ -227,20 +227,19 @@ class Saison(CommonModel):
 
     def get_periode(self):
         if self.debut.year != self.fin.year:
-            return '%s–%s' % (self.debut.year, self.fin.year)
-        return force_text(self.debut.year)
+            return f'{self.debut.year}–{self.fin.year}'
+        return f'{self.debut.year}'
 
     def __str__(self):
-        return '%s, %s' % (force_text(self.ensemble or self.lieu),
-                           self.get_periode())
+        return f'{self.ensemble or self.lieu}, {self.get_periode()}'
 
     def get_absolute_url(self):
-        q = '?par_saison=True&dates_0=%d&dates_1=%d' % (self.debut.year,
-                                                        self.fin.year)
+        q = (f'?par_saison=True&'
+             f'dates_0={self.debut.year}&dates_1={self.fin.year}')
         if self.lieu_id is not None:
-            q += '&lieu=|%d|' % self.lieu_id
+            q += f'&lieu=|{self.lieu_id}|'
         elif self.ensemble_id is not None:
-            q += '&ensemble=|%d|' % self.ensemble_id
+            q += f'&ensemble=|{self.ensemble_id}|'
         return reverse('evenements') + q
 
     def non_distinct_evenements(self):

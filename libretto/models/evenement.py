@@ -248,9 +248,10 @@ class CaracteristiqueDeProgramme(CommonModel):
     html.allow_tags = True
 
     def __str__(self):
+        valeur = strip_tags(self.valeur)
         if self.type:
-            return force_text(self.type) + ' : ' + strip_tags(self.valeur)
-        return strip_tags(self.valeur)
+            return f'{self.type} : {valeur}'
+        return valeur
 
     @staticmethod
     def autocomplete_search_fields():
@@ -362,16 +363,16 @@ class ElementDeProgramme(CommonModel):
             out = distribution
             add_distribution = False
         else:
-            warnings.warn('Il manque des champs dans <%(class)s pk=%(pk)s>' %
-                          {'class': self.__class__.__name__, 'pk': self.pk})
+            warnings.warn(f'Il manque des champs '
+                          f'dans <{self.__class__.__name__} pk={self.pk}>')
             return ''
 
         caracteristiques = self.calc_caracteristiques(tags=tags)
         if caracteristiques:
-            out += ' [' + caracteristiques + ']'
+            out += f' [{caracteristiques}]'
 
         if add_distribution:
-            out += '. — ' + distribution
+            out += f'. — {distribution}'
 
         return mark_safe(out)
     html.short_description = _('rendu HTML')
@@ -650,7 +651,7 @@ class Evenement(AutoriteModel):
     def __str__(self):
         out = self.debut.date_str(False)
         out = capfirst(out)
-        out += '\u00A0> ' + self.html(False)
+        out += f'\u00A0> {self.html(False)}'
         return strip_tags(out)
 
     def related_label(self):

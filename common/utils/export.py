@@ -137,9 +137,9 @@ def send_pdf(context, template_name, subject, filename, user_pk, site_pk,
         pdf_content = xelatex_to_pdf(tex).read()
     except RuntimeError as e:
         mail = get_failure_mail(subject, user)
-        mail_admins('Error while generating `%s`' % filename, e.body)
+        mail_admins(f'Error while generating `{filename}`', e.body)
     else:
-        mail = get_success_mail(subject, user, filename + '.pdf', pdf_content,
+        mail = get_success_mail(subject, user, f'{filename}.pdf', pdf_content,
                                 'application/pdf')
 
     mail.send()
@@ -154,14 +154,14 @@ def send_export(exporter_instance, extension, subject, filename, user_pk,
     request = HttpRequest()
     request.user = user
     try:
-        file_content = getattr(exporter_instance, 'to_' + extension)()
+        file_content = getattr(exporter_instance, f'to_{extension}')()
     except JobTimeoutException:
         get_failure_mail(subject, user).send()
         unlock_user(user)
         raise
     if isinstance(file_content, tuple):
         extension, file_content = file_content
-    filename += '.' + extension
+    filename += f'.{extension}'
     get_success_mail(subject, user, filename, file_content,
                      exporter_instance.CONTENT_TYPES[extension]).send()
     unlock_user(user)

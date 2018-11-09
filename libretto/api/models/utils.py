@@ -30,31 +30,29 @@ def get_obj_contents(obj):
 
 
 def pprintable_dict(d):
-    return '(%s)' % ', '.join('%s=%s' % (k, smart_text(repr(v)))
-                              for k, v in d.items())
+    return f"({', '.join(f'{k}={v!r}' for k, v in d.items())})"
 
 
 def ask_for_choice(intro, choices, start=1, allow_empty=False, default=None):
     notify_send(intro)
     print_info(intro)
 
-    question = 'Que choisir{} ? '.format(
-        '' if default is None else ' (par défaut {})'.format(default))
+    default_message = '' if default is None else f' (par défaut {default})'
+    question = f"Que choisir{default_message} ? "
 
     for i, obj in enumerate(choices, start=start):
         if isinstance(obj, tuple):
             obj, msg = obj
-            s = '{} {}'.format(obj, info(msg))
+            s = f'{obj} {info(msg)}'
         else:
-            s = smart_text(obj)
-        out = '{} {}'.format(info('{}.'.format(i)), s)
+            s = f'{obj}'
+        out = f"{info(f'{i}.')} {s}"
         if isinstance(obj, Model):
-            out += ' ' + pprintable_dict(get_obj_contents(obj))
+            out += f' {pprintable_dict(get_obj_contents(obj))}'
         print(out)
 
-    input_func = raw_input if six.PY2 else input
     while True:
-        choice = input_func(info(question).encode('utf-8'))
+        choice = input(info(question).encode('utf-8'))
         if choice.isdigit():
             choice = int(choice)
             if 0 <= choice - start < len(choices):
@@ -76,7 +74,7 @@ def serialize(l):
         elif isinstance(item, dict):
             item = OrderedDict(item)
             serializations.append(
-                '{%s}' % ', '.join('%s: %s' % (k, v) for k, v in
+                '{%s}' % ', '.join(f'{k}: {v}' for k, v in
                                    zip(item.keys(), serialize(item.values()))))
         else:
             serializations.append(json.dumps(item))
@@ -178,8 +176,8 @@ def enlarged_get(Model, filter_kwargs):
     if cache_key in ENLARGED_GET_CACHE:
         return ENLARGED_GET_CACHE[cache_key]
 
-    intro = '%d objets trouvés pour les arguments %s' \
-            % (n, pprintable_dict(filter_kwargs))
+    intro = (f'{n} objets trouvés '
+             f'pour les arguments {pprintable_dict(filter_kwargs)}')
     ENLARGED_GET_CACHE[cache_key] = result = qs[ask_for_choice(intro, qs)]
     return result
 

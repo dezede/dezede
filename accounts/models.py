@@ -117,7 +117,7 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
         return self.html(tags=False)
 
     def get_full_name(self, tags=False):
-        full_name = '%s %s' % (self.first_name, sc(self.last_name, tags=tags))
+        full_name = f'{self.first_name} {sc(self.last_name, tags=tags)}'
         return full_name.strip()
 
     def html(self, tags=True):
@@ -136,7 +136,7 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
                     new_tab=True)
 
     def email_link(self):
-        return href('mailto:' + self.email, self.email)
+        return href(f'mailto:{self.email}', self.email)
 
     def dossiers_edites(self):
         return apps.get_model('dossiers.DossierDEvenements').objects.filter(

@@ -21,7 +21,7 @@ def capfirst(text):
     out = force_text(text)
     if not out:
         return out
-    return out[0].upper() + out[1:]
+    return f'{out[0].upper()}{out[1:]}'
 
 
 def str_list(iterable, infix=None, last_infix=None):
@@ -43,8 +43,8 @@ def str_list(iterable, infix=None, last_infix=None):
 
     suffix = ''
     if len(l) > 1:
-        suffix = last_infix + l.pop()
-    return infix.join(l) + suffix
+        suffix = f'{last_infix}{l.pop()}'
+    return f'{infix.join(l)}{suffix}'
 
 
 def str_list_w_last(iterable, infix=None, last_infix=None,
@@ -129,7 +129,7 @@ def to_roman(integer):
     CM
     """
     if integer < 1:
-        raise ValueError('%s is not strictly positive.' % integer)
+        raise ValueError(f'{integer} is not strictly positive.')
     roman = ''
     for n, s in ROMAN_BINDINGS:
         while integer >= n:
@@ -180,7 +180,7 @@ class BiGrouper(object):
         for value, keys in keys_grouper.items():
             values_grouper[tuple(keys)].append(value)
         return mark_safe(str_list([
-            ('%s [%s]' % (values, keys) if keys else values)
+            (f'{values} [{keys}]' if keys else values)
             for values, keys in [(
                 str_list_w_last([self.get_verbose_value(value, keys)
                                  for value in values]),

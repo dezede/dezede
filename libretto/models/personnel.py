@@ -119,7 +119,7 @@ class Profession(AutoriteModel, UniqueSlugModel):
 
     def related_label(self):
         if self.nom_feminin:
-            return '%s / %s' % (self.nom, self.nom_feminin)
+            return f'{self.nom} / {self.nom_feminin}'
         return self.nom
 
     @staticmethod
@@ -226,9 +226,9 @@ class Membre(CommonModel, PeriodeDActivite):
         l = [(self.individu if to_individus
               else self.ensemble).html(tags=tags)]
         if self.instrument:
-            l.append('[%s]' % self.instrument.html(tags=tags))
+            l.append(f'[{self.instrument.html(tags=tags)}]')
         if self.debut or self.fin:
-            l.append('(%s)' % self.smart_period(tags=tags))
+            l.append(f'({self.smart_period(tags=tags)})')
         return mark_safe(' '.join(l))
 
     def ensemble_html(self, tags=True):
@@ -296,7 +296,7 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
         return self.html(tags=False)
 
     def nom_complet(self):
-        return ('%s %s' % (self.particule_nom, self.nom)).strip()
+        return f'{self.particule_nom} {self.nom}'.strip()
 
     def html(self, tags=True):
         nom = self.nom_complet()
@@ -349,24 +349,24 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
                 evenements_qs.order_by().values('pk', 'debut_lieu_id'))
         except EmptyResultSet:
             return ()
-        sql = """
+        sql = f"""
         WITH evenements AS (
-            %s
+            {evenements_sql}
         )
         (
-            SELECT %%s, COUNT(id) FROM evenements
+            SELECT %s, COUNT(id) FROM evenements
         ) UNION ALL (
             SELECT ancetre.nom, COUNT(evenement.id)
             FROM libretto_lieu AS ancetre
             INNER JOIN libretto_lieu AS lieu ON (
-                lieu.path LIKE ancetre.path || '%%%%')
+                lieu.path LIKE ancetre.path || '%%')
             INNER JOIN evenements AS evenement ON (
                 evenement.debut_lieu_id = lieu.id)
-            WHERE %%s LIKE ancetre.path || '%%%%'
+            WHERE %s LIKE ancetre.path || '%%'
             GROUP BY ancetre.id
             ORDER BY length(ancetre.path)
         );
-        """ % evenements_sql
+        """
         with connection.cursor() as cursor:
             cursor.execute(sql, evenements_params + (
                 ugettext('Monde'), self.siege.path))

@@ -135,8 +135,8 @@ class BaseEvenementListView(PublishedListView):
             if data.get('par_saison', 'False') == 'True':
                 qs &= Saison.objects.between_years(start, end).evenements()
             else:
-                qs = qs.filter(debut_date__range=('%s-1-1' % start,
-                                                  '%s-12-31' % end))
+                qs = qs.filter(debut_date__range=(f'{start}-1-1',
+                                                  f'{end}-12-31'))
         except (TypeError, ValueError):
             pass
 
@@ -284,7 +284,7 @@ CENTURIES_VERBOSES = [
 ][::-1]
 
 CENTURIES_DATE_RANGES = {
-    str(i): ('%d00-1-1' % (i-1), '%d99-12-31' % (i-1)) for i in CENTURIES
+    f'{i}': (f'{i-1}00-1-1', f'{i-1}99-12-31') for i in CENTURIES
 }
 
 

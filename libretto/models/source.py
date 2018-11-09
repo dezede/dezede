@@ -59,17 +59,17 @@ class SourceQuerySet(PublishedQuerySet):
         sources = Source._meta.db_table
         return self.select_related('type').extra(select={
             '_has_others':
-            'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id AND type = %s)'
-            % (fichiers, sources, Fichier.OTHER),
+            f'EXISTS (SELECT 1 FROM {fichiers} '
+            f'WHERE source_id = {sources}.id AND type = {Fichier.OTHER})',
             '_has_images':
-            'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id AND type = %s)'
-            % (fichiers, sources, Fichier.IMAGE),
+            f'EXISTS (SELECT 1 FROM {fichiers} '
+            f'WHERE source_id = {sources}.id AND type = {Fichier.IMAGE})',
             '_has_audios':
-            'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id AND type = %s)'
-            % (fichiers, sources, Fichier.AUDIO),
+            f'EXISTS (SELECT 1 FROM {fichiers} '
+            f'WHERE source_id = {sources}.id AND type = {Fichier.AUDIO})',
             '_has_videos':
-            'EXISTS (SELECT 1 FROM %s WHERE source_id = %s.id AND type = %s)'
-            % (fichiers, sources, Fichier.VIDEO)}
+            f'EXISTS (SELECT 1 FROM {fichiers} '
+            f'WHERE source_id = {sources}.id AND type = {Fichier.VIDEO})'}
         ).only(
             'titre', 'numero', 'folio', 'page', 'lieu_conservation',
             'cote', 'url', 'transcription', 'date', 'date_approx',
@@ -231,7 +231,7 @@ class Source(AutoriteModel):
         else:
             ancrage = None
         if self.cote:
-            conservation += ', ' + hlp(self.cote, 'cote', tags)
+            conservation += f", {hlp(self.cote, 'cote', tags)}"
         if self.titre:
             l = [cite(self.titre, tags)]
             if self.numero:
@@ -243,7 +243,7 @@ class Source(AutoriteModel):
             if self.page:
                 l.append(hlp(self.p(), ugettext('page'), tags))
             if self.lieu_conservation:
-                l[-1] += ' (%s)' % conservation
+                l[-1] += f' ({conservation})'
         else:
             l = [conservation]
             if ancrage is not None:
@@ -331,12 +331,12 @@ class Source(AutoriteModel):
     }
 
     DATA_TYPES_WITH_ICONS = (
-        (VIDEO, _(ICONS[VIDEO] + ' ' + 'Vidéo')),
-        (AUDIO, _(ICONS[AUDIO] + ' ' + 'Audio')),
-        (IMAGE, _(ICONS[IMAGE] + ' ' + 'Image')),
-        (OTHER, _(ICONS[OTHER] + ' ' + 'Autre')),
-        (TEXT, _(ICONS[TEXT] + ' ' + 'Texte')),
-        (LINK, _(ICONS[LINK] + ' ' + 'Lien')),
+        (VIDEO, _(f'{ICONS[VIDEO]} Vidéo')),
+        (AUDIO, _(f'{ICONS[AUDIO]} Audio')),
+        (IMAGE, _(f'{ICONS[IMAGE]} Image')),
+        (OTHER, _(f'{ICONS[OTHER]} Autre')),
+        (TEXT, _(f'{ICONS[TEXT]} Texte')),
+        (LINK, _(f'{ICONS[LINK]} Lien')),
     )
 
     @property

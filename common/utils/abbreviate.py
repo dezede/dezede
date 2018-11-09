@@ -12,7 +12,7 @@ def abbreviate_word(word, min_vowels, min_len):
 
     if prev_is_vowel:
         if min_vowels <= 1 and min_len <= 1:
-            return word[0] + '.'
+            return f'{word[0]}.'
         vowels_count = 1
     else:
         vowels_count = 0
@@ -22,7 +22,7 @@ def abbreviate_word(word, min_vowels, min_len):
         is_vowel = c in VOWELS
         if is_vowel and not prev_is_vowel:
             if vowels_count >= min_vowels and i >= min_len:
-                return word[:i] + '.'
+                return f'{word[:i]}.'
             vowels_count += 1
         prev_is_vowel = is_vowel
         i += 1

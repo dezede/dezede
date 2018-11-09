@@ -41,8 +41,8 @@ def set_env():
 @contextmanager
 def workon_dezede(settings_module='dezede.settings.prod'):
     set_env()
-    with cd(str(env.project_path)):
-        with path(str(env.virtual_env / 'bin'), behavior='prepend'):
+    with cd(f'{env.project_path}'):
+        with path(f"{env.virtual_env / 'bin'}", behavior='prepend'):
             with shell_env(DJANGO_SETTINGS_MODULE=settings_module):
                 yield
 
@@ -95,13 +95,13 @@ def install_ubuntu():
 
 
 def can_connect_postgresql():
-    result = run('psql -U %s %s -c ""' % (DB_USER, DB_NAME),
+    result = run(f'psql -U {DB_USER} {DB_NAME} -c ""',
                  warn_only=True, quiet=True)
     return not result.return_code
 
 
 def can_connect_redis():
-    result = run('redis-cli -s "%s" ECHO ""' % REDIS_SOCKET,
+    result = run(f'redis-cli -s "{REDIS_SOCKET}" ECHO ""',
                  warn_only=True, quiet=True)
     return not result.return_code
 
@@ -111,25 +111,25 @@ def config_postgresql():
         return
 
     pg_hba = '/etc/postgresql/9.*/main/pg_hba.conf'
-    trust_rule = 'local %s,%s %s trust' % (DB_NAME, DB_NAME_TEST, DB_USER)
+    trust_rule = f'local {DB_NAME},{DB_NAME_TEST} {DB_USER} trust'
     if not contains(pg_hba, trust_rule, exact=True, use_sudo=True):
         previous_line = '# Database administrative login by Unix domain socket'
         sed(pg_hba, previous_line, '&\\n' + trust_rule, use_sudo=True)
     sudo('systemctl restart postgresql')
 
     for sql_command in (
-            'CREATE USER %s SUPERUSER;' % DB_USER,
-            'CREATE DATABASE %s OWNER %s;' % (DB_NAME, DB_USER),
+            f'CREATE USER {DB_USER} SUPERUSER;',
+            f'CREATE DATABASE {DB_NAME} OWNER {DB_USER};',
             'CREATE EXTENSION postgis;'):
-        sudo('psql -c "%s"' % sql_command, user='postgres', warn_only=True)
+        sudo(f'psql -c "{sql_command}"', user='postgres', warn_only=True)
 
 
 def config_redis():
     if can_connect_redis():
         return
 
-    uncomment(REDIS_CONF,
-              r'^#\s*unixsocket %s$' % REDIS_SOCKET.replace('/', '\/'),
+    escaped_socket = REDIS_SOCKET.replace('/', '\/')
+    uncomment(REDIS_CONF, fr'^#\s*unixsocket {escaped_socket}$',
               use_sudo=True)
     uncomment(REDIS_CONF, r'^#\s*unixsocketperm 700$', use_sudo=True)
     sed(REDIS_CONF, 'unixsocketperm 700', 'unixsocketperm 777',
@@ -148,9 +148,9 @@ def clone():
     if exists(PROJECT_PATH):
         return
 
-    sudo('mkdir -p "%s"' % PROJECT_PATH)
-    sudo('chown %s "%s"' % (env.user, PROJECT_PATH))
-    run('git clone "%s" "%s"' % (GIT_REPOSITORY, PROJECT_PATH))
+    sudo(f'mkdir -p "{PROJECT_PATH}"')
+    sudo(f'chown {env.user} "{PROJECT_PATH}"')
+    run(f'git clone "{GIT_REPOSITORY}" "{PROJECT_PATH}"')
     update_submodules()
 
 
@@ -162,12 +162,12 @@ def mkvirtualenv():
 
     venv_wrapper = '/usr/share/virtualenvwrapper/virtualenvwrapper.sh'
     workon_home = env.home / RELATIVE_WORKON_HOME
-    bashrc = ('export WORKON_HOME="%s"\n'
-              'source "%s"\n' % (workon_home, venv_wrapper))
-    append(str(env.home / '.bashrc'), bashrc)
-    run('mkdir -p "%s"' % workon_home)
-    with prefix('source "%s"' % venv_wrapper):
-        run('mkvirtualenv -p /usr/bin/python3.6 %s' % VIRTUALENV_NAME)
+    bashrc = (f'export WORKON_HOME="{workon_home}"\n'
+              f'source "{venv_wrapper}"\n')
+    append(f"{env.home / '.bashrc'}", bashrc)
+    run(f'mkdir -p "{workon_home}"')
+    with prefix(f'source "{venv_wrapper}"'):
+        run(f'mkvirtualenv -p /usr/bin/python3.6 {VIRTUALENV_NAME}')
 
 
 def pip_install():
@@ -266,21 +266,21 @@ def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=9,
     ssl_folder = '/etc/letsencrypt/live/dezede.org/'
     ssl_certificate = ssl_folder + 'fullchain.pem'
     ssl_key = ssl_folder + 'privkey.pem'
-    sudo('mkdir -p "%s"' % ssl_folder)
-    sudo('touch "%s"' % ssl_certificate)
-    sudo('touch "%s"' % ssl_key)
+    sudo(f'mkdir -p "{ssl_folder}"')
+    sudo(f'touch "{ssl_certificate}"')
+    sudo(f'touch "{ssl_key}"')
     context.update(server_name=domain,
                    ssl_certificate=ssl_certificate, ssl_key=ssl_key)
     available = '/etc/nginx/sites-available/dezede'
     upload_template('prod/nginx', available,
                     context=context, use_jinja=True, use_sudo=True)
     sudo('unlink /etc/nginx/sites-enabled/default', warn_only=True)
-    sudo('ln -s "%s" /etc/nginx/sites-enabled' % available, warn_only=True)
+    sudo(f'ln -s "{available}" /etc/nginx/sites-enabled', warn_only=True)
     sudo('systemctl restart nginx')
 
     with workon_dezede():
         sed('dezede/settings/prod.py',
-            'ALLOWED_HOSTS = \[\]', r"ALLOWED_HOSTS = \[\x27%s\x27\]" % domain)
+            'ALLOWED_HOSTS = \[\]', fr"ALLOWED_HOSTS = \[\x27{domain}\x27\]")
 
     restart()
 
@@ -291,33 +291,31 @@ def reset_remote_db():
                   default='n', validate='[yn]') == 'y'
     if not sure:
         abort('Database reset canceled.')
-    sudo("psql -c 'DROP DATABASE %s;'" % DB_NAME, user='postgres')
-    sudo("psql -c 'CREATE DATABASE %s OWNER %s;'" % (DB_NAME, DB_USER),
+    sudo(f"psql -c 'DROP DATABASE {DB_NAME};'", user='postgres')
+    sudo(f"psql -c 'CREATE DATABASE {DB_NAME} OWNER {DB_USER};'",
          user='postgres')
     migrate_db()
 
 
 @task
 def save_remote_db():
-    run('pg_dump -U %s -Fc -b -v -f "%s" %s'
-        % (DB_USER, REMOTE_BACKUP, DB_NAME))
-    local('rsync --info=progress2 "%s":"%s" "%s"'
-          % (env.hosts[0], REMOTE_BACKUP, LOCAL_BACKUP))
+    run(f'pg_dump -U {DB_USER} -Fc -b -v -f "{REMOTE_BACKUP}" {DB_NAME}')
+    local(f'rsync --info=progress2 '
+          f'"{env.hosts[0]}":"{REMOTE_BACKUP}" "{LOCAL_BACKUP}"')
 
 
 @task
 def restore_saved_db():
-    local('sudo -u postgres dropdb --if-exists %s' % DB_NAME)
-    local('sudo -u postgres dropuser --if-exists %s' % DB_USER)
-    local('sudo -u postgres createuser --login -g clients %s'
-          % DB_USER)
-    local('sudo -u postgres createdb --owner %s %s' % (DB_USER, DB_NAME))
+    local(f'sudo -u postgres dropdb --if-exists {DB_NAME}')
+    local(f'sudo -u postgres dropuser --if-exists {DB_USER}')
+    local(f'sudo -u postgres createuser --login -g clients {DB_USER}')
+    local(f'sudo -u postgres createdb --owner {DB_USER} {DB_NAME}')
     with warn_only():
         for parent in Path(LOCAL_BACKUP).resolve().parents:
-            local('chmod o+x %s' % parent)
-    local('chmod o+r %s' % LOCAL_BACKUP)
-    local('sudo -u postgres pg_restore -e -d %s -j 5 "%s"'
-          % (DB_NAME, Path(LOCAL_BACKUP).resolve()))
+            local(f'chmod o+x {parent}')
+    local(f'chmod o+r {LOCAL_BACKUP}')
+    local(f'sudo -u postgres pg_restore -e -d {DB_NAME} '
+          f'-j 5 "{Path(LOCAL_BACKUP).resolve()}"')
     invalidate_cachalot()
 
 

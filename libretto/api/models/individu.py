@@ -8,11 +8,10 @@ PARTICULES = 'de|d’|d\'|di|da|van|van der|von|ben'
 INDIVIDU_RE = re.compile(
     r'^'
     r'(?P<nom>[^,(]+?)'
-    r'(?:, (?P<prenoms>[^,(]+?)(?: (?P<particule_nom>%s))?)?'
+    fr'(?:, (?P<prenoms>[^,(]+?)(?: (?P<particule_nom>{PARTICULES}))?)?'
     r'(?: \((?P<dates>[^)]+)\))?'
     r'(?:, dite? (?P<pseudonyme>.+?))?'
-    r'$'
-    % PARTICULES, flags=re.IGNORECASE)
+    r'$', flags=re.IGNORECASE)
 
 
 def get_individu(individu_str, dates_sep='-', commit=True):
@@ -22,7 +21,7 @@ def get_individu(individu_str, dates_sep='-', commit=True):
     else:
         match = INDIVIDU_RE.match(individu_str)
         if match is None:
-            raise ValueError('Unable to parse "%s"' % individu_str)
+            raise ValueError(f'Unable to parse "{individu_str}"')
         data = match.groupdict()
         for k, v in data.items():
             if v is None:

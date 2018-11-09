@@ -22,7 +22,7 @@ def multiple_replace(text, replacement_dict):
 
 
 def translate_date_month(date_str, language='fr'):
-    var_name = 'MONTH_BINDINGS_' + language.upper()
+    var_name = f'MONTH_BINDINGS_{language.upper()}'
     month_bindings = globals().get(var_name, {})
     return multiple_replace(date_str, month_bindings)
 
@@ -73,11 +73,10 @@ def ancrage_re_iterator():
                 ancrage_re = re.compile(
                     r'^'                  # Begin of string.
                     r'(?:\([^)]+\)\s+)?'  # Matches "(something and so on...) "
-                    r'(?P<lieux>%s)'
-                    r'%s\s+'              # Matches ", ".
-                    r'(?P<date>%s)'
+                    fr'(?P<lieux>{lieu_re_pattern})'
+                    fr'{separator}\s+'              # Matches ", ".
+                    fr'(?P<date>{date_re_pattern})'
                     r'$'                  # End of string.
-                    % (lieu_re_pattern, separator, date_re_pattern)
                 )
                 yield ancrage_re, date_strp_pattern
 
@@ -108,7 +107,7 @@ def build_date(date_str, date_strp_pattern=None):
         try:
             return datetime.strptime(date_str, date_strp_pattern).date()
         except ValueError:
-            raise ValueError('Unable to parse "%s"' % date_str)
+            raise ValueError(f'Unable to parse "{date_str}"')
 
 
 def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern,
@@ -121,16 +120,16 @@ def parse_ancrage_inner(ancrage_str, ancrage_re, date_strp_pattern,
     lieu_str = match.group('lieux')
     lieu = build_lieu(lieu_str, commit=commit)
     if lieu is None:
-        kwargs[prefix + 'lieu_approx'] = lieu_str
+        kwargs[f'{prefix}lieu_approx'] = lieu_str
     else:
-        kwargs[prefix + 'lieu'] = lieu
+        kwargs[f'{prefix}lieu'] = lieu
 
     date_str = match.group('date')
     date = build_date(date_str, date_strp_pattern)
     if date is None:
-        kwargs[prefix + 'date_approx'] = date_str
+        kwargs[f'{prefix}date_approx'] = date_str
     else:
-        kwargs[prefix + 'date'] = date
+        kwargs[f'{prefix}date'] = date
 
     return kwargs
 
@@ -140,12 +139,12 @@ def parse_ancrage(ancrage_str, prefix='', commit=False):
     if prefix:
         prefix += '_'
     if ancrage_str.isdigit():
-        return {prefix + 'date_approx': ancrage_str}
+        return {f'{prefix}date_approx': ancrage_str}
 
     for ancrage_re, date_strp_pattern in ancrage_re_iterator():
         if date_strp_pattern is not None:
             try:
-                return {prefix + 'date': build_date(ancrage_str,
+                return {f'{prefix}date': build_date(ancrage_str,
                                                     date_strp_pattern)}
             except ValueError:
                 pass
@@ -154,7 +153,7 @@ def parse_ancrage(ancrage_str, prefix='', commit=False):
         if data is not None:
             return data
 
-    return {prefix + 'date_approx': ancrage_str}
+    return {f'{prefix}date_approx': ancrage_str}
 
 
 def build_ancrage(ancrage, ancrage_str, commit=True):
