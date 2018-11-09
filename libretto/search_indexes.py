@@ -43,7 +43,7 @@ class CommonSearchIndex(SearchIndex):
 
 class OeuvreIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='titre_html')
-    BASE_BOOST = 1.5
+    BASE_BOOST = 2.0
     LEVEL_ATTENUATION = 1
 
     def get_model(self):
@@ -66,7 +66,7 @@ class SourceIndex(CommonSearchIndex, Indexable):
 
 class IndividuIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='related_label')
-    BASE_BOOST = 2.0
+    BASE_BOOST = 3.0
 
     def get_model(self):
         return apps.get_model('libretto.Individu')
@@ -90,7 +90,7 @@ class EnsembleIndex(CommonSearchIndex, Indexable):
 
 class LieuIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='html')
-    BASE_BOOST = 1.5
+    BASE_BOOST = 2.5
 
     def get_model(self):
         return apps.get_model('libretto.Lieu')
@@ -111,7 +111,6 @@ class EvenementIndex(CommonSearchIndex, Indexable):
 
 class PartieIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='html')
-    BASE_BOOST = 1.0
 
     def get_model(self):
         return apps.get_model('libretto.Partie')
