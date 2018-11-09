@@ -31,7 +31,7 @@ class CommonSearchIndex(SearchIndex):
 
         if isinstance(obj, TreeModelMixin):
             # Sligthly reduces the number of related objects if highly nested.
-            n /= 1 + obj.get_level() * self.LEVEL_ATTENUATION
+            n /= 1 + (obj.get_level() - 1) * self.LEVEL_ATTENUATION
 
         min_boost, max_boost = self.BASE_BOOST, self.MAXIMUM_BOOST
         growth = 100
@@ -44,7 +44,7 @@ class CommonSearchIndex(SearchIndex):
 class OeuvreIndex(CommonSearchIndex, Indexable):
     content_auto = EdgeNgramField(model_attr='titre_html')
     BASE_BOOST = 1.5
-    LEVEL_ATTENUATION = 0.3
+    LEVEL_ATTENUATION = 1
 
     def get_model(self):
         return apps.get_model('libretto.Oeuvre')
