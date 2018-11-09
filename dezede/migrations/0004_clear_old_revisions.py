@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
         ('dezede', '0003_add_unaccent'),
     ]
     run_before = [
-        ('reversion', '0003_auto_20160601_1600'),
+        ('reversion', '0001_squashed_0004_auto_20160611_1202'),
     ]
 
     operations = [
