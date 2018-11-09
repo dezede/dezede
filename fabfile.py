@@ -26,7 +26,7 @@ DB_NAME = settings.DATABASES['default']['NAME']
 DB_NAME_TEST = settings.DATABASES['default'].get('TEST_NAME',
                                                  'test_' + DB_NAME)
 DB_USER = settings.DATABASES['default']['USER']
-REDIS_SOCKET = '/tmp/redis.sock'
+REDIS_SOCKET = '/var/run/redis/redis-server.sock'
 REDIS_CONF = '/etc/redis/redis.conf'
 REMOTE_BACKUP = '/dezede/backups/dezede.backup'
 LOCAL_BACKUP = './backups/dezede.backup'
@@ -51,8 +51,9 @@ def add_elasticsearch_repo():
     sudo('wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch '
          '| apt-key add -')
     append('/etc/apt/sources.list.d/elasticsearch.list',
-           'deb http://packages.elastic.co/elasticsearch/1.7/debian '
-           'stable main', use_sudo=True)
+           'deb http://packages.elastic.co/elasticsearch/2.x/debian '
+           'stable main',
+           use_sudo=True)
 
 
 def install_less_css():
@@ -75,8 +76,8 @@ def install_ubuntu():
     sudo('apt-get install '
          'git mercurial '
          'postgresql postgresql-server-dev-all postgis '
-         'redis-server elasticsearch default-jre '
-         'python3.5 python3-pip python3.5-dev virtualenvwrapper '
+         'redis-server elasticsearch=2.4.6 default-jre '
+         'python3.6 python3-pip python3.6-dev virtualenvwrapper '
          # For image thumbnailing and conversion.
          'libjpeg-dev '
          # For CSS generation.
@@ -166,7 +167,7 @@ def mkvirtualenv():
     append(str(env.home / '.bashrc'), bashrc)
     run('mkdir -p "%s"' % workon_home)
     with prefix('source "%s"' % venv_wrapper):
-        run('mkvirtualenv -p /usr/bin/python3.4 %s' % VIRTUALENV_NAME)
+        run('mkvirtualenv -p /usr/bin/python3.6 %s' % VIRTUALENV_NAME)
 
 
 def pip_install():

@@ -19,7 +19,7 @@ django-allauth==0.38.0
 
 # Search engine
 django-haystack==2.8.1
-elasticsearch==5.5.3
+elasticsearch==2.4.1
 
 # Caching
 django-redis==4.9.0
