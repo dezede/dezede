@@ -54,7 +54,7 @@ def clean_query(q):
 
 class CustomModelSearchForm(ModelSearchForm):
     def search(self):
-        if not self.is_valid() or not 'q' not in self.cleaned_data:
+        if not self.is_valid() or 'q' not in self.cleaned_data:
             return self.no_query_found()
 
         sqs = self.searchqueryset.filter(content_auto=self.cleaned_data['q'])
