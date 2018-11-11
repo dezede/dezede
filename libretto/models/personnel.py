@@ -6,7 +6,7 @@ from django.db.models import (
     DateField, PositiveSmallIntegerField, Model, BooleanField, CASCADE)
 from django.db.models.sql import EmptyResultSet
 from django.template.defaultfilters import date
-from django.utils.encoding import python_2_unicode_compatible, force_text
+from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
 from common.utils.abbreviate import abbreviate
@@ -23,7 +23,6 @@ __all__ = (
 
 
 # TODO: Songer à l’arrivée des Emplois.
-@python_2_unicode_compatible
 class Profession(AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
@@ -203,7 +202,6 @@ def limit_choices_to_instruments():
     return {'type': apps.get_model('libretto', 'Partie').INSTRUMENT}
 
 
-@python_2_unicode_compatible
 class Membre(CommonModel, PeriodeDActivite):
     ensemble = ForeignKey('Ensemble', related_name='membres',
                           verbose_name=_('ensemble'), on_delete=CASCADE)
@@ -241,7 +239,6 @@ class Membre(CommonModel, PeriodeDActivite):
         return self.html()
 
 
-@python_2_unicode_compatible
 class TypeDEnsemble(CommonModel):
     nom = CharField(_('nom'), max_length=40, help_text=LOWER_MSG)
     nom_pluriel = CharField(_('nom pluriel'), max_length=45, blank=True,
@@ -262,7 +259,6 @@ class TypeDEnsemble(CommonModel):
         return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains'
 
 
-@python_2_unicode_compatible
 class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     particule_nom = CharField(
         _('particule du nom'), max_length=5, blank=True, db_index=True)

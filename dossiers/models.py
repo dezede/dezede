@@ -4,7 +4,7 @@ from django.db.models import (
     TextField, permalink, PositiveSmallIntegerField, Q,
     ForeignKey, SlugField, CASCADE)
 from django.urls import reverse
-from django.utils.encoding import python_2_unicode_compatible, smart_text
+from django.utils.encoding import smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -20,7 +20,6 @@ from common.utils.html import href
 from common.utils.text import str_list_w_last
 
 
-@python_2_unicode_compatible
 class CategorieDeDossiers(PublishedModel):
     nom = CharField(max_length=75)
     position = PositiveSmallIntegerField(default=1)
@@ -51,7 +50,6 @@ class DossierDEvenementsManager(CommonTreeManager, PublishedManager):
 #       ou par thème (ex: censure, livret, etc).
 
 
-@python_2_unicode_compatible
 class DossierDEvenements(TreeModelMixin, PublishedModel):
     categorie = ForeignKey(
         CategorieDeDossiers, null=True, blank=True,

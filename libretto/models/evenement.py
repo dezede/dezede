@@ -9,8 +9,7 @@ from django.db.models import (
     PositiveSmallIntegerField, permalink, Q,
     PROTECT, Count, DecimalField, SmallIntegerField, Max, CASCADE)
 from django.urls import reverse
-from django.utils.encoding import (
-    python_2_unicode_compatible, force_text)
+from django.utils.encoding import force_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
@@ -84,7 +83,6 @@ class ElementDeDistributionManager(CommonManager):
         return self.get_queryset().html(tags=tags)
 
 
-@python_2_unicode_compatible
 class ElementDeDistribution(CommonModel):
     # Une contrainte de base de données existe dans les migrations
     # pour éviter que les deux soient remplis.
@@ -153,7 +151,6 @@ class ElementDeDistribution(CommonModel):
         )
 
 
-@python_2_unicode_compatible
 class TypeDeCaracteristiqueDeProgramme(CommonModel):
     nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
                     unique=True, db_index=True)
@@ -212,7 +209,6 @@ class CaracteristiqueManager(CommonManager):
         return self.get_queryset().html(tags=tags, caps=caps)
 
 
-@python_2_unicode_compatible
 class CaracteristiqueDeProgramme(CommonModel):
     type = ForeignKey(
         'TypeDeCaracteristiqueDeProgramme', null=True, blank=True,
@@ -278,7 +274,6 @@ class ElementDeProgrammeManager(CommonManager):
         return self.get_queryset().fill_numeros()
 
 
-@python_2_unicode_compatible
 class ElementDeProgramme(CommonModel):
     evenement = ForeignKey('Evenement', related_name='programme',
                            verbose_name=_('événement'), on_delete=CASCADE)
@@ -513,7 +508,6 @@ plus_separated_integers_validator = RegexValidator(
     _('Entrez uniquement des entiers séparés par des « + ».'), 'invalid')
 
 
-@python_2_unicode_compatible
 class Evenement(AutoriteModel):
     debut = AncrageSpatioTemporel(('date',),
                                   verbose_name=_('début'))

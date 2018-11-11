@@ -9,7 +9,7 @@ from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField,
     BooleanField, permalink, SmallIntegerField, PROTECT, Count,
     PositiveSmallIntegerField, CASCADE)
-from django.utils.encoding import python_2_unicode_compatible, force_text
+from django.utils.encoding import force_text
 from django.utils.html import strip_tags, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
@@ -36,7 +36,6 @@ __all__ = (
 )
 
 
-@python_2_unicode_compatible
 class GenreDOeuvre(CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
                     db_index=True)
@@ -73,7 +72,6 @@ class GenreDOeuvre(CommonModel, SlugModel):
         return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains'
 
 
-@python_2_unicode_compatible
 class Partie(AutoriteModel, UniqueSlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
@@ -190,7 +188,6 @@ class PupitreManager(CommonManager):
         return self.get_queryset().oeuvres()
 
 
-@python_2_unicode_compatible
 class Pupitre(CommonModel):
     oeuvre = ForeignKey('Oeuvre', related_name='pupitres',
                         verbose_name=_('œuvre'), on_delete=CASCADE)
@@ -278,7 +275,6 @@ class ParenteDOeuvresManager(CommonManager):
             'fille__creation_heure_approx', 'fille__creation_lieu_approx')
 
 
-@python_2_unicode_compatible
 class ParenteDOeuvres(CommonModel):
     type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes',
                       verbose_name=_('type'), on_delete=PROTECT)
@@ -384,7 +380,6 @@ class AuteurManager(CommonManager):
         return self.get_queryset().html(tags)
 
 
-@python_2_unicode_compatible
 class Auteur(CommonModel):
     # Une contrainte de base de données existe dans les migrations
     # pour éviter que les deux soient remplis.
@@ -569,7 +564,6 @@ TONALITE_I18N_CHOICES = (
 )
 
 
-@python_2_unicode_compatible
 class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(_('article'), max_length=20, blank=True)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True)

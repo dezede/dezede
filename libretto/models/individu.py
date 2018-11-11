@@ -2,7 +2,6 @@ from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, BooleanField)
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import (
     pgettext_lazy, ugettext, ugettext_lazy as _)
@@ -34,7 +33,6 @@ class TypeDeParenteDIndividus(TypeDeParente):
         return ()
 
 
-@python_2_unicode_compatible
 class ParenteDIndividus(CommonModel):
     type = ForeignKey('TypeDeParenteDIndividus', related_name='parentes',
                       verbose_name=_('type'), on_delete=PROTECT)
@@ -82,7 +80,6 @@ class IndividuManager(PublishedManager):
         return self.get_queryset().are_feminins()
 
 
-@python_2_unicode_compatible
 class Individu(AutoriteModel, UniqueSlugModel):
     particule_nom = CharField(
         _('particule du nom d’usage'), max_length=10, blank=True,

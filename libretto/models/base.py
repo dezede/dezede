@@ -17,7 +17,7 @@ from django.db.models import (
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.template.defaultfilters import time
-from django.utils.encoding import python_2_unicode_compatible, force_text
+from django.utils.encoding import force_text
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext, ugettext_lazy as _
 from autoslug import AutoSlugField
@@ -337,7 +337,6 @@ class CommonTreeManager(CommonManager):
              if isinstance(f, PathField)][0])
 
 
-@python_2_unicode_compatible
 class AncrageSpatioTemporel(object):
     def __init__(self, not_null_fields=(),
                  has_date=True, has_heure=True, has_lieu=True, approx=True,
@@ -545,7 +544,6 @@ class AncrageSpatioTemporel(object):
         return False
 
 
-@python_2_unicode_compatible
 class TypeDeParente(CommonModel):
     nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG,
                     db_index=True)
@@ -631,7 +629,6 @@ class FichierManager(CommonManager):
         return self.get_queryset().group_by_type()
 
 
-@python_2_unicode_compatible
 class Fichier(CommonModel):
     source = ForeignKey('Source', related_name='fichiers')
     fichier = FileField(_('fichier'), upload_to='files/')
@@ -788,7 +785,6 @@ class Fichier(CommonModel):
         self.update_extract_from()
 
 
-@python_2_unicode_compatible
 class Etat(CommonModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,

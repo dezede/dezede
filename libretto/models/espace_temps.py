@@ -3,7 +3,6 @@ from django.core.exceptions import ValidationError
 from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
                               permalink, Q, PROTECT, CASCADE)
 from django.urls import reverse
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from tinymce.models import HTMLField
@@ -26,7 +25,6 @@ __all__ = (
 )
 
 
-@python_2_unicode_compatible
 class NatureDeLieu(CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
                     db_index=True)
@@ -72,7 +70,6 @@ class LieuManager(CommonTreeManager, PublishedManager):
     queryset_class = LieuQuerySet
 
 
-@python_2_unicode_compatible
 class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, db_index=True)
     parent = ForeignKey(
@@ -208,7 +205,6 @@ class SaisonManager(CommonManager):
         return self.get_queryset().evenements()
 
 
-@python_2_unicode_compatible
 class Saison(CommonModel):
     ensemble = ForeignKey('Ensemble', related_name='saisons',
                           verbose_name=_('ensemble'), blank=True, null=True,

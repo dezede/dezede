@@ -1,7 +1,7 @@
 from unicodedata import normalize
 
 from django.utils import six
-from django.utils.encoding import force_text, python_2_unicode_compatible
+from django.utils.encoding import force_text
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import pgettext, ugettext_lazy as _
@@ -154,7 +154,6 @@ def from_roman(roman):
     return integer
 
 
-@python_2_unicode_compatible
 class BiGrouper(object):
     def __init__(self, iterator):
         self.iterator = iterator

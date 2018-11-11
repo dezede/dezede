@@ -5,7 +5,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
     CharField, ImageField, DecimalField, BooleanField, ForeignKey,
     PositiveIntegerField, PositiveSmallIntegerField, Max, CASCADE)
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from image_cropping import ImageRatioField
@@ -20,7 +19,6 @@ def get_default_position():
     return max_pos + 1
 
 
-@python_2_unicode_compatible
 class Diapositive(PublishedModel):
     # TODO: Pouvoir paramétrer :
     #       couleur de fond, placement vertical, largeur du texte.

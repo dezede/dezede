@@ -8,7 +8,6 @@ from django.db.models import (
     CharField, ForeignKey, PositiveIntegerField, ImageField, CASCADE)
 from django.db.models.signals import class_prepared
 from django.dispatch import receiver
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
@@ -70,7 +69,6 @@ def _get_valid_modelnames_func(autorites_only=True):
     return ValidModelNames()
 
 
-@python_2_unicode_compatible
 class HierarchicUser(TreeModelMixin, AbstractUser):
     show_email = BooleanField(_('afficher l’email'), default=False)
     website = URLField(_('site internet'), blank=True)

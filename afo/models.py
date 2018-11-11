@@ -1,7 +1,7 @@
 from django.db.models import (
     OneToOneField, CharField, PositiveIntegerField, TextField, CASCADE,
 )
-from django.utils.encoding import python_2_unicode_compatible, force_text
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from libretto.models import Evenement, Lieu
 from libretto.models.base import CommonModel
@@ -9,7 +9,6 @@ from libretto.models.base import CommonModel
 __all__ = ('EvenementAFO', 'LieuAFO')
 
 
-@python_2_unicode_compatible
 class EvenementAFO(CommonModel):
     evenement = OneToOneField(Evenement, related_name='afo',
                               verbose_name=_('événement'), on_delete=CASCADE)
@@ -88,7 +87,6 @@ class EvenementAFO(CommonModel):
         return force_text(self.evenement)
 
 
-@python_2_unicode_compatible
 class LieuAFO(CommonModel):
     lieu = OneToOneField(Lieu, related_name='afo', on_delete=CASCADE,
                          verbose_name=_('lieu ou institution'))

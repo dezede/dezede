@@ -1,7 +1,6 @@
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField,
     CASCADE)
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
@@ -22,7 +21,6 @@ __all__ = (
 )
 
 
-@python_2_unicode_compatible
 class TypeDeSource(CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
@@ -142,7 +140,6 @@ class SourceManager(PublishedManager):
         return self.get_queryset().with_data_type(data_type)
 
 
-@python_2_unicode_compatible
 class Source(AutoriteModel):
     type = ForeignKey('TypeDeSource', related_name='sources',
                       help_text=ex(_('compte rendu')), verbose_name=_('type'),

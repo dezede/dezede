@@ -6,7 +6,7 @@ from django.db.models import (
     Model, PositiveSmallIntegerField, TextField, FloatField, ForeignKey,
     OneToOneField, ManyToManyField, BooleanField, DateTimeField, QuerySet,
     Max, Sum, F, SET_NULL, CASCADE)
-from django.utils.encoding import python_2_unicode_compatible, force_text
+from django.utils.encoding import force_text
 from django.utils.formats import date_format
 from django.utils.translation import ugettext_lazy as _
 from examens.utils import AnnotatedDiff
@@ -14,7 +14,6 @@ from examens.utils import AnnotatedDiff
 from libretto.models import Fichier
 
 
-@python_2_unicode_compatible
 class Level(Model):
     number = PositiveSmallIntegerField(
         _('numéro'), unique=True, default=1,
@@ -65,7 +64,6 @@ class TakenExamQuerySet(QuerySet):
                                              - F('taken_levels__start')))
 
 
-@python_2_unicode_compatible
 class TakenExam(Model):
     user = OneToOneField(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=CASCADE,
@@ -146,7 +144,6 @@ class TakenLevelQuerySet(QuerySet):
         return self.filter(end__isnull=False)
 
 
-@python_2_unicode_compatible
 class TakenLevel(Model):
     taken_exam = ForeignKey(TakenExam, related_name='taken_levels',
                             verbose_name=_('examen passé'), editable=False,
