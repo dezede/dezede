@@ -5,8 +5,7 @@ from crispy_forms.layout import Layout, Submit, Field, HTML
 from datetime import timedelta
 from django.db.models import Q
 from django.forms import (
-    ValidationError, ModelForm, Form, CharField, TextInput,
-    BooleanField, IntegerField)
+    ValidationError, ModelForm, Form, CharField, TextInput, BooleanField)
 from django.utils.translation import ugettext_lazy as _
 from common.utils.text import capfirst, str_list_w_last
 from .models import (
@@ -338,8 +337,7 @@ SAISON_SELECT = """
 
 class EvenementListForm(Form):
     q = CharField(label=_('Recherche libre'), required=False)
-    dates = RangeSliderField(required=False,
-                             fields=(IntegerField(), IntegerField()))
+    dates = RangeSliderField(required=False)
     par_saison = BooleanField(required=False, initial=False)
     lieu = AutoCompleteSelectMultipleField('lieu', label=_('Lieu'),
                                            required=False, help_text='')
