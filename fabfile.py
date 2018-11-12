@@ -47,15 +47,6 @@ def workon_dezede(settings_module='dezede.settings.prod'):
                 yield
 
 
-def add_elasticsearch_repo():
-    sudo('wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch '
-         '| apt-key add -')
-    append('/etc/apt/sources.list.d/elasticsearch.list',
-           'deb http://packages.elastic.co/elasticsearch/2.x/debian '
-           'stable main',
-           use_sudo=True)
-
-
 def install_less_css():
     result = run('lessc', warn_only=True, quiet=True)
     if result.return_code:
@@ -71,12 +62,11 @@ def upgrade_ubuntu():
 
 
 def install_ubuntu():
-    add_elasticsearch_repo()
     upgrade_ubuntu()
     sudo('apt-get install '
          'git mercurial '
          'postgresql postgresql-server-dev-all postgis '
-         'redis-server elasticsearch=2.4.6 default-jre '
+         'redis-server default-jre '
          'python3.6 python3-pip python3.6-dev virtualenvwrapper '
          # For image thumbnailing and conversion.
          'libjpeg-dev '
@@ -89,9 +79,15 @@ def install_ubuntu():
          # For PDF generation.
          'texlive-xetex fonts-linuxlibertine '
          'texlive-lang-french texlive-fonts-extra')
-    install_less_css()
+
+    run('wget https://download.elastic.co/elasticsearch/elasticsearch/'
+        'elasticsearch-1.7.6.deb')
+    sudo('dpkg -i elasticsearch-1.7.6.deb')
+    run('rm elasticsearch-1.7.6.deb')
     sudo('systemctl enable elasticsearch')
     sudo('systemctl start elasticsearch')
+
+    install_less_css()
 
 
 def can_connect_postgresql():

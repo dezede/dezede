@@ -19,6 +19,7 @@ class CommonSearchIndex(SearchIndex):
     owner_id = IntegerField(model_attr='owner_id', null=True)
     BASE_BOOST = 0.5
     MAXIMUM_BOOST = 5.0
+    BOOST_GROWTH = 100
     LEVEL_ATTENUATION = 0.1
 
     def prepare(self, obj):
@@ -34,9 +35,9 @@ class CommonSearchIndex(SearchIndex):
             n /= 1 + (obj.get_level() - 1) * self.LEVEL_ATTENUATION
 
         min_boost, max_boost = self.BASE_BOOST, self.MAXIMUM_BOOST
-        growth = 100
         boost = (
-            min_boost + (max_boost-min_boost) * (1 - 1 / (1 + n / growth)))
+            min_boost
+            + (max_boost-min_boost) * (1 - 1 / (1 + n / self.BOOST_GROWTH)))
         prepared_data['boost'] = boost
         return prepared_data
 
