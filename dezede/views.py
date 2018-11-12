@@ -6,7 +6,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse
 from django.utils.encoding import smart_text
 from django.views.generic import ListView, TemplateView
-from haystack.forms import ModelSearchForm
 from haystack.views import SearchView
 from libretto.models import Oeuvre, Lieu, Individu
 from libretto.search_indexes import autocomplete_search, filter_published
@@ -52,27 +51,10 @@ def clean_query(q):
             .replace('-', ' '))
 
 
-class CustomModelSearchForm(ModelSearchForm):
-    def search(self):
-        if not self.is_valid() or 'q' not in self.cleaned_data:
-            return self.no_query_found()
-
-        sqs = self.searchqueryset.filter(content_auto=self.cleaned_data['q'])
-
-        if self.load_all:
-            sqs = sqs.load_all()
-
-        return sqs.models(*self.get_models())
-
-
 class CustomSearchView(SearchView):
     """
     Custom SearchView to fix spelling suggestions.
     """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form_class = CustomModelSearchForm
 
     def build_form(self, form_kwargs=None):
         self.request.GET = GET = self.request.GET.copy()
