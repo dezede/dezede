@@ -690,6 +690,7 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     ORDRE = 10
     MOUVEMENT = 11
     PIECE = 12
+    SERIE = 13
     TYPES_EXTRAIT_ROMAINS = (ACTE, LIVRE, ORDRE)
     TYPES_EXTRAIT_CACHES = (MORCEAU, MOUVEMENT, PIECE)
     TYPES_EXTRAIT = (
@@ -705,6 +706,7 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         (ORDRE,     _('ordre')),
         (MOUVEMENT, _('mouvement')),
         (PIECE,     _('pièce de recueil')),
+        (SERIE,     _('série')),
     )
     type_extrait = PositiveSmallIntegerField(
         _('type d’extrait'), choices=TYPES_EXTRAIT, blank=True, null=True,
