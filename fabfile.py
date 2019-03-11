@@ -310,8 +310,11 @@ def restore_saved_db():
         for parent in Path(LOCAL_BACKUP).resolve().parents:
             local(f'chmod o+x {parent}')
     local(f'chmod o+r {LOCAL_BACKUP}')
+    local(f'sudo -u postgres psql dezede -c "DROP SCHEMA public;"')
     local(f'sudo -u postgres pg_restore -e -d {DB_NAME} '
           f'-j 5 "{Path(LOCAL_BACKUP).resolve()}"')
+    local(f'sudo -u postgres psql dezede '
+          f'-c "GRANT USAGE ON SCHEMA public TO dezede;"')
     invalidate_cachalot()
 
 
