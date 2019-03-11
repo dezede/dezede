@@ -401,6 +401,7 @@ def lookup_needs_distinct(opts, lookup_path):
 
 class CommonAdmin(CustomBaseModel, ModelAdmin):
     list_per_page = 20
+    save_as = True
     additional_fields = ('owner',)
     additional_readonly_fields = ('owner',)
     admin_fields = ()
