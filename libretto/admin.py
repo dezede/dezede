@@ -757,8 +757,8 @@ class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
 @register(Partie)
 class PartieAdmin(VersionAdmin, AutoriteAdmin):
     form = PartieForm
-    list_display = ('__str__', 'nom', 'parent', 'classement',)
-    list_editable = ('nom', 'parent', 'classement',)
+    list_display = ('__str__', 'nom', 'parent', 'oeuvre', 'classement',)
+    list_editable = ('nom', 'parent', 'oeuvre', 'classement',)
     list_filter = ('type',)
     list_select_related = ('parent', 'etat', 'owner')
     search_fields = ('nom__unaccent',)
