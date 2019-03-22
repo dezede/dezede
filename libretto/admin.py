@@ -18,7 +18,9 @@ from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 from .models import *
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
-    ElementDeDistributionForm, EnsembleForm, SaisonForm, PartieForm)
+    ElementDeDistributionForm, EnsembleForm, SaisonForm, PartieForm,
+    LieuAdminForm,
+)
 from .jobs import events_to_pdf as events_to_pdf_job
 from common.utils.export import launch_export
 from typography.utils import replace
@@ -589,6 +591,7 @@ class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
 
 @register(Lieu)
 class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
+    form = LieuAdminForm
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ('nom__unaccent', 'parent__nom__unaccent',)
@@ -601,7 +604,7 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     fieldsets = (
         (None, {
             'fields': (('nom', 'parent'), ('nature', 'is_institution'),
-                       'historique', 'geometry'),
+                       'historique', 'geometry', ('latitude', 'longitude')),
         }),
     )
     layerswitcher = False

@@ -3,11 +3,16 @@ from ajax_select.fields import AutoCompleteSelectMultipleField, \
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
 from datetime import timedelta
+
+from django.contrib.gis.geos import Point
 from django.db.models import Q
 from django.forms import (
-    ValidationError, ModelForm, Form, CharField, TextInput, BooleanField)
+    ValidationError, ModelForm, Form, CharField, TextInput, BooleanField,
+    FloatField,
+)
 from django.utils.translation import ugettext_lazy as _
 from common.utils.text import capfirst, str_list_w_last
+from libretto.models import Lieu
 from .models import (
     Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
     Ensemble, Saison, Partie)
@@ -373,3 +378,32 @@ class EvenementListForm(Form):
             field.label = ''
 
         self.fields['dates'].widget.queryset = queryset
+
+
+class LieuAdminForm(ModelForm):
+    latitude = FloatField(min_value=-90, max_value=90, required=False)
+    longitude = FloatField(min_value=-180, max_value=180, required=False)
+
+    class Meta:
+        model = Lieu
+        exclude = []
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        geometry = self.initial.get('geometry', None)
+        if isinstance(geometry, Point):
+            self.initial['longitude'], self.initial['latitude'] = \
+                geometry.tuple
+
+    def clean(self):
+        data = super().clean()
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+        geometry = data.get('geometry')
+        geometry_changed = geometry != self.initial.get('geometry')
+        latlon_changed = (latitude != self.initial.get('latitude')
+                          or longitude != self.initial.get('longitude'))
+        if latitude and longitude and latlon_changed \
+                and (not geometry or not geometry_changed):
+            data['geometry'] = Point(longitude, latitude)
+        return data
