@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n routines el_pagination_tags %}
+{% load i18n routines el_pagination_tags static %}
 
 
 {% block title %}
@@ -16,7 +16,11 @@
 
 
 {% block header %}
+  {% if object.pk == 119 %}
+    <img class="pull-right" src="{% static 'images/normandie-large.png' %}" style="height: 70px; margin-right: 30px;" />
+  {% endif %}
   <h1>{{ object.titre|safe }}</h1>
+  {% if object.pk == 119 %}<div class="clearfix"></div>{% endif %}
 {% endblock %}
 
 
