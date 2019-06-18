@@ -742,7 +742,11 @@ class Fichier(CommonModel):
         format = data['format']['format_name']
         if format in self.FORMAT_BINDINGS:
             format = self.FORMAT_BINDINGS[format]
-        codecs = tuple(s['codec_name'] for s in data['streams'])
+        codecs = tuple(s['codec_name'] for s in data['streams']
+                       if 'codec_name' in s)
+
+        if not codecs:
+            return
 
         props = {}
         if data['streams'][0]['codec_type'] == 'video':
