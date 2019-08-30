@@ -111,3 +111,11 @@ server {
   server_name afo.dezede.org;
   rewrite ^(.*) https://dezede.org$1 permanent;
 }
+
+server {
+  listen 443 ssl;
+  server_name afo.dezede.org;
+  ssl_certificate     {{ ssl_certificate }};
+  ssl_certificate_key {{ ssl_key }};
+  rewrite ^(.*) https://dezede.org$1 permanent;
+}
