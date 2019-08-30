@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.admin.models import LogEntry
 from django.core.exceptions import (
     NON_FIELD_ERRORS, FieldError, ValidationError)
+from django.core.files.images import get_image_dimensions
 from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
@@ -729,6 +730,15 @@ class Fichier(CommonModel):
     def get_media_info(self):
         # Force le fichier à être enregistré pour qu’il puisse être analysé.
         self._meta.get_field('fichier').pre_save(self, False)
+
+        close = self.fichier.closed
+        self.fichier.open()
+        width, height = get_image_dimensions(self.fichier, close=close)
+        if width is not None and height is not None:
+            from PIL import Image
+            return self.IMAGE, Image.open(self.fichier).format, {
+                'width': width, 'height': height,
+            }
 
         try:
             stdout = check_output([
