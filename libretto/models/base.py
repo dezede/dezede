@@ -733,12 +733,17 @@ class Fichier(CommonModel):
 
         close = self.fichier.closed
         self.fichier.open()
-        width, height = get_image_dimensions(self.fichier, close=close)
+        width, height = get_image_dimensions(self.fichier, close=False)
         if width is not None and height is not None:
-            from PIL import Image
-            return self.IMAGE, Image.open(self.fichier).format, {
-                'width': width, 'height': height,
-            }
+            try:
+                from PIL import Image
+                self.fichier.open()
+                return self.IMAGE, Image.open(self.fichier).format, {
+                    'width': width, 'height': height,
+                }
+            finally:
+                if close:
+                    self.fichier.close()
 
         try:
             stdout = check_output([
