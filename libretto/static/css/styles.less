@@ -1074,6 +1074,44 @@ video {
   background: black;
 }
 
+.bibliotheque {
+  display: flex;
+  flex-flow: row wrap;
+  a.panel {
+    display: flex;
+    flex-flow: column nowrap;
+    height: calc(100% ~'-' 20px);
+    .panel-heading {
+      font-size: @font-size-h4;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .panel-body {
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: center;
+      flex: 1 0 auto;
+      blockquote {
+        margin-bottom: 0;
+        color: @text-color;
+      }
+      small {
+        text-align: center;
+        color: @gray-light;
+      }
+    }
+  }
+}
+
+.full-width-image {
+  padding-bottom: percentage(700 / 950);  // Height / width ratio of the image
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
 .list-group-item {
   padding: @panel-heading-padding;
 }

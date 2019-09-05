@@ -318,6 +318,12 @@ class SourceTableView(PublishedMixin, CommonTableView):
             pk__in=queryset.with_data_type(value)).prefetch()
 
 
+class BibliothequeView(PublishedListView):
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(est_promu=True).order_by('position')
+
+
 class SourceModalView(PublishedDetailView):
     def get(self, request, *args, **kwargs):
         if not request.is_ajax():
@@ -338,6 +344,14 @@ class SourceViewSet(CommonViewSet):
             'name': 'modal',
             'kwargs': {
                 'template_name': 'libretto/source_modal.html'
+            },
+        }
+        self.views['bibliotheque'] = {
+            'view': BibliothequeView,
+            'pattern': r'bibliothèque/',
+            'name': 'bibliotheque',
+            'kwargs': {
+                'template_name': 'libretto/bibliotheque.html',
             },
         }
         super(SourceViewSet, self).__init__()

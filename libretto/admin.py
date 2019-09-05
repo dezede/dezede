@@ -998,7 +998,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                ('parent', 'position'),
+                ('parent', 'position', 'est_promu'),
             ),
         }),
         (None, {

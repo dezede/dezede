@@ -5,7 +5,7 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField,
-    CASCADE, PositiveSmallIntegerField, FileField)
+    CASCADE, PositiveSmallIntegerField, FileField, BooleanField)
 from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -138,8 +138,16 @@ class Source(AutoriteModel):
     parent = ForeignKey(
         'self', related_name='children', verbose_name=_('parent'),
         null=True, blank=True, on_delete=CASCADE,
+        help_text=_(
+            'À remplir par exemple si la source est une page d’un recueil '
+            'déjà existant ou un tome d’une série.'
+        ),
     )
-    position = PositiveSmallIntegerField(_('position'), null=True, blank=True)
+    position = PositiveSmallIntegerField(
+        _('position'), null=True, blank=True,
+        help_text=_('Position au sein de son parent.')
+    )
+    est_promu = BooleanField(_('est dans la bibliothèque'), default=False)
 
     type = ForeignKey('TypeDeSource', related_name='sources',
                       help_text=ex(_('compte rendu')), verbose_name=_('type'),

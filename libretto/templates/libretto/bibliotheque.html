@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load i18n thumbnail %}
+
+
+{% block header %}
+  <h1>{% block title %}{% trans 'bibliothèque'|capfirst %}{% endblock %}</h1>
+{% endblock %}
+
+
+{% block content %}
+  <div class="row bibliotheque">
+    {% for source in source_list %}
+      <div class="col-xs-12 col-md-6">
+        <a class="panel panel-default" href="{{ source.get_absolute_url }}">
+          <div class="panel-heading">{{ source }}</div>
+          <div class="panel-body">
+            {% if source.images %}
+              <div class="full-width-image" style="background-image: url('{% thumbnail source.images.0.fichier 'small' %}');"></div>
+            {% elif source.transcription %}
+              <blockquote>
+                {{ source.transcription|truncatewords_html:100|striptags }}
+              </blockquote>
+            {% else %}
+              <small>{% trans 'Pas de prévisualisation' %}</small>
+            {% endif %}
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

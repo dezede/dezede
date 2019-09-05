@@ -21,6 +21,7 @@
       <ul class="nav navbar-nav">
         {% nav_link 'dossierdevenements_index' _('dossiers') %}
         {% nav_link 'evenements' _('événements') %}
+        {% nav_link 'source_bibliotheque' _('bibliothèque') %}
       </ul>
       <form method="get" action="{% url 'haystack_search' %}"
             class="navbar-form navbar-left" role="search">
@@ -71,47 +72,25 @@
 
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            {% trans 'Équipe' %} <b class="caret"></b>
-          </a>
-          <ul class="dropdown-menu" role="menu">
-            {% nav_link 'comite_editorial' _('Comité éditorial') %}
-            {% nav_link 'contributeurs' _('Contributeurs') %}
-            {% nav_link 'equipe_developpement' _('Équipe de développement') %}
-          </ul>
-        </li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            {% trans 'Partenariats' %} <b class="caret"></b>
-          </a>
-          <ul class="dropdown-menu" role="menu">
-            {% nav_link 'proprietaires' _('Propriétaires') %}
-            {% nav_link 'partenaires' _('Partenaires') %}
-          </ul>
-        </li>
-
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <b class="fa fa-info-circle"></b> <b class="caret"></b>
           </a>
           <ul class="dropdown-menu">
 
-            <li>
-              <a href="{% url 'presentation' %}">{% trans 'Présentation' %}</a>
-            </li>
+            {% nav_link 'presentation' _('Présentation') %}
+            <li class="divider"></li>
+            {% nav_link 'proprietaires' _('Propriétaires') %}
+            {% nav_link 'partenaires' _('Partenaires') %}
+            <li class="divider"></li>
+            {% nav_link 'comite_editorial' _('Comité éditorial') %}
+            {% nav_link 'contributeurs' _('Contributeurs') %}
+            {% nav_link 'equipe_developpement' _('Équipe de développement') %}
+            <li class="divider"></li>
             {# TODO: Créer un mode d’emploi #}
-{#            <li>#}
-{#              <a href="">{% trans 'Mode d’emploi' %}</a>#}
-{#            </li>#}
-            <li>
-              <a href="{% url 'bibliographie' %}">{% trans 'Bibliographie' %}</a>
-            </li>
-            <li>
-              <a href="{% url 'contribuer' %}">{% trans 'Contribuer' %}</a>
-            </li>
+{#            {% nav_link '' _('Mode d’emploi') %}#}
+            {% nav_link 'bibliographie' _('Bibliographie') %}
+            {% nav_link 'contribuer' _('Contribuer') %}
             {# TODO: Rédiger la méthode scientifique #}
-{#            <li>#}
-{#              <a href="">{% trans 'Méthode scientifique' %}</a>#}
-{#            </li>#}
+{#            {% nav_link '' _('Méthode scientifique') %}#}
 
           </ul>
         </li>
