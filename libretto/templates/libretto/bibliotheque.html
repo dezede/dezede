@@ -26,6 +26,10 @@
           </div>
         </a>
       </div>
+    {% empty %}
+      <div class="col-xs-12">
+        {% trans 'La bibliothèque est vide pour le moment.' %}
+      </div>
     {% endfor %}
   </div>
 {% endblock %}
