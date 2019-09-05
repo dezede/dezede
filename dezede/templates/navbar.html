@@ -23,35 +23,6 @@
         {% nav_link 'evenements' _('événements') %}
         {% nav_link 'source_bibliotheque' _('bibliothèque') %}
       </ul>
-      <form method="get" action="{% url 'haystack_search' %}"
-            class="navbar-form navbar-left" role="search">
-        <input id="navbar-search" type="search" name="q" class="form-control"
-               placeholder="{% trans "Rechercher…" %}" />
-      </form>
-      {% addstatic js %}
-        <script>
-          var suggestions = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('str'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            remote: '{% url 'autocomplete' %}?q=%QUERY'
-          });
-          suggestions.initialize();
-          $('input[name="q"]').typeahead({
-            minLength: 2,
-            highlight: true
-          }, {
-            source: suggestions.ttAdapter(),
-            displayKey: 'str'
-          }).keypress(function (e) {
-            if (e.which == 13) {
-              $(this).parents('form').submit();
-              e.preventDefault();
-            }
-          }).on('typeahead:selected', function (e, object) {
-            document.location = object.url;
-          });
-        </script>
-      {% endaddstatic %}
 
       <ul class="nav navbar-nav navbar-right">
 
@@ -172,6 +143,36 @@
         </li>
 
       </ul>
+
+      <form method="get" action="{% url 'haystack_search' %}"
+            class="navbar-form navbar-right" role="search">
+        <input id="navbar-search" type="search" name="q" class="form-control"
+               placeholder="{% trans "Rechercher…" %}" />
+      </form>
+      {% addstatic js %}
+        <script>
+          var suggestions = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('str'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: '{% url 'autocomplete' %}?q=%QUERY'
+          });
+          suggestions.initialize();
+          $('input[name="q"]').typeahead({
+            minLength: 2,
+            highlight: true
+          }, {
+            source: suggestions.ttAdapter(),
+            displayKey: 'str'
+          }).keypress(function (e) {
+            if (e.which == 13) {
+              $(this).parents('form').submit();
+              e.preventDefault();
+            }
+          }).on('typeahead:selected', function (e, object) {
+            document.location = object.url;
+          });
+        </script>
+      {% endaddstatic %}
 
     </div>
 
