@@ -1,19 +1,12 @@
-from collections import defaultdict
 import datetime
-import json
-import os
-from subprocess import check_output, CalledProcessError, PIPE
 
 from django.conf import settings
 from django.contrib.admin.models import LogEntry
-from django.core.exceptions import (
-    NON_FIELD_ERRORS, FieldError, ValidationError)
-from django.core.files.images import get_image_dimensions
+from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
-    FileField, PositiveSmallIntegerField, OneToOneField, SET_NULL,
     NOT_PROVIDED)
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -28,10 +21,9 @@ from tree.fields import PathField
 from tree.query import TreeQuerySetMixin
 
 from cache_tools import invalidate_object
-from common.utils.base import OrderedDefaultDict
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
-from common.utils.html import href, capfirst, date_html, sanitize_html
+from common.utils.html import capfirst, date_html, sanitize_html
 from common.utils.text import str_list
 from typography.utils import replace
 
@@ -573,235 +565,6 @@ class TypeDeParente(CommonModel):
 #
 # Modèles communs
 #
-
-
-class FichierQuerySet(CommonQuerySet):
-    def others(self):
-        return self.filter(type=self.model.OTHER)
-
-    def images(self):
-        return self.filter(type=self.model.IMAGE)
-
-    def audios(self):
-        return self.filter(type=self.model.AUDIO)
-
-    def videos(self):
-        return self.filter(type=self.model.VIDEO)
-
-    def group_by_type(self):
-        groups = defaultdict(list)
-        groups.update(audios=OrderedDefaultDict(),
-                      videos=OrderedDefaultDict())
-        for fichier in self:
-            if fichier.is_image():
-                groups['images'].append(fichier)
-            elif fichier.is_audio():
-                groups['audios'][fichier.get_stem()].append(fichier)
-            elif fichier.is_video():
-                groups['videos'][fichier.get_stem()].append(fichier)
-            else:
-                groups['others'].append(fichier)
-        groups.update(audios=groups['audios'].values(),
-                      videos=groups['videos'].values())
-        return groups
-
-    def published(self, request=None):
-        if request is None or not request.user.is_authenticated():
-            return self.filter(extract=None)
-        return self.filter(Q(extract__isnull=False) | Q(extract_from=None))
-
-
-class FichierManager(CommonManager):
-    queryset_class = FichierQuerySet
-
-    def others(self):
-        return self.get_queryset().others()
-
-    def images(self):
-        return self.get_queryset().images()
-
-    def audios(self):
-        return self.get_queryset().audios()
-
-    def videos(self):
-        return self.get_queryset().videos()
-
-    def group_by_type(self):
-        return self.get_queryset().group_by_type()
-
-
-class Fichier(CommonModel):
-    source = ForeignKey('Source', related_name='fichiers')
-    fichier = FileField(_('fichier'), upload_to='files/')
-    folio = CharField(_('folio'), max_length=10, blank=True)
-    page = CharField(_('page'), max_length=10, blank=True)
-
-    # Internal fields
-    OTHER = 0
-    IMAGE = 1
-    AUDIO = 2
-    VIDEO = 3
-    TYPES = (
-        (OTHER, _('autre')),
-        (IMAGE, _('image')),
-        (AUDIO, _('audio')),
-        (VIDEO, _('vidéo')),
-    )
-    type = PositiveSmallIntegerField(choices=TYPES, null=True, blank=True,
-                                     db_index=True)
-    format = CharField(max_length=10, blank=True)
-    width = PositiveSmallIntegerField(_('largeur'), null=True, blank=True)
-    height = PositiveSmallIntegerField(_('hauteur'), null=True, blank=True)
-    duration = PositiveSmallIntegerField(_('durée (en secondes)'),
-                                         null=True, blank=True)
-    EXTRACT_INFIX = '.extrait'
-    extract = OneToOneField(
-        'self', related_name='extract_from', null=True, blank=True,
-        verbose_name=_('extrait'), on_delete=SET_NULL)
-    position = PositiveSmallIntegerField(_('position'))
-
-    objects = FichierManager()
-
-    class Meta(object):
-        verbose_name = _('fichier')
-        verbose_name_plural = _('fichiers')
-        ordering = ('position',)
-
-    def __str__(self):
-        return force_text(self.fichier)
-
-    def link(self):
-        return href(self.fichier.url, force_text(self))
-
-    def is_image(self):
-        return self.type == self.IMAGE
-
-    def is_audio(self):
-        return self.type == self.AUDIO
-
-    def is_video(self):
-        return self.type == self.VIDEO
-
-    def get_filename(self):
-        return os.path.basename(self.fichier.url)
-
-    def get_stem(self):
-        return os.path.splitext(self.get_filename())[0]
-
-    FORMAT_BINDINGS = {
-        'matroska,webm': 'webm',
-        'mov,mp4,m4a,3gp,3g2,mj2': 'mp4',
-    }
-    HTML5_AV_FORMATS = {
-        'mp3': (('mp3',),),
-        'webm': (('vorbis',), ('vp8', 'vorbis'), ('vp9', 'opus')),
-        'ogg': (('vorbis',), ('opus',),
-                ('theora', 'vorbis'),),
-        'mp4': (('aac',), ('h264', 'mp3'), ('h264', 'aac')),
-    }
-
-    def _get_normalized_filename(self, filename):
-        return self._meta.get_field('fichier').get_filename(filename)
-
-    def get_fichier_complet(self):
-        l = self.fichier.name.split(self.EXTRACT_INFIX, 1)
-        if len(l) == 2:
-            fichier_complet_filename = self._get_normalized_filename(''.join(l))
-            qs = self.source.fichiers.exclude(
-                pk=self.pk).filter(
-                fichier__regex=fr'^(?:.+/)?{fichier_complet_filename}$')
-            if len(qs) < 1:
-                raise ValidationError(_('Il n’y a pas d’enregistrement entier '
-                                        'pour cet extrait.'))
-            elif len(qs) == 1:
-                try:
-                    list(qs)[0].extract_from
-                except Fichier.DoesNotExist:
-                    pass
-                else:
-                    raise ValidationError(
-                        _('L’enregistrement dont ce fichier est extrait est '
-                          'déjà un extrait.'))
-            return list(qs)[0]
-
-    def clean(self):
-        self.get_fichier_complet()
-
-    def get_media_info(self):
-        # Force le fichier à être enregistré pour qu’il puisse être analysé.
-        self._meta.get_field('fichier').pre_save(self, False)
-
-        close = self.fichier.closed
-        self.fichier.open()
-        width, height = get_image_dimensions(self.fichier, close=False)
-        if width is not None and height is not None:
-            try:
-                from PIL import Image
-                self.fichier.open()
-                return self.IMAGE, Image.open(self.fichier).format, {
-                    'width': width, 'height': height,
-                }
-            finally:
-                if close:
-                    self.fichier.close()
-
-        try:
-            stdout = check_output([
-                'avprobe', '-of', 'json', '-show_format', '-show_streams',
-                self.fichier.path], stderr=PIPE)
-        except CalledProcessError:
-            return
-
-        data = json.loads(stdout.decode())
-
-        format = data['format']['format_name']
-        if format in self.FORMAT_BINDINGS:
-            format = self.FORMAT_BINDINGS[format]
-        codecs = tuple(s['codec_name'] for s in data['streams']
-                       if 'codec_name' in s)
-
-        if not codecs:
-            return
-
-        props = {}
-        if data['streams'][0]['codec_type'] == 'video':
-            props.update(width=data['streams'][0]['width'],
-                         height=data['streams'][0]['height'])
-
-        if format == 'image2':
-            assert len(codecs) == 1
-            return self.IMAGE, codecs[0], props
-
-        if format in self.HTML5_AV_FORMATS \
-                and codecs in self.HTML5_AV_FORMATS[format]:
-            props['duration'] = int(float(data['format']['duration']))
-            if len(codecs) == 1:
-                return self.AUDIO, format, props
-            elif len(codecs) == 2:
-                return self.VIDEO, format, props
-
-    def update_media_info(self):
-        if getattr(self, 'updated_media_info', False):
-            return
-        data = self.get_media_info()
-        if data is None:
-            self.type = self.OTHER
-        else:
-            self.type, self.format, props = data
-            for k, v in props.items():
-                setattr(self, k, v)
-        self.updated_media_info = True
-
-    def update_extract_from(self):
-        fichier_complet = self.get_fichier_complet()
-        if fichier_complet is not None:
-            fichier_complet.extract = self
-            fichier_complet.save()
-
-    def save(self, *args, **kwargs):
-        self.update_media_info()
-        super(Fichier, self).save(*args, **kwargs)
-        self.update_extract_from()
 
 
 class Etat(CommonModel, UniqueSlugModel):

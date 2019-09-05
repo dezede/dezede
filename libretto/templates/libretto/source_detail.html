@@ -20,19 +20,41 @@
 
 
 {% block autorite-content %}
+  <ul class="nav nav-tabs nav-justified autorite-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a href="#contenu" aria-controls="content" role="tab" data-toggle="tab">
+        {% trans 'Consulter' %}
+      </a>
+    </li>
+    <li role="presentation">
+      <a href="#index" aria-controls="index" role="tab" data-toggle="tab">
+        {% trans 'Index' %}
+      </a>
+    </li>
+  </ul>
 
-  {% include 'libretto/source_content.html' %}
+  <div class="tab-content">
 
-  <table class="data-table auto-links">
-    {% evenement_list_def source.evenements.all %}
-    {% data_table_list source.oeuvres.all %}
-    {% data_table_list source.individus.all %}
-    {% data_table_list source.ensembles.all %}
-    {% data_table_list source.lieux.all %}
-    {% data_table_list source.parties.all %}
+    <div role="tabpanel" class="tab-pane active" id="contenu">
+      {% include 'libretto/source_content.html' %}
+    </div>
 
-    {% data_table_attr 'notes_publiques' _('notes') %}
-  </table>
+    <div role="tabpanel" class="tab-pane" id="index">
+      <table class="data-table auto-links">
+        {% data_table_attr 'parent.html' _('source parente') %}
+
+        {% evenement_list_def source.evenements.all %}
+        {% data_table_list source.oeuvres.all %}
+        {% data_table_list source.individus.all %}
+        {% data_table_list source.ensembles.all %}
+        {% data_table_list source.lieux.all %}
+        {% data_table_list source.parties.all %}
+
+        {% data_table_attr 'notes_publiques' _('notes') %}
+      </table>
+    </div>
+
+  </div>
 
 {% endblock %}
 

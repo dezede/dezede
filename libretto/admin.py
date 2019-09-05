@@ -8,20 +8,27 @@ from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.admin import OSMGeoAdmin
+from django.contrib.sites.models import Site
 from django.db.models import Q
 from django.forms.models import modelformset_factory
+from django.shortcuts import redirect
+from django.utils.html import format_html_join
 from django.utils.translation import ugettext_lazy as _
 from grappelli.forms import GrappelliSortableHiddenMixin
 from reversion.admin import VersionAdmin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 
+from common.utils.cache import is_user_locked, lock_user
+from common.utils.file import FileAnalyzer
 from .models import *
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
     ElementDeDistributionForm, EnsembleForm, SaisonForm, PartieForm,
     LieuAdminForm,
 )
-from .jobs import events_to_pdf as events_to_pdf_job
+from .jobs import (
+    events_to_pdf as events_to_pdf_job, split_pdf as split_pdf_job,
+)
 from common.utils.export import launch_export
 from typography.utils import replace
 
@@ -133,13 +140,16 @@ EventHasProgramListFilter = build_boolean_list_filter(
     _('programme'), 'has_program',
     Q(programme__isnull=False) | Q(relache=True))
 
+SourceHasParentListFilter = build_boolean_list_filter(
+    _('parent'), 'has_parent', filter=Q(parent__isnull=False),
+)
+
 SourceHasEventsListFilter = build_boolean_list_filter(
     _('événements'), 'has_events', exclude=Q(evenements=None))
 
 SourceHasProgramListFilter = build_boolean_list_filter(
     _('programme'), 'has_program',
     Q(evenements__programme__isnull=False) | Q(evenements__relache=True))
-
 
 #
 # Inlines
@@ -288,12 +298,6 @@ class ElementDeProgrammeInline(SuperInlineModelAdmin,
             'caracteristiques', 'distribution',
             'distribution__individu', 'distribution__ensemble',
             'distribution__partie', 'distribution__profession')
-
-
-class FichierInline(GrappelliSortableHiddenMixin, CustomTabularInline):
-    model = Fichier
-    classes = ('grp-collapse grp-closed',)
-    fields = ('fichier', 'folio', 'page', 'position')
 
 
 class SourceEvenementInline(TabularInline):
@@ -927,32 +931,80 @@ class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
     search_fields = ('nom__unaccent', 'nom_pluriel__unaccent')
 
 
+def split_pdf(modeladmin, request, queryset):
+    # Ensures the user is not trying to see something he should not.
+    queryset = queryset.published(request)
+
+    queryset = queryset.filter(
+        type_fichier=FileAnalyzer.OTHER, fichier__endswith='.pdf',
+        children__isnull=True,
+    )
+
+    if not queryset:
+        messages.warning(
+            request,
+            _('Aucune source sélectionnée n’est un PDF sans enfant.')
+        )
+        return
+
+    if is_user_locked(request.user):
+        messages.error(
+            request,
+            _('Une séparation de PDF de votre part est déjà en cours. '
+              'Veuillez attendre la fin de celle-ci avant'
+              'd’en lancer une autre.'))
+        return
+
+    lock_user(request.user)
+    for source in queryset:
+        split_pdf_job.delay(source.pk, request.user.pk)
+    messages.info(
+        request,
+        _('La séparation de PDF est en cours. '
+          'Revenez consulter le·s source·s dans quelques minutes.'))
+split_pdf.short_description = _('Séparer le PDF')
+
+
 @register(Source)
 class SourceAdmin(VersionAdmin, AutoriteAdmin):
     form = SourceForm
-    list_display = ('__str__', 'date', 'type', 'has_events', 'has_program', 'link')
-    list_editable = ('type', 'date',)
+    list_display = (
+        '__str__', 'parent', 'position', 'date', 'type', 'has_events',
+        'has_program', 'link',
+    )
+    list_editable = ('parent', 'position', 'type', 'date')
     list_select_related = ('type', 'etat', 'owner')
     date_hierarchy = 'date'
     search_fields = (
         'type__nom__unaccent', 'titre__unaccent', 'date',
         'date_approx__unaccent', 'numero__unaccent',
         'lieu_conservation__unaccent', 'cote__unaccent')
-    list_filter = ('type', 'titre', SourceHasEventsListFilter,
-                   SourceHasProgramListFilter)
-    raw_id_fields = ('evenements',)
+    list_filter = (SourceHasParentListFilter, 'type', 'titre',
+                   SourceHasEventsListFilter, SourceHasProgramListFilter)
+    raw_id_fields = ('parent', 'evenements',)
+    autocomplete_lookup_fields = {
+        'fk': ('parent',),
+    }
     related_lookup_fields = {
         'm2m': ['evenements'],
     }
-    readonly_fields = ('__str__', 'html',)
+    readonly_fields = ('__str__', 'html', 'children_links')
     inlines = (
-        FichierInline, AuteurInline, SourceEvenementInline, SourceOeuvreInline,
+        AuteurInline, SourceEvenementInline, SourceOeuvreInline,
         SourceIndividuInline, SourceEnsembleInline, SourceLieuInline,
         SourcePartieInline,
     )
+    actions = [split_pdf]
     fieldsets = (
         (None, {
-            'fields': ('type', 'titre', 'legende',),
+            'fields': (
+                ('parent', 'position'),
+            ),
+        }),
+        (None, {
+            'fields': (
+                'type', 'titre', 'legende',
+            ),
         }),
         (None, {
             'fields': (
@@ -966,9 +1018,15 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('transcription',),
         }),
+        (_('Fichier'), {
+            'fields': ('fichier',),
+        }),
+        (None, {
+            'fields': ('children_links',),
+        }),
     )
-    fieldsets_and_inlines_order = ('f', 'f', 'f', 'i', 'i',
-                                   'i', 'i', 'i', 'i', 'i', 'i')
+    fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'f', 'i', 'i',
+                                   'i', 'i', 'i', 'i', 'i', 'f')
 
     def get_queryset(self, request):
         qs = super(SourceAdmin, self).get_queryset(request)
@@ -1002,3 +1060,68 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
             }
         )
         return qs
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        source = self.get_object(request, object_id)
+        if source is not None and isinstance(source.specific, (Video, Audio)):
+            change_url = source.get_change_url()
+            if change_url != request.path:
+                return redirect(change_url)
+        return super().change_view(
+            request, object_id, form_url=form_url, extra_context=extra_context,
+        )
+
+    def children_links(self, instance):
+        return format_html_join(
+            ', ',
+            '<a href="{}">{}</a>',
+            [(child.get_change_url(), child.position)
+             for child in instance.children.all()]
+        )
+    children_links.short_description = _('Enfants')
+
+
+@register(Audio)
+class AudioAdmin(SourceAdmin):
+    readonly_fields = SourceAdmin.readonly_fields + (
+        'fichier_ogg', 'fichier_mpeg', 'extrait_ogg', 'extrait_mpeg',
+        'duree', 'duree_extrait',
+    )
+    fieldsets = (
+        SourceAdmin.fieldsets[0],
+        SourceAdmin.fieldsets[1],
+        SourceAdmin.fieldsets[2],
+        SourceAdmin.fieldsets[3],
+        (_('Fichiers'), {
+            'fields': (
+                ('fichier', 'duree'),
+                ('fichier_ogg', 'fichier_mpeg'),
+                ('extrait', 'duree_extrait'),
+                ('extrait_ogg', 'extrait_mpeg'),
+            ),
+        }),
+    )
+
+
+@register(Video)
+class VideoAdmin(AudioAdmin):
+    readonly_fields = AudioAdmin.readonly_fields + (
+        'largeur', 'hauteur', 'largeur_extrait', 'hauteur_extrait',
+    )
+    fieldsets = (
+        SourceAdmin.fieldsets[0],
+        SourceAdmin.fieldsets[1],
+        SourceAdmin.fieldsets[2],
+        SourceAdmin.fieldsets[3],
+        (_('Fichiers'), {
+            'fields': (
+                ('fichier', 'duree',
+                 'largeur', 'hauteur'),
+                ('fichier_ogg', 'fichier_mpeg'),
+                ('extrait', 'duree_extrait',
+                 'largeur_extrait', 'hauteur_extrait'),
+                ('extrait_ogg', 'extrait_mpeg'),
+            ),
+        }),
+    )
+

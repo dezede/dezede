@@ -9,6 +9,7 @@ function Reader ($div, images) {
   this.$next = this.$div.find('.next');
   this.$spinner = this.$div.find('.spinner-container');
   this.$page = this.$div.find('input[name="page"]');
+  this.$linkedObjects = this.$div.find('.linked-objects');
 
   this.images = images;
   this.current = 0;
@@ -110,17 +111,26 @@ Reader.prototype.unwait = function () {
 };
 
 Reader.prototype.updateControls = function () {
-  if (this.current == 0) {
+  if (this.current === 0) {
     this.$prev.addClass('invisible');
   } else {
     this.$prev.removeClass('invisible');
   }
-  if (this.current == (this.images.length - 1)) {
+  if (this.current === (this.images.length - 1)) {
     this.$next.addClass('invisible');
   } else {
     this.$next.removeClass('invisible');
   }
   this.$page.val(this.current+1);
+  this.$linkedObjects.empty();
+  var linkedObjects = this.images[this.current]['linkedObjects'];
+  for (var i = 0; i < linkedObjects.length; i++) {
+    this.$linkedObjects.append(
+      '<a href="' + linkedObjects[i]['url'] + '" class="btn btn-default '
+      + linkedObjects[i]['model'] + '">'
+      + linkedObjects[i]['label'] + '</a>'
+    );
+  }
 };
 
 Reader.prototype.limitPage = function (i) {

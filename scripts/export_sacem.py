@@ -1,7 +1,8 @@
 from django.utils.encoding import force_text
 import pandas
 
-from libretto.models import Source, Fichier
+from common.utils.file import FileAnalyzer
+from libretto.models import Source
 
 
 def get_row(source, oeuvre):
@@ -26,10 +27,11 @@ def get_row(source, oeuvre):
 
 
 def run():
-    sources = (Source.objects
-               .filter(fichiers__type__in=(Fichier.AUDIO, Fichier.VIDEO))
-               .distinct()
-               .prefetch_related('oeuvres__auteurs__individu', 'ensembles'))
+    sources = (
+        Source.objects.filter(type_fichier__in=(
+            FileAnalyzer.AUDIO, FileAnalyzer.VIDEO
+        )
+    ).distinct().prefetch_related('oeuvres__auteurs__individu', 'ensembles'))
 
     data = []
     for source in sources:

@@ -12,10 +12,6 @@
 {% endblock %}
 
 
-{% block microdata_attrs %}
-   itemscope itemtype="http://schema.org/Event"
-{% endblock %}
-
 {% block content %}
   {% include 'libretto/include/etat.html' with etat=object.etat %}
 

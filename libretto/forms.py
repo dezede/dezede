@@ -274,15 +274,18 @@ class SourceForm(ConstrainedModelForm):
     def clean(self):
         data = super(SourceForm, self).clean()
 
-        if not (data.get('titre') or data.get('lieu_conservation')
-                or data.get('cote')):
+        if not (
+            (data.get('parent') and data.get('position')) or data.get('titre')
+            or (data.get('lieu_conservation') and data.get('cote'))
+        ):
             msg = _('Vous devez remplir « Titre » ou '
-                    '« Lieu de conservation » et « Cote ».')
-            self.add_error('titre', msg)
-            if not data.get('lieu_conservation'):
-                self.add_error('lieu_conservation', msg)
-            if not data.get('cote'):
-                self.add_error('cote', msg)
+                    '« Lieu de conservation » et « Cote » '
+                    'ou « Parent » et « Position ».')
+            for field in (
+                'parent', 'position', 'titre', 'lieu_conservation', 'cote'
+            ):
+                if not data.get(field):
+                    self.add_error(field, msg)
 
         return data
 

@@ -9,9 +9,9 @@ from django.db.models import (
 from django.utils.encoding import force_text
 from django.utils.formats import date_format
 from django.utils.translation import ugettext_lazy as _
-from examens.utils import AnnotatedDiff
 
-from libretto.models import Fichier
+from common.utils.file import FileAnalyzer
+from examens.utils import AnnotatedDiff
 
 
 class Level(Model):
@@ -33,8 +33,10 @@ class Level(Model):
 
 
 def limit_choices_to_possible_sources():
-    return {'pk__in': (apps.get_model('libretto.Source').objects.exclude(
-                       transcription='').filter(fichiers__type=Fichier.IMAGE))}
+    return {'pk__in': (
+        apps.get_model('libretto.Source').objects.exclude(transcription='')
+        .filter(type_fichier=FileAnalyzer.IMAGE)
+    )}
 
 
 class LevelSource(Model):

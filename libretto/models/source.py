@@ -1,23 +1,32 @@
+import json
+from pathlib import Path
+
+from django.apps import apps
+from django.core.exceptions import ValidationError
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField,
-    CASCADE)
+    CASCADE, PositiveSmallIntegerField, FileField)
+from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
 from tinymce.models import HTMLField
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
-    SlugModel, PublishedManager, PublishedQuerySet, AncrageSpatioTemporel, Fichier)
+    SlugModel, PublishedManager, PublishedQuerySet, AncrageSpatioTemporel,
+)
 
 from common.utils.base import OrderedDefaultDict
+from common.utils.file import FileAnalyzer
 from common.utils.html import cite, href, small, hlp
 from common.utils.text import ex, str_list
 from typography.models import TypographicModel
 
 
 __all__ = (
-    'TypeDeSource', 'Source', 'SourceEvenement', 'SourceOeuvre',
-    'SourceIndividu', 'SourceEnsemble', 'SourceLieu', 'SourcePartie'
+    'TypeDeSource', 'Source', 'Audio', 'Video',
+    'SourceEvenement', 'SourceOeuvre', 'SourceIndividu', 'SourceEnsemble',
+    'SourceLieu', 'SourcePartie'
 )
 
 
@@ -54,38 +63,23 @@ class SourceQuerySet(PublishedQuerySet):
         return sources.items()
 
     def prefetch(self):
-        fichiers = Fichier._meta.db_table
-        sources = Source._meta.db_table
-        return self.select_related('type').extra(select={
-            '_has_others':
-            f'EXISTS (SELECT 1 FROM {fichiers} '
-            f'WHERE source_id = {sources}.id AND type = {Fichier.OTHER})',
-            '_has_images':
-            f'EXISTS (SELECT 1 FROM {fichiers} '
-            f'WHERE source_id = {sources}.id AND type = {Fichier.IMAGE})',
-            '_has_audios':
-            f'EXISTS (SELECT 1 FROM {fichiers} '
-            f'WHERE source_id = {sources}.id AND type = {Fichier.AUDIO})',
-            '_has_videos':
-            f'EXISTS (SELECT 1 FROM {fichiers} '
-            f'WHERE source_id = {sources}.id AND type = {Fichier.VIDEO})'}
-        ).only(
+        return self.select_related('type').only(
             'titre', 'numero', 'folio', 'page', 'lieu_conservation',
             'cote', 'url', 'transcription', 'date', 'date_approx',
-            'type__nom', 'type__nom_pluriel',
+            'type__nom', 'type__nom_pluriel', 'fichier', 'type_fichier',
         )
 
     def with_video(self):
-        return self.filter(fichiers__type=Fichier.VIDEO).distinct()
+        return self.filter(type_fichier=FileAnalyzer.VIDEO)
 
     def with_audio(self):
-        return self.filter(fichiers__type=Fichier.AUDIO).distinct()
+        return self.filter(type_fichier=FileAnalyzer.AUDIO)
 
     def with_image(self):
-        return self.filter(fichiers__type=Fichier.IMAGE).distinct()
+        return self.filter(type_fichier=FileAnalyzer.IMAGE)
 
     def with_other(self):
-        return self.filter(fichiers__type=Fichier.OTHER).distinct()
+        return self.filter(type_fichier=FileAnalyzer.OTHER)
 
     def with_text(self):
         return self.exclude(transcription='')
@@ -141,6 +135,12 @@ class SourceManager(PublishedManager):
 
 
 class Source(AutoriteModel):
+    parent = ForeignKey(
+        'self', related_name='children', verbose_name=_('parent'),
+        null=True, blank=True, on_delete=CASCADE,
+    )
+    position = PositiveSmallIntegerField(_('position'), null=True, blank=True)
+
     type = ForeignKey('TypeDeSource', related_name='sources',
                       help_text=ex(_('compte rendu')), verbose_name=_('type'),
                       on_delete=PROTECT)
@@ -162,10 +162,23 @@ class Source(AutoriteModel):
     url = URLField(_('URL'), blank=True,
                    help_text=_('Uniquement un permalien extérieur à Dezède.'))
 
-    transcription = HTMLField(_('transcription'), blank=True,
+    transcription = HTMLField(
+        _('transcription'), blank=True,
         help_text=_('Recopier la source ou un extrait en suivant les règles '
                     'définies dans '  # FIXME: Don’t hardcode the URL.
-                    '<a href="/examens/source">le didacticiel.</a>'))
+                    '<a href="/examens/source">le didacticiel.</a>'),
+    )
+
+    fichier = FileField(_('fichier'), upload_to='files/', blank=True)
+    TYPES = (
+        (FileAnalyzer.OTHER, _('autre')),
+        (FileAnalyzer.IMAGE, _('image')),
+        (FileAnalyzer.AUDIO, _('audio')),
+        (FileAnalyzer.VIDEO, _('vidéo')),
+    )
+    type_fichier = PositiveSmallIntegerField(
+        choices=TYPES, null=True, blank=True, editable=False, db_index=True,
+    )
 
     evenements = ManyToManyField(
         'Evenement', through='SourceEvenement', related_name='sources',
@@ -186,7 +199,7 @@ class Source(AutoriteModel):
 
     objects = SourceManager()
 
-    class Meta(object):
+    class Meta:
         verbose_name = _('source')
         verbose_name_plural = _('sources')
         ordering = ('date', 'titre', 'numero', 'page',
@@ -196,9 +209,22 @@ class Source(AutoriteModel):
     def __str__(self):
         return strip_tags(self.html(False))
 
+    @cached_property
+    def specific(self):
+        if self.type_fichier == FileAnalyzer.AUDIO:
+            return Audio.objects.get(pk=self.pk)
+        if self.type_fichier == FileAnalyzer.VIDEO:
+            return Video.objects.get(pk=self.pk)
+        return self
+
     @permalink
     def get_absolute_url(self):
         return 'source_permanent_detail', (self.pk,)
+
+    @permalink
+    def get_change_url(self):
+        meta = self.specific._meta
+        return f'admin:{meta.app_label}_{meta.model_name}_change', (self.pk,)
 
     def permalien(self):
         return self.get_absolute_url()
@@ -220,7 +246,7 @@ class Source(AutoriteModel):
     def p(self):
         return ugettext('p. %s') % self.page
 
-    def html(self, tags=True, pretty_title=False):
+    def html(self, tags=True, pretty_title=False, link=True):
         url = None if not tags else self.get_absolute_url()
         conservation = hlp(self.lieu_conservation,
                            ugettext('Lieu de conservation'), tags)
@@ -236,19 +262,26 @@ class Source(AutoriteModel):
                 l.append(self.no())
             if ancrage is not None:
                 l.append(ancrage)
-            if self.folio:
-                l.append(hlp(self.f(), ugettext('folio'), tags))
-            if self.page:
-                l.append(hlp(self.p(), ugettext('page'), tags))
             if self.lieu_conservation:
                 l[-1] += f' ({conservation})'
         else:
             l = [conservation]
             if ancrage is not None:
                 l.append(ancrage)
+        if self.folio:
+            l.append(hlp(self.f(), ugettext('folio'), tags))
+        if self.page:
+            l.append(hlp(self.p(), ugettext('page'), tags))
+        if self.parent is not None:
+            l.insert(
+                0, self.parent.html(tags=tags, pretty_title=pretty_title,
+                                    link=False)
+            )
         l = (l[0], small(str_list(l[1:]), tags=tags)) if pretty_title else l
         out = str_list(l)
-        return mark_safe(href(url, out, tags))
+        if link:
+            return mark_safe(href(url, out, tags))
+        return out
     html.short_description = _('rendu HTML')
     html.allow_tags = True
 
@@ -270,31 +303,46 @@ class Source(AutoriteModel):
     has_program.short_description = _('programme')
     has_program.boolean = True
 
-    def has_fichiers(self):
-        attrs = ('_has_others', '_has_images', '_has_audios', '_has_videos')
-        if all(hasattr(self, attr) for attr in attrs):
-            return any(getattr(self, attr) for attr in attrs)
-        return self.fichiers.exists()
+    def is_other(self):
+        return self.type_fichier == FileAnalyzer.OTHER
 
-    def has_others(self):
-        if hasattr(self, '_has_others'):
-            return self._has_others
-        return self.fichiers.others().exists()
+    def is_pdf(self):
+        return self.is_other() and self.fichier.name.endswith('.pdf')
+
+    def is_image(self):
+        return self.type_fichier == FileAnalyzer.IMAGE
+
+    def is_audio(self):
+        return self.type_fichier == FileAnalyzer.AUDIO
+
+    def is_video(self):
+        return self.type_fichier == FileAnalyzer.VIDEO
+
+    def has_children_images(self):
+        return self.children.filter(type_fichier=FileAnalyzer.IMAGE).exists()
 
     def has_images(self):
-        if hasattr(self, '_has_images'):
-            return self._has_images
-        return self.fichiers.images().exists()
+        return (
+            self.type_fichier == FileAnalyzer.IMAGE
+            or self.has_children_images()
+        )
 
-    def has_audios(self):
-        if hasattr(self, '_has_audios'):
-            return self._has_audios
-        return self.fichiers.audios().exists()
+    def has_fichiers(self):
+        return (
+            self.is_other() or self.is_audio() or self.is_video()
+            or self.has_images()
+        )
 
-    def has_videos(self):
-        if hasattr(self, '_has_videos'):
-            return self._has_videos
-        return self.fichiers.videos().exists()
+    @cached_property
+    def images(self):
+        images = []
+        if self.is_image():
+            images.append(self)
+        images.extend(
+            self.children.filter(type_fichier=FileAnalyzer.IMAGE)
+            .order_by('position', 'page')
+        )
+        return images
 
     def is_empty(self):
         return not (self.transcription or self.url or self.has_fichiers())
@@ -305,13 +353,13 @@ class Source(AutoriteModel):
     @property
     def data_types(self):
         data_types = []
-        if self.has_videos():
+        if self.is_video():
             data_types.append(self.VIDEO)
-        if self.has_audios():
+        if self.is_audio():
             data_types.append(self.AUDIO)
         if self.has_images():
             data_types.append(self.IMAGE)
-        if self.has_others():
+        if self.is_other():
             data_types.append(self.OTHER)
         if self.transcription:
             data_types.append(self.TEXT)
@@ -341,6 +389,183 @@ class Source(AutoriteModel):
     def icons(self):
         return ''.join([self.ICONS[data_type]
                         for data_type in self.data_types])
+
+    def update_media_info(self):
+        if self.fichier:
+            file_analyzer = FileAnalyzer(self, 'fichier')
+            self.type_fichier = file_analyzer.type
+        else:
+            self.type_fichier = None
+
+    def clean(self):
+        super().clean()
+        if not getattr(self, 'updated_media_info', False):
+            self.update_media_info()
+            self.updated_media_info = True
+
+    @cached_property
+    def first_page(self):
+        return self.children.order_by('position').first()
+
+    @cached_property
+    def prev_page(self):
+        if self.parent is not None:
+            return self.parent.children.exclude(pk=self.pk).filter(
+                position__lte=self.position,
+            ).order_by('-position').first()
+
+    @cached_property
+    def next_page(self):
+        if self.parent is not None:
+            return self.parent.children.exclude(pk=self.pk).filter(
+                position__gte=self.position,
+            ).order_by('position').first()
+
+    @property
+    def filename(self):
+        return Path(self.fichier.path).name
+
+    def get_linked_objects(self):
+        return [
+            *apps.get_model('libretto.Individu').objects.filter(
+                auteurs__source=self,
+            ).distinct() | self.individus.distinct(),
+            *self.evenements.distinct(),
+            *self.oeuvres.distinct(),
+            *self.ensembles.distinct(),
+            *self.lieux.distinct(),
+            *self.parties.distinct(),
+        ]
+
+    def get_linked_objects_json(self):
+        return json.dumps([
+            {
+                'url': obj.get_absolute_url(), 'label': str(obj),
+                'model': obj.class_name().lower(),
+            }
+            for obj in self.get_linked_objects()
+        ])
+
+
+class AudioVideoAbstract(Source):
+    fichier_ogg = FileField(
+        _('fichier (OGG)'), upload_to='files/ogg/', blank=True, editable=False,
+    )
+    fichier_mpeg = FileField(
+        _('fichier (MPEG)'), upload_to='files/mpeg/', blank=True,
+        editable=False,
+    )
+    extrait = FileField(_('extrait'), upload_to='files/extraits/', blank=True)
+    extrait_ogg = FileField(
+        _('extrait (OGG)'), upload_to='files/extraits/ogg/', blank=True,
+        editable=False,
+    )
+    extrait_mpeg = FileField(
+        _('extrait (MPEG)'), upload_to='files/extraits/mpeg/', blank=True,
+        editable=False,
+    )
+    format = CharField(_('format'), max_length=10, blank=True, editable=False)
+    format_extrait = CharField(
+        _('format de l’extrait'), max_length=10, blank=True, editable=False,
+    )
+    duree = PositiveSmallIntegerField(
+        _('durée (en secondes)'), null=True, blank=True,
+        editable=False,
+    )
+    duree_extrait = PositiveSmallIntegerField(
+        _('durée de l’extrait (en secondes)'), null=True, blank=True,
+        editable=False,
+    )
+
+    type_fichier_attendu = None
+    format_ogg_attendu = 'ogg'
+    format_mpeg_attendu = 'mpeg'
+
+    class Meta:
+        abstract = True
+
+    def update_media_info(self):
+        if not self.fichier and not self.extrait:
+            raise ValidationError(
+                _('Vous devez remplir au moins « fichier » ou « extrait ».')
+            )
+
+        if self.fichier:
+            file_analyzer = FileAnalyzer(self, 'fichier')
+            file_analyzer.validate(expected_type=self.type_fichier_attendu)
+
+            self.format = file_analyzer.format_name
+            self.duree = file_analyzer.avprobe_info.duration
+            if isinstance(self, Video):
+                self.largeur = file_analyzer.avprobe_info.width
+                self.hauteur = file_analyzer.avprobe_info.height
+
+            if self.fichier_ogg:
+                file_analyzer = FileAnalyzer(self, 'fichier_ogg')
+                file_analyzer.validate(
+                    expected_type=self.type_fichier_attendu,
+                    expected_format=self.format_ogg_attendu,
+                )
+            if self.fichier_mpeg:
+                file_analyzer = FileAnalyzer(self, 'fichier_mpeg')
+                file_analyzer.validate(
+                    expected_type=self.type_fichier_attendu,
+                    expected_format=self.format_mpeg_attendu,
+                )
+
+        if self.extrait:
+            file_analyzer = FileAnalyzer(self, 'extrait')
+            file_analyzer.validate(expected_type=self.type_fichier_attendu)
+
+            self.format_extrait = file_analyzer.format_name
+            self.duree_extrait = file_analyzer.avprobe_info.duration
+            if isinstance(self, Video):
+                self.largeur_extrait = file_analyzer.avprobe_info.width
+                self.hauteur_extrait = file_analyzer.avprobe_info.height
+
+            if self.extrait_ogg:
+                file_analyzer = FileAnalyzer(self, 'extrait_ogg')
+                file_analyzer.validate(
+                    expected_type=self.type_fichier_attendu,
+                    expected_format=self.format_ogg_attendu,
+                )
+            if self.extrait_mpeg:
+                file_analyzer = FileAnalyzer(self, 'extrait_mpeg')
+                file_analyzer.validate(
+                    expected_type=self.type_fichier_attendu,
+                    expected_format=self.format_mpeg_attendu,
+                )
+
+        self.type_fichier = self.type_fichier_attendu
+
+
+class Audio(AudioVideoAbstract):
+    type_fichier_attendu = FileAnalyzer.AUDIO
+    format_mpeg_attendu = 'mp3'
+
+    class Meta:
+        verbose_name = _('audio')
+        verbose_name_plural = _('audios')
+
+
+class Video(AudioVideoAbstract):
+    largeur = PositiveSmallIntegerField(_('largeur'), null=True, blank=True,
+                                        editable=False)
+    hauteur = PositiveSmallIntegerField(_('hauteur'), null=True, blank=True,
+                                        editable=False)
+    largeur_extrait = PositiveSmallIntegerField(
+        _('largeur de l’extrait'), null=True, blank=True, editable=False,
+    )
+    hauteur_extrait = PositiveSmallIntegerField(
+        _('hauteur de l’extrait'), null=True, blank=True, editable=False,
+    )
+
+    type_fichier_attendu = FileAnalyzer.VIDEO
+    format_mpeg_attendu = 'mp4'
+
+    class Meta:
+        verbose_name = _('vidéo')
+        verbose_name_plural = _('vidéos')
 
 
 class SourceEvenement(TypographicModel):

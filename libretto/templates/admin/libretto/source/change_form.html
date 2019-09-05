@@ -1,0 +1,44 @@
+{% extends 'admin/libretto/change_form.html' %}
+{% load i18n %}
+
+{% block object-tools-items %}
+  {% if original.is_pdf and not original.children.exists %}
+    <li>
+      <form action="{% url 'admin:libretto_source_changelist' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="split_pdf" />
+        <input type="hidden" name="_selected_action" value="{{ original.pk }}" />
+        <input type="submit" class="grp-button" value="{% trans 'Séparer le PDF' %}">
+      </form>
+    </li>
+  {% endif %}
+  {% if original.parent %}
+    <li>
+      <a href="{{ original.parent.get_change_url }}">
+        {% trans 'Parent' %}
+      </a>
+    </li>
+  {% endif %}
+  {% if original.first_page %}
+    <li>
+      <a href="{{ original.first_page.get_change_url }}">
+        {% trans 'Première page' %}
+      </a>
+    </li>
+  {% endif %}
+  {% if original.prev_page %}
+    <li>
+      <a href="{{ original.prev_page.get_change_url }}">
+        {% trans 'Page précédente' %}
+      </a>
+    </li>
+  {% endif %}
+  {% if original.next_page %}
+    <li>
+      <a href="{{ original.next_page.get_change_url }}">
+        {% trans 'Page suivante' %}
+      </a>
+    </li>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

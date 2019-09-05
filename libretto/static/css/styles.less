@@ -606,39 +606,40 @@ ul {
   h4 {
     margin-top: 0;
   }
-  .btn.disabled {
-    @base-result-background: hsv(0, 30%, 100%);
-    @colors-count: 9;
-    .apply-background (@spin) {
-      background: spin(@base-result-background, @spin * 360 / @colors-count);
-    }
-    &.evenement {
-      .apply-background(0);
-    }
-    &.individu {
-      .apply-background(1);
-    }
-    &.lieu {
-      .apply-background(2);
-    }
-    &.oeuvre {
-      .apply-background(3);
-    }
-    &.ensemble {
-      .apply-background(4);
-    }
-    &.source {
-      .apply-background(5);
-    }
-    &.partie {
-      .apply-background(6);
-    }
-    &.profession {
-      .apply-background(7);
-    }
-    &.dossierdevenements {
-      .apply-background(8);
-    }
+}
+
+.btn {
+  @base-result-background: hsv(0, 30%, 100%);
+  @colors-count: 9;
+  .apply-background (@spin) {
+    background: spin(@base-result-background, @spin * 360 / @colors-count);
+  }
+  &.evenement {
+    .apply-background(0);
+  }
+  &.individu {
+    .apply-background(1);
+  }
+  &.lieu {
+    .apply-background(2);
+  }
+  &.oeuvre {
+    .apply-background(3);
+  }
+  &.ensemble {
+    .apply-background(4);
+  }
+  &.source {
+    .apply-background(5);
+  }
+  &.partie {
+    .apply-background(6);
+  }
+  &.profession {
+    .apply-background(7);
+  }
+  &.dossierdevenements {
+    .apply-background(8);
   }
 }
 
@@ -995,13 +996,20 @@ form .results_on_deck {
 }
 
 .reader {
-  text-align: center;
+  display: flex;
+  flex-flow: column nowrap;
+  background: white;
+  border: 1px solid @panel-default-border;
+  border-radius: @border-radius-base;
+  padding-top: @grid-gutter-width / 2;
+  align-items: center;
   .user-select(none);
   .btn-group {
     margin-bottom: 5px;
   }
   .row {
     margin: 0;
+    width: 100%;
     .prev, .next, .spinner-container, .img-container {
       height: 700px;
       line-height: 700px;
@@ -1016,6 +1024,7 @@ form .results_on_deck {
       text-shadow: 0 0 40px white;
     }
     .img-container {
+      text-align: center;
       &.zoomed {
         overflow: scroll;
         img {
@@ -1039,6 +1048,23 @@ form .results_on_deck {
     margin: 8px auto @grid-gutter-width / 2;
     input[name='page'] {
       text-align: right;
+    }
+  }
+  .linked-objects {
+    display: flex;
+    flex-flow: row wrap;
+    margin-left: -1px;
+    margin-right: -1px;
+    margin-bottom: -1px;
+    width: calc(~'100% + 2px');
+    overflow: hidden;
+    .btn {
+      flex: 1 1 auto;
+      margin-left: 0;
+      border-radius: unset;
+      border-width: 1px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }
@@ -1073,6 +1099,10 @@ svg.diffusion {
       }
     }
   }
+}
+
+.autorite-tabs {
+  margin-bottom: @grid-gutter-width;
 }
 
 #visualisations {

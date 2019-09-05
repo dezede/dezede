@@ -1,0 +1,9 @@
+{% load static_grouper %}
+
+{% if fichier %}
+  <source src="{{ fichier.url }}" type="{{ mimetype }}" />
+  {% addstatic metadata %}
+    <meta property="og:audio" content="http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{{ fichier.url }}" />
+    <meta property="og:audio:type" content="{{ mimetype }}" />
+  {% endaddstatic %}
+{% endif %}

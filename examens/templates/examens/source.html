@@ -50,8 +50,8 @@
   {% endif %}
 
   <h3>{% trans 'Source à transcrire' %}</h3>
-  {% for fichier in source.fichiers.group_by_type.images %}
-    <img src="{{ fichier.fichier.url }}" />
+  {% for image_source in source.images %}
+    <img src="{{ image_source.fichier.url }}" />
   {% endfor %}
 
   <h3>{% trans 'Transcription' %}</h3>

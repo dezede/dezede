@@ -315,7 +315,7 @@ def restore_saved_db():
     local(f'sudo -u postgres pg_restore -e -d {DB_NAME} '
           f'-j 5 "{Path(LOCAL_BACKUP).resolve()}"')
     local(f'sudo -u postgres psql dezede '
-          f'-c "GRANT USAGE ON SCHEMA public TO dezede;"')
+          f'-c "ALTER SCHEMA public OWNER TO dezede;"')
     invalidate_cachalot()
 
 
