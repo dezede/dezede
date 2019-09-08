@@ -1005,6 +1005,9 @@ form .results_on_deck {
   align-items: center;
   text-align: center;
   .user-select(none);
+  + * {
+    margin-top: @grid-gutter-width;
+  }
   .btn-group {
     margin-bottom: 5px;
   }
@@ -1093,8 +1096,10 @@ video {
       flex-flow: column nowrap;
       justify-content: center;
       flex: 1 0 auto;
+      min-height: @grid-gutter-width * 2;
+      padding: 0;
       blockquote {
-        margin-bottom: 0;
+        margin: @grid-gutter-width / 2;
         color: @text-color;
       }
       small {
@@ -1106,8 +1111,8 @@ video {
 }
 
 .full-width-image {
-  padding-bottom: percentage(700 / 950);  // Height / width ratio of the image
-  background-size: contain;
+  padding-bottom: 100%;  // Height / width ratio of the image
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
 }

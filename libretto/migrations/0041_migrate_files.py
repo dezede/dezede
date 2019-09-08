@@ -15,17 +15,12 @@ VIDEO = 3
 
 def migrate_files(apps, schema_editor):
     Fichier = apps.get_model('libretto.Fichier')
-    TypeDeSource = apps.get_model('libretto.TypeDeSource')
     Source = apps.get_model('libretto.Source')
     Audio = apps.get_model('libretto.Audio')
     Video = apps.get_model('libretto.Video')
     Etat = apps.get_model('libretto.Etat')
 
     nouveau = Etat.objects.get_or_create(nom='nouveau')[0]
-
-    TypeDeSource.get_slug = lambda o: o.nom
-
-    page_type = TypeDeSource.objects.get_or_create(nom='page')[0]
 
     for source in tqdm(Source.objects.filter(
         fichiers__isnull=False
@@ -52,7 +47,7 @@ def migrate_files(apps, schema_editor):
             else:
                 Source.objects.bulk_create([
                     Source(
-                        parent=source, position=position, type=page_type,
+                        parent=source, position=position, type=source.type,
                         folio=fichier.folio, page=fichier.page or position,
                         fichier=fichier.fichier, type_fichier=IMAGE,
                         etat=nouveau,

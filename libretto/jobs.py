@@ -52,15 +52,15 @@ def split_pdf(source_pk, user_pk):
         assert not source.children.exists()
         f = source.fichier
         num_pages = get_pdf_num_pages(f.path)
-        page_type = TypeDeSource.objects.get_or_create(nom='page')[0]
 
         with TemporaryDirectory() as tmp:
             for i in trange(num_pages):
                 image_path = Path(tmp) / f'{Path(f.name).stem}_{i}.jpg'
                 create_image_from_pdf(f.path, i, str(image_path))
                 cf = ContentFile(image_path.read_bytes(), image_path.name)
+                page = i + 1
                 Source.objects.create(
-                    parent=source, position=i+1, type=page_type,
+                    parent=source, position=page, page=page, type=source.type,
                     fichier=cf, type_fichier=FileAnalyzer.IMAGE,
                 )
     finally:

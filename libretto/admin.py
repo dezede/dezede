@@ -141,7 +141,7 @@ EventHasProgramListFilter = build_boolean_list_filter(
     Q(programme__isnull=False) | Q(relache=True))
 
 SourceHasParentListFilter = build_boolean_list_filter(
-    _('parent'), 'has_parent', filter=Q(parent__isnull=False),
+    _('a un parent'), 'has_parent', filter=Q(parent__isnull=False),
 )
 
 SourceHasEventsListFilter = build_boolean_list_filter(
@@ -1027,6 +1027,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     )
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'f', 'i', 'i',
                                    'i', 'i', 'i', 'i', 'i', 'f')
+    admin_fields = AutoriteAdmin.admin_fields + ('est_promue',)
 
     def get_queryset(self, request):
         qs = super(SourceAdmin, self).get_queryset(request)
@@ -1076,7 +1077,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
             ', ',
             '<a href="{}">{}</a>',
             [(child.get_change_url(), child.position)
-             for child in instance.children.all()]
+             for child in instance.children.order_by('position')]
         )
     children_links.short_description = _('Enfants')
 

@@ -283,7 +283,7 @@ class Source(AutoriteModel):
         if self.parent is not None:
             l.insert(
                 0, self.parent.html(tags=tags, pretty_title=pretty_title,
-                                    link=False)
+                                    link=pretty_title)
             )
         l = (l[0], small(str_list(l[1:]), tags=tags)) if pretty_title else l
         out = str_list(l)
@@ -294,7 +294,7 @@ class Source(AutoriteModel):
     html.allow_tags = True
 
     def pretty_title(self):
-        return self.html(pretty_title=True)
+        return self.html(pretty_title=True, link=False)
 
     def has_events(self):
         if hasattr(self, '_has_events'):
@@ -453,6 +453,36 @@ class Source(AutoriteModel):
             }
             for obj in self.get_linked_objects()
         ])
+
+    def nested_evenements(self):
+        return apps.get_model('libretto.Evenement').objects.filter(
+            sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
+        )
+
+    def nested_oeuvres(self):
+        return apps.get_model('libretto.Oeuvre').objects.filter(
+            sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
+        )
+
+    def nested_individus(self):
+        return apps.get_model('libretto.Individu').objects.filter(
+            sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
+        )
+
+    def nested_ensembles(self):
+        return apps.get_model('libretto.Ensemble').objects.filter(
+            sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
+        )
+
+    def nested_lieux(self):
+        return apps.get_model('libretto.Lieu').objects.filter(
+            sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
+        )
+
+    def nested_parties(self):
+        return apps.get_model('libretto.Partie').objects.filter(
+            sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
+        )
 
 
 class AudioVideoAbstract(Source):

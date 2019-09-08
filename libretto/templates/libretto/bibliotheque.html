@@ -10,12 +10,12 @@
 {% block content %}
   <div class="row bibliotheque">
     {% for source in source_list %}
-      <div class="col-xs-12 col-md-6">
-        <a class="panel panel-default" href="{{ source.get_absolute_url }}">
+      <div class="col-xs-12 col-md-6 col-lg-4">
+        <a class="panel panel-default" href="{{ source.get_absolute_url }}" title="{{ source }}">
           <div class="panel-heading">{{ source }}</div>
           <div class="panel-body">
             {% if source.images %}
-              <div class="full-width-image" style="background-image: url('{% thumbnail source.images.0.fichier 'small' %}');"></div>
+              <div class="full-width-image" style="background-image: url('{% thumbnail source.images.0.fichier 718x718 crop detail %}');"></div>
             {% elif source.transcription %}
               <blockquote>
                 {{ source.transcription|truncatewords_html:100|striptags }}
