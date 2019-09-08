@@ -1,5 +1,4 @@
 import json
-from collections import namedtuple
 from subprocess import check_output, PIPE, CalledProcessError
 
 from django.core.exceptions import ValidationError
@@ -8,11 +7,15 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
 
-AvProbeInfo = namedtuple(
-    'MediaInfo',
-    ['type', 'format', 'width', 'height', 'duration'],
-    defaults=[None, None, None, None],
-)
+class AvProbeInfo:
+    def __init__(
+        self, type, format=None, width=None, height=None, duration=None
+    ):
+        self.type = type
+        self.format = format
+        self.width = width
+        self.height = height
+        self.duration = duration
 
 
 class FileAnalyzer:
