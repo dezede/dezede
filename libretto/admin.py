@@ -1018,7 +1018,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
             'classes': ('grp-collapse grp-closed',),
             'fields': ('transcription',),
         }),
-        (_('Fichier'), {
+        (None, {
             'fields': ('fichier',),
         }),
         (None, {
