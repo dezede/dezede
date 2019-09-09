@@ -340,7 +340,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-COMPRESS_ENABLED = False
+COMPRESS_ENABLED = True
 COMPRESS_OUTPUT_DIR = ''
 COMPRESS_CSS_FILTERS = (
     'compressor.filters.css_default.CssAbsoluteFilter',
