@@ -59,7 +59,7 @@ server {
     frame-src 'self' https://docs.google.com;
     object-src 'self'";
 
-  client_max_body_size 50M;
+  client_max_body_size 1000M;
 
   # Parameters to avoid DDOS attacks on static files
   limit_conn dezede_static_conn 100;
