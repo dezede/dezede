@@ -8,28 +8,35 @@ from django.core.files.base import ContentFile
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from django_rq import job
+from easy_thumbnails.alias import aliases
+from easy_thumbnails.files import generate_all_aliases, get_thumbnailer
 from tqdm import trange
 
 from accounts.models import HierarchicUser
 from common.utils.cache import unlock_user
 from common.utils.export import send_pdf, send_export
 from common.utils.file import FileAnalyzer
-from libretto.export import EvenementExporter, Source, TypeDeSource
+from libretto.export import EvenementExporter, Source
 from libretto.models import Evenement
 
 
-def create_image_from_pdf(pdf_path, page_index, image_path):
+def create_image_from_pdf(pdf_path, page_index, image_path: Path):
+    assert image_path.suffix == '.jpg'
     p = Popen([
-        'gm', 'convert',
-        '-density', '300',  # Utilise une densité de 300 dpi pour assurer une
-                            # haute qualité.
-        '-resize', '3000x3000>',  # S’assure que la taille de l’image finale
-                                  # ne dépasse pas 3000 pixels
-                                  # de largeur ou hauteur.
-        '-define', 'pdf:use-cropbox=true',  # Utilise la CropBox du PDF pour
-                                            # déterminer les dimensions
-                                            # de la partie affichée de la page.
-        f'{pdf_path}[{page_index}]', image_path])
+        'pdftoppm',
+        '-r', '300',  # Utilise une densité de 300 dpi pour assurer une
+                      # haute qualité.
+        '-scale-to', '3000',  # S’assure que la taille de l’image finale ne
+                              # dépasse pas 3000 pixels de largeur ou hauteur.
+        '-cropbox',  # Utilise la CropBox du PDF pour déterminer les dimensions
+                     # de la partie affichée de la page.
+        '-jpeg',
+        # Progressive JPEGs reduce the size while making a nicer browser load.
+        '-jpegopt', 'quality=85,progressive=y',
+        # Only the current page.
+        '-f', str(page_index + 1), '-l', str(page_index + 1), '-singlefile',
+        pdf_path, str(image_path.with_suffix('')),
+    ])
     p.wait()
 
 
@@ -56,13 +63,16 @@ def split_pdf(source_pk, user_pk):
         with TemporaryDirectory() as tmp:
             for i in trange(num_pages):
                 image_path = Path(tmp) / f'{Path(f.name).stem}_{i}.jpg'
-                create_image_from_pdf(f.path, i, str(image_path))
+                create_image_from_pdf(f.path, i, image_path)
                 cf = ContentFile(image_path.read_bytes(), image_path.name)
                 page = i + 1
-                Source.objects.create(
+                source_page = Source.objects.create(
                     parent=source, position=page, page=page, type=source.type,
                     fichier=cf, type_fichier=FileAnalyzer.IMAGE,
                 )
+                thumbnailer = get_thumbnailer(source_page.fichier)
+                thumbnailer.get_thumbnail(aliases.get('small'))
+                thumbnailer.get_thumbnail(aliases.get('medium'))
     finally:
         unlock_user(HierarchicUser.objects.get(pk=user_pk))
 

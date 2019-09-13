@@ -951,7 +951,7 @@ def split_pdf(modeladmin, request, queryset):
         messages.error(
             request,
             _('Une séparation de PDF de votre part est déjà en cours. '
-              'Veuillez attendre la fin de celle-ci avant'
+              'Veuillez attendre la fin de celle-ci avant '
               'd’en lancer une autre.'))
         return
 

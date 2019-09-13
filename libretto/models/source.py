@@ -5,7 +5,7 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField,
-    CASCADE, PositiveSmallIntegerField, FileField, BooleanField)
+    CASCADE, PositiveSmallIntegerField, FileField, BooleanField, Prefetch)
 from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -342,14 +342,61 @@ class Source(AutoriteModel):
         )
 
     @cached_property
-    def images(self):
+    def images(self, prefetch=True):
         images = []
         if self.is_image():
             images.append(self)
-        images.extend(
-            self.children.filter(type_fichier=FileAnalyzer.IMAGE)
-            .order_by('position', 'page')
-        )
+
+        children_images = self.children.filter(
+            type_fichier=FileAnalyzer.IMAGE
+        ).order_by('position', 'page')
+        if prefetch:
+            children_images = children_images.prefetch_related(
+                'auteurs',
+                Prefetch(
+                    'individus',
+                    queryset=apps.get_model(
+                        'libretto', 'Individu'
+                    ).objects.distinct(),
+                    to_attr='linked_individus',
+                ),
+                Prefetch(
+                    'evenements',
+                    queryset=apps.get_model(
+                        'libretto', 'Evenement'
+                    ).objects.distinct(),
+                    to_attr='linked_evenements',
+                ),
+                Prefetch(
+                    'oeuvres',
+                    queryset=apps.get_model(
+                        'libretto', 'Oeuvre'
+                    ).objects.distinct(),
+                    to_attr='linked_oeuvres',
+                ),
+                Prefetch(
+                    'ensembles',
+                    queryset=apps.get_model(
+                        'libretto', 'Ensemble'
+                    ).objects.distinct(),
+                    to_attr='linked_ensembles',
+                ),
+                Prefetch(
+                    'lieux',
+                    queryset=apps.get_model(
+                        'libretto', 'Lieu'
+                    ).objects.distinct(),
+                    to_attr='linked_lieux',
+                ),
+                Prefetch(
+                    'parties',
+                    queryset=apps.get_model(
+                        'libretto', 'Partie'
+                    ).objects.distinct(),
+                    to_attr='linked_parties',
+                ),
+            )
+        images.extend(children_images)
         return images
 
     def is_empty(self):
@@ -433,16 +480,39 @@ class Source(AutoriteModel):
     def filename(self):
         return Path(self.fichier.path).name
 
+    @cached_property
+    def linked_individus(self):
+        return self.individus.distinct()
+
+    @cached_property
+    def linked_evenements(self):
+        return self.evenements.distinct()
+
+    @cached_property
+    def linked_oeuvres(self):
+        return self.oeuvres.distinct()
+
+    @cached_property
+    def linked_ensembles(self):
+        return self.ensembles.distinct()
+
+    @cached_property
+    def linked_lieux(self):
+        return self.lieux.distinct()
+
+    @cached_property
+    def linked_parties(self):
+        return self.parties.distinct()
+
     def get_linked_objects(self):
         return [
-            *apps.get_model('libretto.Individu').objects.filter(
-                auteurs__source=self,
-            ).distinct() | self.individus.distinct(),
-            *self.evenements.distinct(),
-            *self.oeuvres.distinct(),
-            *self.ensembles.distinct(),
-            *self.lieux.distinct(),
-            *self.parties.distinct(),
+            *self.auteurs.all(),
+            *self.linked_individus,
+            *self.linked_evenements,
+            *self.linked_oeuvres,
+            *self.linked_ensembles,
+            *self.linked_lieux,
+            *self.linked_parties,
         ]
 
     def get_linked_objects_json(self):
