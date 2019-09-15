@@ -527,32 +527,32 @@ class Source(AutoriteModel):
     def nested_evenements(self):
         return apps.get_model('libretto.Evenement').objects.filter(
             sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
-        )
+        ).distinct()
 
     def nested_oeuvres(self):
         return apps.get_model('libretto.Oeuvre').objects.filter(
             sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
-        )
+        ).distinct()
 
     def nested_individus(self):
         return apps.get_model('libretto.Individu').objects.filter(
             sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
-        )
+        ).distinct()
 
     def nested_ensembles(self):
         return apps.get_model('libretto.Ensemble').objects.filter(
             sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
-        )
+        ).distinct()
 
     def nested_lieux(self):
         return apps.get_model('libretto.Lieu').objects.filter(
             sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
-        )
+        ).distinct()
 
     def nested_parties(self):
         return apps.get_model('libretto.Partie').objects.filter(
             sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
-        )
+        ).distinct()
 
 
 class AudioVideoAbstract(Source):

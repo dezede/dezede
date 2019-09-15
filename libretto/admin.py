@@ -961,7 +961,7 @@ def split_pdf(modeladmin, request, queryset):
     messages.info(
         request,
         _('La séparation de PDF est en cours. '
-          'Revenez consulter le·s source·s dans quelques minutes.'))
+          'Revenez consulter les sources dans quelques minutes.'))
 split_pdf.short_description = _('Séparer le PDF')
 
 
