@@ -121,6 +121,8 @@ class FileAnalyzer:
                     duration=duration,
                 )
 
+        return AvProbeInfo(self.OTHER)
+
     @property
     def format_name(self):
         if self.avprobe_info.format is not None:
