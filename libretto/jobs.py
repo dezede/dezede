@@ -69,6 +69,7 @@ def split_pdf(source_pk, user_pk):
                 source_page = Source.objects.create(
                     parent=source, position=page, page=page, type=source.type,
                     fichier=cf, type_fichier=FileAnalyzer.IMAGE,
+                    owner=source.owner,
                 )
                 thumbnailer = get_thumbnailer(source_page.fichier)
                 thumbnailer.get_thumbnail(aliases.get('small'))
