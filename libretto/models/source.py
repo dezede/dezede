@@ -210,8 +210,12 @@ class Source(AutoriteModel):
     class Meta:
         verbose_name = _('source')
         verbose_name_plural = _('sources')
-        ordering = ('date', 'titre', 'numero', 'page',
-                    'lieu_conservation', 'cote')
+        ordering = (
+            'date', 'titre', 'numero',
+            'parent__date', 'parent__titre', 'parent__numero',
+            'position', 'page',
+            'lieu_conservation', 'cote',
+        )
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     def __str__(self):
