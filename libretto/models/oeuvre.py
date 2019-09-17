@@ -397,8 +397,9 @@ class Auteur(CommonModel):
     ensemble = ForeignKey(
         'Ensemble', related_name='auteurs', null=True, blank=True,
         verbose_name=_('ensemble'), on_delete=PROTECT)
-    profession = ForeignKey('Profession', related_name='auteurs',
-                            verbose_name=_('profession'), on_delete=PROTECT)
+    profession = ForeignKey(
+        'Profession', related_name='auteurs', null=True, blank=True,
+        verbose_name=_('profession'), on_delete=PROTECT)
 
     objects = AuteurManager()
 
@@ -419,11 +420,15 @@ class Auteur(CommonModel):
     html.allow_tags = True
 
     def clean(self):
+        if self.oeuvre is not None and self.profession is None:
+            raise ValidationError({
+                'profession': ugettext('This field is required.')
+            })
         if self.individu_id is not None and self.ensemble_id is not None:
             msg = ugettext('« Individu » et « Ensemble » '
                            'ne peuvent être saisis sur la même ligne.')
             raise ValidationError({'individu': msg, 'ensemble': msg})
-        if self.individu is not None:
+        if self.individu is not None and self.profession is not None:
             try:
                 self.individu.professions.add(self.profession)
             except (Individu.DoesNotExist,
