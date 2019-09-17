@@ -444,6 +444,10 @@ class Auteur(CommonModel):
     def __str__(self):
         return self.html(tags=False)
 
+    @permalink
+    def get_absolute_url(self):
+        return 'individu_detail', (self.individu_id,)
+
 
 class OeuvreQuerySet(CommonTreeQuerySet, PublishedQuerySet):
     def html(self, *args, **kwargs):
