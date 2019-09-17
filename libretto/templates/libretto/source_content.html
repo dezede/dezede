@@ -55,9 +55,9 @@
 
       {% if source.is_other %}
         <li>
-          <a href="{{ source.fichier.url }}">
-            <i class="fa fa-paperclip"></i>
-            {{ source.filename }} ({{ source.fichier.size|filesizeformat }})
+          <a href="{{ source.fichier.url }}" class="btn btn-default">
+            <i class="fa fa-download fa-fw"></i>
+            {% trans 'Télécharger' %} ({{ source.fichier.size|filesizeformat }})
           </a>
         </li>
       {% endif %}
