@@ -17,6 +17,7 @@ class GrantToAdmin(DetailView):
     template_name = 'accounts/grant_to_admin.html'
 
     def grant_user(self, user):
+        user.is_active = True
         user.is_staff = True
         user.save()
         site_url = 'https://' + Site.objects.get_current(self.request).domain
