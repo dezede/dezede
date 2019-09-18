@@ -1,9 +1,12 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from accounts.models import HierarchicUser
 from ...models import *
 from ...views import PublishedMixin
-from .serializers import (IndividuSerializer, EnsembleSerializer,
-                          LieuSerializer, OeuvreSerializer)
+from .serializers import (
+    IndividuSerializer, EnsembleSerializer, LieuSerializer, OeuvreSerializer,
+    SourceSerializer, EvenementSerializer, PartieSerializer, UserSerializer,
+)
 
 
 class IndividuViewSet(PublishedMixin, ReadOnlyModelViewSet):
@@ -29,3 +32,27 @@ class OeuvreViewSet(PublishedMixin, ReadOnlyModelViewSet):
     queryset = model.objects.prefetch_related('extrait_de',
                                               'auteurs__profession')
     serializer_class = OeuvreSerializer
+
+
+class SourceViewSet(PublishedMixin, ReadOnlyModelViewSet):
+    model = Source
+    queryset = Source.objects.all()
+    serializer_class = SourceSerializer
+
+
+class EvenementViewSet(PublishedMixin, ReadOnlyModelViewSet):
+    model = Evenement
+    queryset = Evenement.objects.all()
+    serializer_class = EvenementSerializer
+
+
+class PartieViewSet(PublishedMixin, ReadOnlyModelViewSet):
+    model = Partie
+    queryset = Partie.objects.all()
+    serializer_class = PartieSerializer
+
+
+class UserViewSet(ReadOnlyModelViewSet):
+    model = HierarchicUser
+    queryset = HierarchicUser.objects.all()
+    serializer_class = UserSerializer

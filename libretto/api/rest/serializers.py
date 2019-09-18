@@ -1,12 +1,35 @@
 from collections import OrderedDict
 
-from rest_framework.fields import ReadOnlyField, Field
+from rest_framework.fields import ReadOnlyField, Field, SerializerMethodField
 from rest_framework.relations import (
-    HyperlinkedIdentityField, StringRelatedField)
+    HyperlinkedIdentityField, StringRelatedField, PrimaryKeyRelatedField
+)
 from rest_framework.reverse import reverse
-from rest_framework.serializers import HyperlinkedModelSerializer
+from rest_framework.serializers import (
+    HyperlinkedModelSerializer, ModelSerializer,
+)
 
+from accounts.models import HierarchicUser
 from ...models import *
+
+
+class CommonSerializer(ModelSerializer):
+    str = ReadOnlyField(source='__str__')
+    edit_url = SerializerMethodField()
+    delete_url = SerializerMethodField()
+
+    def _get_base_admin_url(self, obj):
+        return f'admin:{obj._meta.app_label}_{obj._meta.model_name}'
+
+    def get_edit_url(self, obj):
+        return reverse(
+            f'{self._get_base_admin_url(obj)}_change', args=[obj.pk]
+        )
+
+    def get_delete_url(self, obj):
+        return reverse(
+            f'{self._get_base_admin_url(obj)}_delete', args=[obj.pk],
+        )
 
 
 class AncrageSpatioTemporelSerializer(Field):
@@ -25,7 +48,7 @@ class IndividuSerializer(HyperlinkedModelSerializer):
     str = ReadOnlyField(source='__str__')
     naissance = AncrageSpatioTemporelSerializer()
     deces = AncrageSpatioTemporelSerializer()
-    professions = StringRelatedField(many=True)
+    professions = PrimaryKeyRelatedField(many=True, read_only=True)
     front_url = HyperlinkedIdentityField(view_name='individu_detail',
                                          lookup_field='slug')
 
@@ -91,4 +114,59 @@ class OeuvreSerializer(HyperlinkedModelSerializer):
             'titre_significatif', 'titre_non_significatif', 'description',
             'genre', 'auteurs', 'creation',
             'front_url', 'url'
+        )
+
+
+class SourceSerializer(CommonSerializer):
+    children = SerializerMethodField()
+    small_thumbnail = SerializerMethodField()
+    medium_thumbnail = SerializerMethodField()
+    front_url = HyperlinkedIdentityField(view_name='source_permanent_detail',
+                                         lookup_field='pk')
+
+    class Meta:
+        model = Source
+        exclude = ()
+
+    def get_children(self, obj):
+        return list(
+            obj.children.order_by('position').values_list('pk', flat=True)
+        )
+
+    def get_small_thumbnail(self, obj):
+        return self.context['request'].build_absolute_uri(obj.small_thumbnail)
+
+    def get_medium_thumbnail(self, obj):
+        return self.context['request'].build_absolute_uri(obj.medium_thumbnail)
+
+
+class EvenementSerializer(CommonSerializer):
+    front_url = HyperlinkedIdentityField(
+        view_name='evenement_pk', lookup_field='pk',
+    )
+
+    class Meta:
+        model = Evenement
+        exclude = ()
+
+
+class PartieSerializer(CommonSerializer):
+    front_url = HyperlinkedIdentityField(view_name='partie_detail',
+                                         lookup_field='slug')
+
+    class Meta:
+        model = Partie
+        exclude = ()
+
+
+class UserSerializer(CommonSerializer):
+    front_url = HyperlinkedIdentityField(view_name='user_profile',
+                                         lookup_field='username')
+
+    class Meta:
+        model = HierarchicUser
+        exclude = (
+            'password', 'email', 'last_login', 'date_joined', 'show_email',
+            'willing_to_be_mentor', 'is_superuser', 'is_staff', 'is_active',
+            'groups', 'user_permissions',
         )

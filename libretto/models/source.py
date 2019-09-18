@@ -10,6 +10,8 @@ from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
+from easy_thumbnails.alias import aliases
+from easy_thumbnails.files import get_thumbnailer
 from tinymce.models import HTMLField
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
@@ -351,56 +353,10 @@ class Source(AutoriteModel):
         if self.is_image():
             images.append(self)
 
-        children_images = self.children.filter(
-            type_fichier=FileAnalyzer.IMAGE
-        ).order_by('position', 'page')
-        if prefetch:
-            children_images = children_images.prefetch_related(
-                'auteurs',
-                Prefetch(
-                    'individus',
-                    queryset=apps.get_model(
-                        'libretto', 'Individu'
-                    ).objects.distinct(),
-                    to_attr='linked_individus',
-                ),
-                Prefetch(
-                    'evenements',
-                    queryset=apps.get_model(
-                        'libretto', 'Evenement'
-                    ).objects.distinct(),
-                    to_attr='linked_evenements',
-                ),
-                Prefetch(
-                    'oeuvres',
-                    queryset=apps.get_model(
-                        'libretto', 'Oeuvre'
-                    ).objects.distinct(),
-                    to_attr='linked_oeuvres',
-                ),
-                Prefetch(
-                    'ensembles',
-                    queryset=apps.get_model(
-                        'libretto', 'Ensemble'
-                    ).objects.distinct(),
-                    to_attr='linked_ensembles',
-                ),
-                Prefetch(
-                    'lieux',
-                    queryset=apps.get_model(
-                        'libretto', 'Lieu'
-                    ).objects.distinct(),
-                    to_attr='linked_lieux',
-                ),
-                Prefetch(
-                    'parties',
-                    queryset=apps.get_model(
-                        'libretto', 'Partie'
-                    ).objects.distinct(),
-                    to_attr='linked_parties',
-                ),
-            )
-        images.extend(children_images)
+        images.extend(
+            self.children.filter(
+                type_fichier=FileAnalyzer.IMAGE
+            ).order_by('position', 'page'))
         return images
 
     def is_empty(self):
@@ -557,6 +513,18 @@ class Source(AutoriteModel):
         return apps.get_model('libretto.Partie').objects.filter(
             sources__in=self.children.all() | Source.objects.filter(pk=self.pk)
         ).distinct()
+
+    @property
+    def small_thumbnail(self):
+        if self.is_image():
+            thumbnailer = get_thumbnailer(self.fichier)
+            return thumbnailer.get_thumbnail(aliases.get('small')).url
+
+    @property
+    def medium_thumbnail(self):
+        if self.is_image():
+            thumbnailer = get_thumbnailer(self.fichier)
+            return thumbnailer.get_thumbnail(aliases.get('medium')).url
 
 
 class AudioVideoAbstract(Source):

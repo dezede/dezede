@@ -8,8 +8,6 @@ from django.core.files.base import ContentFile
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 from django_rq import job
-from easy_thumbnails.alias import aliases
-from easy_thumbnails.files import generate_all_aliases, get_thumbnailer
 from tqdm import trange
 
 from accounts.models import HierarchicUser
@@ -71,9 +69,9 @@ def split_pdf(source_pk, user_pk):
                     fichier=cf, type_fichier=FileAnalyzer.IMAGE,
                     owner=source.owner,
                 )
-                thumbnailer = get_thumbnailer(source_page.fichier)
-                thumbnailer.get_thumbnail(aliases.get('small'))
-                thumbnailer.get_thumbnail(aliases.get('medium'))
+                # Generates thumbnails.
+                source_page.small_thumbnail
+                source_page.medium_thumbnail
     finally:
         unlock_user(HierarchicUser.objects.get(pk=user_pk))
 
