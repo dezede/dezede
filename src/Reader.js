@@ -34,9 +34,13 @@ const styles = theme => ({
   imageSubContainer: {
     position: 'relative',
     height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   unzoomedImage: {
     cursor: 'zoom-in',
+    maxWidth: '100%',
   },
   cropper: {
     display: 'none',
