@@ -1,4 +1,4 @@
-import {observable} from "mobx";
+import {computed, observable} from "mobx";
 
 import Model from './Model';
 import Individu from "./Individu";
@@ -54,24 +54,42 @@ class Source extends Model {
     return this.individus.map(id => Individu.getById(id));
   }
 
-  get evenementsList() {
-    return this.evenements.map(id => Evenement.getById(id));
-  }
-
   get oeuvresList() {
     return this.oeuvres.map(id => Oeuvre.getById(id));
   }
 
-  get ensemblesList() {
-    return this.ensembles.map(id => Ensemble.getById(id));
+  get partiesList() {
+    return this.parties.map(id => Partie.getById(id));
   }
 
   get lieuxList() {
     return this.lieux.map(id => Lieu.getById(id));
   }
 
-  get partiesList() {
-    return this.parties.map(id => Partie.getById(id));
+  get evenementsList() {
+    return this.evenements.map(id => Evenement.getById(id));
+  }
+
+  get ensemblesList() {
+    return this.ensembles.map(id => Ensemble.getById(id));
+  }
+
+  @computed get linkedObjects() {
+    return [
+      ...this.individusList,
+      ...this.oeuvresList,
+      ...this.partiesList,
+      ...this.lieuxList,
+      ...this.evenementsList,
+      ...this.ensemblesList,
+    ];
+  }
+
+  @computed get fullyLoaded() {
+    return (
+      this.loaded
+      && this.linkedObjects.every(instance => instance.loaded)
+    );
   }
 
   get nomFichier() {

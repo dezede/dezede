@@ -41,6 +41,7 @@ const styles = theme => ({
   unzoomedImage: {
     cursor: 'zoom-in',
     maxWidth: '100%',
+    userSelect: 'none',
   },
   cropper: {
     display: 'none',
@@ -121,32 +122,10 @@ class Reader extends React.Component {
     return this.position >= this.numPages - 1;
   }
 
-  getLinkedObjects(child) {
-    return [
-      ...child.individusList,
-      ...child.oeuvresList,
-      ...child.evenementsList,
-      ...child.ensemblesList,
-      ...child.lieuxList,
-      ...child.partiesList,
-    ];
-  }
-
-  get linkedObjects() {
-    return this.getLinkedObjects(this.child);
-  }
-
-  @computed get fullyLoaded() {
-    return (
-      this.child.loaded
-      && this.linkedObjects.every(instance => instance.loaded)
-    );
-  }
-
   prefetch = position => {
     const child = this.source.getChild(position);
     if (child) {
-      this.getLinkedObjects(child);
+      child.linkedObjects;
     }
   };
 
@@ -333,7 +312,7 @@ class Reader extends React.Component {
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}>
             {
-              this.fullyLoaded
+              this.child.fullyLoaded
                 ? imageContent
                 : <Skeleton variant="rect"
                             className={classes.imageSubContainer} />
@@ -342,8 +321,8 @@ class Reader extends React.Component {
         <Grid item>
           <Grid container spacing={2} justify="center">
             {
-              this.fullyLoaded
-                ? this.linkedObjects.map(instance => {
+              this.child.fullyLoaded
+                ? this.child.linkedObjects.map(instance => {
                     if (!instance.loaded) {
                       return null;
                     }

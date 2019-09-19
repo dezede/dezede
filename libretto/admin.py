@@ -990,9 +990,9 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     }
     readonly_fields = ('__str__', 'html', 'children_links')
     inlines = (
-        AuteurInline, SourceEvenementInline, SourceOeuvreInline,
-        SourceIndividuInline, SourceEnsembleInline, SourceLieuInline,
-        SourcePartieInline,
+        AuteurInline, SourceIndividuInline, SourceOeuvreInline,
+        SourcePartieInline, SourceLieuInline, SourceEvenementInline,
+        SourceEnsembleInline,
     )
     actions = [split_pdf]
     fieldsets = (
