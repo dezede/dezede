@@ -25,7 +25,7 @@ const styles = theme => ({
   container: {
     outline: 'none',
     minHeight: '500px',
-    height: '80vh',
+    height: '85vh',
     textAlign: 'center',
   },
   imageContainer: {
@@ -39,8 +39,10 @@ const styles = theme => ({
     alignItems: 'center',
   },
   unzoomedImage: {
+    position: 'absolute',
     cursor: 'zoom-in',
     maxWidth: '100%',
+    maxHeight: '100%',
     userSelect: 'none',
   },
   cropper: {
