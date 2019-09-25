@@ -37,7 +37,7 @@ urlpatterns = [
     # url(r'^email/$', views.email, name='account_email'),
     url(r'^confirmation-email/$', views.email_verification_sent,
         name='account_email_verification_sent'),
-    url(r'^confirmation-email/(?P<key>\w+)/$', views.confirm_email,
+    url(r'^confirmation-email/(?P<key>[-:\w]+)/$', views.confirm_email,
         name='account_confirm_email'),
 
     # password reset
