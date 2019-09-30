@@ -11,8 +11,11 @@ class Model {
   @observable str = '';
   @observable owner = null;
   @observable front_url = '';
-  @observable edit_url = '';
+  @observable change_url = '';
   @observable delete_url = '';
+  @observable can_add = false;
+  @observable can_change = false;
+  @observable can_delete = false;
 
   constructor(id) {
     this.id = id;
@@ -38,8 +41,11 @@ class Model {
     this.str = data.str;
     this.owner = data.owner;
     this.front_url = data.front_url;
-    this.edit_url = data.edit_url;
+    this.change_url = data.change_url;
     this.delete_url = data.delete_url;
+    this.can_add = data.can_add;
+    this.can_change = data.can_change;
+    this.can_delete = data.can_delete;
   }
 
   reload = async () => {

@@ -214,7 +214,7 @@ THUMBNAIL_ALIASES = {
     '': {
         'avatar': {'size': (96, 96)},
         'thumbnail': {'size': (192, 192)},
-        'small': {'size': (950, 700)},
+        'small': {'size': (1140, 840)},
         'medium': {'size': (2000, 2000)},
     },
 }

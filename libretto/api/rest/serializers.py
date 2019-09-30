@@ -15,20 +15,46 @@ from ...models import *
 
 class CommonSerializer(ModelSerializer):
     str = ReadOnlyField(source='__str__')
-    edit_url = SerializerMethodField()
+    change_url = SerializerMethodField()
     delete_url = SerializerMethodField()
+    can_add = SerializerMethodField()
+    can_change = SerializerMethodField()
+    can_delete = SerializerMethodField()
 
     def _get_base_admin_url(self, obj):
         return f'admin:{obj._meta.app_label}_{obj._meta.model_name}'
 
-    def get_edit_url(self, obj):
-        return reverse(
-            f'{self._get_base_admin_url(obj)}_change', args=[obj.pk]
+    def get_url(self, viewname, *args, **kwargs):
+        return self.context['request'].build_absolute_uri(reverse(
+            viewname, args=args, kwargs=kwargs,
+        ))
+
+    def get_change_url(self, obj):
+        return self.get_url(
+            f'{self._get_base_admin_url(obj)}_change', obj.pk,
         )
 
     def get_delete_url(self, obj):
-        return reverse(
-            f'{self._get_base_admin_url(obj)}_delete', args=[obj.pk],
+        return self.get_url(
+            f'{self._get_base_admin_url(obj)}_delete', obj.pk,
+        )
+
+    def has_perm(self, permission, obj):
+        return self.context['request'].user.has_perm(permission, obj=obj)
+
+    def get_can_add(self, obj):
+        return self.has_perm(
+            f'libretto.add_{obj._meta.model_name}', obj,
+        )
+
+    def get_can_change(self, obj):
+        return self.has_perm(
+            f'libretto.change_{obj._meta.model_name}', obj,
+        )
+
+    def get_can_delete(self, obj):
+        return self.has_perm(
+            f'libretto.delete_{obj._meta.model_name}', obj,
         )
 
 

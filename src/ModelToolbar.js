@@ -44,16 +44,28 @@ class ModelToolbar extends React.Component {
         <Grid item>
           <ButtonGroup variant="outlined" size="small"
                        className={classes.buttonGroup}>
-            <Tooltip title={strings.edit}>
-              <Button component="a" href={instance.edit_url}>
-                <EditIcon />
-              </Button>
-            </Tooltip>
-            <Tooltip title={strings.delete}>
-              <Button component="a" href={instance.delete_url}>
-                <DeleteIcon />
-              </Button>
-            </Tooltip>
+            {
+              instance.can_change
+                ? (
+                  <Tooltip title={strings.edit}>
+                    <Button component="a" href={instance.change_url}>
+                      <EditIcon />
+                    </Button>
+                  </Tooltip>
+                )
+                : null
+            }
+            {
+              instance.can_delete
+                ? (
+                  <Tooltip title={strings.delete}>
+                    <Button component="a" href={instance.delete_url}>
+                      <DeleteIcon />
+                    </Button>
+                  </Tooltip>
+                )
+                : null
+            }
             {
               this.owner
                 ? (

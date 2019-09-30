@@ -24,12 +24,12 @@ import strings from './strings';
 const styles = theme => ({
   container: {
     outline: 'none',
-    minHeight: '500px',
-    height: '85vh',
     textAlign: 'center',
   },
   imageContainer: {
     position: 'relative',
+    minHeight: theme.spacing(30),
+    height: `calc(100vh - ${theme.spacing(24)}px)`,
   },
   imageSubContainer: {
     position: 'relative',
@@ -77,14 +77,13 @@ const styles = theme => ({
     top: theme.spacing(2),
     zIndex: theme.zIndex.mobileStepper,
   },
+  slider: {
+    width: `calc(100% - ${theme.spacing(8)}px)`,
+  },
   linkedSkeleton: {
     width: '100%',
     height: '48px',
   },
-  pageField: {
-    maxWidth: '250px',
-    textAlign: 'right',
-  }
 });
 
 
@@ -182,29 +181,6 @@ class Reader extends React.Component {
     this.move(newValue - 1);
   };
 
-  onKeyDown = event => {
-    switch (event.keyCode) {
-      case 37: // Left
-        this.prev(event);
-        break;
-      case 39: // Right
-        this.next(event);
-        break;
-      case 33: // Page up
-        this.move(this.position - 10);
-        break;
-      case 34: // Page down
-        this.move(this.position + 10);
-        break;
-      case 36: // Origin
-        this.move(0);
-        break;
-      case 35: // End
-        this.move(this.numPages - 1);
-        break;
-    }
-  };
-
   onMouseEnter = () => {
     this.hover = true;
   };
@@ -255,6 +231,18 @@ class Reader extends React.Component {
     }
     const imageContent = (
       <>
+        <div className={classes.imageSubContainer}>
+          {
+            this.zoom === 1.0
+              ? <img src={this.imageSrc} onClick={this.onZoomInit}
+                     className={classes.unzoomedImage} />
+              : <Cropper classes={{cropAreaClassName: classes.cropper}}
+                         image={this.imageSrc} showGrid={false} aspect={16/9}
+                         zoom={this.zoom} crop={this.crop} maxZoom={10}
+                         onZoomChange={this.onZoomChange}
+                         onCropChange={this.onCropChange} />
+          }
+        </div>
         <Fade in={this.hover && !this.isAtStart}>
           <div> {/* Div prevents Fade from overwriting Fab transition. */}
             <Fab onClick={this.prev}
@@ -291,25 +279,11 @@ class Reader extends React.Component {
             }
           />
         </Fade>
-        <div className={classes.imageSubContainer}>
-          {
-            this.zoom === 1.0
-              ? <img src={this.imageSrc} onClick={this.onZoomInit}
-                     className={classes.unzoomedImage} />
-              : <Cropper classes={{cropAreaClassName: classes.cropper}}
-                         image={this.imageSrc} showGrid={false} aspect={16/9}
-                         zoom={this.zoom} crop={this.crop} maxZoom={10}
-                         onZoomChange={this.onZoomChange}
-                         onCropChange={this.onCropChange} />
-          }
-        </div>
       </>
     );
     return (
       <Grid container direction="column" wrap="nowrap"
-            spacing={2} onKeyDown={this.onKeyDown}
-            tabIndex={-1}  // For key press capture.
-            className={classes.container}>
+            spacing={2} className={classes.container}>
         <Grid item xs={12} className={classes.imageContainer}
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}>
@@ -320,6 +294,22 @@ class Reader extends React.Component {
                             className={classes.imageSubContainer} />
             }
         </Grid>
+        {
+          this.numPages <= 1
+            ? null
+            : (
+              <Grid item>
+                <Slider
+                  value={position + 1} min={1} max={this.numPages}
+                  getAriaLabel={value => this.source.getChild(value).folio}
+                  marks={[
+                    {value: position + 1, label: this.getPageName(position)},
+                  ]}
+                  className={classes.slider}
+                  onChange={this.changePage} />
+              </Grid>
+            )
+        }
         <Grid item>
           <Grid container spacing={2} justify="center">
             {
@@ -345,22 +335,6 @@ class Reader extends React.Component {
             }
           </Grid>
         </Grid>
-        {
-          this.numPages <= 1
-            ? null
-            : (
-              <Grid item>
-                <Slider
-                  value={position + 1} min={1} step={1}
-                  getAriaLabel={value => this.source.getChild(value).folio}
-                  marks={[
-                    {value: position + 1, label: this.getPageName(position)},
-                  ]}
-                  max={this.numPages}
-                  onChange={this.changePage} />
-              </Grid>
-            )
-        }
       </Grid>
     );
   }
