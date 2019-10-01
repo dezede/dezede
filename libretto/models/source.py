@@ -526,6 +526,16 @@ class Source(AutoriteModel):
             thumbnailer = get_thumbnailer(self.fichier)
             return thumbnailer.get_thumbnail(aliases.get('medium')).url
 
+    @staticmethod
+    def autocomplete_search_fields():
+        return (
+            'type__nom__unaccent__icontains', 'titre__unaccent__icontains',
+            'date__icontains', 'date_approx__unaccent__icontains',
+            'numero__unaccent__icontains',
+            'lieu_conservation__unaccent__icontains',
+            'cote__unaccent__icontains',
+        )
+
 
 class AudioVideoAbstract(Source):
     fichier_ogg = FileField(
