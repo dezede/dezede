@@ -104,12 +104,8 @@ class Reader extends React.Component {
     this.source = Source.getById(this.props.sourceId);
   }
 
-  get sourceIsImage() {
-    return this.source.type_fichier === 1 && this.source.children.length === 0;
-  }
-
   @computed get numPages() {
-    if (this.sourceIsImage) {
+    if (this.source.isImage) {
       return 1;
     }
     return this.source.children.length;
@@ -131,7 +127,7 @@ class Reader extends React.Component {
   };
 
   @computed get child() {
-    if (this.sourceIsImage) {
+    if (this.source.isImage) {
       return this.source;
     }
     if (!this.isAtStart) {
@@ -259,7 +255,7 @@ class Reader extends React.Component {
             </Fab>
           </div>
         </Fade>
-        <Fade in={this.hover && !this.sourceIsImage}>
+        <Fade in={this.hover && !this.source.isImage}>
           <ModelToolbar
             instance={this.child} className={classes.tools} justify="flex-end"
             extraButtons={

@@ -7,6 +7,7 @@ import Ancrage from "./Ancrage";
 class Individu extends Model {
   static apiName = 'individus';
 
+  @observable html = '';
   @observable prenoms = '';
   @observable nom = '';
   @observable naissance = null;
@@ -16,6 +17,7 @@ class Individu extends Model {
 
   setData(data) {
     super.setData(data);
+    this.html = data.html;
     this.prenoms = data.prenoms;
     this.nom = data.nom;
     this.naissance = Ancrage.fromObject(data.naissance);

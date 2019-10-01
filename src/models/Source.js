@@ -7,6 +7,7 @@ import Oeuvre from './Oeuvre';
 import Ensemble from "./Ensemble";
 import Lieu from './Lieu';
 import Partie from './Partie';
+import Auteur from "./Auteur";
 
 
 class Source extends Model {
@@ -15,10 +16,15 @@ class Source extends Model {
   @observable title = '';
   @observable folio = '';
   @observable fichier = '';
-  @observable type_fichier = '';
+  @observable type_fichier = -1;
+  @observable taille_fichier = '';
+  @observable has_images = false;
   @observable small_thumbnail = '';
   @observable medium_thumbnail = '';
   @observable children = [];
+  @observable transcription = '';
+  @observable url = '';
+  @observable auteurs = [];
   @observable individus = [];
   @observable evenements = [];
   @observable oeuvres = [];
@@ -32,9 +38,14 @@ class Source extends Model {
     this.folio = data.folio;
     this.fichier = data.fichier;
     this.type_fichier = data.type_fichier;
+    this.taille_fichier = data.taille_fichier;
+    this.has_images = data.has_images;
     this.small_thumbnail = data.small_thumbnail;
     this.medium_thumbnail = data.medium_thumbnail;
     this.children = data.children;
+    this.url = data.url;
+    this.transcription = data.transcription;
+    this.auteurs = data.auteurs;
     this.individus = data.individus;
     this.evenements = data.evenements;
     this.oeuvres = data.oeuvres;
@@ -43,11 +54,31 @@ class Source extends Model {
     this.parties = data.parties;
   }
 
+  get isOther() {
+    return this.type_fichier === 0;
+  }
+
+  get isImage() {
+    return this.type_fichier === 1 && this.children.length === 0;
+  }
+
+  get isAudio() {
+    return this.type_fichier === 2;
+  }
+
+  get isVideo() {
+    return this.type_fichier === 3;
+  }
+
   getChild(position) {
     if (!this.loaded) {
       return null;
     }
     return this.constructor.getById(this.children[position]);
+  }
+
+  get auteursList() {
+    return this.auteurs.map(id => Auteur.getById(id));
   }
 
   get individusList() {

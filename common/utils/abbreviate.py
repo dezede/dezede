@@ -3,40 +3,13 @@ import re
 from .html import hlp
 from .text import remove_diacritics
 
-VOWELS = frozenset(b'AEIOUYaeiouy')
+
+VOWELS = 'AEIOUYaeiouy'
 
 
-def abbreviate_word(word, min_vowels, min_len):
-    ascii_word = remove_diacritics(word)
-    prev_is_vowel = ascii_word[0] in VOWELS
-
-    if prev_is_vowel:
-        if min_vowels <= 1 and min_len <= 1:
-            return f'{word[0]}.'
-        vowels_count = 1
-    else:
-        vowels_count = 0
-
-    i = 1
-    for c in ascii_word[1:-1]:
-        is_vowel = c in VOWELS
-        if is_vowel and not prev_is_vowel:
-            if vowels_count >= min_vowels and i >= min_len:
-                return f'{word[:i]}.'
-            vowels_count += 1
-        prev_is_vowel = is_vowel
-        i += 1
-
-    return word
-
-
-# TODO: créer un catalogue COMPLET de ponctuations de séparation.
-SEPARATOR_RE = re.compile(r'([-\s]+)')
-
-
-def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
+def abbreviate(text, min_len=1, tags=True, enabled=True):
     """
-    Abrège les mots avec une limite de longueur (par défaut 0).
+    Abrège les mots avec une limite de longueur (par défaut 1).
 
     >>> print(abbreviate('amélie'))
     <span title="Amélie">a.</span>
@@ -44,11 +17,11 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
     j.-fr. du p. du f.
     >>> print(abbreviate('autéeur dramatique de la tour de babel', 1,
     ...                  tags=False))
-    a. dram. de la tour de bab.
-    >>> print(abbreviate('adaptateur', 1, 4, tags=False))
+    aut. dram. de la tour de bab.
+    >>> print(abbreviate('adaptateur', 4, tags=False))
     adapt.
     >>> print(abbreviate('Fait à Quincampoix', 2, tags=False))
-    Fait à Quincamp.
+    Fait à Quinc.
     >>> print(abbreviate('ceci est un test bidon', enabled=False))
     ceci est un test bidon
     >>> print(abbreviate('A.-J.'))
@@ -56,18 +29,24 @@ def abbreviate(string, min_vowels=0, min_len=1, tags=True, enabled=True):
     """
 
     if not enabled:
-        return string
+        return text
 
-    out = ''
-    is_word = True
-    for sub in SEPARATOR_RE.split(string):
-        if is_word:
-            if sub:
-                out += abbreviate_word(sub, min_vowels, min_len)
-        else:
-            out += sub
-        is_word = not is_word
-
-    if out == string:
-        return string
-    return hlp(out, string, tags)
+    pattern = (
+        fr'([A-Za-z]{{{min_len},}}?(?<=[^{VOWELS}])(?=[{VOWELS}]))'
+    )
+    if min_len == 1:  # Handles the special case for a single vowel.
+        pattern = fr'([{VOWELS}]|{pattern})'
+    short = ''
+    last_end = 0
+    for match in re.finditer(
+        pattern + r'[A-Za-z]{2,}',
+        remove_diacritics(text).decode(),
+    ):
+        start = match.start()
+        short += text[last_end:start]
+        short += text[start:start + len(match.group(1))] + '.'
+        last_end = match.end()
+    short += text[last_end:]
+    if short == text:
+        return text
+    return hlp(short, text, tags)

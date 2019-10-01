@@ -24,7 +24,7 @@
       {% with year=yearly_count.year.year count=yearly_count.count %}
         <a href="{% url 'evenements' %}?{{ object.class_name|lower }}=|{{ object.pk }}|&dates_0={{ year }}&dates_1={{ year }}">
           {{ year }} ({{ count }}
-          {% filter abbreviate:2 %}{% trans 'événements' %}{% endfilter %})
+          {% filter abbreviate:4 %}{% trans 'événements' %}{% endfilter %})
         </a>
       {% endwith %}
     </td>

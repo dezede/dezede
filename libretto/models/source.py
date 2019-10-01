@@ -348,7 +348,7 @@ class Source(AutoriteModel):
         )
 
     @cached_property
-    def images(self, prefetch=True):
+    def images(self):
         images = []
         if self.is_image():
             images.append(self)

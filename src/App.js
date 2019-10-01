@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import {StylesProvider, createGenerateClassName} from "@material-ui/styles";
 import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles";
 
-import Reader from "./Reader";
+import SourceView from "./SourceView";
 
 
 const theme = createMuiTheme({
@@ -14,6 +14,9 @@ const theme = createMuiTheme({
     secondary: {
       main: '#fff7d1',
     }
+  },
+  typography: {
+    fontFamilySerif: "'Linux Libertine',Georgia,serif",
   },
   overrides: {
     MuiButtonBase: {
@@ -33,12 +36,11 @@ class App extends React.Component {
   });
 
   render() {
-    return [...document.querySelectorAll('.reader')].map(reader => (
+    return [...document.querySelectorAll('.source-view')].map(reader => (
       ReactDOM.render(
         <StylesProvider generateClassName={this.classGenerator}>
           <MuiThemeProvider theme={theme}>
-            <Reader
-              sourceId={parseInt(reader.getAttribute('data-source-id'))} />
+            <SourceView id={parseInt(reader.getAttribute('data-id'))} />
           </MuiThemeProvider>
         </StylesProvider>,
         reader,

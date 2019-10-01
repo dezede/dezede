@@ -53,48 +53,17 @@
         </script>
       {% endaddstatic %}
 
-      {% if source.is_other %}
-        <li class="text-center">
-          <a href="{{ source.fichier.url }}" class="btn btn-default">
-            <i class="fa fa-download fa-fw"></i>
-            {% trans 'Télécharger' %} ({{ source.fichier.size|filesizeformat }})
-          </a>
-        </li>
-      {% endif %}
-
     </ul>
-  {% endif %}
-
-  {% if source.images %}
-    <div id="react"></div>
-    <div class="reader" data-source-id="{{ source.pk }}"></div>
-    {% addstatic js %}
-      <script src="{% static 'js/bundle.min.js' %}"></script>
-    {% endaddstatic %}
   {% endif %}
 {% endwith %}
 
 
-{% if source.transcription %}
-  <blockquote class="source">
+<div id="react"></div>
+<div class="source-view" data-id="{{ source.pk }}"></div>
+{% addstatic js %}
+  <script src="{% static 'js/bundle.min.js' %}"></script>
+{% endaddstatic %}
 
-    <div class="transcription">
-      {{ source.transcription|safe }}
-    </div>
-    {% if source.auteurs.exists %}
-      <footer class="auteurs">
-        {{ source.auteurs_html }}
-      </footer>
-    {% endif %}
-
-  </blockquote>
-{% endif %}
-
-{% if source.url %}
-  <a href="{{ source.url }}" target="_blank">
-    <i class="fa fa-external-link fa-fw"></i> {{ source.url }}
-  </a>
-{% endif %}
 
 {% addstatic js %}
   <script>

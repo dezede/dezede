@@ -4,4 +4,6 @@ export default {
   "delete": "Supprimer",
   "download": "Télécharger",
   "print": "Imprimer",
+  "lastSeparator": " et ",
+  "originalOn": "Original sur",
 };

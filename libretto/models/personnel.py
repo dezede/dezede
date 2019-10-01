@@ -89,7 +89,7 @@ class Profession(AutoriteModel, UniqueSlugModel):
         if caps:
             nom = capfirst(nom)
         if short:
-            nom = abbreviate(nom, min_vowels=1, min_len=4, tags=tags)
+            nom = abbreviate(nom, min_len=4, tags=tags)
         url = '' if not tags else self.get_absolute_url()
         return href(url, nom, tags)
 

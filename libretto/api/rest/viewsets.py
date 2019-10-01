@@ -6,6 +6,7 @@ from ...views import PublishedMixin
 from .serializers import (
     IndividuSerializer, EnsembleSerializer, LieuSerializer, OeuvreSerializer,
     SourceSerializer, EvenementSerializer, PartieSerializer, UserSerializer,
+    AuteurSerializer, ProfessionSerializer,
 )
 
 
@@ -38,6 +39,18 @@ class SourceViewSet(PublishedMixin, ReadOnlyModelViewSet):
     model = Source
     queryset = Source.objects.all()
     serializer_class = SourceSerializer
+
+
+class AuteurViewSet(ReadOnlyModelViewSet):
+    model = Auteur
+    queryset = Auteur.objects.all()
+    serializer_class = AuteurSerializer
+
+
+class ProfessionViewSet(ReadOnlyModelViewSet):
+    model = Profession
+    queryset = Profession.objects.all()
+    serializer_class = ProfessionSerializer
 
 
 class EvenementViewSet(PublishedMixin, ReadOnlyModelViewSet):

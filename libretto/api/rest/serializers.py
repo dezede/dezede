@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from django.template.defaultfilters import filesizeformat
 from rest_framework.fields import ReadOnlyField, Field, SerializerMethodField
 from rest_framework.relations import (
     HyperlinkedIdentityField, StringRelatedField, PrimaryKeyRelatedField
@@ -72,6 +73,7 @@ class AncrageSpatioTemporelSerializer(Field):
 
 class IndividuSerializer(HyperlinkedModelSerializer):
     str = ReadOnlyField(source='__str__')
+    html = ReadOnlyField()
     naissance = AncrageSpatioTemporelSerializer()
     deces = AncrageSpatioTemporelSerializer()
     professions = PrimaryKeyRelatedField(many=True, read_only=True)
@@ -81,7 +83,7 @@ class IndividuSerializer(HyperlinkedModelSerializer):
     class Meta(object):
         model = Individu
         fields = (
-            'id', 'str', 'nom', 'prenoms',
+            'id', 'str', 'html', 'nom', 'prenoms',
             'naissance', 'deces',
             'professions', 'parents',
             'front_url', 'url'
@@ -90,6 +92,7 @@ class IndividuSerializer(HyperlinkedModelSerializer):
 
 class EnsembleSerializer(HyperlinkedModelSerializer):
     str = ReadOnlyField(source='__str__')
+    html = ReadOnlyField()
     type = StringRelatedField()
     front_url = HyperlinkedIdentityField(view_name='ensemble_detail',
                                          lookup_field='slug')
@@ -97,7 +100,7 @@ class EnsembleSerializer(HyperlinkedModelSerializer):
     class Meta(object):
         model = Ensemble
         fields = (
-            'id', 'str', 'type', 'front_url', 'url'
+            'id', 'str', 'html', 'type', 'front_url', 'url'
         )
 
 
@@ -114,21 +117,13 @@ class LieuSerializer(HyperlinkedModelSerializer):
         )
 
 
-class AuteurSerializer(HyperlinkedModelSerializer):
-    profession = StringRelatedField()
-
-    class Meta(object):
-        model = Auteur
-        fields = ('individu', 'profession')
-
-
 class OeuvreSerializer(HyperlinkedModelSerializer):
     str = ReadOnlyField(source='__str__')
     titre_significatif = ReadOnlyField(source='get_titre_significatif')
     titre_non_significatif = ReadOnlyField(source='get_titre_non_significatif')
     description = ReadOnlyField(source='get_description')
     genre = StringRelatedField()
-    auteurs = AuteurSerializer(many=True, read_only=True)
+    auteurs = PrimaryKeyRelatedField(many=True, read_only=True)
     creation = AncrageSpatioTemporelSerializer()
     front_url = HyperlinkedIdentityField(view_name='oeuvre_detail',
                                          lookup_field='slug')
@@ -144,11 +139,14 @@ class OeuvreSerializer(HyperlinkedModelSerializer):
 
 
 class SourceSerializer(CommonSerializer):
+    auteurs = PrimaryKeyRelatedField(many=True, read_only=True)
     children = SerializerMethodField()
     small_thumbnail = SerializerMethodField()
     medium_thumbnail = SerializerMethodField()
     front_url = HyperlinkedIdentityField(view_name='source_permanent_detail',
                                          lookup_field='pk')
+    taille_fichier = SerializerMethodField()
+    has_images = ReadOnlyField()
 
     class Meta:
         model = Source
@@ -164,6 +162,30 @@ class SourceSerializer(CommonSerializer):
 
     def get_medium_thumbnail(self, obj):
         return self.context['request'].build_absolute_uri(obj.medium_thumbnail)
+
+    def get_taille_fichier(self, obj):
+        try:
+            size = obj.fichier.size
+        except (ValueError, FileNotFoundError):
+            size = 0
+        return filesizeformat(size)
+
+
+class AuteurSerializer(ModelSerializer):
+    class Meta:
+        model = Auteur
+        exclude = ()
+
+
+class ProfessionSerializer(CommonSerializer):
+    html = ReadOnlyField(source='short_html')
+    front_url = HyperlinkedIdentityField(
+        view_name='profession_permanent_detail', lookup_field='pk',
+    )
+
+    class Meta:
+        model = Profession
+        exclude = ()
 
 
 class EvenementSerializer(CommonSerializer):
