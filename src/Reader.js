@@ -29,17 +29,18 @@ const styles = theme => ({
   imageContainer: {
     position: 'relative',
     minHeight: theme.spacing(30),
-    height: `calc(100vh - ${theme.spacing(24)}px)`,
+    flexBasis: `calc(100vh - ${theme.spacing(24)}px)`,
   },
-  imageSubContainer: {
-    position: 'relative',
+  imageSkeleton: {
+    position: 'absolute',
+    width: '100%',
     height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   unzoomedImage: {
     position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
     cursor: 'zoom-in',
     maxWidth: '100%',
     maxHeight: '100%',
@@ -227,18 +228,18 @@ class Reader extends React.Component {
     }
     const imageContent = (
       <>
-        <div className={classes.imageSubContainer}>
-          {
-            this.zoom === 1.0
-              ? <img src={this.imageSrc} onClick={this.onZoomInit}
-                     className={classes.unzoomedImage} />
-              : <Cropper classes={{cropAreaClassName: classes.cropper}}
-                         image={this.imageSrc} showGrid={false} aspect={16/9}
-                         zoom={this.zoom} crop={this.crop} maxZoom={10}
-                         onZoomChange={this.onZoomChange}
-                         onCropChange={this.onCropChange} />
-          }
-        </div>
+        {
+          this.zoom === 1.0
+            ? <img src={this.imageSrc} onClick={this.onZoomInit}
+                   className={classes.unzoomedImage} />
+            : (
+              <Cropper classes={{cropAreaClassName: classes.cropper}}
+                       image={this.imageSrc} showGrid={false} aspect={16/9}
+                       zoom={this.zoom} crop={this.crop} maxZoom={10}
+                       onZoomChange={this.onZoomChange}
+                       onCropChange={this.onCropChange} />
+            )
+        }
         <Fade in={this.hover && !this.isAtStart}>
           <div> {/* Div prevents Fade from overwriting Fab transition. */}
             <Fab onClick={this.prev}
@@ -286,8 +287,7 @@ class Reader extends React.Component {
             {
               this.child.fullyLoaded
                 ? imageContent
-                : <Skeleton variant="rect"
-                            className={classes.imageSubContainer} />
+                : <Skeleton variant="rect" className={classes.imageSkeleton} />
             }
         </Grid>
         {
