@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from "react-dom";
 import {StylesProvider, createGenerateClassName} from "@material-ui/styles";
 import {createMuiTheme, MuiThemeProvider} from "@material-ui/core/styles";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 import SourceView from "./SourceView";
 
@@ -36,14 +37,18 @@ class App extends React.Component {
   });
 
   render() {
-    return [...document.querySelectorAll('.source-view')].map(reader => (
+    return [...document.querySelectorAll('.source-view')].map(div => (
       ReactDOM.render(
         <StylesProvider generateClassName={this.classGenerator}>
           <MuiThemeProvider theme={theme}>
-            <SourceView id={parseInt(reader.getAttribute('data-id'))} />
+            <React.Suspense fallback={
+              <LinearProgress style={{position: 'absolute', top: 0, left: 0, width: '100%'}} />
+            }>
+              <SourceView id={parseInt(div.getAttribute('data-id'))} />
+            </React.Suspense>
           </MuiThemeProvider>
         </StylesProvider>,
-        reader,
+        div,
       )
     ));
   }

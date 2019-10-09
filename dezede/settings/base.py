@@ -83,6 +83,7 @@ STATICFILES_FINDERS = (
 )
 STATICFILES_DIRS = (
     str(BASE_DIR / 'dezede/static'),
+    str(BASE_DIR / 'public/static'),
 )
 
 

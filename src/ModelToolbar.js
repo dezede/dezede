@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {computed} from "mobx";
+import {withTranslation} from "react-i18next";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Tooltip from "@material-ui/core/Tooltip";
-import {withStyles} from "@material-ui/styles";
+import {withStyles} from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PersonIcon from "@material-ui/icons/Person";
 import LinkIcon from "@material-ui/icons/Link";
 import User from "./models/User";
-import strings from './strings';
 
 
 const styles = theme => ({
@@ -22,6 +22,7 @@ const styles = theme => ({
 
 
 @withStyles(styles)
+@withTranslation('base')
 class ModelToolbar extends React.Component {
   static propTypes = {
     instance: PropTypes.any.isRequired,
@@ -36,7 +37,7 @@ class ModelToolbar extends React.Component {
 
   render() {
     const {
-      instance, extraButtons, className, justify, classes, style,
+      instance, extraButtons, className, justify, classes, style, t,
     } = this.props;
     return (
       <Grid container spacing={1} justify={justify} className={className}
@@ -47,7 +48,7 @@ class ModelToolbar extends React.Component {
             {
               instance.can_change
                 ? (
-                  <Tooltip title={strings.edit}>
+                  <Tooltip title={t('base:edit')}>
                     <Button component="a" href={instance.change_url}>
                       <EditIcon />
                     </Button>
@@ -58,7 +59,7 @@ class ModelToolbar extends React.Component {
             {
               instance.can_delete
                 ? (
-                  <Tooltip title={strings.delete}>
+                  <Tooltip title={t('base:delete')}>
                     <Button component="a" href={instance.delete_url}>
                       <DeleteIcon />
                     </Button>
@@ -83,7 +84,7 @@ class ModelToolbar extends React.Component {
           <ButtonGroup variant="outlined" size="small"
                        className={classes.buttonGroup}>
             {extraButtons}
-            <Tooltip title={strings.permalink}>
+            <Tooltip title={t('base:permalink')}>
               <Button component="a" href={instance.front_url}>
                 <LinkIcon />
               </Button>

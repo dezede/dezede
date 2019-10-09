@@ -5,20 +5,17 @@ import {observer} from "mobx-react";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import {withStyles} from "@material-ui/styles";
+import {withStyles} from "@material-ui/core/styles";
 import GetAppIcon from '@material-ui/icons/GetApp';
 import LaunchIcon from '@material-ui/icons/Launch';
 
 import Reader from "./Reader";
 import Source from "./models/Source";
 import AuteurLabelList from "./labels/AuteurLabelList";
-import strings from "./strings";
+import {withTranslation} from "react-i18next";
 
 
 const styles = theme => ({
-  buttonIcon: {
-    marginRight: theme.spacing(0.75),
-  },
   transcription: {
     fontFamily: theme.typography.fontFamilySerif,
     // Makes sure tables in the transcription have enough space between cells.
@@ -33,6 +30,7 @@ const styles = theme => ({
 
 
 @withStyles(styles)
+@withTranslation('source')
 @observer
 class SourceView extends React.Component {
   static propTypes = {
@@ -45,31 +43,24 @@ class SourceView extends React.Component {
   }
 
   get downloadButton() {
-    const {classes} = this.props;
+    const {t} = this.props;
     let url = this.source.url;
+    let icon;
     let label;
     if (url) {
-      label = (
-        <>
-          <LaunchIcon fontSize="small" className={classes.buttonIcon} />
-          {strings.originalOn} {new URL(url).hostname}
-        </>
-      )
+      icon = <LaunchIcon fontSize="small" />;
+      label = t('source:originalOn', {url: new URL(url).hostname});
     } else if (this.source.isOther) {
       url = this.source.fichier;
-      label = (
-        <>
-          <GetAppIcon fontSize="small" className={classes.buttonIcon} />
-          {strings.download} ({this.source.taille_fichier})
-        </>
-      );
+      icon = <GetAppIcon fontSize="small" />;
+      label = `${t('source:download')} (${this.source.taille_fichier})`;
     } else {
       return null;
     }
     return (
       <Grid item>
         <Typography align="center">
-          <Button component="a" target="_blank" href={url}
+          <Button component="a" target="_blank" href={url} startIcon={icon}
                   color="primary" variant="outlined" size="small">
             {label}
           </Button>
@@ -117,7 +108,7 @@ class SourceView extends React.Component {
 
   render() {
     return (
-      <Grid container direction="column" spacing={4}>
+      <Grid container direction="column" wrap="nowrap" spacing={4}>
         {this.downloadButton}
         {this.reader}
         {this.transcription}

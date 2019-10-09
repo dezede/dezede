@@ -10,7 +10,7 @@ import Slider from "@material-ui/core/Slider";
 import Fab from "@material-ui/core/Fab";
 import Tooltip from "@material-ui/core/Tooltip";
 import Button from "@material-ui/core/Button";
-import {withStyles} from "@material-ui/styles";
+import {withStyles} from "@material-ui/core/styles";
 import Skeleton from "@material-ui/lab/Skeleton";
 import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
@@ -18,7 +18,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import PrintIcon from '@material-ui/icons/Print';
 import ModelToolbar from './ModelToolbar';
 import Source from './models/Source';
-import strings from './strings';
+import {withTranslation} from "react-i18next";
 
 
 const styles = theme => ({
@@ -89,6 +89,7 @@ const styles = theme => ({
 
 
 @withStyles(styles)
+@withTranslation(['base', 'source'])
 @observer
 class Reader extends React.Component {
   @observable position = 0;
@@ -221,7 +222,7 @@ class Reader extends React.Component {
   };
 
   render() {
-    const {classes} = this.props;
+    const {t, classes} = this.props;
     const {position} = this;
     if (!this.child) {
       return <Skeleton variant="rect" className={classes.container} />;
@@ -261,13 +262,13 @@ class Reader extends React.Component {
             instance={this.child} className={classes.tools} justify="flex-end"
             extraButtons={
               [
-                <Tooltip key="download" title={strings.download}>
+                <Tooltip key="download" title={t('source:download')}>
                   <Button component="a" href={this.child.fichier}
                           download={this.child.nomFichier}>
                     <GetAppIcon />
                   </Button>
                 </Tooltip>,
-                <Tooltip key="print" title={strings.print}>
+                <Tooltip key="print" title={t('source:print')}>
                   <Button onClick={this.print}>
                     <PrintIcon />
                   </Button>

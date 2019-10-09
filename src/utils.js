@@ -1,4 +1,4 @@
-import strings from "./strings";
+import i18n from "./i18n";
 import Tooltip from "@material-ui/core/Tooltip";
 import React from "react";
 
@@ -16,7 +16,7 @@ export const join = (parts, separator) => {
 
 export const joinWithLast = (parts, separator, lastSeparator) => {
   if (lastSeparator === undefined) {
-    lastSeparator = strings.lastSeparator;
+    lastSeparator = i18n.t('base:lastSeparator');
   }
   parts = join(parts, separator);
   if (parts.length > 2) {
