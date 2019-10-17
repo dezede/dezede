@@ -1,4 +1,7 @@
 import re
+from warnings import warn
+
+from compressor.exceptions import UncompressableFileError
 from django.apps import AppConfig
 from django.conf import settings
 from django.template import Template, Context
@@ -15,6 +18,10 @@ class DezedeConfig(AppConfig):
                 '  <link rel="stylesheet" type="text/less"'
                 '        href="{% static "css/styles.less" %}" />'
                 '{% endcompress %}')
-        html = Template(html).render(Context())
-        settings.TINYMCE_DEFAULT_CONFIG['content_css'] = re.search(
-            r'href="([^"]+)"', html).group(1)
+        try:
+            html = Template(html).render(Context())
+        except UncompressableFileError:
+            warn('Unable to apply front-end styling to the admin!')
+        else:
+            settings.TINYMCE_DEFAULT_CONFIG['content_css'] = re.search(
+                r'href="([^"]+)"', html).group(1)
