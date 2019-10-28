@@ -2,6 +2,7 @@ import i18n from "./i18n";
 import Tooltip from "@material-ui/core/Tooltip";
 import React from "react";
 
+
 export const join = (parts, separator) => {
   if (separator === undefined) {
     separator = ', ';
@@ -35,7 +36,7 @@ const VOWELS = 'aeiouy';
 
 
 export const abbreviate = (text, minLength) => {
-  let pattern = `([a-z]{${minLength},}?(?<=[^${VOWELS}])(?=[${VOWELS}]))`;
+  let pattern = `([a-z]{${minLength - 1},}?[^${VOWELS}](?=[${VOWELS}]))`;
   if (minLength === 1) { // Handles the special case for a single vowel.
     pattern = `([${VOWELS}]|${pattern})`;
   }
