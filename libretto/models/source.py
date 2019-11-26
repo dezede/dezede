@@ -162,9 +162,9 @@ class Source(AutoriteModel):
     ancrage = AncrageSpatioTemporel(has_heure=False, has_lieu=False)
     numero = CharField(_('numéro'), max_length=50, blank=True, db_index=True,
                        help_text=_('Sans « № ». Exemple : « 52 »'))
-    folio = CharField(_('folio'), max_length=10, blank=True,
+    folio = CharField(_('folio'), max_length=15, blank=True,
                       help_text=_('Sans « f. ». Exemple : « 3 ».'))
-    page = CharField(_('page'), max_length=10, blank=True, db_index=True,
+    page = CharField(_('page'), max_length=15, blank=True, db_index=True,
                      help_text=_('Sans « p. ». Exemple : « 3 »'))
     lieu_conservation = CharField(_('lieu de conservation'), max_length=50,
                                   blank=True, db_index=True)
