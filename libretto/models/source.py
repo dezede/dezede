@@ -192,6 +192,9 @@ class Source(AutoriteModel):
     type_fichier = PositiveSmallIntegerField(
         choices=TYPES, null=True, blank=True, editable=False, db_index=True,
     )
+    telechargement_autorise = BooleanField(
+        _('téléchargement autorisé'), default=True,
+    )
 
     evenements = ManyToManyField(
         'Evenement', through='SourceEvenement', related_name='sources',
@@ -217,7 +220,8 @@ class Source(AutoriteModel):
     # Métadonnées
     editeurs_scientifiques = ManyToManyField(
         'accounts.HierarchicUser', related_name='sources_editees',
-        verbose_name=_('éditeurs scientifiques'))
+        verbose_name=_('éditeurs scientifiques'), blank=True,
+    )
     date_publication = DateField(_('date de publication'),
                                  default=datetime.datetime.now)
     publications = TextField(_('publication(s) associée(s)'), blank=True)

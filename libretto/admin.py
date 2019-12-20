@@ -1020,7 +1020,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
             'fields': ('transcription',),
         }),
         (None, {
-            'fields': ('fichier',),
+            'fields': (('fichier', 'telechargement_autorise'),),
         }),
         (None, {
             'fields': ('children_links',),

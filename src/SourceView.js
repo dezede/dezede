@@ -43,6 +43,9 @@ class SourceView extends React.Component {
   }
 
   get downloadButton() {
+    if (!this.source.telechargement_autorise) {
+      return null;
+    }
     const {t} = this.props;
     let url = this.source.url;
     let icon;

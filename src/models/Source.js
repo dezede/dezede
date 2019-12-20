@@ -18,6 +18,7 @@ class Source extends Model {
   @observable fichier = '';
   @observable type_fichier = -1;
   @observable taille_fichier = '';
+  @observable telechargement_autorise = true;
   @observable has_images = false;
   @observable small_thumbnail = '';
   @observable medium_thumbnail = '';
@@ -39,6 +40,7 @@ class Source extends Model {
     this.fichier = data.fichier;
     this.type_fichier = data.type_fichier;
     this.taille_fichier = data.taille_fichier;
+    this.telechargement_autorise = data.telechargement_autorise;
     this.has_images = data.has_images;
     this.small_thumbnail = data.small_thumbnail;
     this.medium_thumbnail = data.medium_thumbnail;
