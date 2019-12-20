@@ -1,4 +1,3 @@
-from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.db import connection
 from django.db.models import Q, Count
@@ -74,7 +73,6 @@ class DossierDEvenementsDetail(PublishedDetailView):
         context = super(DossierDEvenementsDetail,
                         self).get_context_data(**kwargs)
         context.update(
-            SITE=get_current_site(self.request),
             children=self.object.children.published(self.request)
         )
         return context

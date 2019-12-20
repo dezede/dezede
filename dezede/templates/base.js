@@ -22,6 +22,18 @@ tooltips_reload();
 {# Fin de la gestion des tooltips #}
 
 
+{# Tabs switch on page load #}
+var url = document.location.toString();
+if (url.match('#')) {
+    $('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
+}
+
+$('.nav-tabs a').on('shown.bs.tab', function (e) {
+    window.location.hash = e.target.hash;
+});
+{# End of tabs switch on page load#}
+
+
 {# Gestion des boutons changeant d’état quand on clique dessus #}
 $('*[data-loading-text]').click(function () {
   $(this).button('loading');

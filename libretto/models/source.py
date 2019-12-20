@@ -1,3 +1,4 @@
+import datetime
 import json
 from pathlib import Path
 
@@ -5,7 +6,9 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField,
-    CASCADE, PositiveSmallIntegerField, FileField, BooleanField, Prefetch)
+    CASCADE, PositiveSmallIntegerField, FileField, BooleanField,
+    DateField, TextField,
+)
 from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -207,6 +210,25 @@ class Source(AutoriteModel):
         'Partie', through='SourcePartie', related_name='sources',
         verbose_name=_('sources'))
 
+    #
+    # Dossier
+    #
+
+    # Métadonnées
+    editeurs_scientifiques = ManyToManyField(
+        'accounts.HierarchicUser', related_name='sources_editees',
+        verbose_name=_('éditeurs scientifiques'))
+    date_publication = DateField(_('date de publication'),
+                                 default=datetime.datetime.now)
+    publications = TextField(_('publication(s) associée(s)'), blank=True)
+    developpements = TextField(_('développements envisagés'), blank=True)
+
+    # Article
+    presentation = TextField(_('présentation'), blank=True)
+    contexte = TextField(_('contexte historique'), blank=True)
+    sources_et_protocole = TextField(_('sources et protocole'), blank=True)
+    bibliographie = TextField(_('bibliographie indicative'), blank=True)
+
     objects = SourceManager()
 
     class Meta:
@@ -222,6 +244,30 @@ class Source(AutoriteModel):
 
     def __str__(self):
         return strip_tags(self.html(False))
+
+    def has_presentation_tab(self):
+        def iterator():
+            yield self.editeurs_scientifiques.exists()
+            yield self.publications
+            yield self.developpements
+            yield self.presentation
+            yield self.contexte
+            yield self.sources_et_protocole
+            yield self.bibliographie
+
+        return any(iterator())
+
+    def has_index_tab(self):
+        def iterator():
+            yield self.parent
+            yield self.nested_individus()
+            yield self.nested_oeuvres()
+            yield self.nested_parties()
+            yield self.nested_evenements()
+            yield self.nested_ensembles()
+            yield self.notes_publiques
+
+        return any(iterator())
 
     @cached_property
     def specific(self):

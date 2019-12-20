@@ -8,8 +8,7 @@ from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.admin import OSMGeoAdmin
-from django.contrib.sites.models import Site
-from django.db.models import Q
+from django.db.models import Q, TextField
 from django.forms.models import modelformset_factory
 from django.shortcuts import redirect
 from django.utils.html import format_html_join
@@ -17,6 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from grappelli.forms import GrappelliSortableHiddenMixin
 from reversion.admin import VersionAdmin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
+from tinymce.widgets import TinyMCE
 
 from common.utils.cache import is_user_locked, lock_user
 from common.utils.file import FileAnalyzer
@@ -981,9 +981,10 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
         'lieu_conservation__unaccent', 'cote__unaccent')
     list_filter = (SourceHasParentListFilter, 'type', 'titre',
                    SourceHasEventsListFilter, SourceHasProgramListFilter)
-    raw_id_fields = ('parent', 'evenements',)
+    raw_id_fields = ('parent', 'evenements', 'editeurs_scientifiques')
     autocomplete_lookup_fields = {
         'fk': ('parent',),
+        'm2m': ('editeurs_scientifiques',),
     }
     related_lookup_fields = {
         'm2m': ['evenements'],
@@ -1024,10 +1025,21 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
         (None, {
             'fields': ('children_links',),
         }),
+        (_('Présentation'), {
+            'classes': ('grp-collapse grp-closed',),
+            'fields': (
+                'editeurs_scientifiques', 'date_publication', 'publications',
+                'developpements', 'presentation', 'contexte',
+                'sources_et_protocole', 'bibliographie',
+            ),
+        })
     )
     fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'f', 'i', 'i',
                                    'i', 'i', 'i', 'i', 'i', 'f')
     admin_fields = AutoriteAdmin.admin_fields + ('est_promue',)
+    formfield_overrides = {
+        TextField: {'widget': TinyMCE},
+    }
 
     def get_queryset(self, request):
         qs = super(SourceAdmin, self).get_queryset(request)

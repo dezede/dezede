@@ -21,38 +21,55 @@
 
 {% block autorite-content %}
   <ul class="nav nav-tabs nav-justified autorite-tabs" role="tablist">
-    <li role="presentation" class="active">
-      <a href="#contenu" aria-controls="content" role="tab" data-toggle="tab">
+    {% if source.has_presentation_tab %}
+      <li role="presentation">
+        <a href="#presentation" aria-controls="presentation" role="tab" data-toggle="tab">
+          {% trans 'Présentation' %}
+        </a>
+      </li>
+    {% endif %}
+    <li role="presentation"{% if not request.GET %} class="active"{% endif %}>
+      <a href="#contenu" aria-controls="contenu" role="tab" data-toggle="tab">
         {% trans 'Consulter' %}
       </a>
     </li>
-    <li role="presentation">
-      <a href="#index" aria-controls="index" role="tab" data-toggle="tab">
-        {% trans 'Index' %}
-      </a>
-    </li>
+    {% if source.has_index_tab %}
+      <li role="presentation"{% if request.GET %} class="active"{% endif %}>
+        <a href="#index" aria-controls="index" role="tab" data-toggle="tab">
+          {% trans 'Index' %}
+        </a>
+      </li>
+    {% endif %}
   </ul>
 
   <div class="tab-content">
+    {% if source.has_presentation_tab %}
+      <div role="tabpanel" class="tab-pane" id="presentation">
+        {% trans 'Pour citer cette source' as citation_title %}
+        {% include 'dossiers/dossierdevenements_content.html' %}
+      </div>
+    {% endif %}
 
-    <div role="tabpanel" class="tab-pane active" id="contenu">
+    <div role="tabpanel" class="tab-pane{% if not request.GET %} active{% endif %}" id="contenu">
       {% include 'libretto/source_content.html' %}
     </div>
 
-    <div role="tabpanel" class="tab-pane" id="index">
-      <table class="data-table auto-links">
-        {% data_table_attr 'parent.html' _('source parente') %}
+    {% if source.has_index_tab %}
+      <div role="tabpanel" class="tab-pane{% if request.GET %} active{% endif %}" id="index">
+        <table class="data-table auto-links">
+          {% data_table_attr 'parent.html' _('source parente') %}
 
-        {% data_table_list source.nested_individus %}
-        {% data_table_list source.nested_oeuvres %}
-        {% data_table_list source.nested_parties %}
-        {% data_table_list source.nested_lieux %}
-        {% evenement_list_def source.nested_evenements %}
-        {% data_table_list source.nested_ensembles %}
+          {% data_table_list source.nested_individus %}
+          {% data_table_list source.nested_oeuvres %}
+          {% data_table_list source.nested_parties %}
+          {% data_table_list source.nested_lieux %}
+          {% evenement_list_def source.nested_evenements %}
+          {% data_table_list source.nested_ensembles %}
 
-        {% data_table_attr 'notes_publiques' _('notes') %}
-      </table>
-    </div>
+          {% data_table_attr 'notes_publiques' _('notes') %}
+        </table>
+      </div>
+    {% endif %}
 
   </div>
 
