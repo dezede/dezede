@@ -58,6 +58,7 @@
       <div role="tabpanel" class="tab-pane{% if request.GET %} active{% endif %}" id="index">
         <table class="data-table auto-links">
           {% data_table_attr 'parent.html' _('source parente') %}
+          {% data_table_attr 'auteurs_html' _('auteur(s)') %}
 
           {% data_table_list source.nested_individus %}
           {% data_table_list source.nested_oeuvres %}

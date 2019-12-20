@@ -264,6 +264,7 @@ class Source(AutoriteModel):
     def has_index_tab(self):
         def iterator():
             yield self.parent
+            yield self.auteurs_html()
             yield self.nested_individus()
             yield self.nested_oeuvres()
             yield self.nested_parties()
