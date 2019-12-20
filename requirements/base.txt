@@ -1,6 +1,6 @@
 # Basics
-Django==1.11.20
-psycopg2-binary==2.7.7
+Django==1.11.27
+psycopg2-binary==2.8.4
 
 # Database fields
 django-tree==0.3.2
