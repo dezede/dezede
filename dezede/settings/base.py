@@ -65,6 +65,8 @@ MEDIA_ROOT = str(BASE_DIR / 'media')
 MEDIA_URL = SITE_URL + 'media/'
 FILE_UPLOAD_PERMISSIONS = 0o755
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'replace_this_with_some_random_string'
 
