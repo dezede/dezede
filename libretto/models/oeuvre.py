@@ -1020,7 +1020,8 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     @staticmethod
     def autocomplete_search_fields(add_icontains=True):
         lookups = (
-            'auteurs__individu__nom', 'auteurs__ensemble__nom',
+            'auteurs__individu__nom', 'auteurs__individu__prenoms',
+            'auteurs__individu__pseudonyme', 'auteurs__ensemble__nom',
             'prefixe_titre', 'titre',
             'prefixe_titre_secondaire', 'titre_secondaire',
             'genre__nom', 'numero', 'coupe',
