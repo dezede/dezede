@@ -322,6 +322,10 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
         return self.membres.count()
     membres_count.short_description = _('nombre de membres')
 
+    def oeuvres(self):
+        oeuvres = self.auteurs.oeuvres()
+        return oeuvres.exclude(extrait_de__in=oeuvres)
+
     def apparitions(self):
         sql = """
         SELECT DISTINCT COALESCE(distribution.evenement_id, programme.evenement_id)

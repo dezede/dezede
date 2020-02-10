@@ -16,6 +16,7 @@
     {% data_table_attr 'siege.link' %}
     {% data_table_attr 'smart_period' caps=True %}
     {% data_table_list object.membres.all %}
+    {% data_table_list object.oeuvres.prefetch_all %}
     {% evenement_list_def object.apparitions %}
 
     {% data_table_attr 'notes_publiques' _('notes') %}
