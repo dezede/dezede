@@ -54,6 +54,12 @@
       {% endaddstatic %}
 
     </ul>
+  {% elif source.is_collection %}
+    <div class="row bibliotheque">
+      {% for source in source.children.all %}
+        {% include 'libretto/include/bibliotheque_source.html' %}
+      {% endfor %}
+    </div>
   {% endif %}
 {% endwith %}
 

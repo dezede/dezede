@@ -8,7 +8,7 @@ from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField,
     CASCADE, PositiveSmallIntegerField, FileField, BooleanField,
     DateField, TextField,
-)
+    Q)
 from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -398,17 +398,26 @@ class Source(AutoriteModel):
             or self.has_images()
         )
 
+    def images_iterator(self):
+        if self.is_image():
+            yield self
+        for child in Source.objects.filter(
+            Q(parent=self) | Q(parent__parent=self),
+            type_fichier=FileAnalyzer.IMAGE,
+        ).order_by('position', 'page'):
+            yield child
+
     @cached_property
     def images(self):
-        images = []
-        if self.is_image():
-            images.append(self)
+        return list(self.images_iterator())
 
-        images.extend(
-            self.children.filter(
-                type_fichier=FileAnalyzer.IMAGE
-            ).order_by('position', 'page'))
-        return images
+    @cached_property
+    def preview_image(self):
+        return next(self.images_iterator())
+
+    @cached_property
+    def is_collection(self):
+        return Source.objects.filter(parent__parent=self).exists()
 
     def is_empty(self):
         return not (self.transcription or self.url or self.has_fichiers())
