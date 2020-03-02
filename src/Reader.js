@@ -316,7 +316,7 @@ class Reader extends React.Component {
                       return null;
                     }
                     return (
-                      <Grid item key={instance.key}>
+                      <Grid item key={instance.cacheKey}>
                         <Chip label={instance.toString()}
                               clickable component="a"
                               href={instance.front_url}/>

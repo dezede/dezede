@@ -21,8 +21,12 @@ class Model {
     this.id = id;
   }
 
-  get key() {
-    return `${this.constructor.name}-${this.id}`;
+  static getCacheKey(id) {
+    return `${this.apiName}-${id}`;
+  }
+
+  get cacheKey() {
+    return this.constructor.getCacheKey(this.id);
   }
 
   static getBaseApiUrl() {
@@ -64,7 +68,7 @@ class Model {
     if (!id) {
       return null;
     }
-    const cacheKey = `${this.apiName}-${id}`;
+    const cacheKey = this.getCacheKey(id);
     if (cacheKey in this.cache) {
       return this.cache[cacheKey];
     }
