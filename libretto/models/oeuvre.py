@@ -263,14 +263,14 @@ class TypeDeParenteDOeuvres(TypeDeParente):
 
 class ParenteDOeuvresManager(CommonManager):
     def meres_en_ordre(self):
-        return self.all().order_by(
-            'mere__creation_date', 'mere__creation_heure',
+        return self.order_by(
+            'type', 'mere__creation_date', 'mere__creation_heure',
             'mere__creation_lieu', 'mere__creation_date_approx',
             'mere__creation_heure_approx', 'mere__creation_lieu_approx')
 
     def filles_en_ordre(self):
-        return self.all().order_by(
-            'fille__creation_date', 'fille__creation_heure',
+        return self.order_by(
+            'type', 'fille__creation_date', 'fille__creation_heure',
             'fille__creation_lieu', 'fille__creation_date_approx',
             'fille__creation_heure_approx', 'fille__creation_lieu_approx')
 
