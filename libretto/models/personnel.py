@@ -213,18 +213,24 @@ class Membre(CommonModel, PeriodeDActivite):
         'Partie', blank=True, null=True, related_name='membres',
         limit_choices_to=limit_choices_to_instruments,
         verbose_name=_('instrument'), on_delete=CASCADE)
+    profession = ForeignKey(
+        'Profession', blank=True, null=True, related_name='membres',
+        verbose_name=_('profession'), on_delete=CASCADE,
+    )
     classement = SmallIntegerField(_('classement'), default=1)
 
     class Meta(object):
         verbose_name = _('membre')
         verbose_name_plural = _('membres')
-        ordering = ('instrument', 'classement', 'debut')
+        ordering = ('instrument', 'profession', 'classement', 'debut')
 
     def html(self, to_individus=True, tags=True):
         l = [(self.individu if to_individus
               else self.ensemble).html(tags=tags)]
         if self.instrument:
             l.append(f'[{self.instrument.html(tags=tags)}]')
+        if self.profession:
+            l.append(f'[{self.profession.html(tags=tags)}]')
         if self.debut or self.fin:
             l.append(f'({self.smart_period(tags=tags)})')
         return mark_safe(' '.join(l))

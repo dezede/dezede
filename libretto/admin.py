@@ -245,12 +245,14 @@ class AuteurInline(CustomTabularInline):
 
 class MembreInline(CustomStackedInline):
     model = Membre
-    raw_id_fields = ('individu', 'instrument')
+    raw_id_fields = ('individu', 'instrument', 'profession')
     autocomplete_lookup_fields = {
-        'fk': ['individu', 'instrument'],
+        'fk': ['individu', 'instrument', 'profession'],
     }
     fieldsets = (
-        (None, {'fields': ('individu', 'instrument', 'classement')}),
+        (None, {'fields': (
+            'individu', 'instrument', 'profession', 'classement',
+        )}),
         PERIODE_D_ACTIVITE_FIELDSET,
     )
 
