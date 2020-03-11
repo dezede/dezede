@@ -15,6 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, TemplateView
 from haystack.views import SearchView
 
+from common.utils.html import sanitize_html
 from dossiers.models import DossierDEvenements
 from libretto.models import Oeuvre, Lieu, Individu
 from libretto.search_indexes import autocomplete_search, filter_published
@@ -157,10 +158,13 @@ class RssFeed(Feed):
         return Diapositive.objects.published()
 
     def item_title(self, item):
-        return strip_tags(item.title)
+        return strip_tags(item.title) + ' ' + strip_tags(item.subtitle)
 
     def item_description(self, item: Diapositive):
-        return item.subtitle
+        if isinstance(item.content_object, DossierDEvenements):
+            return sanitize_html(
+                item.content_object.presentation, include_links=False,
+            )
 
     def item_link(self, item: Diapositive):
         return item.content_object.get_absolute_url()

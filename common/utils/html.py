@@ -143,13 +143,18 @@ def em(txt):
     return f'<em>{txt}</em>'
 
 
-def sanitize_html(html):
+def sanitize_html(html, include_links=True):
+    tags = (
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'p', 'ul', 'ol', 'li', 'pre', 'address', 'br',
+        'table', 'caption', 'thead', 'tbody', 'tr', 'th', 'td',
+        'span', 'em', 'cite', 'strong', 'sub', 'sup',
+    )
+    if include_links:
+        tags += ('a',)
     return clean(
         html,
-        tags=('h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-              'p', 'ul', 'ol', 'li', 'pre', 'address', 'br',
-              'table', 'caption', 'thead', 'tbody', 'tr', 'th', 'td',
-              'span', 'a', 'em', 'cite', 'strong', 'sub', 'sup'),
+        tags=tags,
         attributes={
             'a': ['href', 'target', 'title'],
             'span': ['class', 'style'],
