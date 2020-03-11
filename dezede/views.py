@@ -1,12 +1,21 @@
-from collections import OrderedDict
+import datetime
 import json
+from collections import OrderedDict
+from mimetypes import guess_type
 
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.contrib.syndication.views import Feed
 from django.http import HttpResponse
 from django.utils.encoding import smart_text
+from django.utils.feedgenerator import DefaultFeed, Enclosure
+from django.utils.html import strip_tags
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView, TemplateView
 from haystack.views import SearchView
+
+from dossiers.models import DossierDEvenements
 from libretto.models import Oeuvre, Lieu, Individu
 from libretto.search_indexes import autocomplete_search, filter_published
 from typography.utils import replace
@@ -117,3 +126,65 @@ class BibliographieView(TemplateView):
             lieux=Lieu.objects.all(),
         )
         return context
+
+
+class ImageRssFeedGenerator(DefaultFeed):
+    def add_root_elements(self, handler):
+        super(ImageRssFeedGenerator, self).add_root_elements(handler)
+        handler.startElement('image', {})
+        handler.addQuickElement('url', self.feed['image_url'])
+        handler.addQuickElement('title', self.feed['title'])
+        handler.addQuickElement('link', self.feed['link'])
+        handler.endElement('image')
+
+
+class RssFeed(Feed):
+    feed_type = ImageRssFeedGenerator
+    title = 'Dezède'
+    link = ''
+    description = _(
+        'Derniers travaux importants de chronologie des spectacles.'
+    )
+
+    def get_feed(self, obj, request):
+        self.request = request
+        return super().get_feed(obj, request)
+
+    def get_absolute_url(self, relative_url):
+        return self.request.build_absolute_uri(relative_url)
+
+    def items(self):
+        return Diapositive.objects.published()
+
+    def item_title(self, item):
+        return strip_tags(item.title)
+
+    def item_description(self, item: Diapositive):
+        return item.subtitle
+
+    def item_link(self, item: Diapositive):
+        return item.content_object.get_absolute_url()
+
+    def item_pubdate(self, item: Diapositive):
+        if isinstance(item.content_object, DossierDEvenements):
+            return datetime.datetime.combine(
+                item.content_object.date_publication,
+                datetime.time.min,
+            )
+
+    def item_enclosures(self, item: Diapositive):
+        thumbnail = item.thumbnail_instance()
+        return [
+            Enclosure(
+                self.get_absolute_url(thumbnail.url),
+                str(thumbnail.size),
+                guess_type(thumbnail.url)[0],
+            )
+        ]
+
+    def feed_extra_kwargs(self, obj):
+        return {
+            'image_url': self.get_absolute_url(
+                staticfiles_storage.url('images/logo-large.png')
+            ),
+        }

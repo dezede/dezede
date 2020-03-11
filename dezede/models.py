@@ -121,15 +121,18 @@ class Diapositive(PublishedModel):
     def size_sm(self):
         return self.size(self.SLIDER_SM_RATIO)
 
-    def thumbnail(self):
-        cropping_field = self._meta.get_field('cropping')
-        width = cropping_field.width
-        height = cropping_field.height
-        thumbnail_url = get_thumbnailer(self.image).get_thumbnail({
+    def thumbnail_instance(self):
+        return get_thumbnailer(self.image).get_thumbnail({
             'size': (150, 150),
             'box': self.cropping,
-        }).url
-        return (f'<img src="{thumbnail_url}" '
-                f'style="width: {width}; height: {height};" />')
+        })
+
+    def thumbnail(self):
+        thumbnail_instance = self.thumbnail_instance()
+        return (
+            f'<img src="{thumbnail_instance.url}" '
+            f'style="width: {thumbnail_instance.width}; '
+            f'height: {thumbnail_instance.height};" />'
+        )
     thumbnail.short_description = _('miniature')
     thumbnail.allow_tags = True

@@ -5,7 +5,9 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 from ajax_select import urls as ajax_select_urls
 from .views import (
-    HomeView, CustomSearchView, autocomplete, ErrorView, BibliographieView)
+    HomeView, CustomSearchView, autocomplete, ErrorView, BibliographieView,
+    RssFeed,
+)
 
 
 admin.autodiscover()
@@ -32,6 +34,7 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),
     url(r'autocomplete', autocomplete, name='autocomplete'),
+    url(r'rss\.xml', RssFeed(), name='rss_feed'),
     url(r'^404$', ErrorView.as_view(status=404)),
 ]
 
