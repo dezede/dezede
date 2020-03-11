@@ -19,6 +19,7 @@ from tinymce.models import HTMLField
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
     SlugModel, PublishedManager, PublishedQuerySet, AncrageSpatioTemporel,
+    NumberCharField,
 )
 
 from common.utils.base import OrderedDefaultDict
@@ -163,13 +164,15 @@ class Source(AutoriteModel):
                         help_text=_('Recommandée pour les images.'))
 
     ancrage = AncrageSpatioTemporel(has_heure=False, has_lieu=False)
-    numero = CharField(_('numéro'), max_length=50, blank=True, db_index=True,
-                       help_text=_('Sans « № ». Exemple : « 52 »'))
+    numero = NumberCharField(
+        _('numéro'), max_length=50, blank=True, db_index=True,
+        help_text=_('Sans « № ». Exemple : « 52 »'),
+    )
     folio = CharField(_('folio'), max_length=15, blank=True,
                       help_text=_('Sans « f. ». Exemple : « 3 ».'))
     page = CharField(_('page'), max_length=15, blank=True, db_index=True,
                      help_text=_('Sans « p. ». Exemple : « 3 »'))
-    lieu_conservation = CharField(_('lieu de conservation'), max_length=50,
+    lieu_conservation = CharField(_('lieu de conservation'), max_length=75,
                                   blank=True, db_index=True)
     cote = CharField(_('cote'), max_length=60, blank=True, db_index=True)
     url = URLField(_('URL'), blank=True,

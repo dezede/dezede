@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from django.conf import settings
 from django.contrib.admin.models import LogEntry
@@ -328,6 +329,24 @@ class CommonTreeManager(CommonManager):
         return self.queryset_class(self.model, using=self._db).order_by(
             [f.name for f in self.model._meta.fields
              if isinstance(f, PathField)][0])
+
+
+class NumberCharField(CharField):
+    NUMBER_RE = re.compile(r'\d+')
+
+    def __init__(self, *args, zfill_size=6, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.zfill_size = zfill_size
+
+    def fill_zeros(self, match):
+        return match.group(0).zfill(self.zfill_size)
+
+    def get_db_prep_value(self, value, connection, prepared=False):
+        value = super().get_db_prep_value(value, connection, prepared=prepared)
+        return self.NUMBER_RE.sub(self.fill_zeros, value)
+
+    def from_db_value(self, value, expression, connection, context):
+        return value.lstrip('0')
 
 
 class AncrageSpatioTemporel(object):

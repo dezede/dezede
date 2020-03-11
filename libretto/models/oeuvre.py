@@ -20,9 +20,9 @@ from cache_tools import model_method_cached
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
-    PublishedQuerySet, CommonTreeManager,
-    CommonTreeQuerySet, TypeDeParente,
-    AncrageSpatioTemporel)
+    PublishedQuerySet, CommonTreeManager, CommonTreeQuerySet, TypeDeParente,
+    AncrageSpatioTemporel, NumberCharField,
+)
 from common.utils.html import capfirst, hlp, href, cite, em
 from common.utils.text import str_list, str_list_w_last, to_roman, BiGrouper
 from .individu import Individu
@@ -585,8 +585,8 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     genre = ForeignKey(
         'GenreDOeuvre', related_name='oeuvres', blank=True, null=True,
         verbose_name=_('genre'), on_delete=PROTECT)
-    numero = CharField(
-        _('numéro'), max_length=5, blank=True, db_index=True,
+    numero = NumberCharField(
+        _('numéro'), max_length=10, blank=True, db_index=True,
         validators=[RegexValidator(
             r'^[\d\w\-]+$', _('Vous ne pouvez saisir que des chiffres, '
                               'lettres non accentuées et tiret, '
@@ -722,8 +722,8 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         db_index=True)
     NUMERO_EXTRAIT_PATTERN = r'^([1-9]\d*)([^\d\.\-]*)$'
     NUMERO_EXTRAIT_RE = re.compile(NUMERO_EXTRAIT_PATTERN)
-    numero_extrait = CharField(
-        _('numéro d’extrait'), max_length=5, blank=True, db_index=True,
+    numero_extrait = NumberCharField(
+        _('numéro d’extrait'), max_length=10, blank=True, db_index=True,
         help_text=_(
             'Le numéro de l’extrait au sein de l’œuvre, par exemple « 3 » '
             'pour le 3<sup>e</sup> mouvement d’un concerto, « 4 » pour '
