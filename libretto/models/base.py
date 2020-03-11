@@ -345,8 +345,11 @@ class NumberCharField(CharField):
         value = super().get_db_prep_value(value, connection, prepared=prepared)
         return self.NUMBER_RE.sub(self.fill_zeros, value)
 
+    def strip_zeros(self, match):
+        return match.group(0).lstrip('0')
+
     def from_db_value(self, value, expression, connection, context):
-        return value.lstrip('0')
+        return self.NUMBER_RE.sub(self.strip_zeros, value)
 
 
 class AncrageSpatioTemporel(object):
