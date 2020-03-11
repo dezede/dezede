@@ -173,7 +173,7 @@ class RssFeed(Feed):
             )
 
     def item_enclosures(self, item: Diapositive):
-        thumbnail = item.thumbnail_instance()
+        thumbnail = item.thumbnail_instance(item.size_lg(), item.box_lg())
         return [
             Enclosure(
                 self.get_absolute_url(thumbnail.url),

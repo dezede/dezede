@@ -121,10 +121,14 @@ class Diapositive(PublishedModel):
     def size_sm(self):
         return self.size(self.SLIDER_SM_RATIO)
 
-    def thumbnail_instance(self):
+    def thumbnail_instance(self, size=None, box=None):
+        if size is None:
+            size = (150, 150)
+        if box is None:
+            box = self.cropping
         return get_thumbnailer(self.image).get_thumbnail({
-            'size': (150, 150),
-            'box': self.cropping,
+            'size': size,
+            'box': box,
         })
 
     def thumbnail(self):
