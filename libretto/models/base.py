@@ -343,12 +343,16 @@ class NumberCharField(CharField):
 
     def get_db_prep_value(self, value, connection, prepared=False):
         value = super().get_db_prep_value(value, connection, prepared=prepared)
+        if value is None:
+            return None
         return self.NUMBER_RE.sub(self.fill_zeros, value)
 
     def strip_zeros(self, match):
         return match.group(0).lstrip('0')
 
     def from_db_value(self, value, expression, connection, context):
+        if value is None:
+            return value
         return self.NUMBER_RE.sub(self.strip_zeros, value)
 
 
