@@ -6,9 +6,9 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField,
-    CASCADE, PositiveSmallIntegerField, FileField, BooleanField,
-    DateField, TextField,
-    Q)
+    CASCADE, PositiveSmallIntegerField, FileField, BooleanField, DateField,
+    TextField, Q, PositiveIntegerField,
+)
 from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -149,7 +149,7 @@ class Source(AutoriteModel):
             'déjà existant ou un tome d’une série.'
         ),
     )
-    position = PositiveSmallIntegerField(
+    position = PositiveIntegerField(
         _('position'), null=True, blank=True,
         help_text=_('Position au sein de son parent.')
     )
