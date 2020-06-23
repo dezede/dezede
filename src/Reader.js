@@ -207,6 +207,9 @@ class Reader extends React.Component {
     if (child.folio) {
       return `Folio ${child.folio}`;
     }
+    if (child.page) {
+      return child.page;
+    }
     return (position + 1).toString();
   };
 
@@ -298,7 +301,7 @@ class Reader extends React.Component {
               <Grid item>
                 <Slider
                   value={position + 1} min={1} max={this.numPages}
-                  getAriaLabel={value => this.source.getChild(value).folio}
+                  getAriaLabel={this.getPageName}
                   marks={[
                     {value: position + 1, label: this.getPageName(position)},
                   ]}

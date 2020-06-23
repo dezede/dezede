@@ -15,6 +15,7 @@ class Source extends Model {
 
   @observable title = '';
   @observable folio = '';
+  @observable page = '';
   @observable fichier = '';
   @observable type_fichier = -1;
   @observable taille_fichier = '';
@@ -37,6 +38,7 @@ class Source extends Model {
     super.setData(data);
     this.title = data.title;
     this.folio = data.folio;
+    this.page = data.page;
     this.fichier = data.fichier;
     this.type_fichier = data.type_fichier;
     this.taille_fichier = data.taille_fichier;
