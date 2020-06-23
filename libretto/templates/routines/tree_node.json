@@ -1,7 +1,7 @@
 {% load routines %}[
   {% for child in children %}
     {
-      "label": "{% filter escapejs %}<a href="{{ child.get_absolute_url }}">{{ child|get_property:attr }}</a>{% endfilter %}",
+      "label": "{% filter escapejs %}<a href="{{ child.get_absolute_url }}">{{ child|get_property:attr|safe }}</a>{% endfilter %}",
       "id": "{{ child.pk }}",
       "load_on_demand": {{ child.is_leaf_node|yesno:'false,true' }}
     }{% if not forloop.last %},{% endif %}
