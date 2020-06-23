@@ -392,7 +392,7 @@ class EvenementQuerySet(PublishedQuerySet):
         return (
             self.extra({'year': connection.ops.date_trunc_sql('year',
                                                               'debut_date')})
-            .values('year').annotate(count=Count('pk'))
+            .values('year').annotate(count=Count('pk', distinct=True))
             .order_by('year'))
 
     def get_distributions(self):
