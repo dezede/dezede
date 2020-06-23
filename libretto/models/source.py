@@ -638,10 +638,16 @@ class AudioVideoAbstract(Source):
         abstract = True
 
     def update_media_info(self):
-        if not self.fichier and not self.extrait:
-            raise ValidationError(
-                _('Vous devez remplir au moins « fichier » ou « extrait ».')
+        if (
+            (self.fichier_ogg and self.fichier_mpeg)
+            and (self.extrait_ogg and self.extrait_mpeg)
+        ):
+            return
+        elif not self.fichier and not self.extrait:
+            message = _(
+                'Vous devez remplir au moins « fichier » ou « extrait ».'
             )
+            raise ValidationError({'fichier': message, 'extrait': message})
 
         if self.fichier:
             file_analyzer = FileAnalyzer(self, 'fichier')
