@@ -205,10 +205,10 @@ class Reader extends React.Component {
   getPageName = position => {
     const child = this.source.getChild(position);
     if (child.folio) {
-      return `Folio ${child.folio}`;
+      return `f. ${child.folio}`;
     }
     if (child.page) {
-      return child.page;
+      return `p. ${child.page}`;
     }
     return (position + 1).toString();
   };
