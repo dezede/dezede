@@ -766,21 +766,29 @@ class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
 @register(Partie)
 class PartieAdmin(VersionAdmin, AutoriteAdmin):
     form = PartieForm
-    list_display = ('__str__', 'nom', 'parent', 'oeuvre', 'classement',)
-    list_editable = ('nom', 'parent', 'oeuvre', 'classement',)
+    list_display = (
+        '__str__', 'nom', 'parent', 'oeuvre', 'classement',
+        'premier_interprete',
+    )
+    list_editable = (
+        'nom', 'parent', 'oeuvre', 'classement', 'premier_interprete',
+    )
     list_filter = ('type',)
     list_select_related = ('parent', 'etat', 'owner')
     search_fields = ('nom__unaccent',)
     radio_fields = {'type': HORIZONTAL}
-    raw_id_fields = ('oeuvre', 'professions', 'parent')
+    raw_id_fields = ('oeuvre', 'professions', 'parent', 'premier_interprete')
     autocomplete_lookup_fields = {
         'm2m': ('professions',),
-        'fk': ('oeuvre', 'parent'),
+        'fk': ('oeuvre', 'parent', 'premier_interprete'),
     }
     fieldsets = (
         (None, {
-            'fields': ('type', ('nom', 'nom_pluriel'),
-                       'oeuvre', 'professions', 'parent', 'classement'),
+            'fields': (
+                'type', ('nom', 'nom_pluriel'),
+                'oeuvre', 'professions', 'parent', 'classement',
+                'premier_interprete',
+            ),
         }),
     )
 

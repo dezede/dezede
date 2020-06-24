@@ -105,6 +105,10 @@ class Partie(AutoriteModel, UniqueSlugModel):
                         verbose_name=_('rôle ou instrument parent'),
                         on_delete=CASCADE)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
+    premier_interprete = ForeignKey(
+        'Individu', related_name='parties_creees', on_delete=PROTECT,
+        null=True, blank=True, verbose_name=_('premier(ère) interprète'),
+    )
 
     class Meta(object):
         unique_together = ('nom', 'parent', 'oeuvre')
