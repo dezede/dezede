@@ -319,7 +319,7 @@ class ParenteDOeuvres(CommonModel):
 class AuteurBiGrouper(BiGrouper):
     def __init__(self, iterator, tags=False):
         self.tags = tags
-        super(AuteurBiGrouper, self).__init__(iterator)
+        super().__init__(iterator)
 
     def get_key(self, obj):
         return obj.profession

@@ -29,7 +29,7 @@ __all__ = ('ElementDeDistribution', 'CaracteristiqueDeProgramme',
 class ElementDeDistributionBiGrouper(BiGrouper):
     def __init__(self, iterator, tags=False):
         self.tags = tags
-        super(ElementDeDistributionBiGrouper, self).__init__(iterator)
+        super().__init__(iterator)
 
     def get_key(self, obj):
         return obj.partie if obj.profession is None else obj.profession

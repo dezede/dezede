@@ -222,7 +222,7 @@ class Membre(CommonModel, PeriodeDActivite):
     class Meta(object):
         verbose_name = _('membre')
         verbose_name_plural = _('membres')
-        ordering = ('instrument', 'profession', 'classement', 'debut')
+        ordering = ('classement', 'individu__nom', 'individu__prenoms')
 
     def html(self, to_individus=True, tags=True):
         l = [(self.individu if to_individus
