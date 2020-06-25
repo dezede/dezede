@@ -91,8 +91,10 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
                             related_name='dossiers')
     oeuvres = ManyToManyField(Oeuvre, blank=True, verbose_name=_('œuvres'),
                               related_name='dossiers')
-    auteurs = ManyToManyField(Individu, blank=True, verbose_name=_('auteurs'),
-                              related_name='dossiers')
+    individus = ManyToManyField(
+        Individu, blank=True, verbose_name=_('individus'),
+        related_name='dossiers',
+    )
     circonstance = CharField(_('circonstance'), max_length=100, blank=True)
     evenements = ManyToManyField(Evenement, verbose_name=_('événements'),
                                  blank=True, related_name='dossiers')
@@ -140,6 +142,7 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
             return self._evenement_queryset
         if not dynamic and self.pk and self.evenements.exists():
             return self.evenements.all()
+        args = []
         kwargs = {}
         if self.debut:
             kwargs['debut_date__gte'] = self.debut
@@ -152,9 +155,13 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
             if self.oeuvres.exists():
                 oeuvres = self.oeuvres.all().get_descendants(include_self=True)
                 kwargs['programme__oeuvre__in'] = oeuvres
-            auteurs = self.auteurs.all()
-            if auteurs.exists():
-                kwargs['programme__oeuvre__auteurs__individu__in'] = auteurs
+            individus = self.individus.all()
+            if individus.exists():
+                args.append(
+                    Q(programme__oeuvre__auteurs__individu__in=individus)
+                    | Q(programme__distribution__individu__in=individus)
+                    | Q(distribution__individu__in=individus)
+                )
             if self.ensembles.exists():
                 evenements = Evenement.objects.extra(where=("""
                 id IN (
@@ -175,9 +182,10 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
                 kwargs['pk__in'] = saisons.evenements()
         if self.circonstance:
             kwargs['circonstance__icontains'] = self.circonstance
-        if kwargs:
+        if args or kwargs:
             self._evenement_queryset = Evenement.objects.filter(
-                **kwargs).distinct()
+                *args, **kwargs,
+            ).distinct()
         else:
             self._evenement_queryset = Evenement.objects.none()
         return self._evenement_queryset
@@ -211,7 +219,7 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
     oeuvres_html.allow_tags = True
 
     def auteurs_html(self):
-        return str_list_w_last([a.html() for a in self.auteurs.all()])
+        return str_list_w_last([a.html() for a in self.individus.all()])
     auteurs_html.short_description = _('auteurs')
     auteurs_html.allow_tags = True
 

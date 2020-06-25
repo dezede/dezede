@@ -26,10 +26,10 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
     search_fields = ('titre__unaccent', 'titre_court__unaccent',)
     prepopulated_fields = {'slug': ('titre',)}
     readonly_fields = ('get_count',)
-    raw_id_fields = ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs',
+    raw_id_fields = ('editeurs_scientifiques', 'lieux', 'oeuvres', 'individus',
                      'ensembles', 'sources', 'evenements', 'saisons')
     autocomplete_lookup_fields = {
-        'm2m': ('editeurs_scientifiques', 'lieux', 'oeuvres', 'auteurs',
+        'm2m': ('editeurs_scientifiques', 'lieux', 'oeuvres', 'individus',
                 'ensembles'),
     }
     fieldsets = (
@@ -53,7 +53,7 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
         }),
         (_('Sélection dynamique'), {
             'fields': ('saisons', ('debut', 'fin'), 'lieux', 'oeuvres',
-                       'auteurs', 'ensembles', 'sources', 'circonstance'),
+                       'individus', 'ensembles', 'sources', 'circonstance'),
         }),
         (_('Sélection manuelle'), {
             'fields': ('evenements', 'statique', 'get_count',),
