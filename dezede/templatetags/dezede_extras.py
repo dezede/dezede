@@ -1,7 +1,7 @@
 from django import template
 from django.apps import apps
 from django.urls import reverse
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 from django.utils.text import capfirst
 import dezede
 
@@ -24,3 +24,14 @@ def nav_link(context, view_name, text):
     css_class = ' class="active"' if requested_url.startswith(url) else ''
     return format_html(f'<li{css_class}><a href="{{}}">{{}}</a></li>',
                        url, capfirst(text))
+
+
+@register.simple_tag()
+def meta(namespace, name, content, **attrs):
+    attrs = format_html_join(' ', '{}="{}"', attrs.items())
+    return format_html(
+        '<meta name="{}.{}" content="{}" {}/>'
+        '<meta property="{}:{}" content="{}" {}/>',
+        namespace.upper(), name, content, attrs,
+        namespace.lower(), name, content, attrs,
+    )

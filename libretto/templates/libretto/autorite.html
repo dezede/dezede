@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n extras routines %}
+{% load i18n extras routines static_grouper dezede_extras %}
 
 
 {% block title %}
@@ -13,6 +13,11 @@
 
 
 {% block content %}
+  {% addstatic metadata %}
+    {% meta 'DC' 'title' object.related_label|striptags %}
+    {% meta 'DC' 'creator' object.owner %}
+  {% endaddstatic %}
+
   {% include 'libretto/include/etat.html' with etat=object.etat %}
 
   {% block autorite-content %}{% endblock %}

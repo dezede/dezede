@@ -1,4 +1,4 @@
-{% load i18n static compress static_grouper %}
+{% load i18n static compress static_grouper dezede_extras %}
 
 {% addstatic css %}
   <link rel="stylesheet" href="{% static 'css/custom-theme/jquery-ui-1.9.2.min.css' %}" />
@@ -62,8 +62,16 @@
     <meta name="keywords"
           content="Dezède, {% trans "musicologie, base de données" %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
+    <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />
     <meta property="og:site_name" content="Dezède" />
     <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    {% meta 'DC' 'identifier' request.build_absolute_uri %}
+    {% meta 'DC' 'source' 'https://'|add:request.get_host %}
+    {% meta 'DC' 'format' 'text/html' %}
+    {% meta 'DC' 'language' LANGUAGE_CODE %}
+    {% meta 'DC' 'publisher' 'Dezède' %}
+    {% meta 'DC' 'rights' _('Tous droits réservés') %}
     {% static_list metadata %}
     <meta property="og:image" content="http{% if request.is_secure %}s{% endif %}://{{ request.get_host }}{% static 'images/logo-large.png' %}" />
     <meta property="og:image:type" content="image/png" />

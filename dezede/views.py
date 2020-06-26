@@ -5,6 +5,7 @@ from mimetypes import guess_type
 
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sitemaps import Sitemap
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.contrib.syndication.views import Feed
 from django.http import HttpResponse
@@ -17,7 +18,9 @@ from haystack.views import SearchView
 
 from common.utils.html import sanitize_html
 from dossiers.models import DossierDEvenements
-from libretto.models import Oeuvre, Lieu, Individu
+from libretto.models import (
+    Oeuvre, Lieu, Individu, Source, Evenement, Ensemble, Profession, Partie,
+)
 from libretto.search_indexes import autocomplete_search, filter_published
 from typography.utils import replace
 from .models import Diapositive
@@ -192,3 +195,30 @@ class RssFeed(Feed):
                 staticfiles_storage.url('images/logo-large.png')
             ),
         }
+
+
+class GlobalSitemap(Sitemap):
+    changefreq = 'monthly'
+
+    def items(self):
+        items = []
+        for model in (
+            DossierDEvenements, Individu, Ensemble, Oeuvre,
+            Lieu, Profession, Partie, Source, Evenement,
+        ):
+            items.extend(model.objects.published().only('pk'))
+        return items
+
+    def location(self, obj):
+        return obj.permalien()
+
+    def priority(self, obj):
+        if isinstance(obj, DossierDEvenements):
+            return 1.0
+        if isinstance(obj, (Individu, Ensemble)):
+            return 0.7
+        if isinstance(obj, Profession):
+            return 0.2
+        if isinstance(obj, (Source, Evenement, Partie)):
+            return 0.1
+        return 0.5

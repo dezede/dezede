@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n routines el_pagination_tags static %}
+{% load dezede_extras i18n routines el_pagination_tags static static_grouper %}
 
 
 {% block title %}
@@ -31,6 +31,13 @@
 
 
 {% block content %}
+
+  {% addstatic metadata %}
+    {% meta 'DC' 'title' object|striptags %}
+    {% meta 'DC' 'creator' object.editeurs_scientifiques.all|join:', ' %}
+    {% meta 'DC' 'date' object.date_publication scheme='DCTERMS.W3C-DTF' %}
+    {% meta 'DC' 'description' object.presentation|striptags %}
+  {% endaddstatic %}
 
   {% trans 'Pour citer ce dossier' as citation_title %}
   {% include 'dossiers/dossierdevenements_content.html' with export_pdf=True  %}

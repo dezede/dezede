@@ -107,6 +107,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.gis',
     'django.contrib.postgres',
+    'django.contrib.sitemaps',
 
     'allauth',
     'allauth.account',

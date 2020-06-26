@@ -1,5 +1,5 @@
 {% extends 'libretto/autorite.html' %}
-{% load i18n %}
+{% load i18n static_grouper dezede_extras %}
 
 {% block title %}
   {% trans "événement"|capfirst %}
@@ -10,6 +10,11 @@
 {% endblock %}
 
 {% block autorite-content %}
+  {% if not object.debut_date_approx %}
+    {% addstatic metadata %}
+      {% meta 'DC' 'date' object.debut_date scheme='DCTERMS.W3C-DTF' %}
+    {% endaddstatic %}
+  {% endif %}
   {% include 'libretto/evenement_item_body.html' %}
 {% endblock %}
 

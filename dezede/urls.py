@@ -2,11 +2,13 @@ from django.conf import settings
 from django.conf.urls import *
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
+from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 from ajax_select import urls as ajax_select_urls
 from .views import (
     HomeView, CustomSearchView, autocomplete, ErrorView, BibliographieView,
-    RssFeed,
+    RssFeed, GlobalSitemap,
 )
 
 
@@ -33,8 +35,11 @@ urlpatterns = [
     url(r'^recherche/', CustomSearchView(), name='haystack_search'),
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),
-    url(r'autocomplete', autocomplete, name='autocomplete'),
-    url(r'rss\.xml', RssFeed(), name='rss_feed'),
+    url(r'^autocomplete$', autocomplete, name='autocomplete'),
+    url(r'^rss\.xml$', RssFeed(), name='rss_feed'),
+    url(r'^sitemap.xml$', cache_page(24*60*60)(sitemap),
+        {'sitemaps': {'global': GlobalSitemap}},
+        name='django.contrib.sitemaps.views.sitemap'),
     url(r'^404$', ErrorView.as_view(status=404)),
 ]
 
