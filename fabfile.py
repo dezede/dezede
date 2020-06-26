@@ -228,8 +228,12 @@ def update():
     with workon_dezede():
         run('git pull')
         update_submodules()
-        run('find . -not -path "./media/*" -not -path "./static/*" '
-            '-name "*.pyc" -delete')
+        run('find . '
+            '-path "./media/*" -prune -o '
+            '-path "./static/*" -prune -o '
+            '-path "./node_modules/*" -prune -o '
+            '-path "./.git/*" -prune -o '
+            r'-name "*.pyc" -exec rm "{}" \;')
 
     pip_install()
     npm_install()
