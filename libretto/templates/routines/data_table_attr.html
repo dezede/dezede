@@ -1,5 +1,5 @@
 <tr>
-  <th>
+  <th{% if title %} title="{{ title }}"{% endif %}>
     {{ verbose_name|capfirst }}
   </th>
   <td>{{ value|safe }}</td>

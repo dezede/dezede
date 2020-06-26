@@ -55,7 +55,9 @@ def frontend_admin(context, obj=None, size='xs'):
 
 
 @register.inclusion_tag('routines/data_table_attr.html', takes_context=True)
-def data_table_attr(context, attr, verbose_name=None, obj=None, caps=False):
+def data_table_attr(
+    context, attr, verbose_name=None, title=None, obj=None, caps=False,
+):
     if obj is None:
         obj = context['object']
     value = obj
@@ -84,6 +86,7 @@ def data_table_attr(context, attr, verbose_name=None, obj=None, caps=False):
         value = capfirst(value.strip())
     return {
         'verbose_name': verbose_name,
+        'title': title,
         'value': value,
     }
 
@@ -162,9 +165,11 @@ def data_table_list_header(context):
 
 
 @register.inclusion_tag('routines/data_table_list.html', takes_context=True)
-def data_table_list(context, object_list, attr='link',
-                    verbose_name=None, verbose_name_plural=None, per_page=10,
-                    has_count_if_one=True, has_count=True):
+def data_table_list(
+    context, object_list, attr='link',
+    verbose_name=None, verbose_name_plural=None, title=None, per_page=10,
+    has_count_if_one=True, has_count=True,
+):
 
     # Only show what the connected user is allowed to see.
     if isinstance(object_list, PublishedQuerySet):
@@ -190,6 +195,7 @@ def data_table_list(context, object_list, attr='link',
         'is_published_queryset': is_published_queryset,
         'verbose_name': verbose_name,
         'verbose_name_plural': verbose_name_plural,
+        'title': title,
         'per_page': per_page,
         'page_variable': verbose_name + '_page',
         'has_count_if_one': has_count_if_one,

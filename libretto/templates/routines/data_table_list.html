@@ -8,7 +8,7 @@
   <tr>
 
     {% if forloop.first %}
-      <th rowspan="{{ object_list|length }}">
+      <th rowspan="{{ object_list|length }}"{% if title %} title="{{ title }}"{% endif %}>
         {% data_table_list_header %}
       </th>
     {% endif %}
