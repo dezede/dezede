@@ -23,7 +23,7 @@ jinja2
 tornado
 
 # Translation helper
-transifex-client==0.13.5
+transifex-client==0.13.10
 
 # Test data deserialization
 PyYaml
