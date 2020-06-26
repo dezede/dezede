@@ -169,7 +169,7 @@ def get_data(evenements_qs, min_places, bbox):
         WHERE (
             %s
             geometry IS NOT NULL
-            AND length(path) / 4 <= %%s
+            AND length(path) / 4 = %%s
         )
         ORDER BY length(path) DESC
     ) AS ancetre ON lieu.path LIKE ancetre.path || '%%%%'
