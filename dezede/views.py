@@ -8,6 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sitemaps import Sitemap
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.contrib.syndication.views import Feed
+from django.db.models import Q
 from django.http import HttpResponse
 from django.utils.encoding import smart_text
 from django.utils.feedgenerator import DefaultFeed, Enclosure
@@ -200,13 +201,40 @@ class RssFeed(Feed):
 class GlobalSitemap(Sitemap):
     changefreq = 'monthly'
 
+    def get_queryset(self, model):
+        queryset = model.objects.published()
+        model = queryset.model
+        if model in (Individu, Ensemble, Profession):
+            if model is Profession:
+                queryset = queryset.filter(parent__isnull=True)
+            return queryset.filter(
+                Q(elements_de_distribution__isnull=False)
+                | Q(auteurs__isnull=False)
+            )
+        if model is Oeuvre:
+            return queryset.filter(
+                Q(extrait_de__isnull=True)
+                & Q(elements_de_programme__isnull=False)
+                | Q(sources__isnull=False),
+            )
+        if model is Lieu:
+            return queryset.filter(evenement_debut_set__isnull=False)
+        if model is Partie:
+            return queryset.filter(
+                elements_de_distribution__isnull=False, parent__isnull=True,
+            )
+        if model is Source:
+            return queryset.filter(parent__isnull=True)
+        return queryset
+
     def items(self):
         items = []
         for model in (
             DossierDEvenements, Individu, Ensemble, Oeuvre,
             Lieu, Profession, Partie, Source, Evenement,
         ):
-            items.extend(model.objects.published().only('pk'))
+            queryset = self.get_queryset(model)
+            items.extend(queryset.distinct().only('pk'))
         return items
 
     def location(self, obj):
