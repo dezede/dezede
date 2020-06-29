@@ -210,7 +210,7 @@ def evenement_list_def(context, evenements, verbose_name=None,
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         evenements, verbose_name=verbose_name,
         verbose_name_plural=verbose_name_plural)
-    counter = evenements.count
+    counter = evenements.count()
     name = force_text(verbose_name if counter == 1 else verbose_name_plural)
     c = context.flatten()
     c.update({'name': name,
