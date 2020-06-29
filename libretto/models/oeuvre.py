@@ -154,28 +154,34 @@ class Partie(AutoriteModel, UniqueSlugModel):
     def link(self):
         return self.html()
 
-    def html(self, pluriel=False, tags=True):
+    def html(self, pluriel=False, oeuvre=True, tags=True):
         url = '' if not tags else self.get_absolute_url()
         if pluriel:
             out = self.pluriel()
         else:
             out = self.nom
+        if oeuvre and self.oeuvre:
+            out = f'{out} ({self.oeuvre})'
         return href(url, out, tags=tags)
 
     def __str__(self):
         return self.html(tags=False)
 
-    def related_label(self):
-        txt = super(Partie, self).related_label()
-        if self.oeuvre is not None:
-            txt += f' ({self.oeuvre})'
-        return txt
+    def short_html(self, pluriel=False, tags=True):
+        return self.html(pluriel=pluriel, oeuvre=False, tags=tags)
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
-                'professions__nom__unaccent__icontains',
-                'professions__nom_pluriel__unaccent__icontains',)
+        return (
+            'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
+            'professions__nom__unaccent__icontains',
+            'professions__nom_pluriel__unaccent__icontains',
+            'oeuvre__prefixe_titre__unaccent__icontains',
+            'oeuvre__titre__unaccent__icontains',
+            'oeuvre__coordination__unaccent__icontains',
+            'oeuvre__prefixe_titre_secondaire__unaccent__icontains',
+            'oeuvre__titre_secondaire__unaccent__icontains',
+        )
 
 
 class PupitreQuerySet(CommonQuerySet):

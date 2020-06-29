@@ -39,7 +39,7 @@ class ElementDeDistributionBiGrouper(BiGrouper):
 
     def get_verbose_key(self, key, values):
         if isinstance(key, apps.get_model('libretto.Partie')):
-            return key.html(tags=self.tags, pluriel=len(values) > 1)
+            return key.short_html(tags=self.tags, pluriel=len(values) > 1)
         Individu = apps.get_model('libretto.Individu')
         return key.html(tags=self.tags, pluriel=len(values) > 1,
                         feminin=all(isinstance(v, Individu) and v.is_feminin()
