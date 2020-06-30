@@ -223,8 +223,7 @@ class Pupitre(CommonModel):
     def __str__(self):
         n_min = self.quantite_min
         n_max = self.quantite_max
-        partie = (force_text(self.partie) if n_max == 1
-                  else self.partie.pluriel())
+        partie = self.partie.html(pluriel=n_max > 1, oeuvre=False, tags=False)
         if n_min != n_max:
             out = ugettext('%s à %s %s') % (
                 apnumber(n_min), apnumber(n_max), partie)
