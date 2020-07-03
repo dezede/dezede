@@ -117,6 +117,18 @@ class Partie(AutoriteModel, UniqueSlugModel):
         ordering = ('type', 'classement', 'nom',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
+    def clean(self):
+        if self.premier_interprete and (
+            self.type == self.INSTRUMENT
+            or self.type == self.ROLE and not self.oeuvre
+        ):
+            raise ValidationError({
+                'premier_interprete': _(
+                    'Le premier interprète ne peut être rempli que pour '
+                    'un rôle d’une œuvre donnée.'
+                ),
+            })
+
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
         return ('pupitres',)
