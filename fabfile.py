@@ -251,7 +251,7 @@ def update_index():
 
 @task
 def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=9,
-           timeout=300):
+           timeout=6 * 60 * 60):
     set_env()
 
     sudo('apt-get install '
