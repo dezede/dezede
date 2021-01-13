@@ -301,6 +301,7 @@ def reset_remote_db():
 @task
 def save_remote_db():
     run(f'pg_dump -U {DB_USER} -Fc -b -v -f "{REMOTE_BACKUP}" {DB_NAME}')
+    local(f'mkdir -p "{Path(LOCAL_BACKUP).parent}"')
     local(f'rsync --info=progress2 '
           f'"{env.hosts[0]}":"{REMOTE_BACKUP}" "{LOCAL_BACKUP}"')
 
