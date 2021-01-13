@@ -59,6 +59,9 @@ html_latex_bindings = (
     (dict(name='b'), r'\textbf{', r'}'),
     (dict(name='small'), r'\small{', r'}'),
     (dict(name='sup'), r'\textsuperscript{', r'}'),
+    (dict(name='ul'), r'\begin{itemize}', r'\end{itemize}'),
+    (dict(name='ol'), r'\begin{enumerate}', r'\end{enumerate}'),
+    (dict(name='li'), r'\item{', r'}'),
     (dict(class_='sc'), r'\textsc{', r'}'),
     (dict(style=re.compile(r'.*font-variant:\s*'
                            r'small-caps;.*')), r'\textsc{', r'}'),
