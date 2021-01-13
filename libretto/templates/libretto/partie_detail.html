@@ -16,7 +16,11 @@
   <table class="data-table auto-links">
     {% data_table_attr 'oeuvre.link' _('œuvre liée') %}
     {% data_table_list partie.professions.all %}
-    {% data_table_attr 'premier_interprete.link' verbose_name=_('Créateur du rôle') %}
+    {% if object.premier_interprete.is_feminin %}
+      {% data_table_attr 'premier_interprete.link' verbose_name=_('Créatrice du rôle') %}
+    {% else %}
+      {% data_table_attr 'premier_interprete.link' verbose_name=_('Créateur du rôle') %}
+    {% endif %}
     {% data_table_list partie.interpretes verbose_name=_('interprète') verbose_name_plural=_('interprètes') %}
     {% data_table_list partie.repertoire %}
     {% data_table_list partie.evenements %}
