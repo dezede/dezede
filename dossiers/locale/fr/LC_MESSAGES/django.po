@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-11 19:29+0200\n"
+"POT-Creation-Date: 2020-12-15 19:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,119 +18,215 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: admin.py:44
+#: admin.py:41
 msgid "Métadonnées"
 msgstr ""
 
-#: admin.py:50
+#: admin.py:47
 msgid "Article"
 msgstr ""
 
-#: admin.py:57
+#: admin.py:54
 msgid "Sélection dynamique"
 msgstr ""
 
-#: admin.py:61
+#: admin.py:58
 msgid "Sélection manuelle"
 msgstr ""
 
-#: jobs.py:19
+#: export.py:243 export.py:322 export.py:384 export.py:462 export.py:513
+#: export.py:574 export.py:629
+msgid "Année"
+msgstr ""
+
+#: export.py:244 export.py:323 export.py:385 export.py:463 export.py:514
+#: export.py:575 export.py:630
+msgid "Saison"
+msgstr ""
+
+#: export.py:245 export.py:324 export.py:386 export.py:464 export.py:515
+#: export.py:576 export.py:631
+msgid "Mois"
+msgstr ""
+
+#: export.py:246 export.py:632
+msgid "Jour"
+msgstr ""
+
+#: export.py:247 export.py:287 export.py:325 export.py:387 export.py:516
+#: export.py:577
+msgid "Nombre d'événements"
+msgstr ""
+
+#: export.py:250 forms.py:56
+msgid "1. Événements - chronologique"
+msgstr ""
+
+#: export.py:284 export.py:381 export.py:626
+msgid "Pays"
+msgstr ""
+
+#: export.py:285 export.py:382 export.py:627
+msgid "Ville"
+msgstr ""
+
+#: export.py:286 export.py:383 export.py:628
+msgid "Salle"
+msgstr ""
+
+#: export.py:289 forms.py:57
+msgid "2. Événements - géographique"
+msgstr ""
+
+#: export.py:320 export.py:379 export.py:573
+msgid "Œuvre"
+msgstr ""
+
+#: export.py:321 export.py:380
+msgid "Auteurs"
+msgstr ""
+
+#: export.py:327 forms.py:58
+msgid "3. Œuvres - chronologique"
+msgstr ""
+
+#: export.py:389 forms.py:59
+msgid "4. Œuvres - géographique"
+msgstr ""
+
+#: export.py:461 export.py:572
+msgid "Auteur"
+msgstr ""
+
+#: export.py:465
+msgid "Nombre d'éléments de programme"
+msgstr ""
+
+#: export.py:467 forms.py:60
+msgid "5. Auteurs - chronologique"
+msgstr ""
+
+#: export.py:512
+msgid "Interprète"
+msgstr ""
+
+#: export.py:518 forms.py:61
+msgid "6. Interprètes - chronologique"
+msgstr ""
+
+#: export.py:579 forms.py:62
+msgid "7. Auteurs et œuvres"
+msgstr ""
+
+#: export.py:633
+msgid "Recette"
+msgstr ""
+
+#: export.py:635 forms.py:63
+msgid "8. Recettes"
+msgstr ""
+
+#: jobs.py:21
 #, python-format
 msgid "du dossier « %s »"
 msgstr ""
 
-#: models.py:32
+#: jobs.py:33
+msgid "du dossier "
+msgstr ""
+
+#: models.py:29
 msgid "catégorie de dossiers"
 msgstr ""
 
-#: models.py:33
+#: models.py:30
 msgid "catégories de dossiers"
 msgstr ""
 
-#: models.py:60
+#: models.py:56
 msgid "catégorie"
 msgstr ""
 
-#: models.py:61
+#: models.py:57
 msgid ""
 "Attention, un dossier contenu dans un autre dossier ne peut être dans une "
 "catégorie."
 msgstr ""
 
-#: models.py:63
+#: models.py:59
 msgid "titre"
 msgstr ""
 
-#: models.py:64
+#: models.py:60
 msgid "titre court"
 msgstr ""
 
-#: models.py:65
+#: models.py:61
 msgid "Utilisé pour le chemin de fer."
 msgstr ""
 
-#: models.py:68
+#: models.py:64
 msgid "parent"
 msgstr ""
 
-#: models.py:69
+#: models.py:67
 msgid "position"
 msgstr ""
 
-#: models.py:71
+#: models.py:69
 msgid "Personnaliser l’affichage du titre du dossier dans l’adresse URL."
 msgstr ""
 
-#: models.py:77
+#: models.py:75
 msgid "éditeurs scientifiques"
 msgstr ""
 
-#: models.py:78
+#: models.py:76
 msgid "date de publication"
 msgstr ""
 
-#: models.py:80
+#: models.py:78
 msgid "publication(s) associée(s)"
 msgstr ""
 
-#: models.py:81
+#: models.py:79
 msgid "développements envisagés"
 msgstr ""
 
-#: models.py:84
+#: models.py:82
 msgid "présentation"
 msgstr ""
 
-#: models.py:85
+#: models.py:83
 msgid "contexte historique"
 msgstr ""
 
-#: models.py:86
+#: models.py:84
 msgid "sources et protocole"
 msgstr ""
 
-#: models.py:87
+#: models.py:85
 msgid "bibliographie indicative"
 msgstr ""
 
-#: models.py:90
+#: models.py:88
 msgid "début"
 msgstr ""
 
-#: models.py:91
+#: models.py:89
 msgid "fin"
 msgstr ""
 
-#: models.py:92 models.py:210
+#: models.py:90 models.py:213
 msgid "lieux"
 msgstr ""
 
-#: models.py:94 models.py:215
+#: models.py:92 models.py:218
 msgid "œuvres"
 msgstr ""
 
-#: models.py:96 models.py:220
-msgid "auteurs"
+#: models.py:95
+msgid "individus"
 msgstr ""
 
 #: models.py:98
@@ -141,7 +237,7 @@ msgstr ""
 msgid "événements"
 msgstr ""
 
-#: models.py:101 models.py:225
+#: models.py:101 models.py:228
 msgid "ensembles"
 msgstr ""
 
@@ -153,24 +249,28 @@ msgstr ""
 msgid "saisons"
 msgstr ""
 
-#: models.py:114
+#: models.py:111
 msgid "dossier d’événements"
 msgstr ""
 
-#: models.py:115
+#: models.py:112
 msgid "dossiers d’événements"
 msgstr ""
 
-#: models.py:117
+#: models.py:114
 msgid "Peut changer l’état"
 msgstr ""
 
-#: models.py:189
+#: models.py:192
 msgid "ensemble de données"
 msgstr ""
 
-#: models.py:193
+#: models.py:196
 msgid "quantité de données sélectionnées"
+msgstr ""
+
+#: models.py:223
+msgid "auteurs"
 msgstr ""
 
 #: templates/dossiers/categoriededossiers_list.html:6
@@ -228,71 +328,71 @@ msgid ""
 "  "
 msgstr ""
 
+#: templates/dossiers/dossierdevenements_content.html:15
+msgid "Contexte historique"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_content.html:19
+msgid "Sources et protocole"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_content.html:23
+msgid "Bibliographie indicative"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_content.html:33
+msgid "(dir.)"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_content.html:35
+#, python-format
+msgid ""
+"\n"
+"          « %(object)s »,\n"
+"          <em>Dezède</em> [en ligne].\n"
+"          %(SITE)s%(permalien)s\n"
+"          (consulté le %(now)s).\n"
+"        "
+msgstr ""
+
 #: templates/dossiers/dossierdevenements_detail.html:6
 #: templates/dossiers/opera_comique_base.html:32 templates/dossiers/tabs.html:7
 msgid "Présentation"
 msgstr ""
 
-#: templates/dossiers/dossierdevenements_detail.html:43
-msgid "Contexte historique"
-msgstr ""
-
-#: templates/dossiers/dossierdevenements_detail.html:47
-msgid "Sources et protocole"
-msgstr ""
-
-#: templates/dossiers/dossierdevenements_detail.html:51
-msgid "Bibliographie indicative"
-msgstr ""
-
-#: templates/dossiers/dossierdevenements_detail.html:58
+#: templates/dossiers/dossierdevenements_detail.html:42
 msgid "Pour citer ce dossier"
 msgstr ""
 
-#: templates/dossiers/dossierdevenements_detail.html:61
-msgid "(dir.)"
-msgstr ""
-
-#: templates/dossiers/dossierdevenements_detail.html:63
-#, python-format
-msgid ""
-"\n"
-"            « %(object)s »,\n"
-"            <em>Dezède</em> [en ligne].\n"
-"            %(SITE)s%(permalien)s\n"
-"            (consulté le %(now)s).\n"
-"          "
-msgstr ""
-
-#: templates/dossiers/dossierdevenements_detail.html:84
+#: templates/dossiers/dossierdevenements_detail.html:54
 msgid "Dossier précédent"
 msgstr ""
 
-#: templates/dossiers/dossierdevenements_detail.html:88
+#: templates/dossiers/dossierdevenements_detail.html:58
 msgid "Retourner en haut"
 msgstr ""
 
-#: templates/dossiers/dossierdevenements_detail.html:95
+#: templates/dossiers/dossierdevenements_detail.html:65
 msgid "Dossier suivant"
 msgstr ""
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:8
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:10
 msgid ""
 "\n"
-"          Éditeur scientifique\n"
-"        "
+"              Éditeur scientifique\n"
+"            "
 msgid_plural ""
 "\n"
-"          Éditeurs scientifiques\n"
-"        "
+"              Éditeurs scientifiques\n"
+"            "
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:19
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:23
 msgid "Dans ce dossier"
 msgstr ""
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:34
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:38
 msgid ""
 "\n"
 "              Contributeur\n"
@@ -304,21 +404,46 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:43
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:47
 #: templates/dossiers/opera_comique_presentation.html:18
 msgid "Date de mise en ligne"
 msgstr ""
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:50
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:54
 msgid "Publication(s) associée(s)"
 msgstr ""
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:56
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:60
 msgid "Développements envisagés"
 msgstr ""
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:65
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:69
 msgid "Exporter en PDF"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:75
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:82
+msgid "Exporter les statistiques"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:92
+msgid "Exports"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:109
+msgid "Fermer"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:110
+msgid "Exporter"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:124
+msgid "Ajouter"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:126
+msgid "Supp."
 msgstr ""
 
 #: templates/dossiers/dossierdevenements_stats_detail.html:6
@@ -633,30 +758,36 @@ msgstr ""
 msgid "Événements"
 msgstr ""
 
-#: views.py:39
+#: views.py:35
 msgid "Indéterminé"
 msgstr ""
 
-#: views.py:40
+#: views.py:36
 msgid "Né avant 1580"
 msgstr ""
 
-#: views.py:41
+#: views.py:37
 msgid "Baroque"
 msgstr ""
 
-#: views.py:42
+#: views.py:38
 msgid "Classique"
 msgstr ""
 
-#: views.py:43
+#: views.py:39
 msgid "Romantique"
 msgstr ""
 
-#: views.py:44
+#: views.py:40
 msgid "Moderne"
 msgstr ""
 
-#: views.py:45
+#: views.py:41
 msgid "Né après 1920"
+msgstr ""
+
+msgid "Donnée indisponible"
+msgstr ""
+
+msgid "TOTAL"
 msgstr ""

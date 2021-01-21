@@ -5,7 +5,8 @@ from dossiers.views import (
     DossierDEvenementsStatsDetail, DossierDEvenementsDataDetail,
     DossierDEvenementsDetailXeLaTeX,
     OperaComiquePresentation, OperaComiqueListView,
-    DossierDEvenementsDataGeoJson, DossierDEvenementsDataExport)
+    DossierDEvenementsDataGeoJson, DossierDEvenementsDataExport,
+    DossierDEvenementsScenario)
 
 
 urlpatterns = [
@@ -45,4 +46,7 @@ urlpatterns = [
     url(r'^id/(?P<pk>\d+)/export-pdf$',
         DossierDEvenementsDetailXeLaTeX.as_view(),
         name='dossierdevenements_detail_permanent_xelatex'),
+    url(r'^(?P<slug>[\w-]+)/export-scenario$',
+        DossierDEvenementsScenario.as_view(),
+        name='dossierdevenement_export_scenario')
 ]
