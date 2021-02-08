@@ -123,6 +123,27 @@ msgstr "Revenue"
 msgid "8. Recettes"
 msgstr "8. Revenue"
 
+msgid "1. Événements : répartition chronologique"
+msgstr "1. Events: Chronological Breakdown"
+
+msgid "2. Événements : répartition géographique"
+msgstr "2. Events: Geographical Breakdown"
+
+msgid "3. Œuvres : répartition chronologique"
+msgstr "3. Works: Chronological Breakdown"
+
+msgid "4. Œuvres : répartition géographique"
+msgstr "4. Works: Geographical Breakdown"
+
+msgid "5. Auteurs : répartition chronologique"
+msgstr "5. Authors: Chronological Breakdown"
+
+msgid "6. Interprètes : répartition chronologique"
+msgstr "6. Performers: Chronological Breakdown"
+
+msgid "7. Auteurs et œuvres : répartition chronologique"
+msgstr "7. Authors and Works: Chronological Breakdown"
+
 #: jobs.py:21
 #, python-format
 msgid "du dossier « %s »"

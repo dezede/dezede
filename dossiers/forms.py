@@ -53,13 +53,13 @@ class DossierDEvenementsForm(forms.ModelForm):
 
 
 SCENARIOS = (
-    ('scenario-1', _('1. Événements - chronologique')),
-    ('scenario-2', _('2. Événements - géographique')),
-    ('scenario-3', _('3. Œuvres - chronologique')),
-    ('scenario-4', _('4. Œuvres - géographique')),
-    ('scenario-5', _('5. Auteurs - chronologique')),
-    ('scenario-6', _('6. Interprètes - chronologique')),
-    ('scenario-7', _('7. Auteurs et œuvres')),
+    ('scenario-1', _('1. Événements : répartition chronologique')),
+    ('scenario-2', _('2. Événements : répartition géographique')),
+    ('scenario-3', _('3. Œuvres : répartition chronologique')),
+    ('scenario-4', _('4. Œuvres : répartition géographique')),
+    ('scenario-5', _('5. Auteurs : répartition chronologique')),
+    ('scenario-6', _('6. Interprètes : répartition chronologique')),
+    ('scenario-7', _('7. Auteurs et œuvres : répartition chronologique')),
     ('scenario-8', _('8. Recettes')),
 )
 

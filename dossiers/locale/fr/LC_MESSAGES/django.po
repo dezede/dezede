@@ -126,6 +126,27 @@ msgstr ""
 msgid "8. Recettes"
 msgstr ""
 
+msgid "1. Événements : répartition chronologique"
+msgstr ""
+
+msgid "2. Événements : répartition géographique"
+msgstr ""
+
+msgid "3. Œuvres : répartition chronologique"
+msgstr ""
+
+msgid "4. Œuvres : répartition géographique"
+msgstr ""
+
+msgid "5. Auteurs : répartition chronologique"
+msgstr ""
+
+msgid "6. Interprètes : répartition chronologique"
+msgstr ""
+
+msgid "7. Auteurs et œuvres : répartition chronologique"
+msgstr ""
+
 #: jobs.py:21
 #, python-format
 msgid "du dossier « %s »"
