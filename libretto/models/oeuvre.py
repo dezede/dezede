@@ -16,7 +16,6 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 
-from cache_tools import model_method_cached
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
@@ -874,7 +873,6 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         return self.get_pupitres_str(prefix=prefix, tags=tags,
                                      solistes=solistes)
 
-    @model_method_cached()
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
     auteurs_html.short_description = _('auteur(s)')
@@ -960,7 +958,6 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         l.extend(caracteristiques)
         return str_list(l, infix=' ')
 
-    @model_method_cached()
     def html(self, tags=True, auteurs=True, titre=True, descr=True,
              ancestors=True, ancestors_links=False, links=True,
              show_type_extrait=True):

@@ -21,7 +21,6 @@ from tinymce.models import HTMLField
 from tree.fields import PathField
 from tree.query import TreeQuerySetMixin
 
-from cache_tools import invalidate_object
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 from common.utils.html import capfirst, date_html, sanitize_html
@@ -295,7 +294,6 @@ class SlugModel(Model):
         abstract = True
 
     def get_slug(self):
-        invalidate_object(self)
         s = slugify_unicode(force_text(self))
         if not s:
             return force_text(self._meta.verbose_name)
@@ -311,7 +309,6 @@ class UniqueSlugModel(Model):
         abstract = True
 
     def get_slug(self):
-        invalidate_object(self)
         s = slugify_unicode(force_text(self))
         if not s:
             return force_text(self._meta.verbose_name)

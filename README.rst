@@ -289,7 +289,7 @@ Tests de régression
 
 Une suite de tests encore incomplète est disponible. Pour la lancer, exécuter :
 
-  ``./manage.py test dezede libretto accounts dossiers typography cache_tools``
+  ``./manage.py test dezede libretto accounts dossiers typography``
 
 
 

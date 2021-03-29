@@ -13,7 +13,6 @@ from django.utils.encoding import force_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
-from cache_tools import model_method_cached
 from .base import (
     CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
     PublishedManager, PublishedQuerySet,
@@ -321,7 +320,6 @@ class ElementDeProgramme(CommonModel):
     calc_caracteristiques.short_description = _('caractéristiques')
 
     @property
-    @model_method_cached()
     def numero(self):
         if hasattr(self, '_numero'):
             return self._numero
@@ -338,7 +336,6 @@ class ElementDeProgramme(CommonModel):
 
         super(ElementDeProgramme, self).save(*args, **kwargs)
 
-    @model_method_cached()
     def html(self, tags=True):
         has_pk = self.pk is not None
 

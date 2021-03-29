@@ -1,12 +1,57 @@
 from django.apps import apps
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
+from django.db.models import Manager, QuerySet
 from django.db.models.signals import post_save, pre_delete
 from django_rq import job
 import django_rq
 from haystack.signals import BaseSignalProcessor
 
-from cache_tools.jobs import auto_invalidate_cache, get_stale_objects
 from .search_indexes import get_haystack_index
+
+
+def get_obj_key(obj, id_attr='pk'):
+    meta = obj._meta
+    return '%s.%s.%s' % (
+        meta.app_label, meta.model_name, getattr(obj, id_attr),
+    )
+
+
+def get_stale_objects(instance, explored=None, all_relations=False):
+    if explored is None:
+        explored = []
+
+    if instance is None:
+        return
+
+    obj_key = get_obj_key(instance)
+    if obj_key in explored:
+        return
+
+    yield instance
+
+    explored.append(obj_key)
+
+    relations = getattr(instance, 'invalidated_relations_when_saved',
+                        lambda all_relations: ())(all_relations=all_relations)
+    for relation in relations:
+        try:
+            related = getattr(instance, relation)
+        except ObjectDoesNotExist:
+            continue
+        if isinstance(related, Manager):
+            related = related.all()
+        if callable(related):
+            related = related()
+        if isinstance(related, QuerySet):
+            for obj in related:
+                for sub_obj in get_stale_objects(
+                        obj, explored, all_relations=all_relations):
+                    yield sub_obj
+        else:
+            for sub_related in get_stale_objects(
+                    related, explored, all_relations=all_relations):
+                yield sub_related
 
 
 def auto_update_haystack(action, instance):
@@ -38,10 +83,7 @@ def auto_invalidate(action, app_label, model_name, pk):
             index.remove_object('%s.%s.%s' % (app_label, model_name, pk))
         return
 
-    instance = model._default_manager.get(pk=pk)
-
-    auto_invalidate_cache(instance)
-    auto_update_haystack(action, instance)
+    auto_update_haystack(action, model._default_manager.get(pk=pk))
 
 
 class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
