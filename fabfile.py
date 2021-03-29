@@ -14,7 +14,6 @@ from pathlib import Path
 django.project('dezede')
 import django
 django.setup()
-from cachalot.api import invalidate as invalidate_cachalot
 from django.conf import settings
 
 
@@ -320,7 +319,6 @@ def restore_saved_db():
           f'-j 5 "{Path(LOCAL_BACKUP).resolve()}"')
     local(f'sudo -u postgres psql dezede '
           f'-c "ALTER SCHEMA public OWNER TO dezede;"')
-    invalidate_cachalot()
 
 
 @task

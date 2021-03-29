@@ -97,7 +97,6 @@ INSTALLED_APPS = (
 
     'super_inlines.grappelli_integration',
     'super_inlines',
-    'cachalot',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

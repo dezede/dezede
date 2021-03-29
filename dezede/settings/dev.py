@@ -35,7 +35,6 @@ DEBUG_TOOLBAR_PANELS = (
     # 'debug_toolbar.panels.profiling.ProfilingPanel',
     # 'template_timings_panel.panels.TemplateTimings.TemplateTimings',
     'haystack_panel.panel.HaystackDebugPanel',
-    'cachalot.panels.CachalotPanel',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
