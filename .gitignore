@@ -13,3 +13,6 @@ _*/
 /node_modules/
 /media/
 /build/
+/backups/
+/tmp/
+/venv/

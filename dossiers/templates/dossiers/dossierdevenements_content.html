@@ -30,7 +30,11 @@
         <h3 class="panel-title">{{ citation_title }}</h3>
       </div>
       <div class="panel-body">
-        {{ object.editeurs_scientifiques.html }}{% if object.get_contributors.count > object.editeurs_scientifiques.count %} {% trans '(dir.)' %}{% endif %},
+        {% with editeurs_count=object.editeurs_scientifiques.count %}
+          {% if editeurs_count %}
+            {{ object.editeurs_scientifiques.html }}{% if object.get_contributors.count > editeurs_count %} {% trans '(dir.)' %}{% endif %},
+          {% endif %}
+        {% endwith %}
         {% now 'DATE_FORMAT' as now %}
         {% blocktrans with permalien=object.permalien %}
           « {{ object }} »,

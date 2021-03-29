@@ -7,6 +7,9 @@
             {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
             <li class="grp-float-left"><a href="{% add_preserved_filters delete_url %}" class="grp-button grp-delete-link">{% trans "Delete" %}</a></li>
         {% endif %}
+        {% if show_save_and_continue %}
+        	<li style="display: none"><input type="submit" style="display: none" name="_continue" /></li>
+        {% endif %}
         {% if show_save_as_new %}
         	<li class="grp-float-left"><input type="submit" value="{% trans 'Dupliquer' %}" class="grp-button" name="_saveasnew" style="background-image: linear-gradient(#50d350,#30c030); border: 1px solid #2bab2b;" /></li>
         {% endif %}

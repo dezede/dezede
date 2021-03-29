@@ -519,7 +519,7 @@ class Evenement(AutoriteModel):
         CaracteristiqueDeProgramme, related_name='evenements', blank=True,
         verbose_name=_('caractéristiques'))
 
-    recette_generale = DecimalField(_('recette générale'), max_digits=7,
+    recette_generale = DecimalField(_('recette générale'), max_digits=9,
                                     decimal_places=2, blank=True, null=True)
     recette_par_billets = CharField(
         _('recette par titre de billets'),
