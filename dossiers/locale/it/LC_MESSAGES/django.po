@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-11 19:29+0200\n"
+"POT-Creation-Date: 2020-12-15 19:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Rosalba Agresta <rosalbagresta@gmail.com>, 2016\n"
 "Language-Team: Italian (https://www.transifex.com/bertrandbordage/"
@@ -19,40 +19,155 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:44
+#: admin.py:41
 msgid "Métadonnées"
 msgstr "Metadati"
 
-#: admin.py:50
+#: admin.py:47
 msgid "Article"
 msgstr "Articolo"
 
-#: admin.py:57
+#: admin.py:54
 msgid "Sélection dynamique"
 msgstr "Selezione dinamica"
 
-#: admin.py:61
+#: admin.py:58
 msgid "Sélection manuelle"
 msgstr "Selezione manuale"
 
-#: jobs.py:19
+#: export.py:243 export.py:322 export.py:384 export.py:462 export.py:513
+#: export.py:574 export.py:629
+msgid "Année"
+msgstr "Anno"
+
+#: export.py:244 export.py:323 export.py:385 export.py:463 export.py:514
+#: export.py:575 export.py:630
+msgid "Saison"
+msgstr "Stagione"
+
+#: export.py:245 export.py:324 export.py:386 export.py:464 export.py:515
+#: export.py:576 export.py:631
+msgid "Mois"
+msgstr "Mese"
+
+#: export.py:246 export.py:632
+msgid "Jour"
+msgstr "Giorno"
+
+#: export.py:247 export.py:287 export.py:325 export.py:387 export.py:516
+#: export.py:577
+msgid "Nombre d'événements"
+msgstr "Numero di eventi"
+
+#: export.py:250 forms.py:56
+msgid "1. Événements - chronologique"
+msgstr "1. Eventi - cronologica"
+
+#: export.py:284 export.py:381 export.py:626
+msgid "Pays"
+msgstr "Paese"
+
+#: export.py:285 export.py:382 export.py:627
+msgid "Ville"
+msgstr "Città"
+
+#: export.py:286 export.py:383 export.py:628
+msgid "Salle"
+msgstr "Sala"
+
+#: export.py:289 forms.py:57
+msgid "2. Événements - géographique"
+msgstr "2. Eventi - geografica"
+
+#: export.py:320 export.py:379 export.py:573
+msgid "Œuvre"
+msgstr "Opera"
+
+#: export.py:321 export.py:380 export.py:461 export.py:572
+msgid "Auteur"
+msgstr "Autore"
+
+#: export.py:327 forms.py:58
+msgid "3. Œuvres - chronologique"
+msgstr "3. Opere - cronologica"
+
+#: export.py:389 forms.py:59
+msgid "4. Œuvres - géographique"
+msgstr "4. Opere - geografica"
+
+#: export.py:465
+msgid "Nombre d'éléments de programme"
+msgstr "Numero di elementi del programma"
+
+#: export.py:467 forms.py:60
+msgid "5. Auteurs - chronologique"
+msgstr "5. Autori - cronologica"
+
+#: export.py:512
+msgid "Interprète"
+msgstr "Interprete"
+
+#: export.py:518 forms.py:61
+msgid "6. Interprètes - chronologique"
+msgstr "6. Autori - cronologica"
+
+#: export.py:579 forms.py:62
+msgid "7. Auteurs et œuvres"
+msgstr "7. Autori e opere"
+
+#: export.py:633
+msgid "Recette"
+msgstr "Entrate"
+
+#: export.py:635 forms.py:63
+msgid "8. Recettes"
+msgstr "8. Entrate"
+
+msgid "1. Événements : répartition chronologique"
+msgstr "1. Eventi : ripartizione cronologica"
+
+msgid "2. Événements : répartition géographique"
+msgstr "2. Eventi : ripartizione geografica"
+
+msgid "3. Œuvres : répartition chronologique"
+msgstr "3. Opere : ripartizione cronologica"
+
+msgid "4. Œuvres : répartition géographique"
+msgstr "4. Opere : ripartizione geografica"
+
+msgid "5. Auteurs : répartition chronologique"
+msgstr "5. Autori : ripartizione cronologica"
+
+msgid "6. Interprètes : répartition chronologique"
+msgstr "6. Autori : ripartizione cronologica"
+
+msgid "7. Auteurs et œuvres : répartition chronologique"
+msgstr "7. Autori e opere : ripartizione cronologica"
+
+#: jobs.py:21
 #, python-format
 msgid "du dossier « %s »"
 msgstr "del dossier « %s »"
 
-#: models.py:32
+#: jobs.py:33
+#, fuzzy
+#| msgid "dossiers"
+msgid "du dossier "
+msgstr "dossiers"
+
+#: models.py:29
 msgid "catégorie de dossiers"
 msgstr "categoria di dossiers"
 
-#: models.py:33
+#: models.py:30
 msgid "catégories de dossiers"
 msgstr "categorie di dossiers"
 
-#: models.py:60
+#: models.py:56
 msgid "catégorie"
 msgstr "categoria"
 
-#: models.py:61
+#: models.py:57
 msgid ""
 "Attention, un dossier contenu dans un autre dossier ne peut être dans une "
 "catégorie."
@@ -60,82 +175,82 @@ msgstr ""
 "Attenzione, un dossier contenuto in un altro dossier non può essere in una "
 "categoria."
 
-#: models.py:63
+#: models.py:59
 msgid "titre"
 msgstr "titolo"
 
-#: models.py:64
+#: models.py:60
 msgid "titre court"
 msgstr "titolo breve"
 
-#: models.py:65
+#: models.py:61
 msgid "Utilisé pour le chemin de fer."
 msgstr "Utilizzato per il breadcrumb."
 
-#: models.py:68
+#: models.py:64
 msgid "parent"
 msgstr "parente"
 
-#: models.py:69
+#: models.py:67
 msgid "position"
 msgstr "posizione"
 
-#: models.py:71
+#: models.py:69
 msgid "Personnaliser l’affichage du titre du dossier dans l’adresse URL."
 msgstr ""
 "Personalizzare la visualizzazione del titolo del dossier nell'indirizzo URL."
 
-#: models.py:77
+#: models.py:75
 msgid "éditeurs scientifiques"
 msgstr "editori scientifici"
 
-#: models.py:78
+#: models.py:76
 msgid "date de publication"
 msgstr "data di pubblicazione"
 
-#: models.py:80
+#: models.py:78
 msgid "publication(s) associée(s)"
 msgstr "pubblicazione/i associata/e"
 
-#: models.py:81
+#: models.py:79
 msgid "développements envisagés"
 msgstr "sviluppi previsti"
 
-#: models.py:84
+#: models.py:82
 msgid "présentation"
 msgstr "presentazione"
 
-#: models.py:85
+#: models.py:83
 msgid "contexte historique"
 msgstr "contesto storico"
 
-#: models.py:86
+#: models.py:84
 msgid "sources et protocole"
 msgstr "fonti e protocollo"
 
-#: models.py:87
+#: models.py:85
 msgid "bibliographie indicative"
 msgstr "bibliografia indicativa"
 
-#: models.py:90
+#: models.py:88
 msgid "début"
 msgstr "inizio"
 
-#: models.py:91
+#: models.py:89
 msgid "fin"
 msgstr "fine"
 
-#: models.py:92 models.py:210
+#: models.py:90 models.py:213
 msgid "lieux"
 msgstr "luoghi"
 
-#: models.py:94 models.py:215
+#: models.py:92 models.py:218
 msgid "œuvres"
 msgstr "opere"
 
-#: models.py:96 models.py:220
-msgid "auteurs"
-msgstr "autori"
+#: models.py:95
+msgid "individus"
+msgstr ""
 
 #: models.py:98
 msgid "circonstance"
@@ -145,7 +260,7 @@ msgstr "circostanza"
 msgid "événements"
 msgstr "eventi"
 
-#: models.py:101 models.py:225
+#: models.py:101 models.py:228
 msgid "ensembles"
 msgstr "insiemi"
 
@@ -157,25 +272,29 @@ msgstr "fonti"
 msgid "saisons"
 msgstr "stagioni"
 
-#: models.py:114
+#: models.py:111
 msgid "dossier d’événements"
 msgstr "dossier di eventi"
 
-#: models.py:115
+#: models.py:112
 msgid "dossiers d’événements"
 msgstr "dossiers di eventi"
 
-#: models.py:117
+#: models.py:114
 msgid "Peut changer l’état"
 msgstr "Può cabiare lo stato"
 
-#: models.py:189
+#: models.py:192
 msgid "ensemble de données"
 msgstr "insieme di dati"
 
-#: models.py:193
+#: models.py:196
 msgid "quantité de données sélectionnées"
 msgstr "quantità di dati selezionati"
+
+#: models.py:223
+msgid "auteurs"
+msgstr "autori"
 
 #: templates/dossiers/categoriededossiers_list.html:6
 msgid "dossiers"
@@ -255,40 +374,38 @@ msgstr ""
 "il chord diagram a cui questo nome è collegato.<br />\n"
 "Clicca in qualsiasi altro posto per tornare alla posizione iniziale."
 
-#: templates/dossiers/dossierdevenements_detail.html:6
-#: templates/dossiers/opera_comique_base.html:32 templates/dossiers/tabs.html:7
-msgid "Présentation"
-msgstr "Presentazione"
-
-#: templates/dossiers/dossierdevenements_detail.html:43
+#: templates/dossiers/dossierdevenements_content.html:15
 msgid "Contexte historique"
 msgstr "Contesto storico"
 
-#: templates/dossiers/dossierdevenements_detail.html:47
+#: templates/dossiers/dossierdevenements_content.html:19
 msgid "Sources et protocole"
 msgstr "Fonti e protocollo"
 
-#: templates/dossiers/dossierdevenements_detail.html:51
+#: templates/dossiers/dossierdevenements_content.html:23
 msgid "Bibliographie indicative"
 msgstr "Bibliografia indicativa"
 
-#: templates/dossiers/dossierdevenements_detail.html:58
-msgid "Pour citer ce dossier"
-msgstr "Per citare questo dossier"
-
-#: templates/dossiers/dossierdevenements_detail.html:61
+#: templates/dossiers/dossierdevenements_content.html:33
 msgid "(dir.)"
 msgstr "(dir.)"
 
-#: templates/dossiers/dossierdevenements_detail.html:63
-#, python-format
+#: templates/dossiers/dossierdevenements_content.html:35
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "            « %(object)s »,\n"
+#| "            <em>Dezède</em> [en ligne].\n"
+#| "            %(SITE)s%(permalien)s\n"
+#| "            (consulté le %(now)s).\n"
+#| "          "
 msgid ""
 "\n"
-"            « %(object)s »,\n"
-"            <em>Dezède</em> [en ligne].\n"
-"            %(SITE)s%(permalien)s\n"
-"            (consulté le %(now)s).\n"
-"          "
+"          « %(object)s »,\n"
+"          <em>Dezède</em> [en ligne].\n"
+"          %(SITE)s%(permalien)s\n"
+"          (consulté le %(now)s).\n"
+"        "
 msgstr ""
 "\n"
 "«%(object)s»,\n"
@@ -299,27 +416,45 @@ msgstr ""
 "\n"
 "(consultato il %(now)s)."
 
-#: templates/dossiers/dossierdevenements_detail.html:84
+#: templates/dossiers/dossierdevenements_detail.html:6
+#: templates/dossiers/opera_comique_base.html:32 templates/dossiers/tabs.html:7
+msgid "Présentation"
+msgstr "Presentazione"
+
+#: templates/dossiers/dossierdevenements_detail.html:42
+msgid "Pour citer ce dossier"
+msgstr "Per citare questo dossier"
+
+#: templates/dossiers/dossierdevenements_detail.html:54
 msgid "Dossier précédent"
 msgstr "Dossier precedente"
 
-#: templates/dossiers/dossierdevenements_detail.html:88
+#: templates/dossiers/dossierdevenements_detail.html:58
 msgid "Retourner en haut"
 msgstr "Ritorna in alto"
 
-#: templates/dossiers/dossierdevenements_detail.html:95
+#: templates/dossiers/dossierdevenements_detail.html:65
 msgid "Dossier suivant"
 msgstr "Dossier successivo"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:8
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:10
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "          Éditeur scientifique\n"
+#| "        "
+#| msgid_plural ""
+#| "\n"
+#| "          Éditeurs scientifiques\n"
+#| "        "
 msgid ""
 "\n"
-"          Éditeur scientifique\n"
-"        "
+"              Éditeur scientifique\n"
+"            "
 msgid_plural ""
 "\n"
-"          Éditeurs scientifiques\n"
-"        "
+"              Éditeurs scientifiques\n"
+"            "
 msgstr[0] ""
 "\n"
 "Editore scientifico"
@@ -327,11 +462,11 @@ msgstr[1] ""
 "\n"
 "Editori scientifici"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:19
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:23
 msgid "Dans ce dossier"
 msgstr "In questo dossier"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:34
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:38
 msgid ""
 "\n"
 "              Contributeur\n"
@@ -347,22 +482,49 @@ msgstr[1] ""
 "\n"
 "Contributori"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:43
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:47
 #: templates/dossiers/opera_comique_presentation.html:18
 msgid "Date de mise en ligne"
 msgstr "Data di pubblicazione online"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:50
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:54
 msgid "Publication(s) associée(s)"
 msgstr "Pubblicazione/i associata/e"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:56
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:60
 msgid "Développements envisagés"
 msgstr "Sviluppi previsti"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:65
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:69
 msgid "Exporter en PDF"
 msgstr "Esportare in PDF"
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:75
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:82
+msgid "Exporter les statistiques"
+msgstr "Esportare le statistiche"
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:92
+msgid "Exports"
+msgstr "Esportazioni"
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:109
+msgid "Fermer"
+msgstr "Chiudere"
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:110
+#, fuzzy
+#| msgid "Exporter en PDF"
+msgid "Exporter"
+msgstr "Esportare in PDF"
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:124
+msgid "Ajouter"
+msgstr "Aggiungere"
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:126
+msgid "Supprimer"
+msgstr "Cancellare"
 
 #: templates/dossiers/dossierdevenements_stats_detail.html:6
 #: templates/dossiers/tabs.html:13
@@ -676,30 +838,41 @@ msgstr ""
 msgid "Événements"
 msgstr "Eventi"
 
-#: views.py:39
+#: views.py:35
 msgid "Indéterminé"
 msgstr "Indeterminato"
 
-#: views.py:40
+#: views.py:36
 msgid "Né avant 1580"
 msgstr "Nato prima del 1580"
 
-#: views.py:41
+#: views.py:37
 msgid "Baroque"
 msgstr "Barocco"
 
-#: views.py:42
+#: views.py:38
 msgid "Classique"
 msgstr "Classico"
 
-#: views.py:43
+#: views.py:39
 msgid "Romantique"
 msgstr "Romantico"
 
-#: views.py:44
+#: views.py:40
 msgid "Moderne"
 msgstr "Moderno"
 
-#: views.py:45
+#: views.py:41
 msgid "Né après 1920"
 msgstr "Nato dopo il 1920"
+
+msgid "Donnée indisponible"
+msgstr "Dati non disponibili"
+
+msgid "TOTAL"
+msgstr "TOTALE"
+
+#, fuzzy
+#~| msgid "auteurs"
+#~ msgid "Auteurs"
+#~ msgstr "autori"

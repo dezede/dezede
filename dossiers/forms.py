@@ -1,11 +1,13 @@
-from django.forms import BooleanField, ModelForm
+from django import forms
+from django.utils.translation import ugettext_lazy as _
+
 from tree.forms import TreeChoiceField
 
 from .models import DossierDEvenements
 
 
-class DossierDEvenementsForm(ModelForm):
-    statique = BooleanField(required=False)
+class DossierDEvenementsForm(forms.ModelForm):
+    statique = forms.BooleanField(required=False)
 
     class Meta(object):
         model = DossierDEvenements
@@ -48,3 +50,26 @@ class DossierDEvenementsForm(ModelForm):
             if self.instance.pk is not None:
                 self.instance.evenements.clear()
         return cleaned_data
+
+
+SCENARIOS = (
+    ('scenario-1', _('1. Événements : répartition chronologique')),
+    ('scenario-2', _('2. Événements : répartition géographique')),
+    ('scenario-3', _('3. Œuvres : répartition chronologique')),
+    ('scenario-4', _('4. Œuvres : répartition géographique')),
+    ('scenario-5', _('5. Auteurs : répartition chronologique')),
+    ('scenario-6', _('6. Interprètes : répartition chronologique')),
+    ('scenario-7', _('7. Auteurs et œuvres : répartition chronologique')),
+    ('scenario-8', _('8. Recettes')),
+)
+
+
+class ScenarioForm(forms.Form):
+    """ScenarioForm definition."""
+
+    scenario = forms.ChoiceField(
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        choices=SCENARIOS, required=True)
+
+
+ScenarioFormSet = forms.formset_factory(ScenarioForm)

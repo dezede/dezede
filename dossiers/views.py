@@ -5,12 +5,12 @@ from django.db.models.sql import EmptyResultSet
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 from el_pagination.views import AjaxListView
 
 from accounts.models import HierarchicUser
 from common.utils.sql import get_raw_query
-from .jobs import dossier_to_pdf
+from .jobs import dossier_to_pdf, dossier_to_xlsx
 from libretto.models import Source, Oeuvre, Individu
 from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementGeoJson, EvenementExport,
@@ -18,6 +18,7 @@ from libretto.views import (
 from .models import CategorieDeDossiers, DossierDEvenements
 from common.utils.export import launch_export
 
+from .forms import ScenarioForm, ScenarioFormSet
 
 DEFAULT_PERIOD = -1
 
@@ -68,12 +69,16 @@ class CategorieDeDossiersList(PublishedListView):
 
 class DossierDEvenementsDetail(PublishedDetailView):
     model = DossierDEvenements
+    formset = ScenarioFormSet
+    form = ScenarioForm
 
     def get_context_data(self, **kwargs):
         context = super(DossierDEvenementsDetail,
                         self).get_context_data(**kwargs)
         context.update(
-            children=self.object.children.published(self.request)
+            children=self.object.children.published(self.request),
+            formset=self.formset(),
+            form=self.form(),
         )
         return context
 
@@ -307,6 +312,26 @@ class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
         self.object = self.get_object()
         launch_export(dossier_to_pdf, request, self.object.pk, 'PDF',
                       'du dossier « %s »' % self.object)
+        return redirect(self.object.get_absolute_url())
+
+
+class DossierDEvenementsScenario(DossierDEvenementsDetail):
+    def get_object(self, queryset=None):
+        if not self.request.user.is_authenticated():
+            raise PermissionDenied
+        return super(DossierDEvenementsScenario,
+                     self).get_object(queryset)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = ScenarioFormSet(data=request.POST)
+        if form.is_valid():
+            data = {
+                'dossier': self.object.pk,
+                'scenarios': form.cleaned_data
+            }
+            launch_export(dossier_to_xlsx, request, data, 'XLSX',
+                          '%s' % self.object)
         return redirect(self.object.get_absolute_url())
 
 
