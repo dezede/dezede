@@ -1,34 +1,26 @@
 
 import numpy
 import string
-import calendar
 import pandas
 import importlib
 from io import BytesIO
-from itertools import chain
-from collections import defaultdict, OrderedDict
-from math import isnan
 
 from django.apps import apps
 from django.db.models import Q
+from django.utils.dates import MONTHS
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 from django.db.models import (
-    IntegerField, ForeignKey, DateTimeField, OneToOneField)
-from django.db.models.fields.related import RelatedField, ForeignObjectRel
-from django.db.models.query import QuerySet
+    IntegerField, ForeignKey, DateTimeField,
+)
+from django.db.models.fields.related import ForeignObjectRel
 
-from exporter.registry import exporter_registry
+from common.utils.text import capfirst
 from exporter.base import Exporter
-
-from libretto.models import Evenement
-
-from exporter.base import Exporter
-
 from libretto.models import *
 
 
-class ScenariosExporter(object):
+class ScenariosExporter:
     exporters = []
 
     CONTENT_TYPES = {
@@ -36,7 +28,7 @@ class ScenariosExporter(object):
                 '.spreadsheetml.sheet',
     }
 
-    def __init__(self, dossier, scenarios=[]):
+    def __init__(self, dossier, scenarios=()):
         for scenario in scenarios:
             scenario = string.capwords(scenario.get('scenario')).replace('-', '')
             expt = f"dossiers.export.{scenario}"
@@ -51,9 +43,6 @@ class ScenariosExporter(object):
     def get_dataframes(self):
         return [(exporter.get_verbose_table_name(), exporter._get_shaped_dataframe())
                 for exporter in self.exporters]
-
-    # def to_xlsx(self):
-    #     return self.exporter.to_xlsx()
 
     def to_xlsx(self):
         f = BytesIO()
@@ -207,7 +196,6 @@ class CustomExporter(Exporter):
         if self.purge:
             df_initial = df_initial.drop_duplicates(df_columns).reset_index(drop=True)
 
-        divider = 1
         if self.stats == 'sum':
             del df_initial[self.sum_col]
             del df_initial[f'sum_{self.sum_col}']
@@ -263,7 +251,68 @@ class CustomExporter(Exporter):
         return self.tab_name
 
 
-class Scenario1(CustomExporter):
+class EvenementScenarioExporter(CustomExporter):
+    model = Evenement
+
+    def _get_related_exporters(self, parent_fk_ids=None, is_root=True):
+        return [self]
+
+    @staticmethod
+    def get_lieu(obj, nature):
+        if obj.debut_lieu is None:
+            return
+        lieu = (obj.debut_lieu.get_ancestors(include_self=True)
+                .filter(nature__nom=nature).first())
+        if lieu is not None:
+            return force_text(lieu)
+
+    def get_pays(self, obj):
+        return self.get_lieu(obj, 'pays')
+
+    def get_ville(self, obj):
+        return self.get_lieu(obj, 'ville')
+
+    @staticmethod
+    def get_salle(obj):
+        if obj.debut_lieu is None:
+            return
+        path = (obj.debut_lieu.get_ancestors(include_self=True)
+                .select_related('nature'))
+        try:
+            return path.last().nom
+        except Exception:
+            return ''
+
+    @staticmethod
+    def get_saison(obj):
+        saison = ', '.join(
+            [saison.get_periode() for saison in obj.get_saisons()])
+        if saison:
+            return saison
+        return _('Saison indisponible')
+
+    @staticmethod
+    def get_annee(obj):
+        return obj.debut_date.year
+
+    @staticmethod
+    def get_mois(obj):
+        return capfirst(MONTHS[obj.debut_date.month])
+
+    @staticmethod
+    def get_jour(obj):
+        return obj.debut_date.day
+
+    @staticmethod
+    def get_oeuvre(obj):
+        return obj.oeuvre
+
+    @staticmethod
+    def get_auteur(obj):
+        return obj.auteur
+
+
+class Scenario1(EvenementScenarioExporter):
     model = Evenement
     columns = [
         'annee', 'saison', 'mois', 'jour'
@@ -282,31 +331,11 @@ class Scenario1(CustomExporter):
         ('annee', 'saison',),
     )
 
-    def get_background_colors():
+    def get_background_colors(self):
         return self.background_colors.insert(0, "#d9d2e9")
 
-    @staticmethod
-    def get_annee(obj):
-        return obj.debut_date.year
 
-    @staticmethod
-    def get_saison(obj):
-        saison = ', '.join([saison.get_periode() for saison in obj.get_saisons()])
-        if saison:
-            return saison
-        return _('Donnée indisponible')
-
-    @staticmethod
-    def get_mois(obj):
-        return calendar.month_name[obj.debut_date.month]
-
-    @staticmethod
-    def get_jour(obj):
-        return obj.debut_date.day
-
-
-class Scenario2(CustomExporter):
-    model = Evenement
+class Scenario2(EvenementScenarioExporter):
     background_colors = ["#3d85c6", "#6fa8dc", "#9fc5e8", "#a4cafe", "#d9d2e9", "#cfe2f3", "#c9daf8", "#c3ddfd", "#ebf5ff"]
     columns = [
         'pays', 'ville', 'salle',
@@ -320,31 +349,8 @@ class Scenario2(CustomExporter):
     tab_name = _("2. Événements - géographique")
     title = _("2. Événements : répartition géographique")
 
-    @staticmethod
-    def get_ville(obj, nature='ville'):
-        if obj.debut_lieu is None:
-            return
-        ville = (obj.debut_lieu.get_ancestors(include_self=True)
-                 .filter(nature__nom=nature).first())
-        if ville is not None:
-            return force_text(ville)
 
-    def get_pays(self, obj):
-        return self.get_ville(obj, 'pays')
-
-    def get_salle(self, obj):
-        if obj.debut_lieu is None:
-            return
-        path = (obj.debut_lieu.get_ancestors(include_self=True)
-                .select_related('nature'))
-        try:
-            return path.last().nom
-        except Exception:
-            return ''
-
-
-class Scenario3(CustomExporter):
-    model = Evenement
+class Scenario3(EvenementScenarioExporter):
     columns = [
         'oeuvre', 'auteur', 'annee', 'saison', 'mois',
     ]
@@ -360,7 +366,6 @@ class Scenario3(CustomExporter):
     title = _("3. Œuvres : répartition chronologique")
 
     def __init__(self, queryset=None):
-        events_pk = queryset.values_list('pk')
         elements = []
 
         for work in queryset.oeuvres():
@@ -377,35 +382,8 @@ class Scenario3(CustomExporter):
 
         super(Scenario3, self).__init__(queryset=elements)
 
-    def _get_related_exporters(self, parent_fk_ids=None, is_root=True):
-        return [self]
 
-    @staticmethod
-    def get_oeuvre(obj):
-        return obj.oeuvre
-
-    @staticmethod
-    def get_auteur(obj):
-        return obj.auteur
-
-    @staticmethod
-    def get_annee(obj):
-        return obj.debut_date.year
-
-    @staticmethod
-    def get_mois(obj):
-        return calendar.month_name[obj.debut_date.month]
-
-    @staticmethod
-    def get_saison(obj):
-        saison = ', '.join([saison.get_periode() for saison in obj.get_saisons()])
-        if saison:
-            return saison
-        return _('Donnée indisponible')
-
-
-class Scenario4(CustomExporter):
-    model = Evenement
+class Scenario4(EvenementScenarioExporter):
     columns = [
         'oeuvre', 'auteur', 'pays', 'ville', 'salle', 'annee', 'saison', 'mois',
     ]
@@ -424,7 +402,6 @@ class Scenario4(CustomExporter):
     title = _("4. Œuvres : répartition géographique")
 
     def __init__(self, queryset=None):
-        events_pk = queryset.values_list('pk')
         elements = []
 
         for work in queryset.oeuvres():
@@ -441,55 +418,8 @@ class Scenario4(CustomExporter):
 
         super(Scenario4, self).__init__(queryset=elements)
 
-    def _get_related_exporters(self, parent_fk_ids=None, is_root=True):
-        return [self]
 
-    @staticmethod
-    def get_oeuvre(obj):
-        return obj.oeuvre
-
-    @staticmethod
-    def get_auteur(obj):
-        return obj.auteur
-
-    @staticmethod
-    def get_ville(obj, nature='ville'):
-        if obj.debut_lieu is None:
-            return
-        ville = (obj.debut_lieu.get_ancestors(include_self=True)
-                 .filter(nature__nom=nature).first())
-        if ville is not None:
-            return force_text(ville)
-
-    def get_pays(self, obj):
-        return self.get_ville(obj, 'pays')
-
-    def get_salle(self, obj):
-        if obj.debut_lieu is None:
-            return
-        path = (obj.debut_lieu.get_ancestors(include_self=True)
-                .select_related('nature'))
-        try:
-            return path.last().nom
-        except Exception:
-            return ''
-
-    def get_annee(self, obj):
-        return obj.debut_date.year
-
-    @staticmethod
-    def get_saison(obj):
-        saison = ', '.join([saison.get_periode() for saison in obj.get_saisons()])
-        if saison:
-            return saison
-        return _('Donnée indisponible')
-
-    def get_mois(self, obj):
-        return calendar.month_name[obj.debut_date.month]
-
-
-class Scenario5(CustomExporter):
-    model = Evenement
+class Scenario5(EvenementScenarioExporter):
     columns = [
         'auteur', 'annee', 'saison', 'mois', 'programmes',
     ]
@@ -518,31 +448,11 @@ class Scenario5(CustomExporter):
 
         super(Scenario5, self).__init__(queryset=elements)
 
-    def _get_related_exporters(self, parent_fk_ids=None, is_root=True):
-        return [self]
-
-    def get_auteur(self, obj):
-        return obj.auteur
-
-    def get_annee(self, obj):
-        return obj.debut_date.year
-
-    @staticmethod
-    def get_saison(obj):
-        saison = ', '.join([saison.get_periode() for saison in obj.get_saisons()])
-        if saison:
-            return saison
-        return _('Donnée indisponible')
-
-    def get_mois(self, obj):
-        return calendar.month_name[obj.debut_date.month]
-
     def get_programmes(self, obj):
         return obj.programmes
 
 
-class Scenario6(CustomExporter):
-    model = Evenement
+class Scenario6(EvenementScenarioExporter):
     columns = [
         'interprete', 'annee', 'saison', 'mois'
     ]
@@ -582,30 +492,13 @@ class Scenario6(CustomExporter):
 
         super(Scenario6, self).__init__(queryset=elements)
 
-    def _get_related_exporters(self, parent_fk_ids=None, is_root=True):
-        return [self]
-
     def get_interprete(self, obj):
         if hasattr(obj, 'interprete'):
             return obj.interprete
         return ' '
 
-    def get_annee(self, obj):
-        return obj.debut_date.year
 
-    @staticmethod
-    def get_saison(obj):
-        saison = ', '.join([saison.get_periode() for saison in obj.get_saisons()])
-        if saison:
-            return saison
-        return _('Donnée indisponible')
-
-    def get_mois(self, obj):
-        return calendar.month_name[obj.debut_date.month]
-
-
-class Scenario7(CustomExporter):
-    model = Evenement
+class Scenario7(EvenementScenarioExporter):
     columns = [
         'auteur', 'oeuvre', 'annee', 'saison', 'mois'
     ]
@@ -621,7 +514,6 @@ class Scenario7(CustomExporter):
     title = _("7. Auteurs et œuvres : répartition chronologique")
 
     def __init__(self, queryset=None):
-        events_pk = queryset.values_list('pk')
         elements = []
 
         for individu in queryset.individus_auteurs():
@@ -634,33 +526,8 @@ class Scenario7(CustomExporter):
 
         super(Scenario7, self).__init__(queryset=elements)
 
-    def _get_related_exporters(self, parent_fk_ids=None, is_root=True):
-        return [self]
 
-    def get_auteur(self, obj):
-        return obj.auteur
-
-    def get_oeuvre(self, obj):
-        return obj.oeuvre
-
-    @staticmethod
-    def get_annee(obj):
-        return obj.debut_date.year
-
-    @staticmethod
-    def get_saison(obj):
-        saison = ', '.join([saison.get_periode() for saison in obj.get_saisons()])
-        if saison:
-            return saison
-        return _('Donnée indisponible')
-
-    @staticmethod
-    def get_mois(obj):
-        return calendar.month_name[obj.debut_date.month]
-
-
-class Scenario8(CustomExporter):
-    model = Evenement
+class Scenario8(EvenementScenarioExporter):
     columns = [
         'pays', 'ville', 'salle', 'annee', 'saison', 'mois', 'jour', 'recettes',
     ]
@@ -678,50 +545,6 @@ class Scenario8(CustomExporter):
     title = _("8. Recettes")
     stats = 'sum'
     sum_col = 'recettes'
-
-    @staticmethod
-    def get_lieu(obj, nature):
-        if obj.debut_lieu is None:
-            return
-        lieu = (obj.debut_lieu.get_ancestors(include_self=True)
-                .filter(nature__nom=nature).first())
-        if lieu is not None:
-            return force_text(lieu)
-
-    def get_pays(self, obj):
-        return self.get_lieu(obj, 'pays')
-
-    def get_ville(self, obj):
-        return self.get_lieu(obj, 'ville')
-
-    def get_salle(self, obj):
-        if obj.debut_lieu is None:
-            return
-        path = (obj.debut_lieu.get_ancestors(include_self=True)
-                .select_related('nature'))
-        try:
-            return path.last().nom
-        except Exception:
-            return ''
-
-    @staticmethod
-    def get_saison(obj):
-        saison = ', '.join([saison.get_periode() for saison in obj.get_saisons()])
-        if saison:
-            return saison
-        return _('Donnée indisponible')
-
-    @staticmethod
-    def get_annee(obj):
-        return obj.debut_date.year
-
-    @staticmethod
-    def get_mois(obj):
-        return calendar.month_name[obj.debut_date.month]
-
-    @staticmethod
-    def get_jour(obj):
-        return obj.debut_date.day
 
     @staticmethod
     def get_recettes(obj):

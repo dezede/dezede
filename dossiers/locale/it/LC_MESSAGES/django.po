@@ -150,10 +150,8 @@ msgid "du dossier « %s »"
 msgstr "del dossier « %s »"
 
 #: jobs.py:33
-#, fuzzy
-#| msgid "dossiers"
 msgid "du dossier "
-msgstr "dossiers"
+msgstr "del dossier "
 
 #: models.py:29
 msgid "catégorie de dossiers"
@@ -391,14 +389,7 @@ msgid "(dir.)"
 msgstr "(dir.)"
 
 #: templates/dossiers/dossierdevenements_content.html:35
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "            « %(object)s »,\n"
-#| "            <em>Dezède</em> [en ligne].\n"
-#| "            %(SITE)s%(permalien)s\n"
-#| "            (consulté le %(now)s).\n"
-#| "          "
+#, python-format
 msgid ""
 "\n"
 "          « %(object)s »,\n"
@@ -438,15 +429,6 @@ msgid "Dossier suivant"
 msgstr "Dossier successivo"
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:10
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "          Éditeur scientifique\n"
-#| "        "
-#| msgid_plural ""
-#| "\n"
-#| "          Éditeurs scientifiques\n"
-#| "        "
 msgid ""
 "\n"
 "              Éditeur scientifique\n"
@@ -513,10 +495,8 @@ msgid "Fermer"
 msgstr "Chiudere"
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:110
-#, fuzzy
-#| msgid "Exporter en PDF"
 msgid "Exporter"
-msgstr "Esportare in PDF"
+msgstr "Esportare"
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:124
 msgid "Ajouter"
@@ -866,13 +846,8 @@ msgstr "Moderno"
 msgid "Né après 1920"
 msgstr "Nato dopo il 1920"
 
-msgid "Donnée indisponible"
-msgstr "Dati non disponibili"
+msgid "Saison indisponible"
+msgstr "Stagione non disponibili"
 
 msgid "TOTAL"
 msgstr "TOTALE"
-
-#, fuzzy
-#~| msgid "auteurs"
-#~ msgid "Auteurs"
-#~ msgstr "autori"

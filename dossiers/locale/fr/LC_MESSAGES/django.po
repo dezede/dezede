@@ -807,7 +807,7 @@ msgstr ""
 msgid "Né après 1920"
 msgstr ""
 
-msgid "Donnée indisponible"
+msgid "Saison indisponible"
 msgstr ""
 
 msgid "TOTAL"

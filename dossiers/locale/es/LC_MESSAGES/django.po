@@ -390,14 +390,7 @@ msgid "(dir.)"
 msgstr "(dir.)"
 
 #: templates/dossiers/dossierdevenements_content.html:35
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "            « %(object)s »,\n"
-#| "            <em>Dezède</em> [en ligne].\n"
-#| "            %(SITE)s%(permalien)s\n"
-#| "            (consulté le %(now)s).\n"
-#| "          "
+#, python-format
 msgid ""
 "\n"
 "          « %(object)s »,\n"
@@ -434,15 +427,6 @@ msgid "Dossier suivant"
 msgstr "Carpeta siguiente"
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:10
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "          Éditeur scientifique\n"
-#| "        "
-#| msgid_plural ""
-#| "\n"
-#| "          Éditeurs scientifiques\n"
-#| "        "
 msgid ""
 "\n"
 "              Éditeur scientifique\n"
@@ -509,10 +493,8 @@ msgid "Fermer"
 msgstr "Cerrar"
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:110
-#, fuzzy
-#| msgid "Exporter en PDF"
 msgid "Exporter"
-msgstr "Exportar en PDF"
+msgstr "Exportar"
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:124
 msgid "Ajouter"
@@ -862,13 +844,8 @@ msgstr "Moderno"
 msgid "Né après 1920"
 msgstr "Nacido después de 1920"
 
-msgid "Donnée indisponible"
-msgstr "Informacion no disponible"
+msgid "Saison indisponible"
+msgstr "Temporada no disponible"
 
 msgid "TOTAL"
 msgstr "TOTAL"
-
-#, fuzzy
-#~| msgid "auteurs"
-#~ msgid "Auteurs"
-#~ msgstr "autores"
