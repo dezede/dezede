@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-15 19:13+0100\n"
+"POT-Creation-Date: 2021-05-03 17:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Rosalba Agresta <rosalbagresta@gmail.com>, 2016\n"
 "Language-Team: Italian (https://www.transifex.com/bertrandbordage/"
@@ -35,123 +35,134 @@ msgstr "Selezione dinamica"
 msgid "Sélection manuelle"
 msgstr "Selezione manuale"
 
-#: export.py:243 export.py:322 export.py:384 export.py:462 export.py:513
-#: export.py:574 export.py:629
+#: export.py:219
+msgid "TOTAL"
+msgstr "TOTALE"
+
+#: export.py:292
+msgid "Saison indéterminée"
+msgstr "Stagione indeterminata"
+
+#: export.py:321 export.py:360 export.py:396 export.py:428 export.py:461
+#: export.py:508 export.py:538
 msgid "Année"
 msgstr "Anno"
 
-#: export.py:244 export.py:323 export.py:385 export.py:463 export.py:514
-#: export.py:575 export.py:630
+#: export.py:322 export.py:361 export.py:397 export.py:429 export.py:462
+#: export.py:509 export.py:539
 msgid "Saison"
 msgstr "Stagione"
 
-#: export.py:245 export.py:324 export.py:386 export.py:464 export.py:515
-#: export.py:576 export.py:631
+#: export.py:323 export.py:362 export.py:398 export.py:430 export.py:463
+#: export.py:510 export.py:540
 msgid "Mois"
 msgstr "Mese"
 
-#: export.py:246 export.py:632
+#: export.py:324 export.py:541
 msgid "Jour"
 msgstr "Giorno"
 
-#: export.py:247 export.py:287 export.py:325 export.py:387 export.py:516
-#: export.py:577
+#: export.py:325 export.py:347 export.py:363 export.py:399 export.py:464
+#: export.py:511
 msgid "Nombre d'événements"
 msgstr "Numero di eventi"
 
-#: export.py:250 forms.py:56
+#: export.py:328
 msgid "1. Événements - chronologique"
 msgstr "1. Eventi - cronologica"
 
-#: export.py:284 export.py:381 export.py:626
-msgid "Pays"
-msgstr "Paese"
-
-#: export.py:285 export.py:382 export.py:627
-msgid "Ville"
-msgstr "Città"
-
-#: export.py:286 export.py:383 export.py:628
-msgid "Salle"
-msgstr "Sala"
-
-#: export.py:289 forms.py:57
-msgid "2. Événements - géographique"
-msgstr "2. Eventi - geografica"
-
-#: export.py:320 export.py:379 export.py:573
-msgid "Œuvre"
-msgstr "Opera"
-
-#: export.py:321 export.py:380 export.py:461 export.py:572
-msgid "Auteur"
-msgstr "Autore"
-
-#: export.py:327 forms.py:58
-msgid "3. Œuvres - chronologique"
-msgstr "3. Opere - cronologica"
-
-#: export.py:389 forms.py:59
-msgid "4. Œuvres - géographique"
-msgstr "4. Opere - geografica"
-
-#: export.py:465
-msgid "Nombre d'éléments de programme"
-msgstr "Numero di elementi del programma"
-
-#: export.py:467 forms.py:60
-msgid "5. Auteurs - chronologique"
-msgstr "5. Autori - cronologica"
-
-#: export.py:512
-msgid "Interprète"
-msgstr "Interprete"
-
-#: export.py:518 forms.py:61
-msgid "6. Interprètes - chronologique"
-msgstr "6. Autori - cronologica"
-
-#: export.py:579 forms.py:62
-msgid "7. Auteurs et œuvres"
-msgstr "7. Autori e opere"
-
-#: export.py:633
-msgid "Recette"
-msgstr "Entrate"
-
-#: export.py:635 forms.py:63
-msgid "8. Recettes"
-msgstr "8. Entrate"
-
+#: export.py:329 forms.py:56
 msgid "1. Événements : répartition chronologique"
 msgstr "1. Eventi : ripartizione cronologica"
 
+#: export.py:344 export.py:393 export.py:535
+msgid "Pays"
+msgstr "Paese"
+
+#: export.py:345 export.py:394 export.py:536
+msgid "Ville"
+msgstr "Città"
+
+#: export.py:346 export.py:395 export.py:537
+msgid "Salle"
+msgstr "Sala"
+
+#: export.py:349
+msgid "2. Événements - géographique"
+msgstr "2. Eventi - geografica"
+
+#: export.py:350 forms.py:57
 msgid "2. Événements : répartition géographique"
 msgstr "2. Eventi : ripartizione geografica"
 
+#: export.py:358 export.py:391 export.py:507
+msgid "Œuvre"
+msgstr "Opera"
+
+#: export.py:359 export.py:392 export.py:427 export.py:506
+msgid "Auteur"
+msgstr "Autore"
+
+#: export.py:365
+msgid "3. Œuvres - chronologique"
+msgstr "3. Opere - cronologica"
+
+#: export.py:366 forms.py:58
 msgid "3. Œuvres : répartition chronologique"
 msgstr "3. Opere : ripartizione cronologica"
 
+#: export.py:401
+msgid "4. Œuvres - géographique"
+msgstr "4. Opere - geografica"
+
+#: export.py:402 forms.py:59
 msgid "4. Œuvres : répartition géographique"
 msgstr "4. Opere : ripartizione geografica"
 
+#: export.py:431
+msgid "Nombre d'éléments de programme"
+msgstr "Numero di elementi del programma"
+
+#: export.py:433
+msgid "5. Auteurs - chronologique"
+msgstr "5. Autori - cronologica"
+
+#: export.py:434 forms.py:60
 msgid "5. Auteurs : répartition chronologique"
 msgstr "5. Autori : ripartizione cronologica"
 
+#: export.py:460
+msgid "Interprète"
+msgstr "Interprete"
+
+#: export.py:466
+msgid "6. Interprètes - chronologique"
+msgstr "6. Autori - cronologica"
+
+#: export.py:467 forms.py:61
 msgid "6. Interprètes : répartition chronologique"
 msgstr "6. Autori : ripartizione cronologica"
 
+#: export.py:513
+msgid "7. Auteurs et œuvres"
+msgstr "7. Autori e opere"
+
+#: export.py:514 forms.py:62
 msgid "7. Auteurs et œuvres : répartition chronologique"
 msgstr "7. Autori e opere : ripartizione cronologica"
+
+#: export.py:542
+msgid "Recette"
+msgstr "Entrate"
+
+#: export.py:544 export.py:545 forms.py:63
+msgid "8. Recettes"
+msgstr "8. Entrate"
 
 #: jobs.py:21
 #, python-format
 msgid "du dossier « %s »"
 msgstr "del dossier « %s »"
-
-#: jobs.py:33
-msgid "du dossier "
-msgstr "del dossier "
 
 #: models.py:29
 msgid "catégorie de dossiers"
@@ -384,11 +395,11 @@ msgstr "Fonti e protocollo"
 msgid "Bibliographie indicative"
 msgstr "Bibliografia indicativa"
 
-#: templates/dossiers/dossierdevenements_content.html:33
+#: templates/dossiers/dossierdevenements_content.html:35
 msgid "(dir.)"
 msgstr "(dir.)"
 
-#: templates/dossiers/dossierdevenements_content.html:35
+#: templates/dossiers/dossierdevenements_content.html:39
 #, python-format
 msgid ""
 "\n"
@@ -412,19 +423,19 @@ msgstr ""
 msgid "Présentation"
 msgstr "Presentazione"
 
-#: templates/dossiers/dossierdevenements_detail.html:42
+#: templates/dossiers/dossierdevenements_detail.html:45
 msgid "Pour citer ce dossier"
 msgstr "Per citare questo dossier"
 
-#: templates/dossiers/dossierdevenements_detail.html:54
+#: templates/dossiers/dossierdevenements_detail.html:57
 msgid "Dossier précédent"
 msgstr "Dossier precedente"
 
-#: templates/dossiers/dossierdevenements_detail.html:58
+#: templates/dossiers/dossierdevenements_detail.html:61
 msgid "Retourner en haut"
 msgstr "Ritorna in alto"
 
-#: templates/dossiers/dossierdevenements_detail.html:65
+#: templates/dossiers/dossierdevenements_detail.html:68
 msgid "Dossier suivant"
 msgstr "Dossier successivo"
 
@@ -481,28 +492,28 @@ msgstr "Sviluppi previsti"
 msgid "Exporter en PDF"
 msgstr "Esportare in PDF"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:75
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:82
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:76
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:83
 msgid "Exporter les statistiques"
 msgstr "Esportare le statistiche"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:92
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:93
 msgid "Exports"
 msgstr "Esportazioni"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:109
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:110
 msgid "Fermer"
 msgstr "Chiudere"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:110
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:111
 msgid "Exporter"
 msgstr "Esportare"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:124
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:126
 msgid "Ajouter"
 msgstr "Aggiungere"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:126
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:128
 msgid "Supprimer"
 msgstr "Cancellare"
 
@@ -845,9 +856,3 @@ msgstr "Moderno"
 #: views.py:41
 msgid "Né après 1920"
 msgstr "Nato dopo il 1920"
-
-msgid "Saison indisponible"
-msgstr "Stagione non disponibili"
-
-msgid "TOTAL"
-msgstr "TOTALE"

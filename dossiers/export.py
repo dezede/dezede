@@ -289,7 +289,7 @@ class EvenementScenarioExporter(CustomExporter):
             [saison.get_periode() for saison in obj.get_saisons()])
         if saison:
             return saison
-        return _('Saison indisponible')
+        return _('Saison indéterminée')
 
     @staticmethod
     def get_annee(obj):
