@@ -73,18 +73,13 @@ def install_ubuntu():
          'npm '
          # For media files analysis.
          'libav-tools '
+         # For elasticsearch.
+         'docker.io '
          # For lxml.
          'libxml2-dev libxslt1-dev '
          # For PDF generation.
          'texlive-xetex fonts-linuxlibertine '
          'texlive-lang-french texlive-fonts-extra')
-
-    run('wget https://download.elastic.co/elasticsearch/elasticsearch/'
-        'elasticsearch-1.7.6.deb')
-    sudo('dpkg -i elasticsearch-1.7.6.deb')
-    run('rm elasticsearch-1.7.6.deb')
-    sudo('systemctl enable elasticsearch')
-    sudo('systemctl start elasticsearch')
 
     install_less_css()
 
@@ -131,6 +126,15 @@ def config_redis():
         use_sudo=True)
 
     sudo('systemctl restart redis-server')
+
+
+def config_elasticsearch():
+    upload_template(
+        'prod/elasticsearch.service',
+        '/etc/systemd/system/elasticsearch.service',
+        use_sudo=True,
+    )
+    sudo('systemctl enable elasticsearch')
 
 
 def update_submodules():
@@ -201,6 +205,7 @@ def install():
 
     config_postgresql()
     config_redis()
+    config_elasticsearch()
 
     clone()
 

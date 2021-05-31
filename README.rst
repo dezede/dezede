@@ -35,7 +35,7 @@ Dépendances
 ===========
 
 :Système d'exploitation:
-  Ubuntu 17.10 « Raring Ringtail »
+  Ubuntu 20.04 « Raring Ringtail »
 
 Pour installer les dépendances qui suivent :
   ``sudo ./dependances.sh``
