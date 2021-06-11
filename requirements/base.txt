@@ -30,7 +30,7 @@ django-tablature==0.1.7
 
 # Small but powerful tools
 django-reversion==3.0.2
-django-el-pagination==3.2.2
+django-el-pagination==3.2.4
 easy-thumbnails==2.5
 django-viewsets==0.2.0
 tqdm==4.28.1

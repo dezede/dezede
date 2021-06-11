@@ -1,4 +1,4 @@
-{% load i18n static_grouper static %}
+{% load routines i18n static_grouper static %}
 
 
 {% addstatic css %}
@@ -67,8 +67,8 @@
 {% addstatic js %}
   <script>
 
-    var matrix = [{% for row in matrix %}[{{ row|join:"," }}],{% endfor %}];
-    var individus = ['{{ individus|join:"','" }}'];
+    var matrix = [{% for row in matrix %}[{{ row|map_str|join:"," }}],{% endfor %}];
+    var individus = ['{{ individus|map_str|join:"','" }}'];
     var colors = ['{{ colors|join:"','" }}'];
 
     var chord = d3.layout.chord()

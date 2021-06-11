@@ -37,7 +37,7 @@
 
   {% addstatic metadata %}
     {% meta 'DC' 'title' object|striptags %}
-    {% meta 'DC' 'creator' object.editeurs_scientifiques.all|join:', ' %}
+    {% meta 'DC' 'creator' object.editeurs_scientifiques.all|map_str|join:', ' %}
     {% meta 'DC' 'date' object.date_publication scheme='DCTERMS.W3C-DTF' %}
     {% meta 'DC' 'description' object.presentation|striptags %}
   {% endaddstatic %}
