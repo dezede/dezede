@@ -28,12 +28,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ensemble',
             name='siege',
-            field=models.ForeignKey(to='libretto.Lieu', null=True, blank=True, related_name='ensembles', verbose_name='localisation'),
+            field=models.ForeignKey(to='libretto.Lieu', null=True, blank=True, related_name='ensembles', verbose_name='localisation', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='ensemble',
             name='type',
-            field=models.ForeignKey(to='libretto.TypeDEnsemble', null=True, related_name='ensembles', verbose_name='type'),
+            field=models.ForeignKey(to='libretto.TypeDEnsemble', null=True, related_name='ensembles', verbose_name='type', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='evenement',

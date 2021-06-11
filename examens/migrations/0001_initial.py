@@ -29,8 +29,8 @@ class Migration(migrations.Migration):
             name='LevelSource',
             fields=[
                 ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
-                ('level', models.ForeignKey(related_name='level_sources', to='examens.Level', verbose_name='level')),
-                ('source', models.OneToOneField(to='libretto.Source', verbose_name='source')),
+                ('level', models.ForeignKey(related_name='level_sources', to='examens.Level', verbose_name='level', on_delete=models.CASCADE)),
+                ('source', models.OneToOneField(to='libretto.Source', verbose_name='source', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'sources of level',
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, verbose_name='ID', auto_created=True, primary_key=True)),
                 ('session', models.OneToOneField(null=True, to='sessions.Session', blank=True, on_delete=django.db.models.deletion.SET_NULL, verbose_name='session')),
-                ('user', models.OneToOneField(null=True, to=settings.AUTH_USER_MODEL, blank=True, verbose_name='user')),
+                ('user', models.OneToOneField(null=True, to=settings.AUTH_USER_MODEL, blank=True, verbose_name='user', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'taken exams',
@@ -58,9 +58,9 @@ class Migration(migrations.Migration):
                 ('passed', models.BooleanField(verbose_name='passed', default=False)),
                 ('start', models.DateTimeField(verbose_name='start', auto_now_add=True)),
                 ('end', models.DateTimeField(blank=True, editable=False, verbose_name='end', null=True)),
-                ('level', models.ForeignKey(to='examens.Level', editable=False, verbose_name='level')),
-                ('source', models.ForeignKey(to='libretto.Source', editable=False, verbose_name='source')),
-                ('taken_exam', models.ForeignKey(related_name='taken_levels', to='examens.TakenExam', editable=False, verbose_name='taken exam')),
+                ('level', models.ForeignKey(to='examens.Level', editable=False, verbose_name='level', on_delete=models.CASCADE)),
+                ('source', models.ForeignKey(to='libretto.Source', editable=False, verbose_name='source', on_delete=models.CASCADE)),
+                ('taken_exam', models.ForeignKey(related_name='taken_levels', to='examens.TakenExam', editable=False, verbose_name='taken exam', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name_plural': 'taken levels',

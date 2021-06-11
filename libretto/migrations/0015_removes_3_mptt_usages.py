@@ -63,19 +63,19 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='partie',
             name='parent',
-            field=models.ForeignKey(related_name='enfant', verbose_name='r\xf4le ou instrument parent', blank=True, to='libretto.Partie', null=True),
+            field=models.ForeignKey(related_name='enfant', verbose_name='r\xf4le ou instrument parent', blank=True, to='libretto.Partie', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='profession',
             name='parent',
-            field=models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Profession', null=True),
+            field=models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Profession', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='typedensemble',
             name='parent',
-            field=models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.TypeDEnsemble', null=True),
+            field=models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.TypeDEnsemble', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

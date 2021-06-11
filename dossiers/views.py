@@ -303,7 +303,7 @@ class DossierDEvenementsDataGeoJson(DossierDEvenementsViewMixin,
 
 class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
     def get_object(self, queryset=None):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise PermissionDenied
         return super(DossierDEvenementsDetailXeLaTeX,
                      self).get_object(queryset)
@@ -317,7 +317,7 @@ class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
 
 class DossierDEvenementsScenario(DossierDEvenementsDetail):
     def get_object(self, queryset=None):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise PermissionDenied
         return super(DossierDEvenementsScenario,
                      self).get_object(queryset)

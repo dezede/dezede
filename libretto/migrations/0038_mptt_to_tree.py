@@ -40,12 +40,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='lieu',
             name='parent',
-            field=models.ForeignKey(verbose_name='parent', blank=True, null=True, related_name='enfants', to='libretto.Lieu'),
+            field=models.ForeignKey(verbose_name='parent', blank=True, null=True, related_name='enfants', to='libretto.Lieu', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='oeuvre',
             name='extrait_de',
-            field=models.ForeignKey(verbose_name='extrait de', blank=True, null=True, related_name='enfants', to='libretto.Oeuvre'),
+            field=models.ForeignKey(verbose_name='extrait de', blank=True, null=True, related_name='enfants', to='libretto.Oeuvre', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='partie',

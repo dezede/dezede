@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='membre',
             name='instrument',
-            field=models.ForeignKey(related_name='membres', verbose_name='instrument', blank=True, to='libretto.Partie', null=True),
+            field=models.ForeignKey(related_name='membres', verbose_name='instrument', blank=True, to='libretto.Partie', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.DeleteModel(
@@ -62,7 +62,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='partie',
             name='parent',
-            field=models.ForeignKey(related_name='enfants', verbose_name='r\xf4le ou instrument parent', blank=True, to='libretto.Partie', null=True),
+            field=models.ForeignKey(related_name='enfants', verbose_name='r\xf4le ou instrument parent', blank=True, to='libretto.Partie', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

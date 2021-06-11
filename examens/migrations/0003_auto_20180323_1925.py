@@ -45,12 +45,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='levelsource',
             name='level',
-            field=models.ForeignKey(verbose_name='niveau', related_name='level_sources', to='examens.Level'),
+            field=models.ForeignKey(verbose_name='niveau', related_name='level_sources', to='examens.Level', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='levelsource',
             name='source',
-            field=models.OneToOneField(verbose_name='source', related_name='+', to='libretto.Source'),
+            field=models.OneToOneField(verbose_name='source', related_name='+', to='libretto.Source', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='takenexam',
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='takenexam',
             name='user',
-            field=models.OneToOneField(verbose_name='utilisateur', blank=True, null=True, related_name='+', to=settings.AUTH_USER_MODEL),
+            field=models.OneToOneField(verbose_name='utilisateur', blank=True, null=True, related_name='+', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='takenlevel',
@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='takenlevel',
             name='level',
-            field=models.ForeignKey(verbose_name='niveau', editable=False, related_name='+', to='examens.Level'),
+            field=models.ForeignKey(verbose_name='niveau', editable=False, related_name='+', to='examens.Level', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='takenlevel',
@@ -85,7 +85,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='takenlevel',
             name='source',
-            field=models.ForeignKey(verbose_name='source', editable=False, related_name='+', to='libretto.Source'),
+            field=models.ForeignKey(verbose_name='source', editable=False, related_name='+', to='libretto.Source', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='takenlevel',
@@ -95,6 +95,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='takenlevel',
             name='taken_exam',
-            field=models.ForeignKey(verbose_name='examen passé', editable=False, related_name='taken_levels', to='examens.TakenExam'),
+            field=models.ForeignKey(verbose_name='examen passé', editable=False, related_name='taken_levels', to='examens.TakenExam', on_delete=models.CASCADE),
         ),
     ]

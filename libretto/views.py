@@ -189,7 +189,7 @@ class EvenementListView(AjaxListView, BaseEvenementListView):
 
 class EvenementExport(BaseEvenementListView):
     def get_queryset(self, base_filter=None):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             raise PermissionDenied
         qs = super(EvenementExport, self).get_queryset(base_filter=base_filter)
         if self.request.user.is_superuser:

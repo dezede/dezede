@@ -214,7 +214,7 @@ class PublishedQuerySet(CommonQuerySet):
         if request.user.is_superuser:
             return Q()
 
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             filters |= Q(owner=request.user.pk)
         return filters
 
@@ -264,7 +264,7 @@ class PublishedModel(CommonModel):
 
     def can_be_viewed(self, request=None):
         public = self.is_public
-        if request is None or not request.user.is_authenticated():
+        if request is None or not request.user.is_authenticated:
             return public
         if request.user.is_superuser:
             return True
@@ -446,7 +446,7 @@ class AncrageSpatioTemporel(object):
 
         self.admin_order_field = f'{self.prefix}{self.fields[0][0]}'
 
-        model._meta.add_field(self, virtual=True)
+        model._meta.add_field(self, private=True)
         setattr(model, name, self)
 
         for fieldname, field in self.fields:

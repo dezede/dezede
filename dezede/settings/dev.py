@@ -12,7 +12,7 @@ INSTALLED_APPS += (
     'django_nose',
 )
 
-MIDDLEWARE_CLASSES += (
+MIDDLEWARE += (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 

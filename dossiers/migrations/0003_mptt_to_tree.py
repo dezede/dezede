@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='dossierdevenements',
             name='parent',
-            field=models.ForeignKey(verbose_name='parent', blank=True, null=True, related_name='children', to='dossiers.DossierDEvenements'),
+            field=models.ForeignKey(verbose_name='parent', blank=True, null=True, related_name='children', to='dossiers.DossierDEvenements', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='dossierdevenements',

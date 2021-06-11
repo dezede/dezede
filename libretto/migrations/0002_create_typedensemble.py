@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('tree_id', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('level', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('owner', models.ForeignKey(related_name='typedensemble', on_delete=django.db.models.deletion.PROTECT, verbose_name='propri\xe9taire', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('parent', models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.TypeDEnsemble', null=True)),
+                ('parent', models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.TypeDEnsemble', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('nom',),
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='ensemble',
             name='type',
-            field=models.ForeignKey(related_name='ensembles', to='libretto.TypeDEnsemble', null=True),
+            field=models.ForeignKey(related_name='ensembles', to='libretto.TypeDEnsemble', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]
