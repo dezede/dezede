@@ -243,6 +243,10 @@ class EvenementDetailView(PublishedDetailView):
 
 
 class CommonTableView(TableView):
+    @property
+    def search_enabled(self):
+        return True
+
     def search(self, queryset, q):
         if not q:
             return queryset

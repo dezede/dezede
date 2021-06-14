@@ -26,7 +26,7 @@ django-redis==4.10.0
 
 # Data visualization frameworks
 djangorestframework==3.9.0
-django-tablature==0.1.7
+django-tablature==0.2.0
 
 # Small but powerful tools
 django-reversion==3.0.2

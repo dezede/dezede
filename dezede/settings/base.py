@@ -354,7 +354,6 @@ COMPRESS_CSS_FILTERS = (
 NPM_BINARY_PATH = BASE_DIR / 'node_modules/.bin/'
 COMPRESS_PRECOMPILERS = (
     ('text/less', f"{NPM_BINARY_PATH / 'lessc'} {{infile}} {{outfile}}"),
-    ('text/x-scss', 'django_libsass.SassCompiler'),
 )
 
 AJAX_LOOKUP_CHANNELS = {
