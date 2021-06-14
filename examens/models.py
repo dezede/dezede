@@ -53,7 +53,7 @@ class LevelSource(Model):
 
 class TakenExamQuerySet(QuerySet):
     def get_for_request(self, request):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return self.get_or_create(user=request.user)[0]
         if not request.session.modified:
             request.session.save()

@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partie',
             name='oeuvre2',
-            field=models.ForeignKey(related_name='parties', verbose_name='work', blank=True, to='libretto.Oeuvre', help_text='Ne remplir que pour les r\xf4les.', null=True),
+            field=models.ForeignKey(related_name='parties', verbose_name='work', blank=True, to='libretto.Oeuvre', help_text='Ne remplir que pour les r\xf4les.', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(

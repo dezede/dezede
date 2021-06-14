@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaracteristiqueDeProgramme',
             fields=[
-                ('caracteristique_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Caracteristique')),
+                ('caracteristique_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Caracteristique', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('type', 'classement', 'valeur'),
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaracteristiqueDOeuvre',
             fields=[
-                ('caracteristique_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Caracteristique')),
+                ('caracteristique_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Caracteristique', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('type', 'classement', 'valeur'),
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                 ('caracteristique_ptr',
                  models.OneToOneField(parent_link=True, auto_created=True,
                                       primary_key=True, serialize=False,
-                                      to='libretto.Caracteristique')),
+                                      to='libretto.Caracteristique', on_delete=models.CASCADE)),
             ],
             bases=('libretto.caracteristique',),
         ),
@@ -310,7 +310,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Institution',
             fields=[
-                ('lieu_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Lieu')),
+                ('lieu_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Lieu', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'institution',
@@ -321,7 +321,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LieuDivers',
             fields=[
-                ('lieu_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Lieu')),
+                ('lieu_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Lieu', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'place',
@@ -338,8 +338,8 @@ class Migration(migrations.Migration):
                 ('fin', models.DateField(null=True, verbose_name='fin', blank=True)),
                 ('fin_precision', models.PositiveSmallIntegerField(default=0, verbose_name='pr\xe9cision de la fin', choices=[(0, 'Ann\xe9e'), (1, 'Mois'), (2, 'Jour')])),
                 ('classement', models.SmallIntegerField(default=1)),
-                ('ensemble', models.ForeignKey(related_name='membres', verbose_name='ensemble', to='libretto.Ensemble')),
-                ('individu', models.ForeignKey(related_name='membres', verbose_name='individu', to='libretto.Individu')),
+                ('ensemble', models.ForeignKey(related_name='membres', verbose_name='ensemble', to='libretto.Ensemble', on_delete=models.CASCADE)),
+                ('individu', models.ForeignKey(related_name='membres', verbose_name='individu', to='libretto.Individu', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('instrument', 'classement'),
@@ -401,7 +401,7 @@ class Migration(migrations.Migration):
                 ('caracteristiques', models.ManyToManyField(related_name='oeuvres', null=True, verbose_name='autres caract\xe9ristiques', to='libretto.CaracteristiqueDOeuvre', blank=True)),
                 ('creation_lieu', models.ForeignKey(related_name='oeuvre_creation_set', on_delete=django.db.models.deletion.PROTECT, verbose_name='lieu', blank=True, to='libretto.Lieu', null=True)),
                 ('etat', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, default=libretto.models.base._get_default_etat, verbose_name='\xe9tat', to='libretto.Etat')),
-                ('extrait_de', models.ForeignKey(related_name='enfants', verbose_name='extrait de', blank=True, to='libretto.Oeuvre', null=True)),
+                ('extrait_de', models.ForeignKey(related_name='enfants', verbose_name='extrait de', blank=True, to='libretto.Oeuvre', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('type_extrait', 'numero_extrait', 'titre', 'genre', 'numero', 'coupe', 'tempo', 'tonalite', 'surnom', 'nom_courant', 'incipit', 'opus', 'ict'),
@@ -430,8 +430,8 @@ class Migration(migrations.Migration):
             name='ParenteDOeuvres',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('fille', models.ForeignKey(related_name='parentes_meres', verbose_name='\u0153uvre fille', to='libretto.Oeuvre')),
-                ('mere', models.ForeignKey(related_name='parentes_filles', verbose_name='\u0153uvre m\xe8re', to='libretto.Oeuvre')),
+                ('fille', models.ForeignKey(related_name='parentes_meres', verbose_name='\u0153uvre fille', to='libretto.Oeuvre', on_delete=models.CASCADE)),
+                ('mere', models.ForeignKey(related_name='parentes_filles', verbose_name='\u0153uvre m\xe8re', to='libretto.Oeuvre', on_delete=models.CASCADE)),
                 ('owner', models.ForeignKey(related_name='parentedoeuvres', on_delete=django.db.models.deletion.PROTECT, verbose_name='propri\xe9taire', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
@@ -467,7 +467,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Instrument',
             fields=[
-                ('partie_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Partie')),
+                ('partie_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Partie', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'instrument',
@@ -505,7 +505,7 @@ class Migration(migrations.Migration):
                 ('level', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('etat', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, default=libretto.models.base._get_default_etat, verbose_name='\xe9tat', to='libretto.Etat')),
                 ('owner', models.ForeignKey(related_name='profession', on_delete=django.db.models.deletion.PROTECT, verbose_name='propri\xe9taire', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('parent', models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Profession', null=True)),
+                ('parent', models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Profession', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('classement', 'nom'),
@@ -522,7 +522,7 @@ class Migration(migrations.Migration):
                 ('soliste', models.NullBooleanField(default=False, verbose_name='soliste', db_index=True)),
                 ('quantite_min', models.IntegerField(default=1, verbose_name='quantit\xe9 minimale', db_index=True)),
                 ('quantite_max', models.IntegerField(default=1, verbose_name='quantit\xe9 maximale', db_index=True)),
-                ('oeuvre', models.ForeignKey(related_name='pupitres', verbose_name='work', to='libretto.Oeuvre')),
+                ('oeuvre', models.ForeignKey(related_name='pupitres', verbose_name='work', to='libretto.Oeuvre', on_delete=models.CASCADE)),
                 ('owner', models.ForeignKey(related_name='pupitre', on_delete=django.db.models.deletion.PROTECT, verbose_name='propri\xe9taire', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
@@ -535,8 +535,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Role',
             fields=[
-                ('partie_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Partie')),
-                ('oeuvre', models.ForeignKey(related_name='roles', verbose_name='work', blank=True, to='libretto.Oeuvre', null=True)),
+                ('partie_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.Partie', on_delete=models.CASCADE)),
+                ('oeuvre', models.ForeignKey(related_name='roles', verbose_name='work', blank=True, to='libretto.Oeuvre', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'r\xf4le',
@@ -550,8 +550,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('debut', models.DateField(help_text='Exemple : \xab 6/6/1944 \xbb pour le 6 juin 1944.', verbose_name='d\xe9but')),
                 ('fin', models.DateField(verbose_name='fin')),
-                ('ensemble', models.ForeignKey(related_name='saisons', verbose_name='ensemble', blank=True, to='libretto.Ensemble', null=True)),
-                ('lieu', models.ForeignKey(related_name='saisons', verbose_name='lieu ou institution', blank=True, to='libretto.Lieu', null=True)),
+                ('ensemble', models.ForeignKey(related_name='saisons', verbose_name='ensemble', blank=True, to='libretto.Ensemble', null=True, on_delete=models.CASCADE)),
+                ('lieu', models.ForeignKey(related_name='saisons', verbose_name='lieu ou institution', blank=True, to='libretto.Lieu', null=True, on_delete=models.CASCADE)),
                 ('owner', models.ForeignKey(related_name='saison', on_delete=django.db.models.deletion.PROTECT, verbose_name='propri\xe9taire', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
@@ -591,8 +591,8 @@ class Migration(migrations.Migration):
             name='SourceEnsemble',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('ensemble', models.ForeignKey(related_name='sourceensemble_set', verbose_name='ensemble', to='libretto.Ensemble')),
-                ('source', models.ForeignKey(related_name='sourceensemble_set', to='libretto.Source')),
+                ('ensemble', models.ForeignKey(related_name='sourceensemble_set', verbose_name='ensemble', to='libretto.Ensemble', on_delete=models.CASCADE)),
+                ('source', models.ForeignKey(related_name='sourceensemble_set', to='libretto.Source', on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'libretto_source_ensembles',
@@ -603,8 +603,8 @@ class Migration(migrations.Migration):
             name='SourceEvenement',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('evenement', models.ForeignKey(related_name='sourceevenement_set', verbose_name='\xe9v\xe9nement', to='libretto.Evenement')),
-                ('source', models.ForeignKey(related_name='sourceevenement_set', to='libretto.Source')),
+                ('evenement', models.ForeignKey(related_name='sourceevenement_set', verbose_name='\xe9v\xe9nement', to='libretto.Evenement', on_delete=models.CASCADE)),
+                ('source', models.ForeignKey(related_name='sourceevenement_set', to='libretto.Source', on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'libretto_source_evenements',
@@ -615,8 +615,8 @@ class Migration(migrations.Migration):
             name='SourceIndividu',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('individu', models.ForeignKey(related_name='sourceindividu_set', verbose_name='individu', to='libretto.Individu')),
-                ('source', models.ForeignKey(related_name='sourceindividu_set', to='libretto.Source')),
+                ('individu', models.ForeignKey(related_name='sourceindividu_set', verbose_name='individu', to='libretto.Individu', on_delete=models.CASCADE)),
+                ('source', models.ForeignKey(related_name='sourceindividu_set', to='libretto.Source', on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'libretto_source_individus',
@@ -627,8 +627,8 @@ class Migration(migrations.Migration):
             name='SourceLieu',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('lieu', models.ForeignKey(related_name='sourcelieu_set', verbose_name='lieu', to='libretto.Lieu')),
-                ('source', models.ForeignKey(related_name='sourcelieu_set', to='libretto.Source')),
+                ('lieu', models.ForeignKey(related_name='sourcelieu_set', verbose_name='lieu', to='libretto.Lieu', on_delete=models.CASCADE)),
+                ('source', models.ForeignKey(related_name='sourcelieu_set', to='libretto.Source', on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'libretto_source_lieux',
@@ -639,8 +639,8 @@ class Migration(migrations.Migration):
             name='SourceOeuvre',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('oeuvre', models.ForeignKey(related_name='sourceoeuvre_set', verbose_name='work', to='libretto.Oeuvre')),
-                ('source', models.ForeignKey(related_name='sourceoeuvre_set', to='libretto.Source')),
+                ('oeuvre', models.ForeignKey(related_name='sourceoeuvre_set', verbose_name='work', to='libretto.Oeuvre', on_delete=models.CASCADE)),
+                ('source', models.ForeignKey(related_name='sourceoeuvre_set', to='libretto.Source', on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'libretto_source_oeuvres',
@@ -651,8 +651,8 @@ class Migration(migrations.Migration):
             name='SourcePartie',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('partie', models.ForeignKey(related_name='sourcepartie_set', verbose_name='r\xf4le ou instrument', to='libretto.Partie')),
-                ('source', models.ForeignKey(related_name='sourcepartie_set', to='libretto.Source')),
+                ('partie', models.ForeignKey(related_name='sourcepartie_set', verbose_name='r\xf4le ou instrument', to='libretto.Partie', on_delete=models.CASCADE)),
+                ('source', models.ForeignKey(related_name='sourcepartie_set', to='libretto.Source', on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'libretto_source_parties',
@@ -677,7 +677,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TypeDeCaracteristiqueDeProgramme',
             fields=[
-                ('typedecaracteristique_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.TypeDeCaracteristique')),
+                ('typedecaracteristique_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.TypeDeCaracteristique', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('classement',),
@@ -689,7 +689,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TypeDeCaracteristiqueDOeuvre',
             fields=[
-                ('typedecaracteristique_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.TypeDeCaracteristique')),
+                ('typedecaracteristique_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.TypeDeCaracteristique', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('classement',),
@@ -704,7 +704,7 @@ class Migration(migrations.Migration):
                 ('typedecaracteristique_ptr',
                  models.OneToOneField(parent_link=True, auto_created=True,
                                       primary_key=True, serialize=False,
-                                      to='libretto.TypeDeCaracteristique')),
+                                      to='libretto.TypeDeCaracteristique', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('classement',),
@@ -732,7 +732,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TypeDeParenteDIndividus',
             fields=[
-                ('typedeparente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.TypeDeParente')),
+                ('typedeparente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.TypeDeParente', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('classement',),
@@ -744,7 +744,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TypeDeParenteDOeuvres',
             fields=[
-                ('typedeparente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.TypeDeParente')),
+                ('typedeparente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='libretto.TypeDeParente', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('classement',),
@@ -792,7 +792,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='typedeparente',
             name='polymorphic_ctype',
-            field=models.ForeignKey(related_name='polymorphic_libretto.typedeparente_set', editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(related_name='polymorphic_libretto.typedeparente_set', editable=False, to='contenttypes.ContentType', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -808,7 +808,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='typedecaracteristique',
             name='polymorphic_ctype',
-            field=models.ForeignKey(related_name='polymorphic_libretto.typedecaracteristique_set', editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(related_name='polymorphic_libretto.typedecaracteristique_set', editable=False, to='contenttypes.ContentType', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -922,13 +922,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='partie',
             name='parent',
-            field=models.ForeignKey(related_name='enfant', verbose_name='r\xf4le ou instrument parent', blank=True, to='libretto.Partie', null=True),
+            field=models.ForeignKey(related_name='enfant', verbose_name='r\xf4le ou instrument parent', blank=True, to='libretto.Partie', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='partie',
             name='polymorphic_ctype',
-            field=models.ForeignKey(related_name='polymorphic_libretto.partie_set', editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(related_name='polymorphic_libretto.partie_set', editable=False, to='contenttypes.ContentType', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -974,7 +974,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='membre',
             name='instrument',
-            field=models.ForeignKey(related_name='membres', verbose_name='instrument', blank=True, to='libretto.Instrument', null=True),
+            field=models.ForeignKey(related_name='membres', verbose_name='instrument', blank=True, to='libretto.Instrument', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1004,13 +1004,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='lieu',
             name='parent',
-            field=models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Lieu', null=True),
+            field=models.ForeignKey(related_name='enfants', verbose_name='parent', blank=True, to='libretto.Lieu', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='lieu',
             name='polymorphic_ctype',
-            field=models.ForeignKey(related_name='polymorphic_libretto.lieu_set', editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(related_name='polymorphic_libretto.lieu_set', editable=False, to='contenttypes.ContentType', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -1060,7 +1060,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='fichier',
             name='source',
-            field=models.ForeignKey(related_name='fichiers', to='libretto.Source'),
+            field=models.ForeignKey(related_name='fichiers', to='libretto.Source', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1108,7 +1108,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='ensemble',
             name='siege',
-            field=models.ForeignKey(related_name='ensembles', verbose_name='si\xe8ge', blank=True, to='libretto.Lieu', null=True),
+            field=models.ForeignKey(related_name='ensembles', verbose_name='si\xe8ge', blank=True, to='libretto.Lieu', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1132,7 +1132,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='elementdeprogramme',
             name='evenement',
-            field=models.ForeignKey(related_name='programme', verbose_name='\xe9v\xe9nement', to='libretto.Evenement'),
+            field=models.ForeignKey(related_name='programme', verbose_name='\xe9v\xe9nement', to='libretto.Evenement', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1162,7 +1162,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='elementdedistribution',
             name='evenement',
-            field=models.ForeignKey(related_name='distribution', verbose_name='\xe9v\xe9nement', blank=True, to='libretto.Evenement', null=True),
+            field=models.ForeignKey(related_name='distribution', verbose_name='\xe9v\xe9nement', blank=True, to='libretto.Evenement', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1198,7 +1198,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='caracteristique',
             name='polymorphic_ctype',
-            field=models.ForeignKey(related_name='polymorphic_libretto.caracteristique_set', editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(related_name='polymorphic_libretto.caracteristique_set', editable=False, to='contenttypes.ContentType', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1216,7 +1216,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='auteur',
             name='oeuvre',
-            field=models.ForeignKey(related_name='auteurs', verbose_name='work', blank=True, to='libretto.Oeuvre', null=True),
+            field=models.ForeignKey(related_name='auteurs', verbose_name='work', blank=True, to='libretto.Oeuvre', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1234,7 +1234,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='auteur',
             name='source',
-            field=models.ForeignKey(related_name='auteurs', verbose_name='source', blank=True, to='libretto.Source', null=True),
+            field=models.ForeignKey(related_name='auteurs', verbose_name='source', blank=True, to='libretto.Source', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

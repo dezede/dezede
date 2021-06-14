@@ -21,6 +21,11 @@ def build_admin_view_name(perm):
     return 'admin:%s' % perm.replace('.', '_')
 
 
+@register.filter
+def map_str(iterable):
+    return map(str, iterable)
+
+
 @register.inclusion_tag('routines/front-end_admin.html', takes_context=True)
 def frontend_admin(context, obj=None, size='xs'):
     request = context['request']

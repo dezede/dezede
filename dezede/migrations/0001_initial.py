@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 ('image_align', models.CharField(default='text-right', max_length=11, verbose_name='alignement de l\u2019image', choices=[('text-left', 'Gauche'), ('text-center', 'Centre'), ('text-right', 'Droite')])),
                 ('opacity', models.DecimalField(default=0.6, verbose_name='opacit\xe9', max_digits=2, decimal_places=1, choices=[(Decimal('1.0'), 'Opaque'), (Decimal('0.9'), '90 %'), (Decimal('0.8'), '80 %'), (Decimal('0.7'), '70 %'), (Decimal('0.6'), '60 %'), (Decimal('0.5'), '50 %'), (Decimal('0.4'), '40 %'), (Decimal('0.3'), '30 %'), (Decimal('0.2'), '20 %'), (Decimal('0.1'), '10 %')])),
                 ('position', models.PositiveSmallIntegerField(default=1, verbose_name='position')),
-                ('content_type', models.ForeignKey(verbose_name='type d\u2019objet li\xe9', to='contenttypes.ContentType')),
+                ('content_type', models.ForeignKey(verbose_name='type d\u2019objet li\xe9', to='contenttypes.ContentType', on_delete=django.db.models.CASCADE)),
                 ('etat', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, default=libretto.models.base._get_default_etat, verbose_name='\xe9tat', to='libretto.Etat')),
                 ('owner', models.ForeignKey(related_name='diapositive', on_delete=django.db.models.deletion.PROTECT, verbose_name='propri\xe9taire', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],

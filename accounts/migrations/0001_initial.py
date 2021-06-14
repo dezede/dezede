@@ -40,9 +40,9 @@ class Migration(migrations.Migration):
                 ('rght', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('tree_id', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('level', models.PositiveIntegerField(editable=False, db_index=True)),
-                ('content_type', models.ForeignKey(verbose_name='type d\u2019autorit\xe9 associ\xe9e', blank=True, to='contenttypes.ContentType', null=True)),
+                ('content_type', models.ForeignKey(verbose_name='type d\u2019autorit\xe9 associ\xe9e', blank=True, to='contenttypes.ContentType', null=True, on_delete=django.db.models.CASCADE)),
                 ('groups', models.ManyToManyField(related_query_name='user', related_name='user_set', to='auth.Group', blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of his/her group.', verbose_name='groups')),
-                ('mentor', models.ForeignKey(related_name='disciples', verbose_name='mentor', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('mentor', models.ForeignKey(related_name='disciples', verbose_name='mentor', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=django.db.models.CASCADE)),
                 ('user_permissions', models.ManyToManyField(related_query_name='user', related_name='user_set', to='auth.Permission', blank=True, help_text='Specific permissions for this user.', verbose_name='user permissions')),
             ],
             options={

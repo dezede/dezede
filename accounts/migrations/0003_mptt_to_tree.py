@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='hierarchicuser',
             name='mentor',
-            field=models.ForeignKey(verbose_name='responsable scientifique', blank=True, null=True, related_name='disciples', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(verbose_name='responsable scientifique', blank=True, null=True, related_name='disciples', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='hierarchicuser',

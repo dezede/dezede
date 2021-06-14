@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
                 ('tree_id', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('level', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('auteurs', models.ManyToManyField(related_name='dossiers', null=True, verbose_name='authors', to='libretto.Individu', blank=True)),
-                ('categorie', models.ForeignKey(related_name='dossiersdevenements', blank=True, to='dossiers.CategorieDeDossiers', help_text='Attention, un dossier contenu dans un autre dossier ne peut \xeatre dans une cat\xe9gorie.', null=True, verbose_name='cat\xe9gorie')),
+                ('categorie', models.ForeignKey(related_name='dossiersdevenements', blank=True, to='dossiers.CategorieDeDossiers', help_text='Attention, un dossier contenu dans un autre dossier ne peut \xeatre dans une cat\xe9gorie.', null=True, verbose_name='cat\xe9gorie', on_delete=models.CASCADE)),
                 ('editeurs_scientifiques', models.ManyToManyField(related_name='dossiers_d_evenements_edites', verbose_name='\xe9diteurs scientifiques', to=settings.AUTH_USER_MODEL)),
                 ('ensembles', models.ManyToManyField(related_name='dossiers', null=True, verbose_name='ensembles', to='libretto.Ensemble', blank=True)),
                 ('etat', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, default=libretto.models.base._get_default_etat, verbose_name='\xe9tat', to='libretto.Etat')),
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
                 ('lieux', models.ManyToManyField(related_name='dossiers', null=True, verbose_name='lieux', to='libretto.Lieu', blank=True)),
                 ('oeuvres', models.ManyToManyField(related_name='dossiers', null=True, verbose_name='\u0153uvres', to='libretto.Oeuvre', blank=True)),
                 ('owner', models.ForeignKey(related_name='dossierdevenements', on_delete=django.db.models.deletion.PROTECT, verbose_name='propri\xe9taire', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('parent', models.ForeignKey(related_name='children', verbose_name='parent', blank=True, to='dossiers.DossierDEvenements', null=True)),
+                ('parent', models.ForeignKey(related_name='children', verbose_name='parent', blank=True, to='dossiers.DossierDEvenements', null=True, on_delete=models.CASCADE)),
                 ('sources', models.ManyToManyField(related_name='dossiers', null=True, verbose_name='sources', to='libretto.Source', blank=True)),
             ],
             options={

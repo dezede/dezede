@@ -1,6 +1,6 @@
 import datetime
 from django.db.models import Min, Max
-from django.forms.fields import MultiValueField
+from django.forms.fields import MultiValueField, CharField
 from django.forms.widgets import MultiWidget, TextInput
 from django.template.loader import render_to_string
 from libretto.models import Evenement
@@ -64,6 +64,13 @@ class RangeSliderWidget(MultiWidget):
 
 class RangeSliderField(MultiValueField):
     widget = RangeSliderWidget
+
+    def __init__(self, *args, **kwargs):
+        fields = (
+            CharField(), CharField()
+        )
+
+        super().__init__(*args, fields=fields, **kwargs)
 
     def compress(self, data_list):
         if data_list:

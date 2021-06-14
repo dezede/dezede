@@ -2,6 +2,14 @@
 {% load static_grouper static i18n %}
 
 
+{% block preloaded_statics %}
+  {{ block.super }}
+  {% addstatic css %}
+    <link rel="stylesheet" type="text/less" href="{% static 'less/tablature.less' %}" />
+  {% endaddstatic %}
+{% endblock %}
+
+
 {% block header %}
   <h1>
     {% block title %}
@@ -13,20 +21,10 @@
 
 
 {% block content %}
-  {% include 'tablature/includes/table.html' with search_lookups=True %}
-
-  {% addstatic css %}
-    <link rel="stylesheet" type="text/x-scss" href="{% static 'css/tablature.scss' %}" />
-  {% endaddstatic %}
+  {% include 'tablature/includes/table.html' %}
 
   {% addstatic js %}
     <script src="{% static 'js/tablature.js' %}"></script>
-  {% endaddstatic %}
-
-  {% addstatic js %}
-    <script>
-      {% include 'tablature/includes/table_init.js' %}
-    </script>
   {% endaddstatic %}
 
 {% endblock %}

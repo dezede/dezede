@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('scolaires', models.PositiveIntegerField(null=True, verbose_name='entr\xe9es scolaires', blank=True)),
                 ('frequentation', models.PositiveIntegerField(null=True, verbose_name='fr\xe9quentation totale', blank=True)),
                 ('jauge', models.PositiveIntegerField(null=True, verbose_name='jauge', blank=True)),
-                ('evenement', models.OneToOneField(related_name='afo', verbose_name='\xe9v\xe9nement', to='libretto.Evenement')),
+                ('evenement', models.OneToOneField(related_name='afo', verbose_name='\xe9v\xe9nement', to='libretto.Evenement', on_delete=models.CASCADE)),
             ],
             options={
             },
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('code_postal', models.CharField(max_length=10, verbose_name='code postal', blank=True)),
                 ('type_de_scene', models.CharField(blank=True, max_length=1, verbose_name='type de sc\xe8ne', choices=[('N', 'nationale'), ('C', 'conventionn\xe9e')])),
-                ('lieu', models.OneToOneField(related_name='afo', verbose_name='lieu ou institution', to='libretto.Lieu')),
+                ('lieu', models.OneToOneField(related_name='afo', verbose_name='lieu ou institution', to='libretto.Lieu', on_delete=models.CASCADE)),
             ],
             options={
             },

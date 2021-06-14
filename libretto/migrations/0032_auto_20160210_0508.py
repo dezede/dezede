@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='auteur',
             name='oeuvre',
-            field=models.ForeignKey(verbose_name='œuvre', null=True, to='libretto.Oeuvre', related_name='auteurs', blank=True),
+            field=models.ForeignKey(verbose_name='œuvre', null=True, to='libretto.Oeuvre', related_name='auteurs', blank=True, on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='auteur',
@@ -220,7 +220,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='partie',
             name='oeuvre',
-            field=models.ForeignKey(verbose_name='œuvre', null=True, to='libretto.Oeuvre', related_name='parties', help_text='Ne remplir que pour les rôles.', blank=True),
+            field=models.ForeignKey(verbose_name='œuvre', null=True, to='libretto.Oeuvre', related_name='parties', help_text='Ne remplir que pour les rôles.', blank=True, on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='partie',
@@ -250,7 +250,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='pupitre',
             name='oeuvre',
-            field=models.ForeignKey(verbose_name='œuvre', to='libretto.Oeuvre', related_name='pupitres'),
+            field=models.ForeignKey(verbose_name='œuvre', to='libretto.Oeuvre', related_name='pupitres', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='source',
@@ -265,7 +265,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='sourceoeuvre',
             name='oeuvre',
-            field=models.ForeignKey(verbose_name='œuvre', to='libretto.Oeuvre', related_name='sourceoeuvre_set'),
+            field=models.ForeignKey(verbose_name='œuvre', to='libretto.Oeuvre', related_name='sourceoeuvre_set', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='typedecaracteristiquedeprogramme',

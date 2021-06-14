@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^', include('accounts.urls')),
     url(r'^dossiers/', include('dossiers.urls')),
     url(r'^admin/lookups/', include(ajax_select_urls)),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^tinymce/', include('tinymce.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
