@@ -1,7 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import (
-    CharField, ForeignKey, ManyToManyField, permalink, PROTECT, BooleanField)
+    CharField, ForeignKey, ManyToManyField, PROTECT, BooleanField)
+from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.translation import (
     pgettext_lazy, ugettext, ugettext_lazy as _)
@@ -155,13 +156,11 @@ class Individu(AutoriteModel, UniqueSlugModel):
         parent = super(Individu, self).get_slug()
         return slugify_unicode(self.nom) or parent
 
-    @permalink
     def get_absolute_url(self):
-        return 'individu_detail', (self.slug,)
+        return reverse('individu_detail', args=(self.slug,))
 
-    @permalink
     def permalien(self):
-        return 'individu_permanent_detail', (self.pk,)
+        return reverse('individu_permanent_detail', args=(self.pk,))
 
     def link(self):
         return self.html()

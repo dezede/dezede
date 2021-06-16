@@ -5,10 +5,11 @@ from pathlib import Path
 from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db.models import (
-    CharField, ForeignKey, ManyToManyField, permalink, PROTECT, URLField,
+    CharField, ForeignKey, ManyToManyField, PROTECT, URLField,
     CASCADE, PositiveSmallIntegerField, FileField, BooleanField, DateField,
     TextField, Q, PositiveIntegerField,
 )
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -285,14 +286,15 @@ class Source(AutoriteModel):
             return Video.objects.get(pk=self.pk)
         return self
 
-    @permalink
     def get_absolute_url(self):
-        return 'source_permanent_detail', (self.pk,)
+        return reverse('source_permanent_detail', args=(self.pk,))
 
-    @permalink
     def get_change_url(self):
         meta = self.specific._meta
-        return f'admin:{meta.app_label}_{meta.model_name}_change', (self.pk,)
+        return reverse(
+            f'admin:{meta.app_label}_{meta.model_name}_change',
+            args=(self.pk,),
+        )
 
     def permalien(self):
         return self.get_absolute_url()

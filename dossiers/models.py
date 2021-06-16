@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.db.models import (
     CharField, DateField, ManyToManyField,
-    TextField, permalink, PositiveSmallIntegerField, Q,
+    TextField, PositiveSmallIntegerField, Q,
     ForeignKey, SlugField, CASCADE)
 from django.urls import reverse
 from django.utils.encoding import smart_text
@@ -125,17 +125,14 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
     def short_link(self):
         return href(self.get_absolute_url(), self.titre_court or self.titre)
 
-    @permalink
     def get_absolute_url(self):
-        return 'dossierdevenements_detail', (self.slug,)
+        return reverse('dossierdevenements_detail', args=(self.slug,))
 
-    @permalink
     def permalien(self):
-        return 'dossierdevenements_permanent_detail', (self.pk,)
+        return reverse('dossierdevenements_permanent_detail', args=(self.pk,))
 
-    @permalink
     def get_data_absolute_url(self):
-        return 'dossierdevenements_data_detail', (self.slug,)
+        return reverse('dossierdevenements_data_detail', args=(self.slug,))
 
     def get_queryset(self, dynamic=False):
         if hasattr(self, '_evenement_queryset'):

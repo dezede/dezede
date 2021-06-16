@@ -1,7 +1,8 @@
 from django.contrib.gis.db.models import GeometryField
 from django.core.exceptions import ValidationError
-from django.db.models import (CharField, ForeignKey, BooleanField, DateField,
-                              permalink, Q, PROTECT, CASCADE)
+from django.db.models import (
+    CharField, ForeignKey, BooleanField, DateField, Q, PROTECT, CASCADE,
+)
 from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
@@ -106,13 +107,11 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
             )
         return relations
 
-    @permalink
     def get_absolute_url(self):
-        return 'lieu_detail', [self.slug]
+        return reverse('lieu_detail', args=[self.slug])
 
-    @permalink
     def permalien(self):
-        return 'lieu_permanent_detail', [self.pk]
+        return reverse('lieu_permanent_detail', args=[self.pk])
 
     def link(self):
         return self.html()

@@ -7,8 +7,9 @@ from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator
 from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField,
-    BooleanField, permalink, SmallIntegerField, PROTECT, Count,
+    BooleanField, SmallIntegerField, PROTECT, Count,
     PositiveSmallIntegerField, CASCADE)
+from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags, format_html
 from django.utils.safestring import mark_safe
@@ -154,13 +155,11 @@ class Partie(AutoriteModel, UniqueSlugModel):
     def pluriel(self):
         return calc_pluriel(self)
 
-    @permalink
     def get_absolute_url(self):
-        return 'partie_detail', (self.slug,)
+        return reverse('partie_detail', args=(self.slug,))
 
-    @permalink
     def permalien(self):
-        return 'partie_permanent_detail', (self.pk,)
+        return reverse('partie_permanent_detail', args=(self.pk,))
 
     def link(self):
         return self.html()
@@ -464,9 +463,8 @@ class Auteur(CommonModel):
     def __str__(self):
         return self.html(tags=False)
 
-    @permalink
     def get_absolute_url(self):
-        return 'individu_detail', (self.individu_id,)
+        return reverse('individu_detail', args=(self.individu_id,))
 
 
 class OeuvreQuerySet(CommonTreeQuerySet, PublishedQuerySet):
@@ -771,13 +769,11 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
             relations += ('dossiers', 'filles',)
         return relations
 
-    @permalink
     def get_absolute_url(self):
-        return 'oeuvre_detail', [self.slug]
+        return reverse('oeuvre_detail', args=[self.slug])
 
-    @permalink
     def permalien(self):
-        return 'oeuvre_permanent_detail', [self.pk]
+        return reverse('oeuvre_permanent_detail', args=[self.pk])
 
     def link(self):
         return self.html(tags=True, auteurs=False, titre=True, descr=True,

@@ -4,10 +4,11 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MaxLengthValidator
 from django.db.models import (
-    BooleanField, permalink, TextField, URLField,
+    BooleanField, TextField, URLField,
     CharField, ForeignKey, PositiveIntegerField, ImageField, CASCADE)
 from django.db.models.signals import class_prepared
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
@@ -126,9 +127,8 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
     def link(self, tags=True):
         return self.html(tags=tags)
 
-    @permalink
     def get_absolute_url(self):
-        return 'user_profile', (self.username,)
+        return reverse('user_profile', args=(self.username,))
 
     def website_link(self):
         return href(self.website, self.website_verbose or self.website,

@@ -2,10 +2,11 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import (
-    CharField, ForeignKey, ManyToManyField, permalink, SmallIntegerField,
+    CharField, ForeignKey, ManyToManyField, SmallIntegerField,
     DateField, PositiveSmallIntegerField, Model, BooleanField, CASCADE)
 from django.db.models.sql import EmptyResultSet
 from django.template.defaultfilters import date
+from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -51,13 +52,11 @@ class Profession(AutoriteModel, UniqueSlugModel):
             relations += ('enfants', 'individus', 'parties',)
         return relations
 
-    @permalink
     def get_absolute_url(self):
-        return 'profession_detail', (self.slug,)
+        return reverse('profession_detail', args=(self.slug,))
 
-    @permalink
     def permalien(self):
-        return 'profession_permanent_detail', (self.pk,)
+        return reverse('profession_permanent_detail', args=(self.pk,))
 
     def pretty_link(self):
         return self.html(caps=True)
@@ -310,13 +309,11 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     def link(self):
         return self.html()
 
-    @permalink
     def get_absolute_url(self):
-        return 'ensemble_detail', (self.slug,)
+        return reverse('ensemble_detail', args=(self.slug,))
 
-    @permalink
     def permalien(self):
-        return 'ensemble_permanent_detail', (self.pk,)
+        return reverse('ensemble_permanent_detail', args=(self.pk,))
 
     def membres_html(self):
         return str_list([

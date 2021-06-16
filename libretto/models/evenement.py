@@ -6,8 +6,9 @@ from django.core.validators import RegexValidator
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, BooleanField,
-    PositiveSmallIntegerField, permalink, Q,
-    PROTECT, Count, DecimalField, SmallIntegerField, Max, CASCADE)
+    PositiveSmallIntegerField, Q, PROTECT, Count, DecimalField,
+    SmallIntegerField, Max, CASCADE,
+)
 from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags
@@ -133,9 +134,10 @@ class ElementDeDistribution(CommonModel):
     def related_label(self):
         return self.get_change_link()
 
-    @permalink
     def get_change_url(self):
-        return 'admin:libretto_elementdedistribution_change', (self.pk,)
+        return reverse(
+            'admin:libretto_elementdedistribution_change', args=(self.pk,),
+        )
 
     def get_change_link(self):
         return href(self.get_change_url(), force_text(self), new_tab=True)
@@ -538,9 +540,8 @@ class Evenement(AutoriteModel):
             return ('dossiers',)
         return ()
 
-    @permalink
     def get_absolute_url(self):
-        return 'evenement_pk', (self.pk,)
+        return reverse('evenement_pk', args=(self.pk,))
 
     def permalien(self):
         return self.get_absolute_url()
