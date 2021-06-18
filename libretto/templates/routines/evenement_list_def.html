@@ -14,7 +14,7 @@
   </tr>
 {% endif %}
 
-{% paginate 10 evenements.yearly_counts as yearly_counts %}
+{% paginate 10 evenements.yearly_counts using 'events' as yearly_counts %}
 {% for yearly_count in yearly_counts %}
   <tr>
 
