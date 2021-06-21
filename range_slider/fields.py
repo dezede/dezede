@@ -35,7 +35,7 @@ class RangeSliderWidget(MultiWidget):
 
         return min_date.year, max_date.year
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         min_year, max_year = self.get_default_range()
         try:
             int(value[0]), int(value[1])
