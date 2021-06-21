@@ -1,7 +1,6 @@
 {% load el_pagination_tags routines i18n %}
 
 {% paginate per_page object_list using page_variable %}
-{% get_pages %}
 
 {% for object in object_list %}
 
@@ -25,9 +24,9 @@
 
 {% endfor %}
 
-{% if pages.paginated %}
+{% if endless.page.paginator.num_pages > 1 %}
   <tr>
     <td></td>
-    <td>{{ pages }}</td>
+    <td>{% show_pages %}</td>
   </tr>
 {% endif %}

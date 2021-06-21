@@ -40,14 +40,6 @@ $('*[data-loading-text]').click(function () {
 });
 {# Fin de la gestion des boutons changeant d’état quand on clique dessus #}
 
-
-{# Google Analytics #}
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-JFEPPVCGW7');
-{# Fin de Google Analytics #}
-
 {# Gestion du changement de langue #}
 $('.language-link').click(function (e) {
   e.preventDefault();

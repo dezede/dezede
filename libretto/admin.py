@@ -7,7 +7,7 @@ from django.contrib.admin import (register, TabularInline, StackedInline,
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
-from django.contrib.gis.admin import OSMGeoAdmin
+from django.contrib.gis.admin import GeoModelAdmin
 from django.db.models import Q, TextField
 from django.forms.models import modelformset_factory
 from django.shortcuts import redirect
@@ -596,7 +596,8 @@ class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
 
 
 @register(Lieu)
-class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
+# FIXME: Revert back to OSMGeoAdmin when Django >= 3.2
+class LieuAdmin(GeoModelAdmin, AutoriteAdmin):
     form = LieuAdminForm
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
@@ -618,8 +619,6 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     default_lat = 5900000
     default_zoom = 5
     point_zoom = default_zoom
-    openlayers_url = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1' \
-                     '/OpenLayers.js'
 
 
 @register(Saison)

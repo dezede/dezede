@@ -161,5 +161,6 @@ def sanitize_html(html, include_links=True):
             'p': ['style'],
             'table': ['align'],
         },
-        styles=('text-decoration', 'text-align', 'padding-left')
+        styles=('text-decoration', 'text-align', 'padding-left'),
+        strip=True,
     ).replace('&amp;', '&')

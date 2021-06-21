@@ -434,9 +434,8 @@ class Auteur(CommonModel):
         )
 
     def html(self, tags=True):
-        return force_text(AuteurBiGrouper((self,), tags=tags))
+        return mark_safe(force_text(AuteurBiGrouper((self,), tags=tags)))
     html.short_description = _('rendu HTML')
-    html.allow_tags = True
 
     def clean(self):
         if self.oeuvre is not None and self.profession is None:
@@ -779,7 +778,6 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         return self.html(tags=True, auteurs=False, titre=True, descr=True,
                          ancestors=True)
     link.short_description = _('lien')
-    link.allow_tags = True
 
     def get_extrait(self, show_type=True):
         if not self.type_extrait or not self.numero_extrait:
@@ -835,8 +833,9 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
                       ugettext('Indice de Catalogue Thématique'), tags)
 
     def caracteristiques_html(self, tags=True):
-        return ' '.join(list(self.caracteristiques_iterator(tags=tags)))
-    caracteristiques_html.allow_tags = True
+        return mark_safe(
+            ' '.join(list(self.caracteristiques_iterator(tags=tags))),
+        )
     caracteristiques_html.short_description = _('caractéristiques')
 
     def get_pupitres_str(self, prefix=True, tags=False, solistes=False):
@@ -872,7 +871,6 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
     auteurs_html.short_description = _('auteur(s)')
-    auteurs_html.allow_tags = True
     auteurs_html.admin_order_field = 'auteurs__individu__nom'
 
     def parentes_in_order(self, relation):
@@ -983,7 +981,6 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
             l.append(self.get_description(tags=tags))
         return mark_safe(str_list(l))
     html.short_description = _('rendu HTML')
-    html.allow_tags = True
 
     def short_html(self, tags=True, links=False):
         return self.html(tags=tags, auteurs=False, titre=True, descr=False,

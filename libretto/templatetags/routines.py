@@ -157,7 +157,7 @@ def has_elements(object_list, request):
 
 @register.simple_tag(takes_context=True)
 def data_table_list_header(context):
-    count = context['pages'].total_count()
+    count = context['endless']['page'].paginator.count
     has_count = context['has_count']
     has_count_if_one = context['has_count_if_one']
     verbose_name = context['verbose_name']

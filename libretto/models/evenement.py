@@ -242,7 +242,6 @@ class CaracteristiqueDeProgramme(CommonModel):
         if self.type:
             return hlp(value, self.type, tags=tags)
         return value
-    html.allow_tags = True
 
     def __str__(self):
         valeur = strip_tags(self.valeur)
@@ -318,7 +317,6 @@ class ElementDeProgramme(CommonModel):
         if self.pk is None:
             return ''
         return self.caracteristiques.html(tags=tags, caps=False)
-    calc_caracteristiques.allow_tags = True
     calc_caracteristiques.short_description = _('caractéristiques')
 
     @property
@@ -370,7 +368,6 @@ class ElementDeProgramme(CommonModel):
 
         return mark_safe(out)
     html.short_description = _('rendu HTML')
-    html.allow_tags = True
 
     def __str__(self):
         return strip_tags(self.html(False))
@@ -549,7 +546,6 @@ class Evenement(AutoriteModel):
     def link(self):
         return href(self.get_absolute_url(), force_text(self))
     link.short_description = _('lien')
-    link.allow_tags = True
 
     def calc_caracteristiques(self, tags=True, caps=True):
         if self.pk is None:
@@ -588,7 +584,6 @@ class Evenement(AutoriteModel):
                                    self.debut.heure_str(), relache)))
 
     html.short_description = _('rendu HTML')
-    html.allow_tags = True
 
     def has_program(self):
         if self.relache:
