@@ -15,7 +15,7 @@ django-ajax-selects==1.7.1
 django-image-cropping==1.2.0
 
 # User authentication
-django-allauth==0.38.0
+django-allauth==0.44.0
 
 # Search engine
 django-haystack==2.8.1
@@ -25,39 +25,39 @@ elasticsearch==1.7.0
 django-redis==4.10.0
 
 # Data visualization frameworks
-djangorestframework==3.9.0
+djangorestframework==3.11.2
 django-tablature==0.2.0
 
 # Small but powerful tools
-django-reversion==3.0.2
-django-el-pagination==3.2.4
-easy-thumbnails==2.5
+django-reversion==3.0.9
+django-el-pagination==3.3.0
+easy-thumbnails==2.6
 django-viewsets==0.2.0
-tqdm==4.28.1
+tqdm==4.61.1
 awesome-slugify==1.6.5
 
 # Asynchronous tasks
-django-rq==2.1.0
-rq==1.1.0
+django-rq==2.4.1
+rq==1.8.1
 
 # CSS/JS handling
-django_compressor==2.2
+django_compressor==2.4.1
 cssmin==0.2.0
-rjsmin==1.0.12
+rjsmin==1.1.0
 
 # Data parsing/serialization
-beautifulsoup4==4.6.3
-lxml==4.2.5
-defusedxml==0.5.0
-pandas==0.25.3
-XlsxWriter==1.1.2
+beautifulsoup4==4.9.3
+lxml==4.6.3
+defusedxml==0.7.1
+pandas==1.2.4
+XlsxWriter==1.4.3
 
 # HTML cleaning
-bleach==3.0.2
+bleach==3.3.0
 
 # Dependencies
 # For easy-thumbnails
-Pillow==5.3.0
+Pillow==8.2.0
 # For djangorestframework (optionals)
-Pygments==2.2.0
-django-filter==2.0.0
+Pygments==2.9.0
+django-filter==2.2.0

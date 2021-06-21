@@ -86,7 +86,7 @@ class Exporter(object):
             if isinstance(field, ForeignObjectRel):
                 model = field.field.model
             elif isinstance(field, ForeignKey):
-                model = field.rel.to
+                model = field.related_model
         return model, field
 
     def get_verbose_name(self, column):
@@ -139,7 +139,7 @@ class Exporter(object):
                         .order_by().distinct().values_list(m2m, flat=True))
             else:
                 # Simple M2M
-                model = field.rel.through
+                model = getattr(field.model, field.attname).through
                 original_qs = self.get_queryset().order_by().distinct()
                 ids = frozenset(
                     model.objects.filter(
