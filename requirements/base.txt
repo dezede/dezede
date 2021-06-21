@@ -7,7 +7,7 @@ django-tree==0.3.2
 django-autoslug==1.9.8
 
 # User interface
-django-grappelli==2.13.4
+django-grappelli==2.15.1
 https://github.com/BertrandBordage/django-super-inlines/archive/761e8a3d8e907f3aa6f09009ac00b4588a0968b2.tar.gz
 django-tinymce==2.9.0
 django-crispy-forms==1.12.0
