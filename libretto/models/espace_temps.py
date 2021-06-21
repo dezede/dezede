@@ -117,7 +117,6 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     def link(self):
         return self.html()
     link.short_description = _('lien')
-    link.allow_tags = True
 
     def get_slug(self):
         parent = super(Lieu, self).get_slug()
@@ -165,7 +164,6 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         url = None if not tags else self.get_absolute_url()
         return href(url, out, tags)
     html.short_description = _('rendu HTML')
-    html.allow_tags = True
 
     def clean(self):
         if self.parent == self:

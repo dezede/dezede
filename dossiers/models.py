@@ -208,26 +208,6 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
             url += '?' + '&'.join(request_kwargs)
         return url
 
-    def lieux_html(self):
-        return str_list_w_last([l.html() for l in self.lieux.all()])
-    lieux_html.short_description = _('lieux')
-    lieux_html.allow_tags = True
-
-    def oeuvres_html(self):
-        return str_list_w_last([o.titre_html() for o in self.oeuvres.all()])
-    oeuvres_html.short_description = _('œuvres')
-    oeuvres_html.allow_tags = True
-
-    def auteurs_html(self):
-        return str_list_w_last([a.html() for a in self.individus.all()])
-    auteurs_html.short_description = _('auteurs')
-    auteurs_html.allow_tags = True
-
-    def ensembles_html(self):
-        return str_list_w_last([e.html() for e in self.ensembles.all()])
-    ensembles_html.short_description = _('ensembles')
-    ensembles_html.allow_tags = True
-
     def get_contributors(self):
         return HierarchicUser.objects.filter(
             Q(pk__in=self.get_queryset().values_list('owner_id',

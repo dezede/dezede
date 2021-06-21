@@ -300,7 +300,6 @@ class Source(AutoriteModel):
     def link(self):
         return self.html()
     link.short_description = _('Lien')
-    link.allow_tags = True
 
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
@@ -351,7 +350,6 @@ class Source(AutoriteModel):
             return mark_safe(href(url, out, tags))
         return out
     html.short_description = _('rendu HTML')
-    html.allow_tags = True
 
     def pretty_title(self):
         return self.html(pretty_title=True, link=False)

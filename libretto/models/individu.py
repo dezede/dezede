@@ -3,6 +3,7 @@ from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, permalink, PROTECT, BooleanField)
 from django.utils.html import strip_tags
+from django.utils.safestring import mark_safe
 from django.utils.translation import (
     pgettext_lazy, ugettext, ugettext_lazy as _)
 from tinymce.models import HTMLField
@@ -166,7 +167,6 @@ class Individu(AutoriteModel, UniqueSlugModel):
     def link(self):
         return self.html()
     link.short_description = _('lien')
-    link.allow_tags = True
 
     def oeuvres(self):
         oeuvres = self.auteurs.oeuvres()
@@ -234,12 +234,14 @@ class Individu(AutoriteModel, UniqueSlugModel):
     def calc_professions(self, tags=True):
         if not self.pk:
             return ''
-        return str_list_w_last(
-            p.html(feminin=self.is_feminin(), tags=tags, caps=i == 0)
-            for i, p in enumerate(self.professions.all()))
+        return mark_safe(
+            str_list_w_last(
+                p.html(feminin=self.is_feminin(), tags=tags, caps=i == 0)
+                for i, p in enumerate(self.professions.all())
+            )
+        )
     calc_professions.short_description = _('professions')
     calc_professions.admin_order_field = 'professions__nom'
-    calc_professions.allow_tags = True
 
     def html(self, tags=True, lon=False,
              show_prenoms=True, designation=None, abbr=True, links=True):
@@ -298,7 +300,6 @@ class Individu(AutoriteModel, UniqueSlugModel):
             return href(self.get_absolute_url(), out, links)
         return out
     html.short_description = _('rendu HTML')
-    html.allow_tags = True
 
     def nom_seul(self, tags=False, abbr=False, links=False):
         return self.html(tags=tags, lon=False, show_prenoms=False,

@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
     CharField, ImageField, DecimalField, BooleanField, ForeignKey,
     PositiveIntegerField, PositiveSmallIntegerField, Max, CASCADE)
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from image_cropping import ImageRatioField
@@ -133,10 +134,9 @@ class Diapositive(PublishedModel):
 
     def thumbnail(self):
         thumbnail_instance = self.thumbnail_instance()
-        return (
+        return mark_safe(
             f'<img src="{thumbnail_instance.url}" '
             f'style="width: {thumbnail_instance.width}; '
             f'height: {thumbnail_instance.height};" />'
         )
     thumbnail.short_description = _('miniature')
-    thumbnail.allow_tags = True
