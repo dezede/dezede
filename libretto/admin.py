@@ -427,6 +427,22 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super(CommonAdmin, self).get_fieldsets(request, obj=obj)
+
+        # Si fields ou fieldsets sont définis, alors le formulaire
+        # est fait automatiquement et inclut donc les champs qu'on voudrait
+        # ajouter ci-dessous.
+        if self.fields or self.fieldsets:
+            added_fields = self._get_added_fields(
+                request, 'additional_fields', excluded=self.exclude or (),
+            )
+            if added_fields:
+                self.added_fieldsets = (
+                    (_('Notes'), {
+                        'classes': ('grp-collapse grp-closed',),
+                        'fields': added_fields,
+                    }),
+                )
+
         return tuple(fieldsets) + self.added_fieldsets
 
     def _get_added_fields(self, request, additional_fields_attname,
@@ -440,27 +456,6 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
                 added_fields.append(added_field)
 
         return tuple(added_fields)
-
-    # TODO: Ajouter cette méthode aux inlines.
-    def pre_get_form(self, request, obj=None, **kwargs):
-        if not self.fields and not self.fieldsets:
-            # Cas où le formulaire est fait automatiquement et inclut donc
-            # les champs qu'on voudrait ajouter ci-dessous.
-            return
-
-        added_fields = self._get_added_fields(
-            request, 'additional_fields', excluded=self.exclude or ())
-        if added_fields:
-            self.added_fieldsets = (
-                (_('Notes'), {
-                    'classes': ('grp-collapse grp-closed',),
-                    'fields': added_fields,
-                }),
-            )
-
-    def get_form(self, request, obj=None, **kwargs):
-        self.pre_get_form(request, obj=obj, **kwargs)
-        return super(CommonAdmin, self).get_form(request, obj=obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
         if hasattr(obj, 'owner') and obj.owner is None:
