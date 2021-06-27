@@ -401,13 +401,16 @@ class Source(AutoriteModel):
             or self.has_images()
         )
 
-    def images_iterator(self):
-        if self.is_image():
-            yield self
-        for child in Source.objects.filter(
+    def children_images(self, limit=None):
+        return Source.objects.filter(
             Q(parent=self) | Q(parent__parent=self),
             type_fichier=FileAnalyzer.IMAGE,
-        ).order_by('position', 'page'):
+        ).order_by('position', 'page')[:limit]
+
+    def images_iterator(self, limit=None):
+        if self.is_image():
+            yield self
+        for child in self.children_images(limit=limit):
             yield child
 
     @cached_property
@@ -416,7 +419,8 @@ class Source(AutoriteModel):
 
     @cached_property
     def preview_image(self):
-        return next(self.images_iterator())
+        for image in self.images_iterator(limit=1):
+            return image
 
     @cached_property
     def is_collection(self):

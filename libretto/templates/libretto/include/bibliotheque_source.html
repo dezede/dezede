@@ -4,7 +4,7 @@
   <a class="panel panel-default" href="{{ source.get_absolute_url }}" title="{{ source }}">
     <div class="panel-heading">{{ source }}</div>
     <div class="panel-body">
-      {% if source.images %}
+      {% if source.preview_image %}
         <div class="full-width-image" style="background-image: url('{% thumbnail source.preview_image.fichier 718x718 crop detail %}');"></div>
       {% elif source.transcription %}
         <blockquote>
