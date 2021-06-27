@@ -1,10 +1,9 @@
 from django.apps import apps
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, EmptyResultSet
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, SmallIntegerField,
     DateField, PositiveSmallIntegerField, Model, BooleanField, CASCADE)
-from django.db.models.sql import EmptyResultSet
 from django.template.defaultfilters import date
 from django.urls import reverse
 from django.utils.encoding import force_text

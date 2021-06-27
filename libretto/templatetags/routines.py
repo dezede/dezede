@@ -1,6 +1,6 @@
 import re
 from copy import copy
-from django.db.models import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template import Library, Template
 from django.utils.encoding import force_text

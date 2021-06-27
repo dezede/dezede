@@ -1,7 +1,6 @@
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, EmptyResultSet
 from django.db import connection
 from django.db.models import Q, Count
-from django.db.models.sql import EmptyResultSet
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _

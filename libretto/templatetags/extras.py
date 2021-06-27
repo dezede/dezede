@@ -1,9 +1,9 @@
 from html.parser import HTMLParser
 import re
 from bs4 import BeautifulSoup, Comment
+from django.core.exceptions import EmptyResultSet
 from django.contrib.gis.geos import GEOSGeometry
 from django.db import connection
-from django.db.models.sql import EmptyResultSet
 from django.template import Library
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
