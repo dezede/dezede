@@ -142,7 +142,7 @@
 
 {% addstatic js %}
   <script>
-    $(function() {
+    (function($) {
       $('#min-places-slider').slider({
         min: 1,
         max: {{ MAX_MIN_PLACES }},
@@ -166,6 +166,6 @@
           });
         }
       });
-    });
+    })(jQuery);
   </script>
 {% endaddstatic %}

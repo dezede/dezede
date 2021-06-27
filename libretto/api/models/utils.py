@@ -8,7 +8,6 @@ from django.db import transaction, connection
 from django.db.models import ManyToManyField, Manager, Model
 from django.db.models.fields.related import ForeignObjectRel
 from django.db.models.query import QuerySet
-from django.utils import six
 from django.utils.encoding import smart_text
 from typography.utils import replace
 from ...models.base import PublishedModel, CommonModel
@@ -111,20 +110,16 @@ def is_many_related_field(object_or_model, field_name):
     return isinstance(field, MANY_RELATED_FIELDS)
 
 
-def is_str(v):
-    return isinstance(v, six.string_types)
-
-
 def get_field_cmp_value(obj, k, v):
     if is_many_related_field(obj, k):
         return v.all()
-    elif is_str(v):
+    elif isinstance(v, str):
         return smart_text(v)
     return v
 
 
 def get_field_settable_value(new_v):
-    if is_str(new_v):
+    if isinstance(new_v, str):
         return replace(smart_text(new_v))
     return new_v
 

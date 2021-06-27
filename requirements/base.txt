@@ -1,14 +1,14 @@
 # Basics
-Django==2.2.24
+Django==3.0.14
 psycopg2-binary==2.8.6
 
 # Database fields
-django-tree==0.3.2
+django-tree==0.4.1
 django-autoslug==1.9.8
 
 # User interface
 django-grappelli==2.15.1
-https://github.com/BertrandBordage/django-super-inlines/archive/761e8a3d8e907f3aa6f09009ac00b4588a0968b2.tar.gz
+django-super-inlines==0.2.1
 django-tinymce==2.9.0
 django-crispy-forms==1.12.0
 django-ajax-selects==2.1.0
@@ -49,7 +49,7 @@ rjsmin==1.1.0
 beautifulsoup4==4.9.3
 lxml==4.6.3
 defusedxml==0.7.1
-pandas==1.2.4
+pandas==1.2.5
 XlsxWriter==1.4.3
 
 # HTML cleaning

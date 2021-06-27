@@ -1,14 +1,10 @@
 from collections import defaultdict
 from difflib import SequenceMatcher
-try:
-    from itertools import zip_longest
-except ImportError:  # Python 2
-    from itertools import izip_longest as zip_longest
+from itertools import zip_longest
 import re
 
 from bs4 import BeautifulSoup, NavigableString
 from django.utils.encoding import force_text
-from django.utils.six import text_type
 from django.utils.translation import ungettext, ugettext_lazy as _
 
 from common.utils.text import remove_diacritics
@@ -59,7 +55,7 @@ PENALITIES_MESSAGES = {
 }
 
 
-class HTMLAnnotatedChar(text_type):
+class HTMLAnnotatedChar(str):
     def __new__(cls, c='', is_tag=False, names=(), classes=()):
         self = super(HTMLAnnotatedChar, cls).__new__(cls, force_text(c))
         self.is_tag = is_tag

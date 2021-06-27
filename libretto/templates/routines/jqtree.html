@@ -6,7 +6,7 @@
 
 {% addstatic js %}
   <script>
-    $(function () {
+    (function ($) {
       $('#{% if id %}{{ id }}{% else %}{{ model_name }}-tree{% endif %}').tree({
         selectable: false,
         autoEscape: false,
@@ -19,6 +19,6 @@
                              function (node) { return node.element; });
         tooltips_create($(elements))
       });
-    });
+    })(jQuery);
   </script>
 {% endaddstatic %}

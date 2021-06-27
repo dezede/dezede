@@ -55,10 +55,10 @@ class RangeSliderWidget(MultiWidget):
 
     class Media(object):
         css = {
-            'all': ('css/custom-theme/jquery-ui-1.9.2.min.css',),
+            'all': ('css/custom-theme/jquery-ui-1.12.1-base.min.css',),
         }
-        js = ('js/jquery-1.10.2.min.js',
-              'js/jquery-ui-1.9.2.min.js',
+        js = ('js/jquery-3.6.0.min.js',
+              'js/jquery-ui-1.12.1.min.js',
               'js/range_slider_widget.js',)
 
 

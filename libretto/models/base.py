@@ -347,7 +347,7 @@ class NumberCharField(CharField):
     def strip_zeros(self, match):
         return match.group(0).lstrip('0')
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection):
         if value is None:
             return value
         return self.NUMBER_RE.sub(self.strip_zeros, value)

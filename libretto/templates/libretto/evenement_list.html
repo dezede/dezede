@@ -117,7 +117,7 @@
   {% endaddstatic %}
   {% addstatic js %}
     <script>
-      $(function () {
+      (function ($) {
         $.endlessPaginate({
           paginateOnScroll: true,
           paginateOnScrollMargin: 200,
@@ -186,7 +186,7 @@
                                      - $('.page').first().offset().top);
           $window.scrollTop($window.scrollTop() - current_page_offset);
         });
-      });
+      })(jQuery);
     </script>
   {% endaddstatic %}
 

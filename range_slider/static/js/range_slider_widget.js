@@ -1,4 +1,4 @@
-$(function() {
+(function($) {
   var $widget = $('.date-range-widget');
   var $slider = $widget.find('.slider');
   var $start = $widget.find('.start');
@@ -38,4 +38,4 @@ $(function() {
     $slider.slider('values', 1, new_val);
     $(this).val(new_val);
   });
-});
+})(jQuery);

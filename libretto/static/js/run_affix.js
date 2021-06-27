@@ -1,4 +1,4 @@
-$(function () {
+(function ($) {
   var $side = $('#sidebar');
   $side.affix({
     offset: {
@@ -12,4 +12,4 @@ $(function () {
       }
     }
   });
-});
+})(jQuery);

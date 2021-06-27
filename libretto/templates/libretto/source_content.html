@@ -38,7 +38,7 @@
             var modalId = $(media).parents('.modal')[0].id;
             return $('[data-target="#' + modalId + '"]');
           }
-          $(function () {
+          (function ($) {
             $('audio, video').off('play').on('play', function (e) {
               $('audio, video').not(this).trigger('pause');
               getModalOpener(this).addClass('active');
@@ -49,7 +49,7 @@
               getModalOpener(this).removeClass('active');
               e.preventDefault();
             });
-          });
+          })(jQuery);
         </script>
       {% endaddstatic %}
 

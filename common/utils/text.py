@@ -1,6 +1,5 @@
 from unicodedata import normalize
 
-from django.utils import six
 from django.utils.encoding import force_text
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
@@ -87,7 +86,7 @@ def ex(txt, pre='', post=''):
         'txt': txt,
         'post': post,
     }
-ex = lazy(ex, six.text_type)
+ex = lazy(ex, str)
 
 
 ROMAN_BINDINGS = (

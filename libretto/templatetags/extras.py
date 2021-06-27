@@ -1,7 +1,4 @@
-try:
-    from html.parser import HTMLParser
-except ImportError:  # Python 2 compatibility
-    from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 import re
 from bs4 import BeautifulSoup, Comment
 from django.contrib.gis.geos import GEOSGeometry
