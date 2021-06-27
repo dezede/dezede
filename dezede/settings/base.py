@@ -356,7 +356,6 @@ COMPRESS_PRECOMPILERS = (
     ('text/less', f"{NPM_BINARY_PATH / 'lessc'} {{infile}} {{outfile}}"),
 )
 
-AJAX_SELECT_BOOTSTRAP = False
 AJAX_LOOKUP_CHANNELS = {
     'lieu': ('libretto.lookups', 'LieuLookup'),
     'ensemble': ('libretto.lookups', 'EnsembleLookup'),
