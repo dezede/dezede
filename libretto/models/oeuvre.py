@@ -453,6 +453,9 @@ class Auteur(CommonModel):
                     Profession.DoesNotExist):
                 pass
 
+    def __hash__(self):
+        return super().__hash__()
+
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
