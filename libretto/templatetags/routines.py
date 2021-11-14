@@ -5,6 +5,7 @@ from django.db.models.query import QuerySet
 from django.template import Library, Template
 from django.utils.encoding import force_text
 from django.utils.safestring import SafeText, mark_safe
+from tinymce.models import HTMLField
 
 from libretto.models.base import PublishedQuerySet
 from common.utils.text import capfirst
@@ -81,11 +82,16 @@ def data_table_attr(
     sub_context['value'] = value
     value = Template('{{ value }}').render(sub_context)
 
+    try:
+        field = obj._meta.get_field(attr.split('.')[0])
+    except FieldDoesNotExist:
+        field = None
+
     if verbose_name is None:
-        try:
-            verbose_name = obj._meta.get_field(attr.split('.')[0]).verbose_name
-        except FieldDoesNotExist:
-            verbose_name = getattr(obj, attr).short_description
+        verbose_name = (
+            getattr(obj, attr).short_description if field is None
+            else field.verbose_name
+        )
 
     if caps:
         value = capfirst(value.strip())
@@ -93,6 +99,7 @@ def data_table_attr(
         'verbose_name': verbose_name,
         'title': title,
         'value': value,
+        'show_links': isinstance(field, HTMLField),
     }
 
 

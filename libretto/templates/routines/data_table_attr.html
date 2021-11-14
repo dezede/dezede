@@ -2,5 +2,5 @@
   <th{% if title %} title="{{ title }}"{% endif %}>
     {{ verbose_name|capfirst }}
   </th>
-  <td>{{ value|safe }}</td>
+  <td{% if show_links %} class="show-links"{% endif %}>{{ value|safe }}</td>
 </tr>
