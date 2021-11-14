@@ -41,6 +41,13 @@
 
 </div>
 
+{% if evenement.recette_generale %}
+  <h4>{% trans 'recette générale'|capfirst %}</h4>
+  <small>
+    {{ evenement.recette_generale }} ({% trans 'devise locale' %})
+  </small>
+{% endif %}
+
 {% if evenement.notes_publiques %}
   <h4>{% trans 'notes'|capfirst %}</h4>
   <small>
