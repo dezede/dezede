@@ -27,21 +27,32 @@
     <div class="col-xs-12 col-md-8 col-lg-7">
       <div id="slogan">
         {% trans 'Archives et chronologie des spectacles' %}
-        <a href="{% url 'presentation' %}" class="btn btn-primary btn-xs"
-           title="{% trans 'Présentation de Dezède' %}">
-          <i class="fa fa-question"></i>
-        </a>
-        <a href="http://dezede.hypotheses.org/" class="btn btn-primary btn-xs"
-           title="{% trans 'Carnet Dezède' %}" target="_blank">
-          <img src="{% static 'images/hypotheses.png' %}" width="13" height="13" />
-        </a>
-        <a href="https://www.facebook.com/dezede.org" class="btn btn-primary btn-xs"
-           title="{% trans 'Facebook' %}" target="_blank">
-          <i class="fa fa-facebook"></i>
-        </a>
-        <a href="{% url 'rss_feed' %}" class="btn btn-primary btn-xs" title="{% trans 'Flux RSS' %}" target="_blank">
-          <i class="fa fa-rss"></i>
-        </a>
+        <span id="slogan-buttons">
+          <a href="{% url 'presentation' %}" class="btn btn-primary btn-xs"
+             title="{% trans 'Présentation de Dezède' %}">
+            <i class="fa fa-question"></i>
+          </a>
+          <a href="http://dezede.hypotheses.org/" class="btn btn-primary btn-xs"
+             title="{% trans 'Carnet Dezède' %}" target="_blank">
+            <img src="{% static 'images/hypotheses.png' %}" width="13" height="13" />
+          </a>
+          <a href="https://www.facebook.com/dezede.org" class="btn btn-primary btn-xs"
+             title="{% trans 'Facebook' %}" target="_blank">
+            <i class="fa fa-facebook"></i>
+          </a>
+          <br />
+          <a href="https://twitter.com/DezedeOrg" class="btn btn-primary btn-xs"
+             title="{% trans 'Twitter' %}" target="_blank">
+            <i class="fa fa-twitter"></i>
+          </a>
+          <a href="https://instagram.com/dezede.spectacles" class="btn btn-primary btn-xs"
+             title="{% trans 'Instagram' %}" target="_blank">
+            <i class="fa fa-instagram"></i>
+          </a>
+          <a href="{% url 'rss_feed' %}" class="btn btn-primary btn-xs" title="{% trans 'Flux RSS' %}" target="_blank">
+            <i class="fa fa-rss"></i>
+          </a>
+        </span>
       </div>
     </div>
   </div>
