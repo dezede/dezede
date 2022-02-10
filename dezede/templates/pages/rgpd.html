@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+
+{% block header %}
+  <h1>
+    <a href="{% url 'rgpd' %}">
+      {% block title %}{% trans 'Protection des données' %}{% endblock %}
+    </a>
+  </h1>
+{% endblock %}
+
+
+{% block content %}
+  <div class="static-page">
+
+    <ul class="nav nav-tabs" style="margin: 0 0 20px;">
+      <li class="active">
+        <a href="#generalites" data-toggle="tab">
+          {% trans 'Généralités' %}
+        </a>
+      </li>
+      <li>
+        <a href="#compte-contributeur" data-toggle="tab">
+          {% trans 'Création d’un compte contributeur' %}
+        </a>
+      </li>
+      <li>
+        <a href="#chronologies" data-toggle="tab">
+          {% trans 'Reconstitution de chronologies de spectacles' %}
+        </a>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+
+      <div class="tab-pane active" id="generalites">
+        <p>
+          {% blocktrans %}
+            Le site Dezède implique la mise en œuvre de plusieurs traitements de données
+            à caractère personnel décrits dans le présent document.
+          {% endblocktrans %}
+        </p>
+        <p>
+          {% url 'presentation' as presentation_url %}
+          {% blocktrans %}
+            Ces traitements sont mis en œuvre sous la responsabilité des propriétaires du site.
+            Voir la section <a href="{{ presentation_url }}">Présentation</a>.
+          {% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}
+            Pour toute question sur vos données, les propriétaires du site peuvent être contactés
+          à l’adresse <a href="mailto:dezede.contact@gmail.com">dezede.contact@gmail.com</a>.
+          {% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}
+            L’université de Rouen Normandie assure la gestion du site internet. Ainsi pour toute
+            question sur la protection de vos données, vous pouvez également contacter la déléguée
+            à la protection des données de l’établissement à l’adresse
+          <a href="mailto:dpo@univ-rouen.fr">dpo@univ-rouen.fr</a>.
+          {% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}
+            Si vous estimez, après nous avoir contactés, que vos droits et libertés ne sont pas
+            respectés, vous pouvez également introduire une réclamation auprès de la CNIL.
+          {% endblocktrans %}
+        </p>
+      </div>
+
+      <div class="tab-pane" id="compte-contributeur">
+        <h3>{% trans 'Finalité et base légale du traitement' %}</h3>
+        <p>
+          {% blocktrans %}
+            Afin de contribuer au site, il est nécessaire d’obtenir la création d’un compte
+            contributeur. <strong>Il permet au contributeur d’alimenter la base de données et assure
+            la traçabilité des publications.</strong>
+          {% endblocktrans %}
+        </p>
+        {% blocktrans %}
+          <p>
+            Afin de gérer ce compte, les données suivantes relatives au contributeur sont traitées :
+          </p>
+          <ul>
+            <li><strong>son identité</strong></li>
+            <li><strong>son adresse mail</strong></li>
+            <li><strong>sa biographie (facultative)</strong></li>
+            <li><strong>ses publications</strong></li>
+            <li><strong>son mot de passe (chiffré)</strong></li>
+          </ul>
+        {% endblocktrans %}
+        <p>
+          {% blocktrans %}
+            Le traitement de ces données repose sur <strong>les missions d’intérêt public</strong>
+            (recherche et formation) dont sont investis les propriétaires du site (universités et laboratoires).
+          {% endblocktrans %}
+        </p>
+        <h3>{% trans 'Durée de conservation et destinataires des données' %}</h3>
+        <p>
+          {% blocktrans %}
+            Ces données sont conservées <strong>tant que le site Dezède existe</strong>.
+            Les comptes contributeurs ne peuvent pas être effacés. Leur conservation est
+            nécessaire afin de maintenir le lien entre un contributeur et ses publications.
+          {% endblocktrans %}
+        </p>
+        <p>
+        {% blocktrans %}
+          L’identité, la biographie renseignée par le contributeur et les publications sont
+          <strong>publiés sur le site internet Dezède et accessibles à tous</strong>.
+        {% endblocktrans %}
+        </p>
+        <h3>{% trans 'Droits des contributeurs sur leurs données' %}</h3>
+        <p>
+          {% blocktrans %}
+            Les personnes détentrices d’un compte contributeur peuvent
+            <strong> accéder et rectifier les données </strong>
+            les concernant via leur espace contributeur.
+          {% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}
+            Les contributeurs ont également la possibilité de demander <strong>l’effacement</strong>
+            des données les concernant, <strong>la limitation</strong> du traitement des données,
+            de <strong>s’opposer</strong> au traitement et de
+            <strong>définir des directives relatives au sort des données après leur mort</strong>.
+          {% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}
+            Ces droits ne sont pas absolus et les contributeurs les exerçant pourront se voir opposer
+            un refus dument justifié. Les demandes d’exercice des droits doivent être transmises à
+            l’adresse <a href="mailto:dezede.contact@gmail.com">dezede.contact@gmail.com</a>.
+          {% endblocktrans %}
+        </p>
+      </div>
+      <div class="tab-pane" id="chronologies">
+        <p>
+          {% blocktrans %}
+            Les publications postées sur le site internet Dezède sont susceptibles de contenir des
+            données à caractère personnel relatives aux interprètes, compositeurs, auteurs et à
+            toute personne ayant participé à la programmation étudiée.
+          {% endblocktrans %}
+        </p>
+        <h3>{% trans 'Finalité et base légale du traitement' %}</h3>
+        {% blocktrans %}
+          <p>
+            Les données à caractère personnel utilisées dans ce cadre ont pour objet de permettre de :
+          </p>
+          <ul>
+            <li>
+              <strong>reconstituer des programmes de spectacles</strong> dans un espace géographique
+              et temporel circonscrit, établir la programmation d’une institution,
+              retracer la carrière d’un interprète, ou étudier la diffusion et la réception d’une œuvre ;
+            </li>
+            <li><strong>publier ces corpus documentaires</strong> en ligne sur le site.</li>
+          </ul>
+        {% endblocktrans %}
+        {% blocktrans %}
+          <p>
+            À cette fin, les données suivantes peuvent être traitées, dans le respect du principe de
+            minimisation des données posé par le Règlement général sur la protection des données :
+          </p>
+          <ul>
+            <li><strong>Etat-civil</strong> : nom, prénom, lieu de naissance, date de naissance … ;</li>
+            <li><strong>Vie professionnelle</strong> : œuvre interprétée, lieu d’interprétation, métier… ;</li>
+            <li><strong>Toute donnée pertinente pour la reconstruction de chronologies des spectacles</strong>.</li>
+          </ul>
+        {% endblocktrans %}
+        <p>
+          {% blocktrans %}
+          Ces données sont issues de diverses <strong>sources publiques</strong> : archives (départementales,
+            d’opéras, de salles de concert, de bibliothèques, de médiathèques, …), articles de presse,
+            brochures de festivals, sites internet, …
+          {% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}
+            Le traitement de ces données repose sur les <strong>missions d’intérêt public</strong>
+            (recherche et formation) dont sont investis les propriétaires du site (universités et laboratoires).
+          {% endblocktrans %}
+        </p>
+        <h3>{% trans 'Durée de conservation et destinataires des données' %}</h3>
+        <p>
+          {% blocktrans %}
+          Les données sont conservées <strong>sans limite de temps</strong>, en application de l’article
+          80 – 1 de la loi informatique et libertés relatif aux traitements mis en œuvre aux fins
+            d’expression universitaire.
+          {% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}
+            Les données sont <strong>publiées sur le site internet Dezède et accessibles à tous</strong>.
+          {% endblocktrans %}
+        </p>
+        <h3>{% trans 'Droits des personnes concernées sur leurs données' %}</h3>
+        <p>
+          {% blocktrans %}
+            Toute personne dont des données à caractère personnel figurent dans les publications
+            du site dispose de droits sur ces données.
+          {% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}
+            Elle peut <strong>accéder aux données</strong> la concernant directement depuis le site internet Dezède.
+          {% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}
+            Elle dispose du droit de demander la <strong>rectification</strong> des données la concernant,
+            <strong>leur effacement</strong>, la <strong>limitation</strong> du traitement des données,
+            de <strong>s’opposer</strong> au traitement et de
+            <strong>définir des directives relatives au sort des données après leur mort</strong>.
+          {% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}
+            Ces données étant utilisées à des fins de recherche et d’expression universitaire,
+            l’exercice de ces droits est soumis à conditions et pourra faire l’objet d’un refus
+            dûment justifié. Les demandes d’exercice des droits doivent être transmises à l’adresse
+            <a href="mailto:dezede.contact@gmail.com">dezede.contact@gmail.com</a>.
+          {% endblocktrans %}
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+{% endblock %}
