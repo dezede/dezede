@@ -228,7 +228,7 @@ class Membre(CommonModel, PeriodeDActivite):
         if self.instrument:
             l.append(f'[{self.instrument.html(tags=tags)}]')
         if self.profession:
-            l.append(f'[{self.profession.html(tags=tags)}]')
+            l.append(f'[{self.profession.html(tags=tags, feminin=(to_individus and self.individu.is_feminin()))}]')
         if self.debut or self.fin:
             l.append(f'({self.smart_period(tags=tags)})')
         return mark_safe(' '.join(l))
