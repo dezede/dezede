@@ -47,7 +47,7 @@ rjsmin==1.1.0
 
 # Data parsing/serialization
 beautifulsoup4==4.9.3
-lxml==4.6.3
+lxml==4.9.1
 defusedxml==0.7.1
 pandas==1.2.5
 XlsxWriter==1.4.3
