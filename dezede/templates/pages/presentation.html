@@ -100,11 +100,11 @@
         <p>{% trans 'Le comité éditorial est composé de trois membres :' %}</p>
         <p>
           <a href="{% url 'user_profile' 'joann_elart' %}">Joann <span class="sc">Élart</span></a>,
-          {% trans 'Maître de conférences en musicologie, université de Rouen (fondateur de Dezède)' %}
+          {% trans 'Maître de conférences en musicologie, université de Rouen Normandie (fondateur de Dezède)' %}
         </p>
         <p>
           <a href="{% url 'user_profile' 'yannick_simon' %}">Yannick <span class="sc">Simon</span></a>,
-          {% trans 'Professeur des Universités en musicologie, université de Rouen (fondateur de Dezède)' %}
+          {% trans 'Professeur des Universités en musicologie, université Toulouse – Jean Jaurès (fondateur de Dezède)' %}
         </p>
         <p>
           <a href="{% url 'user_profile' 'patrick_taieb' %}">Patrick <span class="sc">Taïeb</span></a>,
@@ -118,7 +118,7 @@
               L’invention de trois enseignants-chercheurs :
               Joann Élart, Yannick Simon
               et Patrick Taïeb</span>,
-            musicologues aux universités de Rouen et Paul-Valéry Montpellier 3.
+            musicologues aux universités de Rouen, Toulouse Jean Jaurès et Paul-Valéry Montpellier 3.
             Ils partagent un accord de co-propriété avec leur laboratoire
             – le <abbr title="Groupe de Recherche d’Histoire">GRHis</abbr> (<abbr title="Équipe d’accueil">EA</abbr> 3831),
             le <abbr title="Centre d’Études et de Recherche Éditer/Interpréter">CÉRÉdI</abbr> (EA 3229)
@@ -134,21 +134,12 @@
             via les <abbr title="Grands Réseaux de Recherche">GRR</abbr>.
           {% endblocktrans %}
         </p>
-        <p>
-          {% blocktrans %}
-            Du point de vue des responsabilités, Joann Élart
-            est chargé de coordonner le développement méthodologique et informatique,
-            Yannick Simon s’occupe plus particulièrement
-            des affaires juridiques,
-            Patrick Taïeb est chargé du projet des répertoires de concert.
-          {% endblocktrans %}
-        </p>
 
         <p>
           <a href="{% url 'user_profile' 'joann_elart' %}">Joann <span class="sc">Élart</span></a> −
           <a href="{% url 'user_profile' 'yannick_simon' %}">Yannick <span class="sc">Simon</span></a> −
           <a href="{% url 'user_profile' 'patrick_taieb' %}">Patrick <span class="sc">Taïeb</span></a><br />
-          <a href="http://www.univ-rouen.fr/">université de Rouen</a> −
+          <a href="http://www.univ-rouen.fr/">université de Rouen Normandie</a> −
           <a href="http://www.univ-montp3.fr/">université Paul-Valéry Montpellier 3</a><br />
           <a href="http://grhis.univ-rouen.fr/">GRHis</a> −
           <a href="http://ceredi.labos.univ-rouen.fr/">CÉRÉdI</a> −
@@ -233,10 +224,10 @@
             La souplesse de l’application et l’homogénéisation de l’édition
             résultent de la mise en commun d’autorités liées entre elles
             par un système de gestion relationnelle et récursive :
-            évenements, œuvres, individus, ensembles, lieux, rôles, instruments,
+            événements, œuvres, individus, ensembles, lieux, rôles, instruments,
             professions, etc.
-            Elles font l’objet d’un contrôle scientifique basé sur le recoupement
-            d’ouvrages de référence.
+            Elles font l’objet d’un contrôle scientifique basé sur différents
+            ouvrages de référence disponibles en ligne et référentiels internationaux.
           {% endblocktrans %}
         </p>
         <p><a href="{% url 'bibliographie' %}">{% trans 'Bibliographie des autorités' %}</a></p>
@@ -268,7 +259,7 @@
         <h3>{% trans 'Le filtre et les événements' %}</h3>
         <p>
           {% blocktrans %}
-            <span class="lead">Rechercher des événements dans Dezède, rien de plus simple !</span>
+            <span class="lead">Rechercher des événements dans Dezède.</span>
             Il suffit de se rendre dans le menu « événements » et d’utiliser le filtre.
             Celui-ci permet de croiser différentes requêtes de tri :
             recherche libre, période, tri par année civile ou par saison, lieu, œuvre, individu, ensemble.
@@ -314,18 +305,20 @@
             Dezède propose aux jeunes chercheurs inscrits en master
             ou en thèse de doctorat une aide à l’édition
             (mise à disposition des autorités, module d’exportation des annexes
-            avec mise en page et indexation automatique) et à la valorisation
-            des travaux universitaires (confidentialité des données personnelles,
-            possibilité de différer la publication en ligne).
+            avec mise en page automatique, outil statistique, outils de
+            visualisation) et à la valorisation des travaux universitaires
+            (confidentialité des données personnelles, possibilité de différer
+            la publication en ligne).
           {% endblocktrans %}
         </p>
         <p>
           {% blocktrans %}
             Tourné vers le développement de pratiques pédagogiques innovantes
-            en partie financées par un <abbr title="Bonus Qualité Enseignement">BQE</abbr>
-            obtenu en 2014 à l’université de Rouen, Dezède est également
-            un support pour l’enseignement universitaire,
-            en particulier de la méthodologie et des technologies de l’information.
+            en partie financées par une dotation obtenue en 2014 à
+            l’université de Rouen Normandie, Dezède est également
+            un support pour l’enseignement universitaire, en particulier dans
+            les domaines de la méthodologie de la recherche et des humanités
+            numériques.
             Les comptes personnels des étudiants sont liés à un groupe placé
             sous la responsabilité d’un enseignant.
           {% endblocktrans %}
@@ -341,13 +334,15 @@
           {% url 'dossierdevenements_permanent_detail' 38 as afo_url %}
           {% url 'dossier_opera_comique_presentation' as oc_url %}
           {% blocktrans %}
-            <span class="lead">Dezède est une solution d’archivage pour les institutions et de promotion du spectacle vivant.</span>
-            L’application est à la disposition des institutions qui cherchent un portail sécurisé
-            pour la valorisation de leur patrimoine et de leur histoire.
+            <span class="lead">Dezède est une solution d’archivage et de
+              promotion du spectacle vivant pour les institutions</span>
+            en quête d’un portail sécurisé pour la valorisation de leur
+            patrimoine et de leur histoire.
+
             Entre 2013 et 2015, trois partenariats ont été initiés.
-            Depuis 2013, les étudiants du master de musicologie de l’université de Rouen travaillent
-            à la réalisation
-            <a href="{{ royaumont_url }}">du dossier des programmes des concerts organisés à la Fondation Royaumont</a>.
+            Depuis 2013, les étudiants du master de musicologie de
+            l’université de Rouen Normandie travaillent à la réalisation du
+            <a href="{{ royaumont_url }}">dossier des programmes des concerts donnés à l’abbaye de Royaumont</a>.
             Depuis 2014, <a href="{{ afo_url }}">les saisons de concerts et les archives audiovisuelles des orchestres
             membres de l’<abbr title="Association Française des Orchestres">AFO</abbr></a> sont
             publiés et accessibles gratuitement dans Dezède.
@@ -365,7 +360,7 @@
         </p>
         {# TODO: Lien vers les partenaires #}
         {# TODO: Lien vers la « page des logos » #}
-        <p>{% trans 'Pour devenir partenaire, un contact :' %} {{ 'institution@dezede.org'|urlize }}</p>
+        <p>{% trans 'Pour devenir partenaire :' %} {{ 'contact@dezede.org'|urlize }}</p>
 
         <h3>{% trans 'Des auteurs' %}</h3>
         <p>
@@ -375,7 +370,8 @@
             l’utilisateur (chercheur, étudiant, institution, etc.) en devient automatiquement
             l’auteur et le propriétaire.
             Cet affichage offre une transparence totale sur l’appartenance
-            et la provenance des données.
+            et la provenance des données. Celles-ci sont alors mutualisées
+            entre les utilisateurs et modérées par le comité éditorial.
           {% endblocktrans %}
         </p>
 
@@ -421,7 +417,7 @@
                 Ce choix s’est imposé pendant le déjeuner du 23 février 2012,
                 quand Joann Élart, Étienne Jardin, Yannick Simon, Patrick Taïeb
                 et Bertrand Bordage ont abordé la question du nom
-                à donner à l’application. Il fallait un mot qui puisse incarner le projet :
+                à donner au portail. Il fallait un mot qui puisse incarner le projet :
                 la séduisante Carmen et l’emblématique Boieldieu furent évoqués avant de laisser place à Dezède,
                 proposition de Patrick Taïeb apparue évidente à tous :
                 le nom est une énigme en soi…
@@ -524,15 +520,16 @@
             la reconstitution de programmes de concerts à partir de la presse et des archives.
             Constitué autour du détachement de Patrick Taïeb à
             l’<abbr title="Institut universitaire de France">IUF</abbr> entre 2000 et 2005,
-            puis autour de l’<abbr title="Agence nationale de la recherche">ANR</abbr> 06-BLAN-03448
-            entre 2006 et 2009, ce programme de recherche a été partagé
+            puis autour du programme 06-BLAN-03448 de
+            l’<abbr title="Agence nationale de la recherche">ANR</abbr>
+            entre 2006 et 2009, ce projet de recherche a été partagé
             par plusieurs dizaines de chercheurs du monde entier pendant une décennie,
-            parmi lesquels Joann Élart et Yannick Simon ont été très actifs.
+            parmi lesquels Joann Élart et Yannick Simon ont été parmi les plus actifs.
             Si les efforts menés pour concevoir un outil informatique n’ont pas abouti à cette époque,
             les expériences acquises ont permis toutefois d’établir un cahier des charges pour le réaliser :
             la solution attendue devait être pérenne, gratuite, sécurisée, souple, illimitée, contributive et dématérialisée.
             Partant de cet acquis et souhaitant élargir la méthode à l’ensemble des spectacles,
-            Joann Élart pouvait annoncer à ses collaborateurs le lancement du projet
+            Joann Élart a pu annoncer à ses partenaires le lancement du projet
             Dezède en octobre 2011, suite aux premiers contacts pris avec Bertrand Bordage,
             le concepteur du programme informatique.
           {% endblocktrans %}
@@ -586,9 +583,9 @@
                   {% blocktrans %}
                     Journée d’étude à l’Opéra de Rouen Haute-Normandie :
                     <em>Rendez-vous au Théâtre des Arts de Rouen !</em><br />
-                    Présentation publique du prototype<br />
-                    Première rencontre avec Florent Girard, secrétaire général
-                    de l’<abbr title="Association Française des Orchestres">AFO</abbr>
+                    Présentation publique du prototype, baptisé Dezède le jour même<br />
+                    Première rencontre avec
+                    l’<abbr title="Association Française des Orchestres">AFO</abbr>
                   {% endblocktrans %}
                 </p>
               </td>
@@ -628,8 +625,8 @@
                 <p>
                   {% blocktrans %}
                     Premiers échanges avec la <abbr title="Direction de la Recherche et de la Valorisation">DRV</abbr>
-                    de l’université de Rouen pour la mise en place d’un accord de copropriété
-                    entre les universités de Rouen et de Montpellier III,
+                    de l’université de Rouen Normandie pour la mise en place d’un accord de copropriété
+                    entre les universités de Rouen et de Montpellier 3,
                     les laboratoires
                     <abbr title="Centre d’Études et de Recherche Éditer/Interpréter">CÉRÉdI</abbr>,
                     <abbr title="Groupe de Recherche d’Histoire">GRHis</abbr>
@@ -804,9 +801,9 @@
                   {% blocktrans %}
                     Signature de la convention avec la Fondation Royaumont
                     pour l’accueil d’étudiants de master du département
-                    de musicologie de l’université de Rouen
+                    de musicologie de l’université de Rouen Normandie
                     (réalisation du dossier
-                    <a href="{{ royaumont_url }}">Concerts à l’abbaye de Royaumont</a>)
+                    <a href="{{ royaumont_url }}">Concerts à l’Abbaye de Royaumont</a>)
                   {% endblocktrans %}
                 </p>
               </td>
@@ -858,8 +855,8 @@
               <td>
                 <p>
                   {% blocktrans %}
-                    Inauguration des outils pédagogiques financés par un
-                    <abbr title="Bonus Qualité Enseignement">BQE</abbr> de l’université de Rouen en 2014
+                    Inauguration des outils pédagogiques financés par une
+                    dotation de l’université de Rouen Normandie en 2014
                   {% endblocktrans %}
                 </p>
               </td>
@@ -868,6 +865,17 @@
               <td>{% trans '2 décembre' %}</td>
               <td>
                 <p>{% trans 'Inauguration du <a href="http://dezede.hypotheses.org/">carnet de recherche Dezède</a> (ISSN 2492-9204)' %}</p>
+              </td>
+            </tr>
+            <tr>
+              <td>{% trans '16 décembre' %}</td>
+              <td>
+                <p>
+                  {% blocktrans %}
+                    Dezède rencontre la Comédie-Française : tables rondes et hackathon
+                    dans le cadre du colloque <em>Remettre en jeu le passé</em>
+                  {% endblocktrans %}
+                </p>
               </td>
             </tr>
           </tbody>
@@ -879,12 +887,20 @@
           </thead>
           <tbody>
             <tr>
+              <td>{% trans '21 janvier' %}</td>
+              <td>
+                <p>
+                  {% trans 'Présentation de Dezède à l’<abbr title="Institut Mémoires de l’Édition Contemporaine">IMEC</abbr>' %}
+                </p>
+              </td>
+            </tr>
+            <tr>
               <td>{% trans '24 mars' %}</td>
               <td>
                 <p>
                   {% blocktrans %}
-                    Dezède rejoint <a href="https://musica.hypotheses.org/">le Consortium Musica</a>
-                    labellisé par la TGIR Huma-Num
+                    Dezède rejoint le <a href="https://musica.hypotheses.org/">Consortium Musica1</a>
+                    labellisé par la <abbr title="Très Grande Infrastructure de Recherche">TGIR</abbr> Huma-Num
                   {% endblocktrans %}
                 </p>
               </td>
@@ -919,10 +935,201 @@
                 </p>
               </td>
             </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-condensed">
+          <thead>
+            <tr><th style="width: 130px;">2017</th><th></th></tr>
+          </thead>
+          <tbody>
             <tr>
-              <td>{% trans 'Novembre' %}</td>
+              <td>{% trans '30 avril' %}</td>
               <td>
-                <p>{% trans 'Inauguration de la revue <em>Florine</em>' %}</p>
+                <p>{% trans 'Rapprochement avec la Maîtrise de Radio France' %}</p>
+              </td>
+            </tr>
+            <tr>
+              <td>{% trans '23 et 24 octobre' %}</td>
+              <td>
+                <p>
+                  {% blocktrans %}
+                    Présentation de Dezède à Dresde dans le cadre de
+                    <em>Music Performance Ephemera</em>
+                  {% endblocktrans %}
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-condensed">
+          <thead>
+            <tr><th style="width: 130px;">2018</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{% trans '30 mai' %}</td>
+              <td><p>{% trans 'Dezède est sur Facebook' %}</p></td>
+            </tr>
+            <tr>
+              <td>{% trans '9 juin' %}</td>
+              <td><p>{% trans 'Atelier Dezède #1 à l’Abbaye de Royaumont' %}</p></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-condensed">
+          <thead>
+            <tr><th style="width: 130px;">2019</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{% trans '25 février' %}</td>
+              <td>
+                <p>
+                  {% blocktrans %}
+                    Lancement du projet SpectaNum (2019-2021), partie intégrante du
+                    <abbr title="Réseau d’Intérêts Normands">RIN</abbr>
+                    <abbr title="Contenus et cORpus NUMérisés">CorNum</abbr>
+                    dédié aux humanités numériques et financé par la région Normandie<br />
+                    Prise de fonction de Marion Blanc, ingénieure d’études dédiée au projet
+                  {% endblocktrans %}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>{% trans '7 juin' %}</td>
+              <td>
+                <p>
+                  {% blocktrans %}
+                    Journée <abbr title="Contenus et cORpus NUMérisés">CorNum</abbr>
+                    à l’université de Rouen Normandie
+                  {% endblocktrans %}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>{% trans '15 juin' %}</td>
+              <td><p>{% trans 'Atelier Dezède #2 à l’Abbaye de Royaumont' %}</p></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-condensed">
+          <thead>
+            <tr><th style="width: 130px;">2020</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{% trans '7 avril' %}</td>
+              <td><p>{% trans '40 000<sup>e</sup> événement' %}</p></td>
+            </tr>
+            <tr>
+              <td>{% trans '1er juin' %}</td>
+              <td>
+                <p>
+                  {% blocktrans %}
+                    Publication de l’article de Joann Élart et Yannick Simon,
+                    « Du spectacle vivant aux humanités numériques : le projet Dezède »,
+                    <em>Humanités numériques</em>, n° 2, 2020
+                    <a href="https://journals.openedition.org/revuehn/408">[en ligne]</a>
+                  {% endblocktrans %}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>{% trans '2 août' %}</td>
+              <td><p>{% trans '50 000<sup>e</sup> événement' %}</p></td>
+            </tr>
+            <tr>
+              <td>{% trans '19 décembre' %}</td>
+              <td>
+                <p>
+                  {% trans 'Ajout du <a href="https://dezede.org/rss.xml">flux RSS</a>' %}
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-condensed">
+          <thead>
+            <tr><th style="width: 130px;">2021</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{% trans '30 avril' %}</td>
+              <td>
+                <p>
+                  {% blocktrans %}
+                    Ouverture du menu Bibliothèque et de la Bibliothèque numérique
+                    des spectacles (SpectaNum /
+                    <abbr title="Réseau d’Intérêts Normands">RIN</abbr>
+                    <abbr title="Contenus et cORpus NUMérisés">CorNum</abbr>)
+                  {% endblocktrans %}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>{% trans '7 mai' %}</td>
+              <td>
+                <p>
+                  {% blocktrans %}
+                    Inauguration de l’outil statistiques (SpectaNum /
+                    <abbr title="Réseau d’Intérêts Normands">RIN</abbr>
+                    <abbr title="Contenus et cORpus NUMérisés">CorNum</abbr>)
+                  {% endblocktrans %}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>{% trans '19 juin' %}</td>
+              <td><p>{% trans 'Atelier Dezède #3' %}</p></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table table-condensed">
+          <thead>
+            <tr><th style="width: 130px;">2022</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{% trans '26 janvier' %}</td>
+              <td><p>{% trans 'Dezède sur Instagram' %}</p></td>
+            </tr>
+            <tr>
+              <td>{% trans '23 février' %}</td>
+              <td><p>{% trans 'Dezède souffle ses dix bougies' %}</p></td>
+            </tr>
+            <tr>
+              <td>{% trans '18 juin' %}</td>
+              <td><p>{% trans 'Atelier Dezède #4 (en ligne)' %}</p></td>
+            </tr>
+            <tr>
+              <td>{% trans '23 juin' %}</td>
+              <td>
+                <p>
+                  {% blocktrans %}
+                    Dezède rejoint le <a href="https://musica.hypotheses.org/">
+                    Consortium Musica2</a> labellisé par la
+                    <abbr title="Très Grande Infrastructure de Recherche">TGIR</abbr>
+                    Huma-Num (lancement du Consortium à Tours)
+                  {% endblocktrans %}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td>{% trans '15 et 16 décembre' %}</td>
+              <td>
+                <p>
+                  {% blocktrans %}
+                    Dezède co-organise les premières rencontres de Musica2,
+                    <em>Quel avenir pour la musicologie numérique ?</em>
+                    à la BLGF à Paris
+                  {% endblocktrans %}
+                </p>
               </td>
             </tr>
           </tbody>
@@ -962,7 +1169,7 @@
           <li>
             <p>
               {% blocktrans %}
-                le choix de solutions techniques les plus pérennes,
+                le choix des solutions techniques les plus pérennes,
                 notamment le langage de programmation <a href="https://www.python.org/">Python</a>
                 qui permet d’écrire du code extrêmement lisible et simplifie nettement la maintenance ;
               {% endblocktrans %}

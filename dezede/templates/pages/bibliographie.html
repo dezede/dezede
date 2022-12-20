@@ -55,11 +55,11 @@
             de deux missions financées par les <abbr title="Grands Réseaux de Recherche">GRR</abbr> haut-normands
             et placées sous la direction de Joann Élart.
             La première a été confiée à Anne Touverey, doctorante en musicologie
-            de l’université de Rouen qui a créé des autorités à partir de l’index de Castil-Blaze,
+            de l’université de Rouen Normandie qui a créé des autorités à partir de l’index de Castil-Blaze,
             <em>Histoire de l’opéra-comique</em>,
             publication coordonnée par Alexandre Dratwicki
             et Patrick Taïeb (Lyon, Symétrie, 2012, 352 p.) ;
-            la seconde à Claire Malandin, étudiante en musicologie de l’université de Rouen,
+            la seconde à Claire Malandin, étudiante en musicologie de l’université de Rouen Normandie,
             qui a établi un ensemble d’autorités nouvelles dans les genres de la comédie, de la tragédie ou du vaudeville.
           {% endblocktrans %}
         </p>
@@ -68,7 +68,7 @@
             <a href="http://www.univ-rouen.fr/" target="_blank">
               <img src="{% static 'images/université-rouen-normandie.png' %}"
                    style="width: 58px; height: 21px;"
-                   title="Université de Rouen" />
+                   title="Université de Rouen Normandie" />
             </a>
           </div>
           <div class="col-xs-2 text-center">
@@ -97,7 +97,7 @@
             sous la direction scientifique d’Étienne Jardin et de Patrick Taïeb ;
             les Concerts populaires de musique classique (concerts Pasdeloup) réalisés par Yannick Simon.
             L’intégration dans Dezède de ces deux ensembles de données réalisées entre 2009 et 2010 par Étienne Jardin
-            a fait l’objet d’une convention entre l’université de Rouen
+            a fait l’objet d’une convention entre l’université de Rouen Normandie
             et les deux autres partenaires qui en ont permis la réalisation,
             le Palazzetto Bru Zane et les éditions Symétrie.
           {% endblocktrans %}
@@ -124,13 +124,14 @@
             La troisième importation a permis de verser en 2014 des données
             mises à disposition par
             l’<abbr title="Association Française des Orchestres">AFO</abbr>
-            dans le cadre d’une convention signée avec l’université de Rouen.
-            Fournies par les orchestres membres de cette association,
+            dans le cadre d’une convention signée avec l’université de Rouen
+            Normandie. Fournies par les orchestres membres de cette association,
             elles ont été corrigées, complétées et relues par
             Claire Morvannou, Julie Graine, Joann Élart et Yannick Simon.
             Ce premier chantier coordonné par Florent Girard, secrétaire
-            général de l’AFO, correspond au traitement complet des saisons
-            2010-2011, 2011-2012 et 2012-2013 de tous ces orchestres.
+            général de l’<abbr title="Association Française des Orchestres">AFO</abbr>,
+            correspond au traitement complet des saisons 2010-2011,
+            2011-2012 et 2012-2013 de tous ces orchestres.
           {% endblocktrans %}
         </p>
         <p class="text-center">
@@ -143,7 +144,12 @@
 
         <p>
           {% blocktrans %}
-            La quatrième importation correspond au versement des archives de l’Opéra Comique, numérisées à partir des collections des Archives Nationales de France et de l’Opéra Comique, dans le cadre d’une convention signée avec l’université de Rouen. Elles sont consultables dans un dossier inauguré le 13 novembre 2014  et contiennent 2 200 documents, soit environ 25 000 images.
+            La quatrième importation correspond au versement des archives de
+            l’Opéra Comique, numérisées à partir des collections des Archives
+            Nationales de France et de l’Opéra Comique, dans le cadre d’une
+            convention signée avec l’université de Rouen Normandie. Elles sont
+            consultables dans un dossier inauguré le 13 novembre 2014  et
+            contiennent 2 200 documents, soit environ 25 000 images.
           {% endblocktrans %}
         </p>
         <p class="text-center">
@@ -167,9 +173,18 @@
           <thead>
             <tr>
               <th style="width: 150px;">{% trans 'Référence' %}</th>
-              <th>{% trans 'Ouvrage' %}</th>
+              <th>{% trans 'Ouvrage ou site' %}</th>
             </tr>
           </thead>
+          <tr>
+            <td>artlyrique.fr</td>
+            <td>
+              <p>
+                <em>Association L’Art lyrique français</em> [en ligne].
+                {{ 'https://www.artlyriquefr.fr/'|urlize }}
+              </p>
+            </td>
+          </tr>
           <tr>
             <td>Benoit</td>
             <td>
@@ -177,6 +192,15 @@
                 <em>Dictionnaire de la musique en France aux <span class="sc">xvii</span><sup>e</sup>
                 et <span class="sc">xviii</span><sup>e</sup> siècles</em>,
                 dir. Marcelle <span class="sc">Benoit</span>, Paris, Fayard, 1992.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>BLMO</td>
+            <td>
+              <p>
+                <em>Bayerisches Musiker Lexicon Online</em> [en ligne].
+                {{ 'https://www.bmlo.lmu.de/'|urlize }}
               </p>
             </td>
           </tr>
@@ -208,6 +232,24 @@
             </td>
           </tr>
           <tr>
+            <td>CÉSAR</td>
+            <td>
+              <p>
+                <em>Calendrier Électronique des Spectacles sous l’Ancien Régime et
+                sous la Révolution</em> [en ligne].
+                {{ 'https://cesar.huma-num.fr/cesar2/'|urlize }}
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>data.bnf.fr</td>
+            <td>
+              <p>
+                <em>BnF Data</em> [en ligne]. {{ 'https://data.bnf.fr/'|urlize }}
+              </p>
+            </td>
+          </tr>
+          <tr>
             <td>Diccionario</td>
             <td>
               <p>
@@ -225,6 +267,16 @@
                 Tome I : Bibliothèque municipale de Rouen. Volume 1 : Fonds du Théâtre des Arts
                 (<span class="sc">xviii</span><sup>e</sup> et <span class="sc">xix</span><sup>e</sup> siècles)</em>,
                 coll. « Patrimoine musical régional », Rouen, Presses universitaires de Rouen et du Havre, 2004, 538 p.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>EMCF</td>
+            <td>
+              <p>
+                Jacques Gana, <em>Encyclopédie multimédia de la comédie musicale
+                théâtrale en France</em> [en ligne].
+                {{ 'https://comedie-musicale.jgana.fr/'|urlize }}
               </p>
             </td>
           </tr>
@@ -251,6 +303,23 @@
             </td>
           </tr>
           <tr>
+            <td>Gallica</td>
+            <td>
+              <p>
+                <em>Gallica</em> [en ligne]. {{ 'https://gallica.bnf.fr/'|urlize }}
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>GÉNÉAFRANCE</td>
+            <td>
+              <p>
+                <em>Portail de la généalogie en France</em> [en ligne].
+                {{ 'https://geneafrance.com/'|urlize }}
+              </p>
+            </td>
+          </tr>
+          <tr>
             <td>Gourret 1</td>
             <td>
               <p>
@@ -267,6 +336,24 @@
                 Jean <span class="sc">Gourret</span>,
                 <em>Nouveau dictionnaire des chanteurs de l’Opéra de Paris</em>,
                 Paris, Albatros, 1989, 402 p.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>IMSLP</td>
+            <td>
+              <p>
+                <em>International Music Score Library Project</em> [en ligne].
+                {{ 'https://imslp.org/'|urlize }}
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>ISNI</td>
+            <td>
+              <p>
+                <em>International Standard Name Identifier</em> [en ligne].
+                {{ 'https://isni.org/'|urlize }}
               </p>
             </td>
           </tr>
@@ -316,6 +403,16 @@
             </td>
           </tr>
           <tr>
+            <td>MUSEFREM</td>
+            <td>
+              <p>
+                <em>MUSEFREM, Base de données prosopographique des musiciens d’Église en 1790</em>
+                [en ligne].
+                {{ 'https://philidor.cmbv.fr/Publications/Bases-prosopographiques/MUSEFREM-Base-de-donnees-prosopographique-des-musiciens-d-Eglise-en-1790'|urlize }}
+              </p>
+            </td>
+          </tr>
+          <tr>
             <td>Musick Sack</td>
             <td>
               <p>
@@ -357,6 +454,15 @@
               <p>
                 <em>Oxford Music Online</em> [en ligne].
                 {{ 'http://www.oxfordmusiconline.com'|urlize }}
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>OTM</td>
+            <td>
+              <p>
+                <em>Opérette théâtre musical</em> [en ligne].
+                {{ 'http://www.operette-theatremusical.fr/'|urlize }}
               </p>
             </td>
           </tr>
