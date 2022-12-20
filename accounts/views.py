@@ -173,17 +173,32 @@ class ContributeursView(EquipeView):
         39,  # Claire Morvannou
         80,  # Lucille Brunel
         85,  # Denis Tchorek
+        94,  # Étienne Jardin
         95,  # Christine Carrère-Saucède
         98,  # Julie Graine
         102,  # Thomas Bacquet
         168,  # Thomas Vernet
         206,  # Maxime Margollé
         330,  # Jean-Christophe Branger
+        337,  # Naomie Charlier
         344,  # Stella Rollet
         375,  # Frédéric Guérin
         472,  # Gabriella Elgarrista
         474,  # Pierre Girod
         482,  # Marion Blanc
+        566,  # Myriam Chimènes
+        602,  # Manuel Cornejo
+        605,  # Déborah Livet
+        692,  # Sabine Teulon Lardic
+        694,  # Jean-Sébastien Noël
+        740,  # Gilles Demonet
+        776,  # Danieli Longo
+        796,  # Lucia Pasini
+        798,  # Jessie Gerbaud
+        820,  # Arthur Macé
+        841,  # Apolline Gouzi
+        843,  # Karine Boulanger
+        845,  # Yannaël Pasquier
     )
     title = _('Contributeurs')
 
