@@ -199,6 +199,7 @@ class ContributeursView(EquipeView):
         841,  # Apolline Gouzi
         843,  # Karine Boulanger
         845,  # Yannaël Pasquier
+        856,  # Peter Asimov
     )
     title = _('Contributeurs')
 
