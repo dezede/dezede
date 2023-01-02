@@ -271,9 +271,13 @@ Localisation
 
 #. Ajouter (éventuellement) la langue désirée à LANGUAGES du fichier settings.py
 
+#. Télécharger l’exécutable de Transifex cli à partir de GitHub :https://github.com/transifex/cli/releases
+
+#. Récupérer le token du projet sur https://transifex.com
+
 #. Metre à jour à partir de Transifex :
 
-    ``tx pull -a``
+    ``tx --hostname https://rest.api.transifex.com --token [INSÉRER_TOKEN_ICI] pull -a``
 
 #. Compiler les fichiers de langues (en se mettant au préalable dans le
    dossier de l'application ou du projet) :
