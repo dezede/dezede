@@ -5,7 +5,7 @@ from fabric.contrib import django
 from fabric.contrib.files import (append, contains, sed, uncomment, exists,
                                   upload_template)
 from fabric.decorators import task
-from fabric.operations import sudo, run, prompt, local
+from fabric.operations import sudo, run, prompt, local, put
 from fabric.state import env
 from fabric.utils import abort
 from pathlib import Path
@@ -276,10 +276,11 @@ def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=9,
     sudo(f'touch "{ssl_key}"')
     context.update(server_name=domain,
                    ssl_certificate=ssl_certificate, ssl_key=ssl_key)
+    put('prod/nginx_default.conf', '/etc/sites-available/default',
+        use_sudo=True)
     available = '/etc/nginx/sites-available/dezede'
-    upload_template('prod/nginx', available,
+    upload_template('prod/nginx.conf', available,
                     context=context, use_jinja=True, use_sudo=True)
-    sudo('unlink /etc/nginx/sites-enabled/default', warn_only=True)
     sudo(f'ln -s "{available}" /etc/nginx/sites-enabled', warn_only=True)
     sudo('systemctl restart nginx')
 
