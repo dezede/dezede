@@ -276,7 +276,7 @@ def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=9,
     sudo(f'touch "{ssl_key}"')
     context.update(server_name=domain,
                    ssl_certificate=ssl_certificate, ssl_key=ssl_key)
-    put('prod/nginx_default.conf', '/etc/sites-available/default',
+    put('prod/nginx_default.conf', '/etc/nginx/sites-available/default',
         use_sudo=True)
     available = '/etc/nginx/sites-available/dezede'
     upload_template('prod/nginx.conf', available,
