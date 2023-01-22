@@ -1,3 +1,2 @@
 # Deployment
 gunicorn==20.1.0
-rq-dashboard==0.6.1
