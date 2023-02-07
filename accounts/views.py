@@ -195,9 +195,11 @@ class ContributeursView(EquipeView):
         776,  # Danieli Longo
         796,  # Lucia Pasini
         798,  # Jessie Gerbaud
+        799,  # Màrius Bernadó
         820,  # Arthur Macé
         841,  # Apolline Gouzi
         843,  # Karine Boulanger
+        844,  # Gaëlle Lafage
         845,  # Yannaël Pasquier
         856,  # Peter Asimov
     )
