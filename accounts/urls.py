@@ -3,12 +3,14 @@ from django.conf.urls import url
 from .views import (
     GrantToAdmin, EvenementsGraph, HierarchicUserDetail,
     PartenairesView, ComiteEditorialeView, ContributeursView,
-    EquipeDeveloppementView, ProprietairesView)
+    EquipeDeveloppementView, ProprietairesView, ComiteScientifiqueView)
 
 
 urlpatterns = [
     url(r'^comite-editorial$', ComiteEditorialeView.as_view(),
         name='comite_editorial'),
+    url(r'^comite-scientifique$', ComiteScientifiqueView.as_view(),
+        name='comite_scientifique'),
     url(r'^contributeurs$', ContributeursView.as_view(), name='contributeurs'),
     url(r'^equipe-developpement$', EquipeDeveloppementView.as_view(),
         name='equipe_developpement'),

@@ -110,7 +110,13 @@
           <a href="{% url 'user_profile' 'patrick_taieb' %}">Patrick <span class="sc">Taïeb</span></a>,
           {% trans 'Professeur des Universités en musicologie, université Paul-Valéry Montpellier 3 (fondateur de Dezède)' %}
         </p>
-
+        <h3>{% trans 'Son comité scientifique' %}</h3>
+        <p>
+          {% blocktrans %}
+            Il réunit des contributeurs expérimentés du site qui participent à sa maintenance scientifique et assument
+            des missions d’accompagnement, d’encadrement et de formation auprès des nouveaux contributeurs.
+          {% endblocktrans %}
+        </p>
         <h3>{% trans 'Ses propriétaires' %}</h3>
         <p>
           {% blocktrans %}

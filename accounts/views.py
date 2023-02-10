@@ -165,6 +165,21 @@ class ComiteEditorialeView(EquipeView):
     title = _('Comité éditorial')
 
 
+class ComiteScientifiqueView(EquipeView):
+    membres = (
+        5,  # Joann
+        6,  # Yannick
+        7,  # Patrick
+        94,  # Étienne Jardin
+        375,  # Frédéric Guérin
+        602,  # Manuel Cornejo
+        605,  # Déborah Livet
+        845,  # Yannaël Pasquier
+        820,  # Arthur Macé
+    )
+    title = _('Comité scientifique')
+
+
 class ContributeursView(EquipeView):
     membres = (
         5,  # Joann
