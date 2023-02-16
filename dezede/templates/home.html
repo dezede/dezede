@@ -127,80 +127,82 @@
     </div>
   {% endif %}
 
-  <div class="row">
-    <div class="col-xs-8 col-xs-offset-2 col-md-3 col-md-offset-0">
-      <div class="well text-center">
-        <img style="height: 60px;" src="{% static 'images/opera-comique-mini.png' %}" title="Opéra Comique" />
-        <h3>
-          {% trans 'Archives de l’Opéra Comique' %}
-        </h3>
-        <p>
-          {% trans 'Temps fort du tricentenaire' %}
-        </p>
-        <div style="margin-left: 19px;">
-          <a class="btn btn-primary" href="/dossiers/archives-opera-comique">
-            {% trans 'Dossier' %}
-          </a>
-          <a class="btn btn-link" title="{% trans 'Fiche partenaire' %}" href="/utilisateurs/oc">
-            <i class="fa fa-info-circle fa-2x"></i>
-          </a>
-        </div>
-        <div class="clearfix"></div>
+  <div class="home-partners-list">
+    <div class="partner well text-center">
+      <img src="{% static 'images/opera-comique-mini.png' %}" title="Opéra Comique" />
+      <h3>
+        {% trans 'Archives de l’Opéra Comique' %}
+      </h3>
+      <p>
+        {% trans 'Temps fort du tricentenaire' %}
+      </p>
+      <div class="with-info-link">
+        <a class="btn btn-primary" href="/dossiers/archives-opera-comique">
+          {% trans 'Dossier' %}
+        </a>
+        <a class="btn btn-link" title="{% trans 'Fiche partenaire' %}" href="/utilisateurs/oc">
+          <i class="fa fa-info-circle fa-2x"></i>
+        </a>
       </div>
     </div>
-    <div class="col-xs-8 col-xs-offset-2 col-md-3 col-md-offset-0">
-      <div class="well text-center">
-        <img style="height: 60px;" src="{% static 'images/afo-mini.png' %}" title="Association Française des Orchestres" />
-        <h3>
-          {% trans 'Association Française des Orchestres' %}
-        </h3>
-        <div style="margin-left: 19px;">
-          <a class="btn btn-primary" href="/dossiers/id/38/">
-            {% trans 'Dossier' %}
-          </a>
-          <a class="btn btn-link" title="{% trans 'Fiche partenaire' %}" href="/utilisateurs/afo">
-            <i class="fa fa-info-circle fa-2x"></i>
-          </a>
-        </div>
-        <div class="clearfix"></div>
+    <div class="partner well text-center">
+      <img src="{% static 'images/afo-mini.png' %}" title="Association Française des Orchestres" />
+      <h3>
+        {% trans 'Association Française des Orchestres' %}
+      </h3>
+      <div class="with-info-link">
+        <a class="btn btn-primary" href="/dossiers/id/38/">
+          {% trans 'Dossier' %}
+        </a>
+        <a class="btn btn-link" title="{% trans 'Fiche partenaire' %}" href="/utilisateurs/afo">
+          <i class="fa fa-info-circle fa-2x"></i>
+        </a>
       </div>
     </div>
-    <div class="col-xs-8 col-xs-offset-2 col-md-3 col-md-offset-0">
-      <div class="well text-center">
-        <img style="height: 60px;" src="{% static 'images/royaumont.png' %}" title="Royaumont abbaye & fondation" />
-        <h3>
-          {% trans 'Concerts à Royaumont' %}
-        </h3>
-        <p>
-          1936-1977
-        </p>
-        <div style="padding: 5px 0;">{# Padding pour compenser l’absence du lien vers la fiche partenair #}
-          <a class="btn btn-primary" href="/dossiers/id/24/">
-            {% trans 'Dossier' %}
-          </a>
-          {# FIXME: À remplir #}
+    <div class="partner well text-center">
+      <img src="{% static 'images/royaumont.png' %}" title="Royaumont abbaye & fondation" />
+      <h3>
+        {% trans 'Concerts à Royaumont' %}
+      </h3>
+      <p>
+        1936-1977
+      </p>
+      <div>
+        <a class="btn btn-primary" href="/dossiers/id/24/">
+          {% trans 'Dossier' %}
+        </a>
+        {# FIXME: À remplir #}
 {#          <a class="btn btn-link" title="Fiche partenaire" href="">#}
 {#            <i class="fa fa-info-circle fa-2x"></i>#}
 {#          </a>#}
-        </div>
-        <div class="clearfix"></div>
       </div>
     </div>
-    <div class="col-xs-8 col-xs-offset-2 col-md-3 col-md-offset-0">
-      <div class="well text-center">
-        <img style="height: 60px;" src="{% static 'images/opéra-rouen.png' %}" title="Opéra de Rouen Normandie" />
-        <h3>
-          {% trans 'Orchestre de l’Opéra de Rouen Normandie' %}
-        </h3>
-        <p>
-          {% trans 'Depuis 1998' %}
-        </p>
-        <div style="margin-left: 19px;">
-          <a class="btn btn-primary" href="/dossiers/id/119/">
-            {% trans 'Dossier' %}
-          </a>
-        </div>
-        <div class="clearfix"></div>
+    <div class="partner well text-center">
+      <img src="{% static 'images/opéra-rouen.png' %}" title="Opéra de Rouen Normandie" />
+      <h3>
+        {% trans 'Orchestre de l’Opéra de Rouen Normandie' %}
+      </h3>
+      <p>
+        {% trans 'Depuis 1998' %}
+      </p>
+      <div>
+        <a class="btn btn-primary" href="/dossiers/id/119/">
+          {% trans 'Dossier' %}
+        </a>
+      </div>
+    </div>
+    <div class="partner well text-center">
+      <img src="{% static 'images/cnsmdp-mini.png' %}" title="Conservatoire National Supérieur de Musique et de Danse de Paris" />
+      <h3>
+        {% trans 'Conservatoire de Paris' %}
+      </h3>
+      <div class="with-info-link">
+        <a class="btn btn-primary" href="/dossiers/id/505/">
+          {% trans 'Dossier' %}
+        </a>
+        <a class="btn btn-link" title="{% trans 'Fiche partenaire' %}" href="/utilisateurs/CNSMDP">
+          <i class="fa fa-info-circle fa-2x"></i>
+        </a>
       </div>
     </div>
   </div>

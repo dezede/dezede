@@ -246,7 +246,9 @@ class PartenairesView(EquipeView):
     membres = (
         157,  # AFO
         103,  # Opéra Comique
+        297,  # Orchestre de l’Opéra de Rouen Normandie
         332,  # Fondation Royaumont
+        871,  # CNSMDP
     )
     title = _('Partenaires')
 
