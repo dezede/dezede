@@ -481,13 +481,19 @@ cite {
   align-items: stretch;
   margin: 0 -@grid-gutter-width/2;
   .partner {
-    flex: 0 0 calc(percentage(1/3) ~'-' @grid-gutter-width);
+    flex: 0 0 calc(100% ~'-' @grid-gutter-width);
     margin: 0 @grid-gutter-width/2;
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
     margin-bottom: @grid-gutter-width;
+    @media (min-width: @screen-sm-min) {
+      flex-basis: calc(50% ~'-' @grid-gutter-width);
+    }
+    @media (min-width: @screen-md-min) {
+      flex-basis: calc(percentage(1/3) ~'-' @grid-gutter-width);
+    }
     img {
       height: 60px;
     }
