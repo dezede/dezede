@@ -174,8 +174,10 @@ class ComiteScientifiqueView(EquipeView):
         375,  # Frédéric Guérin
         602,  # Manuel Cornejo
         605,  # Déborah Livet
+        796,  # Lucia Pasini
         845,  # Yannaël Pasquier
         820,  # Arthur Macé
+        843,  # Karine Boulanger
     )
     title = _('Comité scientifique')
 
@@ -206,6 +208,7 @@ class ContributeursView(EquipeView):
         605,  # Déborah Livet
         692,  # Sabine Teulon Lardic
         694,  # Jean-Sébastien Noël
+        724,  # Jonathan Parisi
         740,  # Gilles Demonet
         776,  # Danieli Longo
         796,  # Lucia Pasini
