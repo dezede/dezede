@@ -221,7 +221,7 @@ class ContributeursView(EquipeView):
         845,  # Yannaël Pasquier
         856,  # Peter Asimov
     )
-    title = _('Contributeurs')
+    title = _('Principaux contributeurs')
 
 
 class EquipeDeveloppementView(EquipeView):
