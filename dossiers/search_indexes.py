@@ -4,7 +4,6 @@ from .models import DossierDEvenements
 
 
 class DossierDEvenementsIndex(CommonSearchIndex, Indexable):
-    content_auto = EdgeNgramField(model_attr='titre')
     BASE_BOOST = 4.0
 
     def get_model(self):
