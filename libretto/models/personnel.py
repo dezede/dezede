@@ -114,7 +114,7 @@ class Profession(AutoriteModel, UniqueSlugModel):
     def is_leaf_node(self):
         return not self.enfants.exists()
 
-    def related_label(self):
+    def get_related_label(self):
         if self.nom_feminin:
             return f'{self.nom} / {self.nom_feminin}'
         return self.nom

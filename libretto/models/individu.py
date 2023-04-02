@@ -309,12 +309,15 @@ class Individu(AutoriteModel, UniqueSlugModel):
         return self.html(tags=tags, lon=True,
                          designation=designation, abbr=abbr, links=links)
 
-    def related_label(self, tags=False):
+    def get_related_label(self, tags=False):
         return self.html(tags=tags, abbr=False)
+
+    def related_label(self):
+        return super().related_label()
     related_label.short_description = _('individu')
 
     def related_label_html(self):
-        return self.related_label(tags=True)
+        return self.get_related_label(tags=True)
 
     def clean(self):
         naissance = self.naissance.date

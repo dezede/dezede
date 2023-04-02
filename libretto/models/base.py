@@ -14,6 +14,7 @@ from django.dispatch import receiver
 from django.template.defaultfilters import time
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags
+from django.utils.safestring import SafeData, mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
 from autoslug import AutoSlugField
 from slugify import Slugify
@@ -118,7 +119,11 @@ class CommonModel(TypographicModel):
         settings.AUTH_USER_MODEL, null=True, blank=True,
         verbose_name=_('propriétaire'), on_delete=PROTECT,
         related_name='%(class)s')
+    cached_related_label = TextField(blank=True, editable=False, db_index=True)
+    is_cached_related_label_safe = BooleanField(default=False, editable=False)
     objects = CommonManager()
+
+    is_related_label_used = True
 
     class Meta(object):
         abstract = True  # = prototype de modèle, et non un vrai modèle.
@@ -196,12 +201,44 @@ class CommonModel(TypographicModel):
     def meta(cls):
         return cls._meta
 
-    def related_label(self):
+    def get_related_label(self):
         return force_text(self)
+
+    def update_cached_related_label(self):
+        if not self.is_related_label_used:
+            return
+
+        new_related_label = self.get_related_label()
+        new_is_cached_related_label_safe = isinstance(new_related_label, SafeData)
+        if (
+            new_related_label != self.cached_related_label
+        ) or (
+            new_is_cached_related_label_safe != self.is_cached_related_label_safe
+        ):
+            self.cached_related_label = new_related_label
+            self.is_cached_related_label_safe = new_is_cached_related_label_safe
+            # TODO: Probably use a try except to catch and ignore the case
+            #       when the object was removed before we try to save it.
+            self.save(
+                update_fields=[
+                    'cached_related_label', 'is_cached_related_label_safe',
+                ],
+            )
+
+    def related_label(self):
+        if not self.cached_related_label:
+            self.update_cached_related_label()
+        if self.is_cached_related_label_safe:
+            return mark_safe(self.cached_related_label)
+        return self.cached_related_label
 
     @staticmethod
     def autocomplete_term_adjust(term):
         return replace(term)
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return ('cached_related_label__unaccent__icontains',)
 
 
 class PublishedQuerySet(CommonQuerySet):

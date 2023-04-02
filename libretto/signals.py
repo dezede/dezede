@@ -7,6 +7,7 @@ from django_rq import job
 import django_rq
 from haystack.signals import BaseSignalProcessor
 
+from .models.base import CommonModel
 from .search_indexes import get_haystack_index
 
 
@@ -56,6 +57,11 @@ def get_stale_objects(instance, explored=None, all_relations=False):
 
 def auto_update_haystack(action, instance):
     for obj in get_stale_objects(instance, all_relations=True):
+
+        # FIXME: This should happen during `update_index` as well.
+        if isinstance(obj, CommonModel):
+            obj.update_cached_related_label()
+
         model = obj.__class__
 
         index = get_haystack_index(model)

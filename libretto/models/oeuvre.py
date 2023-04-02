@@ -67,10 +67,6 @@ class GenreDOeuvre(CommonModel, SlugModel):
     def __str__(self):
         return strip_tags(self.nom)
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains'
-
 
 class Partie(AutoriteModel, UniqueSlugModel):
     """
@@ -180,19 +176,6 @@ class Partie(AutoriteModel, UniqueSlugModel):
     def short_html(self, pluriel=False, tags=True):
         return self.html(pluriel=pluriel, oeuvre=False, tags=tags)
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return (
-            'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
-            'professions__nom__unaccent__icontains',
-            'professions__nom_pluriel__unaccent__icontains',
-            'oeuvre__prefixe_titre__unaccent__icontains',
-            'oeuvre__titre__unaccent__icontains',
-            'oeuvre__coordination__unaccent__icontains',
-            'oeuvre__prefixe_titre_secondaire__unaccent__icontains',
-            'oeuvre__titre_secondaire__unaccent__icontains',
-        )
-
 
 class PupitreQuerySet(CommonQuerySet):
     def oeuvres(self):
@@ -251,18 +234,18 @@ class Pupitre(CommonModel):
     def html(self, tags=True):
         return href(self.get_absolute_url(), force_text(self), tags=tags)
 
-    def related_label(self):
+    def get_related_label(self):
         out = force_text(self)
         if self.partie.oeuvre is not None:
             out += f' ({self.partie.oeuvre})'
         return out
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return ('partie__nom__unaccent__icontains',
-                'partie__nom_pluriel__unaccent__icontains',
-                'partie__professions__nom__unaccent__icontains',
-                'partie__professions__nom_pluriel__unaccent__icontains',)
+    # @staticmethod
+    # def autocomplete_search_fields():
+    #     return ('partie__nom__unaccent__icontains',
+    #             'partie__nom_pluriel__unaccent__icontains',
+    #             'partie__professions__nom__unaccent__icontains',
+    #             'partie__professions__nom_pluriel__unaccent__icontains',)
 
 
 class TypeDeParenteDOeuvres(TypeDeParente):
@@ -1017,7 +1000,7 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
             if v and v[-1] not in (' ', "'", '’'):
                 setattr(self, attr, f'{v} ')
 
-    def related_label(self):
+    def get_related_label(self):
         txt = force_text(self)
         auteurs = self.auteurs.html(tags=False)
         if auteurs:
@@ -1031,19 +1014,19 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     _str = __str__
     _str.short_description = _('œuvre')
 
-    @staticmethod
-    def autocomplete_search_fields(add_icontains=True):
-        lookups = (
-            'auteurs__individu__nom', 'auteurs__individu__prenoms',
-            'auteurs__individu__pseudonyme', 'auteurs__ensemble__nom',
-            'prefixe_titre', 'titre',
-            'prefixe_titre_secondaire', 'titre_secondaire',
-            'genre__nom', 'numero', 'coupe',
-            'tempo', 'sujet',
-            'surnom', 'nom_courant', 'incipit',
-            'opus', 'ict',
-            'pupitres__partie__nom')
-        lookups = [f'{lookup}__unaccent' for lookup in lookups]
-        if add_icontains:
-            return [f'{lookup}__icontains' for lookup in lookups]
-        return lookups
+    # @staticmethod
+    # def autocomplete_search_fields(add_icontains=True):
+    #     lookups = (
+    #         'auteurs__individu__nom', 'auteurs__individu__prenoms',
+    #         'auteurs__individu__pseudonyme', 'auteurs__ensemble__nom',
+    #         'prefixe_titre', 'titre',
+    #         'prefixe_titre_secondaire', 'titre_secondaire',
+    #         'genre__nom', 'numero', 'coupe',
+    #         'tempo', 'sujet',
+    #         'surnom', 'nom_courant', 'incipit',
+    #         'opus', 'ict',
+    #         'pupitres__partie__nom')
+    #     lookups = [f'{lookup}__unaccent' for lookup in lookups]
+    #     if add_icontains:
+    #         return [f'{lookup}__icontains' for lookup in lookups]
+    #     return lookups

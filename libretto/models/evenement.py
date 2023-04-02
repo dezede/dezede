@@ -113,6 +113,8 @@ class ElementDeDistribution(CommonModel):
 
     objects = ElementDeDistributionManager()
 
+    is_related_label_used = False
+
     class Meta(object):
         verbose_name = _('élément de distribution')
         verbose_name_plural = _('éléments de distribution')
@@ -131,16 +133,10 @@ class ElementDeDistribution(CommonModel):
             return strip_tags(out)
         return mark_safe(out)
 
-    def related_label(self):
-        return self.get_change_link()
-
     def get_change_url(self):
         return reverse(
             'admin:libretto_elementdedistribution_change', args=(self.pk,),
         )
-
-    def get_change_link(self):
-        return href(self.get_change_url(), force_text(self), new_tab=True)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -301,6 +297,8 @@ class ElementDeProgramme(CommonModel):
                                  blank=True, null=True)
 
     objects = ElementDeProgrammeManager()
+
+    is_related_label_used = False
 
     class Meta(object):
         verbose_name = _('élément de programme')
@@ -641,19 +639,9 @@ class Evenement(AutoriteModel):
         out += f'\u00A0> {self.html(False)}'
         return strip_tags(out)
 
-    def related_label(self):
+    def get_related_label(self):
+        # FIXME: The `mark_safe` from within `href` gets lost
+        #        when the related label is cached.
+        #        Maybe store a new boolean `is_cached_related_label_safe`?
         return href(reverse('admin:libretto_evenement_change',
                             args=(self.pk,)), force_text(self), new_tab=True)
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return (
-            'circonstance__unaccent__icontains',
-            'debut_lieu__nom__unaccent__icontains',
-            'debut_lieu__parent__nom__unaccent__icontains',
-            'debut_date__icontains',
-            'debut_heure__icontains',
-            'debut_lieu_approx__unaccent__icontains',
-            'debut_date_approx__unaccent__icontains',
-            'debut_heure_approx__unaccent__icontains',
-        )

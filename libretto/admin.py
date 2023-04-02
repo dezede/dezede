@@ -792,7 +792,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
                     'caracteristiques_html', 'auteurs_html',
                     'creation', 'link',)
-    search_fields = Oeuvre.autocomplete_search_fields(add_icontains=False)
+    search_fields = ['cached_related_name']# Oeuvre.autocomplete_search_fields(add_icontains=False)
     list_filter = ('genre', 'tonalite', 'arrangement', 'type_extrait')
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'

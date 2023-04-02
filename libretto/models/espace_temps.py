@@ -57,10 +57,6 @@ class NatureDeLieu(CommonModel, SlugModel):
     def __str__(self):
         return self.nom
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return 'nom__unaccent__icontains',
-
 
 class LieuQuerySet(PublishedQuerySet,
                    CommonTreeQuerySet):
@@ -170,11 +166,6 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     def __str__(self):
         return strip_tags(self.html(False))
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return ('nom__unaccent__icontains',
-                'parent__nom__unaccent__icontains')
 
 
 class SaisonQuerySet(CommonQuerySet):
