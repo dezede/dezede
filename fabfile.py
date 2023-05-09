@@ -313,19 +313,14 @@ def save_remote_db():
 
 @task
 def restore_saved_db():
-    local(f'sudo -u postgres dropdb --if-exists {DB_NAME}')
-    local(f'sudo -u postgres dropuser --if-exists {DB_USER}')
-    local(f'sudo -u postgres createuser --login -g clients {DB_USER}')
-    local(f'sudo -u postgres createdb --owner {DB_USER} {DB_NAME}')
     with warn_only():
         for parent in Path(LOCAL_BACKUP).resolve().parents:
             local(f'chmod o+x {parent}')
     local(f'chmod o+r {LOCAL_BACKUP}')
-    local(f'sudo -u postgres psql dezede -c "DROP SCHEMA public;"')
-    local(f'sudo -u postgres pg_restore -e -d {DB_NAME} '
+    local(f'psql -U {DB_USER} {DB_NAME} -c "DROP SCHEMA IF EXISTS public CASCADE;"')
+    local(f'psql -U {DB_USER} {DB_NAME} -c "CREATE SCHEMA public AUTHORIZATION {DB_USER};"')
+    local(f'pg_restore -U dezede -e -d {DB_NAME} '
           f'-j 5 "{Path(LOCAL_BACKUP).resolve()}"')
-    local(f'sudo -u postgres psql dezede '
-          f'-c "ALTER SCHEMA public OWNER TO dezede;"')
 
 
 @task
