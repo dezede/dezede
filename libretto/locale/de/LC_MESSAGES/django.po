@@ -1641,12 +1641,12 @@ msgstr "abgeleitetes Element/Werk"
 
 #: models/oeuvre.py:790
 msgid "№ "
-msgstr "Nr."
+msgstr "Nr. "
 
 #: models/oeuvre.py:799
 #, python-format
 msgid "n° %s"
-msgstr "Nr. %s"
+msgstr "Nr. %s"
 
 #: models/oeuvre.py:801 models/oeuvre.py:814
 #, python-format
@@ -1665,7 +1665,7 @@ msgstr "über %s"
 #: models/oeuvre.py:826
 #, python-format
 msgid "op. %s"
-msgstr "Op. %s"
+msgstr "Op. %s"
 
 #: models/oeuvre.py:829
 msgid "Indice de Catalogue Thématique"
@@ -1673,15 +1673,15 @@ msgstr "Kennung im Werkverzeichnis"
 
 #: models/oeuvre.py:856
 msgid "de "
-msgstr "von"
+msgstr "von "
 
 #: models/oeuvre.py:858
 msgid " avec "
-msgstr "mit"
+msgstr " mit "
 
 #: models/oeuvre.py:860
 msgid "pour "
-msgstr "für"
+msgstr "für "
 
 #: models/oeuvre.py:869
 msgid "auteur(s)"

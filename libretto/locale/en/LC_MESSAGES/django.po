@@ -1654,12 +1654,12 @@ msgstr "girls"
 
 #: models/oeuvre.py:790
 msgid "№ "
-msgstr "№ "
+msgstr "№ "
 
 #: models/oeuvre.py:799
 #, python-format
 msgid "n° %s"
-msgstr "n° %s"
+msgstr "n° %s"
 
 #: models/oeuvre.py:801 models/oeuvre.py:814
 #, python-format
@@ -1678,7 +1678,7 @@ msgstr "on %s"
 #: models/oeuvre.py:826
 #, python-format
 msgid "op. %s"
-msgstr "op. %s"
+msgstr "op. %s"
 
 #: models/oeuvre.py:829
 msgid "Indice de Catalogue Thématique"
@@ -1686,15 +1686,15 @@ msgstr "Thematic catalogue number"
 
 #: models/oeuvre.py:856
 msgid "de "
-msgstr "of"
+msgstr "of "
 
 #: models/oeuvre.py:858
 msgid " avec "
-msgstr "with"
+msgstr " with "
 
 #: models/oeuvre.py:860
 msgid "pour "
-msgstr "for"
+msgstr "for "
 
 #: models/oeuvre.py:869
 msgid "auteur(s)"
