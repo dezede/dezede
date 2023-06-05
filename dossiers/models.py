@@ -21,8 +21,8 @@ from common.utils.text import str_list_w_last
 
 
 class CategorieDeDossiers(PublishedModel):
-    nom = CharField(max_length=75)
-    position = PositiveSmallIntegerField(default=1)
+    nom = CharField(_('nom'), max_length=75)
+    position = PositiveSmallIntegerField(_('position'), default=1)
 
     class Meta(object):
         ordering = ('position',)
