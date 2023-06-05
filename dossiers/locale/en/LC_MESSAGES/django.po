@@ -3,15 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+# Translators:
+# Diane Tisdall <diane.tisdall@kcl.ac.uk>, 2016
+# Yannick Simon <yannick.simon@univ-rouen.fr>, 2016
+# Joann Élart <joann.elart@univ-rouen.fr>, 2016
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-03 17:45+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2023-06-05 18:26+0200\n"
+"PO-Revision-Date: 2016-06-24 22:21+0000\n"
 "Last-Translator: Joann Élart <joann.elart@univ-rouen.fr>, 2016\n"
-"Language-Team: English (https://www.transifex.com/bertrandbordage/"
+"Language-Team: English (https://app.transifex.com/bertrandbordage/"
 "teams/11498/en/)\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
@@ -168,6 +173,14 @@ msgstr "8. Revenue"
 msgid "du dossier « %s »"
 msgstr "dossier « %s »"
 
+#: dossiers/models.py:24
+msgid "nom"
+msgstr ""
+
+#: dossiers/models.py:25 dossiers/models.py:67
+msgid "position"
+msgstr "position"
+
 #: dossiers/models.py:29
 msgid "catégorie de dossiers"
 msgstr "dossier category"
@@ -202,10 +215,6 @@ msgstr "Used for the flatplan."
 #: dossiers/models.py:64
 msgid "parent"
 msgstr "parent"
-
-#: dossiers/models.py:67
-msgid "position"
-msgstr "position"
 
 #: dossiers/models.py:69
 msgid "Personnaliser l’affichage du titre du dossier dans l’adresse URL."
@@ -251,11 +260,11 @@ msgstr "start"
 msgid "fin"
 msgstr "end"
 
-#: dossiers/models.py:90 dossiers/models.py:213
+#: dossiers/models.py:90
 msgid "lieux"
 msgstr "places"
 
-#: dossiers/models.py:92 dossiers/models.py:218
+#: dossiers/models.py:92
 msgid "œuvres"
 msgstr "works"
 
@@ -272,7 +281,7 @@ msgstr "occasion"
 msgid "événements"
 msgstr "events"
 
-#: dossiers/models.py:101 dossiers/models.py:228
+#: dossiers/models.py:101
 msgid "ensembles"
 msgstr "ensembles"
 
@@ -296,17 +305,13 @@ msgstr "Events dossiers"
 msgid "Peut changer l’état"
 msgstr "Can change the status"
 
-#: dossiers/models.py:192
+#: dossiers/models.py:189
 msgid "ensemble de données"
 msgstr "set of data"
 
-#: dossiers/models.py:196
+#: dossiers/models.py:193
 msgid "quantité de données sélectionnées"
 msgstr "quantity of selected data"
-
-#: dossiers/models.py:223
-msgid "auteurs"
-msgstr "authors"
 
 #: dossiers/templates/dossiers/categoriededossiers_list.html:6
 msgid "dossiers"
@@ -442,41 +447,26 @@ msgstr "Back to Top"
 msgid "Dossier suivant"
 msgstr "Next dossier"
 
-#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:10
-msgid ""
-"\n"
-"              Éditeur scientifique\n"
-"            "
-msgid_plural ""
-"\n"
-"              Éditeurs scientifiques\n"
-"            "
-msgstr[0] ""
-"\n"
-"Scientific editor"
-msgstr[1] ""
-"\n"
-"Scientific editors"
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:11
+#: dossiers/templates/dossiers/opera_comique_presentation.html:13
+msgid "Éditeur scientifique"
+msgstr "Scientific editor"
+
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:13
+msgid "Éditeurs scientifiques"
+msgstr "Scientific editors"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:23
 msgid "Dans ce dossier"
 msgstr "In this dossier"
 
-#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:38
-msgid ""
-"\n"
-"              Contributeur\n"
-"            "
-msgid_plural ""
-"\n"
-"              Contributeurs\n"
-"            "
-msgstr[0] ""
-"\n"
-"Contributor"
-msgstr[1] ""
-"\n"
-"Contributors"
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:39
+msgid "Contributeur"
+msgstr "Contributor"
+
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:41
+msgid "Contributeurs"
+msgstr "Contributors"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:47
 #: dossiers/templates/dossiers/opera_comique_presentation.html:18
@@ -555,10 +545,6 @@ msgstr "Archives de l’Opéra Comique"
 #: dossiers/templates/dossiers/opera_comique_base.html:38
 msgid "Archives"
 msgstr "Archives"
-
-#: dossiers/templates/dossiers/opera_comique_presentation.html:13
-msgid "Éditeur scientifique"
-msgstr "Scientific editor"
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:19
 msgid "13 novembre 2014"
@@ -832,30 +818,33 @@ msgstr ""
 msgid "Événements"
 msgstr "Events"
 
-#: dossiers/views.py:35
+#: dossiers/views.py:34
 msgid "Indéterminé"
 msgstr "Indeterminate"
 
-#: dossiers/views.py:36
+#: dossiers/views.py:35
 msgid "Né avant 1580"
 msgstr "Born before 1580"
 
-#: dossiers/views.py:37
+#: dossiers/views.py:36
 msgid "Baroque"
 msgstr "Baroque"
 
-#: dossiers/views.py:38
+#: dossiers/views.py:37
 msgid "Classique"
 msgstr "Classical"
 
-#: dossiers/views.py:39
+#: dossiers/views.py:38
 msgid "Romantique"
 msgstr "Romantic"
 
-#: dossiers/views.py:40
+#: dossiers/views.py:39
 msgid "Moderne"
 msgstr "Modern"
 
-#: dossiers/views.py:41
+#: dossiers/views.py:40
 msgid "Né après 1920"
 msgstr "Born after 1920"
+
+#~ msgid "auteurs"
+#~ msgstr "authors"

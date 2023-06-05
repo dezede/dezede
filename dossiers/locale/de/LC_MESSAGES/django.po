@@ -3,15 +3,19 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+# Translators:
+# Sara Iglesias <saraiglesias@gmx.de>, 2016
+# Yannick Simon <yannick.simon@univ-rouen.fr>, 2016
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-03 17:49+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2023-06-05 18:26+0200\n"
+"PO-Revision-Date: 2016-06-24 22:21+0000\n"
 "Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
-"Language-Team: German (https://www.transifex.com/bertrandbordage/teams/11498/"
+"Language-Team: German (https://app.transifex.com/bertrandbordage/teams/11498/"
 "de/)\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -19,164 +23,176 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:41
+#: dossiers/admin.py:41
 msgid "Métadonnées"
 msgstr "Metadaten"
 
-#: admin.py:47
+#: dossiers/admin.py:47
 msgid "Article"
 msgstr "Artikel"
 
-#: admin.py:54
+#: dossiers/admin.py:54
 msgid "Sélection dynamique"
 msgstr "Dynamische Auswahl"
 
-#: admin.py:58
+#: dossiers/admin.py:58
 msgid "Sélection manuelle"
 msgstr "Manuelle Auswahl"
 
-#: export.py:219
+#: dossiers/export.py:219
 msgid "TOTAL"
 msgstr "GESAMT"
 
-#: export.py:292
+#: dossiers/export.py:292
 msgid "Saison indéterminée"
 msgstr "Unbestimmt Spielzeit"
 
-#: export.py:321 export.py:360 export.py:396 export.py:428 export.py:461
-#: export.py:508 export.py:538
+#: dossiers/export.py:321 dossiers/export.py:360 dossiers/export.py:396
+#: dossiers/export.py:428 dossiers/export.py:461 dossiers/export.py:508
+#: dossiers/export.py:538
 msgid "Année"
 msgstr "Jahr"
 
-#: export.py:322 export.py:361 export.py:397 export.py:429 export.py:462
-#: export.py:509 export.py:539
+#: dossiers/export.py:322 dossiers/export.py:361 dossiers/export.py:397
+#: dossiers/export.py:429 dossiers/export.py:462 dossiers/export.py:509
+#: dossiers/export.py:539
 msgid "Saison"
 msgstr "Spielzeit"
 
-#: export.py:323 export.py:362 export.py:398 export.py:430 export.py:463
-#: export.py:510 export.py:540
+#: dossiers/export.py:323 dossiers/export.py:362 dossiers/export.py:398
+#: dossiers/export.py:430 dossiers/export.py:463 dossiers/export.py:510
+#: dossiers/export.py:540
 msgid "Mois"
 msgstr "Monat"
 
-#: export.py:324 export.py:541
+#: dossiers/export.py:324 dossiers/export.py:541
 msgid "Jour"
 msgstr "Tag"
 
-#: export.py:325 export.py:347 export.py:363 export.py:399 export.py:464
-#: export.py:511
+#: dossiers/export.py:325 dossiers/export.py:347 dossiers/export.py:363
+#: dossiers/export.py:399 dossiers/export.py:464 dossiers/export.py:511
 msgid "Nombre d'événements"
 msgstr "Anzahl der Ereignisse"
 
-#: export.py:328
+#: dossiers/export.py:328
 msgid "1. Événements - chronologique"
 msgstr "1. Ereignisse - chronologische"
 
-#: export.py:329 forms.py:56
+#: dossiers/export.py:329 dossiers/forms.py:56
 msgid "1. Événements : répartition chronologique"
 msgstr "1. Ereignisse: chronologische Verteilung"
 
-#: export.py:344 export.py:393 export.py:535
+#: dossiers/export.py:344 dossiers/export.py:393 dossiers/export.py:535
 msgid "Pays"
 msgstr "Land"
 
-#: export.py:345 export.py:394 export.py:536
+#: dossiers/export.py:345 dossiers/export.py:394 dossiers/export.py:536
 msgid "Ville"
 msgstr "Stadt"
 
-#: export.py:346 export.py:395 export.py:537
+#: dossiers/export.py:346 dossiers/export.py:395 dossiers/export.py:537
 msgid "Salle"
 msgstr "Saal"
 
-#: export.py:349
+#: dossiers/export.py:349
 msgid "2. Événements - géographique"
 msgstr "2. Ereignisse - geographische"
 
-#: export.py:350 forms.py:57
+#: dossiers/export.py:350 dossiers/forms.py:57
 msgid "2. Événements : répartition géographique"
 msgstr "2. Ereignisse: geographische Verteilung"
 
-#: export.py:358 export.py:391 export.py:507
+#: dossiers/export.py:358 dossiers/export.py:391 dossiers/export.py:507
 msgid "Œuvre"
 msgstr "Werk"
 
-#: export.py:359 export.py:392 export.py:427 export.py:506
+#: dossiers/export.py:359 dossiers/export.py:392 dossiers/export.py:427
+#: dossiers/export.py:506
 msgid "Auteur"
 msgstr "Autor"
 
-#: export.py:365
+#: dossiers/export.py:365
 msgid "3. Œuvres - chronologique"
 msgstr "3. Werke - chronologische"
 
-#: export.py:366 forms.py:58
+#: dossiers/export.py:366 dossiers/forms.py:58
 msgid "3. Œuvres : répartition chronologique"
 msgstr "3. Werke: chronologische Verteilung"
 
-#: export.py:401
+#: dossiers/export.py:401
 msgid "4. Œuvres - géographique"
 msgstr "4. Werke - geographische"
 
-#: export.py:402 forms.py:59
+#: dossiers/export.py:402 dossiers/forms.py:59
 msgid "4. Œuvres : répartition géographique"
 msgstr "4. Werke: geographische Verteilung"
 
-#: export.py:431
+#: dossiers/export.py:431
 msgid "Nombre d'éléments de programme"
 msgstr "Anzahl der Programmelemente"
 
-#: export.py:433
+#: dossiers/export.py:433
 msgid "5. Auteurs - chronologique"
 msgstr "5. Autoren - chronologische"
 
-#: export.py:434 forms.py:60
+#: dossiers/export.py:434 dossiers/forms.py:60
 msgid "5. Auteurs : répartition chronologique"
 msgstr "5. Autoren: chronologische Verteilung"
 
-#: export.py:460
+#: dossiers/export.py:460
 msgid "Interprète"
 msgstr "Interpret"
 
-#: export.py:466
+#: dossiers/export.py:466
 msgid "6. Interprètes - chronologique"
 msgstr "6. Interpreten - chronologische"
 
-#: export.py:467 forms.py:61
+#: dossiers/export.py:467 dossiers/forms.py:61
 msgid "6. Interprètes : répartition chronologique"
 msgstr "6. Interpreten: chronologische Verteilung"
 
-#: export.py:513
+#: dossiers/export.py:513
 msgid "7. Auteurs et œuvres"
 msgstr "7. Autoren und Werke"
 
-#: export.py:514 forms.py:62
+#: dossiers/export.py:514 dossiers/forms.py:62
 msgid "7. Auteurs et œuvres : répartition chronologique"
 msgstr "7. Autoren und Werke: chronologische Verteilung"
 
-#: export.py:542
+#: dossiers/export.py:542
 msgid "Recette"
 msgstr "Einnahmen"
 
-#: export.py:544 export.py:545 forms.py:63
+#: dossiers/export.py:544 dossiers/export.py:545 dossiers/forms.py:63
 msgid "8. Recettes"
 msgstr "8. Einnahmen"
 
-#: jobs.py:21
+#: dossiers/jobs.py:21
 #, python-format
 msgid "du dossier « %s »"
 msgstr "des Dossiers \"%s\""
 
-#: models.py:29
+#: dossiers/models.py:24
+msgid "nom"
+msgstr ""
+
+#: dossiers/models.py:25 dossiers/models.py:67
+msgid "position"
+msgstr "Position"
+
+#: dossiers/models.py:29
 msgid "catégorie de dossiers"
 msgstr "Dossier-Kategorie"
 
-#: models.py:30
+#: dossiers/models.py:30
 msgid "catégories de dossiers"
 msgstr "Dossier-Kategorien"
 
-#: models.py:56
+#: dossiers/models.py:56
 msgid "catégorie"
 msgstr "Kategorie"
 
-#: models.py:57
+#: dossiers/models.py:57
 msgid ""
 "Attention, un dossier contenu dans un autre dossier ne peut être dans une "
 "catégorie."
@@ -184,135 +200,128 @@ msgstr ""
 "Achtung, ein Dossier innerhalb eines anderen Dossiers kann nicht einer "
 "Kategorie zugeordnet werden."
 
-#: models.py:59
+#: dossiers/models.py:59
 msgid "titre"
 msgstr "Titel"
 
-#: models.py:60
+#: dossiers/models.py:60
 msgid "titre court"
 msgstr "Kurztitel"
 
-#: models.py:61
+#: dossiers/models.py:61
 msgid "Utilisé pour le chemin de fer."
 msgstr "Für die Brotkrumennavigation verwendet."
 
-#: models.py:64
+#: dossiers/models.py:64
 msgid "parent"
 msgstr "Verwandtschaft"
 
-#: models.py:67
-msgid "position"
-msgstr "Position"
-
-#: models.py:69
+#: dossiers/models.py:69
 msgid "Personnaliser l’affichage du titre du dossier dans l’adresse URL."
 msgstr "Die Anzeige des Dossier-Titels in der URL-Adresse personalisieren"
 
-#: models.py:75
+#: dossiers/models.py:75
 msgid "éditeurs scientifiques"
 msgstr "Wissenschaftliche Herausgeber"
 
-#: models.py:76
+#: dossiers/models.py:76
 msgid "date de publication"
 msgstr "Erscheinungsdatum"
 
-#: models.py:78
+#: dossiers/models.py:78
 msgid "publication(s) associée(s)"
 msgstr "Assoziierte Publikation(en)"
 
-#: models.py:79
+#: dossiers/models.py:79
 msgid "développements envisagés"
 msgstr "Angestrebte Weiterentwicklungen"
 
-#: models.py:82
+#: dossiers/models.py:82
 msgid "présentation"
 msgstr "Präsentation"
 
-#: models.py:83
+#: dossiers/models.py:83
 msgid "contexte historique"
 msgstr "Historischer Kontext"
 
-#: models.py:84
+#: dossiers/models.py:84
 msgid "sources et protocole"
 msgstr "Quellen und Protokoll"
 
-#: models.py:85
+#: dossiers/models.py:85
 msgid "bibliographie indicative"
 msgstr "Bibliografie"
 
-#: models.py:88
+#: dossiers/models.py:88
 msgid "début"
 msgstr "Beginn"
 
-#: models.py:89
+#: dossiers/models.py:89
 msgid "fin"
 msgstr "Ende"
 
-#: models.py:90 models.py:213
+#: dossiers/models.py:90
 msgid "lieux"
 msgstr "Orte"
 
-#: models.py:92 models.py:218
+#: dossiers/models.py:92
 msgid "œuvres"
 msgstr "Werke"
 
-#: models.py:95
+#: dossiers/models.py:95
 msgid "individus"
 msgstr ""
 
-#: models.py:98
+#: dossiers/models.py:98
 msgid "circonstance"
 msgstr "Anlass/bes. Umstände"
 
-#: models.py:99 templates/dossiers/dossierdevenements_data_detail.html:6
+#: dossiers/models.py:99
+#: dossiers/templates/dossiers/dossierdevenements_data_detail.html:6
 msgid "événements"
 msgstr "Ereignisse"
 
-#: models.py:101 models.py:228
+#: dossiers/models.py:101
 msgid "ensembles"
 msgstr "Ensembles"
 
-#: models.py:103
+#: dossiers/models.py:103
 msgid "sources"
 msgstr "Quellen"
 
-#: models.py:105 models.py:106
+#: dossiers/models.py:105 dossiers/models.py:106
 msgid "saisons"
 msgstr "Spielzeiten"
 
-#: models.py:111
+#: dossiers/models.py:111
 msgid "dossier d’événements"
 msgstr "Ereignis-Dossier"
 
-#: models.py:112
+#: dossiers/models.py:112
 msgid "dossiers d’événements"
 msgstr "Ereignis-Dossiers"
 
-#: models.py:114
+#: dossiers/models.py:114
 msgid "Peut changer l’état"
 msgstr "Kann Bearbeitungsstand ändern"
 
-#: models.py:192
+#: dossiers/models.py:189
 msgid "ensemble de données"
 msgstr "Zusammenstellung von Daten"
 
-#: models.py:196
+#: dossiers/models.py:193
 msgid "quantité de données sélectionnées"
 msgstr "Anzahl ausgewählter Daten"
 
-#: models.py:223
-msgid "auteurs"
-msgstr "Autoren"
-
-#: templates/dossiers/categoriededossiers_list.html:6
+#: dossiers/templates/dossiers/categoriededossiers_list.html:6
 msgid "dossiers"
 msgstr "Dossiers"
 
-#: templates/dossiers/categoriededossiers_list.html:24
+#: dossiers/templates/dossiers/categoriededossiers_list.html:24
 msgid "Qu’est-ce qu’un dossier ?"
 msgstr "Was ist ein Dossier?"
 
-#: templates/dossiers/categoriededossiers_list.html:27
+#: dossiers/templates/dossiers/categoriededossiers_list.html:27
 #, python-format
 msgid ""
 "\n"
@@ -354,11 +363,11 @@ msgstr ""
 "Ihre Veröffentlichung unterliegt der Expertise des <a href=\"%(comite_url)s"
 "\">Herausgeberkomitees</a>."
 
-#: templates/dossiers/chord_diagram.html:39
+#: dossiers/templates/dossiers/chord_diagram.html:39
 msgid "Auteurs les plus représentés"
 msgstr "Am stärksten vertretene Autoren"
 
-#: templates/dossiers/chord_diagram.html:44
+#: dossiers/templates/dossiers/chord_diagram.html:44
 msgid ""
 "\n"
 "    La taille des cordes est proportionnelle au nombre d’événements\n"
@@ -370,7 +379,7 @@ msgstr ""
 "zur Anzahl der Ereignisse,\n"
 "die Werke der beiden miteinander verbundenen Autoren enthalten."
 
-#: templates/dossiers/chord_diagram.html:50
+#: dossiers/templates/dossiers/chord_diagram.html:50
 msgid ""
 "\n"
 "    Cliquez sur le nom d’un auteur pour visualiser uniquement\n"
@@ -388,23 +397,23 @@ msgstr ""
 "Klicken Sie überall sonst, um zur Ausgangsposition\n"
 "zurückzukehren."
 
-#: templates/dossiers/dossierdevenements_content.html:15
+#: dossiers/templates/dossiers/dossierdevenements_content.html:15
 msgid "Contexte historique"
 msgstr "Historischer Kontext"
 
-#: templates/dossiers/dossierdevenements_content.html:19
+#: dossiers/templates/dossiers/dossierdevenements_content.html:19
 msgid "Sources et protocole"
 msgstr "Quellen und Protokoll"
 
-#: templates/dossiers/dossierdevenements_content.html:23
+#: dossiers/templates/dossiers/dossierdevenements_content.html:23
 msgid "Bibliographie indicative"
 msgstr "Bibliografie"
 
-#: templates/dossiers/dossierdevenements_content.html:35
+#: dossiers/templates/dossiers/dossierdevenements_content.html:35
 msgid "(dir.)"
 msgstr "(Hg.)"
 
-#: templates/dossiers/dossierdevenements_content.html:39
+#: dossiers/templates/dossiers/dossierdevenements_content.html:39
 #, python-format
 msgid ""
 "\n"
@@ -420,150 +429,132 @@ msgstr ""
 "%(SITE)s%(permalien)s \n"
 "(letzter Zugang %(now)s)."
 
-#: templates/dossiers/dossierdevenements_detail.html:6
-#: templates/dossiers/opera_comique_base.html:32 templates/dossiers/tabs.html:7
+#: dossiers/templates/dossiers/dossierdevenements_detail.html:6
+#: dossiers/templates/dossiers/opera_comique_base.html:32
+#: dossiers/templates/dossiers/tabs.html:7
 msgid "Présentation"
 msgstr "Präsentation"
 
-#: templates/dossiers/dossierdevenements_detail.html:45
+#: dossiers/templates/dossiers/dossierdevenements_detail.html:45
 msgid "Pour citer ce dossier"
 msgstr "Dieses Dossier zitieren"
 
-#: templates/dossiers/dossierdevenements_detail.html:57
+#: dossiers/templates/dossiers/dossierdevenements_detail.html:57
 msgid "Dossier précédent"
 msgstr "Voriges Dossier"
 
-#: templates/dossiers/dossierdevenements_detail.html:61
+#: dossiers/templates/dossiers/dossierdevenements_detail.html:61
 msgid "Retourner en haut"
 msgstr "Zurück zum Seitenanfang"
 
-#: templates/dossiers/dossierdevenements_detail.html:68
+#: dossiers/templates/dossiers/dossierdevenements_detail.html:68
 msgid "Dossier suivant"
 msgstr "Folgendes Dossier"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:10
-msgid ""
-"\n"
-"              Éditeur scientifique\n"
-"            "
-msgid_plural ""
-"\n"
-"              Éditeurs scientifiques\n"
-"            "
-msgstr[0] ""
-"\n"
-"Wissenschaftlicher Herausgeber"
-msgstr[1] ""
-"\n"
-"Wissenschaftliche Herausgeber"
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:11
+#: dossiers/templates/dossiers/opera_comique_presentation.html:13
+msgid "Éditeur scientifique"
+msgstr "Wissenschaftlicher Herausgeber"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:23
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:13
+msgid "Éditeurs scientifiques"
+msgstr "Wissenschaftliche Herausgeber"
+
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:23
 msgid "Dans ce dossier"
 msgstr "In diesem Dossier"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:38
-msgid ""
-"\n"
-"              Contributeur\n"
-"            "
-msgid_plural ""
-"\n"
-"              Contributeurs\n"
-"            "
-msgstr[0] ""
-"\n"
-"Beiträger/in"
-msgstr[1] ""
-"\n"
-"Beiträger/innen"
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:39
+msgid "Contributeur"
+msgstr "Beiträger/in"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:47
-#: templates/dossiers/opera_comique_presentation.html:18
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:41
+msgid "Contributeurs"
+msgstr "Beiträger/innen"
+
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:47
+#: dossiers/templates/dossiers/opera_comique_presentation.html:18
 msgid "Date de mise en ligne"
 msgstr "Datum des Launchs"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:54
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:54
 msgid "Publication(s) associée(s)"
 msgstr "Assoziierte Publikation(en)"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:60
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:60
 msgid "Développements envisagés"
 msgstr "angestrebte Weiterentwicklungen"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:69
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:69
 msgid "Exporter en PDF"
 msgstr "Als PDF exportieren"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:76
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:83
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:76
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:83
 msgid "Exporter les statistiques"
 msgstr "Statistik exportieren"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:93
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:93
 msgid "Exports"
 msgstr "Exporte"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:110
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:110
 msgid "Fermer"
 msgstr "Schließen"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:111
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:111
 msgid "Exporter"
 msgstr "Export"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:126
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:126
 msgid "Ajouter"
 msgstr "Hinzufügen"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:128
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:128
 msgid "Supprimer"
 msgstr "Löschen"
 
-#: templates/dossiers/dossierdevenements_stats_detail.html:6
-#: templates/dossiers/tabs.html:13
+#: dossiers/templates/dossiers/dossierdevenements_stats_detail.html:6
+#: dossiers/templates/dossiers/tabs.html:13
 msgid "Visualisations"
 msgstr "Visualisierungen"
 
-#: templates/dossiers/dossierdevenements_stats_detail.html:44
+#: dossiers/templates/dossiers/dossierdevenements_stats_detail.html:44
 #, python-format
 msgid "%(n_oeuvres)s œuvres"
 msgstr "%(n_oeuvres)s Werke"
 
-#: templates/dossiers/dossierdevenements_stats_detail.html:49
+#: dossiers/templates/dossiers/dossierdevenements_stats_detail.html:49
 #, python-format
 msgid "%(period)s (%(ratio)s %%, soit %(count)s œuvres)"
 msgstr "%(period)s (%(ratio)s %%, d.h. %(count)s Werke)"
 
-#: templates/dossiers/opera_comique.html:9
+#: dossiers/templates/dossiers/opera_comique.html:9
 msgid "Ordonner par nom d’œuvre"
 msgstr "Nach Werknamen sortieren"
 
-#: templates/dossiers/opera_comique.html:13
+#: dossiers/templates/dossiers/opera_comique.html:13
 msgid "Ordonner par date de création mondiale"
 msgstr "Nach Datum der Uraufführung sortieren"
 
-#: templates/dossiers/opera_comique.html:33
+#: dossiers/templates/dossiers/opera_comique.html:33
 msgid "Création mondiale :"
 msgstr "Uraufführung :"
 
-#: templates/dossiers/opera_comique_base.html:8
-#: templates/dossiers/opera_comique_base.html:21
+#: dossiers/templates/dossiers/opera_comique_base.html:8
+#: dossiers/templates/dossiers/opera_comique_base.html:21
 msgid "Archives de l’Opéra Comique"
 msgstr "Archiv der Opéra Comique"
 
-#: templates/dossiers/opera_comique_base.html:38
+#: dossiers/templates/dossiers/opera_comique_base.html:38
 msgid "Archives"
 msgstr "Archiv"
 
-#: templates/dossiers/opera_comique_presentation.html:13
-msgid "Éditeur scientifique"
-msgstr "Wissenschaftliche/r Herausgeber/in"
-
-#: templates/dossiers/opera_comique_presentation.html:19
+#: dossiers/templates/dossiers/opera_comique_presentation.html:19
 msgid "13 novembre 2014"
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:31
+#: dossiers/templates/dossiers/opera_comique_presentation.html:31
 msgid ""
 "\n"
 "              Tricentenaire en 2015, l’Opéra Comique est la troisième plus "
@@ -578,7 +569,7 @@ msgid ""
 "            "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:37
+#: dossiers/templates/dossiers/opera_comique_presentation.html:37
 msgid ""
 "\n"
 "              Contrairement à ses deux aînés, l’Opéra Comique n’a jamais pu "
@@ -590,7 +581,7 @@ msgid ""
 "            "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:43
+#: dossiers/templates/dossiers/opera_comique_presentation.html:43
 msgid ""
 "\n"
 "              Jérôme Deschamps dirige l’institution depuis 2007 avec la "
@@ -602,7 +593,7 @@ msgid ""
 "            "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:49
+#: dossiers/templates/dossiers/opera_comique_presentation.html:49
 msgid ""
 "\n"
 "              Cette démarche, qui remporte un vif succès public, a incité "
@@ -611,11 +602,11 @@ msgid ""
 "            "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:55
+#: dossiers/templates/dossiers/opera_comique_presentation.html:55
 msgid "Contexte"
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:58
+#: dossiers/templates/dossiers/opera_comique_presentation.html:58
 msgid ""
 "\n"
 "            En 2012, l’Opéra Comique a présenté sa candidature à l’appel à "
@@ -627,7 +618,7 @@ msgid ""
 "          "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:65
+#: dossiers/templates/dossiers/opera_comique_presentation.html:65
 msgid ""
 "\n"
 "              des archives artistiques conservées aux Archives nationales : "
@@ -638,7 +629,7 @@ msgid ""
 "            "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:70
+#: dossiers/templates/dossiers/opera_comique_presentation.html:70
 msgid ""
 "\n"
 "              des archives conservées à l’Opéra Comique : programmes de "
@@ -649,7 +640,7 @@ msgid ""
 "            "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:77
+#: dossiers/templates/dossiers/opera_comique_presentation.html:77
 msgid ""
 "\n"
 "            Les documents ont été numérisés par Archimaine. En 2013, l’Opéra "
@@ -661,15 +652,15 @@ msgid ""
 "          "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:82
+#: dossiers/templates/dossiers/opera_comique_presentation.html:82
 msgid "Ont contribué à la réalisation de ce projet :"
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:84
+#: dossiers/templates/dossiers/opera_comique_presentation.html:84
 msgid "À l’Opéra Comique"
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:86
+#: dossiers/templates/dossiers/opera_comique_presentation.html:86
 msgid ""
 "\n"
 "            Agnès <span class=\"sc\">Terrier</span>, dramaturge et "
@@ -692,11 +683,11 @@ msgid ""
 "          "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:98
+#: dossiers/templates/dossiers/opera_comique_presentation.html:98
 msgid "Aux Archives nationales"
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:100
+#: dossiers/templates/dossiers/opera_comique_presentation.html:100
 msgid ""
 "\n"
 "            Catherine <span class=\"sc\">Mérot</span>, conservateur général "
@@ -719,11 +710,11 @@ msgid ""
 "          "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:111
+#: dossiers/templates/dossiers/opera_comique_presentation.html:111
 msgid "De l’université de Rouen ou l’équipe Dezède"
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:113
+#: dossiers/templates/dossiers/opera_comique_presentation.html:113
 msgid ""
 "\n"
 "            Joann <span class=\"sc\">Élart</span>, Maître de conférences en "
@@ -740,15 +731,15 @@ msgid ""
 "          "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:120
+#: dossiers/templates/dossiers/opera_comique_presentation.html:120
 msgid "Sources"
 msgstr "Quellen"
 
-#: templates/dossiers/opera_comique_presentation.html:122
+#: dossiers/templates/dossiers/opera_comique_presentation.html:122
 msgid "Historique des archives de l’Opéra Comique"
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:125
+#: dossiers/templates/dossiers/opera_comique_presentation.html:125
 msgid ""
 "\n"
 "            Si l’Opéra de Paris, chargé dès son origine d’une fonction "
@@ -763,7 +754,7 @@ msgid ""
 "          "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:130
+#: dossiers/templates/dossiers/opera_comique_presentation.html:130
 msgid ""
 "\n"
 "            Archiviste de l’Opéra à partir de 1866, Charles Nuitter y "
@@ -782,7 +773,7 @@ msgid ""
 "          "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:136
+#: dossiers/templates/dossiers/opera_comique_presentation.html:136
 msgid ""
 "\n"
 "            Aux Archives nationales sont distinguées les sources produites "
@@ -798,7 +789,7 @@ msgid ""
 "          "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:142
+#: dossiers/templates/dossiers/opera_comique_presentation.html:142
 msgid ""
 "\n"
 "            Deux autres institutions comptent dans la reconstitution des "
@@ -814,7 +805,7 @@ msgid ""
 "          "
 msgstr ""
 
-#: templates/dossiers/opera_comique_presentation.html:148
+#: dossiers/templates/dossiers/opera_comique_presentation.html:148
 msgid ""
 "\n"
 "            Parce que la conservation et l’accès de tous aux archives sont "
@@ -827,34 +818,37 @@ msgid ""
 "          "
 msgstr ""
 
-#: templates/dossiers/tabs.html:18
+#: dossiers/templates/dossiers/tabs.html:18
 msgid "Événements"
 msgstr "Ereignisse"
 
-#: views.py:35
+#: dossiers/views.py:34
 msgid "Indéterminé"
 msgstr "unbestimmt"
 
-#: views.py:36
+#: dossiers/views.py:35
 msgid "Né avant 1580"
 msgstr "Geboren vor 1580"
 
-#: views.py:37
+#: dossiers/views.py:36
 msgid "Baroque"
 msgstr "Barock"
 
-#: views.py:38
+#: dossiers/views.py:37
 msgid "Classique"
 msgstr "Klassisch"
 
-#: views.py:39
+#: dossiers/views.py:38
 msgid "Romantique"
 msgstr "Romantisch"
 
-#: views.py:40
+#: dossiers/views.py:39
 msgid "Moderne"
 msgstr "Modern"
 
-#: views.py:41
+#: dossiers/views.py:40
 msgid "Né après 1920"
 msgstr "Nach 1920 geboren"
+
+#~ msgid "auteurs"
+#~ msgstr "Autoren"

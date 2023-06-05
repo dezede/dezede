@@ -1,38 +1,48 @@
 [main]
 host = https://www.transifex.com
 
-[dezede.libretto]
-file_filter = libretto/locale/<lang>/LC_MESSAGES/django.po
-source_lang = fr
-
-[dezede.dezede]
-file_filter = dezede/locale/<lang>/LC_MESSAGES/django.po
-source_lang = fr
-
-[dezede.accounts]
+[o:bertrandbordage:p:dezede:r:accounts]
 file_filter = accounts/locale/<lang>/LC_MESSAGES/django.po
+source_file = accounts/locale/fr/LC_MESSAGES/django.po
 source_lang = fr
 
-[dezede.afo]
+[o:bertrandbordage:p:dezede:r:afo]
 file_filter = afo/locale/<lang>/LC_MESSAGES/django.po
+source_file = afo/locale/fr/LC_MESSAGES/django.po
 source_lang = fr
 
-[dezede.common]
+[o:bertrandbordage:p:dezede:r:common]
 file_filter = common/locale/<lang>/LC_MESSAGES/django.po
+source_file = common/locale/fr/LC_MESSAGES/django.po
 source_lang = fr
 
-[dezede.exporter]
-file_filter = exporter/locale/<lang>/LC_MESSAGES/django.po
+[o:bertrandbordage:p:dezede:r:dezede]
+file_filter = dezede/locale/<lang>/LC_MESSAGES/django.po
+source_file = dezede/locale/fr/LC_MESSAGES/django.po
 source_lang = fr
 
-[dezede.range_slider]
-file_filter = range_slider/locale/<lang>/LC_MESSAGES/django.po
-source_lang = fr
-
-[dezede.examens]
-file_filter = examens/locale/<lang>/LC_MESSAGES/django.po
-source_lang = fr
-
-[dezede.dossiers]
+[o:bertrandbordage:p:dezede:r:dossiers]
 file_filter = dossiers/locale/<lang>/LC_MESSAGES/django.po
+source_file = dossiers/locale/fr/LC_MESSAGES/django.po
 source_lang = fr
+
+[o:bertrandbordage:p:dezede:r:examens]
+file_filter = examens/locale/<lang>/LC_MESSAGES/django.po
+source_file = examens/locale/fr/LC_MESSAGES/django.po
+source_lang = fr
+
+[o:bertrandbordage:p:dezede:r:exporter]
+file_filter = exporter/locale/<lang>/LC_MESSAGES/django.po
+source_file = exporter/locale/fr/LC_MESSAGES/django.po
+source_lang = fr
+
+[o:bertrandbordage:p:dezede:r:libretto]
+file_filter = libretto/locale/<lang>/LC_MESSAGES/django.po
+source_file = libretto/locale/fr/LC_MESSAGES/django.po
+source_lang = fr
+
+[o:bertrandbordage:p:dezede:r:range_slider]
+file_filter = range_slider/locale/<lang>/LC_MESSAGES/django.po
+source_file = range_slider/locale/fr/LC_MESSAGES/django.po
+source_lang = fr
+

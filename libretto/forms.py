@@ -328,21 +328,6 @@ class SaisonForm(ModelForm):
         return data
 
 
-SAISON_SELECT = """
-<div class="form-group btn-group btn-group-justified" data-toggle="buttons">
-  <label class="radio-inline btn btn-default{% if not by_season %} active{% endif %}">
-    <input name="par_saison" type="radio" autocomplete="off" disabled />
-    {{ _('Par année civile') }}
-  </label>
-  <label class="radio-inline btn btn-default{% if by_season %} active{% endif %}">
-    <input name="par_saison", type="radio"
-    autocomplete="off" value="True" {% if by_season %}checked {% endif %}/>
-    {{ _('Par saison') }}
-  </label>
-</div>
-"""
-
-
 class EvenementListForm(Form):
     q = CharField(label=_('Recherche libre'), required=False)
     dates = RangeSliderField(required=False)
@@ -357,6 +342,20 @@ class EvenementListForm(Form):
         'ensemble', required=False, label=_('Ensemble'), help_text='')
 
     def __init__(self, *args, **kwargs):
+        saison_select = """
+            <div class="form-group btn-group btn-group-justified" data-toggle="buttons">
+              <label class="radio-inline btn btn-default{%% if not by_season %%} active{%% endif %%}">
+                <input name="par_saison" type="radio" autocomplete="off" disabled />
+                %s
+              </label>
+              <label class="radio-inline btn btn-default{%% if by_season %%} active{%% endif %%}">
+                <input name="par_saison", type="radio"
+                autocomplete="off" value="True" {%% if by_season %%}checked {%% endif %%}/>
+                %s
+              </label>
+            </div>
+            """ % (_('Par année civile'), _('Par saison'))
+
         queryset = kwargs.pop('queryset')
 
         self.helper = FormHelper()
@@ -366,7 +365,7 @@ class EvenementListForm(Form):
             Field('q', css_class='input-lg'),
             HTML('<hr/>'),
             'dates',
-            HTML(SAISON_SELECT),
+            HTML(saison_select),
             HTML('<hr/>'),
             'lieu', 'oeuvre', 'individu', 'ensemble',
             HTML('<hr/>'),
@@ -384,8 +383,10 @@ class EvenementListForm(Form):
 
 
 class LieuAdminForm(ModelForm):
-    latitude = FloatField(min_value=-90, max_value=90, required=False)
-    longitude = FloatField(min_value=-180, max_value=180, required=False)
+    latitude = FloatField(
+        min_value=-90, max_value=90, required=False, label=_('latitude'))
+    longitude = FloatField(
+        min_value=-180, max_value=180, required=False, label=_('longitude'))
 
     class Meta:
         model = Lieu
