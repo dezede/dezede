@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-11 18:55+0200\n"
+"POT-Creation-Date: 2023-06-05 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,20 +18,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: utils/export.py:65
+#: common/utils/export.py:61
 msgid ""
 "Un export de votre part est déjà en cours. Veuillez attendre la fin de celui-"
 "ci avant d’en lancer un autre."
 msgstr ""
 
-#: utils/export.py:73
+#: common/utils/export.py:69
 #, python-format
 msgid ""
 "La génération de l’export %s %s est en cours. Un courriel le contenant vous "
 "sera envoyé d’ici quelques minutes."
 msgstr ""
 
-#: utils/export.py:79
+#: common/utils/export.py:75
 #, python-format
 msgid ""
 "\n"
@@ -49,12 +49,12 @@ msgid ""
 "    "
 msgstr ""
 
-#: utils/export.py:93
+#: common/utils/export.py:89
 #, python-format
 msgid "[Dezède] Export %s"
 msgstr ""
 
-#: utils/export.py:101
+#: common/utils/export.py:97
 #, python-format
 msgid ""
 "\n"
@@ -73,31 +73,36 @@ msgid ""
 "    "
 msgstr ""
 
-#: utils/export.py:116
+#: common/utils/export.py:112
 #, python-format
 msgid "[Dezède] Échec de l’export %s"
 msgstr ""
 
-#: utils/html.py:32
+#: common/utils/file.py:144
+#, python-format
+msgid "« %s » n’est pas un fichier valide."
+msgstr ""
+
+#: common/utils/html.py:28
 msgid "er"
 msgstr ""
 
-#: utils/text.py:40 utils/text.py:70
+#: common/utils/text.py:36 common/utils/text.py:66
 msgctxt "infix d’une liste"
 msgid ", "
 msgstr ""
 
-#: utils/text.py:75
+#: common/utils/text.py:71
 msgctxt "dernier infix pour plus de 2 éléments"
 msgid " et "
 msgstr ""
 
-#: utils/text.py:78
+#: common/utils/text.py:74
 msgctxt "dernier infix pour 2 éléments"
 msgid " et "
 msgstr ""
 
-#: utils/text.py:88
+#: common/utils/text.py:84
 #, python-format
 msgid "Exemple : %(pre)s« %(txt)s »%(post)s."
 msgstr ""

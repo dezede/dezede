@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 23:49+0200\n"
+"POT-Creation-Date: 2023-06-05 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,14 +18,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: admin.py:12
+#: exporter/admin.py:9
 msgid "Exporter en CSV"
 msgstr ""
 
-#: admin.py:20
+#: exporter/admin.py:17
 msgid "Exporter en XLSX"
 msgstr ""
 
-#: admin.py:28
+#: exporter/admin.py:25
 msgid "Exporter en JSON"
 msgstr ""
