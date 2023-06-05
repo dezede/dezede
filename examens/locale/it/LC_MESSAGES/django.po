@@ -2,22 +2,24 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+# Translators:
+# Rosalba Agresta <rosalbagresta@gmail.com>, 2016
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-11 19:33+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2016-06-25 00:51+0200\n"
+"PO-Revision-Date: 2016-06-24 22:26+0000\n"
 "Last-Translator: Rosalba Agresta <rosalbagresta@gmail.com>, 2016\n"
-"Language-Team: Italian (https://www.transifex.com/bertrandbordage/"
-"teams/11498/it/)\n"
-"Language: it\n"
+"Language-Team: Italian (https://app.transifex.com/bertrandbordage/teams/11498/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: it\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: admin.py:39 models.py:162
 msgid "note"
@@ -123,7 +125,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Tappa %(level_number)s su %(max_level_number)s"
+"Tappa%(level_number)s su %(max_level_number)s"
 
 #: templates/examens/source.html:28
 msgid "Instructions"
@@ -170,12 +172,14 @@ msgid "Caractère en trop"
 msgid_plural "Caractères en trop"
 msgstr[0] "Carattere di troppo"
 msgstr[1] "Caratteri di troppo"
+msgstr[2] "Caratteri di troppo"
 
 #: utils.py:56
 msgid "Caractère manquant"
 msgid_plural "Caractères manquants"
 msgstr[0] "Carattere mancante"
 msgstr[1] "Caratteri mancanti"
+msgstr[2] "Caratteri mancanti"
 
 #: utils.py:58
 msgid "Sic manquant"
