@@ -164,15 +164,19 @@ msgstr ""
 
 #: utils.py:54
 msgid "Caractère en trop"
-msgid_plural "Caractères en trop"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
+
+#: utils.py:54
+msgid "Caractères en trop"
+msgstr ""
 
 #: utils.py:56
 msgid "Caractère manquant"
-msgid_plural "Caractères manquants"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
+
+#: utils.py:56
+msgid "Caractères manquants"
+msgstr ""
 
 #: utils.py:58
 msgid "Sic manquant"

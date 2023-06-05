@@ -443,41 +443,25 @@ msgstr "Back to Top"
 msgid "Dossier suivant"
 msgstr "Next dossier"
 
-#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:10
-msgid ""
-"\n"
-"              Éditeur scientifique\n"
-"            "
-msgid_plural ""
-"\n"
-"              Éditeurs scientifiques\n"
-"            "
-msgstr[0] ""
-"\n"
-"Scientific editor"
-msgstr[1] ""
-"\n"
-"Scientific editors"
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:8
+msgid "Éditeur scientifique"
+msgstr "Scientific editor"
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:8
+msgid "Éditeurs scientifiques"
+msgstr "Scientific editors"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:23
 msgid "Dans ce dossier"
 msgstr "In this dossier"
 
-#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:38
-msgid ""
-"\n"
-"              Contributeur\n"
-"            "
-msgid_plural ""
-"\n"
-"              Contributeurs\n"
-"            "
-msgstr[0] ""
-"\n"
-"Contributor"
-msgstr[1] ""
-"\n"
-"Contributors"
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:34
+msgid "Contributeur"
+msgstr "Contributor"
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:34
+msgid "Contributeurs"
+msgstr "Contributors"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:47
 #: dossiers/templates/dossiers/opera_comique_presentation.html:18
@@ -557,11 +541,7 @@ msgstr "Archives de l’Opéra Comique"
 msgid "Archives"
 msgstr "Archives"
 
-#: dossiers/templates/dossiers/opera_comique_presentation.html:13
-msgid "Éditeur scientifique"
-msgstr "Scientific editor"
-
-#: dossiers/templates/dossiers/opera_comique_presentation.html:19
+#: templates/dossiers/opera_comique_presentation.html:19
 msgid "13 novembre 2014"
 msgstr ""
 

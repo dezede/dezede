@@ -169,17 +169,19 @@ msgstr "Formateo erróneo"
 
 #: utils.py:54
 msgid "Caractère en trop"
-msgid_plural "Caractères en trop"
-msgstr[0] "Sobra un carácter"
-msgstr[1] "Sobran caracteres"
-msgstr[2] "Sobran caracteres"
+msgstr "Sobra un carácter"
+
+#: utils.py:54
+msgid "Caractères en trop"
+msgstr "Sobran caracteres"
 
 #: utils.py:56
 msgid "Caractère manquant"
-msgid_plural "Caractères manquants"
-msgstr[0] "Falta un carácter"
-msgstr[1] "Faltan caracteres"
-msgstr[2] "Faltan caracteres"
+msgstr "Falta un carácter"
+
+#: utils.py:56
+msgid "Caractères manquants"
+msgstr "Faltan caracteres"
 
 #: utils.py:58
 msgid "Sic manquant"

@@ -173,15 +173,19 @@ msgstr "Bad formatting"
 
 #: examens/utils.py:46
 msgid "Caractère en trop"
-msgid_plural "Caractères en trop"
-msgstr[0] "Extra character"
-msgstr[1] "Extra characters"
+msgstr "Extra character"
+
+#: utils.py:54
+msgid "Caractères en trop"
+msgstr "Extra characters"
 
 #: examens/utils.py:48
 msgid "Caractère manquant"
-msgid_plural "Caractères manquants"
-msgstr[0] "Missing character"
-msgstr[1] "Missing characters"
+msgstr "Missing character"
+
+#: utils.py:56
+msgid "Caractères manquants"
+msgstr "Missing characters"
 
 #: examens/utils.py:50
 msgid "Sic manquant"

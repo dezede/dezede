@@ -5,7 +5,7 @@ import re
 
 from bs4 import BeautifulSoup, NavigableString
 from django.utils.encoding import force_text
-from django.utils.translation import ungettext, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 from common.utils.text import remove_diacritics
 
@@ -43,10 +43,8 @@ PENALITIES = {
 }
 PENALITIES_MESSAGES = {
     FORMATTING_ERROR: _('Mauvais formatage'),
-    EXTRA_ERROR: lambda n: ungettext('Caractère en trop',
-                                     'Caractères en trop', n),
-    MISSING_ERROR: lambda n: ungettext('Caractère manquant',
-                                       'Caractères manquants', n),
+    EXTRA_ERROR: lambda n: _('Caractère en trop') if n < 1 else _('Caractères en trop'),
+    MISSING_ERROR: lambda n: _('Caractère manquant') if n < 1 else _('Caractères manquants'),
     MISSING_SIC_ERROR: _('Sic manquant'),
     CASE_ERROR: _('Mauvaise casse'),
     DIACRITIC_ERROR: _('Mauvais accent'),

@@ -439,46 +439,23 @@ msgid "Dossier suivant"
 msgstr "Dossier successivo"
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:8
-msgid ""
-"\n"
-"          Éditeur scientifique\n"
-"        "
-msgid_plural ""
-"\n"
-"          Éditeurs scientifiques\n"
-"        "
-msgstr[0] ""
-"\n"
-"Editore scientifico"
-msgstr[1] ""
-"\n"
-"Editori scientifici"
-msgstr[2] ""
-"\n"
-"Editori scientifici"
+msgid "Éditeur scientifique"
+msgstr "Editore scientifico"
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:8
+msgid "Éditeurs scientifiques"
+msgstr "Editori scientifici"
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:19
 msgid "Dans ce dossier"
 msgstr "In questo dossier"
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:34
-msgid ""
-"\n"
-"              Contributeur\n"
-"            "
-msgid_plural ""
-"\n"
-"              Contributeurs\n"
-"            "
-msgstr[0] ""
-"\n"
-"Contributore"
-msgstr[1] ""
-"\n"
-"Contributori"
-msgstr[2] ""
-"\n"
-"Contributori"
+msgid "Contributeur"
+msgstr "Contributore"
+
+msgid "Contributeurs"
+msgstr "Contributori"
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:43
 #: templates/dossiers/opera_comique_presentation.html:18
@@ -532,10 +509,6 @@ msgstr "Archivi dell'Opéra Comique"
 #: templates/dossiers/opera_comique_base.html:38
 msgid "Archives"
 msgstr "Archivi"
-
-#: templates/dossiers/opera_comique_presentation.html:13
-msgid "Éditeur scientifique"
-msgstr "Editore scientifico"
 
 #: templates/dossiers/opera_comique_presentation.html:19
 msgid "13 novembre 2014"

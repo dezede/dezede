@@ -169,17 +169,19 @@ msgstr "Formattazione sbagliata"
 
 #: utils.py:54
 msgid "Caractère en trop"
-msgid_plural "Caractères en trop"
-msgstr[0] "Carattere di troppo"
-msgstr[1] "Caratteri di troppo"
-msgstr[2] "Caratteri di troppo"
+msgstr "Carattere di troppo"
+
+#: utils.py:54
+msgid "Caractères en trop"
+msgstr "Caratteri di troppo"
 
 #: utils.py:56
 msgid "Caractère manquant"
-msgid_plural "Caractères manquants"
-msgstr[0] "Carattere mancante"
-msgstr[1] "Caratteri mancanti"
-msgstr[2] "Caratteri mancanti"
+msgstr "Carattere mancante"
+
+#: utils.py:56
+msgid "Caractères manquants"
+msgstr "Caratteri mancanti"
 
 #: utils.py:58
 msgid "Sic manquant"

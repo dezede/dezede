@@ -7,11 +7,11 @@
       {% if editeurs_count %}
         <dl class="auto-links">
           <dt>
-            {% blocktrans count counter=editeurs_count %}
-              Éditeur scientifique
-            {% plural %}
-              Éditeurs scientifiques
-            {% endblocktrans %}
+            {% if editeurs_count < 2 %}
+              {% trans 'Éditeur scientifique' %}
+            {% else %}
+              {% trans 'Éditeurs scientifiques' %}
+            {% endif %}
           </dt>{# Auteur(s) pour revue #}
           <dd>{{ object.editeurs_scientifiques.html }}</dd>
         </dl>
@@ -35,11 +35,11 @@
       {% with n_contributors=object.get_contributors.count %}
         {% if n_contributors %}
           <dt>
-            {% blocktrans count counter=n_contributors %}
-              Contributeur
-            {% plural %}
-              Contributeurs
-            {% endblocktrans %}
+            {% if n_contributors < 2 %}
+              {% trans 'Contributeur' %}
+            {% else %}
+              {% trans 'Contributeurs' %}
+            {% endif %}
           </dt>{# Supprimé dans revue #}
           <dd>{{ object.get_contributors.html }}</dd>
         {% endif %}

@@ -171,15 +171,19 @@ msgstr "Falsches Format"
 
 #: utils.py:54
 msgid "Caractère en trop"
-msgid_plural "Caractères en trop"
-msgstr[0] "Ein Zeichen zu viel"
-msgstr[1] "Zu viele Zeichen"
+msgstr "Ein Zeichen zu viel"
+
+#: utils.py:54
+msgid "Caractères en trop"
+msgstr "Zu viele Zeichen"
 
 #: utils.py:56
 msgid "Caractère manquant"
-msgid_plural "Caractères manquants"
-msgstr[0] "Fehlendes Zeichen"
-msgstr[1] "Fehlende Zeichen"
+msgstr "Fehlendes Zeichen"
+
+#: utils.py:56
+msgid "Caractères manquants"
+msgstr "Fehlende Zeichen"
 
 #: utils.py:58
 msgid "Sic manquant"

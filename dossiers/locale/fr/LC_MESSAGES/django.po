@@ -398,32 +398,24 @@ msgid "Dossier suivant"
 msgstr ""
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:10
-msgid ""
-"\n"
-"              Éditeur scientifique\n"
-"            "
-msgid_plural ""
-"\n"
-"              Éditeurs scientifiques\n"
-"            "
-msgstr[0] ""
-msgstr[1] ""
+msgid "Éditeur scientifique"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:10
+msgid "Éditeurs scientifiques"
+msgstr ""
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:23
 msgid "Dans ce dossier"
 msgstr ""
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:38
-msgid ""
-"\n"
-"              Contributeur\n"
-"            "
-msgid_plural ""
-"\n"
-"              Contributeurs\n"
-"            "
-msgstr[0] ""
-msgstr[1] ""
+msgid "Contributeur"
+msgstr ""
+
+#: templates/dossiers/dossierdevenements_detail_sidebar.html:38
+msgid "Contributeurs"
+msgstr ""
 
 #: templates/dossiers/dossierdevenements_detail_sidebar.html:47
 #: templates/dossiers/opera_comique_presentation.html:18
@@ -501,10 +493,6 @@ msgstr ""
 
 #: templates/dossiers/opera_comique_base.html:38
 msgid "Archives"
-msgstr ""
-
-#: templates/dossiers/opera_comique_presentation.html:13
-msgid "Éditeur scientifique"
 msgstr ""
 
 #: templates/dossiers/opera_comique_presentation.html:19
