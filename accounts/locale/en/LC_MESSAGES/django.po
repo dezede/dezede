@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Bertrand Bordage <bordage.bertrand@gmail.com>, 2012
 # Diane Tisdall <diane.tisdall@kcl.ac.uk>, 2016
@@ -11,235 +11,262 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 23:30+0200\n"
+"POT-Creation-Date: 2023-06-05 17:09+0200\n"
 "PO-Revision-Date: 2012-10-06 19:01+0000\n"
 "Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
-"Language-Team: English (http://app.transifex.com/bertrandbordage/dezede/language/en/)\n"
+"Language-Team: English (http://app.transifex.com/bertrandbordage/dezede/"
+"language/en/)\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:56
+#: accounts/admin.py:59
 msgid "Informations personnelles"
 msgstr "Personal information"
 
-#: admin.py:61 templates/accounts/hierarchicuser_detail.html:32
+#: accounts/admin.py:64
+#: accounts/templates/accounts/hierarchicuser_detail.html:32
 msgid "Autorité associée"
 msgstr "Linked authority file"
 
-#: admin.py:63
+#: accounts/admin.py:66
 msgid "À saisir s’il existe une autorité sur vous dans la base de données."
 msgstr "Fill in if there's an authority file on you in the database."
 
-#: admin.py:66
+#: accounts/admin.py:69
 msgid "Responsabilité scientifique"
 msgstr "Scientific director"
 
-#: admin.py:68
+#: accounts/admin.py:71
 msgid "Informations complémentaires"
 msgstr "Additional information"
 
-#: admin.py:71
+#: accounts/admin.py:74
 msgid "Permissions"
 msgstr "Permissions"
 
-#: admin.py:74
+#: accounts/admin.py:77
 msgid "Important dates"
 msgstr "Important dates"
 
-#: forms.py:27
+#: accounts/forms.py:24
 msgid "Prénom(s)"
 msgstr "first name(s)"
 
-#: forms.py:28
+#: accounts/forms.py:25
 msgid "Nom"
 msgstr "Surname"
 
-#: forms.py:30
+#: accounts/forms.py:26
 msgid "Responsable"
 msgstr "Manager"
 
-#: forms.py:32
+#: accounts/forms.py:28
 msgid "Souhaite devenir responsable scientifique"
 msgstr "Wish to become scientific director"
 
-#: forms.py:35
+#: accounts/forms.py:31
 msgid "Groupes"
 msgstr "Groups"
 
-#: forms.py:52
+#: accounts/forms.py:48
 msgid "Responsable scientifique"
 msgstr "Scientific director"
 
-#: forms.py:59
+#: accounts/forms.py:55
 msgid "Enregistrer"
 msgstr "Register"
 
-#: forms.py:60
+#: accounts/forms.py:56
 msgid "Réinitialiser"
 msgstr "Reset"
 
-#: forms.py:72
+#: accounts/forms.py:68
 msgid "[Dezède] Demande de responsabilité scientifique"
 msgstr "[Dezède] Request for scientific responsibility"
 
-#: forms.py:94 templates/account/login.html:5
+#: accounts/forms.py:90 accounts/templates/account/login.html:5
 msgid "Sign In"
 msgstr "Sign in"
 
-#: models.py:90
+#: accounts/models.py:74
 msgid "afficher l’email"
 msgstr "display email"
 
-#: models.py:91
+#: accounts/models.py:75
 msgid "site internet"
 msgstr "website"
 
-#: models.py:93
+#: accounts/models.py:77
 msgid "nom affiché du site internet"
 msgstr "Website display name"
 
-#: models.py:96
+#: accounts/models.py:80
 msgid "personne morale"
 msgstr "legal entity"
 
-#: models.py:97
+#: accounts/models.py:81
 msgid "Cochez si vous êtes une institution ou un ensemble."
 msgstr "Tick if you are an institution or an ensemble."
 
-#: models.py:101
+#: accounts/models.py:85
 msgid "type d’autorité associée"
 msgstr "type of linked authority record"
 
-#: models.py:102
+#: accounts/models.py:86
 msgid "identifiant de l’autorité associée"
 msgstr "lD of linked authority record"
 
-#: models.py:108 views.py:237
+#: accounts/models.py:92 accounts/views.py:279
 msgid "responsable scientifique"
 msgstr "scientific director"
 
-#: models.py:111
+#: accounts/models.py:98
 msgid "Veut être responsable scientifique"
 msgstr "Would like to be scientific director"
 
-#: models.py:113
+#: accounts/models.py:100
 msgid "photographie d’identité"
 msgstr "ID photo"
 
-#: models.py:117
+#: accounts/models.py:104
 msgid "présentation"
 msgstr "presentation"
 
-#: models.py:118
+#: accounts/models.py:105
 msgid "fonctions au sein de l’équipe"
 msgstr "functions in the team"
 
-#: models.py:120
+#: accounts/models.py:107
 msgid "publications"
 msgstr "publications"
 
-#: models.py:130
+#: accounts/models.py:113
 msgid "utilisateur"
 msgstr "user"
 
-#: models.py:131
+#: accounts/models.py:114
 msgid "utilisateurs"
 msgstr "users"
 
-#: templates/account/login.html:11
+#: accounts/templates/account/account_inactive.html:6
+msgid "Account Inactive"
+msgstr ""
+
+#: accounts/templates/account/account_inactive.html:10
+msgid "This account is inactive."
+msgstr ""
+
+#: accounts/templates/account/login.html:11
 #, python-format
 msgid ""
 "\n"
 "      Si vous ne possédez pas encore de compte,\n"
 "      <a href=\"%(signup_url)s\">veuillez en créer un</a> d’abord.\n"
 "    "
-msgstr "\nIf you still do not have an account,\n<a href=\"%(signup_url)s\">please create one</a> first."
+msgstr ""
+"\n"
+"If you still do not have an account,\n"
+"<a href=\"%(signup_url)s\">please create one</a> first."
 
-#: templates/account/password_change.html:6
-#: templates/account/password_change.html:14
-#: templates/account/password_reset_from_key.html:10
-#: templates/account/password_reset_from_key_done.html:5
+#: accounts/templates/account/password_change.html:6
+#: accounts/templates/account/password_change.html:14
+#: accounts/templates/account/password_reset_from_key.html:10
+#: accounts/templates/account/password_reset_from_key_done.html:5
 msgid "Change Password"
 msgstr "Change Password"
 
-#: templates/account/password_reset.html:6
-#: templates/account/password_reset_done.html:6
+#: accounts/templates/account/password_reset.html:6
+#: accounts/templates/account/password_reset_done.html:6
 msgid "Password Reset"
 msgstr "Password Reset"
 
-#: templates/account/password_reset.html:16
+#: accounts/templates/account/password_reset.html:16
 msgid ""
-"Forgotten your password? Enter your e-mail address below, and we'll send you"
-" an e-mail allowing you to reset it."
-msgstr "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail to reset it."
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
+msgstr ""
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail to reset it."
 
-#: templates/account/password_reset.html:21
+#: accounts/templates/account/password_reset.html:21
 msgid "Reset My Password"
 msgstr "Reset my password"
 
-#: templates/account/password_reset.html:24
+#: accounts/templates/account/password_reset.html:24
 msgid "Please contact us if you have any trouble resetting your password."
 msgstr "Please contact us if you have any trouble resetting your password."
 
-#: templates/account/password_reset_done.html:15
+#: accounts/templates/account/password_reset_done.html:15
 msgid ""
 "We have sent you an e-mail. Please contact us if you do not receive it "
 "within a few minutes."
-msgstr "We have sent you an e-mail. Please contact us if you do not receive it within a few minutes."
+msgstr ""
+"We have sent you an e-mail. Please contact us if you do not receive it "
+"within a few minutes."
 
-#: templates/account/password_reset_from_key.html:8
+#: accounts/templates/account/password_reset_from_key.html:8
 msgid "Bad Token"
 msgstr "Bad token"
 
-#: templates/account/password_reset_from_key.html:19
+#: accounts/templates/account/password_reset_from_key.html:19
 #, python-format
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
-"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
-"reset</a>."
-msgstr "The password reset link was invalid, possibly because it has already been used. Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
+msgstr ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
 
-#: templates/account/password_reset_from_key.html:25
+#: accounts/templates/account/password_reset_from_key.html:25
 msgid "change password"
 msgstr "change password"
 
-#: templates/account/password_reset_from_key.html:28
-#: templates/account/password_reset_from_key_done.html:9
+#: accounts/templates/account/password_reset_from_key.html:28
+#: accounts/templates/account/password_reset_from_key_done.html:9
 msgid "Your password is now changed."
 msgstr "Your password is now changed."
 
-#: templates/account/signup.html:5
+#: accounts/templates/account/signup.html:5
 msgid "Sign Up"
 msgstr "Sign up"
 
-#: templates/account/signup.html:11
+#: accounts/templates/account/signup.html:11
 #, python-format
 msgid ""
 "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
-msgstr "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+"Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
 
-#: templates/account/verification_sent.html:7
+#: accounts/templates/account/verification_sent.html:7
 msgid "Vérification de votre adresse e-mail"
 msgstr "Email address verification"
 
-#: templates/account/verification_sent.html:14
+#: accounts/templates/account/verification_sent.html:14
 msgid ""
 "\n"
 "      Nous vous avons envoyé un e-mail de vérification.\n"
-"      Suivez le lien fourni pour finaliser la procédure de création de compte.\n"
+"      Suivez le lien fourni pour finaliser la procédure de création de "
+"compte.\n"
 "      Veuillez nous contactez si vous ne le recevez pas\n"
 "      dans les minutes qui viennent.\n"
 "    "
-msgstr "\nYou have been sent a verification email.\nFollow the link provided to finish creating your account.\nPlease contact us if you do not receive it\nin the next few minutes."
+msgstr ""
+"\n"
+"You have been sent a verification email.\n"
+"Follow the link provided to finish creating your account.\n"
+"Please contact us if you do not receive it\n"
+"in the next few minutes."
 
-#: templates/accounts/grant_to_admin.html:7
+#: accounts/templates/accounts/grant_to_admin.html:7
 msgid "Accès à l’interface d’administration"
 msgstr "Access to the administrative interface"
 
-#: templates/accounts/grant_to_admin.html:15
+#: accounts/templates/accounts/grant_to_admin.html:15
 #, python-format
 msgid ""
 "\n"
@@ -249,7 +276,7 @@ msgstr ""
 "\n"
 "The user «%(object)s» is already a member of the team!"
 
-#: templates/accounts/grant_to_admin.html:20
+#: accounts/templates/accounts/grant_to_admin.html:20
 #, python-format
 msgid ""
 "\n"
@@ -270,7 +297,7 @@ msgstr ""
 "change the user %(object.get_full_name)s</a>,\n"
 "untick the box «team status» and save."
 
-#: templates/accounts/grant_to_admin_demand_email.txt:3
+#: accounts/templates/accounts/grant_to_admin_demand_email.txt:3
 #, python-format
 msgid ""
 "\n"
@@ -287,7 +314,7 @@ msgstr ""
 "\n"
 "They request to become part of the group(s):\n"
 
-#: templates/accounts/grant_to_admin_demand_email.txt:16
+#: accounts/templates/accounts/grant_to_admin_demand_email.txt:16
 #, python-format
 msgid ""
 "\n"
@@ -307,84 +334,95 @@ msgstr ""
 "%(change_user_url)s.\n"
 "\n"
 
-#: templates/accounts/granted_to_admin_email.txt:4
+#: accounts/templates/accounts/granted_to_admin_email.txt:4
 #, python-format
 msgid ""
 "\n"
 "Bonjour %(user_first_name)s,\n"
 "\n"
 "Vous venez d’être accepté dans l’équipe de Dezède.\n"
-"Vous êtes donc autorisé à accéder à l’interface d’administration sur %(site_url)s%(admin_index_url)s.\n"
-msgstr "\nHello %(user_first_name)s,\n\nYou have just been accepted into the Dezède team.\nYou are thus authorised to access the administrative interface on %(site_url)s%(admin_index_url)s.\n"
+"Vous êtes donc autorisé à accéder à l’interface d’administration sur "
+"%(site_url)s%(admin_index_url)s.\n"
+msgstr ""
+"\n"
+"Hello %(user_first_name)s,\n"
+"\n"
+"You have just been accepted into the Dezède team.\n"
+"You are thus authorised to access the administrative interface on "
+"%(site_url)s%(admin_index_url)s.\n"
 
-#: templates/accounts/hierarchicuser_detail.html:16
+#: accounts/templates/accounts/hierarchicuser_detail.html:16
 msgid "Présentation"
 msgstr "Presentation"
 
-#: templates/accounts/hierarchicuser_detail.html:22
+#: accounts/templates/accounts/hierarchicuser_detail.html:22
 msgid "Bibliographie"
 msgstr "Bibliography"
 
-#: templates/accounts/hierarchicuser_detail.html:36
+#: accounts/templates/accounts/hierarchicuser_detail.html:36
 msgid "Fonction(s) au sein de l’équipe"
 msgstr "Function(s) in the team"
 
-#: templates/accounts/hierarchicuser_detail.html:40
+#: accounts/templates/accounts/hierarchicuser_detail.html:40
 msgid "À consulter dans Dezède"
 msgstr "Available on Dezède"
 
-#: templates/accounts/hierarchicuser_detail.html:48
+#: accounts/templates/accounts/hierarchicuser_detail.html:48
 msgid "Site internet"
 msgstr "Website"
 
-#: templates/accounts/hierarchicuser_detail.html:52
+#: accounts/templates/accounts/hierarchicuser_detail.html:52
 msgid "Courriel"
 msgstr "Email address"
 
-#: views.py:30
+#: accounts/views.py:28
 msgid "[Dezède] Accès autorisé à l’administration"
 msgstr "[Dezède] Authorised administrative access "
 
-#: views.py:144
+#: accounts/views.py:142
 msgid "Liste des utilisateurs"
 msgstr "List of users"
 
-#: views.py:167
+#: accounts/views.py:165
 msgid "Comité éditorial"
 msgstr "Editorial committee"
 
-#: views.py:184
-msgid "Contributeurs"
-msgstr "Contributors"
+#: accounts/views.py:182
+msgid "Comité scientifique"
+msgstr ""
 
-#: views.py:194
+#: accounts/views.py:224
+msgid "Principaux contributeurs"
+msgstr ""
+
+#: accounts/views.py:234
 msgid "Équipe de développement"
 msgstr "Development team"
 
-#: views.py:205
+#: accounts/views.py:245
 msgid "Propriétaires"
 msgstr "Owners"
 
-#: views.py:214
+#: accounts/views.py:256
 msgid "Partenaires"
 msgstr "Partners"
 
-#: views.py:226
+#: accounts/views.py:268
 msgid "membre"
 msgstr "member"
 
-#: views.py:227
+#: accounts/views.py:269
 msgid "membres"
 msgstr "members"
 
-#: views.py:231
+#: accounts/views.py:273
 msgid "disciple"
 msgstr "follower"
 
-#: views.py:232
+#: accounts/views.py:274
 msgid "disciples"
 msgstr "followers"
 
-#: views.py:235
+#: accounts/views.py:277
 msgid "appartenance"
 msgstr "affiliation"

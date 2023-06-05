@@ -2,124 +2,125 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Bertrand Bordage <bordage.bertrand@gmail.com>, 2016
 # Diane Tisdall <diane.tisdall@kcl.ac.uk>, 2016
 # Yannick Simon <yannick.simon@univ-rouen.fr>, 2016
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-25 00:51+0200\n"
+"POT-Creation-Date: 2023-06-05 17:09+0200\n"
 "PO-Revision-Date: 2016-06-24 22:26+0000\n"
 "Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
-"Language-Team: English (https://app.transifex.com/bertrandbordage/teams/11498/en/)\n"
+"Language-Team: English (https://app.transifex.com/bertrandbordage/"
+"teams/11498/en/)\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:39 models.py:162
+#: examens/admin.py:39 examens/models.py:160
 msgid "note"
 msgstr "score"
 
-#: admin.py:55
+#: examens/admin.py:55
 msgid "niveau actuel"
 msgstr "current level"
 
-#: admin.py:60
+#: examens/admin.py:60
 msgid "note moyenne"
 msgstr "average score"
 
-#: models.py:23
+#: examens/models.py:19
 msgid "numéro"
 msgstr "number"
 
-#: models.py:25
+#: examens/models.py:21
 msgid "message d’aide"
 msgstr "help message"
 
-#: models.py:28
+#: examens/models.py:24
 msgid "sources"
 msgstr "sources"
 
-#: models.py:31 models.py:46 models.py:157
+#: examens/models.py:27 examens/models.py:44 examens/models.py:154
 msgid "niveau"
 msgstr "level"
 
-#: models.py:32
+#: examens/models.py:28
 msgid "niveaux"
 msgstr "levels"
 
-#: models.py:49 models.py:159
+#: examens/models.py:47 examens/models.py:157
 msgid "source"
 msgstr "source"
 
-#: models.py:52
+#: examens/models.py:50
 msgid "source de niveau"
 msgstr "source of level"
 
-#: models.py:53
+#: examens/models.py:51
 msgid "sources de niveau"
 msgstr "sources of level"
 
-#: models.py:75
+#: examens/models.py:72
 msgid "utilisateur"
 msgstr "user"
 
-#: models.py:77
+#: examens/models.py:74
 msgid "session"
 msgstr "session"
 
-#: models.py:84 models.py:155
+#: examens/models.py:81 examens/models.py:151
 msgid "examen passé"
 msgstr "taken exam"
 
-#: models.py:85
+#: examens/models.py:82
 msgid "examens passés"
 msgstr "taken exams"
 
-#: models.py:106
+#: examens/models.py:103
 msgid "est fini"
 msgstr "is complete"
 
-#: models.py:121
+#: examens/models.py:118
 msgid "temps passé"
 msgstr "time spent"
 
-#: models.py:161
+#: examens/models.py:159
 msgid "transcription"
 msgstr "transcription"
 
-#: models.py:164
+#: examens/models.py:162
 msgid "passé"
 msgstr "passed"
 
-#: models.py:165
+#: examens/models.py:163
 msgid "début"
 msgstr "start"
 
-#: models.py:166
+#: examens/models.py:164
 msgid "fin"
 msgstr "end"
 
-#: models.py:172
+#: examens/models.py:170
 msgid "niveau passé"
 msgstr "taken level"
 
-#: models.py:173
+#: examens/models.py:171
 msgid "niveaux passés"
 msgstr "taken levels"
 
-#: templates/examens/source.html:7
+#: examens/templates/examens/source.html:7
 msgid "Formation à la transcription de source"
 msgstr "Source transcription training"
 
-#: templates/examens/source.html:11
+#: examens/templates/examens/source.html:11
 #, python-format
 msgid ""
 "\n"
@@ -130,79 +131,79 @@ msgstr ""
 "      Level %(level_number)s of %(max_level_number)s\n"
 "    "
 
-#: templates/examens/source.html:28
+#: examens/templates/examens/source.html:28
 msgid "Instructions"
 msgstr "Instructions"
 
-#: templates/examens/source.html:33
+#: examens/templates/examens/source.html:33
 msgid "Transcription envoyée"
 msgstr "Transcription sent"
 
-#: templates/examens/source.html:37
+#: examens/templates/examens/source.html:37
 msgid "Très insuffisant"
 msgstr "Very inadequate"
 
-#: templates/examens/source.html:39
+#: examens/templates/examens/source.html:39
 msgid "Insuffisant"
 msgstr "Inadequate"
 
-#: templates/examens/source.html:41
+#: examens/templates/examens/source.html:41
 msgid "Bien ! Plus que quelques erreurs à corriger"
 msgstr "Good ! A few errors left"
 
-#: templates/examens/source.html:43
+#: examens/templates/examens/source.html:43
 msgid "Très bien ! Encore un tout petit effort"
 msgstr "Very good ! Still a little more effort"
 
-#: templates/examens/source.html:52
+#: examens/templates/examens/source.html:52
 msgid "Source à transcrire"
 msgstr "Source to transcribe"
 
-#: templates/examens/source.html:57
+#: examens/templates/examens/source.html:57
 msgid "Transcription"
 msgstr "Transcription"
 
-#: templates/examens/source.html:63
+#: examens/templates/examens/source.html:63
 msgid "Vérifier"
 msgstr "Check"
 
-#: utils.py:53
+#: examens/utils.py:45
 msgid "Mauvais formatage"
 msgstr "Bad formatting"
 
-#: utils.py:54
+#: examens/utils.py:46
 msgid "Caractère en trop"
 msgid_plural "Caractères en trop"
 msgstr[0] "Extra character"
 msgstr[1] "Extra characters"
 
-#: utils.py:56
+#: examens/utils.py:48
 msgid "Caractère manquant"
 msgid_plural "Caractères manquants"
 msgstr[0] "Missing character"
 msgstr[1] "Missing characters"
 
-#: utils.py:58
+#: examens/utils.py:50
 msgid "Sic manquant"
 msgstr "Missing sic"
 
-#: utils.py:59
+#: examens/utils.py:51
 msgid "Mauvaise casse"
 msgstr "Wrong case"
 
-#: utils.py:60
+#: examens/utils.py:52
 msgid "Mauvais accent"
 msgstr "Wrong diacritic"
 
-#: utils.py:61
+#: examens/utils.py:53
 msgid "Mauvaise casse et accent"
 msgstr "Wrong case and diacritic"
 
-#: utils.py:62
+#: examens/utils.py:54
 msgid "Caractère erroné"
 msgstr "Wrong character"
 
-#: views.py:49
+#: examens/views.py:46
 msgid ""
 "Félicitations ! La transcription était parfaite <i class=\"fa fa-smile-o\"></"
 "i>"
@@ -210,7 +211,7 @@ msgstr ""
 "Congratulations! The transcription was perfect <i class=\"fa fa-smile-o\"></"
 "i>"
 
-#: views.py:58
+#: examens/views.py:55
 msgid ""
 "Excellent, vous avez fini toutes les étapes ! Vous pouvez maintenant créer "
 "un compte utilisateur si vous n’en possédez pas."
