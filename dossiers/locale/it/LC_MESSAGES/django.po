@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 18:20+0200\n"
+"POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2016-06-24 22:21+0000\n"
 "Last-Translator: Rosalba Agresta <rosalbagresta@gmail.com>, 2016\n"
 "Language-Team: Italian (https://app.transifex.com/bertrandbordage/"
@@ -172,6 +172,14 @@ msgstr "8. Entrate"
 msgid "du dossier « %s »"
 msgstr "del dossier « %s »"
 
+#: dossiers/models.py:24
+msgid "nom"
+msgstr ""
+
+#: dossiers/models.py:25 dossiers/models.py:67
+msgid "position"
+msgstr "posizione"
+
 #: dossiers/models.py:29
 msgid "catégorie de dossiers"
 msgstr "categoria di dossiers"
@@ -207,10 +215,6 @@ msgstr "Utilizzato per il breadcrumb."
 #: dossiers/models.py:64
 msgid "parent"
 msgstr "parente"
-
-#: dossiers/models.py:67
-msgid "position"
-msgstr "posizione"
 
 #: dossiers/models.py:69
 msgid "Personnaliser l’affichage du titre du dossier dans l’adresse URL."

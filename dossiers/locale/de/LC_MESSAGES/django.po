@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 18:16+0200\n"
+"POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2016-06-24 22:21+0000\n"
 "Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
 "Language-Team: German (https://app.transifex.com/bertrandbordage/teams/11498/"
@@ -172,6 +172,14 @@ msgstr "8. Einnahmen"
 msgid "du dossier « %s »"
 msgstr "des Dossiers \"%s\""
 
+#: dossiers/models.py:24
+msgid "nom"
+msgstr ""
+
+#: dossiers/models.py:25 dossiers/models.py:67
+msgid "position"
+msgstr "Position"
+
 #: dossiers/models.py:29
 msgid "catégorie de dossiers"
 msgstr "Dossier-Kategorie"
@@ -207,10 +215,6 @@ msgstr "Für die Brotkrumennavigation verwendet."
 #: dossiers/models.py:64
 msgid "parent"
 msgstr "Verwandtschaft"
-
-#: dossiers/models.py:67
-msgid "position"
-msgstr "Position"
 
 #: dossiers/models.py:69
 msgid "Personnaliser l’affichage du titre du dossier dans l’adresse URL."

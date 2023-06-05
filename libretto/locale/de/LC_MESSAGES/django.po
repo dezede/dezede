@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 18:16+0200\n"
+"POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2012-10-06 18:55+0000\n"
 "Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
 "Language-Team: German (http://app.transifex.com/bertrandbordage/dezede/"
@@ -218,11 +218,11 @@ msgstr "Dateien"
 msgid "rendu"
 msgstr "Anzeige"
 
-#: libretto/export.py:55
+#: libretto/export.py:55 libretto/forms.py:389
 msgid "longitude"
 msgstr "Längengrad"
 
-#: libretto/export.py:56
+#: libretto/export.py:56 libretto/forms.py:387
 msgid "latitude"
 msgstr "Breitengrad"
 
@@ -409,31 +409,41 @@ msgstr "Die Dauer einer Spielzeit kann nicht ein Jahr überschreiten."
 msgid "Une saison existe déjà sur cette période pour « %s »."
 msgstr "In dieser Zeitspanne besteht bereits eine Spielzeit für \"%s\"."
 
-#: libretto/forms.py:347
+#: libretto/forms.py:332
 msgid "Recherche libre"
 msgstr "Freitextsuche"
 
-#: libretto/forms.py:350
+#: libretto/forms.py:335
 msgid "Lieu"
 msgstr "Ort"
 
-#: libretto/forms.py:353
+#: libretto/forms.py:338
 msgid "Œuvre"
 msgstr "Werk"
 
-#: libretto/forms.py:355
+#: libretto/forms.py:340
 msgid "Individu"
 msgstr "Person"
 
-#: libretto/forms.py:357
+#: libretto/forms.py:342
 msgid "Ensemble"
 msgstr "Ensemble"
 
-#: libretto/forms.py:373
+#: libretto/forms.py:357
+msgid "Par année civile"
+msgstr ""
+
+#: libretto/forms.py:357
+#, fuzzy
+#| msgid "saison"
+msgid "Par saison"
+msgstr "Spielzeit"
+
+#: libretto/forms.py:372
 msgid "Filtrer"
 msgstr "Filtern"
 
-#: libretto/forms.py:374
+#: libretto/forms.py:373
 msgid "Chargement…"
 msgstr "Lädt..."
 

@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 17:09+0200\n"
+"POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2016-06-24 22:21+0000\n"
 "Last-Translator: Joann Élart <joann.elart@univ-rouen.fr>, 2016\n"
 "Language-Team: English (https://app.transifex.com/bertrandbordage/"
@@ -173,6 +173,14 @@ msgstr "8. Revenue"
 msgid "du dossier « %s »"
 msgstr "dossier « %s »"
 
+#: dossiers/models.py:24
+msgid "nom"
+msgstr ""
+
+#: dossiers/models.py:25 dossiers/models.py:67
+msgid "position"
+msgstr "position"
+
 #: dossiers/models.py:29
 msgid "catégorie de dossiers"
 msgstr "dossier category"
@@ -207,10 +215,6 @@ msgstr "Used for the flatplan."
 #: dossiers/models.py:64
 msgid "parent"
 msgstr "parent"
-
-#: dossiers/models.py:67
-msgid "position"
-msgstr "position"
 
 #: dossiers/models.py:69
 msgid "Personnaliser l’affichage du titre du dossier dans l’adresse URL."
@@ -443,11 +447,12 @@ msgstr "Back to Top"
 msgid "Dossier suivant"
 msgstr "Next dossier"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:8
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:11
+#: dossiers/templates/dossiers/opera_comique_presentation.html:13
 msgid "Éditeur scientifique"
 msgstr "Scientific editor"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:8
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:13
 msgid "Éditeurs scientifiques"
 msgstr "Scientific editors"
 
@@ -455,11 +460,11 @@ msgstr "Scientific editors"
 msgid "Dans ce dossier"
 msgstr "In this dossier"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:34
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:39
 msgid "Contributeur"
 msgstr "Contributor"
 
-#: templates/dossiers/dossierdevenements_detail_sidebar.html:34
+#: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:41
 msgid "Contributeurs"
 msgstr "Contributors"
 
@@ -541,7 +546,7 @@ msgstr "Archives de l’Opéra Comique"
 msgid "Archives"
 msgstr "Archives"
 
-#: templates/dossiers/opera_comique_presentation.html:19
+#: dossiers/templates/dossiers/opera_comique_presentation.html:19
 msgid "13 novembre 2014"
 msgstr ""
 

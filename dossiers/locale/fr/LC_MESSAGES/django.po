@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 18:11+0200\n"
+"POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -167,6 +167,14 @@ msgstr ""
 msgid "du dossier « %s »"
 msgstr ""
 
+#: dossiers/models.py:24
+msgid "nom"
+msgstr ""
+
+#: dossiers/models.py:25 dossiers/models.py:67
+msgid "position"
+msgstr ""
+
 #: dossiers/models.py:29
 msgid "catégorie de dossiers"
 msgstr ""
@@ -199,10 +207,6 @@ msgstr ""
 
 #: dossiers/models.py:64
 msgid "parent"
-msgstr ""
-
-#: dossiers/models.py:67
-msgid "position"
 msgstr ""
 
 #: dossiers/models.py:69

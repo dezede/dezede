@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 17:09+0200\n"
+"POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2016-06-24 22:26+0000\n"
 "Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
 "Language-Team: English (https://app.transifex.com/bertrandbordage/"
@@ -175,35 +175,35 @@ msgstr "Bad formatting"
 msgid "Caractère en trop"
 msgstr "Extra character"
 
-#: utils.py:54
+#: examens/utils.py:46
 msgid "Caractères en trop"
 msgstr "Extra characters"
 
-#: examens/utils.py:48
+#: examens/utils.py:47
 msgid "Caractère manquant"
 msgstr "Missing character"
 
-#: utils.py:56
+#: examens/utils.py:47
 msgid "Caractères manquants"
 msgstr "Missing characters"
 
-#: examens/utils.py:50
+#: examens/utils.py:48
 msgid "Sic manquant"
 msgstr "Missing sic"
 
-#: examens/utils.py:51
+#: examens/utils.py:49
 msgid "Mauvaise casse"
 msgstr "Wrong case"
 
-#: examens/utils.py:52
+#: examens/utils.py:50
 msgid "Mauvais accent"
 msgstr "Wrong diacritic"
 
-#: examens/utils.py:53
+#: examens/utils.py:51
 msgid "Mauvaise casse et accent"
 msgstr "Wrong case and diacritic"
 
-#: examens/utils.py:54
+#: examens/utils.py:52
 msgid "Caractère erroné"
 msgstr "Wrong character"
 
