@@ -459,12 +459,12 @@ class Source(AutoriteModel):
     }
 
     DATA_TYPES_WITH_ICONS = (
-        (VIDEO, _(f'{ICONS[VIDEO]} Vidéo')),
-        (AUDIO, _(f'{ICONS[AUDIO]} Audio')),
-        (IMAGE, _(f'{ICONS[IMAGE]} Image')),
-        (OTHER, _(f'{ICONS[OTHER]} Autre')),
-        (TEXT, _(f'{ICONS[TEXT]} Texte')),
-        (LINK, _(f'{ICONS[LINK]} Lien')),
+        (VIDEO, _('%(icon)s Vidéo') % ICONS[VIDEO]),
+        (AUDIO, _('%(icon)s Audio') % ICONS[AUDIO]),
+        (IMAGE, _('%(icon)s Image') % ICONS[IMAGE]),
+        (OTHER, _('%(icon)s Autre') % ICONS[OTHER]),
+        (TEXT, _('%(icon)s Texte') % ICONS[TEXT]),
+        (LINK, _('%(icon)s Lien') % ICONS[LINK]),
     )
 
     @property
