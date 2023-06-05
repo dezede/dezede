@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Bertrand Bordage <bordage.bertrand@gmail.com>, 2012
 # Diane Tisdall <diane.tisdall@kcl.ac.uk>, 2016
@@ -11,18 +11,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-11 19:35+0200\n"
-"PO-Revision-Date: 2016-10-06 16:47+0000\n"
-"Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>\n"
-"Language-Team: English (http://www.transifex.com/bertrandbordage/dezede/"
-"language/en/)\n"
-"Language: en\n"
+"POT-Creation-Date: 2016-06-25 00:04+0200\n"
+"PO-Revision-Date: 2012-10-06 18:55+0000\n"
+"Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
+"Language-Team: English (http://app.transifex.com/bertrandbordage/dezede/language/en/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:76 models/personnel.py:192
+#: admin.py:76 models/personnel.py:193
 msgid "Période d’activité"
 msgstr "Period of activity"
 
@@ -38,18 +37,18 @@ msgstr "Yes"
 msgid "Non"
 msgstr "No"
 
-#: admin.py:130 models/evenement.py:620 models/oeuvre.py:396
-#: models/source.py:195
+#: admin.py:130 models/evenement.py:633 models/oeuvre.py:404
+#: models/source.py:197 models/source.py:198
 msgid "source"
 msgstr "source"
 
-#: admin.py:134 admin.py:141 admin.py:270 models/evenement.py:613
-#: models/source.py:275 templates/libretto/evenement_item_body.html:14
+#: admin.py:134 admin.py:141 admin.py:270 models/evenement.py:626
+#: models/source.py:277 templates/libretto/evenement_item_body.html:14
 msgid "programme"
 msgstr "programme"
 
-#: admin.py:138 models/evenement.py:545 models/source.py:177
-#: models/source.py:267 templates/libretto/evenement_list.html:6
+#: admin.py:138 models/source.py:179 models/source.py:269
+#: templates/libretto/evenement_list.html:6
 #: templates/routines/evenement_list_def.html:27
 msgid "événements"
 msgstr "events"
@@ -266,11 +265,12 @@ msgstr "sources ↔ places"
 msgid "sources ↔ parties"
 msgstr "sources ↔ parts"
 
-#: export.py:315 models/evenement.py:98 models/evenement.py:312
+#: export.py:315 models/evenement.py:99 models/evenement.py:323
+#: models/evenement.py:325
 msgid "élément de programme"
 msgstr "programme information"
 
-#: export.py:316 models/evenement.py:234
+#: export.py:316 models/evenement.py:242 models/evenement.py:245
 msgid "caractéristique de programme"
 msgstr "feature of programme"
 
@@ -283,7 +283,7 @@ msgstr "programme ↔ features"
 msgid "« %(field)s » ne peut être saisi sans « %(required)s »."
 msgstr "« %(field)s » cannot be inputted without « %(required)s »"
 
-#: forms.py:54 models/oeuvre.py:795
+#: forms.py:54 models/oeuvre.py:803
 #, python-format
 msgid "« %s »"
 msgstr "« %s »"
@@ -312,8 +312,7 @@ msgstr "At least a title, genre, or tempo should be specified."
 
 #: forms.py:179
 msgid "« Type de création » doit être rempli lorsqu’on remplit la création."
-msgstr ""
-"« Type of premiere » should be filled in when filling in the performance."
+msgstr "« Type of premiere » should be filled in when filling in the performance."
 
 #: forms.py:219
 msgid "Vous devez remplir « Individu » ou « Ensemble »."
@@ -323,9 +322,7 @@ msgstr "Fill in « Individual » or « Ensemble »."
 msgid ""
 "Au moins un rôle ou instrument est lié à cette profession. Remplissez donc "
 "« Rôle ou instrument » à la place."
-msgstr ""
-"At least a role or instrument is associated with this occupation. Fill in "
-"thus « Role or instrument ». "
+msgstr "At least a role or instrument is associated with this occupation. Fill in thus « Role or instrument ». "
 
 #: forms.py:250
 msgid "Vous devez remplir au moins « Œuvre », « Autre » ou « Distribution »."
@@ -385,190 +382,181 @@ msgstr "Loading…"
 msgid "de %s événements"
 msgstr "of %s events"
 
-#: models/base.py:51
+#: models/base.py:52
 msgid "En minuscules."
 msgstr "In lowercase."
 
-#: models/base.py:52
+#: models/base.py:53
 msgid ""
 "À remplir si le pluriel n’est pas un simple ajout de « s ». Exemple : « "
 "animal » devient « animaux » et non « animals »."
-msgstr ""
-"To fill in if the plural is not a simple addition of an « s ». E.g.: « "
-"animal » becomes « animaux » and not « animals »."
+msgstr "To fill in if the plural is not a simple addition of an « s ». E.g.: « animal » becomes « animaux » and not « animals »."
 
-#: models/base.py:55
+#: models/base.py:56
 msgid "Exemple : « 14/7/1789 » pour le 14 juillet 1789."
 msgstr "Example: « 14/7/1789 » for 14 July 1789."
 
-#: models/base.py:57
+#: models/base.py:58
 msgid ""
 "Exemple : « 14/7/1789 » pour le 14 juillet 1789. En cas de date "
 "approximative, saisir le premier jour du mois (« 1/10/1678 » pour octobre "
 "1678) ou de l’année (« 1/1/1830 » pour 1830)."
-msgstr ""
-"Example: « 14/7/1789 » for 14 July 1789. In the case of an approximate date, "
-"fill in the first day of the month (« 1/10/1678 » for October 1678) or of "
-"the year (« 1/1/1830 » for 1830)."
+msgstr "Example: « 14/7/1789 » for 14 July 1789. In the case of an approximate date, fill in the first day of the month (« 1/10/1678 » for October 1678) or of the year (« 1/1/1830 » for 1830)."
 
-#: models/base.py:62
+#: models/base.py:63
 msgid ""
 "Ne remplir que si la date est approximative. Par exemple : « 1870 », "
 "« octobre 1812 », « été 1967 »."
-msgstr ""
-"Only fill in if the date is approximate. For example: « 1870 », « October "
-"1812 », « Summer 1967 »."
+msgstr "Only fill in if the date is approximate. For example: « 1870 », « October 1812 », « Summer 1967 »."
 
-#: models/base.py:64
+#: models/base.py:65
 msgid "Exemple : « 19:30 » pour 19h30."
 msgstr "Example: « 19:30 » for 19h30."
 
-#: models/base.py:65
+#: models/base.py:66
 msgid ""
 "Ne remplir que si l’heure est approximative. Par exemple : « matinée », "
 "« soirée »."
-msgstr ""
-"Only fill in if the time is approximate. For example : « morning », « "
-"evening »."
+msgstr "Only fill in if the time is approximate. For example : « morning », « evening »."
 
-#: models/base.py:115
+#: models/base.py:116
 msgid "propriétaire"
 msgstr "owner"
 
-#: models/base.py:179
+#: models/base.py:180
 msgid "a des objets liés"
 msgstr "has linked objects"
 
-#: models/base.py:254 models/base.py:788
+#: models/base.py:255 models/base.py:783 models/base.py:784
 msgid "état"
 msgstr "status"
 
-#: models/base.py:275
+#: models/base.py:276
 msgid "notes publiques"
 msgstr "public notes"
 
-#: models/base.py:276
+#: models/base.py:277
 msgid "notes privées"
 msgstr "private notes"
 
-#: models/base.py:371 models/source.py:233
+#: models/base.py:366 models/source.py:235
 msgid "date"
 msgstr "date"
 
-#: models/base.py:376
+#: models/base.py:371
 msgid "date (approximative)"
 msgstr "date (approx.)"
 
-#: models/base.py:381
+#: models/base.py:376
 msgid "heure"
 msgstr "time"
 
-#: models/base.py:386
+#: models/base.py:381
 msgid "heure (approximative)"
 msgstr "time (approx.)"
 
-#: models/base.py:391 models/source.py:393
+#: models/base.py:386 models/source.py:395
 msgid "lieu"
 msgstr "place"
 
-#: models/base.py:398
+#: models/base.py:393
 msgid "lieu (approximatif)"
 msgstr "place (?)"
 
-#: models/base.py:399
+#: models/base.py:394
 msgid "Ne remplir que si le lieu (ou l’institution) est approximatif(ve)."
 msgstr "Only fill in if the place (or institution) is vague"
 
-#: models/base.py:480
+#: models/base.py:475
 msgid "H\\hi"
 msgstr "H:i"
 
-#: models/base.py:486 models/base.py:487
+#: models/base.py:481 models/base.py:482
 #, python-format
 msgid "%(date)s"
 msgstr "%(date)s"
 
-#: models/base.py:488
+#: models/base.py:483
 #, python-format
 msgid "à %(heure)s"
 msgstr "at %(heure)s"
 
-#: models/base.py:489
+#: models/base.py:484
 #, python-format
 msgid "%(heure)s"
 msgstr "%(heure)s"
 
-#: models/base.py:536 models/base.py:779 models/espace_temps.py:34
-#: models/espace_temps.py:80 models/evenement.py:160 models/oeuvre.py:43
-#: models/oeuvre.py:86 models/personnel.py:32 models/personnel.py:235
-#: models/personnel.py:258 models/source.py:29
+#: models/base.py:531 models/base.py:774 models/espace_temps.py:34
+#: models/espace_temps.py:81 models/evenement.py:163 models/oeuvre.py:44
+#: models/oeuvre.py:88 models/personnel.py:33 models/personnel.py:236
+#: models/personnel.py:260 models/source.py:30
 msgid "nom"
 msgstr "name"
 
-#: models/base.py:538 models/base.py:780 models/espace_temps.py:36
-#: models/evenement.py:162 models/oeuvre.py:45 models/oeuvre.py:89
-#: models/personnel.py:34 models/source.py:31
+#: models/base.py:533 models/base.py:775 models/espace_temps.py:36
+#: models/evenement.py:165 models/oeuvre.py:46 models/oeuvre.py:91
+#: models/personnel.py:35 models/source.py:32
 msgid "nom (au pluriel)"
 msgstr "name (plural)"
 
-#: models/base.py:540
+#: models/base.py:535
 msgid "nom relatif"
 msgstr "relative name"
 
-#: models/base.py:543
+#: models/base.py:538
 msgid "nom relatif (au pluriel)"
 msgstr "relative name (plural)"
 
-#: models/base.py:545 models/evenement.py:164 models/evenement.py:226
-#: models/oeuvre.py:111 models/personnel.py:41 models/personnel.py:211
+#: models/base.py:540 models/evenement.py:167 models/evenement.py:233
+#: models/oeuvre.py:113 models/personnel.py:42 models/personnel.py:212
 msgid "classement"
 msgstr "ranking"
 
-#: models/base.py:623 models/base.py:654
+#: models/base.py:618 models/base.py:649 models/base.py:650
 msgid "fichier"
 msgstr "file"
 
-#: models/base.py:624 models/source.py:160 models/source.py:245
+#: models/base.py:619 models/source.py:162 models/source.py:247
 msgid "folio"
 msgstr "folio"
 
-#: models/base.py:625 models/source.py:162 models/source.py:247
+#: models/base.py:620 models/source.py:164 models/source.py:249
 msgid "page"
 msgstr "page"
 
-#: models/base.py:633 models/evenement.py:292
+#: models/base.py:628 models/evenement.py:303
 msgid "autre"
 msgstr "other"
 
-#: models/base.py:634
+#: models/base.py:629
 msgid "image"
 msgstr "image"
 
-#: models/base.py:635
+#: models/base.py:630
 msgid "audio"
 msgstr "audio"
 
-#: models/base.py:636
+#: models/base.py:631
 msgid "vidéo"
 msgstr "video"
 
-#: models/base.py:641
+#: models/base.py:636
 msgid "largeur"
 msgstr "width"
 
-#: models/base.py:642
+#: models/base.py:637
 msgid "hauteur"
 msgstr "height"
 
-#: models/base.py:643
+#: models/base.py:638
 msgid "durée (en secondes)"
 msgstr "duration (in seconds)"
 
-#: models/base.py:648
+#: models/base.py:643
 msgid "extrait"
 msgstr "sound clip"
 
-#: models/base.py:649 models/evenement.py:305
+#: models/base.py:644 models/evenement.py:316
 msgid "position"
 msgstr "location"
 
@@ -580,20 +568,19 @@ msgstr "files"
 msgid "Il n’y a pas d’enregistrement entier pour cet extrait."
 msgstr "There is no complete recording for this sound clip."
 
-#: models/base.py:711
+#: models/base.py:706
 msgid "L’enregistrement dont ce fichier est extrait est déjà un extrait."
-msgstr ""
-"The recording from which this file is extracted is already a sound clip."
+msgstr "The recording from which this file is extracted is already a sound clip."
 
-#: models/base.py:783
+#: models/base.py:778
 msgid "message"
 msgstr "message"
 
-#: models/base.py:784
+#: models/base.py:779
 msgid "Message à afficher dans la partie consultation."
 msgstr "Message to be displayed in the consultation part."
 
-#: models/base.py:785
+#: models/base.py:780
 msgid "publié"
 msgstr "published"
 
@@ -609,15 +596,11 @@ msgstr "referent"
 msgid ""
 "L’affichage d’un lieu remonte jusqu’au lieu référent. Exemple : dans une "
 "architecture de pays, villes, théâtres, etc, « ville, institution, salle » "
-"sera affiché car on remonte jusqu’à un lieu référent, ici choisi comme étant "
-"ceux de nature « ville »"
-msgstr ""
-"The location display extends to a referent location. Example: in an "
-"architecture of countries, towns, theatres, etc, « town, institution, venue "
-"» will be displayed because of extending to a referent location, selected "
-"here as being those of type « town »"
+"sera affiché car on remonte jusqu’à un lieu référent, ici choisi comme étant"
+" ceux de nature « ville »"
+msgstr "The location display extends to a referent location. Example: in an architecture of countries, towns, theatres, etc, « town, institution, venue » will be displayed because of extending to a referent location, selected here as being those of type « town »"
 
-#: models/espace_temps.py:48
+#: models/espace_temps.py:48 models/espace_temps.py:49
 msgid "nature de lieu"
 msgstr "type of place"
 
@@ -631,23 +614,24 @@ msgstr "types of place"
 msgid "parent"
 msgstr "parent"
 
-#: models/espace_temps.py:85
+#: models/espace_temps.py:86
 msgid "nature"
 msgstr "nature"
 
-#: models/espace_temps.py:86
+#: models/espace_temps.py:87
 msgid "institution"
 msgstr "institution"
 
-#: models/espace_temps.py:89
+#: models/espace_temps.py:90
 msgid "historique"
 msgstr "history"
 
-#: models/espace_temps.py:91
+#: models/espace_temps.py:92
 msgid "géo-positionnement"
 msgstr "GPS"
 
-#: models/espace_temps.py:99 models/espace_temps.py:222
+#: models/espace_temps.py:100 models/espace_temps.py:102
+#: models/espace_temps.py:224
 msgid "lieu ou institution"
 msgstr "place or institution"
 
@@ -661,35 +645,35 @@ msgstr "places and institutions"
 msgid "Peut changer l’état"
 msgstr "Can change the editing mode"
 
-#: models/espace_temps.py:128 models/evenement.py:565 models/individu.py:176
-#: models/oeuvre.py:767
+#: models/espace_temps.py:131 models/evenement.py:578 models/individu.py:182
+#: models/oeuvre.py:775
 msgid "lien"
 msgstr "link"
 
-#: models/espace_temps.py:176 models/evenement.py:379 models/evenement.py:604
-#: models/individu.py:304 models/oeuvre.py:423 models/oeuvre.py:972
-#: models/source.py:257
+#: models/espace_temps.py:178 models/evenement.py:392 models/evenement.py:617
+#: models/individu.py:310 models/oeuvre.py:431 models/oeuvre.py:980
+#: models/source.py:259
 msgid "rendu HTML"
 msgstr "rendering HTML"
 
-#: models/espace_temps.py:181
+#: models/espace_temps.py:183
 msgid "Le lieu a une parenté avec lui-même."
 msgstr "The place has a link with itself."
 
-#: models/espace_temps.py:220 models/evenement.py:107 models/oeuvre.py:404
-#: models/personnel.py:202 models/personnel.py:274 models/source.py:383
+#: models/espace_temps.py:222 models/evenement.py:108 models/oeuvre.py:412
+#: models/personnel.py:203 models/source.py:385
 msgid "ensemble"
 msgstr "ensemble"
 
-#: models/espace_temps.py:223 models/evenement.py:525 models/personnel.py:134
+#: models/espace_temps.py:225 models/evenement.py:538 models/personnel.py:135
 msgid "début"
 msgstr "beginning"
 
-#: models/espace_temps.py:224 models/evenement.py:526 models/personnel.py:137
+#: models/espace_temps.py:226 models/evenement.py:539 models/personnel.py:138
 msgid "fin"
 msgstr "end"
 
-#: models/espace_temps.py:229
+#: models/espace_temps.py:231 models/espace_temps.py:232
 msgid "saison"
 msgstr "season"
 
@@ -701,27 +685,29 @@ msgstr "seasons"
 msgid "Nombre d’événements"
 msgstr "Number of events"
 
-#: models/evenement.py:95 models/evenement.py:285 models/evenement.py:544
-#: models/source.py:353 templates/libretto/evenement_detail.html:5
+#: models/evenement.py:96 models/evenement.py:296 models/evenement.py:557
+#: models/evenement.py:558 models/source.py:355
+#: templates/libretto/evenement_detail.html:5
 msgid "événement"
 msgstr "event"
 
-#: models/evenement.py:104 models/individu.py:150 models/individu.py:318
-#: models/oeuvre.py:401 models/personnel.py:206 models/source.py:373
+#: models/evenement.py:105 models/individu.py:156 models/individu.py:157
+#: models/individu.py:324 models/oeuvre.py:409 models/personnel.py:207
+#: models/source.py:375
 msgid "individu"
 msgstr "individual"
 
-#: models/evenement.py:111 models/oeuvre.py:115 models/oeuvre.py:201
-#: models/source.py:403
+#: models/evenement.py:112 models/oeuvre.py:117 models/oeuvre.py:119
+#: models/oeuvre.py:205 models/source.py:405
 msgid "rôle ou instrument"
 msgstr "role or instrument"
 
-#: models/evenement.py:114 models/oeuvre.py:406 models/personnel.py:44
-#: templates/libretto/individu_detail.html:24
+#: models/evenement.py:115 models/oeuvre.py:414 models/personnel.py:45
+#: models/personnel.py:46 templates/libretto/individu_detail.html:24
 msgid "profession"
 msgstr "occupation"
 
-#: models/evenement.py:121
+#: models/evenement.py:122 models/evenement.py:124
 msgid "élément de distribution"
 msgstr "element of distribution"
 
@@ -733,7 +719,7 @@ msgstr "elements of distribution"
 msgid "tonalité"
 msgstr "tonality"
 
-#: models/evenement.py:167
+#: models/evenement.py:171 models/evenement.py:174
 msgid "type de caractéristique de programme"
 msgstr "type of programme characteristics"
 
@@ -746,15 +732,15 @@ msgstr "types of programme characteristics"
 msgid "type"
 msgstr "type"
 
-#: models/evenement.py:223
+#: models/evenement.py:230
 msgid "valeur"
 msgstr "value"
 
-#: models/evenement.py:224
+#: models/evenement.py:231
 msgid "en trois actes"
 msgstr "in three acts"
 
-#: models/evenement.py:227
+#: models/evenement.py:234
 msgid ""
 "Par exemple, on peut choisir de classer les découpages par nombre d’actes."
 msgstr "For example, the cuts could be classified by number of acts."
@@ -769,40 +755,38 @@ msgstr "feature of programme"
 msgid "œuvre"
 msgstr "work"
 
-#: models/evenement.py:289
+#: models/evenement.py:300
 msgid ""
 "Vous pouvez croiser le titre et le nom des auteurs. Évitez les termes "
 "généraux comme « de », « la », « le », « avec »."
-msgstr ""
-"You can cross-check the title and surname of the authors. Avoid general "
-"terms such as « of », « the », « with »."
+msgstr "You can cross-check the title and surname of the authors. Avoid general terms such as « of », « the », « with »."
 
-#: models/evenement.py:295 models/evenement.py:327 models/evenement.py:532
-#: models/oeuvre.py:826
+#: models/evenement.py:306 models/evenement.py:340 models/evenement.py:545
+#: models/oeuvre.py:834
 msgid "caractéristiques"
 msgstr "features"
 
-#: models/evenement.py:297
+#: models/evenement.py:308
 msgid "Numéros"
 msgstr "Numbers"
 
-#: models/evenement.py:298
+#: models/evenement.py:309
 msgid "Numéros entre crochets (supposition)"
 msgstr "Numbers in square brackets (assumption)"
 
-#: models/evenement.py:299
+#: models/evenement.py:310
 msgid "Puce"
 msgstr "Microchip"
 
-#: models/evenement.py:300
+#: models/evenement.py:311
 msgid "Absente (entracte, etc)"
 msgstr "Absent (entracte, etc)"
 
-#: models/evenement.py:303
+#: models/evenement.py:314
 msgid "numérotation"
 msgstr "numbering"
 
-#: models/evenement.py:306
+#: models/evenement.py:317
 msgid "P. A."
 msgstr "Copyright"
 
@@ -814,31 +798,31 @@ msgstr "programme information"
 msgid "Entrez uniquement des entiers séparés par des « + »."
 msgstr "Enter only integers separated by « + » signs."
 
-#: models/evenement.py:527
+#: models/evenement.py:540
 msgid "programme incomplet"
 msgstr "incomplete programme"
 
-#: models/evenement.py:528
+#: models/evenement.py:541
 msgid "relâche"
 msgstr "closure"
 
-#: models/evenement.py:529 models/evenement.py:593
+#: models/evenement.py:542 models/evenement.py:606
 msgid "circonstance"
 msgstr "circumstance"
 
-#: models/evenement.py:534
+#: models/evenement.py:547
 msgid "recette générale"
 msgstr "total revenue"
 
-#: models/evenement.py:537
+#: models/evenement.py:550
 msgid "recette par titre de billets"
 msgstr "Revenue from tickets"
 
-#: models/evenement.py:596
+#: models/evenement.py:609
 msgid "Relâche"
 msgstr "Closure"
 
-#: models/individu.py:30
+#: models/individu.py:30 models/individu.py:33
 msgid "type de parenté d’individus"
 msgstr "type of links between individuals"
 
@@ -850,11 +834,11 @@ msgstr "types of links between individuals"
 msgid "individu parent"
 msgstr "individual parent"
 
-#: models/individu.py:48
+#: models/individu.py:52
 msgid "individu enfant"
 msgstr "individual child"
 
-#: models/individu.py:51
+#: models/individu.py:55 models/individu.py:57
 msgid "parenté d’individus"
 msgstr "link between individuals"
 
@@ -866,170 +850,161 @@ msgstr "links between individuals"
 msgid "Un individu ne peut avoir une parenté avec lui-même."
 msgstr "An individual cannot have a link with themselves."
 
-#: models/individu.py:71
+#: models/individu.py:77
 #, python-format
 msgid "%(parent)s, %(type)s de %(enfant)s"
 msgstr "%(parent)s, %(type)s of %(enfant)s"
 
-#: models/individu.py:92
+#: models/individu.py:98
 msgid "particule du nom d’usage"
 msgstr "surname preposition"
 
-#: models/individu.py:95
+#: models/individu.py:101
 msgid "nom d’usage"
 msgstr "surname"
 
-#: models/individu.py:97
+#: models/individu.py:103
 msgid "particule du nom de naissance"
 msgstr "birth name preposition"
 
-#: models/individu.py:100
+#: models/individu.py:106
 msgid "nom de naissance"
 msgstr "birth name"
 
-#: models/individu.py:101
+#: models/individu.py:107
 msgid "Ne remplir que s’il est différent du nom d’usage."
 msgstr "Only fill in if it is different from the surname."
 
-#: models/individu.py:102
+#: models/individu.py:108
 msgid "prénoms"
 msgstr "first names"
 
-#: models/individu.py:105
+#: models/individu.py:111
 msgid "prénoms complets"
 msgstr "full first names"
 
-#: models/individu.py:110
+#: models/individu.py:116
 msgid "pseudonyme"
 msgstr "pseudonym"
 
-#: models/individu.py:113
+#: models/individu.py:119
 msgid "Standard (nom, prénoms et pseudonyme)"
 msgstr "Standard (surname, first names, and pseudonym)"
 
-#: models/individu.py:114
+#: models/individu.py:120
 msgid "Pseudonyme (uniquement)"
 msgstr "Pseudonym (only)"
 
-#: models/individu.py:115
+#: models/individu.py:121
 msgid "Nom d’usage (uniquement)"
 msgstr "Surname (only)"
 
-#: models/individu.py:116
+#: models/individu.py:122
 msgid "Nom de naissance (standard)"
 msgstr "Birth name (standard)"
 
-#: models/individu.py:117
+#: models/individu.py:123
 msgid "Prénom(s) (uniquement)"
 msgstr "First name(s) (only)"
 
-#: models/individu.py:119
+#: models/individu.py:125
 msgid "affichage"
 msgstr "display"
 
-#: models/individu.py:122 models/individu.py:214
+#: models/individu.py:128 models/individu.py:220
 msgid "M."
 msgstr "Mr"
 
-#: models/individu.py:123
+#: models/individu.py:129
 msgid "Mlle"
 msgstr "Miss"
 
-#: models/individu.py:124
+#: models/individu.py:130
 msgid "Mme"
 msgstr "Mrs"
 
-#: models/individu.py:126
+#: models/individu.py:132
 msgctxt "individu"
 msgid "titre"
 msgstr "title"
 
-#: models/individu.py:129 templates/libretto/individu_detail.html:12
+#: models/individu.py:135 templates/libretto/individu_detail.html:12
 msgid "naissance"
 msgstr "birth"
 
-#: models/individu.py:131 templates/libretto/individu_detail.html:16
+#: models/individu.py:137 templates/libretto/individu_detail.html:16
 msgid "décès"
 msgstr "death"
 
-#: models/individu.py:134 models/individu.py:245 models/oeuvre.py:106
-#: models/personnel.py:45
+#: models/individu.py:140 models/individu.py:251 models/oeuvre.py:108
 msgid "professions"
 msgstr "occupations"
 
-#: models/individu.py:137
+#: models/individu.py:143
 msgid "enfants"
 msgstr "children"
 
-#: models/individu.py:138
+#: models/individu.py:144
 msgid "biographie"
 msgstr "biography"
 
-#: models/individu.py:141
+#: models/individu.py:147
 msgid "Identifiant ISNI"
 msgstr "ISNI ID"
 
-#: models/individu.py:144
+#: models/individu.py:150
 msgid "Numéro d’ISNI invalide."
 msgstr "Invalid ISNI number"
 
-#: models/individu.py:145
+#: models/individu.py:151
 msgid "Exemple : « 0000000121269154 » pour Mozart."
 msgstr "Example: « 0000000121269154 » for Mozart."
 
-#: models/individu.py:151 models/personnel.py:270 models/source.py:182
-msgid "individus"
-msgstr "individuals"
-
-#: models/individu.py:216
+#: models/individu.py:222
 msgid "M<sup>lle</sup>"
 msgstr "Miss"
 
-#: models/individu.py:218
+#: models/individu.py:224
 msgid "M<sup>me</sup>"
 msgstr "Mrs"
 
-#: models/individu.py:221
+#: models/individu.py:227
 msgid "Monsieur"
 msgstr "Mr"
 
-#: models/individu.py:223
+#: models/individu.py:229
 msgid "Mademoiselle"
 msgstr "Miss"
 
-#: models/individu.py:225
+#: models/individu.py:231
 msgid "Madame"
 msgstr "Mrs"
 
-#: models/individu.py:282
+#: models/individu.py:288
 msgid "dite"
 msgstr "known by her stage name"
 
-#: models/individu.py:283
+#: models/individu.py:289
 msgid "dit"
 msgstr "known by his stage name"
 
-#: models/individu.py:327
+#: models/individu.py:333
 msgid "Le décès ne peut précéder la naissance."
 msgstr "The death date cannot precede the birth date."
 
-#: models/oeuvre.py:50
+#: models/oeuvre.py:51
 msgid ""
 "L’affichage d’une œuvre remonte jusqu’à l’œuvre référente la contenant. "
 "Exemple : le rendu d’une scène sera du type « Le jeune Henri, acte 2, scène "
 "3 » car on remonte jusqu’à l’œuvre référente, ici choisie comme étant celle "
 "de nature « opéra »"
-msgstr ""
-"The work display extends to the referent work containing it. Example: the "
-"scene descriptor will be « Le jeune Henri, Act 2, Scene 3 » because of "
-"extending to the referent work, selected here as being that of type « opera "
-"» "
+msgstr "The work display extends to the referent work containing it. Example: the scene descriptor will be « Le jeune Henri, Act 2, Scene 3 » because of extending to the referent work, selected here as being that of type « opera » "
 
-#: models/oeuvre.py:56
+#: models/oeuvre.py:57
 msgid "parents"
 msgstr "parents"
 
-#: models/oeuvre.py:59
+#: models/oeuvre.py:60 models/oeuvre.py:61
 msgid "genre d’œuvre"
 msgstr "type of oeuvre"
 
@@ -1041,23 +1016,23 @@ msgstr "types of oeuvre"
 msgid "Le nom d’une partie de la partition, instrumentale ou vocale."
 msgstr "The name of a part of the score, instrumental or vocal."
 
-#: models/oeuvre.py:94 models/personnel.py:210
+#: models/oeuvre.py:96 models/personnel.py:211
 msgid "instrument"
 msgstr "instrument"
 
-#: models/oeuvre.py:95
+#: models/oeuvre.py:97
 msgid "rôle"
 msgstr "role"
 
-#: models/oeuvre.py:102
+#: models/oeuvre.py:104
 msgid "Ne remplir que pour les rôles."
 msgstr "Only fill this in for roles."
 
-#: models/oeuvre.py:107
+#: models/oeuvre.py:109
 msgid "La ou les profession(s) capable(s) de jouer ce rôle ou cet instrument."
 msgstr "Occupations capable of playing this role or this instrument."
 
-#: models/oeuvre.py:110
+#: models/oeuvre.py:112
 msgid "rôle ou instrument parent"
 msgstr "linked role or instrument"
 
@@ -1069,23 +1044,23 @@ msgstr "roles and instruments"
 msgid "interprètes"
 msgstr "performers"
 
-#: models/oeuvre.py:202
+#: models/oeuvre.py:206
 msgid "soliste"
 msgstr "soloist"
 
-#: models/oeuvre.py:203
+#: models/oeuvre.py:207
 msgid "quantité minimale"
 msgstr "minimum quantity"
 
-#: models/oeuvre.py:204
+#: models/oeuvre.py:208
 msgid "quantité maximale"
 msgstr "maximum quantity"
 
-#: models/oeuvre.py:205
+#: models/oeuvre.py:209
 msgid "ad libitum"
 msgstr "ad libitum"
 
-#: models/oeuvre.py:210
+#: models/oeuvre.py:214 models/oeuvre.py:215
 msgid "pupitre"
 msgstr "desk"
 
@@ -1098,7 +1073,7 @@ msgstr "desks"
 msgid "%s à %s %s"
 msgstr "%s to %s %s"
 
-#: models/oeuvre.py:257
+#: models/oeuvre.py:261 models/oeuvre.py:263
 msgid "type de parenté d’œuvres"
 msgstr "type of links between oeuvres"
 
@@ -1110,11 +1085,11 @@ msgstr "types of links between oeuvres"
 msgid "œuvre mère"
 msgstr "hypotext"
 
-#: models/oeuvre.py:290
+#: models/oeuvre.py:296
 msgid "œuvre fille"
 msgstr "hypertext"
 
-#: models/oeuvre.py:295
+#: models/oeuvre.py:301 models/oeuvre.py:303
 msgid "parenté d’œuvres"
 msgstr "link between oeuvres"
 
@@ -1126,13 +1101,11 @@ msgstr "links between oeuvres"
 msgid "Les deux champs de parenté ne peuvent pas être identiques"
 msgstr "The two fields of family relations cannot be identical"
 
-#: models/oeuvre.py:317
+#: models/oeuvre.py:325
 msgid "Une relation entre ces deux objets existe déjà dans le sens inverse"
-msgstr ""
-"A relation between these two objects already exists with the opposite "
-"meaning."
+msgstr "A relation between these two objects already exists with the opposite meaning."
 
-#: models/oeuvre.py:411
+#: models/oeuvre.py:419 models/oeuvre.py:420
 msgid "auteur"
 msgstr "author"
 
@@ -1144,712 +1117,683 @@ msgstr "authors"
 msgid "« Individu » et « Ensemble » ne peuvent être saisis sur la même ligne."
 msgstr "« Individual » and « Ensemble » cannot be inputted on the same line."
 
-#: models/oeuvre.py:497
+#: models/oeuvre.py:505
 msgid "do bémol majeur"
 msgstr "C-flat major"
 
-#: models/oeuvre.py:498
+#: models/oeuvre.py:506
 msgid "do majeur"
 msgstr "C major"
 
-#: models/oeuvre.py:499
+#: models/oeuvre.py:507
 msgid "do dièse majeur"
 msgstr "C-sharp major"
 
-#: models/oeuvre.py:500
+#: models/oeuvre.py:508
 msgid "ré bémol majeur"
 msgstr "D-flat major"
 
-#: models/oeuvre.py:501
+#: models/oeuvre.py:509
 msgid "ré majeur"
 msgstr "D major"
 
-#: models/oeuvre.py:502
+#: models/oeuvre.py:510
 msgid "ré dièse majeur"
 msgstr "D-sharp major"
 
-#: models/oeuvre.py:503
+#: models/oeuvre.py:511
 msgid "mi bémol majeur"
 msgstr "E-flat major"
 
-#: models/oeuvre.py:504
+#: models/oeuvre.py:512
 msgid "mi majeur"
 msgstr "E major"
 
-#: models/oeuvre.py:505
+#: models/oeuvre.py:513
 msgid "mi dièse majeur"
 msgstr "E-sharp major"
 
-#: models/oeuvre.py:506
+#: models/oeuvre.py:514
 msgid "fa bémol majeur"
 msgstr "F-flat major"
 
-#: models/oeuvre.py:507
+#: models/oeuvre.py:515
 msgid "fa majeur"
 msgstr "F major"
 
-#: models/oeuvre.py:508
+#: models/oeuvre.py:516
 msgid "fa dièse majeur"
 msgstr "F-sharp major"
 
-#: models/oeuvre.py:509
+#: models/oeuvre.py:517
 msgid "sol bémol majeur"
 msgstr "G-flat major"
 
-#: models/oeuvre.py:510
+#: models/oeuvre.py:518
 msgid "sol majeur"
 msgstr "G major"
 
-#: models/oeuvre.py:511
+#: models/oeuvre.py:519
 msgid "sol dièse majeur"
 msgstr "G-sharp major"
 
-#: models/oeuvre.py:512
+#: models/oeuvre.py:520
 msgid "la bémol majeur"
 msgstr "A-flat major"
 
-#: models/oeuvre.py:513
+#: models/oeuvre.py:521
 msgid "la majeur"
 msgstr "A major"
 
-#: models/oeuvre.py:514
+#: models/oeuvre.py:522
 msgid "la dièse majeur"
 msgstr "A-sharp major"
 
-#: models/oeuvre.py:515
+#: models/oeuvre.py:523
 msgid "si bémol majeur"
 msgstr "B-flat major"
 
-#: models/oeuvre.py:516
+#: models/oeuvre.py:524
 msgid "si majeur"
 msgstr "B major"
 
-#: models/oeuvre.py:517
+#: models/oeuvre.py:525
 msgid "si dièse majeur"
 msgstr "B-sharp major"
 
-#: models/oeuvre.py:518
+#: models/oeuvre.py:526
 msgid "ut bémol majeur"
 msgstr "C-flat major"
 
-#: models/oeuvre.py:519
+#: models/oeuvre.py:527
 msgid "ut majeur"
 msgstr "C major"
 
-#: models/oeuvre.py:520
+#: models/oeuvre.py:528
 msgid "ut dièse majeur"
 msgstr "C-sharp major"
 
-#: models/oeuvre.py:521
+#: models/oeuvre.py:529
 msgid "do bémol mineur"
 msgstr "C-flat minor"
 
-#: models/oeuvre.py:522
+#: models/oeuvre.py:530
 msgid "do mineur"
 msgstr "C minor"
 
-#: models/oeuvre.py:523
+#: models/oeuvre.py:531
 msgid "do dièse mineur"
 msgstr "C-sharp minor"
 
-#: models/oeuvre.py:524
+#: models/oeuvre.py:532
 msgid "ré bémol mineur"
 msgstr "D-flat minor"
 
-#: models/oeuvre.py:525
+#: models/oeuvre.py:533
 msgid "ré mineur"
 msgstr "D minor"
 
-#: models/oeuvre.py:526
+#: models/oeuvre.py:534
 msgid "ré dièse mineur"
 msgstr "D-sharp minor"
 
-#: models/oeuvre.py:527
+#: models/oeuvre.py:535
 msgid "mi bémol mineur"
 msgstr "E-flat minor"
 
-#: models/oeuvre.py:528
+#: models/oeuvre.py:536
 msgid "mi mineur"
 msgstr "E minor"
 
-#: models/oeuvre.py:529
+#: models/oeuvre.py:537
 msgid "mi dièse mineur"
 msgstr "E-sharp minor"
 
-#: models/oeuvre.py:530
+#: models/oeuvre.py:538
 msgid "fa bémol mineur"
 msgstr "F-flat minor"
 
-#: models/oeuvre.py:531
+#: models/oeuvre.py:539
 msgid "fa mineur"
 msgstr "F minor"
 
-#: models/oeuvre.py:532
+#: models/oeuvre.py:540
 msgid "fa dièse mineur"
 msgstr "F-sharp minor"
 
-#: models/oeuvre.py:533
+#: models/oeuvre.py:541
 msgid "sol bémol mineur"
 msgstr "G-flat minor"
 
-#: models/oeuvre.py:534
+#: models/oeuvre.py:542
 msgid "sol mineur"
 msgstr "G minor"
 
-#: models/oeuvre.py:535
+#: models/oeuvre.py:543
 msgid "sol dièse mineur"
 msgstr "G-sharp minor"
 
-#: models/oeuvre.py:536
+#: models/oeuvre.py:544
 msgid "la bémol mineur"
 msgstr "A-flat minor"
 
-#: models/oeuvre.py:537
+#: models/oeuvre.py:545
 msgid "la mineur"
 msgstr "A minor"
 
-#: models/oeuvre.py:538
+#: models/oeuvre.py:546
 msgid "la dièse mineur"
 msgstr "A-sharp minor"
 
-#: models/oeuvre.py:539
+#: models/oeuvre.py:547
 msgid "si bémol mineur"
 msgstr "B-flat minor"
 
-#: models/oeuvre.py:540
+#: models/oeuvre.py:548
 msgid "si mineur"
 msgstr "B minor"
 
-#: models/oeuvre.py:541
+#: models/oeuvre.py:549
 msgid "si dièse mineur"
 msgstr "B-sharp minor"
 
-#: models/oeuvre.py:542
+#: models/oeuvre.py:550
 msgid "ut bémol mineur"
 msgstr "C-flat minor"
 
-#: models/oeuvre.py:543
+#: models/oeuvre.py:551
 msgid "ut mineur"
 msgstr "C minor"
 
-#: models/oeuvre.py:544
+#: models/oeuvre.py:552
 msgid "ut dièse mineur"
 msgstr "C-sharp minor"
 
-#: models/oeuvre.py:545
+#: models/oeuvre.py:553
 msgid "do bémol"
 msgstr "C-flat"
 
-#: models/oeuvre.py:546
+#: models/oeuvre.py:554
 msgid "do"
 msgstr "C"
 
-#: models/oeuvre.py:547
+#: models/oeuvre.py:555
 msgid "do dièse"
 msgstr "C-sharp"
 
-#: models/oeuvre.py:548
+#: models/oeuvre.py:556
 msgid "ré bémol"
 msgstr "D-flat"
 
-#: models/oeuvre.py:549
+#: models/oeuvre.py:557
 msgid "ré"
 msgstr "D"
 
-#: models/oeuvre.py:550
+#: models/oeuvre.py:558
 msgid "ré dièse"
 msgstr "D-sharp"
 
-#: models/oeuvre.py:551
+#: models/oeuvre.py:559
 msgid "mi bémol"
 msgstr "E-flat"
 
-#: models/oeuvre.py:552
+#: models/oeuvre.py:560
 msgid "mi"
 msgstr "E"
 
-#: models/oeuvre.py:553
+#: models/oeuvre.py:561
 msgid "mi dièse"
 msgstr "E-sharp"
 
-#: models/oeuvre.py:554
+#: models/oeuvre.py:562
 msgid "fa bémol"
 msgstr "F-flat"
 
-#: models/oeuvre.py:555
+#: models/oeuvre.py:563
 msgid "fa"
 msgstr "F"
 
-#: models/oeuvre.py:556
+#: models/oeuvre.py:564
 msgid "fa dièse"
 msgstr "F-sharp"
 
-#: models/oeuvre.py:557
+#: models/oeuvre.py:565
 msgid "sol bémol"
 msgstr "G-flat"
 
-#: models/oeuvre.py:558
+#: models/oeuvre.py:566
 msgid "sol"
 msgstr "G"
 
-#: models/oeuvre.py:559
+#: models/oeuvre.py:567
 msgid "sol dièse"
 msgstr "G-sharp"
 
-#: models/oeuvre.py:560
+#: models/oeuvre.py:568
 msgid "la bémol"
 msgstr "A-flat"
 
-#: models/oeuvre.py:561
+#: models/oeuvre.py:569
 msgid "la"
 msgstr "A"
 
-#: models/oeuvre.py:562
+#: models/oeuvre.py:570
 msgid "la dièse"
 msgstr "A-sharp"
 
-#: models/oeuvre.py:563
+#: models/oeuvre.py:571
 msgid "si bémol"
 msgstr "B-flat"
 
-#: models/oeuvre.py:564
+#: models/oeuvre.py:572
 msgid "si"
 msgstr "B"
 
-#: models/oeuvre.py:565
+#: models/oeuvre.py:573
 msgid "si dièse"
 msgstr "B-sharp"
 
-#: models/oeuvre.py:566
+#: models/oeuvre.py:574
 msgid "ut bémol"
 msgstr "C-flat"
 
-#: models/oeuvre.py:567
+#: models/oeuvre.py:575
 msgid "ut"
 msgstr "C"
 
-#: models/oeuvre.py:568
+#: models/oeuvre.py:576
 msgid "ut dièse"
 msgstr "C-sharp"
 
-#: models/oeuvre.py:574 models/oeuvre.py:579
+#: models/oeuvre.py:582 models/oeuvre.py:587
 msgid "article"
 msgstr "article"
 
-#: models/oeuvre.py:575 models/oeuvre.py:984 models/source.py:152
+#: models/oeuvre.py:583 models/oeuvre.py:992 models/source.py:154
 msgid "titre"
 msgstr "title"
 
-#: models/oeuvre.py:576
+#: models/oeuvre.py:584
 msgid "coordination"
 msgstr "coordination"
 
-#: models/oeuvre.py:580
+#: models/oeuvre.py:588
 msgid "titre secondaire"
 msgstr "secondary"
 
-#: models/oeuvre.py:584
+#: models/oeuvre.py:592
 msgid "genre"
 msgstr "genre"
 
-#: models/oeuvre.py:586 models/source.py:158
+#: models/oeuvre.py:594 models/source.py:160
 msgid "numéro"
 msgstr "number"
 
-#: models/oeuvre.py:588
+#: models/oeuvre.py:596
 msgid ""
 "Vous ne pouvez saisir que des chiffres, lettres non accentuées et tiret, le "
 "tout sans espace."
-msgstr ""
-"Only numbers, lowercase letters and dash can be inputted without a space."
+msgstr "Only numbers, lowercase letters and dash can be inputted without a space."
 
-#: models/oeuvre.py:592
+#: models/oeuvre.py:600
 msgid ""
 "Exemple : « 5 » pour symphonie n° 5, « 7a » pour valse n° 7 a, ou encore "
 "« 3-7 » pour sonates n° 3 à 7. <strong>Ne pas confondre avec le sous-numéro "
 "d’opus.</strong>"
-msgstr ""
-"Example: « 5 » for symphony n° 5, « 7a » for waltz n° 7 a, and also « 3-7 » "
-"for sonatas n° 3 à 7. <strong>Do not confuse with the opus subnumber</strong>"
+msgstr "Example: « 5 » for symphony n° 5, « 7a » for waltz n° 7 a, and also « 3-7 » for sonatas n° 3 à 7. <strong>Do not confuse with the opus subnumber</strong>"
 
-#: models/oeuvre.py:596 models/oeuvre.py:793
+#: models/oeuvre.py:604 models/oeuvre.py:801
 msgid "coupe"
 msgstr "cut"
 
-#: models/oeuvre.py:598
+#: models/oeuvre.py:606
 msgid "Vous devez saisir les quantités en toutes lettres."
 msgstr "Input the numbers in words."
 
-#: models/oeuvre.py:600
+#: models/oeuvre.py:608
 msgid "Exemple : « trois actes » pour un opéra en trois actes."
 msgstr "Example: « three acts » for an opera in three acts."
 
-#: models/oeuvre.py:602
+#: models/oeuvre.py:610
 msgid "indéterminée"
 msgstr "unknown"
 
-#: models/oeuvre.py:604
+#: models/oeuvre.py:612
 msgid ""
 "Cocher si l’œuvre n’est pas identifiable, par exemple un quatuor de Haydn, "
-"sans savoir lequel. <strong>Ne pas utiliser pour un extrait indéterminé</"
-"strong>, sélectionner plutôt dans le programme l’œuvre dont il est tiré et "
-"joindre une caractéristique le décrivant (« un air », « un mouvement », "
-"etc.)."
-msgstr ""
-"Tick if the work is not identifiable, for example a quartet by Haydn, "
-"without knowing which one. <strong>Do not use for an unknown extract</"
-"strong>, instead, in the programme, select the work from which it is taken "
-"and attach a feature that describes it (« air », « movement », etc.)."
+"sans savoir lequel. <strong>Ne pas utiliser pour un extrait "
+"indéterminé</strong>, sélectionner plutôt dans le programme l’œuvre dont il "
+"est tiré et joindre une caractéristique le décrivant (« un air », "
+"« un mouvement », etc.)."
+msgstr "Tick if the work is not identifiable, for example a quartet by Haydn, without knowing which one. <strong>Do not use for an unknown extract</strong>, instead, in the programme, select the work from which it is taken and attach a feature that describes it (« air », « movement », etc.)."
 
-#: models/oeuvre.py:611 models/oeuvre.py:796
+#: models/oeuvre.py:619 models/oeuvre.py:804
 msgid "incipit"
 msgstr "incipit"
 
-#: models/oeuvre.py:612
+#: models/oeuvre.py:620
 msgid ""
 "Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 de l’acte III des "
 "<em>Contes d’Hoffmann</em> d’Offenbach."
-msgstr ""
-"Example: « Belle nuit, ô nuit d’amour » for Act III n° 13 of <em>Contes "
-"d’Hoffmann</em> by Offenbach."
+msgstr "Example: « Belle nuit, ô nuit d’amour » for Act III n° 13 of <em>Contes d’Hoffmann</em> by Offenbach."
 
-#: models/oeuvre.py:616
+#: models/oeuvre.py:624
 msgid "tempo"
 msgstr "tempo"
 
-#: models/oeuvre.py:617
+#: models/oeuvre.py:625
 msgid ""
 "Exemple : « Largo », « Presto ma non troppo », etc. Ne pas saisir "
 "d’indication métronomique."
-msgstr ""
-"Example : « Largo », « Presto ma non troppo », etc. Do not input the "
-"metronome marking."
+msgstr "Example : « Largo », « Presto ma non troppo », etc. Do not input the metronome marking."
 
-#: models/oeuvre.py:632 models/oeuvre.py:810
+#: models/oeuvre.py:640 models/oeuvre.py:818
 msgid "sujet"
 msgstr "subject"
 
-#: models/oeuvre.py:634
+#: models/oeuvre.py:642
 msgid ""
 "Exemple : « un thème de Beethoven » pour une variation sur un thème de "
 "Beethoven, « des motifs de &lt;em&gt;Lucia di Lammermoor&lt;/em&gt; » pour "
 "une fantaisie sur des motifs de <em>Lucia di Lammermoor</em> (&lt;em&gt; et "
 "&lt;/em&gt; sont les balises HTML pour mettre en emphase)."
-msgstr ""
-"Example: « a theme by Beethoven » for a variation on a theme by Beethoven, « "
-"the motifs of &lt;em&gt;Lucia di Lammermoor&lt;/em&gt; » for a fantasia on "
-"the motifs of <em>Lucia di Lammermoor</em> (&lt;em&gt; et &lt;/em&gt; are "
-"the HTML tags to put the emphasis on)."
+msgstr "Example: « a theme by Beethoven » for a variation on a theme by Beethoven, « the motifs of &lt;em&gt;Lucia di Lammermoor&lt;/em&gt; » for a fantasia on the motifs of <em>Lucia di Lammermoor</em> (&lt;em&gt; et &lt;/em&gt; are the HTML tags to put the emphasis on)."
 
-#: models/oeuvre.py:643 models/source.py:170
+#: models/oeuvre.py:651 models/source.py:172
 msgid "transcription"
 msgstr "transcription"
 
-#: models/oeuvre.py:644
+#: models/oeuvre.py:652
 msgid "orchestration"
 msgstr "orchestration"
 
-#: models/oeuvre.py:647
+#: models/oeuvre.py:655
 msgid "arrangement"
 msgstr "arrangement"
 
-#: models/oeuvre.py:650 models/oeuvre.py:814
+#: models/oeuvre.py:658 models/oeuvre.py:822
 msgid "surnom"
 msgstr "nickname"
 
-#: models/oeuvre.py:651
+#: models/oeuvre.py:659
 msgid "Exemple : « Jupiter » pour la symphonie n° 41 de Mozart."
 msgstr "Example: « Jupiter » for Symphony n° 41 by Mozart."
 
-#: models/oeuvre.py:654 models/oeuvre.py:816
+#: models/oeuvre.py:662 models/oeuvre.py:824
 msgid "nom courant"
 msgstr "commonly-used name"
 
-#: models/oeuvre.py:655
+#: models/oeuvre.py:663
 msgid ""
 "Exemple : « barcarolle » pour le n° 13 de l’acte III des <em>Contes "
 "d’Hoffmann</em> d’Offenbach."
-msgstr ""
-"Example: « barcarolle » for Act III n° 13 of <em>Contes d’Hoffmann</em> by "
-"Offenbach."
+msgstr "Example: « barcarolle » for Act III n° 13 of <em>Contes d’Hoffmann</em> by Offenbach."
 
-#: models/oeuvre.py:658 models/oeuvre.py:818
+#: models/oeuvre.py:666 models/oeuvre.py:826
 msgid "opus"
 msgstr "opus"
 
-#: models/oeuvre.py:660
+#: models/oeuvre.py:668
 msgid ""
 "Vous ne pouvez saisir que des chiffres, lettres non accentuées, tiret et "
 "barre oblique, le tout sans espace."
-msgstr ""
-"Only numbers, lowercase letters, dash and forward slash can be inputted "
-"without a space."
+msgstr "Only numbers, lowercase letters, dash and forward slash can be inputted without a space."
 
-#: models/oeuvre.py:663
+#: models/oeuvre.py:671
 msgid ""
 "Exemple : « 12 » pour op. 12, « 27/3 » pour op. 27 n° 3, « 8b » pour "
 "op. 8 b, ou encore « 12-15 » pour op. 12 à 15."
-msgstr ""
-"Example: « 12 » for op. 12, « 27/3 » for op. 27 n° 3, « 8b » for op. 8 b, "
-"likewise « 12-15 » for op. 12 to 15."
+msgstr "Example: « 12 » for op. 12, « 27/3 » for op. 27 n° 3, « 8b » for op. 8 b, likewise « 12-15 » for op. 12 to 15."
 
-#: models/oeuvre.py:667
+#: models/oeuvre.py:675
 msgid "ICT"
 msgstr "Thematic catalogue reference"
 
-#: models/oeuvre.py:668
+#: models/oeuvre.py:676
 msgid ""
 "Indice de Catalogue Thématique. Exemple : « RV 42 », « K. 299d » ou encore "
 "« Hob. XVI:24 »."
-msgstr ""
-"Thematic catalogue number. Example: « RV 42 », « K. 299d » or « Hob. XVI:24 "
-"»."
+msgstr "Thematic catalogue number. Example: « RV 42 », « K. 299d » or « Hob. XVI:24 »."
 
-#: models/oeuvre.py:671
+#: models/oeuvre.py:679
 msgid "genèse (composition, écriture, etc.)"
 msgstr "genesis (composition, writing, etc.)"
 
-#: models/oeuvre.py:672
+#: models/oeuvre.py:680
 msgid "première mondiale"
 msgstr "world premiere"
 
-#: models/oeuvre.py:673
+#: models/oeuvre.py:681
 msgid "première édition"
 msgstr "first edition"
 
-#: models/oeuvre.py:676
+#: models/oeuvre.py:684
 msgid "type de création"
 msgstr "type of premiere"
 
-#: models/oeuvre.py:677
+#: models/oeuvre.py:685
 msgid "création"
 msgstr "premiere"
 
-#: models/oeuvre.py:680
+#: models/oeuvre.py:688
 msgid "extrait de"
 msgstr "extract from"
 
-#: models/oeuvre.py:696
+#: models/oeuvre.py:704
 msgid "acte"
 msgstr "Act"
 
-#: models/oeuvre.py:697
+#: models/oeuvre.py:705
 msgid "tableau"
 msgstr "tableau"
 
-#: models/oeuvre.py:698
+#: models/oeuvre.py:706
 msgid "scène"
 msgstr "scene"
 
-#: models/oeuvre.py:699
+#: models/oeuvre.py:707
 msgid "morceau chanté"
 msgstr "sung piece"
 
-#: models/oeuvre.py:700
+#: models/oeuvre.py:708
 msgid "partie"
 msgstr "part"
 
-#: models/oeuvre.py:701
+#: models/oeuvre.py:709
 msgid "livre"
 msgstr "book"
 
-#: models/oeuvre.py:702
+#: models/oeuvre.py:710
 msgid "album"
 msgstr "album"
 
-#: models/oeuvre.py:703
+#: models/oeuvre.py:711
 msgid "volume"
 msgstr "volume"
 
-#: models/oeuvre.py:704
+#: models/oeuvre.py:712
 msgid "cahier"
 msgstr "notebook"
 
-#: models/oeuvre.py:705
+#: models/oeuvre.py:713
 msgid "ordre"
 msgstr "order"
 
-#: models/oeuvre.py:706
+#: models/oeuvre.py:714
 msgid "mouvement"
 msgstr "movement"
 
-#: models/oeuvre.py:707
+#: models/oeuvre.py:715
 msgid "pièce de recueil"
 msgstr "a movement from a suite or collection of pieces"
 
-#: models/oeuvre.py:710
+#: models/oeuvre.py:718
 msgid "type d’extrait"
 msgstr "type of extract"
 
-#: models/oeuvre.py:715
+#: models/oeuvre.py:723
 msgid "numéro d’extrait"
 msgstr "extract number"
 
-#: models/oeuvre.py:717
+#: models/oeuvre.py:725
 msgid ""
 "Le numéro de l’extrait au sein de l’œuvre, par exemple « 3 » pour le "
 "3<sup>e</sup> mouvement d’un concerto, « 4 » pour l’acte IV d’un opéra, ou "
 "encore « 12b »."
-msgstr ""
-"The number of the extract within the work, for example « 3 » for the 3rd "
-"movement of a concerto, « 4 » for Act IV of an opera, or « 12b »."
+msgstr "The number of the extract within the work, for example « 3 » for the 3rd movement of a concerto, « 4 » for Act IV of an opera, or « 12b »."
 
-#: models/oeuvre.py:722
+#: models/oeuvre.py:730
 msgid ""
 "Vous devez saisir un nombre en chiffres arabes éventellement suivi de "
 "lettres."
 msgstr "Input a number in Arabic numerals possibly followed in written form"
 
-#: models/oeuvre.py:726
+#: models/oeuvre.py:734
 msgid "filles"
 msgstr "girls"
 
-#: models/oeuvre.py:732 models/source.py:179
-msgid "œuvres"
-msgstr "works"
-
-#: models/oeuvre.py:782
+#: models/oeuvre.py:790
 msgid "№ "
 msgstr "№ "
 
-#: models/oeuvre.py:791
+#: models/oeuvre.py:799
 #, python-format
 msgid "n° %s"
 msgstr "n° %s"
 
-#: models/oeuvre.py:793 models/oeuvre.py:806
+#: models/oeuvre.py:801 models/oeuvre.py:814
 #, python-format
 msgid "en %s"
 msgstr "in %s"
 
-#: models/oeuvre.py:800
+#: models/oeuvre.py:808
 msgid "Tempo"
 msgstr "Tempo"
 
-#: models/oeuvre.py:810
+#: models/oeuvre.py:818
 #, python-format
 msgid "sur %s"
 msgstr "on %s"
 
-#: models/oeuvre.py:818
+#: models/oeuvre.py:826
 #, python-format
 msgid "op. %s"
 msgstr "op. %s"
 
-#: models/oeuvre.py:821
+#: models/oeuvre.py:829
 msgid "Indice de Catalogue Thématique"
 msgstr "Thematic catalogue number"
 
-#: models/oeuvre.py:848
+#: models/oeuvre.py:856
 msgid "de "
-msgstr "of "
+msgstr "of"
 
-#: models/oeuvre.py:850
+#: models/oeuvre.py:858
 msgid " avec "
-msgstr " with "
+msgstr "with"
 
-#: models/oeuvre.py:852
+#: models/oeuvre.py:860
 msgid "pour "
-msgstr "for "
+msgstr "for"
 
-#: models/oeuvre.py:861
+#: models/oeuvre.py:869
 msgid "auteur(s)"
 msgstr "author(s)"
 
-#: models/oeuvre.py:896
+#: models/oeuvre.py:904
 #, python-format
 msgid "œuvre jouée %s fois avec : %s"
 msgstr "work played %s times with: %s"
 
-#: models/personnel.py:37
+#: models/personnel.py:38
 msgid "nom (au féminin)"
 msgstr "name (feminine version)"
 
-#: models/personnel.py:38
+#: models/personnel.py:39
 msgid "Ne préciser que s’il est différent du nom."
 msgstr "Only specify if it is different from the surname."
 
-#: models/personnel.py:108
+#: models/personnel.py:109
 msgid "nombre d’individus"
 msgstr "number of people"
 
-#: models/personnel.py:112
+#: models/personnel.py:113
 msgid "nombre d’œuvres"
 msgstr "number of works"
 
-#: models/personnel.py:130
+#: models/personnel.py:131
 msgid "Année"
 msgstr "Year"
 
-#: models/personnel.py:131
+#: models/personnel.py:132
 msgid "Mois"
 msgstr "Month"
 
-#: models/personnel.py:132
+#: models/personnel.py:133
 msgid "Jour"
 msgstr "Day"
 
-#: models/personnel.py:136
+#: models/personnel.py:137
 msgid "précision du début"
 msgstr "clarification of start"
 
-#: models/personnel.py:139
+#: models/personnel.py:140
 msgid "précision de la fin"
 msgstr "clarification of end"
 
-#: models/personnel.py:171
+#: models/personnel.py:172
 #, python-format
 msgid "depuis le %(debut)s"
 msgstr "from the %(debut)s"
 
-#: models/personnel.py:173
+#: models/personnel.py:174
 #, python-format
 msgid "depuis %(debut)s"
 msgstr "from %(debut)s"
 
-#: models/personnel.py:177
+#: models/personnel.py:178
 #, python-format
 msgid "jusqu’au %(fin)s"
 msgstr "until %(fin)s"
 
-#: models/personnel.py:179
+#: models/personnel.py:180
 #, python-format
 msgid "jusqu’à %(fin)s"
 msgstr "until %(fin)s"
 
-#: models/personnel.py:183
+#: models/personnel.py:184
 #, python-format
 msgid "du %(debut)s au %(fin)s"
 msgstr "from %(debut)s to %(fin)s"
 
-#: models/personnel.py:185
+#: models/personnel.py:186
 #, python-format
 msgid "du %(debut)s à %(fin)s"
 msgstr "from %(debut)s to %(fin)s"
 
-#: models/personnel.py:188
+#: models/personnel.py:189
 #, python-format
 msgid "de %(debut)s au %(fin)s"
 msgstr "from %(debut)s to %(fin)s"
 
-#: models/personnel.py:190
+#: models/personnel.py:191
 #, python-format
 msgid "de %(debut)s à %(fin)s"
 msgstr "from %(debut)s to %(fin)s"
 
-#: models/personnel.py:214
+#: models/personnel.py:215
 msgid "membre"
 msgstr "member"
 
-#: models/personnel.py:215 models/personnel.py:305
+#: models/personnel.py:216 models/personnel.py:305
 msgid "membres"
 msgstr "members"
 
-#: models/personnel.py:236
+#: models/personnel.py:237
 msgid "nom pluriel"
 msgstr "plural noun"
 
-#: models/personnel.py:242
+#: models/personnel.py:243 models/personnel.py:244
 msgid "type d’ensemble"
 msgstr "type of ensemble"
 
@@ -1861,13 +1805,13 @@ msgstr "types of ensemble"
 msgid "particule du nom"
 msgstr "surname preposition"
 
-#: models/personnel.py:265
+#: models/personnel.py:267
 msgid "localisation"
 msgstr "location"
 
-#: models/personnel.py:275 models/source.py:185
-msgid "ensembles"
-msgstr "ensembles"
+#: models/personnel.py:272 models/source.py:184
+msgid "individus"
+msgstr "individuals"
 
 #: models/personnel.py:309
 msgid "nombre de membres"
@@ -1877,7 +1821,7 @@ msgstr "number of members"
 msgid "Monde"
 msgstr "World"
 
-#: models/source.py:36
+#: models/source.py:37 models/source.py:38
 msgid "type de source"
 msgstr "type of source"
 
@@ -1889,108 +1833,115 @@ msgstr "types of source"
 msgid "compte rendu"
 msgstr "report"
 
-#: models/source.py:153
+#: models/source.py:155
 msgid "Journal de Rouen"
 msgstr "Journal de Rouen"
 
-#: models/source.py:154
+#: models/source.py:156
 msgid "légende"
 msgstr "caption"
 
-#: models/source.py:155
+#: models/source.py:157
 msgid "Recommandée pour les images."
 msgstr "Recommended for images."
 
-#: models/source.py:159
+#: models/source.py:161
 msgid "Sans « № ». Exemple : « 52 »"
 msgstr "Without « № ». Example: « 52 »"
 
-#: models/source.py:161
+#: models/source.py:163
 msgid "Sans « f. ». Exemple : « 3 »."
 msgstr "Without « f. ». Example: « 3 »."
 
-#: models/source.py:163
+#: models/source.py:165
 msgid "Sans « p. ». Exemple : « 3 »"
 msgstr "Without « p. ». Example : « 3 »"
 
-#: models/source.py:164
+#: models/source.py:166
 msgid "lieu de conservation"
 msgstr "place of conservation"
 
-#: models/source.py:166
+#: models/source.py:168
 msgid "cote"
 msgstr "classmark"
 
-#: models/source.py:167
+#: models/source.py:169
 msgid "URL"
 msgstr "URL"
 
-#: models/source.py:168
+#: models/source.py:170
 msgid "Uniquement un permalien extérieur à Dezède."
 msgstr "Only a permalink external to Dezède."
 
-#: models/source.py:171
+#: models/source.py:173
+#, python-format
 msgid ""
-"Recopier la source ou un extrait en suivant les règles définies dans <a href="
-"\"/examens/source\">le didacticiel.</a>"
+"Recopier la source ou un extrait en suivant les règles définies dans <a "
+"href=\"%s\">le didacticiel.</a>"
 msgstr ""
-"Recopy the source or an extract by following the rules defined in <a href=\"/"
-"examens/source\">the tutorial.</a>"
+
+#: models/source.py:181
+msgid "œuvres"
+msgstr "works"
 
 #: models/source.py:187
+msgid "ensembles"
+msgstr "ensembles"
+
+#: models/source.py:189
 msgid "lieux"
 msgstr "places"
 
-#: models/source.py:190 models/source.py:196
+#: models/source.py:192
 msgid "sources"
 msgstr "sources"
 
-#: models/source.py:213
+#: models/source.py:215
 msgid "Lien"
 msgstr "Link"
 
-#: models/source.py:220
+#: models/source.py:222
 #, python-format
 msgid "n° %s"
 msgstr "n° %s"
 
-#: models/source.py:223
+#: models/source.py:225
 #, python-format
 msgid "f. %s"
 msgstr "f. %s"
 
-#: models/source.py:226
+#: models/source.py:228
 #, python-format
 msgid "p. %s"
 msgstr "p. %s"
 
-#: models/source.py:231
+#: models/source.py:233
 msgid "Lieu de conservation"
 msgstr "Place of conservation"
 
 #: models/source.py:337
-msgid " Vidéo"
-msgstr " Video"
-
-#: models/source.py:338
-msgid " Audio"
-msgstr " Audio"
-
-#: models/source.py:339
-msgid " Image"
-msgstr " Image"
+msgid "%(icon)s Vidéo"
+msgstr "%(icon)s Video"
 
 #: models/source.py:340
-msgid " Autre"
-msgstr " Other"
+msgid "%(icon)s Audio"
+msgstr "%(icon)s Audio"
 
 #: models/source.py:341
-msgid " Texte"
-msgstr " Text"
+msgid "%(icon)s Image"
+msgstr "%(icon)s Image"
 
 #: models/source.py:342
-msgid " Lien"
-msgstr " Link"
+msgid "%(icon)s Autre"
+msgstr "%(icon)s Other"
+
+#: models/source.py:343
+msgid "%(icon)s Texte"
+msgstr "%(icon)s Text"
+
+#: models/source.py:344
+msgid "%(icon)s Lien"
+msgstr "%(icon)s Link"
 
 #: templates/admin/libretto/oeuvre/change_form.html:8
 msgid "Ajouter un extrait"
