@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Sara Iglesias <saraiglesias@gmx.de>, 2016
 # Yannick Simon <yannick.simon@univ-rouen.fr>, 2016
@@ -9,15 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-11 18:51+0200\n"
-"PO-Revision-Date: 2016-09-29 19:29+0000\n"
-"Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>\n"
-"Language-Team: German (http://www.transifex.com/bertrandbordage/dezede/"
-"language/de/)\n"
-"Language: de\n"
+"POT-Creation-Date: 2016-06-24 23:30+0200\n"
+"PO-Revision-Date: 2012-10-06 19:01+0000\n"
+"Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
+"Language-Team: German (http://app.transifex.com/bertrandbordage/dezede/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: admin.py:56
@@ -155,11 +154,7 @@ msgid ""
 "      Si vous ne possédez pas encore de compte,\n"
 "      <a href=\"%(signup_url)s\">veuillez en créer un</a> d’abord.\n"
 "    "
-msgstr ""
-"\n"
-"Wenn Sie noch kein Konto haben, \n"
-"müssen Sie zunächst ein \n"
-"<a href=\"%(signup_url)s\">Konto erstellen</a>."
+msgstr "\nWenn Sie noch kein Konto haben, \nmüssen Sie zunächst ein \n<a href=\"%(signup_url)s\">Konto erstellen</a>."
 
 #: templates/account/password_change.html:6
 #: templates/account/password_change.html:14
@@ -175,11 +170,9 @@ msgstr "Passwort zurücksetzen"
 
 #: templates/account/password_reset.html:16
 msgid ""
-"Forgotten your password? Enter your e-mail address below, and we'll send you "
-"an e-mail allowing you to reset it."
-msgstr ""
-"Passwort vergessen? Geben Sie hier Ihre Email-Adresse an, und wir senden "
-"Ihnen eine Email zum Zurücksetzen Ihres Passworts."
+"Forgotten your password? Enter your e-mail address below, and we'll send you"
+" an e-mail allowing you to reset it."
+msgstr "Passwort vergessen? Geben Sie hier Ihre Email-Adresse an, und wir senden Ihnen eine Email zum Zurücksetzen Ihres Passworts."
 
 #: templates/account/password_reset.html:21
 msgid "Reset My Password"
@@ -187,17 +180,13 @@ msgstr "Passwort zurücksetzen"
 
 #: templates/account/password_reset.html:24
 msgid "Please contact us if you have any trouble resetting your password."
-msgstr ""
-"Bitte kontaktieren Sie uns, falls Sie auf Probleme mit dem Zurücksetzen "
-"Ihres Passworts stoßen."
+msgstr "Bitte kontaktieren Sie uns, falls Sie auf Probleme mit dem Zurücksetzen Ihres Passworts stoßen."
 
 #: templates/account/password_reset_done.html:15
 msgid ""
 "We have sent you an e-mail. Please contact us if you do not receive it "
 "within a few minutes."
-msgstr ""
-"Wir haben Ihnen eine Email geschickt. Bitte kontaktieren Sie uns, falls Sie "
-"diese nicht innerhalb weniger Minuten erhalten."
+msgstr "Wir haben Ihnen eine Email geschickt. Bitte kontaktieren Sie uns, falls Sie diese nicht innerhalb weniger Minuten erhalten."
 
 #: templates/account/password_reset_from_key.html:8
 msgid "Bad Token"
@@ -207,12 +196,9 @@ msgstr "Bad Token"
 #, python-format
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
-"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
-"a>."
-msgstr ""
-"Der Link zum Zurücksetzen des Passworts ist ungültig, wahrscheinlich weil er "
-"bereits benutzt wurde. Bitte beantragen Sie ein <a href="
-"\"%(passwd_reset_url)s\">erneutes Zurücksetzen des Passworts</a>."
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
+"reset</a>."
+msgstr "Der Link zum Zurücksetzen des Passworts ist ungültig, wahrscheinlich weil er bereits benutzt wurde. Bitte beantragen Sie ein <a href=\"%(passwd_reset_url)s\">erneutes Zurücksetzen des Passworts</a>."
 
 #: templates/account/password_reset_from_key.html:25
 msgid "change password"
@@ -231,9 +217,7 @@ msgstr "Anmelden"
 #, python-format
 msgid ""
 "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
-msgstr ""
-"Haben Sie schon ein Konto? Dann <a href=\"%(login_url)s\">melden Sie sich "
-"an</a>."
+msgstr "Haben Sie schon ein Konto? Dann <a href=\"%(login_url)s\">melden Sie sich an</a>."
 
 #: templates/account/verification_sent.html:7
 msgid "Vérification de votre adresse e-mail"
@@ -243,18 +227,11 @@ msgstr "Prüfung Ihrer Email-Adresse"
 msgid ""
 "\n"
 "      Nous vous avons envoyé un e-mail de vérification.\n"
-"      Suivez le lien fourni pour finaliser la procédure de création de "
-"compte.\n"
+"      Suivez le lien fourni pour finaliser la procédure de création de compte.\n"
 "      Veuillez nous contactez si vous ne le recevez pas\n"
 "      dans les minutes qui viennent.\n"
 "    "
-msgstr ""
-"\n"
-"Wir haben Ihnen eine Verifizierungs-Email geschickt.\n"
-"Folgen Sie dem dort angezeigten Link, \n"
-"um die Kontoerstellung abzuschließen.\n"
-"Bitte kontaktieren Sie uns, falls Sie die Email \n"
-"nicht innerhalb weniger Minuten erhalten."
+msgstr "\nWir haben Ihnen eine Verifizierungs-Email geschickt.\nFolgen Sie dem dort angezeigten Link, \num die Kontoerstellung abzuschließen.\nBitte kontaktieren Sie uns, falls Sie die Email \nnicht innerhalb weniger Minuten erhalten."
 
 #: templates/accounts/grant_to_admin.html:7
 msgid "Accès à l’interface d’administration"
@@ -337,15 +314,8 @@ msgid ""
 "Bonjour %(user_first_name)s,\n"
 "\n"
 "Vous venez d’être accepté dans l’équipe de Dezède.\n"
-"Vous êtes donc autorisé à accéder à l’interface d’administration sur "
-"%(site_url)s%(admin_index_url)s.\n"
-msgstr ""
-"\n"
-"Liebe/r  %(user_first_name)s,\n"
-"\n"
-"Sie wurden in das Dezède-Team aufgenommen.\n"
-"Sie haben damit Zugang zur Verwaltungsoberfläche auf %(site_url)s"
-"%(admin_index_url)s.\n"
+"Vous êtes donc autorisé à accéder à l’interface d’administration sur %(site_url)s%(admin_index_url)s.\n"
+msgstr "\nLiebe/r  %(user_first_name)s,\n\nSie wurden in das Dezède-Team aufgenommen.\nSie haben damit Zugang zur Verwaltungsoberfläche auf %(site_url)s%(admin_index_url)s.\n"
 
 #: templates/accounts/hierarchicuser_detail.html:16
 msgid "Présentation"

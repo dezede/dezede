@@ -1,23 +1,22 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Rosalba Agresta <rosalbagresta@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-11 18:51+0200\n"
-"PO-Revision-Date: 2016-08-29 23:51+0000\n"
-"Last-Translator: Rosalba Agresta <rosalbagresta@gmail.com>\n"
-"Language-Team: Italian (http://www.transifex.com/bertrandbordage/dezede/"
-"language/it/)\n"
-"Language: it\n"
+"POT-Creation-Date: 2016-06-24 23:30+0200\n"
+"PO-Revision-Date: 2012-10-06 19:01+0000\n"
+"Last-Translator: Rosalba Agresta <rosalbagresta@gmail.com>, 2016\n"
+"Language-Team: Italian (http://app.transifex.com/bertrandbordage/dezede/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: it\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: admin.py:56
 msgid "Informations personnelles"
@@ -154,10 +153,7 @@ msgid ""
 "      Si vous ne possédez pas encore de compte,\n"
 "      <a href=\"%(signup_url)s\">veuillez en créer un</a> d’abord.\n"
 "    "
-msgstr ""
-"\n"
-"Se non possiedi ancora un conto\n"
-"<a href=\"%(signup_url)s\">creane prima uno</a>."
+msgstr "\nSe non possiedi ancora un conto\n<a href=\"%(signup_url)s\">creane prima uno</a>."
 
 #: templates/account/password_change.html:6
 #: templates/account/password_change.html:14
@@ -173,11 +169,9 @@ msgstr "Password Reset"
 
 #: templates/account/password_reset.html:16
 msgid ""
-"Forgotten your password? Enter your e-mail address below, and we'll send you "
-"an e-mail allowing you to reset it."
-msgstr ""
-"Hai dimenticato la password? Immetti il tuo indirizzo email e ti manderemo "
-"un email che ti permetterà di reimpostarla."
+"Forgotten your password? Enter your e-mail address below, and we'll send you"
+" an e-mail allowing you to reset it."
+msgstr "Hai dimenticato la password? Immetti il tuo indirizzo email e ti manderemo un email che ti permetterà di reimpostarla."
 
 #: templates/account/password_reset.html:21
 msgid "Reset My Password"
@@ -191,9 +185,7 @@ msgstr "Per favore contattaci se hai problemi a reimpostare la password."
 msgid ""
 "We have sent you an e-mail. Please contact us if you do not receive it "
 "within a few minutes."
-msgstr ""
-"Ti abbiamo mandato una email. Per favore contattaci se non la ricevi entro "
-"pochi minuti."
+msgstr "Ti abbiamo mandato una email. Per favore contattaci se non la ricevi entro pochi minuti."
 
 #: templates/account/password_reset_from_key.html:8
 msgid "Bad Token"
@@ -203,12 +195,9 @@ msgstr "Bad Token"
 #, python-format
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
-"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
-"a>."
-msgstr ""
-"Il link per reimpostare la password non è valido, probabilmente perchè è già "
-"stato utilizzato. Per favore richiedi un <a href=\"%(passwd_reset_url)s"
-"\">nuovo password reset</a>."
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
+"reset</a>."
+msgstr "Il link per reimpostare la password non è valido, probabilmente perchè è già stato utilizzato. Per favore richiedi un <a href=\"%(passwd_reset_url)s\">nuovo password reset</a>."
 
 #: templates/account/password_reset_from_key.html:25
 msgid "change password"
@@ -227,9 +216,7 @@ msgstr "Sign Up"
 #, python-format
 msgid ""
 "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
-msgstr ""
-"Hai già un account ? Allora per favore <a href=\"%(login_url)s\">connettiti</"
-"a>."
+msgstr "Hai già un account ? Allora per favore <a href=\"%(login_url)s\">connettiti</a>."
 
 #: templates/account/verification_sent.html:7
 msgid "Vérification de votre adresse e-mail"
@@ -239,17 +226,11 @@ msgstr "Controllo del tuo indirizzo email"
 msgid ""
 "\n"
 "      Nous vous avons envoyé un e-mail de vérification.\n"
-"      Suivez le lien fourni pour finaliser la procédure de création de "
-"compte.\n"
+"      Suivez le lien fourni pour finaliser la procédure de création de compte.\n"
 "      Veuillez nous contactez si vous ne le recevez pas\n"
 "      dans les minutes qui viennent.\n"
 "    "
-msgstr ""
-"\n"
-"Ti abbiamo mandato un'email di verifica.\n"
-"Clicca sul link per confermare la creazione dell'account.\n"
-"Contattaci se non lo ricevi\n"
-"nei prossimi minuti."
+msgstr "\nTi abbiamo mandato un'email di verifica.\nClicca sul link per confermare la creazione dell'account.\nContattaci se non lo ricevi\nnei prossimi minuti."
 
 #: templates/accounts/grant_to_admin.html:7
 msgid "Accès à l’interface d’administration"
@@ -330,15 +311,8 @@ msgid ""
 "Bonjour %(user_first_name)s,\n"
 "\n"
 "Vous venez d’être accepté dans l’équipe de Dezède.\n"
-"Vous êtes donc autorisé à accéder à l’interface d’administration sur "
-"%(site_url)s%(admin_index_url)s.\n"
-msgstr ""
-"\n"
-"Buongiorno %(user_first_name)s,\n"
-"\n"
-"Sei stato accettato nell'equipe di Dezède.\n"
-"Sei quindi autorizzato ad accedere all'interfaccia di amministrazione su "
-"%(site_url)s%(admin_index_url)s.\n"
+"Vous êtes donc autorisé à accéder à l’interface d’administration sur %(site_url)s%(admin_index_url)s.\n"
+msgstr "\nBuongiorno %(user_first_name)s,\n\nSei stato accettato nell'equipe di Dezède.\nSei quindi autorizzato ad accedere all'interfaccia di amministrazione su %(site_url)s%(admin_index_url)s.\n"
 
 #: templates/accounts/hierarchicuser_detail.html:16
 msgid "Présentation"
