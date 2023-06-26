@@ -56,6 +56,7 @@ LANGUAGES = (
     ('es', ugettext('Español')),
     ('fr', ugettext('Français')),
     ('it', ugettext('Italiano')),
+    ('pt', ugettext('Português')),
 )
 USE_I18N = True
 USE_L10N = True
