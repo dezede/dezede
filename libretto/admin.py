@@ -378,34 +378,6 @@ class SourcePartieInline(TabularInline):
 #
 
 
-# FIXME: Workaround for https://code.djangoproject.com/ticket/26184
-#        Remove when fixed.
-def lookup_needs_distinct(opts, lookup_path):
-    """
-    Returns True if 'distinct()' should be used to query the given lookup path.
-    """
-    field = None
-    # Go through the fields (following all relations) and look for an m2m
-    for lookup_part in lookup_path.split('__'):
-        if field is not None:
-            # Checks whether the current lookup part is not a field.
-            try:
-                if field.get_transform(lookup_part) is not None \
-                        or field.get_lookup(lookup_part) is not None:
-                    continue
-            except (NotImplementedError, TypeError):
-                continue
-        field = opts.get_field(lookup_part)
-        if hasattr(field, 'get_path_info'):
-            # This field is a relation, update opts to follow the relation
-            path_info = field.get_path_info()
-            opts = path_info[-1].to_opts
-            if any(path.m2m for path in path_info):
-                # This field is a m2m relation so we know we need to call distinct
-                return True
-    return False
-
-
 class CommonAdmin(CustomBaseModel, ModelAdmin):
     list_per_page = 20
     save_as = True
