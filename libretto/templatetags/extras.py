@@ -124,58 +124,57 @@ def get_data(evenements_qs, min_places, bbox):
     valid_ancestors_query, valid_ancestors_params = get_raw_query(
         valid_ancestors.values('id', 'path'))
 
-    evenements_query, params = get_raw_query(
-        evenements_qs.values('debut_lieu_id'))
+    lieux_query, params = get_raw_query(
+        evenements_qs.values('debut_lieu__path'))
 
-    cursor.execute("""
-    SELECT length(ancetre.path) / 4, COUNT(DISTINCT ancetre.id)
-    FROM libretto_lieu AS lieu
-    INNER JOIN (%s) AS ancetre ON lieu.path LIKE ancetre.path || '%%%%'
-    WHERE lieu.id IN (%s)
-    GROUP BY length(ancetre.path)
-    ORDER BY length(ancetre.path) ASC;
-    """ % (valid_ancestors_query, evenements_query),
-        valid_ancestors_params + params)
+    cursor.execute(f"""
+    SELECT level
+    FROM generate_series(1, (SELECT max(array_length(path, 1)) FROM libretto_lieu)) AS _(level)
+    LEFT JOIN ({lieux_query}) AS lieu ON true
+    INNER JOIN ({valid_ancestors_query}) AS ancetre
+        ON lieu.path[:level] = ancetre.path
+    WHERE array_length(ancetre.path, 1) = level
+    GROUP BY level
+    HAVING COUNT(DISTINCT ancetre.id) >= %s
+    ORDER BY level ASC
+    LIMIT 1;
+    """, params + valid_ancestors_params + (min_places,))
 
-    level = None
-    for level, count in cursor.fetchall():
-        if count >= min_places:
-            break
-        if count == 0:
-            if level > 0:
-                level -= 1
-            break
+    output = cursor.fetchone()
+    level = None if output is None else output[0]
+
     if level is None:
-        return ()
+        cursor.execute(f"""
+        SELECT array_length(ancetre.path, 1), COUNT(DISTINCT ancetre.id)
+        FROM ({lieux_query}) AS lieu
+        INNER JOIN ({valid_ancestors_query}) AS ancetre
+            ON lieu.path[:array_length(ancetre.path, 1)] = ancetre.path
+        GROUP BY array_length(ancetre.path, 1)
+        ORDER BY array_length(ancetre.path, 1) ASC
+        """, params + valid_ancestors_params)
+        counts_to_levels = {count: level for level, count in cursor.fetchall()}
+        level = counts_to_levels[max(counts_to_levels)]
 
-    evenements_query, params = get_raw_query(
+        if level is None:
+            return ()
+
+    lieux_query, params = get_raw_query(
         evenements_qs.values('pk', 'debut_lieu_id'))
-    params = list(params)
-    if bbox is None:
-        bbox_where = ''
-    else:
-        bbox_where = 'geometry @ ST_GeomFromEWKB(%s::bytea) AND '
-        params.append(bbox.ewkb)
 
-    params.append(level)
+    ancestors = valid_ancestors.filter(path__level=level)
+    ancestors_query, ancestors_params = get_raw_query(
+        ancestors.values('id', 'nom', 'geometry', 'path')
+    )
 
-    cursor.execute("""
+    cursor.execute(f"""
     SELECT ancetre.id, ancetre.nom, ancetre.geometry, COUNT(evenement.id) AS n
-    FROM (%s) AS evenement
+    FROM ({lieux_query}) AS evenement
     INNER JOIN libretto_lieu AS lieu ON lieu.id = evenement.debut_lieu_id
-    INNER JOIN (
-        SELECT *
-        FROM libretto_lieu
-        WHERE (
-            %s
-            geometry IS NOT NULL
-            AND length(path) / 4 = %%s
-        )
-        ORDER BY length(path) DESC
-    ) AS ancetre ON lieu.path LIKE ancetre.path || '%%%%'
+    INNER JOIN ({ancestors_query}) AS ancetre
+        ON ancetre.path = lieu.path[:%s]
     GROUP BY ancetre.id, ancetre.nom, ancetre.geometry
     ORDER BY n DESC;
-    """ % (evenements_query, bbox_where), params)
+    """, params + ancestors_params + (level,))
     return cursor.fetchall()
 
 

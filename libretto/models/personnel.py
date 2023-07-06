@@ -361,12 +361,12 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
             SELECT ancetre.nom, COUNT(evenement.id)
             FROM libretto_lieu AS ancetre
             INNER JOIN libretto_lieu AS lieu ON (
-                lieu.path LIKE ancetre.path || '%%')
+                lieu.path[:array_length(ancetre.path, 1)] = ancetre.path)
             INNER JOIN evenements AS evenement ON (
                 evenement.debut_lieu_id = lieu.id)
-            WHERE %s LIKE ancetre.path || '%%'
+            WHERE (%s::decimal[])[:array_length(ancetre.path, 1)] = ancetre.path
             GROUP BY ancetre.id
-            ORDER BY length(ancetre.path)
+            ORDER BY array_length(ancetre.path, 1)
         );
         """
         with connection.cursor() as cursor:
