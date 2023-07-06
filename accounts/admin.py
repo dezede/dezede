@@ -76,4 +76,4 @@ class HierarchicUserAdmin(VersionAdmin, CommonAdmin, UserAdmin):
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
-    ordering = ('last_name', 'first_name')
+    ordering = HierarchicUser._meta.ordering

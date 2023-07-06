@@ -111,8 +111,8 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
 
     objects = HierarchicUserManager()
 
-    class Meta(object):
-        ordering = ('last_name', 'first_name')
+    class Meta:
+        ordering = ['last_name', 'first_name']
         verbose_name = _('utilisateur')
         verbose_name_plural = _('utilisateurs')
 

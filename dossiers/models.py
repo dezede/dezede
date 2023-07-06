@@ -110,7 +110,7 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
     class Meta(object):
         verbose_name = _('dossier d’événements')
         verbose_name_plural = _('dossiers d’événements')
-        ordering = ('path',)
+        ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     def __str__(self):

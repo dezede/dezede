@@ -322,11 +322,6 @@ class CommonTreeQuerySet(TreeQuerySetMixin, CommonQuerySet):
 class CommonTreeManager(CommonManager):
     queryset_class = CommonTreeQuerySet
 
-    def get_queryset(self):
-        return self.queryset_class(self.model, using=self._db).order_by(
-            [f.name for f in self.model._meta.fields
-             if isinstance(f, PathField)][0])
-
 
 class NumberCharField(CharField):
     NUMBER_RE = re.compile(r'\d+')

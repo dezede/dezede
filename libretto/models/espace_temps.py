@@ -88,10 +88,10 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = LieuManager()
 
-    class Meta(object):
+    class Meta:
         verbose_name = _('lieu ou institution')
         verbose_name_plural = _('lieux et institutions')
-        ordering = ('path',)
+        ordering = ['path']
         unique_together = ('nom', 'parent',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
 

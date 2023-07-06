@@ -760,10 +760,10 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = OeuvreManager()
 
-    class Meta(object):
+    class Meta:
         verbose_name = _('œuvre')
         verbose_name_plural = _('œuvres')
-        ordering = ('path',)
+        ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
     @staticmethod
