@@ -153,9 +153,9 @@ def get_data(evenements_qs, min_places, bbox):
         ORDER BY array_length(ancetre.path, 1) ASC
         """, params + valid_ancestors_params)
         counts_to_levels = {count: level for level, count in cursor.fetchall()}
-        level = counts_to_levels[max(counts_to_levels)]
-
-        if level is None:
+        try:
+            level = counts_to_levels[max(counts_to_levels)]
+        except ValueError:  # `max` got an empty dict.
             return ()
 
     lieux_query, params = get_raw_query(
