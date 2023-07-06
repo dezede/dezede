@@ -94,6 +94,9 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         ordering = ['path']
         unique_together = ('nom', 'parent',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
+        indexes = [
+            *PathField.get_indexes('lieu', 'path'),
+        ]
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):

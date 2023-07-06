@@ -765,6 +765,9 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         verbose_name_plural = _('œuvres')
         ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
+        indexes = [
+            *PathField.get_indexes('oeuvre', 'path'),
+        ]
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):

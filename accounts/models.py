@@ -115,6 +115,9 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
         ordering = ['last_name', 'first_name']
         verbose_name = _('utilisateur')
         verbose_name_plural = _('utilisateurs')
+        indexes = [
+            *PathField.get_indexes('user', 'path'),
+        ]
 
     def __str__(self, tags=False):
         return self.html(tags=False)

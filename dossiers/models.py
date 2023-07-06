@@ -112,6 +112,9 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
         verbose_name_plural = _('dossiers d’événements')
         ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
+        indexes = [
+            *PathField.get_indexes('dossiers', 'path'),
+        ]
 
     def __str__(self):
         return strip_tags(self.html())
