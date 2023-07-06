@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='oeuvre',
             name='path',
-            field=tree.fields.PathField(db_index=True, order_by=('type_extrait', 'numero_extrait', 'titre', 'genre', 'numero', 'coupe', 'incipit', 'tempo', 'tonalite', 'sujet', 'arrangement', 'surnom', 'nom_courant', 'opus', 'ict')),
+            field=tree.fields.PathField(db_index=True, order_by=['type_extrait', 'numero_extrait', 'titre', 'genre', 'numero', 'coupe', 'incipit', 'tempo', 'tonalite', 'sujet', 'arrangement', 'surnom', 'nom_courant', 'opus', 'ict'], parent_field_name='extrait_de'),
         ),
         migrations.AlterField(
             model_name='lieu',
@@ -74,6 +74,6 @@ class Migration(migrations.Migration):
         ),
         CreateTreeTrigger('lieu'),
         RebuildPaths('lieu'),
-        CreateTreeTrigger('oeuvre', parent_field='extrait_de'),
+        CreateTreeTrigger('oeuvre'),
         RebuildPaths('oeuvre'),
     ]

@@ -92,8 +92,11 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
         verbose_name=_('responsable scientifique'),
         limit_choices_to={'willing_to_be_mentor__exact': True},
         on_delete=CASCADE)
-    path = PathField(order_by=('last_name', 'first_name', 'username'),
-                     db_index=True)
+    path = PathField(
+        order_by=['last_name', 'first_name', 'username'],
+        parent_field_name='mentor',
+        db_index=True,
+    )
     willing_to_be_mentor = BooleanField(
         _('Veut être responsable scientifique'), default=False)
 

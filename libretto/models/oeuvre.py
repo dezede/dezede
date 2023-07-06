@@ -706,7 +706,9 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     extrait_de = ForeignKey(
         'self', null=True, blank=True, related_name='enfants',
         verbose_name=_('extrait de'), on_delete=CASCADE)
-    path = PathField(order_by=ORDERING, db_index=True)
+    path = PathField(
+        order_by=ORDERING, parent_field_name='extrait_de', db_index=True,
+    )
     ACTE = 1
     TABLEAU = 2
     SCENE = 3
