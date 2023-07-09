@@ -509,7 +509,7 @@ class TreeNode(PublishedDetailView):
         context = super(TreeNode, self).get_context_data(**kwargs)
 
         if self.object is None:
-            children = self.model.get_roots()
+            children = self.model.filter_roots()
         else:
             children = self.object.get_children()
 
