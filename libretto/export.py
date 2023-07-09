@@ -1,3 +1,4 @@
+from django.db.models.constants import LOOKUP_SEP
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
@@ -18,7 +19,7 @@ class CommonModelExporter(Exporter):
             if s.endswith(suffix):
                 self.verbose_overrides[s] = self.get_verbose_name(
                     s.split(suffix)[0]) + ' (%s)' % force_text(self.RENDU)
-            elif '__' in s:
+            elif LOOKUP_SEP in s:
                 self.verbose_overrides[s] = self.fields[s].verbose_name
 
     @staticmethod

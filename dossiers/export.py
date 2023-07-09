@@ -7,6 +7,7 @@ from io import BytesIO
 
 from django.apps import apps
 from django.db.models import Q
+from django.db.models.constants import LOOKUP_SEP
 from django.utils.dates import MONTHS
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
@@ -99,7 +100,7 @@ class CustomExporter(Exporter):
                 self.method_names.append(column)
             else:
                 self.lookups.append(column)
-        self.fields = {lookup: self.get_field(lookup.split('__')[0])
+        self.fields = {lookup: self.get_field(lookup.split(LOOKUP_SEP)[0])
                        for lookup in self.lookups}
         self.final_fields = {lookup: self.get_final_field(lookup)
                              for lookup in self.lookups}

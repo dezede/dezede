@@ -1,4 +1,5 @@
 from django.db.models import CharField, TextField, Manager, Model
+from django.db.models.constants import LOOKUP_SEP
 from django.db.models.query import QuerySet
 from django.dispatch import receiver
 from django.utils.encoding import force_text
@@ -27,7 +28,7 @@ def replace_in_kwargs(obj, kwargs_dict):
     field_names = [field.attname for field in fields
                    if field.__class__ in REPLACE_FIELDS]
     for k, v in kwargs_dict.items():
-        if k.split('__')[0] in field_names:
+        if k.split(LOOKUP_SEP)[0] in field_names:
             kwargs_dict[k] = replace(force_text(v))
 
 
