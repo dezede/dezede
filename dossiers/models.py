@@ -1,4 +1,6 @@
 from datetime import datetime
+from functools import cached_property
+
 from django.db.models import (
     CharField, DateField, ManyToManyField,
     TextField, PositiveSmallIntegerField, Q,
@@ -17,7 +19,6 @@ from libretto.models import (Lieu, Oeuvre, Evenement, Individu, Ensemble,
 from libretto.models.base import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from common.utils.html import href
-from common.utils.text import str_list_w_last
 
 
 class CategorieDeDossiers(PublishedModel):
@@ -137,9 +138,15 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
     def get_data_absolute_url(self):
         return reverse('dossierdevenements_data_detail', args=(self.slug,))
 
+    @cached_property
+    def queryset(self):
+        return self.get_queryset(dynamic=False)
+
+    @cached_property
+    def dynamic_queryset(self):
+        return self.get_queryset(dynamic=True)
+
     def get_queryset(self, dynamic=False):
-        if hasattr(self, '_evenement_queryset'):
-            return self._evenement_queryset
         if not dynamic and self.pk and self.evenements.exists():
             return self.evenements.all()
         args = []
@@ -149,14 +156,16 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
         if self.fin:
             kwargs['debut_date__lte'] = self.fin
         if self.pk:
-            if self.lieux.exists():
-                lieux = self.lieux.all().get_descendants(include_self=True)
+            lieux = set(self.lieux.all().get_descendants(include_self=True))
+            if lieux:
                 kwargs['debut_lieu__in'] = lieux
-            if self.oeuvres.exists():
-                oeuvres = self.oeuvres.all().get_descendants(include_self=True)
+            oeuvres = set(
+                self.oeuvres.all().get_descendants(include_self=True)
+            )
+            if oeuvres:
                 kwargs['programme__oeuvre__in'] = oeuvres
-            individus = self.individus.all()
-            if individus.exists():
+            individus = set(self.individus.values_list('pk', flat=True))
+            if individus:
                 args.append(
                     Q(programme__oeuvre__auteurs__individu__in=individus)
                     | Q(programme__distribution__individu__in=individus)
@@ -174,8 +183,8 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
                     WHERE dossier_ensemble.dossierdevenements_id = %s
                 )""",), params=(self.pk,))
                 kwargs['pk__in'] = evenements
-            sources = self.sources.all()
-            if sources.exists():
+            sources = set(self.sources.values_list('pk', flat=True))
+            if sources:
                 kwargs['sources__in'] = sources
             saisons = self.saisons.all()
             if saisons.exists():
@@ -183,16 +192,14 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
         if self.circonstance:
             kwargs['circonstance__icontains'] = self.circonstance
         if args or kwargs:
-            self._evenement_queryset = Evenement.objects.filter(
+            return Evenement.objects.filter(
                 *args, **kwargs,
             ).distinct()
-        else:
-            self._evenement_queryset = Evenement.objects.none()
-        return self._evenement_queryset
+        return Evenement.objects.none()
     get_queryset.short_description = _('ensemble de données')
 
     def get_count(self):
-        return self.get_queryset().count()
+        return self.queryset.count()
     get_count.short_description = _('quantité de données sélectionnées')
 
     def get_queryset_url(self):
@@ -208,10 +215,12 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
             url += '?' + '&'.join(request_kwargs)
         return url
 
-    def get_contributors(self):
-        return HierarchicUser.objects.filter(
-            Q(pk__in=self.get_queryset().values_list('owner_id',
-                                                     flat=True).distinct()) |
-            Q(pk__in=self.get_queryset().values_list('sources__owner_id',
-                                                     flat=True).distinct())
-        ).order_by('last_name', 'first_name')
+    @cached_property
+    def contributors(self):
+        contributor_ids = set()
+        for evenement_owner_id, source_owner_id in self.queryset.values_list(
+            'owner_id', 'sources__owner_id'
+        ).distinct():
+            contributor_ids.add(evenement_owner_id)
+            contributor_ids.add(source_owner_id)
+        return HierarchicUser.objects.filter(pk__in=contributor_ids)

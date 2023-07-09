@@ -42,8 +42,7 @@ class DossierDEvenementsForm(forms.ModelForm):
 
         if cleaned_data['statique']:
             if not evenements:
-                cleaned_data['evenements'] = \
-                    self.instance.get_queryset(dynamic=True)
+                cleaned_data['evenements'] = self.instance.dynamic_queryset
                 self.instance.evenements.add(*evenements)
         else:
             cleaned_data['evenements'] = []

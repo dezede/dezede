@@ -156,7 +156,7 @@ class DossierDEvenementsStatsDetail(PublishedDetailView):
                 for k, count in data]
 
     def update_context_with_chord_diagram(self, context):
-        evenements = self.object.get_queryset()
+        evenements = self.object.queryset
         individus = evenements.individus_auteurs()
 
         n_auteurs = self.n_auteurs
@@ -243,9 +243,9 @@ class DossierDEvenementsStatsDetail(PublishedDetailView):
         evenements_par_territoire = (
             None if ensemble is None
             else ensemble.evenements_par_territoire(
-                evenements_qs=self.object.get_queryset()))
+                evenements_qs=self.object.queryset))
         oeuvres_par_periode = self.get_oeuvres_par_periode(
-            self.object.get_queryset().oeuvres())
+            self.object.queryset.oeuvres())
         n_oeuvres = sum([count for _, _, _, count in oeuvres_par_periode])
         context.update(
             MAX_MIN_PLACES=MAX_MIN_PLACES,
@@ -267,7 +267,7 @@ class DossierDEvenementsViewMixin(object):
         if not self.object.can_be_viewed(self.request):
             raise PermissionDenied
         return super(DossierDEvenementsViewMixin, self).get_queryset(
-            base_filter=Q(pk__in=self.object.get_queryset()))
+            base_filter=Q(pk__in=self.object.queryset))
 
     def get_export_url(self):
         return reverse('dossierdevenements_data_export', kwargs=self.kwargs)

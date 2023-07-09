@@ -3,17 +3,17 @@
 <aside id="sidebar">
 
   <div class="well">
-    {% with editeurs_count=object.editeurs_scientifiques.count %}
-      {% if editeurs_count %}
+    {% with editeurs_scientifiques=object.editeurs_scientifiques.all %}
+      {% if editeurs_scientifiques %}
         <dl class="auto-links">
           <dt>
-            {% if editeurs_count < 2 %}
+            {% if editeurs_scientifiques|length < 2 %}
               {% trans 'Éditeur scientifique' %}
             {% else %}
               {% trans 'Éditeurs scientifiques' %}
             {% endif %}
           </dt>{# Auteur(s) pour revue #}
-          <dd>{{ object.editeurs_scientifiques.html }}</dd>
+          <dd>{{ editeurs_scientifiques.html }}</dd>
         </dl>
       {% endif %}
     {% endwith %}
@@ -32,16 +32,16 @@
       </div>
     {% endif %}
     <dl class="auto-links">
-      {% with n_contributors=object.get_contributors.count %}
-        {% if n_contributors %}
+      {% with contributors=object.contributors %}
+        {% if contributors %}
           <dt>
-            {% if n_contributors < 2 %}
+            {% if contributors|length < 2 %}
               {% trans 'Contributeur' %}
             {% else %}
               {% trans 'Contributeurs' %}
             {% endif %}
           </dt>{# Supprimé dans revue #}
-          <dd>{{ object.get_contributors.html }}</dd>
+          <dd>{{ contributors.html }}</dd>
         {% endif %}
       {% endwith %}
       <dt>{% trans 'Date de mise en ligne' %}</dt>
@@ -68,7 +68,7 @@
          class="btn btn-default btn-block">
         <i class="fa fa-book"></i> {% trans 'Exporter en PDF' %}
       </a>
-      {% if user.is_superuser %}        
+      {% if user.is_superuser %}
         <a href="#"
           data-toggle="modal"
           data-target="#scenarios"

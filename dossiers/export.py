@@ -34,7 +34,7 @@ class ScenariosExporter:
             scenario = string.capwords(scenario.get('scenario')).replace('-', '')
             expt = f"dossiers.export.{scenario}"
             Exporter = self.loader(expt)
-            self.exporters.append(Exporter(dossier.get_queryset()))
+            self.exporters.append(Exporter(dossier.queryset))
 
     def loader(self, path):
         module_name, class_name = path.rsplit(".", 1)
