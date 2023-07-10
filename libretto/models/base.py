@@ -9,7 +9,7 @@ from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
-    NOT_PROVIDED,
+    NOT_PROVIDED, Value,
 )
 from django.template.defaultfilters import time
 from django.utils.encoding import force_text
@@ -96,8 +96,17 @@ class SearchVectorAbstractModel(Model):
     def update_all_search_vectors(cls):
         update_all_search_vectors(cls, cls.search_fields)
 
-    def set_search_vector(self):
-        self.search_vector = get_search_vector(self.search_fields)
+    def set_search_vector(self) -> None:
+        search_fields = self.search_fields
+
+        search_fields = [
+            getattr(self, field_name)
+            for field_name in search_fields
+        ]
+        search_fields = [
+            Value(value) for value in search_fields if value is not None
+        ]
+        self.search_vector = get_search_vector(search_fields)
 
     @staticmethod
     def autocomplete_term_adjust(term):

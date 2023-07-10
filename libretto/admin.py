@@ -491,7 +491,7 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
                 for search_field in search_fields
             ]))
 
-        return queryset.distinct(), False
+        return queryset.distinct(), True
 
 
 class PublishedAdmin(CommonAdmin):
