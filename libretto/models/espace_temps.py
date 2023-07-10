@@ -40,7 +40,9 @@ class NatureDeLieu(CommonModel, SlugModel):
             'jusqu’à un lieu référent, ici choisi comme étant ceux de nature '
             '« ville »'))
 
-    class Meta(object):
+    search_fields = ['nom', 'nom_pluriel']
+
+    class Meta(CommonModel.Meta):
         verbose_name = _('nature de lieu')
         verbose_name_plural = _('natures de lieu')
         ordering = ('slug',)
@@ -56,10 +58,6 @@ class NatureDeLieu(CommonModel, SlugModel):
 
     def __str__(self):
         return self.nom
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return 'nom__unaccent__icontains',
 
 
 class LieuQuerySet(PublishedQuerySet,
@@ -88,7 +86,9 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = LieuManager()
 
-    class Meta:
+    search_fields = ['nom']
+
+    class Meta(AutoriteModel.Meta):
         verbose_name = _('lieu ou institution')
         verbose_name_plural = _('lieux et institutions')
         ordering = ['path']
@@ -96,6 +96,7 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         permissions = (('can_change_status', _('Peut changer l’état')),)
         indexes = [
             *PathField.get_indexes('lieu', 'path'),
+            *AutoriteModel.Meta.indexes,
         ]
 
     @staticmethod
@@ -176,8 +177,10 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('nom__unaccent__icontains',
-                'parent__nom__unaccent__icontains')
+        return [
+            'search_vector__autocomplete',
+            'parent__search_vector__autocomplete',
+        ]
 
 
 class SaisonQuerySet(CommonQuerySet):

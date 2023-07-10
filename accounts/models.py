@@ -16,7 +16,7 @@ from tree.models import TreeModelMixin
 from common.utils.html import href, sc
 from common.utils.text import str_list_w_last
 from libretto.models.base import (
-    AutoriteModel, CommonTreeManager, CommonTreeQuerySet,
+    AutoriteModel, CommonTreeManager, CommonTreeQuerySet, SearchVectorAbstractModel,
 )
 
 
@@ -70,7 +70,7 @@ def _get_valid_modelnames_func(autorites_only=True):
     return ValidModelNames()
 
 
-class HierarchicUser(TreeModelMixin, AbstractUser):
+class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
     show_email = BooleanField(_('afficher l’email'), default=False)
     website = URLField(_('site internet'), blank=True)
     website_verbose = CharField(
@@ -111,12 +111,15 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
 
     objects = HierarchicUserManager()
 
+    search_fields = ['first_name', 'last_name', 'username', 'email']
+
     class Meta:
         ordering = ['last_name', 'first_name']
         verbose_name = _('utilisateur')
         verbose_name_plural = _('utilisateurs')
         indexes = [
             *PathField.get_indexes('user', 'path'),
+            *SearchVectorAbstractModel.Meta.indexes,
         ]
 
     def __str__(self, tags=False):
@@ -147,8 +150,3 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
         return apps.get_model('dossiers.DossierDEvenements').objects.filter(
             editeurs_scientifiques=self
         ).exclude(parent__editeurs_scientifiques=self)
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return ('first_name__unaccent__icontains',
-                'last_name__unaccent__icontains')

@@ -1,5 +1,7 @@
-from functools import partial
+import operator
+from functools import partial, reduce
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin import (register, TabularInline, StackedInline,
                                   ModelAdmin, HORIZONTAL)
@@ -7,6 +9,7 @@ from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.admin import OSMGeoAdmin
+from django.contrib.postgres.search import SearchQuery
 from django.db.models import Q, TextField
 from django.forms.models import modelformset_factory
 from django.shortcuts import redirect
@@ -379,6 +382,7 @@ class SourcePartieInline(TabularInline):
 
 
 class CommonAdmin(CustomBaseModel, ModelAdmin):
+    search_fields = ['search_vector']
     list_per_page = 20
     save_as = True
     additional_fields = ('owner',)
@@ -474,8 +478,20 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
         return NewChangeList
 
     def get_search_results(self, request, queryset, search_term):
+        search_fields = self.get_search_fields(request)
+        if not search_term or not search_fields:
+            return queryset, False
+
         search_term = replace(search_term)
-        return super().get_search_results(request, queryset, search_term)
+
+        for word in search_term.split():
+            search_query = SearchQuery(word, config=settings.SEARCH_CONFIG)
+            queryset = queryset.filter(reduce(operator.or_, [
+                Q(**{search_field: search_query})
+                for search_field in search_fields
+            ]))
+
+        return queryset.distinct(), False
 
 
 class PublishedAdmin(CommonAdmin):
@@ -495,8 +511,6 @@ class TypeDeParenteCommonAdmin(CommonAdmin):
                     'nom_relatif_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
                      'nom_relatif_pluriel', 'classement',)
-    search_fields = ('nom__unaccent', 'nom_relatif__unaccent',
-                     'nom_pluriel__unaccent', 'nom_relatif_pluriel__unaccent')
     fieldsets = (
         (None, {'fields': (
             ('nom', 'nom_pluriel'), ('nom_relatif', 'nom_relatif_pluriel'),
@@ -528,7 +542,6 @@ class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'referent',)
     list_editable = ('nom', 'nom_pluriel', 'referent',)
     list_filter = ('referent',)
-    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent')
 
 
 @register(Lieu)
@@ -536,7 +549,7 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     form = LieuAdminForm
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
-    search_fields = ('nom__unaccent', 'parent__nom__unaccent',)
+    search_fields = ['search_vector', 'parent__search_vector']
     list_filter = ('nature',)
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
@@ -574,9 +587,6 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
                     'nom_feminin_pluriel', 'parent', 'classement')
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin',
                      'nom_feminin_pluriel', 'parent', 'classement')
-    search_fields = (
-        'nom__unaccent', 'nom_pluriel__unaccent',
-        'nom_feminin__unaccent', 'nom_feminin_pluriel__unaccent')
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ('parent',),
@@ -597,9 +607,6 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
                     'pseudonyme', 'titre', 'naissance',
                     'deces', 'calc_professions', 'link',)
     list_editable = ('nom', 'titre',)
-    search_fields = (
-        'nom__unaccent', 'pseudonyme__unaccent', 'nom_naissance__unaccent',
-        'prenoms__unaccent',)
     list_filter = ('titre',)
     form = IndividuForm
     raw_id_fields = ('naissance_lieu', 'deces_lieu', 'professions')
@@ -645,7 +652,6 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
 class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'parent')
     list_editable = ('nom', 'nom_pluriel', 'parent')
-    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent',)
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ('parent',),
@@ -656,7 +662,7 @@ class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
 class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     form = EnsembleForm
     list_display = ('__str__', 'type', 'membres_count')
-    search_fields = ('nom__unaccent', 'membres__individu__nom__unaccent')
+    search_fields = ['search_vector', 'membres__individu__search_vector']
     inlines = (MembreInline,)
     raw_id_fields = ('siege', 'type')
     autocomplete_lookup_fields = {
@@ -676,7 +682,6 @@ class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
 class GenreDOeuvreAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'has_related_objects')
     list_editable = ('nom', 'nom_pluriel',)
-    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent',)
     raw_id_fields = ('parents',)
     autocomplete_lookup_fields = {
         'm2m': ('parents',),
@@ -687,14 +692,13 @@ class GenreDOeuvreAdmin(VersionAdmin, CommonAdmin):
 class TypeDeCaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
-    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent')
 
 
 @register(CaracteristiqueDeProgramme)
 class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
     list_editable = ('valeur', 'classement',)
-    search_fields = ('type__nom__unaccent', 'valeur__unaccent')
+    search_fields = ['type__search_vector', 'search_vector']
 
 
 @register(Partie)
@@ -709,7 +713,6 @@ class PartieAdmin(VersionAdmin, AutoriteAdmin):
     )
     list_filter = ('type',)
     list_select_related = ('parent', 'etat', 'owner')
-    search_fields = ('nom__unaccent',)
     radio_fields = {'type': HORIZONTAL}
     raw_id_fields = ('oeuvre', 'professions', 'parent', 'premier_interprete')
     autocomplete_lookup_fields = {
@@ -733,7 +736,13 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
                     'caracteristiques_html', 'auteurs_html',
                     'creation', 'link',)
-    search_fields = Oeuvre.autocomplete_search_fields(add_icontains=False)
+    search_fields = [
+        'auteurs__individu__search_vector',
+        'auteurs__ensemble__search_vector',
+        'search_vector',
+        'genre__search_vector',
+        'pupitres__partie__search_vector',
+    ]
     list_filter = ('genre', 'tonalite', 'arrangement', 'type_extrait')
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
@@ -812,7 +821,7 @@ class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'link',)
     list_editable = ('relache', 'circonstance',)
-    search_fields = ('circonstance__unaccent', 'debut_lieu__nom__unaccent')
+    search_fields = ['search_vector', 'debut_lieu__search_vector']
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
     list_select_related = ('debut_lieu', 'debut_lieu__nature',
@@ -872,7 +881,6 @@ class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
 class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
-    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent')
 
 
 def split_pdf(modeladmin, request, queryset):
@@ -919,10 +927,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     list_editable = ('parent', 'position', 'type', 'date')
     list_select_related = ('type', 'etat', 'owner')
     date_hierarchy = 'date'
-    search_fields = (
-        'type__nom__unaccent', 'titre__unaccent', 'date',
-        'date_approx__unaccent', 'numero__unaccent',
-        'lieu_conservation__unaccent', 'cote__unaccent')
+    search_fields = ['type__search_vector', 'search_vector']
     list_filter = (SourceHasParentListFilter, 'type', 'titre',
                    SourceHasEventsListFilter, SourceHasProgramListFilter)
     raw_id_fields = ('parent', 'evenements', 'editeurs_scientifiques')

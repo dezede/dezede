@@ -49,8 +49,6 @@ class HierarchicUserAdmin(VersionAdmin, CommonAdmin, UserAdmin):
     additional_readonly_fields = ()
     additional_list_display = ()
     additional_list_filters = ()
-    search_fields = ('username__unaccent', 'first_name__unaccent',
-                     'last_name__unaccent', 'email__unaccent')
     related_lookup_fields = {
         'generic': [['content_type', 'object_id'],],
     }

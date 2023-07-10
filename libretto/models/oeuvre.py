@@ -52,7 +52,9 @@ class GenreDOeuvre(CommonModel, SlugModel):
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
                               blank=True, verbose_name=_('parents'))
 
-    class Meta(object):
+    search_fields = ['nom', 'nom_pluriel']
+
+    class Meta(CommonModel.Meta):
         verbose_name = _('genre d’œuvre')
         verbose_name_plural = _('genres d’œuvre')
         ordering = ('nom',)
@@ -66,10 +68,6 @@ class GenreDOeuvre(CommonModel, SlugModel):
 
     def __str__(self):
         return strip_tags(self.nom)
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains'
 
 
 class Partie(AutoriteModel, UniqueSlugModel):
@@ -110,7 +108,9 @@ class Partie(AutoriteModel, UniqueSlugModel):
         null=True, blank=True, verbose_name=_('premier(ère) interprète'),
     )
 
-    class Meta(object):
+    search_fields = ['nom', 'nom_pluriel']
+
+    class Meta(AutoriteModel.Meta):
         unique_together = ('nom', 'parent', 'oeuvre')
         verbose_name = _('rôle ou instrument')
         verbose_name_plural = _('rôles et instruments')
@@ -182,16 +182,11 @@ class Partie(AutoriteModel, UniqueSlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return (
-            'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
-            'professions__nom__unaccent__icontains',
-            'professions__nom_pluriel__unaccent__icontains',
-            'oeuvre__prefixe_titre__unaccent__icontains',
-            'oeuvre__titre__unaccent__icontains',
-            'oeuvre__coordination__unaccent__icontains',
-            'oeuvre__prefixe_titre_secondaire__unaccent__icontains',
-            'oeuvre__titre_secondaire__unaccent__icontains',
-        )
+        return [
+            'search_vector__autocomplete',
+            'professions__search_vector__autocomplete',
+            'oeuvre__search_vector__autocomplete',
+        ]
 
 
 class PupitreQuerySet(CommonQuerySet):
@@ -221,7 +216,7 @@ class Pupitre(CommonModel):
 
     objects = PupitreManager()
 
-    class Meta(object):
+    class Meta(CommonModel.Meta):
         verbose_name = _('pupitre')
         verbose_name_plural = _('pupitres')
         ordering = ('-soliste', 'partie')
@@ -259,25 +254,17 @@ class Pupitre(CommonModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('partie__nom__unaccent__icontains',
-                'partie__nom_pluriel__unaccent__icontains',
-                'partie__professions__nom__unaccent__icontains',
-                'partie__professions__nom_pluriel__unaccent__icontains',)
+        return [
+            'oeuvre__search_vector__autocomplete',
+            'partie__search_vector__autocomplete',
+            'partie__professions__search_vector__autocomplete',
+        ]
 
 
 class TypeDeParenteDOeuvres(TypeDeParente):
-    class Meta(object):
-        unique_together = ('nom', 'nom_relatif')
+    class Meta(TypeDeParente.Meta):
         verbose_name = _('type de parenté d’œuvres')
         verbose_name_plural = _('types de parentés d’œuvres')
-        ordering = ('classement',)
-        # app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('parentes',)
-        return ()
 
 
 class ParenteDOeuvresManager(CommonManager):
@@ -760,13 +747,21 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = OeuvreManager()
 
-    class Meta:
+    search_fields = [
+        'prefixe_titre', 'titre',
+        'prefixe_titre_secondaire', 'titre_secondaire', 'numero',
+        'coupe', 'tempo', 'sujet', 'surnom', 'nom_courant', 'incipit',
+        'opus', 'ict',
+    ]
+
+    class Meta(AutoriteModel.Meta):
         verbose_name = _('œuvre')
         verbose_name_plural = _('œuvres')
         ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
         indexes = [
             *PathField.get_indexes('oeuvre', 'path'),
+            *AutoriteModel.Meta.indexes,
         ]
 
     @staticmethod
@@ -1037,18 +1032,11 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     _str.short_description = _('œuvre')
 
     @staticmethod
-    def autocomplete_search_fields(add_icontains=True):
-        lookups = (
-            'auteurs__individu__nom', 'auteurs__individu__prenoms',
-            'auteurs__individu__pseudonyme', 'auteurs__ensemble__nom',
-            'prefixe_titre', 'titre',
-            'prefixe_titre_secondaire', 'titre_secondaire',
-            'genre__nom', 'numero', 'coupe',
-            'tempo', 'sujet',
-            'surnom', 'nom_courant', 'incipit',
-            'opus', 'ict',
-            'pupitres__partie__nom')
-        lookups = [f'{lookup}__unaccent' for lookup in lookups]
-        if add_icontains:
-            return [f'{lookup}__icontains' for lookup in lookups]
-        return lookups
+    def autocomplete_search_fields():
+        return [
+            'auteurs__individu__search_vector__autocomplete',
+            'auteurs__ensemble__search_vector__autocomplete',
+            'search_vector__autocomplete',
+            'genre__search_vector__autocomplete',
+            'pupitres__partie__search_vector__autocomplete',
+        ]

@@ -38,7 +38,11 @@ class Profession(AutoriteModel, UniqueSlugModel):
                         verbose_name=_('parent'), on_delete=CASCADE)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
-    class Meta(object):
+    search_fields = [
+        'nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel',
+    ]
+
+    class Meta(AutoriteModel.Meta):
         verbose_name = _('profession')
         verbose_name_plural = _('professions')
         ordering = ('classement', 'nom')
@@ -118,12 +122,6 @@ class Profession(AutoriteModel, UniqueSlugModel):
         if self.nom_feminin:
             return f'{self.nom} / {self.nom_feminin}'
         return self.nom
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return ('nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
-                'nom_feminin__unaccent__icontains',
-                'nom_feminin_pluriel__unaccent__icontains')
 
 
 class PeriodeDActivite(Model):
@@ -250,17 +248,15 @@ class TypeDEnsemble(CommonModel):
     parent = ForeignKey('self', null=True, blank=True, related_name='enfants',
                         verbose_name=_('parent'), on_delete=CASCADE)
 
-    class Meta(object):
+    search_fields = ['nom', 'nom_pluriel']
+
+    class Meta(CommonModel.Meta):
         verbose_name = _('type d’ensemble')
         verbose_name_plural = _('types d’ensemble')
         ordering = ('nom',)
 
     def __str__(self):
         return self.nom
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains'
 
 
 class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
@@ -287,7 +283,9 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
                     'pour Le Poème Harmonique.'))
     sans_isni = BooleanField(_('sans ISNI'), default=False)
 
-    class Meta(object):
+    search_fields = ['particule_nom', 'nom']
+
+    class Meta(AutoriteModel.Meta):
         ordering = ('nom',)
         verbose_name = _('ensemble')
         verbose_name_plural = _('ensembles')
@@ -395,6 +393,7 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('particule_nom__unaccent__icontains',
-                'nom__unaccent__icontains',
-                'siege__nom__unaccent__icontains')
+        return [
+            'search_vector__autocomplete',
+            'siege__search_vector__autocomplete',
+        ]

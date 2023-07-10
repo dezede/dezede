@@ -25,7 +25,9 @@ class CategorieDeDossiers(PublishedModel):
     nom = CharField(_('nom'), max_length=75)
     position = PositiveSmallIntegerField(_('position'), default=1)
 
-    class Meta(object):
+    search_fields = ['nom']
+
+    class Meta(PublishedModel.Meta):
         ordering = ('position',)
         verbose_name = _('catégorie de dossiers')
         verbose_name_plural = _('catégories de dossiers')
@@ -108,13 +110,16 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
 
     objects = DossierDEvenementsManager()
 
-    class Meta(object):
+    search_fields = ['titre', 'titre_court']
+
+    class Meta(PublishedModel.Meta):
         verbose_name = _('dossier d’événements')
         verbose_name_plural = _('dossiers d’événements')
         ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
         indexes = [
             *PathField.get_indexes('dossiers', 'path'),
+            *PublishedModel.Meta.indexes,
         ]
 
     def __str__(self):

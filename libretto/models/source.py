@@ -44,7 +44,9 @@ class TypeDeSource(CommonModel, SlugModel):
                             db_index=True, help_text=PLURAL_MSG)
     # TODO: Ajouter un classement et changer ordering en conséquence.
 
-    class Meta(object):
+    search_fields = ['nom', 'nom_pluriel']
+
+    class Meta(CommonModel.Meta):
         verbose_name = _('type de source')
         verbose_name_plural = _('types de source')
         ordering = ('slug',)
@@ -239,7 +241,16 @@ class Source(AutoriteModel):
 
     objects = SourceManager()
 
-    class Meta:
+    search_fields = [
+        'titre',
+        'date',
+        'date_approx',
+        'numero',
+        'lieu_conservation',
+        'cote',
+    ]
+
+    class Meta(AutoriteModel.Meta):
         verbose_name = _('source')
         verbose_name_plural = _('sources')
         ordering = (
@@ -595,13 +606,10 @@ class Source(AutoriteModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return (
-            'type__nom__unaccent__icontains', 'titre__unaccent__icontains',
-            'date__icontains', 'date_approx__unaccent__icontains',
-            'numero__unaccent__icontains',
-            'lieu_conservation__unaccent__icontains',
-            'cote__unaccent__icontains',
-        )
+        return [
+            'search_vector__autocomplete',
+            'type__search_vector__autocomplete',
+        ]
 
 
 class AudioVideoAbstract(Source):

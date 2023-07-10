@@ -58,7 +58,7 @@ class TypographicManager(Manager):
 class TypographicModel(Model):
     objects = TypographicManager()
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
 

@@ -438,3 +438,7 @@ LOGGING = {
         },
     }
 }
+
+# Custom settings
+
+SEARCH_CONFIG = 'french_unaccent_including_stopwords'

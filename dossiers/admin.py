@@ -23,7 +23,6 @@ class CategorieDeDossierAdmin(VersionAdmin, PublishedAdmin):
 class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
     form = DossierDEvenementsForm
     list_display = ('__str__',)
-    search_fields = ('titre__unaccent', 'titre_court__unaccent',)
     prepopulated_fields = {'slug': ('titre',)}
     readonly_fields = ('get_count',)
     raw_id_fields = ('editeurs_scientifiques', 'lieux', 'oeuvres', 'individus',

@@ -1,6 +1,7 @@
 import re
 import warnings
 from django.apps import apps
+from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import connection
@@ -113,7 +114,7 @@ class ElementDeDistribution(CommonModel):
 
     objects = ElementDeDistributionManager()
 
-    class Meta(object):
+    class Meta(CommonModel.Meta):
         verbose_name = _('élément de distribution')
         verbose_name_plural = _('éléments de distribution')
         ordering = ('partie', 'profession', 'individu', 'ensemble')
@@ -144,12 +145,11 @@ class ElementDeDistribution(CommonModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return (
-            'partie__nom__unaccent__icontains',
-            'individu__nom__unaccent__icontains',
-            'individu__pseudonyme__unaccent__icontains',
-            'ensemble__nom__unaccent__icontains',
-        )
+        return [
+            'partie__search_vector__autocomplete',
+            'individu__search_vector__autocomplete',
+            'ensemble__search_vector__autocomplete',
+        ]
 
 
 class TypeDeCaracteristiqueDeProgramme(CommonModel):
@@ -159,10 +159,16 @@ class TypeDeCaracteristiqueDeProgramme(CommonModel):
                             help_text=PLURAL_MSG)
     classement = SmallIntegerField(_('classement'), default=1)
 
-    class Meta(object):
+    search_fields = ['nom', 'nom_pluriel']
+
+    class Meta(CommonModel.Meta):
         verbose_name = _('type de caractéristique de programme')
         verbose_name_plural = _('types de caractéristique de programme')
         ordering = ('classement',)
+        indexes = [
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('search_vector', name='typecaracdeprogramme_search'),
+        ]
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -173,10 +179,6 @@ class TypeDeCaracteristiqueDeProgramme(CommonModel):
 
     def __str__(self):
         return self.nom
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
 
 
 class CaracteristiqueQuerySet(CommonQuerySet):
@@ -224,11 +226,17 @@ class CaracteristiqueDeProgramme(CommonModel):
 
     objects = CaracteristiqueManager()
 
-    class Meta(object):
+    search_fields = ['valeur']
+
+    class Meta(CommonModel.Meta):
         unique_together = ('type', 'valeur')
         verbose_name = _('caractéristique de programme')
         verbose_name_plural = _('caractéristiques de programme')
         ordering = ('type', 'classement', 'valeur')
+        indexes = [
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('search_vector', name='caracdeprogramme_search'),
+        ]
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -251,7 +259,10 @@ class CaracteristiqueDeProgramme(CommonModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return 'type__nom__unaccent__icontains', 'valeur__unaccent__icontains',
+        return [
+            'type__search_vector__autocomplete',
+            'search_vector__autocomplete',
+        ]
 
 
 class ElementDeProgrammeQueryset(CommonQuerySet):
@@ -302,7 +313,7 @@ class ElementDeProgramme(CommonModel):
 
     objects = ElementDeProgrammeManager()
 
-    class Meta(object):
+    class Meta(CommonModel.Meta):
         verbose_name = _('élément de programme')
         verbose_name_plural = _('éléments de programme')
         ordering = ('position',)
@@ -374,13 +385,10 @@ class ElementDeProgramme(CommonModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return (
-            'oeuvre__prefixe_titre__unaccent__icontains',
-            'oeuvre__titre__unaccent__icontains',
-            'oeuvre__prefixe_titre_secondaire__unaccent__icontains',
-            'oeuvre__titre_secondaire__unaccent__icontains',
-            'oeuvre__genre__nom__unaccent__icontains',
-        )
+        return [
+            'oeuvre__search_vector__autocomplete',
+            'oeuvre__genre__search_vector__autocomplete',
+        ]
 
 
 class EvenementQuerySet(PublishedQuerySet):
@@ -524,7 +532,16 @@ class Evenement(AutoriteModel):
 
     objects = EvenementManager()
 
-    class Meta(object):
+    search_fields = [
+        'circonstance',
+        'debut_date',
+        'debut_heure',
+        'debut_lieu_approx',
+        'debut_date_approx',
+        'debut_heure_approx',
+    ]
+
+    class Meta(AutoriteModel.Meta):
         verbose_name = _('événement')
         verbose_name_plural = _('événements')
         ordering = ('debut_date', 'debut_heure', 'debut_lieu',
@@ -647,13 +664,8 @@ class Evenement(AutoriteModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return (
-            'circonstance__unaccent__icontains',
-            'debut_lieu__nom__unaccent__icontains',
-            'debut_lieu__parent__nom__unaccent__icontains',
-            'debut_date__icontains',
-            'debut_heure__icontains',
-            'debut_lieu_approx__unaccent__icontains',
-            'debut_date_approx__unaccent__icontains',
-            'debut_heure_approx__unaccent__icontains',
-        )
+        return [
+            'search_vector__autocomplete',
+            'debut_lieu__search_vector__autocomplete',
+            'debut_lieu__parent__search_vector__autocomplete',
+        ]
