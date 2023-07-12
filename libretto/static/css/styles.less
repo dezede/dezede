@@ -798,6 +798,12 @@ ul.jqtree-tree {
   }
 }
 
+// Fix for autocomplete fields to apply again the UI styling.
+.form-control.ui-autocomplete-loading {
+  background: url("../ajax_select/images/loading-indicator.gif") no-repeat right;
+  background-origin: content-box;
+}
+
 ul.ui-autocomplete li a, .results_on_deck > div {
   overflow: hidden;
   text-overflow: ellipsis;

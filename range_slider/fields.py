@@ -53,13 +53,8 @@ class RangeSliderWidget(MultiWidget):
             return value.split('-')
         return [None, None]
 
-    class Media(object):
-        css = {
-            'all': ('css/custom-theme/jquery-ui-1.12.1-base.min.css',),
-        }
-        js = ('js/jquery-3.6.0.min.js',
-              'js/jquery-ui-1.12.1.min.js',
-              'js/range_slider_widget.js',)
+    class Media:
+        js = ['js/range_slider_widget.js']
 
 
 class RangeSliderField(MultiValueField):

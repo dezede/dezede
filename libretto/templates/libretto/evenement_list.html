@@ -7,6 +7,22 @@
 {% endblock %}
 
 
+{% block preloaded_statics %}
+  {{ block.super }}
+
+  {% for css in form.media.render_css %}
+    {% addstatic css %}{{ css }}{% endaddstatic %}
+  {% endfor %}
+
+  {% for js in form.media.render_js %}
+    {# Workaround to skip the jQuery isolation done by django-ajax-selects #}
+    {% if '/admin/js/jquery.init.js' not in js %}
+      {% addstatic js %}{{ js }}{% endaddstatic %}
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+
+
 {% block content %}
 
   <div class="row">
@@ -16,14 +32,6 @@
         {% crispy form %}
       </aside>
     </div>
-
-    {% for css in form.media.render_css %}
-      {% addstatic css %}{{ css }}{% endaddstatic %}
-    {% endfor %}
-
-    {% for js in form.media.render_js %}
-      {% addstatic js %}{{ js }}{% endaddstatic %}
-    {% endfor %}
 
     <div class="col-xs-12 col-sm-8 col-lg-9">
 

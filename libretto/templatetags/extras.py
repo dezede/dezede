@@ -202,7 +202,7 @@ def map_request(context, lieu_pk=None, show_map=True):
         query_dict['show_map'] = True
     else:
         del query_dict['show_map']
-    return '?' + query_dict.urlencode()
+    return mark_safe('?' + query_dict.urlencode())
 
 
 @register.simple_tag(takes_context=True)

@@ -1,9 +1,19 @@
 {% load i18n static compress static_grouper dezede_extras %}
 
+{% addstatic js %}
+  <script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+  <script>
+    window.jQuery = jQuery;
+  </script>
+{% endaddstatic %}
+{% addstatic js %}
+  <script type="text/javascript" src="{% static 'js/jquery-ui-1.13.2.min.js' %}"></script>
+{% endaddstatic %}
+
 {% block preloaded_statics %}{% endblock %}
 
 {% addstatic css %}
-  <link rel="stylesheet" href="{% static 'css/custom-theme/jquery-ui-1.12.1-base.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/custom-theme/jquery-ui-1.13.2-base.min.css' %}" />
 {% endaddstatic %}
 {% addstatic css %}
   <link rel="stylesheet" href="{% static 'jqTree/jqtree.css' %}" />
@@ -12,15 +22,6 @@
   <link rel="stylesheet" type="text/less" href="{% static 'css/styles.less' %}"/>
 {% endaddstatic %}
 
-{% addstatic js %}
-  <script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-  <script>
-    window.jQuery = jQuery;
-  </script>
-{% endaddstatic %}
-{% addstatic js %}
-  <script type="text/javascript" src="{% static 'js/jquery-ui-1.12.1.min.js' %}"></script>
-{% endaddstatic %}
 {% addstatic js %}
   {# Attention, l'ordre des JS de bootstrap importe ! #}
   <script type="text/javascript" src="{% static 'bootstrap/js/transition.js' %}"></script>
