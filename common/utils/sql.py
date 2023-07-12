@@ -1,7 +1,7 @@
 from typing import Type, List, Optional
 
 from django.conf import settings
-from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import SearchVector, SearchQuery
 from django.db import connection
 from django.db.migrations.operations.models import ModelOperation
 from django.db.models import Model
@@ -49,3 +49,19 @@ class UpdateAllSearchVectors(ModelOperation):
         self, app_label, schema_editor, from_state, to_state,
     ):
         pass
+
+
+def escape_for_tsquery(word: str) -> str:
+    for special_char in '()<!&|':
+        word = word.replace(special_char, fr'\{special_char}')
+    return word
+
+
+def get_autocomplete_query(value: str) -> SearchQuery:
+    return SearchQuery(
+        ' & '.join([
+            f'{escape_for_tsquery(word)}:*' for word in value.split()
+        ]),
+        config=settings.SEARCH_CONFIG,
+        search_type='raw',
+    )

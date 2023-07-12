@@ -1,12 +1,11 @@
 from ajax_select import LookupChannel
 from bs4 import BeautifulSoup
-from django.conf import settings
-from django.contrib.postgres.search import (
-    SearchVectorField, SearchVectorExact, SearchQuery,
-)
+from django.contrib.postgres.search import SearchVectorField, SearchVectorExact
 from django.db.models import Count
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags
+
+from common.utils.sql import get_autocomplete_query
 from libretto.search_indexes import autocomplete_search
 from common.utils.html import hlp
 from .models import *
@@ -23,11 +22,7 @@ class Autocomplete(SearchVectorExact):
 
     def process_rhs(self, compiler, connection):
         if isinstance(self.rhs, str):
-            self.rhs = SearchQuery(
-                ' & '.join([f'{word}:*' for word in self.rhs.split()]),
-                config=settings.SEARCH_CONFIG,
-                search_type='raw',
-            )
+            self.rhs = get_autocomplete_query(self.rhs)
         return super().process_rhs(compiler, connection)
 
 
