@@ -16,7 +16,8 @@
 
   {% for js in form.media.render_js %}
     {# Workaround to skip the jQuery isolation done by django-ajax-selects as well as its auto-jQuery loader #}
-    {% if '/admin/js/jquery.init.js' not in js and '/ajax_select/js/bootstrap.js' not in js %}
+    {# We do not include the .js extension because in production there is a checksum infix due to the manifest static storage. #}
+    {% if '/static/admin/js/jquery.init' not in js and '/static/ajax_select/js/bootstrap' not in js %}
       {% addstatic js %}{{ js }}{% endaddstatic %}
     {% endif %}
   {% endfor %}
