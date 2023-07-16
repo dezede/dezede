@@ -353,7 +353,7 @@ class CommonTreeQuerySet(TreeQuerySetMixin, CommonQuerySet):
     pass
 
 
-class CommonTreeManager(CommonManager):
+class CommonTreeManager(CommonManager.from_queryset(CommonTreeQuerySet)):
     queryset_class = CommonTreeQuerySet
 
 
