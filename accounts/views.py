@@ -259,21 +259,3 @@ class HierarchicUserDetail(DetailView):
     model = HierarchicUser
     slug_url_kwarg = 'username'
     slug_field = 'username'
-
-    def get_context_data(self, **kwargs):
-        context = super(HierarchicUserDetail, self).get_context_data(**kwargs)
-        if self.object.legal_person:
-            context['verboses'] = {
-                'disciple': _('membre'),
-                'disciples': _('membres'),
-            }
-        else:
-            context['verboses'] = {
-                'disciple': _('disciple'),
-                'disciples': _('disciples'),
-            }
-        if getattr(self.object.mentor, 'legal_person', False):
-            context['verboses']['mentor'] = _('appartenance')
-        else:
-            context['verboses']['mentor'] = _('responsable scientifique')
-        return context
