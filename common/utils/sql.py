@@ -52,7 +52,7 @@ class UpdateAllSearchVectors(ModelOperation):
 
 
 def escape_for_tsquery(word: str) -> str:
-    for special_char in '()<!&|':
+    for special_char in '()<!&|:':
         word = word.replace(special_char, fr'\{special_char}')
     return word
 
