@@ -20,6 +20,7 @@ from reversion.admin import VersionAdmin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 from tinymce.widgets import TinyMCE
 
+from accounts.models import HierarchicUser
 from common.utils.cache import is_user_locked, lock_user
 from common.utils.file import FileAnalyzer
 from .models import *
@@ -89,6 +90,23 @@ PERIODE_D_ACTIVITE_FIELDSET = (_('Période d’activité'), {
 #
 # Filters
 #
+
+
+class OwnerListFilter(SimpleListFilter):
+    title = _('propriétaire')
+    parameter_name = 'owner_by_reverse_full_name'
+
+    def lookups(self, request, model_admin):
+        return [
+            (owner.pk, owner.html(tags=False, reverse=True))
+            for owner in HierarchicUser.objects.all()
+        ]
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value:
+            return queryset.filter(owner__pk=value)
+        return queryset
 
 
 class HasRelatedObjectsListFilter(SimpleListFilter):
@@ -390,7 +408,9 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
     admin_fields = ()
     additional_list_display = ('owner',)
     additional_list_editable = ()
-    additional_list_filters = ('owner', HasRelatedObjectsListFilter,)
+    additional_list_filters = (
+        OwnerListFilter, HasRelatedObjectsListFilter,
+    )
     fieldsets_and_inlines_order = ()
 
     def __init__(self, *args, **kwargs):
@@ -499,7 +519,9 @@ class PublishedAdmin(CommonAdmin):
     admin_fields = ('etat',)
     additional_list_display = ('etat', 'owner')
     additional_list_editable = ('etat',)
-    additional_list_filters = ('etat', 'owner', HasRelatedObjectsListFilter,)
+    additional_list_filters = (
+        'etat', OwnerListFilter, HasRelatedObjectsListFilter,
+    )
 
 
 class AutoriteAdmin(PublishedAdmin):

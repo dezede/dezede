@@ -639,7 +639,7 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     tonalite = CharField(_('tonalité'), max_length=3, choices=TONALITES,
                          blank=True, db_index=True)
     sujet = CharField(
-        _('sujet'), max_length=80, blank=True,
+        _('sujet'), max_length=80, blank=True, db_index=True,
         help_text=_(
             'Exemple : « un thème de Beethoven » pour une variation sur un '
             'thème de Beethoven, « des motifs de '

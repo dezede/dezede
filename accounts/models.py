@@ -125,12 +125,18 @@ class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
     def __str__(self, tags=False):
         return self.html(tags=False)
 
-    def get_full_name(self, tags=False):
-        full_name = f'{self.first_name} {sc(self.last_name, tags=tags)}'
+    def get_full_name(self, tags=False, reverse=False):
+        full_name = f'{sc(self.last_name, tags=tags)} {self.first_name}' if (
+            reverse
+        ) else (
+            f'{self.first_name} {sc(self.last_name, tags=tags)}'
+        )
         return full_name.strip()
 
-    def html(self, tags=True):
-        txt = self.get_full_name(tags=tags) or self.get_username()
+    def html(self, tags=True, reverse=False):
+        txt = self.get_full_name(tags=tags, reverse=reverse) or (
+            self.get_username()
+        )
         return href(self.get_absolute_url(), txt, tags=tags)
 
     def link(self, tags=True):
