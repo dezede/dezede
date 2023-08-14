@@ -28,9 +28,7 @@ class CorsHeadersMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        start_time = time.time()
         response = self.get_response(request)
-        total = time.time() - start_time
         response['Access-Control-Allow-Credentials'] = 'true'
         response['Access-Control-Allow-Origin'] = '*'
         response['Access-Control-Allow-Methods'] = (
@@ -43,5 +41,4 @@ class CorsHeadersMiddleware:
             'Cache-Control, Content-Language, Content-Type, Expires, '
             'Last-Modified, Pragma, Set-Cookie'
         )
-        response["X-Request-Generation-Duration-ms"] = int(total * 1000)
         return response
