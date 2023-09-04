@@ -39,6 +39,7 @@
     {% endif %}
 
     {% evenement_list_def oeuvre.evenements.distinct %}
+    {% data_table_attr 'dedicataire.html' _('dédié à') %}
     {% data_table_attr 'notes_publiques' _('notes') %}
 
     {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}

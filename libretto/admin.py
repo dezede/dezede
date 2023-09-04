@@ -768,9 +768,9 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     list_filter = ('genre', 'tonalite', 'arrangement', 'type_extrait')
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
-    raw_id_fields = ('genre', 'extrait_de', 'creation_lieu')
+    raw_id_fields = ('genre', 'extrait_de', 'creation_lieu', 'dedicataire')
     autocomplete_lookup_fields = {
-        'fk': ('genre', 'extrait_de', 'creation_lieu'),
+        'fk': ('genre', 'extrait_de', 'creation_lieu', 'dedicataire'),
     }
     readonly_fields = ('__str__', 'html', 'link',)
     inlines = (AuteurInline, PupitreInline, OeuvreMereInline)
@@ -802,13 +802,16 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                 ('creation_heure', 'creation_heure_approx'),
                 ('creation_lieu', 'creation_lieu_approx'))
         }),
+        (_('Édition'), {
+            'fields': ('dedicataire',)
+        }),
     )
     fieldsets_and_inlines_order = ('i', 'f', 'f', 'i', 'f', 'f', 'f', 'f', 'f')
 
     def get_queryset(self, request):
         qs = super(OeuvreAdmin, self).get_queryset(request)
         return qs.select_related(
-            'genre', 'extrait_de', 'creation_lieu',
+            'genre', 'extrait_de', 'creation_lieu', 'dedicataire',
             'etat', 'owner'
         ).prefetch_related(
             'auteurs__individu', 'auteurs__ensemble', 'auteurs__profession',

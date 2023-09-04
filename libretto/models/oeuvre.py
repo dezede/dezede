@@ -682,6 +682,13 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         (2, _('première mondiale')),
         (3, _('première édition')),
     )
+    dedicataire = ForeignKey(
+        'Individu', blank=True, null=True, on_delete=PROTECT,
+        related_name='dedicaces', verbose_name=_('dédié à'), help_text=(
+            'N’ajouter que des autorités confirmées. '
+            'Dans le cas contraire, utiliser les notes.'
+        ),
+    )
     creation_type = PositiveSmallIntegerField(
         _('type de création'), choices=CREATION_TYPES, null=True, blank=True)
     creation = AncrageSpatioTemporel(verbose_name=_('création'))
