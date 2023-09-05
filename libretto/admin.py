@@ -784,6 +784,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
         }),
         (_('Données musicales'), {
             'fields': ('incipit', ('tempo', 'tonalite'),
+                       'ambitus',
                        ('sujet', 'arrangement')),
         }),
         (None, {
