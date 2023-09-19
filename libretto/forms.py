@@ -246,13 +246,6 @@ class AmbitusField(BaseRangeField):
                 raise ValidationError(
                     _('Veuillez saisir les deux extrémités de l’ambitus.'),
                 )
-            if value.upper == value.lower:
-                raise ValidationError(
-                    _(
-                        'Les deux extrémités de l’ambitus '
-                        'doivent être différentes.'
-                    )
-                )
         return value
 
     def compress(self, values):
