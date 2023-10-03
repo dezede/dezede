@@ -1,6 +1,7 @@
 from datetime import datetime
 from functools import cached_property
 
+from django.contrib.postgres.indexes import GinIndex
 from django.db.models import (
     CharField, DateField, ManyToManyField,
     TextField, PositiveSmallIntegerField, Q,
@@ -31,6 +32,12 @@ class CategorieDeDossiers(PublishedModel):
         ordering = ('position',)
         verbose_name = _('catégorie de dossiers')
         verbose_name_plural = _('catégories de dossiers')
+        indexes = [
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('search_vector', name='categoriedossiers_search'),
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('autocomplete_vector', name='categoriedossiers_autocomplete'),
+        ]
 
     def __str__(self):
         return self.nom
@@ -119,7 +126,10 @@ class DossierDEvenements(TreeModelMixin, PublishedModel):
         permissions = (('can_change_status', _('Peut changer l’état')),)
         indexes = [
             *PathField.get_indexes('dossiers', 'path'),
-            *PublishedModel.Meta.indexes,
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('search_vector', name='dossierevenements_search'),
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('autocomplete_vector', name='dossierevenements_autocomplete'),
         ]
 
     def __str__(self):

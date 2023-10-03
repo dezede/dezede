@@ -38,7 +38,7 @@ def update_search_vector(sender, **kwargs):
         return
 
     instance = kwargs['instance']
-    instance.set_search_vector()
+    instance.set_search_vectors()
 
 
 def get_obj_key(obj, id_attr='pk'):

@@ -394,6 +394,6 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
     @staticmethod
     def autocomplete_search_fields():
         return [
-            'search_vector__autocomplete',
-            'siege__search_vector__autocomplete',
+            'autocomplete_vector__autocomplete',
+            'siege__autocomplete_vector__autocomplete',
         ]

@@ -607,8 +607,8 @@ class Source(AutoriteModel):
     @staticmethod
     def autocomplete_search_fields():
         return [
-            'search_vector__autocomplete',
-            'type__search_vector__autocomplete',
+            'autocomplete_vector__autocomplete',
+            'type__autocomplete_vector__autocomplete',
         ]
 
 

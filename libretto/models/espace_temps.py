@@ -178,8 +178,8 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     @staticmethod
     def autocomplete_search_fields():
         return [
-            'search_vector__autocomplete',
-            'parent__search_vector__autocomplete',
+            'autocomplete_vector__autocomplete',
+            'parent__autocomplete_vector__autocomplete',
         ]
 
 

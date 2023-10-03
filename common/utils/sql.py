@@ -1,4 +1,5 @@
-from typing import Type, List, Optional
+from multiprocessing import Value
+from typing import Type, List, Optional, Union
 
 from django.conf import settings
 from django.contrib.postgres.search import SearchVector, SearchQuery
@@ -11,10 +12,12 @@ def get_raw_query(qs):
     return qs.query.get_compiler(connection=connection).as_sql()
 
 
-def get_search_vector(search_fields: List[str]) -> Optional[SearchVector]:
+def get_search_vector(
+    search_fields: List[Union[str, Value]], config: str = settings.SEARCH_CONFIG,
+) -> Optional[SearchVector]:
     if not search_fields:
         return None
-    return SearchVector(*search_fields, config=settings.SEARCH_CONFIG)
+    return SearchVector(*search_fields, config=config)
 
 
 def update_all_search_vectors(
@@ -22,6 +25,9 @@ def update_all_search_vectors(
 ) -> None:
     model.objects.update(
         search_vector=get_search_vector(search_fields),
+        autocomplete_vector=get_search_vector(
+            search_fields, config=settings.AUTOCOMPLETE_CONFIG,
+        ),
     )
 
 
@@ -62,6 +68,6 @@ def get_autocomplete_query(value: str) -> SearchQuery:
         ' & '.join([
             f'{escape_for_tsquery(word)}:*' for word in value.split()
         ]),
-        config=settings.SEARCH_CONFIG,
+        config=settings.AUTOCOMPLETE_CONFIG,
         search_type='raw',
     )

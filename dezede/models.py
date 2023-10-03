@@ -71,6 +71,8 @@ class Diapositive(PublishedModel):
     position = PositiveSmallIntegerField(
         _('position'), default=get_default_position)
 
+    search_fields = ['title', 'subtitle']
+
     SLIDER_LG_WIDTH = 1140
     SLIDER_MD_WIDTH = 940
     SLIDER_SM_WIDTH = 720
@@ -79,7 +81,7 @@ class Diapositive(PublishedModel):
     SLIDER_MD_RATIO = SLIDER_MD_WIDTH / SLIDER_HEIGHT
     SLIDER_SM_RATIO = SLIDER_SM_WIDTH / SLIDER_HEIGHT
 
-    class Meta(object):
+    class Meta(PublishedModel.Meta):
         verbose_name = _('diapositive')
         verbose_name_plural = _('diapositives')
         ordering = ('position',)
