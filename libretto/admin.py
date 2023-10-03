@@ -24,6 +24,7 @@ from accounts.models import HierarchicUser
 from common.utils.cache import is_user_locked, lock_user
 from common.utils.file import FileAnalyzer
 from .models import *
+from .models.base import CommonModel
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
     ElementDeDistributionForm, EnsembleForm, SaisonForm, PartieForm,
@@ -51,10 +52,12 @@ class CustomBaseModel(BaseModelAdmin):
         if not has_class_permission:
             return False
         user = request.user
-        if obj is not None and not user.is_superuser \
-                and obj.owner not in user.get_descendants(include_self=True):
-            return False
-        return True
+        return (
+            obj is None or user.is_superuser
+            or user.get_descendants(
+                include_self=True
+            ).filter(pk=obj.owner_id).exists()
+        )
 
     def has_change_permission(self, request, obj=None):
         has_class_permission = super(CustomBaseModel,
@@ -73,9 +76,11 @@ class CustomBaseModel(BaseModelAdmin):
     def get_queryset(self, request):
         user = request.user
         qs = super(CustomBaseModel, self).get_queryset(request)
-        if not user.is_superuser and IS_POPUP_VAR not in request.GET:
-            qs = qs.filter(
-                owner__in=user.get_descendants(include_self=True))
+        if issubclass(qs.model, CommonModel):
+            if not user.is_superuser and IS_POPUP_VAR not in request.GET:
+                return qs.filter(
+                    owner__in=user.get_descendants(include_self=True),
+                )
         return qs
 
 
