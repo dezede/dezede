@@ -405,6 +405,7 @@ class SourcePartieInline(TabularInline):
 
 
 class CommonAdmin(CustomBaseModel, ModelAdmin):
+    list_select_related = ['owner']
     search_fields = ['search_vector']
     list_per_page = 20
     save_as = True
@@ -520,6 +521,7 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
 
 
 class PublishedAdmin(CommonAdmin):
+    list_select_related = ['etat', *CommonAdmin.list_select_related]
     additional_fields = ('etat', 'owner')
     admin_fields = ('etat',)
     additional_list_display = ('etat', 'owner')
@@ -577,6 +579,7 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ['search_vector', 'parent__search_vector']
+    list_select_related = ['parent__nature', 'nature', 'etat', 'owner']
     list_filter = ('nature',)
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
@@ -601,6 +604,9 @@ class SaisonAdmin(VersionAdmin, CommonAdmin):
     form = SaisonForm
     list_display = ('__str__', 'lieu', 'ensemble', 'debut', 'fin',
                     'evenements_count')
+    list_select_related = [
+        'lieu__nature', 'lieu__parent__nature', 'ensemble', 'owner',
+    ]
     date_hierarchy = 'debut'
     raw_id_fields = ('lieu', 'ensemble')
     autocomplete_lookup_fields = {
@@ -614,6 +620,7 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
                     'nom_feminin_pluriel', 'parent', 'classement')
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin',
                      'nom_feminin_pluriel', 'parent', 'classement')
+    list_select_related = ['parent', 'etat', 'owner']
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ('parent',),
@@ -689,6 +696,7 @@ class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
 class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     form = EnsembleForm
     list_display = ('__str__', 'type', 'membres_count')
+    list_select_related = ['type', 'etat', 'owner']
     search_fields = ['search_vector', 'membres__individu__search_vector']
     inlines = (MembreInline,)
     raw_id_fields = ('siege', 'type')
@@ -725,6 +733,7 @@ class TypeDeCaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
 class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
     list_editable = ('valeur', 'classement',)
+    list_select_related = ['type', 'owner']
     search_fields = ['type__search_vector', 'search_vector']
 
 
@@ -851,9 +860,6 @@ class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
     search_fields = ['search_vector', 'debut_lieu__search_vector']
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
-    list_select_related = ('debut_lieu', 'debut_lieu__nature',
-                           'fin_lieu', 'fin_lieu__nature',
-                           'etat', 'owner')
     date_hierarchy = 'debut_date'
     raw_id_fields = ('debut_lieu', 'fin_lieu', 'caracteristiques')
     autocomplete_lookup_fields = {
@@ -1048,7 +1054,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
                 }
             }
         )
-        return qs
+        return qs.select_related('type', 'etat', 'owner')
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         source = self.get_object(request, object_id)

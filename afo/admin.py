@@ -18,7 +18,11 @@ class EvenementAFOAdmin(VersionAdmin, CommonAdmin):
 
     def get_queryset(self, request):
         qs = super(EvenementAFOAdmin, self).get_queryset(request)
-        return qs.select_related('evenement', 'owner')
+        return qs.select_related(
+            'evenement__debut_lieu__nature',
+            'evenement__debut_lieu__parent__nature',
+            'owner',
+        )
 
 
 @register(LieuAFO)
@@ -36,4 +40,6 @@ class LieuAFOAdmin(VersionAdmin, CommonAdmin):
 
     def get_queryset(self, request):
         qs = super(LieuAFOAdmin, self).get_queryset(request)
-        return qs.select_related('lieu', 'owner')
+        return qs.select_related(
+            'lieu__parent__nature', 'lieu__nature', 'owner',
+        )
