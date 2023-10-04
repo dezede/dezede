@@ -641,7 +641,6 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
 
 @register(Individu)
 class IndividuAdmin(VersionAdmin, AutoriteAdmin):
-    list_per_page = 20
     list_display = ('__str__', 'nom', 'prenoms',
                     'pseudonyme', 'titre', 'naissance',
                     'deces', 'calc_professions', 'link',)
