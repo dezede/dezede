@@ -10,6 +10,7 @@ import django_rq
 from haystack.signals import BaseSignalProcessor
 
 from common.utils.html import sanitize_html
+from .forms import FasterModelChoiceIterator
 from .models.base import SearchVectorAbstractModel
 from .search_indexes import get_haystack_index
 
@@ -149,3 +150,6 @@ class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
             result_ttl=0,  # Doesn't store result
             timeout=3600,  # Avoids never-ending jobs
         )
+
+
+FasterModelChoiceIterator.register_cleanup_signal()

@@ -5,11 +5,12 @@ from crispy_forms.layout import Layout, Submit, Field, HTML
 from datetime import timedelta
 
 from django.contrib.gis.geos import Point
-from django.db.models import Q
+from django.db.models import Q, ForeignKey
 from django.forms import (
     ValidationError, ModelForm, Form, CharField, TextInput, BooleanField,
-    FloatField,
+    FloatField, ModelChoiceField,
 )
+from django.forms.models import ModelChoiceIterator
 from django.utils.translation import ugettext_lazy as _
 from common.utils.text import capfirst, str_list_w_last
 from libretto.models import Lieu
@@ -24,9 +25,43 @@ __all__ = ('IndividuForm', 'EnsembleForm', 'OeuvreForm',
            'SourceForm', 'SaisonForm', 'EvenementListForm')
 
 
+class FasterModelChoiceIterator(ModelChoiceIterator):
+    _cache = {}
+
+    @classmethod
+    def register_cleanup_signal(cls):
+        from django.core.signals import request_started
+
+        def clear_model_choice_cache(sender, **kwargs):
+            cls._cache = {}
+
+        request_started.connect(clear_model_choice_cache)
+
+    def __iter__(self):
+        cache_key = str(self.queryset.query)
+        if cache_key not in self._cache:
+            self._cache[cache_key] = [
+                choice for choice in super().__iter__()
+            ]
+        return iter(self._cache[cache_key])
+
+
+class FasterModelChoiceField(ModelChoiceField):
+    iterator = FasterModelChoiceIterator
+
+
+def formfield_for_dbfield(db_field, **kwargs):
+    if isinstance(db_field, ForeignKey):
+        kwargs['form_class'] = FasterModelChoiceField
+    return db_field.formfield(**kwargs)
+
+
 class ConstrainedModelForm(ModelForm):
     REQUIRED_BY = ()
     INCOMPATIBLES = ()
+
+    class Meta:
+        formfield_callback = formfield_for_dbfield
 
     def get_field_verbose(self, fieldname):
         return capfirst(
@@ -69,7 +104,7 @@ class IndividuForm(ConstrainedModelForm):
         (('deces_date',), ('deces_date_approx',)),
     )
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = Individu
         exclude = ()
         widgets = {
@@ -108,6 +143,7 @@ class EnsembleForm(ModelForm):
                 AutoCompleteWidget('ensemble__particule_nom',
                                    attrs={'style': 'width: 50px;'})
         }
+        formfield_callback = formfield_for_dbfield
 
 
 class PartieForm(ConstrainedModelForm):
@@ -129,7 +165,7 @@ class PartieForm(ConstrainedModelForm):
 
         return data
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = Partie
         exclude = ()
 
@@ -190,7 +226,7 @@ class OeuvreForm(ConstrainedModelForm):
 
         return data
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = Oeuvre
         exclude = ()
         widgets = {
@@ -217,7 +253,7 @@ class ElementDeDistributionForm(ConstrainedModelForm):
         ('partie', 'profession'),
     )
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = ElementDeDistribution
         exclude = ()
 
@@ -242,7 +278,7 @@ class ElementDeDistributionForm(ConstrainedModelForm):
 class ElementDeProgrammeForm(ConstrainedModelForm):
     INCOMPATIBLES = (('oeuvre', 'autre'),)
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = ElementDeProgramme
         exclude = ()
         # FIXME: Rendre fonctionnel ce qui suit.
@@ -258,7 +294,7 @@ class SourceForm(ConstrainedModelForm):
         (('lieu_conservation', 'cote'), ('lieu_conservation', 'cote')),
     )
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = Source
         exclude = ()
         widgets = {
@@ -294,6 +330,7 @@ class SaisonForm(ModelForm):
     class Meta(object):
         model = Saison
         exclude = ()
+        formfield_callback = formfield_for_dbfield
 
     def clean(self):
         data = super(SaisonForm, self).clean()
@@ -391,6 +428,7 @@ class LieuAdminForm(ModelForm):
     class Meta:
         model = Lieu
         exclude = []
+        formfield_callback = formfield_for_dbfield
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

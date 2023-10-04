@@ -10,7 +10,7 @@ from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.postgres.search import SearchQuery
-from django.db.models import Q, TextField
+from django.db.models import Q, TextField, ForeignKey
 from django.forms.models import modelformset_factory
 from django.shortcuts import redirect
 from django.utils.html import format_html_join
@@ -28,7 +28,7 @@ from .models.base import CommonModel
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
     ElementDeDistributionForm, EnsembleForm, SaisonForm, PartieForm,
-    LieuAdminForm,
+    LieuAdminForm, FasterModelChoiceField,
 )
 from .jobs import (
     events_to_pdf as events_to_pdf_job, split_pdf as split_pdf_job,
@@ -47,6 +47,11 @@ __all__ = ()
 
 class CustomBaseModel(BaseModelAdmin):
     # FIXME: Utiliser un AuthenticationBackend personnalisé.
+
+    # Speeds up ForeignKeys in `list_editable` by caching the choices.
+    formfield_overrides = {
+        ForeignKey: {'form_class': FasterModelChoiceField},
+    }
 
     def check_user_ownership(self, request, obj, has_class_permission):
         if not has_class_permission:
@@ -1020,6 +1025,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
                                    'i', 'i', 'i', 'i', 'i', 'f')
     admin_fields = AutoriteAdmin.admin_fields + ('est_promue',)
     formfield_overrides = {
+        **AutoriteAdmin.formfield_overrides,
         TextField: {'widget': TinyMCE},
     }
 
