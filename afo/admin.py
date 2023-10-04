@@ -1,6 +1,6 @@
 from django.contrib.admin import register
 from reversion.admin import VersionAdmin
-from libretto.admin import CommonAdmin
+from libretto.admin import CommonAdmin, EvenementAdmin, LieuAdmin
 from .models import *
 
 
@@ -11,6 +11,10 @@ class EvenementAFOAdmin(VersionAdmin, CommonAdmin):
     related_lookup_fields = {
         'fk': ('evenement',),
     }
+    search_fields = [
+        f'evenement__{search_field}'
+        for search_field in EvenementAdmin.search_fields
+    ]
 
     def get_queryset(self, request):
         qs = super(EvenementAFOAdmin, self).get_queryset(request)
@@ -25,6 +29,10 @@ class LieuAFOAdmin(VersionAdmin, CommonAdmin):
     related_lookup_fields = {
         'fk': ('lieu',),
     }
+    search_fields = [
+        f'lieu__{search_field}'
+        for search_field in LieuAdmin.search_fields
+    ]
 
     def get_queryset(self, request):
         qs = super(LieuAFOAdmin, self).get_queryset(request)
