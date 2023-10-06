@@ -45,6 +45,7 @@ class HierarchicUserAdmin(VersionAdmin, CommonAdmin, UserAdmin):
     list_editable = ('first_name', 'last_name', 'mentor',
                      'willing_to_be_mentor', 'is_active')
     list_filter = ('mentor', 'willing_to_be_mentor') + UserAdmin.list_filter
+    list_select_related = ['mentor']
     additional_fields = ()
     additional_readonly_fields = ()
     additional_list_display = ()
