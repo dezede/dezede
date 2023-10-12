@@ -21,8 +21,8 @@
     "react-dom": "^16.10.2",
     "react-easy-crop": "^1.16.1",
     "react-i18next": "^10.13.1",
-    "react-scripts": "^3.1.2",
-    "webpack-cli": "^3.3.9"
+    "react-scripts": "^5.0.1",
+    "webpack-cli": "^5.0.1"
   },
   "scripts": {
     "start": "react-app-rewired start",
