@@ -14,7 +14,7 @@ from libretto.models import Source, Oeuvre, Individu
 from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementGeoJson, EvenementExport,
     BaseEvenementListView, MAX_MIN_PLACES, DEFAULT_MIN_PLACES)
-from .models import CategorieDeDossiers, DossierDEvenements
+from .models import CategorieDeDossiers, DossierDEvenements, Dossier
 from common.utils.export import launch_export
 
 from .forms import ScenarioForm, ScenarioFormSet
@@ -66,13 +66,18 @@ class CategorieDeDossiersList(PublishedListView):
     has_frontend_admin = False
 
 
-class DossierDEvenementsDetail(PublishedDetailView):
-    model = DossierDEvenements
+class DossierDetail(PublishedDetailView):
+    model = Dossier
+    # FIXME: Try to find out what to do with this.
     formset = ScenarioFormSet
     form = ScenarioForm
 
+    def get_object(self, queryset=None):
+        dossier = super().get_object(queryset=queryset)
+        return dossier.specific
+
     def get_context_data(self, **kwargs):
-        context = super(DossierDEvenementsDetail,
+        context = super(DossierDetail,
                         self).get_context_data(**kwargs)
         context.update(
             children=self.object.children.published(self.request),
@@ -259,7 +264,7 @@ class DossierDEvenementsStatsDetail(PublishedDetailView):
 
 
 class DossierDEvenementsViewMixin(object):
-    view_name = 'dossierdevenements_data_detail'
+    success_view_name = 'dossier_data_detail'
     enable_default_page = False
 
     def get_queryset(self):
@@ -282,7 +287,7 @@ class DossierDEvenementsViewMixin(object):
         return data
 
     def get_success_url(self):
-        return reverse(self.view_name, kwargs=self.kwargs)
+        return reverse(self.success_view_name, kwargs=self.kwargs)
 
 
 class DossierDEvenementsDataDetail(DossierDEvenementsViewMixin,
@@ -300,7 +305,7 @@ class DossierDEvenementsDataGeoJson(DossierDEvenementsViewMixin,
     pass
 
 
-class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
+class DossierDEvenementsDetailXeLaTeX(DossierDetail):
     def get_object(self, queryset=None):
         if not self.request.user.is_authenticated:
             raise PermissionDenied
@@ -314,7 +319,7 @@ class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
         return redirect(self.object.get_absolute_url())
 
 
-class DossierDEvenementsScenario(DossierDEvenementsDetail):
+class DossierDEvenementsScenario(DossierDetail):
     def get_object(self, queryset=None):
         if not self.request.user.is_authenticated:
             raise PermissionDenied

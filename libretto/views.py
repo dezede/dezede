@@ -526,11 +526,11 @@ class TreeNode(PublishedDetailView):
         app_label = self.kwargs['app_label']
         model_name = self.kwargs['model_name']
 
-        # FIXME: Ceci est un hack laid pour gérer les DossierDEvenements
+        # FIXME: Ceci est un hack laid pour gérer les Dossier
         #        enfants de CategorieDeDossiers.
         if app_label == 'dossiers' and model_name == 'categoriededossiers' \
                 and 'node' in self.request.GET:
-            model_name = 'dossierdevenements'
+            model_name = 'dossier'
 
         self.model = apps.get_model(app_label, model_name)
         if 'node' in self.request.GET:

@@ -18,7 +18,7 @@ from django.views.generic import ListView, TemplateView
 from haystack.views import SearchView
 
 from common.utils.html import sanitize_html
-from dossiers.models import DossierDEvenements
+from dossiers.models import Dossier
 from libretto.models import (
     Oeuvre, Lieu, Individu, Source, Evenement, Ensemble, Profession, Partie,
 )
@@ -165,7 +165,7 @@ class RssFeed(Feed):
         return strip_tags(item.title) + ' ' + strip_tags(item.subtitle)
 
     def item_description(self, item: Diapositive):
-        if isinstance(item.content_object, DossierDEvenements):
+        if isinstance(item.content_object, Dossier):
             return sanitize_html(
                 item.content_object.presentation, include_links=False,
             )
@@ -174,7 +174,7 @@ class RssFeed(Feed):
         return item.content_object.get_absolute_url()
 
     def item_pubdate(self, item: Diapositive):
-        if isinstance(item.content_object, DossierDEvenements):
+        if isinstance(item.content_object, Dossier):
             return datetime.datetime.combine(
                 item.content_object.date_publication,
                 datetime.time.min,
@@ -230,8 +230,8 @@ class GlobalSitemap(Sitemap):
     def items(self):
         items = []
         for model in (
-            DossierDEvenements, Individu, Ensemble, Oeuvre,
-            Lieu, Profession, Partie, Source, Evenement,
+                Dossier, Individu, Ensemble, Oeuvre,
+                Lieu, Profession, Partie, Source, Evenement,
         ):
             queryset = self.get_queryset(model)
             items.extend(queryset.distinct().only('pk'))
@@ -241,7 +241,7 @@ class GlobalSitemap(Sitemap):
         return obj.permalien()
 
     def priority(self, obj):
-        if isinstance(obj, DossierDEvenements):
+        if isinstance(obj, Dossier):
             return 1.0
         if isinstance(obj, (Individu, Ensemble)):
             return 0.7
