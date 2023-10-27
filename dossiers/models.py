@@ -16,7 +16,7 @@ from tree.models import TreeModelMixin
 
 from accounts.models import HierarchicUser
 from libretto.models import (Lieu, Oeuvre, Evenement, Individu, Ensemble,
-                             Source, Saison)
+                             Source, Saison, GenreDOeuvre)
 from libretto.models.base import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from common.utils.html import href
@@ -107,7 +107,10 @@ class Dossier(TreeModelMixin, PublishedModel):
         try:
             return self.dossierdevenements
         except DossierDEvenements.DoesNotExist:
-            # TODO: Add DossierDOeuvres here.
+            pass
+        try:
+            return self.dossierdoeuvres
+        except DossierDOeuvres.DoesNotExist:
             raise NotImplementedError('Unknown type of dossier!')
 
     def __str__(self):
@@ -233,3 +236,66 @@ class DossierDEvenements(Dossier):
                 *args, **kwargs,
             ).distinct()
         return Evenement.objects.none()
+
+
+class DossierDOeuvres(Dossier):
+    debut = DateField(_('début'), blank=True, null=True)
+    fin = DateField(_('fin'), blank=True, null=True)
+    lieux = ManyToManyField(Lieu, blank=True, verbose_name=_('lieux'),
+                            related_name='dossiersdoeuvres')
+    genres = ManyToManyField(
+        GenreDOeuvre, blank=True, verbose_name=_('genres d’œuvre'),
+        related_name='dossiersdoeuvres',
+    )
+    individus = ManyToManyField(
+        Individu, blank=True, verbose_name=_('individus'),
+        related_name='dossiersdoeuvres',
+    )
+    ensembles = ManyToManyField(Ensemble, verbose_name=_('ensembles'),
+                                blank=True, related_name='dossiersdoeuvres')
+    sources = ManyToManyField(Source, verbose_name=_('sources'), blank=True,
+                              related_name='dossiersdoeuvres')
+    oeuvres = ManyToManyField(Oeuvre, blank=True, verbose_name=_('œuvres'),
+                              related_name='dossiersdoeuvres')
+
+
+    class Meta(Dossier.Meta):
+        verbose_name = _('dossier d’œuvres')
+        verbose_name_plural = _('dossiers d’œuvres')
+        indexes = []
+
+    def get_queryset(self, dynamic=False):
+        if not dynamic and self.pk and self.oeuvres.exists():
+            return self.oeuvres.all()
+        args = []
+        kwargs = {
+            'extrait_de__isnull': True,
+        }
+        if self.debut:
+            kwargs['debut_date__gte'] = self.debut
+        if self.fin:
+            kwargs['debut_date__lte'] = self.fin
+        if self.pk:
+            lieux = set(self.lieux.all().get_descendants(include_self=True))
+            if lieux:
+                kwargs['debut_lieu__in'] = lieux
+            genres = set(self.genres.values_list('pk', flat=True))
+            if genres:
+                kwargs['genre__in'] = genres
+            individus = set(self.individus.values_list('pk', flat=True))
+            if individus:
+                args.append(
+                    Q(auteurs__individu__in=individus)
+                    | Q(dedicataire__in=individus)
+                )
+            ensembles = set(self.ensembles.values_list('pk', flat=True))
+            if ensembles:
+                kwargs['auteurs__ensemble__in'] = ensembles
+            sources = set(self.sources.values_list('pk', flat=True))
+            if sources:
+                kwargs['sources__in'] = sources
+        if args or kwargs:
+            return Oeuvre.objects.filter(
+                *args, **kwargs,
+            ).distinct()
+        return Oeuvre.objects.none()

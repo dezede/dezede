@@ -6,7 +6,7 @@ from dossiers.views import (
     DossierDEvenementsDetailXeLaTeX,
     OperaComiquePresentation, OperaComiqueListView,
     DossierDEvenementsDataGeoJson, DossierDEvenementsDataExport,
-    DossierDEvenementsScenario)
+    DossierDEvenementsScenario, DossierDataDetail)
 
 
 urlpatterns = [
@@ -26,9 +26,9 @@ urlpatterns = [
         name='dossierdevenements_stats_detail'),
     url(r'^id/(?P<pk>\d+)/stats$', DossierDEvenementsStatsDetail.as_view(),
         name='dossierdevenements_stats_permanent_detail'),
-    url(r'^(?P<slug>[\w-]+)/data$', DossierDEvenementsDataDetail.as_view(),
+    url(r'^(?P<slug>[\w-]+)/data$', DossierDataDetail.as_view(),
         name='dossier_data_detail'),
-    url(r'^id/(?P<pk>\d+)/data$', DossierDEvenementsDataDetail.as_view(),
+    url(r'^id/(?P<pk>\d+)/data$', DossierDataDetail.as_view(),
         name='dossier_data_permanent_detail'),
     url(r'^(?P<slug>[\w-]+)/geojson$', DossierDEvenementsDataGeoJson.as_view(),
         name='dossierdevenements_data_geojson'),

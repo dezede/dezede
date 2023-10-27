@@ -1,76 +1,9 @@
-{% extends 'base.html' %}
-{% load dezede_extras i18n routines el_pagination_tags static static_grouper %}
+{% extends 'dossiers/dossier_detail_base.html' %}
 
-
-{% block title %}
-  {{ object|striptags }} | {% trans 'Présentation' %}
+{% block tabs %}
+  {% include 'dossiers/include/dossierdevenements_tabs.html' %}
 {% endblock %}
 
-
-{% block breadcrumb %}
-  {% include 'dossiers/dossierdevenements_breadcrumb.html' %}
-{% endblock %}
-
-
-{% block header_extra_class %}no-separator{% endblock %}
-
-
-{% block header %}
-  {% if object.pk == 95 %}
-    <img class="pull-right" src="{% static 'images/orn.png' %}" style="height: 40px; margin-right: 30px; margin-top: 15px;" />
-  {% endif %}
-  {% if object.pk == 119 or object.pk == 95 %}
-    <img class="pull-right" src="{% static 'images/normandie-large.png' %}" style="height: 70px; margin-right: 30px;" />
-  {% endif %}
-  <h1>{{ object.titre|safe }}</h1>
-  {% if object.pk == 95 or object.pk == 119 %}<div class="clearfix"></div>{% endif %}
-{% endblock %}
-
-
-{% block header-aside %}{% frontend_admin %}{% endblock %}
-
-
-{% block tabs %}{% include 'dossiers/tabs.html' %}{% endblock %}
-
-
-{% block content %}
-
-  {% addstatic metadata %}
-    {% meta 'DC' 'title' object|striptags %}
-    {% meta 'DC' 'creator' object.editeurs_scientifiques.all|map_str|join:', ' %}
-    {% meta 'DC' 'date' object.date_publication scheme='DCTERMS.W3C-DTF' %}
-    {% meta 'DC' 'description' object.presentation|striptags %}
-  {% endaddstatic %}
-
-  {% trans 'Pour citer ce dossier' as citation_title %}
-  {% include 'dossiers/dossierdevenements_content.html' with export_pdf=True  %}
-
-  <div class="row">
-    <div class="col-xs-12 col-md-offset-4 col-md-8">
-      <nav id="dossier-switcher">
-        <div class="btn-group btn-group-justified">
-          {% prev_sibling object as prev %}
-          <a href="{{ prev.get_absolute_url|default:'#' }}" role="button"
-             {% if not prev %}disabled="disabled"{% endif %}
-             class="btn btn-primary">
-            <i class="fa fa-angle-left"></i>
-            {% trans 'Dossier précédent' %}
-          </a>
-          <a href="#" class="btn btn-default" role="button">
-            <i class="fa fa-angle-double-up"></i>
-            {% trans 'Retourner en haut' %}
-            <i class="fa fa-angle-double-up"></i>
-          </a>
-          {% next_sibling object as next %}
-          <a href="{{ next.get_absolute_url|default:'#' }}" role="button"
-             {% if not next %}disabled="disabled"{% endif %}
-             class="btn btn-primary">
-            {% trans 'Dossier suivant' %}
-            <i class="fa fa-angle-right"></i>
-          </a>
-        </div>
-      </nav>
-    </div>
-  </div>
-
+{% block subcontent %}
+  {% include 'dossiers/include/dossierdevenements_content.html' with export_pdf=True  %}
 {% endblock %}

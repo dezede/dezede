@@ -1,9 +1,12 @@
+from functools import cached_property
+
 from django.core.exceptions import PermissionDenied, EmptyResultSet
 from django.db import connection
 from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.views import View
 from django.views.generic import TemplateView, FormView
 from el_pagination.views import AjaxListView
 
@@ -14,7 +17,9 @@ from libretto.models import Source, Oeuvre, Individu
 from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementGeoJson, EvenementExport,
     BaseEvenementListView, MAX_MIN_PLACES, DEFAULT_MIN_PLACES)
-from .models import CategorieDeDossiers, DossierDEvenements, Dossier
+from .models import (
+    CategorieDeDossiers, DossierDEvenements, Dossier, DossierDOeuvres,
+)
 from common.utils.export import launch_export
 
 from .forms import ScenarioForm, ScenarioFormSet
@@ -263,31 +268,48 @@ class DossierDEvenementsStatsDetail(PublishedDetailView):
         return context
 
 
-class DossierDEvenementsViewMixin(object):
+class DossierViewMixin:
     success_view_name = 'dossier_data_detail'
     enable_default_page = False
 
-    def get_queryset(self):
-        self.object = get_object_or_404(DossierDEvenements, **self.kwargs)
-        if not self.object.can_be_viewed(self.request):
+    @cached_property
+    def dossier(self):
+        dossier = get_object_or_404(Dossier, **self.kwargs).specific
+        if not dossier.can_be_viewed(self.request):
             raise PermissionDenied
-        return super(DossierDEvenementsViewMixin, self).get_queryset(
-            base_filter=Q(pk__in=self.object.queryset))
+        return dossier
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['object'] = data['dossier'] = self.dossier
+        return data
+
+    def get_success_url(self):
+        return reverse(self.success_view_name, kwargs=self.kwargs)
+
+
+class DossierDataDetail(DossierViewMixin, View):
+    def get_child_view(self):
+        if isinstance(self.dossier, DossierDEvenements):
+            return DossierDEvenementsDataDetail
+        elif isinstance(self.dossier, DossierDOeuvres):
+            return DossierDOeuvresDataDetail
+        raise RuntimeError
+
+    def dispatch(self, request, *args, **kwargs):
+        # FIXME: Pass `self.dossier` instead of letting the child view fetch it again.
+        return self.get_child_view().as_view()(request, *args, **kwargs)
+
+
+class DossierDEvenementsViewMixin(DossierViewMixin):
+    def get_queryset(self):
+        return super().get_queryset(base_filter=Q(pk__in=self.dossier.queryset))
 
     def get_export_url(self):
         return reverse('dossierdevenements_data_export', kwargs=self.kwargs)
 
     def get_geojson_url(self):
         return reverse('dossierdevenements_data_geojson', kwargs=self.kwargs)
-
-    def get_context_data(self, **kwargs):
-        data = super(DossierDEvenementsViewMixin,
-                     self).get_context_data(**kwargs)
-        data['object'] = self.object
-        return data
-
-    def get_success_url(self):
-        return reverse(self.success_view_name, kwargs=self.kwargs)
 
 
 class DossierDEvenementsDataDetail(DossierDEvenementsViewMixin,
@@ -337,6 +359,22 @@ class DossierDEvenementsScenario(DossierDetail):
             launch_export(dossier_to_xlsx, request, data, 'XLSX',
                           '%s' % self.object)
         return redirect(self.object.get_absolute_url())
+
+
+class DossierDOeuvresDataDetail(DossierViewMixin, PublishedListView):
+    model = Oeuvre
+    context_object_name = 'oeuvres'
+    template_name = 'dossiers/dossierdoeuvres_data_detail.html'
+
+    def get_queryset(self):
+        qs = self.dossier.queryset.select_related(
+            'genre', 'creation_lieu', 'creation_lieu__nature'
+        ).prefetch_related(
+            'auteurs__individu', 'auteurs__profession',
+        )
+        if self.request.GET.get('order_by') == 'creation_date':
+            return qs.order_by('creation_date')
+        return qs.order_by(*Oeuvre._meta.ordering)
 
 
 class OperaComiquePresentation(TemplateView):

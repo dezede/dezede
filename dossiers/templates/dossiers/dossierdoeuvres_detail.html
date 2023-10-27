@@ -1,0 +1,10 @@
+{% extends 'dossiers/dossier_detail_base.html' %}
+{% load dezede_extras i18n routines el_pagination_tags static static_grouper %}
+
+{% block tabs %}
+  {% include 'dossiers/include/dossierdoeuvres_tabs.html' %}
+{% endblock %}
+
+{% block subcontent %}
+  {% include 'dossiers/include/dossierdoeuvres_content.html' %}
+{% endblock %}

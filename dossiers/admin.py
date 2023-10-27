@@ -4,8 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from reversion.admin import VersionAdmin
 from tinymce.widgets import TinyMCE
 from libretto.admin import PublishedAdmin
-from .forms import DossierDEvenementsForm
-from .models import DossierDEvenements, CategorieDeDossiers
+from .forms import DossierDEvenementsForm, DossierForm, DossierDOeuvresForm
+from .models import DossierDEvenements, CategorieDeDossiers, DossierDOeuvres
 
 
 @register(CategorieDeDossiers)
@@ -19,17 +19,14 @@ class CategorieDeDossierAdmin(VersionAdmin, PublishedAdmin):
     )
 
 
-@register(DossierDEvenements)
-class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
-    form = DossierDEvenementsForm
+class DossierAdmin(VersionAdmin, PublishedAdmin):
+    form = DossierForm
     list_display = ('__str__',)
     prepopulated_fields = {'slug': ('titre',)}
     readonly_fields = ('get_count',)
-    raw_id_fields = ('editeurs_scientifiques', 'lieux', 'oeuvres', 'individus',
-                     'ensembles', 'sources', 'evenements', 'saisons')
+    raw_id_fields = ('editeurs_scientifiques',)
     autocomplete_lookup_fields = {
-        'm2m': ('editeurs_scientifiques', 'lieux', 'oeuvres', 'individus',
-                'ensembles'),
+        'm2m': ('editeurs_scientifiques',),
     }
     fieldsets = (
         (None, {
@@ -50,6 +47,26 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
             ),
             'classes': ('grp-collapse grp-open',),
         }),
+    )
+    formfield_overrides = {
+        TextField: {'widget': TinyMCE},
+    }
+
+
+@register(DossierDEvenements)
+class DossierDEvenementsAdmin(DossierAdmin):
+    form = DossierDEvenementsForm
+    raw_id_fields = DossierAdmin.raw_id_fields + (
+        'lieux', 'oeuvres', 'individus', 'ensembles', 'sources', 'evenements',
+        'saisons',
+    )
+    autocomplete_lookup_fields = {
+        **DossierAdmin.autocomplete_lookup_fields,
+        'm2m': ('editeurs_scientifiques', 'lieux', 'oeuvres', 'individus',
+                'ensembles'),
+    }
+    fieldsets = (
+        *DossierAdmin.fieldsets,
         (_('Sélection dynamique'), {
             'fields': ('saisons', ('debut', 'fin'), 'lieux', 'oeuvres',
                        'individus', 'ensembles', 'sources', 'circonstance'),
@@ -58,6 +75,29 @@ class DossierDEvenementsAdmin(VersionAdmin, PublishedAdmin):
             'fields': ('evenements', 'statique', 'get_count',),
         })
     )
-    formfield_overrides = {
-        TextField: {'widget': TinyMCE},
+
+
+@register(DossierDOeuvres)
+class DossierDOeuvresAdmin(DossierAdmin):
+    form = DossierDOeuvresForm
+    raw_id_fields = DossierAdmin.raw_id_fields + (
+        'lieux', 'genres', 'individus', 'ensembles', 'sources', 'oeuvres',
+    )
+    autocomplete_lookup_fields = {
+        **DossierAdmin.autocomplete_lookup_fields,
+        'm2m': (
+            'editeurs_scientifiques', 'lieux', 'individus', 'ensembles', 'genres',
+        ),
     }
+    fieldsets = (
+        *DossierAdmin.fieldsets,
+        (_('Sélection dynamique'), {
+            'fields': (
+                ('debut', 'fin'), 'lieux', 'genres', 'individus', 'ensembles',
+                'sources',
+            ),
+        }),
+        (_('Sélection manuelle'), {
+            'fields': ('oeuvres', 'statique', 'get_count',),
+        })
+    )

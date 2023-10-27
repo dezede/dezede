@@ -8,7 +8,7 @@
 
 
 {% block breadcrumb %}
-  {% include 'dossiers/dossierdevenements_breadcrumb.html' %}
+  {% include 'dossiers/include/breadcrumb.html' %}
 {% endblock %}
 
 
@@ -23,7 +23,7 @@
 {% block header-aside %}{% frontend_admin %}{% endblock %}
 
 
-{% block tabs %}{% include 'dossiers/tabs.html' %}{% endblock %}
+{% block tabs %}{% include 'dossiers/include/dossierdevenements_tabs.html' %}{% endblock %}
 
 
 {% block content %}
@@ -55,7 +55,7 @@
       {% if matrix %}
         <div class="col-xs-12 text-center">
           <hr />
-          {% include 'dossiers/chord_diagram.html' %}
+          {% include 'dossiers/include/chord_diagram.html' %}
         </div>
       {% endif %}
     {% endif %}
