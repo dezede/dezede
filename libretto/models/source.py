@@ -508,14 +508,14 @@ class Source(AutoriteModel):
 
     @cached_property
     def prev_page(self):
-        if self.parent is not None:
+        if self.parent is not None and self.position is not None:
             return self.parent.children.exclude(pk=self.pk).filter(
                 position__lte=self.position,
             ).order_by('-position').first()
 
     @cached_property
     def next_page(self):
-        if self.parent is not None:
+        if self.parent is not None and self.position is not None:
             return self.parent.children.exclude(pk=self.pk).filter(
                 position__gte=self.position,
             ).order_by('position').first()
@@ -613,8 +613,8 @@ class Source(AutoriteModel):
     @staticmethod
     def autocomplete_search_fields():
         return [
-            'search_vector__autocomplete',
-            'type__search_vector__autocomplete',
+            'autocomplete_vector__autocomplete',
+            'type__autocomplete_vector__autocomplete',
         ]
 
 

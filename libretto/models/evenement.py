@@ -118,6 +118,12 @@ class ElementDeDistribution(CommonModel):
         verbose_name = _('élément de distribution')
         verbose_name_plural = _('éléments de distribution')
         ordering = ('partie', 'profession', 'individu', 'ensemble')
+        indexes = [
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('search_vector', name='elementdistrib_search'),
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('autocomplete_vector', name='elementdistrib_autocomplete'),
+        ]
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -146,9 +152,9 @@ class ElementDeDistribution(CommonModel):
     @staticmethod
     def autocomplete_search_fields():
         return [
-            'partie__search_vector__autocomplete',
-            'individu__search_vector__autocomplete',
-            'ensemble__search_vector__autocomplete',
+            'partie__autocomplete_vector__autocomplete',
+            'individu__autocomplete_vector__autocomplete',
+            'ensemble__autocomplete_vector__autocomplete',
         ]
 
 
@@ -168,6 +174,8 @@ class TypeDeCaracteristiqueDeProgramme(CommonModel):
         indexes = [
             # We specify it manually, otherwise its name is too long.
             GinIndex('search_vector', name='typecaracdeprogramme_search'),
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('autocomplete_vector', name='typecaracprogr_autocomplete'),
         ]
 
     @staticmethod
@@ -236,6 +244,8 @@ class CaracteristiqueDeProgramme(CommonModel):
         indexes = [
             # We specify it manually, otherwise its name is too long.
             GinIndex('search_vector', name='caracdeprogramme_search'),
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('autocomplete_vector', name='caracprogr_autocomplete'),
         ]
 
     @staticmethod
@@ -260,8 +270,8 @@ class CaracteristiqueDeProgramme(CommonModel):
     @staticmethod
     def autocomplete_search_fields():
         return [
-            'type__search_vector__autocomplete',
-            'search_vector__autocomplete',
+            'type__autocomplete_vector__autocomplete',
+            'autocomplete_vector__autocomplete',
         ]
 
 
@@ -317,6 +327,12 @@ class ElementDeProgramme(CommonModel):
         verbose_name = _('élément de programme')
         verbose_name_plural = _('éléments de programme')
         ordering = ('position',)
+        indexes = [
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('search_vector', name='elementprogr_search'),
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('autocomplete_vector', name='elementprogr_autocomplete'),
+        ]
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -386,8 +402,8 @@ class ElementDeProgramme(CommonModel):
     @staticmethod
     def autocomplete_search_fields():
         return [
-            'oeuvre__search_vector__autocomplete',
-            'oeuvre__genre__search_vector__autocomplete',
+            'oeuvre__autocomplete_vector__autocomplete',
+            'oeuvre__genre__autocomplete_vector__autocomplete',
         ]
 
 
@@ -666,7 +682,7 @@ class Evenement(AutoriteModel):
     @staticmethod
     def autocomplete_search_fields():
         return [
-            'search_vector__autocomplete',
-            'debut_lieu__search_vector__autocomplete',
-            'debut_lieu__parent__search_vector__autocomplete',
+            'autocomplete_vector__autocomplete',
+            'debut_lieu__autocomplete_vector__autocomplete',
+            'debut_lieu__parent__autocomplete_vector__autocomplete',
         ]

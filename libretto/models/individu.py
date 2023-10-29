@@ -1,3 +1,4 @@
+from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import (
@@ -25,6 +26,12 @@ class TypeDeParenteDIndividus(TypeDeParente):
     class Meta(TypeDeParente.Meta):
         verbose_name = _('type de parenté d’individus')
         verbose_name_plural = _('types de parenté d’individus')
+        indexes = [
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('search_vector', name='typeparenteindiv_search'),
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('autocomplete_vector', name='typeparenteindiv_autocomplete'),
+        ]
 
 
 class ParenteDIndividus(CommonModel):

@@ -3,6 +3,7 @@ import re
 
 from django.apps import apps
 from django.contrib.postgres.fields import IntegerRangeField
+from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator
@@ -184,9 +185,9 @@ class Partie(AutoriteModel, UniqueSlugModel):
     @staticmethod
     def autocomplete_search_fields():
         return [
-            'search_vector__autocomplete',
-            'professions__search_vector__autocomplete',
-            'oeuvre__search_vector__autocomplete',
+            'autocomplete_vector__autocomplete',
+            'professions__autocomplete_vector__autocomplete',
+            'oeuvre__autocomplete_vector__autocomplete',
         ]
 
 
@@ -256,9 +257,9 @@ class Pupitre(CommonModel):
     @staticmethod
     def autocomplete_search_fields():
         return [
-            'oeuvre__search_vector__autocomplete',
-            'partie__search_vector__autocomplete',
-            'partie__professions__search_vector__autocomplete',
+            'oeuvre__autocomplete_vector__autocomplete',
+            'partie__autocomplete_vector__autocomplete',
+            'partie__professions__autocomplete_vector__autocomplete',
         ]
 
 
@@ -266,6 +267,12 @@ class TypeDeParenteDOeuvres(TypeDeParente):
     class Meta(TypeDeParente.Meta):
         verbose_name = _('type de parenté d’œuvres')
         verbose_name_plural = _('types de parentés d’œuvres')
+        indexes = [
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('search_vector', name='typeparenteoeuv_search'),
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('autocomplete_vector', name='typeparenteoeuv_autocomplete'),
+        ]
 
 
 class ParenteDOeuvresManager(CommonManager):
@@ -1068,9 +1075,9 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     @staticmethod
     def autocomplete_search_fields():
         return [
-            'auteurs__individu__search_vector__autocomplete',
-            'auteurs__ensemble__search_vector__autocomplete',
-            'search_vector__autocomplete',
-            'genre__search_vector__autocomplete',
-            'pupitres__partie__search_vector__autocomplete',
+            'auteurs__individu__autocomplete_vector__autocomplete',
+            'auteurs__ensemble__autocomplete_vector__autocomplete',
+            'autocomplete_vector__autocomplete',
+            'genre__autocomplete_vector__autocomplete',
+            'pupitres__partie__autocomplete_vector__autocomplete',
         ]

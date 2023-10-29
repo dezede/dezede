@@ -49,6 +49,7 @@ class DossierAdmin(VersionAdmin, PublishedAdmin):
         }),
     )
     formfield_overrides = {
+        **PublishedAdmin.formfield_overrides,
         TextField: {'widget': TinyMCE},
     }
 

@@ -10,7 +10,7 @@ from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.postgres.search import SearchQuery
-from django.db.models import Q, TextField
+from django.db.models import Q, TextField, ForeignKey
 from django.forms.models import modelformset_factory
 from django.shortcuts import redirect
 from django.utils.html import format_html_join
@@ -24,10 +24,11 @@ from accounts.models import HierarchicUser
 from common.utils.cache import is_user_locked, lock_user
 from common.utils.file import FileAnalyzer
 from .models import *
+from .models.base import CommonModel
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
     ElementDeDistributionForm, EnsembleForm, SaisonForm, PartieForm,
-    LieuAdminForm,
+    LieuAdminForm, FasterModelChoiceField,
 )
 from .jobs import (
     events_to_pdf as events_to_pdf_job, split_pdf as split_pdf_job,
@@ -47,14 +48,21 @@ __all__ = ()
 class CustomBaseModel(BaseModelAdmin):
     # FIXME: Utiliser un AuthenticationBackend personnalisé.
 
+    # Speeds up ForeignKeys in `list_editable` by caching the choices.
+    formfield_overrides = {
+        ForeignKey: {'form_class': FasterModelChoiceField},
+    }
+
     def check_user_ownership(self, request, obj, has_class_permission):
         if not has_class_permission:
             return False
         user = request.user
-        if obj is not None and not user.is_superuser \
-                and obj.owner not in user.get_descendants(include_self=True):
-            return False
-        return True
+        return (
+            obj is None or user.is_superuser
+            or user.get_descendants(
+                include_self=True
+            ).filter(pk=obj.owner_id).exists()
+        )
 
     def has_change_permission(self, request, obj=None):
         has_class_permission = super(CustomBaseModel,
@@ -73,9 +81,11 @@ class CustomBaseModel(BaseModelAdmin):
     def get_queryset(self, request):
         user = request.user
         qs = super(CustomBaseModel, self).get_queryset(request)
-        if not user.is_superuser and IS_POPUP_VAR not in request.GET:
-            qs = qs.filter(
-                owner__in=user.get_descendants(include_self=True))
+        if issubclass(qs.model, CommonModel):
+            if not user.is_superuser and IS_POPUP_VAR not in request.GET:
+                return qs.filter(
+                    owner__in=user.get_descendants(include_self=True),
+                )
         return qs
 
 
@@ -400,6 +410,7 @@ class SourcePartieInline(TabularInline):
 
 
 class CommonAdmin(CustomBaseModel, ModelAdmin):
+    list_select_related = ['owner']
     search_fields = ['search_vector']
     list_per_page = 20
     save_as = True
@@ -515,6 +526,7 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
 
 
 class PublishedAdmin(CommonAdmin):
+    list_select_related = ['etat', *CommonAdmin.list_select_related]
     additional_fields = ('etat', 'owner')
     admin_fields = ('etat',)
     additional_list_display = ('etat', 'owner')
@@ -572,6 +584,7 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     search_fields = ['search_vector', 'parent__search_vector']
+    list_select_related = ['parent__nature', 'nature', 'etat', 'owner']
     list_filter = ('nature',)
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
@@ -596,6 +609,9 @@ class SaisonAdmin(VersionAdmin, CommonAdmin):
     form = SaisonForm
     list_display = ('__str__', 'lieu', 'ensemble', 'debut', 'fin',
                     'evenements_count')
+    list_select_related = [
+        'lieu__nature', 'lieu__parent__nature', 'ensemble', 'owner',
+    ]
     date_hierarchy = 'debut'
     raw_id_fields = ('lieu', 'ensemble')
     autocomplete_lookup_fields = {
@@ -609,6 +625,7 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
                     'nom_feminin_pluriel', 'parent', 'classement')
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin',
                      'nom_feminin_pluriel', 'parent', 'classement')
+    list_select_related = ['parent', 'etat', 'owner']
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ('parent',),
@@ -624,7 +641,6 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
 
 @register(Individu)
 class IndividuAdmin(VersionAdmin, AutoriteAdmin):
-    list_per_page = 20
     list_display = ('__str__', 'nom', 'prenoms',
                     'pseudonyme', 'titre', 'naissance',
                     'deces', 'calc_professions', 'link',)
@@ -684,6 +700,7 @@ class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
 class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     form = EnsembleForm
     list_display = ('__str__', 'type', 'membres_count')
+    list_select_related = ['type', 'etat', 'owner']
     search_fields = ['search_vector', 'membres__individu__search_vector']
     inlines = (MembreInline,)
     raw_id_fields = ('siege', 'type')
@@ -720,6 +737,7 @@ class TypeDeCaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
 class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
     list_editable = ('valeur', 'classement',)
+    list_select_related = ['type', 'owner']
     search_fields = ['type__search_vector', 'search_vector']
 
 
@@ -850,9 +868,6 @@ class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
     search_fields = ['search_vector', 'debut_lieu__search_vector']
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
-    list_select_related = ('debut_lieu', 'debut_lieu__nature',
-                           'fin_lieu', 'fin_lieu__nature',
-                           'etat', 'owner')
     date_hierarchy = 'debut_date'
     raw_id_fields = ('debut_lieu', 'fin_lieu', 'caracteristiques')
     autocomplete_lookup_fields = {
@@ -1013,6 +1028,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
                                    'i', 'i', 'i', 'i', 'i', 'f')
     admin_fields = AutoriteAdmin.admin_fields + ('est_promue',)
     formfield_overrides = {
+        **AutoriteAdmin.formfield_overrides,
         TextField: {'widget': TinyMCE},
     }
 
@@ -1047,7 +1063,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
                 }
             }
         )
-        return qs
+        return qs.select_related('type', 'etat', 'owner')
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         source = self.get_object(request, object_id)

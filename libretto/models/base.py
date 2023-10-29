@@ -84,19 +84,23 @@ ISNI_VALIDATORS = [
 
 class SearchVectorAbstractModel(Model):
     search_vector = SearchVectorField(null=True, blank=True, editable=False)
+    autocomplete_vector = SearchVectorField(
+        null=True, blank=True, editable=False,
+    )
     search_fields = []
 
     class Meta:
         abstract = True
         indexes = [
             GinIndex('search_vector', name='%(class)s_search'),
+            GinIndex('autocomplete_vector', name='%(class)s_autocomplete'),
         ]
 
     @classmethod
     def update_all_search_vectors(cls):
         update_all_search_vectors(cls, cls.search_fields)
 
-    def set_search_vector(self) -> None:
+    def set_search_vectors(self) -> None:
         search_fields = self.search_fields
 
         search_fields = [
@@ -107,6 +111,9 @@ class SearchVectorAbstractModel(Model):
             Value(value) for value in search_fields if value is not None
         ]
         self.search_vector = get_search_vector(search_fields)
+        self.autocomplete_vector = get_search_vector(
+            search_fields, config=settings.AUTOCOMPLETE_CONFIG,
+        )
 
     @staticmethod
     def autocomplete_term_adjust(term):
@@ -114,7 +121,7 @@ class SearchVectorAbstractModel(Model):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ['search_vector__autocomplete']
+        return ['autocomplete_vector__autocomplete']
 
 
 def get_related_fields(meta):
