@@ -11,7 +11,7 @@ from tree.operations import DeleteTreeTrigger, CreateTreeTrigger, RebuildPaths
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0059_oeuvre_ambitus'),
+        ('libretto', '0060_oeuvre_ambitus'),
         ('dossiers', '0008_add_autocomplete_vector'),
     ]
 
