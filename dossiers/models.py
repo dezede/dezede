@@ -292,8 +292,10 @@ class DossierDOeuvres(Dossier):
             ensembles = set(self.ensembles.values_list('pk', flat=True))
             if ensembles:
                 kwargs['auteurs__ensemble__in'] = ensembles
-            sources = set(self.sources.values_list('pk', flat=True))
-            if sources:
+            # For sources, we don't fetch them as there can be a huge amount
+            # of them (see the Opera Comique dossier for example).
+            sources = self.sources.values_list('pk', flat=True)
+            if sources.exists():
                 kwargs['sources__in'] = sources
         if args or kwargs:
             return Oeuvre.objects.filter(
