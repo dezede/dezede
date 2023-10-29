@@ -377,7 +377,7 @@ class DossierDOeuvresDataDetail(DossierViewMixin, PublishedListView):
 
     def get_queryset(self):
         qs = self.dossier.queryset.select_related(
-            'genre', 'creation_lieu', 'creation_lieu__nature'
+            'genre', 'creation_lieu__parent__nature', 'creation_lieu__nature'
         ).prefetch_related(
             'auteurs__individu', 'auteurs__profession',
         )
