@@ -7,7 +7,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0058_oeuvre_dedicataire'),
+        ('libretto', '0059_oeuvre_dedicataire'),
     ]
 
     operations = [

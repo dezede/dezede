@@ -33,7 +33,7 @@ def migrate_data(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dossiers', '0008_dossier'),
+        ('dossiers', '0009_dossier'),
     ]
 
     operations = [

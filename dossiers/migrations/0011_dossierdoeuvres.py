@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('libretto', '0059_oeuvre_ambitus'),
-        ('dossiers', '0009_remove_dossier_old_fields'),
+        ('dossiers', '0010_remove_dossier_old_fields'),
     ]
 
     operations = [

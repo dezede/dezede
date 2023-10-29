@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0057_alter_oeuvre_sujet'),
+        ('libretto', '0058_add_autocomplete_vector'),
     ]
 
     operations = [

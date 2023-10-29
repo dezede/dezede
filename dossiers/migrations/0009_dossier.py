@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('libretto', '0059_oeuvre_ambitus'),
-        ('dossiers', '0007_add_search_vectors'),
+        ('dossiers', '0008_add_autocomplete_vector'),
     ]
 
     operations = [
