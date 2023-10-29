@@ -384,36 +384,3 @@ class DossierDOeuvresDataDetail(DossierViewMixin, PublishedListView):
         if self.request.GET.get('order_by') == 'creation_date':
             return qs.order_by('creation_date')
         return qs.order_by(*Oeuvre._meta.ordering)
-
-
-class OperaComiquePresentation(TemplateView):
-    template_name = 'dossiers/opera_comique_presentation.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(OperaComiquePresentation,
-                        self).get_context_data(**kwargs)
-        context['oc_user'] = HierarchicUser.objects.get(pk=103)
-        return context
-
-
-class OperaComiqueListView(PublishedListView):
-    model = Source
-    template_name = 'dossiers/opera_comique.html'
-
-    def get_queryset(self):
-        qs = super(OperaComiqueListView, self).get_queryset()
-        return qs.filter(owner_id=103)
-
-    def get_context_data(self, **kwargs):
-        context = super(OperaComiqueListView, self).get_context_data(**kwargs)
-        qs = context['object_list']
-        oeuvres = (
-            Oeuvre.objects.filter(sources__in=qs).distinct()
-            .select_related('genre', 'creation_lieu', 'creation_lieu__nature')
-            .prefetch_related('auteurs__individu', 'auteurs__profession'))
-        if self.request.GET.get('order_by') == 'creation_date':
-            oeuvres = oeuvres.order_by('creation_date')
-        else:
-            oeuvres = oeuvres.order_by(*Oeuvre._meta.ordering)
-        context['oeuvres'] = oeuvres
-        return context

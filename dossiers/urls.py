@@ -1,10 +1,8 @@
 from django.conf.urls import url
-from django.views.generic import RedirectView
 from dossiers.views import (
     CategorieDeDossiersList, DossierDetail,
-    DossierDEvenementsStatsDetail, DossierDEvenementsDataDetail,
+    DossierDEvenementsStatsDetail,
     DossierDEvenementsDetailXeLaTeX,
-    OperaComiquePresentation, OperaComiqueListView,
     DossierDEvenementsDataGeoJson, DossierDEvenementsDataExport,
     DossierDEvenementsScenario, DossierDataDetail)
 
@@ -12,12 +10,6 @@ from dossiers.views import (
 urlpatterns = [
     url(r'^$', CategorieDeDossiersList.as_view(),
         name='dossier_index'),
-    url(r'^id/62/?$', RedirectView.as_view(
-        pattern_name='dossier_opera_comique_presentation', permanent=False)),
-    url(r'^archives[-\.]opera-comique/$', OperaComiquePresentation.as_view(),
-        name='dossier_opera_comique_presentation'),
-    url(r'^archives[-\.]opera-comique/data$', OperaComiqueListView.as_view(),
-        name='dossier_opera_comique'),
     url(r'^(?P<slug>[\w-]+)/$', DossierDetail.as_view(),
         name='dossier_detail'),
     url(r'^id/(?P<pk>\d+)/$', DossierDetail.as_view(),
