@@ -1,26 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'dossiers/base.html' %}
 {% load i18n routines el_pagination_tags math_tags %}
 
 
 {% block title %}
   {{ object|striptags }} | {% trans 'Visualisations' %}
 {% endblock %}
-
-
-{% block breadcrumb %}
-  {% include 'dossiers/include/breadcrumb.html' %}
-{% endblock %}
-
-
-{% block header_extra_class %}no-separator{% endblock %}
-
-
-{% block header %}
-  <h1>{{ object.titre|safe }}</h1>
-{% endblock %}
-
-
-{% block header-aside %}{% frontend_admin %}{% endblock %}
 
 
 {% block tabs %}{% include 'dossiers/include/dossierdevenements_tabs.html' %}{% endblock %}
