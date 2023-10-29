@@ -21,7 +21,11 @@ class Migration(migrations.Migration):
         migrations.RenameModel('DossierDEvenements', 'Dossier'),
         migrations.RemoveIndex(
             model_name='dossier',
-            name='dossierdevenements_search',
+            name='dossierevenements_search',
+        ),
+        migrations.RemoveIndex(
+            model_name='dossier',
+            name='dossierevenements_autocomplete',
         ),
         migrations.AlterField(
             model_name='dossier',
@@ -47,6 +51,11 @@ class Migration(migrations.Migration):
             model_name='dossier',
             index=django.contrib.postgres.indexes.GinIndex(django.db.models.expressions.F('search_vector'),
                                                            name='dossier_search'),
+        ),
+        migrations.AddIndex(
+            model_name='dossier',
+            index=django.contrib.postgres.indexes.GinIndex(django.db.models.expressions.F('autocomplete_vector'),
+                                                           name='dossier_autocomplete'),
         ),
         migrations.AlterModelOptions(
             name='dossier',
