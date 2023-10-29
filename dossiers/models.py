@@ -104,7 +104,7 @@ class Dossier(TreeModelMixin, PublishedModel):
         ]
 
     @property
-    def specific(self) -> Union['DossierDEvenements']:
+    def specific(self) -> Union['DossierDEvenements', 'DossierDOeuvres']:
         try:
             return self.dossierdevenements
         except DossierDEvenements.DoesNotExist:
@@ -273,13 +273,13 @@ class DossierDOeuvres(Dossier):
             'extrait_de__isnull': True,
         }
         if self.debut:
-            kwargs['debut_date__gte'] = self.debut
+            kwargs['creation_date__gte'] = self.debut
         if self.fin:
-            kwargs['debut_date__lte'] = self.fin
+            kwargs['creation_date__lte'] = self.fin
         if self.pk:
             lieux = set(self.lieux.all().get_descendants(include_self=True))
             if lieux:
-                kwargs['debut_lieu__in'] = lieux
+                kwargs['creation_lieu__in'] = lieux
             genres = set(self.genres.values_list('pk', flat=True))
             if genres:
                 kwargs['genre__in'] = genres
