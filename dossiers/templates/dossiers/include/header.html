@@ -1,8 +1,8 @@
 {% load thumbnail %}
 
 {% if object.logo %}
-  {% thumbnail object.logo 200x70 as thumb %}
-  <img class="pull-right" src="{{ thumb.url }}" height="{{ thumb.height }}" width="{{ thumb.width }}" style="margin-right: 30px;"/>
+  {% thumbnail object.logo 200x55 as thumb %}
+  <img class="pull-right" src="{{ thumb.url }}" height="{{ thumb.height }}" width="{{ thumb.width }}" style="margin-right: 30px; margin-bottom: 15px;"/>
 {% endif %}
 <h1>{{ object.titre|safe }}</h1>
 {% if object.logo %}
