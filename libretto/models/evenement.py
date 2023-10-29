@@ -479,6 +479,7 @@ class EvenementQuerySet(PublishedQuerySet):
                 'fin_lieu__slug',
                 'fin_lieu__nom', 'fin_lieu__parent',
                 'fin_lieu__nature__referent',
+                'recette_generale',
             )
         )
 
