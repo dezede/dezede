@@ -21,7 +21,7 @@ def create_dossier_opera_comique(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0059_oeuvre_ambitus'),
+        ('libretto', '0060_oeuvre_ambitus'),
         ('dossiers', '0010_remove_dossier_old_fields'),
     ]
 
