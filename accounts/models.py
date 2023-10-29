@@ -153,6 +153,6 @@ class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
         return href(f'mailto:{self.email}', self.email)
 
     def dossiers_edites(self):
-        return apps.get_model('dossiers.DossierDEvenements').objects.filter(
+        return apps.get_model('dossiers.Dossier').objects.filter(
             editeurs_scientifiques=self
         ).exclude(parent__editeurs_scientifiques=self)

@@ -1,0 +1,70 @@
+{% extends 'dossiers/include/sidebar_base.html' %}
+{% load i18n static static_grouper %}
+
+{% block export_pdf %}
+  {% if user.is_authenticated and export_pdf %}
+    <a id="export"
+       href="{% url 'dossierdevenements_detail_xelatex' object.slug %}"
+       class="btn btn-default btn-block">
+      <i class="fa fa-book"></i> {% trans 'Exporter en PDF' %}
+    </a>
+    {% if user.is_superuser %}
+      <a href="#"
+        data-toggle="modal"
+        data-target="#scenarios"
+        class="btn btn-default btn-block">
+        <i class="fa fa-folder-open-o"></i> {% trans "Exporter les statistiques" %}</a>
+
+      <div id="scenarios" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">{% trans "Exporter les statistiques" %}</h4>
+            </div>
+            <form id="id_{{ formset.prefix }}" action="{% url 'dossierdevenement_export_scenario' object.slug %}" method="post">
+              {% csrf_token %}
+              <div class="modal-body">
+                {{ formset.management_form }}
+                {% for form in formset.forms %}
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>{% trans "Exports" %}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="formset_row">
+                          {% for field in form.visible_fields %}
+                            <td>{{ field }}</td>
+                          {% endfor %}
+                        </tr>
+                    </tbody>
+                  </table>
+                  {% for hidden in form.hidden_fields %}
+                      {{ hidden }}
+                  {% endfor %}
+                {% endfor %}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Fermer" %}</button>
+                <button type="submit" class="btn btn-primary">{% trans "Exporter" %}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% addstatic js %}
+  <script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>
+  <script>
+    $('.formset_row').formset({
+      addText: '{% trans "Ajouter" %}',
+      addCssClass: 'btn btn-primary btn-sm',
+      deleteText: '{% trans "Supprimer" %}',
+    });
+  </script>
+{% endaddstatic %}

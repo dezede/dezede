@@ -2,6 +2,7 @@ from collections import OrderedDict
 import re
 
 from django.apps import apps
+from django.contrib.postgres.fields import IntegerRangeField
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import apnumber
@@ -587,6 +588,31 @@ TONALITE_I18N_CHOICES = (
 )
 
 
+class Pitch:
+    OCTAVE_NOTES = (
+        _('do'), _('do dièse / ré bémol'), _('ré'), _('ré dièse / mi bémol'),
+        _('mi'), _('fa'), _('fa dièse / sol bémol'), _('sol'),
+        _('sol dièse / la bémol'), _('la'), _('la dièse / si bémol'), _('si'),
+    )
+    OCTAVE_LENGTH = len(OCTAVE_NOTES)
+    DO_0 = 12
+
+    @classmethod
+    def form_to_database_value(cls, note_index, octave):
+        """
+        Converts the scientific notation to the MIDI pitch value.
+        """
+        return cls.DO_0 + octave * cls.OCTAVE_LENGTH + note_index
+
+    @classmethod
+    def database_to_form_values(cls, db_value):
+        """
+        Converts the MIDI pitch value to the split scientific notation.
+        """
+        octave, note_index = divmod(db_value - cls.DO_0, cls.OCTAVE_LENGTH)
+        return str(note_index), octave
+
+
 class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(_('article'), max_length=20, blank=True)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True)
@@ -645,6 +671,7 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     ]
     tonalite = CharField(_('tonalité'), max_length=3, choices=TONALITES,
                          blank=True, db_index=True)
+    ambitus = IntegerRangeField(_('ambitus'), null=True, blank=True)
     sujet = CharField(
         _('sujet'), max_length=80, blank=True, db_index=True,
         help_text=_(
@@ -688,6 +715,13 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         (1, _('genèse (composition, écriture, etc.)')),
         (2, _('première mondiale')),
         (3, _('première édition')),
+    )
+    dedicataire = ForeignKey(
+        'Individu', blank=True, null=True, on_delete=PROTECT,
+        related_name='dedicaces', verbose_name=_('dédié à'), help_text=(
+            'N’ajouter que des autorités confirmées. '
+            'Dans le cas contraire, utiliser les notes.'
+        ),
     )
     creation_type = PositiveSmallIntegerField(
         _('type de création'), choices=CREATION_TYPES, null=True, blank=True)

@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, PROTECT, URLField,
     CASCADE, PositiveSmallIntegerField, FileField, BooleanField, DateField,
-    TextField, Q, PositiveIntegerField,
+    TextField, Q, PositiveIntegerField, OuterRef, Exists,
 )
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -72,10 +72,15 @@ class SourceQuerySet(PublishedQuerySet):
         return sources.items()
 
     def prefetch(self):
-        return self.select_related('type').only(
+        return self.select_related('type', 'parent').annotate(
+            has_children_images=Exists(self.model.objects.filter(
+                parent=OuterRef('pk'), type_fichier=FileAnalyzer.IMAGE
+            )),
+        ).only(
             'titre', 'numero', 'folio', 'page', 'lieu_conservation',
             'cote', 'url', 'transcription', 'date', 'date_approx',
             'type__nom', 'type__nom_pluriel', 'fichier', 'type_fichier',
+            'parent',
         )
 
     def with_video(self):
@@ -397,13 +402,14 @@ class Source(AutoriteModel):
     def is_video(self):
         return self.type_fichier == FileAnalyzer.VIDEO
 
+    @cached_property
     def has_children_images(self):
         return self.children.filter(type_fichier=FileAnalyzer.IMAGE).exists()
 
     def has_images(self):
         return (
             self.type_fichier == FileAnalyzer.IMAGE
-            or self.has_children_images()
+            or self.has_children_images
         )
 
     def has_fichiers(self):

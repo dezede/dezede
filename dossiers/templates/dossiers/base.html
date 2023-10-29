@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load dezede_extras i18n routines static static_grouper thumbnail %}
+
+
+{% block title %}
+  {{ object|striptags }}
+{% endblock %}
+
+
+{% block breadcrumb %}
+  {% include 'dossiers/include/breadcrumb.html' %}
+{% endblock %}
+
+
+{% block header_extra_class %}no-separator{% endblock %}
+
+
+{% block header %}
+  {% include 'dossiers/include/header.html' %}
+{% endblock %}
+
+
+{% block header-aside %}{% frontend_admin %}{% endblock %}
+
+
+{% block tabs %}{% endblock %}
+
+
+{% block content %}
+
+  {% addstatic metadata %}
+    {% meta 'DC' 'title' object|striptags %}
+    {% meta 'DC' 'creator' object.editeurs_scientifiques.all|map_str|join:', ' %}
+    {% meta 'DC' 'date' object.date_publication scheme='DCTERMS.W3C-DTF' %}
+    {% meta 'DC' 'description' object.presentation|striptags %}
+  {% endaddstatic %}
+
+  {% trans 'Pour citer ce dossier' as citation_title %}
+
+
+  {% block subcontent %}{% endblock %}
+
+{% endblock %}

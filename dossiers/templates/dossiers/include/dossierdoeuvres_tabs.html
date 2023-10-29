@@ -1,0 +1,18 @@
+{% load i18n routines %}
+
+<ul class="nav nav-tabs nav-justified">
+  {% with presentation_url=object.get_absolute_url data_url=object.get_data_absolute_url %}
+    <li{% if request.path == presentation_url %} class="active"{% endif %}>
+      <a href="{{ presentation_url }}">
+        {% trans 'Présentation' %}
+      </a>
+    </li>
+    <li{% if request.path == data_url %} class="active"{% endif %}>
+      <a href="{{ data_url }}">
+        {% trans 'Œuvres' %}
+        {% published object.queryset as oeuvres %}
+        <span class="badge">{{ oeuvres.count }}</span>
+      </a>
+    </li>
+  {% endwith %}
+</ul>
