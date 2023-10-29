@@ -14,7 +14,7 @@ def migrate_data(apps, schema_editor):
         if m2m.name.startswith('old_')
     ]
 
-    for dossier in Dossier.objects.all():
+    for dossier in Dossier.objects.exclude(slug="archives-opera-comique"):
         dossier_devenements = DossierDEvenements(
             dossier_ptr=dossier,
             **{
