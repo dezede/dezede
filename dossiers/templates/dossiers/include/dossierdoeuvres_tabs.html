@@ -10,7 +10,7 @@
     <li{% if request.path == data_url %} class="active"{% endif %}>
       <a href="{{ data_url }}">
         {% trans 'Œuvres' %}
-        {% published object.get_queryset as oeuvres %}
+        {% published object.queryset as oeuvres %}
         <span class="badge">{{ oeuvres.count }}</span>
       </a>
     </li>

@@ -272,8 +272,16 @@ class DossierViewMixin:
     success_view_name = 'dossier_data_detail'
     enable_default_page = False
 
+    def __init__(self, *args, dossier=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if dossier is not None:
+            self.dossier = dossier
+
     @cached_property
     def dossier(self):
+        if 'dossier' in self.kwargs:
+            return self.kwargs['dossier']
+
         dossier = get_object_or_404(Dossier, **self.kwargs).specific
         if not dossier.can_be_viewed(self.request):
             raise PermissionDenied
@@ -297,8 +305,9 @@ class DossierDataDetail(DossierViewMixin, View):
         raise RuntimeError
 
     def dispatch(self, request, *args, **kwargs):
-        # FIXME: Pass `self.dossier` instead of letting the child view fetch it again.
-        return self.get_child_view().as_view()(request, *args, **kwargs)
+        view = self.get_child_view().as_view()
+        view.view_initkwargs['dossier'] = self.dossier
+        return view(request, *args, **kwargs)
 
 
 class DossierDEvenementsViewMixin(DossierViewMixin):
