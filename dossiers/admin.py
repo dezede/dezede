@@ -37,7 +37,7 @@ class DossierAdmin(VersionAdmin, PublishedAdmin):
         (_('Métadonnées'), {
             'fields': (
                 ('editeurs_scientifiques', 'date_publication'),
-                'publications', 'developpements',),
+                'publications', 'developpements', 'logo'),
             'classes': ('grp-collapse grp-open',),
         }),
         (_('Article'), {

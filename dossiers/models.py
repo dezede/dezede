@@ -3,9 +3,9 @@ from functools import cached_property
 from typing import Union
 
 from django.db.models import (
-    CharField, DateField, ManyToManyField,
-    TextField, PositiveSmallIntegerField, Q,
-    ForeignKey, SlugField, CASCADE)
+    CharField, DateField, ImageField, TextField, PositiveSmallIntegerField,
+    SlugField, ForeignKey, ManyToManyField, Q, CASCADE,
+)
 from django.urls import reverse
 from django.utils.encoding import smart_text
 from django.utils.html import strip_tags
@@ -81,6 +81,7 @@ class Dossier(TreeModelMixin, PublishedModel):
                                  default=datetime.now)
     publications = TextField(_('publication(s) associée(s)'), blank=True)
     developpements = TextField(_('développements envisagés'), blank=True)
+    logo = ImageField(_('logo'), upload_to='dossiers/', null=True, blank=True)
 
     # Article
     presentation = TextField(_('présentation'))
@@ -103,7 +104,7 @@ class Dossier(TreeModelMixin, PublishedModel):
         ]
 
     @property
-    def specific(self) -> Union['DossierDEvenements']:  # TODO: + DossierDOeuvres.
+    def specific(self) -> Union['DossierDEvenements']:
         try:
             return self.dossierdevenements
         except DossierDEvenements.DoesNotExist:
