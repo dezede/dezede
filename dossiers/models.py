@@ -269,7 +269,6 @@ class DossierDOeuvres(Dossier):
     oeuvres = ManyToManyField(Oeuvre, blank=True, verbose_name=_('œuvres'),
                               related_name='dossiersdoeuvres')
 
-
     class Meta(Dossier.Meta):
         verbose_name = _('dossier d’œuvres')
         verbose_name_plural = _('dossiers d’œuvres')

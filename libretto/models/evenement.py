@@ -568,7 +568,7 @@ class Evenement(AutoriteModel):
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
         if all_relations:
-            return ('dossiers',)
+            return ('dossiersdevenements',)
         return ()
 
     def get_absolute_url(self):

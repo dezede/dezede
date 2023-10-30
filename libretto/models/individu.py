@@ -151,7 +151,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     def invalidated_relations_when_saved(all_relations=False):
         relations = ('auteurs', 'elements_de_distribution',)
         if all_relations:
-            relations += ('enfants', 'dossiers',)
+            relations += ('enfants', 'dossiersdevenements', 'dossiersdoeuvres')
         return relations
 
     def get_slug(self):

@@ -809,7 +809,9 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     def invalidated_relations_when_saved(all_relations=False):
         relations = ('enfants', 'elements_de_programme',)
         if all_relations:
-            relations += ('dossiers', 'filles',)
+            relations += (
+                'dossiersdevenements', 'dossiersdoeuvres', 'filles',
+            )
         return relations
 
     def get_absolute_url(self):

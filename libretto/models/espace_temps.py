@@ -107,7 +107,8 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         if all_relations:
             relations += (
                 'individu_naissance_set', 'individu_deces_set',
-                'oeuvre_creation_set', 'dossiers',
+                'oeuvre_creation_set',
+                'dossiersdevenements', 'dossiersdoeuvres',
             )
         return relations
 
