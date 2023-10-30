@@ -1,3 +1,5 @@
+from operator import xor
+
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
     AutoCompleteWidget
 from crispy_forms.helper import FormHelper
@@ -277,11 +279,10 @@ class AmbitusField(BaseRangeField):
 
     def clean(self, value):
         value = super().clean(value)
-        if value:
-            if not value.upper or not value.lower:
-                raise ValidationError(
-                    _('Veuillez saisir les deux extrémités de l’ambitus.'),
-                )
+        if value and xor(value.upper is None, value.lower is None):
+            raise ValidationError(
+                _('Veuillez saisir les deux extrémités de l’ambitus.'),
+            )
         return value
 
     def compress(self, values):
