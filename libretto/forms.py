@@ -195,10 +195,12 @@ class PitchWidget(MultiWidget):
 
 
 PITCH_HELP_TEXT = _(
-    'Do 3 est le do central d’un piano. Suivent ré 3, mi 3… '
-    'Jusqu’à si 3 (cf. '
+    '<strong>Do 4 est le do central d’un piano</strong>. '
+    'Suivent ré 4, mi 4… Jusqu’à si 4 (cf. '
     '<a href="https://en.wikipedia.org/wiki/Scientific_pitch_notation" '
-    'target="_blank">notation scientifique</a>).'
+    'target="_blank"><strong>notation scientifique internationale</strong></a>).'
+    '<br /><strong>Attention :</strong> nous n’utilisons pas la notation '
+    'française (do 3).'
 )
 
 
