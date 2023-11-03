@@ -39,7 +39,7 @@
     {% endif %}
 
     {% evenement_list_def oeuvre.evenements.distinct %}
-    {% data_table_attr 'dedicataire.html' _('dédié à') %}
+    {% data_table_list oeuvre.dedicataires.all verbose_name=_('Dédié à') verbose_name_plural=_('Dédié à') has_count=False %}
     {% data_table_attr 'notes_publiques' _('notes') %}
 
     {% regroup oeuvre.parentes_meres.meres_en_ordre by type as parentes_list %}

@@ -296,7 +296,7 @@ class DossierDOeuvres(Dossier):
             if individus:
                 args.append(
                     Q(auteurs__individu__in=individus)
-                    | Q(dedicataire__in=individus)
+                    | Q(dedicataires__in=individus)
                 )
             ensembles = set(self.ensembles.values_list('pk', flat=True))
             if ensembles:

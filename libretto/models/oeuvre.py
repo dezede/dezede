@@ -716,8 +716,8 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         (2, _('première mondiale')),
         (3, _('première édition')),
     )
-    dedicataire = ForeignKey(
-        'Individu', blank=True, null=True, on_delete=PROTECT,
+    dedicataires = ManyToManyField(
+        'Individu', blank=True,
         related_name='dedicaces', verbose_name=_('dédié à'), help_text=(
             'N’ajouter que des autorités confirmées. '
             'Dans le cas contraire, utiliser les notes.'
