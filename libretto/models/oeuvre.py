@@ -718,7 +718,7 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     )
     dedicataires = ManyToManyField(
         'Individu', blank=True,
-        related_name='dedicaces', verbose_name=_('dédié à'), help_text=(
+        related_name='dedicaces', verbose_name=_('dédié à'), help_text=_(
             'N’ajouter que des autorités confirmées. '
             'Dans le cas contraire, utiliser les notes.'
         ),
