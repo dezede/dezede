@@ -354,7 +354,7 @@ COMPRESS_FILTERS = {
         'compressor.filters.css_default.CssAbsoluteFilter',
         'compressor.filters.cssmin.CSSMinFilter',
     ],
-    'js': [],
+    'js': ['compressor.filters.jsmin.CalmjsFilter'],
 }
 NPM_BINARY_PATH = BASE_DIR / 'node_modules/.bin/'
 COMPRESS_PRECOMPILERS = (
