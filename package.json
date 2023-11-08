@@ -3,25 +3,36 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.5.0",
-    "@material-ui/icons": "^4.4.3",
-    "@material-ui/lab": "^4.0.0-alpha.28",
-    "@material-ui/styles": "^4.5.0",
-    "axios": "^0.21.2",
-    "browserslist": "^4.7.0",
-    "i18next": "^17.0.18",
-    "i18next-xhr-backend": "^3.2.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.16",
+    "@mui/lab": "^5.0.0-alpha.152",
+    "@mui/material": "^5.14.17",
+    "@mui/styles": "^5.14.17",
+    "@types/react-dom": "^17.0.23",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "axios": "^1.6.0",
+    "browserslist": "^4.22.1",
+    "eslint": "^8.53.0",
+    "eslint-config-standard-with-typescript": "^39.1.1",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-n": "^16.3.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "i18next": "^17.3.1",
+    "i18next-xhr-backend": "^3.2.2",
     "less": "2.7.2",
-    "mobx": "^5.14.0",
-    "mobx-react": "^6.1.3",
-    "react": "^16.10.2",
-    "react-dom": "^16.10.2",
-    "react-easy-crop": "^1.16.1",
-    "react-i18next": "^10.13.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-easy-crop": "^5.0.2",
+    "react-i18next": "^10.13.2",
+    "react-scripts": "^5.0.1",
     "swr": "^2.2.4"
   },
   "scripts": {
-    "build": "tsc-bundle src/index.tsx --outFile libretto/static/js/bundle.min.js"
+    "start": "react-scripts start",
+    "build": "webpack",
+    "format": "prettier src --write",
+    "lint": "eslint './src/**/*'"
   },
   "browserslist": {
     "production": [
@@ -37,8 +48,14 @@
   },
   "devDependencies": {
     "@types/node": "^20.9.0",
-    "@types/react": "^16.14.50",
-    "typescript": "^5.2.2",
-    "typescript-bundle": "^1.0.18"
+    "@types/react": "^17.0.70",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "3.0.3",
+    "ts-loader": "^9.5.0",
+    "typescript": "^4.9.5",
+    "typescript-bundle": "^1.0.18",
+    "webpack-cli": "^5.1.4"
   }
 }

@@ -1,11 +1,11 @@
-export type Ancrage = {
+export interface Ancrage {
   date: null | string;
   date_approx: string;
   lieu: null | string;
   lieu_approx: string;
-};
+}
 
-export type Model = {
+export interface Model {
   id: number;
   str: string;
   owner: number | null;
@@ -15,29 +15,32 @@ export type Model = {
   can_add: boolean;
   can_change: boolean;
   can_delete: boolean;
-};
+}
 
 export type Auteur = {
   id: number;
   owner: number | null;
   profession: number | null;
 } & (
-  {
-    oeuvre: number;
-    source: null;
-  } | {
-    oeuvre: null;
-    source: number;
-  }
-) & (
-  {
-    individu: number;
-    ensemble: null;
-  } | {
-    individu: null;
-    ensemble: number;
-  }
-);
+  | {
+      oeuvre: number;
+      source: null;
+    }
+  | {
+      oeuvre: null;
+      source: number;
+    }
+) &
+  (
+    | {
+        individu: number;
+        ensemble: null;
+      }
+    | {
+        individu: null;
+        ensemble: number;
+      }
+  );
 
 export interface Ensemble extends Model {
   html: string;
@@ -88,8 +91,8 @@ export interface Source extends Model {
   evenements: number[];
   oeuvres: number[];
   ensembles: number[];
-  lieux: number [];
-  parties: number [];
+  lieux: number[];
+  parties: number[];
 }
 
 export interface User extends Model {}

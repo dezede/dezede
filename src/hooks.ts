@@ -1,5 +1,5 @@
-import axios from 'axios';
-import useSWR, { preload, SWRConfiguration } from 'swr';
+import axios from "axios";
+import useSWR, { preload, type SWRConfiguration } from "swr";
 
 function getBaseApiUrl() {
   return (
@@ -17,22 +17,40 @@ async function fetcher<T>([apiName, id]: FetcherArgs) {
   return response.data as T;
 }
 
-async function multipleFetcher<T>([apiName, ...ids]: [apiName: string, ...ids: number[]]) {
-  const promises = ids.map(id => fetcher<T>([apiName, id]));
+async function multipleFetcher<T>([apiName, ...ids]: [
+  apiName: string,
+  ...ids: number[],
+]) {
+  const promises = ids.map(async (id) => await fetcher<T>([apiName, id]));
   return await (Promise.all(promises) as Promise<T[]>);
 }
 
-export function useApi<T>(apiName: string, id: number | undefined | null, config?: SWRConfiguration<T>) {
+export function useApi<T>(
+  apiName: string,
+  id: number | undefined | null,
+  config?: SWRConfiguration<T>,
+) {
   return useSWR<T>(id ? [apiName, id] : null, fetcher<T>, config);
 }
 
-export function useMultipleApi<T>(apiName: string, ids: (number | undefined | null)[], config?: SWRConfiguration<T[]>) {
-  return useSWR<T[]>(ids.some(id => !id) ? null : [apiName, ...ids], multipleFetcher<T>, config);
+export function useMultipleApi<T>(
+  apiName: string,
+  ids: Array<number | undefined | null>,
+  config?: SWRConfiguration<T[]>,
+) {
+  return useSWR<T[]>(
+    ids.some((id) => !id) ? null : [apiName, ...ids],
+    multipleFetcher<T>,
+    config,
+  );
 }
 
-export function preloadApi<T>(apiName: string, id: number | undefined | null) {
+export async function preloadApi<T>(
+  apiName: string,
+  id: number | undefined | null,
+) {
   if (!id) {
-    return preload<T>(null, fetcher<T>);
+    return await preload<T>(null, fetcher<T>);
   }
-  return preload<T>([apiName, id], fetcher<T>);
+  return await preload<T>([apiName, id], fetcher<T>);
 }

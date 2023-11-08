@@ -1,8 +1,7 @@
-import React from 'react';
-import { abbreviate, getPluriel } from '../utils';
-import { useApi } from '../hooks';
-import { Profession } from '../types';
-
+import React from "react";
+import { abbreviate, getPluriel } from "../utils";
+import { useApi } from "../hooks";
+import { type Profession } from "../types";
 
 function getLabel(profession: Profession, feminin: boolean, pluriel: boolean) {
   if (feminin) {
@@ -18,11 +17,18 @@ function getLabel(profession: Profession, feminin: boolean, pluriel: boolean) {
   return profession.nom;
 }
 
-
-export default function ProfessionLabel({id, feminin, pluriel}: {id: number; feminin: boolean; pluriel: boolean}) {
+export default function ProfessionLabel({
+  id,
+  feminin,
+  pluriel,
+}: {
+  id: number;
+  feminin: boolean;
+  pluriel: boolean;
+}) {
   const { data: profession } = useApi<Profession>("professions", id);
 
-  if (!profession) {
+  if (profession === undefined) {
     return null;
   }
 
