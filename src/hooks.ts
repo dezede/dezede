@@ -1,6 +1,6 @@
 import axios from "axios";
 import { preload, type SWRConfiguration } from "swr";
-import useSWRImmutable from 'swr/immutable';
+import useSWRImmutable from "swr/immutable";
 
 function getBaseApiUrl() {
   return (

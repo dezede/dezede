@@ -34,6 +34,54 @@ import ModelChip from "./ModelChip";
 import { unstable_serialize, useSWRConfig } from "swr";
 import { type SxProps } from "@mui/system";
 
+function Related({ source }: { source: Source | undefined }) {
+  const fallback = (
+    <Grid item xs={12}>
+      <Fade in>
+        <Skeleton variant="rectangular" width="100%" height="48px" />
+      </Fade>
+    </Grid>
+  );
+
+  if (!source) {
+    return fallback;
+  }
+  return (
+    <Suspense fallback={fallback}>
+      {source.individus.map((id) => (
+        <Grid item key={id}>
+          <ModelChip<Individu> apiName="individus" id={id} />
+        </Grid>
+      ))}
+      {source.oeuvres.map((id) => (
+        <Grid item key={id}>
+          <ModelChip<Oeuvre> apiName="oeuvres" id={id} />
+        </Grid>
+      ))}
+      {source.parties.map((id) => (
+        <Grid item key={id}>
+          <ModelChip<Partie> apiName="parties" id={id} />
+        </Grid>
+      ))}
+      {source.lieux.map((id) => (
+        <Grid item key={id}>
+          <ModelChip<Lieu> apiName="lieux" id={id} />
+        </Grid>
+      ))}
+      {source.evenements.map((id) => (
+        <Grid item key={id}>
+          <ModelChip<Evenement> apiName="evenements" id={id} />
+        </Grid>
+      ))}
+      {source.ensembles.map((id) => (
+        <Grid item key={id}>
+          <ModelChip<Ensemble> apiName="ensembles" id={id} />
+        </Grid>
+      ))}
+    </Suspense>
+  );
+}
+
 function prefetchRelated(source: Source) {
   source.individus.map(async (id) => await preloadApi("individus", id));
   source.oeuvres.map(async (id) => await preloadApi("oeuvres", id));
@@ -224,128 +272,148 @@ export default function Reader({ sourceId }: { sourceId: number }) {
   }, [child]);
 
   const containerStyle: CSSProperties = {
+    height: "100%",
     outline: "none",
     textAlign: "center",
   };
 
-  const directionsStyle: SxProps = {
-    position: "absolute",
-    top: "50%",
-    transform: "translateY(-50%)",
-    backgroundColor: "white",
-    boxShadow: "none",
-    border: "1px solid rgba(0, 0, 0, 0.23)",
-    zIndex: theme.zIndex.mobileStepper,
-    "&:hover, &:active, &:focus": {
-      backgroundColor: "rgba(235, 235, 235)",
+  const imageContent = useMemo(() => {
+    if (!imageSrc || !child?.fichier) {
+      return null;
+    }
+
+    const directionsStyle: SxProps = {
+      position: "absolute",
+      top: "50%",
+      transform: "translateY(-50%)",
+      backgroundColor: "white",
       boxShadow: "none",
-    },
-  };
+      border: "1px solid rgba(0, 0, 0, 0.23)",
+      zIndex: theme.zIndex.mobileStepper,
+      "&:hover, &:active, &:focus": {
+        backgroundColor: "rgba(235, 235, 235)",
+        boxShadow: "none",
+      },
+    };
 
-  if (!source || !child || !imageSrc || !child.fichier) {
-    return <Skeleton variant="rectangular" style={containerStyle} />;
-  }
-
-  const imageContent = (
-    <>
-      {zoom === 1.0 ? (
-        <img
-          src={imageSrc}
-          onClick={onZoomInit}
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            cursor: "zoom-in",
-            maxWidth: "100%",
-            maxHeight: "100%",
-            userSelect: "none",
-          }}
-        />
-      ) : (
-        <Cropper
-          style={{
-            cropAreaStyle: { display: "none" },
-          }}
-          image={imageSrc}
-          showGrid={false}
-          aspect={16 / 9}
-          zoom={zoom}
-          crop={crop}
-          maxZoom={10}
-          onZoomChange={onZoomChange}
-          onCropChange={onCropChange}
-        />
-      )}
-      <Fade in={hover && !isAtStart}>
-        {/* Div is required, otherwise MUI crashes. */}
-        <div>
-          <Fab
-            onClick={prev}
-            sx={{
-              ...directionsStyle,
-              left: theme.spacing(2),
-            }}
-          >
-            <NavigateBeforeIcon />
-          </Fab>
-        </div>
-      </Fade>
-      <Fade in={hover && !isAtEnd}>
-        {/* Div is required, otherwise MUI crashes. */}
-        <div>
-          <Fab
-            onClick={next}
-            sx={{
-              ...directionsStyle,
-              right: theme.spacing(2),
-            }}
-          >
-            <NavigateNextIcon />
-          </Fab>
-        </div>
-      </Fade>
-      <Fade in={hover && !isImage}>
-        {/* Div is required, otherwise MUI crashes. */}
-        <div>
-          <ModelToolbar
-            instance={child}
+    return (
+      <>
+        {zoom === 1.0 ? (
+          <img
+            src={imageSrc}
+            onClick={onZoomInit}
             style={{
               position: "absolute",
-              right: theme.spacing(2),
-              top: theme.spacing(2),
-              justifyContent: "flex-end",
-              zIndex: theme.zIndex.mobileStepper,
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              cursor: "zoom-in",
+              maxWidth: "100%",
+              maxHeight: "100%",
+              userSelect: "none",
             }}
-            extraButtons={[
-              <Tooltip key="download" title={t("source:download")}>
-                <Button
-                  component="a"
-                  href={child.fichier}
-                  download={child.fichier.replace(/^.*[\\/]/, "")}
-                >
-                  <GetAppIcon />
-                </Button>
-              </Tooltip>,
-              <Tooltip key="print" title={t("source:print")}>
-                <Button onClick={print}>
-                  <PrintIcon />
-                </Button>
-              </Tooltip>,
-            ]}
           />
-        </div>
-      </Fade>
-    </>
-  );
+        ) : (
+          <Cropper
+            style={{
+              cropAreaStyle: { display: "none" },
+            }}
+            image={imageSrc}
+            showGrid={false}
+            aspect={16 / 9}
+            zoom={zoom}
+            crop={crop}
+            maxZoom={10}
+            onZoomChange={onZoomChange}
+            onCropChange={onCropChange}
+          />
+        )}
+        <Fade in={hover && !isAtStart}>
+          {/* Div is required, otherwise MUI crashes. */}
+          <div>
+            <Fab
+              onClick={prev}
+              sx={{
+                ...directionsStyle,
+                left: theme.spacing(2),
+              }}
+            >
+              <NavigateBeforeIcon />
+            </Fab>
+          </div>
+        </Fade>
+        <Fade in={hover && !isAtEnd}>
+          {/* Div is required, otherwise MUI crashes. */}
+          <div>
+            <Fab
+              onClick={next}
+              sx={{
+                ...directionsStyle,
+                right: theme.spacing(2),
+              }}
+            >
+              <NavigateNextIcon />
+            </Fab>
+          </div>
+        </Fade>
+        <Fade in={hover && !isImage}>
+          {/* Div is required, otherwise MUI crashes. */}
+          <div>
+            <ModelToolbar
+              instance={child}
+              style={{
+                position: "absolute",
+                right: theme.spacing(2),
+                top: theme.spacing(2),
+                justifyContent: "flex-end",
+                zIndex: theme.zIndex.mobileStepper,
+              }}
+              extraButtons={[
+                <Tooltip key="download" title={t("source:download")}>
+                  <Button
+                    component="a"
+                    href={child.fichier}
+                    download={child.fichier.replace(/^.*[\\/]/, "")}
+                  >
+                    <GetAppIcon />
+                  </Button>
+                </Tooltip>,
+                <Tooltip key="print" title={t("source:print")}>
+                  <Button onClick={print}>
+                    <PrintIcon />
+                  </Button>
+                </Tooltip>,
+              ]}
+            />
+          </div>
+        </Fade>
+      </>
+    );
+  }, [
+    child,
+    crop,
+    hover,
+    imageSrc,
+    isAtEnd,
+    isAtStart,
+    isImage,
+    next,
+    onCropChange,
+    onZoomChange,
+    onZoomInit,
+    prev,
+    print,
+    t,
+    theme,
+    zoom,
+  ]);
 
   return (
     <Grid
       container
       direction="column"
       wrap="nowrap"
-      spacing={2}
+      rowSpacing={2}
       style={containerStyle}
     >
       <Grid
@@ -360,14 +428,16 @@ export default function Reader({ sourceId }: { sourceId: number }) {
         onMouseLeave={onMouseLeave}
       >
         {isChildLoading ? (
-          <Skeleton
-            variant="rectangular"
-            width="100%"
-            height="100%"
-            style={{
-              position: "absolute",
-            }}
-          />
+          <Fade in>
+            <Skeleton
+              variant="rectangular"
+              width="100%"
+              height="100%"
+              style={{
+                position: "absolute",
+              }}
+            />
+          </Fade>
         ) : (
           imageContent
         )}
@@ -389,44 +459,7 @@ export default function Reader({ sourceId }: { sourceId: number }) {
       )}
       <Grid item>
         <Grid container spacing={2} justifyContent="center">
-          <Suspense
-            fallback={
-              <Grid item xs={12}>
-                <Skeleton variant="rectangular" width="100%" height="48px" />
-              </Grid>
-            }
-          >
-            {child.individus.map((id) => (
-              <Grid item key={id}>
-                <ModelChip<Individu> apiName="individus" id={id} />
-              </Grid>
-            ))}
-            {child.oeuvres.map((id) => (
-              <Grid item key={id}>
-                <ModelChip<Oeuvre> apiName="oeuvres" id={id} />
-              </Grid>
-            ))}
-            {child.parties.map((id) => (
-              <Grid item key={id}>
-                <ModelChip<Partie> apiName="parties" id={id} />
-              </Grid>
-            ))}
-            {child.lieux.map((id) => (
-              <Grid item key={id}>
-                <ModelChip<Lieu> apiName="lieux" id={id} />
-              </Grid>
-            ))}
-            {child.evenements.map((id) => (
-              <Grid item key={id}>
-                <ModelChip<Evenement> apiName="evenements" id={id} />
-              </Grid>
-            ))}
-            {child.ensembles.map((id) => (
-              <Grid item key={id}>
-                <ModelChip<Ensemble> apiName="ensembles" id={id} />
-              </Grid>
-            ))}
-          </Suspense>
+          <Related source={child} />
         </Grid>
       </Grid>
     </Grid>
