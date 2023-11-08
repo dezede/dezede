@@ -1,5 +1,6 @@
 import axios from "axios";
-import useSWR, { preload, type SWRConfiguration } from "swr";
+import { preload, type SWRConfiguration } from "swr";
+import useSWRImmutable from 'swr/immutable';
 
 function getBaseApiUrl() {
   return (
@@ -30,7 +31,7 @@ export function useApi<T>(
   id: number | undefined | null,
   config?: SWRConfiguration<T>,
 ) {
-  return useSWR<T>(id ? [apiName, id] : null, fetcher<T>, config);
+  return useSWRImmutable<T>(id ? [apiName, id] : null, fetcher<T>, config);
 }
 
 export function useMultipleApi<T>(
@@ -38,7 +39,7 @@ export function useMultipleApi<T>(
   ids: Array<number | undefined | null>,
   config?: SWRConfiguration<T[]>,
 ) {
-  return useSWR<T[]>(
+  return useSWRImmutable<T[]>(
     ids.some((id) => !id) ? null : [apiName, ...ids],
     multipleFetcher<T>,
     config,

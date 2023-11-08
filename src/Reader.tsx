@@ -276,9 +276,8 @@ export default function Reader({ sourceId }: { sourceId: number }) {
         />
       )}
       <Fade in={hover && !isAtStart}>
+        {/* Div is required, otherwise MUI crashes. */}
         <div>
-          {" "}
-          {/* Div prevents Fade from overwriting Fab transition. */}
           <Fab
             onClick={prev}
             sx={{
@@ -291,9 +290,8 @@ export default function Reader({ sourceId }: { sourceId: number }) {
         </div>
       </Fade>
       <Fade in={hover && !isAtEnd}>
+        {/* Div is required, otherwise MUI crashes. */}
         <div>
-          {" "}
-          {/* Div prevents Fade from overwriting Fab transition. */}
           <Fab
             onClick={next}
             sx={{
@@ -306,32 +304,35 @@ export default function Reader({ sourceId }: { sourceId: number }) {
         </div>
       </Fade>
       <Fade in={hover && !isImage}>
-        <ModelToolbar
-          instance={child}
-          style={{
-            position: "absolute",
-            right: theme.spacing(2),
-            top: theme.spacing(2),
-            justifyContent: "flex-end",
-            zIndex: theme.zIndex.mobileStepper,
-          }}
-          extraButtons={[
-            <Tooltip key="download" title={t("source:download")}>
-              <Button
-                component="a"
-                href={child.fichier}
-                download={child.fichier.replace(/^.*[\\/]/, "")}
-              >
-                <GetAppIcon />
-              </Button>
-            </Tooltip>,
-            <Tooltip key="print" title={t("source:print")}>
-              <Button onClick={print}>
-                <PrintIcon />
-              </Button>
-            </Tooltip>,
-          ]}
-        />
+        {/* Div is required, otherwise MUI crashes. */}
+        <div>
+          <ModelToolbar
+            instance={child}
+            style={{
+              position: "absolute",
+              right: theme.spacing(2),
+              top: theme.spacing(2),
+              justifyContent: "flex-end",
+              zIndex: theme.zIndex.mobileStepper,
+            }}
+            extraButtons={[
+              <Tooltip key="download" title={t("source:download")}>
+                <Button
+                  component="a"
+                  href={child.fichier}
+                  download={child.fichier.replace(/^.*[\\/]/, "")}
+                >
+                  <GetAppIcon />
+                </Button>
+              </Tooltip>,
+              <Tooltip key="print" title={t("source:print")}>
+                <Button onClick={print}>
+                  <PrintIcon />
+                </Button>
+              </Tooltip>,
+            ]}
+          />
+        </div>
       </Fade>
     </>
   );
