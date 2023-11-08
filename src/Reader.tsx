@@ -258,6 +258,8 @@ export default function Reader({ sourceId }: { sourceId: number }) {
     }
     const popup = window.open();
     if (popup) {
+      // We add a 200 ms delay before triggering print,
+      // otherwise it does not work on Chrome currently.
       popup.document.write(
         "<html><head>" +
           "<style>img { max-width: 100%; max-height: 100%; }</style>" +
