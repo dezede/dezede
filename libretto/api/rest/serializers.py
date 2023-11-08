@@ -150,7 +150,7 @@ class SourceSerializer(CommonSerializer):
 
     class Meta:
         model = Source
-        exclude = ()
+        exclude = ['search_vector', 'autocomplete_vector']
 
     def get_children(self, obj):
         return list(
@@ -174,7 +174,7 @@ class SourceSerializer(CommonSerializer):
 class AuteurSerializer(ModelSerializer):
     class Meta:
         model = Auteur
-        exclude = ()
+        exclude = ['search_vector', 'autocomplete_vector']
 
 
 class ProfessionSerializer(CommonSerializer):
