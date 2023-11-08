@@ -69,7 +69,7 @@ export default function Reader({ sourceId }: { sourceId: number }) {
 
   const getCachedChild = useCallback(
     (childId: number | undefined) => {
-      return cache.get(unstable_serialize(["sources", childId])) as
+      return cache.get(unstable_serialize(["sources", childId]))?.data as
         | Source
         | undefined;
     },
@@ -215,8 +215,11 @@ export default function Reader({ sourceId }: { sourceId: number }) {
           "<style>img { max-width: 100%; max-height: 100%; }</style>" +
           "</head><body>" +
           `<img src="${child.fichier}"` +
-          ' onload="window.print(); window.close();" /></body></html>',
+          ' onload="setTimeout(function () {' +
+          "window.print(); window.close();" +
+          '}, 200);" /></body></html>',
       );
+      popup.focus();
     }
   }, [child]);
 

@@ -1,7 +1,7 @@
+import React from "react";
 import { useApi } from "./hooks";
 import { type Model } from "./types";
 import Chip from "@mui/material/Chip";
-import React from "react";
 
 export default function ModelChip<T extends Model>({
   apiName,

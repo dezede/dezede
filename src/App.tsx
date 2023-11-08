@@ -14,7 +14,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "'Linux Libertine',Georgia,serif",
+    fontFamily: "'Linux Biolinum', Arial, sans-serif",
   },
   components: {
     MuiButtonBase: {
