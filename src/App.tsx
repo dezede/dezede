@@ -17,7 +17,7 @@ const theme = createMuiTheme({
     }
   },
   typography: {
-    fontFamilySerif: "'Linux Libertine',Georgia,serif",
+    fontFamily: "'Linux Libertine',Georgia,serif",
   },
   overrides: {
     MuiButtonBase: {
@@ -37,20 +37,23 @@ class App extends React.Component {
   });
 
   render() {
-    return [...document.querySelectorAll('.source-view')].map(div => (
-      ReactDOM.render(
-        <StylesProvider generateClassName={this.classGenerator}>
-          <MuiThemeProvider theme={theme}>
-            <React.Suspense fallback={
-              <LinearProgress style={{position: 'absolute', top: 0, left: 0, width: '100%'}} />
-            }>
-              <SourceView id={parseInt(div.getAttribute('data-id'))} />
-            </React.Suspense>
-          </MuiThemeProvider>
-        </StylesProvider>,
-        div,
-      )
-    ));
+    return [...document.querySelectorAll('.source-view')].map(div => {
+      const sourceId = div.getAttribute('data-id');
+      return (
+        ReactDOM.render(
+          <StylesProvider generateClassName={this.classGenerator}>
+            <MuiThemeProvider theme={theme}>
+              <React.Suspense fallback={
+                <LinearProgress style={{position: 'absolute', top: 0, left: 0, width: '100%'}} />
+              }>
+                {sourceId && <SourceView id={parseInt(sourceId)} />}
+              </React.Suspense>
+            </MuiThemeProvider>
+          </StylesProvider>,
+          div,
+        )
+      );
+    });
   }
 }
 

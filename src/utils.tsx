@@ -1,41 +1,44 @@
-import i18n from "./i18n";
 import Tooltip from "@material-ui/core/Tooltip";
 import React from "react";
 
+import i18n from "./i18n";
 
-export const join = (parts, separator) => {
+
+export function join(parts: React.ReactNode[], separator?: string, lastSeparator?: string) {
   if (separator === undefined) {
     separator = ', ';
   }
-  parts = parts.filter(part => part !== null);
-  if (parts.length > 1) {
-    parts = parts.reduce((a, b) => [a, separator, b]);
+  if (lastSeparator === undefined) {
+    lastSeparator = separator;
   }
-  return parts;
-};
+  parts = parts.filter(part => part !== null);
+  if (parts.length === 0) {
+    return null;
+  }
+  if (parts.length === 1) {
+    return parts[0];
+  }
+  return parts.reduce((a, b, index) => [a, index === parts.length - 1 ? lastSeparator : separator, b]);
+}
 
 
-export const joinWithLast = (parts, separator, lastSeparator) => {
+export const joinWithLast = (parts: React.ReactNode[], separator?: string, lastSeparator?: string) => {
   if (lastSeparator === undefined) {
     lastSeparator = i18n.t('base:lastSeparator');
   }
-  parts = join(parts, separator);
-  if (parts.length > 2) {
-    parts[parts.length - 2] = lastSeparator;
-  }
-  return parts;
+  return join(parts, separator, lastSeparator);
 };
 
 
-export const removeDiacritics = text => (
-  text.normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
-);
+export function removeDiacritics(text: string) {
+  return text.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+}
 
 
 const VOWELS = 'aeiouy';
 
 
-export const abbreviate = (text, minLength) => {
+export function abbreviate(text: string, minLength: number) {
   let pattern = `([a-z]{${minLength - 1},}?[^${VOWELS}](?=[${VOWELS}]))`;
   if (minLength === 1) { // Handles the special case for a single vowel.
     pattern = `([${VOWELS}]|${pattern})`;
@@ -57,9 +60,9 @@ export const abbreviate = (text, minLength) => {
       <span>{short}</span>
     </Tooltip>
   );
-};
+}
 
 
-export const getPluriel = text => (
-  text + 's'
-);
+export function getPluriel(text: string) {
+  return text + 's';
+}

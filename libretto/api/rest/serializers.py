@@ -174,7 +174,7 @@ class SourceSerializer(CommonSerializer):
 class AuteurSerializer(ModelSerializer):
     class Meta:
         model = Auteur
-        exclude = ()
+        exclude = ('search_vector', 'autocomplete_vector')
 
 
 class ProfessionSerializer(CommonSerializer):

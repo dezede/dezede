@@ -7,7 +7,7 @@ i18n
   .use(XHR)
   .use(initReactI18next)
   .init({
-    lng: document.getElementsByTagName('html')[0].getAttribute('lang'),
+    lng: document.getElementsByTagName('html')[0].getAttribute('lang') ?? undefined,
     fallbackLng: 'en',
     backend: {
       loadPath: '/static/locales/{{lng}}/{{ns}}.json',
