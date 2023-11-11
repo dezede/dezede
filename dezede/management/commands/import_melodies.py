@@ -714,7 +714,7 @@ class Command(BaseCommand):
         ]].groupby('ID Poulenc')['individu'].apply(
             lambda series: ' ; '.join([str(obj.pk) for obj in series.to_list()])
         ).rename('Compositeurs ID Dezède')
-        df_export = df_oeuvres.drop(['Compositeurs ID Dezède']).merge(
+        df_export = df_oeuvres.drop(['Compositeurs ID Dezède'], axis=1).merge(
             s_individus, on='ID Poulenc', how='left',
         )
         writer = pandas.ExcelWriter(
