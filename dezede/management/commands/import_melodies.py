@@ -13,10 +13,12 @@ from psycopg2._range import NumericRange
 from tqdm import tqdm
 
 from accounts.models import HierarchicUser
-from dossiers.models import DossierDOeuvres
-from libretto.models import *
-from libretto.models.oeuvre import Pitch
-
+from dossiers.models import DossierDOeuvres, CategorieDeDossiers
+from libretto.models import Etat, Individu, Profession
+from libretto.models.oeuvre import (
+    Pitch, GenreDOeuvre, TypeDeParenteDOeuvres, Partie, Oeuvre, ParenteDOeuvres,
+    Pupitre, Auteur,
+)
 
 OWNER = HierarchicUser.objects.get(first_name='François', last_name='Le Roux')
 
@@ -367,8 +369,6 @@ class Command(BaseCommand):
                 'Recueil poétique ID Dezède': str,
             }
         )
-        df['erreurs'] = ''
-        df['est_importe'] = True
         df['oeuvre'] = None
 
         # Sépare le tableau en deux (les œuvres déjà dans Dezède et les autres)
@@ -398,7 +398,6 @@ class Command(BaseCommand):
         if limit is not None:
             df = df.head(limit)
 
-        # FIXME: revérifier que strip ne fait pas de dégât
         # Supprime les '"' parasites (probablement dûs à un mauvais formatage LibreOffice)
         for s in (
             'Compositeurs', 'Compositeurs commentaires', 'Compositeurs ID Dezède',
@@ -637,7 +636,6 @@ class Command(BaseCommand):
         format_ancrage_individu(df, 'naissance')
         format_ancrage_individu(df, 'deces')
 
-        # FIXME: vérifier les noms
         df[['particule_nom', 'nom', 'prenoms']] = (
             df['nom_complet'].str.extract(PARTICULE_NOM_RE)
         )
@@ -655,7 +653,7 @@ class Command(BaseCommand):
         df['individu'] = df.progress_apply(self.create_individu, axis=1)
         df['compositeur_ID'] = df['individu'].map(lambda obj: obj.pk)
 
-        df = pandas.concat([df, df_deja_crees])
+        df = pandas.concat([df, df_deja_crees]).sort_values('individu_str')
         return df
 
     def import_auteurs(
@@ -689,10 +687,12 @@ class Command(BaseCommand):
         self.stdout.write('Creating auteurs in bulk…')
         Auteur.objects.bulk_create(df_auteurs['auteur'].to_list())
         self.stdout.write('Done.')
+        return df_auteurs
 
     def import_dossier(self, df_oeuvres: pandas.DataFrame):
         self.stdout.write('Creating dossier…')
         dossier = DossierDOeuvres(
+            categorie=CategorieDeDossiers.objects.get(nom='Archives du spectacle'),
             owner=OWNER, etat=ETAT, titre='Mélodies françaises',
             presentation='<p>Lorem ipsum</p>',
             slug='melodies-francaises',
@@ -708,17 +708,21 @@ class Command(BaseCommand):
         )
         self.stdout.write('Done.')
 
-    def to_excel(self, df_oeuvres, df_individus):
-        df = df_individus[[
-            'ID Poulenc', 'compositeur_ID'
-        ]].groupby('ID Poulenc')['compositeur_ID'].apply(
-            lambda series: ''.join([str(int(truc)) for truc in series.to_list()])
+    def to_excel(self, df_oeuvres, df_auteurs, df_individus):
+        s_individus = df_auteurs[[
+            'ID Poulenc', 'individu',
+        ]].groupby('ID Poulenc')['individu'].apply(
+            lambda series: ' ; '.join([str(obj.pk) for obj in series.to_list()])
+        ).rename('Compositeurs ID Dezède')
+        df_export = df_oeuvres.drop(['Compositeurs ID Dezède']).merge(
+            s_individus, on='ID Poulenc', how='left',
         )
-        df_a_exporter = df_oeuvres.merge(
-            df, on='ID Poulenc', how='left',
+        writer = pandas.ExcelWriter(
+            settings.BASE_DIR / 'scripts/data/mélodies_françaises_importées.xlsx',
+            engine='xlsxwriter',
         )
-        df_a_exporter.to_excel(
-            'oeuvres_importees.xlsx',
+        df_export.to_excel(
+            writer,
             columns=[
                 'ID Poulenc', 'Compositeurs', 'Compositeurs commentaires',
                 'Compositeurs ID Dezède', 'Poètes', 'Poètes commentaires',
@@ -727,11 +731,15 @@ class Command(BaseCommand):
                 'Dédicataire ID Dezède', 'Poésie titre', 'Poésie ID Dezède',
                 'Recueil poétique', 'Recueil poétique ID Dezède', 'Date poésie',
                 'Durée', 'Opus', 'Commentaire', 'Enregistrements',
-                'est_importe', 'erreurs',
             ],
             index=False,
+            sheet_name='Œuvres',
         )
-
+        df_individus.to_excel(
+            writer, index=False, sheet_name='Individus',
+            columns=['compositeur_ID', 'individu_str'],
+        )
+        writer.close()
 
     def handle(self, *args, **kwargs):
         limit = kwargs['limit']
@@ -744,15 +752,14 @@ class Command(BaseCommand):
                 self.import_parentes(oeuvres_df)
                 auteurs_df = self.get_auteurs_df(oeuvres_df)
                 individus_df = self.import_individus(auteurs_df)
-                self.import_auteurs(auteurs_df, individus_df)
+                auteurs_df = self.import_auteurs(auteurs_df, individus_df)
                 all_oeuvres_df = pandas.concat(
                     [oeuvres_df, oeuvres_dezede_df],
                     sort=True,
                 )
                 self.import_dossier(all_oeuvres_df)
-                # self.to_excel(all_oeuvres_df, individus_df)
+                self.to_excel(all_oeuvres_df, auteurs_df, individus_df)
 
-        # FIXME: Enable again paths rebuild.
         self.stdout.write('Rebuilding Œuvre paths…')
         Oeuvre.rebuild_paths()
         self.stdout.write('Done.')
