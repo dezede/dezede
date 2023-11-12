@@ -66,7 +66,7 @@ PARTICULE_NOM_RE = re.compile(
 
 
 def html(comment, s):
-    return linebreaks(f'{comment}: {s}') if s else ''
+    return linebreaks(f'{comment} : {s}') if s else ''
 
 
 def get_ID_list_series(series):
@@ -290,16 +290,16 @@ def format_notes(df: pandas.DataFrame):
     df['tonalite'] = df['tonalite'].map(lambda s: html('Tonalité', s))
     df['duree'] = df['duree'].map(lambda s: html('Durée', s))
 
-    df['notes_poesie'] = df['notes_poesie'].map(lambda s: html('Notes sur la poésie', s))
+    df['notes_poesie'] = df['notes_poesie'].map(lambda s: html('Titre de la poésie', s))
     df['poetes_str'] = df['poetes_str'].map(lambda s: html('Auteur(s) (texte)', s))
     df['notes_poetes'] = df['notes_poetes'].map(
         lambda s: html('Notes sur les auteurs (texte)', s)
     )
     df['date_poesie'] = df['date_poesie'].map(
-        lambda s: html('Date de composition du texte', s)
+        lambda s: html('Date d’écriture de la poésie', s)
     )
     df['notes_recueil_poetique'] = df['notes_recueil_poetique'].map(
-        lambda s: html('Notes sur le recueil poétique', s)
+        lambda s: html('Recueil poétique', s)
     )
 
     df['commentaire'] = df['commentaire'].map(
@@ -499,9 +499,7 @@ class Command(BaseCommand):
             ).str.replace(
                 'flute', 'flûte', regex=False,
             ).str.replace(
-                r';\s*piano\s*;', ';', regex=True,
-            ).str.replace(
-                r'(:^\s*piano\s*;|;\s*piano\s*$|^\s*piano\s*$)', '', regex=True,
+                r'^\s*piano\s*$', '', regex=True,
             )
         )
         df_oeuvres['pupitre_str'] = df_oeuvres['pupitre_str'].where(
