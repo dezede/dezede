@@ -23,7 +23,7 @@ from common.utils.text import capfirst, str_list_w_last
 from .models import (
     Lieu, Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
     Ensemble, Saison, Partie)
-from .models.oeuvre import Pitch
+from .models.oeuvre import Pitch, make_range_include_bounds
 from range_slider.fields import RangeSliderField
 
 
@@ -234,25 +234,6 @@ class PitchField(MultiValueField):
         if octave in empty_values:
             raise ValidationError(_('Il manque le numéro d’octave.'))
         return Pitch.form_to_database_value(note, octave)
-
-
-def make_range_include_bounds(value):
-    """
-    By default, all PostgreSQL ranges are with '[)' bounds, which is wrong
-    for an ambitus.
-    """
-    if isinstance(value, NumericRange):
-        return NumericRange(
-            lower=None if value.lower is None else (
-                value.lower + (0 if value.lower_inc else 1)
-            ),
-            upper=None if value.upper is None else (
-                value.upper - (0 if value.upper_inc else 1)
-            ),
-            bounds='[]',
-            empty=value.isempty,
-        )
-    return value
 
 
 class AmbitusWidget(RangeWidget):

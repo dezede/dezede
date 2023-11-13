@@ -18,6 +18,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
+from psycopg2._range import NumericRange
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
@@ -613,6 +614,25 @@ class Pitch:
         return str(note_index), octave
 
 
+def make_range_include_bounds(value):
+    """
+    By default, all PostgreSQL ranges are with '[)' bounds, which is wrong
+    for an ambitus.
+    """
+    if isinstance(value, NumericRange):
+        return NumericRange(
+            lower=None if value.lower is None else (
+                value.lower + (0 if value.lower_inc else 1)
+            ),
+            upper=None if value.upper is None else (
+                value.upper - (0 if value.upper_inc else 1)
+            ),
+            bounds='[]',
+            empty=value.isempty,
+        )
+    return value
+
+
 class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(_('article'), max_length=20, blank=True)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True)
@@ -915,8 +935,9 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
                                      solistes=solistes)
 
     def get_ambitus_str(self):
-        note_min, octave_min = Pitch.database_to_form_values(self.ambitus.lower)
-        note_max, octave_max = Pitch.database_to_form_values(self.ambitus.upper)
+        range = make_range_include_bounds(self.ambitus)
+        note_min, octave_min = Pitch.database_to_form_values(range.lower)
+        note_max, octave_max = Pitch.database_to_form_values(range.upper)
         return (
             f'{Pitch.OCTAVE_NOTES[int(note_min)]} {str(octave_min)} – '
             f'{Pitch.OCTAVE_NOTES[int(note_max)]} {str(octave_max)}'
