@@ -935,13 +935,17 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
                                      solistes=solistes)
 
     def get_ambitus_str(self):
-        range = make_range_include_bounds(self.ambitus)
-        note_min, octave_min = Pitch.database_to_form_values(range.lower)
-        note_max, octave_max = Pitch.database_to_form_values(range.upper)
-        return (
-            f'{Pitch.OCTAVE_NOTES[int(note_min)]} {str(octave_min)} – '
-            f'{Pitch.OCTAVE_NOTES[int(note_max)]} {str(octave_max)}'
-        )
+        value = make_range_include_bounds(self.ambitus)
+        if isinstance(value, NumericRange):
+            if value.lower is None or value.upper is None:
+                return ''
+            note_min, octave_min = Pitch.database_to_form_values(value.lower)
+            note_max, octave_max = Pitch.database_to_form_values(value.upper)
+            return (
+                f'{Pitch.OCTAVE_NOTES[int(note_min)]} {str(octave_min)} – '
+                f'{Pitch.OCTAVE_NOTES[int(note_max)]} {str(octave_max)}'
+            )
+        return ''
 
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
