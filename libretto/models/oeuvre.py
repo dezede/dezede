@@ -914,6 +914,14 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         return self.get_pupitres_str(prefix=prefix, tags=tags,
                                      solistes=solistes)
 
+    def get_ambitus_str(self):
+        note_min, octave_min = Pitch.database_to_form_values(self.ambitus.lower)
+        note_max, octave_max = Pitch.database_to_form_values(self.ambitus.upper)
+        return (
+            f'{Pitch.OCTAVE_NOTES[int(note_min)]} {str(octave_min)} – '
+            f'{Pitch.OCTAVE_NOTES[int(note_max)]} {str(octave_max)}'
+        )
+
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
     auteurs_html.short_description = _('auteur(s)')

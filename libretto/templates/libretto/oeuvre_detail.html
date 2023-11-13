@@ -32,6 +32,7 @@
 
   <table class="data-table auto-links">
     {% data_table_attr 'pupitres_html' _('effectif') %}
+    {% data_table_attr 'get_ambitus_str' _('ambitus') %}
 
     {% if oeuvre.get_children|has_elements:request %}
       <th>{% trans 'Extraits' %}</th>
