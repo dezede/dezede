@@ -1,5 +1,6 @@
 import datetime
 import re
+from math import ceil
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -368,8 +369,25 @@ class NumberCharField(CharField):
     NUMBER_RE = re.compile(r'\d+')
 
     def __init__(self, *args, zfill_size=6, **kwargs):
-        super().__init__(*args, **kwargs)
         self.zfill_size = zfill_size
+        super().__init__(*args, **kwargs)
+
+    def db_type_parameters(self, connection):
+        parameters = super().db_type_parameters(connection)
+
+        # Adjusts the database maximum length to allow for zfill padding.
+        # For example, a `form_max_length` of 5 means we can store something
+        # like '1-2-3', which gets padded with zeros: '000001-000002-000003'
+        # So even though we force the form to validate for 5 characters max,
+        # the database must allow 20 characters max.
+        form_max_length = parameters['max_length']
+        max_possible_numbers = ceil(form_max_length / 2)
+        parameters['max_length'] = (
+            max_possible_numbers * self.zfill_size
+            + form_max_length - max_possible_numbers
+        )
+
+        return parameters
 
     def fill_zeros(self, match):
         return match.group(0).zfill(self.zfill_size)
