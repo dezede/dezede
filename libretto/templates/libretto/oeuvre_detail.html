@@ -32,7 +32,7 @@
 
   <table class="data-table auto-links">
     {% data_table_attr 'pupitres_html' _('effectif') %}
-    {% data_table_attr 'get_ambitus_str' _('ambitus') %}
+    {% data_table_attr 'get_ambitus_str' _('ambitus') info_link='https://en.wikipedia.org/wiki/Scientific_pitch_notation' info_title=_('do 4 est le do central du piano (notation scientifique internationale)') %}
 
     {% if oeuvre.get_children|has_elements:request %}
       <th>{% trans 'Extraits' %}</th>

@@ -2,5 +2,12 @@
   <th{% if title %} title="{{ title }}"{% endif %}>
     {{ verbose_name|capfirst }}
   </th>
-  <td{% if show_links %} class="show-links"{% endif %}>{{ value|safe }}</td>
+  <td{% if show_links %} class="show-links"{% endif %}>
+    {{ value|safe }}
+    {% if info_link %}
+      <a class="btn btn-link" {% if info_title %}title="{{ info_title }}"{% endif %} href="{{ info_link }}" target="_blank">
+          <i class="fa fa-info-circle fa-1x"></i>
+      </a>
+    {% endif %}
+  </td>
 </tr>
