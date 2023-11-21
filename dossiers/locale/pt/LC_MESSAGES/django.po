@@ -1,0 +1,558 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-21 16:36+0100\n"
+"PO-Revision-Date: 2016-06-24 22:21+0000\n"
+"Language-Team: Portuguese (https://app.transifex.com/bertrandbordage/"
+"teams/11498/pt/)\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % "
+"1000000 == 0 ? 1 : 2;\n"
+
+#: dossiers/admin.py:37
+msgid "Métadonnées"
+msgstr ""
+
+#: dossiers/admin.py:43
+msgid "Article"
+msgstr ""
+
+#: dossiers/admin.py:71 dossiers/admin.py:95
+msgid "Sélection dynamique"
+msgstr ""
+
+#: dossiers/admin.py:75 dossiers/admin.py:101
+msgid "Sélection manuelle"
+msgstr ""
+
+#: dossiers/export.py:220
+msgid "TOTAL"
+msgstr ""
+
+#: dossiers/export.py:293
+msgid "Saison indéterminée"
+msgstr ""
+
+#: dossiers/export.py:322 dossiers/export.py:361 dossiers/export.py:397
+#: dossiers/export.py:429 dossiers/export.py:462 dossiers/export.py:509
+#: dossiers/export.py:539
+msgid "Année"
+msgstr ""
+
+#: dossiers/export.py:323 dossiers/export.py:362 dossiers/export.py:398
+#: dossiers/export.py:430 dossiers/export.py:463 dossiers/export.py:510
+#: dossiers/export.py:540
+msgid "Saison"
+msgstr ""
+
+#: dossiers/export.py:324 dossiers/export.py:363 dossiers/export.py:399
+#: dossiers/export.py:431 dossiers/export.py:464 dossiers/export.py:511
+#: dossiers/export.py:541
+msgid "Mois"
+msgstr ""
+
+#: dossiers/export.py:325 dossiers/export.py:542
+msgid "Jour"
+msgstr ""
+
+#: dossiers/export.py:326 dossiers/export.py:348 dossiers/export.py:364
+#: dossiers/export.py:400 dossiers/export.py:465 dossiers/export.py:512
+msgid "Nombre d'événements"
+msgstr ""
+
+#: dossiers/export.py:329
+msgid "1. Événements - chronologique"
+msgstr ""
+
+#: dossiers/export.py:330 dossiers/forms.py:77
+msgid "1. Événements : répartition chronologique"
+msgstr ""
+
+#: dossiers/export.py:345 dossiers/export.py:394 dossiers/export.py:536
+msgid "Pays"
+msgstr ""
+
+#: dossiers/export.py:346 dossiers/export.py:395 dossiers/export.py:537
+msgid "Ville"
+msgstr ""
+
+#: dossiers/export.py:347 dossiers/export.py:396 dossiers/export.py:538
+msgid "Salle"
+msgstr ""
+
+#: dossiers/export.py:350
+msgid "2. Événements - géographique"
+msgstr ""
+
+#: dossiers/export.py:351 dossiers/forms.py:78
+msgid "2. Événements : répartition géographique"
+msgstr ""
+
+#: dossiers/export.py:359 dossiers/export.py:392 dossiers/export.py:508
+msgid "Œuvre"
+msgstr ""
+
+#: dossiers/export.py:360 dossiers/export.py:393 dossiers/export.py:428
+#: dossiers/export.py:507
+msgid "Auteur"
+msgstr ""
+
+#: dossiers/export.py:366
+msgid "3. Œuvres - chronologique"
+msgstr ""
+
+#: dossiers/export.py:367 dossiers/forms.py:79
+msgid "3. Œuvres : répartition chronologique"
+msgstr ""
+
+#: dossiers/export.py:402
+msgid "4. Œuvres - géographique"
+msgstr ""
+
+#: dossiers/export.py:403 dossiers/forms.py:80
+msgid "4. Œuvres : répartition géographique"
+msgstr ""
+
+#: dossiers/export.py:432
+msgid "Nombre d'éléments de programme"
+msgstr ""
+
+#: dossiers/export.py:434
+msgid "5. Auteurs - chronologique"
+msgstr ""
+
+#: dossiers/export.py:435 dossiers/forms.py:81
+msgid "5. Auteurs : répartition chronologique"
+msgstr ""
+
+#: dossiers/export.py:461
+msgid "Interprète"
+msgstr ""
+
+#: dossiers/export.py:467
+msgid "6. Interprètes - chronologique"
+msgstr ""
+
+#: dossiers/export.py:468 dossiers/forms.py:82
+msgid "6. Interprètes : répartition chronologique"
+msgstr ""
+
+#: dossiers/export.py:514
+msgid "7. Auteurs et œuvres"
+msgstr ""
+
+#: dossiers/export.py:515 dossiers/forms.py:83
+msgid "7. Auteurs et œuvres : répartition chronologique"
+msgstr ""
+
+#: dossiers/export.py:543
+msgid "Recette"
+msgstr ""
+
+#: dossiers/export.py:545 dossiers/export.py:546 dossiers/forms.py:84
+msgid "8. Recettes"
+msgstr ""
+
+#: dossiers/jobs.py:19
+#, python-format
+msgid "du dossier « %s »"
+msgstr ""
+
+#: dossiers/models.py:27
+msgid "nom"
+msgstr ""
+
+#: dossiers/models.py:28 dossiers/models.py:78
+msgid "position"
+msgstr ""
+
+#: dossiers/models.py:34
+msgid "catégorie de dossiers"
+msgstr ""
+
+#: dossiers/models.py:35
+msgid "catégories de dossiers"
+msgstr ""
+
+#: dossiers/models.py:67
+msgid "catégorie"
+msgstr ""
+
+#: dossiers/models.py:68
+msgid ""
+"Attention, un dossier contenu dans un autre dossier ne peut être dans une "
+"catégorie."
+msgstr ""
+
+#: dossiers/models.py:70
+msgid "titre"
+msgstr ""
+
+#: dossiers/models.py:71
+msgid "titre court"
+msgstr ""
+
+#: dossiers/models.py:72
+msgid "Utilisé pour le chemin de fer."
+msgstr ""
+
+#: dossiers/models.py:75
+msgid "parent"
+msgstr ""
+
+#: dossiers/models.py:80
+msgid "Personnaliser l’affichage du titre du dossier dans l’adresse URL."
+msgstr ""
+
+#: dossiers/models.py:86
+msgid "éditeurs scientifiques"
+msgstr ""
+
+#: dossiers/models.py:87
+msgid "date de publication"
+msgstr ""
+
+#: dossiers/models.py:89
+msgid "publication(s) associée(s)"
+msgstr ""
+
+#: dossiers/models.py:90
+msgid "développements envisagés"
+msgstr ""
+
+#: dossiers/models.py:91
+msgid "logo"
+msgstr ""
+
+#: dossiers/models.py:94
+msgid "présentation"
+msgstr ""
+
+#: dossiers/models.py:95
+msgid "contexte historique"
+msgstr ""
+
+#: dossiers/models.py:96
+msgid "sources et protocole"
+msgstr ""
+
+#: dossiers/models.py:97
+msgid "bibliographie indicative"
+msgstr ""
+
+#: dossiers/models.py:104
+msgid "dossier"
+msgstr ""
+
+#: dossiers/models.py:105
+#: dossiers/templates/dossiers/categoriededossiers_list.html:6
+msgid "dossiers"
+msgstr ""
+
+#: dossiers/models.py:107
+msgid "Peut changer l’état"
+msgstr ""
+
+#: dossiers/models.py:161
+msgid "quantité de données sélectionnées"
+msgstr ""
+
+#: dossiers/models.py:175 dossiers/models.py:253
+msgid "début"
+msgstr ""
+
+#: dossiers/models.py:176 dossiers/models.py:254
+msgid "fin"
+msgstr ""
+
+#: dossiers/models.py:177 dossiers/models.py:255
+msgid "lieux"
+msgstr ""
+
+#: dossiers/models.py:179 dossiers/models.py:269
+#: dossiers/templates/dossiers/dossierdoeuvres_data_detail.html:5
+msgid "œuvres"
+msgstr ""
+
+#: dossiers/models.py:182 dossiers/models.py:262
+msgid "individus"
+msgstr ""
+
+#: dossiers/models.py:185
+msgid "circonstance"
+msgstr ""
+
+#: dossiers/models.py:186
+#: dossiers/templates/dossiers/dossierdevenements_data_detail.html:6
+msgid "événements"
+msgstr ""
+
+#: dossiers/models.py:188 dossiers/models.py:265
+msgid "ensembles"
+msgstr ""
+
+#: dossiers/models.py:190 dossiers/models.py:267
+msgid "sources"
+msgstr ""
+
+#: dossiers/models.py:192
+msgid "saisons"
+msgstr ""
+
+#: dossiers/models.py:193
+msgid "dossiersdevenements"
+msgstr ""
+
+#: dossiers/models.py:196
+msgid "dossier d’événements"
+msgstr ""
+
+#: dossiers/models.py:197
+msgid "dossiers d’événements"
+msgstr ""
+
+#: dossiers/models.py:258
+msgid "genres d’œuvre"
+msgstr ""
+
+#: dossiers/models.py:273
+msgid "dossier d’œuvres"
+msgstr ""
+
+#: dossiers/models.py:274
+msgid "dossiers d’œuvres"
+msgstr ""
+
+#: dossiers/templates/dossiers/base.html:38
+msgid "Pour citer ce dossier"
+msgstr ""
+
+#: dossiers/templates/dossiers/categoriededossiers_list.html:24
+msgid "Qu’est-ce qu’un dossier ?"
+msgstr ""
+
+#: dossiers/templates/dossiers/categoriededossiers_list.html:27
+#, python-format
+msgid ""
+"\n"
+"            Le dossier est la forme aboutie d’une publication dans Dezède :\n"
+"            il s’agit d’un corpus d’événements ou d’images, créé et "
+"rassemblé\n"
+"            par des éditeurs scientifiques ou des partenaires qui en "
+"assurent la présentation.\n"
+"            Le dossier d’événements a pour objectif de reconstituer des "
+"programmes de spectacles\n"
+"            dans un espace géographique et temporel circonscrit, d’établir "
+"la programmation d’une institution,\n"
+"            de retracer la carrière d’un interprète, ou d’étudier la "
+"diffusion et la réception d’une œuvre.\n"
+"            Les événements sont présentés de manière chronologique.\n"
+"            Les dossiers sont classés selon un ordre établi\n"
+"            par une table générale qui évolue en fonction des nouvelles "
+"contributions ;\n"
+"            leur publication est soumise à l’expertise\n"
+"            du <a href=\"%(comite_url)s\">comité éditorial</a>.\n"
+"          "
+msgstr ""
+
+#: dossiers/templates/dossiers/detail_base.html:6
+#: dossiers/templates/dossiers/include/dossierdevenements_tabs.html:7
+#: dossiers/templates/dossiers/include/dossierdoeuvres_tabs.html:7
+msgid "Présentation"
+msgstr ""
+
+#: dossiers/templates/dossiers/detail_base.html:21
+msgid "Dossier précédent"
+msgstr ""
+
+#: dossiers/templates/dossiers/detail_base.html:25
+msgid "Retourner en haut"
+msgstr ""
+
+#: dossiers/templates/dossiers/detail_base.html:32
+msgid "Dossier suivant"
+msgstr ""
+
+#: dossiers/templates/dossiers/dossierdevenements_stats_detail.html:6
+#: dossiers/templates/dossiers/include/dossierdevenements_tabs.html:13
+msgid "Visualisations"
+msgstr ""
+
+#: dossiers/templates/dossiers/dossierdevenements_stats_detail.html:28
+#, python-format
+msgid "%(n_oeuvres)s œuvres"
+msgstr ""
+
+#: dossiers/templates/dossiers/dossierdevenements_stats_detail.html:33
+#, python-format
+msgid "%(period)s (%(ratio)s %%, soit %(count)s œuvres)"
+msgstr ""
+
+#: dossiers/templates/dossiers/dossierdoeuvres_data_detail.html:15
+msgid "Ordonner par nom d’œuvre"
+msgstr ""
+
+#: dossiers/templates/dossiers/dossierdoeuvres_data_detail.html:19
+msgid "Ordonner par date de création mondiale"
+msgstr ""
+
+#: dossiers/templates/dossiers/dossierdoeuvres_data_detail.html:39
+msgid "Création mondiale :"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/chord_diagram.html:39
+msgid "Auteurs les plus représentés"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/chord_diagram.html:44
+msgid ""
+"\n"
+"    La taille des cordes est proportionnelle au nombre d’événements\n"
+"    comportant des œuvres des deux auteurs reliés entre eux.\n"
+"  "
+msgstr ""
+
+#: dossiers/templates/dossiers/include/chord_diagram.html:50
+msgid ""
+"\n"
+"    Cliquez sur le nom d’un auteur pour visualiser uniquement\n"
+"    les cordes auxquelles il est associé.<br />\n"
+"    Cliquez une seconde fois pour faire disparaitre\n"
+"    les cordes auxquelles ce nom est lié.<br />\n"
+"    Cliquez partout ailleurs pour revenir à la position initiale.\n"
+"  "
+msgstr ""
+
+#: dossiers/templates/dossiers/include/content_base.html:15
+msgid "Contexte historique"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/content_base.html:19
+msgid "Sources et protocole"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/content_base.html:23
+msgid "Bibliographie indicative"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/content_base.html:35
+msgid "(dir.)"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/content_base.html:39
+#, python-format
+msgid ""
+"\n"
+"          « %(object)s »,\n"
+"          <em>Dezède</em> [en ligne].\n"
+"          %(SITE)s%(permalien)s\n"
+"          (consulté le %(now)s).\n"
+"        "
+msgstr ""
+
+#: dossiers/templates/dossiers/include/dossierdevenements_sidebar.html:9
+msgid "Exporter en PDF"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/dossierdevenements_sidebar.html:16
+#: dossiers/templates/dossiers/include/dossierdevenements_sidebar.html:23
+msgid "Exporter les statistiques"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/dossierdevenements_sidebar.html:33
+msgid "Exports"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/dossierdevenements_sidebar.html:50
+msgid "Fermer"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/dossierdevenements_sidebar.html:51
+msgid "Exporter"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/dossierdevenements_sidebar.html:65
+msgid "Ajouter"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/dossierdevenements_sidebar.html:67
+msgid "Supprimer"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/dossierdevenements_tabs.html:18
+msgid "Événements"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/dossierdoeuvres_tabs.html:12
+msgid "Œuvres"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/sidebar_base.html:11
+msgid "Éditeur scientifique"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/sidebar_base.html:13
+msgid "Éditeurs scientifiques"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/sidebar_base.html:23
+msgid "Dans ce dossier"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/sidebar_base.html:39
+msgid "Contributeur"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/sidebar_base.html:41
+msgid "Contributeurs"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/sidebar_base.html:47
+msgid "Date de mise en ligne"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/sidebar_base.html:54
+msgid "Publication(s) associée(s)"
+msgstr ""
+
+#: dossiers/templates/dossiers/include/sidebar_base.html:60
+msgid "Développements envisagés"
+msgstr ""
+
+#: dossiers/views.py:39
+msgid "Indéterminé"
+msgstr ""
+
+#: dossiers/views.py:40
+msgid "Né avant 1580"
+msgstr ""
+
+#: dossiers/views.py:41
+msgid "Baroque"
+msgstr ""
+
+#: dossiers/views.py:42
+msgid "Classique"
+msgstr ""
+
+#: dossiers/views.py:43
+msgid "Romantique"
+msgstr ""
+
+#: dossiers/views.py:44
+msgid "Moderne"
+msgstr ""
+
+#: dossiers/views.py:45
+msgid "Né après 1920"
+msgstr ""

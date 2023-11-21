@@ -2,10 +2,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # Rosalba Agresta <rosalbagresta@gmail.com>, 2016
-#
+# Bertrand Bordage <bordage.bertrand@gmail.com>, 2023
+# Lucia Pasini, 2023
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -13,15 +15,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2016-06-24 22:26+0000\n"
-"Last-Translator: Rosalba Agresta <rosalbagresta@gmail.com>, 2016\n"
-"Language-Team: Italian (https://app.transifex.com/bertrandbordage/"
-"teams/11498/it/)\n"
-"Language: it\n"
+"Last-Translator: Lucia Pasini, 2023\n"
+"Language-Team: Italian (https://app.transifex.com/bertrandbordage/teams/11498/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
-"1 : 2;\n"
+"Language: it\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: examens/admin.py:39 examens/models.py:160
 msgid "note"
@@ -89,7 +89,7 @@ msgstr "è finito"
 
 #: examens/models.py:118
 msgid "temps passé"
-msgstr "tempo passato"
+msgstr "tempo trascorso"
 
 #: examens/models.py:159
 msgid "transcription"
@@ -97,7 +97,7 @@ msgstr "trascrizione"
 
 #: examens/models.py:162
 msgid "passé"
-msgstr "superato"
+msgstr "cominciato"
 
 #: examens/models.py:163
 msgid "début"
@@ -117,7 +117,7 @@ msgstr "livelli superati"
 
 #: examens/templates/examens/source.html:7
 msgid "Formation à la transcription de source"
-msgstr "Formazione alla trascrizione della fonte"
+msgstr "Formazione sulla trascrizione delle fonti"
 
 #: examens/templates/examens/source.html:11
 #, python-format
@@ -139,7 +139,7 @@ msgstr "Trascrizione inviata"
 
 #: examens/templates/examens/source.html:37
 msgid "Très insuffisant"
-msgstr "Più che insufficiente"
+msgstr "Molto insufficiente"
 
 #: examens/templates/examens/source.html:39
 msgid "Insuffisant"
@@ -147,11 +147,11 @@ msgstr "Insufficiente"
 
 #: examens/templates/examens/source.html:41
 msgid "Bien ! Plus que quelques erreurs à corriger"
-msgstr "Bene ! Solo qualche errore da correggere"
+msgstr "Ben fatto ! Ancora qualche errore da correggere"
 
 #: examens/templates/examens/source.html:43
 msgid "Très bien ! Encore un tout petit effort"
-msgstr "Molto bene ! Ancora un piccolo sforzo"
+msgstr "Fantastico ! Solo un altro piccolo sforzo"
 
 #: examens/templates/examens/source.html:52
 msgid "Source à transcrire"
@@ -163,19 +163,19 @@ msgstr "Trascrizione"
 
 #: examens/templates/examens/source.html:63
 msgid "Vérifier"
-msgstr "Verificare"
+msgstr "Controllare"
 
 #: examens/utils.py:45
 msgid "Mauvais formatage"
-msgstr "Formattazione sbagliata"
+msgstr "Formattazione errata"
 
 #: examens/utils.py:46
 msgid "Caractère en trop"
-msgstr "Carattere di troppo"
+msgstr "Carattere in più"
 
 #: examens/utils.py:46
 msgid "Caractères en trop"
-msgstr "Caratteri di troppo"
+msgstr "Caratteri in più"
 
 #: examens/utils.py:47
 msgid "Caractère manquant"
@@ -191,7 +191,7 @@ msgstr "Sic mancante"
 
 #: examens/utils.py:49
 msgid "Mauvaise casse"
-msgstr "Cassa sbagliata"
+msgstr "Cassa tipografica sbagliata"
 
 #: examens/utils.py:50
 msgid "Mauvais accent"
@@ -199,24 +199,24 @@ msgstr "Accento sbagliato"
 
 #: examens/utils.py:51
 msgid "Mauvaise casse et accent"
-msgstr "Cassa e accento sbagliati"
+msgstr "Cassa tipografica e accento sbagliati"
 
 #: examens/utils.py:52
 msgid "Caractère erroné"
-msgstr "Carattere erroneo"
+msgstr "Carattere sbagliato"
 
 #: examens/views.py:46
 msgid ""
-"Félicitations ! La transcription était parfaite <i class=\"fa fa-smile-o\"></"
-"i>"
+"Félicitations ! La transcription était parfaite <i class=\"fa fa-"
+"smile-o\"></i>"
 msgstr ""
-"Congratulazioni ! La trascrizione era perfetta <i class=\"fa fa-smile-o\"></"
-"i>"
+"Congratulazioni ! La trascrizione era perfetta <i class=\"fa fa-"
+"smile-o\"></i>"
 
 #: examens/views.py:55
 msgid ""
 "Excellent, vous avez fini toutes les étapes ! Vous pouvez maintenant créer "
 "un compte utilisateur si vous n’en possédez pas."
 msgstr ""
-"Eccellente, hai superato tutte le tappe! Ora puoi creare un conto utente se "
-"non ce l'hai."
+"Ottimo, hai superato tutti i passaggi! Ora è possibile creare un account "
+"utente, se non se ne possiede già uno."

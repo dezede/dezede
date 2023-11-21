@@ -1,0 +1,360 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: Dezède\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-21 14:49+0100\n"
+"PO-Revision-Date: 2012-10-06 19:01+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Portuguese (http://app.transifex.com/bertrandbordage/dezede/"
+"language/pt/)\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % "
+"1000000 == 0 ? 1 : 2;\n"
+
+#: accounts/admin.py:58
+msgid "Informations personnelles"
+msgstr ""
+
+#: accounts/admin.py:63
+#: accounts/templates/accounts/hierarchicuser_detail.html:32
+msgid "Autorité associée"
+msgstr ""
+
+#: accounts/admin.py:65
+msgid "À saisir s’il existe une autorité sur vous dans la base de données."
+msgstr ""
+
+#: accounts/admin.py:68
+msgid "Responsabilité scientifique"
+msgstr ""
+
+#: accounts/admin.py:70
+msgid "Informations complémentaires"
+msgstr ""
+
+#: accounts/admin.py:73
+msgid "Permissions"
+msgstr ""
+
+#: accounts/admin.py:76
+msgid "Important dates"
+msgstr ""
+
+#: accounts/forms.py:24
+msgid "Prénom(s)"
+msgstr ""
+
+#: accounts/forms.py:25
+msgid "Nom"
+msgstr ""
+
+#: accounts/forms.py:26
+msgid "Responsable"
+msgstr ""
+
+#: accounts/forms.py:28
+msgid "Souhaite devenir responsable scientifique"
+msgstr ""
+
+#: accounts/forms.py:31
+msgid "Groupes"
+msgstr ""
+
+#: accounts/forms.py:48
+msgid "Responsable scientifique"
+msgstr ""
+
+#: accounts/forms.py:55
+msgid "Enregistrer"
+msgstr ""
+
+#: accounts/forms.py:56
+msgid "Réinitialiser"
+msgstr ""
+
+#: accounts/forms.py:68
+msgid "[Dezède] Demande de responsabilité scientifique"
+msgstr ""
+
+#: accounts/forms.py:90 accounts/templates/account/login.html:5
+msgid "Sign In"
+msgstr ""
+
+#: accounts/models.py:74
+msgid "afficher l’email"
+msgstr ""
+
+#: accounts/models.py:75
+msgid "site internet"
+msgstr ""
+
+#: accounts/models.py:77
+msgid "nom affiché du site internet"
+msgstr ""
+
+#: accounts/models.py:80
+msgid "personne morale"
+msgstr ""
+
+#: accounts/models.py:81
+msgid "Cochez si vous êtes une institution ou un ensemble."
+msgstr ""
+
+#: accounts/models.py:85
+msgid "type d’autorité associée"
+msgstr ""
+
+#: accounts/models.py:86
+msgid "identifiant de l’autorité associée"
+msgstr ""
+
+#: accounts/models.py:92
+msgid "responsable scientifique"
+msgstr ""
+
+#: accounts/models.py:101
+msgid "Veut être responsable scientifique"
+msgstr ""
+
+#: accounts/models.py:103
+msgid "photographie d’identité"
+msgstr ""
+
+#: accounts/models.py:107
+msgid "présentation"
+msgstr ""
+
+#: accounts/models.py:108
+msgid "fonctions au sein de l’équipe"
+msgstr ""
+
+#: accounts/models.py:110
+msgid "publications"
+msgstr ""
+
+#: accounts/models.py:118
+msgid "utilisateur"
+msgstr ""
+
+#: accounts/models.py:119
+msgid "utilisateurs"
+msgstr ""
+
+#: accounts/templates/account/account_inactive.html:6
+msgid "Account Inactive"
+msgstr ""
+
+#: accounts/templates/account/account_inactive.html:10
+msgid "This account is inactive."
+msgstr ""
+
+#: accounts/templates/account/login.html:11
+#, python-format
+msgid ""
+"\n"
+"      Si vous ne possédez pas encore de compte,\n"
+"      <a href=\"%(signup_url)s\">veuillez en créer un</a> d’abord.\n"
+"    "
+msgstr ""
+
+#: accounts/templates/account/password_change.html:6
+#: accounts/templates/account/password_change.html:14
+#: accounts/templates/account/password_reset_from_key.html:10
+#: accounts/templates/account/password_reset_from_key_done.html:5
+msgid "Change Password"
+msgstr ""
+
+#: accounts/templates/account/password_reset.html:6
+#: accounts/templates/account/password_reset_done.html:6
+msgid "Password Reset"
+msgstr ""
+
+#: accounts/templates/account/password_reset.html:16
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
+msgstr ""
+
+#: accounts/templates/account/password_reset.html:21
+msgid "Reset My Password"
+msgstr ""
+
+#: accounts/templates/account/password_reset.html:24
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr ""
+
+#: accounts/templates/account/password_reset_done.html:15
+msgid ""
+"We have sent you an e-mail. Please contact us if you do not receive it "
+"within a few minutes."
+msgstr ""
+
+#: accounts/templates/account/password_reset_from_key.html:8
+msgid "Bad Token"
+msgstr ""
+
+#: accounts/templates/account/password_reset_from_key.html:19
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
+msgstr ""
+
+#: accounts/templates/account/password_reset_from_key.html:25
+msgid "change password"
+msgstr ""
+
+#: accounts/templates/account/password_reset_from_key.html:28
+#: accounts/templates/account/password_reset_from_key_done.html:9
+msgid "Your password is now changed."
+msgstr ""
+
+#: accounts/templates/account/signup.html:5
+msgid "Sign Up"
+msgstr ""
+
+#: accounts/templates/account/signup.html:11
+#, python-format
+msgid ""
+"Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+
+#: accounts/templates/account/verification_sent.html:7
+msgid "Vérification de votre adresse e-mail"
+msgstr ""
+
+#: accounts/templates/account/verification_sent.html:14
+msgid ""
+"\n"
+"      Nous vous avons envoyé un e-mail de vérification.\n"
+"      Suivez le lien fourni pour finaliser la procédure de création de "
+"compte.\n"
+"      Veuillez nous contactez si vous ne le recevez pas\n"
+"      dans les minutes qui viennent.\n"
+"    "
+msgstr ""
+
+#: accounts/templates/accounts/grant_to_admin.html:7
+msgid "Accès à l’interface d’administration"
+msgstr ""
+
+#: accounts/templates/accounts/grant_to_admin.html:15
+#, python-format
+msgid ""
+"\n"
+"        L’utilisateur « %(object)s » fait déjà partie de l’équipe !\n"
+"      "
+msgstr ""
+
+#: accounts/templates/accounts/grant_to_admin.html:20
+#, python-format
+msgid ""
+"\n"
+"        %(user)s, l’utilisateur « %(object)s »\n"
+"        a été autorisé à accéder à l’interface d'administration suite à "
+"votre\n"
+"        accord. Si vous souhaitez annuler cela,\n"
+"        <a href=\"%(change_user_url)s\">\n"
+"          modifiez l’utilisateur %(object.get_full_name)s</a>,\n"
+"        décochez la case « statut équipe » et enregistrez.\n"
+"      "
+msgstr ""
+
+#: accounts/templates/accounts/grant_to_admin_demand_email.txt:3
+#, python-format
+msgid ""
+"\n"
+"Bonjour %(mentor_first_name)s,\n"
+"\n"
+"L’utilisateur « %(user)s » demande à devenir l'un de vos disciples.\n"
+"\n"
+"Il a demandé à faire partie du(es) groupe(s) :\n"
+msgstr ""
+
+#: accounts/templates/accounts/grant_to_admin_demand_email.txt:16
+#, python-format
+msgid ""
+"\n"
+"Si vous souhaitez l’accepter et ainsi lui autoriser à accéder à l’interface "
+"d’administration, cliquez sur ce lien :\n"
+"%(site_url)s%(grant_to_admin_url)s\n"
+"\n"
+"Vous pouvez consulter et modifier ses données complètes sur "
+"%(site_url)s%(change_user_url)s.\n"
+msgstr ""
+
+#: accounts/templates/accounts/granted_to_admin_email.txt:4
+#, python-format
+msgid ""
+"\n"
+"Bonjour %(user_first_name)s,\n"
+"\n"
+"Vous venez d’être accepté dans l’équipe de Dezède.\n"
+"Vous êtes donc autorisé à accéder à l’interface d’administration sur "
+"%(site_url)s%(admin_index_url)s.\n"
+msgstr ""
+
+#: accounts/templates/accounts/hierarchicuser_detail.html:16
+msgid "Présentation"
+msgstr ""
+
+#: accounts/templates/accounts/hierarchicuser_detail.html:22
+msgid "Bibliographie"
+msgstr ""
+
+#: accounts/templates/accounts/hierarchicuser_detail.html:36
+msgid "Fonction(s) au sein de l’équipe"
+msgstr ""
+
+#: accounts/templates/accounts/hierarchicuser_detail.html:40
+msgid "À consulter dans Dezède"
+msgstr ""
+
+#: accounts/templates/accounts/hierarchicuser_detail.html:48
+msgid "Site internet"
+msgstr ""
+
+#: accounts/templates/accounts/hierarchicuser_detail.html:52
+msgid "Courriel"
+msgstr ""
+
+#: accounts/views.py:28
+msgid "[Dezède] Accès autorisé à l’administration"
+msgstr ""
+
+#: accounts/views.py:142
+msgid "Liste des utilisateurs"
+msgstr ""
+
+#: accounts/views.py:164
+msgid "Comité éditorial"
+msgstr ""
+
+#: accounts/views.py:181
+msgid "Comité scientifique"
+msgstr ""
+
+#: accounts/views.py:223
+msgid "Principaux contributeurs"
+msgstr ""
+
+#: accounts/views.py:233
+msgid "Équipe de développement"
+msgstr ""
+
+#: accounts/views.py:244
+msgid "Propriétaires"
+msgstr ""
+
+#: accounts/views.py:255
+msgid "Partenaires"
+msgstr ""

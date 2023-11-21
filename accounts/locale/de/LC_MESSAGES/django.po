@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 18:26+0200\n"
+"POT-Creation-Date: 2023-11-21 14:48+0100\n"
 "PO-Revision-Date: 2012-10-06 19:01+0000\n"
 "Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
 "Language-Team: German (http://app.transifex.com/bertrandbordage/dezede/"
@@ -20,32 +20,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: accounts/admin.py:59
+#: accounts/admin.py:58
 msgid "Informations personnelles"
 msgstr "Persönliche Angaben"
 
-#: accounts/admin.py:64
+#: accounts/admin.py:63
 #: accounts/templates/accounts/hierarchicuser_detail.html:32
 msgid "Autorité associée"
 msgstr "Assoziierte Einheit"
 
-#: accounts/admin.py:66
+#: accounts/admin.py:65
 msgid "À saisir s’il existe une autorité sur vous dans la base de données."
 msgstr "Angeben, falls eine Einheit über Sie in der Datenbank besteht."
 
-#: accounts/admin.py:69
+#: accounts/admin.py:68
 msgid "Responsabilité scientifique"
 msgstr "Wissenschaftliche Leitung"
 
-#: accounts/admin.py:71
+#: accounts/admin.py:70
 msgid "Informations complémentaires"
 msgstr "Weitere Angaben"
 
-#: accounts/admin.py:74
+#: accounts/admin.py:73
 msgid "Permissions"
 msgstr "Zugriffsrechte"
 
-#: accounts/admin.py:77
+#: accounts/admin.py:76
 msgid "Important dates"
 msgstr "Important dates"
 
@@ -117,35 +117,35 @@ msgstr "Typ der assoziierten Einheit"
 msgid "identifiant de l’autorité associée"
 msgstr "Kennzeichen der assoziierten Einheit"
 
-#: accounts/models.py:92 accounts/views.py:279
+#: accounts/models.py:92
 msgid "responsable scientifique"
 msgstr "Wissenschaftliche Leitung"
 
-#: accounts/models.py:98
+#: accounts/models.py:101
 msgid "Veut être responsable scientifique"
 msgstr "Möchte wissenschaftliche Leitung übernehmen."
 
-#: accounts/models.py:100
+#: accounts/models.py:103
 msgid "photographie d’identité"
 msgstr "Passfoto"
 
-#: accounts/models.py:104
+#: accounts/models.py:107
 msgid "présentation"
 msgstr "Präsentation"
 
-#: accounts/models.py:105
+#: accounts/models.py:108
 msgid "fonctions au sein de l’équipe"
 msgstr "Aufgaben innerhalb des Teams"
 
-#: accounts/models.py:107
+#: accounts/models.py:110
 msgid "publications"
 msgstr "Publikationen"
 
-#: accounts/models.py:113
+#: accounts/models.py:118
 msgid "utilisateur"
 msgstr "Benutzer/in"
 
-#: accounts/models.py:114
+#: accounts/models.py:119
 msgid "utilisateurs"
 msgstr "Benutzer/innen"
 
@@ -220,8 +220,8 @@ msgid ""
 "a>."
 msgstr ""
 "Der Link zum Zurücksetzen des Passworts ist ungültig, wahrscheinlich weil er "
-"bereits benutzt wurde. Bitte beantragen Sie ein <a href="
-"\"%(passwd_reset_url)s\">erneutes Zurücksetzen des Passworts</a>."
+"bereits benutzt wurde. Bitte beantragen Sie ein <a "
+"href=\"%(passwd_reset_url)s\">erneutes Zurücksetzen des Passworts</a>."
 
 #: accounts/templates/account/password_reset_from_key.html:25
 msgid "change password"
@@ -328,8 +328,8 @@ msgid ""
 "d’administration, cliquez sur ce lien :\n"
 "%(site_url)s%(grant_to_admin_url)s\n"
 "\n"
-"Vous pouvez consulter et modifier ses données complètes sur %(site_url)s"
-"%(change_user_url)s.\n"
+"Vous pouvez consulter et modifier ses données complètes sur "
+"%(site_url)s%(change_user_url)s.\n"
 msgstr ""
 "\n"
 "Wenn Sie den Benutzer/die Benutzerin aufnehmen und ihm/ihr damit Zugang zur "
@@ -353,8 +353,8 @@ msgstr ""
 "Liebe/r  %(user_first_name)s,\n"
 "\n"
 "Sie wurden in das Dezède-Team aufgenommen.\n"
-"Sie haben damit Zugang zur Verwaltungsoberfläche auf %(site_url)s"
-"%(admin_index_url)s.\n"
+"Sie haben damit Zugang zur Verwaltungsoberfläche auf "
+"%(site_url)s%(admin_index_url)s.\n"
 
 #: accounts/templates/accounts/hierarchicuser_detail.html:16
 msgid "Présentation"
@@ -388,46 +388,26 @@ msgstr "[Dezède] Zugriff auf die Verwaltungsoberfläche gewährt"
 msgid "Liste des utilisateurs"
 msgstr "Liste der Benutzer/innen"
 
-#: accounts/views.py:165
+#: accounts/views.py:164
 msgid "Comité éditorial"
 msgstr "Herausgeberkomitee"
 
-#: accounts/views.py:182
+#: accounts/views.py:181
 msgid "Comité scientifique"
 msgstr ""
 
-#: accounts/views.py:224
+#: accounts/views.py:223
 msgid "Principaux contributeurs"
 msgstr ""
 
-#: accounts/views.py:234
+#: accounts/views.py:233
 msgid "Équipe de développement"
 msgstr "Entwickler-Team"
 
-#: accounts/views.py:245
+#: accounts/views.py:244
 msgid "Propriétaires"
 msgstr "Urheber/innen"
 
-#: accounts/views.py:256
+#: accounts/views.py:255
 msgid "Partenaires"
 msgstr "Partner"
-
-#: accounts/views.py:268
-msgid "membre"
-msgstr "Mitglied"
-
-#: accounts/views.py:269
-msgid "membres"
-msgstr "Mitglieder"
-
-#: accounts/views.py:273
-msgid "disciple"
-msgstr "Mentee"
-
-#: accounts/views.py:274
-msgid "disciples"
-msgstr "Mentees"
-
-#: accounts/views.py:277
-msgid "appartenance"
-msgstr "Zugehörigkeit"

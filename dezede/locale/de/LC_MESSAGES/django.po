@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 18:26+0200\n"
+"POT-Creation-Date: 2023-11-21 14:48+0100\n"
 "PO-Revision-Date: 2012-10-06 19:00+0000\n"
 "Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
 "Language-Team: German (http://app.transifex.com/bertrandbordage/dezede/"
@@ -177,15 +177,15 @@ msgstr "Transparenz"
 msgid "position"
 msgstr "Position"
 
-#: dezede/models.py:83
+#: dezede/models.py:85
 msgid "diapositive"
 msgstr "Diapositiv"
 
-#: dezede/models.py:84
+#: dezede/models.py:86
 msgid "diapositives"
 msgstr "Diapositive"
 
-#: dezede/models.py:142
+#: dezede/models.py:144
 msgid "miniature"
 msgstr "Miniatur"
 
@@ -207,6 +207,10 @@ msgstr "Französisch"
 
 #: dezede/settings/base.py:58
 msgid "Italiano"
+msgstr ""
+
+#: dezede/settings/base.py:59
+msgid "Português"
 msgstr ""
 
 #: dezede/templates/403.html:5
@@ -236,11 +240,11 @@ msgstr "Fehler 404"
 msgid "La page n’a pu être trouvée."
 msgstr "Die Seite konnte nicht gefunden werden."
 
-#: dezede/templates/500.html:5
+#: dezede/templates/500.html:4
 msgid "Erreur 500"
 msgstr "Fehler 500"
 
-#: dezede/templates/500.html:9
+#: dezede/templates/500.html:8
 msgid "Le serveur ne parvient pas à répondre correctement à votre requête."
 msgstr "Der Server kann Ihre Anfrage nicht korrekt bearbeiten."
 
@@ -272,15 +276,15 @@ msgstr ""
 msgid "Save and continue editing"
 msgstr ""
 
-#: dezede/templates/base.html:68
+#: dezede/templates/base.html:69
 msgid "musicologie, base de données"
 msgstr "Musikwissenschaft, Datenbank"
 
-#: dezede/templates/base.html:79
+#: dezede/templates/base.html:80
 msgid "Tous droits réservés"
 msgstr ""
 
-#: dezede/templates/base.html:110
+#: dezede/templates/base.html:126
 msgid ""
 "\n"
 "                Votre navigateur ne peut pas lancer javascript.\n"
@@ -355,10 +359,8 @@ msgid "Concerts à Royaumont"
 msgstr "Konzerte in Royaumont"
 
 #: dezede/templates/home.html:183
-#, fuzzy
-#| msgid "Archives de l’Opéra Comique"
 msgid "Orchestre de l’Opéra de Rouen Normandie"
-msgstr "Archiv der Opéra Comique"
+msgstr ""
 
 #: dezede/templates/home.html:186
 msgid "Depuis 1998"
@@ -436,10 +438,8 @@ msgstr "Partner"
 
 #: dezede/templates/navbar.html:54
 #: dezede/templates/pages/protection_donnees.html:8
-#, fuzzy
-#| msgid "Base de données"
 msgid "Protection des données"
-msgstr "Datenbank"
+msgstr ""
 
 #: dezede/templates/navbar.html:56
 msgid "Comité éditorial"
@@ -450,10 +450,8 @@ msgid "Comité scientifique"
 msgstr ""
 
 #: dezede/templates/navbar.html:58
-#, fuzzy
-#| msgid "Pour contribuer"
 msgid "Principaux contributeurs"
-msgstr "Einen Beitrag einreichen"
+msgstr ""
 
 #: dezede/templates/navbar.html:59
 msgid "Équipe de développement"
@@ -553,37 +551,6 @@ msgstr ""
 "hat seinen Ursprung in früheren Forschungsarbeiten."
 
 #: dezede/templates/pages/bibliographie.html:47
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "            Une première importation a permis d’intégrer les index "
-#| "d’individus et d’œuvres contenus\n"
-#| "            dans l’ouvrage de Joann Élart intitulé <em>Catalogue des "
-#| "fonds musicaux conservés en Haute-Normandie.\n"
-#| "            Tome I : Bibliothèque municipale de Rouen. Volume 1 : Fonds "
-#| "du Théâtre des Arts\n"
-#| "            (<span class=\"sc\">xviii</span><sup>e</sup> et <span class="
-#| "\"sc\">xix</span><sup>e</sup> siècles)</em>,\n"
-#| "            coll. « Patrimoine musical régional » (Rouen, Presses "
-#| "universitaires de Rouen et du Havre, 2004, 538 p.)\n"
-#| "            Issues, pour l’essentiel, du répertoire de l’Opéra-Comique,\n"
-#| "            ces données ont été associées à celles réalisées dans le "
-#| "cadre\n"
-#| "            de deux missions financées par les <abbr title=\"Grands "
-#| "Réseaux de Recherche\">GRR</abbr> haut-normands\n"
-#| "            et placées sous la direction de Joann Élart.\n"
-#| "            La première a été confiée à Anne Touverey, doctorante en "
-#| "musicologie\n"
-#| "            de l’université de Rouen qui a créé des autorités à partir de "
-#| "l’index de Castil-Blaze,\n"
-#| "            <em>Histoire de l’opéra-comique</em>,\n"
-#| "            publication coordonnée par Alexandre Dratwicki\n"
-#| "            et Patrick Taïeb (Lyon, Symétrie, 2012, 352 p.) ;\n"
-#| "            la seconde à Claire Malandin, étudiante en musicologie de "
-#| "l’université de Rouen,\n"
-#| "            qui a établi un ensemble d’autorités nouvelles dans les "
-#| "genres de la comédie, de la tragédie ou du vaudeville.\n"
-#| "          "
 msgid ""
 "\n"
 "            Une première importation a permis d’intégrer les index "
@@ -592,8 +559,8 @@ msgid ""
 "musicaux conservés en Haute-Normandie.\n"
 "            Tome I : Bibliothèque municipale de Rouen. Volume 1 : Fonds du "
 "Théâtre des Arts\n"
-"            (<span class=\"sc\">xviii</span><sup>e</sup> et <span class=\"sc"
-"\">xix</span><sup>e</sup> siècles)</em>,\n"
+"            (<span class=\"sc\">xviii</span><sup>e</sup> et <span "
+"class=\"sc\">xix</span><sup>e</sup> siècles)</em>,\n"
 "            coll. « Patrimoine musical régional » (Rouen, Presses "
 "universitaires de Rouen et du Havre, 2004, 538 p.)\n"
 "            Issues, pour l’essentiel, du répertoire de l’Opéra-Comique,\n"
@@ -614,56 +581,8 @@ msgid ""
 "de la comédie, de la tragédie ou du vaudeville.\n"
 "          "
 msgstr ""
-"\n"
-"In einem ersten Datenimport wurden der Personen- und Werkindex aus Joann "
-"Élarts Werk\n"
-"<em>Catalogue des fonds musicaux conservés en Haute-Normandie.\n"
-"Bd. I: Bibliothèque municipale de Rouen. Vol. 1: Fonds du Théâtre des Arts\n"
-"(<span class=\"sc\">xviii</span><sup>e</sup> et <span class=\"sc\">xix</"
-"span><sup>e</sup> siècles)</em>,\n"
-"coll. «Patrimoine musical régional» (Rouen, Presses universitaires de Rouen "
-"et du Havre, 2004, 538 S.)\n"
-"übernommen.\n"
-"Diese hauptsächlich aus dem Fonds der Opéra-Comique stammenden Daten\n"
-"wurden mit Daten verknüpft, die im Rahmen von zwei Forschungsaufträgen \n"
-"– unter der Leitung von Joann Élart und gefördert von den \n"
-"<abbr title=\"Grands Réseaux de Recherche\">GRR</abbr> der Haute-Normandie "
-"– \n"
-"gewonnen wurden.\n"
-"Anne Touverey, Doktorandin der Musikwissenschaft an der Universität Rouen,\n"
-"hat im Rahmen des ersten Forschungsauftrags Datensätze anhand des Index "
-"Castil-Blaze\n"
-"(<em>Histoire de l’opéra-comique</em>, koordiniert von Alexandre Dratwicki "
-"und Patrick Taïeb\n"
-"[Lyon, Symétrie, 2012, 352 S.]) erstellt.\n"
-"Im Rahmen des zweiten Auftrags hat Claire Malandin, Musikwissenschafts-"
-"Studentin\n"
-"an der Universität Rouen, neue Datensätze aus dem Genre der Komödie, der "
-"Tragödie oder auch des Vaudeville erstellt."
 
 #: dezede/templates/pages/bibliographie.html:91
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "            La deuxième importation a concerné un ensemble de données "
-#| "relatives au répertoire du concert.\n"
-#| "            Réalisé dans le cadre du projet de recherche sur l’histoire "
-#| "du concert\n"
-#| "            dirigé par Patrick Taïeb et Hervé Lacombe\n"
-#| "            (« Répertoire des programmes de concerts en France »),\n"
-#| "            il comporte deux parties : les concerts parisiens de la "
-#| "Révolution à l’Empire,\n"
-#| "            sous la direction scientifique d’Étienne Jardin et de Patrick "
-#| "Taïeb ;\n"
-#| "            les Concerts populaires de musique classique (concerts "
-#| "Pasdeloup) réalisés par Yannick Simon.\n"
-#| "            L’intégration dans Dezède de ces deux ensembles de données "
-#| "réalisées entre 2009 et 2010 par Étienne Jardin\n"
-#| "            a fait l’objet d’une convention entre l’université de Rouen\n"
-#| "            et les deux autres partenaires qui en ont permis la "
-#| "réalisation,\n"
-#| "            le Palazzetto Bru Zane et les éditions Symétrie.\n"
-#| "          "
 msgid ""
 "\n"
 "            La deuxième importation a concerné un ensemble de données "
@@ -687,45 +606,8 @@ msgid ""
 "            le Palazzetto Bru Zane et les éditions Symétrie.\n"
 "          "
 msgstr ""
-"\n"
-"Im zweiten Datenimport wurden Daten aus dem Bereich des Konzert-Repertoires "
-"eingespeist.\n"
-"Diese Datengruppe, ein Bestandteil des von Patrick Taïeb und Hervé Lacombe\n"
-"geleiteten Forschungsprojekts über die Geschichte des Konzerts \n"
-"(\"Répertoire des programmes de concerts en France\")\n"
-"besteht aus zwei Teilen:\n"
-"die Pariser Konzerte von der Revolution bis zum Empire (Leitung Étienne "
-"Jardin und Patrick Taïeb)\n"
-"und die klassischen Konzerte für ein breites Publikum (Concerts Pasdeloup, "
-"Leitung Yannick Simon).\n"
-"Die Einspeisung dieser beiden Daten-Ensembles in Dezède durch Étienne "
-"Jardin \n"
-"von 2009 bis 2010 wurde in einem Abkommen\n"
-"zwischen der Universität Rouen und den beiden anderen an der Umsetzung des "
-"Projekts\n"
-"beteiligten Partnern, dem Palazetto Bru Zane und dem Verlag Symétrie, "
-"geregelt."
 
 #: dezede/templates/pages/bibliographie.html:123
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "            La troisième importation a permis de verser en 2014 des "
-#| "données\n"
-#| "            mises à disposition par\n"
-#| "            l’<abbr title=\"Association Française des Orchestres\">AFO</"
-#| "abbr>\n"
-#| "            dans le cadre d’une convention signée avec l’université de "
-#| "Rouen.\n"
-#| "            Fournies par les orchestres membres de cette association,\n"
-#| "            elles ont été corrigées, complétées et relues par\n"
-#| "            Claire Morvannou, Julie Graine, Joann Élart et Yannick "
-#| "Simon.\n"
-#| "            Ce premier chantier coordonné par Florent Girard, secrétaire\n"
-#| "            général de l’AFO, correspond au traitement complet des "
-#| "saisons\n"
-#| "            2010-2011, 2011-2012 et 2012-2013 de tous ces orchestres.\n"
-#| "          "
 msgid ""
 "\n"
 "            La troisième importation a permis de verser en 2014 des données\n"
@@ -739,37 +621,14 @@ msgid ""
 "            elles ont été corrigées, complétées et relues par\n"
 "            Claire Morvannou, Julie Graine, Joann Élart et Yannick Simon.\n"
 "            Ce premier chantier coordonné par Florent Girard, secrétaire\n"
-"            général de l’<abbr title=\"Association Française des Orchestres"
-"\">AFO</abbr>,\n"
+"            général de l’<abbr title=\"Association Française des "
+"Orchestres\">AFO</abbr>,\n"
 "            correspond au traitement complet des saisons 2010-2011,\n"
 "            2011-2012 et 2012-2013 de tous ces orchestres.\n"
 "          "
 msgstr ""
-"\n"
-"Im dritten Datenimport wurden 2014 im Rahmen eines Abkommens\n"
-"mit der Universität Rouen \n"
-"Daten der <abbr title=\"Association Française des Orchestres\">AFO</abbr> "
-"eingespeist.\n"
-"Die Daten wurden von den Mitgliedsorchestern des Verbunds geliefert\n"
-"und korrigiert, vervollständigt und redigiert von\n"
-"Claire Morvannou, Julie Graine, Joann Élart und Yannick Simon.\n"
-"In dieser ersten großen, vom Generalsekretär der AFO koordinierten "
-"Operation\n"
-"wurden die Spielzeiten aller Orchester \n"
-"des Verbunds der Jahre \n"
-"2010-2011, 2011-2012 und 2012-2013 vollständig erfasst. "
 
 #: dezede/templates/pages/bibliographie.html:146
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "            La quatrième importation correspond au versement des archives "
-#| "de l’Opéra Comique, numérisées à partir des collections des Archives "
-#| "Nationales de France et de l’Opéra Comique, dans le cadre d’une "
-#| "convention signée avec l’université de Rouen. Elles sont consultables "
-#| "dans un dossier inauguré le 13 novembre 2014  et contiennent 2 200 "
-#| "documents, soit environ 25 000 images.\n"
-#| "          "
 msgid ""
 "\n"
 "            La quatrième importation correspond au versement des archives "
@@ -783,13 +642,6 @@ msgid ""
 "            contiennent 2 200 documents, soit environ 25 000 images.\n"
 "          "
 msgstr ""
-"\n"
-"Der vierte Datenimport bestand aus dem Archiv der Opéra-Comique, das "
-"ausgehend von den Beständen des französischen Nationalarchivs und der Opéra-"
-"Comique im Rahmen eines Abkommens mit der Universität Rouen digitalisiert "
-"wurde.\n"
-"Das aus diesem Fonds erstellte Dossier ging am 13. November 2014 online und "
-"enthält 2200 Dokumente, was 25000 Bildern entspricht."
 
 #: dezede/templates/pages/bibliographie.html:164
 msgid ""
@@ -814,10 +666,8 @@ msgid "Référence"
 msgstr "Kurztitel"
 
 #: dezede/templates/pages/bibliographie.html:176
-#, fuzzy
-#| msgid "Ouvrage"
 msgid "Ouvrage ou site"
-msgstr "Buch/Artikel"
+msgstr ""
 
 #: dezede/templates/pages/contribute.html:8
 msgid "Pour contribuer"
@@ -850,8 +700,8 @@ msgid ""
 "        au terme de laquelle, si le projet est retenu,\n"
 "        un compte personnel est attribué au porteur de projet,\n"
 "        un tuteur est désigné pour suivre sa formation et une fiche de "
-"chercheur associé est ajoutée aux <a href=\"%(contributeurs_url)s"
-"\">contributeurs</a>.\n"
+"chercheur associé est ajoutée aux <a "
+"href=\"%(contributeurs_url)s\">contributeurs</a>.\n"
 "      "
 msgstr ""
 "\n"
@@ -862,8 +712,8 @@ msgstr ""
 "Einarbeitung begleitet, \n"
 "sowie eine Karteikarte erstellt, die den neuen assoziierten "
 "Wissenschaftler/\n"
-"die neue assoziierte Wissenschaftlerin zur Liste der <a href="
-"\"%(contributeurs_url)s\">Beiträger/innen</a> hinzufügt."
+"die neue assoziierte Wissenschaftlerin zur Liste der <a "
+"href=\"%(contributeurs_url)s\">Beiträger/innen</a> hinzufügt."
 
 #: dezede/templates/pages/contribute.html:34
 #, python-format
@@ -1044,28 +894,16 @@ msgid "Le comité éditorial est composé de trois membres :"
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:103
-#, fuzzy
-#| msgid ""
-#| "Maître de conférences en musicologie, université de Rouen (fondateur de "
-#| "Dezède)"
 msgid ""
 "Maître de conférences en musicologie, université de Rouen Normandie "
 "(fondateur de Dezède)"
 msgstr ""
-"Dozent für Musikwissenschaft an der Universität Rouen (Mitbegründer von "
-"Dezède)"
 
 #: dezede/templates/pages/presentation.html:107
-#, fuzzy
-#| msgid ""
-#| "Professeur des Universités en musicologie, université de Rouen (fondateur "
-#| "de Dezède)"
 msgid ""
 "Professeur des Universités en musicologie, université Toulouse – Jean Jaurès "
 "(fondateur de Dezède)"
 msgstr ""
-"Professor für Musikwissenschaft an der Universität Rouen (Mitbegründer von "
-"Dezède)"
 
 #: dezede/templates/pages/presentation.html:111
 msgid ""
@@ -1076,10 +914,8 @@ msgstr ""
 "(Mitbegründer von Dezède)"
 
 #: dezede/templates/pages/presentation.html:113
-#, fuzzy
-#| msgid "Son comité éditorial"
 msgid "Son comité scientifique"
-msgstr "Herausgeberkomitee"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:115
 msgid ""
@@ -1096,37 +932,6 @@ msgid "Ses propriétaires"
 msgstr "Urheber/in"
 
 #: dezede/templates/pages/presentation.html:122
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "            <span class=\"lead\">\n"
-#| "              L’invention de trois enseignants-chercheurs :\n"
-#| "              Joann Élart, Yannick Simon\n"
-#| "              et Patrick Taïeb</span>,\n"
-#| "            musicologues aux universités de Rouen et Paul-Valéry "
-#| "Montpellier 3.\n"
-#| "            Ils partagent un accord de co-propriété avec leur "
-#| "laboratoire\n"
-#| "            – le <abbr title=\"Groupe de Recherche d’Histoire\">GRHis</"
-#| "abbr> (<abbr title=\"Équipe d’accueil\">EA</abbr> 3831),\n"
-#| "            le <abbr title=\"Centre d’Études et de Recherche Éditer/"
-#| "Interpréter\">CÉRÉdI</abbr> (EA 3229)\n"
-#| "            et l’<abbr title=\"Institut de Recherche sur la Renaissance, "
-#| "l’Age Classique et les Lumières\">IRCL</abbr>\n"
-#| "            (<abbr title=\"Unité Mixte de Recherche\">UMR</abbr> 5186 du "
-#| "CNRS) –\n"
-#| "            et leur université de rattachement.\n"
-#| "            Hébergé sur les serveurs de la <abbr title=\"Très Grande "
-#| "Infrastructure de Recherche\">TGIR</abbr> Huma-Num,\n"
-#| "            Dezède est une ressource numérique <em>open source</em>\n"
-#| "            référencée par le numéro d’ISSN 2269-9473.\n"
-#| "            La première phase du développement a été rendue possible\n"
-#| "            grâce au soutien financier des universités de Rouen et Paul-"
-#| "Valéry Montpellier 3,\n"
-#| "            des laboratoires associés et de la Région Normandie\n"
-#| "            via les <abbr title=\"Grands Réseaux de Recherche\">GRR</"
-#| "abbr>.\n"
-#| "          "
 msgid ""
 "\n"
 "            <span class=\"lead\">\n"
@@ -1156,31 +961,6 @@ msgid ""
 "            via les <abbr title=\"Grands Réseaux de Recherche\">GRR</abbr>.\n"
 "          "
 msgstr ""
-"\n"
-"<span class=\"lead\">\n"
-"Eine Erfindung von drei Hochschulwissenschaftlern:\n"
-"Joann Élart, Yannick Simon und Patrick Taïeb</span>,\n"
-"Musikwissenschaftler an den Universitäten \n"
-"Rouen und Paul-Valéry Montpellier 3.\n"
-"Sie teilen sich das Urheberrecht mit ihren jeweiligen Forschungszentren –\n"
-"die <abbr title=\"Groupe de Recherche d’Histoire\">GRHis</abbr> (<abbr title="
-"\"Équipe d’accueil\">EA</abbr> 3831),\n"
-"das <abbr title=\"Centre d’Études et de Recherche Éditer/Interpréter"
-"\">CÉRÉdI</abbr> (EA 3229)\n"
-"und das <abbr title=\"Institut de Recherche sur la Renaissance, l’Age "
-"Classique et les Lumières\">IRCL</abbr>\n"
-"(<abbr title=\"Unité Mixte de Recherche\">UMR</abbr> 5186 du CNRS) –\n"
-"und ihren Universitäten.\n"
-"Dezède wird von den Servern der <abbr title=\"Très Grande Infrastructure de "
-"Recherche\">TGIR</abbr> Huma-Num\n"
-"gehostet und ist eine freie digitale Ressource\n"
-"mit dem ISSN-Kennzeichen 2269-9473.\n"
-"Die erste Entwicklungsphase wurde durch die finanzielle Förderung der "
-"Universitäten \n"
-"Rouen und Paul-Valéry Montpellier 3, der ins Projekt involvierten "
-"Forschungszentren\n"
-"sowie der Region Normandie über das Programm der <abbr title=\"Grands "
-"Réseaux de Recherche\">GRR</abbr> ermöglicht."
 
 #: dezede/templates/pages/presentation.html:163
 msgid "Les dossiers"
@@ -1260,22 +1040,6 @@ msgid "Les autorités"
 msgstr "Die Einheiten"
 
 #: dezede/templates/pages/presentation.html:228
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "            <span class=\"lead\">Au cœur de Dezède, des milliers "
-#| "d’autorités mises à la disposition de tous !</span>\n"
-#| "            La souplesse de l’application et l’homogénéisation de "
-#| "l’édition\n"
-#| "            résultent de la mise en commun d’autorités liées entre elles\n"
-#| "            par un système de gestion relationnelle et récursive :\n"
-#| "            évenements, œuvres, individus, ensembles, lieux, rôles, "
-#| "instruments,\n"
-#| "            professions, etc.\n"
-#| "            Elles font l’objet d’un contrôle scientifique basé sur le "
-#| "recoupement\n"
-#| "            d’ouvrages de référence.\n"
-#| "          "
 msgid ""
 "\n"
 "            <span class=\"lead\">Au cœur de Dezède, des milliers d’autorités "
@@ -1292,16 +1056,6 @@ msgid ""
 "internationaux.\n"
 "          "
 msgstr ""
-"\n"
-"<span class=\"lead\">Der Herz von Dezède: Tausende von Daten-Einheiten, \n"
-"die für alle frei zugänglich sind!</span>\n"
-"Die Flexibilität des Tools und die homogenisierte Editionsweise\n"
-"enstehen aus der Kombination von miteinander verknüpften Einheiten\n"
-"durch ein System, das rekursive und andere Beziehungen verwaltet:\n"
-"zwischen Ereignissen, Werken, Personen, Ensembles, Orten, Rollen, "
-"Instrumenten, Berufen usw.\n"
-"Die Einheiten unterliegen einer wissenschaftlichen Kontrolle durch\n"
-"das Abgleichen verschiedener Standardpublikationen."
 
 #: dezede/templates/pages/presentation.html:239
 msgid "Bibliographie des autorités"
@@ -1368,17 +1122,6 @@ msgid "Le filtre et les événements"
 msgstr "Filter und Ereignisse"
 
 #: dezede/templates/pages/presentation.html:267
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "            <span class=\"lead\">Rechercher des événements dans Dezède, "
-#| "rien de plus simple !</span>\n"
-#| "            Il suffit de se rendre dans le menu « événements » et "
-#| "d’utiliser le filtre.\n"
-#| "            Celui-ci permet de croiser différentes requêtes de tri :\n"
-#| "            recherche libre, période, tri par année civile ou par saison, "
-#| "lieu, œuvre, individu, ensemble.\n"
-#| "          "
 msgid ""
 "\n"
 "            <span class=\"lead\">Rechercher des événements dans Dezède.</"
@@ -1390,12 +1133,6 @@ msgid ""
 "lieu, œuvre, individu, ensemble.\n"
 "          "
 msgstr ""
-"\n"
-"<span class=\"lead\">Ereignisse in Dezède suchen: ein Kinderspiel!</span>\n"
-"Gehen Sie einfach ins Menü \"Ereignisse\" und benutzen Sie den Filter.\n"
-"Hier können Sie verschiedene Such- und Filterkriterien miteinander kreuzen:\n"
-"Freitextsuche, Zeitspanne, nach Kalenderjahr oder Spielzeit filtern, \n"
-"Ort, Werk, Person, Ensemble."
 
 #: dezede/templates/pages/presentation.html:274
 msgid "Chercher et filter des événements"
@@ -1474,19 +1211,6 @@ msgstr ""
 "Theaterwissenschaft, Kunstgeschichte, Tanzwissenschaft usw."
 
 #: dezede/templates/pages/presentation.html:310
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "            Dezède propose aux jeunes chercheurs inscrits en master\n"
-#| "            ou en thèse de doctorat une aide à l’édition\n"
-#| "            (mise à disposition des autorités, module d’exportation des "
-#| "annexes\n"
-#| "            avec mise en page et indexation automatique) et à la "
-#| "valorisation\n"
-#| "            des travaux universitaires (confidentialité des données "
-#| "personnelles,\n"
-#| "            possibilité de différer la publication en ligne).\n"
-#| "          "
 msgid ""
 "\n"
 "            Dezède propose aux jeunes chercheurs inscrits en master\n"
@@ -1500,31 +1224,8 @@ msgid ""
 "            la publication en ligne).\n"
 "          "
 msgstr ""
-"\n"
-"Dezède unterstützt Nachwuchswissenschaftler/innen während\n"
-"des Masters oder der Promotion bei der Edition\n"
-"(Bereitstellung der Einheiten, Modul zum Export der Anhänge\n"
-"mit Layout und automatischer Indexierung) sowie\n"
-"bei der adäquaten Präsentation ihrer Forschungsarbeiten\n"
-"(Schutz der persönlichen Daten, Möglichkeit, die Online-Publikation \n"
-"zeitlich zu verschieben)."
 
 #: dezede/templates/pages/presentation.html:321
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "            Tourné vers le développement de pratiques pédagogiques "
-#| "innovantes\n"
-#| "            en partie financées par un <abbr title=\"Bonus Qualité "
-#| "Enseignement\">BQE</abbr>\n"
-#| "            obtenu en 2014 à l’université de Rouen, Dezède est également\n"
-#| "            un support pour l’enseignement universitaire,\n"
-#| "            en particulier de la méthodologie et des technologies de "
-#| "l’information.\n"
-#| "            Les comptes personnels des étudiants sont liés à un groupe "
-#| "placé\n"
-#| "            sous la responsabilité d’un enseignant.\n"
-#| "          "
 msgid ""
 "\n"
 "            Tourné vers le développement de pratiques pédagogiques "
@@ -1541,15 +1242,6 @@ msgid ""
 "            sous la responsabilité d’un enseignant.\n"
 "          "
 msgstr ""
-"\n"
-"Dezède will eine innovative pädagogische Praxis fördern. \n"
-"Teilfinanziert von einem <abbr title=\"Bonus Qualité Enseignement\">BQE</"
-"abbr> (Exzellenzbonus), den die Universität Rouen 2014 erlangt hat, \n"
-"unterstützt Dezède auch die Hochschullehre, \n"
-"insbesondere im Bereich Methodologie und Informationstechnologie. \n"
-"Die persönlichen Nutzerkonten der Studierenden \n"
-"sind mit einer von einem/einer \n"
-"Lehrenden angeleiteten Gruppe verknüpft."
 
 #: dezede/templates/pages/presentation.html:334
 msgid "Découvrir l’outil de formation à la transcription"
@@ -1560,30 +1252,7 @@ msgid "Des partenaires"
 msgstr "Partner"
 
 #: dezede/templates/pages/presentation.html:342
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "            <span class=\"lead\">Dezède est une solution d’archivage pour "
-#| "les institutions et de promotion du spectacle vivant.</span>\n"
-#| "            L’application est à la disposition des institutions qui "
-#| "cherchent un portail sécurisé\n"
-#| "            pour la valorisation de leur patrimoine et de leur histoire.\n"
-#| "            Entre 2013 et 2015, trois partenariats ont été initiés.\n"
-#| "            Depuis 2013, les étudiants du master de musicologie de "
-#| "l’université de Rouen travaillent\n"
-#| "            à la réalisation\n"
-#| "            <a href=\"%(royaumont_url)s\">du dossier des programmes des "
-#| "concerts organisés à la Fondation Royaumont</a>.\n"
-#| "            Depuis 2014, <a href=\"%(afo_url)s\">les saisons de concerts "
-#| "et les archives audiovisuelles des orchestres\n"
-#| "            membres de l’<abbr title=\"Association Française des "
-#| "Orchestres\">AFO</abbr></a> sont\n"
-#| "            publiés et accessibles gratuitement dans Dezède.\n"
-#| "            Depuis le 13 novembre 2014, <a href=\"%(oc_url)s\">les "
-#| "archives de l’Opéra Comique</a>\n"
-#| "            sont consultables dans Dezède, publication rendue possible\n"
-#| "            dans le cadre d’une délégation au CNRS (IRCL, UMR 5186).\n"
-#| "          "
+#, python-format
 msgid ""
 "\n"
 "            <span class=\"lead\">Dezède est une solution d’archivage et de\n"
@@ -1598,8 +1267,8 @@ msgid ""
 "concerts donnés à l’abbaye de Royaumont</a>.\n"
 "            Depuis 2014, <a href=\"%(afo_url)s\">les saisons de concerts et "
 "les archives audiovisuelles des orchestres\n"
-"            membres de l’<abbr title=\"Association Française des Orchestres"
-"\">AFO</abbr></a> sont\n"
+"            membres de l’<abbr title=\"Association Française des "
+"Orchestres\">AFO</abbr></a> sont\n"
 "            publiés et accessibles gratuitement dans Dezède.\n"
 "            Depuis le 13 novembre 2014, <a href=\"%(oc_url)s\">les archives "
 "de l’Opéra Comique</a>\n"
@@ -1607,26 +1276,6 @@ msgid ""
 "            dans le cadre d’une délégation au CNRS (IRCL, UMR 5186).\n"
 "          "
 msgstr ""
-"\n"
-"<span class=\"lead\">Dezède bietet eine Archivierungs-Lösung für "
-"Institutionen und eine Präsentations-Plattform für das Musiktheater.</span>\n"
-"Das Tool steht Institutionen zur Verfügung, die ein gesichertes Portal\n"
-"für eine adäquate Darstellung ihrer Schätze und ihrer Geschichte suchen.\n"
-"Zwischen 2013 und 2015 sind drei Partnerschaften entstanden.\n"
-"Seit 2013 arbeiten die Master-Studierenden im Fach Musikwissenschaft der "
-"Universität Rouen \n"
-"an der Umsetzung des\n"
-"<a href=\"%(royaumont_url)s\">Dossiers der Konzertprogramme der Fondation "
-"Royaumont</a>.\n"
-"Seit 2014 sind die <a href=\"%(afo_url)s\">Konzert-Spielzeiten und Ton-Bild-"
-"Archive der \n"
-"Orchester der <abbr title=\"Association Française des Orchestres\">AFO</"
-"abbr></a> online \n"
-"und frei in Dezède zugänglich.\n"
-"Seit dem 13. November 2014 ist das <a href=\"%(oc_url)s\">Archiv der Opéra-"
-"Comique</a> \n"
-"in Dezède einsehbar. Diese Veröffentlichung wurde durch eine Mission am CNRS "
-"(IRCL, UMR 5186) ermöglicht."
 
 #: dezede/templates/pages/presentation.html:361
 msgid "Concerts à l’abbaye de Royaumont"
@@ -1637,29 +1286,14 @@ msgid "Association Française des Orchestres"
 msgstr "Association Française des Orchestres"
 
 #: dezede/templates/pages/presentation.html:369
-#, fuzzy
-#| msgid "Pour devenir partenaire, un contact :"
 msgid "Pour devenir partenaire :"
-msgstr "Um Partner zu werden, kontaktieren Sie bitte:"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:371
 msgid "Des auteurs"
 msgstr "Autoren/Autorinnen"
 
 #: dezede/templates/pages/presentation.html:373
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "            <span class=\"lead\">Chaque utilisateur est propriétaire de "
-#| "ses données.</span>\n"
-#| "            En les produisant à partir de son compte,\n"
-#| "            l’utilisateur (chercheur, étudiant, institution, etc.) en "
-#| "devient automatiquement\n"
-#| "            l’auteur et le propriétaire.\n"
-#| "            Cet affichage offre une transparence totale sur "
-#| "l’appartenance\n"
-#| "            et la provenance des données.\n"
-#| "          "
 msgid ""
 "\n"
 "            <span class=\"lead\">Chaque utilisateur est propriétaire de ses "
@@ -1673,15 +1307,6 @@ msgid ""
 "            entre les utilisateurs et modérées par le comité éditorial.\n"
 "          "
 msgstr ""
-"\n"
-"<span class=\"lead\">Alle Daten sind geistiges Eigentum \n"
-"des jeweiligen Beiträgers/der jeweiligen Beiträgerin.</span>\n"
-"Indem der Benutzer/die Benutzerin (Wissenschaftler/in, Studierende/r, "
-"Institution etc.) \n"
-"die Daten über sein/ihr Benutzerkonto eingibt, \n"
-"fallen ihm/ihr automatisch die Autorschaft und das Urheberrecht zu.\n"
-"Diese Art der Darstellung garantiert volle Transparenz über Herkunft und "
-"Autorschaft aller Daten. "
 
 #: dezede/templates/pages/presentation.html:388
 msgid "Le choix du nom"
@@ -1749,8 +1374,8 @@ msgstr ""
 "War er der uneheliche Sohn eines deutschen Prinzen\n"
 "– von Friedrich II. von Preußen, wie man es manchmal liest –\n"
 "oder ist er in Lyon geboren?\n"
-"Er selbst unterzeichnete seine Partituren mit \"DeZ.\", \"D.Z.\", \"Desaides"
-"\" oder \"Dezède\".\n"
+"Er selbst unterzeichnete seine Partituren mit \"DeZ.\", \"D.Z.\", "
+"\"Desaides\" oder \"Dezède\".\n"
 "Fétis erzählt übrigens folgende Anekdote:\n"
 "Bei seiner Ankunft in Paris \"konnte er sich [...] einer Pension von 25000 "
 "Francs erfreuen,\n"
@@ -1766,23 +1391,6 @@ msgstr ""
 "um seine Existenz zu sichern.\"  (<em>op. cit.</em>)"
 
 #: dezede/templates/pages/presentation.html:422
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                Ce choix s’est imposé pendant le déjeuner du 23 février "
-#| "2012,\n"
-#| "                quand Joann Élart, Étienne Jardin, Yannick Simon, Patrick "
-#| "Taïeb\n"
-#| "                et Bertrand Bordage ont abordé la question du nom\n"
-#| "                à donner à l’application. Il fallait un mot qui puisse "
-#| "incarner le projet :\n"
-#| "                la séduisante Carmen et l’emblématique Boieldieu furent "
-#| "évoqués avant de laisser place à Dezède,\n"
-#| "                proposition de Patrick Taïeb apparue évidente à tous :\n"
-#| "                le nom est une énigme en soi…\n"
-#| "                Et il fallait inventer un outil informatique pour "
-#| "parvenir, peut-être un jour, à la résoudre !\n"
-#| "              "
 msgid ""
 "\n"
 "                Ce choix s’est imposé pendant le déjeuner du 23 février "
@@ -1800,18 +1408,6 @@ msgid ""
 "peut-être un jour, à la résoudre !\n"
 "              "
 msgstr ""
-"\n"
-"Die Entscheidung für \"Dezède\" wurde während des Arbeitsessens am 23. "
-"Februar 2012 gefällt,\n"
-"als Joann Élart, Étienne Jardin, Yannick Simon, Patrick Taïeb\n"
-"und Bertrand Bordage sich die Frage nach einem geeigneten Namen für\n"
-"das Tool stellten. Es sollte ein Wort sein, das das Projekt verkörpert:\n"
-"nach der verführerischen Carmen und dem emblematischen Boieldieu kam "
-"schließlich\n"
-"der Name \"Dezède\" auf.\n"
-"Dieser Vorschlag Patrick Taïebs leuchtete sofort allen ein:\n"
-"Schließlich ist der Name an sich schon ein Rätsel…\n"
-"und nun galt es, ein digitales Tool zu erfinden, um es eines Tages zu lösen!"
 
 #: dezede/templates/pages/presentation.html:435
 msgid "En savoir plus sur <span class=\"sc\">Dezède</span> dans Dezède"
@@ -1901,8 +1497,8 @@ msgid ""
 "\n"
 "            <span class=\"lead\">\n"
 "              Dezède est une marque déposée à\n"
-"              l’<abbr title=\"Institut national de la propriété industrielle"
-"\">INPI</abbr>\n"
+"              l’<abbr title=\"Institut national de la propriété "
+"industrielle\">INPI</abbr>\n"
 "            </span>\n"
 "            depuis le 12 décembre 2013 sous le numéro national "
 "13 4 056 592.\n"
@@ -1918,42 +1514,6 @@ msgstr ""
 "unter dem nationalen Kennzeichen 134056592."
 
 #: dezede/templates/pages/presentation.html:519
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "            <span class=\"lead\">\n"
-#| "              Dezède puise ses origines dans un programme de recherche "
-#| "sur\n"
-#| "              <em>l’histoire du concert en France</em>\n"
-#| "            </span>\n"
-#| "            dirigé par Patrick Taïeb et Hervé Lacombe,\n"
-#| "            et dans la méthode d’investigation historique fondée sur\n"
-#| "            la reconstitution de programmes de concerts à partir de la "
-#| "presse et des archives.\n"
-#| "            Constitué autour du détachement de Patrick Taïeb à\n"
-#| "            l’<abbr title=\"Institut universitaire de France\">IUF</abbr> "
-#| "entre 2000 et 2005,\n"
-#| "            puis autour de l’<abbr title=\"Agence nationale de la "
-#| "recherche\">ANR</abbr> 06-BLAN-03448\n"
-#| "            entre 2006 et 2009, ce programme de recherche a été partagé\n"
-#| "            par plusieurs dizaines de chercheurs du monde entier pendant "
-#| "une décennie,\n"
-#| "            parmi lesquels Joann Élart et Yannick Simon ont été très "
-#| "actifs.\n"
-#| "            Si les efforts menés pour concevoir un outil informatique "
-#| "n’ont pas abouti à cette époque,\n"
-#| "            les expériences acquises ont permis toutefois d’établir un "
-#| "cahier des charges pour le réaliser :\n"
-#| "            la solution attendue devait être pérenne, gratuite, "
-#| "sécurisée, souple, illimitée, contributive et dématérialisée.\n"
-#| "            Partant de cet acquis et souhaitant élargir la méthode à "
-#| "l’ensemble des spectacles,\n"
-#| "            Joann Élart pouvait annoncer à ses collaborateurs le "
-#| "lancement du projet\n"
-#| "            Dezède en octobre 2011, suite aux premiers contacts pris avec "
-#| "Bertrand Bordage,\n"
-#| "            le concepteur du programme informatique.\n"
-#| "          "
 msgid ""
 "\n"
 "            <span class=\"lead\">\n"
@@ -1989,38 +1549,6 @@ msgid ""
 "            le concepteur du programme informatique.\n"
 "          "
 msgstr ""
-"\n"
-"<span class=\"lead\">\n"
-"Dezède ist aus einem Forschungsprogramm über <em>die Geschichte des Konzerts "
-"in Frankreich</em>\n"
-"heraus entstanden</span>,\n"
-"das von Patrick Taïeb und Hervé Lacombe geleitet wurde,\n"
-"und verschreibt sich einer historiografischen Forschungsmethode,\n"
-"die auf der Rekonstruktion von Konzertprogrammen durch Quellen aus "
-"zeitgenössicher Presse und Archiven basiert.\n"
-"An diesem Forschungsprogramm, das im Rahmen einer Mission von Patrick Taïeb "
-"am \n"
-"<abbr title=\"Institut universitaire de France\">IUF</abbr> von 2000 bis "
-"2005 sowie anschließend, \n"
-"von 2006 bis 2009, durch den \n"
-"<abbr title=\"Agence nationale de la recherche\">ANR</abbr>-"
-"Forschungsauftrag 06-BLAN-03448 umgesetzt wurde,\n"
-"waren zehn Jahre lang mehrere Dutzend Wissenschaftler/innen aus aller Welt\n"
-"beteiligt. Unter ihnen spielten Joann Élart und Yannick Simon eine wichtige "
-"Rolle.\n"
-"Die damals angestrengten Versuche, ein elektronisches Tool zu entwerfen, \n"
-"scheiterten zwar zunächst, doch anhand der so gewonnenen Erfahrungen\n"
-"konnte ein Lastenheft für seine spätere Umsetzung erstellt werden:\n"
-"Die erwünschte Lösung sollte dauerhaft sein, frei zugänglich, gesichert, "
-"flexibel, unbegrenzt,\n"
-"interaktiv und virtuell.\n"
-"Ausgehend von diesem Lastenheft und mit dem Wunsch, die Methode auf den "
-"gesamten Bereich des Musiktheaters auszuweiten,\n"
-"konnte Joann Élart seinen Partnern im Oktober 2011 den Start des Projekts "
-"Dezède ankündigen,\n"
-"nachdem die ersten Kontakte mit Bertrand Bordage, dem Entwickler der "
-"Programm-Software,\n"
-"geknüpft waren. "
 
 #: dezede/templates/pages/presentation.html:544
 msgid "Dezède en quelques dates"
@@ -2067,18 +1595,6 @@ msgid "23 février"
 msgstr "23. Februar"
 
 #: dezede/templates/pages/presentation.html:589
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                    Journée d’étude à l’Opéra de Rouen Haute-Normandie :\n"
-#| "                    <em>Rendez-vous au Théâtre des Arts de Rouen !</"
-#| "em><br />\n"
-#| "                    Présentation publique du prototype<br />\n"
-#| "                    Première rencontre avec Florent Girard, secrétaire "
-#| "général\n"
-#| "                    de l’<abbr title=\"Association Française des "
-#| "Orchestres\">AFO</abbr>\n"
-#| "                  "
 msgid ""
 "\n"
 "                    Journée d’étude à l’Opéra de Rouen Haute-Normandie :\n"
@@ -2087,18 +1603,10 @@ msgid ""
 "                    Présentation publique du prototype, baptisé Dezède le "
 "jour même<br />\n"
 "                    Première rencontre avec\n"
-"                    l’<abbr title=\"Association Française des Orchestres"
-"\">AFO</abbr>\n"
+"                    l’<abbr title=\"Association Française des "
+"Orchestres\">AFO</abbr>\n"
 "                  "
 msgstr ""
-"\n"
-"\n"
-"Tagung an der Oper Rouen Haute-Normandie:\n"
-"<em>Rendez-vous au Théâtre des Arts de Rouen!</em><br />\n"
-"Öffentliche Präsentation des Prototyps<br />\n"
-"Erstes Treffen mit Florent Girard,\n"
-"Generalsekretär der <abbr title=\"Association Française des Orchestres"
-"\">AFO</abbr>"
 
 #: dezede/templates/pages/presentation.html:600
 msgid "28 septembre"
@@ -2148,26 +1656,6 @@ msgid "5 décembre"
 msgstr "5. Dezember"
 
 #: dezede/templates/pages/presentation.html:632
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                    Premiers échanges avec la <abbr title=\"Direction de "
-#| "la Recherche et de la Valorisation\">DRV</abbr>\n"
-#| "                    de l’université de Rouen pour la mise en place d’un "
-#| "accord de copropriété\n"
-#| "                    entre les universités de Rouen et de Montpellier "
-#| "III,\n"
-#| "                    les laboratoires\n"
-#| "                    <abbr title=\"Centre d’Études et de Recherche Éditer/"
-#| "Interpréter\">CÉRÉdI</abbr>,\n"
-#| "                    <abbr title=\"Groupe de Recherche d’Histoire\">GRHis</"
-#| "abbr>\n"
-#| "                    et <abbr title=\"Institut de Recherche sur la "
-#| "Renaissance, l’Age Classique et les Lumières\">IRCL</abbr>,\n"
-#| "                    les trois enseignants-chercheurs inventeurs Joann "
-#| "Élart,\n"
-#| "                    Yannick Simon et Patrick Taïeb\n"
-#| "                  "
 msgid ""
 "\n"
 "                    Premiers échanges avec la <abbr title=\"Direction de la "
@@ -2187,20 +1675,6 @@ msgid ""
 "                    Yannick Simon et Patrick Taïeb\n"
 "                  "
 msgstr ""
-"\n"
-"Erster Austausch mit der <abbr title=\"Direction de la Recherche et de la "
-"Valorisation\">DRV</abbr>\n"
-"der Universität Rouen, um eine Vereinbarung zu treffen über die "
-"Mitinhaberschaft \n"
-"zwischen der Universität Rouen und der Universität Montpellier III,\n"
-"den Forschungszentren\n"
-"<abbr title=\"Centre d’Études et de Recherche Éditer/Interpréter\">CÉRÉdI</"
-"abbr>,\n"
-"<abbr title=\"Groupe de Recherche d’Histoire\">GRHis</abbr>\n"
-"und <abbr title=\"Institut de Recherche sur la Renaissance, l’Age Classique "
-"et les Lumières\">IRCL</abbr>\n"
-"und den drei Hochschulwissenschaftlern und Erfindern des Projekts\n"
-"Joann Élart, Yannick Simon und Patrick Taïeb"
 
 #: dezede/templates/pages/presentation.html:647
 msgid "20 décembre"
@@ -2241,13 +1715,6 @@ msgid "3 juin"
 msgstr "3. Juni"
 
 #: dezede/templates/pages/presentation.html:682
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                    Dezède est hébergé par la\n"
-#| "                    <abbr title=\"Très Grande Infrastructure de Recherche"
-#| "\">TGIR</abbr> Huma-Num\n"
-#| "                  "
 msgid ""
 "\n"
 "                    Dezède est hébergé par\n"
@@ -2255,9 +1722,6 @@ msgid ""
 "Huma-Num\n"
 "                  "
 msgstr ""
-"\n"
-"Dezède wird gehostet von der \n"
-"<abbr title=\"Très Grande Infrastructure de Recherche\">TGIR</abbr> Huma-Num."
 
 #: dezede/templates/pages/presentation.html:690
 msgid "24 juin"
@@ -2327,16 +1791,6 @@ msgid "9 décembre"
 msgstr "9. Dezember"
 
 #: dezede/templates/pages/presentation.html:734
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                    Présentation publique aux journées professionelles du "
-#| "groupe français\n"
-#| "                    de l’<abbr title=\"Association Internationale des "
-#| "Bibliothèques Musicales\">AIBM</abbr>\n"
-#| "                    au Centre de documentation de la musique "
-#| "contemporaine\n"
-#| "                  "
 msgid ""
 "\n"
 "                    Présentation publique aux journées professionnelles du "
@@ -2346,11 +1800,6 @@ msgid ""
 "                    au Centre de documentation de la musique contemporaine\n"
 "                  "
 msgstr ""
-"\n"
-"Öffentliche Präsentation auf der Fachtagung der französischen Abteilung\n"
-"der <abbr title=\"Association Internationale des Bibliothèques Musicales"
-"\">AIBM</abbr>\n"
-"im Centre de documentation de la musique contemporaine"
 
 #: dezede/templates/pages/presentation.html:743
 msgid "12 décembre"
@@ -2381,10 +1830,10 @@ msgstr "18. Dezember"
 msgid ""
 "\n"
 "                    Signature d’un contrat de licence\n"
-"                    avec l’<abbr title=\"Association Française des Orchestres"
-"\">AFO</abbr> au Sénat\n"
-"                    et création du dossier <a href=\"%(afo_url)s"
-"\">Association Française des Orchestres</a>\n"
+"                    avec l’<abbr title=\"Association Française des "
+"Orchestres\">AFO</abbr> au Sénat\n"
+"                    et création du dossier <a "
+"href=\"%(afo_url)s\">Association Française des Orchestres</a>\n"
 "                  "
 msgstr ""
 "\n"
@@ -2441,17 +1890,7 @@ msgid "23 novembre"
 msgstr "23. November"
 
 #: dezede/templates/pages/presentation.html:807
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "                    Signature de la convention avec la Fondation "
-#| "Royaumont\n"
-#| "                    pour l’accueil d’étudiants de master du département\n"
-#| "                    de musicologie de l’université de Rouen\n"
-#| "                    (réalisation du dossier\n"
-#| "                    <a href=\"%(royaumont_url)s\">Concerts à l’abbaye de "
-#| "Royaumont</a>)\n"
-#| "                  "
+#, python-format
 msgid ""
 "\n"
 "                    Signature de la convention avec la Fondation Royaumont\n"
@@ -2462,12 +1901,6 @@ msgid ""
 "Royaumont</a>)\n"
 "                  "
 msgstr ""
-"\n"
-"Unterzeichnung des Abkommens mit der Fondation Royaumont\n"
-"über die Aufnahme von Master-Studierenden des Instituts\n"
-"für Musikwissenschaft der Universität Rouen\n"
-"(Einrichtung des Dossiers \n"
-"<a href=\"%(royaumont_url)s\">Concerts à l’abbaye de Royaumont</a>)"
 
 #: dezede/templates/pages/presentation.html:818
 msgid "12 août"
@@ -2522,23 +1955,12 @@ msgid "30 septembre"
 msgstr "30. September"
 
 #: dezede/templates/pages/presentation.html:863
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                    Inauguration des outils pédagogiques financés par un\n"
-#| "                    <abbr title=\"Bonus Qualité Enseignement\">BQE</abbr> "
-#| "de l’université de Rouen en 2014\n"
-#| "                  "
 msgid ""
 "\n"
 "                    Inauguration des outils pédagogiques financés par une\n"
 "                    dotation de l’université de Rouen Normandie en 2014\n"
 "                  "
 msgstr ""
-"\n"
-"Einrichtung der pädagogischen Tools, die 2014 von einem\n"
-"<abbr title=\"Bonus Qualité Enseignement\">BQE</abbr> der Universität Rouen "
-"finanziert wurden."
 
 #: dezede/templates/pages/presentation.html:871
 msgid "2 décembre"
@@ -2553,10 +1975,8 @@ msgstr ""
 "Dezède</a> (ISSN 2492-9204)"
 
 #: dezede/templates/pages/presentation.html:877
-#, fuzzy
-#| msgid "2 décembre"
 msgid "16 décembre"
-msgstr "2. Dezember"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:880
 msgid ""
@@ -2569,10 +1989,8 @@ msgid ""
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:896
-#, fuzzy
-#| msgid "31 janvier"
 msgid "21 janvier"
-msgstr "31. Januar"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:899
 msgid ""
@@ -2585,25 +2003,14 @@ msgid "24 mars"
 msgstr "24. März"
 
 #: dezede/templates/pages/presentation.html:907
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                    Dezède rejoint <a href=\"https://musica.hypotheses."
-#| "org/\">le Consortium Musica</a>\n"
-#| "                    labellisé par la TGIR Huma-Num\n"
-#| "                  "
 msgid ""
 "\n"
 "                    Dezède rejoint le <a href=\"https://musica.hypotheses."
 "org/\">Consortium Musica1</a>\n"
-"                    labellisé par l’<abbr title=\"Infrastructure de Recherche"
-"\">IR*</abbr> Huma-Num\n"
+"                    labellisé par l’<abbr title=\"Infrastructure de "
+"Recherche\">IR*</abbr> Huma-Num\n"
 "                  "
 msgstr ""
-"\n"
-"Dezède wir Teil des <a href=\"https://musica.hypotheses.org/\">Consortium "
-"Musica</a>\n"
-"mit dem Label der TGIR Huma-Num"
 
 #: dezede/templates/pages/presentation.html:915
 msgid "9-10 mai"
@@ -2630,10 +2037,8 @@ msgid "30 000<sup>e</sup> événement"
 msgstr "3 000. Ereignis"
 
 #: dezede/templates/pages/presentation.html:932
-#, fuzzy
-#| msgid "1<sup>er</sup> décembre"
 msgid "1<sup>er</sup> octobre"
-msgstr "1. Dezember"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:935
 msgid ""
@@ -2654,66 +2059,44 @@ msgstr ""
 
 #: dezede/templates/pages/presentation.html:953
 #: dezede/templates/pages/presentation.html:1068
-#, fuzzy
-#| msgid "7 avril"
 msgid "30 avril"
-msgstr "7. April"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:955
 msgid "Rapprochement avec la Maîtrise de Radio France"
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:959
-#, fuzzy
-#| msgid "1er octobre"
 msgid "23 et 24 octobre"
-msgstr "1. Oktober"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:962
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                    Colloque à l’École nationale des chartes à Paris :\n"
-#| "                    <em>Nicolas Dezède. Un compositeur des Lumières à "
-#| "Paris</em>\n"
-#| "                  "
 msgid ""
 "\n"
 "                    Présentation de Dezède à Dresde dans le cadre de\n"
 "                    <em>Music Performance Ephemera</em>\n"
 "                  "
 msgstr ""
-"\n"
-"Konferenz an der École nationale des chartes in Paris:\n"
-"<em>Nicolas Dezède. Un compositeur des Lumières à Paris</em>"
 
 #: dezede/templates/pages/presentation.html:978
-#, fuzzy
-#| msgid "9-10 mai"
 msgid "30 mai"
-msgstr "9.-10. Mai"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:979
 msgid "Dezède est sur Facebook"
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:982
-#, fuzzy
-#| msgid "24 juin"
 msgid "9 juin"
-msgstr "24. Juni"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:983
-#, fuzzy
-#| msgid "Concerts à l’abbaye de Royaumont"
 msgid "Atelier Dezède #1 à l’Abbaye de Royaumont"
-msgstr "Konzerte in der Abtei von Royaumont"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:994
-#, fuzzy
-#| msgid "12 février"
 msgid "25 février"
-msgstr "12. Februar"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:997
 msgid ""
@@ -2731,60 +2114,37 @@ msgid ""
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:1008
-#, fuzzy
-#| msgid "24 juin"
 msgid "7 juin"
-msgstr "24. Juni"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1011
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                    Inauguration des outils pédagogiques financés par un\n"
-#| "                    <abbr title=\"Bonus Qualité Enseignement\">BQE</abbr> "
-#| "de l’université de Rouen en 2014\n"
-#| "                  "
 msgid ""
 "\n"
-"                    Journée <abbr title=\"Contenus et cORpus NUMérisés"
-"\">CorNum</abbr>\n"
+"                    Journée <abbr title=\"Contenus et cORpus "
+"NUMérisés\">CorNum</abbr>\n"
 "                    à l’université de Rouen Normandie\n"
 "                  "
 msgstr ""
-"\n"
-"Einrichtung der pädagogischen Tools, die 2014 von einem\n"
-"<abbr title=\"Bonus Qualité Enseignement\">BQE</abbr> der Universität Rouen "
-"finanziert wurden."
 
 #: dezede/templates/pages/presentation.html:1019
-#, fuzzy
-#| msgid "16 juin"
 msgid "15 juin"
-msgstr "16. Juni"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1020
-#, fuzzy
-#| msgid "Concerts à l’abbaye de Royaumont"
 msgid "Atelier Dezède #2 à l’Abbaye de Royaumont"
-msgstr "Konzerte in der Abtei von Royaumont"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1031
-#, fuzzy
-#| msgid "7 avril"
 msgid "7 avril"
-msgstr "7. April"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1032
-#, fuzzy
-#| msgid "4 000<sup>e</sup> événement"
 msgid "40 000<sup>e</sup> événement"
-msgstr "4 000. Ereignis"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1035
-#, fuzzy
-#| msgid "1<sup>er</sup> décembre"
 msgid "1<sup>er</sup> juin"
-msgstr "1. Dezember"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1038
 msgid ""
@@ -2800,22 +2160,16 @@ msgid ""
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:1048
-#, fuzzy
-#| msgid "12 août"
 msgid "2 août"
-msgstr "12. August"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1049
-#, fuzzy
-#| msgid "5 000<sup>e</sup> événement"
 msgid "50 000<sup>e</sup> événement"
-msgstr "5 000. Ereignis"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1052
-#, fuzzy
-#| msgid "2 décembre"
 msgid "19 décembre"
-msgstr "2. Dezember"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1055
 msgid "Ajout du <a href=\"https://dezede.org/rss.xml\">flux RSS</a>"
@@ -2834,10 +2188,8 @@ msgid ""
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:1081
-#, fuzzy
-#| msgid "9-10 mai"
 msgid "7 mai"
-msgstr "9.-10. Mai"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1084
 msgid ""
@@ -2850,59 +2202,42 @@ msgid ""
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:1093
-#, fuzzy
-#| msgid "16 juin"
 msgid "19 juin"
-msgstr "16. Juni"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1094
 msgid "Atelier Dezède #3"
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:1105
-#, fuzzy
-#| msgid "31 janvier"
 msgid "26 janvier"
-msgstr "31. Januar"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1106
 msgid "Dezède sur Instagram"
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:1109
-#, fuzzy
-#| msgid "12 février"
 msgid "23 février"
-msgstr "12. Februar"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1110
 msgid "Dezède souffle ses dix bougies"
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:1113
-#, fuzzy
-#| msgid "16 juin"
 msgid "18 juin"
-msgstr "16. Juni"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1114
 msgid "Atelier Dezède #4 (en ligne)"
 msgstr ""
 
 #: dezede/templates/pages/presentation.html:1117
-#, fuzzy
-#| msgid "24 juin"
 msgid "23 juin"
-msgstr "24. Juni"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1120
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                    Dezède rejoint <a href=\"https://musica.hypotheses."
-#| "org/\">le Consortium Musica</a>\n"
-#| "                    labellisé par la TGIR Huma-Num\n"
-#| "                  "
 msgid ""
 "\n"
 "                    Dezède rejoint le <a href=\"https://musica.hypotheses."
@@ -2913,16 +2248,10 @@ msgid ""
 "                    Huma-Num (lancement du Consortium à Tours)\n"
 "                  "
 msgstr ""
-"\n"
-"Dezède wir Teil des <a href=\"https://musica.hypotheses.org/\">Consortium "
-"Musica</a>\n"
-"mit dem Label der TGIR Huma-Num"
 
 #: dezede/templates/pages/presentation.html:1130
-#, fuzzy
-#| msgid "2 décembre"
 msgid "15 et 16 décembre"
-msgstr "2. Dezember"
+msgstr ""
 
 #: dezede/templates/pages/presentation.html:1133
 msgid ""
@@ -2984,15 +2313,6 @@ msgstr ""
 "einzusehen);"
 
 #: dezede/templates/pages/presentation.html:1178
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "                le choix de solutions techniques les plus pérennes,\n"
-#| "                notamment le langage de programmation <a href=\"https://"
-#| "www.python.org/\">Python</a>\n"
-#| "                qui permet d’écrire du code extrêmement lisible et "
-#| "simplifie nettement la maintenance ;\n"
-#| "              "
 msgid ""
 "\n"
 "                le choix des solutions techniques les plus pérennes,\n"
@@ -3002,11 +2322,6 @@ msgid ""
 "nettement la maintenance ;\n"
 "              "
 msgstr ""
-"\n"
-"die Verwendung von möglichst langfristig konzipierten technischen Lösungen,\n"
-"insbesondere der Programmiersprache <a href=\"https://www.python.org/"
-"\">Python</a>,\n"
-"die besonders lesbare Codes ermöglicht und die Wartung extrem vereinfacht."
 
 #: dezede/templates/pages/presentation.html:1187
 msgid ""
@@ -3066,10 +2381,8 @@ msgid "Création d’un compte contributeur"
 msgstr ""
 
 #: dezede/templates/pages/protection_donnees.html:30
-#, fuzzy
-#| msgid "Archives et chronologie des spectacles"
 msgid "Reconstitution de chronologies de spectacles"
-msgstr "Archiv und Chronologie von Konzert, Oper und Musiktheater"
+msgstr ""
 
 #: dezede/templates/pages/protection_donnees.html:39
 msgid ""
@@ -3096,8 +2409,8 @@ msgid ""
 "\n"
 "            Pour toute question sur vos données, les propriétaires du site "
 "peuvent être contactés\n"
-"          à l’adresse <a href=\"mailto:dezede.contact@gmail.com\">dezede."
-"contact@gmail.com</a>.\n"
+"          à l’adresse <a href=\"mailto:contact@dezede.org\">contact@dezede."
+"org</a>.\n"
 "          "
 msgstr ""
 
@@ -3226,8 +2539,8 @@ msgid ""
 "pourront se voir opposer\n"
 "            un refus dument justifié. Les demandes d’exercice des droits "
 "doivent être transmises à\n"
-"            l’adresse <a href=\"mailto:dezede.contact@gmail.com\">dezede."
-"contact@gmail.com</a>.\n"
+"            l’adresse <a href=\"mailto:contact@dezede.org\">contact@dezede."
+"org</a>.\n"
 "          "
 msgstr ""
 
@@ -3367,8 +2680,7 @@ msgid ""
 "l’objet d’un refus\n"
 "            dûment justifié. Les demandes d’exercice des droits doivent être "
 "transmises à l’adresse\n"
-"            <a href=\"mailto:dezede.contact@gmail.com\">dezede.contact@gmail."
-"com</a>.\n"
+"            <a href=\"mailto:contact@dezede.org\">contact@dezede.org</a>.\n"
 "          "
 msgstr ""
 
@@ -3475,107 +2787,5 @@ msgid "%s a vécu %s ans"
 msgstr "%s ist %s Jahre alt geworden. "
 
 #: dezede/views.py:151
-#, fuzzy
-#| msgid "Archives et chronologie des spectacles"
 msgid "Derniers travaux importants de chronologie des spectacles."
-msgstr "Archiv und Chronologie von Konzert, Oper und Musiktheater"
-
-#~ msgid "Field"
-#~ msgstr "Feld"
-
-#~ msgid "Value"
-#~ msgstr "Value"
-
-#~ msgid "Error message"
-#~ msgstr "Fehlermeldung"
-
-#~ msgid "Coordinates"
-#~ msgstr "Koordinaten"
-
-#, python-format
-#~ msgid "Importing %(count)s rows from “%(imported_table)s”"
-#~ msgstr "Importing %(count)s rows from “%(imported_table)s”"
-
-#~ msgid "dry run"
-#~ msgstr "dry run"
-
-#~ msgid "Imports data from these models:"
-#~ msgstr "Importiert Daten aus diesen Modellen:"
-
-#~ msgid "Legend:"
-#~ msgstr "Legende"
-
-#~ msgid "created"
-#~ msgstr "created"
-
-#~ msgid "updated"
-#~ msgstr "aktualisiert"
-
-#~ msgid "fetched"
-#~ msgstr "fetched"
-
-#~ msgid "skipped"
-#~ msgstr "skipped"
-
-#~ msgid "errored"
-#~ msgstr "fehlerhaft"
-
-#~ msgid "empty"
-#~ msgstr "leer"
-
-#~ msgid "Report"
-#~ msgstr "Meldung"
-
-#~ msgid "Model"
-#~ msgstr "Modell"
-
-#~ msgid "Creations"
-#~ msgstr "Creations"
-
-#~ msgid "Updates"
-#~ msgstr "Aktualisierunen"
-
-#~ msgid "Fetches"
-#~ msgstr "Fetches"
-
-#~ msgid "Skips"
-#~ msgstr "Skips"
-
-#~ msgid "Empties"
-#~ msgstr "Empties"
-
-#~ msgid "Errors"
-#~ msgstr "Fehler"
-
-#~ msgid "Équipe"
-#~ msgstr "Team"
-
-#~ msgid "Contributeurs"
-#~ msgstr "Beiträger/innen"
-
-#~ msgid "Partenariats"
-#~ msgstr "Partnerschaften"
-
-#~ msgid ""
-#~ "\n"
-#~ "            Du point de vue des responsabilités, Joann Élart\n"
-#~ "            est chargé de coordonner le développement méthodologique et "
-#~ "informatique,\n"
-#~ "            Yannick Simon s’occupe plus particulièrement\n"
-#~ "            des affaires juridiques,\n"
-#~ "            Patrick Taïeb est chargé du projet des répertoires de "
-#~ "concert.\n"
-#~ "          "
-#~ msgstr ""
-#~ "\n"
-#~ "Die einzelnen Verantwortlichkeitsgebiete sind verteilt wie folgt: \n"
-#~ "Joann Élart koordiniert die methodische und \n"
-#~ "technische Weiterentwicklung, \n"
-#~ "Yannick Simon ist insbesondere mit juristischen Fragen betraut, \n"
-#~ "und Patrick Taïeb ist Projektleiter des Konzert-Repertoires."
-
-#~ msgid "Novembre"
-#~ msgstr "November"
-
-#~ msgid "Inauguration de la revue <em>Florine</em>"
-#~ msgstr "Gründung der Zeitschrift <em>Florine</em>"
+msgstr ""

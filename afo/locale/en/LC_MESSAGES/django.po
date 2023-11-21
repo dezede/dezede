@@ -2,10 +2,11 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # Diane Tisdall <diane.tisdall@kcl.ac.uk>, 2016
-#
+# Lucia Pasini, 2023
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -13,13 +14,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2016-06-24 22:20+0000\n"
-"Last-Translator: Diane Tisdall <diane.tisdall@kcl.ac.uk>, 2016\n"
-"Language-Team: English (https://app.transifex.com/bertrandbordage/"
-"teams/11498/en/)\n"
-"Language: en\n"
+"Last-Translator: Lucia Pasini, 2023\n"
+"Language-Team: English (https://app.transifex.com/bertrandbordage/teams/11498/en/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: afo/models.py:14
@@ -28,11 +28,11 @@ msgstr "event"
 
 #: afo/models.py:15
 msgid "nom du festival"
-msgstr "Festival name"
+msgstr "festival name"
 
 #: afo/models.py:16
 msgid "code ou titre de la tournée"
-msgstr "Tour code or title"
+msgstr "code or title of tour"
 
 #: afo/models.py:18
 msgid "cycle"
@@ -40,15 +40,15 @@ msgstr "cycle"
 
 #: afo/models.py:19
 msgid "code du programme"
-msgstr "programme code"
+msgstr "program code"
 
 #: afo/models.py:21
 msgid "titre du programme"
-msgstr "title code"
+msgstr "program title"
 
 #: afo/models.py:24
 msgid "lyrique version scénique"
-msgstr "Opera, staged version"
+msgstr "opera, stage version"
 
 #: afo/models.py:25
 msgid "musique de chambre"
@@ -56,11 +56,11 @@ msgstr "chamber music"
 
 #: afo/models.py:26
 msgid "lyrique version concert"
-msgstr "Opera, concert version"
+msgstr "opera, concert version"
 
 #: afo/models.py:27
 msgid "symphonique (dont chœur/récital)"
-msgstr "symphonic (includes choir/recital)"
+msgstr "symphonic (including choir/recital)"
 
 #: afo/models.py:28
 msgid "chorégraphique"
@@ -72,11 +72,11 @@ msgstr "other"
 
 #: afo/models.py:31
 msgid "typologie artistique du programme"
-msgstr "Artistic typology of programme "
+msgstr "artistic typology of the program "
 
 #: afo/models.py:35
 msgid "concert commenté/présenté"
-msgstr "lecture-concert"
+msgstr "concert with commentary/lecture"
 
 #: afo/models.py:36
 msgid "concert participatif"
@@ -92,11 +92,11 @@ msgstr "local audience"
 
 #: afo/models.py:44
 msgid "public empêché (santé, handicap, justice)"
-msgstr "inaccessible audience (ill health, disability, in prison)"
+msgstr "audience in difficulty (health, disability or justice issues)"
 
 #: afo/models.py:45
 msgid "seniors"
-msgstr "senior citizens"
+msgstr "seniors"
 
 #: afo/models.py:46
 msgid "jeunes"
@@ -104,7 +104,7 @@ msgstr "young people"
 
 #: afo/models.py:47
 msgid "jeunes en temps scolaire"
-msgstr "young people of school age"
+msgstr "school-age children"
 
 #: afo/models.py:48
 msgid "jeunes hors temps scolaire"
@@ -112,15 +112,15 @@ msgstr "out-of-school youth"
 
 #: afo/models.py:50
 msgid "public spécifique"
-msgstr "specific public"
+msgstr "specific audience"
 
 #: afo/models.py:53
 msgid "participation aux frais"
-msgstr "contribution to costs"
+msgstr "contribution to expenses"
 
 #: afo/models.py:54
 msgid "autoproduction"
-msgstr "independent production"
+msgstr "self-production"
 
 #: afo/models.py:55
 msgid "contrat de cession"
@@ -128,11 +128,11 @@ msgstr "contract of assignment"
 
 #: afo/models.py:56
 msgid "contrat de coproduction"
-msgstr "co-production agreement"
+msgstr "co-production contract"
 
 #: afo/models.py:57
 msgid "contrat de coréalisation"
-msgstr "co-production agreement"
+msgstr "co-direction contract"
 
 #: afo/models.py:58
 msgid "location"
@@ -144,7 +144,7 @@ msgstr "production method"
 
 #: afo/models.py:64
 msgid "nombre de musiciens permanents convoqués (dont remplaçants)"
-msgstr "number of permanent musicians requested (including replacements)"
+msgstr "number of permanent musicians requested (including substitutes)"
 
 #: afo/models.py:67
 msgid "nombre de musiciens remplaçants"
@@ -164,7 +164,7 @@ msgstr "exempt tickets"
 
 #: afo/models.py:74
 msgid "entrées payantes"
-msgstr "paid tickets"
+msgstr "paying tickets"
 
 #: afo/models.py:76
 msgid "entrées scolaires"
@@ -200,11 +200,11 @@ msgstr "national"
 
 #: afo/models.py:96
 msgid "conventionnée"
-msgstr "subsidised"
+msgstr "subsidized"
 
 #: afo/models.py:98
 msgid "type de scène"
-msgstr "type of stage work"
+msgstr "type of scene"
 
 #: afo/models.py:101
 msgid "dédiée à la musique"

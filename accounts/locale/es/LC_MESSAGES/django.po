@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 18:26+0200\n"
+"POT-Creation-Date: 2023-11-21 14:49+0100\n"
 "PO-Revision-Date: 2012-10-06 19:01+0000\n"
 "Last-Translator: Marie Salgues <marie.salgues@laposte.net>, 2016\n"
 "Language-Team: Spanish (http://app.transifex.com/bertrandbordage/dezede/"
@@ -20,32 +20,32 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
 "1 : 2;\n"
 
-#: accounts/admin.py:59
+#: accounts/admin.py:58
 msgid "Informations personnelles"
 msgstr "Datos personales"
 
-#: accounts/admin.py:64
+#: accounts/admin.py:63
 #: accounts/templates/accounts/hierarchicuser_detail.html:32
 msgid "Autorité associée"
 msgstr "Autoridad asociada"
 
-#: accounts/admin.py:66
+#: accounts/admin.py:65
 msgid "À saisir s’il existe une autorité sur vous dans la base de données."
 msgstr "Completar si existe una autoridad sobre usted en la base de datos."
 
-#: accounts/admin.py:69
+#: accounts/admin.py:68
 msgid "Responsabilité scientifique"
 msgstr "Responsabilidad científica"
 
-#: accounts/admin.py:71
+#: accounts/admin.py:70
 msgid "Informations complémentaires"
 msgstr "Datos complementarios"
 
-#: accounts/admin.py:74
+#: accounts/admin.py:73
 msgid "Permissions"
 msgstr "Permisos"
 
-#: accounts/admin.py:77
+#: accounts/admin.py:76
 msgid "Important dates"
 msgstr "Importante fechas"
 
@@ -117,35 +117,35 @@ msgstr "Tipo de autoridad asociada"
 msgid "identifiant de l’autorité associée"
 msgstr "Nombre de usuario de la autoridad asociada"
 
-#: accounts/models.py:92 accounts/views.py:279
+#: accounts/models.py:92
 msgid "responsable scientifique"
 msgstr "responsable científico"
 
-#: accounts/models.py:98
+#: accounts/models.py:101
 msgid "Veut être responsable scientifique"
 msgstr "Quiere ser responsable científico"
 
-#: accounts/models.py:100
+#: accounts/models.py:103
 msgid "photographie d’identité"
 msgstr "foto tamaño carnet"
 
-#: accounts/models.py:104
+#: accounts/models.py:107
 msgid "présentation"
 msgstr "presentación"
 
-#: accounts/models.py:105
+#: accounts/models.py:108
 msgid "fonctions au sein de l’équipe"
 msgstr "Funciones en el equipo"
 
-#: accounts/models.py:107
+#: accounts/models.py:110
 msgid "publications"
 msgstr "publicaciones"
 
-#: accounts/models.py:113
+#: accounts/models.py:118
 msgid "utilisateur"
 msgstr "usuario"
 
-#: accounts/models.py:114
+#: accounts/models.py:119
 msgid "utilisateurs"
 msgstr "usuarios"
 
@@ -323,16 +323,16 @@ msgid ""
 "d’administration, cliquez sur ce lien :\n"
 "%(site_url)s%(grant_to_admin_url)s\n"
 "\n"
-"Vous pouvez consulter et modifier ses données complètes sur %(site_url)s"
-"%(change_user_url)s.\n"
+"Vous pouvez consulter et modifier ses données complètes sur "
+"%(site_url)s%(change_user_url)s.\n"
 msgstr ""
 "\n"
 "Si desea aceptarlo y darle así acceso a la interfaz de administración, haga "
 "clic en este enlace:\n"
 "%(site_url)s%(grant_to_admin_url)s\n"
 "\n"
-"Puede usted consultar y modificar los datos completos de él en %(site_url)s"
-"%(change_user_url)s.\n"
+"Puede usted consultar y modificar los datos completos de él en "
+"%(site_url)s%(change_user_url)s.\n"
 
 #: accounts/templates/accounts/granted_to_admin_email.txt:4
 #, python-format
@@ -383,50 +383,26 @@ msgstr "[Dezède] Acceso autorizado a la administración"
 msgid "Liste des utilisateurs"
 msgstr "Lista de los usuarios"
 
-#: accounts/views.py:165
+#: accounts/views.py:164
 msgid "Comité éditorial"
 msgstr "Comité editorial"
 
-#: accounts/views.py:182
-#, fuzzy
-#| msgid "Responsabilité scientifique"
+#: accounts/views.py:181
 msgid "Comité scientifique"
-msgstr "Responsabilidad científica"
+msgstr ""
 
-#: accounts/views.py:224
-#, fuzzy
-#| msgid "Contributeurs"
+#: accounts/views.py:223
 msgid "Principaux contributeurs"
-msgstr "Contribuidores"
+msgstr ""
 
-#: accounts/views.py:234
+#: accounts/views.py:233
 msgid "Équipe de développement"
 msgstr "Equipo de desarrollo"
 
-#: accounts/views.py:245
+#: accounts/views.py:244
 msgid "Propriétaires"
 msgstr "Propietarios"
 
-#: accounts/views.py:256
+#: accounts/views.py:255
 msgid "Partenaires"
 msgstr "Colaboradores"
-
-#: accounts/views.py:268
-msgid "membre"
-msgstr "miembro"
-
-#: accounts/views.py:269
-msgid "membres"
-msgstr "miembros"
-
-#: accounts/views.py:273
-msgid "disciple"
-msgstr "discípulo"
-
-#: accounts/views.py:274
-msgid "disciples"
-msgstr "discípulos"
-
-#: accounts/views.py:277
-msgid "appartenance"
-msgstr "pertenencia"
