@@ -108,9 +108,9 @@ class Dossier(TreeModelMixin, PublishedModel):
         indexes = [
             *PathField.get_indexes('dossiers', 'path'),
             # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='dossierevenements_search'),
+            GinIndex('search_vector', name='dossier_search'),
             # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='dossierevenements_autocomplete'),
+            GinIndex('autocomplete_vector', name='dossier_autocomplete'),
         ]
 
     @property
