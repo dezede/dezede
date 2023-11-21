@@ -63,6 +63,7 @@ def frontend_admin(context, obj=None, size='xs'):
 @register.inclusion_tag('routines/data_table_attr.html', takes_context=True)
 def data_table_attr(
     context, attr, verbose_name=None, title=None, obj=None, caps=False,
+    info_link=None, info_title=None,
 ):
     if obj is None:
         obj = context['object']
@@ -100,6 +101,8 @@ def data_table_attr(
         'title': title,
         'value': value,
         'show_links': isinstance(field, HTMLField),
+        'info_title': info_title,
+        'info_link': info_link,
     }
 
 

@@ -20,7 +20,7 @@ class DezedeConfig(AppConfig):
                 '{% endcompress %}')
         try:
             html = Template(html).render(Context())
-        except UncompressableFileError:
+        except (UncompressableFileError, ValueError):
             warn('Unable to apply front-end styling to the admin!')
         else:
             settings.TINYMCE_DEFAULT_CONFIG['content_css'] = re.search(

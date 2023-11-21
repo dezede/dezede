@@ -1,13 +1,45 @@
 from django.apps import apps
+from django.contrib.admin.models import LogEntry
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from django.db.models import Manager, QuerySet
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import post_save, pre_delete, pre_save
+from django.dispatch import receiver
 from django_rq import job
 import django_rq
 from haystack.signals import BaseSignalProcessor
 
+from common.utils.html import sanitize_html
+from .forms import FasterModelChoiceIterator
+from .models.base import SearchVectorAbstractModel
 from .search_indexes import get_haystack_index
+
+
+@receiver(pre_save)
+def handle_whitespaces(sender, **kwargs):
+    # We skip LogEntry because the logged entry has already been saved
+    # (and sanitized).
+    if sender is LogEntry:
+        return
+
+    # We start by stripping all leading and trailing whitespaces.
+    obj = kwargs['instance']
+    for field_name in [f.attname for f in obj._meta.fields]:
+        v = getattr(obj, field_name)
+        if hasattr(v, 'strip'):
+            setattr(obj, field_name, sanitize_html(v.strip()))
+    # Then we call the specific whitespace handler of the model (if it exists).
+    if hasattr(obj, 'handle_whitespaces'):
+        obj.handle_whitespaces()
+
+
+@receiver(pre_save)
+def update_search_vector(sender, **kwargs):
+    if not issubclass(sender, SearchVectorAbstractModel):
+        return
+
+    instance = kwargs['instance']
+    instance.set_search_vectors()
 
 
 def get_obj_key(obj, id_attr='pk'):
@@ -118,3 +150,6 @@ class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
             result_ttl=0,  # Doesn't store result
             timeout=3600,  # Avoids never-ending jobs
         )
+
+
+FasterModelChoiceIterator.register_cleanup_signal()

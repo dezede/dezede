@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, PROTECT, URLField,
     CASCADE, PositiveSmallIntegerField, FileField, BooleanField, DateField,
-    TextField, Q, PositiveIntegerField,
+    TextField, Q, PositiveIntegerField, OuterRef, Exists,
 )
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -44,7 +44,9 @@ class TypeDeSource(CommonModel, SlugModel):
                             db_index=True, help_text=PLURAL_MSG)
     # TODO: Ajouter un classement et changer ordering en conséquence.
 
-    class Meta(object):
+    search_fields = ['nom', 'nom_pluriel']
+
+    class Meta(CommonModel.Meta):
         verbose_name = _('type de source')
         verbose_name_plural = _('types de source')
         ordering = ('slug',)
@@ -70,10 +72,15 @@ class SourceQuerySet(PublishedQuerySet):
         return sources.items()
 
     def prefetch(self):
-        return self.select_related('type').only(
+        return self.select_related('type', 'parent').annotate(
+            has_children_images=Exists(self.model.objects.filter(
+                parent=OuterRef('pk'), type_fichier=FileAnalyzer.IMAGE
+            )),
+        ).only(
             'titre', 'numero', 'folio', 'page', 'lieu_conservation',
             'cote', 'url', 'transcription', 'date', 'date_approx',
             'type__nom', 'type__nom_pluriel', 'fichier', 'type_fichier',
+            'parent',
         )
 
     def with_video(self):
@@ -239,7 +246,16 @@ class Source(AutoriteModel):
 
     objects = SourceManager()
 
-    class Meta:
+    search_fields = [
+        'titre',
+        'date',
+        'date_approx',
+        'numero',
+        'lieu_conservation',
+        'cote',
+    ]
+
+    class Meta(AutoriteModel.Meta):
         verbose_name = _('source')
         verbose_name_plural = _('sources')
         ordering = (
@@ -386,13 +402,14 @@ class Source(AutoriteModel):
     def is_video(self):
         return self.type_fichier == FileAnalyzer.VIDEO
 
+    @cached_property
     def has_children_images(self):
         return self.children.filter(type_fichier=FileAnalyzer.IMAGE).exists()
 
     def has_images(self):
         return (
             self.type_fichier == FileAnalyzer.IMAGE
-            or self.has_children_images()
+            or self.has_children_images
         )
 
     def has_fichiers(self):
@@ -491,14 +508,14 @@ class Source(AutoriteModel):
 
     @cached_property
     def prev_page(self):
-        if self.parent is not None:
+        if self.parent is not None and self.position is not None:
             return self.parent.children.exclude(pk=self.pk).filter(
                 position__lte=self.position,
             ).order_by('-position').first()
 
     @cached_property
     def next_page(self):
-        if self.parent is not None:
+        if self.parent is not None and self.position is not None:
             return self.parent.children.exclude(pk=self.pk).filter(
                 position__gte=self.position,
             ).order_by('position').first()
@@ -595,13 +612,10 @@ class Source(AutoriteModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return (
-            'type__nom__unaccent__icontains', 'titre__unaccent__icontains',
-            'date__icontains', 'date_approx__unaccent__icontains',
-            'numero__unaccent__icontains',
-            'lieu_conservation__unaccent__icontains',
-            'cote__unaccent__icontains',
-        )
+        return [
+            'autocomplete_vector__autocomplete',
+            'type__autocomplete_vector__autocomplete',
+        ]
 
 
 class AudioVideoAbstract(Source):

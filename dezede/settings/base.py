@@ -204,7 +204,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
     'plugins': 'contextmenu,fullscreen,inlinepopups,nonbreaking,paste,preview,searchreplace,table,smallcaps',
     'theme_advanced_buttons1': 'fullscreen,preview,code,|,selectall,cut,copy,paste,pasteword,|,undo,redo,|,link,unlink,|,charmap,nonbreaking,|,search',
-    'theme_advanced_buttons2': 'removeformat,formatselect,|,smallcaps,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justify,|,bullist,numlist,outdent,indent,|,sub,sup',
+    'theme_advanced_buttons2': 'removeformat,formatselect,|,smallcaps,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justify,|,bullist,numlist,outdent,indent,blockquote,|,sub,sup',
     'theme_advanced_buttons3': 'tablecontrols',
     'theme_advanced_toolbar_location': 'top',
     'theme_advanced_toolbar_align': 'center',
@@ -350,10 +350,13 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 COMPRESS_ENABLED = True
 COMPRESS_OUTPUT_DIR = ''
-COMPRESS_CSS_FILTERS = (
-    'compressor.filters.css_default.CssAbsoluteFilter',
-    'compressor.filters.cssmin.CSSMinFilter',
-)
+COMPRESS_FILTERS = {
+    'css': [
+        'compressor.filters.css_default.CssAbsoluteFilter',
+        'compressor.filters.cssmin.CSSMinFilter',
+    ],
+    'js': ['compressor.filters.jsmin.rJSMinFilter'],
+}
 NPM_BINARY_PATH = BASE_DIR / 'node_modules/.bin/'
 COMPRESS_PRECOMPILERS = (
     ('text/less', f"{NPM_BINARY_PATH / 'lessc'} {{infile}} {{outfile}}"),
@@ -439,3 +442,8 @@ LOGGING = {
         },
     }
 }
+
+# Custom settings
+
+SEARCH_CONFIG = 'french_unaccent_including_stopwords'
+AUTOCOMPLETE_CONFIG = 'simple_unaccent'

@@ -1,6 +1,7 @@
-from functools import partial, reduce
 import operator
+from functools import partial, reduce
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin import (register, TabularInline, StackedInline,
                                   ModelAdmin, HORIZONTAL)
@@ -8,7 +9,8 @@ from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.admin import OSMGeoAdmin
-from django.db.models import Q, TextField
+from django.contrib.postgres.search import SearchQuery
+from django.db.models import Q, TextField, ForeignKey
 from django.forms.models import modelformset_factory
 from django.shortcuts import redirect
 from django.utils.html import format_html_join
@@ -18,13 +20,15 @@ from reversion.admin import VersionAdmin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 from tinymce.widgets import TinyMCE
 
+from accounts.models import HierarchicUser
 from common.utils.cache import is_user_locked, lock_user
 from common.utils.file import FileAnalyzer
 from .models import *
+from .models.base import CommonModel
 from .forms import (
     OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
     ElementDeDistributionForm, EnsembleForm, SaisonForm, PartieForm,
-    LieuAdminForm,
+    LieuAdminForm, FasterModelChoiceField,
 )
 from .jobs import (
     events_to_pdf as events_to_pdf_job, split_pdf as split_pdf_job,
@@ -44,14 +48,21 @@ __all__ = ()
 class CustomBaseModel(BaseModelAdmin):
     # FIXME: Utiliser un AuthenticationBackend personnalisé.
 
+    # Speeds up ForeignKeys in `list_editable` by caching the choices.
+    formfield_overrides = {
+        ForeignKey: {'form_class': FasterModelChoiceField},
+    }
+
     def check_user_ownership(self, request, obj, has_class_permission):
         if not has_class_permission:
             return False
         user = request.user
-        if obj is not None and not user.is_superuser \
-                and obj.owner not in user.get_descendants(include_self=True):
-            return False
-        return True
+        return (
+            obj is None or user.is_superuser
+            or user.get_descendants(
+                include_self=True
+            ).filter(pk=obj.owner_id).exists()
+        )
 
     def has_change_permission(self, request, obj=None):
         has_class_permission = super(CustomBaseModel,
@@ -70,9 +81,11 @@ class CustomBaseModel(BaseModelAdmin):
     def get_queryset(self, request):
         user = request.user
         qs = super(CustomBaseModel, self).get_queryset(request)
-        if not user.is_superuser and IS_POPUP_VAR not in request.GET:
-            qs = qs.filter(
-                owner__in=user.get_descendants(include_self=True))
+        if issubclass(qs.model, CommonModel):
+            if not user.is_superuser and IS_POPUP_VAR not in request.GET:
+                return qs.filter(
+                    owner__in=user.get_descendants(include_self=True),
+                )
         return qs
 
 
@@ -87,6 +100,23 @@ PERIODE_D_ACTIVITE_FIELDSET = (_('Période d’activité'), {
 #
 # Filters
 #
+
+
+class OwnerListFilter(SimpleListFilter):
+    title = _('propriétaire')
+    parameter_name = 'owner_by_reverse_full_name'
+
+    def lookups(self, request, model_admin):
+        return [
+            (owner.pk, owner.html(tags=False, reverse=True))
+            for owner in HierarchicUser.objects.all()
+        ]
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value:
+            return queryset.filter(owner__pk=value)
+        return queryset
 
 
 class HasRelatedObjectsListFilter(SimpleListFilter):
@@ -379,35 +409,9 @@ class SourcePartieInline(TabularInline):
 #
 
 
-# FIXME: Workaround for https://code.djangoproject.com/ticket/26184
-#        Remove when fixed.
-def lookup_needs_distinct(opts, lookup_path):
-    """
-    Returns True if 'distinct()' should be used to query the given lookup path.
-    """
-    field = None
-    # Go through the fields (following all relations) and look for an m2m
-    for lookup_part in lookup_path.split('__'):
-        if field is not None:
-            # Checks whether the current lookup part is not a field.
-            try:
-                if field.get_transform(lookup_part) is not None \
-                        or field.get_lookup(lookup_part) is not None:
-                    continue
-            except (NotImplementedError, TypeError):
-                continue
-        field = opts.get_field(lookup_part)
-        if hasattr(field, 'get_path_info'):
-            # This field is a relation, update opts to follow the relation
-            path_info = field.get_path_info()
-            opts = path_info[-1].to_opts
-            if any(path.m2m for path in path_info):
-                # This field is a m2m relation so we know we need to call distinct
-                return True
-    return False
-
-
 class CommonAdmin(CustomBaseModel, ModelAdmin):
+    list_select_related = ['owner']
+    search_fields = ['search_vector']
     list_per_page = 20
     save_as = True
     additional_fields = ('owner',)
@@ -415,7 +419,9 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
     admin_fields = ()
     additional_list_display = ('owner',)
     additional_list_editable = ()
-    additional_list_filters = ('owner', HasRelatedObjectsListFilter,)
+    additional_list_filters = (
+        OwnerListFilter, HasRelatedObjectsListFilter,
+    )
     fieldsets_and_inlines_order = ()
 
     def __init__(self, *args, **kwargs):
@@ -503,46 +509,31 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
         return NewChangeList
 
     def get_search_results(self, request, queryset, search_term):
+        search_fields = self.get_search_fields(request)
+        if not search_term or not search_fields:
+            return queryset, False
+
         search_term = replace(search_term)
 
-        # FIXME: What follows is a copy of the original get_search_results.
-        #        It is a workaround to https://code.djangoproject.com/ticket/26184
-        #        Remove when fixed.
+        for word in search_term.split():
+            search_query = SearchQuery(word, config=settings.SEARCH_CONFIG)
+            queryset = queryset.filter(reduce(operator.or_, [
+                Q(**{search_field: search_query})
+                for search_field in search_fields
+            ]))
 
-        def construct_search(field_name):
-            if field_name.startswith('^'):
-                return "%s__istartswith" % field_name[1:]
-            elif field_name.startswith('='):
-                return "%s__iexact" % field_name[1:]
-            elif field_name.startswith('@'):
-                return "%s__search" % field_name[1:]
-            else:
-                return "%s__icontains" % field_name
-
-        use_distinct = False
-        search_fields = self.get_search_fields(request)
-        if search_fields and search_term:
-            orm_lookups = [construct_search(str(search_field))
-                           for search_field in search_fields]
-            for bit in search_term.split():
-                or_queries = [Q(**{orm_lookup: bit})
-                              for orm_lookup in orm_lookups]
-                queryset = queryset.filter(reduce(operator.or_, or_queries))
-            if not use_distinct:
-                for search_spec in orm_lookups:
-                    if lookup_needs_distinct(self.opts, search_spec):
-                        use_distinct = True
-                        break
-
-        return queryset, use_distinct
+        return queryset.distinct(), True
 
 
 class PublishedAdmin(CommonAdmin):
+    list_select_related = ['etat', *CommonAdmin.list_select_related]
     additional_fields = ('etat', 'owner')
     admin_fields = ('etat',)
     additional_list_display = ('etat', 'owner')
     additional_list_editable = ('etat',)
-    additional_list_filters = ('etat', 'owner', HasRelatedObjectsListFilter,)
+    additional_list_filters = (
+        'etat', OwnerListFilter, HasRelatedObjectsListFilter,
+    )
 
 
 class AutoriteAdmin(PublishedAdmin):
@@ -554,8 +545,6 @@ class TypeDeParenteCommonAdmin(CommonAdmin):
                     'nom_relatif_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'nom_relatif',
                      'nom_relatif_pluriel', 'classement',)
-    search_fields = ('nom__unaccent', 'nom_relatif__unaccent',
-                     'nom_pluriel__unaccent', 'nom_relatif_pluriel__unaccent')
     fieldsets = (
         (None, {'fields': (
             ('nom', 'nom_pluriel'), ('nom_relatif', 'nom_relatif_pluriel'),
@@ -587,7 +576,6 @@ class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'referent',)
     list_editable = ('nom', 'nom_pluriel', 'referent',)
     list_filter = ('referent',)
-    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent')
 
 
 @register(Lieu)
@@ -595,7 +583,8 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     form = LieuAdminForm
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
-    search_fields = ('nom__unaccent', 'parent__nom__unaccent',)
+    search_fields = ['search_vector', 'parent__search_vector']
+    list_select_related = ['parent__nature', 'nature', 'etat', 'owner']
     list_filter = ('nature',)
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
@@ -620,6 +609,9 @@ class SaisonAdmin(VersionAdmin, CommonAdmin):
     form = SaisonForm
     list_display = ('__str__', 'lieu', 'ensemble', 'debut', 'fin',
                     'evenements_count')
+    list_select_related = [
+        'lieu__nature', 'lieu__parent__nature', 'ensemble', 'owner',
+    ]
     date_hierarchy = 'debut'
     raw_id_fields = ('lieu', 'ensemble')
     autocomplete_lookup_fields = {
@@ -633,9 +625,7 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
                     'nom_feminin_pluriel', 'parent', 'classement')
     list_editable = ('nom', 'nom_pluriel', 'nom_feminin',
                      'nom_feminin_pluriel', 'parent', 'classement')
-    search_fields = (
-        'nom__unaccent', 'nom_pluriel__unaccent',
-        'nom_feminin__unaccent', 'nom_feminin_pluriel__unaccent')
+    list_select_related = ['parent', 'etat', 'owner']
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ('parent',),
@@ -651,14 +641,10 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
 
 @register(Individu)
 class IndividuAdmin(VersionAdmin, AutoriteAdmin):
-    list_per_page = 20
     list_display = ('__str__', 'nom', 'prenoms',
                     'pseudonyme', 'titre', 'naissance',
                     'deces', 'calc_professions', 'link',)
     list_editable = ('nom', 'titre',)
-    search_fields = (
-        'nom__unaccent', 'pseudonyme__unaccent', 'nom_naissance__unaccent',
-        'prenoms__unaccent',)
     list_filter = ('titre',)
     form = IndividuForm
     raw_id_fields = ('naissance_lieu', 'deces_lieu', 'professions')
@@ -704,7 +690,6 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
 class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'parent')
     list_editable = ('nom', 'nom_pluriel', 'parent')
-    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent',)
     raw_id_fields = ('parent',)
     autocomplete_lookup_fields = {
         'fk': ('parent',),
@@ -715,7 +700,8 @@ class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
 class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     form = EnsembleForm
     list_display = ('__str__', 'type', 'membres_count')
-    search_fields = ('nom__unaccent', 'membres__individu__nom__unaccent')
+    list_select_related = ['type', 'etat', 'owner']
+    search_fields = ['search_vector', 'membres__individu__search_vector']
     inlines = (MembreInline,)
     raw_id_fields = ('siege', 'type')
     autocomplete_lookup_fields = {
@@ -735,7 +721,6 @@ class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
 class GenreDOeuvreAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'has_related_objects')
     list_editable = ('nom', 'nom_pluriel',)
-    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent',)
     raw_id_fields = ('parents',)
     autocomplete_lookup_fields = {
         'm2m': ('parents',),
@@ -746,14 +731,14 @@ class GenreDOeuvreAdmin(VersionAdmin, CommonAdmin):
 class TypeDeCaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel', 'classement',)
     list_editable = ('nom', 'nom_pluriel', 'classement',)
-    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent')
 
 
 @register(CaracteristiqueDeProgramme)
 class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
     list_editable = ('valeur', 'classement',)
-    search_fields = ('type__nom__unaccent', 'valeur__unaccent')
+    list_select_related = ['type', 'owner']
+    search_fields = ['type__search_vector', 'search_vector']
 
 
 @register(Partie)
@@ -768,7 +753,6 @@ class PartieAdmin(VersionAdmin, AutoriteAdmin):
     )
     list_filter = ('type',)
     list_select_related = ('parent', 'etat', 'owner')
-    search_fields = ('nom__unaccent',)
     radio_fields = {'type': HORIZONTAL}
     raw_id_fields = ('oeuvre', 'professions', 'parent', 'premier_interprete')
     autocomplete_lookup_fields = {
@@ -792,13 +776,20 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
                     'caracteristiques_html', 'auteurs_html',
                     'creation', 'link',)
-    search_fields = Oeuvre.autocomplete_search_fields(add_icontains=False)
+    search_fields = [
+        'auteurs__individu__search_vector',
+        'auteurs__ensemble__search_vector',
+        'search_vector',
+        'genre__search_vector',
+        'pupitres__partie__search_vector',
+    ]
     list_filter = ('genre', 'tonalite', 'arrangement', 'type_extrait')
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
-    raw_id_fields = ('genre', 'extrait_de', 'creation_lieu')
+    raw_id_fields = ('genre', 'extrait_de', 'creation_lieu', 'dedicataires')
     autocomplete_lookup_fields = {
         'fk': ('genre', 'extrait_de', 'creation_lieu'),
+        'm2m': ('dedicataires',),
     }
     readonly_fields = ('__str__', 'html', 'link',)
     inlines = (AuteurInline, PupitreInline, OeuvreMereInline)
@@ -812,6 +803,7 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
         }),
         (_('Données musicales'), {
             'fields': ('incipit', ('tempo', 'tonalite'),
+                       'ambitus',
                        ('sujet', 'arrangement')),
         }),
         (None, {
@@ -830,14 +822,16 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
                 ('creation_heure', 'creation_heure_approx'),
                 ('creation_lieu', 'creation_lieu_approx'))
         }),
+        (_('Édition'), {
+            'fields': ('dedicataires',)
+        }),
     )
     fieldsets_and_inlines_order = ('i', 'f', 'f', 'i', 'f', 'f', 'f', 'f', 'f')
 
     def get_queryset(self, request):
         qs = super(OeuvreAdmin, self).get_queryset(request)
         return qs.select_related(
-            'genre', 'extrait_de', 'creation_lieu',
-            'etat', 'owner'
+            'genre', 'extrait_de', 'creation_lieu', 'etat', 'owner'
         ).prefetch_related(
             'auteurs__individu', 'auteurs__ensemble', 'auteurs__profession',
             'pupitres__partie'
@@ -871,12 +865,9 @@ class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'link',)
     list_editable = ('relache', 'circonstance',)
-    search_fields = ('circonstance__unaccent', 'debut_lieu__nom__unaccent')
+    search_fields = ['search_vector', 'debut_lieu__search_vector']
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
-    list_select_related = ('debut_lieu', 'debut_lieu__nature',
-                           'fin_lieu', 'fin_lieu__nature',
-                           'etat', 'owner')
     date_hierarchy = 'debut_date'
     raw_id_fields = ('debut_lieu', 'fin_lieu', 'caracteristiques')
     autocomplete_lookup_fields = {
@@ -931,7 +922,6 @@ class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
 class TypeDeSourceAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'nom', 'nom_pluriel',)
     list_editable = ('nom', 'nom_pluriel',)
-    search_fields = ('nom__unaccent', 'nom_pluriel__unaccent')
 
 
 def split_pdf(modeladmin, request, queryset):
@@ -978,10 +968,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     list_editable = ('parent', 'position', 'type', 'date')
     list_select_related = ('type', 'etat', 'owner')
     date_hierarchy = 'date'
-    search_fields = (
-        'type__nom__unaccent', 'titre__unaccent', 'date',
-        'date_approx__unaccent', 'numero__unaccent',
-        'lieu_conservation__unaccent', 'cote__unaccent')
+    search_fields = ['type__search_vector', 'search_vector']
     list_filter = (SourceHasParentListFilter, 'type', 'titre',
                    SourceHasEventsListFilter, SourceHasProgramListFilter)
     raw_id_fields = ('parent', 'evenements', 'editeurs_scientifiques')
@@ -1041,6 +1028,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
                                    'i', 'i', 'i', 'i', 'i', 'f')
     admin_fields = AutoriteAdmin.admin_fields + ('est_promue',)
     formfield_overrides = {
+        **AutoriteAdmin.formfield_overrides,
         TextField: {'widget': TinyMCE},
     }
 
@@ -1075,7 +1063,7 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
                 }
             }
         )
-        return qs
+        return qs.select_related('type', 'etat', 'owner')
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         source = self.get_object(request, object_id)

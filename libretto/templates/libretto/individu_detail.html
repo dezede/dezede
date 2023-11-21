@@ -58,6 +58,7 @@
     {% endfor %}
 
 
+    {% data_table_list individu.dedicaces.all 'html' verbose_name=_('dédicace') verbose_name_plural=_('dédicaces') %}
     {% data_table_attr 'notes_publiques' _('notes') %}
   </table>
 

@@ -1,3 +1,4 @@
+from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import (
@@ -22,17 +23,15 @@ __all__ = ('TypeDeParenteDIndividus', 'ParenteDIndividus', 'Individu')
 
 
 class TypeDeParenteDIndividus(TypeDeParente):
-    class Meta(object):
-        unique_together = ('nom', 'nom_relatif')
+    class Meta(TypeDeParente.Meta):
         verbose_name = _('type de parenté d’individus')
         verbose_name_plural = _('types de parenté d’individus')
-        ordering = ('classement',)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('parentes',)
-        return ()
+        indexes = [
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('search_vector', name='typeparenteindiv_search'),
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('autocomplete_vector', name='typeparenteindiv_autocomplete'),
+        ]
 
 
 class ParenteDIndividus(CommonModel):
@@ -140,7 +139,9 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     objects = IndividuManager()
 
-    class Meta(object):
+    search_fields = ['nom', 'nom_naissance', 'prenoms', 'pseudonyme']
+
+    class Meta(AutoriteModel.Meta):
         verbose_name = _('individu')
         verbose_name_plural = _('individus')
         ordering = ('nom',)
@@ -150,7 +151,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
     def invalidated_relations_when_saved(all_relations=False):
         relations = ('auteurs', 'elements_de_distribution',)
         if all_relations:
-            relations += ('enfants', 'dossiers',)
+            relations += ('enfants', 'dossiersdevenements', 'dossiersdoeuvres')
         return relations
 
     def get_slug(self):
@@ -330,12 +331,3 @@ class Individu(AutoriteModel, UniqueSlugModel):
 
     def __str__(self):
         return strip_tags(self.html(tags=False))
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return (
-            'nom__unaccent__icontains',
-            'nom_naissance__unaccent__icontains',
-            'pseudonyme__unaccent__icontains',
-            'prenoms__unaccent__icontains',
-        )

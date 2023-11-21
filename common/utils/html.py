@@ -148,7 +148,7 @@ def sanitize_html(html, include_links=True):
         'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
         'p', 'ul', 'ol', 'li', 'pre', 'address', 'br',
         'table', 'caption', 'thead', 'tbody', 'tr', 'th', 'td',
-        'span', 'em', 'cite', 'strong', 'sub', 'sup',
+        'span', 'em', 'cite', 'strong', 'sub', 'sup', 'blockquote',
     )
     if include_links:
         tags += ('a',)

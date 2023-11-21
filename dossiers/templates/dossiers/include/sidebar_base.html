@@ -1,0 +1,67 @@
+{% load i18n extras %}
+
+<aside id="sidebar">
+
+  <div class="well">
+    {% with editeurs_scientifiques=object.editeurs_scientifiques.all %}
+      {% if editeurs_scientifiques %}
+        <dl class="auto-links">
+          <dt>
+            {% if editeurs_scientifiques|length < 2 %}
+              {% trans 'Éditeur scientifique' %}
+            {% else %}
+              {% trans 'Éditeurs scientifiques' %}
+            {% endif %}
+          </dt>{# Auteur(s) pour revue #}
+          <dd>{{ editeurs_scientifiques.html }}</dd>
+        </dl>
+      {% endif %}
+    {% endwith %}
+    {% if children %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{% trans 'Dans ce dossier' %}</h3>
+        </div>
+        <div class="list-group">
+          {% for child in children %}
+            <a class="list-group-item" href="{{ child.get_absolute_url }}">
+              {{ child }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+    <dl class="auto-links">
+      {% with contributors=object.contributors %}
+        {% if contributors %}
+          <dt>
+            {% if contributors|length < 2 %}
+              {% trans 'Contributeur' %}
+            {% else %}
+              {% trans 'Contributeurs' %}
+            {% endif %}
+          </dt>{# Supprimé dans revue #}
+          <dd>{{ contributors.html }}</dd>
+        {% endif %}
+      {% endwith %}
+      <dt>{% trans 'Date de mise en ligne' %}</dt>
+      <dd>{{ object.date_publication|date_html:True }}</dd>
+      {# FIXME: Revoir cette condition quand le "voir aussi sera implémenté #}
+      {% if object.publications or object.developpements %}
+        <hr />
+      {% endif %}
+      {% if object.publications %}
+        <dt>{% trans 'Publication(s) associée(s)' %}</dt>
+        <dd>{{ object.publications }}</dd>
+      {% endif %}
+      {# TODO: Implémenter cette fonctionnalité #}
+{#      <dt>{% trans 'Voir aussi' %}</dt>#}
+      {% if object.developpements %}
+        <dt>{% trans 'Développements envisagés' %}</dt>{# Supprimé dans revue #}
+        <dd>{{ object.developpements }}</dd>
+      {% endif %}
+    </dl>
+
+    {% block export_pdf %}{% endblock %}
+  </div>
+</aside>

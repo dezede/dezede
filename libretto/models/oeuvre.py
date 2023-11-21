@@ -2,6 +2,8 @@ from collections import OrderedDict
 import re
 
 from django.apps import apps
+from django.contrib.postgres.fields import IntegerRangeField
+from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator
@@ -16,6 +18,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
+from psycopg2._range import NumericRange
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
@@ -52,7 +55,9 @@ class GenreDOeuvre(CommonModel, SlugModel):
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
                               blank=True, verbose_name=_('parents'))
 
-    class Meta(object):
+    search_fields = ['nom', 'nom_pluriel']
+
+    class Meta(CommonModel.Meta):
         verbose_name = _('genre d’œuvre')
         verbose_name_plural = _('genres d’œuvre')
         ordering = ('nom',)
@@ -66,10 +71,6 @@ class GenreDOeuvre(CommonModel, SlugModel):
 
     def __str__(self):
         return strip_tags(self.nom)
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return 'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains'
 
 
 class Partie(AutoriteModel, UniqueSlugModel):
@@ -110,7 +111,9 @@ class Partie(AutoriteModel, UniqueSlugModel):
         null=True, blank=True, verbose_name=_('premier(ère) interprète'),
     )
 
-    class Meta(object):
+    search_fields = ['nom', 'nom_pluriel']
+
+    class Meta(AutoriteModel.Meta):
         unique_together = ('nom', 'parent', 'oeuvre')
         verbose_name = _('rôle ou instrument')
         verbose_name_plural = _('rôles et instruments')
@@ -182,16 +185,11 @@ class Partie(AutoriteModel, UniqueSlugModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return (
-            'nom__unaccent__icontains', 'nom_pluriel__unaccent__icontains',
-            'professions__nom__unaccent__icontains',
-            'professions__nom_pluriel__unaccent__icontains',
-            'oeuvre__prefixe_titre__unaccent__icontains',
-            'oeuvre__titre__unaccent__icontains',
-            'oeuvre__coordination__unaccent__icontains',
-            'oeuvre__prefixe_titre_secondaire__unaccent__icontains',
-            'oeuvre__titre_secondaire__unaccent__icontains',
-        )
+        return [
+            'autocomplete_vector__autocomplete',
+            'professions__autocomplete_vector__autocomplete',
+            'oeuvre__autocomplete_vector__autocomplete',
+        ]
 
 
 class PupitreQuerySet(CommonQuerySet):
@@ -221,7 +219,7 @@ class Pupitre(CommonModel):
 
     objects = PupitreManager()
 
-    class Meta(object):
+    class Meta(CommonModel.Meta):
         verbose_name = _('pupitre')
         verbose_name_plural = _('pupitres')
         ordering = ('-soliste', 'partie')
@@ -259,25 +257,23 @@ class Pupitre(CommonModel):
 
     @staticmethod
     def autocomplete_search_fields():
-        return ('partie__nom__unaccent__icontains',
-                'partie__nom_pluriel__unaccent__icontains',
-                'partie__professions__nom__unaccent__icontains',
-                'partie__professions__nom_pluriel__unaccent__icontains',)
+        return [
+            'oeuvre__autocomplete_vector__autocomplete',
+            'partie__autocomplete_vector__autocomplete',
+            'partie__professions__autocomplete_vector__autocomplete',
+        ]
 
 
 class TypeDeParenteDOeuvres(TypeDeParente):
-    class Meta(object):
-        unique_together = ('nom', 'nom_relatif')
+    class Meta(TypeDeParente.Meta):
         verbose_name = _('type de parenté d’œuvres')
         verbose_name_plural = _('types de parentés d’œuvres')
-        ordering = ('classement',)
-        # app_label = 'libretto'
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('parentes',)
-        return ()
+        indexes = [
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('search_vector', name='typeparenteoeuv_search'),
+            # We specify it manually, otherwise its name is too long.
+            GinIndex('autocomplete_vector', name='typeparenteoeuv_autocomplete'),
+        ]
 
 
 class ParenteDOeuvresManager(CommonManager):
@@ -593,6 +589,50 @@ TONALITE_I18N_CHOICES = (
 )
 
 
+class Pitch:
+    OCTAVE_NOTES = (
+        _('do'), _('do dièse / ré bémol'), _('ré'), _('ré dièse / mi bémol'),
+        _('mi'), _('fa'), _('fa dièse / sol bémol'), _('sol'),
+        _('sol dièse / la bémol'), _('la'), _('la dièse / si bémol'), _('si'),
+    )
+    OCTAVE_LENGTH = len(OCTAVE_NOTES)
+    DO_0 = 12
+
+    @classmethod
+    def form_to_database_value(cls, note_index, octave):
+        """
+        Converts the scientific notation to the MIDI pitch value.
+        """
+        return cls.DO_0 + octave * cls.OCTAVE_LENGTH + note_index
+
+    @classmethod
+    def database_to_form_values(cls, db_value):
+        """
+        Converts the MIDI pitch value to the split scientific notation.
+        """
+        octave, note_index = divmod(db_value - cls.DO_0, cls.OCTAVE_LENGTH)
+        return str(note_index), octave
+
+
+def make_range_include_bounds(value):
+    """
+    By default, all PostgreSQL ranges are with '[)' bounds, which is wrong
+    for an ambitus.
+    """
+    if isinstance(value, NumericRange):
+        return NumericRange(
+            lower=None if value.lower is None else (
+                value.lower + (0 if value.lower_inc else 1)
+            ),
+            upper=None if value.upper is None else (
+                value.upper - (0 if value.upper_inc else 1)
+            ),
+            bounds='[]',
+            empty=value.isempty,
+        )
+    return value
+
+
 class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(_('article'), max_length=20, blank=True)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True)
@@ -651,8 +691,9 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     ]
     tonalite = CharField(_('tonalité'), max_length=3, choices=TONALITES,
                          blank=True, db_index=True)
+    ambitus = IntegerRangeField(_('ambitus'), null=True, blank=True)
     sujet = CharField(
-        _('sujet'), max_length=80, blank=True,
+        _('sujet'), max_length=80, blank=True, db_index=True,
         help_text=_(
             'Exemple : « un thème de Beethoven » pour une variation sur un '
             'thème de Beethoven, « des motifs de '
@@ -695,6 +736,13 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         (2, _('première mondiale')),
         (3, _('première édition')),
     )
+    dedicataires = ManyToManyField(
+        'Individu', blank=True,
+        related_name='dedicaces', verbose_name=_('dédié à'), help_text=_(
+            'N’ajouter que des autorités confirmées. '
+            'Dans le cas contraire, utiliser les notes.'
+        ),
+    )
     creation_type = PositiveSmallIntegerField(
         _('type de création'), choices=CREATION_TYPES, null=True, blank=True)
     creation = AncrageSpatioTemporel(verbose_name=_('création'))
@@ -706,7 +754,9 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     extrait_de = ForeignKey(
         'self', null=True, blank=True, related_name='enfants',
         verbose_name=_('extrait de'), on_delete=CASCADE)
-    path = PathField(order_by=ORDERING, db_index=True)
+    path = PathField(
+        order_by=ORDERING, parent_field_name='extrait_de', db_index=True,
+    )
     ACTE = 1
     TABLEAU = 2
     SCENE = 3
@@ -758,17 +808,30 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = OeuvreManager()
 
-    class Meta(object):
+    search_fields = [
+        'prefixe_titre', 'titre',
+        'prefixe_titre_secondaire', 'titre_secondaire', 'numero',
+        'coupe', 'tempo', 'sujet', 'surnom', 'nom_courant', 'incipit',
+        'opus', 'ict',
+    ]
+
+    class Meta(AutoriteModel.Meta):
         verbose_name = _('œuvre')
         verbose_name_plural = _('œuvres')
-        ordering = ('path',)
+        ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
+        indexes = [
+            *PathField.get_indexes('oeuvre', 'path'),
+            *AutoriteModel.Meta.indexes,
+        ]
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
         relations = ('enfants', 'elements_de_programme',)
         if all_relations:
-            relations += ('dossiers', 'filles',)
+            relations += (
+                'dossiersdevenements', 'dossiersdoeuvres', 'filles',
+            )
         return relations
 
     def get_absolute_url(self):
@@ -870,6 +933,19 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     def pupitres_html(self, prefix=False, tags=True, solistes=False):
         return self.get_pupitres_str(prefix=prefix, tags=tags,
                                      solistes=solistes)
+
+    def get_ambitus_str(self):
+        value = make_range_include_bounds(self.ambitus)
+        if isinstance(value, NumericRange):
+            if value.lower is None or value.upper is None:
+                return ''
+            note_min, octave_min = Pitch.database_to_form_values(value.lower)
+            note_max, octave_max = Pitch.database_to_form_values(value.upper)
+            return (
+                f'{Pitch.OCTAVE_NOTES[int(note_min)]} {str(octave_min)} – '
+                f'{Pitch.OCTAVE_NOTES[int(note_max)]} {str(octave_max)}'
+            )
+        return ''
 
     def auteurs_html(self, tags=True):
         return self.auteurs.html(tags)
@@ -1032,18 +1108,11 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     _str.short_description = _('œuvre')
 
     @staticmethod
-    def autocomplete_search_fields(add_icontains=True):
-        lookups = (
-            'auteurs__individu__nom', 'auteurs__individu__prenoms',
-            'auteurs__individu__pseudonyme', 'auteurs__ensemble__nom',
-            'prefixe_titre', 'titre',
-            'prefixe_titre_secondaire', 'titre_secondaire',
-            'genre__nom', 'numero', 'coupe',
-            'tempo', 'sujet',
-            'surnom', 'nom_courant', 'incipit',
-            'opus', 'ict',
-            'pupitres__partie__nom')
-        lookups = [f'{lookup}__unaccent' for lookup in lookups]
-        if add_icontains:
-            return [f'{lookup}__icontains' for lookup in lookups]
-        return lookups
+    def autocomplete_search_fields():
+        return [
+            'auteurs__individu__autocomplete_vector__autocomplete',
+            'auteurs__ensemble__autocomplete_vector__autocomplete',
+            'autocomplete_vector__autocomplete',
+            'genre__autocomplete_vector__autocomplete',
+            'pupitres__partie__autocomplete_vector__autocomplete',
+        ]

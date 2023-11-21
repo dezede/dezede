@@ -1,0 +1,49 @@
+{% load i18n %}
+
+<div class="row">
+
+  <div class="col-xs-12 col-sm-6 col-md-4">
+    {% block sidebar %}{% endblock %}
+  </div>
+
+  <div class="col-xs-12 col-sm-6 col-md-8">
+    <div class="dossier">
+      <div class="presentation">
+      {{ object.presentation }}
+      </div>
+      {% if object.contexte %}
+        <h2>{% trans 'Contexte historique' %}</h2>
+        {{ object.contexte }}
+      {% endif %}
+      {% if object.sources_et_protocole %}
+        <h2>{% trans 'Sources et protocole' %}</h2>
+        {{ object.sources_et_protocole }}
+      {% endif %}
+      {% if object.bibliographie %}
+        <h2>{% trans 'Bibliographie indicative' %}</h2>
+        {{ object.bibliographie }}
+      {% endif %}
+    </div>
+
+    <div id="reference-dossier" class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ citation_title }}</h3>
+      </div>
+      <div class="panel-body">
+        {% with editeurs_scientifiques=object.editeurs_scientifiques.all %}
+          {% if editeurs_scientifiques %}
+            {{ editeurs_scientifiques.html }}{% if object.contributors|length > editeurs_scientifiques|length %} {% trans '(dir.)' %}{% endif %},
+          {% endif %}
+        {% endwith %}
+        {% now 'DATE_FORMAT' as now %}
+        {% blocktrans with permalien=object.permalien %}
+          « {{ object }} »,
+          <em>Dezède</em> [en ligne].
+          {{ SITE }}{{ permalien }}
+          (consulté le {{ now }}).
+        {% endblocktrans %}
+      </div>
+    </div>
+  </div>
+
+</div>

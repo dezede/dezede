@@ -1,3 +1,5 @@
+from operator import xor
+
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
     AutoCompleteWidget
 from crispy_forms.helper import FormHelper
@@ -5,17 +7,23 @@ from crispy_forms.layout import Layout, Submit, Field, HTML
 from datetime import timedelta
 
 from django.contrib.gis.geos import Point
-from django.db.models import Q
+from django.contrib.postgres.forms import RangeWidget, BaseRangeField
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Q, ForeignKey
 from django.forms import (
     ValidationError, ModelForm, Form, CharField, TextInput, BooleanField,
-    FloatField,
+    FloatField, IntegerField, MultiValueField, MultiWidget, NumberInput,
+    Select, ModelChoiceField,
 )
+from django.forms.models import ModelChoiceIterator
 from django.utils.translation import ugettext_lazy as _
+from psycopg2._range import NumericRange
+
 from common.utils.text import capfirst, str_list_w_last
-from libretto.models import Lieu
 from .models import (
-    Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
+    Lieu, Oeuvre, Source, Individu, ElementDeProgramme, ElementDeDistribution,
     Ensemble, Saison, Partie)
+from .models.oeuvre import Pitch, make_range_include_bounds
 from range_slider.fields import RangeSliderField
 
 
@@ -24,9 +32,43 @@ __all__ = ('IndividuForm', 'EnsembleForm', 'OeuvreForm',
            'SourceForm', 'SaisonForm', 'EvenementListForm')
 
 
+class FasterModelChoiceIterator(ModelChoiceIterator):
+    _cache = {}
+
+    @classmethod
+    def register_cleanup_signal(cls):
+        from django.core.signals import request_started
+
+        def clear_model_choice_cache(sender, **kwargs):
+            cls._cache = {}
+
+        request_started.connect(clear_model_choice_cache)
+
+    def __iter__(self):
+        cache_key = str(self.queryset.query)
+        if cache_key not in self._cache:
+            self._cache[cache_key] = [
+                choice for choice in super().__iter__()
+            ]
+        return iter(self._cache[cache_key])
+
+
+class FasterModelChoiceField(ModelChoiceField):
+    iterator = FasterModelChoiceIterator
+
+
+def formfield_for_dbfield(db_field, **kwargs):
+    if isinstance(db_field, ForeignKey):
+        kwargs['form_class'] = FasterModelChoiceField
+    return db_field.formfield(**kwargs)
+
+
 class ConstrainedModelForm(ModelForm):
     REQUIRED_BY = ()
     INCOMPATIBLES = ()
+
+    class Meta:
+        formfield_callback = formfield_for_dbfield
 
     def get_field_verbose(self, fieldname):
         return capfirst(
@@ -69,7 +111,7 @@ class IndividuForm(ConstrainedModelForm):
         (('deces_date',), ('deces_date_approx',)),
     )
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = Individu
         exclude = ()
         widgets = {
@@ -108,6 +150,7 @@ class EnsembleForm(ModelForm):
                 AutoCompleteWidget('ensemble__particule_nom',
                                    attrs={'style': 'width: 50px;'})
         }
+        formfield_callback = formfield_for_dbfield
 
 
 class PartieForm(ConstrainedModelForm):
@@ -129,9 +172,113 @@ class PartieForm(ConstrainedModelForm):
 
         return data
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = Partie
         exclude = ()
+
+
+class PitchWidget(MultiWidget):
+    def __init__(self, *args, **kwargs):
+        choices = [('', '---------')] + [
+            (str(n), s) for n, s in enumerate(Pitch.OCTAVE_NOTES)
+        ]
+        widgets = [
+            Select(choices=choices),
+            NumberInput(attrs={'placeholder': _('octave')}),
+        ]
+        super().__init__(*args, widgets=widgets, **kwargs)
+
+    def decompress(self, value):
+        if not isinstance(value, int):
+            return '', None
+        return Pitch.database_to_form_values(value)
+
+
+PITCH_HELP_TEXT = _(
+    '<strong>Do 4 est le do central d’un piano</strong>. '
+    'Suivent ré 4, mi 4… Jusqu’à si 4 (cf. '
+    '<a href="https://en.wikipedia.org/wiki/Scientific_pitch_notation" '
+    'target="_blank"><strong>notation scientifique internationale</strong></a>).'
+    '<br /><strong>Attention :</strong> nous n’utilisons pas la notation '
+    'française (do 3).'
+)
+
+
+class PitchField(MultiValueField):
+    widget = PitchWidget
+
+    def __init__(self, **kwargs):
+        fields = [
+            IntegerField(validators=[
+                MinValueValidator(0),
+                MaxValueValidator(Pitch.OCTAVE_LENGTH),
+            ]),
+            IntegerField(validators=[
+                MinValueValidator(-5),
+                MaxValueValidator(15),
+            ]),
+        ]
+        super().__init__(fields, **kwargs, help_text=PITCH_HELP_TEXT)
+
+    def compress(self, data_list):
+        try:
+            note, octave = data_list
+        except ValueError:
+            return None
+
+        empty_values = self.empty_values
+        if note in empty_values:
+            if octave in empty_values:
+                return None
+            raise ValidationError(_('Il manque la note.'))
+        if octave in empty_values:
+            raise ValidationError(_('Il manque le numéro d’octave.'))
+        return Pitch.form_to_database_value(note, octave)
+
+
+class AmbitusWidget(RangeWidget):
+    template_name = 'admin/ambitus_widget.html'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, base_widget=PitchWidget(), **kwargs)
+
+    def decompress(self, value):
+        return super().decompress(make_range_include_bounds(value))
+
+
+class AmbitusField(BaseRangeField):
+    base_field = PitchField
+    range_type = NumericRange
+
+    def __init__(self, *args, **kwargs):
+        # We force pass the widget here, otherwise it is ignored when
+        # specified as a class attribute.
+        super().__init__(
+            *args, widget=AmbitusWidget, help_text=PITCH_HELP_TEXT, **kwargs,
+        )
+
+    def prepare_value(self, value):
+        return super().prepare_value(make_range_include_bounds(value))
+
+    def clean(self, value):
+        value = super().clean(value)
+        if value and xor(value.upper is None, value.lower is None):
+            raise ValidationError(
+                _('Veuillez saisir les deux extrémités de l’ambitus.'),
+            )
+        return value
+
+    def compress(self, values):
+        value = super().compress(values=values)
+        if isinstance(value, NumericRange) and not (
+            value.lower_inc and value.upper_inc  # bounds are not '[]'
+        ):
+            # We force the range to be fully inclusive.
+            value = NumericRange(
+                lower=value.lower, upper=value.upper, bounds='[]',
+                empty=value.isempty,
+            )
+        return value
 
 
 class OeuvreForm(ConstrainedModelForm):
@@ -150,6 +297,7 @@ class OeuvreForm(ConstrainedModelForm):
     INCOMPATIBLES = (
         ('coupe', 'numero'),
     )
+    ambitus = AmbitusField(label=_('Ambitus'), required=False)
 
     def clean(self):
         data = super(OeuvreForm, self).clean()
@@ -190,7 +338,7 @@ class OeuvreForm(ConstrainedModelForm):
 
         return data
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = Oeuvre
         exclude = ()
         widgets = {
@@ -217,7 +365,7 @@ class ElementDeDistributionForm(ConstrainedModelForm):
         ('partie', 'profession'),
     )
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = ElementDeDistribution
         exclude = ()
 
@@ -242,7 +390,7 @@ class ElementDeDistributionForm(ConstrainedModelForm):
 class ElementDeProgrammeForm(ConstrainedModelForm):
     INCOMPATIBLES = (('oeuvre', 'autre'),)
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = ElementDeProgramme
         exclude = ()
         # FIXME: Rendre fonctionnel ce qui suit.
@@ -258,7 +406,7 @@ class SourceForm(ConstrainedModelForm):
         (('lieu_conservation', 'cote'), ('lieu_conservation', 'cote')),
     )
 
-    class Meta(object):
+    class Meta(ConstrainedModelForm.Meta):
         model = Source
         exclude = ()
         widgets = {
@@ -294,6 +442,7 @@ class SaisonForm(ModelForm):
     class Meta(object):
         model = Saison
         exclude = ()
+        formfield_callback = formfield_for_dbfield
 
     def clean(self):
         data = super(SaisonForm, self).clean()
@@ -391,6 +540,7 @@ class LieuAdminForm(ModelForm):
     class Meta:
         model = Lieu
         exclude = []
+        formfield_callback = formfield_for_dbfield
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

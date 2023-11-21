@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        DeleteTreeTrigger('hierarchicuser', parent_field='mentor'),
+        DeleteTreeTrigger('hierarchicuser'),
         migrations.AlterField(
             model_name='hierarchicuser',
             name='content_type',
@@ -36,6 +36,6 @@ class Migration(migrations.Migration):
             name='username',
             field=models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username'),
         ),
-        CreateTreeTrigger('hierarchicuser', parent_field='mentor'),
+        CreateTreeTrigger('hierarchicuser'),
         RebuildPaths('hierarchicuser'),
     ]

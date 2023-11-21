@@ -6,6 +6,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core import serializers
 from django.db import transaction, connection
 from django.db.models import ManyToManyField, Manager, Model
+from django.db.models.constants import LOOKUP_SEP
 from django.db.models.fields.related import ForeignObjectRel
 from django.db.models.query import QuerySet
 from django.utils.encoding import smart_text
@@ -141,7 +142,7 @@ def get_changed_kwargs(obj, new_kwargs):
 def separate_m2m_kwargs(Model, filter_kwargs):
     filter_kwargs = filter_kwargs.copy()
     m2m_kwargs = {k: v for k, v in filter_kwargs.items()
-                  if is_many_related_field(Model, k.split('__')[0])}
+                  if is_many_related_field(Model, k.split(LOOKUP_SEP)[0])}
     for k in m2m_kwargs:
         del filter_kwargs[k]
     return filter_kwargs, m2m_kwargs
@@ -188,8 +189,8 @@ def enlarged_create(Model, filter_kwargs, commit=True):
 
 
 def access_related(v, lookup):
-    base_k = lookup.split('__')[0]
-    new_lookup = '__'.join(lookup.split('__')[1:])
+    base_k = lookup.split(LOOKUP_SEP)[0]
+    new_lookup = LOOKUP_SEP.join(lookup.split(LOOKUP_SEP)[1:])
     if isinstance(v, Manager):
         v = v.all()
     if is_sequence(v):
@@ -213,8 +214,8 @@ def get_or_create(Model, filter_kwargs, unique_keys=(), commit=True):
     if unique_keys:
         unique_kwargs = {}
         for k in unique_keys:
-            base_k = k.split('__')[0]
-            lookup = '__'.join(k.split('__')[1:])
+            base_k = k.split(LOOKUP_SEP)[0]
+            lookup = LOOKUP_SEP.join(k.split(LOOKUP_SEP)[1:])
             if base_k not in filter_kwargs:
                 continue
             v = filter_kwargs[base_k]

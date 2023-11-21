@@ -45,12 +45,11 @@ class HierarchicUserAdmin(VersionAdmin, CommonAdmin, UserAdmin):
     list_editable = ('first_name', 'last_name', 'mentor',
                      'willing_to_be_mentor', 'is_active')
     list_filter = ('mentor', 'willing_to_be_mentor') + UserAdmin.list_filter
+    list_select_related = ['mentor']
     additional_fields = ()
     additional_readonly_fields = ()
     additional_list_display = ()
     additional_list_filters = ()
-    search_fields = ('username__unaccent', 'first_name__unaccent',
-                     'last_name__unaccent', 'email__unaccent')
     related_lookup_fields = {
         'generic': [['content_type', 'object_id'],],
     }
@@ -76,4 +75,4 @@ class HierarchicUserAdmin(VersionAdmin, CommonAdmin, UserAdmin):
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
-    ordering = ('last_name', 'first_name')
+    ordering = HierarchicUser._meta.ordering

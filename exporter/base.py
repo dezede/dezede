@@ -6,6 +6,7 @@ from zipfile import ZipFile
 from django.contrib.sites.models import Site
 from django.db.models import (
     IntegerField, ForeignKey, DateTimeField, OneToOneField)
+from django.db.models.constants import LOOKUP_SEP
 from django.db.models.fields.related import RelatedField, ForeignObjectRel
 from django.http import HttpResponse
 from django.utils.encoding import force_text
@@ -51,7 +52,7 @@ class Exporter(object):
                 self.method_names.append(column)
             else:
                 self.lookups.append(column)
-        self.fields = {lookup: self.get_field(lookup.split('__')[0])
+        self.fields = {lookup: self.get_field(lookup.split(LOOKUP_SEP)[0])
                        for lookup in self.lookups}
         self.final_fields = {lookup: self.get_final_field(lookup)
                              for lookup in self.lookups}
@@ -81,7 +82,7 @@ class Exporter(object):
 
     def get_final_field(self, lookup):
         model = self.model
-        for part in lookup.split('__'):
+        for part in lookup.split(LOOKUP_SEP):
             field = self.get_field(part, model)
             if isinstance(field, ForeignObjectRel):
                 model = field.field.model

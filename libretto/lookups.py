@@ -1,11 +1,34 @@
 from ajax_select import LookupChannel
 from bs4 import BeautifulSoup
+from django.contrib.postgres.search import SearchVectorField, SearchVectorExact
 from django.db.models import Count
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags
+
+from common.utils.sql import get_autocomplete_query
 from libretto.search_indexes import autocomplete_search
 from common.utils.html import hlp
 from .models import *
+
+
+#
+# Django lookups
+#
+
+
+@SearchVectorField.register_lookup
+class Autocomplete(SearchVectorExact):
+    lookup_name = 'autocomplete'
+
+    def process_rhs(self, compiler, connection):
+        if isinstance(self.rhs, str):
+            self.rhs = get_autocomplete_query(self.rhs)
+        return super().process_rhs(compiler, connection)
+
+
+#
+# Ajax-select lookups
+#
 
 
 class PublicLookup(LookupChannel):

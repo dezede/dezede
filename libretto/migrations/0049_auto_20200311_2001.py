@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        DeleteTreeTrigger('oeuvre', parent_field='extrait_de'),
+        DeleteTreeTrigger('oeuvre'),
         migrations.AlterField(
             model_name='oeuvre',
             name='numero',
@@ -44,6 +44,6 @@ class Migration(migrations.Migration):
             field=libretto.models.base.NumberCharField(blank=True, db_index=True, help_text='Sans «\xa0№\xa0». Exemple\u202f: «\xa052\xa0»', max_length=50, verbose_name='numéro'),
         ),
         migrations.RunPython(update_oeuvre_numero_extrait),
-        CreateTreeTrigger('oeuvre', parent_field='extrait_de'),
+        CreateTreeTrigger('oeuvre'),
         RebuildPaths('oeuvre'),
     ]

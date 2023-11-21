@@ -49,7 +49,7 @@
 
   \fontsize{10pt}{12pt}\selectfont
 
-  {% blocktrans with editeurs=object.editeurs_scientifiques.html|html_to_latex contributeurs=object.get_contributors.html|html_to_latex %}
+  {% blocktrans with editeurs=object.editeurs_scientifiques.html|html_to_latex contributeurs=object.contributors.html|html_to_latex %}
     Dossier dirigé par {{ editeurs }},
     avec la contribution de {{ contributeurs }}.
   {% endblocktrans %}

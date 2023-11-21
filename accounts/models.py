@@ -16,7 +16,7 @@ from tree.models import TreeModelMixin
 from common.utils.html import href, sc
 from common.utils.text import str_list_w_last
 from libretto.models.base import (
-    AutoriteModel, CommonTreeManager, CommonTreeQuerySet,
+    AutoriteModel, CommonTreeManager, CommonTreeQuerySet, SearchVectorAbstractModel,
 )
 
 
@@ -70,7 +70,7 @@ def _get_valid_modelnames_func(autorites_only=True):
     return ValidModelNames()
 
 
-class HierarchicUser(TreeModelMixin, AbstractUser):
+class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
     show_email = BooleanField(_('afficher l’email'), default=False)
     website = URLField(_('site internet'), blank=True)
     website_verbose = CharField(
@@ -92,8 +92,11 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
         verbose_name=_('responsable scientifique'),
         limit_choices_to={'willing_to_be_mentor__exact': True},
         on_delete=CASCADE)
-    path = PathField(order_by=('last_name', 'first_name', 'username'),
-                     db_index=True)
+    path = PathField(
+        order_by=['last_name', 'first_name', 'username'],
+        parent_field_name='mentor',
+        db_index=True,
+    )
     willing_to_be_mentor = BooleanField(
         _('Veut être responsable scientifique'), default=False)
 
@@ -108,20 +111,32 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
 
     objects = HierarchicUserManager()
 
-    class Meta(object):
-        ordering = ('last_name', 'first_name')
+    search_fields = ['first_name', 'last_name', 'username', 'email']
+
+    class Meta:
+        ordering = ['last_name', 'first_name']
         verbose_name = _('utilisateur')
         verbose_name_plural = _('utilisateurs')
+        indexes = [
+            *PathField.get_indexes('user', 'path'),
+            *SearchVectorAbstractModel.Meta.indexes,
+        ]
 
     def __str__(self, tags=False):
         return self.html(tags=False)
 
-    def get_full_name(self, tags=False):
-        full_name = f'{self.first_name} {sc(self.last_name, tags=tags)}'
+    def get_full_name(self, tags=False, reverse=False):
+        full_name = f'{sc(self.last_name, tags=tags)} {self.first_name}' if (
+            reverse
+        ) else (
+            f'{self.first_name} {sc(self.last_name, tags=tags)}'
+        )
         return full_name.strip()
 
-    def html(self, tags=True):
-        txt = self.get_full_name(tags=tags) or self.get_username()
+    def html(self, tags=True, reverse=False):
+        txt = self.get_full_name(tags=tags, reverse=reverse) or (
+            self.get_username()
+        )
         return href(self.get_absolute_url(), txt, tags=tags)
 
     def link(self, tags=True):
@@ -138,11 +153,6 @@ class HierarchicUser(TreeModelMixin, AbstractUser):
         return href(f'mailto:{self.email}', self.email)
 
     def dossiers_edites(self):
-        return apps.get_model('dossiers.DossierDEvenements').objects.filter(
+        return apps.get_model('dossiers.Dossier').objects.filter(
             editeurs_scientifiques=self
         ).exclude(parent__editeurs_scientifiques=self)
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return ('first_name__unaccent__icontains',
-                'last_name__unaccent__icontains')

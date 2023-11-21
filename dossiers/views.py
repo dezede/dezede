@@ -1,9 +1,12 @@
+from functools import cached_property
+
 from django.core.exceptions import PermissionDenied, EmptyResultSet
 from django.db import connection
 from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.views import View
 from django.views.generic import TemplateView, FormView
 from el_pagination.views import AjaxListView
 
@@ -14,7 +17,9 @@ from libretto.models import Source, Oeuvre, Individu
 from libretto.views import (
     PublishedListView, PublishedDetailView, EvenementGeoJson, EvenementExport,
     BaseEvenementListView, MAX_MIN_PLACES, DEFAULT_MIN_PLACES)
-from .models import CategorieDeDossiers, DossierDEvenements
+from .models import (
+    CategorieDeDossiers, DossierDEvenements, Dossier, DossierDOeuvres,
+)
 from common.utils.export import launch_export
 
 from .forms import ScenarioForm, ScenarioFormSet
@@ -66,13 +71,18 @@ class CategorieDeDossiersList(PublishedListView):
     has_frontend_admin = False
 
 
-class DossierDEvenementsDetail(PublishedDetailView):
-    model = DossierDEvenements
+class DossierDetail(PublishedDetailView):
+    model = Dossier
+    # FIXME: Try to find out what to do with this.
     formset = ScenarioFormSet
     form = ScenarioForm
 
+    def get_object(self, queryset=None):
+        dossier = super().get_object(queryset=queryset)
+        return dossier.specific
+
     def get_context_data(self, **kwargs):
-        context = super(DossierDEvenementsDetail,
+        context = super(DossierDetail,
                         self).get_context_data(**kwargs)
         context.update(
             children=self.object.children.published(self.request),
@@ -156,7 +166,7 @@ class DossierDEvenementsStatsDetail(PublishedDetailView):
                 for k, count in data]
 
     def update_context_with_chord_diagram(self, context):
-        evenements = self.object.get_queryset()
+        evenements = self.object.queryset
         individus = evenements.individus_auteurs()
 
         n_auteurs = self.n_auteurs
@@ -243,9 +253,9 @@ class DossierDEvenementsStatsDetail(PublishedDetailView):
         evenements_par_territoire = (
             None if ensemble is None
             else ensemble.evenements_par_territoire(
-                evenements_qs=self.object.get_queryset()))
+                evenements_qs=self.object.queryset))
         oeuvres_par_periode = self.get_oeuvres_par_periode(
-            self.object.get_queryset().oeuvres())
+            self.object.queryset.oeuvres())
         n_oeuvres = sum([count for _, _, _, count in oeuvres_par_periode])
         context.update(
             MAX_MIN_PLACES=MAX_MIN_PLACES,
@@ -258,31 +268,57 @@ class DossierDEvenementsStatsDetail(PublishedDetailView):
         return context
 
 
-class DossierDEvenementsViewMixin(object):
-    view_name = 'dossierdevenements_data_detail'
+class DossierViewMixin:
+    success_view_name = 'dossier_data_detail'
     enable_default_page = False
 
-    def get_queryset(self):
-        self.object = get_object_or_404(DossierDEvenements, **self.kwargs)
-        if not self.object.can_be_viewed(self.request):
+    def __init__(self, *args, dossier=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if dossier is not None:
+            self.dossier = dossier
+
+    @cached_property
+    def dossier(self):
+        if 'dossier' in self.kwargs:
+            return self.kwargs['dossier']
+
+        dossier = get_object_or_404(Dossier, **self.kwargs).specific
+        if not dossier.can_be_viewed(self.request):
             raise PermissionDenied
-        return super(DossierDEvenementsViewMixin, self).get_queryset(
-            base_filter=Q(pk__in=self.object.get_queryset()))
+        return dossier
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['object'] = data['dossier'] = self.dossier
+        return data
+
+    def get_success_url(self):
+        return reverse(self.success_view_name, kwargs=self.kwargs)
+
+
+class DossierDataDetail(DossierViewMixin, View):
+    def get_child_view(self):
+        if isinstance(self.dossier, DossierDEvenements):
+            return DossierDEvenementsDataDetail
+        elif isinstance(self.dossier, DossierDOeuvres):
+            return DossierDOeuvresDataDetail
+        raise RuntimeError
+
+    def dispatch(self, request, *args, **kwargs):
+        view = self.get_child_view().as_view()
+        view.view_initkwargs['dossier'] = self.dossier
+        return view(request, *args, **kwargs)
+
+
+class DossierDEvenementsViewMixin(DossierViewMixin):
+    def get_queryset(self):
+        return super().get_queryset(base_filter=Q(pk__in=self.dossier.queryset))
 
     def get_export_url(self):
         return reverse('dossierdevenements_data_export', kwargs=self.kwargs)
 
     def get_geojson_url(self):
         return reverse('dossierdevenements_data_geojson', kwargs=self.kwargs)
-
-    def get_context_data(self, **kwargs):
-        data = super(DossierDEvenementsViewMixin,
-                     self).get_context_data(**kwargs)
-        data['object'] = self.object
-        return data
-
-    def get_success_url(self):
-        return reverse(self.view_name, kwargs=self.kwargs)
 
 
 class DossierDEvenementsDataDetail(DossierDEvenementsViewMixin,
@@ -300,7 +336,7 @@ class DossierDEvenementsDataGeoJson(DossierDEvenementsViewMixin,
     pass
 
 
-class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
+class DossierDEvenementsDetailXeLaTeX(DossierDetail):
     def get_object(self, queryset=None):
         if not self.request.user.is_authenticated:
             raise PermissionDenied
@@ -314,7 +350,7 @@ class DossierDEvenementsDetailXeLaTeX(DossierDEvenementsDetail):
         return redirect(self.object.get_absolute_url())
 
 
-class DossierDEvenementsScenario(DossierDEvenementsDetail):
+class DossierDEvenementsScenario(DossierDetail):
     def get_object(self, queryset=None):
         if not self.request.user.is_authenticated:
             raise PermissionDenied
@@ -334,34 +370,17 @@ class DossierDEvenementsScenario(DossierDEvenementsDetail):
         return redirect(self.object.get_absolute_url())
 
 
-class OperaComiquePresentation(TemplateView):
-    template_name = 'dossiers/opera_comique_presentation.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(OperaComiquePresentation,
-                        self).get_context_data(**kwargs)
-        context['oc_user'] = HierarchicUser.objects.get(pk=103)
-        return context
-
-
-class OperaComiqueListView(PublishedListView):
-    model = Source
-    template_name = 'dossiers/opera_comique.html'
+class DossierDOeuvresDataDetail(DossierViewMixin, PublishedListView):
+    model = Oeuvre
+    context_object_name = 'oeuvres'
+    template_name = 'dossiers/dossierdoeuvres_data_detail.html'
 
     def get_queryset(self):
-        qs = super(OperaComiqueListView, self).get_queryset()
-        return qs.filter(owner_id=103)
-
-    def get_context_data(self, **kwargs):
-        context = super(OperaComiqueListView, self).get_context_data(**kwargs)
-        qs = context['object_list']
-        oeuvres = (
-            Oeuvre.objects.filter(sources__in=qs).distinct()
-            .select_related('genre', 'creation_lieu', 'creation_lieu__nature')
-            .prefetch_related('auteurs__individu', 'auteurs__profession'))
+        qs = self.dossier.queryset.select_related(
+            'genre', 'creation_lieu__parent__nature', 'creation_lieu__nature'
+        ).prefetch_related(
+            'auteurs__individu', 'auteurs__profession',
+        )
         if self.request.GET.get('order_by') == 'creation_date':
-            oeuvres = oeuvres.order_by('creation_date')
-        else:
-            oeuvres = oeuvres.order_by(*Oeuvre._meta.ordering)
-        context['oeuvres'] = oeuvres
-        return context
+            return qs.order_by('creation_date')
+        return qs.order_by(*Oeuvre._meta.ordering)

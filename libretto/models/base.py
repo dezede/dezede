@@ -1,16 +1,17 @@
 import datetime
 import re
+from math import ceil
 
 from django.conf import settings
-from django.contrib.admin.models import LogEntry
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVectorField
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError
 from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
-    NOT_PROVIDED)
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
+    NOT_PROVIDED, Value,
+)
 from django.template.defaultfilters import time
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags
@@ -18,12 +19,12 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from autoslug import AutoSlugField
 from slugify import Slugify
 from tinymce.models import HTMLField
-from tree.fields import PathField
 from tree.query import TreeQuerySetMixin
 
+from common.utils.sql import get_search_vector, update_all_search_vectors
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
-from common.utils.html import capfirst, date_html, sanitize_html
+from common.utils.html import capfirst, date_html
 from common.utils.text import str_list
 from typography.utils import replace
 
@@ -82,6 +83,48 @@ ISNI_VALIDATORS = [
 #
 
 
+class SearchVectorAbstractModel(Model):
+    search_vector = SearchVectorField(null=True, blank=True, editable=False)
+    autocomplete_vector = SearchVectorField(
+        null=True, blank=True, editable=False,
+    )
+    search_fields = []
+
+    class Meta:
+        abstract = True
+        indexes = [
+            GinIndex('search_vector', name='%(class)s_search'),
+            GinIndex('autocomplete_vector', name='%(class)s_autocomplete'),
+        ]
+
+    @classmethod
+    def update_all_search_vectors(cls):
+        update_all_search_vectors(cls, cls.search_fields)
+
+    def set_search_vectors(self) -> None:
+        search_fields = self.search_fields
+
+        search_fields = [
+            getattr(self, field_name)
+            for field_name in search_fields
+        ]
+        search_fields = [
+            Value(value) for value in search_fields if value is not None
+        ]
+        self.search_vector = get_search_vector(search_fields)
+        self.autocomplete_vector = get_search_vector(
+            search_fields, config=settings.AUTOCOMPLETE_CONFIG,
+        )
+
+    @staticmethod
+    def autocomplete_term_adjust(term):
+        return replace(term)
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return ['autocomplete_vector__autocomplete']
+
+
 def get_related_fields(meta):
     return [
         f for f in meta.get_fields()
@@ -110,7 +153,7 @@ class CommonManager(TypographicManager):
     queryset_class = CommonQuerySet
 
 
-class CommonModel(TypographicModel):
+class CommonModel(SearchVectorAbstractModel, TypographicModel):
     """
     Modèle commun à l’application, ajoutant diverses possibilités.
     """
@@ -120,8 +163,11 @@ class CommonModel(TypographicModel):
         related_name='%(class)s')
     objects = CommonManager()
 
-    class Meta(object):
+    class Meta(TypographicModel.Meta):
         abstract = True  # = prototype de modèle, et non un vrai modèle.
+        indexes = [
+            *SearchVectorAbstractModel.Meta.indexes,
+        ]
 
     def _perform_unique_checks(self, unique_checks):
         # Taken from the overridden method.
@@ -199,10 +245,6 @@ class CommonModel(TypographicModel):
     def related_label(self):
         return force_text(self)
 
-    @staticmethod
-    def autocomplete_term_adjust(term):
-        return replace(term)
-
 
 class PublishedQuerySet(CommonQuerySet):
     @staticmethod
@@ -255,7 +297,7 @@ class PublishedModel(CommonModel):
 
     objects = PublishedManager()
 
-    class Meta(object):
+    class Meta(CommonModel.Meta):
         abstract = True
 
     @property
@@ -275,7 +317,7 @@ class AutoriteModel(PublishedModel):
     notes_publiques = HTMLField(blank=True, verbose_name=_('notes publiques'))
     notes_privees = HTMLField(blank=True, verbose_name=_('notes privées'))
 
-    class Meta(object):
+    class Meta(PublishedModel.Meta):
         abstract = True
 
 
@@ -319,21 +361,33 @@ class CommonTreeQuerySet(TreeQuerySetMixin, CommonQuerySet):
     pass
 
 
-class CommonTreeManager(CommonManager):
+class CommonTreeManager(CommonManager.from_queryset(CommonTreeQuerySet)):
     queryset_class = CommonTreeQuerySet
-
-    def get_queryset(self):
-        return self.queryset_class(self.model, using=self._db).order_by(
-            [f.name for f in self.model._meta.fields
-             if isinstance(f, PathField)][0])
 
 
 class NumberCharField(CharField):
     NUMBER_RE = re.compile(r'\d+')
 
     def __init__(self, *args, zfill_size=6, **kwargs):
-        super().__init__(*args, **kwargs)
         self.zfill_size = zfill_size
+        super().__init__(*args, **kwargs)
+
+    def db_type_parameters(self, connection):
+        parameters = super().db_type_parameters(connection)
+
+        # Adjusts the database maximum length to allow for zfill padding.
+        # For example, a `form_max_length` of 5 means we can store something
+        # like '1-2-3', which gets padded with zeros: '000001-000002-000003'
+        # So even though we force the form to validate for 5 characters max,
+        # the database must allow 20 characters max.
+        form_max_length = parameters['max_length']
+        max_possible_numbers = ceil(form_max_length / 2)
+        parameters['max_length'] = (
+            max_possible_numbers * self.zfill_size
+            + form_max_length - max_possible_numbers
+        )
+
+        return parameters
 
     def fill_zeros(self, match):
         return match.group(0).zfill(self.zfill_size)
@@ -572,8 +626,14 @@ class TypeDeParente(CommonModel):
         help_text=PLURAL_MSG)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
-    class Meta(object):
+    search_fields = [
+        'nom', 'nom_relatif', 'nom_pluriel', 'nom_relatif_pluriel',
+    ]
+
+    class Meta(CommonModel.Meta):
         abstract = True
+        unique_together = ['nom', 'nom_relatif']
+        ordering = ['classement']
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -583,6 +643,12 @@ class TypeDeParente(CommonModel):
 
     def __str__(self):
         return f'{self.nom} ({self.nom_relatif})'
+
+    @staticmethod
+    def invalidated_relations_when_saved(all_relations=False):
+        if all_relations:
+            return ('parentes',)
+        return ()
 
 
 #
@@ -609,26 +675,3 @@ class Etat(CommonModel, UniqueSlugModel):
 
     def pluriel(self):
         return calc_pluriel(self)
-
-
-#
-# Signals
-#
-
-
-@receiver(pre_save)
-def handle_whitespaces(sender, **kwargs):
-    # We skip LogEntry because the logged entry has already been saved
-    # (and sanitized).
-    if sender is LogEntry:
-        return
-
-    # We start by stripping all leading and trailing whitespaces.
-    obj = kwargs['instance']
-    for field_name in [f.attname for f in obj._meta.fields]:
-        v = getattr(obj, field_name)
-        if hasattr(v, 'strip'):
-            setattr(obj, field_name, sanitize_html(v.strip()))
-    # Then we call the specific whitespace handler of the model (if it exists).
-    if hasattr(obj, 'handle_whitespaces'):
-        obj.handle_whitespaces()

@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='hierarchicuser',
             name='path',
-            field=tree.fields.PathField(db_index=True, order_by=('last_name', 'first_name', 'username')),
+            field=tree.fields.PathField(db_index=True, order_by=['last_name', 'first_name', 'username'], parent_field_name='mentor'),
         ),
         migrations.AlterField(
             model_name='hierarchicuser',
@@ -48,6 +48,6 @@ class Migration(migrations.Migration):
             name='willing_to_be_mentor',
             field=models.BooleanField(verbose_name='Veut être responsable scientifique', default=False),
         ),
-        CreateTreeTrigger('hierarchicuser', parent_field='mentor'),
+        CreateTreeTrigger('hierarchicuser'),
         RebuildPaths('hierarchicuser'),
     ]

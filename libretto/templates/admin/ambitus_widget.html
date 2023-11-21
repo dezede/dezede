@@ -1,0 +1,1 @@
+du    {% for widget in widget.subwidgets %}{% spaceless %}{% include widget.template_name %}{% endspaceless %}{% if not forloop.last %}    au    {% endif %}{% endfor %}
