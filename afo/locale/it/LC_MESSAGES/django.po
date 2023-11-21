@@ -2,10 +2,11 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # Rosalba Agresta <rosalbagresta@gmail.com>, 2016
-#
+# Lucia Pasini, 2023
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -13,15 +14,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2016-06-24 22:20+0000\n"
-"Last-Translator: Rosalba Agresta <rosalbagresta@gmail.com>, 2016\n"
-"Language-Team: Italian (https://app.transifex.com/bertrandbordage/"
-"teams/11498/it/)\n"
-"Language: it\n"
+"Last-Translator: Lucia Pasini, 2023\n"
+"Language-Team: Italian (https://app.transifex.com/bertrandbordage/teams/11498/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
-"1 : 2;\n"
+"Language: it\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: afo/models.py:14
 msgid "événement"
@@ -33,7 +32,7 @@ msgstr "nome del festival"
 
 #: afo/models.py:16
 msgid "code ou titre de la tournée"
-msgstr "codice o titolo della tournée"
+msgstr "codice o titolo del tour"
 
 #: afo/models.py:18
 msgid "cycle"
@@ -49,7 +48,7 @@ msgstr "titolo del programma"
 
 #: afo/models.py:24
 msgid "lyrique version scénique"
-msgstr "lirica versione scenica"
+msgstr "versione lirica da palcoscenico"
 
 #: afo/models.py:25
 msgid "musique de chambre"
@@ -57,11 +56,11 @@ msgstr "musica da camera"
 
 #: afo/models.py:26
 msgid "lyrique version concert"
-msgstr "lirico versione concerto"
+msgstr "versione lirica da concerto"
 
 #: afo/models.py:27
 msgid "symphonique (dont chœur/récital)"
-msgstr "sinfonico (compreso coro/recital)"
+msgstr "sinfonico (incluso coro/recital)"
 
 #: afo/models.py:28
 msgid "chorégraphique"
@@ -77,7 +76,7 @@ msgstr "tipologia artistica del programma"
 
 #: afo/models.py:35
 msgid "concert commenté/présenté"
-msgstr "concerto commentato/presentato"
+msgstr "concerto con commento/presentazione"
 
 #: afo/models.py:36
 msgid "concert participatif"
@@ -89,15 +88,15 @@ msgstr "presentazione specifica"
 
 #: afo/models.py:43
 msgid "public de proximité"
-msgstr "pubblico di prossimità"
+msgstr "pubblico locale"
 
 #: afo/models.py:44
 msgid "public empêché (santé, handicap, justice)"
-msgstr "pubblico impedito (salute, handicap, giustizia)"
+msgstr "pubblico svantaggiato (salute, disabilità, giustizia)"
 
 #: afo/models.py:45
 msgid "seniors"
-msgstr "seniors"
+msgstr "anziani"
 
 #: afo/models.py:46
 msgid "jeunes"
@@ -105,11 +104,11 @@ msgstr "giovani"
 
 #: afo/models.py:47
 msgid "jeunes en temps scolaire"
-msgstr "giovani in periodo scolastico"
+msgstr "giovani scolarizzati"
 
 #: afo/models.py:48
 msgid "jeunes hors temps scolaire"
-msgstr "giovani in periodo non scolastico"
+msgstr "giovani non scolarizzati"
 
 #: afo/models.py:50
 msgid "public spécifique"
@@ -117,7 +116,7 @@ msgstr "pubblico specifico"
 
 #: afo/models.py:53
 msgid "participation aux frais"
-msgstr "partecipazione alle spese"
+msgstr "contributo ai costi"
 
 #: afo/models.py:54
 msgid "autoproduction"
@@ -137,23 +136,23 @@ msgstr "contratto di corealizzazione"
 
 #: afo/models.py:58
 msgid "location"
-msgstr "locazione"
+msgstr "noleggio"
 
 #: afo/models.py:60
 msgid "modalité de production"
-msgstr "modalità di produzione"
+msgstr "metodo di produzione"
 
 #: afo/models.py:64
 msgid "nombre de musiciens permanents convoqués (dont remplaçants)"
-msgstr "numero di musicisti titolari convocati (compresi i sostituti)"
+msgstr "numero di musicisti di ruolo convocati (compresi i supplenti)"
 
 #: afo/models.py:67
 msgid "nombre de musiciens remplaçants"
-msgstr "numero di musicisti sostituti"
+msgstr "numero di musicisti supplenti"
 
 #: afo/models.py:69
 msgid "nombre de musiciens supplémentaires convoqués"
-msgstr "numero di musicisti supplementari convocati"
+msgstr "numero di musicisti aggiuntivi convocati"
 
 #: afo/models.py:71
 msgid "nomenclature"
@@ -161,11 +160,11 @@ msgstr "nomenclatura"
 
 #: afo/models.py:72
 msgid "entrées exonérées"
-msgstr "ingressi esonerati "
+msgstr "ingressi esenti "
 
 #: afo/models.py:74
 msgid "entrées payantes"
-msgstr "ingressi paganti"
+msgstr "ingressi a pagamento"
 
 #: afo/models.py:76
 msgid "entrées scolaires"
@@ -173,11 +172,11 @@ msgstr "ingressi scolastici"
 
 #: afo/models.py:78
 msgid "fréquentation totale"
-msgstr "frequentazione totale"
+msgstr "presenze totali"
 
 #: afo/models.py:80
 msgid "jauge"
-msgstr "indicatore"
+msgstr "calibro"
 
 #: afo/models.py:83
 msgid "événement AFO"
@@ -213,7 +212,7 @@ msgstr "dedicata alla musica"
 
 #: afo/models.py:102
 msgid "pluridisciplinaire"
-msgstr "pluridisciplinare"
+msgstr "multidisciplinare"
 
 #: afo/models.py:105
 msgid "type de salle"

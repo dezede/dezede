@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Marie Salgues <marie.salgues@laposte.net>, 2016
 msgid ""
@@ -11,14 +11,12 @@ msgstr ""
 "POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2012-10-06 19:01+0000\n"
 "Last-Translator: Marie Salgues <marie.salgues@laposte.net>, 2016\n"
-"Language-Team: Spanish (http://app.transifex.com/bertrandbordage/dezede/"
-"language/es/)\n"
-"Language: es\n"
+"Language-Team: Spanish (http://app.transifex.com/bertrandbordage/dezede/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
-"1 : 2;\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: accounts/admin.py:59
 msgid "Informations personnelles"
@@ -164,10 +162,7 @@ msgid ""
 "      Si vous ne possédez pas encore de compte,\n"
 "      <a href=\"%(signup_url)s\">veuillez en créer un</a> d’abord.\n"
 "    "
-msgstr ""
-"\n"
-"Si aún no tiene cuenta ,\n"
-"<a href=\"%(signup_url)s\">cree una</a> primero."
+msgstr "\nSi aún no tiene cuenta ,\n<a href=\"%(signup_url)s\">cree una</a> primero."
 
 #: accounts/templates/account/password_change.html:6
 #: accounts/templates/account/password_change.html:14
@@ -183,11 +178,9 @@ msgstr "Restablecimiento de contraseña"
 
 #: accounts/templates/account/password_reset.html:16
 msgid ""
-"Forgotten your password? Enter your e-mail address below, and we'll send you "
-"an e-mail allowing you to reset it."
-msgstr ""
-"¿Contraseña olvidada? Escriba su dirección de correo electrónico abajo y le "
-"mandaremos un correo autorizándole para restablecerla."
+"Forgotten your password? Enter your e-mail address below, and we'll send you"
+" an e-mail allowing you to reset it."
+msgstr "¿Contraseña olvidada? Escriba su dirección de correo electrónico abajo y le mandaremos un correo autorizándole para restablecerla."
 
 #: accounts/templates/account/password_reset.html:21
 msgid "Reset My Password"
@@ -195,16 +188,13 @@ msgstr "Restablecer Mi Contraseña"
 
 #: accounts/templates/account/password_reset.html:24
 msgid "Please contact us if you have any trouble resetting your password."
-msgstr ""
-"Por favor, contáctenos si encuentra problemas al restablecer su contraseña."
+msgstr "Por favor, contáctenos si encuentra problemas al restablecer su contraseña."
 
 #: accounts/templates/account/password_reset_done.html:15
 msgid ""
 "We have sent you an e-mail. Please contact us if you do not receive it "
 "within a few minutes."
-msgstr ""
-"Le hemos mandado un correo electrónico. Por favor, contáctenos si no lo "
-"recibe en unos pocos minutos. "
+msgstr "Le hemos mandado un correo electrónico. Por favor, contáctenos si no lo recibe en unos pocos minutos. "
 
 #: accounts/templates/account/password_reset_from_key.html:8
 msgid "Bad Token"
@@ -214,12 +204,9 @@ msgstr "Símbolo (Token) incorrecto"
 #, python-format
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
-"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
-"a>."
-msgstr ""
-"El enlace para restablecer la contraseña no era válido, sin duda porque ya "
-"fue utilizado. Por favor solicite un <a href=\"%(passwd_reset_url)s\">nuevo "
-"restablecimiento de contraseña</a>. "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
+"reset</a>."
+msgstr "El enlace para restablecer la contraseña no era válido, sin duda porque ya fue utilizado. Por favor solicite un <a href=\"%(passwd_reset_url)s\">nuevo restablecimiento de contraseña</a>. "
 
 #: accounts/templates/account/password_reset_from_key.html:25
 msgid "change password"
@@ -238,9 +225,7 @@ msgstr "Iniciar sesión"
 #, python-format
 msgid ""
 "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
-msgstr ""
-"¿Ya tiene una cuenta? Entonces por favor <a href=\"%(login_url)s\">inicie la "
-"sesión</a>."
+msgstr "¿Ya tiene una cuenta? Entonces por favor <a href=\"%(login_url)s\">inicie la sesión</a>."
 
 #: accounts/templates/account/verification_sent.html:7
 msgid "Vérification de votre adresse e-mail"
@@ -250,18 +235,11 @@ msgstr "Verificación de su dirección de correo electrónico"
 msgid ""
 "\n"
 "      Nous vous avons envoyé un e-mail de vérification.\n"
-"      Suivez le lien fourni pour finaliser la procédure de création de "
-"compte.\n"
+"      Suivez le lien fourni pour finaliser la procédure de création de compte.\n"
 "      Veuillez nous contactez si vous ne le recevez pas\n"
 "      dans les minutes qui viennent.\n"
 "    "
-msgstr ""
-"\n"
-"Le hemos mandado un correo de verificación. \n"
-"Siga el enlace proporcionado para finalizar el proceso de creación  de "
-"cuenta.\n"
-"Contáctenos si no lo recibe\n"
-"en unos pocos minutos."
+msgstr "\nLe hemos mandado un correo de verificación. \nSiga el enlace proporcionado para finalizar el proceso de creación  de cuenta.\nContáctenos si no lo recibe\nen unos pocos minutos."
 
 #: accounts/templates/accounts/grant_to_admin.html:7
 msgid "Accès à l’interface d’administration"
@@ -273,30 +251,20 @@ msgid ""
 "\n"
 "        L’utilisateur « %(object)s » fait déjà partie de l’équipe !\n"
 "      "
-msgstr ""
-"\n"
-"¡El usuario «%(object)s» ya forma parte del equipo!"
+msgstr "\n¡El usuario «%(object)s» ya forma parte del equipo!"
 
 #: accounts/templates/accounts/grant_to_admin.html:20
 #, python-format
 msgid ""
 "\n"
 "        %(user)s, l’utilisateur « %(object)s »\n"
-"        a été autorisé à accéder à l’interface d'administration suite à "
-"votre\n"
+"        a été autorisé à accéder à l’interface d'administration suite à votre\n"
 "        accord. Si vous souhaitez annuler cela,\n"
 "        <a href=\"%(change_user_url)s\">\n"
 "          modifiez l’utilisateur %(object.get_full_name)s</a>,\n"
 "        décochez la case « statut équipe » et enregistrez.\n"
 "      "
-msgstr ""
-"\n"
-"%(user)s, el usuario «%(object)s»\n"
-"ha sido autorizado para acceder a la interfaz de administración a raíz del "
-"acuerdo de usted. Si desea cancelarlo,\n"
-"<a href=\"%(change_user_url)s\">\n"
-"modifique al usuario %(object.get_full_name)s</a>\n"
-"desmarque la casilla «estatuto equipo» y guarde."
+msgstr "\n%(user)s, el usuario «%(object)s»\nha sido autorizado para acceder a la interfaz de administración a raíz del acuerdo de usted. Si desea cancelarlo,\n<a href=\"%(change_user_url)s\">\nmodifique al usuario %(object.get_full_name)s</a>\ndesmarque la casilla «estatuto equipo» y guarde."
 
 #: accounts/templates/accounts/grant_to_admin_demand_email.txt:3
 #, python-format
@@ -307,32 +275,17 @@ msgid ""
 "L’utilisateur « %(user)s » demande à devenir l'un de vos disciples.\n"
 "\n"
 "Il a demandé à faire partie du(es) groupe(s) :\n"
-msgstr ""
-"\n"
-"Buenos días %(mentor_first_name)s,\n"
-"\n"
-"El usuario «%(user)s» pide convertirse en uno de sus discípulos .\n"
-"\n"
-"Pidió formar parte del(los) grupo(s):\n"
+msgstr "\nBuenos días %(mentor_first_name)s,\n\nEl usuario «%(user)s» pide convertirse en uno de sus discípulos .\n\nPidió formar parte del(los) grupo(s):\n"
 
 #: accounts/templates/accounts/grant_to_admin_demand_email.txt:16
 #, python-format
 msgid ""
 "\n"
-"Si vous souhaitez l’accepter et ainsi lui autoriser à accéder à l’interface "
-"d’administration, cliquez sur ce lien :\n"
+"Si vous souhaitez l’accepter et ainsi lui autoriser à accéder à l’interface d’administration, cliquez sur ce lien :\n"
 "%(site_url)s%(grant_to_admin_url)s\n"
 "\n"
-"Vous pouvez consulter et modifier ses données complètes sur %(site_url)s"
-"%(change_user_url)s.\n"
-msgstr ""
-"\n"
-"Si desea aceptarlo y darle así acceso a la interfaz de administración, haga "
-"clic en este enlace:\n"
-"%(site_url)s%(grant_to_admin_url)s\n"
-"\n"
-"Puede usted consultar y modificar los datos completos de él en %(site_url)s"
-"%(change_user_url)s.\n"
+"Vous pouvez consulter et modifier ses données complètes sur %(site_url)s%(change_user_url)s.\n"
+msgstr "\nSi desea aceptarlo y darle así acceso a la interfaz de administración, haga clic en este enlace:\n%(site_url)s%(grant_to_admin_url)s\n\nPuede usted consultar y modificar los datos completos de él en %(site_url)s%(change_user_url)s.\n"
 
 #: accounts/templates/accounts/granted_to_admin_email.txt:4
 #, python-format
@@ -341,15 +294,8 @@ msgid ""
 "Bonjour %(user_first_name)s,\n"
 "\n"
 "Vous venez d’être accepté dans l’équipe de Dezède.\n"
-"Vous êtes donc autorisé à accéder à l’interface d’administration sur "
-"%(site_url)s%(admin_index_url)s.\n"
-msgstr ""
-"\n"
-"Buenos días %(user_first_name)s,\n"
-"\n"
-"Acaba de ser aceptado en el equipo de Dezède.\n"
-"Pues, está autorizado a acceder a la interfaz de administración en "
-"%(site_url)s%(admin_index_url)s.\n"
+"Vous êtes donc autorisé à accéder à l’interface d’administration sur %(site_url)s%(admin_index_url)s.\n"
+msgstr "\nBuenos días %(user_first_name)s,\n\nAcaba de ser aceptado en el equipo de Dezède.\nPues, está autorizado a acceder a la interfaz de administración en %(site_url)s%(admin_index_url)s.\n"
 
 #: accounts/templates/accounts/hierarchicuser_detail.html:16
 msgid "Présentation"
@@ -388,16 +334,12 @@ msgid "Comité éditorial"
 msgstr "Comité editorial"
 
 #: accounts/views.py:182
-#, fuzzy
-#| msgid "Responsabilité scientifique"
 msgid "Comité scientifique"
-msgstr "Responsabilidad científica"
+msgstr ""
 
 #: accounts/views.py:224
-#, fuzzy
-#| msgid "Contributeurs"
 msgid "Principaux contributeurs"
-msgstr "Contribuidores"
+msgstr ""
 
 #: accounts/views.py:234
 msgid "Équipe de développement"

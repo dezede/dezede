@@ -1,9 +1,10 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Bertrand Bordage <bordage.bertrand@gmail.com>, 2016
+# Joann Élart <joann.elart@univ-rouen.fr>, 2023
 # Sara Iglesias <saraiglesias@gmx.de>, 2016
 # Yannick Simon <yannick.simon@univ-rouen.fr>, 2016
 msgid ""
@@ -12,13 +13,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2012-10-06 18:55+0000\n"
-"Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
-"Language-Team: German (http://app.transifex.com/bertrandbordage/dezede/"
-"language/de/)\n"
-"Language: de\n"
+"Last-Translator: Joann Élart <joann.elart@univ-rouen.fr>, 2023\n"
+"Language-Team: German (http://app.transifex.com/bertrandbordage/dezede/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: libretto/admin.py:82 libretto/models/personnel.py:196
@@ -49,10 +49,8 @@ msgid "programme"
 msgstr "Programm"
 
 #: libretto/admin.py:144
-#, fuzzy
-#| msgid "parent"
 msgid "a un parent"
-msgstr "Verwandt mit"
+msgstr ""
 
 #: libretto/admin.py:148 libretto/models/evenement.py:529
 #: libretto/models/source.py:205 libretto/models/source.py:363
@@ -187,32 +185,24 @@ msgstr ""
 
 #: libretto/admin.py:968
 #: libretto/templates/admin/libretto/source/change_form.html:11
-#, fuzzy
-#| msgid "Exporter en PDF"
 msgid "Séparer le PDF"
-msgstr "Als PDF exportieren"
+msgstr ""
 
 #: libretto/admin.py:1021
 msgid "Transcription"
 msgstr "Transkription"
 
 #: libretto/admin.py:1031 libretto/templates/libretto/source_detail.html:27
-#, fuzzy
-#| msgid "Création"
 msgid "Présentation"
-msgstr "Uraufführung"
+msgstr ""
 
 #: libretto/admin.py:1097
-#, fuzzy
-#| msgid "enfants"
 msgid "Enfants"
-msgstr "Kinder"
+msgstr ""
 
 #: libretto/admin.py:1111 libretto/admin.py:1132
-#, fuzzy
-#| msgid "fichiers"
 msgid "Fichiers"
-msgstr "Dateien"
+msgstr ""
 
 #: libretto/export.py:11
 msgid "rendu"
@@ -351,10 +341,8 @@ msgid "« Œuvre » ne peut être saisi que pour les rôles."
 msgstr "\"Werk\" kann nur für Rollen angegeben werden."
 
 #: libretto/forms.py:127
-#, fuzzy
-#| msgid "« Œuvre » ne peut être saisi que pour les rôles."
 msgid "« Professions » ne peut être saisi que pour les instruments."
-msgstr "\"Werk\" kann nur für Rollen angegeben werden."
+msgstr ""
 
 #: libretto/forms.py:171
 #, python-format
@@ -367,9 +355,7 @@ msgstr "Geben sie mindestens einen Titel, ein Genre oder ein Tempo an."
 
 #: libretto/forms.py:188
 msgid "« Type de création » doit être rempli lorsqu’on remplit la création."
-msgstr ""
-"\"Art der Angabe\" muss ausgewählt werden, um Angaben zur Werkgenese zu "
-"machen."
+msgstr "\"Art der Angabe\" muss ausgewählt werden, um Angaben zur Werkgenese zu machen."
 
 #: libretto/forms.py:228
 msgid "Vous devez remplir « Individu » ou « Ensemble »."
@@ -379,18 +365,13 @@ msgstr "Geben Sie \"Person\" oder \"Ensemble\" an."
 msgid ""
 "Au moins un rôle ou instrument est lié à cette profession. Remplissez donc "
 "« Rôle ou instrument » à la place."
-msgstr ""
-"Mindestens eine Rolle oder ein Instrument ist mit dieser Berufsgruppe "
-"verknüpft. Füllen Sie daher stellvertretend \"Rolle oder Instrument\" aus."
+msgstr "Mindestens eine Rolle oder ein Instrument ist mit dieser Berufsgruppe verknüpft. Füllen Sie daher stellvertretend \"Rolle oder Instrument\" aus."
 
 #: libretto/forms.py:281
-#, fuzzy
-#| msgid ""
-#| "Vous devez remplir « Titre » ou « Lieu de conservation » et « Cote »."
 msgid ""
 "Vous devez remplir « Titre » ou « Lieu de conservation » et « Cote » ou "
 "« Parent » et « Position »."
-msgstr "Geben Sie \"Titel\" oder \"Standort\" und \"Signatur\" an."
+msgstr ""
 
 #: libretto/forms.py:308
 msgid "Vous devez remplir « Ensemble » ou « Lieu ou Institution »"
@@ -434,10 +415,8 @@ msgid "Par année civile"
 msgstr ""
 
 #: libretto/forms.py:357
-#, fuzzy
-#| msgid "saison"
 msgid "Par saison"
-msgstr "Spielzeit"
+msgstr ""
 
 #: libretto/forms.py:372
 msgid "Filtrer"
@@ -471,18 +450,13 @@ msgid ""
 "Exemple : « 14/7/1789 » pour le 14 juillet 1789. En cas de date "
 "approximative, saisir le premier jour du mois (« 1/10/1678 » pour octobre "
 "1678) ou de l’année (« 1/1/1830 » pour 1830)."
-msgstr ""
-"Bsp.: \"14/7/1789\" für den 14. Juli 1789. Bei ungefährem Datum den ersten "
-"Tag des Monats (\"1/10/1678\" für Oktober 1678) bzw. des Jahres "
-"(\"1/1/1830\" für 1830) angeben."
+msgstr "Bsp.: \"14/7/1789\" für den 14. Juli 1789. Bei ungefährem Datum den ersten Tag des Monats (\"1/10/1678\" für Oktober 1678) bzw. des Jahres (\"1/1/1830\" für 1830) angeben."
 
 #: libretto/models/base.py:54
 msgid ""
 "Ne remplir que si la date est approximative. Par exemple : « 1870 », "
 "« octobre 1812 », « été 1967 »."
-msgstr ""
-"Nur ausfüllen, wenn nur ein ungefähres Datum bekannt ist. Z.B. \"1870\", "
-"\"Oktober 1812\", \"Sommer 1967\". "
+msgstr "Nur ausfüllen, wenn nur ein ungefähres Datum bekannt ist. Z.B. \"1870\", \"Oktober 1812\", \"Sommer 1967\". "
 
 #: libretto/models/base.py:56
 msgid "Exemple : « 19:30 » pour 19h30."
@@ -492,9 +466,7 @@ msgstr "Bsp.: \"19:30\" für 19:30 Uhr."
 msgid ""
 "Ne remplir que si l’heure est approximative. Par exemple : « matinée », "
 "« soirée »."
-msgstr ""
-"Nur ausfüllen, wenn nur eine ungefähre Uhrzeit bekannt ist. Z.B. \"Vormittag"
-"\", \"Abend\""
+msgstr "Nur ausfüllen, wenn nur eine ungefähre Uhrzeit bekannt ist. Z.B. \"Vormittag\", \"Abend\""
 
 #: libretto/models/base.py:77
 msgid "Numéro d’ISNI invalide."
@@ -546,9 +518,7 @@ msgstr "Ort (ungefähr)"
 
 #: libretto/models/base.py:428
 msgid "Ne remplir que si le lieu (ou l’institution) est approximatif(ve)."
-msgstr ""
-"Nur ausfüllen, wenn nur ein ungefährer Ort (oder eine ungefähre Institution) "
-"bekannt ist. "
+msgstr "Nur ausfüllen, wenn nur ein ungefährer Ort (oder eine ungefähre Institution) bekannt ist. "
 
 #: libretto/models/base.py:509
 msgid "H\\hi"
@@ -605,8 +575,7 @@ msgstr "Nachricht"
 
 #: libretto/models/base.py:599
 msgid "Message à afficher dans la partie consultation."
-msgstr ""
-"Nachricht, die im öffentlichen Nachschlage-Bereich angezeigt werden soll."
+msgstr "Nachricht, die im öffentlichen Nachschlage-Bereich angezeigt werden soll."
 
 #: libretto/models/base.py:600
 msgid "publié"
@@ -624,15 +593,9 @@ msgstr "Übergeordnete Ortsangabe"
 msgid ""
 "L’affichage d’un lieu remonte jusqu’au lieu référent. Exemple : dans une "
 "architecture de pays, villes, théâtres, etc, « ville, institution, salle » "
-"sera affiché car on remonte jusqu’à un lieu référent, ici choisi comme étant "
-"ceux de nature « ville »"
-msgstr ""
-"Wenn Sie dieses Kästchen anklicken, wird bei der Anzeige der entsprechenden "
-"Informationen die Art des Ortes als übergeordnete Ortsangabe verwendet. "
-"Bsp.: \"Stadt\" ist eine Art von übergeordneter Ortsangabe, daher wird die "
-"Information \"Feydeau\" (ein Pariser Konzertsaal) zusammen mit allen "
-"übergeordneten Ortsangaben bis hinauf zum Niveau Stadt (in diesem Fall "
-"\"Paris\") angezeigt (\"Paris, Opéra-Comique, Feydeau\")."
+"sera affiché car on remonte jusqu’à un lieu référent, ici choisi comme étant"
+" ceux de nature « ville »"
+msgstr "Wenn Sie dieses Kästchen anklicken, wird bei der Anzeige der entsprechenden Informationen die Art des Ortes als übergeordnete Ortsangabe verwendet. Bsp.: \"Stadt\" ist eine Art von übergeordneter Ortsangabe, daher wird die Information \"Feydeau\" (ein Pariser Konzertsaal) zusammen mit allen übergeordneten Ortsangaben bis hinauf zum Niveau Stadt (in diesem Fall \"Paris\") angezeigt (\"Paris, Opéra-Comique, Feydeau\")."
 
 #: libretto/models/espace_temps.py:44
 msgid "nature de lieu"
@@ -746,12 +709,10 @@ msgstr "Rolle oder Instrument"
 #: libretto/models/evenement.py:110 libretto/models/oeuvre.py:421
 #: libretto/models/personnel.py:42 libretto/models/personnel.py:216
 #: libretto/templates/libretto/individu_detail.html:24
-#, fuzzy
-#| msgid "profession"
 msgid "profession"
 msgid_plural "professions"
-msgstr[0] "Berufsgruppe"
-msgstr[1] "Berufsgruppe"
+msgstr[0] ""
+msgstr[1] ""
 
 #: libretto/models/evenement.py:117
 msgid "élément de distribution"
@@ -790,16 +751,11 @@ msgstr "in drei Akten"
 #: libretto/models/evenement.py:222
 msgid ""
 "Par exemple, on peut choisir de classer les découpages par nombre d’actes."
-msgstr ""
-"Über diese Funktion können gleichartige Angaben in eine nummerierte "
-"Reihenfolge gestellt werden. Bsp.: Um in \"Akt I\", \"Akt II\", \"Akt III\" "
-"zu gliedern, muss \"1\", \"2\", \"3\" eingegeben werden."
+msgstr "Über diese Funktion können gleichartige Angaben in eine nummerierte Reihenfolge gestellt werden. Bsp.: Um in \"Akt I\", \"Akt II\", \"Akt III\" zu gliedern, muss \"1\", \"2\", \"3\" eingegeben werden."
 
 #: libretto/models/evenement.py:230
-#, fuzzy
-#| msgid "caractéristique de programme"
 msgid "caractéristiques de programme"
-msgstr "Programmeigenschaft"
+msgstr ""
 
 #: libretto/models/evenement.py:282 libretto/models/oeuvre.py:96
 #: libretto/models/oeuvre.py:213 libretto/models/oeuvre.py:407
@@ -812,9 +768,7 @@ msgstr "Werk"
 msgid ""
 "Vous pouvez croiser le titre et le nom des auteurs. Évitez les termes "
 "généraux comme « de », « la », « le », « avec »."
-msgstr ""
-"Sie können Titel und Namen der Autoren kreuzen. Vermeiden Sie allgemeine "
-"Ausdrücke wie \"von\", \"die\", \"der\", \"mit\"."
+msgstr "Sie können Titel und Namen der Autoren kreuzen. Vermeiden Sie allgemeine Ausdrücke wie \"von\", \"die\", \"der\", \"mit\"."
 
 #: libretto/models/evenement.py:286 libretto/models/source.py:191
 msgid "autre"
@@ -854,10 +808,8 @@ msgid "P. A."
 msgstr "Tantiemen"
 
 #: libretto/models/evenement.py:307
-#, fuzzy
-#| msgid "élément de programme"
 msgid "éléments de programme"
-msgstr "Programmelement"
+msgstr ""
 
 #: libretto/models/evenement.py:504
 msgid "Entrez uniquement des entiers séparés par des « + »."
@@ -1082,15 +1034,7 @@ msgid ""
 "Exemple : le rendu d’une scène sera du type « Le jeune Henri, acte 2, scène "
 "3 » car on remonte jusqu’à l’œuvre référente, ici choisie comme étant celle "
 "de nature « opéra »"
-msgstr ""
-"Wenn Sie dieses Kästchen anklicken, wird bei der Anzeige der entsprechenden "
-"Information die Art des Genres als übergeordnete Genre-Angabe verwendet. "
-"Bsp.: \"Opéra comique\" ist eine Art von übergeordneter Genre-Angabe, daher "
-"wird die Arie \"Ah! quel plaisir d’être soldat!\", ein Auszug aus dem ersten "
-"Akt der Oper <em>La Dame blanche<em> zusammen mit allen übergeordneten Genre-"
-"Angaben bis hinauf zum Niveau des Werktitels angezeigt (<em>La Dame "
-"blanche<em>, I, 3, Melodie von Georges Brown \"Ah! Quel plaisir d’être soldat"
-"\")."
+msgstr "Wenn Sie dieses Kästchen anklicken, wird bei der Anzeige der entsprechenden Information die Art des Genres als übergeordnete Genre-Angabe verwendet. Bsp.: \"Opéra comique\" ist eine Art von übergeordneter Genre-Angabe, daher wird die Arie \"Ah! quel plaisir d’être soldat!\", ein Auszug aus dem ersten Akt der Oper <em>La Dame blanche<em> zusammen mit allen übergeordneten Genre-Angaben bis hinauf zum Niveau des Werktitels angezeigt (<em>La Dame blanche<em>, I, 3, Melodie von Georges Brown \"Ah! Quel plaisir d’être soldat\")."
 
 #: libretto/models/oeuvre.py:53
 msgid "parents"
@@ -1125,16 +1069,12 @@ msgid "rôle ou instrument parent"
 msgstr "Verwandte Rolle oder verwandtes Instrument"
 
 #: libretto/models/oeuvre.py:110
-#, fuzzy
-#| msgid "interprète"
 msgid "premier(ère) interprète"
-msgstr "Interpret"
+msgstr ""
 
 #: libretto/models/oeuvre.py:116
-#, fuzzy
-#| msgid "rôle ou instrument"
 msgid "rôles et instruments"
-msgstr "Rolle oder Instrument"
+msgstr ""
 
 #: libretto/models/oeuvre.py:127
 msgid ""
@@ -1222,9 +1162,7 @@ msgstr ""
 
 #: libretto/models/oeuvre.py:446
 msgid "« Individu » et « Ensemble » ne peuvent être saisis sur la même ligne."
-msgstr ""
-"\"Person\" und \"Ensemble\" können nicht in der gleichen Zeile angegeben "
-"werden.."
+msgstr "\"Person\" und \"Ensemble\" können nicht in der gleichen Zeile angegeben werden.."
 
 #: libretto/models/oeuvre.py:521
 msgid "do bémol majeur"
@@ -1543,19 +1481,14 @@ msgstr "Nummer"
 msgid ""
 "Vous ne pouvez saisir que des chiffres, lettres non accentuées et tiret, le "
 "tout sans espace."
-msgstr ""
-"Geben Sie ausschließlich Zahlen, einen Bindestrich und Buchstaben ohne "
-"Akzente ein, keine Leerzeichen."
+msgstr "Geben Sie ausschließlich Zahlen, einen Bindestrich und Buchstaben ohne Akzente ein, keine Leerzeichen."
 
 #: libretto/models/oeuvre.py:615
 msgid ""
 "Exemple : « 5 » pour symphonie n° 5, « 7a » pour valse n° 7 a, ou encore "
 "« 3-7 » pour sonates n° 3 à 7. <strong>Ne pas confondre avec le sous-numéro "
 "d’opus.</strong>"
-msgstr ""
-"Z.B. \"5\" für die 5. Sinfonie, \"7a\" für den Walzer Nr. 7a oder \"3–7\" "
-"für die Sonaten Nr. 3 bis 7. <strong>Nicht mit der Opuszahl verwechseln.</"
-"strong>"
+msgstr "Z.B. \"5\" für die 5. Sinfonie, \"7a\" für den Walzer Nr. 7a oder \"3–7\" für die Sonaten Nr. 3 bis 7. <strong>Nicht mit der Opuszahl verwechseln.</strong>"
 
 #: libretto/models/oeuvre.py:619 libretto/models/oeuvre.py:808
 msgid "coupe"
@@ -1576,16 +1509,11 @@ msgstr "unbestimmt"
 #: libretto/models/oeuvre.py:627
 msgid ""
 "Cocher si l’œuvre n’est pas identifiable, par exemple un quatuor de Haydn, "
-"sans savoir lequel. <strong>Ne pas utiliser pour un extrait indéterminé</"
-"strong>, sélectionner plutôt dans le programme l’œuvre dont il est tiré et "
-"joindre une caractéristique le décrivant (« un air », « un mouvement », "
-"etc.)."
-msgstr ""
-"Auswählen, wenn das Werk nicht genau identifizierbar ist, z.B. ein nicht "
-"näher bestimmtes Quartett von Haydn.<strong>Nicht für einen unbestimmten "
-"Auszug auswählen.</strong>Wählen Sie hierfür aus dem Programm das Werk aus, "
-"aus dem der Auszug stammt, und geben sie eine Beschreibung an (\"eine Melodie"
-"\", \"ein Satz\" usw.)."
+"sans savoir lequel. <strong>Ne pas utiliser pour un extrait "
+"indéterminé</strong>, sélectionner plutôt dans le programme l’œuvre dont il "
+"est tiré et joindre une caractéristique le décrivant (« un air », "
+"« un mouvement », etc.)."
+msgstr "Auswählen, wenn das Werk nicht genau identifizierbar ist, z.B. ein nicht näher bestimmtes Quartett von Haydn.<strong>Nicht für einen unbestimmten Auszug auswählen.</strong>Wählen Sie hierfür aus dem Programm das Werk aus, aus dem der Auszug stammt, und geben sie eine Beschreibung an (\"eine Melodie\", \"ein Satz\" usw.)."
 
 #: libretto/models/oeuvre.py:634 libretto/models/oeuvre.py:811
 msgid "incipit"
@@ -1595,9 +1523,7 @@ msgstr "Incipit"
 msgid ""
 "Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 de l’acte III des "
 "<em>Contes d’Hoffmann</em> d’Offenbach."
-msgstr ""
-"Z.B. \"Belle nuit, ô nuit d’amour\" für die Nr. 13 des 3. Akts von "
-"<em>Hoffmanns Erzählungen</em> von Offenbach."
+msgstr "Z.B. \"Belle nuit, ô nuit d’amour\" für die Nr. 13 des 3. Akts von <em>Hoffmanns Erzählungen</em> von Offenbach."
 
 #: libretto/models/oeuvre.py:639
 msgid "tempo"
@@ -1619,11 +1545,7 @@ msgid ""
 "Beethoven, « des motifs de &lt;em&gt;Lucia di Lammermoor&lt;/em&gt; » pour "
 "une fantaisie sur des motifs de <em>Lucia di Lammermoor</em> (&lt;em&gt; et "
 "&lt;/em&gt; sont les balises HTML pour mettre en emphase)."
-msgstr ""
-"Z.B. \"ein Thema von Beethoven\" für eine Variation über ein Thema von "
-"Beethoven, \"Motive aus &lt;em&gt;Lucia di Lammermoor&lt;/em&gt; \" für eine "
-"Fantasie über Motive aus <em>Lucia di Lammermoor</em>. (Über die beiden HTML-"
-"Tags &lt;em&gt; wird eine Kursivschreibung erreicht.)"
+msgstr "Z.B. \"ein Thema von Beethoven\" für eine Variation über ein Thema von Beethoven, \"Motive aus &lt;em&gt;Lucia di Lammermoor&lt;/em&gt; \" für eine Fantasie über Motive aus <em>Lucia di Lammermoor</em>. (Über die beiden HTML-Tags &lt;em&gt; wird eine Kursivschreibung erreicht.)"
 
 #: libretto/models/oeuvre.py:666 libretto/models/source.py:183
 msgid "transcription"
@@ -1653,9 +1575,7 @@ msgstr "Gebrauchsname"
 msgid ""
 "Exemple : « barcarolle » pour le n° 13 de l’acte III des <em>Contes "
 "d’Hoffmann</em> d’Offenbach."
-msgstr ""
-"Z.B. \"Barcarolle\" für die Nr. 13 des 3. Akts von <em>Hoffmanns "
-"Erzählungen<em> von Offenbach."
+msgstr "Z.B. \"Barcarolle\" für die Nr. 13 des 3. Akts von <em>Hoffmanns Erzählungen<em> von Offenbach."
 
 #: libretto/models/oeuvre.py:681 libretto/models/oeuvre.py:833
 msgid "opus"
@@ -1665,17 +1585,13 @@ msgstr "Opuszahl"
 msgid ""
 "Vous ne pouvez saisir que des chiffres, lettres non accentuées, tiret et "
 "barre oblique, le tout sans espace."
-msgstr ""
-"Geben Sie nur Zahlen, Buchstaben ohne Akzente, einen Bindestrich und einen "
-"Schrägstrich ein, immer ohne Leerzeichen. "
+msgstr "Geben Sie nur Zahlen, Buchstaben ohne Akzente, einen Bindestrich und einen Schrägstrich ein, immer ohne Leerzeichen. "
 
 #: libretto/models/oeuvre.py:686
 msgid ""
 "Exemple : « 12 » pour op. 12, « 27/3 » pour op. 27 n° 3, « 8b » pour "
 "op. 8 b, ou encore « 12-15 » pour op. 12 à 15."
-msgstr ""
-"Z.B. \"12\" für Op. 12, \"27/3\" für Op. 27 Nr. 3, \"8b\" für Op. 8b, oder "
-"\"12-15\" für Op. 12 bis 15."
+msgstr "Z.B. \"12\" für Op. 12, \"27/3\" für Op. 27 Nr. 3, \"8b\" für Op. 8b, oder \"12-15\" für Op. 12 bis 15."
 
 #: libretto/models/oeuvre.py:690
 msgid "ICT"
@@ -1685,9 +1601,7 @@ msgstr "Nummerierung Werkverzeichnis"
 msgid ""
 "Indice de Catalogue Thématique. Exemple : « RV 42 », « K. 299d » ou encore "
 "« Hob. XVI:24 »."
-msgstr ""
-"Nummerierung des Werks im Werkverzeichnis, z.B. \"RV 42\", K. 299d\" oder "
-"\"Hob. XVI:24\"."
+msgstr "Nummerierung des Werks im Werkverzeichnis, z.B. \"RV 42\", K. 299d\" oder \"Hob. XVI:24\"."
 
 #: libretto/models/oeuvre.py:694
 msgid "genèse (composition, écriture, etc.)"
@@ -1731,7 +1645,7 @@ msgstr "Vorgetragenes Stück"
 
 #: libretto/models/oeuvre.py:730
 msgid "partie"
-msgstr "Stimme"
+msgstr "Teil"
 
 #: libretto/models/oeuvre.py:731
 msgid "livre"
@@ -1778,16 +1692,13 @@ msgid ""
 "Le numéro de l’extrait au sein de l’œuvre, par exemple « 3 » pour le "
 "3<sup>e</sup> mouvement d’un concerto, « 4 » pour l’acte IV d’un opéra, ou "
 "encore « 12b »."
-msgstr ""
-"Die Nummerierung des Auszugs innerhalb des Werks, z.B. \"3\" für den 3. Satz "
-"eines Konzerts, \"4\" für den 4. Akt einer Oper, oder etwa \"12b\"."
+msgstr "Die Nummerierung des Auszugs innerhalb des Werks, z.B. \"3\" für den 3. Satz eines Konzerts, \"4\" für den 4. Akt einer Oper, oder etwa \"12b\"."
 
 #: libretto/models/oeuvre.py:753
 msgid ""
 "Vous devez saisir un nombre en chiffres arabes éventellement suivi de "
 "lettres."
-msgstr ""
-"Geben Sie eine Zahl (arabische Ziffern), evtl. gefolgt von Buchstaben, an."
+msgstr "Geben Sie eine Zahl (arabische Ziffern), evtl. gefolgt von Buchstaben, an."
 
 #: libretto/models/oeuvre.py:757
 msgid "filles"
@@ -1860,10 +1771,8 @@ msgid "Ne préciser que s’il est différent du nom."
 msgstr "Nur ausfüllen, wenn abweichend vom Namen"
 
 #: libretto/models/personnel.py:35
-#, fuzzy
-#| msgid "nom (au féminin)"
 msgid "nom (au féminin pluriel)"
-msgstr "Name (weibliche Form)"
+msgstr ""
 
 #: libretto/models/personnel.py:105
 msgid "nombre d’individus"
@@ -1962,10 +1871,8 @@ msgid "localisation"
 msgstr "Ort"
 
 #: libretto/models/personnel.py:286
-#, fuzzy
-#| msgid "Exemple : « 0000000121269154 » pour Mozart."
 msgid "Exemple : « 0000000115201575 » pour Le Poème Harmonique."
-msgstr "Z.B. \"0000000121269154\" für Mozart."
+msgstr ""
 
 #: libretto/models/personnel.py:293 libretto/models/source.py:213
 #: libretto/templates/libretto/individu_detail.html:41
@@ -2056,8 +1963,8 @@ msgstr "Nur außerhalb von Dezède bestehende Permalinks angeben."
 
 #: libretto/models/source.py:184
 msgid ""
-"Recopier la source ou un extrait en suivant les règles définies dans <a href="
-"\"/examens/source\">le didacticiel.</a>"
+"Recopier la source ou un extrait en suivant les règles définies dans <a "
+"href=\"/examens/source\">le didacticiel.</a>"
 msgstr ""
 
 #: libretto/models/source.py:189
@@ -2077,10 +1984,8 @@ msgid "vidéo"
 msgstr "Video-Dokument"
 
 #: libretto/models/source.py:200
-#, fuzzy
-#| msgid "événement lié"
 msgid "téléchargement autorisé"
-msgstr "Verknüpftes Ereignis"
+msgstr ""
 
 #: libretto/models/source.py:215
 msgid "lieux"
@@ -2095,38 +2000,28 @@ msgid "éditeurs scientifiques"
 msgstr ""
 
 #: libretto/models/source.py:229
-#, fuzzy
-#| msgid "date de création"
 msgid "date de publication"
-msgstr "Datum der Uraufführung/Entstehung"
+msgstr ""
 
 #: libretto/models/source.py:231
 msgid "publication(s) associée(s)"
 msgstr ""
 
 #: libretto/models/source.py:232
-#, fuzzy
-#| msgid "événements liés"
 msgid "développements envisagés"
-msgstr "Verknüpfte Ereignisse"
+msgstr ""
 
 #: libretto/models/source.py:235
-#, fuzzy
-#| msgid "Création"
 msgid "présentation"
-msgstr "Uraufführung"
+msgstr ""
 
 #: libretto/models/source.py:236
-#, fuzzy
-#| msgid "historique"
 msgid "contexte historique"
-msgstr "Geschichte"
+msgstr ""
 
 #: libretto/models/source.py:237
-#, fuzzy
-#| msgid "sources ↔ parties"
 msgid "sources et protocole"
-msgstr "Quellen↔Stimmen"
+msgstr ""
 
 #: libretto/models/source.py:238
 msgid "bibliographie indicative"
@@ -2186,65 +2081,48 @@ msgid "%(icon)s Lien"
 msgstr "%(icon)s Link"
 
 #: libretto/models/source.py:609
-#, fuzzy
-#| msgid "fichier"
 msgid "fichier (OGG)"
-msgstr "Datei"
+msgstr ""
 
 #: libretto/models/source.py:612
-#, fuzzy
-#| msgid "fichier"
 msgid "fichier (MPEG)"
-msgstr "Datei"
+msgstr ""
 
 #: libretto/models/source.py:615
 msgid "extrait"
 msgstr "Auszug"
 
 #: libretto/models/source.py:617
-#, fuzzy
-#| msgid "extrait"
 msgid "extrait (OGG)"
-msgstr "Auszug"
+msgstr ""
 
 #: libretto/models/source.py:621
-#, fuzzy
-#| msgid "extrait de"
 msgid "extrait (MPEG)"
-msgstr "Auszug aus"
+msgstr ""
 
 #: libretto/models/source.py:624
 msgid "format"
 msgstr ""
 
 #: libretto/models/source.py:626
-#, fuzzy
-#| msgid "type d’extrait"
 msgid "format de l’extrait"
-msgstr "Auszugstyp"
+msgstr ""
 
 #: libretto/models/source.py:629
 msgid "durée (en secondes)"
 msgstr "Dauer (in Sekunden)"
 
 #: libretto/models/source.py:633
-#, fuzzy
-#| msgid "durée (en secondes)"
 msgid "durée de l’extrait (en secondes)"
-msgstr "Dauer (in Sekunden)"
+msgstr ""
 
 #: libretto/models/source.py:652
-#, fuzzy
-#| msgid ""
-#| "Vous devez remplir au moins « Œuvre », « Autre » ou « Distribution »."
 msgid "Vous devez remplir au moins « fichier » ou « extrait »."
-msgstr "Geben Sie mindestens \"Werk\", \"Andere\" oder \"Besetzung\" an."
+msgstr ""
 
 #: libretto/models/source.py:711
-#, fuzzy
-#| msgid "audio"
 msgid "audios"
-msgstr "Audio-Dokument"
+msgstr ""
 
 #: libretto/models/source.py:715
 msgid "largeur"
@@ -2255,38 +2133,28 @@ msgid "hauteur"
 msgstr "Höhe"
 
 #: libretto/models/source.py:720
-#, fuzzy
-#| msgid "type d’extrait"
 msgid "largeur de l’extrait"
-msgstr "Auszugstyp"
+msgstr ""
 
 #: libretto/models/source.py:723
-#, fuzzy
-#| msgid "type d’extrait"
 msgid "hauteur de l’extrait"
-msgstr "Auszugstyp"
+msgstr ""
 
 #: libretto/models/source.py:731
-#, fuzzy
-#| msgid "vidéo"
 msgid "vidéos"
-msgstr "Video-Dokument"
+msgstr ""
 
 #: libretto/templates/admin/libretto/oeuvre/change_form.html:8
 msgid "Ajouter un extrait"
 msgstr "Einen Auszug hinzufügen"
 
 #: libretto/templates/admin/libretto/source/change_form.html:18
-#, fuzzy
-#| msgid "parent"
 msgid "Parent"
-msgstr "Verwandt mit"
+msgstr ""
 
 #: libretto/templates/admin/libretto/source/change_form.html:25
-#, fuzzy
-#| msgid "première mondiale"
 msgid "Première page"
-msgstr "Uraufführung"
+msgstr ""
 
 #: libretto/templates/admin/libretto/source/change_form.html:32
 msgid "Page précédente"
@@ -2337,8 +2205,7 @@ msgid ""
 "                  qu’ils soient intégrés ou non dans un dossier,\n"
 "                  il suffit de croiser les critères de sélection\n"
 "                  en utilisant les outils et les différents champs :\n"
-"                  champs de recherche libre, réglage de la période "
-"chronologique,\n"
+"                  champs de recherche libre, réglage de la période chronologique,\n"
 "                  sélection par année civile ou par saison,\n"
 "                  champs de lieu, d’œuvre, d’individu et d’ensemble.\n"
 "                  Plusieurs éléments peuvent être sélectionnés\n"
@@ -2346,19 +2213,7 @@ msgid ""
 "                  Pour consulter la totalité de la chronologie,\n"
 "                  cliquez sur « Filtrer » sans remplir les champs.\n"
 "                "
-msgstr ""
-"\n"
-"Um die in Dezède publizierten Ereignisse einzusehen\n"
-"(sowohl Ereignisse innerhalb von Dossiers als auch unabhängige "
-"Ereignisse), \n"
-"kreuzen Sie die Suchkriterien in den verschiedenen Suchsparten: \n"
-"Freitextsuche, Eingrenzung der Zeitspanne, \n"
-"Kalenderjahr oder Spielzeit, \n"
-"Ort, Werk, Person und Ensemble. \n"
-"Sie können in jeder der vier letzten Suchsparten \n"
-"mehrere Kriterien auswählen. \n"
-"Um die gesamte Chronologie einzusehen, \n"
-"klicken Sie auf \"Filtern\", ohne die Suchfelder auszufüllen."
+msgstr "\nUm die in Dezède publizierten Ereignisse einzusehen\n(sowohl Ereignisse innerhalb von Dossiers als auch unabhängige Ereignisse), \nkreuzen Sie die Suchkriterien in den verschiedenen Suchsparten: \nFreitextsuche, Eingrenzung der Zeitspanne, \nKalenderjahr oder Spielzeit, \nOrt, Werk, Person und Ensemble. \nSie können in jeder der vier letzten Suchsparten \nmehrere Kriterien auswählen. \nUm die gesamte Chronologie einzusehen, \nklicken Sie auf \"Filtern\", ohne die Suchfelder auszufüllen."
 
 #: libretto/templates/libretto/evenement_list.html:60
 msgid "Exporter"
@@ -2395,10 +2250,8 @@ msgid "Aucun événement n’a été trouvé selon ces critères."
 msgstr "Mit diesen Eingabekriterien konnte kein Ereignis gefunden werden."
 
 #: libretto/templates/libretto/include/bibliotheque_source.html:14
-#, fuzzy
-#| msgid "date de création"
 msgid "Pas de prévisualisation"
-msgstr "Datum der Uraufführung/Entstehung"
+msgstr ""
 
 #: libretto/templates/libretto/include/ensemble_diffusion.html:5
 msgid "Diffusion"
@@ -2438,16 +2291,12 @@ msgid "Proportion des points"
 msgstr "Auflösung"
 
 #: libretto/templates/libretto/individu_detail.html:42
-#, fuzzy
-#| msgid "œuvre créée ici"
 msgid "rôle créé"
-msgstr "Hier uraufgeführtes/entstandenes Werk"
+msgstr ""
 
 #: libretto/templates/libretto/individu_detail.html:42
-#, fuzzy
-#| msgid "œuvres créées ici"
 msgid "rôles créés"
-msgstr "Hier uraufgeführte/entstandene Werke"
+msgstr ""
 
 #: libretto/templates/libretto/individu_detail.html:43
 msgid "apparition"
@@ -2531,10 +2380,8 @@ msgid "Pour citer cette source"
 msgstr ""
 
 #: libretto/templates/libretto/source_detail.html:60
-#, fuzzy
-#| msgid "sources ↔ parties"
 msgid "source parente"
-msgstr "Quellen↔Stimmen"
+msgstr ""
 
 #: libretto/templates/libretto/source_modal.html:5
 #: libretto/templates/libretto/source_modal.html:7
@@ -2605,15 +2452,3 @@ msgstr "Beruf(e)"
 #: libretto/views.py:476
 msgid "Genèse et création"
 msgstr "Genese und Uraufführung"
-
-#~ msgid "Il n’y a pas d’enregistrement entier pour cet extrait."
-#~ msgstr "Keine vollständige Aufnahme dieses Auszugs vorhanden."
-
-#~ msgid "L’enregistrement dont ce fichier est extrait est déjà un extrait."
-#~ msgstr "Die Aufnahme, aus der dieser Auszug stammt, ist bereits ein Auszug."
-
-#~ msgid ""
-#~ "La ou les profession(s) capable(s) de jouer ce rôle ou cet instrument."
-#~ msgstr ""
-#~ "Berufsgruppe/n, die dieses Instrument oder diese Rolle spielen kann/"
-#~ "können."

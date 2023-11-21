@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Sara Iglesias <saraiglesias@gmx.de>, 2016
 # Yannick Simon <yannick.simon@univ-rouen.fr>, 2016
@@ -12,12 +12,11 @@ msgstr ""
 "POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2012-10-06 19:01+0000\n"
 "Last-Translator: Yannick Simon <yannick.simon@univ-rouen.fr>, 2016\n"
-"Language-Team: German (http://app.transifex.com/bertrandbordage/dezede/"
-"language/de/)\n"
-"Language: de\n"
+"Language-Team: German (http://app.transifex.com/bertrandbordage/dezede/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: accounts/admin.py:59
@@ -164,11 +163,7 @@ msgid ""
 "      Si vous ne possédez pas encore de compte,\n"
 "      <a href=\"%(signup_url)s\">veuillez en créer un</a> d’abord.\n"
 "    "
-msgstr ""
-"\n"
-"Wenn Sie noch kein Konto haben, \n"
-"müssen Sie zunächst ein \n"
-"<a href=\"%(signup_url)s\">Konto erstellen</a>."
+msgstr "\nWenn Sie noch kein Konto haben, \nmüssen Sie zunächst ein \n<a href=\"%(signup_url)s\">Konto erstellen</a>."
 
 #: accounts/templates/account/password_change.html:6
 #: accounts/templates/account/password_change.html:14
@@ -184,11 +179,9 @@ msgstr "Passwort zurücksetzen"
 
 #: accounts/templates/account/password_reset.html:16
 msgid ""
-"Forgotten your password? Enter your e-mail address below, and we'll send you "
-"an e-mail allowing you to reset it."
-msgstr ""
-"Passwort vergessen? Geben Sie hier Ihre Email-Adresse an, und wir senden "
-"Ihnen eine Email zum Zurücksetzen Ihres Passworts."
+"Forgotten your password? Enter your e-mail address below, and we'll send you"
+" an e-mail allowing you to reset it."
+msgstr "Passwort vergessen? Geben Sie hier Ihre Email-Adresse an, und wir senden Ihnen eine Email zum Zurücksetzen Ihres Passworts."
 
 #: accounts/templates/account/password_reset.html:21
 msgid "Reset My Password"
@@ -196,17 +189,13 @@ msgstr "Passwort zurücksetzen"
 
 #: accounts/templates/account/password_reset.html:24
 msgid "Please contact us if you have any trouble resetting your password."
-msgstr ""
-"Bitte kontaktieren Sie uns, falls Sie auf Probleme mit dem Zurücksetzen "
-"Ihres Passworts stoßen."
+msgstr "Bitte kontaktieren Sie uns, falls Sie auf Probleme mit dem Zurücksetzen Ihres Passworts stoßen."
 
 #: accounts/templates/account/password_reset_done.html:15
 msgid ""
 "We have sent you an e-mail. Please contact us if you do not receive it "
 "within a few minutes."
-msgstr ""
-"Wir haben Ihnen eine Email geschickt. Bitte kontaktieren Sie uns, falls Sie "
-"diese nicht innerhalb weniger Minuten erhalten."
+msgstr "Wir haben Ihnen eine Email geschickt. Bitte kontaktieren Sie uns, falls Sie diese nicht innerhalb weniger Minuten erhalten."
 
 #: accounts/templates/account/password_reset_from_key.html:8
 msgid "Bad Token"
@@ -216,12 +205,9 @@ msgstr "Bad Token"
 #, python-format
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
-"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
-"a>."
-msgstr ""
-"Der Link zum Zurücksetzen des Passworts ist ungültig, wahrscheinlich weil er "
-"bereits benutzt wurde. Bitte beantragen Sie ein <a href="
-"\"%(passwd_reset_url)s\">erneutes Zurücksetzen des Passworts</a>."
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
+"reset</a>."
+msgstr "Der Link zum Zurücksetzen des Passworts ist ungültig, wahrscheinlich weil er bereits benutzt wurde. Bitte beantragen Sie ein <a href=\"%(passwd_reset_url)s\">erneutes Zurücksetzen des Passworts</a>."
 
 #: accounts/templates/account/password_reset_from_key.html:25
 msgid "change password"
@@ -240,9 +226,7 @@ msgstr "Anmelden"
 #, python-format
 msgid ""
 "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
-msgstr ""
-"Haben Sie schon ein Konto? Dann <a href=\"%(login_url)s\">melden Sie sich "
-"an</a>."
+msgstr "Haben Sie schon ein Konto? Dann <a href=\"%(login_url)s\">melden Sie sich an</a>."
 
 #: accounts/templates/account/verification_sent.html:7
 msgid "Vérification de votre adresse e-mail"
@@ -252,18 +236,11 @@ msgstr "Prüfung Ihrer Email-Adresse"
 msgid ""
 "\n"
 "      Nous vous avons envoyé un e-mail de vérification.\n"
-"      Suivez le lien fourni pour finaliser la procédure de création de "
-"compte.\n"
+"      Suivez le lien fourni pour finaliser la procédure de création de compte.\n"
 "      Veuillez nous contactez si vous ne le recevez pas\n"
 "      dans les minutes qui viennent.\n"
 "    "
-msgstr ""
-"\n"
-"Wir haben Ihnen eine Verifizierungs-Email geschickt.\n"
-"Folgen Sie dem dort angezeigten Link, \n"
-"um die Kontoerstellung abzuschließen.\n"
-"Bitte kontaktieren Sie uns, falls Sie die Email \n"
-"nicht innerhalb weniger Minuten erhalten."
+msgstr "\nWir haben Ihnen eine Verifizierungs-Email geschickt.\nFolgen Sie dem dort angezeigten Link, \num die Kontoerstellung abzuschließen.\nBitte kontaktieren Sie uns, falls Sie die Email \nnicht innerhalb weniger Minuten erhalten."
 
 #: accounts/templates/accounts/grant_to_admin.html:7
 msgid "Accès à l’interface d’administration"
@@ -275,32 +252,20 @@ msgid ""
 "\n"
 "        L’utilisateur « %(object)s » fait déjà partie de l’équipe !\n"
 "      "
-msgstr ""
-"\n"
-"Der Benutzer/die Benutzerin \"%(object)s\" ist bereits \n"
-"Teil des Teams!"
+msgstr "\nDer Benutzer/die Benutzerin \"%(object)s\" ist bereits \nTeil des Teams!"
 
 #: accounts/templates/accounts/grant_to_admin.html:20
 #, python-format
 msgid ""
 "\n"
 "        %(user)s, l’utilisateur « %(object)s »\n"
-"        a été autorisé à accéder à l’interface d'administration suite à "
-"votre\n"
+"        a été autorisé à accéder à l’interface d'administration suite à votre\n"
 "        accord. Si vous souhaitez annuler cela,\n"
 "        <a href=\"%(change_user_url)s\">\n"
 "          modifiez l’utilisateur %(object.get_full_name)s</a>,\n"
 "        décochez la case « statut équipe » et enregistrez.\n"
 "      "
-msgstr ""
-"\n"
-"%(user)s, \n"
-"mit Ihrer Zustimmung hat der Benutzer/die Benutzerin \"%(object)s\" \n"
-"Zugriffsrechte für die Verwaltungsoberfläche erhalten. \n"
-"Wenn Sie dies rückgängig machen wollen,\n"
-"<a href=\"%(change_user_url)s\">\n"
-"ändern Sie den Benutzer %(object.get_full_name)s</a>,\n"
-"wählen Sie das Feld \"Team-Status\" ab und speichern Sie."
+msgstr "\n%(user)s, \nmit Ihrer Zustimmung hat der Benutzer/die Benutzerin \"%(object)s\" \nZugriffsrechte für die Verwaltungsoberfläche erhalten. \nWenn Sie dies rückgängig machen wollen,\n<a href=\"%(change_user_url)s\">\nändern Sie den Benutzer %(object.get_full_name)s</a>,\nwählen Sie das Feld \"Team-Status\" ab und speichern Sie."
 
 #: accounts/templates/accounts/grant_to_admin_demand_email.txt:3
 #, python-format
@@ -311,33 +276,17 @@ msgid ""
 "L’utilisateur « %(user)s » demande à devenir l'un de vos disciples.\n"
 "\n"
 "Il a demandé à faire partie du(es) groupe(s) :\n"
-msgstr ""
-"\n"
-"Liebe/r  %(mentor_first_name)s, \n"
-"\n"
-"der Benutzer/die Benutzerin \"%(user)s\" bittet darum, Ihr Mentee zu "
-"werden \n"
-"\n"
-"und in folgende Gruppe(n) aufgenommen zu werden:\n"
+msgstr "\nLiebe/r  %(mentor_first_name)s, \n\nder Benutzer/die Benutzerin \"%(user)s\" bittet darum, Ihr Mentee zu werden \n\nund in folgende Gruppe(n) aufgenommen zu werden:\n"
 
 #: accounts/templates/accounts/grant_to_admin_demand_email.txt:16
 #, python-format
 msgid ""
 "\n"
-"Si vous souhaitez l’accepter et ainsi lui autoriser à accéder à l’interface "
-"d’administration, cliquez sur ce lien :\n"
+"Si vous souhaitez l’accepter et ainsi lui autoriser à accéder à l’interface d’administration, cliquez sur ce lien :\n"
 "%(site_url)s%(grant_to_admin_url)s\n"
 "\n"
-"Vous pouvez consulter et modifier ses données complètes sur %(site_url)s"
-"%(change_user_url)s.\n"
-msgstr ""
-"\n"
-"Wenn Sie den Benutzer/die Benutzerin aufnehmen und ihm/ihr damit Zugang zur "
-"Verwaltungsoberfläche gewähren möchten, folgen Sie diesem Link: \n"
-"%(site_url)s%(grant_to_admin_url)s\n"
-"\n"
-"Sie können sein/ihr vollständiges Profil hier einsehen und ändern: "
-"%(site_url)s%(change_user_url)s.\n"
+"Vous pouvez consulter et modifier ses données complètes sur %(site_url)s%(change_user_url)s.\n"
+msgstr "\nWenn Sie den Benutzer/die Benutzerin aufnehmen und ihm/ihr damit Zugang zur Verwaltungsoberfläche gewähren möchten, folgen Sie diesem Link: \n%(site_url)s%(grant_to_admin_url)s\n\nSie können sein/ihr vollständiges Profil hier einsehen und ändern: %(site_url)s%(change_user_url)s.\n"
 
 #: accounts/templates/accounts/granted_to_admin_email.txt:4
 #, python-format
@@ -346,15 +295,8 @@ msgid ""
 "Bonjour %(user_first_name)s,\n"
 "\n"
 "Vous venez d’être accepté dans l’équipe de Dezède.\n"
-"Vous êtes donc autorisé à accéder à l’interface d’administration sur "
-"%(site_url)s%(admin_index_url)s.\n"
-msgstr ""
-"\n"
-"Liebe/r  %(user_first_name)s,\n"
-"\n"
-"Sie wurden in das Dezède-Team aufgenommen.\n"
-"Sie haben damit Zugang zur Verwaltungsoberfläche auf %(site_url)s"
-"%(admin_index_url)s.\n"
+"Vous êtes donc autorisé à accéder à l’interface d’administration sur %(site_url)s%(admin_index_url)s.\n"
+msgstr "\nLiebe/r  %(user_first_name)s,\n\nSie wurden in das Dezède-Team aufgenommen.\nSie haben damit Zugang zur Verwaltungsoberfläche auf %(site_url)s%(admin_index_url)s.\n"
 
 #: accounts/templates/accounts/hierarchicuser_detail.html:16
 msgid "Présentation"

@@ -2,10 +2,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # Translators:
 # Rosalba Agresta <rosalbagresta@gmail.com>, 2016
-#
+# Bertrand Bordage <bordage.bertrand@gmail.com>, 2023
+# Lucia Pasini, 2023
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -13,15 +15,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-06-05 18:26+0200\n"
 "PO-Revision-Date: 2016-06-24 22:21+0000\n"
-"Last-Translator: Rosalba Agresta <rosalbagresta@gmail.com>, 2016\n"
-"Language-Team: Italian (https://app.transifex.com/bertrandbordage/"
-"teams/11498/it/)\n"
-"Language: it\n"
+"Last-Translator: Lucia Pasini, 2023\n"
+"Language-Team: Italian (https://app.transifex.com/bertrandbordage/teams/11498/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
-"1 : 2;\n"
+"Language: it\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: dossiers/admin.py:41
 msgid "Métadonnées"
@@ -45,7 +45,7 @@ msgstr "TOTALE"
 
 #: dossiers/export.py:292
 msgid "Saison indéterminée"
-msgstr "Stagione indeterminata"
+msgstr "Stagione indefinita"
 
 #: dossiers/export.py:321 dossiers/export.py:360 dossiers/export.py:396
 #: dossiers/export.py:428 dossiers/export.py:461 dossiers/export.py:508
@@ -80,7 +80,7 @@ msgstr "1. Eventi - cronologica"
 
 #: dossiers/export.py:329 dossiers/forms.py:56
 msgid "1. Événements : répartition chronologique"
-msgstr "1. Eventi : ripartizione cronologica"
+msgstr "1. Eventi: ripartizione cronologica"
 
 #: dossiers/export.py:344 dossiers/export.py:393 dossiers/export.py:535
 msgid "Pays"
@@ -100,7 +100,7 @@ msgstr "2. Eventi - geografica"
 
 #: dossiers/export.py:350 dossiers/forms.py:57
 msgid "2. Événements : répartition géographique"
-msgstr "2. Eventi : ripartizione geografica"
+msgstr "2. Eventi: ripartizione geografica"
 
 #: dossiers/export.py:358 dossiers/export.py:391 dossiers/export.py:507
 msgid "Œuvre"
@@ -117,7 +117,7 @@ msgstr "3. Opere - cronologica"
 
 #: dossiers/export.py:366 dossiers/forms.py:58
 msgid "3. Œuvres : répartition chronologique"
-msgstr "3. Opere : ripartizione cronologica"
+msgstr "3. Opere: ripartizione cronologica"
 
 #: dossiers/export.py:401
 msgid "4. Œuvres - géographique"
@@ -125,7 +125,7 @@ msgstr "4. Opere - geografica"
 
 #: dossiers/export.py:402 dossiers/forms.py:59
 msgid "4. Œuvres : répartition géographique"
-msgstr "4. Opere : ripartizione geografica"
+msgstr "4. Opere: ripartizione geografica"
 
 #: dossiers/export.py:431
 msgid "Nombre d'éléments de programme"
@@ -137,7 +137,7 @@ msgstr "5. Autori - cronologica"
 
 #: dossiers/export.py:434 dossiers/forms.py:60
 msgid "5. Auteurs : répartition chronologique"
-msgstr "5. Autori : ripartizione cronologica"
+msgstr "5. Autori: ripartizione cronologica"
 
 #: dossiers/export.py:460
 msgid "Interprète"
@@ -145,11 +145,11 @@ msgstr "Interprete"
 
 #: dossiers/export.py:466
 msgid "6. Interprètes - chronologique"
-msgstr "6. Autori - cronologica"
+msgstr "6. Interpreti - cronologica"
 
 #: dossiers/export.py:467 dossiers/forms.py:61
 msgid "6. Interprètes : répartition chronologique"
-msgstr "6. Autori : ripartizione cronologica"
+msgstr "6. Interpreti: ripartizione cronologica"
 
 #: dossiers/export.py:513
 msgid "7. Auteurs et œuvres"
@@ -157,7 +157,7 @@ msgstr "7. Autori e opere"
 
 #: dossiers/export.py:514 dossiers/forms.py:62
 msgid "7. Auteurs et œuvres : répartition chronologique"
-msgstr "7. Autori e opere : ripartizione cronologica"
+msgstr "7. Autori e opere: ripartizione cronologica"
 
 #: dossiers/export.py:542
 msgid "Recette"
@@ -170,11 +170,11 @@ msgstr "8. Entrate"
 #: dossiers/jobs.py:21
 #, python-format
 msgid "du dossier « %s »"
-msgstr "del dossier « %s »"
+msgstr "del dossier «%s»"
 
 #: dossiers/models.py:24
 msgid "nom"
-msgstr ""
+msgstr "nome"
 
 #: dossiers/models.py:25 dossiers/models.py:67
 msgid "position"
@@ -182,11 +182,11 @@ msgstr "posizione"
 
 #: dossiers/models.py:29
 msgid "catégorie de dossiers"
-msgstr "categoria di dossiers"
+msgstr "categoria di dossier"
 
 #: dossiers/models.py:30
 msgid "catégories de dossiers"
-msgstr "categorie di dossiers"
+msgstr "categorie di dossier"
 
 #: dossiers/models.py:56
 msgid "catégorie"
@@ -197,8 +197,8 @@ msgid ""
 "Attention, un dossier contenu dans un autre dossier ne peut être dans une "
 "catégorie."
 msgstr ""
-"Attenzione, un dossier contenuto in un altro dossier non può essere in una "
-"categoria."
+"Si noti che un dossier contenuto in un altro dossier non può far parte di "
+"una categoria."
 
 #: dossiers/models.py:59
 msgid "titre"
@@ -214,7 +214,7 @@ msgstr "Utilizzato per il breadcrumb."
 
 #: dossiers/models.py:64
 msgid "parent"
-msgstr "parente"
+msgstr "genitore"
 
 #: dossiers/models.py:69
 msgid "Personnaliser l’affichage du titre du dossier dans l’adresse URL."
@@ -271,7 +271,7 @@ msgstr "opere"
 
 #: dossiers/models.py:95
 msgid "individus"
-msgstr ""
+msgstr "persone"
 
 #: dossiers/models.py:98
 msgid "circonstance"
@@ -284,7 +284,7 @@ msgstr "eventi"
 
 #: dossiers/models.py:101
 msgid "ensembles"
-msgstr "insiemi"
+msgstr "ensemble"
 
 #: dossiers/models.py:103
 msgid "sources"
@@ -300,15 +300,15 @@ msgstr "dossier di eventi"
 
 #: dossiers/models.py:112
 msgid "dossiers d’événements"
-msgstr "dossiers di eventi"
+msgstr "dossier di eventi"
 
 #: dossiers/models.py:114
 msgid "Peut changer l’état"
-msgstr "Può cabiare lo stato"
+msgstr "Può cabiare stato"
 
 #: dossiers/models.py:189
 msgid "ensemble de données"
-msgstr "insieme di dati"
+msgstr "dataset"
 
 #: dossiers/models.py:193
 msgid "quantité de données sélectionnées"
@@ -316,7 +316,7 @@ msgstr "quantità di dati selezionati"
 
 #: dossiers/templates/dossiers/categoriededossiers_list.html:6
 msgid "dossiers"
-msgstr "dossiers"
+msgstr "dossier"
 
 #: dossiers/templates/dossiers/categoriededossiers_list.html:24
 msgid "Qu’est-ce qu’un dossier ?"
@@ -327,37 +327,29 @@ msgstr "Cos'è un dossier?"
 msgid ""
 "\n"
 "            Le dossier est la forme aboutie d’une publication dans Dezède :\n"
-"            il s’agit d’un corpus d’événements ou d’images, créé et "
-"rassemblé\n"
-"            par des éditeurs scientifiques ou des partenaires qui en "
-"assurent la présentation.\n"
-"            Le dossier d’événements a pour objectif de reconstituer des "
-"programmes de spectacles\n"
-"            dans un espace géographique et temporel circonscrit, d’établir "
-"la programmation d’une institution,\n"
-"            de retracer la carrière d’un interprète, ou d’étudier la "
-"diffusion et la réception d’une œuvre.\n"
+"            il s’agit d’un corpus d’événements ou d’images, créé et rassemblé\n"
+"            par des éditeurs scientifiques ou des partenaires qui en assurent la présentation.\n"
+"            Le dossier d’événements a pour objectif de reconstituer des programmes de spectacles\n"
+"            dans un espace géographique et temporel circonscrit, d’établir la programmation d’une institution,\n"
+"            de retracer la carrière d’un interprète, ou d’étudier la diffusion et la réception d’une œuvre.\n"
 "            Les événements sont présentés de manière chronologique.\n"
 "            Les dossiers sont classés selon un ordre établi\n"
-"            par une table générale qui évolue en fonction des nouvelles "
-"contributions ;\n"
+"            par une table générale qui évolue en fonction des nouvelles contributions ;\n"
 "            leur publication est soumise à l’expertise\n"
 "            du <a href=\"%(comite_url)s\">comité éditorial</a>.\n"
 "          "
 msgstr ""
 "\n"
-"Il dossier è la forma più completa di una pubblicazione in Dezède:\n"
+"Il dossier è la forma compiuta di una pubblicazione su Dezède:\n"
 "si tratta di un corpus di eventi o di immagini, creato e riunito\n"
-"da editori scientifici o da partners che ne assicurano la presentazione.\n"
-"L'obiettivo del dossier di eventi è di ricostruire programmi di spettacoli\n"
-"in uno spazio geografico e temporale circoscritto, di stabilire la "
-"programmazione di una istituzione,\n"
-"di ritracciare la carriera di un interprete, o di studiare la diffusione e "
-"la ricezione di un'opera. \n"
-"Gli eventi sono presentati cronologicamente.\n"
-"I dossiers sono classificati secondo un ordine stabilito\n"
-"da una tavola generale che si evolve in funzione dei nuovi contributi;\n"
-"la loro pubblicazione è sottomessa alla perizia\n"
+"dagli editori scientifici o dai partner che ne curano la presentazione.\n"
+"L'obiettivo del dossier di eventi è di ricostruire i programmi degli spettacoli\n"
+"in un'area geografica e temporale definita, di stabilire la programmazione di un'istituzione,\n"
+"di ripercorrere la carriera di un artista, o di studiare la diffusione e la ricezione di un'opera. \n"
+"Gli eventi sono presentati in ordine cronologico.\n"
+"I dossier sono classificati secondo un ordine stabilito\n"
+"da una tabella generale che si evolve in base ai nuovi contributi;\n"
+"la pubblicazione è soggetta alla valutazione\n"
 "del <a href=\"%(comite_url)s\">comitato editoriale</a>."
 
 #: dossiers/templates/dossiers/chord_diagram.html:39
@@ -372,8 +364,8 @@ msgid ""
 "  "
 msgstr ""
 "\n"
-"Il chord diagram è proporzionale al numero di eventi\n"
-"comportanti opere di due autori collegati fra loro."
+"La dimensione delle stringhe è proporzionale al numero di eventi\n"
+"in cui sono presenti opere dei due autori collegati."
 
 #: dossiers/templates/dossiers/chord_diagram.html:50
 msgid ""
@@ -386,11 +378,11 @@ msgid ""
 "  "
 msgstr ""
 "\n"
-"Clicca sul nome di un autore per visualizzare solo\n"
-"il chord diagram a cui è associato.<br />\n"
-"Clicca una seconda volta per nascondere\n"
-"il chord diagram a cui questo nome è collegato.<br />\n"
-"Clicca in qualsiasi altro posto per tornare alla posizione iniziale."
+"Fare clic sul nome di un autore per visualizzare solo\n"
+"le stringhe a cui è associato.<br />\n"
+"Fare clic una seconda volta per nascondere\n"
+"le stringhe a cui questo nome è associato.<br />\n"
+"Fare clic in qualsiasi altro punto per tornare alla posizione iniziale."
 
 #: dossiers/templates/dossiers/dossierdevenements_content.html:15
 msgid "Contexte historique"
@@ -406,7 +398,7 @@ msgstr "Bibliografia indicativa"
 
 #: dossiers/templates/dossiers/dossierdevenements_content.html:35
 msgid "(dir.)"
-msgstr "(dir.)"
+msgstr "(a cura di)"
 
 #: dossiers/templates/dossiers/dossierdevenements_content.html:39
 #, python-format
@@ -443,11 +435,11 @@ msgstr "Dossier precedente"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail.html:61
 msgid "Retourner en haut"
-msgstr "Ritorna in alto"
+msgstr "Torna in alto"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail.html:68
 msgid "Dossier suivant"
-msgstr "Dossier successivo"
+msgstr "Prossimo dossier"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:11
 #: dossiers/templates/dossiers/opera_comique_presentation.html:13
@@ -477,7 +469,7 @@ msgstr "Data di pubblicazione online"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:54
 msgid "Publication(s) associée(s)"
-msgstr "Pubblicazione/i associata/e"
+msgstr "Pubblicazione/i correlata/e"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:60
 msgid "Développements envisagés"
@@ -485,34 +477,32 @@ msgstr "Sviluppi previsti"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:69
 msgid "Exporter en PDF"
-msgstr "Esportare in PDF"
+msgstr "Esportazione in formato PDF"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:76
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:83
 msgid "Exporter les statistiques"
-msgstr ""
+msgstr "Esportazione delle statistiche"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:93
 msgid "Exports"
-msgstr ""
+msgstr "Esportazioni"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:110
 msgid "Fermer"
-msgstr ""
+msgstr "Chiudere"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:111
-#, fuzzy
-#| msgid "Exporter en PDF"
 msgid "Exporter"
-msgstr "Esportare in PDF"
+msgstr "Esportare"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:126
 msgid "Ajouter"
-msgstr ""
+msgstr "Aggiungere"
 
 #: dossiers/templates/dossiers/dossierdevenements_detail_sidebar.html:128
 msgid "Supprimer"
-msgstr ""
+msgstr "Eliminare"
 
 #: dossiers/templates/dossiers/dossierdevenements_stats_detail.html:6
 #: dossiers/templates/dossiers/tabs.html:13
@@ -527,19 +517,19 @@ msgstr "%(n_oeuvres)s opere"
 #: dossiers/templates/dossiers/dossierdevenements_stats_detail.html:49
 #, python-format
 msgid "%(period)s (%(ratio)s %%, soit %(count)s œuvres)"
-msgstr "%(period)s (%(ratio)s %%,o%(count)sopere)"
+msgstr "%(period)s (%(ratio)s %%, cioè %(count)s opere)"
 
 #: dossiers/templates/dossiers/opera_comique.html:9
 msgid "Ordonner par nom d’œuvre"
-msgstr "Ordinare per nome d'opera"
+msgstr "Ordinare per nome dell'opera"
 
 #: dossiers/templates/dossiers/opera_comique.html:13
 msgid "Ordonner par date de création mondiale"
-msgstr "Ordinare per data di creazione mondiale"
+msgstr "Ordinare per data della prima esecuzione mondiale"
 
 #: dossiers/templates/dossiers/opera_comique.html:33
 msgid "Création mondiale :"
-msgstr "Creazione mondiale :"
+msgstr "Prima esecuzione mondiale:"
 
 #: dossiers/templates/dossiers/opera_comique_base.html:8
 #: dossiers/templates/dossiers/opera_comique_base.html:21
@@ -557,48 +547,28 @@ msgstr ""
 #: dossiers/templates/dossiers/opera_comique_presentation.html:31
 msgid ""
 "\n"
-"              Tricentenaire en 2015, l’Opéra Comique est la troisième plus "
-"ancienne institution théâtrale de France après l’Opéra de Paris et la "
-"Comédie-Française. L’Opéra Comique a créé au Siècle des Lumières un genre "
-"original – l’opéra-comique – et produit le répertoire français qui s’est le "
-"mieux diffusé en région et à l’étranger, jusqu’au cœur du XX<sup>e</sup> "
-"siècle. Parmi les chefs-d’œuvre créés dans ses murs figurent <em>La Fille du "
-"régiment</em>, <em>La Damnation de Faust</em>, <em>Carmen</em>, <em>Les "
-"Contes d’Hoffmann</em>, <em>Manon</em>, <em>Pelléas et Mélisande</em> ou "
-"<em>La Voix humaine</em>.\n"
+"              Tricentenaire en 2015, l’Opéra Comique est la troisième plus ancienne institution théâtrale de France après l’Opéra de Paris et la Comédie-Française. L’Opéra Comique a créé au Siècle des Lumières un genre original – l’opéra-comique – et produit le répertoire français qui s’est le mieux diffusé en région et à l’étranger, jusqu’au cœur du XX<sup>e</sup> siècle. Parmi les chefs-d’œuvre créés dans ses murs figurent <em>La Fille du régiment</em>, <em>La Damnation de Faust</em>, <em>Carmen</em>, <em>Les Contes d’Hoffmann</em>, <em>Manon</em>, <em>Pelléas et Mélisande</em> ou <em>La Voix humaine</em>.\n"
 "            "
 msgstr ""
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:37
 msgid ""
 "\n"
-"              Contrairement à ses deux aînés, l’Opéra Comique n’a jamais pu "
-"centraliser ni traiter ses fonds d’archives. Elles sont aujourd’hui "
-"dispersées entre différentes parties de fonds des Archives nationales, de la "
-"Bibliothèque nationale de France et de la Bibliothèque historique de la "
-"ville de Paris. Certaines archives des périodes les plus récentes sont "
-"restées <em>in situ</em> mais ne sont pas consultables par le public.\n"
+"              Contrairement à ses deux aînés, l’Opéra Comique n’a jamais pu centraliser ni traiter ses fonds d’archives. Elles sont aujourd’hui dispersées entre différentes parties de fonds des Archives nationales, de la Bibliothèque nationale de France et de la Bibliothèque historique de la ville de Paris. Certaines archives des périodes les plus récentes sont restées <em>in situ</em> mais ne sont pas consultables par le public.\n"
 "            "
 msgstr ""
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:43
 msgid ""
 "\n"
-"              Jérôme Deschamps dirige l’institution depuis 2007 avec la "
-"volonté de convier le public à se réapproprier l’Opéra Comique dans une "
-"perspective historique. Il a mis à l’honneur la programmation du répertoire "
-"maison, la restauration du bâtiment, le développement de la pédagogie autour "
-"des spectacles, le partenariat avec la recherche, la publication d’ouvrages "
-"collectifs et de programmes de salle ambitieux.\n"
+"              Jérôme Deschamps dirige l’institution depuis 2007 avec la volonté de convier le public à se réapproprier l’Opéra Comique dans une perspective historique. Il a mis à l’honneur la programmation du répertoire maison, la restauration du bâtiment, le développement de la pédagogie autour des spectacles, le partenariat avec la recherche, la publication d’ouvrages collectifs et de programmes de salle ambitieux.\n"
 "            "
 msgstr ""
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:49
 msgid ""
 "\n"
-"              Cette démarche, qui remporte un vif succès public, a incité "
-"l’Opéra Comique à concevoir, dans la perspective du tricentenaire de 2015, "
-"le rassemblement virtuel de ses archives.\n"
+"              Cette démarche, qui remporte un vif succès public, a incité l’Opéra Comique à concevoir, dans la perspective du tricentenaire de 2015, le rassemblement virtuel de ses archives.\n"
 "            "
 msgstr ""
 
@@ -609,52 +579,43 @@ msgstr ""
 #: dossiers/templates/dossiers/opera_comique_presentation.html:58
 msgid ""
 "\n"
-"            En 2012, l’Opéra Comique a présenté sa candidature à l’appel à "
-"projet de numérisation 2013 dans le cadre du plan national de numérisation "
-"du patrimoine et de la création, coordonné par le DREST, département de la "
-"recherche, de l’enseignement supérieur et de la technologie au sein du "
-"ministère de la Culture et de la Communication. Le projet, retenu par le "
-"ministère, portait sur la numérisation de deux ensembles d’archives :\n"
+"            En 2012, l’Opéra Comique a présenté sa candidature à l’appel à projet de numérisation 2013 dans le cadre du plan national de numérisation du patrimoine et de la création, coordonné par le DREST, département de la recherche, de l’enseignement supérieur et de la technologie au sein du ministère de la Culture et de la Communication. Le projet, retenu par le ministère, portait sur la numérisation de deux ensembles d’archives :\n"
 "          "
 msgstr ""
+"\n"
+"            Nel 2012, l'Opéra Comique ha presentato una candidatura al bando 2013 per progetti di digitalizzazione nell'ambito del piano nazionale di digitalizzazione del patrimonio e della produzione culturale, coordinato dal DREST, il dipartimento della ricerca, dell'istruzione superiore e della tecnologia del Ministero della Cultura e della Comunicazione. Il progetto, selezionato dal Ministero, prevedeva la digitalizzazione di due serie di archivi:\n"
+"          "
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:65
 msgid ""
 "\n"
-"              des archives artistiques conservées aux Archives nationales : "
-"livrets manuscrits, dossiers de censure, affiches, dessins, gravures et "
-"photographies, documents couvrant la période de 1800 à 2007. Cet ensemble "
-"constitue environ un tiers des archives globales relatives à l’Opéra "
-"Comique, les autres portant sur l’administration et l’architecture ;\n"
+"              des archives artistiques conservées aux Archives nationales : livrets manuscrits, dossiers de censure, affiches, dessins, gravures et photographies, documents couvrant la période de 1800 à 2007. Cet ensemble constitue environ un tiers des archives globales relatives à l’Opéra Comique, les autres portant sur l’administration et l’architecture ;\n"
 "            "
 msgstr ""
+"\n"
+"              gli archivi artistici custoditi dagli Archives nationales: libretti manoscritti, fascicoli della censura, manifesti, disegni, incisioni e fotografie, documenti che coprono il periodo dal 1800 al 2007. Questo fondo costituisce circa un terzo degli archivi complessivi inerenti all'Opéra Comique, mentre il resto riguarda l'amministrazione e l'architettura;\n"
+"            "
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:70
 msgid ""
 "\n"
-"              des archives conservées à l’Opéra Comique : programmes de "
-"salle et brochures de saison de 1911 à 2007, affiches pour la période "
-"1985-2007, photographies du début du XX<sup>e</sup> siècle. Au sein de cet "
-"ensemble figure un don conséquent réalisé en 2012 par Madame Jeannine "
-"Desplobins.\n"
+"              des archives conservées à l’Opéra Comique : programmes de salle et brochures de saison de 1911 à 2007, affiches pour la période 1985-2007, photographies du début du XX<sup>e</sup> siècle. Au sein de cet ensemble figure un don conséquent réalisé en 2012 par Madame Jeannine Desplobins.\n"
 "            "
 msgstr ""
+"\n"
+"              gli archivi in possesso dell'Opéra Comique: programmi e opuscoli stagionali dal 1911 al 2007, manifesti dal 1985 al 2007, fotografie dell'inizio del Novecento. Questa collezione include un'importante donazione fatta nel 2012 da Madame Jeannine Desplobins.\n"
+"            "
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:77
 msgid ""
 "\n"
-"            Les documents ont été numérisés par Archimaine. En 2013, l’Opéra "
-"Comique a décidé de travailler avec l’équipe Dezède, en accord avec les "
-"Archives nationales, afin de permettre la mise en ligne et l’accessibilité "
-"au plus grand nombre de sa chronologie et de ses archives numérisées, ceci "
-"en bénéficiant des garanties scientifiques et techniques qu’offre le portail "
-"Dezède.\n"
+"            Les documents ont été numérisés par Archimaine. En 2013, l’Opéra Comique a décidé de travailler avec l’équipe Dezède, en accord avec les Archives nationales, afin de permettre la mise en ligne et l’accessibilité au plus grand nombre de sa chronologie et de ses archives numérisées, ceci en bénéficiant des garanties scientifiques et techniques qu’offre le portail Dezède.\n"
 "          "
 msgstr ""
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:82
 msgid "Ont contribué à la réalisation de ce projet :"
-msgstr ""
+msgstr "Collaboratori a questo progetto:"
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:84
 msgid "À l’Opéra Comique"
@@ -663,23 +624,14 @@ msgstr ""
 #: dossiers/templates/dossiers/opera_comique_presentation.html:86
 msgid ""
 "\n"
-"            Agnès <span class=\"sc\">Terrier</span>, dramaturge et "
-"conseillère artistique<br />\n"
-"            Laure <span class=\"sc\">Mercatello</span> puis Nathalie <span "
-"class=\"sc\">Lefèvre</span>, directrice administrative et financière<br />\n"
-"            Albane <span class=\"sc\">de Chatellus</span>, secrétaire "
-"générale<br />\n"
-"            Laure <span class=\"sc\">Salefranque</span>, adjointe de la "
-"secrétaire générale en charge de la communication<br />\n"
-"            Juliette <span class=\"sc\">Tissot-Vidal</span>, chargée de "
-"communication web<br />\n"
-"            Emmanuel <span class=\"sc\">Hervé</span>, chargé de mission "
-"archives<br />\n"
-"            Nicola <span class=\"sc\">Ross</span>, assistant dramaturge<br /"
-">\n"
-"            Jérôme <span class=\"sc\">Avenas</span>, Yann <span class=\"sc"
-"\">Breton</span> et Emmanuel <span class=\"sc\">Quinchez</span> stagiaires à "
-"la dramaturgie\n"
+"            Agnès <span class=\"sc\">Terrier</span>, dramaturge et conseillère artistique<br />\n"
+"            Laure <span class=\"sc\">Mercatello</span> puis Nathalie <span class=\"sc\">Lefèvre</span>, directrice administrative et financière<br />\n"
+"            Albane <span class=\"sc\">de Chatellus</span>, secrétaire générale<br />\n"
+"            Laure <span class=\"sc\">Salefranque</span>, adjointe de la secrétaire générale en charge de la communication<br />\n"
+"            Juliette <span class=\"sc\">Tissot-Vidal</span>, chargée de communication web<br />\n"
+"            Emmanuel <span class=\"sc\">Hervé</span>, chargé de mission archives<br />\n"
+"            Nicola <span class=\"sc\">Ross</span>, assistant dramaturge<br />\n"
+"            Jérôme <span class=\"sc\">Avenas</span>, Yann <span class=\"sc\">Breton</span> et Emmanuel <span class=\"sc\">Quinchez</span> stagiaires à la dramaturgie\n"
 "          "
 msgstr ""
 
@@ -690,25 +642,24 @@ msgstr ""
 #: dossiers/templates/dossiers/opera_comique_presentation.html:100
 msgid ""
 "\n"
-"            Catherine <span class=\"sc\">Mérot</span>, conservateur général "
-"du Patrimoine, responsable du Département Éducation-Culture-Affaires "
-"sociales (DECAS)<br />\n"
-"            Yvette <span class=\"sc\">Isselin</span>, chargée d’études "
-"documentaires, responsable des fonds Spectacles, DECAS<br />\n"
-"            Nicole <span class=\"sc\">Brondel</span>, chargée d’études "
-"documentaires, responsable des fonds de la Censure, Département Justice-"
-"Intérieur<br />\n"
-"            Charlotte <span class=\"sc\">Renaud</span>, chargée d’études "
-"documentaires, pôle Image, Département de la Conservation<br />\n"
-"            Marc <span class=\"sc\">Paturange</span>, photographe, "
-"responsable du pôle Photographie, Département de la Conservation<br />\n"
-"            Pascal <span class=\"sc\">Tanésie</span>, chargé d’études "
-"documentaires, chef de mission SIA, Département de la Maîtrise d’ouvrage et "
-"du service d’information<br />\n"
-"            Laurent <span class=\"sc\">Martin</span>, responsable des "
-"ateliers de Restauration, Département de la Conservation\n"
+"            Catherine <span class=\"sc\">Mérot</span>, conservateur général du Patrimoine, responsable du Département Éducation-Culture-Affaires sociales (DECAS)<br />\n"
+"            Yvette <span class=\"sc\">Isselin</span>, chargée d’études documentaires, responsable des fonds Spectacles, DECAS<br />\n"
+"            Nicole <span class=\"sc\">Brondel</span>, chargée d’études documentaires, responsable des fonds de la Censure, Département Justice-Intérieur<br />\n"
+"            Charlotte <span class=\"sc\">Renaud</span>, chargée d’études documentaires, pôle Image, Département de la Conservation<br />\n"
+"            Marc <span class=\"sc\">Paturange</span>, photographe, responsable du pôle Photographie, Département de la Conservation<br />\n"
+"            Pascal <span class=\"sc\">Tanésie</span>, chargé d’études documentaires, chef de mission SIA, Département de la Maîtrise d’ouvrage et du service d’information<br />\n"
+"            Laurent <span class=\"sc\">Martin</span>, responsable des ateliers de Restauration, Département de la Conservation\n"
 "          "
 msgstr ""
+"\n"
+"            Catherine <span class=\"sc\">Mérot</span>, curatrice generale del patrimonio culturale, responsabile del Dipartimento Educazione-Cultura-Affari Sociali (DECAS)<br />\n"
+"            Yvette <span class=\"sc\">Isselin</span>, ricercatrice documentarista, responsabile delle collezioni dello Spettacolo, DECAS<br />\n"
+"            Nicole <span class=\"sc\">Brondel</span>, ricercatrice documentarista, responsabile delle collezioni sulla Censura, Dipartimento di Giustizia e Affari Interni<br />\n"
+"            Charlotte <span class=\"sc\">Renaud</span>, ricercatrice documentarista, reparto Immagine, Dipartimento della Conservazione<br />\n"
+"            Marc <span class=\"sc\">Paturange</span>, fotografo, responsabile del servizio fotografico, Dipartimento della Conservazione<br />\n"
+"            Pascal <span class=\"sc\">Tanésie</span>, documentarista, responsabile della missione SIA, Dipartimento di Gestione dei progetti e servizio informazioni<br />\n"
+"            Laurent <span class=\"sc\">Martin</span>, responsabile dei laboratori di Restauro, Dipartimento della Conservazione\n"
+"          "
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:111
 msgid "De l’université de Rouen ou l’équipe Dezède"
@@ -717,17 +668,9 @@ msgstr ""
 #: dossiers/templates/dossiers/opera_comique_presentation.html:113
 msgid ""
 "\n"
-"            Joann <span class=\"sc\">Élart</span>, Maître de conférences en "
-"musicologie à l’université de Rouen (GRHIS), chargé dans le cadre d’un "
-"accueil en délégation au CNRS (IRCL UMR 5186) en 2014-2015 du suivi de "
-"l’importation des données dans Dezède (relecture, préparation des fichiers, "
-"coordination du développement informatique)<br />\n"
-"            Nawal <span class=\"sc\">Bouin-El Boustani</span>, Chargée de "
-"Valorisation à la Direction de la Recherche et de la Valorisation à "
-"l’université de Rouen (convention entre l’Opéra Comique et l’université de "
-"Rouen)<br />\n"
-"            Bertrand <span class=\"sc\">Bordage</span>, développeur "
-"informatique\n"
+"            Joann <span class=\"sc\">Élart</span>, Maître de conférences en musicologie à l’université de Rouen (GRHIS), chargé dans le cadre d’un accueil en délégation au CNRS (IRCL UMR 5186) en 2014-2015 du suivi de l’importation des données dans Dezède (relecture, préparation des fichiers, coordination du développement informatique)<br />\n"
+"            Nawal <span class=\"sc\">Bouin-El Boustani</span>, Chargée de Valorisation à la Direction de la Recherche et de la Valorisation à l’université de Rouen (convention entre l’Opéra Comique et l’université de Rouen)<br />\n"
+"            Bertrand <span class=\"sc\">Bordage</span>, développeur informatique\n"
 "          "
 msgstr ""
 
@@ -742,79 +685,38 @@ msgstr ""
 #: dossiers/templates/dossiers/opera_comique_presentation.html:125
 msgid ""
 "\n"
-"            Si l’Opéra de Paris, chargé dès son origine d’une fonction "
-"politique de centralisation de l’art musical, sauvegarda ses archives de "
-"manière quasi exhaustive, l’Opéra Comique conserva les siennes de façon "
-"irrégulière. De nos jours, l’institution conserve ses archives courantes et "
-"intermédiaires, tandis que le Code du patrimoine prévoit qu’en qualité "
-"d’établissement public, elle verse ses archives définitives aux Archives "
-"nationales. Mais il n’en a pas toujours été ainsi. Il en résulte aujourd’hui "
-"une dispersion et une fragmentation des fonds, dont l’exploration "
-"s’apparente souvent à une chasse au trésor.\n"
+"            Si l’Opéra de Paris, chargé dès son origine d’une fonction politique de centralisation de l’art musical, sauvegarda ses archives de manière quasi exhaustive, l’Opéra Comique conserva les siennes de façon irrégulière. De nos jours, l’institution conserve ses archives courantes et intermédiaires, tandis que le Code du patrimoine prévoit qu’en qualité d’établissement public, elle verse ses archives définitives aux Archives nationales. Mais il n’en a pas toujours été ainsi. Il en résulte aujourd’hui une dispersion et une fragmentation des fonds, dont l’exploration s’apparente souvent à une chasse au trésor.\n"
 "          "
 msgstr ""
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:130
 msgid ""
 "\n"
-"            Archiviste de l’Opéra à partir de 1866, Charles Nuitter y "
-"apporta de la Salle Ventadour, qu’avait occupé l’Opéra Comique de 1829 à "
-"1832, un ensemble de sources qui remontaient jusqu’au XVIII<sup>e</sup> "
-"siècle. Cette collection fut ensuite enrichie par le don effectué par Émile "
-"Perrin, qui avait dirigé l’Opéra Comique de 1848 à 1857. En 1935, la "
-"Bibliothèque-musée de l’Opéra fut rattachée à la Bibliothèque nationale de "
-"France, puis intégrée au département de la Musique lors de sa création en "
-"1942. Les archives administratives de l’Opéra Comique furent dès lors "
-"récupérées par les Archives nationales, tandis que la Bibliothèque-musée "
-"conservait ses archives artistiques. Ce fonds s’est enrichi entre 1939 et "
-"1972 suite à la réunion de l’Opéra Comique et de l’Opéra, au sein de la "
-"Réunion des Théâtres Lyriques Nationaux (RTLN). Il comporte partitions, "
-"manuscrits, maquettes de décors et de costumes.\n"
+"            Archiviste de l’Opéra à partir de 1866, Charles Nuitter y apporta de la Salle Ventadour, qu’avait occupé l’Opéra Comique de 1829 à 1832, un ensemble de sources qui remontaient jusqu’au XVIII<sup>e</sup> siècle. Cette collection fut ensuite enrichie par le don effectué par Émile Perrin, qui avait dirigé l’Opéra Comique de 1848 à 1857. En 1935, la Bibliothèque-musée de l’Opéra fut rattachée à la Bibliothèque nationale de France, puis intégrée au département de la Musique lors de sa création en 1942. Les archives administratives de l’Opéra Comique furent dès lors récupérées par les Archives nationales, tandis que la Bibliothèque-musée conservait ses archives artistiques. Ce fonds s’est enrichi entre 1939 et 1972 suite à la réunion de l’Opéra Comique et de l’Opéra, au sein de la Réunion des Théâtres Lyriques Nationaux (RTLN). Il comporte partitions, manuscrits, maquettes de décors et de costumes.\n"
 "          "
 msgstr ""
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:136
 msgid ""
 "\n"
-"            Aux Archives nationales sont distinguées les sources produites "
-"par l’Opéra Comique (sous-série AJ/13) de celles produites par les "
-"administrations de tutelle de l’État (sous-séries F/18 et F/21). L’ensemble "
-"porte sur des aspects institutionnels, économiques, sociaux et artistiques, "
-"du XVIII<sup>e</sup> siècle à nos jours. Notons l’importance des livrets "
-"manuscrits, ceux issus du fonds du théâtre (AJ/13) et ceux soumis à la "
-"censure (F/18) qui s’exerça jusqu’en 1906. Ces documents, que complètent les "
-"procès-verbaux de censure (F/21), témoignent des modifications apportées aux "
-"œuvres pendant les répétitions puis les représentations. Ils nous "
-"renseignent sur la vitalité du répertoire.\n"
+"            Aux Archives nationales sont distinguées les sources produites par l’Opéra Comique (sous-série AJ/13) de celles produites par les administrations de tutelle de l’État (sous-séries F/18 et F/21). L’ensemble porte sur des aspects institutionnels, économiques, sociaux et artistiques, du XVIII<sup>e</sup> siècle à nos jours. Notons l’importance des livrets manuscrits, ceux issus du fonds du théâtre (AJ/13) et ceux soumis à la censure (F/18) qui s’exerça jusqu’en 1906. Ces documents, que complètent les procès-verbaux de censure (F/21), témoignent des modifications apportées aux œuvres pendant les répétitions puis les représentations. Ils nous renseignent sur la vitalité du répertoire.\n"
 "          "
 msgstr ""
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:142
 msgid ""
 "\n"
-"            Deux autres institutions comptent dans la reconstitution des "
-"trois siècles d’histoire culturelle de l’Opéra Comique. Au Centre national "
-"du costume de scène, à Moulins, des costumes exceptionnels produits par le "
-"théâtre aux XIX<sup>e</sup> et XX<sup>e</sup> siècles ont été déposés avec "
-"les collections de l’Opéra et de la Bibliothèque nationale de France. En "
-"2015, l’exposition « L’Opéra Comique et ses trésors » motivera le dépôt à "
-"Moulins de nouvelles pièces à haute valeur patrimoniale. À la Bibliothèque "
-"historique de la ville de Paris, une riche collection de livrets de mise en "
-"scène et de photographies des XIX<sup>e</sup> et XX<sup>e</sup> siècles "
-"achève de reconstituer la dimension visuelle des spectacles du passé.\n"
+"            Deux autres institutions comptent dans la reconstitution des trois siècles d’histoire culturelle de l’Opéra Comique. Au Centre national du costume de scène, à Moulins, des costumes exceptionnels produits par le théâtre aux XIX<sup>e</sup> et XX<sup>e</sup> siècles ont été déposés avec les collections de l’Opéra et de la Bibliothèque nationale de France. En 2015, l’exposition « L’Opéra Comique et ses trésors » motivera le dépôt à Moulins de nouvelles pièces à haute valeur patrimoniale. À la Bibliothèque historique de la ville de Paris, une riche collection de livrets de mise en scène et de photographies des XIX<sup>e</sup> et XX<sup>e</sup> siècles achève de reconstituer la dimension visuelle des spectacles du passé.\n"
 "          "
 msgstr ""
+"\n"
+"            Altre due istituzioni svolgono un ruolo importante nella ricostruzione dei tre secoli di storia culturale dell'Opéra Comique. Presso il Centre national du costume de scène di Moulins, gli eccezionali costumi prodotti dal teatro nell'Ottocento e nel Novecento sono stati depositati insieme alle collezioni dell'Opéra e della Bibliothèque nationale de France. Nel 2015, la mostra «L’Opéra Comique et ses trésors» condurrà al deposito di nuovi pezzi di grande valore patrimoniale a Moulins. Alla Bibliothèque historique de la ville de Paris, una ricca collezione di libretti di allestimento e fotografie dell'Ottocento e del Novecento consente di arricchire la dimensione visiva degli spettacoli del passato.\n"
+"          "
 
 #: dossiers/templates/dossiers/opera_comique_presentation.html:148
 msgid ""
 "\n"
-"            Parce que la conservation et l’accès de tous aux archives sont "
-"des questions d’avenir, ces divers fonds sont aujourd’hui en cours "
-"d’inventaire et/ou de numérisation. Quant aux archives audiovisuelles de "
-"l’Opéra Comique, elles font l’objet, en accord avec le ministère de la "
-"Culture, d’une convention avec la Bibliothèque nationale de France pour la "
-"mise en place d’un fonds Opéra Comique au sein de son département de "
-"l’Audiovisuel.\n"
+"            Parce que la conservation et l’accès de tous aux archives sont des questions d’avenir, ces divers fonds sont aujourd’hui en cours d’inventaire et/ou de numérisation. Quant aux archives audiovisuelles de l’Opéra Comique, elles font l’objet, en accord avec le ministère de la Culture, d’une convention avec la Bibliothèque nationale de France pour la mise en place d’un fonds Opéra Comique au sein de son département de l’Audiovisuel.\n"
 "          "
 msgstr ""
 
@@ -849,6 +751,3 @@ msgstr "Moderno"
 #: dossiers/views.py:40
 msgid "Né après 1920"
 msgstr "Nato dopo il 1920"
-
-#~ msgid "auteurs"
-#~ msgstr "autori"

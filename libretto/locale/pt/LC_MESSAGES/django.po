@@ -1,22 +1,21 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
+# 
+# Translators:
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Dezède\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-26 16:11+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2023-06-05 18:26+0200\n"
+"PO-Revision-Date: 2012-10-06 18:55+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language-Team: Portuguese (http://app.transifex.com/bertrandbordage/dezede/language/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: pt\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: libretto/admin.py:82 libretto/models/personnel.py:196
 msgid "Période d’activité"
@@ -590,8 +589,8 @@ msgstr ""
 msgid ""
 "L’affichage d’un lieu remonte jusqu’au lieu référent. Exemple : dans une "
 "architecture de pays, villes, théâtres, etc, « ville, institution, salle » "
-"sera affiché car on remonte jusqu’à un lieu référent, ici choisi comme étant "
-"ceux de nature « ville »"
+"sera affiché car on remonte jusqu’à un lieu référent, ici choisi comme étant"
+" ceux de nature « ville »"
 msgstr ""
 
 #: libretto/models/espace_temps.py:44
@@ -710,6 +709,7 @@ msgid "profession"
 msgid_plural "professions"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
 
 #: libretto/models/evenement.py:117
 msgid "élément de distribution"
@@ -1506,10 +1506,10 @@ msgstr ""
 #: libretto/models/oeuvre.py:627
 msgid ""
 "Cocher si l’œuvre n’est pas identifiable, par exemple un quatuor de Haydn, "
-"sans savoir lequel. <strong>Ne pas utiliser pour un extrait indéterminé</"
-"strong>, sélectionner plutôt dans le programme l’œuvre dont il est tiré et "
-"joindre une caractéristique le décrivant (« un air », « un mouvement », "
-"etc.)."
+"sans savoir lequel. <strong>Ne pas utiliser pour un extrait "
+"indéterminé</strong>, sélectionner plutôt dans le programme l’œuvre dont il "
+"est tiré et joindre une caractéristique le décrivant (« un air », "
+"« un mouvement », etc.)."
 msgstr ""
 
 #: libretto/models/oeuvre.py:634 libretto/models/oeuvre.py:811
@@ -2202,8 +2202,7 @@ msgid ""
 "                  qu’ils soient intégrés ou non dans un dossier,\n"
 "                  il suffit de croiser les critères de sélection\n"
 "                  en utilisant les outils et les différents champs :\n"
-"                  champs de recherche libre, réglage de la période "
-"chronologique,\n"
+"                  champs de recherche libre, réglage de la période chronologique,\n"
 "                  sélection par année civile ou par saison,\n"
 "                  champs de lieu, d’œuvre, d’individu et d’ensemble.\n"
 "                  Plusieurs éléments peuvent être sélectionnés\n"
@@ -2242,6 +2241,7 @@ msgid "résultat"
 msgid_plural "résultats"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
 
 #: libretto/templates/libretto/evenement_list_page.html:11
 msgid "Aucun événement n’a été trouvé selon ces critères."
