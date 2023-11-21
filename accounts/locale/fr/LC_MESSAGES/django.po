@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 18:26+0200\n"
+"POT-Creation-Date: 2023-11-21 14:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,32 +18,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
-#: accounts/admin.py:59
+#: accounts/admin.py:58
 msgid "Informations personnelles"
 msgstr ""
 
-#: accounts/admin.py:64
+#: accounts/admin.py:63
 #: accounts/templates/accounts/hierarchicuser_detail.html:32
 msgid "Autorité associée"
 msgstr ""
 
-#: accounts/admin.py:66
+#: accounts/admin.py:65
 msgid "À saisir s’il existe une autorité sur vous dans la base de données."
 msgstr ""
 
-#: accounts/admin.py:69
+#: accounts/admin.py:68
 msgid "Responsabilité scientifique"
 msgstr ""
 
-#: accounts/admin.py:71
+#: accounts/admin.py:70
 msgid "Informations complémentaires"
 msgstr ""
 
-#: accounts/admin.py:74
+#: accounts/admin.py:73
 msgid "Permissions"
 msgstr ""
 
-#: accounts/admin.py:77
+#: accounts/admin.py:76
 msgid "Important dates"
 msgstr ""
 
@@ -115,35 +115,35 @@ msgstr ""
 msgid "identifiant de l’autorité associée"
 msgstr ""
 
-#: accounts/models.py:92 accounts/views.py:279
+#: accounts/models.py:92
 msgid "responsable scientifique"
 msgstr ""
 
-#: accounts/models.py:98
+#: accounts/models.py:101
 msgid "Veut être responsable scientifique"
 msgstr ""
 
-#: accounts/models.py:100
+#: accounts/models.py:103
 msgid "photographie d’identité"
 msgstr ""
 
-#: accounts/models.py:104
+#: accounts/models.py:107
 msgid "présentation"
 msgstr ""
 
-#: accounts/models.py:105
+#: accounts/models.py:108
 msgid "fonctions au sein de l’équipe"
 msgstr ""
 
-#: accounts/models.py:107
+#: accounts/models.py:110
 msgid "publications"
 msgstr ""
 
-#: accounts/models.py:113
+#: accounts/models.py:118
 msgid "utilisateur"
 msgstr ""
 
-#: accounts/models.py:114
+#: accounts/models.py:119
 msgid "utilisateurs"
 msgstr ""
 
@@ -287,8 +287,8 @@ msgid ""
 "d’administration, cliquez sur ce lien :\n"
 "%(site_url)s%(grant_to_admin_url)s\n"
 "\n"
-"Vous pouvez consulter et modifier ses données complètes sur %(site_url)s"
-"%(change_user_url)s.\n"
+"Vous pouvez consulter et modifier ses données complètes sur "
+"%(site_url)s%(change_user_url)s.\n"
 msgstr ""
 
 #: accounts/templates/accounts/granted_to_admin_email.txt:4
@@ -334,46 +334,26 @@ msgstr ""
 msgid "Liste des utilisateurs"
 msgstr ""
 
-#: accounts/views.py:165
+#: accounts/views.py:164
 msgid "Comité éditorial"
 msgstr ""
 
-#: accounts/views.py:182
+#: accounts/views.py:181
 msgid "Comité scientifique"
 msgstr ""
 
-#: accounts/views.py:224
+#: accounts/views.py:223
 msgid "Principaux contributeurs"
 msgstr ""
 
-#: accounts/views.py:234
+#: accounts/views.py:233
 msgid "Équipe de développement"
 msgstr ""
 
-#: accounts/views.py:245
+#: accounts/views.py:244
 msgid "Propriétaires"
 msgstr ""
 
-#: accounts/views.py:256
+#: accounts/views.py:255
 msgid "Partenaires"
-msgstr ""
-
-#: accounts/views.py:268
-msgid "membre"
-msgstr ""
-
-#: accounts/views.py:269
-msgid "membres"
-msgstr ""
-
-#: accounts/views.py:273
-msgid "disciple"
-msgstr ""
-
-#: accounts/views.py:274
-msgid "disciples"
-msgstr ""
-
-#: accounts/views.py:277
-msgid "appartenance"
 msgstr ""
