@@ -190,7 +190,7 @@ class DossierDEvenements(Dossier):
     sources = ManyToManyField(Source, verbose_name=_('sources'), blank=True,
                               related_name='dossiersdevenements')
     saisons = ManyToManyField(Saison, verbose_name=_('saisons'), blank=True,
-                              related_name=_('dossiersdevenements'))
+                              related_name='dossiersdevenements')
 
     class Meta(Dossier.Meta):
         verbose_name = _('dossier d’événements')
