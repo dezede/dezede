@@ -258,7 +258,7 @@ msgstr "Bibliografie"
 
 #: dossiers/models.py:104
 msgid "dossier"
-msgstr "Dossier"
+msgstr ""
 
 #: dossiers/models.py:105
 #: dossiers/templates/dossiers/categoriededossiers_list.html:6
@@ -314,10 +314,6 @@ msgstr "Quellen"
 #: dossiers/models.py:192
 msgid "saisons"
 msgstr "Spielzeiten"
-
-#: dossiers/models.py:193
-msgid "dossiersdevenements"
-msgstr "ereignisdossiers"
 
 #: dossiers/models.py:196
 msgid "dossier d’événements"

@@ -2,30 +2,32 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Marie Salgues <marie.salgues@laposte.net>, 2016
 # Bertrand Bordage <bordage.bertrand@gmail.com>, 2023
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 18:26+0200\n"
+"POT-Creation-Date: 2023-11-22 11:12+0100\n"
 "PO-Revision-Date: 2016-06-24 22:20+0000\n"
 "Last-Translator: Bertrand Bordage <bordage.bertrand@gmail.com>, 2023\n"
-"Language-Team: Spanish (https://app.transifex.com/bertrandbordage/teams/11498/es/)\n"
+"Language-Team: Spanish (https://app.transifex.com/bertrandbordage/"
+"teams/11498/es/)\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
 
 #: common/utils/export.py:61
 msgid ""
-"Un export de votre part est déjà en cours. Veuillez attendre la fin de "
-"celui-ci avant d’en lancer un autre."
+"Un export de votre part est déjà en cours. Veuillez attendre la fin de celui-"
+"ci avant d’en lancer un autre."
 msgstr ""
 "Ya se está procesando una exportación de parte suya. Espere a que finalice "
 "antes de hacer otra."
@@ -36,8 +38,8 @@ msgid ""
 "La génération de l’export %s %s est en cours. Un courriel le contenant vous "
 "sera envoyé d’ici quelques minutes."
 msgstr ""
-"Se está generando la exportación %s %s. En unos pocos minutos, se le mandará"
-" un correo electrónico que la incluya."
+"Se está generando la exportación %s %s. En unos pocos minutos, se le mandará "
+"un correo electrónico que la incluya."
 
 #: common/utils/export.py:75
 #, python-format
@@ -120,22 +122,17 @@ msgstr ""
 msgid "er"
 msgstr "er"
 
-#: common/utils/text.py:36 common/utils/text.py:66
+#: common/utils/text.py:36 common/utils/text.py:65
 msgctxt "infix d’une liste"
 msgid ", "
 msgstr ", "
 
-#: common/utils/text.py:71
-msgctxt "dernier infix pour plus de 2 éléments"
-msgid " et "
-msgstr " y "
-
-#: common/utils/text.py:74
+#: common/utils/text.py:73
 msgctxt "dernier infix pour 2 éléments"
-msgid " et "
-msgstr " y "
+msgid "et "
+msgstr "y "
 
-#: common/utils/text.py:84
+#: common/utils/text.py:85
 #, python-format
 msgid "Exemple : %(pre)s« %(txt)s »%(post)s."
 msgstr "Ejemplo: %(pre)s« %(txt)s »%(post)s."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-05 18:26+0200\n"
+"POT-Creation-Date: 2023-11-22 11:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,22 +87,17 @@ msgstr ""
 msgid "er"
 msgstr ""
 
-#: common/utils/text.py:36 common/utils/text.py:66
+#: common/utils/text.py:36 common/utils/text.py:65
 msgctxt "infix d’une liste"
 msgid ", "
 msgstr ""
 
-#: common/utils/text.py:71
-msgctxt "dernier infix pour plus de 2 éléments"
-msgid " et "
-msgstr ""
-
-#: common/utils/text.py:74
+#: common/utils/text.py:73
 msgctxt "dernier infix pour 2 éléments"
-msgid " et "
+msgid "et "
 msgstr ""
 
-#: common/utils/text.py:84
+#: common/utils/text.py:85
 #, python-format
 msgid "Exemple : %(pre)s« %(txt)s »%(post)s."
 msgstr ""

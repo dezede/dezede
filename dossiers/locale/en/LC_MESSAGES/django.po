@@ -258,7 +258,7 @@ msgstr "indicative bibliography"
 
 #: dossiers/models.py:104
 msgid "dossier"
-msgstr "dossier"
+msgstr ""
 
 #: dossiers/models.py:105
 #: dossiers/templates/dossiers/categoriededossiers_list.html:6
@@ -314,10 +314,6 @@ msgstr "sources"
 #: dossiers/models.py:192
 msgid "saisons"
 msgstr "seasons"
-
-#: dossiers/models.py:193
-msgid "dossiersdevenements"
-msgstr "eventdossiers"
 
 #: dossiers/models.py:196
 msgid "dossier d’événements"
