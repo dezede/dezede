@@ -46,8 +46,7 @@ def str_list(iterable, infix=None, last_infix=None):
     return f'{infix.join(l)}{suffix}'
 
 
-def str_list_w_last(iterable, infix=None, last_infix=None,
-                    oxfordian_last_infix=None, oxford_comma=True):
+def str_list_w_last(iterable, infix=None, last_infix=None):
     """
     Concatène une liste de chaîne de caractères avec des virgules
     et un «,\u00A0et\u00A0» final («\u00A0et\u00A0» pour deux éléments).
@@ -65,13 +64,15 @@ def str_list_w_last(iterable, infix=None, last_infix=None,
     if infix is None:
         infix = pgettext('infix d’une liste', ', ')
 
-    if oxford_comma and len(l) > 2:
-        if oxfordian_last_infix is None:
-            oxfordian_last_infix = pgettext(
-                'dernier infix pour plus de 2 éléments', ' et ')
-        last_infix = oxfordian_last_infix
-    elif last_infix is None:
-        last_infix = pgettext('dernier infix pour 2 éléments', ' et ')
+    if last_infix is None:
+        # Unfortunately, we cannot put a leading breaking space, as it gets
+        # automatically stripped by Transifex for no good reason…
+        # So we force `last_infix` to not have any leading space, then add a
+        # breaking space manually.
+        last_infix = pgettext(
+            'dernier infix pour 2 éléments', 'et ',
+        ).lstrip(' ')
+        last_infix = ' ' + last_infix
 
     return str_list(l, infix, last_infix)
 
