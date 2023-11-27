@@ -614,12 +614,11 @@ class Pitch:
         return str(note_index), octave
 
     @classmethod
-    def html(cls, note_index, octave, tags=True):
-        return (
-            f'{"<i>" if tags else ""}{cls.OCTAVE_NOTES[int(note_index)]}'
-            f'{"<sup>" if tags else " "}{str(octave)}'
-            f'{"</sup></i>" if tags else ""}'
-        )
+    def html(cls, note_index_str: str, octave: int, tags=True):
+        note = cls.OCTAVE_NOTES[int(note_index_str)]
+        if tags:
+            return mark_safe(f'<i>{note} {octave}</i>')
+        return f'{note} {octave}'
 
 
 def make_range_include_bounds(value):
