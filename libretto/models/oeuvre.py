@@ -613,6 +613,14 @@ class Pitch:
         octave, note_index = divmod(db_value - cls.DO_0, cls.OCTAVE_LENGTH)
         return str(note_index), octave
 
+    @classmethod
+    def html(cls, note_index, octave, tags=True):
+        return (
+            f'{"<i>" if tags else ""}{cls.OCTAVE_NOTES[int(note_index)]}'
+            f'{"<sup>" if tags else " "}{str(octave)}'
+            f'{"</sup></i>" if tags else ""}'
+        )
+
 
 def make_range_include_bounds(value):
     """
@@ -934,7 +942,7 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
         return self.get_pupitres_str(prefix=prefix, tags=tags,
                                      solistes=solistes)
 
-    def get_ambitus_str(self):
+    def ambitus_html(self, tags=True):
         value = make_range_include_bounds(self.ambitus)
         if isinstance(value, NumericRange):
             if value.lower is None or value.upper is None:
@@ -942,8 +950,8 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
             note_min, octave_min = Pitch.database_to_form_values(value.lower)
             note_max, octave_max = Pitch.database_to_form_values(value.upper)
             return (
-                f'{Pitch.OCTAVE_NOTES[int(note_min)]} {str(octave_min)} – '
-                f'{Pitch.OCTAVE_NOTES[int(note_max)]} {str(octave_max)}'
+                f'{Pitch.html(note_min, octave_min, tags=tags)} – '
+                f'{Pitch.html(note_max, octave_max, tags=tags)}'
             )
         return ''
 
