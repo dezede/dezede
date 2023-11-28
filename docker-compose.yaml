@@ -1,0 +1,107 @@
+version: "3.6"
+
+services:
+  postgresql:
+    image: postgis/postgis:13-3.4
+    user: postgres
+    environment:
+      POSTGRES_DB: dezede
+      POSTGRES_USER: dezede
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+      - postgresql-socket:/var/run/postgresql
+    networks:
+      default:
+    read_only: true
+    tmpfs:
+      - /tmp/
+      - /run/postgresql/
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "dezede" ]
+      interval: 1s
+      timeout: 1s
+      retries: 60
+    restart: always
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_READ_SEARCH
+      - FOWNER
+      - SETGID
+      - SETUID
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: "1"
+          memory: 250M
+        reservations:
+          cpus: "0.1"
+          memory: 50M
+  redis:
+    image: dezede/redis
+    build:
+      context: .
+      dockerfile: Dockerfile-redis
+    volumes:
+      - redis-data:/data
+      - redis-socket:/var/run/redis
+  migrate:
+    image: dezede/django
+    command: python manage.py migrate
+    volumes:
+      - postgresql-socket:/var/run/postgresql
+      - redis-socket:/var/run/redis
+      - media:/srv/media
+    restart: "no"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      default:
+    read_only: true
+    tmpfs:
+      - /tmp/
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 2500M
+        reservations:
+          memory: 100M
+  django:
+    image: dezede/django
+    build:
+      context: .
+      args:
+        ALLOWED_HOSTS: $ALLOWED_HOSTS
+    restart: always
+    volumes:
+      - postgresql-socket:/var/run/postgresql
+      - redis-socket:/var/run/redis
+      - media:/srv/media
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+# FIXME: Enable me again!
+#      migrate:
+#        condition: service_completed_successfully
+    expose:
+      - 8000
+    ports:
+      - "80:8000"
+
+volumes:
+  postgresql-data:
+  postgresql-socket:
+  redis-data:
+  redis-socket:
+  media:

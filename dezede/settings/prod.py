@@ -1,3 +1,5 @@
+import os
+
 from .base import *
 
 TEMPLATES[0]['OPTIONS']['loaders'] = [
@@ -8,7 +10,7 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
 ]
 del TEMPLATES[0]['APP_DIRS']
 
-ALLOWED_HOSTS = ('dezede.org',)
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'dezede.org').split(',')
 
 EMAIL_HOST = 'ssl0.ovh.net'
 EMAIL_PORT = 587
