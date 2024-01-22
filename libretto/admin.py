@@ -136,6 +136,26 @@ class HasRelatedObjectsListFilter(SimpleListFilter):
             return queryset.without_related_objects()
 
 
+class IsniListFilter(SimpleListFilter):
+    title = _('possède un ISNI')
+    parameter_name = 'has_isni'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1', _('Oui')),
+            ('0', _('Non')),
+            ('2', _('À déterminer')),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == '1':
+            return queryset.filter(sans_isni=False).exclude(isni='')
+        if self.value() == '0':
+            return queryset.filter(sans_isni=True)
+        if self.value() == '2':
+            return queryset.filter(sans_isni=False, isni='')
+
+
 def build_boolean_list_filter(class_title, class_parameter_name, filter=None,
                               exclude=None):
     class HasEventsListFilter(SimpleListFilter):
@@ -645,7 +665,7 @@ class IndividuAdmin(VersionAdmin, AutoriteAdmin):
                     'pseudonyme', 'titre', 'naissance',
                     'deces', 'calc_professions', 'link',)
     list_editable = ('nom', 'titre',)
-    list_filter = ('titre',)
+    list_filter = ('titre', IsniListFilter)
     form = IndividuForm
     raw_id_fields = ('naissance_lieu', 'deces_lieu', 'professions')
     autocomplete_lookup_fields = {
@@ -700,6 +720,7 @@ class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
 class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     form = EnsembleForm
     list_display = ('__str__', 'type', 'membres_count')
+    list_filter = (IsniListFilter,)
     list_select_related = ['type', 'etat', 'owner']
     search_fields = ['search_vector', 'membres__individu__search_vector']
     inlines = (MembreInline,)

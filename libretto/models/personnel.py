@@ -1,9 +1,9 @@
 from django.apps import apps
-from django.core.exceptions import ValidationError, EmptyResultSet
+from django.core.exceptions import EmptyResultSet
 from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, SmallIntegerField,
-    DateField, PositiveSmallIntegerField, Model, BooleanField, CASCADE)
+    DateField, PositiveSmallIntegerField, Model, CASCADE)
 from django.template.defaultfilters import date
 from django.urls import reverse
 from django.utils.encoding import force_text
@@ -14,7 +14,7 @@ from common.utils.html import capfirst, href, date_html, sc
 from common.utils.sql import get_raw_query
 from common.utils.text import str_list
 from .base import (CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
-                   UniqueSlugModel, AutoriteModel, ISNI_VALIDATORS)
+                   UniqueSlugModel, AutoriteModel, ISNI_VALIDATORS, IsniModel)
 from .evenement import Evenement
 
 
@@ -259,7 +259,7 @@ class TypeDEnsemble(CommonModel):
         return self.nom
 
 
-class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
+class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniModel):
     particule_nom = CharField(
         _('particule du nom'), max_length=5, blank=True, db_index=True)
     nom = CharField(_('nom'), max_length=75, db_index=True)
@@ -281,7 +281,6 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
         validators=ISNI_VALIDATORS,
         help_text=_('Exemple : « 0000000115201575 » '
                     'pour Le Poème Harmonique.'))
-    sans_isni = BooleanField(_('sans ISNI'), default=False)
 
     search_fields = ['particule_nom', 'nom']
 
@@ -382,10 +381,7 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel):
         return new_data
 
     def clean(self):
-        if self.isni and self.sans_isni:
-            message = _('« ISNI » ne peut être rempli '
-                        'lorsque « Sans ISNI » est coché.')
-            raise ValidationError({'isni': message, 'sans_isni': message})
+        self.check_isni()
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
