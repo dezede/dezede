@@ -81,12 +81,18 @@ class Command(BaseCommand):
         if pk not in self.oeuvres_dossier:
             return None
         try:
-            return Oeuvre.objects.get(pk=pk, owner=self.owner, etat=self.etat)
+            oeuvre = Oeuvre.objects.get(pk=pk)
         except Oeuvre.DoesNotExist:
             self.stderr.write(
-                f'L’œuvre de pk {pk} n’existe pas dans Dezède.'
+                f'Œuvre {pk=} n’existe pas dans Dezède.'
             )
             return None
+        if oeuvre.owner_id != self.owner.id or oeuvre.etat_id != self.etat.id:
+            self.stdout.write(
+                f'Œuvre {pk=} ignorée car créée avant l’import des mélodies'
+            )
+            return None
+        return oeuvre
 
     def get_auteurs_df(self, oeuvres_df: pd.DataFrame) -> pd.DataFrame:
         if oeuvres_df['Poètes'].hasnans:
@@ -219,6 +225,14 @@ class Command(BaseCommand):
         df['poete_ID'] = df['individu'].map(lambda obj: '-' if obj is None else obj.pk)
 
         df = pd.concat([df, df_deja_crees]).sort_values('individu_str')
+
+        duplicates_df = df[df.duplicated(subset=['individu_str'])]
+        if not duplicates_df.empty:
+            raise ValueError(
+                f'Doublons trouvés pour ces individus: '
+                f'{duplicates_df["individu_str"].to_list()}'
+            )
+
         return df
 
     def format_ancrage_individu(self, df: pd.DataFrame, ancrage_name: str):
