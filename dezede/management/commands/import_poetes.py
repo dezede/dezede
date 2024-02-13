@@ -20,16 +20,8 @@ from accounts.models import HierarchicUser
 from dossiers.models import DossierDOeuvres
 from libretto.models import Oeuvre, Profession, Individu, Auteur, Etat
 
-INITIAL_FILE_PATH = settings.BASE_DIR / 'scripts/data/mélodies_françaises_import_poètes.xlsx'
 
-# ID Dossier "Mélodies françaises"
-OEUVRES_DOSSIER = list(
-    DossierDOeuvres.objects.get(pk=646).oeuvres.values_list('pk', flat=True)
-)
-# ID propriétaire "François Le Roux"
-OWNER = HierarchicUser.objects.get(pk=945)
-# ID État "importé(e) automatiquement"
-ETAT = Etat.objects.get(pk=16)
+INITIAL_FILE_PATH = settings.BASE_DIR / 'scripts/data/mélodies_françaises_import_poètes.xlsx'
 
 
 class Command(BaseCommand):
@@ -43,6 +35,16 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         limit = kwargs['limit']
+
+        # ID Dossier "Mélodies françaises"
+        self.oeuvres_dossier = list(
+            DossierDOeuvres.objects.get(pk=646).oeuvres.values_list('pk', flat=True)
+        )
+        # ID propriétaire "François Le Roux"
+        self.owner = HierarchicUser.objects.get(pk=945)
+        # ID État "importé(e) automatiquement"
+        self.etat = Etat.objects.get(pk=16)
+
         with transaction.atomic():
             oeuvres_a_modifier, autres_oeuvres = self.get_oeuvres_df(limit=limit)
             auteurs_df = self.get_auteurs_df(oeuvres_a_modifier)
