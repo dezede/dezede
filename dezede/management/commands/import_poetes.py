@@ -150,21 +150,23 @@ class Command(BaseCommand):
 
     def import_individus(self, df_auteurs: pd.DataFrame):
         individu_re = re.compile(
-            r'^\s*(?P<nom_complet>[\w\s’\'-\.]+?)?\s*'
-            '(?:\((?P<dates>[\d\[\]?-]+)?\)'
+            r'^\s*(?P<nom_complet>[^(]+?)?\s*'
+            '(?:\((?P<dates>[avJC\d\s\[\]\-?.]+)?\)'
             '\s*(?P<commentaire>.+)?)?\s*$'
         )
         particule_nom_re = re.compile(
-            r'^\s*(?P<particule>des|de|d’|d\'|von|van|van der|van den|den|ten|da|di|do|del|de\sla)?'
-            '\s*(?P<nom>[A-ZÂÊÎÔÛÁÉÍÓĆŃÀÈÒÙÄËÏÖÜŸÇÑØŁ’*\s-]+?)'
+            r'^\s*(?P<particule>des|de|d’|d\'|du|von|van|van der|van den|den|ten|da|di|do|del|de\sla|el)?'
+            '\s*(?P<nom>[A-ZÂÊÎÔÛÁÉÍÓĆŃÀÈÒÙÄËÏÖÜŸÇÑØŁ’\s-]+)'
             '(?:\s+(?P<prenoms>[A-ZÂÊÎÔÛÁÉÍÓĆŃÀÈÒÙÄËÏÖÜŸÇÑØŁ\s-].*?))?\s*$'
         )
 
         df = df_auteurs[[
             'poete_ID', 'individu_str', 'ID Poulenc'
-        ]]
+        ]].copy()
 
         a_creer = df['poete_ID'].isna()
+        df['Importé automatiquement'] = pd.Series(
+            'oui', index=df.index).where(a_creer, other='non')
         df_deja_crees = df[~a_creer].drop_duplicates('poete_ID')
         compositeur_dict = self.get_individu_dict(
             df_deja_crees['poete_ID'], context='compositeur'
@@ -221,15 +223,19 @@ class Command(BaseCommand):
         annee_re = re.compile(r'^(?P<annee>\d{1,4})$')
         date_estimee_re = re.compile(r'^(?P<annee_approx>[\d?]+)\[(?P<annee>\d{1,4})\]$')
         date_tres_approx_re = re.compile(r'^(?P<annee_approx>\d[\d?]{0,2}\?)$')
+        date_av_jc_re = re.compile(r'^(?P<date_approx>\d+\sav\.\sJ\.C\.)$')
 
         df['date_A'] = df[ancrage_name + '_str'].str.extract(annee_re)['annee'].str.zfill(4)
         df['date_B'] = df[ancrage_name + '_str'].str.extract(date_estimee_re)['annee'].str.zfill(4)
         df['date_C'] = df[ancrage_name + '_str'].str.extract(
             date_tres_approx_re
         )['annee_approx'].str.replace('?', '0', regex=False).str.zfill(4)
+        df['date_D'] = df[ancrage_name + '_str'].str.fullmatch(
+            date_av_jc_re, na=False
+        ).map(lambda b: '0001' if b else None)
 
         df[ancrage_name + '_date'] = (
-            df['date_A'].fillna(df['date_B']).fillna(df['date_C'])
+            df['date_D'].fillna(df['date_A']).fillna(df['date_B']).fillna(df['date_C'])
         )
 
         has_ancrage = df[ancrage_name + '_str'].notna()
@@ -303,12 +309,12 @@ class Command(BaseCommand):
         df_auteurs.drop(columns=['individu_cree'], inplace=True)
 
         df_auteurs['auteur'] = df_auteurs.apply(self.get_auteurs, axis=1)
-        self.stdout.write('Creating auteurs in bulk…')
+        self.stdout.write('Création des auteurs en paquet…')
         has_auteur = df_auteurs['auteur'].notna()
         Auteur.objects.bulk_create(
             df_auteurs.loc[has_auteur, 'auteur'].to_list()
         )
-        self.stdout.write('Done.')
+        self.stdout.write('Fait.')
         return df_auteurs
 
     def get_auteurs(self, row):
@@ -355,10 +361,14 @@ class Command(BaseCommand):
         )
         df_individus.to_excel(
             writer, index=False, sheet_name='Poètes',
-            columns=['poete_ID', 'individu_str'],
+            columns=[
+                'poete_ID', 'individu_str', 'Importé automatiquement',
+                'nom', 'prenoms', 'particule_nom', 'naissance_date', 'deces_date',
+                'naissance_date_approx', 'deces_date_approx', 'notes_privees',
+            ],
         )
         pd.read_excel(INITIAL_FILE_PATH, sheet_name=1).to_excel(
             writer, index=False, sheet_name='Compositeurs',
         )
         writer.close()
-        self.stdout.write('Done.')
+        self.stdout.write('Fait.')
