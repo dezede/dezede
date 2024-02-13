@@ -78,10 +78,10 @@ class Command(BaseCommand):
         return df[to_be_modified], other_df
 
     def get_oeuvre(self, pk: int):
-        if pk not in OEUVRES_DOSSIER:
+        if pk not in self.oeuvres_dossier:
             return None
         try:
-            return Oeuvre.objects.get(pk=pk, owner=OWNER, etat=ETAT)
+            return Oeuvre.objects.get(pk=pk, owner=self.owner, etat=self.etat)
         except Oeuvre.DoesNotExist:
             self.stderr.write(
                 f'L’œuvre de pk {pk} n’existe pas dans Dezède.'
@@ -271,8 +271,8 @@ class Command(BaseCommand):
             'nom', 'prenoms', 'particule_nom', 'naissance_date', 'deces_date',
             'naissance_date_approx', 'deces_date_approx', 'notes_privees',
         )}
-        d['owner'] = OWNER
-        d['etat'] = ETAT
+        d['owner'] = self.owner
+        d['etat'] = self.etat
         individu = Individu(**d)
         try:
             individu.clean()
