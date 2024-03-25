@@ -5,9 +5,9 @@ import pandas
 import importlib
 from io import BytesIO
 
-from django.apps import apps
 from django.db.models import Q
 from django.db.models.constants import LOOKUP_SEP
+from django.db.models.functions import Coalesce
 from django.utils.dates import MONTHS
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
@@ -85,7 +85,6 @@ class CustomExporter(Exporter):
     sum_col = None
     swaps = None
     display_total = True
-    purge = True
 
     def __init__(self, queryset=None):
         self.queryset = queryset
@@ -161,7 +160,6 @@ class CustomExporter(Exporter):
         current = df.to_dict()
         newdf = pandas.DataFrame()
         col_args = df.columns.to_list()
-        col_dict = {}
         for i, row in df.iterrows():
             for col in row.to_dict().keys():
                 if current[col] != row[col]:
@@ -193,9 +191,6 @@ class CustomExporter(Exporter):
             if self.stats == 'sum':
                 stats_field = self.sum_col
             df_initial[f'{self.stats}_{field}'] = df_initial.groupby(df_columns[:i])[[stats_field]].transform(self.stats)
-
-        if self.purge:
-            df_initial = df_initial.drop_duplicates(df_columns).reset_index(drop=True)
 
         if self.stats == 'sum':
             del df_initial[self.sum_col]
@@ -422,32 +417,46 @@ class Scenario4(EvenementScenarioExporter):
 
 class Scenario5(EvenementScenarioExporter):
     columns = [
-        'auteur', 'annee', 'saison', 'mois', 'programmes',
+        'auteur', 'annee', 'saison', 'mois',
     ]
     verbose_names = {
         'auteur': _('Auteur'),
         'annee': _('Année'),
         'saison': _('Saison'),
         'mois': _('Mois'),
-        'sum': _('Nombre d\'éléments de programme')
+        'count': _('Nombre d’événements')
     }
     tab_name = _("5. Auteurs - chronologique")
     title = _("5. Auteurs : répartition chronologique")
-    stats = 'sum'
-    sum_col = 'programmes'
-    purge = False
 
     def __init__(self, queryset=None):
-        elements = []
+        evenements = []
 
-        for individu in queryset.individus_auteurs().distinct():
-            for event in queryset.filter(programme__oeuvre__auteurs__individu__pk=individu.pk).distinct():
-                name = self._get_individu_name(individu)
-                setattr(event, 'auteur', name)
-                setattr(event, 'programmes', event.programme.filter(oeuvre__auteurs__individu__pk=individu.pk).count())
-                elements.append(event)
+        for element_de_programme in ElementDeProgramme.objects.filter(
+            evenement__in=queryset, oeuvre__isnull=False,
+        ).order_by(
+            'oeuvre__auteurs__individu_id',
+            'evenement__debut_date',
+            'evenement__debut_heure',
+            'evenement_id',
+        ).distinct(
+            'oeuvre__auteurs__individu_id',
+            'evenement__debut_date',
+            'evenement__debut_heure',
+            'evenement_id',
+        ).select_related('evenement').prefetch_related(
+            'oeuvre__auteurs__individu',
+        ):
+            for individu_name in {
+                self._get_individu_name(auteur.individu)
+                for auteur in element_de_programme.oeuvre.auteurs.all()
+            }:
+                evenement = element_de_programme.evenement
+                # FIXME: Remove this `auteur` temporary attribute.
+                evenement.auteur = individu_name
+                evenements.append(evenement)
 
-        super(Scenario5, self).__init__(queryset=elements)
+        super(Scenario5, self).__init__(queryset=evenements)
 
     def get_programmes(self, obj):
         return obj.programmes
@@ -468,30 +477,27 @@ class Scenario6(EvenementScenarioExporter):
     title = _("6. Interprètes : répartition chronologique")
 
     def __init__(self, queryset=None):
-        event_pk = queryset.values_list('pk')
-        elements = []
+        evenements = []
 
-        for individu in queryset.individus_auteurs():
-            has_distribution = False
+        for element_de_distribution in queryset.get_distributions().annotate(
+            date=Coalesce('element_de_programme__evenement__debut_date', 'evenement__debut_date'),
+            heure=Coalesce('element_de_programme__evenement__debut_heure', 'evenement__debut_heure'),
+            coalesced_evenement_id=Coalesce('element_de_programme__evenement_id', 'evenement_id'),
+        ).filter(
+            individu__isnull=False,
+        ).order_by(
+            'individu_id', 'date', 'heure', 'coalesced_evenement_id',
+        ).distinct(
+            'individu_id', 'date', 'heure', 'coalesced_evenement_id',
+        ).select_related(
+            'evenement', 'element_de_programme__evenement', 'individu',
+        ):
+            evenement = element_de_distribution.evenement or element_de_distribution.element_de_programme.evenement
+            # FIXME: Remove this `interprete` temporary attribute.
+            evenement.interprete = self._get_individu_name(element_de_distribution.individu)
+            evenements.append(evenement)
 
-            for elementdedistribution in apps.get_model('libretto', 'ElementDeDistribution').objects.filter(individu__pk=individu.pk, evenement__isnull=False, evenement__pk__in=event_pk).distinct():
-                event = elementdedistribution.evenement
-                name = self._get_individu_name(individu)
-                setattr(event, 'interprete', name)
-                elements.append(event)
-                has_distribution = True
-
-            if not has_distribution:
-                individu_events = []
-                for elementdeprogramme in apps.get_model('libretto', 'ElementDeProgramme').objects.filter(oeuvre__auteurs__individu__pk=individu.pk, evenement__isnull=False, evenement__pk__in=event_pk).distinct():
-                    event = elementdeprogramme.evenement
-                    if event.pk not in individu_events:
-                        name = self._get_individu_name(individu)
-                        setattr(event, 'interprete', name)
-                        elements.append(event)
-                        individu_events.append(event.pk)
-
-        super(Scenario6, self).__init__(queryset=elements)
+        super(Scenario6, self).__init__(queryset=evenements)
 
     def get_interprete(self, obj):
         if hasattr(obj, 'interprete'):
@@ -515,17 +521,35 @@ class Scenario7(EvenementScenarioExporter):
     title = _("7. Auteurs et œuvres : répartition chronologique")
 
     def __init__(self, queryset=None):
-        elements = []
+        evenements = []
 
-        for individu in queryset.individus_auteurs():
-            for work in queryset.oeuvres().filter(auteurs__individu__pk=individu.pk):
-                for event in queryset.filter(Q(programme__oeuvre__auteurs__individu__pk=individu.pk) and Q(programme__oeuvre__pk=work.pk)):
-                    name = self._get_individu_name(individu)
-                    setattr(event, 'auteur', name)
-                    setattr(event, 'oeuvre', work.titre_html(tags=False))
-                    elements.append(event)
+        for element_de_programme in ElementDeProgramme.objects.filter(
+            evenement__in=queryset, oeuvre__isnull=False,
+        ).order_by(
+            'oeuvre__auteurs__individu_id',
+            'evenement__debut_date',
+            'evenement__debut_heure',
+            'evenement_id',
+        ).distinct(
+            'oeuvre__auteurs__individu_id',
+            'evenement__debut_date',
+            'evenement__debut_heure',
+            'evenement_id',
+        ).select_related('evenement').prefetch_related(
+            'oeuvre__auteurs__individu',
+        ):
+            for individu_name in {
+                self._get_individu_name(auteur.individu)
+                for auteur in element_de_programme.oeuvre.auteurs.all()
+            }:
+                evenement = element_de_programme.evenement
+                # FIXME: Remove this `auteur` temporary attribute.
+                evenement.auteur = individu_name
+                # FIXME: Remove this `oeuvre` temporary attribute.
+                evenement.oeuvre = element_de_programme.oeuvre.titre_html(tags=False)
+                evenements.append(evenement)
 
-        super(Scenario7, self).__init__(queryset=elements)
+        super(Scenario7, self).__init__(queryset=evenements)
 
 
 class Scenario8(EvenementScenarioExporter):
