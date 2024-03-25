@@ -56,15 +56,15 @@
       </div>
     {% endif %}
   {% endif %}
-{% endblock %}
 
-{% addstatic js %}
-  <script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>
-  <script>
-    $('.formset_row').formset({
-      addText: '{% trans "Ajouter" %}',
-      addCssClass: 'btn btn-primary btn-sm',
-      deleteText: '{% trans "Supprimer" %}',
-    });
-  </script>
-{% endaddstatic %}
+  {% addstatic js %}
+    <script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>
+    <script>
+      $('.formset_row').formset({
+        addText: '{% trans "Ajouter" %}',
+        addCssClass: 'btn btn-primary btn-sm',
+        deleteText: '{% trans "Supprimer" %}',
+      });
+    </script>
+  {% endaddstatic %}
+{% endblock %}
