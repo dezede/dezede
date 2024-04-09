@@ -249,8 +249,4 @@ class Migration(migrations.Migration):
             model_name='hierarchicuser',
             index=django.contrib.postgres.indexes.GinIndex(django.db.models.expressions.F('autocomplete_vector'), name='hierarchicuser_autocomplete'),
         ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='hierarchicuser',
-            search_fields=['first_name', 'last_name', 'username', 'email'],
-        ),
     ]

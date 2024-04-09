@@ -1465,10 +1465,6 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'types de parentés d’œuvres',
             },
         ),
-        # migrations.AlterUniqueTogether(
-        #     name='typedeparente',
-        #     unique_together=None,
-        # ),
         migrations.RemoveField(
             model_name='typedeparente',
             name='owner',
@@ -2974,82 +2970,6 @@ class Migration(migrations.Migration):
             model_name='typedesource',
             index=django.contrib.postgres.indexes.GinIndex(django.db.models.expressions.F('search_vector'), name='typedesource_search'),
         ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='caracteristiquedeprogramme',
-            search_fields=['valeur'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='elementdedistribution',
-            search_fields=[],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='elementdeprogramme',
-            search_fields=[],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='ensemble',
-            search_fields=['particule_nom', 'nom'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='evenement',
-            search_fields=['circonstance', 'debut_date', 'debut_heure', 'debut_lieu_approx', 'debut_date_approx', 'debut_heure_approx'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='genredoeuvre',
-            search_fields=['nom', 'nom_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='individu',
-            search_fields=['nom', 'nom_naissance', 'prenoms', 'pseudonyme'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='lieu',
-            search_fields=['nom'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='naturedelieu',
-            search_fields=['nom', 'nom_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='oeuvre',
-            search_fields=['prefixe_titre', 'titre', 'prefixe_titre_secondaire', 'titre_secondaire', 'numero', 'coupe', 'tempo', 'sujet', 'surnom', 'nom_courant', 'incipit', 'opus', 'ict'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='partie',
-            search_fields=['nom', 'nom_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='profession',
-            search_fields=['nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='pupitre',
-            search_fields=[],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='source',
-            search_fields=['titre', 'date', 'date_approx', 'numero', 'lieu_conservation', 'cote'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='typedecaracteristiquedeprogramme',
-            search_fields=['nom', 'nom_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='typedensemble',
-            search_fields=['nom', 'nom_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='typedeparentedindividus',
-            search_fields=['nom', 'nom_relatif', 'nom_pluriel', 'nom_relatif_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='typedeparentedoeuvres',
-            search_fields=['nom', 'nom_relatif', 'nom_pluriel', 'nom_relatif_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='typedesource',
-            search_fields=['nom', 'nom_pluriel'],
-        ),
         migrations.AlterField(
             model_name='oeuvre',
             name='sujet',
@@ -3282,82 +3202,6 @@ class Migration(migrations.Migration):
         migrations.AddIndex(
             model_name='typedesource',
             index=django.contrib.postgres.indexes.GinIndex(django.db.models.expressions.F('autocomplete_vector'), name='typedesource_autocomplete'),
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='caracteristiquedeprogramme',
-            search_fields=['valeur'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='elementdedistribution',
-            search_fields=[],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='elementdeprogramme',
-            search_fields=[],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='ensemble',
-            search_fields=['particule_nom', 'nom'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='evenement',
-            search_fields=['circonstance', 'debut_date', 'debut_heure', 'debut_lieu_approx', 'debut_date_approx', 'debut_heure_approx'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='genredoeuvre',
-            search_fields=['nom', 'nom_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='individu',
-            search_fields=['nom', 'nom_naissance', 'prenoms', 'pseudonyme'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='lieu',
-            search_fields=['nom'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='naturedelieu',
-            search_fields=['nom', 'nom_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='oeuvre',
-            search_fields=['prefixe_titre', 'titre', 'prefixe_titre_secondaire', 'titre_secondaire', 'numero', 'coupe', 'tempo', 'sujet', 'surnom', 'nom_courant', 'incipit', 'opus', 'ict'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='partie',
-            search_fields=['nom', 'nom_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='profession',
-            search_fields=['nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='pupitre',
-            search_fields=[],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='source',
-            search_fields=['titre', 'date', 'date_approx', 'numero', 'lieu_conservation', 'cote'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='typedecaracteristiquedeprogramme',
-            search_fields=['nom', 'nom_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='typedensemble',
-            search_fields=['nom', 'nom_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='typedeparentedindividus',
-            search_fields=['nom', 'nom_relatif', 'nom_pluriel', 'nom_relatif_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='typedeparentedoeuvres',
-            search_fields=['nom', 'nom_relatif', 'nom_pluriel', 'nom_relatif_pluriel'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='typedesource',
-            search_fields=['nom', 'nom_pluriel'],
         ),
         migrations.AddField(
             model_name='oeuvre',

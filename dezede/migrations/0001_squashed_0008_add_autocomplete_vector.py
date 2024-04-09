@@ -53,12 +53,6 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'diapositives',
             },
         ),
-        migrations.RunSQL(
-            sql='\n        DELETE FROM reversion_version WHERE id IN (\n            SELECT id FROM (\n                SELECT\n                    version.id,\n                    version.revision_id,\n                    COUNT(*) OVER (PARTITION BY content_type_id, object_id\n                                   ORDER BY date_created DESC) AS n\n                FROM reversion_version AS version\n                INNER JOIN reversion_revision AS revision\n                    ON revision.id = version.revision_id\n            ) AS version\n            WHERE n > 1\n                  OR revision_id IS NULL\n        );\n        ',
-        ),
-        migrations.RunSQL(
-            sql='\n        DELETE FROM reversion_revision WHERE NOT EXISTS (\n            SELECT * FROM reversion_version\n            WHERE revision_id = reversion_revision.id\n        );\n        ',
-        ),
         migrations.AddField(
             model_name='diapositive',
             name='search_vector',
@@ -86,9 +80,5 @@ class Migration(migrations.Migration):
         migrations.AddIndex(
             model_name='diapositive',
             index=django.contrib.postgres.indexes.GinIndex(django.db.models.expressions.F('autocomplete_vector'), name='diapositive_autocomplete'),
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='diapositive',
-            search_fields=['title', 'subtitle'],
         ),
     ]

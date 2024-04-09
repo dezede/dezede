@@ -209,14 +209,6 @@ class Migration(migrations.Migration):
             model_name='dossierdevenements',
             index=django.contrib.postgres.indexes.GinIndex(django.db.models.expressions.F('autocomplete_vector'), name='dossierevenements_autocomplete'),
         ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='categoriededossiers',
-            search_fields=['nom'],
-        ),
-        db_search.sql.UpdateAllSearchVectors(
-            name='dossierdevenements',
-            search_fields=['titre', 'titre_court'],
-        ),
         tree.operations.DeleteTreeTrigger(
             model_lookup='dossierdevenements',
         ),
