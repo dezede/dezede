@@ -8,7 +8,7 @@ from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, BooleanField,
     PositiveSmallIntegerField, Q, PROTECT, Count, DecimalField,
-    SmallIntegerField, Max, CASCADE,
+    SmallIntegerField, Max, CASCADE, CheckConstraint,
 )
 from django.urls import reverse
 from django.utils.encoding import force_text
@@ -123,6 +123,28 @@ class ElementDeDistribution(CommonModel):
             GinIndex('search_vector', name='elementdistrib_search'),
             # We specify it manually, otherwise its name is too long.
             GinIndex('autocomplete_vector', name='elementdistrib_autocomplete'),
+        ]
+        constraints = [
+            # FIXME: Use an XOR when upgrading to Django >= 4.1.
+            CheckConstraint(
+                check=(
+                    (Q(evenement__isnull=True) & Q(element_de_programme__isnull=False))
+                    | (Q(evenement__isnull=False) & Q(element_de_programme__isnull=True))
+                ),
+                name='distribution_has_evenement_xor_programme',
+            ),
+            # FIXME: Use an XOR when upgrading to Django >= 4.1.
+            CheckConstraint(
+                check=(
+                    (Q(individu__isnull=True) & Q(ensemble__isnull=False))
+                    | (Q(individu__isnull=False) & Q(ensemble__isnull=True))
+                ),
+                name='distribution_has_individu_xor_ensemble',
+            ),
+            CheckConstraint(
+                check=~(Q(partie__isnull=False) & Q(profession__isnull=False)),
+                name='distribution_has_not_partie_and_profession',
+            ),
         ]
 
     @staticmethod

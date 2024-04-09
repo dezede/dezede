@@ -2,7 +2,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import (
-    CharField, ForeignKey, ManyToManyField, PROTECT, BooleanField)
+    CharField, ForeignKey, ManyToManyField, PROTECT)
 from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -15,7 +15,7 @@ from common.utils.text import str_list, str_list_w_last, ex
 from .base import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
     PublishedManager, PublishedQuerySet, AncrageSpatioTemporel,
-    slugify_unicode, ISNI_VALIDATORS)
+    slugify_unicode, ISNI_VALIDATORS, IsniModel)
 from .evenement import Evenement
 
 
@@ -81,7 +81,7 @@ class IndividuManager(PublishedManager):
         return self.get_queryset().are_feminins()
 
 
-class Individu(AutoriteModel, UniqueSlugModel):
+class Individu(AutoriteModel, UniqueSlugModel, IsniModel):
     particule_nom = CharField(
         _('particule du nom d’usage'), max_length=10, blank=True,
         db_index=True)
@@ -135,7 +135,6 @@ class Individu(AutoriteModel, UniqueSlugModel):
         _('Identifiant ISNI'), max_length=16, blank=True,
         validators=ISNI_VALIDATORS,
         help_text=_('Exemple : « 0000000121269154 » pour Mozart.'))
-    sans_isni = BooleanField(_('sans ISNI'), default=False)
 
     objects = IndividuManager()
 
@@ -324,10 +323,7 @@ class Individu(AutoriteModel, UniqueSlugModel):
             message = _('Le décès ne peut précéder la naissance.')
             raise ValidationError({'naissance_date': message,
                                    'deces_date': message})
-        if self.isni and self.sans_isni:
-            message = _('« ISNI » ne peut être rempli '
-                        'lorsque « Sans ISNI » est coché.')
-            raise ValidationError({'isni': message, 'sans_isni': message})
+        self.check_isni()
 
     def __str__(self):
         return strip_tags(self.html(tags=False))

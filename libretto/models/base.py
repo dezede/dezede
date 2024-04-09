@@ -5,7 +5,7 @@ from math import ceil
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
-from django.core.exceptions import NON_FIELD_ERRORS, FieldError
+from django.core.exceptions import NON_FIELD_ERRORS, FieldError, ValidationError
 from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
@@ -24,7 +24,7 @@ from tree.query import TreeQuerySetMixin
 from common.utils.sql import get_search_vector, update_all_search_vectors
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
-from common.utils.html import capfirst, date_html
+from common.utils.html import capfirst, date_html, href
 from common.utils.text import str_list
 from typography.utils import replace
 
@@ -355,6 +355,29 @@ class UniqueSlugModel(Model):
         if not s:
             return force_text(self._meta.verbose_name)
         return s
+
+
+class IsniModel(Model):
+    sans_isni = BooleanField(_('sans ISNI'), default=False)
+
+    class Meta(object):
+        abstract = True
+
+    def isni_html(self):
+        if self.sans_isni:
+            return 'non attribué'
+        s = re.sub(r'(.{4})', r'\1 ', self.isni)
+        return (
+            href(f'https://isni.org/isni/{self.isni}', s, new_tab=True)
+            if s else ''
+        )
+    isni_html.short_description = _('Identifiant ISNI')
+
+    def check_isni(self):
+        if self.isni and self.sans_isni:
+            message = _('« ISNI » ne peut être rempli '
+                        'lorsque « Sans ISNI » est coché.')
+            raise ValidationError({'isni': message, 'sans_isni': message})
 
 
 class CommonTreeQuerySet(TreeQuerySetMixin, CommonQuerySet):

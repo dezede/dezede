@@ -98,6 +98,8 @@ def create_oeuvre(row):
     d['genre'] = GENRE_D_OEUVRE
     d['owner'] = OWNER
     d['etat'] = ETAT
+    # Il manque creation_type ('genèse (composition, écriture, etc.)')
+    # Ajouté en base de données après l’importation.
     oeuvre = Oeuvre(**d)
     oeuvre.clean()
     oeuvre.save()
@@ -201,6 +203,8 @@ def format_titre(df: pandas.DataFrame):
     df[['prefixe_titre', 'titre', 'incipit']] = (
         df[['prefixe_titre', 'titre', 'incipit']].fillna('')
     )
+    # Il manque une majuscule au préfixe
+    # Corrigé après l’importation
     df['prefixe_titre'] = df['prefixe_titre'].str.strip()
 
     # Tronque les incipits trop grands

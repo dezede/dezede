@@ -258,9 +258,12 @@ def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=9,
            timeout=6 * 60 * 60):
     set_env()
 
-    sudo('apt-get install '
-         'supervisor '  # Daemonizes Django (using gunicorn) & rq
-         'nginx')  # HTTP server
+    sudo(
+        'apt-get install '
+        'supervisor '  # Daemonizes Django (using gunicorn) & rq
+        'nginx '  # HTTP server
+        'fail2ban'
+    )
 
     context = env.copy()
     context.update(ip=ip, port=port, workers=int(workers), timeout=timeout)
@@ -283,6 +286,19 @@ def deploy(domain='dezede.org', ip='127.0.0.1', port=8000, workers=9,
                     context=context, use_jinja=True, use_sudo=True)
     sudo(f'ln -s "{available}" /etc/nginx/sites-enabled', warn_only=True)
     sudo('systemctl restart nginx')
+
+    # Blocks spamming bots.
+    put(
+        'prod/fail2ban-nginx-badbots-jail.conf',
+        '/etc/fail2ban/jail.d/nginx-badbots.conf',
+        use_sudo=True,
+    )
+    put(
+        'prod/fail2ban-nginx-badbots-filter.conf',
+        '/etc/fail2ban/filter.d/nginx-badbots.conf',
+        use_sudo=True,
+    )
+    sudo('systemctl restart fail2ban')
 
     with workon_dezede():
         sed('dezede/settings/prod.py',

@@ -10,7 +10,7 @@ from django.core.validators import RegexValidator
 from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField,
     BooleanField, SmallIntegerField, PROTECT, Count,
-    PositiveSmallIntegerField, CASCADE)
+    PositiveSmallIntegerField, CASCADE, CheckConstraint, Q)
 from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags, format_html
@@ -418,10 +418,28 @@ class Auteur(CommonModel):
 
     objects = AuteurManager()
 
-    class Meta(object):
+    class Meta:
         verbose_name = _('auteur')
         verbose_name_plural = _('auteurs')
         ordering = ('profession', 'ensemble', 'individu')
+        constraints = [
+            # FIXME: Use an XOR when upgrading to Django >= 4.1.
+            CheckConstraint(
+                check=(
+                    (Q(oeuvre__isnull=True) & Q(source__isnull=False))
+                    | (Q(oeuvre__isnull=False) & Q(source__isnull=True))
+                ),
+                name='auteur_has_oeuvre_xor_source',
+            ),
+            # FIXME: Use an XOR when upgrading to Django >= 4.1.
+            CheckConstraint(
+                check=(
+                    (Q(individu__isnull=True) & Q(ensemble__isnull=False))
+                    | (Q(individu__isnull=False) & Q(ensemble__isnull=True))
+                ),
+                name='auteur_has_individu_xor_ensemble',
+            ),
+        ]
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -438,6 +456,10 @@ class Auteur(CommonModel):
             raise ValidationError({
                 'profession': ugettext('This field is required.')
             })
+        if self.individu_id is None and self.ensemble_id is None:
+            msg = ugettext('« Individu » ou « Ensemble » '
+                           'doit être saisi.')
+            raise ValidationError({'individu': msg, 'ensemble': msg})
         if self.individu_id is not None and self.ensemble_id is not None:
             msg = ugettext('« Individu » et « Ensemble » '
                            'ne peuvent être saisis sur la même ligne.')
