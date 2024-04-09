@@ -11,8 +11,7 @@ services:
     volumes:
       - postgresql-data:/var/lib/postgresql/data
       - postgresql-socket:/var/run/postgresql
-    networks:
-      default:
+    network_mode: none
     read_only: true
     tmpfs:
       - /tmp/
@@ -48,6 +47,13 @@ services:
     volumes:
       - redis-data:/data
       - redis-socket:/var/run/redis
+    network_mode: none
+  elasticsearch:
+    image: elasticsearch:1.7.6-alpine
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    expose:
+      - 9200
   migrate:
     image: dezede/django
     command: sh -c "
@@ -64,6 +70,8 @@ services:
       postgresql:
         condition: service_healthy
       redis:
+        condition: service_started
+      elasticsearch:
         condition: service_started
     networks:
       default:
@@ -96,6 +104,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+      elasticsearch:
+        condition: service_started
       migrate:
         condition: service_completed_successfully
     expose:
@@ -108,5 +118,6 @@ volumes:
   postgresql-socket:
   redis-data:
   redis-socket:
+  elasticsearch-data:
   media:
   static:

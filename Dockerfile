@@ -17,5 +17,6 @@ RUN pip install -r requirements/base.txt -r requirements/prod.txt
 COPY . /srv
 
 ENV DJANGO_SETTINGS_MODULE=dezede.settings.prod
+ENV ELASTICSEARCH_HOST=elasticsearch
 ENV ALLOWED_HOSTS=${ALLOWED_HOSTS}
 CMD python manage.py runserver django:8000

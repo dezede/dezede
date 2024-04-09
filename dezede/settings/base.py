@@ -1,3 +1,4 @@
+import os
 import re
 from django.utils.safestring import mark_safe
 from easy_thumbnails.conf import Settings as thumbnail_settings
@@ -231,10 +232,11 @@ THUMBNAIL_PROCESSORS = (
 ) + thumbnail_settings.THUMBNAIL_PROCESSORS
 IMAGE_CROPPING_THUMB_SIZE = (800, 600)
 
+ELASTICSEARCH_HOST = os.environ.get('ELASTICSEARCH_HOST', '127.0.0.1')
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'dezede.elasticsearch_backend.ConfigurableElasticSearchEngine',
-        'URL': '127.0.0.1:9200',
+        'URL': f'{ELASTICSEARCH_HOST}:9200',
         'INDEX_NAME': 'dezede',
         'TIMEOUT': 60*5,  # seconds
         'INCLUDE_SPELLING': True,
