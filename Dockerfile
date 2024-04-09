@@ -19,4 +19,4 @@ COPY . /srv
 ENV DJANGO_SETTINGS_MODULE=dezede.settings.prod
 ENV ELASTICSEARCH_HOST=elasticsearch
 ENV ALLOWED_HOSTS=${ALLOWED_HOSTS}
-CMD python manage.py runserver django:8000
+CMD gunicorn dezede.wsgi:application -b django:8000 -w 9 -t 21600
