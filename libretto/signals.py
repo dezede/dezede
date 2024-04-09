@@ -128,8 +128,10 @@ class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
         return self.enqueue('delete', instance, sender, **kwargs)
 
     def enqueue(self, action, instance, sender, **kwargs):
-        if sender._meta.label in ('admin.LogEntry', 'sessions.Session',
-                                  'reversion.Revision', 'reversion.Version'):
+        if sender._meta.label in {
+            'admin.LogEntry', 'sessions.Session', 'reversion.Revision',
+            'reversion.Version', 'migrations.Migration',
+        }:
             return
 
         django_rq.enqueue(
