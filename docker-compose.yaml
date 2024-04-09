@@ -87,6 +87,28 @@ services:
           memory: 2500M
         reservations:
           memory: 100M
+  rq:
+    image: dezede/django
+    command: python manage.py rqworker
+    volumes:
+      - postgresql-socket:/var/run/postgresql
+      - redis-socket:/var/run/redis
+      - media:/srv/media:ro
+      - static:/srv/static
+    networks:
+      - default
+    tmpfs:
+      - /tmp/
+    restart: "always"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      elasticsearch:
+        condition: service_started
+      migrate:
+        condition: service_completed_successfully
   django:
     image: dezede/django
     build:
@@ -105,6 +127,8 @@ services:
       redis:
         condition: service_started
       elasticsearch:
+        condition: service_started
+      rq:
         condition: service_started
       migrate:
         condition: service_completed_successfully
