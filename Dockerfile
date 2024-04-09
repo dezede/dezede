@@ -18,5 +18,4 @@ COPY . /srv
 
 ENV DJANGO_SETTINGS_MODULE=dezede.settings.prod
 ENV ALLOWED_HOSTS=${ALLOWED_HOSTS}
-RUN python manage.py collectstatic -v0
 CMD python manage.py runserver django:8000

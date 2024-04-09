@@ -25,5 +25,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(migrate_arrangements, lambda apps, b: None)
+        migrations.RunPython(migrate_arrangements, migrations.RunPython.noop)
     ]

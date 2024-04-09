@@ -6,7 +6,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.db.models.expressions
 
-from common.utils.sql import UpdateAllSearchVectors
+from db_search.sql import UpdateAllSearchVectors
 
 
 class Migration(migrations.Migration):

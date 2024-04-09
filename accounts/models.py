@@ -16,9 +16,8 @@ from tree.models import TreeModelMixin
 from common.utils.html import href, sc
 from common.utils.text import str_list_w_last
 from libretto.models.base import (
-    AutoriteModel, CommonTreeManager, CommonTreeQuerySet, SearchVectorAbstractModel,
-)
-
+    AutoriteModel, CommonTreeManager, CommonTreeQuerySet, )
+from db_search.models import SearchVectorAbstractModel
 
 #
 # Hack to monkey patch the user model

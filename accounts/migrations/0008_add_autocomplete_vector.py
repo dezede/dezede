@@ -6,7 +6,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.db.models.expressions
 
-from common.utils.sql import UpdateAllSearchVectors
+from db_search.sql import UpdateAllSearchVectors
 
 
 class Migration(migrations.Migration):
@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
     dependencies = [
         ('contenttypes', '0002_remove_content_type_name'),
         ('accounts', '0007_add_search_vectors'),
-        ('dezede', '0007_add_autocomplete_configuration'),
+        # FIXME: Enable again when applied in production.
+        # ('db_search', '0001_create_search_configurations'),
     ]
 
     operations = [

@@ -5,7 +5,7 @@ import django.contrib.postgres.search
 from django.db import migrations
 import django.db.models.expressions
 
-from common.utils.sql import UpdateAllSearchVectors
+from db_search.sql import UpdateAllSearchVectors
 
 
 class Migration(migrations.Migration):

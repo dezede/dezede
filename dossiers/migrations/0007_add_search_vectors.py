@@ -5,13 +5,14 @@ import django.contrib.postgres.search
 from django.db import migrations
 import django.db.models.expressions
 
-from common.utils.sql import UpdateAllSearchVectors
+from db_search.sql import UpdateAllSearchVectors
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dezede', '0005_add_search_configuration'),
+        # FIXME: Enable again when applied in production.
+        # ('db_search', '0001_create_search_configurations'),
         ('dossiers', '0006_auto_20230706_2033'),
     ]
 

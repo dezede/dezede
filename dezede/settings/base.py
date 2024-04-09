@@ -25,7 +25,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 SEND_BROKEN_LINK_EMAILS = True
-EMAIL_SUBJECT_PREFIX = u'[Dezède] '
+EMAIL_SUBJECT_PREFIX = ''
 IGNORABLE_404_URLS = (
     re.compile(r'^/favicon\.ico/?$'),
 )
@@ -93,6 +93,7 @@ STATICFILES_DIRS = (
 
 
 INSTALLED_APPS = (
+    'db_search',
     'dezede',
     'common',
     'accounts',

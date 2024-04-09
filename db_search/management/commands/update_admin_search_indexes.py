@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.core.management import BaseCommand
 
-from libretto.models.base import SearchVectorAbstractModel
+from db_search.models import SearchVectorAbstractModel
 
 
 class Command(BaseCommand):

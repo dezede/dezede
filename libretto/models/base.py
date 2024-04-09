@@ -3,15 +3,12 @@ import re
 from math import ceil
 
 from django.conf import settings
-from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchVectorField
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError, ValidationError
 from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
-    NOT_PROVIDED, Value,
-)
+    NOT_PROVIDED, )
 from django.template.defaultfilters import time
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags
@@ -21,13 +18,11 @@ from slugify import Slugify
 from tinymce.models import HTMLField
 from tree.query import TreeQuerySetMixin
 
-from common.utils.sql import get_search_vector, update_all_search_vectors
+from db_search.models import SearchVectorAbstractModel
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 from common.utils.html import capfirst, date_html, href
 from common.utils.text import str_list
-from typography.utils import replace
-
 
 __all__ = (
     'LOWER_MSG', 'PLURAL_MSG', 'DATE_MSG', 'calc_pluriel',
@@ -81,48 +76,6 @@ ISNI_VALIDATORS = [
 #
 # Modélisation abstraite
 #
-
-
-class SearchVectorAbstractModel(Model):
-    search_vector = SearchVectorField(null=True, blank=True, editable=False)
-    autocomplete_vector = SearchVectorField(
-        null=True, blank=True, editable=False,
-    )
-    search_fields = []
-
-    class Meta:
-        abstract = True
-        indexes = [
-            GinIndex('search_vector', name='%(class)s_search'),
-            GinIndex('autocomplete_vector', name='%(class)s_autocomplete'),
-        ]
-
-    @classmethod
-    def update_all_search_vectors(cls):
-        update_all_search_vectors(cls, cls.search_fields)
-
-    def set_search_vectors(self) -> None:
-        search_fields = self.search_fields
-
-        search_fields = [
-            getattr(self, field_name)
-            for field_name in search_fields
-        ]
-        search_fields = [
-            Value(value) for value in search_fields if value is not None
-        ]
-        self.search_vector = get_search_vector(search_fields)
-        self.autocomplete_vector = get_search_vector(
-            search_fields, config=settings.AUTOCOMPLETE_CONFIG,
-        )
-
-    @staticmethod
-    def autocomplete_term_adjust(term):
-        return replace(term)
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return ['autocomplete_vector__autocomplete']
 
 
 def get_related_fields(meta):
@@ -288,7 +241,7 @@ def _get_default_etat():
         'message': '<p>Cette donnée a été créée récemment et nécessite '
                    'plusieurs relectures.  À lire avec précaution.</p>',
         'public': True,
-    })[0]
+    })[0].pk
 
 
 class PublishedModel(CommonModel):

@@ -10,6 +10,8 @@ class Migration(migrations.Migration):
     dependencies = [
         ('contenttypes', '0002_remove_content_type_name'),
         ('dezede', '0005_add_search_configuration'),
+        # FIXME: Enable again when applied in production.
+        # ('db_search', '0001_create_search_configurations'),
     ]
 
     operations = [

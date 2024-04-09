@@ -11,7 +11,6 @@ from haystack.signals import BaseSignalProcessor
 
 from common.utils.html import sanitize_html
 from .forms import FasterModelChoiceIterator
-from .models.base import SearchVectorAbstractModel
 from .search_indexes import get_haystack_index
 
 
@@ -31,15 +30,6 @@ def handle_whitespaces(sender, **kwargs):
     # Then we call the specific whitespace handler of the model (if it exists).
     if hasattr(obj, 'handle_whitespaces'):
         obj.handle_whitespaces()
-
-
-@receiver(pre_save)
-def update_search_vector(sender, **kwargs):
-    if not issubclass(sender, SearchVectorAbstractModel):
-        return
-
-    instance = kwargs['instance']
-    instance.set_search_vectors()
 
 
 def get_obj_key(obj, id_attr='pk'):

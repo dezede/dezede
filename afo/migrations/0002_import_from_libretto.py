@@ -46,14 +46,9 @@ def delete_lieuafo(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
-    run_before = [
-        ('libretto', '0005_auto_20150423_0910')
-    ]
-
     dependencies = [
         ('afo', '0001_initial'),
-        ('libretto', '0004_auto_20150422_1719'),
+        ('libretto', '0001_squashed_0063_upgrade_check_constraints'),
     ]
 
     operations = [

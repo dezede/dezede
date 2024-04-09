@@ -50,11 +50,15 @@ services:
       - redis-socket:/var/run/redis
   migrate:
     image: dezede/django
-    command: python manage.py migrate
+    command: sh -c "
+        python manage.py collectstatic -v0 --no-input
+        && python manage.py migrate
+      "
     volumes:
       - postgresql-socket:/var/run/postgresql
       - redis-socket:/var/run/redis
       - media:/srv/media
+      - static:/srv/static
     restart: "no"
     depends_on:
       postgresql:
@@ -86,14 +90,14 @@ services:
       - postgresql-socket:/var/run/postgresql
       - redis-socket:/var/run/redis
       - media:/srv/media
+      - static:/srv/static
     depends_on:
       postgresql:
         condition: service_healthy
       redis:
         condition: service_started
-# FIXME: Enable me again!
-#      migrate:
-#        condition: service_completed_successfully
+      migrate:
+        condition: service_completed_successfully
     expose:
       - 8000
     ports:
@@ -105,3 +109,4 @@ volumes:
   redis-data:
   redis-socket:
   media:
+  static:
