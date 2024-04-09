@@ -1,3 +1,5 @@
+# FIXME: Implement IPv6 in Docker and forward client IPs from Traefik.
+
 # Zones created to avoid DDOS attacks
 limit_conn_zone $binary_remote_addr zone=dezede_django_conn:1m;
 limit_req_zone $binary_remote_addr zone=dezede_django_req:1m rate=20r/s;
@@ -7,29 +9,20 @@ limit_req_zone $binary_remote_addr zone=dezede_static_req:10m rate=100r/s;
 server {
   listen 80;
   listen [::]:80;
-  server_name {{ server_name }} www.{{ server_name }};
-  rewrite ^(.*) https://$host$1 permanent;
-}
-
-server {
-  listen 443 ssl;
-  listen [::]:443 ssl;
-  server_name {{ server_name }};
-  ssl_certificate     {{ ssl_certificate }};
-  ssl_certificate_key {{ ssl_key }};
+  server_name ${NGINX_DOMAIN};
 
   error_page 403 404 =404 /404;
   error_page 502 /502.html;
   error_page 503 /503.html;
 
   location ~ /50\d\.html {
-    root {{ project_path }}/prod;
+    root /srv/prod;
     allow all;
     internal;
   }
 
   location /robots.txt {
-    root {{ project_path }}/prod;
+    root /srv/prod;
     allow all;
   }
 
@@ -73,26 +66,26 @@ server {
   limit_req zone=dezede_static_req burst=500;
 
   location /media {
-    alias {{ project_path }}/media;
+    alias /srv/media;
     allow all;
     expires 1y;
   }
 
   location /static {
-    alias {{ project_path }}/static;
+    alias /srv/static;
     allow all;
     expires 1w;
   }
 
   location / {
-    proxy_pass http://{{ ip }}:{{ port }};
+    proxy_pass http://django:8000;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header Host $http_host;
     proxy_redirect off;
     proxy_connect_timeout 2s;
-    proxy_read_timeout {{ timeout }}s;
+    proxy_read_timeout 21600s;
     proxy_buffering off;
 
     # Parameters to avoid DDOS attacks on gunicorn
@@ -101,10 +94,11 @@ server {
   }
 }
 
+# FIXME: Make the RQ dashboard work again.
 server {
   listen 80;
   listen [::]:80;
-  server_name rq.{{ server_name }};
+  server_name rq.${NGINX_DOMAIN};
   location / {
     proxy_pass http://localhost:9181;
     proxy_buffering off;
@@ -113,19 +107,10 @@ server {
   }
 }
 
-{# TODO: Do something cleaner about this. #}
+# TODO: Do something cleaner about this.
 server {
   listen 80;
   listen [::]:80;
-  server_name afo.dezede.org www.{{ server_name }};
-  rewrite ^(.*) https://dezede.org$1 permanent;
-}
-
-server {
-  listen 443 ssl;
-  listen [::]:443 ssl;
-  server_name afo.dezede.org www.{{ server_name }};
-  ssl_certificate     {{ ssl_certificate }};
-  ssl_certificate_key {{ ssl_key }};
-  rewrite ^(.*) https://dezede.org$1 permanent;
+  server_name afo.${NGINX_DOMAIN} www.${NGINX_DOMAIN};
+  rewrite ^(.*) https://${NGINX_DOMAIN}$1 permanent;
 }

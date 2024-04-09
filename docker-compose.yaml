@@ -114,7 +114,7 @@ services:
     build:
       context: .
       args:
-        ALLOWED_HOSTS: $ALLOWED_HOSTS
+        DOMAIN: $DOMAIN
     restart: always
     volumes:
       - postgresql-socket:/var/run/postgresql
@@ -134,8 +134,49 @@ services:
         condition: service_completed_successfully
     expose:
       - 8000
+  nginx:
+    image: nginx:1.24.0-alpine-slim
+    environment:
+      NGINX_DOMAIN: $DOMAIN
+    volumes:
+      - ./prod/nginx_templates:/etc/nginx/templates:ro
+      - ./prod/:/srv/prod:ro
+      - media:/srv/media:ro
+      - static:/srv/static:ro
+    networks:
+      - default
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx/
+      - /var/run/
+      - /etc/nginx/conf.d/
+    healthcheck:
+      test: nc -vz -w1 nginx 80
+      interval: 1s
+      timeout: 1s
+      retries: 60
+    restart: always
+    depends_on:
+      django:
+        condition: service_started
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - SETGID
+      - SETUID
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 100M
+        reservations:
+          cpus: "0.1"
+          memory: 6M
     ports:
-      - "80:8000"
+      - "80:80"
+
 
 volumes:
   postgresql-data:

@@ -9,14 +9,14 @@ WORKDIR /srv/
 COPY package*.json /srv/
 RUN npm install
 
-ARG ALLOWED_HOSTS
-
 COPY ./requirements/* /srv/requirements/
 RUN pip install -r requirements/base.txt -r requirements/prod.txt
 
 COPY . /srv
 
+ARG DOMAIN
+
 ENV DJANGO_SETTINGS_MODULE=dezede.settings.prod
 ENV ELASTICSEARCH_HOST=elasticsearch
-ENV ALLOWED_HOSTS=${ALLOWED_HOSTS}
+ENV DOMAIN=${DOMAIN}
 CMD gunicorn dezede.wsgi:application -b django:8000 -w 9 -t 21600

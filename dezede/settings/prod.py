@@ -10,7 +10,7 @@ TEMPLATES[0]['OPTIONS']['loaders'] = [
 ]
 del TEMPLATES[0]['APP_DIRS']
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'dezede.org').split(',')
+ALLOWED_HOSTS = [os.environ.get('DOMAIN', 'dezede.org')]
 
 EMAIL_HOST = 'ssl0.ovh.net'
 EMAIL_PORT = 587
