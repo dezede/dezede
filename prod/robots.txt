@@ -71,6 +71,7 @@ User-agent: CherryPicker
 User-agent: ChinaClaw
 User-agent: Chlooe
 User-agent: Claritybot
+User-agent: ClaudeBot
 User-agent: Cliqzbot
 User-agent: Cloud mapping
 User-agent: coccocbot-web
