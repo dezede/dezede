@@ -364,6 +364,7 @@ NPM_BINARY_PATH = BASE_DIR / 'node_modules/.bin/'
 COMPRESS_PRECOMPILERS = (
     ('text/less', f"{NPM_BINARY_PATH / 'lessc'} {{infile}} {{outfile}}"),
 )
+COMPRESS_PARSER = 'compressor.parser.LxmlParser'
 
 AJAX_LOOKUP_CHANNELS = {
     'lieu': ('libretto.lookups', 'LieuLookup'),
