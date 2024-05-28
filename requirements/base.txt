@@ -61,3 +61,5 @@ Pillow==8.2.0
 # For djangorestframework (optionals)
 Pygments==2.9.0
 django-filter==2.4.0
+# For exporting DataFrames to XLSX, Pandas needs Jinja2 (yes…)
+Jinja2==3.1.4
