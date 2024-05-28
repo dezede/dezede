@@ -75,6 +75,7 @@ class FileAnalyzer:
         self.field.pre_save(self.model_instance, add=False)
 
         try:
+            # TODO: Remove avprobe to only support ffprobe.
             for executable in ('avprobe', 'ffprobe'):
                 try:
                     stdout = check_output([

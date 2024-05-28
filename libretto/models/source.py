@@ -501,6 +501,20 @@ class Source(AutoriteModel):
         if not getattr(self, 'updated_media_info', False):
             self.update_media_info()
             self.updated_media_info = True
+        if self.is_audio() and not isinstance(self, Audio):
+            raise ValidationError({
+                'fichier': mark_safe(_(
+                    'Impossible de mettre un fichier audio dans une source. '
+                    '<a href="/admin/libretto/audio/add/">Créez un audio</a> à la place.'
+                )),
+            })
+        if self.is_video() and not isinstance(self, Video):
+            raise ValidationError({
+                'fichier': mark_safe(_(
+                    'Impossible de mettre un fichier vidéo dans une source. '
+                    '<a href="/admin/libretto/video/add/">Créez une vidéo</a> à la place.'
+                )),
+            })
 
     @cached_property
     def first_page(self):
