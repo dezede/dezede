@@ -2,7 +2,10 @@ version: "3.6"
 
 services:
   postgresql:
-    image: postgis/postgis:13-3.4
+    image: dezede/postgresql
+    build:
+      context: .
+      dockerfile: Dockerfile-postgresql
     user: postgres
     environment:
       POSTGRES_DB: dezede
