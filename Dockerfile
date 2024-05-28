@@ -2,7 +2,10 @@ FROM python:3.8.18-slim-bookworm
 
 # RUN sed -i -e's/ main/ main contrib non-free science/g' /etc/apt/sources.list.d/debian.sources
 RUN apt update -y
-RUN apt install -y --no-install-recommends build-essential libgdal32 npm
+RUN apt install -y --no-install-recommends \
+    build-essential libgdal32 npm \
+    texlive-xetex fonts-linuxlibertine texlive-lang-french texlive-fonts-extra \
+    ffmpeg
 
 WORKDIR /srv/
 
