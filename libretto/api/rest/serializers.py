@@ -131,7 +131,7 @@ class OeuvreSerializer(HyperlinkedModelSerializer):
     class Meta(object):
         model = Oeuvre
         fields = (
-            'id', 'str', 'extrait_de',
+            'id', 'str', 'extrait_de', 'indeterminee',
             'titre_significatif', 'titre_non_significatif', 'description',
             'genre', 'auteurs', 'creation',
             'front_url', 'url'
