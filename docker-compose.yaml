@@ -138,12 +138,13 @@ services:
     expose:
       - 8000
   nginx:
-    image: nginx:1.24.0-alpine-slim
+    image: dezede/nginx
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
     environment:
       NGINX_DOMAIN: $DOMAIN
     volumes:
-      - ./prod/nginx_templates:/etc/nginx/templates:ro
-      - ./prod/:/srv/prod:ro
       - media:/srv/media:ro
       - static:/srv/static:ro
     networks:
