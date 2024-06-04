@@ -37,7 +37,10 @@ class OeuvreViewSet(PublishedMixin, ReadOnlyModelViewSet):
 
 class SourceViewSet(PublishedMixin, ReadOnlyModelViewSet):
     model = Source
-    queryset = Source.objects.all()
+    queryset = Source.objects.prefetch_related(
+        'evenements', 'oeuvres', 'individus', 'ensembles', 'lieux', 'parties',
+        'editeurs_scientifiques', 'auteurs',
+    )
     serializer_class = SourceSerializer
 
 
@@ -55,7 +58,11 @@ class ProfessionViewSet(ReadOnlyModelViewSet):
 
 class EvenementViewSet(PublishedMixin, ReadOnlyModelViewSet):
     model = Evenement
-    queryset = Evenement.objects.all()
+    queryset = Evenement.objects.select_related(
+        'debut_lieu', 'debut_lieu__nature',
+        'debut_lieu__parent', 'debut_lieu__parent__nature',
+        'fin_lieu', 'fin_lieu__nature',
+    ).prefetch_related('caracteristiques')
     serializer_class = EvenementSerializer
 
 

@@ -83,7 +83,7 @@ class IndividuSerializer(HyperlinkedModelSerializer):
     class Meta(object):
         model = Individu
         fields = (
-            'id', 'str', 'html', 'nom', 'prenoms',
+            'id', 'isni', 'str', 'html', 'nom', 'prenoms',
             'naissance', 'deces',
             'professions', 'parents',
             'front_url', 'url'
@@ -100,7 +100,7 @@ class EnsembleSerializer(HyperlinkedModelSerializer):
     class Meta(object):
         model = Ensemble
         fields = (
-            'id', 'str', 'html', 'type', 'front_url', 'url'
+            'id', 'isni', 'str', 'html', 'type', 'front_url', 'url'
         )
 
 
@@ -131,7 +131,7 @@ class OeuvreSerializer(HyperlinkedModelSerializer):
     class Meta(object):
         model = Oeuvre
         fields = (
-            'id', 'str', 'extrait_de',
+            'id', 'str', 'extrait_de', 'indeterminee',
             'titre_significatif', 'titre_non_significatif', 'description',
             'genre', 'auteurs', 'creation',
             'front_url', 'url'
@@ -185,7 +185,7 @@ class ProfessionSerializer(CommonSerializer):
 
     class Meta:
         model = Profession
-        exclude = ()
+        exclude = ('search_vector', 'autocomplete_vector')
 
 
 class EvenementSerializer(CommonSerializer):
@@ -195,7 +195,7 @@ class EvenementSerializer(CommonSerializer):
 
     class Meta:
         model = Evenement
-        exclude = ()
+        exclude = ('search_vector', 'autocomplete_vector')
 
 
 class PartieSerializer(CommonSerializer):
@@ -204,7 +204,7 @@ class PartieSerializer(CommonSerializer):
 
     class Meta:
         model = Partie
-        exclude = ()
+        exclude = ('search_vector', 'autocomplete_vector')
 
 
 class UserSerializer(CommonSerializer):
@@ -217,4 +217,6 @@ class UserSerializer(CommonSerializer):
             'password', 'email', 'last_login', 'date_joined', 'show_email',
             'willing_to_be_mentor', 'is_superuser', 'is_staff', 'is_active',
             'groups', 'user_permissions',
+            'path', 'search_vector', 'autocomplete_vector',
+            'content_type', 'object_id',
         )
