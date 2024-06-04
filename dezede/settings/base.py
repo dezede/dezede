@@ -1,5 +1,6 @@
 import re
 from django.utils.safestring import mark_safe
+from dotenv import dotenv_values
 from easy_thumbnails.conf import Settings as thumbnail_settings
 from pathlib import Path
 
@@ -13,6 +14,9 @@ except ImportError:
     # Fall back to psycopg2cffi.
     from psycopg2cffi import compat
     compat.register()
+
+
+dotenv_secret = dotenv_values('.env.secret')
 
 
 BASE_DIR = Path(__file__).parent.parent.parent
@@ -71,7 +75,7 @@ FILE_UPLOAD_PERMISSIONS = 0o755
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'replace_this_with_some_random_string'
+SECRET_KEY = dotenv_secret.get('SECRET_KEY', 'replace_this_with_some_random_string')
 
 WSGI_APPLICATION = 'dezede.wsgi.application'
 

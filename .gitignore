@@ -16,3 +16,4 @@ _*/
 /backups/
 /tmp/
 /venv/
+.env.secret
