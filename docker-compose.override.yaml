@@ -1,0 +1,21 @@
+version: "3.6"
+
+services:
+  nginx:
+    labels:
+      traefik.http.routers.nginx.entrypoints: web
+      traefik.http.middlewares.nginx-www-to-root.redirectregex.replacement: "http://$DOMAIN/$${1}"
+  traefik:
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.traefik.address=:8080"
+    ports:
+      - "8080:8080"
+    labels:
+      # Configures the Traefik dashboard to be displayed on DOMAIN:8080/dashboard/
+      traefik.http.routers.traefik.rule: Host(`$DOMAIN`)
+      traefik.http.routers.traefik.service: api@internal
+      traefik.http.routers.traefik.entrypoints: traefik

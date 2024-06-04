@@ -178,8 +178,42 @@ services:
         reservations:
           cpus: "0.1"
           memory: 6M
+    labels:
+      traefik.enable: true
+      traefik.http.routers.nginx.rule: Host(`www.$DOMAIN`, `$DOMAIN`)
+  traefik:
+    image: traefik:2.11.2
+    container_name: traefik
     ports:
       - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      default:
+    read_only: true
+    restart: always
+    healthcheck:
+      test: nc -z -w1 traefik 80
+      interval: 1s
+      timeout: 1s
+      retries: 60
+    depends_on:
+      nginx:
+        condition: service_healthy
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 500M
+        reservations:
+          cpus: "0.1"
+          memory: 50M
+    labels:
+      traefik.enable: true
 
 
 volumes:
@@ -190,3 +224,13 @@ volumes:
   elasticsearch-data:
   media:
   static:
+
+
+networks:
+  default:
+    enable_ipv6: true
+    ipam:
+      config:
+        # Keep these synchronised with the nginx IP forwarding configuration.
+        - subnet: 172.20.0.0/16
+        - subnet: fd00::/80
