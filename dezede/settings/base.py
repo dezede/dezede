@@ -406,7 +406,7 @@ REST_FRAMEWORK = {
 RQ_QUEUES = {
     'default': {
         'USE_REDIS_CACHE': 'default',
-        'DEFAULT_TIMEOUT': 2*60*60,  # seconds
+        'DEFAULT_TIMEOUT': 8*60*60,  # seconds
     },
 }
 
