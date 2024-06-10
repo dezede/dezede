@@ -13,7 +13,7 @@ _*/
 /node_modules/
 /media/
 /build/
-/backups/
+/backup/
 /tmp/
 /venv/
 .env.secret

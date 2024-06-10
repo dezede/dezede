@@ -181,4 +181,4 @@ tx
 node_modules/
 /media/
 /static/
-/backups/
+/backup/
