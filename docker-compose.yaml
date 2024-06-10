@@ -232,5 +232,5 @@ networks:
     ipam:
       config:
         # Keep these synchronised with the nginx IP forwarding configuration.
-        - subnet: 172.20.0.0/16
-        - subnet: fd00::/80
+        - subnet: 172.22.0.0/16
+        - subnet: fd02::/80
