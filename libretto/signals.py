@@ -147,8 +147,7 @@ class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
             args=(action,
                   instance._meta.app_label, instance._meta.model_name,
                   instance.pk),
-            result_ttl=0,  # Doesn't store result
-            timeout=3600,  # Avoids never-ending jobs
+            result_ttl=0,  # Don’t store the result.
         )
 
 
