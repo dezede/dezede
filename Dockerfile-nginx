@@ -1,4 +1,0 @@
-FROM nginx:1.24.0-alpine-slim
-
-COPY --chown=nginx ./prod/nginx_templates /etc/nginx/templates
-COPY --chown=nginx ./prod/ /srv/prod

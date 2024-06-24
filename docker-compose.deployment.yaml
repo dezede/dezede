@@ -1,29 +1,12 @@
-version: "3.6"
+include:
+  - docker-compose-django/volumes.deployment.yaml
 
 services:
   nginx:
-    labels:
-      traefik.http.routers.nginx.entrypoints: websecure
-      traefik.http.routers.nginx.tls.certresolver: dezede
+    extends:
+      file: docker-compose-django/docker-compose.deployment.yaml
+      service: nginx
   traefik:
-    command:
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.dezede.acme.httpchallenge=true"
-      - "--certificatesresolvers.dezede.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.dezede.acme.email=contact@noripyt.com"
-      - "--certificatesresolvers.dezede.acme.storage=/letsencrypt/acme.json"
-    ports:
-      - "443:443"
-    volumes:
-      - letsencrypt:/letsencrypt
-    healthcheck:
-      test: nc -z -w1 traefik 443
-
-volumes:
-  letsencrypt:
+    extends:
+      file: docker-compose-django/docker-compose.deployment.yaml
+      service: traefik

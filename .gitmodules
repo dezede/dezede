@@ -22,3 +22,6 @@
 [submodule "libretto/static/js/d3"]
 	path = libretto/static/js/d3
 	url = https://github.com/mbostock/d3
+[submodule "docker-compose-django"]
+	path = docker-compose-django
+	url = https://github.com/noripyt/docker-compose-django.git

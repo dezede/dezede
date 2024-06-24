@@ -1,49 +1,20 @@
-version: "3.6"
+include:
+  - docker-compose-django/networks.yaml
+  - docker-compose-django/volumes.yaml
 
 services:
   postgresql:
-    image: dezede/postgresql
     build:
       context: .
       dockerfile: Dockerfile-postgresql
-    user: postgres
+    extends:
+      file: docker-compose-django/docker-compose.yaml
+      service: postgresql
+    image: $PROJECT/postgresql:${IMAGES_TAG:-latest}
     environment:
-      POSTGRES_DB: dezede
-      POSTGRES_USER: dezede
-      POSTGRES_HOST_AUTH_METHOD: trust
-    volumes:
-      - postgresql-data:/var/lib/postgresql/data
-      - postgresql-socket:/var/run/postgresql
-    network_mode: none
-    read_only: true
-    tmpfs:
-      - /tmp/
-      - /run/postgresql/
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "dezede" ]
-      interval: 1s
-      timeout: 1s
-      retries: 60
-    restart: always
-    cap_drop:
-      - ALL
-    cap_add:
-      - CHOWN
-      - DAC_READ_SEARCH
-      - FOWNER
-      - SETGID
-      - SETUID
-    deploy:
-      mode: global
-      resources:
-        limits:
-          cpus: "1"
-          memory: 500M
-        reservations:
-          cpus: "0.1"
-          memory: 50M
+      POSTGRES_INITDB_ARGS:
   redis:
-    image: dezede/redis
+    image: $PROJECT/redis:${IMAGES_TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile-redis
@@ -51,48 +22,44 @@ services:
       - redis-data:/data
       - redis-socket:/var/run/redis
     network_mode: none
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 1s
+      timeout: 1s
+      retries: 60
   elasticsearch:
     image: elasticsearch:1.7.6-alpine
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     expose:
       - 9200
-  migrate:
-    image: dezede/django
-    command: sh -c "
-        python manage.py collectstatic -v0 --no-input
-        && python manage.py migrate
-      "
-    volumes:
-      - postgresql-socket:/var/run/postgresql
-      - redis-socket:/var/run/redis
-      - media:/srv/media
-      - static:/srv/static
-    restart: "no"
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      redis:
-        condition: service_started
-      elasticsearch:
-        condition: service_started
     networks:
       default:
-    read_only: true
-    tmpfs:
-      - /tmp/
-    cap_drop:
-      - ALL
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 2500M
-        reservations:
-          memory: 100M
+    restart: always
+    healthcheck:
+      test: nc -vz -w1 elasticsearch 9200
+      interval: 1s
+      timeout: 1s
+      retries: 60
+  migrate:
+    extends:
+      file: docker-compose-django/docker-compose.yaml
+      service: migrate
+    command: sh -c "python manage.py collectstatic --ignore bootstrap/docs/* --no-input && python manage.py migrate"
+    volumes:
+      - redis-socket:/var/run/redis
+      - static:/srv/static
+    depends_on:
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
   rq:
-    image: dezede/django
+    image: $PROJECT/django:${IMAGES_TAG:-latest}
     command: python manage.py rqworker
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch
     volumes:
       - postgresql-socket:/var/run/postgresql
       - redis-socket:/var/run/redis
@@ -107,130 +74,51 @@ services:
       postgresql:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
       elasticsearch:
-        condition: service_started
+        condition: service_healthy
       migrate:
         condition: service_completed_successfully
   django:
-    image: dezede/django
     build:
       context: .
-      args:
-        DOMAIN: $DOMAIN
-    restart: always
+      dockerfile: docker-compose-django/Dockerfile
+    extends:
+      file: docker-compose-django/docker-compose.yaml
+      service: django
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch
     volumes:
-      - postgresql-socket:/var/run/postgresql
-      - redis-socket:/var/run/redis
-      - media:/srv/media
       - static:/srv/static
+      - redis-socket:/var/run/redis
     depends_on:
-      postgresql:
-        condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
       elasticsearch:
-        condition: service_started
+        condition: service_healthy
       rq:
         condition: service_started
-      migrate:
-        condition: service_completed_successfully
-    expose:
-      - 8000
   nginx:
-    image: dezede/nginx
     build:
       context: .
-      dockerfile: Dockerfile-nginx
-    environment:
-      NGINX_DOMAIN: $DOMAIN
+      dockerfile: docker-compose-django/Dockerfile
+    extends:
+      file: docker-compose-django/docker-compose.yaml
+      service: nginx
     volumes:
-      - media:/srv/media:ro
-      - static:/srv/static:ro
-    networks:
-      - default
-    read_only: true
-    tmpfs:
-      - /var/cache/nginx/
-      - /var/run/
-      - /etc/nginx/conf.d/
-    healthcheck:
-      test: nc -vz -w1 nginx 80
-      interval: 1s
-      timeout: 1s
-      retries: 60
-    restart: always
-    depends_on:
-      django:
-        condition: service_started
-    cap_drop:
-      - ALL
-    cap_add:
-      - NET_BIND_SERVICE
-      - CHOWN
-      - SETGID
-      - SETUID
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 100M
-        reservations:
-          cpus: "0.1"
-          memory: 6M
-    labels:
-      traefik.enable: true
-      traefik.http.routers.nginx.rule: Host(`www.$DOMAIN`, `$DOMAIN`)
+      - static:/srv/static
   traefik:
-    image: traefik:2.11.2
-    container_name: traefik
-    ports:
-      - "80:80"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      default:
-    read_only: true
-    restart: always
-    healthcheck:
-      test: nc -z -w1 traefik 80
-      interval: 1s
-      timeout: 1s
-      retries: 60
-    depends_on:
-      nginx:
-        condition: service_healthy
-    cap_drop:
-      - ALL
-    cap_add:
-      - NET_BIND_SERVICE
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 500M
-        reservations:
-          cpus: "0.1"
-          memory: 50M
-    labels:
-      traefik.enable: true
+    extends:
+      file: docker-compose-django/docker-compose.yaml
+      service: traefik
+  fail2ban:
+    extends:
+      file: docker-compose-django/docker-compose.yaml
+      service: fail2ban
 
 
 volumes:
-  postgresql-data:
-  postgresql-socket:
   redis-data:
   redis-socket:
   elasticsearch-data:
-  media:
   static:
-
-
-networks:
-  default:
-    enable_ipv6: true
-    ipam:
-      config:
-        # Keep these synchronised with the nginx IP forwarding configuration.
-        - subnet: 172.22.0.0/16
-        - subnet: fd02::/80
