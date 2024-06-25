@@ -1,4 +1,4 @@
-from unicodedata import normalize
+from unicodedata import combining, normalize
 
 from django.utils.encoding import force_text
 from django.utils.functional import lazy
@@ -13,7 +13,7 @@ def remove_windows_newlines(text):
 
 
 def remove_diacritics(string):
-    return normalize('NFKD', string).encode('ASCII', 'ignore')
+    return ''.join([c for c in normalize('NFKD', string) if combining(c) == 0])
 
 
 def capfirst(text):

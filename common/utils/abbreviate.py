@@ -1,10 +1,12 @@
 import re
+from string import ascii_letters
 
 from .html import hlp
 from .text import remove_diacritics
 
 
 VOWELS = 'AEIOUYaeiouy'
+CONSONANTS = ''.join([letter for letter in ascii_letters if letter not in VOWELS])
 
 
 def abbreviate(text, min_len=1, tags=True, enabled=True):
@@ -17,7 +19,7 @@ def abbreviate(text, min_len=1, tags=True, enabled=True):
     j.-fr. du p. du f.
     >>> print(abbreviate('autéeur dramatique de la tour de babel', 1,
     ...                  tags=False))
-    aut. dram. de la tour de bab.
+    aut. dr. de la t. de b.
     >>> print(abbreviate('adaptateur', 4, tags=False))
     adapt.
     >>> print(abbreviate('Fait à Quincampoix', 2, tags=False))
@@ -26,27 +28,33 @@ def abbreviate(text, min_len=1, tags=True, enabled=True):
     ceci est un test bidon
     >>> print(abbreviate('A.-J.'))
     A.-J.
+    >>> print(abbreviate('Wolgang “Wolfie” Amadeus Mozart', tags=False))
+    W. “W.” A. M.
     """
 
     if not enabled:
         return text
 
-    pattern = (
-        fr'([A-Za-z]{{{min_len},}}?(?<=[^{VOWELS}])(?=[{VOWELS}]))'
-    )
+    pattern = fr'[A-Za-z]{{{min_len - 1},}}?[{CONSONANTS}](?P<consonant_case>[{VOWELS}][A-Za-z]+)'
     if min_len == 1:  # Handles the special case for a single vowel.
-        pattern = fr'([{VOWELS}]|{pattern})'
-    short = ''
-    last_end = 0
-    for match in re.finditer(
-        pattern + r'[A-Za-z]{2,}',
-        remove_diacritics(text).decode(),
-    ):
-        start = match.start()
-        short += text[last_end:start]
-        short += text[start:start + len(match.group(1))] + '.'
-        last_end = match.end()
-    short += text[last_end:]
-    if short == text:
+        pattern = fr'(?:[{VOWELS}](?P<vowel_case>[{CONSONANTS}][A-Za-z]+)|{pattern})'
+
+    matches = []
+
+    def gather_matches(match):
+        start, end = match.span('consonant_case')
+        if start == -1 or end == -1:
+            start, end = match.span('vowel_case')
+        matches.append((start, end))
+        return ''
+
+    re.sub(pattern, gather_matches, remove_diacritics(text))
+
+    if not matches:
         return text
-    return hlp(short, text, tags)
+
+    short = list(text)
+    for start, end in reversed(matches):
+        short[start:end] = ['.']
+
+    return hlp(''.join(short), text, tags)
