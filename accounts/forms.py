@@ -65,7 +65,7 @@ class HierarchicUserSignupForm(Form):
             'accounts/grant_to_admin_demand_email.txt',
             {'user': user, 'site_url': site_url, 'mentor': user.mentor})
         user.mentor.email_user(
-            _('[Dezède] Demande de responsabilité scientifique'),
+            _('Demande de responsabilité scientifique'),
             email_content)
 
 

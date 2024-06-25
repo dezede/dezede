@@ -86,7 +86,7 @@ def get_success_mail(subject, user, filename, file_content, content_type):
         </p>
     """) % subject
 
-    mail = EmailMessage(_('[Dezède] Export %s') % subject,
+    mail = EmailMessage(_('Export %s') % subject,
                         body=body, to=(user.email,))
     mail.content_subtype = 'html'
     mail.attach(filename, file_content, content_type)
@@ -109,7 +109,7 @@ def get_failure_mail(subject, user):
         </p>
     """) % subject
 
-    mail = EmailMessage(_('[Dezède] Échec de l’export %s')
+    mail = EmailMessage(_('Échec de l’export %s')
                         % subject, body=body, to=(user.email,))
     mail.content_subtype = 'html'
     return mail

@@ -83,8 +83,8 @@ msgid "Réinitialiser"
 msgstr "Resettare"
 
 #: accounts/forms.py:68
-msgid "[Dezède] Demande de responsabilité scientifique"
-msgstr "[Dezède] Richiesta di responsabilità scientifica"
+msgid "Demande de responsabilité scientifique"
+msgstr "Richiesta di responsabilità scientifica"
 
 #: accounts/forms.py:90 accounts/templates/account/login.html:5
 msgid "Sign In"
@@ -377,8 +377,8 @@ msgid "Courriel"
 msgstr "E-mail"
 
 #: accounts/views.py:28
-msgid "[Dezède] Accès autorisé à l’administration"
-msgstr "[Dezède] Accesso autorizzaro all'amministrazione"
+msgid "Accès autorisé à l’administration"
+msgstr "Accesso autorizzaro all'amministrazione"
 
 #: accounts/views.py:142
 msgid "Liste des utilisateurs"

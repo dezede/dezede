@@ -25,7 +25,7 @@ class GrantToAdmin(DetailView):
             'accounts/granted_to_admin_email.txt',
             {'user': user, 'site_url': site_url})
         user.email_user(
-            _('[Dezède] Accès autorisé à l’administration'),
+            _('Accès autorisé à l’administration'),
             email_content)
 
     def get_context_data(self, **kwargs):

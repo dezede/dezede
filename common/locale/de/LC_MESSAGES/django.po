@@ -70,8 +70,8 @@ msgstr ""
 
 #: common/utils/export.py:89
 #, python-format
-msgid "[Dezède] Export %s"
-msgstr "[Dezède] Export %s"
+msgid "Export %s"
+msgstr "Export %s"
 
 #: common/utils/export.py:97
 #, python-format
@@ -108,8 +108,8 @@ msgstr ""
 
 #: common/utils/export.py:112
 #, python-format
-msgid "[Dezède] Échec de l’export %s"
-msgstr "[Dezède] Export %s gescheitert"
+msgid "Échec de l’export %s"
+msgstr "Export %s gescheitert"
 
 #: common/utils/file.py:144
 #, python-format
