@@ -378,7 +378,7 @@ msgstr "Email address"
 
 #: accounts/views.py:28
 msgid "Accès autorisé à l’administration"
-msgstr "Authorized administrative access "
+msgstr "Authorized administrative access"
 
 #: accounts/views.py:142
 msgid "Liste des utilisateurs"
