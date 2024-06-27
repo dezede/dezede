@@ -106,6 +106,12 @@ services:
     extends:
       file: docker-compose-django/docker-compose.yaml
       service: nginx
+    environment:
+      CSP_DEFAULT: "'self' https://analyseweb.huma-num.fr"
+      CSP_SCRIPT: "'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://code.jquery.com https://analyseweb.huma-num.fr"
+      CSP_IMG: "'self' data: blob: https://cdnjs.cloudflare.com https://a.tile.openstreetmap.org https://b.tile.openstreetmap.org https://c.tile.openstreetmap.org https://code.jquery.com"
+      CSP_STYLE: "'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://code.jquery.com"
+      CSP_FRAME: "'self' https://docs.google.com"
     volumes:
       - static:/srv/static
   traefik:
