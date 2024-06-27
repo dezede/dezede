@@ -12,6 +12,7 @@ services:
       service: postgresql
     image: $PROJECT/postgresql:${IMAGES_TAG:-latest}
     environment:
+      # FIXME: Remove when upgrading to a more recent PostgreSQL version.
       POSTGRES_INITDB_ARGS:
   redis:
     image: $PROJECT/redis:${IMAGES_TAG:-latest}
@@ -115,6 +116,10 @@ services:
     extends:
       file: docker-compose-django/docker-compose.yaml
       service: fail2ban
+  ofelia:
+    extends:
+      file: docker-compose-django/docker-compose.yaml
+      service: ofelia
 
 
 volumes:
