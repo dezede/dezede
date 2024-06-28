@@ -84,12 +84,12 @@ function Related({ source }: { source: Source | undefined }) {
 }
 
 function prefetchRelated(source: Source) {
-  source.individus.map(async (id) => await preloadApi("individus", id));
-  source.oeuvres.map(async (id) => await preloadApi("oeuvres", id));
-  source.parties.map(async (id) => await preloadApi("parties", id));
-  source.lieux.map(async (id) => await preloadApi("lieux", id));
-  source.evenements.map(async (id) => await preloadApi("evenements", id));
-  source.ensembles.map(async (id) => await preloadApi("ensembles", id));
+  void source.individus.map(async (id) => await preloadApi("individus", id));
+  void source.oeuvres.map(async (id) => await preloadApi("oeuvres", id));
+  void source.parties.map(async (id) => await preloadApi("parties", id));
+  void source.lieux.map(async (id) => await preloadApi("lieux", id));
+  void source.evenements.map(async (id) => await preloadApi("evenements", id));
+  void source.ensembles.map(async (id) => await preloadApi("ensembles", id));
 }
 
 export default function Reader({ sourceId }: { sourceId: number }) {
