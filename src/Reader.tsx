@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useMemo,
   useState,
+  useEffect,
 } from "react";
 import Cropper from "react-easy-crop";
 import Grid from "@mui/material/Grid";
@@ -96,6 +97,7 @@ export default function Reader({ sourceId }: { sourceId: number }) {
   const { cache } = useSWRConfig();
   const { t } = useTranslation(["base", "source"]);
 
+  const [sliderPosition, setSliderPosition] = useState(0);
   const [position, setPosition] = useState(0);
   const [hover, setHover] = useState(true);
   const [zoom, setZoom] = useState(1.0);
@@ -114,6 +116,15 @@ export default function Reader({ sourceId }: { sourceId: number }) {
 
   const isAtStart = useMemo(() => position <= 0, [position]);
   const isAtEnd = useMemo(() => position >= numPages - 1, [numPages, position]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setPosition(sliderPosition);
+    }, 400);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [sliderPosition]);
 
   const getCachedChild = useCallback(
     (childId: number | undefined) => {
@@ -174,14 +185,14 @@ export default function Reader({ sourceId }: { sourceId: number }) {
   }, [child, zoom]);
 
   const move = useCallback(
-    (newPosition) => {
-      if (newPosition < 0) {
-        newPosition = 0;
-      } else if (newPosition >= numPages) {
-        newPosition = numPages - 1;
+    (newSliderPosition) => {
+      if (newSliderPosition < 0) {
+        newSliderPosition = 0;
+      } else if (newSliderPosition >= numPages) {
+        newSliderPosition = numPages - 1;
       }
-      if (!Number.isNaN(newPosition)) {
-        setPosition(newPosition);
+      if (!Number.isNaN(newSliderPosition)) {
+        setSliderPosition(newSliderPosition);
       }
     },
     [numPages],
@@ -447,11 +458,13 @@ export default function Reader({ sourceId }: { sourceId: number }) {
       {numPages <= 1 ? null : (
         <Grid item>
           <Slider
-            value={position + 1}
+            value={sliderPosition + 1}
             min={1}
             max={numPages}
             getAriaLabel={getPageName}
-            marks={[{ value: position + 1, label: getPageName(position) }]}
+            marks={[
+              { value: sliderPosition + 1, label: getPageName(sliderPosition) },
+            ]}
             style={{
               width: `calc(100% - ${theme.spacing(8)})`,
             }}
