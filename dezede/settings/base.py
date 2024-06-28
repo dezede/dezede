@@ -366,7 +366,7 @@ COMPRESS_FILTERS = {
 }
 NPM_BINARY_PATH = BASE_DIR / 'node_modules/.bin/'
 COMPRESS_PRECOMPILERS = (
-    ('text/less', f"{NPM_BINARY_PATH / 'lessc'} {{infile}} {{outfile}}"),
+    ('text/less', f"{NPM_BINARY_PATH / 'lessc'} --math=always {{infile}} {{outfile}}"),
 )
 COMPRESS_PARSER = 'compressor.parser.LxmlParser'
 
