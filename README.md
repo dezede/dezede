@@ -24,6 +24,7 @@ Preferred OS: Debian (latest stable release)
   SystemMaxUse=250M
   ```
   then restart it with `systemctl restart systemd-journald`
+- `sysctl -w vm.overcommit_memory=1 >> /etc/sysctl.conf` (see https://github.com/redis/docker-library-redis/issues/298#issuecomment-1749170920)
 - `git submodule init`
 - `git submodule update`
 
