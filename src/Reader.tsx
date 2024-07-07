@@ -6,7 +6,7 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import Cropper from "react-easy-crop";
+import Cropper, { type Point } from "react-easy-crop";
 import Grid from "@mui/material/Grid";
 import Fade from "@mui/material/Fade";
 import Slider from "@mui/material/Slider";
@@ -101,7 +101,7 @@ export default function Reader({ sourceId }: { sourceId: number }) {
   const [position, setPosition] = useState(0);
   const [hover, setHover] = useState(true);
   const [zoom, setZoom] = useState(1.0);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
 
   const { data: source } = useApi<Source>("sources", sourceId);
 
@@ -185,7 +185,7 @@ export default function Reader({ sourceId }: { sourceId: number }) {
   }, [child, zoom]);
 
   const move = useCallback(
-    (newSliderPosition) => {
+    (newSliderPosition: number) => {
       if (newSliderPosition < 0) {
         newSliderPosition = 0;
       } else if (newSliderPosition >= numPages) {
@@ -230,7 +230,7 @@ export default function Reader({ sourceId }: { sourceId: number }) {
   }, []);
 
   const onCropChange = useCallback(
-    (crop) => {
+    (crop: Point) => {
       if (zoom === 1.0) {
         crop = { x: 0, y: 0 };
       }
@@ -239,7 +239,7 @@ export default function Reader({ sourceId }: { sourceId: number }) {
     [zoom],
   );
 
-  const onZoomChange = useCallback((zoom) => {
+  const onZoomChange = useCallback((zoom: number) => {
     setZoom(zoom);
   }, []);
 

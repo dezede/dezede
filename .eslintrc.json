@@ -21,5 +21,10 @@
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/strict-boolean-expressions": "off",
         "semi": ["warn", "always"]
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
     }
 }

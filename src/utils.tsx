@@ -55,9 +55,9 @@ export function abbreviate(text: string, minLength: number) {
   let short = "";
   let lastEnd = 0;
   const normalizedText = removeDiacritics(text);
-  let match;
+  let match: RegExpExecArray | null;
   while ((match = regexp.exec(normalizedText)) !== null) {
-    const start = match.index;
+    const start: number = match.index;
     short += text.substring(lastEnd, start);
     short += text.substring(start, start + match[1].length) + ".";
     lastEnd = start + match[0].length;
