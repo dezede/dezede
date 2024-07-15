@@ -205,6 +205,21 @@
         </a>
       </div>
     </div>
+    <div class="partner well text-center">
+      <img src="{% static 'images/amr-mini.png' %}" title="Les Amis de Maurice Ravel" />
+      <h3>
+        {% trans 'Les Amis de Maurice Ravel' %}
+      </h3>
+      <div class="with-info-link">
+        <a class="btn btn-primary" href="/dossiers/id/377/">
+          {% trans 'Dossier' %}
+        </a>
+        {# FIXME: À remplir #}
+{#        <a class="btn btn-link" title="{% trans 'Fiche partenaire' %}" href="">#}
+{#          <i class="fa fa-info-circle fa-2x"></i>#}
+{#        </a>#}
+      </div>
+    </div>
   </div>
   <a href="{% url 'contribuer' %}" class="btn btn-primary btn-lg btn-block sc no-padding">{% trans 'Contribuer' %}</a>
 {% endblock %}
