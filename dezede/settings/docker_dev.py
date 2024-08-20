@@ -1,0 +1,5 @@
+from .prod import *
+
+
+DEFAULT_FROM_EMAIL = f'Dezède dev <{EMAIL_HOST_USER}>'
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
