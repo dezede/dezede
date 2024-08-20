@@ -1,6 +1,7 @@
 User-agent: *
 Sitemap: http://dezede.org/sitemap.xml
 Crawl-delay: 10
+Allow: /
 
 User-agent: 360Spider
 User-agent: 404checker
