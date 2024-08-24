@@ -1,12 +1,2 @@
 include:
-  - docker-compose-django/volumes.deployment.yaml
-
-services:
-  nginx:
-    extends:
-      file: docker-compose-django/docker-compose.deployment.yaml
-      service: nginx
-  traefik:
-    extends:
-      file: docker-compose-django/docker-compose.deployment.yaml
-      service: traefik
+  - docker-compose-django/docker-compose.deployment.yaml
