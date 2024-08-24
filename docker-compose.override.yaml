@@ -1,9 +1,2 @@
-services:
-  nginx:
-    extends:
-      file: docker-compose-django/docker-compose.override.yaml
-      service: nginx
-  traefik:
-    extends:
-      file: docker-compose-django/docker-compose.override.yaml
-      service: traefik
+include:
+  - docker-compose-django/docker-compose.override.yaml
