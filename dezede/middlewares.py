@@ -1,7 +1,8 @@
 import re
-import time
 
 from django.conf import settings
+from django.core.exceptions import TooManyFieldsSent
+from django.shortcuts import render
 from django.template.response import TemplateResponse
 
 
@@ -41,4 +42,17 @@ class CorsHeadersMiddleware:
             'Cache-Control, Content-Language, Content-Type, Expires, '
             'Last-Modified, Pragma, Set-Cookie'
         )
+        return response
+
+
+class MaxFieldsMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        try:
+            request.POST
+        except TooManyFieldsSent:
+            return render(request,'413.html', status=413)
+        response = self.get_response(request)
         return response

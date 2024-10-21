@@ -152,6 +152,7 @@ MIDDLEWARE = (
     'django.middleware.locale.LocaleMiddleware',
     'dezede.middlewares.MaintenanceModeMiddleware',
     'dezede.middlewares.CorsHeadersMiddleware',
+    'dezede.middlewares.MaxFieldsMiddleware',
 )
 
 TEMPLATES = [

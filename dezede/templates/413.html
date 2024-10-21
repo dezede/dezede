@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block header %}
+  <h1>{% block title %}{% trans "Erreur 413" %}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  {% trans "Votre requête contient trop de données. Peut-être essayez-vous de détailler un objet au delà du raisonnable ?" %}
+{% endblock %}
