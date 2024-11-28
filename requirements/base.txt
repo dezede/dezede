@@ -1,5 +1,5 @@
 # Basics
-Django==3.2.13
+Django==3.2.18
 psycopg2-binary==2.9.1
 python-dotenv==1.0.1
 
