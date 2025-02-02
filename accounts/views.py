@@ -173,10 +173,12 @@ class ComiteScientifiqueView(EquipeView):
         375,  # Frédéric Guérin
         602,  # Manuel Cornejo
         605,  # Déborah Livet
+        724,  # Jonathan Parisi
         796,  # Lucia Pasini
         845,  # Yannaël Pasquier
         820,  # Arthur Macé
         843,  # Karine Boulanger
+        1062,  # Sabine Le Hir
     )
     title = _('Comité scientifique')
 
@@ -219,6 +221,8 @@ class ContributeursView(EquipeView):
         844,  # Gaëlle Lafage
         845,  # Yannaël Pasquier
         856,  # Peter Asimov
+        983,  # Pierrot Menuge
+        1062,  # Sabine Le Hir
     )
     title = _('Principaux contributeurs')
 
