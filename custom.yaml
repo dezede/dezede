@@ -7,6 +7,10 @@ services:
     environment:
       # FIXME: Remove when upgrading to a more recent PostgreSQL version.
       POSTGRES_INITDB_ARGS:
+    deploy:
+      resources:
+        limits:
+          memory: 500M
   redis:
     image: $PROJECT/redis:${IMAGES_TAG:-latest}
     build:
