@@ -1,26 +1,16 @@
 import os
 import re
+
 from django.utils.safestring import mark_safe
-from dotenv import dotenv_values
 from easy_thumbnails.conf import Settings as thumbnail_settings
-from pathlib import Path
+
+os.environ['USE_COMPRESSOR'] = 'True'
+
+from noridjango.settings import *
 
 ugettext = lambda s: s
 
 
-# Allows PyPy to work with Django.
-try:
-    import psycopg2
-except ImportError:
-    # Fall back to psycopg2cffi.
-    from psycopg2cffi import compat
-    compat.register()
-
-
-dotenv_secret = dotenv_values('.env.secret')
-
-
-BASE_DIR = Path(__file__).parent.parent.parent
 SITE_URL = '/'
 
 ADMINS = (
@@ -30,7 +20,6 @@ ADMINS = (
 MANAGERS = ADMINS
 
 SEND_BROKEN_LINK_EMAILS = True
-EMAIL_SUBJECT_PREFIX = ''
 IGNORABLE_404_URLS = (
     re.compile(r'^/favicon\.ico/?$'),
 )
@@ -46,76 +35,36 @@ DATABASES = {
         'NAME': 'dezede',
         'USER': 'dezede',
         'CONN_MAX_AGE': None,
+        'CONN_HEALTH_CHECKS': True,
     },
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-# Internationalization
-# https://docs.djangoproject.com/en/1.6/topics/i18n/
-
-LANGUAGE_CODE = 'fr'
-TIME_ZONE = 'Europe/Paris'
-LANGUAGES = (
-    ('de', ugettext('Deutsch')),
-    ('en', ugettext('English')),
-    ('es', ugettext('Español')),
-    ('fr', ugettext('Français')),
-    ('it', ugettext('Italiano')),
-    ('pt', ugettext('Português')),
-)
-USE_I18N = True
-USE_L10N = True
-USE_TZ = True
-
 SITE_ID = 1
-
-MEDIA_ROOT = str(BASE_DIR / 'media')
-MEDIA_URL = SITE_URL + 'media/'
-FILE_UPLOAD_PERMISSIONS = 0o755
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = dotenv_secret.get('SECRET_KEY', 'replace_this_with_some_random_string')
-
-WSGI_APPLICATION = 'dezede.wsgi.application'
-
-ROOT_URLCONF = 'dezede.urls'
-
-
-STATIC_ROOT = str(BASE_DIR / 'static')
-STATIC_URL = SITE_URL + 'static/'
 STATICFILES_STORAGE = 'dezede.storage.NonStrictManifestStaticFilesStorage'
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
-)
 STATICFILES_DIRS = (
     str(BASE_DIR / 'dezede/static'),
     str(BASE_DIR / 'public/static'),
 )
 
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'db_search',
     'dezede',
+    'noridjango',
     'common',
     'accounts',
     'exporter',
 
     'super_inlines.grappelli_integration',
     'super_inlines',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    *INSTALLED_APPS[3:],
     'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.gis',
-    'django.contrib.postgres',
-    'django.contrib.sitemaps',
 
     'allauth',
     'allauth.account',
@@ -141,44 +90,27 @@ INSTALLED_APPS = (
     'image_cropping',
     'reversion',
     'django.contrib.admin',
-    'compressor',
     'static_grouper',
-)
+]
 
-MIDDLEWARE = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+MIDDLEWARE = [
+    *MIDDLEWARE,
     'django.middleware.locale.LocaleMiddleware',
     'dezede.middlewares.MaintenanceModeMiddleware',
     'dezede.middlewares.CorsHeadersMiddleware',
     'dezede.middlewares.MaxFieldsMiddleware',
-)
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'dezede.context_processors.site',
-                'django.contrib.auth.context_processors.auth',
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.template.context_processors.i18n',
-                'django.template.context_processors.media',
-                'django.template.context_processors.static',
-                'django.contrib.messages.context_processors.messages',
-            ]
-        },
-    },
 ]
 
-LOCALE_PATHS = (
-    'locale',
-)
+TEMPLATES = TEMPLATES[1:]  # We have Jinja2, but we don’t want to use it for frontend templates.
+TEMPLATES[0]['OPTIONS']['context_processors'] = [
+    'dezede.context_processors.site',
+    'django.template.context_processors.i18n',
+    'django.template.context_processors.media',
+    'django.template.context_processors.static',
+    *TEMPLATES[0]['OPTIONS']['context_processors'],
+]
+
+LOCALE_PATHS = ['locale']
 
 DATE_FORMAT = 'l j F Y'
 
@@ -206,6 +138,10 @@ ACCOUNT_FORMS = {
 LOGIN_URL = '/connexion'
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_ON_GET = True
+
+EMAIL_HOST = 'ssl0.ovh.net'
+EMAIL_PORT = 587
+EMAIL_TIMEOUT = 30
 
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
@@ -237,11 +173,10 @@ THUMBNAIL_PROCESSORS = (
 ) + thumbnail_settings.THUMBNAIL_PROCESSORS
 IMAGE_CROPPING_THUMB_SIZE = (800, 600)
 
-ELASTICSEARCH_HOST = os.environ.get('ELASTICSEARCH_HOST', '127.0.0.1')
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'dezede.elasticsearch_backend.ConfigurableElasticSearchEngine',
-        'URL': f'{ELASTICSEARCH_HOST}:9200',
+        'URL': f'elasticsearch:9200',
         'INDEX_NAME': 'dezede',
         'TIMEOUT': 60*5,  # seconds
         'INCLUDE_SPELLING': True,
@@ -352,21 +287,9 @@ CACHES = {
         'TIMEOUT': None,  # seconds
     }
 }
-SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-COMPRESS_ENABLED = True
-COMPRESS_REBUILD_TIMEOUT = 10 * 365 * 24 * 60 * 60  # seconds
-COMPRESS_OUTPUT_DIR = ''
-COMPRESS_FILTERS = {
-    'css': [
-        'compressor.filters.css_default.CssAbsoluteFilter',
-        'compressor.filters.cssmin.CSSMinFilter',
-    ],
-    'js': ['compressor.filters.jsmin.rJSMinFilter'],
-}
-NPM_BINARY_PATH = BASE_DIR / 'node_modules/.bin/'
 COMPRESS_PRECOMPILERS = (
     ('text/less', f"{NPM_BINARY_PATH / 'lessc'} --math=always {{infile}} {{outfile}}"),
 )
@@ -420,38 +343,66 @@ EL_PAGINATION_PREVIOUS_LABEL = '<i class="fa fa-angle-left"></i>'
 EL_PAGINATION_NEXT_LABEL = '<i class="fa fa-angle-right"></i>'
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-
+    **LOGGING,
     'formatters': {
+        **LOGGING['formatters'],
         'rq_console': {
             'format': '%(asctime)s %(message)s',
             'datefmt': '%H:%M:%S',
         },
     },
     'handlers': {
+        **LOGGING['handlers'],
         'rq_console': {
             'level': 'DEBUG',
             'class': 'rq.utils.ColorizingStreamHandler',
             'formatter': 'rq_console',
             'exclude': ['%(asctime)s'],
         },
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
-        },
     },
     'loggers': {
+        **LOGGING['loggers'],
         'rq.worker': {
             'handlers': ['rq_console', 'mail_admins'],
-            'level': 'DEBUG'
+            'level': 'DEBUG',
         },
         'elasticsearch': {
             'handlers': ['rq_console', 'mail_admins'],
-            'level': 'WARNING'
+            'level': 'WARNING',
         },
     }
 }
+
+if DEBUG:
+    INSTALLED_APPS = INSTALLED_APPS + [
+        'django_extensions',
+        'template_timings_panel',
+        'haystack_panel',
+        'django_nose',
+    ]
+    DEBUG_TOOLBAR_PATCH_SETTINGS = False
+    DEBUG_TOOLBAR_PANELS = [
+        'debug_toolbar.panels.versions.VersionsPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.settings.SettingsPanel',
+        'debug_toolbar.panels.headers.HeadersPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.sql.SQLPanel',
+        # 'debug_toolbar.panels.templates.TemplatesPanel',
+        # 'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        # 'debug_toolbar.panels.cache.CachePanel',
+        # 'debug_toolbar.panels.signals.SignalsPanel',
+        'debug_toolbar.panels.logging.LoggingPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+        # 'debug_toolbar.panels.profiling.ProfilingPanel',
+        # 'template_timings_panel.panels.TemplateTimings.TemplateTimings',
+        'haystack_panel.panel.HaystackDebugPanel',
+    ]
+    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+    NOSE_ARGS = ['--with-doctest']
+else:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 # Custom settings
 

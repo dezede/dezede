@@ -17,4 +17,4 @@ _*/
 /tmp/
 /venv/
 /.venv/
-.env.secret
+.env.secrets

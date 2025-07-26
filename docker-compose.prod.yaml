@@ -2,9 +2,9 @@ include:
   - path:
       - docker-compose-django/base.yaml
       - custom.yaml
-      - docker-compose-django/dev.yaml
+      - docker-compose-django/deployment.yaml
     env_file:
       - docker-compose-django/.env.base
       - .env.base
-      - docker-compose-django/.env.dev
-      - .env.dev
+      - docker-compose-django/.env.prod
+      - .env.prod

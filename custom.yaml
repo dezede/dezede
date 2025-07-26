@@ -1,0 +1,118 @@
+services:
+  postgresql:
+    build:
+      context: ..
+      dockerfile: Dockerfile-postgresql
+    image: $PROJECT/postgresql:${IMAGES_TAG:-latest}
+    environment:
+      # FIXME: Remove when upgrading to a more recent PostgreSQL version.
+      POSTGRES_INITDB_ARGS:
+  redis:
+    image: $PROJECT/redis:${IMAGES_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: Dockerfile-redis
+    volumes:
+      - redis-data:/data
+      - redis-socket:/var/run/redis
+    network_mode: none
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 1s
+      timeout: 1s
+      retries: 60
+  elasticsearch:
+    # FIXME: Use the alpine image when it is more stable (we get incomprehensible mountpoint issues with it).
+    image: elasticsearch:1.7.6
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    expose:
+      - 9200
+    networks:
+      internal:
+    restart: always
+    healthcheck:
+      test: wget http://elasticsearch:9200 -q -O - > /dev/null
+      interval: 1s
+      timeout: 1s
+      retries: 60
+  migrate:
+    command: sh -c "python manage.py collectstatic --ignore bootstrap/docs/* --no-input && python manage.py migrate"
+    volumes:
+      - redis-socket:/var/run/redis
+      - static:/srv/static
+    depends_on:
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+  rq:
+    image: $PROJECT/django:${IMAGES_TAG:-latest}
+    command: python manage.py rqworker
+    environment:
+      PROJECT: $PROJECT
+      PROJECT_VERBOSE: $PROJECT_VERBOSE
+      DOMAIN: $DOMAIN
+      TZ: $TZ
+      LOCALE: $LOCALE
+      LANGUAGES_CODES: $LANGUAGES_CODES
+    volumes:
+      - postgresql-socket:/var/run/postgresql
+      - redis-socket:/var/run/redis
+      - media:/srv/media:ro
+      - static:/srv/static
+    secrets:
+      - .env.secrets
+    networks:
+      internal:
+    tmpfs:
+      - /tmp/
+    restart: "always"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+  django:
+    build:
+      context: ..
+      dockerfile: docker-compose-django/Dockerfile
+    volumes:
+      - static:/srv/static
+      - redis-socket:/var/run/redis
+    depends_on:
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      rq:
+        condition: service_started
+  nginx:
+    build:
+      context: ..
+      dockerfile: docker-compose-django/nginx.Dockerfile
+    environment:
+      CSP_DEFAULT: "'self' https://analyseweb.huma-num.fr"
+      CSP_SCRIPT: "'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://code.jquery.com https://analyseweb.huma-num.fr"
+      CSP_IMG: "'self' data: blob: https://cdnjs.cloudflare.com https://a.tile.openstreetmap.org https://b.tile.openstreetmap.org https://c.tile.openstreetmap.org https://code.jquery.com"
+      CSP_STYLE: "'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://code.jquery.com"
+      CSP_FRAME: "'self' https://docs.google.com"
+    volumes:
+      - static:/srv/static
+
+
+volumes:
+  redis-data:
+  redis-socket:
+  elasticsearch-data:
+  static:
+
+
+secrets:
+  .env.secrets:
+    file: ../.env.secrets
