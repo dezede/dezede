@@ -39,7 +39,7 @@ Preferred OS: Debian (latest stable release)
 - Log as root to the server via SSH
 - Follow “Common to all installations” above
 - Clone the repository in `/srv/dezede`
-- `docker compose -f docker-compose.yaml -f docker-compose.deployment.yaml --env-file .env.prod build`
+- `docker compose -f docker-compose.prod.yaml build`
 - `cp dezede.service /etc/systemd/system/`
 - `systemctl daemon-reload`
 - `systemctl start dezede.service`
@@ -50,7 +50,7 @@ Preferred OS: Debian (latest stable release)
 
 ```shell
 pip install docker-website-backup==1.2.0
-docker-website-backup clone --source-user=[user] --source-host=[host] --source-db-socket-volume=dezede-postgresql-socket --source-db-user=dezede --source-db-database=dezede --source-data-volume=dezede-media --local-db-socket-volume=dezede-postgresql-socket --local-db-user=dezede --local-db-database=dezede --local-data-volume=dezede-media
+dwb --no-input clone dezede.org
 ```
 
 # Localisation

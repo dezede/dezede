@@ -1,7 +1,7 @@
 # To be copied in /etc/systemd/system/dezede.service
 
 [Unit]
-Description=Norinvoice
+Description=Dezède
 Requires=docker.service
 After=docker.service
 StartLimitIntervalSec=60
@@ -9,8 +9,8 @@ StartLimitBurst=3
 
 [Service]
 WorkingDirectory=/srv/dezede
-ExecStart=docker compose -f docker-compose.yaml -f docker-compose.deployment.yaml --env-file .env.prod up --remove-orphans
-ExecStop=docker compose -f docker-compose.yaml -f docker-compose.deployment.yaml --env-file .env.prod down
+ExecStart=docker compose -f docker-compose.prod.yaml up --remove-orphans
+ExecStop=docker compose -f docker-compose.prod.yaml stop
 TimeoutStartSec=0
 Restart=on-failure
 StartLimitInterval=60
