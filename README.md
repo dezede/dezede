@@ -18,7 +18,7 @@ Preferred OS: Debian (latest stable release)
   ```
 - Restart Docker with `systemctl restart docker`
 - Limit the journalctl log size (it can take several GB after months) by editing `/etc/systemd/journalctl.conf` and set:
-  
+
   ```
   [Journal]
   SystemMaxUse=250M
@@ -49,6 +49,7 @@ Preferred OS: Debian (latest stable release)
 **¡ This will delete your local database !**
 
 ```shell
+pip install docker-website-backup==1.2.0
 docker-website-backup clone --source-user=[user] --source-host=[host] --source-db-socket-volume=dezede-postgresql-socket --source-db-user=dezede --source-db-database=dezede --source-data-volume=dezede-media --local-db-socket-volume=dezede-postgresql-socket --local-db-user=dezede --local-db-database=dezede --local-data-volume=dezede-media
 ```
 
