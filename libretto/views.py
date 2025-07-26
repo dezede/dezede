@@ -72,7 +72,7 @@ class BaseEvenementListView(PublishedListView):
         'ensemble': ('distribution__ensemble__in',
                      'programme__distribution__ensemble__in',
                      'programme__oeuvre__auteurs__ensemble__in'),
-        'source': ('sources__in',),
+        'source': ('sources__in', 'sources__parent__in'),
     }
 
     @classmethod

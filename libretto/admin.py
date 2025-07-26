@@ -535,12 +535,16 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
 
         search_term = replace(search_term)
 
+        # We do a single Q object and a single `.filter()`, otherwise with one filter per word
+        # it makes the ORM generate more join with each word, crashing the database at some point.
+        q = Q()
         for word in search_term.split():
             search_query = SearchQuery(word, config=settings.SEARCH_CONFIG)
-            queryset = queryset.filter(reduce(operator.or_, [
+            q &= reduce(operator.or_, [
                 Q(**{search_field: search_query})
                 for search_field in search_fields
-            ]))
+            ])
+        queryset = queryset.filter(q)
 
         return queryset.distinct(), True
 

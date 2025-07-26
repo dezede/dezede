@@ -154,6 +154,7 @@ MIDDLEWARE = (
     'django.middleware.locale.LocaleMiddleware',
     'dezede.middlewares.MaintenanceModeMiddleware',
     'dezede.middlewares.CorsHeadersMiddleware',
+    'dezede.middlewares.MaxFieldsMiddleware',
 )
 
 TEMPLATES = [
@@ -356,6 +357,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 COMPRESS_ENABLED = True
+COMPRESS_REBUILD_TIMEOUT = 10 * 365 * 24 * 60 * 60  # seconds
 COMPRESS_OUTPUT_DIR = ''
 COMPRESS_FILTERS = {
     'css': [
