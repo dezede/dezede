@@ -71,8 +71,8 @@
     <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
     <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />
     <meta property="og:site_name" content="Dezède" />
-    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-    {% meta 'DC' 'identifier' request.build_absolute_uri %}
+    <meta property="og:url" content="{{ absolute_url }}" />
+    {% meta 'DC' 'identifier' absolute_url %}
     {% meta 'DC' 'source' 'https://'|add:request.get_host %}
     {% meta 'DC' 'format' 'text/html' %}
     {% meta 'DC' 'language' LANGUAGE_CODE %}
