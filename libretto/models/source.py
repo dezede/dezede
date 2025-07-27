@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, PROTECT, URLField,
     CASCADE, PositiveSmallIntegerField, FileField, BooleanField, DateField,
-    TextField, Q, PositiveIntegerField, OuterRef, Exists,
+    TextField, Q, PositiveIntegerField, OuterRef, Exists, Index
 )
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -161,7 +161,7 @@ class Source(AutoriteModel):
         _('position'), null=True, blank=True,
         help_text=_('Position au sein de son parent.')
     )
-    est_promu = BooleanField(_('est dans la bibliothèque'), default=False)
+    est_promu = BooleanField(_('est dans la bibliothèque'), default=False, db_index=True)
 
     type = ForeignKey('TypeDeSource', related_name='sources',
                       help_text=ex(_('compte rendu')), verbose_name=_('type'),
@@ -265,6 +265,10 @@ class Source(AutoriteModel):
             'lieu_conservation', 'cote',
         )
         permissions = (('can_change_status', _('Peut changer l’état')),)
+        indexes = [
+            *AutoriteModel.Meta.indexes,
+            Index(fields=['position', 'page']),
+        ]
 
     def __str__(self):
         return strip_tags(self.html(False))
