@@ -51,6 +51,10 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 2000M
   rq:
     image: $PROJECT/django:${IMAGES_TAG:-latest}
     command: python manage.py rqworker
@@ -96,6 +100,10 @@ services:
         condition: service_healthy
       rq:
         condition: service_started
+    deploy:
+      resources:
+        limits:
+          memory: 2000M
   nginx:
     build:
       context: ..
