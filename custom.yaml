@@ -106,6 +106,15 @@ services:
       CSP_IMG: "'self' data: blob: https://cdnjs.cloudflare.com https://a.tile.openstreetmap.org https://b.tile.openstreetmap.org https://c.tile.openstreetmap.org https://code.jquery.com"
       CSP_STYLE: "'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://code.jquery.com"
       CSP_FRAME: "'self' https://docs.google.com"
+      # TODO: Reduce these limits, they are ludicrous.
+      DJANGO_LIMIT_CONN: 20
+      DJANGO_LIMIT_REQ_RATE: 20r/s
+      DJANGO_LIMIT_REQ_BURST: 100
+      DJANGO_LIMIT_REQ_DELAY: 20
+      STATIC_LIMIT_CONN: 100
+      STATIC_LIMIT_REQ_RATE: 100r/s
+      STATIC_LIMIT_REQ_BURST: 500
+      STATIC_LIMIT_REQ_DELAY: 100
     volumes:
       - static:/srv/static
 
