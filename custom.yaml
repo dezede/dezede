@@ -10,7 +10,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1000M
+          memory: 2000M
   redis:
     image: $PROJECT/redis:${IMAGES_TAG:-latest}
     build:
