@@ -69,7 +69,7 @@ services:
     volumes:
       - postgresql-socket:/var/run/postgresql
       - redis-socket:/var/run/redis
-      - media:/srv/media:ro
+      - media:/srv/media
       - static:/srv/static
     secrets:
       - .env.secrets
