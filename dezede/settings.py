@@ -402,8 +402,6 @@ if DEBUG:
     TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
     NOSE_ARGS = ['--with-doctest']
 else:
-    USE_X_FORWARDED_HOST = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 # Custom settings
