@@ -11,7 +11,6 @@ from rest_framework.serializers import (
 )
 
 from accounts.models import HierarchicUser
-from dezede.context_processors import get_absolute_url
 from ...models import *
 
 
@@ -27,7 +26,9 @@ class CommonSerializer(ModelSerializer):
         return f'admin:{obj._meta.app_label}_{obj._meta.model_name}'
 
     def get_url(self, viewname, *args, **kwargs):
-        return get_absolute_url(reverse(viewname, args=args, kwargs=kwargs))
+        return self.context['request'].build_absolute_uri(reverse(
+            viewname, args=args, kwargs=kwargs,
+        ))
 
     def get_change_url(self, obj):
         return self.get_url(
@@ -157,10 +158,10 @@ class SourceSerializer(CommonSerializer):
         )
 
     def get_small_thumbnail(self, obj):
-        return get_absolute_url(obj.small_thumbnail)
+        return self.context['request'].build_absolute_uri(obj.small_thumbnail)
 
     def get_medium_thumbnail(self, obj):
-        return get_absolute_url(obj.medium_thumbnail)
+        return self.context['request'].build_absolute_uri(obj.medium_thumbnail)
 
     def get_taille_fichier(self, obj):
         try:

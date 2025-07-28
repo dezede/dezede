@@ -18,7 +18,6 @@ from django.views.generic import ListView, TemplateView
 from haystack.views import SearchView
 
 from common.utils.html import sanitize_html
-from dezede.context_processors import get_absolute_url
 from dossiers.models import Dossier
 from libretto.models import (
     Oeuvre, Lieu, Individu, Source, Evenement, Ensemble, Profession, Partie,
@@ -157,7 +156,7 @@ class RssFeed(Feed):
         return super().get_feed(obj, request)
 
     def get_absolute_url(self, relative_url):
-        return get_absolute_url(relative_url)
+        return self.request.build_absolute_uri(relative_url)
 
     def items(self):
         return Diapositive.objects.published()

@@ -12,7 +12,6 @@ ugettext = lambda s: s
 
 
 SITE_URL = '/'
-BASE_URL = f'http{"" if DEBUG else "s"}://{constants.DOMAIN}'
 
 ADMINS = (
     ('Bertrand Bordage', 'bordage.bertrand@gmail.com'),
