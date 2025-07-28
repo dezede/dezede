@@ -7,6 +7,7 @@ services:
     environment:
       # FIXME: Remove when upgrading to a more recent PostgreSQL version.
       POSTGRES_INITDB_ARGS:
+    shm_size: 512mb
     deploy:
       resources:
         limits:
