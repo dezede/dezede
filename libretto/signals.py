@@ -105,7 +105,10 @@ def auto_invalidate(action, app_label, model_name, pk):
             index.remove_object('%s.%s.%s' % (app_label, model_name, pk))
         return
 
-    auto_update_haystack(action, model._default_manager.get(pk=pk))
+    try:
+        auto_update_haystack(action, model._default_manager.get(pk=pk))
+    except model.DoesNotExist:
+        pass  # The object was deleted in the meantime.
 
 
 class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
