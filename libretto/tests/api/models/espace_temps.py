@@ -1,11 +1,9 @@
 from django.test import TestCase
-from django.test.utils import override_settings
 from django.utils.encoding import force_text
 from libretto.api import build_ancrage
 from libretto.models import Evenement
 
 
-@override_settings(CACHALOT_ENABLED=False)
 class BuildAncrageTestCase(TestCase):
     cleans_up_after_itself = True
 

@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.test import TestCase
-from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import six
 
@@ -11,7 +10,6 @@ def new(Model, **kwargs):
     return Model.objects.get_or_create(**kwargs)[0]
 
 
-@override_settings(CACHALOT_ENABLED=False)
 class CommonTestCase(TestCase):
     cleans_up_after_itself = True
     model = None
