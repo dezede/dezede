@@ -504,6 +504,9 @@ class AncrageSpatioTemporel(object):
             super(AncrageSpatioTemporel, self).__setattr__(key, value)
 
     def __get__(self, instance, owner):
+        # FIXME: This is not thread-safe.
+        #        Split this class into AncrageSpatioTemporelField & AncrageSpatioTemporel,
+        #        then enable server multithreading again.
         self.owner = owner
         self.instance = instance
         return self
