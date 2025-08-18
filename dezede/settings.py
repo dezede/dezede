@@ -99,6 +99,7 @@ MIDDLEWARE = [
     'dezede.middlewares.MaintenanceModeMiddleware',
     'dezede.middlewares.CorsHeadersMiddleware',
     'dezede.middlewares.MaxFieldsMiddleware',
+    'dezede.middlewares.CountryBlockMiddleware',
 ]
 
 TEMPLATES = TEMPLATES[1:]  # We have Jinja2, but we don’t want to use it for frontend templates.
@@ -409,3 +410,5 @@ else:
 
 SEARCH_CONFIG = 'french_unaccent_including_stopwords'
 AUTOCOMPLETE_CONFIG = 'simple_unaccent'
+
+BLOCKED_COUNTRIES = ['BR']

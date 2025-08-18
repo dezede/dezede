@@ -1,7 +1,11 @@
+from ipaddress import IPv6Address, ip_address
 import re
+from subprocess import check_output
 
+from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.core.exceptions import TooManyFieldsSent
+from django.http import HttpRequest
 from django.shortcuts import render
 from django.template.response import TemplateResponse
 
@@ -56,3 +60,37 @@ class MaxFieldsMiddleware:
             return render(request,'413.html', status=413)
         response = self.get_response(request)
         return response
+
+
+def get_client_ip(request: HttpRequest) -> str:
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        return x_forwarded_for.split(',')[0]
+    return request.META['REMOTE_ADDR']
+
+
+class CountryBlockMiddleware:
+    pattern = re.compile(r'^GeoIP Country(?: V6)? Edition: ([A-Z]{2}), .+$')
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        if request.user.is_authenticated:
+            return None
+        if request.resolver_match.url_name == 'account_login' or 'admin' in request.resolver_match.namespaces:
+            return None
+        ip = get_client_ip(request)
+        command = 'geoiplookup'
+        if isinstance(ip_address(ip), IPv6Address):
+            command = 'geoiplookup6'
+        match = self.pattern.match(check_output([command, ip]).decode().strip())
+        if match is not None:
+            country_code = match.group(1)
+            if country_code in settings.BLOCKED_COUNTRIES:
+                raise PermissionDenied('Your country was blocked due to repeated abuse.')
+
+        return None

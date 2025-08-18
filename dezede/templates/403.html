@@ -17,4 +17,11 @@
       {% endblocktrans %}
     {% endwith %}
   {% endif %}
+  {% if not request.user.is_authenticated %}
+    <p>
+      <small>
+        {% trans 'Il est possible que votre pays ait été bloqué par notre serveur, connectez-vous pour contourner ce blocage.' %}
+      </small>
+    </p>
+  {% endif %}
 {% endblock %}
