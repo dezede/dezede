@@ -101,6 +101,9 @@ services:
         condition: service_healthy
       rq:
         condition: service_started
+    healthcheck:
+      start_period: 240s
+      start_interval: 10s
     deploy:
       resources:
         limits:
