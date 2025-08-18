@@ -411,4 +411,4 @@ else:
 SEARCH_CONFIG = 'french_unaccent_including_stopwords'
 AUTOCOMPLETE_CONFIG = 'simple_unaccent'
 
-BLOCKED_COUNTRIES = ['BR']
+BLOCKED_COUNTRIES = ['BR', 'CR', 'IN', 'PA', 'PE', 'SG', 'UA', 'UZ', 'VE', 'VN']
