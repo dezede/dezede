@@ -411,4 +411,11 @@ else:
 SEARCH_CONFIG = 'french_unaccent_including_stopwords'
 AUTOCOMPLETE_CONFIG = 'simple_unaccent'
 
-BLOCKED_COUNTRIES = ['BR', 'CR', 'IN', 'PA', 'PE', 'SG', 'UA', 'UZ', 'VE', 'VN']
+BLOCKED_COUNTRIES = [
+    # Sorted by biggest offenders first.
+    'SG', 'BR', 'HK', 'VN', 'IN', 'IQ', 'BD', 'CN', 'AR', 'SA',
+    'ZA', 'TR', 'PK', 'VE', 'UZ', 'KE', 'EC', 'CO', 'UA', 'RU',
+    'JO', 'UY', 'PY', 'NP', 'CL', 'JM', 'EG', 'ET', 'AE', 'KZ',
+    'PH', 'HN', 'TT', 'CR', 'AZ', 'PA', 'OM', 'PE', 'BO', 'IR',
+    'BB', 'AL', 'ID',
+]
