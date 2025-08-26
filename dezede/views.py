@@ -110,16 +110,6 @@ def autocomplete(request):
     return HttpResponse(data, content_type='application/json')
 
 
-class ErrorView(TemplateView):
-    status = 200
-
-    def render_to_response(self, context, **response_kwargs):
-        response_kwargs['status'] = self.status
-        self.template_name = f'{self.status}.html'
-        return super(ErrorView, self).render_to_response(context,
-                                                         **response_kwargs)
-
-
 class BibliographieView(TemplateView):
     template_name = 'pages/bibliographie.html'
 

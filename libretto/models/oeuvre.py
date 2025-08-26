@@ -11,6 +11,7 @@ from django.db.models import (
     CharField, ManyToManyField, ForeignKey, IntegerField,
     BooleanField, SmallIntegerField, PROTECT, Count,
     PositiveSmallIntegerField, CASCADE, CheckConstraint, Q)
+from django.forms.widgets import RadioSelect
 from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags, format_html
@@ -19,17 +20,19 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from psycopg2._range import NumericRange
+from wagtail.admin.panels import FieldPanel, FieldRowPanel
+from wagtail.search.index import Indexed, SearchField, RelatedFields
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
     PublishedQuerySet, CommonTreeManager, CommonTreeQuerySet, TypeDeParente,
-    AncrageSpatioTemporel, NumberCharField,
+    SpaceTimeFields, NumberCharField,
 )
 from common.utils.html import capfirst, hlp, href, cite, em
 from common.utils.text import str_list, str_list_w_last, to_roman, BiGrouper
 from .individu import Individu
-from .personnel import Profession
+from .personnel import Ensemble, Profession
 from .source import Source
 
 
@@ -39,7 +42,7 @@ __all__ = (
 )
 
 
-class GenreDOeuvre(CommonModel, SlugModel):
+class GenreDOeuvre(Indexed, CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
@@ -55,7 +58,8 @@ class GenreDOeuvre(CommonModel, SlugModel):
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
                               blank=True, verbose_name=_('parents'))
 
-    search_fields = ['nom', 'nom_pluriel']
+    dezede_search_fields = ['nom', 'nom_pluriel']
+    search_fields = [SearchField('nom'), SearchField('nom_pluriel')]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('genre d’œuvre')
@@ -73,7 +77,7 @@ class GenreDOeuvre(CommonModel, SlugModel):
         return strip_tags(self.nom)
 
 
-class Partie(AutoriteModel, UniqueSlugModel):
+class Partie(Indexed, AutoriteModel, UniqueSlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
     une œuvre musicale.
@@ -111,7 +115,22 @@ class Partie(AutoriteModel, UniqueSlugModel):
         null=True, blank=True, verbose_name=_('premier(ère) interprète'),
     )
 
-    search_fields = ['nom', 'nom_pluriel']
+    dezede_search_fields = ['nom', 'nom_pluriel']
+    panels = [
+        FieldPanel('type', widget=RadioSelect),
+        FieldRowPanel([
+            FieldPanel('nom'), FieldPanel('nom_pluriel'),
+        ]),
+        FieldPanel('oeuvre'),
+        # TODO: Add professions.
+        FieldPanel('parent'),
+        FieldPanel('classement'),
+        FieldPanel('premier_interprete'),
+    ]
+    search_fields = [
+        SearchField('nom'),
+        SearchField('nom_pluriel'),
+    ]
 
     class Meta(AutoriteModel.Meta):
         unique_together = ('nom', 'parent', 'oeuvre')
@@ -662,7 +681,7 @@ def make_range_include_bounds(value):
     return value
 
 
-class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
+class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(_('article'), max_length=20, blank=True)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True)
     coordination = CharField(_('coordination'), max_length=20, blank=True,
@@ -774,7 +793,7 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
     )
     creation_type = PositiveSmallIntegerField(
         _('type de création'), choices=CREATION_TYPES, null=True, blank=True)
-    creation = AncrageSpatioTemporel(verbose_name=_('création'))
+    creation = SpaceTimeFields(verbose_name=_('création'))
     ORDERING = ('type_extrait', 'numero_extrait', 'titre',
                 'genre', 'numero', 'coupe',
                 'incipit', 'tempo', 'tonalite', 'sujet', 'arrangement',
@@ -837,11 +856,26 @@ class Oeuvre(TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = OeuvreManager()
 
-    search_fields = [
+    dezede_search_fields = [
         'prefixe_titre', 'titre',
         'prefixe_titre_secondaire', 'titre_secondaire', 'numero',
         'coupe', 'tempo', 'sujet', 'surnom', 'nom_courant', 'incipit',
         'opus', 'ict',
+    ]
+    search_fields = [
+        SearchField('prefixe_titre'), SearchField('titre'),
+        SearchField('prefixe_titre_secondaire'), SearchField('titre_secondaire'),
+        SearchField('numero'), SearchField('coupe'), SearchField('tempo'),
+        SearchField('sujet'), SearchField('surnom'), SearchField('nom_courant'),
+        SearchField('incipit'), SearchField('opus'), SearchField('ict'),
+        RelatedFields('auteurs', [
+            RelatedFields('individu', Individu.search_fields),
+            RelatedFields('ensemble', Ensemble.search_fields),
+        ]),
+        RelatedFields('genre', GenreDOeuvre.search_fields),
+        RelatedFields('pupitres', [
+            RelatedFields('partie', Partie.search_fields),
+        ]),
     ]
 
     class Meta(AutoriteModel.Meta):

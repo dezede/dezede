@@ -59,6 +59,22 @@ INSTALLED_APPS = [
     'accounts',
     'exporter',
 
+    'wagtail.api.v2',
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail',
+    'wagtail.contrib.settings',
+    'modelcluster',
+    'taggit',
+
     'super_inlines.grappelli_integration',
     'super_inlines',
     *INSTALLED_APPS[3:],
@@ -72,6 +88,7 @@ INSTALLED_APPS = [
 
     'haystack',
     'django_rq',
+    'correspondence',
     'libretto',
     'dossiers',
     'examens',
@@ -100,6 +117,7 @@ MIDDLEWARE = [
     'dezede.middlewares.CorsHeadersMiddleware',
     'dezede.middlewares.MaxFieldsMiddleware',
     'dezede.middlewares.CountryBlockMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
 TEMPLATES = TEMPLATES[1:]  # We have Jinja2, but we don’t want to use it for frontend templates.
@@ -286,7 +304,11 @@ CACHES = {
         'LOCATION': 'unix:///var/run/redis/redis-server.sock',
         'KEY_PREFIX': '2Z',
         'TIMEOUT': None,  # seconds
-    }
+    },
+    'renditions': {
+        # TODO: Cache renditions using Memcached.
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    },
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
@@ -380,6 +402,7 @@ if DEBUG:
         'template_timings_panel',
         'haystack_panel',
         'django_nose',
+        'wagtail.contrib.styleguide',
     ]
     # FIXME: remove setting when we remove Haystack, HaystackDebugPanel and TemplateTimings.
     DEBUG_TOOLBAR_PANELS = [
@@ -406,9 +429,35 @@ if DEBUG:
 else:
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
+#
+# Wagtail settings
+#
+
+WAGTAIL_SITE_NAME = constants.PROJECT_VERBOSE
+WAGTAILEMBEDS_RESPONSIVE_HTML = True
+WAGTAIL_ENABLE_UPDATE_CHECK = False
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = constants.CLIENT_MAX_BODY_SIZE * 1024 * 1024
+WAGTAILADMIN_BASE_URL = f'http://{constants.DOMAIN}' if DEBUG else f'https://{constants.DOMAIN}'
+WAGTAILADMIN_PERMITTED_LANGUAGES = LANGUAGES
+
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.search.backends.database',
+        'SEARCH_CONFIG': 'french_unaccent_including_stopwords',
+    },
+}
+
+WAGTAILADMIN_RICH_TEXT_EDITORS = {
+    "default": {
+        "WIDGET": "wagtail.admin.rich_text.DraftailRichTextArea",
+    },
+    'transcription': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+    },
+}
+
 # Custom settings
 
-SEARCH_CONFIG = 'french_unaccent_including_stopwords'
 AUTOCOMPLETE_CONFIG = 'simple_unaccent'
 
 BLOCKED_COUNTRIES = [

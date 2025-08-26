@@ -1,7 +1,5 @@
-from collections import OrderedDict
-
 from django.template.defaultfilters import filesizeformat
-from rest_framework.fields import ReadOnlyField, Field, SerializerMethodField
+from rest_framework.fields import ReadOnlyField, SerializerMethodField
 from rest_framework.relations import (
     HyperlinkedIdentityField, StringRelatedField, PrimaryKeyRelatedField
 )
@@ -10,7 +8,8 @@ from rest_framework.serializers import (
     HyperlinkedModelSerializer, ModelSerializer,
 )
 
-from accounts.models import HierarchicUser
+from libretto.api.rest.serializer_fields import SpaceTimeSerializer
+
 from ...models import *
 
 
@@ -59,23 +58,11 @@ class CommonSerializer(ModelSerializer):
         )
 
 
-class AncrageSpatioTemporelSerializer(Field):
-    def to_representation(self, obj):
-        d = OrderedDict()
-        for fieldname in sorted(obj.fields):
-            d[fieldname] = getattr(obj, fieldname)
-        lieu = d.get('lieu')
-        if lieu is not None:
-            d['lieu'] = reverse('lieu-detail', (lieu.pk,),
-                                request=self.context.get('request'))
-        return d
-
-
 class IndividuSerializer(HyperlinkedModelSerializer):
     str = ReadOnlyField(source='__str__')
     html = ReadOnlyField()
-    naissance = AncrageSpatioTemporelSerializer()
-    deces = AncrageSpatioTemporelSerializer()
+    naissance = SpaceTimeSerializer()
+    deces = SpaceTimeSerializer()
     professions = PrimaryKeyRelatedField(many=True, read_only=True)
     front_url = HyperlinkedIdentityField(view_name='individu_detail',
                                          lookup_field='slug')
@@ -124,7 +111,7 @@ class OeuvreSerializer(HyperlinkedModelSerializer):
     description = ReadOnlyField(source='get_description')
     genre = StringRelatedField()
     auteurs = PrimaryKeyRelatedField(many=True, read_only=True)
-    creation = AncrageSpatioTemporelSerializer()
+    creation = SpaceTimeSerializer()
     front_url = HyperlinkedIdentityField(view_name='oeuvre_detail',
                                          lookup_field='slug')
 
@@ -205,18 +192,3 @@ class PartieSerializer(CommonSerializer):
     class Meta:
         model = Partie
         exclude = ('search_vector', 'autocomplete_vector')
-
-
-class UserSerializer(CommonSerializer):
-    front_url = HyperlinkedIdentityField(view_name='user_profile',
-                                         lookup_field='username')
-
-    class Meta:
-        model = HierarchicUser
-        exclude = (
-            'password', 'email', 'last_login', 'date_joined', 'show_email',
-            'willing_to_be_mentor', 'is_superuser', 'is_staff', 'is_active',
-            'groups', 'user_permissions',
-            'path', 'search_vector', 'autocomplete_vector',
-            'content_type', 'object_id',
-        )

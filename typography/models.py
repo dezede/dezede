@@ -24,6 +24,9 @@ def replace_in_kwargs(obj, kwargs_dict):
     et que la classe de ce champ est dans REPLACE_FIELDS,
     effectue les remplacements dans la valeur du kwarg.
     """
+    if obj._meta.label in {'wagtailimages.Image', 'wagtailimages.Rendition'}:
+        return
+
     fields = obj._meta.fields
     field_names = [field.attname for field in fields
                    if field.__class__ in REPLACE_FIELDS]

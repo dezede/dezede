@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import datetime
 import re
 from math import ceil
@@ -17,6 +18,7 @@ from autoslug import AutoSlugField
 from slugify import Slugify
 from tinymce.models import HTMLField
 from tree.query import TreeQuerySetMixin
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 
 from db_search.models import SearchVectorAbstractModel
 from typography.models import TypographicModel, TypographicManager, \
@@ -273,6 +275,15 @@ class AutoriteModel(PublishedModel):
     class Meta(PublishedModel.Meta):
         abstract = True
 
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('etat'),
+            FieldPanel('notes_publiques'),
+            FieldPanel('notes_privees'),
+            FieldPanel('owner', read_only=True),
+        ], heading=_('Notes'), classname="collapsed"),
+    ]
+
 
 slugify_unicode_class = Slugify(translate=None, to_lower=True, max_length=50)
 
@@ -383,149 +394,32 @@ class NumberCharField(CharField):
         return self.NUMBER_RE.sub(self.strip_zeros, value)
 
 
-class AncrageSpatioTemporel(object):
-    def __init__(self, not_null_fields=(),
-                 has_date=True, has_heure=True, has_lieu=True, approx=True,
-                 verbose_name=None):
-        self.not_null_fields = not_null_fields
-        self.has_date = has_date
-        self.has_heure = has_heure
-        self.has_lieu = has_lieu
-        self.approx = approx
-        self.verbose_name = verbose_name
-
-        # Definitions expected by Django.
-        self.remote_field = None
-        self.rel = None
-        self.is_relation = False
-        self.column = None
-        self.concrete = False
-        self.auto_created = False
-        self.one_to_many = False
-        self.one_to_one = False
-        self.many_to_many = False
-        self.editable = True
-        self.primary_key = False
-        self.unique = False
-        self.blank = True
-        self.null = True
-        self.default = NOT_PROVIDED
-        self.serialize = False
-        self.choices = []
-        self.help_text = None
-        self.db_index = False
-        self.db_column = None
-        self.db_tablespace = settings.DEFAULT_INDEX_TABLESPACE
-        self.auto_created = False
-
-    def get_col(self, *args, **kwargs):
-        return list(self.fields.values())[0].get_col(*args, **kwargs)
-
-    def create_fields(self):
-        fields = []
-        if self.has_date:
-            is_null = 'date' not in self.not_null_fields
-            date_msg = DATE_MSG_EXTENDED if self.approx else DATE_MSG
-            fields.append(('date', DateField(
-                _('date'), blank=is_null, null=is_null, db_index=True,
-                help_text=date_msg)))
-            if self.approx:
-                is_null = 'date_approx' not in self.not_null_fields
-                fields.append(('date_approx', CharField(
-                    _('date (approximative)'), max_length=60, blank=is_null,
-                    help_text=DATE_APPROX_MESSAGE)))
-        if self.has_heure:
-            is_null = 'heure' not in self.not_null_fields
-            fields.append(('heure', TimeField(
-                _('heure'), blank=is_null, null=is_null, db_index=True,
-                help_text=HEURE_MSG)))
-            if self.approx:
-                is_null = 'heure_approx' not in self.not_null_fields
-                fields.append(('heure_approx', CharField(
-                    _('heure (approximative)'), max_length=30, blank=is_null,
-                    help_text=HEURE_APPROX_MSG)))
-        if self.has_lieu:
-            is_null = 'lieu' not in self.not_null_fields
-            fields.append(('lieu', ForeignKey(
-                'Lieu', blank=is_null, null=is_null, verbose_name=_('lieu'),
-                on_delete=PROTECT,
-                related_name=f'{self.model._meta.model_name}_'
-                             f'{self.name}_set')))
-            if self.approx:
-                is_null = 'lieu_approx' not in self.not_null_fields
-                fields.append(('lieu_approx', CharField(
-                    _('lieu (approximatif)'), max_length=50, blank=is_null,
-                    help_text=_('Ne remplir que si le lieu (ou l’institution) '
-                                'est approximatif(ve).'))))
-        return fields
-
-    def contribute_to_class(self, model, name):
-        self.name = self.attname = name
-        self.model = model
-        if self.model._meta.abstract:
-            return
-        for parent in self.model._meta.parents:
-            if (not parent._meta.abstract
-                and hasattr(parent, name)
-                    and isinstance(getattr(parent, name),
-                                   AncrageSpatioTemporel)):
-                return
-        self.prefix = '' if name == 'ancrage' else f'{name}_'
-
-        self.fields = self.create_fields()
-
-        self.admin_order_field = f'{self.prefix}{self.fields[0][0]}'
-
-        model._meta.add_field(self, private=True)
-        setattr(model, name, self)
-
-        for fieldname, field in self.fields:
-            field.contribute_to_class(model, f'{self.prefix}{fieldname}')
-
-        self.fields = dict(self.fields)
-
-    def instance_bound(self):
-        return hasattr(self, 'instance') and self.instance is not None
+class SpaceTimeValue:
+    def __init__(self, model_instance: Model, fields_instance: 'SpaceTimeFields'):
+        self.model_instance = model_instance
+        self.fields_instance = fields_instance
 
     def __getattr__(self, key):
-        try:
-            return object.__getattribute__(self, key)
-        except AttributeError:
-            if key == 'instance':
-                raise
-            if self.instance_bound() and key in self.fields:
-                return getattr(self.instance, f'{self.prefix}{key}')
-            raise
+        if key in {'name', 'fields', 'approx', 'has_lieu', 'has_date', 'has_heure', 'prefix'}:
+            return getattr(self.fields_instance, key)
+        if key in self.fields:
+            return getattr(self.model_instance, f'{self.prefix}{key}')
+        return object.__getattribute__(self, key)
 
     def __setattr__(self, key, value):
-        if self.instance_bound() and key in self.fields:
-            setattr(self.instance, f'{self.prefix}{key}', value)
+        if key in {'model_instance', 'fields_instance'}:
+            super().__setattr__(key, value)
+        elif key in self.fields:
+            setattr(self.model_instance, f'{self.prefix}{key}', value)
         else:
-            super(AncrageSpatioTemporel, self).__setattr__(key, value)
+            super().__setattr__(key, value)
 
-    def __get__(self, instance, owner):
-        # FIXME: This is not thread-safe.
-        #        Split this class into AncrageSpatioTemporelField & AncrageSpatioTemporel,
-        #        then enable server multithreading again.
-        self.owner = owner
-        self.instance = instance
-        return self
-
-    def __set__(self, instance, value):
-        self.instance = instance
-        super(AncrageSpatioTemporel, self).__set__(instance, value)
-
-    def __bool__(self):
-        return (self.instance_bound()
-                and any(getattr(self, k) for k in self.fields))
-    # Python 2 compatibility
-    __nonzero__ = __bool__
-
-    def __str__(self):
-        return strip_tags(self.html(tags=False, short=True))
-
-    def __repr__(self):
-        return f'<AncrageSpatioTemporel: {self.name}>'
+    def lieu_str(self, tags=True, short=False) -> str:
+        if not self.has_lieu or self.lieu is None:
+            return ''
+        if self.approx and self.lieu_approx:
+            return self.lieu_approx
+        return self.lieu.html(tags, short)
 
     def date_str(self, tags=True, short=False):
         if not self.has_date:
@@ -553,29 +447,31 @@ class AncrageSpatioTemporel(object):
         l.append(pat_heure % {'heure': heure})
         return str_list(l, ' ')
 
-    def lieu_str(self, tags=True, short=False):
-        if not self.has_lieu or self.lieu is None:
-            return ''
-        if self.approx and self.lieu_approx:
-            return self.lieu_approx
-        return self.lieu.html(tags, short)
-
-    def isoformat(self):
-        if not (self.has_date and self.date):
-            return ''
-        if self.has_heure and self.heure:
-            return datetime.datetime.combine(self.date, self.heure).isoformat()
-        return self.date.isoformat()
-
-    def html(self, tags=True, short=False, caps=True):
+    def html(self, tags=True, short=False, caps=True) -> str:
         out = str_list((self.lieu_str(tags, short),
                         self.moment_str(tags, short)))
         if caps:
             return capfirst(out)
         return out
 
-    def short_html(self, tags=True):
+    def short_html(self, tags=True) -> str:
         return self.html(tags, short=True)
+
+    def isoformat(self) -> str:
+        if not (self.has_date and self.date):
+            return ''
+        if self.has_heure and self.heure:
+            return datetime.datetime.combine(self.date, self.heure).isoformat()
+        return self.date.isoformat()
+
+    def __bool__(self):
+        return any(getattr(self, k) for k in self.fields)
+
+    def __str__(self):
+        return strip_tags(self.html(tags=False, short=True))
+
+    def __repr__(self):
+        return f'<SpaceTimeValue: {self}>'
 
     def get_preciseness(self):
         score = 0
@@ -588,9 +484,113 @@ class AncrageSpatioTemporel(object):
         if other.__class__ is not self.__class__:
             return False
 
-        if self.get_preciseness() > other.get_preciseness():
-            return True
-        return False
+        return self.get_preciseness() > other.get_preciseness()
+
+
+class SpaceTimeFields:
+    def __init__(self, not_null_fields=(),
+                 has_date=True, has_heure=True, has_lieu=True, approx=True,
+                 verbose_name=None):
+        self.not_null_fields = not_null_fields
+        self.has_date = has_date
+        self.has_heure = has_heure
+        self.has_lieu = has_lieu
+        self.approx = approx
+        self.verbose_name = verbose_name
+        self.fields = OrderedDict()
+
+    def fields_iterator(self):
+        if self.has_date:
+            is_null = 'date' not in self.not_null_fields
+            date_msg = DATE_MSG_EXTENDED if self.approx else DATE_MSG
+            yield (
+                'date',
+                DateField(
+                    _('date'), blank=is_null, null=is_null, db_index=True,
+                    help_text=date_msg,
+                )
+            )
+            if self.approx:
+                is_null = 'date_approx' not in self.not_null_fields
+                yield (
+                    'date_approx',
+                    CharField(
+                        _('date (approximative)'), max_length=60, blank=is_null,
+                        help_text=DATE_APPROX_MESSAGE,
+                    )
+                )
+        if self.has_heure:
+            is_null = 'heure' not in self.not_null_fields
+            yield (
+                'heure',
+                TimeField(
+                    _('heure'), blank=is_null, null=is_null, db_index=True,
+                    help_text=HEURE_MSG,
+                )
+            )
+            if self.approx:
+                is_null = 'heure_approx' not in self.not_null_fields
+                yield (
+                    'heure_approx',
+                    CharField(
+                        _('heure (approximative)'), max_length=30, blank=is_null,
+                        help_text=HEURE_APPROX_MSG,
+                    )
+                )
+        if self.has_lieu:
+            is_null = 'lieu' not in self.not_null_fields
+            yield (
+                'lieu',
+                ForeignKey(
+                    'libretto.Lieu', blank=is_null, null=is_null, verbose_name=_('lieu'),
+                    on_delete=PROTECT,
+                    related_name=f'{self.model._meta.model_name}_{self.name}_set',
+                )
+            )
+            if self.approx:
+                is_null = 'lieu_approx' not in self.not_null_fields
+                yield (
+                    'lieu_approx',
+                    CharField(
+                        _('lieu (approximatif)'), max_length=50, blank=is_null,
+                        help_text=_('Ne remplir que si le lieu (ou l’institution) '
+                                    'est approximatif(ve).'),
+                    )
+                )
+
+    @property
+    def prefix(self) -> str:
+        return '' if self.name == 'ancrage' else f'{self.name}_'
+
+    def contribute_to_class(self, model, name):
+        self.name = self.attname = name
+        self.model = model
+        if self.model._meta.abstract:
+            return
+        for parent in self.model._meta.parents:
+            if (
+                not parent._meta.abstract
+                and hasattr(parent, name)
+                and isinstance(getattr(parent, name), SpaceTimeValue)
+            ):
+                return
+
+        fields_list = list(self.fields_iterator())
+        self.admin_order_field = f'{self.prefix}{fields_list[0][0]}'
+        self.fields = OrderedDict(fields_list)
+
+        setattr(model, name, self)
+
+        for fieldname, field in self.fields.items():
+            field.contribute_to_class(model, f'{self.prefix}{fieldname}')
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return SpaceTimeValue(model_instance=obj, fields_instance=self)
+
+    def __repr__(self):
+        return f'<SpaceTimeFields: {self.name}>'
 
 
 class TypeDeParente(CommonModel):
@@ -605,7 +605,7 @@ class TypeDeParente(CommonModel):
         help_text=PLURAL_MSG)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
-    search_fields = [
+    dezede_search_fields = [
         'nom', 'nom_relatif', 'nom_pluriel', 'nom_relatif_pluriel',
     ]
 

@@ -15,10 +15,12 @@ from django.utils.encoding import force_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
+from wagtail.search.index import Indexed, SearchField, RelatedFields
+
 from .base import (
     CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
     PublishedManager, PublishedQuerySet,
-    AncrageSpatioTemporel, calc_pluriel, PLURAL_MSG)
+    SpaceTimeFields, calc_pluriel, PLURAL_MSG)
 from common.utils.html import capfirst, href, hlp, microdata
 from common.utils.text import str_list, ex, BiGrouper
 
@@ -187,7 +189,7 @@ class TypeDeCaracteristiqueDeProgramme(CommonModel):
                             help_text=PLURAL_MSG)
     classement = SmallIntegerField(_('classement'), default=1)
 
-    search_fields = ['nom', 'nom_pluriel']
+    dezede_search_fields = ['nom', 'nom_pluriel']
 
     class Meta(CommonModel.Meta):
         verbose_name = _('type de caractéristique de programme')
@@ -256,7 +258,7 @@ class CaracteristiqueDeProgramme(CommonModel):
 
     objects = CaracteristiqueManager()
 
-    search_fields = ['valeur']
+    dezede_search_fields = ['valeur']
 
     class Meta(CommonModel.Meta):
         unique_together = ('type', 'valeur')
@@ -521,6 +523,18 @@ class EvenementQuerySet(PublishedQuerySet):
             )
         )
 
+    def annotate_has_program_and_source(self):
+        from .source import Source
+
+        return self.extra(select={
+            '_has_program':
+            'EXISTS (SELECT 1 FROM %s WHERE evenement_id = %s.id)'
+            % (ElementDeProgramme._meta.db_table, Evenement._meta.db_table),
+            '_has_source':
+            'EXISTS (SELECT 1 FROM %s WHERE evenement_id = %s.id)'
+            % (Source.evenements.field.m2m_db_table(),
+               Evenement._meta.db_table)})
+
 
 class EvenementManager(PublishedManager):
     queryset_class = EvenementQuerySet
@@ -551,10 +565,10 @@ plus_separated_integers_validator = RegexValidator(
     _('Entrez uniquement des entiers séparés par des « + ».'), 'invalid')
 
 
-class Evenement(AutoriteModel):
-    debut = AncrageSpatioTemporel(('date',),
+class Evenement(Indexed, AutoriteModel):
+    debut = SpaceTimeFields(('date',),
                                   verbose_name=_('début'))
-    fin = AncrageSpatioTemporel(verbose_name=_('fin'))
+    fin = SpaceTimeFields(verbose_name=_('fin'))
     programme_incomplet = BooleanField(_('programme incomplet'), default=False)
     relache = BooleanField(_('relâche'), default=False, db_index=True)
     circonstance = CharField(_('circonstance'), max_length=500, blank=True)
@@ -571,13 +585,25 @@ class Evenement(AutoriteModel):
 
     objects = EvenementManager()
 
-    search_fields = [
+    dezede_search_fields = [
         'circonstance',
         'debut_date',
         'debut_heure',
         'debut_lieu_approx',
         'debut_date_approx',
         'debut_heure_approx',
+    ]
+    search_fields = [
+        SearchField('circonstance'),
+        SearchField('debut_date'),
+        SearchField('debut_heure'),
+        SearchField('debut_lieu_approx'),
+        SearchField('debut_date_approx'),
+        SearchField('debut_heure_approx'),
+        RelatedFields('debut_lieu', [
+            SearchField('nom'),
+            RelatedFields('parent', [SearchField('nom')]),
+        ])
     ]
 
     class Meta(AutoriteModel.Meta):

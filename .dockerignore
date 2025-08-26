@@ -180,6 +180,11 @@ tx
 
 /tmp/
 node_modules/
+.next
 /media/
 /static/
 /backup/
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

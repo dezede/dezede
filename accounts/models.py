@@ -110,7 +110,7 @@ class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
 
     objects = HierarchicUserManager()
 
-    search_fields = ['first_name', 'last_name', 'username', 'email']
+    dezede_search_fields = ['first_name', 'last_name', 'username', 'email']
 
     class Meta:
         ordering = ['last_name', 'first_name']

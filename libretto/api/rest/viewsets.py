@@ -1,11 +1,12 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from accounts.models import HierarchicUser
+from accounts.serializers import UserSerializer
 from ...models import *
 from ...views import PublishedMixin
 from .serializers import (
     IndividuSerializer, EnsembleSerializer, LieuSerializer, OeuvreSerializer,
-    SourceSerializer, EvenementSerializer, PartieSerializer, UserSerializer,
+    SourceSerializer, EvenementSerializer, PartieSerializer,
     AuteurSerializer, ProfessionSerializer,
 )
 

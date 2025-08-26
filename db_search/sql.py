@@ -33,7 +33,7 @@ class UpdateAllSearchVectors(ModelOperation):
 
 
 def get_search_vector(
-    search_fields: List[Union[str, Value]], config: str = settings.SEARCH_CONFIG,
+    search_fields: List[Union[str, Value]], config: str = settings.WAGTAILSEARCH_BACKENDS['default']['SEARCH_CONFIG'],
 ) -> Optional[SearchVector]:
     if not search_fields:
         return None

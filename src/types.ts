@@ -1,4 +1,4 @@
-export interface Ancrage {
+export interface SpaceTime {
   date: null | string;
   date_approx: string;
   lieu: null | string;
@@ -52,8 +52,8 @@ export interface Individu extends Model {
   html: string;
   prenoms: string;
   nom: string;
-  naissance: Ancrage;
-  deces: Ancrage;
+  naissance: SpaceTime;
+  deces: SpaceTime;
   professions: number[];
   parents: string[];
 }

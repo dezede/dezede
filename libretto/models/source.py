@@ -19,7 +19,7 @@ from easy_thumbnails.files import get_thumbnailer
 from tinymce.models import HTMLField
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
-    SlugModel, PublishedManager, PublishedQuerySet, AncrageSpatioTemporel,
+    SlugModel, PublishedManager, PublishedQuerySet, SpaceTimeFields,
     NumberCharField,
 )
 
@@ -44,7 +44,7 @@ class TypeDeSource(CommonModel, SlugModel):
                             db_index=True, help_text=PLURAL_MSG)
     # TODO: Ajouter un classement et changer ordering en conséquence.
 
-    search_fields = ['nom', 'nom_pluriel']
+    dezede_search_fields = ['nom', 'nom_pluriel']
 
     class Meta(CommonModel.Meta):
         verbose_name = _('type de source')
@@ -171,7 +171,7 @@ class Source(AutoriteModel):
     legende = CharField(_('légende'), max_length=600, blank=True,
                         help_text=_('Recommandée pour les images.'))
 
-    ancrage = AncrageSpatioTemporel(has_heure=False, has_lieu=False)
+    ancrage = SpaceTimeFields(has_heure=False, has_lieu=False)
     numero = NumberCharField(
         _('numéro'), max_length=50, blank=True, db_index=True,
         help_text=_('Sans « № ». Exemple : « 52 »'),
@@ -246,7 +246,7 @@ class Source(AutoriteModel):
 
     objects = SourceManager()
 
-    search_fields = [
+    dezede_search_fields = [
         'titre',
         'date',
         'date_approx',

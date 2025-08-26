@@ -1,2 +1,2 @@
-from .espace_temps import BuildAncrageTestCase
+from .espace_temps import BuildSpaceTimeTestCase
 from .utils import UpdateOrCreateTestCase

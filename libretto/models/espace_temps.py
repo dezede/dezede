@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from tinymce.models import HTMLField
 from tree.fields import PathField
 from tree.models import TreeModelMixin
+from wagtail.search.index import SearchField, Indexed, RelatedFields
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, PublishedManager,
@@ -40,7 +41,7 @@ class NatureDeLieu(CommonModel, SlugModel):
             'jusqu’à un lieu référent, ici choisi comme étant ceux de nature '
             '« ville »'))
 
-    search_fields = ['nom', 'nom_pluriel']
+    dezede_search_fields = ['nom', 'nom_pluriel']
 
     class Meta(CommonModel.Meta):
         verbose_name = _('nature de lieu')
@@ -69,7 +70,7 @@ class LieuManager(CommonTreeManager, PublishedManager):
     queryset_class = LieuQuerySet
 
 
-class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
+class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, db_index=True)
     parent = ForeignKey(
         'self', null=True, blank=True, related_name='enfants',
@@ -86,7 +87,12 @@ class Lieu(TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = LieuManager()
 
-    search_fields = ['nom']
+    search_fields = [
+        SearchField('nom', boost=10),
+        RelatedFields('parent', [SearchField('nom')]),
+        RelatedFields('nature', [SearchField('nom')])
+    ]
+    dezede_search_fields = ['nom']
 
     class Meta(AutoriteModel.Meta):
         verbose_name = _('lieu ou institution')

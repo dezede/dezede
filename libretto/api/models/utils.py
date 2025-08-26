@@ -11,7 +11,7 @@ from django.db.models.fields.related import ForeignObjectRel
 from django.db.models.query import QuerySet
 from django.utils.encoding import smart_text
 from typography.utils import replace
-from ...models.base import PublishedModel, CommonModel
+from ...models.base import PublishedModel, CommonModel, SpaceTimeValue
 from ..utils import notify_send, print_info
 from ..utils.console import info, colored_diff, error
 
@@ -288,7 +288,7 @@ def update_or_create(Model, filter_kwargs, unique_keys=(), commit=True,
         if old_v:
 
             choice = None
-            if hasattr(old_v, 'is_more_precise_than'):
+            if isinstance(old_v, SpaceTimeValue):
                 if old_v.is_more_precise_than(new_v):
                     choice = KEEP
 

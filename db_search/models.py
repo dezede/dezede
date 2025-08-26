@@ -12,7 +12,7 @@ class SearchVectorAbstractModel(Model):
     autocomplete_vector = SearchVectorField(
         null=True, blank=True, editable=False,
     )
-    search_fields = []
+    dezede_search_fields = []
 
     class Meta:
         abstract = True
@@ -23,10 +23,10 @@ class SearchVectorAbstractModel(Model):
 
     @classmethod
     def update_all_search_vectors(cls):
-        update_all_search_vectors(cls, cls.search_fields)
+        update_all_search_vectors(cls, cls.dezede_search_fields)
 
     def set_search_vectors(self) -> None:
-        search_fields = self.search_fields
+        search_fields = self.dezede_search_fields
 
         search_fields = [
             getattr(self, field_name)

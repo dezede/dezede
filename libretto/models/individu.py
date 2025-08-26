@@ -12,9 +12,11 @@ from tinymce.models import HTMLField
 from common.utils.abbreviate import abbreviate
 from common.utils.html import href, sc, hlp
 from common.utils.text import str_list, str_list_w_last, ex
+from wagtail.search.index import Indexed, SearchField
+
 from .base import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
-    PublishedManager, PublishedQuerySet, AncrageSpatioTemporel,
+    PublishedManager, PublishedQuerySet, SpaceTimeFields,
     slugify_unicode, ISNI_VALIDATORS, IsniModel)
 from .evenement import Evenement
 
@@ -81,7 +83,7 @@ class IndividuManager(PublishedManager):
         return self.get_queryset().are_feminins()
 
 
-class Individu(AutoriteModel, UniqueSlugModel, IsniModel):
+class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
     particule_nom = CharField(
         _('particule du nom d’usage'), max_length=10, blank=True,
         db_index=True)
@@ -119,9 +121,9 @@ class Individu(AutoriteModel, UniqueSlugModel, IsniModel):
     )
     titre = CharField(pgettext_lazy('individu', 'titre'), max_length=1,
                       choices=TITRES, blank=True, db_index=True)
-    naissance = AncrageSpatioTemporel(has_heure=False,
+    naissance = SpaceTimeFields(has_heure=False,
                                       verbose_name=_('naissance'))
-    deces = AncrageSpatioTemporel(has_heure=False,
+    deces = SpaceTimeFields(has_heure=False,
                                   verbose_name=_('décès'))
     professions = ManyToManyField(
         'Profession', related_name='individus', blank=True,
@@ -138,7 +140,13 @@ class Individu(AutoriteModel, UniqueSlugModel, IsniModel):
 
     objects = IndividuManager()
 
-    search_fields = ['nom', 'nom_naissance', 'prenoms', 'pseudonyme']
+    dezede_search_fields = [
+        'nom', 'nom_naissance', 'prenoms', 'pseudonyme',
+    ]
+    search_fields = [
+        SearchField('nom', boost=10), SearchField('nom_naissance'),
+        SearchField('prenoms'), SearchField('pseudonyme'),
+    ]
 
     class Meta(AutoriteModel.Meta):
         verbose_name = _('individu')

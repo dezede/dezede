@@ -9,10 +9,13 @@ from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
+from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
+from wagtail.search.index import Indexed, SearchField, RelatedFields
 from common.utils.abbreviate import abbreviate
 from common.utils.html import capfirst, href, date_html, sc
 from common.utils.sql import get_raw_query
 from common.utils.text import str_list
+from libretto.models.individu import Individu
 from .base import (CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
                    UniqueSlugModel, AutoriteModel, ISNI_VALIDATORS, IsniModel)
 from .evenement import Evenement
@@ -38,7 +41,7 @@ class Profession(AutoriteModel, UniqueSlugModel):
                         verbose_name=_('parent'), on_delete=CASCADE)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
-    search_fields = [
+    dezede_search_fields = [
         'nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel',
     ]
 
@@ -248,7 +251,7 @@ class TypeDEnsemble(CommonModel):
     parent = ForeignKey('self', null=True, blank=True, related_name='enfants',
                         verbose_name=_('parent'), on_delete=CASCADE)
 
-    search_fields = ['nom', 'nom_pluriel']
+    dezede_search_fields = ['nom', 'nom_pluriel']
 
     class Meta(CommonModel.Meta):
         verbose_name = _('type d’ensemble')
@@ -259,7 +262,7 @@ class TypeDEnsemble(CommonModel):
         return self.nom
 
 
-class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniModel):
+class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniModel):
     particule_nom = CharField(
         _('particule du nom'), max_length=5, blank=True, db_index=True)
     nom = CharField(_('nom'), max_length=75, db_index=True)
@@ -282,7 +285,22 @@ class Ensemble(AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniModel):
         help_text=_('Exemple : « 0000000115201575 » '
                     'pour Le Poème Harmonique.'))
 
-    search_fields = ['particule_nom', 'nom']
+    dezede_search_fields = ['particule_nom', 'nom']
+    panels = [
+        FieldRowPanel([FieldPanel('particule_nom'), FieldPanel('nom')]),
+        FieldPanel('type'),
+        FieldPanel('siege'),
+        FieldRowPanel([FieldPanel('isni'), FieldPanel('sans_isni')]),
+        MultiFieldPanel([
+            FieldRowPanel([FieldPanel('debut'), FieldPanel('debut_precision')]),
+            FieldRowPanel([FieldPanel('fin'), FieldPanel('fin_precision')]),
+        ], heading=_('Période d’activité')),
+        *AutoriteModel.panels,
+    ]
+    search_fields = [
+        SearchField('particule_nom'), SearchField('nom'),
+        RelatedFields('individus', Individu.search_fields),
+    ]
 
     class Meta(AutoriteModel.Meta):
         ordering = ('nom',)

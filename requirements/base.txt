@@ -1,4 +1,5 @@
 # Basics
+wagtail==5.2.8
 --extra-index-url https://__token__:glpat-ZJJHm8J1fE9t-LiRys8q@git.noripyt.com/api/v4/groups/55/-/packages/pypi/simple
 noridjango[compressor]==3.2.6
 
@@ -55,9 +56,9 @@ bleach==3.3.0
 
 # Dependencies
 # For easy-thumbnails
-Pillow==8.2.0
+Pillow==10.4.0
 # For djangorestframework (optionals)
 Pygments==2.9.0
-django-filter==2.4.0
+django-filter==23.5
 # For exporting DataFrames to XLSX, Pandas needs Jinja2 (yes…)
 Jinja2==3.1.4

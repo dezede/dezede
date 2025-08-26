@@ -134,6 +134,7 @@ class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
         if sender._meta.label in {
             'admin.LogEntry', 'sessions.Session', 'reversion.Revision',
             'reversion.Version', 'migrations.Migration',
+            'wagtailimages.Image', 'wagtailimages.Rendition',
         }:
             return
 

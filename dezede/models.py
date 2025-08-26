@@ -71,7 +71,7 @@ class Diapositive(PublishedModel):
     position = PositiveSmallIntegerField(
         _('position'), default=get_default_position)
 
-    search_fields = ['title', 'subtitle']
+    dezede_search_fields = ['title', 'subtitle']
 
     SLIDER_LG_WIDTH = 1140
     SLIDER_MD_WIDTH = 940

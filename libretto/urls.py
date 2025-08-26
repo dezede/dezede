@@ -1,5 +1,5 @@
 from django.conf.urls import *
-from .api.rest import router as api_router
+from .api.rest.routers import api_router
 from libretto.views import TreeNode, EnsembleViewSet, EvenementExport
 from .views import *
 

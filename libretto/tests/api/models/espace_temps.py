@@ -4,7 +4,7 @@ from libretto.api import build_ancrage
 from libretto.models import Evenement
 
 
-class BuildAncrageTestCase(TestCase):
+class BuildSpaceTimeTestCase(TestCase):
     cleans_up_after_itself = True
 
     def setUp(self):

@@ -115,7 +115,7 @@ services:
     environment:
       CSP_DEFAULT: "'self' https://analyseweb.huma-num.fr"
       CSP_SCRIPT: "'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://code.jquery.com https://analyseweb.huma-num.fr"
-      CSP_IMG: "'self' data: blob: https://cdnjs.cloudflare.com https://a.tile.openstreetmap.org https://b.tile.openstreetmap.org https://c.tile.openstreetmap.org https://code.jquery.com https://analyseweb.huma-num.fr"
+      CSP_IMG: "'self' data: blob: https://cdnjs.cloudflare.com a.tile.openstreetmap.org b.tile.openstreetmap.org c.tile.openstreetmap.org http://www.gravatar.com https://code.jquery.com https://analyseweb.huma-num.fr"
       CSP_STYLE: "'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://code.jquery.com"
       CSP_CONNECT: "'self' https://analyseweb.huma-num.fr"
       CSP_FRAME: "'self' https://docs.google.com"

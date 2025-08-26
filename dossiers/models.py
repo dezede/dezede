@@ -27,7 +27,7 @@ class CategorieDeDossiers(PublishedModel):
     nom = CharField(_('nom'), max_length=75)
     position = PositiveSmallIntegerField(_('position'), default=1)
 
-    search_fields = ['nom']
+    dezede_search_fields = ['nom']
 
     class Meta(PublishedModel.Meta):
         ordering = ('position',)
@@ -98,7 +98,7 @@ class Dossier(TreeModelMixin, PublishedModel):
 
     objects = DossierManager()
 
-    search_fields = ['titre', 'titre_court']
+    dezede_search_fields = ['titre', 'titre_court']
 
     class Meta(PublishedModel.Meta):
         verbose_name = _('dossier')

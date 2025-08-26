@@ -539,7 +539,9 @@ class CommonAdmin(CustomBaseModel, ModelAdmin):
         # it makes the ORM generate more join with each word, crashing the database at some point.
         q = Q()
         for word in search_term.split():
-            search_query = SearchQuery(word, config=settings.SEARCH_CONFIG)
+            search_query = SearchQuery(
+                word, config=settings.WAGTAILSEARCH_BACKENDS['default']['SEARCH_CONFIG'],
+            )
             q &= reduce(operator.or_, [
                 Q(**{search_field: search_query})
                 for search_field in search_fields
@@ -929,14 +931,7 @@ class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
 
     def get_queryset(self, request):
         qs = super(EvenementAdmin, self).get_queryset(request)
-        qs = qs.extra(select={
-            '_has_program':
-            'EXISTS (SELECT 1 FROM %s WHERE evenement_id = %s.id)'
-            % (ElementDeProgramme._meta.db_table, Evenement._meta.db_table),
-            '_has_source':
-            'EXISTS (SELECT 1 FROM %s WHERE evenement_id = %s.id)'
-            % (Source.evenements.field.m2m_db_table(),
-               Evenement._meta.db_table)})
+        qs = qs.annotate_has_program_and_source()
         return qs.select_related(
             'debut_lieu', 'debut_lieu__nature',
             'debut_lieu__parent', 'debut_lieu__parent__nature',

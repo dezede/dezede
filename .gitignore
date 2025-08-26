@@ -10,7 +10,8 @@ _*/
 *.so
 *.h
 /.idea/
-/node_modules/
+node_modules/
+.next
 /media/
 /build/
 /backup/
@@ -18,3 +19,7 @@ _*/
 /venv/
 /.venv/
 .env.secrets
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
