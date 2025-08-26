@@ -863,11 +863,13 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         'opus', 'ict',
     ]
     search_fields = [
-        SearchField('prefixe_titre'), SearchField('titre'),
+        SearchField('prefixe_titre'), SearchField('titre', boost=True),
         SearchField('prefixe_titre_secondaire'), SearchField('titre_secondaire'),
         SearchField('numero'), SearchField('coupe'), SearchField('tempo'),
-        SearchField('sujet'), SearchField('surnom'), SearchField('nom_courant'),
-        SearchField('incipit'), SearchField('opus'), SearchField('ict'),
+        SearchField('sujet'), SearchField('surnom', boost=10), SearchField('nom_courant', boost=10),
+        SearchField('incipit', boost=10),
+        SearchField('opus', boost=10),
+        SearchField('ict', boost=10),
         RelatedFields('auteurs', [
             RelatedFields('individu', Individu.search_fields),
             RelatedFields('ensemble', Ensemble.search_fields),

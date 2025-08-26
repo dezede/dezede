@@ -594,14 +594,14 @@ class Evenement(Indexed, AutoriteModel):
         'debut_heure_approx',
     ]
     search_fields = [
-        SearchField('circonstance'),
+        SearchField('circonstance', boost=10),
         SearchField('debut_date'),
         SearchField('debut_heure'),
         SearchField('debut_lieu_approx'),
         SearchField('debut_date_approx'),
         SearchField('debut_heure_approx'),
         RelatedFields('debut_lieu', [
-            SearchField('nom'),
+            SearchField('nom', boost=10),
             RelatedFields('parent', [SearchField('nom')]),
         ])
     ]

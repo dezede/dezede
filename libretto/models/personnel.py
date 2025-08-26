@@ -298,7 +298,7 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
         *AutoriteModel.panels,
     ]
     search_fields = [
-        SearchField('particule_nom'), SearchField('nom'),
+        SearchField('particule_nom'), SearchField('nom', boost=10),
         RelatedFields('individus', Individu.search_fields),
     ]
 

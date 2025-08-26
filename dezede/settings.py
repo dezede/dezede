@@ -68,7 +68,6 @@ INSTALLED_APPS = [
     'wagtail.snippets',
     'wagtail.documents',
     'wagtail.images',
-    'wagtail.search',
     'wagtail.admin',
     'wagtail',
     'wagtail.contrib.settings',
@@ -87,6 +86,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 
     'haystack',
+    # Below haystack so we do not overwrite its `update_index`,
+    # but we can still call `wagtail_update_index`.
+    'wagtail.search',
     'django_rq',
     'correspondence',
     'libretto',

@@ -1,4 +1,4 @@
-from django.db.models import ForeignKey, CASCADE, PROTECT, CharField
+from django.db.models import ForeignKey, CASCADE, PROTECT, CharField, ManyToManyField
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
@@ -6,9 +6,11 @@ from wagtail.admin.panels import (
 )
 from wagtail.api import APIField
 from wagtail.fields import RichTextField, StreamField
+from wagtail.images.api.fields import ImageRenditionField
 from wagtail.models import Page, Orderable
+from wagtail.search.index import SearchField, RelatedFields
 
-from libretto.api.rest.serializer_fields import SpaceTimeSerializer
+from correspondence.serializer_fields import RichTextSerializer
 from libretto.models.base import SpaceTimeFields
 
 from .blocks import ReferencesStreamBlock
@@ -45,6 +47,15 @@ class LetterCorpus(BasePage):
         FieldPanel('person'),
         FieldPanel('description'),
     ]
+    search_fields = [
+        *BasePage.search_fields,
+        SearchField('person', boost=10),
+        SearchField('description'),
+    ]
+    api_fields = [
+        APIField('person'),
+        APIField('description', serializer=RichTextSerializer()),
+    ]
 
     class Meta:
         verbose_name = pgettext_lazy('singulier', 'corpus de lettres')
@@ -52,7 +63,7 @@ class LetterCorpus(BasePage):
 
 
 class LetterRecipient(Orderable):
-    letter = ParentalKey('correspondence.Letter', on_delete=CASCADE, related_name='letter_recipients')
+    letter = ParentalKey('correspondence.Letter', on_delete=CASCADE, related_name='recipients')
     person = ForeignKey(
         'libretto.Individu', on_delete=PROTECT, related_name='letter_recipients',
         verbose_name=_('individu'),
@@ -60,6 +71,9 @@ class LetterRecipient(Orderable):
 
     panels = [
         FieldPanel('person'),
+    ]
+    api_fields = [
+        APIField('person'),
     ]
 
     class Meta(Orderable.Meta):
@@ -80,6 +94,12 @@ class LetterImage(Orderable):
         FieldPanel('image'),
         FieldPanel('references'),
     ]
+    api_fields = [
+        APIField('name'),
+        APIField('image', serializer=ImageRenditionField('max-400x800')),
+        APIField('thumbnail', serializer=ImageRenditionField('fill-100x100', source='image')),
+        APIField('references'),
+    ]
 
     class Meta(Orderable.Meta):
         verbose_name = _('image de lettre')
@@ -91,18 +111,18 @@ class Letter(BasePage):
         'libretto.Individu', on_delete=PROTECT, related_name='sent_letters',
         verbose_name=_('expéditeur')
     )
-    writing = SpaceTimeFields(
-        verbose_name=_('rédaction'),
-    )
+    writing = SpaceTimeFields(verbose_name=_('rédaction'))
 
     transcription = RichTextField(_('transcription'), editor='transcription', blank=True)
     description = RichTextField(_('description'), blank=True)
+
+    recipient_persons = ManyToManyField('libretto.Individu', through=LetterRecipient)
 
     parent_page_types = ['correspondence.LetterCorpus']
     content_panels = BasePage.content_panels + [
         FieldPanel('sender'),
         MultipleChooserPanel(
-            'letter_recipients', 'person', heading=_('Destinataires'), label=_('destinataire'),
+            'recipients', 'person', heading=_('Destinataires'), label=_('destinataire'),
         ),
         MultiFieldPanel([
             FieldRowPanel([
@@ -111,17 +131,34 @@ class Letter(BasePage):
             FieldRowPanel([
                 FieldPanel('writing_date'), FieldPanel('writing_date_approx'),
             ]),
+            FieldRowPanel([
+                FieldPanel('writing_heure'), FieldPanel('writing_heure_approx'),
+            ]),
         ], heading=_('Rédaction')),
         InlinePanel('letter_images', heading=_('Images'), label=_('image')),
         FieldPanel('transcription'),
     ]
+    search_fields = [
+        *BasePage.search_fields,
+        RelatedFields('sender', [
+            SearchField('nom', boost=10),
+        ]),
+        RelatedFields('recipients', [
+            RelatedFields('person', [
+                SearchField('nom'),
+            ]),
+        ])
+    ]
     api_fields = [
         APIField('sender'),
-        APIField('letter_recipients'),
-        APIField('writing', serializer=SpaceTimeSerializer()),
+        APIField('recipient_persons'),
+        APIField('writing_lieu'),
+        APIField('writing_lieu_approx'),
+        APIField('writing_date'),
+        APIField('writing_date_approx'),
         APIField('letter_images'),
-        APIField('transcription'),
-        APIField('description'),
+        APIField('transcription', serializer=RichTextSerializer()),
+        APIField('description', serializer=RichTextSerializer()),
     ]
 
     class Meta:

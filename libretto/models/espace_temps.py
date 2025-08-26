@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from tinymce.models import HTMLField
 from tree.fields import PathField
 from tree.models import TreeModelMixin
+from wagtail.api import APIField
 from wagtail.search.index import SearchField, Indexed, RelatedFields
 
 from .base import (
@@ -42,6 +43,11 @@ class NatureDeLieu(CommonModel, SlugModel):
             '« ville »'))
 
     dezede_search_fields = ['nom', 'nom_pluriel']
+    api_fields = [
+        APIField('nom'),
+        APIField('nom_pluriel'),
+        APIField('referent'),
+    ]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('nature de lieu')
@@ -87,12 +93,19 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = LieuManager()
 
+    dezede_search_fields = ['nom']
     search_fields = [
         SearchField('nom', boost=10),
         RelatedFields('parent', [SearchField('nom')]),
         RelatedFields('nature', [SearchField('nom')])
     ]
-    dezede_search_fields = ['nom']
+    api_fields = [
+        APIField('nom'),
+        APIField('parent'),
+        APIField('nature'),
+        APIField('is_institution'),
+        APIField('geometry'),
+    ]
 
     class Meta(AutoriteModel.Meta):
         verbose_name = _('lieu ou institution')

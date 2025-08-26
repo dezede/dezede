@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.utils.encoding import force_text
-from libretto.api import build_ancrage
+from libretto.api.models import build_ancrage
 from libretto.models import Evenement
 
 

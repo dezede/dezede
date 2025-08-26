@@ -1,5 +1,5 @@
 import re
-from libretto.api import parse_ancrage
+from libretto.api.models import parse_ancrage
 from .utils import update_or_create, clean_string
 from ...models import Individu
 

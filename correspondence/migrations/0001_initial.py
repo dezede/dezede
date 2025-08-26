@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('letter', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='letter_recipients', to='correspondence.letter')),
+                ('letter', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='recipients', to='correspondence.letter')),
                 ('person', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='letter_recipients', to='libretto.individu', verbose_name='individu')),
             ],
             options={

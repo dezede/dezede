@@ -12,6 +12,7 @@ from tinymce.models import HTMLField
 from common.utils.abbreviate import abbreviate
 from common.utils.html import href, sc, hlp
 from common.utils.text import str_list, str_list_w_last, ex
+from wagtail.api import APIField
 from wagtail.search.index import Indexed, SearchField
 
 from .base import (
@@ -145,7 +146,27 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
     ]
     search_fields = [
         SearchField('nom', boost=10), SearchField('nom_naissance'),
-        SearchField('prenoms'), SearchField('pseudonyme'),
+        SearchField('prenoms'), SearchField('pseudonyme', boost=10),
+    ]
+    api_fields = [
+        APIField('particule_nom'),
+        APIField('nom'),
+        APIField('particule_nom_naissance'),
+        APIField('nom_naissance'),
+        APIField('prenoms'),
+        APIField('prenoms_complets'),
+        APIField('pseudonyme'),
+        APIField('designation'),
+        APIField('titre'),
+        APIField('naissance_lieu'),
+        APIField('naissance_lieu_approx'),
+        APIField('naissance_date'),
+        APIField('naissance_date_approx'),
+        APIField('deces_lieu'),
+        APIField('deces_lieu_approx'),
+        APIField('deces_date'),
+        APIField('deces_date_approx'),
+        APIField('isni'),
     ]
 
     class Meta(AutoriteModel.Meta):
