@@ -10,6 +10,7 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { ROOT_SLUG } from "../constants";
 import Stack from "@mui/material/Stack";
 import HomeIcon from "@mui/icons-material/Home";
+import Grid from "@mui/material/Grid";
 
 enum EPageType {
   LETTER_INDEX = "correspondence.LetterIndex",
@@ -134,24 +135,28 @@ export default async function WagtailPage({ params }: TProps) {
         </Breadcrumbs>
       ) : null}
       <Typography variant="h1">{pageData.title}</Typography>
-      {childrenData.items.map(
-        ({ id, title, meta: { slug, search_description } }) => (
-          <Card key={id}>
-            <CardActionArea component={Link} href={slug} prefetch={false}>
-              <CardContent>
-                <Stack spacing={2}>
-                  <Typography variant="h2">{title}</Typography>
-                  {search_description ? (
-                    <Typography variant="body2">
-                      {search_description}
-                    </Typography>
-                  ) : null}
-                </Stack>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        ),
-      )}
+      <Grid container>
+        {childrenData.items.map(
+          ({ id, title, meta: { slug, search_description } }) => (
+            <Grid key={id} size={{ xs: 12, sm: 6, lg: 4 }}>
+              <Card>
+                <CardActionArea component={Link} href={slug} prefetch={false}>
+                  <CardContent>
+                    <Stack spacing={2}>
+                      <Typography variant="h2">{title}</Typography>
+                      {search_description ? (
+                        <Typography variant="body2">
+                          {search_description}
+                        </Typography>
+                      ) : null}
+                    </Stack>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          ),
+        )}
+      </Grid>
     </Stack>
   );
 }

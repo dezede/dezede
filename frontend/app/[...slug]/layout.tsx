@@ -1,11 +1,11 @@
 import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Link from "next/link";
 import Button from "@mui/material/Button";
-import { ROOT_SLUG } from "../constants";
 import Stack from "@mui/material/Stack";
+import LaunchIcon from "@mui/icons-material/Launch";
+import { ROOT_SLUG } from "../constants";
 
 export default function Layout({
   children,
@@ -25,7 +25,14 @@ export default function Layout({
             >
               OpenLetter
             </Button>
-            <Button component={Link} href="/" prefetch={false} color="inherit">
+            <Button
+              component={Link}
+              href="/"
+              prefetch={false}
+              color="inherit"
+              variant="outlined"
+              startIcon={<LaunchIcon />}
+            >
               Dezède
             </Button>
           </Stack>
