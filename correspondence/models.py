@@ -17,8 +17,19 @@ from .blocks import ReferencesStreamBlock
 
 
 class BasePage(Page):
+    api_fields = [
+        APIField('ancestors'),
+    ]
+
     class Meta:
         abstract = True
+
+    def ancestors(self):
+        return [
+            {'id': pk, 'title': title} for pk, title in self.get_ancestors().filter(
+                depth__gt=1,
+            ).values_list('pk', 'title')
+        ]
 
 
 class LetterIndex(BasePage):
@@ -53,6 +64,7 @@ class LetterCorpus(BasePage):
         SearchField('description'),
     ]
     api_fields = [
+        *BasePage.api_fields,
         APIField('person'),
         APIField('description', serializer=RichTextSerializer()),
     ]
@@ -150,6 +162,7 @@ class Letter(BasePage):
         ])
     ]
     api_fields = [
+        *BasePage.api_fields,
         APIField('sender'),
         APIField('recipient_persons'),
         APIField('writing_lieu'),
