@@ -11,6 +11,10 @@ import ChildrenCards from "./ChildrenCards";
 function djangoFetch(relativeUrl: string, init?: RequestInit) {
   return fetch(`http://django:8000${relativeUrl}`, {
     ...init,
+    headers: {
+        ...init?.headers,
+        "Content-Type": "application/json",
+    },
     next: { revalidate: 60 },
   });
 }

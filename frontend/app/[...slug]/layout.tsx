@@ -28,9 +28,8 @@ export default function Layout({
               OpenLetter
             </Button>
             <Button
-              component={Link}
+              component="a"
               href="/"
-              prefetch={false}
               color="inherit"
               variant="outlined"
               startIcon={<LaunchIcon />}
