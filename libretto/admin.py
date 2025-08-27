@@ -7,6 +7,7 @@ from django.contrib.admin import (register, TabularInline, StackedInline,
                                   ModelAdmin, HORIZONTAL)
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.postgres.search import SearchQuery
@@ -40,6 +41,17 @@ from typography.utils import replace
 __all__ = ()
 
 
+class GrappelliAutocompleteForeignKeyWidget(ForeignKeyRawIdWidget):
+    """
+    Skips the costly computation of a label and URL for each related object.
+    Grappelli fetches that related data through an AJAX request anyway…
+    """
+
+    def label_and_url_for_value(self, value):
+        return '', ''
+
+
+
 #
 # Common
 #
@@ -52,6 +64,18 @@ class CustomBaseModel(BaseModelAdmin):
     formfield_overrides = {
         ForeignKey: {'form_class': FasterModelChoiceField},
     }
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        grappelli_autocomplete_fields = getattr(self, 'autocomplete_lookup_fields', {})
+        if (
+            db_field.name in self.raw_id_fields
+            and db_field.name in grappelli_autocomplete_fields.get('fk', [])
+        ):
+            db = kwargs.get('using')
+            kwargs['widget'] = GrappelliAutocompleteForeignKeyWidget(
+                db_field.remote_field, self.admin_site, using=db,
+            )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def check_user_ownership(self, request, obj, has_class_permission):
         if not has_class_permission:
