@@ -1,8 +1,10 @@
 include:
   - path:
       - docker-compose-django/base.yaml
+      - docker-compose-django/react.yaml
       - custom.yaml
       - docker-compose-django/dev.yaml
+      - docker-compose-django/react.dev.yaml
     env_file:
       - docker-compose-django/.env.base
       - .env.base

@@ -1,0 +1,22 @@
+# Copied from docker-compose-django, with just the path in `location` modified to `/openletter`.
+
+location ~ ^/(openletter|_next|__nextjs|favicon.ico|.well-known) {
+  proxy_pass http://react:3000;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header Host $http_host;
+  proxy_redirect off;
+  proxy_intercept_errors on;
+  proxy_connect_timeout 2s;
+  proxy_read_timeout ${PROXY_READ_TIMEOUT};
+  # 1.1 is needed to replace the default 1.0, otherwise `proxy_request_buffering off` is ignored.
+  # See http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_request_buffering
+  proxy_http_version 1.1;
+  proxy_request_buffering off;
+  proxy_buffering off;
+  proxy_set_header Upgrade $http_upgrade;
+  proxy_set_header Connection "upgrade";
+
+  # Parameters to avoid DDOS attacks on React
+  limit_conn react_conn ${REACT_LIMIT_CONN};
+  limit_req zone=react_req burst=${REACT_LIMIT_REQ_BURST} delay=${REACT_LIMIT_REQ_DELAY};
+}

@@ -164,8 +164,10 @@ cython_debug/
 # Docker
 .dockerignore
 Dockerfile
+Dockerfile-postgresql
 Dockerfile-redis
-docker-compose.yaml
+docker-compose.*yaml
+custom.yaml
 
 *.patch
 
@@ -179,8 +181,8 @@ tx
 .gitignore
 
 /tmp/
-node_modules/
-.next
+**/node_modules/
+**/.next
 /media/
 /static/
 /backup/

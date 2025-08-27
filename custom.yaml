@@ -108,6 +108,13 @@ services:
       resources:
         limits:
           memory: 2000M
+  react:
+    build:
+      context: ../frontend
+      dockerfile: ../docker-compose-django/react/Dockerfile
+    depends_on:
+      django:
+        condition: service_healthy
   nginx:
     build:
       context: ..
@@ -128,6 +135,9 @@ services:
       STATIC_LIMIT_REQ_RATE: 100r/s
       STATIC_LIMIT_REQ_BURST: 500
       STATIC_LIMIT_REQ_DELAY: 100
+      REACT_LIMIT_CONN: 15
+      REACT_LIMIT_REQ_RATE: 10r/s
+      REACT_LIMIT_REQ_BURST: 50
     volumes:
       - static:/srv/static
 
