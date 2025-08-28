@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from django_rq import job
 import django_rq
 from haystack.signals import BaseSignalProcessor
+from wagtail.models import Page
 
 from common.utils.html import sanitize_html
 from .forms import FasterModelChoiceIterator
@@ -17,8 +18,8 @@ from .search_indexes import get_haystack_index
 @receiver(pre_save)
 def handle_whitespaces(sender, **kwargs):
     # We skip LogEntry because the logged entry has already been saved
-    # (and sanitized).
-    if sender is LogEntry:
+    # (and sanitized). Skip also all the wagtail models.
+    if issubclass(sender, (LogEntry, Page)) or 'wagtail' in sender._meta.app_label:
         return
 
     # We start by stripping all leading and trailing whitespaces.

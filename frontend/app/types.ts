@@ -20,7 +20,7 @@ export enum EModelType {
   LETTER_IMAGE = "correspondence.LetterImage",
   LETTER_RECIPIENT = "correspondence.LetterRecipient",
   PERSON = "libretto.Individu",
-  LIEU = "libretto.Lieu",
+  PLACE = "libretto.Lieu",
 }
 
 export type TRelated<E extends string = EModelType> = {
@@ -54,6 +54,23 @@ export type TRelatedPerson = TRelated<EModelType.PERSON> & {
   titre: EPersonTitre;
   titre_display: string;
   pseudonyme: string;
+};
+
+export type TRelatedPlace = TRelated<EModelType.PLACE> & {
+  nom: string;
+  nature: {
+    referent: boolean;
+  };
+  parent: null | {
+    nom: string;
+  };
+};
+
+export type TLetterImage = TRelated<EModelType.LETTER_IMAGE> & {
+  name: string;
+  image: TImage;
+  thumbnail: TImage;
+  references: TBlock<EBlockType.LIEU>[];
 };
 
 export enum EPageType {

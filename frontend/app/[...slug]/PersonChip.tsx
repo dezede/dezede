@@ -1,5 +1,5 @@
 import { TRelatedPerson } from "../types";
-import Person from "./Person";
+import PersonLabel from "./PersonLabel";
 import Chip from "@mui/material/Chip";
 
 export default function PersonLink(person: TRelatedPerson) {
@@ -7,7 +7,7 @@ export default function PersonLink(person: TRelatedPerson) {
     <Chip
       component="a"
       href={`/individus/id/${person.id}/`}
-      label={<Person {...person} />}
+      label={<PersonLabel {...person} />}
       clickable
       size="small"
     />

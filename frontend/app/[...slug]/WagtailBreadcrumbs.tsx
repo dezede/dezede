@@ -1,5 +1,3 @@
-"use client";
-
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import MuiLink from "@mui/material/Link";
 import { TPageDetailed } from "../types";

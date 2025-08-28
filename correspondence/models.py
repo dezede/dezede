@@ -149,6 +149,7 @@ class Letter(BasePage):
         ], heading=_('Rédaction')),
         InlinePanel('letter_images', heading=_('Images'), label=_('image')),
         FieldPanel('transcription'),
+        FieldPanel('description'),
     ]
     search_fields = [
         *BasePage.search_fields,
@@ -167,6 +168,8 @@ class Letter(BasePage):
         APIField('writing_lieu_approx'),
         APIField('writing_date'),
         APIField('writing_date_approx'),
+        APIField('writing_heure'),
+        APIField('writing_heure_approx'),
         APIField('letter_images'),
         APIField('transcription', serializer=RichTextSerializer()),
         APIField('description', serializer=RichTextSerializer()),

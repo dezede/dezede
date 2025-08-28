@@ -36,7 +36,7 @@ function getSmallCapsLabel({
   }
 }
 
-export default function Person(person: TRelatedPerson) {
+export default function PersonLabel(person: TRelatedPerson) {
   const smallCapsLabel = <SmallCaps>{getSmallCapsLabel(person)}</SmallCaps>;
   switch (person.designation) {
     case EPersonDesignation.STANDARD:
