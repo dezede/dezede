@@ -108,7 +108,7 @@ class LetterImage(Orderable):
     ]
     api_fields = [
         APIField('name'),
-        APIField('image', serializer=ImageRenditionField('max-400x800')),
+        APIField('image', serializer=ImageRenditionField('max-1920x1080')),
         APIField('thumbnail', serializer=ImageRenditionField('fill-100x100', source='image')),
         APIField('references'),
     ]

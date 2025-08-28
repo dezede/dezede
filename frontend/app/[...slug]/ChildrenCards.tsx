@@ -13,7 +13,7 @@ export default function ChildrenCards({
   childrenData: (TPage & { meta: { search_description: string } })[];
 }) {
   return (
-    <Grid container>
+    <Grid container spacing={4}>
       {childrenData.map(({ id, title, meta: { slug, search_description } }) => (
         <Grid key={id} size={{ xs: 12, sm: 6, lg: 4 }}>
           <Card>

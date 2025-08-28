@@ -20,6 +20,7 @@ import Paper from "@mui/material/Paper";
 import LetterImagesReader from "./LetterImagesReader";
 import SpaceTime from "./SpaceTime";
 import Divider from "@mui/material/Divider";
+import Box from "@mui/material/Box";
 
 export default async function Letter({
   findPageData,
@@ -96,7 +97,7 @@ export default async function Letter({
                   <Stack
                     direction="row"
                     justifyContent="space-between"
-                    spacing={4}
+                    spacing={2}
                     useFlexGap
                     flexWrap="wrap"
                   >
@@ -124,7 +125,13 @@ export default async function Letter({
                     />
                   </Stack>
                   <Divider />
-                  <RichText value={transcription} />
+                  {transcription ? (
+                    <RichText value={transcription} />
+                  ) : (
+                    <Box py={10} textAlign="center" color="text.disabled">
+                      Transcription manquante
+                    </Box>
+                  )}
                 </Stack>
               </Container>
             </Paper>

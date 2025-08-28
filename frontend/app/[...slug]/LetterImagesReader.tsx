@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 export default function ImageReader({
   letterImages,
@@ -66,14 +67,22 @@ export default function ImageReader({
         </Grid>
       </Grid>
       <Grid>
-        <Image
-          key={id}
-          src={full_url}
-          width={width}
-          height={height}
-          alt={alt}
-          unoptimized
-        />
+        <TransformWrapper>
+          <TransformComponent
+            wrapperStyle={{ width: "100%", height: "100%" }}
+            contentStyle={{ maxWidth: "100%", maxHeight: "100%" }}
+          >
+            <Image
+              key={id}
+              src={full_url}
+              width={width}
+              height={height}
+              alt={alt}
+              unoptimized
+              style={{ maxWidth: "100%", height: "auto" }}
+            />
+          </TransformComponent>
+        </TransformWrapper>
       </Grid>
     </Grid>
   );
