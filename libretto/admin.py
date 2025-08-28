@@ -57,7 +57,7 @@ class GrappelliAutocompleteForeignKeyWidget(ForeignKeyRawIdWidget):
 #
 
 
-class CustomBaseModel(BaseModelAdmin):
+class CustomBaseModelAdmin(BaseModelAdmin):
     # FIXME: Utiliser un AuthenticationBackend personnalisé.
 
     # Speeds up ForeignKeys in `list_editable` by caching the choices.
@@ -89,8 +89,7 @@ class CustomBaseModel(BaseModelAdmin):
         )
 
     def has_change_permission(self, request, obj=None):
-        has_class_permission = super(CustomBaseModel,
-                                     self).has_change_permission(request, obj)
+        has_class_permission = super().has_change_permission(request, obj)
         return self.check_user_ownership(request, obj, has_class_permission)
 
     def has_delete_permission(self, request, obj=None):
@@ -98,13 +97,12 @@ class CustomBaseModel(BaseModelAdmin):
         # django.contrib.admin.actions.delete_selected, cette action autorise
         # un utilisateur restreint à supprimer des objets pour lesquels il n'a
         # pas le droit.
-        has_class_permission = super(CustomBaseModel,
-                                     self).has_delete_permission(request, obj)
+        has_class_permission = super().has_delete_permission(request, obj)
         return self.check_user_ownership(request, obj, has_class_permission)
 
     def get_queryset(self, request):
         user = request.user
-        qs = super(CustomBaseModel, self).get_queryset(request)
+        qs = super().get_queryset(request)
         if issubclass(qs.model, CommonModel):
             if not user.is_superuser and IS_POPUP_VAR not in request.GET:
                 return qs.filter(
@@ -230,12 +228,12 @@ SourceHasProgramListFilter = build_boolean_list_filter(
 #
 
 
-class CustomTabularInline(TabularInline, CustomBaseModel):
+class CustomTabularInline(TabularInline, CustomBaseModelAdmin):
     extra = 0
     exclude = ('owner',)
 
 
-class CustomStackedInline(StackedInline, CustomBaseModel):
+class CustomStackedInline(StackedInline, CustomBaseModelAdmin):
     extra = 0
     exclude = ('owner',)
 
@@ -369,11 +367,12 @@ class ElementDeProgrammeInline(SuperInlineModelAdmin,
     inlines = (ElementDeDistributionInline,)
 
     def get_queryset(self, request):
-        qs = super(ElementDeProgrammeInline, self).get_queryset(request)
-        return qs.select_related('oeuvre').prefetch_related(
+        qs = super().get_queryset(request)
+        return qs.select_related('oeuvre__genre').prefetch_related(
+            'oeuvre__auteurs__individu', 'oeuvre__auteurs__profession',
+            'oeuvre__pupitres__partie',
             'caracteristiques', 'distribution',
-            'distribution__individu', 'distribution__ensemble',
-            'distribution__partie', 'distribution__profession')
+        )
 
 
 class SourceEvenementInline(TabularInline):
@@ -453,7 +452,7 @@ class SourcePartieInline(TabularInline):
 #
 
 
-class CommonAdmin(CustomBaseModel, ModelAdmin):
+class CommonAdmin(CustomBaseModelAdmin, ModelAdmin):
     list_select_related = ['owner']
     search_fields = ['search_vector']
     list_per_page = 20
@@ -953,6 +952,10 @@ class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
 
     def get_queryset(self, request):
         qs = super(EvenementAdmin, self).get_queryset(request)
+        if request.resolver_match.url_name == 'libretto_evenement_change':
+            return qs.select_related(
+                'debut_lieu__nature', 'debut_lieu__parent__nature',
+            )
         qs = qs.extra(select={
             '_has_program':
             'EXISTS (SELECT 1 FROM %s WHERE evenement_id = %s.id)'
