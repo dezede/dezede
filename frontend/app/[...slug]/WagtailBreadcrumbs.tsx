@@ -1,29 +1,27 @@
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import MuiLink from "@mui/material/Link";
-import { TPageDetailed } from "../types";
+import { TFindPageData } from "../types";
 import Link from "next/link";
 import { ROOT_SLUG } from "../constants";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import HomeIcon from "@mui/icons-material/Home";
-import { getRelativeUrl } from "../utils";
 
-export default function WagtailBreadcrumbs({
-  pageData,
+export default async function WagtailBreadcrumbs({
+  findPageData,
 }: {
-  pageData: TPageDetailed;
+  findPageData: TFindPageData;
 }) {
-  if (pageData.ancestors.length === 0) {
+  if (findPageData.ancestors.length === 0) {
     return null;
   }
-  const pathname = getRelativeUrl(pageData.meta.html_url);
   return (
     <Breadcrumbs>
-      {pageData.ancestors.map(({ id, title }, index) => (
+      {findPageData.ancestors.map(({ id, title }, index) => (
         <MuiLink
           key={id}
           component={Link}
-          href={`/${ROOT_SLUG}/${pathname
+          href={`/${ROOT_SLUG}/${findPageData.url
             .split("/")
             .slice(1, index + 1)
             .join("/")}`}
@@ -36,7 +34,7 @@ export default function WagtailBreadcrumbs({
           </Stack>
         </MuiLink>
       ))}
-      <Typography>{pageData.title}</Typography>
+      <Typography>{findPageData.title}</Typography>
     </Breadcrumbs>
   );
 }

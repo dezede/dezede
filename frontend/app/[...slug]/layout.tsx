@@ -1,5 +1,4 @@
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Link from "next/link";
 import Button from "@mui/material/Button";
@@ -7,68 +6,103 @@ import Stack from "@mui/material/Stack";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { ROOT_SLUG } from "../constants";
 import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import PageHeader from "./PageHeader";
+import { Suspense } from "react";
+import Skeleton from "@mui/material/Skeleton";
+import { findPage } from "../utils";
 
-export default function Layout({
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) {
+  const { title, seoTitle, description } = await findPage({ params });
+  return { title: seoTitle || title, description };
+}
+
+export default async function Layout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ slug: string[] }>;
 }>) {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexFlow: "column nowrap",
-        gap: 4,
-        paddingBottom: 4,
-      }}
+    <Grid
+      container
+      direction="column"
+      wrap="nowrap"
+      spacing={4}
+      paddingBottom={4}
     >
-      <AppBar position="static">
-        <Container>
-          <Stack direction="row" justifyContent="space-between" sx={{ py: 1 }}>
-            <Button
-              component={Link}
-              href={`/${ROOT_SLUG}`}
-              prefetch={false}
-              color="inherit"
+      <Grid>
+        <AppBar position="static">
+          <Container>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              sx={{ py: 1 }}
             >
-              OpenLetter
-            </Button>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography>Financement :</Typography>
               <Button
-                component="a"
-                href="https://nbe.org.uk/wp/"
-                target="_blank"
-                variant="outlined"
+                component={Link}
+                href={`/${ROOT_SLUG}`}
+                prefetch={false}
                 color="inherit"
-                size="small"
               >
-                New Berlioz Edition Trust
+                OpenLetter
               </Button>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography>Financement :</Typography>
+                <Button
+                  component="a"
+                  href="https://nbe.org.uk/wp/"
+                  target="_blank"
+                  variant="outlined"
+                  color="inherit"
+                  size="small"
+                >
+                  New Berlioz Edition Trust
+                </Button>
+                <Button
+                  component="a"
+                  href="https://musica.hypotheses.org/"
+                  target="_blank"
+                  variant="outlined"
+                  color="inherit"
+                  size="small"
+                >
+                  Consortium Musica2
+                </Button>
+              </Stack>
               <Button
                 component="a"
-                href="https://musica.hypotheses.org/"
-                target="_blank"
-                variant="outlined"
+                href="/"
                 color="inherit"
-                size="small"
+                variant="outlined"
+                startIcon={<LaunchIcon />}
               >
-                Consortium Musica2
+                Dezède
               </Button>
             </Stack>
-            <Button
-              component="a"
-              href="/"
-              color="inherit"
-              variant="outlined"
-              startIcon={<LaunchIcon />}
-            >
-              Dezède
-            </Button>
-          </Stack>
+          </Container>
+        </AppBar>
+      </Grid>
+      <Grid>
+        <Container>
+          <Suspense
+            fallback={
+              <Stack spacing={4}>
+                <Skeleton variant="rectangular" height={24} />
+                <Skeleton variant="rectangular" height={56} />
+              </Stack>
+            }
+          >
+            <PageHeader params={params} />
+          </Suspense>
         </Container>
-      </AppBar>
-      {children}
-    </Box>
+      </Grid>
+      <Grid>{children}</Grid>
+    </Grid>
   );
 }

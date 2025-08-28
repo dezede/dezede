@@ -1,14 +1,13 @@
 import Stack from "@mui/material/Stack";
 import {
   EModelType,
-  TFindPage,
+  TFindPageData,
   TLetterImage,
   TPageDetailed,
   TRelated,
   TRelatedPerson,
   TRelatedPlace,
 } from "../types";
-import WagtailBreadcrumbs from "./WagtailBreadcrumbs";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -25,7 +24,7 @@ import Box from "@mui/material/Box";
 export default async function Letter({
   findPageData,
 }: {
-  findPageData: TFindPage;
+  findPageData: TFindPageData;
 }) {
   const pageData = await djangoFetchData<
     TPageDetailed & {
@@ -47,7 +46,6 @@ export default async function Letter({
     `${findPageData.apiUrl}?fields=sender(${INDIVIDU_FIELDS}),recipients(person(${INDIVIDU_FIELDS})),writing_lieu(nom,nature(referent),parent(nom))`,
   );
   const {
-    title,
     sender,
     recipients,
     writing_lieu,
@@ -62,14 +60,6 @@ export default async function Letter({
   } = pageData;
   return (
     <Grid container direction="column" spacing={4}>
-      <Grid>
-        <Container>
-          <Stack spacing={4}>
-            <WagtailBreadcrumbs pageData={pageData} />
-            <Typography variant="h1">{title}</Typography>
-          </Stack>
-        </Container>
-      </Grid>
       <Grid>
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, md: 6, lg: 5 }}>

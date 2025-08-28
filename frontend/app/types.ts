@@ -79,12 +79,15 @@ export enum EPageType {
   LETTER = "correspondence.Letter",
 }
 
-export type TFindPage = {
+export type TFindPageData = {
   id: number;
   apiUrl: string;
   type: EPageType;
   title: string;
+  seoTitle: string;
   description: string;
+  ancestors: { id: number; title: string }[];
+  url: string;
 };
 
 export type TAncestors = { id: number; title: string }[];

@@ -17,19 +17,10 @@ from .blocks import ReferencesStreamBlock
 
 
 class BasePage(Page):
-    api_fields = [
-        APIField('ancestors'),
-    ]
+    api_fields = []
 
     class Meta:
         abstract = True
-
-    def ancestors(self):
-        return [
-            {'id': pk, 'title': title} for pk, title in self.get_ancestors().filter(
-                depth__gt=1,
-            ).values_list('pk', 'title')
-        ]
 
 
 class LetterIndex(BasePage):
