@@ -7,6 +7,7 @@ from django.contrib.admin import (register, TabularInline, StackedInline,
                                   ModelAdmin, HORIZONTAL)
 from django.contrib.admin.options import BaseModelAdmin
 from django.contrib.admin.views.main import IS_POPUP_VAR
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib.postgres.search import SearchQuery
@@ -40,18 +41,41 @@ from typography.utils import replace
 __all__ = ()
 
 
+class GrappelliAutocompleteForeignKeyWidget(ForeignKeyRawIdWidget):
+    """
+    Skips the costly computation of a label and URL for each related object.
+    Grappelli fetches that related data through an AJAX request anyway…
+    """
+
+    def label_and_url_for_value(self, value):
+        return '', ''
+
+
+
 #
 # Common
 #
 
 
-class CustomBaseModel(BaseModelAdmin):
+class CustomBaseModelAdmin(BaseModelAdmin):
     # FIXME: Utiliser un AuthenticationBackend personnalisé.
 
     # Speeds up ForeignKeys in `list_editable` by caching the choices.
     formfield_overrides = {
         ForeignKey: {'form_class': FasterModelChoiceField},
     }
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        grappelli_autocomplete_fields = getattr(self, 'autocomplete_lookup_fields', {})
+        if (
+            db_field.name in self.raw_id_fields
+            and db_field.name in grappelli_autocomplete_fields.get('fk', [])
+        ):
+            db = kwargs.get('using')
+            kwargs['widget'] = GrappelliAutocompleteForeignKeyWidget(
+                db_field.remote_field, self.admin_site, using=db,
+            )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def check_user_ownership(self, request, obj, has_class_permission):
         if not has_class_permission:
@@ -65,8 +89,7 @@ class CustomBaseModel(BaseModelAdmin):
         )
 
     def has_change_permission(self, request, obj=None):
-        has_class_permission = super(CustomBaseModel,
-                                     self).has_change_permission(request, obj)
+        has_class_permission = super().has_change_permission(request, obj)
         return self.check_user_ownership(request, obj, has_class_permission)
 
     def has_delete_permission(self, request, obj=None):
@@ -74,13 +97,12 @@ class CustomBaseModel(BaseModelAdmin):
         # django.contrib.admin.actions.delete_selected, cette action autorise
         # un utilisateur restreint à supprimer des objets pour lesquels il n'a
         # pas le droit.
-        has_class_permission = super(CustomBaseModel,
-                                     self).has_delete_permission(request, obj)
+        has_class_permission = super().has_delete_permission(request, obj)
         return self.check_user_ownership(request, obj, has_class_permission)
 
     def get_queryset(self, request):
         user = request.user
-        qs = super(CustomBaseModel, self).get_queryset(request)
+        qs = super().get_queryset(request)
         if issubclass(qs.model, CommonModel):
             if not user.is_superuser and IS_POPUP_VAR not in request.GET:
                 return qs.filter(
@@ -206,12 +228,12 @@ SourceHasProgramListFilter = build_boolean_list_filter(
 #
 
 
-class CustomTabularInline(TabularInline, CustomBaseModel):
+class CustomTabularInline(TabularInline, CustomBaseModelAdmin):
     extra = 0
     exclude = ('owner',)
 
 
-class CustomStackedInline(StackedInline, CustomBaseModel):
+class CustomStackedInline(StackedInline, CustomBaseModelAdmin):
     extra = 0
     exclude = ('owner',)
 
@@ -345,11 +367,12 @@ class ElementDeProgrammeInline(SuperInlineModelAdmin,
     inlines = (ElementDeDistributionInline,)
 
     def get_queryset(self, request):
-        qs = super(ElementDeProgrammeInline, self).get_queryset(request)
-        return qs.select_related('oeuvre').prefetch_related(
+        qs = super().get_queryset(request)
+        return qs.select_related('oeuvre__genre').prefetch_related(
+            'oeuvre__auteurs__individu', 'oeuvre__auteurs__profession',
+            'oeuvre__pupitres__partie',
             'caracteristiques', 'distribution',
-            'distribution__individu', 'distribution__ensemble',
-            'distribution__partie', 'distribution__profession')
+        )
 
 
 class SourceEvenementInline(TabularInline):
@@ -429,7 +452,7 @@ class SourcePartieInline(TabularInline):
 #
 
 
-class CommonAdmin(CustomBaseModel, ModelAdmin):
+class CommonAdmin(CustomBaseModelAdmin, ModelAdmin):
     list_select_related = ['owner']
     search_fields = ['search_vector']
     list_per_page = 20
@@ -931,6 +954,10 @@ class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
 
     def get_queryset(self, request):
         qs = super(EvenementAdmin, self).get_queryset(request)
+        if request.resolver_match.url_name == 'libretto_evenement_change':
+            return qs.select_related(
+                'debut_lieu__nature', 'debut_lieu__parent__nature',
+            )
         qs = qs.annotate_has_program_and_source()
         return qs.select_related(
             'debut_lieu', 'debut_lieu__nature',
