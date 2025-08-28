@@ -120,10 +120,12 @@ services:
       CSP_CONNECT: "'self' https://analyseweb.huma-num.fr"
       CSP_FRAME: "'self' https://docs.google.com"
       # TODO: Reduce these limits, they are ludicrous.
+      #       For Django they are so high because the admin has gigangitic amounts
+      #       of related HTTP queries due to related objects everywhere in events.
       DJANGO_LIMIT_CONN: 20
       DJANGO_LIMIT_REQ_RATE: 20r/s
-      DJANGO_LIMIT_REQ_BURST: 100
-      DJANGO_LIMIT_REQ_DELAY: 20
+      DJANGO_LIMIT_REQ_BURST: 400
+      DJANGO_LIMIT_REQ_DELAY: 200
       STATIC_LIMIT_CONN: 100
       STATIC_LIMIT_REQ_RATE: 100r/s
       STATIC_LIMIT_REQ_BURST: 500
