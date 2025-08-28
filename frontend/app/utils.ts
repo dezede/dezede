@@ -19,7 +19,7 @@ export function getRelativeUrl(absoluteUrl: string): string {
   return new URL(absoluteUrl).pathname;
 }
 
-export const djangoFetch = cache(function djangoFetch(
+export const djangoFetch = function djangoFetch(
   relativeUrl: string,
   init?: RequestInit,
 ) {
@@ -30,7 +30,7 @@ export const djangoFetch = cache(function djangoFetch(
       "Content-Type": "application/json",
     },
   });
-});
+};
 
 export const djangoFetchData = cache(async function djangoFetchData<T>(
   relativeUrl: string,

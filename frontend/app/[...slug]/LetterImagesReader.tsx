@@ -10,7 +10,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
-export default function ImageReader({
+export default function LetterImagesReader({
   letterImages,
 }: {
   letterImages: TLetterImage[];

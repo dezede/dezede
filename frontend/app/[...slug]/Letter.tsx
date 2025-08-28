@@ -69,6 +69,7 @@ export default async function Letter({
                 top: 100,
                 borderTopLeftRadius: 0,
                 borderBottomLeftRadius: 0,
+                overflow: "hidden",
               }}
             >
               <LetterImagesReader letterImages={letter_images} />
