@@ -2,7 +2,7 @@
 
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import MuiLink from "@mui/material/Link";
-import { TPageDetailed } from "../type";
+import { TPageDetailed } from "../types";
 import Link from "next/link";
 import { ROOT_SLUG } from "../constants";
 import Typography from "@mui/material/Typography";

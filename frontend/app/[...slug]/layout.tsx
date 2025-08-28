@@ -39,7 +39,7 @@ export default function Layout({
           </Stack>
         </Container>
       </AppBar>
-      <Container>{children}</Container>
+      {children}
     </Box>
   );
 }

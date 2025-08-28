@@ -7,7 +7,7 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
-import { TPage } from "../type";
+import { TPage } from "../types";
 
 export default function ChildrenCards({
   childrenData,

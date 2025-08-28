@@ -12,6 +12,7 @@ from tinymce.models import HTMLField
 from common.utils.abbreviate import abbreviate
 from common.utils.html import href, sc, hlp
 from common.utils.text import str_list, str_list_w_last, ex
+from rest_framework import fields as rest_fields
 from wagtail.api import APIField
 from wagtail.search.index import Indexed, SearchField
 
@@ -158,6 +159,7 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
         APIField('pseudonyme'),
         APIField('designation'),
         APIField('titre'),
+        APIField('titre_display', rest_fields.CharField(source='get_titre_display')),
         APIField('naissance_lieu'),
         APIField('naissance_lieu_approx'),
         APIField('naissance_date'),

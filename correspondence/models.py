@@ -155,16 +155,14 @@ class Letter(BasePage):
         RelatedFields('sender', [
             SearchField('nom', boost=10),
         ]),
-        RelatedFields('recipients', [
-            RelatedFields('person', [
-                SearchField('nom'),
-            ]),
+        RelatedFields('recipient_persons', [
+            SearchField('nom'),
         ])
     ]
     api_fields = [
         *BasePage.api_fields,
         APIField('sender'),
-        APIField('recipient_persons'),
+        APIField('recipients'),
         APIField('writing_lieu'),
         APIField('writing_lieu_approx'),
         APIField('writing_date'),
