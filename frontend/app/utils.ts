@@ -1,5 +1,11 @@
 import { notFound } from "next/navigation";
-import { EPageType, TFindPageData, TPage, TPageResults } from "./types";
+import {
+  EPageType,
+  TFindPageData,
+  TPage,
+  TPageResults,
+  TQueryParams,
+} from "./types";
 import { cache } from "react";
 import { ROOT_SLUG } from "./constants";
 
@@ -21,9 +27,28 @@ export function getRelativeUrl(absoluteUrl: string): string {
 
 export const djangoFetch = function djangoFetch(
   relativeUrl: string,
+  params?: TQueryParams,
   init?: RequestInit,
 ) {
-  return fetch(`http://django:8000${relativeUrl}`, {
+  const searchParams = new URLSearchParams();
+  if (params !== undefined) {
+    Object.entries(params).forEach(([param, value]) => {
+      if (!value) {
+        return;
+      }
+      if (typeof value === "number") {
+        value = value.toString();
+      }
+      if (typeof value === "string") {
+        searchParams.set(param, value);
+      } else {
+        for (const item of value) {
+          searchParams.append(param, item);
+        }
+      }
+    });
+  }
+  return fetch(`http://django:8000${relativeUrl}?${searchParams.toString()}`, {
     ...init,
     headers: {
       ...init?.headers,
@@ -34,8 +59,9 @@ export const djangoFetch = function djangoFetch(
 
 export const djangoFetchData = cache(async function djangoFetchData<T>(
   relativeUrl: string,
+  params?: TQueryParams,
 ): Promise<T> {
-  const response = await djangoFetch(relativeUrl);
+  const response = await djangoFetch(relativeUrl, params);
   if (!response.ok) {
     notFound();
   }
@@ -44,8 +70,9 @@ export const djangoFetchData = cache(async function djangoFetchData<T>(
 
 export async function fetchPages<T = TPage>(
   relativeUrl: string,
+  params?: TQueryParams,
 ): Promise<TPageResults<T>> {
-  return await djangoFetchData<TPageResults<T>>(relativeUrl);
+  return await djangoFetchData<TPageResults<T>>(relativeUrl, params);
 }
 
 export const findPage = cache(async function findPage({
@@ -59,9 +86,12 @@ export const findPage = cache(async function findPage({
   } else {
     slug = slug.slice(1);
   }
-  const wagtailUrl = `/${(slug ?? []).join("/")}`;
+  const wagtailUrl = `/${(slug ?? []).map(decodeURIComponent).join("/")}`;
   const redirectResponse = await djangoFetch(
-    `/api/pages/find/?html_path=${wagtailUrl}`,
+    "/api/pages/find/",
+    {
+      html_path: wagtailUrl,
+    },
     {
       redirect: "manual",
     },

@@ -1,3 +1,9 @@
+export type TSearchParams = Promise<{
+  [key: string]: string | string[] | undefined;
+}>;
+
+export type TQueryParams = { [param: string]: string | string[] | number };
+
 export type TImage = {
   url: string;
   full_url: string;
@@ -119,3 +125,26 @@ export type TPageResults<T = TPage> = {
   };
   items: T[];
 };
+
+export type TLetter = TPageDetailed & {
+  sender: TRelatedPerson;
+  recipients: (TRelated<EModelType.LETTER_RECIPIENT> & {
+    person: TRelatedPerson;
+  })[];
+  writing_lieu: TRelatedPlace | null;
+  writing_lieu_approx: string;
+  writing_date: string | null;
+  writing_date_approx: string;
+  writing_heure: string | null;
+  writing_heure_approx: string;
+  letter_images: TLetterImage[];
+  transcription: string;
+  description: string;
+};
+
+export enum ELetterTab {
+  ALL = "all",
+  FROM = "from",
+  TO = "to",
+  OTHER = "other",
+}
