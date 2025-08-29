@@ -11,7 +11,10 @@ import { fetchPages } from "../utils";
 export default async function ChildrenCards({ pageId }: { pageId: number }) {
   const childrenData = await fetchPages<
     TPage & { meta: { search_description: string } }
-  >(`/api/pages/?child_of=${pageId}&fields=search_description`);
+  >("/api/pages/", {
+    child_of: pageId,
+    fields: "search_description",
+  });
   return (
     <Grid container spacing={4}>
       {childrenData.items.map(

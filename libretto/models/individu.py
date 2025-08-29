@@ -16,6 +16,8 @@ from rest_framework import fields as rest_fields
 from wagtail.api import APIField
 from wagtail.search.index import Indexed, SearchField
 
+from libretto.contants import INDIVIDU_SEARCH_FIELDS
+
 from .base import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
     PublishedManager, PublishedQuerySet, SpaceTimeFields,
@@ -145,10 +147,7 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
     dezede_search_fields = [
         'nom', 'nom_naissance', 'prenoms', 'pseudonyme',
     ]
-    search_fields = [
-        SearchField('nom', boost=10), SearchField('nom_naissance'),
-        SearchField('prenoms'), SearchField('pseudonyme', boost=10),
-    ]
+    search_fields = INDIVIDU_SEARCH_FIELDS
     api_fields = [
         APIField('particule_nom'),
         APIField('nom'),

@@ -1,18 +1,10 @@
 import Stack from "@mui/material/Stack";
-import {
-  EModelType,
-  TFindPageData,
-  TLetterImage,
-  TPageDetailed,
-  TRelated,
-  TRelatedPerson,
-  TRelatedPlace,
-} from "../types";
+import { TFindPageData, TLetter } from "../types";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { djangoFetchData } from "../utils";
-import { INDIVIDU_FIELDS } from "../constants";
+import { INDIVIDU_FIELDS, PLACE_FIELDS } from "../constants";
 import PersonLink from "./PersonChip";
 import RichText from "./RichText";
 import Paper from "@mui/material/Paper";
@@ -26,25 +18,9 @@ export default async function Letter({
 }: {
   findPageData: TFindPageData;
 }) {
-  const pageData = await djangoFetchData<
-    TPageDetailed & {
-      sender: TRelatedPerson;
-      recipients: (TRelated<EModelType.LETTER_RECIPIENT> & {
-        person: TRelatedPerson;
-      })[];
-      writing_lieu: TRelatedPlace | null;
-      writing_lieu_approx: string;
-      writing_date: string | null;
-      writing_date_approx: string;
-      writing_heure: string | null;
-      writing_heure_approx: string;
-      letter_images: TLetterImage[];
-      transcription: string;
-      description: string;
-    }
-  >(
-    `${findPageData.apiUrl}?fields=sender(${INDIVIDU_FIELDS}),recipients(person(${INDIVIDU_FIELDS})),writing_lieu(nom,nature(referent),parent(nom))`,
-  );
+  const pageData = await djangoFetchData<TLetter>(findPageData.apiUrl, {
+    fields: `sender(${INDIVIDU_FIELDS}),recipients(person(${INDIVIDU_FIELDS})),writing_lieu(${PLACE_FIELDS})`,
+  });
   const {
     sender,
     recipients,
@@ -99,7 +75,7 @@ export default async function Letter({
                       useFlexGap
                       alignItems="center"
                     >
-                      <Typography color="textDisabled">Lettre de</Typography>
+                      <Typography color="textDisabled">De</Typography>
                       <PersonLink {...sender} />
                       <Typography color="textDisabled">à</Typography>
                       {recipients.map(({ person }) => (
@@ -113,6 +89,7 @@ export default async function Letter({
                       fuzzyDate={writing_date_approx}
                       time={writing_heure}
                       fuzzyTime={writing_heure_approx}
+                      chip
                     />
                   </Stack>
                   <Divider />

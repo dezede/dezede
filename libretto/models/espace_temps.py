@@ -12,6 +12,8 @@ from tree.models import TreeModelMixin
 from wagtail.api import APIField
 from wagtail.search.index import SearchField, Indexed, RelatedFields
 
+from libretto.contants import LIEU_SEARCH_FIELDS
+
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, PublishedManager,
     DATE_MSG, calc_pluriel, SlugModel, UniqueSlugModel, PublishedQuerySet,
@@ -94,11 +96,7 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
     objects = LieuManager()
 
     dezede_search_fields = ['nom']
-    search_fields = [
-        SearchField('nom', boost=10),
-        RelatedFields('parent', [SearchField('nom')]),
-        RelatedFields('nature', [SearchField('nom')])
-    ]
+    search_fields = LIEU_SEARCH_FIELDS
     api_fields = [
         APIField('nom'),
         APIField('parent'),

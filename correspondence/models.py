@@ -1,4 +1,7 @@
+from functools import cached_property
+from bleach import clean
 from django.db.models import ForeignKey, CASCADE, PROTECT, CharField, ManyToManyField
+from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
@@ -11,6 +14,7 @@ from wagtail.models import Page, Orderable
 from wagtail.search.index import SearchField, RelatedFields
 
 from correspondence.serializer_fields import RichTextSerializer
+from libretto.contants import INDIVIDU_SEARCH_FIELDS, LIEU_SEARCH_FIELDS
 from libretto.models.base import SpaceTimeFields
 
 from .blocks import ReferencesStreamBlock
@@ -21,6 +25,9 @@ class BasePage(Page):
 
     class Meta:
         abstract = True
+
+    def serve(self, request, *args, **kwargs):
+        return redirect(f'/openletter{self.relative_url(None)}')
 
 
 class LetterIndex(BasePage):
@@ -58,11 +65,27 @@ class LetterCorpus(BasePage):
         *BasePage.api_fields,
         APIField('person'),
         APIField('description', serializer=RichTextSerializer()),
+        APIField('total_count'),
+        APIField('from_count'),
+        APIField('to_count'),
     ]
 
     class Meta:
         verbose_name = pgettext_lazy('singulier', 'corpus de lettres')
         verbose_name_plural = pgettext_lazy('pluriel', 'corpus de lettres')
+
+    @cached_property
+    def total_count(self) -> int:
+        return Letter.objects.child_of(self).count()
+
+    @cached_property
+    def from_count(self) -> int:
+        return Letter.objects.child_of(self).filter(sender=self.person).count()
+
+    @cached_property
+    def to_count(self) -> int:
+        return Letter.objects.child_of(self).filter(recipient_persons=self.person).count()
+
 
 
 class LetterRecipient(Orderable):
@@ -100,7 +123,7 @@ class LetterImage(Orderable):
     api_fields = [
         APIField('name'),
         APIField('image', serializer=ImageRenditionField('max-1920x1080')),
-        APIField('thumbnail', serializer=ImageRenditionField('fill-100x100', source='image')),
+        APIField('thumbnail', serializer=ImageRenditionField('fill-200x200', source='image')),
         APIField('references'),
     ]
 
@@ -138,7 +161,7 @@ class Letter(BasePage):
                 FieldPanel('writing_heure'), FieldPanel('writing_heure_approx'),
             ]),
         ], heading=_('Rédaction')),
-        InlinePanel('letter_images', heading=_('Images'), label=_('image')),
+        InlinePanel('letter_images', heading=_('Images'), label=_('image'), min_num=1),
         FieldPanel('transcription'),
         FieldPanel('description'),
     ]
@@ -147,9 +170,13 @@ class Letter(BasePage):
         RelatedFields('sender', [
             SearchField('nom', boost=10),
         ]),
-        RelatedFields('recipient_persons', [
-            SearchField('nom'),
-        ])
+        RelatedFields('recipient_persons', INDIVIDU_SEARCH_FIELDS),
+        RelatedFields('writing_lieu', LIEU_SEARCH_FIELDS),
+        SearchField('writing_lieu_approx'),
+        SearchField('writing_date'),
+        SearchField('writing_date_approx'),
+        SearchField('transcription', boost=10),
+        SearchField('description', boost=0.1),
     ]
     api_fields = [
         *BasePage.api_fields,
@@ -163,9 +190,14 @@ class Letter(BasePage):
         APIField('writing_heure_approx'),
         APIField('letter_images'),
         APIField('transcription', serializer=RichTextSerializer()),
+        APIField('transcription_text'),
         APIField('description', serializer=RichTextSerializer()),
     ]
 
     class Meta:
         verbose_name = pgettext_lazy('correspondance épistolaire', 'lettre')
         verbose_name_plural = pgettext_lazy('correspondance épistolaire', 'lettres')
+
+    @property
+    def transcription_text(self) -> str:
+        return clean(self.transcription, strip=True)

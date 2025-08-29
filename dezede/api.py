@@ -1,7 +1,7 @@
 import json
+import urllib
 from django.http import Http404
 from django.shortcuts import redirect
-import urllib
 from wagtail.api.v2.router import WagtailAPIRouter
 from wagtail.api.v2.utils import get_object_detail_url
 from wagtail.api.v2.views import PagesAPIViewSet
