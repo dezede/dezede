@@ -15,26 +15,28 @@ export default async function PageHeader({
   const { title, ancestors, url } = await findPage({ params });
   return (
     <Stack direction="column" flexWrap="nowrap" spacing={4}>
-      <Breadcrumbs>
-        {ancestors.map(({ id, title }, index) => (
-          <MuiLink
-            key={id}
-            component={Link}
-            href={`/${ROOT_SLUG}/${url
-              .split("/")
-              .slice(1, index + 1)
-              .join("/")}`}
-            prefetch={false}
-            underline="hover"
-          >
-            <Stack direction="row" spacing={0.5}>
-              {index === 0 ? <HomeIcon /> : null}
-              <Typography>{title}</Typography>
-            </Stack>
-          </MuiLink>
-        ))}
-        <Typography>{title}</Typography>
-      </Breadcrumbs>
+      {ancestors.length === 0 ? null : (
+        <Breadcrumbs>
+          {ancestors.map(({ id, title }, index) => (
+            <MuiLink
+              key={id}
+              component={Link}
+              href={`/${ROOT_SLUG}/${url
+                .split("/")
+                .slice(1, index + 1)
+                .join("/")}`}
+              prefetch={false}
+              underline="hover"
+            >
+              <Stack direction="row" spacing={0.5}>
+                {index === 0 ? <HomeIcon /> : null}
+                <Typography>{title}</Typography>
+              </Stack>
+            </MuiLink>
+          ))}
+          <Typography>{title}</Typography>
+        </Breadcrumbs>
+      )}
       <Typography variant="h1">{title}</Typography>
     </Stack>
   );
