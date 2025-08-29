@@ -18,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string[] }>;
 }) {
   const { title, seoTitle, description } = await findPage({ params });
-  return { title: seoTitle || title, description };
+  return { title: `${seoTitle || title} · OpenLetter × Dezède`, description };
 }
 
 export default async function Layout({
