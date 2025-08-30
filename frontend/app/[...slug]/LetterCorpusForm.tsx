@@ -107,13 +107,15 @@ export default function LetterCorpusForm({
             },
           }}
           defaultValue={search}
+          fullWidth
         />
         <TextField
           label="Année"
           value={year}
           onChange={onYearChange}
           select
-          sx={{ width: 200 }}
+          fullWidth
+          sx={{ maxWidth: 175 }}
         >
           {yearChoices.map(({ year, count }) => (
             <MenuItem key={year} value={year ?? "null"}>
@@ -133,7 +135,7 @@ export default function LetterCorpusForm({
           value={selectedPerson}
           onChange={onPersonChange}
           select
-          sx={{ width: 200 }}
+          fullWidth
         >
           {personChoices.map((person) => (
             <MenuItem key={person.id} value={person.id}>
@@ -153,7 +155,7 @@ export default function LetterCorpusForm({
           value={writingPlace}
           onChange={onWritingPlaceChange}
           select
-          sx={{ width: 200 }}
+          fullWidth
         >
           {writingPlaceChoices.map((place) => (
             <MenuItem key={place.id} value={place.id}>
