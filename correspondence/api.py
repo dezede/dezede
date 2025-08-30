@@ -1,4 +1,4 @@
-from curses.ascii import isdigit
+from functools import cached_property
 from typing import Type
 from django.db.models import QuerySet, Q, Count, F, Model
 from django.urls import path
@@ -9,6 +9,8 @@ from wagtail.api.v2.utils import parse_fields_parameter
 from wagtail.api.v2.views import PagesAPIViewSet, BaseAPIViewSet
 
 from correspondence.models import Letter, LetterCorpus
+from dezede.search_backend import FixedPostgresSearchResults
+from libretto.models.espace_temps import Lieu
 from libretto.models.individu import Individu
 
 
@@ -18,10 +20,12 @@ class LetterCorpusAPIViewSet(PagesAPIViewSet):
         *PagesAPIViewSet.known_query_parameters,
         'year',
         'person',
+        'writing_place',
         'tab',
     }
 
-    def get_corpus(self) -> LetterCorpus:
+    @cached_property
+    def corpus(self) -> LetterCorpus:
         try:
             return LetterCorpus.objects.live().only('pk', 'person_id').get(pk=self.pk)
         except LetterCorpus.DoesNotExist:
@@ -51,11 +55,14 @@ class LetterCorpusAPIViewSet(PagesAPIViewSet):
 
     def corpus_view(self, request: Request, pk: int):
         self.pk = pk
-        corpus = self.get_corpus()
-        letters = self.get_queryset()
+        corpus = self.corpus
+        letters = self.filter_queryset(self.get_queryset())
+        if isinstance(letters, FixedPostgresSearchResults):
+            letters = letters.get_queryset()
         person_choices = Individu.objects.filter(
             Q(sent_letters__in=letters) | Q(received_letters__in=letters)
         ).distinct()
+        place_choices = Lieu.objects.filter(letter_writing_set__in=letters).distinct()
         return Response({
             'person': self.serialize_instance('person', request, corpus.person),
             'year_choices': letters.annotate(
@@ -64,14 +71,15 @@ class LetterCorpusAPIViewSet(PagesAPIViewSet):
                 count=Count('pk'),
             ),
             'person_choices': self.serialize_queryset('person_choices', request, person_choices),
+            'writing_place_choices': self.serialize_queryset('writing_place_choices', request, place_choices),
             'total_count': letters.count(),
             'from_count': letters.filter(sender=corpus.person_id).count(),
             'to_count': letters.filter(recipient_persons=corpus.person_id).count(),
         })
 
-    def get_queryset(self):
-        corpus = self.get_corpus()
-        qs = super().get_queryset().child_of(corpus)
+    def filter_queryset(self, qs: QuerySet):
+        corpus = self.corpus
+        qs = qs.child_of(corpus)
         year = self.request.GET.get('year', '')
         if year.isdigit():
             qs = qs.filter(writing_date__year=year)
@@ -81,6 +89,10 @@ class LetterCorpusAPIViewSet(PagesAPIViewSet):
         person = self.request.GET.get('person', '')
         if person.isdigit():
             qs = qs.filter(Q(sender=person) | Q(recipient_persons=person))
+
+        writing_place = self.request.GET.get('writing_place', '')
+        if writing_place.isdigit():
+            qs = qs.filter(writing_lieu=writing_place)
 
         if self.action == 'listing_view':
             tab = self.request.GET.get('tab', 'all')
@@ -94,7 +106,7 @@ class LetterCorpusAPIViewSet(PagesAPIViewSet):
                 ).exclude(
                     recipient_persons=corpus.person_id,
                 )
-        return qs
+        return super().filter_queryset(qs)
 
     def listing_view(self, request, pk: int):
         self.pk = pk

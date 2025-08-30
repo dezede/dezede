@@ -9,10 +9,16 @@ import Tab from "@mui/material/Tab";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 import PersonLabel from "./PersonLabel";
-import { ELetterTab, TRelatedPerson, TYearChoice } from "../types";
+import {
+  ELetterTab,
+  TRelatedPerson,
+  TRelatedPlace,
+  TYearChoice,
+} from "../types";
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useDebounceCallback, useUpdateSearchParams } from "../hooks";
 import MenuItem from "@mui/material/MenuItem";
+import PlaceLabel from "./PlaceLabel";
 
 function LetterTabLabel({
   children,
@@ -33,6 +39,7 @@ export default function LetterCorpusForm({
   person,
   yearChoices,
   personChoices,
+  writingPlaceChoices,
   totalCount,
   fromCount,
   toCount,
@@ -40,6 +47,7 @@ export default function LetterCorpusForm({
   person: TRelatedPerson;
   yearChoices: TYearChoice[];
   personChoices: TRelatedPerson[];
+  writingPlaceChoices: TRelatedPlace[];
   totalCount: number;
   fromCount: number;
   toCount: number;
@@ -50,26 +58,36 @@ export default function LetterCorpusForm({
   const [selectedPerson, setSelectedPerson] = useState(
     searchParams.get("person") ?? "",
   );
+  const [writingPlace, setWritingPlace] = useState(
+    searchParams.get("writing_place") ?? "",
+  );
   const search = useMemo(
     () => searchParams.get("search") ?? "",
     [searchParams],
   );
   const onSearchChange = useDebounceCallback(
     (event: ChangeEvent<HTMLInputElement>) =>
-      updateSearchParams({ search: event.target.value }),
+      updateSearchParams({ search: event.target.value, page: 1 }),
     300,
   );
   const onYearChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setYear(event.target.value);
-      updateSearchParams({ year: event.target.value });
+      updateSearchParams({ year: event.target.value, page: 1 });
     },
     [updateSearchParams],
   );
   const onPersonChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setSelectedPerson(event.target.value);
-      updateSearchParams({ person: event.target.value });
+      updateSearchParams({ person: event.target.value, page: 1 });
+    },
+    [updateSearchParams],
+  );
+  const onWritingPlaceChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setWritingPlace(event?.target.value);
+      updateSearchParams({ writing_place: event.target.value, page: 1 });
     },
     [updateSearchParams],
   );
@@ -127,6 +145,19 @@ export default function LetterCorpusForm({
               >
                 <PersonLabel {...person} />
               </Stack>
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          label="Lieu de rédaction"
+          value={writingPlace}
+          onChange={onWritingPlaceChange}
+          select
+          sx={{ width: 200 }}
+        >
+          {writingPlaceChoices.map((place) => (
+            <MenuItem key={place.id} value={place.id}>
+              <PlaceLabel {...place} />
             </MenuItem>
           ))}
         </TextField>

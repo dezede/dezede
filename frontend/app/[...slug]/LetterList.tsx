@@ -22,7 +22,14 @@ export default async function LetterList({
   searchParams: TAsyncSearchParams;
   perPage?: number;
 }) {
-  const { search, year, person, tab, page: pageParam } = await searchParams;
+  const {
+    search,
+    year,
+    person,
+    writing_place,
+    tab,
+    page: pageParam,
+  } = await searchParams;
   const page = safeParseInt(pageParam, 1);
   const lettersData = await djangoFetchData<
     TPageResults<
@@ -34,6 +41,7 @@ export default async function LetterList({
     search,
     year,
     person,
+    writing_place,
     tab,
     fields: `sender(${INDIVIDU_FIELDS}),recipients(person(${INDIVIDU_FIELDS})),writing_lieu(${PLACE_FIELDS}),writing_lieu_approx,writing_date,writing_date_approx,writing_heure,writing_heure_approx,letter_images,transcription_text`,
     offset: (page - 1) * perPage,

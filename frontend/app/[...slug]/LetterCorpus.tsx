@@ -5,6 +5,7 @@ import {
   TAsyncSearchParams,
   ELetterTab,
   TYearChoice,
+  TRelatedPlace,
 } from "../types";
 import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
@@ -13,7 +14,7 @@ import LetterList from "./LetterList";
 import Skeleton from "@mui/material/Skeleton";
 import LetterCorpusForm from "./LetterCorpusForm";
 import { djangoFetchData } from "../utils";
-import { INDIVIDU_FIELDS } from "../constants";
+import { INDIVIDU_FIELDS, PLACE_FIELDS } from "../constants";
 import ClientPagination from "./ClientPagination";
 
 export default async function LetterCorpus({
@@ -27,6 +28,7 @@ export default async function LetterCorpus({
     search,
     year,
     person: selectedPerson,
+    writing_place,
     tab,
     page,
   } = await searchParams;
@@ -34,6 +36,7 @@ export default async function LetterCorpus({
     person,
     year_choices,
     person_choices,
+    writing_place_choices,
     total_count,
     from_count,
     to_count,
@@ -42,6 +45,7 @@ export default async function LetterCorpus({
       person: TRelatedPerson;
       year_choices: TYearChoice[];
       person_choices: TRelatedPerson[];
+      writing_place_choices: TRelatedPlace[];
       total_count: number;
       from_count: number;
       to_count: number;
@@ -50,7 +54,8 @@ export default async function LetterCorpus({
     search,
     year,
     person: selectedPerson,
-    fields: `person(${INDIVIDU_FIELDS}),person_choices(${INDIVIDU_FIELDS})`,
+    writing_place: writing_place,
+    fields: `person(${INDIVIDU_FIELDS}),person_choices(${INDIVIDU_FIELDS}),writing_place_choices(${PLACE_FIELDS})`,
   });
   const count =
     {
@@ -74,13 +79,14 @@ export default async function LetterCorpus({
           person={person}
           yearChoices={year_choices}
           personChoices={person_choices}
+          writingPlaceChoices={writing_place_choices}
           totalCount={total_count}
           fromCount={from_count}
           toCount={to_count}
         />
         {pagination}
         <Suspense
-          key={`${search} ${year} ${selectedPerson} ${tab} ${page}`}
+          key={`${search} ${year} ${selectedPerson} ${writing_place} ${tab} ${page}`}
           fallback={
             <Stack spacing={2}>
               {[...Array(perPage).keys()].map((value) => (
