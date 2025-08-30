@@ -70,5 +70,21 @@ export default responsiveFontSizes(
         default: "#fffbe6",
       },
     },
+    components: {
+      MuiButton: {
+        defaultProps: {
+          style: {
+            textTransform: "none",
+          },
+        },
+      },
+      MuiTab: {
+        defaultProps: {
+          style: {
+            textTransform: "none",
+          },
+        },
+      },
+    },
   }),
 );
