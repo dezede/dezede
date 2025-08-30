@@ -8,17 +8,26 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
-import PersonLabel from "./PersonLabel";
+import PersonLabel, { getPersonLabelString } from "./PersonLabel";
 import {
   ELetterTab,
   TRelatedPerson,
   TRelatedPlace,
   TYearChoice,
 } from "../types";
-import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  SyntheticEvent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { useDebounceCallback, useUpdateSearchParams } from "../hooks";
 import MenuItem from "@mui/material/MenuItem";
 import PlaceLabel from "./PlaceLabel";
+import Autocomplete from "@mui/material/Autocomplete";
+import Box from "@mui/material/Box";
+import { safeParseInt } from "../utils";
 
 function LetterTabLabel({
   children,
@@ -56,7 +65,7 @@ export default function LetterCorpusForm({
   const [tab, setTab] = useState(searchParams.get("tab") ?? ELetterTab.ALL);
   const [year, setYear] = useState(searchParams.get("year") ?? "");
   const [selectedPerson, setSelectedPerson] = useState(
-    searchParams.get("person") ?? "",
+    safeParseInt(searchParams.get("person"), null),
   );
   const [writingPlace, setWritingPlace] = useState(
     searchParams.get("writing_place") ?? "",
@@ -78,9 +87,9 @@ export default function LetterCorpusForm({
     [updateSearchParams],
   );
   const onPersonChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setSelectedPerson(event.target.value);
-      updateSearchParams({ person: event.target.value, page: 1 });
+    (event: SyntheticEvent, value: TRelatedPerson | null) => {
+      setSelectedPerson(value?.id ?? null);
+      updateSearchParams({ person: value?.id, page: 1 });
     },
     [updateSearchParams],
   );
@@ -130,26 +139,32 @@ export default function LetterCorpusForm({
             </MenuItem>
           ))}
         </TextField>
-        <TextField
-          label="Correspondant"
-          value={selectedPerson}
+        <Autocomplete
+          value={personChoices.find((person) => person.id === selectedPerson) ?? null}
           onChange={onPersonChange}
-          select
+          options={personChoices}
+          getOptionKey={(option) => option.id}
+          getOptionLabel={(option) => getPersonLabelString(option)}
+          renderOption={(props, option) => {
+            const { key, ...optionsProps } = props;
+            return (
+              <Box key={key} component="li" {...optionsProps}>
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  justifyContent="space-between"
+                  width="100%"
+                >
+                  {getPersonLabelString(option)}
+                </Stack>
+              </Box>
+            );
+          }}
+          renderInput={(params) => (
+            <TextField {...params} label="Correspondant" />
+          )}
           fullWidth
-        >
-          {personChoices.map((person) => (
-            <MenuItem key={person.id} value={person.id}>
-              <Stack
-                direction="row"
-                spacing={1}
-                justifyContent="space-between"
-                width="100%"
-              >
-                <PersonLabel {...person} />
-              </Stack>
-            </MenuItem>
-          ))}
-        </TextField>
+        />
         <TextField
           label="Lieu de rédaction"
           value={writingPlace}

@@ -4,7 +4,7 @@ import Tooltip from "@mui/material/Tooltip";
 import SmallCaps from "./SmallCaps";
 import { abbreviate } from "../utils";
 
-function withParticule(particule: string, nom: string) {
+function withParticule(particule: string, nom: string): string {
   if (!particule) {
     return nom;
   }
@@ -22,7 +22,7 @@ function getSmallCapsLabel({
   nom_naissance,
   prenoms,
   pseudonyme,
-}: TRelatedPerson): React.ReactNode {
+}: TRelatedPerson): string {
   switch (designation) {
     case EPersonDesignation.STANDARD:
     case EPersonDesignation.LAST_NAME:
@@ -36,12 +36,36 @@ function getSmallCapsLabel({
   }
 }
 
+function getPseudonymeSuffix({ titre, pseudonyme }: TRelatedPerson) {
+  return `${titre === EPersonTitre.MAN ? "dit" : "dite"}\u00A0${pseudonyme}`;
+}
+
+export function getPersonLabelString(person: TRelatedPerson): string {
+  const { prenoms, titre_display, pseudonyme } = person;
+  let label = getSmallCapsLabel(person);
+  switch (person.designation) {
+    case EPersonDesignation.STANDARD:
+    case EPersonDesignation.BIRTH_NAME:
+      if (titre_display && !prenoms) {
+        label = `${titre_display} ${label}`;
+      }
+      if (prenoms) {
+        label = `${label} (${prenoms})`;
+      }
+      if (pseudonyme) {
+        label = `${label} ${getPseudonymeSuffix(person)}`;
+      }
+    default:
+      return label;
+  }
+}
+
 export default function PersonLabel(person: TRelatedPerson) {
   const smallCapsLabel = <SmallCaps>{getSmallCapsLabel(person)}</SmallCaps>;
   switch (person.designation) {
     case EPersonDesignation.STANDARD:
     case EPersonDesignation.BIRTH_NAME:
-      const { prenoms, titre, titre_display, pseudonyme } = person;
+      const { prenoms, titre_display, pseudonyme } = person;
       return (
         <span>
           {prenoms ? null : `${titre_display} `}
@@ -55,9 +79,7 @@ export default function PersonLabel(person: TRelatedPerson) {
               {")"}
             </>
           ) : null}
-          {pseudonyme
-            ? ` ${titre === EPersonTitre.MAN ? "dit" : "dite"}\u00A0${pseudonyme}`
-            : null}
+          {pseudonyme ? ` ${getPseudonymeSuffix(person)}` : null}
         </span>
       );
     default:

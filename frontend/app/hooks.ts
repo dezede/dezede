@@ -33,7 +33,7 @@ export function useUpdateSearchParams() {
           if (typeof value === "number") {
             value = value.toString();
           }
-          if (value === null || value === "") {
+          if (value === null || value === undefined || value === "") {
             updatedSearchParams.delete(param);
           } else {
             updatedSearchParams.set(param, value);

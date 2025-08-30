@@ -9,10 +9,10 @@ import {
 import { cache } from "react";
 import { ROOT_SLUG } from "./constants";
 
-export function safeParseInt(
+export function safeParseInt<T>(
   str: string | string[] | null | undefined,
-  defaultValue: number = 0,
-): number {
+  defaultValue: T,
+): number | T {
   if (typeof str === "string") {
     if (/^\d+$/.test(str)) {
       return parseInt(str);
@@ -100,7 +100,7 @@ export const findPage = cache(async function findPage({
     notFound();
   }
   return {
-    id: safeParseInt(redirectResponse.headers.get("X-Page-Id")),
+    id: safeParseInt(redirectResponse.headers.get("X-Page-Id"), 0),
     apiUrl: getRelativeUrl(redirectResponse.headers.get("location") ?? ""),
     type: (redirectResponse.headers.get("X-Page-Type") ??
       "wagtailcore.Page") as EPageType,
