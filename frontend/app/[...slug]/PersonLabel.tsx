@@ -49,7 +49,7 @@ export default function PersonLabel(person: TRelatedPerson) {
           {prenoms ? (
             <>
               {" ("}
-              <Tooltip title={prenoms} placement="top" arrow>
+              <Tooltip title={prenoms} placement="top" arrow disableInteractive>
                 <span>{abbreviate(prenoms)}</span>
               </Tooltip>
               {")"}
