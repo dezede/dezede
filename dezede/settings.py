@@ -444,7 +444,7 @@ WAGTAILADMIN_PERMITTED_LANGUAGES = LANGUAGES
 
 WAGTAILSEARCH_BACKENDS = {
     'default': {
-        'BACKEND': 'wagtail.search.backends.database',
+        'BACKEND': 'dezede.search_backend.FixedPostgresSearchBackend',
         'SEARCH_CONFIG': 'french_unaccent_including_stopwords',
     },
 }

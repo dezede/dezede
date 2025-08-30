@@ -142,7 +142,9 @@ class Letter(BasePage):
     transcription = RichTextField(_('transcription'), editor='transcription', blank=True)
     description = RichTextField(_('description'), blank=True)
 
-    recipient_persons = ManyToManyField('libretto.Individu', through=LetterRecipient)
+    recipient_persons = ManyToManyField(
+        'libretto.Individu', through=LetterRecipient, related_name='received_letters',
+    )
 
     parent_page_types = ['correspondence.LetterCorpus']
     content_panels = BasePage.content_panels + [

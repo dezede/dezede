@@ -7,6 +7,7 @@ from wagtail.api.v2.utils import get_object_detail_url
 from wagtail.api.v2.views import PagesAPIViewSet
 from wagtail.models import Page
 
+from correspondence.api import LetterCorpusAPIViewSet
 from libretto.api.rest.viewsets import *
 
 
@@ -65,3 +66,4 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
 
 wagtail_api_router = WagtailAPIRouter('wagtailapi')
 wagtail_api_router.register_endpoint(r'pages', CustomPagesAPIViewSet)
+wagtail_api_router.register_endpoint(r'correspondance', LetterCorpusAPIViewSet)

@@ -4,7 +4,9 @@ export type TSearchParams = {
 export type TAsyncSearchParams = Promise<TSearchParams>;
 export type TSearchParamsUpdate = { [param: string]: string | number | null };
 
-export type TQueryParams = { [param: string]: string | string[] | number };
+export type TQueryParams = {
+  [param: string]: string | string[] | number | null | undefined;
+};
 
 export type TImage = {
   url: string;
@@ -150,3 +152,5 @@ export enum ELetterTab {
   TO = "to",
   OTHER = "other",
 }
+
+export type TYearChoice = { year: number | null; count: number };

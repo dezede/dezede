@@ -4,6 +4,7 @@ import {
   TRelatedPerson,
   TAsyncSearchParams,
   ELetterTab,
+  TYearChoice,
 } from "../types";
 import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
@@ -22,19 +23,35 @@ export default async function LetterCorpus({
   findPageData: TFindPageData;
   searchParams: TAsyncSearchParams;
 }) {
-  const { search, tab, page } = await searchParams;
-  const { person, description, total_count, from_count, to_count } =
-    await djangoFetchData<
-      TPage & {
-        person: TRelatedPerson;
-        description: string;
-        total_count: number;
-        from_count: number;
-        to_count: number;
-      }
-    >(findPageData.apiUrl, {
-      fields: `person(${INDIVIDU_FIELDS})`,
-    });
+  const {
+    search,
+    year,
+    person: selectedPerson,
+    tab,
+    page,
+  } = await searchParams;
+  const {
+    person,
+    year_choices,
+    person_choices,
+    total_count,
+    from_count,
+    to_count,
+  } = await djangoFetchData<
+    TPage & {
+      person: TRelatedPerson;
+      year_choices: TYearChoice[];
+      person_choices: TRelatedPerson[];
+      total_count: number;
+      from_count: number;
+      to_count: number;
+    }
+  >(`/api/correspondance/${findPageData.id}/`, {
+    search,
+    year,
+    person: selectedPerson,
+    fields: `person(${INDIVIDU_FIELDS}),person_choices(${INDIVIDU_FIELDS})`,
+  });
   const count =
     {
       [ELetterTab.ALL]: total_count,
@@ -55,13 +72,15 @@ export default async function LetterCorpus({
       <Stack spacing={2}>
         <LetterCorpusForm
           person={person}
+          yearChoices={year_choices}
+          personChoices={person_choices}
           totalCount={total_count}
           fromCount={from_count}
           toCount={to_count}
         />
         {pagination}
         <Suspense
-          key={`${search} ${tab} ${page}`}
+          key={`${search} ${year} ${selectedPerson} ${tab} ${page}`}
           fallback={
             <Stack spacing={2}>
               {[...Array(perPage).keys()].map((value) => (

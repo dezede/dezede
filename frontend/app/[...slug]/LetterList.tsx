@@ -7,7 +7,7 @@ import SpaceTime from "./SpaceTime";
 import PersonLabel from "./PersonLabel";
 import Link from "next/link";
 import Image from "next/image";
-import { EPageType, TLetter, TPageResults, TAsyncSearchParams } from "../types";
+import { TLetter, TPageResults, TAsyncSearchParams } from "../types";
 import { djangoFetchData, safeParseInt } from "../utils";
 import { INDIVIDU_FIELDS, PLACE_FIELDS } from "../constants";
 import Divider from "@mui/material/Divider";
@@ -22,7 +22,7 @@ export default async function LetterList({
   searchParams: TAsyncSearchParams;
   perPage?: number;
 }) {
-  const { search = "", page: pageParam } = await searchParams;
+  const { search, year, person, tab, page: pageParam } = await searchParams;
   const page = safeParseInt(pageParam, 1);
   const lettersData = await djangoFetchData<
     TPageResults<
@@ -30,11 +30,12 @@ export default async function LetterList({
         transcription_text: string;
       }
     >
-  >("/api/pages/", {
-    child_of: parentPageId,
-    type: EPageType.LETTER,
-    fields: `sender(${INDIVIDU_FIELDS}),recipients(person(${INDIVIDU_FIELDS})),writing_lieu(${PLACE_FIELDS}),writing_lieu_approx,writing_date,writing_date_approx,writing_heure,writing_heure_approx,letter_images,transcription_text`,
+  >(`/api/correspondance/${parentPageId}/lettres/`, {
     search,
+    year,
+    person,
+    tab,
+    fields: `sender(${INDIVIDU_FIELDS}),recipients(person(${INDIVIDU_FIELDS})),writing_lieu(${PLACE_FIELDS}),writing_lieu_approx,writing_date,writing_date_approx,writing_heure,writing_heure_approx,letter_images,transcription_text`,
     offset: (page - 1) * perPage,
     limit: perPage,
   });
