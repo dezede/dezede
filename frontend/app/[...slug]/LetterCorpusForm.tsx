@@ -135,7 +135,7 @@ export default function LetterCorpusForm({
         value={tab}
         onChange={(event, value) => {
           setTab(value);
-          updateSearchParams({ tab: value });
+          updateSearchParams({ tab: value, page: null });
         }}
         variant="fullWidth"
       >

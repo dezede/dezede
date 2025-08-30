@@ -3,7 +3,7 @@
 import Pagination from "@mui/material/Pagination";
 import { useUpdateSearchParams } from "../hooks";
 import { safeParseInt } from "../utils";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SxProps } from "@mui/material/styles";
 
 export default function ClientPagination({
@@ -16,7 +16,16 @@ export default function ClientPagination({
   sx?: SxProps;
 }) {
   const { updateSearchParams, searchParams } = useUpdateSearchParams();
-  const [page, setPage] = useState(safeParseInt(searchParams.get("page"), 1));
+  const pageParam = useMemo(
+    () => safeParseInt(searchParams.get("page"), 1),
+    [searchParams],
+  );
+  const [page, setPage] = useState(pageParam);
+
+  useEffect(() => {
+    setPage(pageParam);
+  }, [pageParam]);
+
   if (totalCount === 0) {
     return null;
   }
