@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { EPageType, TSearchParams } from "../types";
+import { EPageType, TAsyncSearchParams } from "../types";
 import { findPage } from "../utils";
 import ChildrenCards from "./ChildrenCards";
 import dynamic from "next/dynamic";
@@ -11,7 +11,7 @@ const Letter = dynamic(() => import("./Letter"));
 
 type TProps = {
   params: Promise<{ slug: string[] }>;
-  searchParams: TSearchParams;
+  searchParams: TAsyncSearchParams;
 };
 
 export default async function WagtailPage({ params, searchParams }: TProps) {

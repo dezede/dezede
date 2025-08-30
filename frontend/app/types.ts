@@ -1,6 +1,8 @@
-export type TSearchParams = Promise<{
+export type TSearchParams = {
   [key: string]: string | string[] | undefined;
-}>;
+};
+export type TAsyncSearchParams = Promise<TSearchParams>;
+export type TSearchParamsUpdate = { [param: string]: string | number | null };
 
 export type TQueryParams = { [param: string]: string | string[] | number };
 

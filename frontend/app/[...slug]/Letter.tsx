@@ -11,7 +11,7 @@ import Paper from "@mui/material/Paper";
 import LetterImagesReader from "./LetterImagesReader";
 import SpaceTime from "./SpaceTime";
 import Divider from "@mui/material/Divider";
-import Box from "@mui/material/Box";
+import Empty from "./Empty";
 
 export default async function Letter({
   findPageData,
@@ -96,9 +96,7 @@ export default async function Letter({
                   {transcription ? (
                     <RichText value={transcription} />
                   ) : (
-                    <Box py={10} textAlign="center" color="text.disabled">
-                      Transcription manquante
-                    </Box>
+                    <Empty>Transcription manquante</Empty>
                   )}
                 </Stack>
               </Container>

@@ -7,7 +7,7 @@ export default function PlaceChip(place: TRelatedPlace) {
   return (
     <Chip
       component="a"
-      href={`/lieux/id/${place.id}/`}
+      href={`/lieux-et-institutions/id/${place.id}/`}
       label={<PlaceLabel {...place} />}
       clickable
       size="small"

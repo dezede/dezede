@@ -7,18 +7,23 @@ import SpaceTime from "./SpaceTime";
 import PersonLabel from "./PersonLabel";
 import Link from "next/link";
 import Image from "next/image";
-import { EPageType, TLetter, TPageResults, TSearchParams } from "../types";
-import { djangoFetchData } from "../utils";
+import { EPageType, TLetter, TPageResults, TAsyncSearchParams } from "../types";
+import { djangoFetchData, safeParseInt } from "../utils";
 import { INDIVIDU_FIELDS, PLACE_FIELDS } from "../constants";
+import Divider from "@mui/material/Divider";
+import Empty from "./Empty";
 
 export default async function LetterList({
   parentPageId,
   searchParams,
+  perPage = 2,
 }: {
   parentPageId: number;
-  searchParams: TSearchParams;
+  searchParams: TAsyncSearchParams;
+  perPage?: number;
 }) {
-  const { search = "" } = await searchParams;
+  const { search = "", page: pageParam } = await searchParams;
+  const page = safeParseInt(pageParam, 1);
   const lettersData = await djangoFetchData<
     TPageResults<
       Omit<TLetter, "transcription" | "description"> & {
@@ -30,9 +35,14 @@ export default async function LetterList({
     type: EPageType.LETTER,
     fields: `sender(${INDIVIDU_FIELDS}),recipients(person(${INDIVIDU_FIELDS})),writing_lieu(${PLACE_FIELDS}),writing_lieu_approx,writing_date,writing_date_approx,writing_heure,writing_heure_approx,letter_images,transcription_text`,
     search,
+    offset: (page - 1) * perPage,
+    limit: perPage,
   });
+  if (lettersData.items.length === 0) {
+    return <Empty>Aucune lettre ne correspond aux critères sélectionnés</Empty>;
+  }
   return (
-    <Stack flexWrap="nowrap" spacing={2}>
+    <Stack spacing={2}>
       {lettersData.items.map(
         ({
           id,
@@ -67,7 +77,7 @@ export default async function LetterList({
                     overflowHeight={50}
                     sx={{ width: "100%" }}
                   >
-                    <Stack flexWrap="nowrap" p={2}>
+                    <Stack spacing={1} p={2}>
                       <Stack
                         direction="row"
                         justifyContent="space-between"
@@ -95,6 +105,7 @@ export default async function LetterList({
                           variant="body2"
                         />
                       </Stack>
+                      <Divider />
                       <Typography>{transcription_text}</Typography>
                     </Stack>
                   </OverflowContainer>
