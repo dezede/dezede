@@ -1,5 +1,5 @@
 import Chip from "@mui/material/Chip";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
+import BoyOutlinedIcon from "@mui/icons-material/BoyOutlined";
 import { TRelatedPerson } from "../types";
 import PersonLabel from "./PersonLabel";
 
@@ -11,7 +11,7 @@ export default function PersonLink(person: TRelatedPerson) {
       label={<PersonLabel {...person} />}
       clickable
       size="small"
-      icon={<PersonOutlinedIcon />}
+      icon={<BoyOutlinedIcon />}
     />
   );
 }
