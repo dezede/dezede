@@ -15,7 +15,7 @@ import {
   TRelatedPlace,
   TYearChoice,
 } from "../types";
-import {
+import React, {
   ChangeEvent,
   SyntheticEvent,
   useCallback,
@@ -23,11 +23,59 @@ import {
   useState,
 } from "react";
 import { useDebounceCallback, useUpdateSearchParams } from "../hooks";
-import MenuItem from "@mui/material/MenuItem";
-import PlaceLabel from "./PlaceLabel";
+import { getPlaceLabel } from "./PlaceLabel";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
-import { safeParseInt } from "../utils";
+
+function AutocompleteFilter<T>({
+  param,
+  label,
+  options,
+  getOptionKey: getParamValue,
+  getOptionLabel,
+  renderOption,
+}: {
+  param: string;
+  label: React.ReactNode;
+  options: T[];
+  getOptionKey: (option: T | null) => string;
+  getOptionLabel: (option: T) => string;
+  renderOption?: (option: T) => React.ReactNode;
+}) {
+  const { updateSearchParams, searchParams } = useUpdateSearchParams();
+  const [selected, setSelected] = useState<string>(
+    searchParams.get(param) ?? "",
+  );
+  const onChange = useCallback(
+    (event: SyntheticEvent, value: T | null) => {
+      setSelected(getParamValue(value));
+      updateSearchParams({ [param]: getParamValue(value), page: null });
+    },
+    [getParamValue, param, updateSearchParams],
+  );
+  return (
+    <Autocomplete
+      value={
+        options.find((option) => getParamValue(option) === selected) ?? null
+      }
+      onChange={onChange}
+      options={options}
+      getOptionKey={getParamValue}
+      getOptionLabel={getOptionLabel}
+      renderOption={
+        renderOption === undefined
+          ? undefined
+          : ({ key, ...props }, option) => (
+              <Box key={key} component="li" {...props}>
+                {renderOption(option)}
+              </Box>
+            )
+      }
+      renderInput={(params) => <TextField {...params} label={label} />}
+      fullWidth
+    />
+  );
+}
 
 function LetterTabLabel({
   children,
@@ -63,42 +111,14 @@ export default function LetterCorpusForm({
 }) {
   const { updateSearchParams, searchParams } = useUpdateSearchParams();
   const [tab, setTab] = useState(searchParams.get("tab") ?? ELetterTab.ALL);
-  const [year, setYear] = useState(searchParams.get("year") ?? "");
-  const [selectedPerson, setSelectedPerson] = useState(
-    safeParseInt(searchParams.get("person"), null),
-  );
-  const [writingPlace, setWritingPlace] = useState(
-    searchParams.get("writing_place") ?? "",
-  );
   const search = useMemo(
     () => searchParams.get("search") ?? "",
     [searchParams],
   );
   const onSearchChange = useDebounceCallback(
     (event: ChangeEvent<HTMLInputElement>) =>
-      updateSearchParams({ search: event.target.value, page: 1 }),
+      updateSearchParams({ search: event.target.value, page: null }),
     300,
-  );
-  const onYearChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setYear(event.target.value);
-      updateSearchParams({ year: event.target.value, page: 1 });
-    },
-    [updateSearchParams],
-  );
-  const onPersonChange = useCallback(
-    (event: SyntheticEvent, value: TRelatedPerson | null) => {
-      setSelectedPerson(value?.id ?? null);
-      updateSearchParams({ person: value?.id, page: 1 });
-    },
-    [updateSearchParams],
-  );
-  const onWritingPlaceChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setWritingPlace(event?.target.value);
-      updateSearchParams({ writing_place: event.target.value, page: 1 });
-    },
-    [updateSearchParams],
   );
   return (
     <Paper>
@@ -118,66 +138,40 @@ export default function LetterCorpusForm({
           defaultValue={search}
           fullWidth
         />
-        <TextField
+        <AutocompleteFilter
+          param="year"
           label="Année"
-          value={year}
-          onChange={onYearChange}
-          select
-          fullWidth
-          sx={{ maxWidth: 175 }}
-        >
-          {yearChoices.map(({ year, count }) => (
-            <MenuItem key={year} value={year ?? "null"}>
-              <Stack
-                direction="row"
-                spacing={1}
-                justifyContent="space-between"
-                width="100%"
-              >
-                <span>{year ?? "Inconnue"}</span> <span>{count} lettres</span>
-              </Stack>
-            </MenuItem>
-          ))}
-        </TextField>
-        <Autocomplete
-          value={personChoices.find((person) => person.id === selectedPerson) ?? null}
-          onChange={onPersonChange}
-          options={personChoices}
-          getOptionKey={(option) => option.id}
-          getOptionLabel={(option) => getPersonLabelString(option)}
-          renderOption={(props, option) => {
-            const { key, ...optionsProps } = props;
-            return (
-              <Box key={key} component="li" {...optionsProps}>
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  justifyContent="space-between"
-                  width="100%"
-                >
-                  {getPersonLabelString(option)}
-                </Stack>
-              </Box>
-            );
-          }}
-          renderInput={(params) => (
-            <TextField {...params} label="Correspondant" />
+          options={yearChoices}
+          getOptionKey={(option) =>
+            (option?.year === null ? "null" : (option?.year ?? "")).toString()
+          }
+          getOptionLabel={(option) => (option.year ?? "Inconnue").toString()}
+          renderOption={(option) => (
+            <Stack
+              direction="row"
+              spacing={1}
+              justifyContent="space-between"
+              width="100%"
+            >
+              <span>{option.year ?? "Inconnue"}</span>
+              <span>{option.count} lettres</span>
+            </Stack>
           )}
-          fullWidth
         />
-        <TextField
+        <AutocompleteFilter
+          param="person"
+          label="Correspondant"
+          options={personChoices}
+          getOptionKey={(option) => (option?.id ?? "").toString()}
+          getOptionLabel={getPersonLabelString}
+        />
+        <AutocompleteFilter
+          param="writing_place"
           label="Lieu de rédaction"
-          value={writingPlace}
-          onChange={onWritingPlaceChange}
-          select
-          fullWidth
-        >
-          {writingPlaceChoices.map((place) => (
-            <MenuItem key={place.id} value={place.id}>
-              <PlaceLabel {...place} />
-            </MenuItem>
-          ))}
-        </TextField>
+          options={writingPlaceChoices}
+          getOptionKey={(option) => (option?.id ?? "").toString()}
+          getOptionLabel={getPlaceLabel}
+        />
       </Stack>
       <Tabs
         value={tab}
