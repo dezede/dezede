@@ -1,5 +1,6 @@
 "use client";
 import {
+  alpha,
   createTheme,
   PaletteColorOptions,
   responsiveFontSizes,
@@ -71,6 +72,30 @@ export default responsiveFontSizes(
       },
     },
     components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          html: {
+            scrollBehavior: "smooth",
+          },
+          "a:not([class])": {
+            color: primary.main,
+            textDecoration: "none",
+            "&:hover, &:active, &:focus": {
+              textDecoration: "underline",
+            },
+            '&[data-note="anchor"], &[data-note="reference"]:focus': {
+              "&:focus": {
+                background: alpha(primary.main, 0.15),
+                borderRadius: 4,
+              },
+            },
+            '&[data-note="reference"]': {
+              verticalAlign: "super",
+              fontSize: "0.85rem",
+            },
+          },
+        },
+      },
       MuiButton: {
         defaultProps: {
           style: {

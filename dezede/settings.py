@@ -59,6 +59,8 @@ INSTALLED_APPS = [
     'accounts',
     'exporter',
 
+    'wagtail_notes',
+    'wagtailfontawesomesvg',
     'wagtail.api.v2',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -452,9 +454,22 @@ WAGTAILSEARCH_BACKENDS = {
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     "default": {
         "WIDGET": "wagtail.admin.rich_text.DraftailRichTextArea",
+        'OPTIONS': {
+            'features': [
+                'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul',
+                'hr', 'link', 'document-link', 'image', 'embed',
+                'blockquote',
+            ],
+        },
     },
     'transcription': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': [
+                'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul',
+                'hr', 'blockquote', 'note-anchor', 'note-reference',
+            ],
+        },
     },
 }
 
