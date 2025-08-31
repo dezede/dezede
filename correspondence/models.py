@@ -1,5 +1,5 @@
 from functools import cached_property
-from bleach import clean
+from bs4 import BeautifulSoup
 from django.db.models import ForeignKey, CASCADE, PROTECT, CharField, ManyToManyField
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
@@ -202,4 +202,4 @@ class Letter(BasePage):
 
     @property
     def transcription_text(self) -> str:
-        return clean(self.transcription, strip=True)
+        return BeautifulSoup(self.transcription, 'html.parser').get_text(' ')
