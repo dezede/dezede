@@ -163,7 +163,7 @@ class Letter(BasePage):
                 FieldPanel('writing_heure'), FieldPanel('writing_heure_approx'),
             ]),
         ], heading=_('Rédaction')),
-        InlinePanel('letter_images', heading=_('Images'), label=_('image'), min_num=1),
+        InlinePanel('letter_images', heading=_('Images'), label=_('image')),
         FieldPanel('transcription'),
         FieldPanel('description'),
     ]

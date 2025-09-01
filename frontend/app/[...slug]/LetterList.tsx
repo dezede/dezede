@@ -6,17 +6,17 @@ import Typography from "@mui/material/Typography";
 import SpaceTime from "./SpaceTime";
 import PersonLabel from "./PersonLabel";
 import Link from "next/link";
-import Image from "next/image";
 import { TLetter, TPageResults, TAsyncSearchParams } from "../types";
 import { djangoFetchData, safeParseInt } from "../utils";
 import { INDIVIDU_FIELDS, PLACE_FIELDS } from "../constants";
 import Divider from "@mui/material/Divider";
 import Empty from "./Empty";
+import ImageRendition from "./ImageRendition";
 
 export default async function LetterList({
   parentPageId,
   searchParams,
-  perPage = 2,
+  perPage = 10,
 }: {
   parentPageId: number;
   searchParams: TAsyncSearchParams;
@@ -67,22 +67,19 @@ export default async function LetterList({
           letter_images,
           transcription_text,
         }) => {
-          const {
-            thumbnail: { full_url, width, height, alt },
-          } = letter_images[0];
           return (
             <Card key={id}>
               <CardActionArea component={Link} href={slug} prefetch={false}>
                 <Stack direction="row" flexWrap="nowrap">
-                  <Image
-                    src={full_url}
-                    width={width}
-                    height={height}
-                    alt={alt}
-                    unoptimized
-                  />
+                  {letter_images.length >= 1 ? (
+                    <ImageRendition rendition={letter_images[0].thumbnail} />
+                  ) : (
+                    <Empty width={200} height={200}>
+                      Image manquante
+                    </Empty>
+                  )}
                   <OverflowContainer
-                    maxHeight={height}
+                    maxHeight={200}
                     overflowHeight={50}
                     sx={{ width: "100%" }}
                   >

@@ -64,7 +64,7 @@ export default async function LetterCorpus({
       [ELetterTab.TO]: to_count,
       [ELetterTab.OTHER]: total_count - from_count - to_count,
     }[typeof tab === "string" ? tab : ELetterTab.ALL] ?? total_count;
-  const perPage = 2;
+  const perPage = 10;
   const pagination = (
     <ClientPagination
       totalCount={count}

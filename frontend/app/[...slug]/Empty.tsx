@@ -3,13 +3,24 @@ import React from "react";
 
 export default function Empty({
   children,
+  width,
   height,
 }: {
   children: React.ReactNode;
+  width?: React.CSSProperties["width"];
   height?: React.CSSProperties["height"];
 }) {
   return (
-    <Box height={height} py={10} textAlign="center" color="text.disabled">
+    <Box
+      width={width}
+      height={height}
+      py={10}
+      textAlign="center"
+      color="text.disabled"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+    >
       {children}
     </Box>
   );

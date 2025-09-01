@@ -106,7 +106,7 @@ class LetterCorpusAPIViewSet(PagesAPIViewSet):
                 ).exclude(
                     recipient_persons=corpus.person_id,
                 )
-        return super().filter_queryset(qs)
+        return super().filter_queryset(qs).order_by('writing_date')
 
     def listing_view(self, request, pk: int):
         self.pk = pk
