@@ -57,8 +57,6 @@ class LetterCorpusAPIViewSet(PagesAPIViewSet):
         self.pk = pk
         corpus = self.corpus
         letters = self.filter_queryset(self.get_queryset())
-        if isinstance(letters, FixedPostgresSearchResults):
-            letters = letters.get_queryset()
         person_choices = Individu.objects.filter(
             Q(sent_letters__in=letters) | Q(received_letters__in=letters)
         ).distinct()
