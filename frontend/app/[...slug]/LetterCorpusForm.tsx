@@ -180,7 +180,7 @@ export default function LetterCorpusForm({
           options={writingPlaceChoices}
           groupBy={(option) => option.nature.nom}
           getOptionKey={(option) => (option?.id ?? "").toString()}
-          getOptionLabel={(option) => option.nom}
+          getOptionLabel={getPlaceLabel}
           filterOptions={placeFilterOptions}
         />
       </Stack>
