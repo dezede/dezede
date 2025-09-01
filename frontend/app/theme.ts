@@ -13,6 +13,8 @@ const primary: PaletteColorOptions = {
   contrastText: "#ffffff",
 };
 
+export const paperBgColor = "#fff7d1";
+
 export default responsiveFontSizes(
   createTheme({
     typography: {
@@ -67,7 +69,7 @@ export default responsiveFontSizes(
         contrastText: "#888888",
       },
       background: {
-        paper: "#fff7d1",
+        paper: paperBgColor,
         default: "#fffbe6",
       },
     },
@@ -107,6 +109,13 @@ export default responsiveFontSizes(
         defaultProps: {
           style: {
             textTransform: "none",
+          },
+        },
+      },
+      MuiListSubheader: {
+        defaultProps: {
+          style: {
+            lineHeight: 1.5,
           },
         },
       },

@@ -71,6 +71,7 @@ export type TRelatedPerson = TRelated<EModelType.PERSON> & {
 export type TRelatedPlace = TRelated<EModelType.PLACE> & {
   nom: string;
   nature: {
+    nom: string;
     referent: boolean;
   };
   parent: null | {

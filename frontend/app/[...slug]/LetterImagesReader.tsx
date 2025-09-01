@@ -27,7 +27,7 @@ export default function LetterImagesReader({
     [letterImages, page],
   );
   if (letterImages.length === 0) {
-    return <Empty height="50vh">Image manquante</Empty>;
+    return <Empty sx={{ height: "50vh" }}>Image manquante</Empty>;
   }
   const { id, name, image } = letterImages[page];
   return (

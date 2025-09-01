@@ -62,7 +62,9 @@ class LetterCorpusAPIViewSet(PagesAPIViewSet):
         person_choices = Individu.objects.filter(
             Q(sent_letters__in=letters) | Q(received_letters__in=letters)
         ).distinct()
-        place_choices = Lieu.objects.filter(letter_writing_set__in=letters).distinct()
+        place_choices = Lieu.objects.filter(
+            letter_writing_set__in=letters,
+        ).distinct().order_by('nature__nom', 'nom')
         return Response({
             'person': self.serialize_instance('person', request, corpus.person),
             'year_choices': letters.annotate(
@@ -106,7 +108,14 @@ class LetterCorpusAPIViewSet(PagesAPIViewSet):
                 ).exclude(
                     recipient_persons=corpus.person_id,
                 )
-        return super().filter_queryset(qs).order_by('writing_date')
+        return (
+            super().filter_queryset(qs).order_by('writing_date')
+            .select_related(
+                'sender', 'writing_lieu__nature', 'writing_lieu__parent',
+            ).prefetch_related(
+                'recipients__person', 'letter_images__image',
+            )
+        )
 
     def listing_view(self, request, pk: int):
         self.pk = pk

@@ -24,7 +24,10 @@ import React, {
 } from "react";
 import { useDebounceCallback, useUpdateSearchParams } from "../hooks";
 import { getPlaceLabel } from "./PlaceLabel";
-import Autocomplete from "@mui/material/Autocomplete";
+import Autocomplete, {
+  AutocompleteProps,
+  createFilterOptions,
+} from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 
 function AutocompleteFilter<T>({
@@ -32,14 +35,16 @@ function AutocompleteFilter<T>({
   label,
   options,
   getOptionKey: getParamValue,
-  getOptionLabel,
   renderOption,
-}: {
+  ...props
+}: Omit<
+  AutocompleteProps<T, undefined, undefined, undefined>,
+  "renderInput" | "renderOption"
+> & {
   param: string;
   label: React.ReactNode;
   options: T[];
   getOptionKey: (option: T | null) => string;
-  getOptionLabel: (option: T) => string;
   renderOption?: (option: T) => React.ReactNode;
 }) {
   const { updateSearchParams, searchParams } = useUpdateSearchParams();
@@ -61,7 +66,6 @@ function AutocompleteFilter<T>({
       onChange={onChange}
       options={options}
       getOptionKey={getParamValue}
-      getOptionLabel={getOptionLabel}
       renderOption={
         renderOption === undefined
           ? undefined
@@ -73,6 +77,7 @@ function AutocompleteFilter<T>({
       }
       renderInput={(params) => <TextField {...params} label={label} />}
       fullWidth
+      {...props}
     />
   );
 }
@@ -120,6 +125,10 @@ export default function LetterCorpusForm({
       updateSearchParams({ search: event.target.value, page: null }),
     300,
   );
+  const placeFilterOptions = createFilterOptions<TRelatedPlace>({
+    matchFrom: "any",
+    stringify: getPlaceLabel,
+  });
   return (
     <Paper>
       <Stack direction="row" p={2} spacing={2}>
@@ -169,8 +178,10 @@ export default function LetterCorpusForm({
           param="writing_place"
           label="Lieu de rédaction"
           options={writingPlaceChoices}
+          groupBy={(option) => option.nature.nom}
           getOptionKey={(option) => (option?.id ?? "").toString()}
-          getOptionLabel={getPlaceLabel}
+          getOptionLabel={(option) => option.nom}
+          filterOptions={placeFilterOptions}
         />
       </Stack>
       <Tabs

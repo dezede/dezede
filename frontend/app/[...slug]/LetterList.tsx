@@ -72,9 +72,22 @@ export default async function LetterList({
               <CardActionArea component={Link} href={slug} prefetch={false}>
                 <Stack direction="row" flexWrap="nowrap">
                   {letter_images.length >= 1 ? (
-                    <ImageRendition rendition={letter_images[0].thumbnail} />
+                    <ImageRendition
+                      rendition={letter_images[0].thumbnail}
+                      style={{
+                        minWidth: 200,
+                        width: 200,
+                        height: "auto",
+                      }}
+                    />
                   ) : (
-                    <Empty width={200} height={200}>
+                    <Empty
+                      sx={{
+                        minWidth: 200,
+                        width: 200,
+                        height: 200,
+                      }}
+                    >
                       Image manquante
                     </Empty>
                   )}
@@ -112,7 +125,9 @@ export default async function LetterList({
                         />
                       </Stack>
                       <Divider />
-                      <Typography>{transcription_text}</Typography>
+                      <Typography textAlign="justify">
+                        {transcription_text}
+                      </Typography>
                     </Stack>
                   </OverflowContainer>
                 </Stack>

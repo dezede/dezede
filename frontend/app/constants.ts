@@ -12,6 +12,6 @@ export const INDIVIDU_FIELDS = [
   "pseudonyme",
 ].join(",");
 
-export const PLACE_FIELDS = ["nom", "nature(referent)", "parent(nom)"].join(
+export const PLACE_FIELDS = ["nom", "nature(nom,referent)", "parent(nom)"].join(
   ",",
 );

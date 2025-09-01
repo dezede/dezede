@@ -130,6 +130,9 @@ const VOWELS_PATTERN = /^([AEIOUY]+)[^AEIOUY]+[AEIOUY]/i;
 const NON_LETTER = /(\P{L}+)/u;
 
 function abbreviateWord(word: string, minLength: number = 1): string {
+  if (word.length <= minLength) {
+    return word;
+  }
   const normalizedWord = removeDiacritics(word);
   if (minLength === 1) {
     const vowelMatch = normalizedWord.match(VOWELS_PATTERN);
