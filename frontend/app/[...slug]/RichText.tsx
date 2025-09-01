@@ -18,6 +18,12 @@ export default function RichText({ value }: { value: string }) {
               height: "100%",
             },
           },
+          hr: {
+            border: "1px solid rgba(0, 0, 0, 0.12)",
+            borderTop: "none",
+            maxWidth: "10rem",
+            marginLeft: 0,
+          },
         }}
       />
       {/* Clearfix */}
