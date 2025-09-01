@@ -108,8 +108,11 @@ class LetterCorpusAPIViewSet(PagesAPIViewSet):
                 ).exclude(
                     recipient_persons=corpus.person_id,
                 )
+        qs = super().filter_queryset(qs)
+        if isinstance(qs, FixedPostgresSearchResults):
+            qs = qs.get_queryset()
         return (
-            super().filter_queryset(qs).order_by('writing_date')
+            qs.order_by('writing_date')
             .select_related(
                 'sender', 'writing_lieu__nature', 'writing_lieu__parent',
             ).prefetch_related(
