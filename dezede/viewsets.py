@@ -73,19 +73,39 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
         )
 
     def get_related_serializer_class(self, name: str, request: Request, model: Type[Model]):
-        router = request.wagtailapi_router
-        endpoint_class = router.get_model_endpoint(model)
-        endpoint_class = (
-            endpoint_class[1] if endpoint_class else BaseAPIViewSet
-        )
         fields_config = []
         for field, _, children in self.parsed_fields:
             if field == name and children:
                 fields_config = children
                 break
-        return endpoint_class._get_serializer_class(
+
+        cache_attr = '_cached_related_serializer_classes'
+        cache_key = f'{model._meta.label}:{fields_config}'
+        if not hasattr(request, cache_attr):
+            setattr(request, cache_attr, {})
+        request_cache = getattr(request, cache_attr)
+        if cached_serializer_class := request_cache.get(cache_key):
+            return cached_serializer_class
+
+        router = request.wagtailapi_router
+        endpoint_class = router.get_model_endpoint(model)
+        endpoint_class = (
+            endpoint_class[1] if endpoint_class else BaseAPIViewSet
+        )
+        serializer_class = endpoint_class._get_serializer_class(
             request.wagtailapi_router, model, fields_config=fields_config, nested=True,
         )
+
+        request_cache[cache_key] = serializer_class
+        return serializer_class
+
+    def get_serializer_context(self):
+        cache_attr = '_serializer_context'
+        if cached := getattr(self.request, cache_attr, None):
+            return cached
+        context = super().get_serializer_context()
+        setattr(self.request, cache_attr, context)
+        return context
 
     def serialize_instance(self, name: str, request: Request, instance: Model):
         serializer_class = self.get_related_serializer_class(name, request, type(instance))
