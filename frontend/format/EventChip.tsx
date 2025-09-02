@@ -20,7 +20,7 @@ export function getEventLabel(event: TRelatedEvent): string {
     .filter((value) => value !== "")
     .join(", ");
   if (left && right) {
-    return `${left} > ${right}`;
+    return `${left} • ${right}`;
   }
   return left || right;
 }
