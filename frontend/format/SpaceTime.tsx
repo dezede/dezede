@@ -3,11 +3,10 @@ import Typography from "@mui/material/Typography";
 import { TypographyVariant } from "@mui/material/styles";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
-import { TRelatedPlace } from "../types";
-import PlaceChip from "./PlaceChip";
+import { TRelatedPlace } from "@/app/types";
+import PlaceChip, { PlaceLabel } from "./PlaceChip";
 import { DateLabel } from "./DateLabel";
 import { TimeLabel } from "./TimeLabel";
-import PlaceLabel from "./PlaceLabel";
 
 export default function SpaceTime({
   date = null,

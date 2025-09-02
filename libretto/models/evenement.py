@@ -15,6 +15,7 @@ from django.utils.encoding import force_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
+from wagtail.api import APIField
 from wagtail.search.index import Indexed, SearchField, RelatedFields
 
 from .base import (
@@ -604,6 +605,26 @@ class Evenement(Indexed, AutoriteModel):
             SearchField('nom', boost=10),
             RelatedFields('parent', [SearchField('nom')]),
         ])
+    ]
+    api_fields = [
+        APIField('debut_lieu'),
+        APIField('debut_lieu_approx'),
+        APIField('debut_date'),
+        APIField('debut_date_approx'),
+        APIField('debut_heure'),
+        APIField('debut_heure_approx'),
+        APIField('fin_lieu'),
+        APIField('fin_lieu_approx'),
+        APIField('fin_date'),
+        APIField('fin_date_approx'),
+        APIField('fin_heure'),
+        APIField('fin_heure_approx'),
+        APIField('programme_incomplet'),
+        APIField('relache'),
+        APIField('circonstance'),
+        APIField('caracteristiques'),
+        APIField('recette_generale'),
+        APIField('recette_par_billets'),
     ]
 
     class Meta(AutoriteModel.Meta):

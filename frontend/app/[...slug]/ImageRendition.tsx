@@ -1,13 +1,12 @@
-import Image from "next/image";
+import Image, { ImageProps } from "next/image";
 import { TImage as TImageRendition } from "../types";
 import React from "react";
 
 export default function ImageRendition({
   rendition: { full_url, width, height, alt },
-  style,
-}: {
+  ...props
+}: Omit<ImageProps, "src" | "width" | "height" | "alt" | "unoptimized"> & {
   rendition: TImageRendition;
-  style?: React.CSSProperties;
 }) {
   return (
     <Image
@@ -16,7 +15,7 @@ export default function ImageRendition({
       height={height}
       alt={alt}
       unoptimized
-      style={style}
+      {...props}
     />
   );
 }

@@ -50,13 +50,20 @@ export default async function LetterCorpus({
       from_count: number;
       to_count: number;
     }
-  >(`/api/correspondance/${findPageData.id}/`, {
-    search,
-    year,
-    person: selectedPerson,
-    writing_place: writing_place,
-    fields: `person(${INDIVIDU_FIELDS}),person_choices(${INDIVIDU_FIELDS}),writing_place_choices(${PLACE_FIELDS})`,
-  });
+  >(
+    `/api/correspondance/${findPageData.id}/`,
+    {
+      search,
+      year,
+      person: selectedPerson,
+      writing_place: writing_place,
+    },
+    [
+      `person(${INDIVIDU_FIELDS})`,
+      `person_choices(${INDIVIDU_FIELDS})`,
+      `writing_place_choices(${PLACE_FIELDS})`,
+    ],
+  );
   const count =
     {
       [ELetterTab.ALL]: total_count,

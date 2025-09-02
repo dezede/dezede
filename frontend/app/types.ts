@@ -31,8 +31,14 @@ export type TBlock<E extends string = EBlockType, T = number> = {
 export enum EModelType {
   LETTER_IMAGE = "correspondence.LetterImage",
   LETTER_RECIPIENT = "correspondence.LetterRecipient",
-  PERSON = "libretto.Individu",
   PLACE = "libretto.Lieu",
+  EVENT = "libretto.Evenement",
+  ENSEMBLE = "libretto.Ensemble",
+  PERSON = "libretto.Individu",
+  WORK = "libretto.Oeuvre",
+  PART = "libretto.Partie",
+  WORK_GENRA = "libretto.GenreDOeuvre",
+  SECTION = "libretto.Pupitre",
 }
 
 export type TRelated<E extends string = EModelType> = {
@@ -40,6 +46,66 @@ export type TRelated<E extends string = EModelType> = {
   meta: {
     type: E;
   };
+};
+
+export type TRelatedEvent = TRelated<EModelType.EVENT> & {
+  debut_lieu: TRelatedPlace | null;
+  debut_lieu_approx: string;
+  debut_date: string | null;
+  debut_date_approx: string;
+  debut_heure: string | null;
+  debut_heure_approx: string;
+  relache: boolean;
+  circonstance: string;
+};
+
+export enum EPartType {
+  INSTRUMENT = 1,
+  ROLE = 2,
+}
+
+export type TRelatedPart = TRelated<EModelType.PART> & {
+  nom: string;
+  nom_pluriel: string;
+  part_type: EPartType;
+  oeuvre: TRelatedWork | null;
+};
+
+export type TRelatedWorkGenra = TRelated<EModelType.WORK_GENRA> & {
+  nom: string;
+};
+
+export type TRelatedSection = TRelated<EModelType.SECTION> & {
+  partie: TRelatedPart;
+  soliste: boolean;
+  quantite_min: number;
+  quantite_max: number;
+  facultatif: boolean;
+};
+
+export type TRelatedWork = TRelated<EModelType.WORK> & {
+  prefixe_titre: string;
+  titre: string;
+  coordination: string;
+  prefixe_titre_secondaire: string;
+  titre_secondaire: string;
+  genre: TRelatedWorkGenra | null;
+  numero: string;
+  coupe: string;
+  indeterminee: boolean;
+  incipit: string;
+  tempo: string;
+  tonalite: string;
+  sujet: string;
+  arrangement: string | null;
+  surnom: string;
+  nom_courant: string;
+  opus: string;
+  ict: string;
+  // extrait_de: TRelatedWork | null;
+  // type_extrait: string | null;
+  // numero_extrait: string;
+  pupitres: TRelatedSection[];
 };
 
 export enum EPersonTitre {
@@ -79,11 +145,24 @@ export type TRelatedPlace = TRelated<EModelType.PLACE> & {
   };
 };
 
+export type TRelatedEnsemble = TRelated<EModelType.ENSEMBLE> & {
+  particule_nom: string;
+  nom: string;
+};
+
+export type TReference =
+  | TRelatedPlace
+  | TRelatedPerson
+  | TRelatedPart
+  | TRelatedEnsemble
+  | TRelatedEvent
+  | TRelatedWork;
+
 export type TLetterImage = TRelated<EModelType.LETTER_IMAGE> & {
   name: string;
   image: TImage;
   thumbnail: TImage;
-  references: TBlock<EBlockType.LIEU>[];
+  references: TReference[];
 };
 
 export enum EPageType {

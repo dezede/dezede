@@ -13,7 +13,7 @@ from wagtail.images.api.fields import ImageRenditionField
 from wagtail.models import Page, Orderable
 from wagtail.search.index import SearchField, RelatedFields
 
-from correspondence.serializer_fields import RichTextSerializer
+from correspondence.serializer_fields import ReferencesSerializer, RichTextSerializer
 from libretto.contants import INDIVIDU_SEARCH_FIELDS, LIEU_SEARCH_FIELDS
 from libretto.models.base import SpaceTimeFields
 
@@ -87,7 +87,6 @@ class LetterCorpus(BasePage):
         return Letter.objects.child_of(self).filter(recipient_persons=self.person).count()
 
 
-
 class LetterRecipient(Orderable):
     letter = ParentalKey('correspondence.Letter', on_delete=CASCADE, related_name='recipients')
     person = ForeignKey(
@@ -124,7 +123,7 @@ class LetterImage(Orderable):
         APIField('name'),
         APIField('image', serializer=ImageRenditionField('max-1920x1080')),
         APIField('thumbnail', serializer=ImageRenditionField('fill-200x200', source='image')),
-        APIField('references'),
+        APIField('references', serializer=ReferencesSerializer()),
     ]
 
     class Meta(Orderable.Meta):

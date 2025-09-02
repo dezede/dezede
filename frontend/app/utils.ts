@@ -60,8 +60,14 @@ export const djangoFetch = function djangoFetch(
 export const djangoFetchData = cache(async function djangoFetchData<T>(
   relativeUrl: string,
   params?: TQueryParams,
+  fields?: string[],
+  extraFields?: string[],
 ): Promise<T> {
-  const response = await djangoFetch(relativeUrl, params);
+  const response = await djangoFetch(relativeUrl, {
+    ...params,
+    fields: (fields ?? []).join(","),
+    extra_fields: (extraFields ?? []).join(","),
+  });
   if (!response.ok) {
     notFound();
   }
@@ -71,8 +77,9 @@ export const djangoFetchData = cache(async function djangoFetchData<T>(
 export async function fetchPages<T = TPage>(
   relativeUrl: string,
   params?: TQueryParams,
+  fields?: string[],
 ): Promise<TPageResults<T>> {
-  return await djangoFetchData<TPageResults<T>>(relativeUrl, params);
+  return await djangoFetchData<TPageResults<T>>(relativeUrl, params, fields);
 }
 
 export const findPage = cache(async function findPage({
@@ -154,4 +161,29 @@ export function abbreviate(text: string): string {
     .split(NON_LETTER)
     .map((bit) => (bit.match(NON_LETTER) === null ? abbreviateWord(bit) : bit))
     .join("");
+}
+
+export function withParticule(particule: string, nom: string): string {
+  if (!particule) {
+    return nom;
+  }
+  if (particule.endsWith("’") || particule.endsWith("'")) {
+    return `${particule}${nom}`;
+  }
+  return `${particule} ${nom}`;
+}
+
+export function capfirst(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+export function joinWithLast(values: string[]) {
+  if (values.length === 0) {
+    return "";
+  }
+  if (values.length === 1) {
+    return values[0];
+  }
+  return [values.slice(0, -1).join(", "), values[values.length - 1]].join(
+    " et ",
+  );
 }

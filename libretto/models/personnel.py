@@ -10,6 +10,7 @@ from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
 from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
+from wagtail.api import APIField
 from wagtail.search.index import Indexed, SearchField, RelatedFields
 from common.utils.abbreviate import abbreviate
 from common.utils.html import capfirst, href, date_html, sc
@@ -300,6 +301,14 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
     search_fields = [
         SearchField('particule_nom'), SearchField('nom', boost=10),
         RelatedFields('individus', Individu.search_fields),
+    ]
+    api_fields = [
+        APIField('particule_nom'),
+        APIField('nom'),
+        APIField('type'),
+        APIField('siege'),
+        APIField('individus'),
+        APIField('isni'),
     ]
 
     class Meta(AutoriteModel.Meta):

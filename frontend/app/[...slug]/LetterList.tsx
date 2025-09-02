@@ -3,8 +3,8 @@ import CardActionArea from "@mui/material/CardActionArea";
 import Stack from "@mui/material/Stack";
 import OverflowContainer from "./OverflowContainer";
 import Typography from "@mui/material/Typography";
-import SpaceTime from "./SpaceTime";
-import PersonLabel from "./PersonLabel";
+import SpaceTime from "@/format/SpaceTime";
+import { PersonLabel } from "@/format/PersonChip";
 import Link from "next/link";
 import { TLetter, TPageResults, TAsyncSearchParams } from "../types";
 import { djangoFetchData, safeParseInt } from "../utils";
@@ -37,16 +37,30 @@ export default async function LetterList({
         transcription_text: string;
       }
     >
-  >(`/api/correspondance/${parentPageId}/lettres/`, {
-    search,
-    year,
-    person,
-    writing_place,
-    tab,
-    fields: `sender(${INDIVIDU_FIELDS}),recipients(person(${INDIVIDU_FIELDS})),writing_lieu(${PLACE_FIELDS}),writing_lieu_approx,writing_date,writing_date_approx,writing_heure,writing_heure_approx,letter_images,transcription_text`,
-    offset: (page - 1) * perPage,
-    limit: perPage,
-  });
+  >(
+    `/api/correspondance/${parentPageId}/lettres/`,
+    {
+      search,
+      year,
+      person,
+      writing_place,
+      tab,
+      offset: (page - 1) * perPage,
+      limit: perPage,
+    },
+    [
+      `sender(${INDIVIDU_FIELDS})`,
+      `recipients(person(${INDIVIDU_FIELDS}))`,
+      `writing_lieu(${PLACE_FIELDS})`,
+      "writing_lieu_approx",
+      "writing_date",
+      "writing_date_approx",
+      "writing_heure",
+      "writing_heure_approx",
+      "letter_images",
+      "transcription_text",
+    ],
+  );
   if (lettersData.items.length === 0) {
     return <Empty>Aucune lettre ne correspond aux critères sélectionnés</Empty>;
   }

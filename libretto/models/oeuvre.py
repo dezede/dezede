@@ -20,7 +20,9 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from psycopg2._range import NumericRange
+from rest_framework import serializers
 from wagtail.admin.panels import FieldPanel, FieldRowPanel
+from wagtail.api import APIField
 from wagtail.search.index import Indexed, SearchField, RelatedFields
 
 from .base import (
@@ -60,6 +62,11 @@ class GenreDOeuvre(Indexed, CommonModel, SlugModel):
 
     dezede_search_fields = ['nom', 'nom_pluriel']
     search_fields = [SearchField('nom'), SearchField('nom_pluriel')]
+    api_fields = [
+        APIField('nom'),
+        APIField('nom_pluriel'),
+        APIField('referent'),
+    ]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('genre d’œuvre')
@@ -130,6 +137,16 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
     search_fields = [
         SearchField('nom'),
         SearchField('nom_pluriel'),
+    ]
+    api_fields = [
+        APIField('nom'),
+        APIField('nom_pluriel'),
+        APIField('part_type', serializer=serializers.IntegerField(source='type')),
+        APIField('oeuvre'),
+        APIField('professions'),
+        APIField('parent'),
+        APIField('classement'),
+        APIField('premier_interprete'),
     ]
 
     class Meta(AutoriteModel.Meta):
@@ -237,6 +254,14 @@ class Pupitre(CommonModel):
     facultatif = BooleanField(_('ad libitum'), default=False,)
 
     objects = PupitreManager()
+
+    api_fields = [
+        APIField('partie'),
+        APIField('soliste'),
+        APIField('quantite_min'),
+        APIField('quantite_max'),
+        APIField('facultatif'),
+    ]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('pupitre')
@@ -865,7 +890,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
     search_fields = [
         SearchField('prefixe_titre'), SearchField('titre', boost=True),
         SearchField('prefixe_titre_secondaire'), SearchField('titre_secondaire'),
-        SearchField('numero'), SearchField('coupe'), SearchField('tempo'),
+        SearchField('numero'), SearchField('coupe'), SearchField('tempo'), SearchField('get_tonalite_display'),
         SearchField('sujet'), SearchField('surnom', boost=10), SearchField('nom_courant', boost=10),
         SearchField('incipit', boost=10),
         SearchField('opus', boost=10),
@@ -878,6 +903,33 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         RelatedFields('pupitres', [
             RelatedFields('partie', Partie.search_fields),
         ]),
+    ]
+    api_fields = [
+        APIField('prefixe_titre'),
+        APIField('titre'),
+        APIField('coordination'),
+        APIField('prefixe_titre_secondaire'),
+        APIField('titre_secondaire'),
+        APIField('genre'),
+        APIField('numero'),
+        APIField('coupe'),
+        APIField('indeterminee'),
+        APIField('incipit'),
+        APIField('tempo'),
+        APIField('tonalite', serializer=serializers.CharField(source='get_tonalite_display')),
+        APIField('ambitus'),
+        APIField('sujet'),
+        APIField('arrangement', serializer=serializers.CharField(source='get_arrangement_display')),
+        APIField('surnom'),
+        APIField('nom_courant'),
+        APIField('opus'),
+        APIField('ict'),
+        APIField('dedicataires'),
+        APIField('creation_type', serializer=serializers.CharField(source='get_creation_type_display')),
+        APIField('extrait_de'),
+        APIField('type_extrait', serializer=serializers.CharField(source='get_type_extrait_display')),
+        APIField('numero_extrait'),
+        APIField('pupitres'),
     ]
 
     class Meta(AutoriteModel.Meta):

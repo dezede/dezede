@@ -8,7 +8,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
-import PersonLabel, { getPersonLabelString } from "./PersonLabel";
+import { getPersonLabel, PersonLabel } from "@/format/PersonChip";
 import {
   ELetterTab,
   TRelatedPerson,
@@ -23,7 +23,7 @@ import React, {
   useState,
 } from "react";
 import { useDebounceCallback, useUpdateSearchParams } from "../hooks";
-import { getPlaceLabel } from "./PlaceLabel";
+import { getPlaceLabel } from "@/format/PlaceChip";
 import Autocomplete, {
   AutocompleteProps,
   createFilterOptions,
@@ -172,7 +172,7 @@ export default function LetterCorpusForm({
           label="Correspondant"
           options={personChoices}
           getOptionKey={(option) => (option?.id ?? "").toString()}
-          getOptionLabel={getPersonLabelString}
+          getOptionLabel={getPersonLabel}
         />
         <AutocompleteFilter
           param="writing_place"

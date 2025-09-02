@@ -4,12 +4,19 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { djangoFetchData } from "../utils";
-import { INDIVIDU_FIELDS, PLACE_FIELDS } from "../constants";
-import PersonLink from "./PersonChip";
+import {
+  ENSEMBLE_FIELDS,
+  EVENT_FIELDS,
+  INDIVIDU_FIELDS,
+  PART_FIELDS,
+  PLACE_FIELDS,
+  WORK_FIELDS,
+} from "../constants";
+import PersonChip from "@/format/PersonChip";
 import RichText from "./RichText";
 import Paper from "@mui/material/Paper";
 import LetterImagesReader from "./LetterImagesReader";
-import SpaceTime from "./SpaceTime";
+import SpaceTime from "@/format/SpaceTime";
 import Divider from "@mui/material/Divider";
 import Empty from "./Empty";
 
@@ -18,9 +25,23 @@ export default async function Letter({
 }: {
   findPageData: TFindPageData;
 }) {
-  const pageData = await djangoFetchData<TLetter>(findPageData.apiUrl, {
-    fields: `sender(${INDIVIDU_FIELDS}),recipients(person(${INDIVIDU_FIELDS})),writing_lieu(${PLACE_FIELDS})`,
-  });
+  const pageData = await djangoFetchData<TLetter>(
+    findPageData.apiUrl,
+    {},
+    [
+      `sender(${INDIVIDU_FIELDS})`,
+      `recipients(person(${INDIVIDU_FIELDS}))`,
+      `writing_lieu(${PLACE_FIELDS})`,
+    ],
+    [
+      `references__individu(${INDIVIDU_FIELDS})`,
+      `references__lieu(${PLACE_FIELDS})`,
+      `references__partie(${PART_FIELDS})`,
+      `references__ensemble(${ENSEMBLE_FIELDS})`,
+      `references__evenement(${EVENT_FIELDS})`,
+      `references__oeuvre(${WORK_FIELDS})`,
+    ],
+  );
   const {
     sender,
     recipients,
@@ -76,10 +97,10 @@ export default async function Letter({
                       alignItems="center"
                     >
                       <Typography color="textDisabled">De</Typography>
-                      <PersonLink {...sender} />
+                      <PersonChip {...sender} />
                       <Typography color="textDisabled">à</Typography>
                       {recipients.map(({ person }) => (
-                        <PersonLink key={person.id} {...person} />
+                        <PersonChip key={person.id} {...person} />
                       ))}
                     </Stack>
                     <SpaceTime
