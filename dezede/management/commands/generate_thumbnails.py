@@ -26,6 +26,7 @@ class Command(BaseCommand):
 
         for model in apps.get_models():
             for api_field in getattr(model, 'api_fields', []):
+                # TODO: Handle images deeply nested in streamfields and rich texts.
                 if not isinstance(api_field.serializer, ImageRenditionField):
                     continue
                 for image in tqdm(

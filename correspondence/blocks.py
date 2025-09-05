@@ -3,8 +3,11 @@ from wagtail.blocks import (
     StreamBlock, StructBlock, URLBlock, ListBlock, ChoiceBlock, PageChooserBlock,
     RichTextBlock,
 )
+from wagtail.images.api.fields import ImageRenditionField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
+
+from dezede.constants import IMAGE_SPEC
 
 
 class PrefetchedChooserBlock(SnippetChooserBlock):
@@ -42,9 +45,34 @@ class ReferencesStreamBlock(StreamBlock):
     class Meta:
         max_num = 30
 
+    def get_api_representation(self, value, context=None):
+        from dezede.viewsets import CustomPagesAPIViewSet
+
+        viewset: CustomPagesAPIViewSet = context['view']
+        return [
+            viewset.serialize_instance(
+                f'{value._stream_field.name}__{reference.block_type}',
+                reference.value,
+            )
+            for reference in value
+        ]
+
+
+class CustomImageBlock(ImageChooserBlock):
+    def get_api_representation(self, value, context=None):
+        return ImageRenditionField(IMAGE_SPEC).to_representation(value)
+
+
+class CustomPageBlock(PageChooserBlock):
+    def get_api_representation(self, value, context=None):
+        from dezede.viewsets import CustomPagesAPIViewSet
+
+        viewset: CustomPagesAPIViewSet = context['view']
+        return viewset.serialize_instance('streamfield_page', value)
+
 
 class ImageCellBlock(StructBlock):
-    image = ImageChooserBlock(label=_('Image'), search_index=False)
+    image = CustomImageBlock(label=_('Image'), search_index=False)
     link_url = URLBlock(label=_('URL du lien'), required=False, search_index=False)
     width = ChoiceBlock(choices=[
         ('narrow', _('étroite')),
@@ -68,7 +96,7 @@ class ImagesRowBlock(StructBlock):
 class BodyStreamBlock(StreamBlock):
     text = RichTextBlock(label=_('Texte'))
     pages_row = ListBlock(
-        PageChooserBlock(search_index=False),
+        CustomPageBlock(search_index=False),
         label=_('Rangée de pages'), icon='doc-empty-inverse', search_index=False,
     )
     images_row = ImagesRowBlock(label=_('Rangée d’images'), search_index=False)

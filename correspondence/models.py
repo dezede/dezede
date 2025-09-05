@@ -13,7 +13,8 @@ from wagtail.images.api.fields import ImageRenditionField
 from wagtail.models import Page, Orderable
 from wagtail.search.index import SearchField, RelatedFields
 
-from correspondence.serializer_fields import ReferencesSerializer, RichTextSerializer
+from correspondence.serializer_fields import RichTextSerializer
+from dezede.constants import IMAGE_SPEC, THUMBNAIL_SPEC
 from libretto.contants import INDIVIDU_SEARCH_FIELDS, LIEU_SEARCH_FIELDS
 from libretto.models.base import SpaceTimeFields
 
@@ -143,9 +144,9 @@ class LetterImage(Orderable):
     ]
     api_fields = [
         APIField('name'),
-        APIField('image', serializer=ImageRenditionField('max-1920x1080')),
-        APIField('thumbnail', serializer=ImageRenditionField('fill-200x200', source='image')),
-        APIField('references', serializer=ReferencesSerializer()),
+        APIField('image', serializer=ImageRenditionField(IMAGE_SPEC)),
+        APIField('thumbnail', serializer=ImageRenditionField(THUMBNAIL_SPEC, source='image')),
+        APIField('references'),
     ]
 
     class Meta(Orderable.Meta):

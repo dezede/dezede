@@ -73,7 +73,8 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
             self.request.GET.get('extra_fields')
         )
 
-    def get_related_serializer_class(self, name: str, request: Request, model: Type[Model]):
+    def get_related_serializer_class(self, name: str, model: Type[Model]):
+        request = self.request
         fields_config = []
         for field, _, children in self.parsed_fields:
             if field == name and children:
@@ -108,10 +109,10 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
         setattr(self.request, cache_attr, context)
         return context
 
-    def serialize_instance(self, name: str, request: Request, instance: Model):
-        serializer_class = self.get_related_serializer_class(name, request, type(instance))
+    def serialize_instance(self, name: str, instance: Model):
+        serializer_class = self.get_related_serializer_class(name, type(instance))
         return serializer_class(instance, context=self.get_serializer_context()).data
 
-    def serialize_queryset(self, name: str, request: Request, queryset: QuerySet):
-        serializer_class = self.get_related_serializer_class(name, request, queryset.model)
+    def serialize_queryset(self, name: str, queryset: QuerySet):
+        serializer_class = self.get_related_serializer_class(name, queryset.model)
         return serializer_class(queryset, many=True, context=self.get_serializer_context()).data

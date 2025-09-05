@@ -39,7 +39,9 @@ class LetterCorpusAPIViewSet(CustomPagesAPIViewSet):
     @cached_property
     def corpus(self) -> LetterCorpus:
         try:
-            return LetterCorpus.objects.live().select_related('person').only(*get_only('libretto.Individu', 'person')).get(pk=self.pk)
+            return LetterCorpus.objects.live().select_related('person').only(
+                'body', *get_only('libretto.Individu', 'person'),
+            ).get(pk=self.pk)
         except LetterCorpus.DoesNotExist:
             raise NotFound
 
@@ -56,14 +58,15 @@ class LetterCorpusAPIViewSet(CustomPagesAPIViewSet):
             *get_only('libretto.Lieu'),
         )
         return Response({
-            'person': self.serialize_instance('person', request, corpus.person),
+            'body': corpus.body.stream_block.get_api_representation(corpus.body, {'view': self}),
+            'person': self.serialize_instance('person', corpus.person),
             'year_choices': letters.annotate(
                 year=F('writing_date__year'),
             ).values('year').order_by('year').annotate(
                 count=Count('pk'),
             ),
-            'person_choices': self.serialize_queryset('person_choices', request, person_choices),
-            'writing_place_choices': self.serialize_queryset('writing_place_choices', request, place_choices),
+            'person_choices': self.serialize_queryset('person_choices', person_choices),
+            'writing_place_choices': self.serialize_queryset('writing_place_choices', place_choices),
             'total_count': letters.count(),
             'from_count': letters.filter(sender=corpus.person_id).count(),
             'to_count': letters.filter(recipient_persons=corpus.person_id).count(),
