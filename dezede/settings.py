@@ -458,7 +458,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
             'features': [
                 'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul',
                 'hr', 'link', 'document-link', 'image', 'embed',
-                'blockquote',
+                'blockquote', 'note-anchor', 'note-reference',
             ],
         },
     },
@@ -468,6 +468,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
             'features': [
                 'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul',
                 'hr', 'blockquote', 'note-anchor', 'note-reference',
+                'align-center', 'align-right',
             ],
         },
     },

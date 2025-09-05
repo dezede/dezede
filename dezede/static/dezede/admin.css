@@ -1,0 +1,23 @@
+/* Draftail aligns */
+
+align-left .public-DraftStyleDefault-block {
+    text-align: left;
+}
+
+align-center .public-DraftStyleDefault-block {
+    text-align: center;
+}
+
+align-right .public-DraftStyleDefault-block {
+    text-align: right;
+}
+
+align-justify .public-DraftStyleDefault-block {
+    text-align: justify;
+}
+
+/* Applies the same styling as the unstyled block to get perfect alignment */
+align-center, align-right, align-justify {
+    display: block;
+    margin: .5rem 0;
+}

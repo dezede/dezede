@@ -2,7 +2,7 @@ from random import choice
 
 from django.core.management import BaseCommand
 from django.core.files.base import ContentFile
-from django.db.models import Q, Count
+from django.db.models import Q
 from tqdm import tqdm
 from wagtail.images.models import Image
 

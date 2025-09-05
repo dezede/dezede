@@ -54,13 +54,14 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
         response.headers['X-Page-Title'] = urllib.parse.quote(obj.title if isinstance(obj, Page) else str(obj))
         response.headers['X-Page-Seo-Title'] = urllib.parse.quote(obj.seo_title if isinstance(obj, Page) else str(obj))
         response.headers['X-Page-Description'] = urllib.parse.quote(
-                obj.search_description if isinstance(obj, Page) else ''
-            )
+            obj.search_description if isinstance(obj, Page) else ''
+        )
         response.headers['X-Page-Ancestors'] = urllib.parse.quote(json.dumps([
                 {'id': pk, 'title': title} for pk, title in obj.get_ancestors().filter(
                     depth__gt=1,
                 ).values_list('pk', 'title')
-            ] if isinstance(obj, Page) else []))
+            ] if isinstance(obj, Page) else [])
+        )
         response.headers['X-Page-Url'] = urllib.parse.quote(obj.relative_url(None) if isinstance(obj, Page) else '/')
         return response
 
