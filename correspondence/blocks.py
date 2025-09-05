@@ -1,5 +1,9 @@
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import StreamBlock
+from wagtail.blocks import (
+    StreamBlock, StructBlock, URLBlock, ListBlock, ChoiceBlock, PageChooserBlock,
+    RichTextBlock,
+)
+from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.blocks import SnippetChooserBlock
 
 
@@ -34,3 +38,34 @@ class ReferencesStreamBlock(StreamBlock):
         'libretto.Partie', label=_('Rôle ou instrument'),
         select_related=['oeuvre'],
     )
+
+    class Meta:
+        max_num = 30
+
+
+class ImageCellBlock(StructBlock):
+    image = ImageChooserBlock(label=_('Image'), search_index=False)
+    link_url = URLBlock(label=_('URL du lien'), required=False, search_index=False)
+    width = ChoiceBlock(choices=[
+        ('narrow', _('étroite')),
+        ('default', _('par défaut')),
+        ('wide', _('large')),
+    ], default='default', label=_('Largeur'), search_index=False)
+
+
+class ImagesRowBlock(StructBlock):
+    height = ChoiceBlock(choices=[
+        ('small', _('petite')),
+        ('default', _('par défaut')),
+        ('large', _('grande')),
+    ], default='default', label=_('Hauteur'), search_index=False)
+    images = ListBlock(ImageCellBlock(label=_('Image')), label=_('Images'), search_index=False)
+
+
+class BodyStreamBlock(StreamBlock):
+    text = RichTextBlock()
+    pages_row = ListBlock(
+        PageChooserBlock(search_index=False),
+        label=_('Rangée de pages'), search_index=False,
+    )
+    images_row = ImagesRowBlock(label=_('Rangée d’images'), search_index=False)
