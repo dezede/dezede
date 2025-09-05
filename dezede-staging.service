@@ -1,0 +1,20 @@
+# To be copied in /etc/systemd/system/dezede-staging.service
+
+[Unit]
+Description=Dezède staging
+Requires=docker.service
+After=docker.service
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+WorkingDirectory=/srv/dezede
+ExecStart=docker compose -f docker-compose.staging.yaml up --remove-orphans
+ExecStop=docker compose -f docker-compose.staging.yaml stop
+TimeoutStartSec=0
+Restart=on-failure
+StartLimitInterval=60
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target
