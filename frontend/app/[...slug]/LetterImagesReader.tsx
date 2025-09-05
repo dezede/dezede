@@ -50,7 +50,11 @@ export default function LetterImagesReader({
             </Button>
           </Grid>
           <Grid size={4}>
-            <Typography variant="caption" textAlign="center" display="block">
+            <Typography
+              textAlign="center"
+              display="block"
+              sx={{ lineHeight: "36px" }}
+            >
               {name}
             </Typography>
           </Grid>

@@ -10,6 +10,9 @@ export default function References({
   references: TReference[];
   sx?: SxProps;
 }) {
+  if (references.length === 0) {
+    return null;
+  }
   return (
     <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={sx}>
       {references.map((reference) => (

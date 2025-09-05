@@ -107,10 +107,10 @@ export default async function LetterList({
                   )}
                   <OverflowContainer
                     maxHeight={200}
-                    overflowHeight={50}
+                    overflowHeight={transcription_text ? 50 : 0}
                     sx={{ width: "100%" }}
                   >
-                    <Stack spacing={1} p={2}>
+                    <Stack spacing={1} p={2} height="100%">
                       <Stack
                         direction="row"
                         justifyContent="space-between"
@@ -139,9 +139,15 @@ export default async function LetterList({
                         />
                       </Stack>
                       <Divider />
-                      <Typography textAlign="justify">
-                        {transcription_text}
-                      </Typography>
+                      {transcription_text ? (
+                        <Typography textAlign="justify">
+                          {transcription_text}
+                        </Typography>
+                      ) : (
+                        <Empty sx={{ py: 0, height: "100%" }}>
+                          Transcription manquante
+                        </Empty>
+                      )}
                     </Stack>
                   </OverflowContainer>
                 </Stack>

@@ -56,73 +56,71 @@ export default async function Letter({
     description,
   } = pageData;
   return (
-    <Grid container direction="column" spacing={4}>
-      <Grid>
-        <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 6, lg: 5 }}>
-            <Paper
-              sx={{
-                position: "sticky",
-                top: 100,
-                borderTopLeftRadius: 0,
-                borderBottomLeftRadius: 0,
-                overflow: "hidden",
-              }}
-            >
-              <LetterImagesReader letterImages={letter_images} />
-            </Paper>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 7 }}>
-            <Paper
-              sx={{
-                py: 2,
-                borderTopRightRadius: 0,
-                borderBottomRightRadius: 0,
-              }}
-            >
-              <Container>
-                <Stack spacing={1}>
+    <Grid container direction="column" spacing={4} wrap="nowrap">
+      <Grid container spacing={4}>
+        <Grid size={{ xs: 12, md: 6, lg: 5 }}>
+          <Paper
+            sx={{
+              position: "sticky",
+              top: 20,
+              borderTopLeftRadius: 0,
+              borderBottomLeftRadius: 0,
+              overflow: "hidden",
+            }}
+          >
+            <LetterImagesReader letterImages={letter_images} />
+          </Paper>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6, lg: 7 }}>
+          <Paper
+            sx={{
+              py: 2,
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+            }}
+          >
+            <Container>
+              <Stack spacing={1}>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  spacing={2}
+                  useFlexGap
+                  flexWrap="wrap"
+                >
                   <Stack
                     direction="row"
-                    justifyContent="space-between"
-                    spacing={2}
-                    useFlexGap
+                    spacing={1}
                     flexWrap="wrap"
+                    useFlexGap
+                    alignItems="center"
                   >
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      flexWrap="wrap"
-                      useFlexGap
-                      alignItems="center"
-                    >
-                      <Typography color="textDisabled">De</Typography>
-                      <PersonChip {...sender} />
-                      <Typography color="textDisabled">à</Typography>
-                      {recipients.map(({ person }) => (
-                        <PersonChip key={person.id} {...person} />
-                      ))}
-                    </Stack>
-                    <SpaceTime
-                      place={writing_lieu}
-                      fuzzyPlace={writing_lieu_approx}
-                      date={writing_date}
-                      fuzzyDate={writing_date_approx}
-                      time={writing_heure}
-                      fuzzyTime={writing_heure_approx}
-                      chip
-                    />
+                    <Typography color="textDisabled">De</Typography>
+                    <PersonChip {...sender} />
+                    <Typography color="textDisabled">à</Typography>
+                    {recipients.map(({ person }) => (
+                      <PersonChip key={person.id} {...person} />
+                    ))}
                   </Stack>
-                  <Divider />
-                  {transcription ? (
-                    <RichText value={transcription} />
-                  ) : (
-                    <Empty>Transcription manquante</Empty>
-                  )}
+                  <SpaceTime
+                    place={writing_lieu}
+                    fuzzyPlace={writing_lieu_approx}
+                    date={writing_date}
+                    fuzzyDate={writing_date_approx}
+                    time={writing_heure}
+                    fuzzyTime={writing_heure_approx}
+                    chip
+                  />
                 </Stack>
-              </Container>
-            </Paper>
-          </Grid>
+                <Divider />
+                {transcription ? (
+                  <RichText value={transcription} />
+                ) : (
+                  <Empty>Transcription manquante</Empty>
+                )}
+              </Stack>
+            </Container>
+          </Paper>
         </Grid>
       </Grid>
       {description ? (
