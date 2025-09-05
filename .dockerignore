@@ -164,8 +164,8 @@ cython_debug/
 # Docker
 .dockerignore
 Dockerfile
-Dockerfile-postgresql
-Dockerfile-redis
+postgresql.Dockerfile
+redis.Dockerfile
 docker-compose.*yaml
 custom.yaml
 

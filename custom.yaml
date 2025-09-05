@@ -2,7 +2,7 @@ services:
   postgresql:
     build:
       context: ..
-      dockerfile: Dockerfile-postgresql
+      dockerfile: postgresql.Dockerfile
     image: $PROJECT/postgresql:${IMAGES_TAG:-latest}
     environment:
       # FIXME: Remove when upgrading to a more recent PostgreSQL version.
@@ -16,7 +16,7 @@ services:
     image: $PROJECT/redis:${IMAGES_TAG:-latest}
     build:
       context: ..
-      dockerfile: Dockerfile-redis
+      dockerfile: redis.Dockerfile
     volumes:
       - redis-data:/data
       - redis-socket:/var/run/redis
