@@ -1,4 +1,5 @@
 from functools import cached_property
+from typing import List, Union
 from django.db.models import QuerySet, Q, Count, F
 from django.urls import path
 from rest_framework.exceptions import NotFound
@@ -10,6 +11,19 @@ from dezede.viewsets import CustomPagesAPIViewSet
 from dezede.search_backend import FixedPostgresSearchResults
 from libretto.models.espace_temps import Lieu
 from libretto.models.individu import Individu
+
+
+def get_only(model_name: str, lookup: Union[str, None] = None) -> List[str]:
+    only_lookups = {
+        'libretto.Individu': [
+            'particule_nom', 'nom', 'particule_nom_naissance', 'nom_naissance',
+            'prenoms', 'pseudonyme', 'designation', 'titre',
+        ],
+        'libretto.Lieu': ['nom', 'parent__nom', 'nature__nom', 'nature__referent'],
+    }[model_name]
+    if lookup is not None:
+        only_lookups = [f'{lookup}__{field}' for field in only_lookups]
+    return only_lookups
 
 
 class LetterCorpusAPIViewSet(CustomPagesAPIViewSet):
@@ -25,7 +39,7 @@ class LetterCorpusAPIViewSet(CustomPagesAPIViewSet):
     @cached_property
     def corpus(self) -> LetterCorpus:
         try:
-            return LetterCorpus.objects.live().only('pk', 'person_id').get(pk=self.pk)
+            return LetterCorpus.objects.live().select_related('person').only(*get_only('libretto.Individu', 'person')).get(pk=self.pk)
         except LetterCorpus.DoesNotExist:
             raise NotFound
 
@@ -35,10 +49,12 @@ class LetterCorpusAPIViewSet(CustomPagesAPIViewSet):
         letters = self.filter_queryset(self.get_queryset())
         person_choices = Individu.objects.filter(
             Q(sent_letters__in=letters) | Q(received_letters__in=letters)
-        ).distinct()
+        ).distinct().only(*get_only('libretto.Individu'))
         place_choices = Lieu.objects.filter(
             letter_writing_set__in=letters,
-        ).distinct().order_by('nature__nom', 'nom')
+        ).distinct().order_by('nature__nom', 'nom').select_related('parent', 'nature').only(
+            *get_only('libretto.Lieu'),
+        )
         return Response({
             'person': self.serialize_instance('person', request, corpus.person),
             'year_choices': letters.annotate(
