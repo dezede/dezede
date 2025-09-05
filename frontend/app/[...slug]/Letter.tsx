@@ -25,23 +25,6 @@ export default async function Letter({
 }: {
   findPageData: TFindPageData;
 }) {
-  const pageData = await djangoFetchData<TLetter>(
-    findPageData.apiUrl,
-    {},
-    [
-      `sender(${INDIVIDU_FIELDS})`,
-      `recipients(person(${INDIVIDU_FIELDS}))`,
-      `writing_lieu(${PLACE_FIELDS})`,
-    ],
-    [
-      `references__individu(${INDIVIDU_FIELDS})`,
-      `references__lieu(${PLACE_FIELDS})`,
-      `references__partie(${PART_FIELDS})`,
-      `references__ensemble(${ENSEMBLE_FIELDS})`,
-      `references__evenement(${EVENT_FIELDS})`,
-      `references__oeuvre(${WORK_FIELDS})`,
-    ],
-  );
   const {
     sender,
     recipients,
@@ -54,7 +37,25 @@ export default async function Letter({
     letter_images,
     transcription,
     description,
-  } = pageData;
+  } = await djangoFetchData<TLetter>(
+    findPageData.apiUrl,
+    {},
+    [
+      `sender(${INDIVIDU_FIELDS})`,
+      `recipients(person(${INDIVIDU_FIELDS}))`,
+      `writing_lieu(${PLACE_FIELDS})`,
+      "letter_images(-thumbnail)",
+      "-transcription_text",
+    ],
+    [
+      `references__individu(${INDIVIDU_FIELDS})`,
+      `references__lieu(${PLACE_FIELDS})`,
+      `references__partie(${PART_FIELDS})`,
+      `references__ensemble(${ENSEMBLE_FIELDS})`,
+      `references__evenement(${EVENT_FIELDS})`,
+      `references__oeuvre(${WORK_FIELDS})`,
+    ],
+  );
   return (
     <Grid container direction="column" spacing={4} wrap="nowrap">
       <Grid container spacing={4}>

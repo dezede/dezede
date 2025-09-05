@@ -57,7 +57,7 @@ export default async function LetterList({
       "writing_date_approx",
       "writing_heure",
       "writing_heure_approx",
-      "letter_images",
+      "letter_images(_,thumbnail)",
       "transcription_text",
     ],
   );
