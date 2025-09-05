@@ -61,11 +61,14 @@ class ImagesRowBlock(StructBlock):
     ], default='default', label=_('Hauteur'), search_index=False)
     images = ListBlock(ImageCellBlock(label=_('Image')), label=_('Images'), search_index=False)
 
+    class Meta:
+        icon = 'image'
+
 
 class BodyStreamBlock(StreamBlock):
-    text = RichTextBlock()
+    text = RichTextBlock(label=_('Texte'))
     pages_row = ListBlock(
         PageChooserBlock(search_index=False),
-        label=_('Rangée de pages'), search_index=False,
+        label=_('Rangée de pages'), icon='doc-empty-inverse', search_index=False,
     )
     images_row = ImagesRowBlock(label=_('Rangée d’images'), search_index=False)
