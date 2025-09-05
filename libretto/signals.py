@@ -1,25 +1,34 @@
+from typing import Type
 from django.apps import apps
 from django.contrib.admin.models import LogEntry
+from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
-from django.db.models import Manager, QuerySet
+from django.db.models import Manager, QuerySet, Model
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
 from django_rq import job
 import django_rq
 from haystack.signals import BaseSignalProcessor
-from wagtail.models import Page
+from reversion.models import Revision, Version
+from wagtail.models import Page, Orderable
 
 from common.utils.html import sanitize_html
 from .forms import FasterModelChoiceIterator
 from .search_indexes import get_haystack_index
 
 
-@receiver(pre_save)
-def handle_whitespaces(sender, **kwargs):
+def is_sender_ignored(sender: Type[Model]) -> bool:
     # We skip LogEntry because the logged entry has already been saved
     # (and sanitized). Skip also all the wagtail models.
-    if issubclass(sender, (LogEntry, Page)) or 'wagtail' in sender._meta.app_label:
+    return issubclass(
+        sender, (LogEntry, Page, Session, Revision, Version, Orderable)
+    ) or sender._meta.label in {'migrations.Migration'} or 'wagtail' in sender._meta.app_label
+
+
+@receiver(pre_save)
+def handle_whitespaces(sender, **kwargs):
+    if is_sender_ignored(sender):
         return
 
     # We start by stripping all leading and trailing whitespaces.
@@ -132,11 +141,7 @@ class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
         return self.enqueue('delete', instance, sender, **kwargs)
 
     def enqueue(self, action, instance, sender, **kwargs):
-        if sender._meta.label in {
-            'admin.LogEntry', 'sessions.Session', 'reversion.Revision',
-            'reversion.Version', 'migrations.Migration',
-            'wagtailimages.Image', 'wagtailimages.Rendition',
-        }:
+        if is_sender_ignored(sender):
             return
 
         django_rq.enqueue(
