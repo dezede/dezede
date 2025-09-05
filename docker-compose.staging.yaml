@@ -1,0 +1,11 @@
+include:
+  - path:
+      - docker-compose-django/base.yaml
+      - docker-compose-django/react.yaml
+      - custom.yaml
+      - docker-compose-django/deployment.yaml
+    env_file:
+      - docker-compose-django/.env.base
+      - .env.base
+      - docker-compose-django/.env.staging
+      - .env.staging
