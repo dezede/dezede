@@ -1,6 +1,7 @@
 from traceback import print_exc
 
 from django.apps import apps
+from django.core.exceptions import FieldError
 from django.core.management import BaseCommand
 from tqdm import tqdm
 
@@ -29,13 +30,16 @@ class Command(BaseCommand):
                 # TODO: Handle images deeply nested in streamfields and rich texts.
                 if not isinstance(api_field.serializer, ImageRenditionField):
                     continue
-                for image in tqdm(
-                    image_model.objects.filter(
-                        pk__in=model.objects.values(api_field.serializer.source or api_field.name),
-                    ),
-                    desc=f'{model.__name__}.{api_field.name} frontend thumbnails…',
-                ):
-                    try:
-                        api_field.serializer.to_representation(image)
-                    except (image_model.DoesNotExist, OSError):
-                        print_exc()
+                try:
+                    for image in tqdm(
+                        image_model.objects.filter(
+                            pk__in=model.objects.values(api_field.serializer.source or api_field.name),
+                        ),
+                        desc=f'{model.__name__}.{api_field.name} frontend thumbnails…',
+                    ):
+                        try:
+                            api_field.serializer.to_representation(image)
+                        except (image_model.DoesNotExist, OSError):
+                            print_exc()
+                except FieldError:
+                    continue
