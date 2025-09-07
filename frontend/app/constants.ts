@@ -33,6 +33,9 @@ export const WORK_FIELDS = [
   "nom_courant",
   "opus",
   "ict",
+  "type_extrait",
+  "categorie_type_extrait",
+  "numero_extrait",
 ];
 
 export const PART_FIELDS = [

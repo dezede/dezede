@@ -1,7 +1,7 @@
-import { EPartType, TRelatedWork } from "@/app/types";
+import { EExtractCategory, EPartType, TRelatedWork } from "@/app/types";
 import Chip from "@mui/material/Chip";
 import HistoryEduOutlinedIcon from "@mui/icons-material/HistoryEduOutlined";
-import { capfirst, joinWithLast } from "@/app/utils";
+import { capfirst, joinWithLast, toRoman } from "@/app/utils";
 import { getSectionLabel } from "./SectionLabel";
 
 function* getFeaturesList({
@@ -90,7 +90,8 @@ function getSections({ pupitres }: TRelatedWork): string {
 }
 
 function getNonSignificantTitle(work: TRelatedWork): string {
-  const { genre, tempo } = work;
+  const { genre, tempo, type_extrait, categorie_type_extrait, numero_extrait } =
+    work;
   const parts = [];
   if (genre === null) {
     parts.push(tempo);
@@ -99,7 +100,24 @@ function getNonSignificantTitle(work: TRelatedWork): string {
   }
   parts.push(getSections(work));
   parts.push(getFeaturesList(work).next().value);
-  return parts.join(" ");
+
+  const nonSignificantTitle = parts.join(" ").trim();
+
+  if (
+    nonSignificantTitle === "" &&
+    type_extrait !== null &&
+    numero_extrait &&
+    categorie_type_extrait !== EExtractCategory.HIDDEN
+  ) {
+    const number =
+      categorie_type_extrait === EExtractCategory.ROMAN
+        ? // FIXME: Do not assume that `numero_extrait` is an integer casted to a string.
+          toRoman(parseInt(numero_extrait))
+        : numero_extrait;
+    return `${type_extrait} ${number}`;
+  }
+
+  return nonSignificantTitle;
 }
 
 export function getWorkLabel(work: TRelatedWork): string {

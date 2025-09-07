@@ -903,6 +903,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         RelatedFields('pupitres', [
             RelatedFields('partie', Partie.search_fields),
         ]),
+        SearchField('get_extrait')
     ]
     api_fields = [
         APIField('prefixe_titre'),
@@ -928,6 +929,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         APIField('creation_type', serializer=serializers.CharField(source='get_creation_type_display')),
         APIField('extrait_de'),
         APIField('type_extrait', serializer=serializers.CharField(source='get_type_extrait_display')),
+        APIField('categorie_type_extrait'),
         APIField('numero_extrait'),
         APIField('pupitres'),
     ]
@@ -961,6 +963,14 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         return self.html(tags=True, auteurs=False, titre=True, descr=True,
                          ancestors=True)
     link.short_description = _('lien')
+
+    @property
+    def categorie_type_extrait(self):
+        if self.type_extrait in self.TYPES_EXTRAIT_CACHES:
+            return 'hidden'
+        if self.type_extrait in self.TYPES_EXTRAIT_ROMAINS:
+            return 'roman'
+        return 'default'
 
     def get_extrait(self, show_type=True):
         if not self.type_extrait or not self.numero_extrait:

@@ -1,7 +1,7 @@
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
 import Link from "next/link";
-import Button, { ButtonProps } from "@mui/material/Button";
+import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { ROOT_SLUG } from "@/app/constants";

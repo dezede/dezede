@@ -83,6 +83,12 @@ export type TRelatedSection = TRelated<EModelType.SECTION> & {
   facultatif: boolean;
 };
 
+export enum EExtractCategory {
+  DEFAULT = "default",
+  HIDDEN = "hidden",
+  ROMAN = "roman",
+}
+
 export type TRelatedWork = TRelated<EModelType.WORK> & {
   prefixe_titre: string;
   titre: string;
@@ -103,8 +109,9 @@ export type TRelatedWork = TRelated<EModelType.WORK> & {
   opus: string;
   ict: string;
   // extrait_de: TRelatedWork | null;
-  // type_extrait: string | null;
-  // numero_extrait: string;
+  type_extrait: string | null;
+  categorie_type_extrait: EExtractCategory;
+  numero_extrait: string;
   pupitres: TRelatedSection[];
 };
 

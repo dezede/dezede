@@ -189,3 +189,33 @@ export function joinWithLast(values: string[]) {
     " et ",
   );
 }
+
+const ROMAN_BINDINGS = [
+  { n: 1000, s: "M" },
+  { n: 900, s: "CM" },
+  { n: 500, s: "D" },
+  { n: 400, s: "CD" },
+  { n: 100, s: "C" },
+  { n: 90, s: "XC" },
+  { n: 50, s: "L" },
+  { n: 40, s: "XL" },
+  { n: 10, s: "X" },
+  { n: 9, s: "IX" },
+  { n: 5, s: "V" },
+  { n: 4, s: "IV" },
+  { n: 1, s: "I" },
+];
+
+export function toRoman(integer: number): string {
+  if (integer < 1) {
+    return "";
+  }
+  let roman = "";
+  for (const { n, s } of ROMAN_BINDINGS) {
+    while (integer >= n) {
+      integer -= n;
+      roman += s;
+    }
+  }
+  return roman;
+}

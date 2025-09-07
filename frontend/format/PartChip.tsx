@@ -9,7 +9,7 @@ export function getPartLabel(
 ): string {
   const label = plural ? nom_pluriel : nom;
   if (oeuvre !== null) {
-    return `${label} ${getWorkLabel(oeuvre)}`;
+    return `${label} (${getWorkLabel(oeuvre)})`;
   }
   return label;
 }
