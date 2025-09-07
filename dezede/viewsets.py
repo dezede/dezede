@@ -22,7 +22,7 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
     def serialize_sibling(self, sibling: Union[Page, None]):
         if sibling is None:
             return None
-        return {'id': sibling.pk, 'title': sibling.title, 'url': sibling.relative_url(None)}
+        return {'title': sibling.title, 'url': sibling.relative_url(None)}
 
     def find_view(self, request):
         # Copied from the original method, with extra HTTP headers added

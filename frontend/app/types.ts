@@ -171,7 +171,7 @@ export enum EPageType {
   LETTER = "correspondence.Letter",
 }
 
-export type TSibling = { id: number; title: string; url: string } | null;
+export type TSibling = { title: string; url: string } | null;
 
 export type TFindPageData = {
   id: number;
