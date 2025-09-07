@@ -14,6 +14,7 @@ import Paper from "@mui/material/Paper";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { TSibling } from "../types";
+import IconButton from "@mui/material/IconButton";
 
 export async function generateMetadata({
   params,
@@ -38,21 +39,37 @@ export async function generateMetadata({
 
 function SiblingButton({
   sibling,
-  ...props
-}: { sibling: TSibling } & Pick<ButtonProps, "startIcon" | "endIcon">) {
+  icon,
+  right = false,
+}: {
+  sibling: TSibling;
+  icon: React.ReactNode;
+  right?: boolean;
+}) {
   if (sibling === null) {
     // We keep an empty DOM object to preserve the alignment of the other sibling button.
     return <span />;
   }
   return (
-    <Button
-      component={Link}
-      href={sibling.url}
-      sx={{ maxWidth: "50%" }}
-      {...props}
-    >
-      {sibling.title}
-    </Button>
+    <>
+      <IconButton
+        component={Link}
+        href={sibling.url}
+        size="large"
+        sx={{ display: { md: "none" } }}
+      >
+        {icon}
+      </IconButton>
+      <Button
+        component={Link}
+        href={sibling.url}
+        startIcon={right ? undefined : icon}
+        endIcon={right ? icon : undefined}
+        sx={{ maxWidth: "50%", display: { xs: "none", md: "flex" } }}
+      >
+        {sibling.title}
+      </Button>
+    </>
   );
 }
 
@@ -119,13 +136,14 @@ export default async function Layout({
       {previous !== null || next !== null ? (
         <Grid>
           <Container>
-            <Paper>
+            <Paper sx={{ padding: { xs: 1, md: 0 } }}>
               <Stack direction="row" justifyContent="space-between" spacing={2}>
+                <SiblingButton sibling={previous} icon={<ChevronLeftIcon />} />
                 <SiblingButton
-                  sibling={previous}
-                  startIcon={<ChevronLeftIcon />}
+                  sibling={next}
+                  icon={<ChevronRightIcon />}
+                  right
                 />
-                <SiblingButton sibling={next} endIcon={<ChevronRightIcon />} />
               </Stack>
             </Paper>
           </Container>

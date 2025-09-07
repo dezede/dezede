@@ -32,7 +32,13 @@ export default function SpaceTime({
   const hasTime = time !== null || fuzzyTime !== "";
   const hasDateTime = hasDate || hasTime;
   return (
-    <Stack direction="row" spacing={1} alignItems="center">
+    <Stack
+      direction="row"
+      spacing={1}
+      alignItems="center"
+      flexWrap="wrap"
+      useFlexGap
+    >
       {hasPlace ? (
         chip && place !== null ? (
           <PlaceChip {...place} />
