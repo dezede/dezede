@@ -25,6 +25,7 @@ Page.teaser_image = None
 Page.api_fields = [
     APIField('teaser_thumbnail', serializer=ImageRenditionField(THUMBNAIL_SPEC, source='specific.teaser_image')),
 ]
+Page.show_in_menus_default = True
 
 
 class BasePageNoImage(Page):
