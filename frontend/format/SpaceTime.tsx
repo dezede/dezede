@@ -5,7 +5,7 @@ import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import { TRelatedPlace } from "@/app/types";
 import PlaceChip, { PlaceLabel } from "./PlaceChip";
-import { DateLabel } from "./DateLabel";
+import DateLabel from "./DateLabel";
 import { TimeLabel } from "./TimeLabel";
 
 export default function SpaceTime({

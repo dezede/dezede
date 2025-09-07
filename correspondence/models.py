@@ -21,9 +21,13 @@ from libretto.models.base import SpaceTimeFields
 from .blocks import BodyStreamBlock, ReferencesStreamBlock
 
 
-class BasePageNoImage(Page):
-    api_fields = []
+Page.teaser_image = None
+Page.api_fields = [
+    APIField('teaser_thumbnail', serializer=ImageRenditionField(THUMBNAIL_SPEC, source='specific.teaser_image')),
+]
 
+
+class BasePageNoImage(Page):
     class Meta(Page.Meta):
         abstract = True
 

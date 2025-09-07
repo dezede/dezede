@@ -15,7 +15,7 @@ export function getDateLabel(
   });
 }
 
-export function DateLabel({
+export default function DateLabel({
   dateString = null,
   fuzzyDate = "",
 }: {

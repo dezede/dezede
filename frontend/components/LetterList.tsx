@@ -12,6 +12,7 @@ import { INDIVIDU_FIELDS, PLACE_FIELDS } from "@/app/constants";
 import Divider from "@mui/material/Divider";
 import Empty from "./Empty";
 import ImageRendition from "./ImageRendition";
+import Box from "@mui/material/Box";
 
 export default async function LetterList({
   parentPageId,
@@ -84,27 +85,30 @@ export default async function LetterList({
           return (
             <Card key={id}>
               <CardActionArea component={Link} href={html_url} prefetch={false}>
-                <Stack direction="row" flexWrap="nowrap">
-                  {letter_images.length >= 1 ? (
-                    <ImageRendition
-                      rendition={letter_images[0].thumbnail}
-                      style={{
-                        minWidth: 200,
-                        width: 200,
-                        height: "auto",
-                      }}
-                    />
-                  ) : (
-                    <Empty
-                      sx={{
-                        minWidth: 200,
-                        width: 200,
-                        height: 200,
-                      }}
-                    >
-                      Image manquante
-                    </Empty>
-                  )}
+                <Stack direction="row">
+                  <Box display={{ xs: "none", sm: "block" }}>
+                    {letter_images.length >= 1 ? (
+                      <ImageRendition
+                        rendition={letter_images[0].thumbnail}
+                        style={{
+                          display: "block",
+                          minWidth: 200,
+                          width: 200,
+                          height: "auto",
+                        }}
+                      />
+                    ) : (
+                      <Empty
+                        sx={{
+                          minWidth: 200,
+                          width: 200,
+                          height: 200,
+                        }}
+                      >
+                        Image manquante
+                      </Empty>
+                    )}
+                  </Box>
                   <OverflowContainer
                     maxHeight={200}
                     overflowHeight={transcription_text ? 50 : 0}
@@ -117,7 +121,8 @@ export default async function LetterList({
                       height="100%"
                     >
                       <Stack
-                        direction="row"
+                        direction={{ xs: "column", md: "row" }}
+                        flexWrap="nowrap"
                         justifyContent="space-between"
                         spacing={2}
                       >

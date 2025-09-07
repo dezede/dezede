@@ -195,9 +195,10 @@ export type TPage<E extends string = EPageType> = {
   title: string;
 };
 
-export type TPageCard<E extends string = EPageType> = TPage<E> & {
-  meta: Pick<TPage<E>["meta"], "type" | "html_url"> & {
+export type TPageCard<E extends string = EPageType> = Omit<TPage<E>, "meta"> & {
+  meta: Pick<TPage<E>["meta"], "type" | "html_url" | "first_published_at"> & {
     search_description: string;
+    teaser_thumbnail: TImageRendition | null;
   };
 };
 

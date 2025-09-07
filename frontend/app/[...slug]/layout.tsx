@@ -5,7 +5,6 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { ROOT_SLUG } from "../constants";
-import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import PageHeader from "@/components/PageHeader";
 import { Suspense } from "react";
@@ -18,7 +17,19 @@ export async function generateMetadata({
   params: Promise<{ slug: string[] }>;
 }) {
   const { title, seoTitle, description } = await findPage({ params });
-  return { title: `${seoTitle || title} · OpenLetter × Dezède`, description };
+  // TODO: Add teaser_thumbnail as an open graph image.
+  return {
+    title: seoTitle || `${title} · OpenLetter × Dezède`,
+    description,
+    openGraph: {
+      siteName: "Dezède",
+    },
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+  };
 }
 
 export default async function Layout({
@@ -52,29 +63,6 @@ export default async function Layout({
               >
                 OpenLetter
               </Button>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Typography>Financement :</Typography>
-                <Button
-                  component="a"
-                  href="https://nbe.org.uk/wp/"
-                  target="_blank"
-                  variant="outlined"
-                  color="inherit"
-                  size="small"
-                >
-                  New Berlioz Edition Trust
-                </Button>
-                <Button
-                  component="a"
-                  href="https://musica.hypotheses.org/"
-                  target="_blank"
-                  variant="outlined"
-                  color="inherit"
-                  size="small"
-                >
-                  Consortium Musica2
-                </Button>
-              </Stack>
               <Button
                 component="a"
                 href="/"

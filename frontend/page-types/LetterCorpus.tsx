@@ -15,7 +15,11 @@ import LetterList from "@/components/LetterList";
 import Skeleton from "@mui/material/Skeleton";
 import LetterCorpusForm from "@/components/LetterCorpusForm";
 import { djangoFetchData } from "@/app/utils";
-import { BODY_EXTRA_FIELDS, INDIVIDU_FIELDS, PLACE_FIELDS } from "@/app/constants";
+import {
+  BODY_EXTRA_FIELDS,
+  INDIVIDU_FIELDS,
+  PLACE_FIELDS,
+} from "@/app/constants";
 import ClientPagination from "@/components/ClientPagination";
 import ReadMore from "@/components/ReadMore";
 import BodyStream from "@/blocks/BodyStream";

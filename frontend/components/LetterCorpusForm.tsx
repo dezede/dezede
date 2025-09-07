@@ -129,9 +129,15 @@ export default function LetterCorpusForm({
     matchFrom: "any",
     stringify: getPlaceLabel,
   });
+  const tabSx = { flexGrow: 1, maxWidth: "100%" };
   return (
     <Paper>
-      <Stack direction="row" p={2} spacing={2}>
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        flexWrap="nowrap"
+        p={2}
+        spacing={2}
+      >
         <TextField
           placeholder="Rechercher…"
           onChange={onSearchChange}
@@ -190,11 +196,13 @@ export default function LetterCorpusForm({
           setTab(value);
           updateSearchParams({ tab: value, page: null });
         }}
-        variant="fullWidth"
+        variant="scrollable"
+        scrollButtons="auto"
       >
         <Tab
           value={ELetterTab.ALL}
           label={<LetterTabLabel count={totalCount}>Tout</LetterTabLabel>}
+          sx={tabSx}
         />
         <Tab
           value={ELetterTab.FROM}
@@ -203,6 +211,7 @@ export default function LetterCorpusForm({
               <small>De</small> <PersonLabel {...person} />
             </LetterTabLabel>
           }
+          sx={tabSx}
         />
         <Tab
           value={ELetterTab.TO}
@@ -211,6 +220,7 @@ export default function LetterCorpusForm({
               <small>À</small> <PersonLabel {...person} />
             </LetterTabLabel>
           }
+          sx={tabSx}
         />
         <Tab
           value={ELetterTab.OTHER}
@@ -219,6 +229,7 @@ export default function LetterCorpusForm({
               Autres
             </LetterTabLabel>
           }
+          sx={tabSx}
         />
       </Tabs>
     </Paper>

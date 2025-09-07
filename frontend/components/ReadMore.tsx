@@ -80,11 +80,7 @@ export default function ReadMore({
           onClick={() => setOpen(true)}
           disableElevation
           endIcon={<ExpandMoreIcon />}
-          sx={{
-            borderRadius: 4,
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-          }}
+          sx={{ borderRadius: 4 }}
         >
           Lire plus
         </Button>

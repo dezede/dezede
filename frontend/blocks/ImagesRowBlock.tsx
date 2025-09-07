@@ -38,12 +38,12 @@ const WIDTHS: { [width in ECellWidth]: { [key in Breakpoint]?: number } } = {
 };
 
 export default function ImagesRowBlock({
-  block: { id, value },
+  block: { value },
 }: {
   block: TImagesRowBlock;
 }) {
   return (
-    <Grid key={id} container alignItems="center" spacing={4}>
+    <Grid container alignItems="center" spacing={4}>
       {value.images.map(({ image, link_url, width }, index) => (
         <Grid
           key={`${index}:${image.url}`}

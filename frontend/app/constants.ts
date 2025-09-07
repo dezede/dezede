@@ -57,4 +57,6 @@ export const EVENT_FIELDS = [
   "relache",
 ];
 
-export const BODY_EXTRA_FIELDS = ["streamfield_page(-detail_url,html_url,search_description)"];
+export const BODY_EXTRA_FIELDS = [
+  "streamfield_page(-detail_url,html_url,search_description,first_published_at,teaser_thumbnail)",
+];

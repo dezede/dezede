@@ -57,6 +57,7 @@ export default responsiveFontSizes(
           },
           background: {
             paper: "#1c1c1c",
+            default: "#121212",
           },
         },
       },

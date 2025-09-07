@@ -1,19 +1,19 @@
-import Grid from "@mui/material/Grid";
-import { TPage } from "@/app/types";
+import { TPageCard } from "@/app/types";
 import { fetchPages } from "@/app/utils";
 import PageCard from "@/components/PageCard";
+import Stack from "@mui/material/Stack";
 
 export default async function ChildrenCards({ pageId }: { pageId: number }) {
-  const childrenData = await fetchPages<
-    TPage & { meta: { search_description: string } }
-  >("/api/pages/", { child_of: pageId }, ["search_description"]);
+  const childrenData = await fetchPages<TPageCard>(
+    "/api/pages/",
+    { child_of: pageId },
+    ["search_description", "teaser_thumbnail"],
+  );
   return (
-    <Grid container spacing={4}>
+    <Stack flexWrap="nowrap" spacing={4}>
       {childrenData.items.map((page) => (
-        <Grid key={page.id} size={{ xs: 12, md: 6, xl: 4 }}>
-          <PageCard page={page} />
-        </Grid>
+        <PageCard key={page.id} page={page} />
       ))}
-    </Grid>
+    </Stack>
   );
 }

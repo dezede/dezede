@@ -16,7 +16,7 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
     meta_fields = [
         name for name in PagesAPIViewSet.meta_fields
         if name not in {'parent', 'alias_of', 'slug'}
-    ]
+    ] + ['teaser_thumbnail']
     detail_only_fields = []
 
     def find_view(self, request):

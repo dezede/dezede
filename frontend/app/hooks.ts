@@ -39,7 +39,7 @@ export function useUpdateSearchParams() {
             updatedSearchParams.set(param, value);
           }
         });
-        router.replace(`?${updatedSearchParams.toString()}`);
+        router.replace(`?${updatedSearchParams.toString()}`, { scroll: false });
       },
       [router, searchParams],
     ),
