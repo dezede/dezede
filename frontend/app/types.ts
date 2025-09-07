@@ -234,6 +234,10 @@ export type TLetter = TPageDetailed & {
   writing_heure: string | null;
   writing_heure_approx: string;
   letter_images: TLetterImage[];
+  edition: string;
+  storage_place: TRelatedPlace | null;
+  storage_call_number: string;
+  source_url: string;
   transcription: string;
   description: string;
 };

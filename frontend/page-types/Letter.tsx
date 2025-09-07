@@ -19,6 +19,9 @@ import LetterImagesReader from "@/components/LetterImagesReader";
 import SpaceTime from "@/format/SpaceTime";
 import Divider from "@mui/material/Divider";
 import Empty from "@/components/Empty";
+import Metadata, { getFilteredRows } from "@/components/Metadata";
+import PlaceChip from "@/format/PlaceChip";
+import Link from "next/link";
 
 export default async function Letter({
   findPageData,
@@ -34,6 +37,10 @@ export default async function Letter({
     writing_date_approx,
     writing_heure,
     writing_heure_approx,
+    edition,
+    storage_place,
+    storage_call_number,
+    source_url,
     letter_images,
     transcription,
     description,
@@ -44,6 +51,7 @@ export default async function Letter({
       `sender(${INDIVIDU_FIELDS})`,
       `recipients(person(${INDIVIDU_FIELDS}))`,
       `writing_lieu(${PLACE_FIELDS})`,
+      `storage_place(${PLACE_FIELDS})`,
       "letter_images(-thumbnail)",
       "-transcription_text",
     ],
@@ -56,10 +64,43 @@ export default async function Letter({
       `references__oeuvre(${WORK_FIELDS})`,
     ],
   );
+  const metadataRows = [
+    {
+      key: "edition",
+      label: "Édition",
+      value: edition,
+    },
+    {
+      key: "storage",
+      label: "Lieu de conservation",
+      value:
+        storage_place === null ? null : (
+          <>
+            <PlaceChip {...storage_place} />
+            {storage_call_number ? ` • ${storage_call_number}` : null}
+          </>
+        ),
+    },
+    {
+      key: "source_url",
+      label: "URL d’origine",
+      value:
+        source_url === "" ? null : (
+          <Link href={source_url} prefetch={false}>
+            {source_url}
+          </Link>
+        ),
+    },
+  ];
   return (
     <Grid container direction="column" spacing={4} wrap="nowrap">
       <Grid container spacing={4}>
-        <Grid size={{ xs: 12, md: 6, lg: 5 }}>
+        <Grid
+          size={{ xs: 12, md: 6, lg: 5 }}
+          display={
+            letter_images.length === 0 ? { xs: "none", md: "block" } : undefined
+          }
+        >
           <Paper
             sx={{
               position: "sticky",
@@ -81,7 +122,7 @@ export default async function Letter({
             }}
           >
             <Container>
-              <Stack spacing={1}>
+              <Stack divider={<Divider />} spacing={1}>
                 <Stack
                   direction="row"
                   justifyContent="space-between"
@@ -113,11 +154,13 @@ export default async function Letter({
                     chip
                   />
                 </Stack>
-                <Divider />
                 {transcription.trim() ? (
                   <RichText value={transcription} />
                 ) : (
                   <Empty>Transcription manquante</Empty>
+                )}
+                {getFilteredRows(metadataRows).length === 0 ? null : (
+                  <Metadata rows={metadataRows} />
                 )}
               </Stack>
             </Container>
