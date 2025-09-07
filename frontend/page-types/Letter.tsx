@@ -114,7 +114,7 @@ export default async function Letter({
                   />
                 </Stack>
                 <Divider />
-                {transcription ? (
+                {transcription.trim() ? (
                   <RichText value={transcription} />
                 ) : (
                   <Empty>Transcription manquante</Empty>

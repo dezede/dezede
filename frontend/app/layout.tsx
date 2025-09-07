@@ -30,7 +30,7 @@ export default function RootLayout({
       lang="en"
       className={`${bodoniModa.variable} ${bodoniModaSc.variable}`}
       // See https://nextjs.org/docs/messages/missing-data-scroll-behavior
-      data-scroll-behaviour="smooth"
+      data-scroll-behavior="smooth"
     >
       <body>
         <AppRouterCacheProvider options={{ key: "css" }}>
