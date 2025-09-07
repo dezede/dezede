@@ -82,6 +82,14 @@ export async function fetchPages<T = TPage>(
   return await djangoFetchData<TPageResults<T>>(relativeUrl, params, fields);
 }
 
+function decodeHeader(
+  response: Response,
+  header: string,
+  defaultValue: string = "",
+): string {
+  return decodeURIComponent(response.headers.get(header) ?? defaultValue);
+}
+
 export const findPage = cache(async function findPage({
   params,
 }: {
@@ -111,20 +119,14 @@ export const findPage = cache(async function findPage({
     apiUrl: getRelativeUrl(redirectResponse.headers.get("location") ?? ""),
     type: (redirectResponse.headers.get("X-Page-Type") ??
       "wagtailcore.Page") as EPageType,
-    title: decodeURIComponent(
-      redirectResponse.headers.get("X-Page-Title") ?? "",
+    title: decodeHeader(redirectResponse, "X-Page-Title"),
+    seoTitle: decodeHeader(redirectResponse, "X-Page-Seo-Title"),
+    description: decodeHeader(redirectResponse, "X-Page-Description"),
+    ancestors: JSON.parse(decodeHeader(redirectResponse, "X-Page-Ancestors")),
+    previous: JSON.parse(
+      decodeHeader(redirectResponse, "X-Page-Previous", "null"),
     ),
-    seoTitle: decodeURIComponent(
-      redirectResponse.headers.get("X-Page-Seo-Title") ?? "",
-    ),
-    description: decodeURIComponent(
-      redirectResponse.headers.get("X-Page-Description") ?? "",
-    ),
-    ancestors: JSON.parse(
-      decodeURIComponent(
-        redirectResponse.headers.get("X-Page-Ancestors") ?? "[]",
-      ),
-    ),
+    next: JSON.parse(decodeHeader(redirectResponse, "X-Page-Next", "null")),
     url: decodeURIComponent(redirectResponse.headers.get("X-Page-Url") ?? ""),
   };
 });

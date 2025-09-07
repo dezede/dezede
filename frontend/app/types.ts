@@ -171,6 +171,8 @@ export enum EPageType {
   LETTER = "correspondence.Letter",
 }
 
+export type TSibling = { id: number; title: string; url: string } | null;
+
 export type TFindPageData = {
   id: number;
   apiUrl: string;
@@ -179,6 +181,8 @@ export type TFindPageData = {
   seoTitle: string;
   description: string;
   ancestors: { id: number; title: string }[];
+  previous: TSibling;
+  next: TSibling;
   url: string;
 };
 

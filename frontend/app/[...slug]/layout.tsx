@@ -1,15 +1,19 @@
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
 import Link from "next/link";
-import Button from "@mui/material/Button";
+import Button, { ButtonProps } from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import LaunchIcon from "@mui/icons-material/Launch";
-import { ROOT_SLUG } from "../constants";
+import { ROOT_SLUG } from "@/app/constants";
 import Grid from "@mui/material/Grid";
 import PageHeader from "@/components/PageHeader";
 import { Suspense } from "react";
 import Skeleton from "@mui/material/Skeleton";
-import { findPage } from "../utils";
+import { findPage } from "@/app/utils";
+import Paper from "@mui/material/Paper";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { TSibling } from "../types";
 
 export async function generateMetadata({
   params,
@@ -32,6 +36,26 @@ export async function generateMetadata({
   };
 }
 
+function SiblingButton({
+  sibling,
+  ...props
+}: { sibling: TSibling } & Pick<ButtonProps, "startIcon" | "endIcon">) {
+  if (sibling === null) {
+    // We keep an empty DOM object to preserve the alignment of the other sibling button.
+    return <span />;
+  }
+  return (
+    <Button
+      component={Link}
+      href={sibling.url}
+      sx={{ maxWidth: "50%" }}
+      {...props}
+    >
+      {sibling.title}
+    </Button>
+  );
+}
+
 export default async function Layout({
   children,
   params,
@@ -39,6 +63,7 @@ export default async function Layout({
   children: React.ReactNode;
   params: Promise<{ slug: string[] }>;
 }>) {
+  const { previous, next } = await findPage({ params });
   return (
     <Grid
       container
@@ -91,6 +116,21 @@ export default async function Layout({
         </Container>
       </Grid>
       <Grid>{children}</Grid>
+      {previous !== null || next !== null ? (
+        <Grid>
+          <Container>
+            <Paper>
+              <Stack direction="row" justifyContent="space-between" spacing={2}>
+                <SiblingButton
+                  sibling={previous}
+                  startIcon={<ChevronLeftIcon />}
+                />
+                <SiblingButton sibling={next} endIcon={<ChevronRightIcon />} />
+              </Stack>
+            </Paper>
+          </Container>
+        </Grid>
+      ) : null}
     </Grid>
   );
 }

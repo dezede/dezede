@@ -9,7 +9,7 @@ from wagtail.models import Page
 import json
 import urllib
 from functools import cached_property
-from typing import Type
+from typing import Type, Union
 
 
 class CustomPagesAPIViewSet(PagesAPIViewSet):
@@ -18,6 +18,11 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
         if name not in {'parent', 'alias_of', 'slug'}
     ] + ['teaser_thumbnail']
     detail_only_fields = []
+
+    def serialize_sibling(self, sibling: Union[Page, None]):
+        if sibling is None:
+            return None
+        return {'id': sibling.pk, 'title': sibling.title, 'url': sibling.relative_url(None)}
 
     def find_view(self, request):
         # Copied from the original method, with extra HTTP headers added
@@ -61,6 +66,13 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
                     depth__gt=1,
                 ).values_list('pk', 'title')
             ] if isinstance(obj, Page) else [])
+        )
+
+        response.headers['X-Page-Previous'] = json.dumps(
+            self.serialize_sibling(obj.get_prev_sibling()) if isinstance(obj, Page) else None
+        )
+        response.headers['X-Page-Next'] = json.dumps(
+            self.serialize_sibling(obj.get_next_sibling()) if isinstance(obj, Page) else None
         )
         response.headers['X-Page-Url'] = urllib.parse.quote(obj.relative_url(None) if isinstance(obj, Page) else '/')
         return response
