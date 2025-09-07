@@ -10,7 +10,7 @@ export type TQueryParams = {
   [param: string]: string | string[] | number | null | undefined;
 };
 
-export type TImage = {
+export type TImageRendition = {
   url: string;
   full_url: string;
   width: number;
@@ -41,7 +41,7 @@ export enum EModelType {
   SECTION = "libretto.Pupitre",
 }
 
-export type TRelated<E extends string = EModelType> = {
+export type TRelated<E extends string = EModelType | EPageType> = {
   id: number;
   meta: {
     type: E;
@@ -160,8 +160,8 @@ export type TReference =
 
 export type TLetterImage = TRelated<EModelType.LETTER_IMAGE> & {
   name: string;
-  image: TImage;
-  thumbnail: TImage;
+  image: TImageRendition;
+  thumbnail: TImageRendition;
   references: TReference[];
 };
 
@@ -184,16 +184,21 @@ export type TFindPageData = {
 
 export type TAncestors = { id: number; title: string }[];
 
-export type TPage = {
+export type TPage<E extends string = EPageType> = {
   id: number;
   meta: {
-    type: EPageType;
+    type: E;
     detail_url: string;
     html_url: string;
-    slug: string;
     first_published_at: string;
   };
   title: string;
+};
+
+export type TPageCard<E extends string = EPageType> = TPage<E> & {
+  meta: Pick<TPage<E>["meta"], "type" | "html_url"> & {
+    search_description: string;
+  };
 };
 
 export type TPageDetailed = Omit<TPage, "meta"> & {
@@ -236,3 +241,48 @@ export enum ELetterTab {
 }
 
 export type TYearChoice = { year: number | null; count: number };
+
+export type TRichTextBlock = {
+  id: string;
+  type: "text";
+  value: string;
+};
+
+export type TPagesRowBlock<E extends string = EPageType> = {
+  id: string;
+  type: "pages_row";
+  value: TPageCard<E>[];
+};
+
+export enum ECellWidth {
+  NARROW = "narrow",
+  DEFAULT = "default",
+  WIDE = "wide",
+}
+
+export enum ERowHeight {
+  SMALL = "small",
+  DEFAULT = "default",
+  LARGE = "large",
+}
+
+export type TImageCellBlock = {
+  image: TImageRendition;
+  link_url: string;
+  width: ECellWidth;
+};
+
+export type TImagesRowBlock = {
+  id: string;
+  type: "images_row";
+  value: {
+    height: ERowHeight;
+    images: TImageCellBlock[];
+  };
+};
+
+export type TBodyStreamBlock<EPageBlock extends string = EPageType> = (
+  | TRichTextBlock
+  | TPagesRowBlock<EPageBlock>
+  | TImagesRowBlock
+)[];

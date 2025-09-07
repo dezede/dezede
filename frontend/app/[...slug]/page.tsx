@@ -1,13 +1,14 @@
 import { Suspense } from "react";
 import { EPageType, TAsyncSearchParams } from "../types";
 import { findPage } from "../utils";
-import ChildrenCards from "./ChildrenCards";
+import ChildrenCards from "@/components/ChildrenCards";
 import dynamic from "next/dynamic";
 import Container from "@mui/material/Container";
 import Skeleton from "@mui/material/Skeleton";
-import LetterCorpus from "./LetterCorpus";
 
-const Letter = dynamic(() => import("./Letter"));
+const LetterIndex = dynamic(() => import("@/page-types/LetterIndex"));
+const LetterCorpus = dynamic(() => import("@/page-types/LetterCorpus"));
+const Letter = dynamic(() => import("@/page-types/Letter"));
 
 type TProps = {
   params: Promise<{ slug: string[] }>;
@@ -23,6 +24,8 @@ export default async function WagtailPage({ params, searchParams }: TProps) {
       return (
         <LetterCorpus findPageData={findPageData} searchParams={searchParams} />
       );
+    case EPageType.LETTER_INDEX:
+      return <LetterIndex findPageData={findPageData} />;
   }
 
   return (

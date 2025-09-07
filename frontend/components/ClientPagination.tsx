@@ -1,8 +1,8 @@
 "use client";
 
 import Pagination from "@mui/material/Pagination";
-import { useUpdateSearchParams } from "../hooks";
-import { safeParseInt } from "../utils";
+import { useUpdateSearchParams } from "@/app/hooks";
+import { safeParseInt } from "@/app/utils";
 import { useEffect, useMemo, useState } from "react";
 import { SxProps } from "@mui/material/styles";
 

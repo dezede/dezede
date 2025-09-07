@@ -56,3 +56,5 @@ export const EVENT_FIELDS = [
   "circonstance",
   "relache",
 ];
+
+export const BODY_EXTRA_FIELDS = ["streamfield_page(-detail_url,html_url,search_description)"];

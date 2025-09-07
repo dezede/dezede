@@ -15,7 +15,7 @@ from typing import Type
 class CustomPagesAPIViewSet(PagesAPIViewSet):
     meta_fields = [
         name for name in PagesAPIViewSet.meta_fields
-        if name not in {'parent', 'alias_of'}
+        if name not in {'parent', 'alias_of', 'slug'}
     ]
     detail_only_fields = []
 

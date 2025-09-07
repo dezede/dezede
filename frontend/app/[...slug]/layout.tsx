@@ -7,7 +7,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import { ROOT_SLUG } from "../constants";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import PageHeader from "./PageHeader";
+import PageHeader from "@/components/PageHeader";
 import { Suspense } from "react";
 import Skeleton from "@mui/material/Skeleton";
 import { findPage } from "../utils";

@@ -6,9 +6,9 @@ import Typography from "@mui/material/Typography";
 import SpaceTime from "@/format/SpaceTime";
 import { PersonLabel } from "@/format/PersonChip";
 import Link from "next/link";
-import { TLetter, TPageResults, TAsyncSearchParams } from "../types";
-import { djangoFetchData, safeParseInt } from "../utils";
-import { INDIVIDU_FIELDS, PLACE_FIELDS } from "../constants";
+import { TLetter, TPageResults, TAsyncSearchParams } from "@/app/types";
+import { djangoFetchData, safeParseInt } from "@/app/utils";
+import { INDIVIDU_FIELDS, PLACE_FIELDS } from "@/app/constants";
 import Divider from "@mui/material/Divider";
 import Empty from "./Empty";
 import ImageRendition from "./ImageRendition";
@@ -69,7 +69,7 @@ export default async function LetterList({
       {lettersData.items.map(
         ({
           id,
-          meta: { slug },
+          meta: { html_url },
           sender,
           recipients,
           writing_lieu,
@@ -83,7 +83,7 @@ export default async function LetterList({
         }) => {
           return (
             <Card key={id}>
-              <CardActionArea component={Link} href={slug} prefetch={false}>
+              <CardActionArea component={Link} href={html_url} prefetch={false}>
                 <Stack direction="row" flexWrap="nowrap">
                   {letter_images.length >= 1 ? (
                     <ImageRendition
@@ -110,7 +110,12 @@ export default async function LetterList({
                     overflowHeight={transcription_text ? 50 : 0}
                     sx={{ width: "100%" }}
                   >
-                    <Stack spacing={1} p={2} height="100%">
+                    <Stack
+                      spacing={1}
+                      divider={<Divider />}
+                      p={2}
+                      height="100%"
+                    >
                       <Stack
                         direction="row"
                         justifyContent="space-between"
@@ -138,7 +143,6 @@ export default async function LetterList({
                           variant="body2"
                         />
                       </Stack>
-                      <Divider />
                       {transcription_text ? (
                         <Typography textAlign="justify">
                           {transcription_text}

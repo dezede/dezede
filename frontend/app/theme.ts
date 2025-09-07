@@ -13,8 +13,6 @@ const primary: PaletteColorOptions = {
   contrastText: "#ffffff",
 };
 
-export const paperBgColor = "#fff7d1";
-
 export default responsiveFontSizes(
   createTheme({
     typography: {
@@ -54,6 +52,12 @@ export default responsiveFontSizes(
             dark: "#777777",
             contrastText: "#f8f8f8",
           },
+          info: {
+            main: "#e7e7e7",
+          },
+          background: {
+            paper: "#1c1c1c",
+          },
         },
       },
     },
@@ -68,8 +72,11 @@ export default responsiveFontSizes(
         dark: "#e7e7e7",
         contrastText: "#888888",
       },
+      info: {
+        main: "#e7e7e7",
+      },
       background: {
-        paper: paperBgColor,
+        paper: "#fff7d1",
         default: "#fffbe6",
       },
     },
@@ -105,17 +112,24 @@ export default responsiveFontSizes(
           },
         },
       },
-      MuiTab: {
-        defaultProps: {
-          style: {
-            textTransform: "none",
+      MuiListSubheader: {
+        styleOverrides: {
+          root: {
+            lineHeight: 1.5,
           },
         },
       },
-      MuiListSubheader: {
-        defaultProps: {
-          style: {
-            lineHeight: 1.5,
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundImage: "none",
+          },
+        },
+      },
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            textTransform: "none",
           },
         },
       },

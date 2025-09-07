@@ -6,16 +6,19 @@ import {
   ELetterTab,
   TYearChoice,
   TRelatedPlace,
-} from "../types";
+  TBodyStreamBlock,
+} from "@/app/types";
 import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
 import React, { Suspense } from "react";
-import LetterList from "./LetterList";
+import LetterList from "@/components/LetterList";
 import Skeleton from "@mui/material/Skeleton";
-import LetterCorpusForm from "./LetterCorpusForm";
-import { djangoFetchData } from "../utils";
-import { INDIVIDU_FIELDS, PLACE_FIELDS } from "../constants";
-import ClientPagination from "./ClientPagination";
+import LetterCorpusForm from "@/components/LetterCorpusForm";
+import { djangoFetchData } from "@/app/utils";
+import { BODY_EXTRA_FIELDS, INDIVIDU_FIELDS, PLACE_FIELDS } from "@/app/constants";
+import ClientPagination from "@/components/ClientPagination";
+import ReadMore from "@/components/ReadMore";
+import BodyStream from "@/blocks/BodyStream";
 
 export default async function LetterCorpus({
   findPageData,
@@ -34,6 +37,7 @@ export default async function LetterCorpus({
   } = await searchParams;
   const {
     person,
+    body,
     year_choices,
     person_choices,
     writing_place_choices,
@@ -43,6 +47,7 @@ export default async function LetterCorpus({
   } = await djangoFetchData<
     TPage & {
       person: TRelatedPerson;
+      body: TBodyStreamBlock;
       year_choices: TYearChoice[];
       person_choices: TRelatedPerson[];
       writing_place_choices: TRelatedPlace[];
@@ -62,6 +67,7 @@ export default async function LetterCorpus({
       `person(${INDIVIDU_FIELDS})`,
       `person_choices(${INDIVIDU_FIELDS})`,
       `writing_place_choices(${PLACE_FIELDS})`,
+      ...BODY_EXTRA_FIELDS,
     ],
   );
   const count =
@@ -82,6 +88,9 @@ export default async function LetterCorpus({
   return (
     <Container>
       <Stack spacing={2}>
+        <ReadMore maxHeight={200}>
+          <BodyStream value={body} />
+        </ReadMore>
         <LetterCorpusForm
           person={person}
           yearChoices={year_choices}

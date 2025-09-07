@@ -14,7 +14,7 @@ import {
   TRelatedPerson,
   TRelatedPlace,
   TYearChoice,
-} from "../types";
+} from "@/app/types";
 import React, {
   ChangeEvent,
   SyntheticEvent,
@@ -22,7 +22,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useDebounceCallback, useUpdateSearchParams } from "../hooks";
+import { useDebounceCallback, useUpdateSearchParams } from "@/app/hooks";
 import { getPlaceLabel } from "@/format/PlaceChip";
 import Autocomplete, {
   AutocompleteProps,

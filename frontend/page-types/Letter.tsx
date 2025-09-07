@@ -1,9 +1,9 @@
 import Stack from "@mui/material/Stack";
-import { TFindPageData, TLetter } from "../types";
+import { TFindPageData, TLetter } from "../app/types";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { djangoFetchData } from "../utils";
+import { djangoFetchData } from "@/app/utils";
 import {
   ENSEMBLE_FIELDS,
   EVENT_FIELDS,
@@ -11,14 +11,14 @@ import {
   PART_FIELDS,
   PLACE_FIELDS,
   WORK_FIELDS,
-} from "../constants";
+} from "@/app/constants";
 import PersonChip from "@/format/PersonChip";
-import RichText from "./RichText";
+import RichText from "@/components/RichText";
 import Paper from "@mui/material/Paper";
-import LetterImagesReader from "./LetterImagesReader";
+import LetterImagesReader from "@/components/LetterImagesReader";
 import SpaceTime from "@/format/SpaceTime";
 import Divider from "@mui/material/Divider";
-import Empty from "./Empty";
+import Empty from "@/components/Empty";
 
 export default async function Letter({
   findPageData,

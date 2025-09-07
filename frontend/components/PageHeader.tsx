@@ -1,11 +1,11 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import { findPage } from "../utils";
+import { findPage } from "@/app/utils";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import MuiLink from "@mui/material/Link";
 import HomeIcon from "@mui/icons-material/Home";
 import Link from "next/link";
-import { ROOT_SLUG } from "../constants";
+import { ROOT_SLUG } from "@/app/constants";
 
 export default async function PageHeader({
   params,

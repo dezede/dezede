@@ -1,6 +1,6 @@
-import Image, { ImageProps } from "next/image";
-import { TImage as TImageRendition } from "../types";
 import React from "react";
+import Image, { ImageProps } from "next/image";
+import { TImageRendition as TImageRendition } from "@/app/types";
 
 export default function ImageRendition({
   rendition: { full_url, width, height, alt },
