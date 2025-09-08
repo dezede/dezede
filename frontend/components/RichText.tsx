@@ -7,7 +7,7 @@ export default function RichText({ value }: { value: string }) {
         dangerouslySetInnerHTML={{ __html: value }}
         textAlign="justify"
         sx={{
-          "& .responsive-object": {
+          ".responsive-object": {
             position: "relative",
             clear: "both",
             "& iframe, & object, & embed": {
@@ -17,6 +17,15 @@ export default function RichText({ value }: { value: string }) {
               width: "100%",
               height: "100%",
             },
+          },
+          "align-center, align-right": {
+            display: "block",
+          },
+          "align-center": {
+            textAlign: "center",
+          },
+          "align-right": {
+            textAlign: "right",
           },
           hr: {
             border: "1px solid rgba(0, 0, 0, 0.12)",
