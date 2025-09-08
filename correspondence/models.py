@@ -1,8 +1,7 @@
-from functools import cached_property
+from functools import cached_property, wraps
 from bs4 import BeautifulSoup
 from django.db.models import ForeignKey, CASCADE, PROTECT, CharField, ManyToManyField, URLField
 from django.http import Http404
-from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
@@ -20,6 +19,27 @@ from libretto.contants import INDIVIDU_SEARCH_FIELDS, LIEU_SEARCH_FIELDS
 from libretto.models.base import SpaceTimeFields
 
 from .blocks import BodyStreamBlock, ReferencesStreamBlock
+
+
+original_get_url_parts = Page.get_url_parts
+
+
+class PageMonkeyPatching(Page):
+    class Meta(Page.Meta):
+        abstract = True
+
+    @wraps(original_get_url_parts)
+    def get_url_parts(self, request=None):
+        url_parts = original_get_url_parts(self, request)
+        if url_parts is None:
+            return None
+        site_id, root_url, page_path = url_parts
+        if page_path is None:
+            return url_parts
+        return site_id, root_url, f'/openletter{page_path}'
+
+
+Page.get_url_parts = PageMonkeyPatching.get_url_parts
 
 
 Page.teaser_image = None
@@ -41,9 +61,6 @@ class BasePageNoImage(Page):
 
     def serve_preview(self, request, mode_name):
         raise Http404
-
-    def serve(self, request, *args, **kwargs):
-        return redirect(f'/openletter{self.relative_url(None)}')
 
 
 class BasePage(BasePageNoImage):

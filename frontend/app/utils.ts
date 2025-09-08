@@ -7,7 +7,6 @@ import {
   TQueryParams,
 } from "./types";
 import { cache } from "react";
-import { ROOT_SLUG } from "./constants";
 
 export function safeParseInt<T>(
   str: string | string[] | null | undefined,
@@ -96,7 +95,7 @@ export const findPage = cache(async function findPage({
   params: Promise<{ slug: string[] }>;
 }): Promise<TFindPageData> {
   let { slug } = await params;
-  if (slug.length < 1 || slug[0] !== ROOT_SLUG) {
+  if (slug.length < 1) {
     notFound();
   } else {
     slug = slug.slice(1);

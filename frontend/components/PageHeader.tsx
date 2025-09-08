@@ -5,7 +5,6 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import MuiLink from "@mui/material/Link";
 import HomeIcon from "@mui/icons-material/Home";
 import Link from "next/link";
-import { ROOT_SLUG } from "@/app/constants";
 
 export default async function PageHeader({
   params,
@@ -21,9 +20,9 @@ export default async function PageHeader({
             <MuiLink
               key={id}
               component={Link}
-              href={`/${ROOT_SLUG}/${url
+              href={`/${url
                 .split("/")
-                .slice(1, index + 1)
+                .slice(1, index + 2)
                 .join("/")}`}
               prefetch={false}
               underline="hover"
