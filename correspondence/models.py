@@ -1,6 +1,7 @@
 from functools import cached_property
 from bs4 import BeautifulSoup
 from django.db.models import ForeignKey, CASCADE, PROTECT, CharField, ManyToManyField, URLField
+from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
@@ -31,6 +32,15 @@ Page.show_in_menus_default = True
 class BasePageNoImage(Page):
     class Meta(Page.Meta):
         abstract = True
+
+    # FIXME: Make preview_modes compatible with Next.js
+    #        instead of disabling it.
+    @property
+    def preview_modes(self):
+        return []
+
+    def serve_preview(self, request, mode_name):
+        raise Http404
 
     def serve(self, request, *args, **kwargs):
         return redirect(f'/openletter{self.relative_url(None)}')
