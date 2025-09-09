@@ -66,6 +66,7 @@ services:
       TZ: $TZ
       LOCALE: $LOCALE
       LANGUAGES_CODES: $LANGUAGES_CODES
+      EMAIL_ADDRESS: $EMAIL_ADDRESS
     volumes:
       - postgresql-socket:/var/run/postgresql
       - redis-socket:/var/run/redis
