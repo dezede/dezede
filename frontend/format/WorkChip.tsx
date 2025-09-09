@@ -3,6 +3,7 @@ import Chip from "@mui/material/Chip";
 import HistoryEduOutlinedIcon from "@mui/icons-material/HistoryEduOutlined";
 import { capfirst, joinWithLast, toRoman } from "@/app/utils";
 import { getSectionLabel } from "./SectionLabel";
+import OurLink from "@/components/OurLink";
 
 function* getFeaturesList({
   numero,
@@ -137,7 +138,7 @@ export function WorkLabel(work: TRelatedWork) {
 export default function WorkChip(work: TRelatedWork) {
   return (
     <Chip
-      component="a"
+      component={OurLink}
       href={`/oeuvres/id/${work.id}/`}
       label={<WorkLabel {...work} />}
       clickable

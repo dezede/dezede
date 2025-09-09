@@ -5,7 +5,6 @@ import OverflowContainer from "./OverflowContainer";
 import Typography from "@mui/material/Typography";
 import SpaceTime from "@/format/SpaceTime";
 import { PersonLabel } from "@/format/PersonChip";
-import Link from "next/link";
 import { TLetter, TPageResults, TAsyncSearchParams } from "@/app/types";
 import { djangoFetchData, safeParseInt } from "@/app/utils";
 import { INDIVIDU_FIELDS, PLACE_FIELDS } from "@/app/constants";
@@ -13,6 +12,7 @@ import Divider from "@mui/material/Divider";
 import Empty from "./Empty";
 import ImageRendition from "./ImageRendition";
 import Box from "@mui/material/Box";
+import OurLink from "./OurLink";
 
 export default async function LetterList({
   parentPageId,
@@ -84,7 +84,7 @@ export default async function LetterList({
         }) => {
           return (
             <Card key={id}>
-              <CardActionArea component={Link} href={html_url} prefetch={false}>
+              <CardActionArea component={OurLink} href={html_url}>
                 <Stack direction="row">
                   <Box display={{ xs: "none", sm: "block" }}>
                     {letter_images.length >= 1 ? (

@@ -4,6 +4,7 @@ import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import { getDateLabel } from "./DateLabel";
 import { getPlaceLabel } from "./PlaceChip";
 import { getTimeLabel } from "./TimeLabel";
+import OurLink from "@/components/OurLink";
 
 export function getEventLabel(event: TRelatedEvent): string {
   const left = [
@@ -32,7 +33,7 @@ export function EventLabel(event: TRelatedEvent) {
 export default function EventChip(event: TRelatedEvent) {
   return (
     <Chip
-      component="a"
+      component={OurLink}
       href={`/evenements/id/${event.id}/`}
       label={<EventLabel {...event} />}
       clickable

@@ -4,7 +4,7 @@ import { findPage } from "@/app/utils";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import MuiLink from "@mui/material/Link";
 import HomeIcon from "@mui/icons-material/Home";
-import Link from "next/link";
+import OurLink from "./OurLink";
 
 export default async function PageHeader({
   params,
@@ -19,12 +19,11 @@ export default async function PageHeader({
           {ancestors.map(({ id, title }, index) => (
             <MuiLink
               key={id}
-              component={Link}
+              component={OurLink}
               href={`/${url
                 .split("/")
                 .slice(1, index + 2)
                 .join("/")}`}
-              prefetch={false}
               underline="hover"
             >
               <Stack direction="row" spacing={0.5}>

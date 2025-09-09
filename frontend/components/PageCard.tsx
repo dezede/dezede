@@ -3,13 +3,13 @@ import CardActionArea from "@mui/material/CardActionArea";
 import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Link from "next/link";
 import { TPageCard } from "@/app/types";
 import OverflowContainer from "./OverflowContainer";
 import Divider from "@mui/material/Divider";
 import ImageRendition from "./ImageRendition";
 import SpaceTime from "@/format/SpaceTime";
 import Box from "@mui/material/Box";
+import OurLink from "./OurLink";
 
 export default function PageCard({
   page: {
@@ -26,7 +26,7 @@ export default function PageCard({
 }) {
   return (
     <Card>
-      <CardActionArea component={Link} href={html_url} prefetch={false}>
+      <CardActionArea component={OurLink} href={html_url}>
         <Stack direction="row">
           {teaser_thumbnail === null ? null : (
             <Box display={{ xs: "none", sm: "block" }}>

@@ -1,6 +1,5 @@
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
-import Link from "next/link";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import LaunchIcon from "@mui/icons-material/Launch";
@@ -15,6 +14,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { TSibling } from "../types";
 import IconButton from "@mui/material/IconButton";
+import OurLink from "@/components/OurLink";
 
 export async function generateMetadata({
   params,
@@ -53,7 +53,7 @@ function SiblingButton({
   return (
     <>
       <IconButton
-        component={Link}
+        component={OurLink}
         href={sibling.url}
         size="large"
         sx={{ display: { md: "none" } }}
@@ -61,7 +61,7 @@ function SiblingButton({
         {icon}
       </IconButton>
       <Button
-        component={Link}
+        component={OurLink}
         href={sibling.url}
         startIcon={right ? undefined : icon}
         endIcon={right ? icon : undefined}
@@ -98,9 +98,8 @@ export default async function Layout({
               sx={{ py: 1 }}
             >
               <Button
-                component={Link}
+                component={OurLink}
                 href={`/${ROOT_SLUG}`}
-                prefetch={false}
                 color="inherit"
               >
                 OpenLetter

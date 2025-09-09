@@ -21,8 +21,8 @@ import Divider from "@mui/material/Divider";
 import Empty from "@/components/Empty";
 import Metadata, { getFilteredRows } from "@/components/Metadata";
 import PlaceChip from "@/format/PlaceChip";
-import Link from "next/link";
 import Box from "@mui/material/Box";
+import OurLink from "@/components/OurLink";
 
 export default async function Letter({
   findPageData,
@@ -98,9 +98,7 @@ export default async function Letter({
       label: "URL d’origine",
       value:
         source_url === "" ? null : (
-          <Link href={source_url} prefetch={false}>
-            {source_url}
-          </Link>
+          <OurLink href={source_url}>{source_url}</OurLink>
         ),
     },
   ];

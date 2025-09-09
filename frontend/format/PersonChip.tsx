@@ -5,6 +5,7 @@ import BoyOutlinedIcon from "@mui/icons-material/BoyOutlined";
 import { abbreviate, withParticule } from "@/app/utils";
 import { EPersonDesignation, EPersonTitre, TRelatedPerson } from "@/app/types";
 import SmallCaps from "./SmallCaps";
+import OurLink from "@/components/OurLink";
 
 function getSmallCapsLabel({
   designation,
@@ -82,7 +83,7 @@ export function PersonLabel(person: TRelatedPerson) {
 export default function PersonChip(person: TRelatedPerson) {
   return (
     <Chip
-      component="a"
+      component={OurLink}
       href={`/individus/id/${person.id}/`}
       label={<PersonLabel {...person} />}
       clickable
