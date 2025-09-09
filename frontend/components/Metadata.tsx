@@ -24,7 +24,7 @@ type TRowType =
 
 function Header({ row }: { row: TRowType }) {
   return (
-    <Typography variant="caption" fontSize="overline.fontSize">
+    <Typography variant="subtitle2" color="textDisabled">
       {row.label}
     </Typography>
   );
@@ -50,7 +50,7 @@ export function getFilteredRows(rows: TRowType[]): TRowType[] {
 
 export default function Metadata({
   rows,
-  headerWidth = 150,
+  headerWidth = 160,
 }: {
   rows: TRowType[];
   headerWidth?: number | string;

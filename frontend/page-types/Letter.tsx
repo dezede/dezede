@@ -22,6 +22,7 @@ import Empty from "@/components/Empty";
 import Metadata, { getFilteredRows } from "@/components/Metadata";
 import PlaceChip from "@/format/PlaceChip";
 import Link from "next/link";
+import Box from "@mui/material/Box";
 
 export default async function Letter({
   findPageData,
@@ -75,10 +76,21 @@ export default async function Letter({
       label: "Lieu de conservation",
       value:
         storage_place === null ? null : (
-          <>
-            <PlaceChip {...storage_place} />
-            {storage_call_number ? ` • ${storage_call_number}` : null}
-          </>
+          <Stack
+            direction="row"
+            alignItems="baseline"
+            flexWrap="wrap"
+            spacing={1}
+            useFlexGap
+            divider={
+              <Divider orientation="vertical" flexItem variant="middle" />
+            }
+          >
+            <Box maxWidth="100%">
+              <PlaceChip {...storage_place} />
+            </Box>
+            {storage_call_number ? <span>{storage_call_number}</span> : null}
+          </Stack>
         ),
     },
     {
