@@ -1,15 +1,10 @@
 "use client";
-import {
-  alpha,
-  createTheme,
-  PaletteColorOptions,
-  responsiveFontSizes,
-} from "@mui/material/styles";
+import { alpha, createTheme, responsiveFontSizes } from "@mui/material/styles";
 
-const primary: PaletteColorOptions = {
+const primary = {
   light: "#f09875",
   main: "#ec8055",
-  dark: "#ea6f3e",
+  dark: "#e75e27",
   contrastText: "#ffffff",
 };
 
@@ -65,6 +60,7 @@ export default responsiveFontSizes(
     palette: {
       text: {
         primary: "#222222",
+        disabled: "#00000099",
       },
       primary,
       secondary: {
@@ -88,14 +84,14 @@ export default responsiveFontSizes(
             scrollBehavior: "smooth",
           },
           "a:not([class])": {
-            color: primary.main,
+            color: primary.dark,
             textDecoration: "none",
             "&:hover, &:active, &:focus": {
               textDecoration: "underline",
             },
             '&[data-note="anchor"], &[data-note="reference"]:focus': {
               "&:focus": {
-                background: alpha(primary.main, 0.15),
+                background: alpha(primary.dark, 0.15),
                 borderRadius: 4,
               },
             },
@@ -110,6 +106,13 @@ export default responsiveFontSizes(
         defaultProps: {
           style: {
             textTransform: "none",
+          },
+        },
+      },
+      MuiLink: {
+        styleOverrides: {
+          root: {
+            color: primary.dark,
           },
         },
       },
