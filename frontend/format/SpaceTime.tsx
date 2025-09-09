@@ -38,6 +38,7 @@ export default function SpaceTime({
       alignItems="center"
       flexWrap="wrap"
       useFlexGap
+      maxWidth="100%"
     >
       {hasPlace ? (
         chip && place !== null ? (

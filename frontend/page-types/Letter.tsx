@@ -146,6 +146,7 @@ export default async function Letter({
                     flexWrap="wrap"
                     useFlexGap
                     alignItems="center"
+                    maxWidth="100%"
                   >
                     <Typography color="textDisabled">De</Typography>
                     <PersonChip {...sender} />
