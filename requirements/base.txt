@@ -6,22 +6,22 @@ wagtail-font-awesome-svg==2.0
 noridjango[compressor]==3.2.8
 
 # Database fields
-django-tree==0.5.6
+django-tree==0.6.2
 django-autoslug==1.9.8
 
 # User interface
-django-grappelli==2.15.6
+django-grappelli==3.0.9
 django-super-inlines==0.2.2
 django-tinymce==2.9.0
 django-crispy-forms==1.12.0
 django-ajax-selects==2.1.0
-django-image-cropping==1.5.0
+django-image-cropping==1.7.0
 
 # User authentication
 django-allauth==0.50.0
 
 # Search engine
-django-haystack==3.0
+django-haystack==3.3.0
 elasticsearch==1.7.0
 
 # Caching
@@ -32,9 +32,9 @@ djangorestframework==3.12.4
 django-tablature==0.2.1
 
 # Small but powerful tools
-django-reversion==3.0.9
-django-el-pagination==3.3.0
-easy-thumbnails==2.7.1
+django-reversion==5.0.12
+django-el-pagination==4.1.2
+easy-thumbnails==2.8.5
 django-viewsets==0.2.0
 tqdm==4.66.1
 awesome-slugify==1.6.5
