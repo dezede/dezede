@@ -21,3 +21,9 @@ align-center, align-right, align-justify {
     display: block;
     margin: .5rem 0;
 }
+
+@media screen and (min-width: 56.25em) {
+    .modal .tab-content {
+        width: 100%;
+    }
+}

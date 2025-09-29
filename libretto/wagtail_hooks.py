@@ -146,6 +146,12 @@ class OeuvreViewSet(AutoriteViewSet):
             'extrait_de__pupitres__partie',
         )
 
+    def get_chooser_extra_columns(self):
+        return [
+            Column('auteurs_html', label=_('Auteurs')),
+            Column('creation', label=_('Création')),
+        ]
+
 
 @register_snippet
 class PartieViewSet(AutoriteViewSet):
