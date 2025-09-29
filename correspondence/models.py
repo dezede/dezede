@@ -191,7 +191,7 @@ class Letter(BasePageNoImage):
         'libretto.Individu', on_delete=PROTECT, related_name='sent_letters',
         verbose_name=_('expéditeur')
     )
-    writing = SpaceTimeFields(verbose_name=_('rédaction'))
+    writing = SpaceTimeFields(verbose_name=_('rédaction'), for_wagtail=True)
     edition = CharField(_('édition'), max_length=50, blank=True)
     storage_place = ForeignKey(
         'libretto.Lieu', on_delete=PROTECT, related_name='stored_letters',
