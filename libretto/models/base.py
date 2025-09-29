@@ -48,6 +48,12 @@ DATE_MSG_EXTENDED = _(
     'En cas de date approximative, '
     'saisir le premier jour du mois (« 1/10/1678 » pour octobre 1678) '
     'ou de l’année (« 1/1/1830 » pour 1830).')
+WAGTAIL_DATE_MSG = _('Exemple : « 1789-7-14 » pour le 14 juillet 1789.')
+WAGTAIL_DATE_MSG_EXTENDED = _(
+    'Exemple : « 1789-7-14 » pour le 14 juillet 1789. '
+    'En cas de date approximative, '
+    'saisir le premier jour du mois (« 1678-10-1 » pour octobre 1678) '
+    'ou de l’année (« 1830-1-1 » pour 1830).')
 DATE_APPROX_MESSAGE = _(
     'Ne remplir que si la date est approximative. '
     'Par exemple : « 1870 », « octobre 1812 », « été 1967 ».')
@@ -488,21 +494,27 @@ class SpaceTimeValue:
 
 
 class SpaceTimeFields:
-    def __init__(self, not_null_fields=(),
-                 has_date=True, has_heure=True, has_lieu=True, approx=True,
-                 verbose_name=None):
+    def __init__(
+        self, not_null_fields=(),
+        has_date=True, has_heure=True, has_lieu=True, approx=True,
+        verbose_name=None, for_wagtail: bool = False,
+    ):
         self.not_null_fields = not_null_fields
         self.has_date = has_date
         self.has_heure = has_heure
         self.has_lieu = has_lieu
         self.approx = approx
         self.verbose_name = verbose_name
+        self.for_wagtail = for_wagtail
         self.fields = OrderedDict()
 
     def fields_iterator(self):
         if self.has_date:
             is_null = 'date' not in self.not_null_fields
-            date_msg = DATE_MSG_EXTENDED if self.approx else DATE_MSG
+            if self.for_wagtail:
+                date_msg = WAGTAIL_DATE_MSG_EXTENDED if self.approx else WAGTAIL_DATE_MSG
+            else:
+                date_msg = DATE_MSG_EXTENDED if self.approx else DATE_MSG
             yield (
                 'date',
                 DateField(
