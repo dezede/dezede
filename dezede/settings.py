@@ -456,7 +456,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
         "WIDGET": "wagtail.admin.rich_text.DraftailRichTextArea",
         'OPTIONS': {
             'features': [
-                'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul',
+                'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul', 'superscript',
                 'hr', 'link', 'document-link', 'image', 'embed',
                 'blockquote', 'note-anchor', 'note-reference',
             ],
@@ -466,7 +466,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
             'features': [
-                'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul',
+                'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul', 'superscript',
                 'hr', 'blockquote', 'note-anchor', 'note-reference',
                 'align-center', 'align-right',
             ],
