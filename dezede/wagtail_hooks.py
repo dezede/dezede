@@ -2,7 +2,9 @@ from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.translation import gettext, gettext_lazy as _
 from wagtail import hooks
-from wagtail.admin.rich_text.converters.html_to_contentstate import BlockElementHandler
+from wagtail.admin.rich_text.converters.html_to_contentstate import (
+    BlockElementHandler, InlineStyleElementHandler,
+)
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 
 
@@ -46,3 +48,25 @@ def register_align_features(features):
             'from_database_format': {element: BlockElementHandler(type_)},
             'to_database_format': {'block_map': {type_: {'element': element, 'props': {}}}},
         })
+
+
+@hooks.register('register_rich_text_features')
+def register_small_caps_feature(features):
+    feature_name = 'small-caps'
+    type_ = 'SMALL_CAPS'
+    control = {
+        'type': type_,
+        'label': 'Cᴀᴘ',
+        'description': gettext('Petites capitales'),
+        'style': {
+            'font-variant': 'small-caps',
+        }
+    }
+    features.register_editor_plugin(
+        'draftail', feature_name, draftail_features.InlineStyleFeature(control),
+    )
+    db_conversion = {
+        'from_database_format': {'span[class=sc]': InlineStyleElementHandler(type_)},
+        'to_database_format': {'style_map': {type_: {'element': 'span', 'props': {'class': 'sc'}}}},
+    }
+    features.register_converter_rule('contentstate', feature_name, db_conversion)

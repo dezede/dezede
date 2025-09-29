@@ -22,8 +22,14 @@ align-center, align-right, align-justify {
     margin: .5rem 0;
 }
 
+/* Fixes the modal content width being too narrow */
 @media screen and (min-width: 56.25em) {
     .modal .tab-content {
         width: 100%;
     }
+}
+
+/* Fixes the small caps button being misaligned */
+.Draftail-ToolbarButton__label {
+    height: auto !important;
 }

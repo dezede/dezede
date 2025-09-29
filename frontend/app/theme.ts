@@ -100,6 +100,9 @@ export default responsiveFontSizes(
               fontSize: "0.85rem",
             },
           },
+          "span.sc": {
+            fontVariant: "small-caps",
+          },
         },
       },
       MuiButton: {
