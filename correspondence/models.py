@@ -15,6 +15,7 @@ from wagtail.search.index import SearchField, RelatedFields
 
 from correspondence.serializer_fields import RichTextSerializer
 from dezede.constants import IMAGE_SPEC, THUMBNAIL_SPEC
+from dezede.utils import richtext_to_text
 from libretto.contants import INDIVIDU_SEARCH_FIELDS, LIEU_SEARCH_FIELDS
 from libretto.models.base import SpaceTimeFields
 
@@ -273,4 +274,4 @@ class Letter(BasePageNoImage):
 
     @property
     def transcription_text(self) -> str:
-        return BeautifulSoup(self.transcription, 'html.parser').get_text(' ').strip()
+        return richtext_to_text(self.transcription)

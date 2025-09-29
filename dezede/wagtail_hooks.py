@@ -1,3 +1,4 @@
+from functools import wraps
 from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.translation import gettext, gettext_lazy as _
@@ -6,6 +7,25 @@ from wagtail.admin.rich_text.converters.html_to_contentstate import (
     BlockElementHandler, InlineStyleElementHandler,
 )
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
+from wagtail.fields import RichTextField
+
+from dezede.utils import richtext_to_text
+
+
+class SearchableRichTextField(RichTextField):
+    """
+    This class is here to fix the naive way that Wagtail does not add space between HTML tags
+    apart from just the few ones that it knows.
+    It prevents us from having something like “Reber<align-right>Le 3 septembre</align-right>”
+    be transformed into the lexeme “reberle”.
+    """
+
+    @wraps(RichTextField.get_searchable_content)
+    def get_searchable_content(self, value):
+        return richtext_to_text(str(value))
+
+
+RichTextField.get_searchable_content = SearchableRichTextField.get_searchable_content
 
 
 @hooks.register('insert_global_admin_css')
