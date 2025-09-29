@@ -1,9 +1,7 @@
 "use client";
 
-import InputAdornment from "@mui/material/InputAdornment";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Stack from "@mui/material/Stack";
@@ -15,20 +13,15 @@ import {
   TRelatedPlace,
   TYearChoice,
 } from "@/app/types";
-import React, {
-  ChangeEvent,
-  SyntheticEvent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import { useDebounceCallback, useUpdateSearchParams } from "@/app/hooks";
+import React, { SyntheticEvent, useCallback, useState } from "react";
+import { useUpdateSearchParams } from "@/app/hooks";
 import { getPlaceLabel } from "@/format/PlaceChip";
 import Autocomplete, {
   AutocompleteProps,
   createFilterOptions,
 } from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
+import SearchTextField from "./SearchTextField";
 
 function AutocompleteFilter<T>({
   param,
@@ -77,6 +70,7 @@ function AutocompleteFilter<T>({
       }
       renderInput={(params) => <TextField {...params} label={label} />}
       fullWidth
+      noOptionsText="Aucun choix disponible"
       {...props}
     />
   );
@@ -116,15 +110,6 @@ export default function LetterCorpusForm({
 }) {
   const { updateSearchParams, searchParams } = useUpdateSearchParams();
   const [tab, setTab] = useState(searchParams.get("tab") ?? ELetterTab.ALL);
-  const search = useMemo(
-    () => searchParams.get("search") ?? "",
-    [searchParams],
-  );
-  const onSearchChange = useDebounceCallback(
-    (event: ChangeEvent<HTMLInputElement>) =>
-      updateSearchParams({ search: event.target.value, page: null }),
-    300,
-  );
   const placeFilterOptions = createFilterOptions<TRelatedPlace>({
     matchFrom: "any",
     stringify: getPlaceLabel,
@@ -138,21 +123,7 @@ export default function LetterCorpusForm({
         p={2}
         spacing={2}
       >
-        <TextField
-          placeholder="Rechercher…"
-          onChange={onSearchChange}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            },
-          }}
-          defaultValue={search}
-          fullWidth
-        />
+        <SearchTextField />
         <AutocompleteFilter
           param="year"
           label="Année"
