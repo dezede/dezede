@@ -5,7 +5,6 @@ from django.core.exceptions import EmptyResultSet
 from django.contrib.gis.geos import GEOSGeometry
 from django.db import connection
 from django.template import Library
-from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
 from common.utils.sql import get_raw_query
 from ..models import Lieu
@@ -89,7 +88,7 @@ def html_to_latex(html):
             tag.append(latex_close_tag)
     for comment in soup.find_all(text=lambda text: isinstance(text, Comment)):
         comment.extract()
-    return mark_safe(smart_text(soup.get_text()))
+    return mark_safe(soup.get_text())
 
 
 @register.simple_tag(takes_context=True)

@@ -6,7 +6,7 @@ from django.db import connection
 from django.db.models import Count
 from django.http import Http404
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, TemplateView, ListView
 from libretto.models import Evenement
 from .models import HierarchicUser

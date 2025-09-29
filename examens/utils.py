@@ -4,8 +4,7 @@ from itertools import zip_longest
 import re
 
 from bs4 import BeautifulSoup, NavigableString
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from common.utils.text import remove_diacritics
 
@@ -55,7 +54,7 @@ PENALITIES_MESSAGES = {
 
 class HTMLAnnotatedChar(str):
     def __new__(cls, c='', is_tag=False, names=(), classes=()):
-        self = super(HTMLAnnotatedChar, cls).__new__(cls, force_text(c))
+        self = super(HTMLAnnotatedChar, cls).__new__(cls, str(c))
         self.is_tag = is_tag
         self.names = names
         self.classes = classes
@@ -108,7 +107,7 @@ class HTMLAnnotatedCharList(list):
                         c, True, parent_names, parent_classes))
 
     def __str__(self):
-        return ''.join(map(force_text, self))
+        return ''.join(map(str, self))
 
     def __eq__(self, other):
         assert (isinstance(self, HTMLAnnotatedCharList)
@@ -203,7 +202,7 @@ class AnnotatedDiff:
 
     def get_html(self):
         self.parse()
-        html = force_text(self.annotated_a)
+        html = str(self.annotated_a)
 
         # Cleans HTML by merging same error tags
         n = 1
@@ -260,7 +259,7 @@ class AnnotatedDiff:
             return
         # Delete
         if not sub_a:
-            if force_text(sub_b).strip() == '[sic]':
+            if str(sub_b).strip() == '[sic]':
                 self.add_error(ia, MISSING_SIC_ERROR, '')
                 return
             self.add_error(ia, MISSING_ERROR, '', len(sub_b))

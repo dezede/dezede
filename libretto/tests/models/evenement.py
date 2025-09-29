@@ -1,6 +1,5 @@
 import os
 from django.urls import reverse
-from django.utils.encoding import smart_text
 from ...models import *
 from .utils import CommonTestCase
 
@@ -20,25 +19,25 @@ class EvenementTestCase(CommonTestCase):
 
     def testProgrammeRendering(self):
         programme = self.nicolas.programme.all()
-        self.assertEqual(smart_text(programme[0]),
+        self.assertEqual(str(programme[0]),
                          '« Avez-vous été bien sages les enfants ? »')
-        self.assertEqual(smart_text(programme[1]),
+        self.assertEqual(str(programme[1]),
                          'Le père Fouettard, ou la correction méritée, '
                          'mélodrame [première représentation]')
-        self.assertEqual(smart_text(programme[2]),
+        self.assertEqual(str(programme[2]),
                          'Distribution de tatanées')
-        self.assertEqual(smart_text(programme[3]),
+        self.assertEqual(str(programme[3]),
                          'L’arrivée du père Noël, ou Le Saint Nicolas vengeur')
-        self.assertEqual(smart_text(programme[4]),
+        self.assertEqual(str(programme[4]),
                          'Distribution de pains d’épices')
         self.assertEqual(
-            smart_text(programme[5]),
+            str(programme[5]),
             'Molière [auteur dram.], Le Tartuffe, ou l’Imposteur, '
             'comédie en cinq actes et en vers. — Gassion (É.) '
             'dite\u00A0La Môme Piaf [chanteuse]')
 
     def testRendering(self):
-        self.assertEqual(smart_text(self.nicolas),
+        self.assertEqual(str(self.nicolas),
                          'Jeudi 6 décembre 2012 > '
                          'Rouen, Théâtre des Arts, Saint-Nicolas')
 

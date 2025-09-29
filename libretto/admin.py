@@ -15,7 +15,7 @@ from django.db.models import Q, TextField, ForeignKey
 from django.forms.models import modelformset_factory
 from django.shortcuts import redirect
 from django.utils.html import format_html_join
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from grappelli.forms import GrappelliSortableHiddenMixin
 from reversion.admin import VersionAdmin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin

@@ -6,7 +6,7 @@ from django.db.models import (
     CharField, ImageField, DecimalField, BooleanField, ForeignKey,
     PositiveIntegerField, PositiveSmallIntegerField, Max, CASCADE)
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from image_cropping import ImageRatioField
 from accounts.models import _get_valid_modelnames_func

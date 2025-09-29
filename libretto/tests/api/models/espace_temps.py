@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.utils.encoding import force_text
 from libretto.api.models import build_ancrage
 from libretto.models import Evenement
 
@@ -17,7 +16,7 @@ class BuildSpaceTimeTestCase(TestCase):
 
         with self.assertNumQueries(12):
             build_ancrage(self.ancrage, txt, commit=False)
-        self.assertEqual(force_text(self.ancrage), out)
+        self.assertEqual(str(self.ancrage), out)
 
     def test_lieu_and_date(self):
         txt = 'Concert Spirituel, 5/7/1852'
@@ -25,11 +24,11 @@ class BuildSpaceTimeTestCase(TestCase):
 
         with self.assertNumQueries(9):
             build_ancrage(self.ancrage, txt, commit=False)
-        self.assertEqual(force_text(self.ancrage), out)
+        self.assertEqual(str(self.ancrage), out)
 
         with self.assertNumQueries(17):
             build_ancrage(self.ancrage, txt)
-        self.assertEqual(force_text(self.ancrage), out)
+        self.assertEqual(str(self.ancrage), out)
 
     def test_lieu_and_date_iso(self):
         txt = 'Concert Spirituel, 1852-7-5'
@@ -37,33 +36,33 @@ class BuildSpaceTimeTestCase(TestCase):
 
         with self.assertNumQueries(9):
             build_ancrage(self.ancrage, txt, commit=False)
-        self.assertEqual(force_text(self.ancrage), out)
+        self.assertEqual(str(self.ancrage), out)
 
         with self.assertNumQueries(17):
             build_ancrage(self.ancrage, txt)
-        self.assertEqual(force_text(self.ancrage), out)
+        self.assertEqual(str(self.ancrage), out)
 
     def test_lieu_and_date_fr(self):
         txt = 'Concert Spirituel, 5 juillet 1852'
 
         with self.assertNumQueries(9):
             build_ancrage(self.ancrage, txt, commit=False)
-        self.assertEqual(force_text(self.ancrage), txt)
+        self.assertEqual(str(self.ancrage), txt)
 
         with self.assertNumQueries(17):
             build_ancrage(self.ancrage, txt)
-        self.assertEqual(force_text(self.ancrage), txt)
+        self.assertEqual(str(self.ancrage), txt)
 
     def test_date_only(self):
         with self.assertNumQueries(0):
             build_ancrage(self.ancrage, '5/7/1852', commit=False)
-        self.assertEqual(force_text(self.ancrage), '5 juillet 1852')
+        self.assertEqual(str(self.ancrage), '5 juillet 1852')
 
         with self.assertNumQueries(1):
             build_ancrage(self.ancrage, '5/7/1852')
-        self.assertEqual(force_text(self.ancrage), '5 juillet 1852')
+        self.assertEqual(str(self.ancrage), '5 juillet 1852')
 
     def test_date_approx_only(self):
         with self.assertNumQueries(0):
             build_ancrage(self.ancrage, '18..', commit=False)
-        self.assertEqual(force_text(self.ancrage), '18..')
+        self.assertEqual(str(self.ancrage), '18..')

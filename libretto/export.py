@@ -1,6 +1,5 @@
 from django.db.models.constants import LOOKUP_SEP
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from exporter.base import Exporter
 from exporter.registry import exporter_registry
@@ -18,7 +17,7 @@ class CommonModelExporter(Exporter):
             suffix = '_str'
             if s.endswith(suffix):
                 self.verbose_overrides[s] = self.get_verbose_name(
-                    s.split(suffix)[0]) + ' (%s)' % force_text(self.RENDU)
+                    s.split(suffix)[0]) + f' ({self.rendu})'
             elif LOOKUP_SEP in s:
                 self.verbose_overrides[s] = self.fields[s].verbose_name
 
@@ -26,7 +25,7 @@ class CommonModelExporter(Exporter):
     def get_owner(obj):
         if obj.owner is None:
             return ''
-        return force_text(obj.owner)
+        return str(obj.owner)
 
 COMMON_MODEL_COLUMNS = ('owner',)
 PUBLISHED_MODEL_COLUMNS = COMMON_MODEL_COLUMNS + ('etat__nom',)
@@ -42,7 +41,7 @@ class RenduExporter(CommonModelExporter):
 
     @staticmethod
     def get_rendu(obj):
-        return force_text(obj)
+        return str(obj)
 
 
 @exporter_registry.add
@@ -61,7 +60,7 @@ class LieuExporter(RenduExporter):
     def get_ville(obj):
         ville = obj.get_ancestors().filter(nature__nom='ville').first()
         if ville is not None:
-            return force_text(ville)
+            return str(ville)
 
     @staticmethod
     def get_longitude(obj):
@@ -85,7 +84,7 @@ class EnsembleExporter(RenduExporter):
     @staticmethod
     def get_siege_str(obj):
         if obj.siege:
-            return force_text(obj.siege)
+            return str(obj.siege)
 
 
 @exporter_registry.add
@@ -171,7 +170,7 @@ class PartieExporter(CommonModelExporter):
 
     @staticmethod
     def get_professions_str(obj):
-        return ', '.join([force_text(o) for o in obj.professions.all()])
+        return ', '.join([str(o) for o in obj.professions.all()])
 
 
 @exporter_registry.add
@@ -286,17 +285,17 @@ class ElementDeDistribution(CommonModelExporter):
     @staticmethod
     def get_evenement_str(obj):
         if obj.evenement:
-            return force_text(obj.evenement)
+            return str(obj.evenement)
 
     @staticmethod
     def get_individu_str(obj):
         if obj.individu:
-            return force_text(obj.individu)
+            return str(obj.individu)
 
     @staticmethod
     def get_ensemble_str(obj):
         if obj.ensemble:
-            return force_text(obj.ensemble)
+            return str(obj.ensemble)
 
 
 @exporter_registry.add
@@ -330,12 +329,12 @@ class ElementDeProgrammeExporter(CommonModelExporter):
     @staticmethod
     def get_evenement_str(obj):
         if obj.evenement:
-            return force_text(obj.evenement)
+            return str(obj.evenement)
 
     @staticmethod
     def get_oeuvre_str(obj):
         if obj.oeuvre:
-            return force_text(obj.oeuvre)
+            return str(obj.oeuvre)
 
     @staticmethod
     def get_caracteristiques_str(obj):
@@ -343,7 +342,7 @@ class ElementDeProgrammeExporter(CommonModelExporter):
 
     @staticmethod
     def get_distribution_str(obj):
-        return ', '.join([force_text(o) for o in obj.distribution.all()])
+        return ', '.join([str(o) for o in obj.distribution.all()])
 
 
 @exporter_registry.add

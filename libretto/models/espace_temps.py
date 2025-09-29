@@ -5,7 +5,7 @@ from django.db.models import (
 )
 from django.urls import reverse
 from django.utils.html import strip_tags
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from tinymce.models import HTMLField
 from tree.fields import PathField
 from tree.models import TreeModelMixin

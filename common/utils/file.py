@@ -4,7 +4,7 @@ from subprocess import check_output, PIPE, CalledProcessError
 from django.core.exceptions import ValidationError
 from django.core.files.images import get_image_dimensions
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class AvProbeInfo:

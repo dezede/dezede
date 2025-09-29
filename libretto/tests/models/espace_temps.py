@@ -1,5 +1,4 @@
 from datetime import date
-from django.utils.encoding import smart_text
 from ...models import *
 from .utils import new, CommonTestCase
 
@@ -16,8 +15,8 @@ class LieuTestCase(CommonTestCase):
             nature=theatre, is_institution=True)
 
     def testComputedNames(self):
-        self.assertEqual(smart_text(self.rouen), 'Rouen')
-        self.assertEqual(smart_text(self.theatre_des_arts),
+        self.assertEqual(str(self.rouen), 'Rouen')
+        self.assertEqual(str(self.theatre_des_arts),
                          'Rouen, Théâtre des Arts')
 
 
@@ -35,5 +34,5 @@ class SaisonTestCase(CommonTestCase):
             fin=date(2012, 8, 31))
 
     def testComputedNames(self):
-        self.assertEqual(smart_text(self.saison),
+        self.assertEqual(str(self.saison),
                          'Rouen, Théâtre des Arts, 2011–2012')

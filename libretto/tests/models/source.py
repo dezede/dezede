@@ -1,5 +1,4 @@
 from datetime import date
-from django.utils.encoding import smart_text
 from ...models import *
 from .utils import new, CommonTestCase
 
@@ -15,5 +14,5 @@ class SourceTestCase(CommonTestCase):
                            type=type_de_source)
 
     def testComputedNames(self):
-        self.assertEqual(smart_text(self.journal),
+        self.assertEqual(str(self.journal),
                          'Journal de Rouen, mardi 15 janvier 1828')

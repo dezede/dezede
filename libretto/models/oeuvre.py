@@ -13,10 +13,9 @@ from django.db.models import (
     PositiveSmallIntegerField, CASCADE, CheckConstraint, Q)
 from django.forms.widgets import RadioSelect
 from django.urls import reverse
-from django.utils.encoding import force_text
 from django.utils.html import strip_tags, format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from psycopg2._range import NumericRange
@@ -277,7 +276,7 @@ class Pupitre(CommonModel):
         n_max = self.quantite_max
         partie = self.partie.html(pluriel=n_max > 1, oeuvre=False, tags=False)
         if n_min != n_max:
-            out = ugettext('%s à %s %s') % (
+            out = gettext('%s à %s %s') % (
                 apnumber(n_min), apnumber(n_max), partie)
         elif n_min > 1:
             out = f'{apnumber(n_min)} {partie}'
@@ -291,10 +290,10 @@ class Pupitre(CommonModel):
         return self.partie.get_absolute_url()
 
     def html(self, tags=True):
-        return href(self.get_absolute_url(), force_text(self), tags=tags)
+        return href(self.get_absolute_url(), str(self), tags=tags)
 
     def related_label(self):
-        out = force_text(self)
+        out = str(self)
         if self.partie.oeuvre is not None:
             out += f' ({self.partie.oeuvre})'
         return out
@@ -417,7 +416,7 @@ class AuteurQuerySet(CommonQuerySet):
         return self.__get_related(Source)
 
     def html(self, tags=True):
-        return force_text(AuteurBiGrouper(self, tags=tags))
+        return str(AuteurBiGrouper(self, tags=tags))
 
 
 class AuteurManager(CommonManager):
@@ -492,20 +491,20 @@ class Auteur(CommonModel):
         )
 
     def html(self, tags=True):
-        return mark_safe(force_text(AuteurBiGrouper((self,), tags=tags)))
+        return mark_safe(str(AuteurBiGrouper((self,), tags=tags)))
     html.short_description = _('rendu HTML')
 
     def clean(self):
         if self.oeuvre is not None and self.profession is None:
             raise ValidationError({
-                'profession': ugettext('This field is required.')
+                'profession': gettext('This field is required.')
             })
         if self.individu_id is None and self.ensemble_id is None:
-            msg = ugettext('« Individu » ou « Ensemble » '
+            msg = gettext('« Individu » ou « Ensemble » '
                            'doit être saisi.')
             raise ValidationError({'individu': msg, 'ensemble': msg})
         if self.individu_id is not None and self.ensemble_id is not None:
-            msg = ugettext('« Individu » et « Ensemble » '
+            msg = gettext('« Individu » et « Ensemble » '
                            'ne peuvent être saisis sur la même ligne.')
             raise ValidationError({'individu': msg, 'ensemble': msg})
         if self.individu is not None and self.profession is not None:
@@ -984,7 +983,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
             digits = to_roman(int(digits))
         out = f'{digits}{suffix}'
         if self.type_extrait == self.MORCEAU:
-            out = ugettext('№ ') + out
+            out = gettext('№ ') + out
         elif self.type_extrait in (self.MOUVEMENT, self.PIECE):
             out += '.'
         elif show_type:
@@ -993,37 +992,37 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     def caracteristiques_iterator(self, tags=False):
         if self.numero:
-            yield ugettext('n° %s') % self.numero
+            yield gettext('n° %s') % self.numero
         if self.coupe:
-            yield hlp(ugettext('en %s') % self.coupe, ugettext('coupe'), tags)
+            yield hlp(gettext('en %s') % self.coupe, gettext('coupe'), tags)
         if self.incipit:
-            yield hlp(ugettext('« %s »') % self.incipit,
-                      ugettext('incipit'), tags)
+            yield hlp(gettext('« %s »') % self.incipit,
+                      gettext('incipit'), tags)
         # On ajoute uniquement le tempo s’il n’y a pas besoin de lui dans le
         # titre non significatif, c’est-à-dire s’il y a déjà un genre.
         if self.tempo and self.genre_id is not None:
-            yield hlp(self.tempo, ugettext('Tempo'), tags)
+            yield hlp(self.tempo, gettext('Tempo'), tags)
         if self.tonalite:
             gamme, note, alteration = self.tonalite
             gamme = GAMMES.get(gamme, '')
             note = self.NOTES[note]
             alteration = self.ALTERATIONS[alteration]
-            tonalite = ugettext('en %s') % str_list(
+            tonalite = gettext('en %s') % str_list(
                 (em(note, tags), alteration, gamme), ' ')
             yield tonalite
         if self.sujet:
-            yield hlp(ugettext('sur %s') % self.sujet, ugettext('sujet'), tags)
+            yield hlp(gettext('sur %s') % self.sujet, gettext('sujet'), tags)
         if self.arrangement is not None:
             yield f'({self.get_arrangement_display()})'
         if self.surnom:
-            yield hlp(f'({self.surnom})', ugettext('surnom'), tags)
+            yield hlp(f'({self.surnom})', gettext('surnom'), tags)
         if self.nom_courant:
-            yield hlp(self.nom_courant, ugettext('nom courant'), tags)
+            yield hlp(self.nom_courant, gettext('nom courant'), tags)
         if self.opus:
-            yield hlp(ugettext('op. %s') % self.opus, ugettext('opus'), tags)
+            yield hlp(gettext('op. %s') % self.opus, gettext('opus'), tags)
         if self.ict:
             yield hlp(self.ict,
-                      ugettext('Indice de Catalogue Thématique'), tags)
+                      gettext('Indice de Catalogue Thématique'), tags)
 
     def caracteristiques_html(self, tags=True):
         return mark_safe(
@@ -1051,11 +1050,11 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
             if p.partie.type == Partie.INSTRUMENT])
 
         if pupitres_roles:
-            out = ugettext('de ') + pupitres_roles
+            out = gettext('de ') + pupitres_roles
             if pupitres_instruments:
-                out += ugettext(' avec ') + pupitres_instruments
+                out += gettext(' avec ') + pupitres_instruments
             return out
-        return ugettext('pour ') + pupitres_instruments
+        return gettext('pour ') + pupitres_instruments
 
     def pupitres_html(self, prefix=False, tags=True, solistes=False):
         return self.get_pupitres_str(prefix=prefix, tags=tags,
@@ -1110,7 +1109,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
             .order_by('-n', *self._meta.ordering)).distinct()
 
     def _link_with_number(self):
-        return ugettext('œuvre jouée %s fois avec : %s') % (
+        return gettext('œuvre jouée %s fois avec : %s') % (
             self.n, self.link())
 
     def get_referent_ancestors_html(self, tags=False, links=False):
@@ -1221,7 +1220,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
                 setattr(self, attr, f'{v} ')
 
     def related_label(self):
-        txt = force_text(self)
+        txt = str(self)
         auteurs = self.auteurs.html(tags=False)
         if auteurs:
             txt += f' ({auteurs})'

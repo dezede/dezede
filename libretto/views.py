@@ -7,8 +7,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, DetailView
 from el_pagination.views import AjaxListView
 from haystack.query import SearchQuerySet
@@ -283,7 +282,7 @@ class CommonViewSet(ModelViewSet):
 CENTURIES = tuple(range(11, 22))
 
 CENTURIES_VERBOSES = [
-    (str(i), to_roman(i) + force_text(_('<sup>e</sup> siècle')))
+    (str(i), to_roman(i) + str(_('<sup>e</sup> siècle')))
     for i in CENTURIES
 ][::-1]
 

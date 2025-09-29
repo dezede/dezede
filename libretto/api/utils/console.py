@@ -1,6 +1,5 @@
 from difflib import SequenceMatcher
 import subprocess
-from django.utils.encoding import smart_text
 
 
 def notify_send(msg):
@@ -28,11 +27,11 @@ PRINT_COLORS = {
 def colored(msg, color):
     if not msg:
         return ''
-    return smart_text(''.join(smart_text(s) for s in (
+    return ''.join(str(s) for s in (
         PRINT_COLORS[color],
         msg,
         PRINT_COLORS['normal']
-    )))
+    ))
 
 
 def red_bg(msg):
@@ -72,19 +71,19 @@ def info(msg):
 
 
 def print_error(msg):
-    print(error(smart_text(msg)))
+    print(error(str(msg)))
 
 
 def print_warning(msg):
-    print(warning(smart_text(msg)))
+    print(warning(str(msg)))
 
 
 def print_success(msg):
-    print(success(smart_text(msg)))
+    print(success(str(msg)))
 
 
 def print_info(msg):
-    print(info(smart_text(msg)))
+    print(info(str(msg)))
 
 
 def colored_diff(a, b):

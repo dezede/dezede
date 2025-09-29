@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 from tinymce.models import HTMLField
@@ -327,20 +327,20 @@ class Source(AutoriteModel):
         return self.auteurs.html(tags)
 
     def no(self):
-        return ugettext('n° %s') % self.numero
+        return gettext('n° %s') % self.numero
 
     def f(self):
-        return ugettext('f. %s') % self.folio
+        return gettext('f. %s') % self.folio
 
     def p(self):
-        return ugettext('p. %s') % self.page
+        return gettext('p. %s') % self.page
 
     def html(self, tags=True, pretty_title=False, link=True):
         url = None if not tags else self.get_absolute_url()
         conservation = hlp(self.lieu_conservation,
-                           ugettext('Lieu de conservation'), tags)
+                           gettext('Lieu de conservation'), tags)
         if self.ancrage.date or self.ancrage.date_approx:
-            ancrage = hlp(self.ancrage.html(tags, caps=False), ugettext('date'))
+            ancrage = hlp(self.ancrage.html(tags, caps=False), gettext('date'))
         else:
             ancrage = None
         if self.cote:
@@ -358,9 +358,9 @@ class Source(AutoriteModel):
             if ancrage is not None:
                 l.append(ancrage)
         if self.folio:
-            l.append(hlp(self.f(), ugettext('folio'), tags))
+            l.append(hlp(self.f(), gettext('folio'), tags))
         if self.page:
-            l.append(hlp(self.p(), ugettext('page'), tags))
+            l.append(hlp(self.p(), gettext('page'), tags))
         if self.parent is not None:
             l.insert(
                 0, self.parent.html(tags=tags, pretty_title=pretty_title,

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from random import randrange, choice
 from django.db.models import Count, F
 from django.template import Library
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 from libretto.models import (
     Evenement, Individu, Source, Oeuvre, Lieu, Partie)
 from common.utils.text import capfirst
@@ -29,7 +29,7 @@ def p(txt):
 
 def read_more(obj):
     return '<a href="%s">%s</a>' % (obj.get_absolute_url(),
-                                    ugettext('En savoir plus…'))
+                                    gettext('En savoir plus…'))
 
 
 def valid_events(request):
@@ -65,10 +65,10 @@ def on_this_day(context):
 
     e = events[randrange(n)]
 
-    out = h3(ugettext('Il y a %s ans aujourd’hui')
+    out = h3(gettext('Il y a %s ans aujourd’hui')
              % (now.year - e.debut_date.year))
-    out += h4(ugettext('On donnait %s') % event_oeuvres(e))
-    out += p(ugettext('à %s') % e.debut_lieu.ancestors_until_referent()[0])
+    out += h4(gettext('On donnait %s') % event_oeuvres(e))
+    out += p(gettext('à %s') % e.debut_lieu.ancestors_until_referent()[0])
     out += read_more(e)
     return out
 
@@ -84,7 +84,7 @@ def famous_event(context, n=10):
 
     request = context['request']
 
-    out = h3(ugettext('Événement à la une'))
+    out = h3(gettext('Événement à la une'))
 
     data = Source.objects \
         .filter(evenements__isnull=False).values('evenements') \
@@ -106,7 +106,7 @@ def famous_event(context, n=10):
 
     out += h4(capfirst(e.debut.moment_str()))
     out += h4(e.debut.lieu_str(tags=False))
-    out += p(ugettext('On donnait %s') % event_oeuvres(e))
+    out += p(gettext('On donnait %s') % event_oeuvres(e))
     out += read_more(e)
     return out
 
@@ -115,7 +115,7 @@ def famous_event(context, n=10):
 #@register.simple_tag(takes_context=True)
 def traveller(context):
     request = context['request']
-    out = h3(ugettext('Interprète voyageur'))
+    out = h3(gettext('Interprète voyageur'))
     Lieu.objects.values('ancrages')
     travellers = valid_individus(request).order_by(
         'elements_de_distribution__element_de_programme__'
@@ -125,9 +125,9 @@ def traveller(context):
                       'evenement__debut_lieu')).filter(n_lieux__gte=5)
     t = travellers[randrange(travellers.count())]
     out += h4(t.nom_complet(links=False))
-    subject = ugettext('Elle') if t.is_feminin() else ugettext('Il')
+    subject = gettext('Elle') if t.is_feminin() else gettext('Il')
     out += p(
-        ugettext('%s a joué dans au moins %s endroits différents')
+        gettext('%s a joué dans au moins %s endroits différents')
         % (subject, t.n_lieux))
     out += read_more(t)
     return out
@@ -136,7 +136,7 @@ def traveller(context):
 @register.simple_tag(takes_context=True)
 def prolific_author(context, n=40):
     request = context['request']
-    out = h3(ugettext('Rencontre avec'))
+    out = h3(gettext('Rencontre avec'))
 
     data = Oeuvre.objects \
         .filter(auteurs__isnull=False).values('auteurs__individu') \
@@ -170,8 +170,8 @@ def prolific_author(context, n=40):
     #     .order_by('-n_oeuvres').filter(n_oeuvres__gte=10)
     # genres = GenreDOeuvre.objects.filter(pk__in=[d['genre'] for d in data])
     # if genres:
-    #     out += p(ugettext('Genre de prédilection : %s') % genres[0])
-    out += p(ugettext('%s œuvres dans Dezède') % n_oeuvres)
+    #     out += p(gettext('Genre de prédilection : %s') % genres[0])
+    out += p(gettext('%s œuvres dans Dezède') % n_oeuvres)
     out += read_more(a)
     return out
 
@@ -179,7 +179,7 @@ def prolific_author(context, n=40):
 # WARNING: Ce fact est peut-être erroné (voir multi-instrumentiste).
 #@register.simple_tag
 def transformist(n=10):
-    out = h3(ugettext('« Transformiste »'))
+    out = h3(gettext('« Transformiste »'))
 
     individu_accessor = 'elements_de_distribution__individu'
     data = Partie.objects.filter(type=Partie.ROLE) \
@@ -192,8 +192,8 @@ def transformist(n=10):
     t = Individu.objects.get(pk=pk)
 
     out += h4(t.nom_complet(links=False))
-    subject = ugettext('Elle') if t.is_feminin() else ugettext('Il')
-    out += p(ugettext('%s a joué au moins %s rôles différents')
+    subject = gettext('Elle') if t.is_feminin() else gettext('Il')
+    out += p(gettext('%s a joué au moins %s rôles différents')
              % (subject, n_roles))
     out += read_more(t)
     return out
@@ -210,7 +210,7 @@ def transformist(n=10):
 # FIXME: La requête de ce fact est cassée.
 #@register.simple_tag
 def multi_instrumentalist(n=10):
-    out = h3(ugettext('Multi-instrumentiste'))
+    out = h3(gettext('Multi-instrumentiste'))
 
     individu_accessor = 'elements_de_distribution__individu'
     data = Partie.objects.filter(type=Partie.INSTRUMENT) \
@@ -223,8 +223,8 @@ def multi_instrumentalist(n=10):
     m = Individu.objects.get(pk=pk)
 
     out += h4(m.nom_complet(links=False))
-    subject = ugettext('Elle') if m.is_feminin() else ugettext('Il')
-    out += p(ugettext('%s a joué d’au moins %s instruments différents')
+    subject = gettext('Elle') if m.is_feminin() else gettext('Il')
+    out += p(gettext('%s a joué d’au moins %s instruments différents')
              % (subject, n_instruments))
     out += read_more(m)
 
@@ -234,7 +234,7 @@ def multi_instrumentalist(n=10):
 # Fonctionnel mais non révélateur.
 #@register.simple_tag
 def centenarian():
-    out = h3(ugettext('Centenaire'))
+    out = h3(gettext('Centenaire'))
 
     # TODO: Faire un rapport de bug à Django.  Si on retire le `.days`,
     #       une exception inattendue est levée.
@@ -246,8 +246,8 @@ def centenarian():
     age = int((c.deces_date - c.naissance_date).days / dpy)
 
     out += h4(c.nom_complet(links=False))
-    subject = ugettext('Elle') if c.is_feminin() else ugettext('Il')
-    out += p(ugettext('%s a vécu %s ans') % (subject, age))
+    subject = gettext('Elle') if c.is_feminin() else gettext('Il')
+    out += p(gettext('%s a vécu %s ans') % (subject, age))
     out += read_more(c)
     return out
 

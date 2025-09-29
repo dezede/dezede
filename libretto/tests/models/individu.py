@@ -1,4 +1,3 @@
-from django.utils.encoding import smart_text
 from ...models import *
 from .utils import new, CommonTestCase
 
@@ -15,12 +14,12 @@ class IndividuTestCase(CommonTestCase):
 
     def testComputedNames(self):
         with self.assertNumQueries(0):
-            self.assertEqual(smart_text(self.moliere), 'Molière')
+            self.assertEqual(str(self.moliere), 'Molière')
         with self.assertNumQueries(0):
             self.assertEqual(self.moliere.nom_complet(tags=False),
                              'Jean-Baptiste Poquelin dit\u00A0Molière')
         with self.assertNumQueries(0):
-            self.assertEqual(smart_text(self.piaf),
+            self.assertEqual(str(self.piaf),
                              'Gassion (É.) dite\u00A0La Môme Piaf')
         with self.assertNumQueries(0):
             self.assertEqual(self.piaf.nom_complet(tags=False),

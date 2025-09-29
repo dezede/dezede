@@ -1,7 +1,6 @@
 from ajax_select import LookupChannel
 from bs4 import BeautifulSoup
 from django.db.models import Count
-from django.utils.encoding import force_text
 from django.utils.html import strip_tags
 
 from libretto.search_indexes import autocomplete_search
@@ -38,7 +37,7 @@ class PublicLookup(LookupChannel):
         for link in soup.find_all('a'):
             link.unwrap()
 
-        out = force_text(soup)
+        out = str(soup)
         return hlp(out, strip_tags(out))
 
     def format_item_display(self, obj):

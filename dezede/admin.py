@@ -1,5 +1,5 @@
 from django.contrib.admin import register, HORIZONTAL
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from image_cropping import ImageCroppingMixin
 from reversion.admin import VersionAdmin
 from libretto.admin import PublishedAdmin

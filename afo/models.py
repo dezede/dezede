@@ -1,8 +1,7 @@
 from django.db.models import (
     OneToOneField, CharField, PositiveIntegerField, TextField, CASCADE,
 )
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from libretto.models import Evenement, Lieu
 from libretto.models.base import CommonModel
 
@@ -84,7 +83,7 @@ class EvenementAFO(CommonModel):
         verbose_name_plural = _('événements AFO')
 
     def __str__(self):
-        return force_text(self.evenement)
+        return str(self.evenement)
 
 
 class LieuAFO(CommonModel):
@@ -110,4 +109,4 @@ class LieuAFO(CommonModel):
         verbose_name_plural = _('lieux et institutions AFO')
 
     def __str__(self):
-        return force_text(self.lieu)
+        return str(self.lieu)

@@ -1,8 +1,7 @@
 from bleach import clean
 from django.template.defaultfilters import date
-from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 
 from .text import capfirst
 
@@ -25,7 +24,7 @@ def date_html(d, tags=True, short=False):
     post = date(d, 'F Y')
     j = date(d, 'j')
     if j == '1':
-        k = ugettext('er')
+        k = gettext('er')
         if tags:
             k = f'<sup>{k}</sup>'
         j += k
@@ -71,7 +70,7 @@ def href(url, txt, tags=True, new_tab=False):
         return txt
     if new_tab:
         url += '" target="_blank'
-    return mark_safe(smart_text(f'<a href="{url}">{txt}</a>'))
+    return mark_safe(f'<a href="{url}">{txt}</a>')
 
 
 @html_decorator

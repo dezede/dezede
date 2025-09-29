@@ -1,9 +1,8 @@
 from unicodedata import combining, normalize
 
-from django.utils.encoding import force_text
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
-from django.utils.translation import pgettext, ugettext_lazy as _
+from django.utils.translation import pgettext, gettext_lazy as _
 
 from .base import OrderedDefaultDict
 
@@ -17,7 +16,7 @@ def remove_diacritics(string):
 
 
 def capfirst(text):
-    out = force_text(text)
+    out = str(text)
     if not out:
         return out
     return f'{out[0].upper()}{out[1:]}'
@@ -79,7 +78,7 @@ def str_list_w_last(iterable, infix=None, last_infix=None):
 
 def ex(txt, pre='', post=''):
     """
-    >>> print(force_text(ex('30/01/1989')))
+    >>> print(str(ex('30/01/1989')))
     Exemple : « 30/01/1989 ».
     """
     return _('Exemple : %(pre)s« %(txt)s »%(post)s.') % {

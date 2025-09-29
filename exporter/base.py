@@ -9,7 +9,6 @@ from django.db.models import (
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.fields.related import RelatedField, ForeignObjectRel
 from django.http import HttpResponse
-from django.utils.encoding import force_text
 import pandas
 from slugify import slugify
 
@@ -92,17 +91,17 @@ class Exporter(object):
 
     def get_verbose_name(self, column):
         if column in self.verbose_overrides:
-            return force_text(self.verbose_overrides[column])
+            return str(self.verbose_overrides[column])
         if column in self.fields:
             field = self.fields[column]
             if isinstance(field, ForeignObjectRel):
-                return force_text(field.field.model._meta.verbose_name)
-            return force_text(field.verbose_name)
+                return str(field.field.model._meta.verbose_name)
+            return str(field.verbose_name)
         return column
 
     def get_verbose_table_name(self):
         # Note: Excel sheet names can’t be larger than 31 characters.
-        return force_text(self.model._meta.verbose_name_plural)[:31]
+        return str(self.model._meta.verbose_name_plural)[:31]
 
     def get_queryset(self):
         if self.queryset is not None:
@@ -191,7 +190,7 @@ class Exporter(object):
         # Display verbose value of fields with `choices`
         for lookup, (model, field) in self.final_fields.items():
             if getattr(field, 'choices', ()):
-                df[lookup] = df[lookup].replace({k: force_text(v)
+                df[lookup] = df[lookup].replace({k: str(v)
                                                  for k, v in field.choices})
 
         # Adds columns calculated from methods
@@ -239,7 +238,7 @@ class Exporter(object):
         if len(dfs) == 1:
             return extension, format_dataframe(dfs[0][1])
         return self._compress_to_zip([
-            ('%s.%s' % (slugify(force_text(verbose_table_name)),
+            ('%s.%s' % (slugify(str(verbose_table_name)),
                         extension),
              format_dataframe(df)) for verbose_table_name, df in dfs])
 
@@ -256,7 +255,7 @@ class Exporter(object):
         f = BytesIO()
         with pandas.ExcelWriter(f, engine='xlsxwriter') as writer:
             for verbose_table_name, df in self.get_dataframes():
-                df.to_excel(writer, force_text(verbose_table_name),
+                df.to_excel(writer, str(verbose_table_name),
                             index=False)
             writer.save()
         out = f.getvalue()

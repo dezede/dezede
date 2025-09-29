@@ -10,10 +10,9 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.contrib.syndication.views import Feed
 from django.db.models import Q
 from django.http import HttpResponse
-from django.utils.encoding import smart_text
 from django.utils.feedgenerator import DefaultFeed, Enclosure
 from django.utils.html import strip_tags
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, TemplateView
 from haystack.views import SearchView
 
@@ -103,7 +102,7 @@ def autocomplete(request):
         OrderedDict((
             ('id', s.pk),
             ('str', (s.related_label() if hasattr(s, 'related_label')
-                     else smart_text(s))),
+                     else str(s))),
             ('url', s.get_absolute_url()))) for s in suggestions
         if s is not None]
     data = json.dumps(suggestions)

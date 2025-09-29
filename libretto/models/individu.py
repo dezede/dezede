@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import (
-    pgettext_lazy, ugettext, ugettext_lazy as _)
+    pgettext_lazy, gettext, gettext_lazy as _)
 from tinymce.models import HTMLField
 from common.utils.abbreviate import abbreviate
 from common.utils.html import href, sc, hlp
@@ -69,7 +69,7 @@ class ParenteDIndividus(CommonModel):
                                     'parenté avec lui-même.'))
 
     def __str__(self):
-        return ugettext('%(parent)s, %(type)s de %(enfant)s') % {
+        return gettext('%(parent)s, %(type)s de %(enfant)s') % {
             'parent': self.parent, 'type': self.type.nom,
             'enfant': self.enfant}
 
@@ -235,18 +235,18 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
 
         if tags:
             if titre == 'M':
-                return hlp(ugettext('M.'), 'Monsieur')
+                return hlp(gettext('M.'), 'Monsieur')
             elif titre == 'J':
-                return hlp(ugettext('M<sup>lle</sup>'), 'Mademoiselle')
+                return hlp(gettext('M<sup>lle</sup>'), 'Mademoiselle')
             elif titre == 'F':
-                return hlp(ugettext('M<sup>me</sup>'), 'Madame')
+                return hlp(gettext('M<sup>me</sup>'), 'Madame')
 
         if titre == 'M':
-            return ugettext('Monsieur')
+            return gettext('Monsieur')
         elif titre == 'J':
-            return ugettext('Mademoiselle')
+            return gettext('Mademoiselle')
         elif titre == 'F':
-            return ugettext('Madame')
+            return gettext('Madame')
 
         raise ValueError('Type de titre inconnu, il devrait être M, J, ou F.')
 
@@ -306,8 +306,8 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
                     l.append(f'({prenom_and_particule})')
             out = str_list(l, ' ')
             if pseudonyme:
-                alias = (ugettext('dite') if self.is_feminin()
-                         else ugettext('dit'))
+                alias = (gettext('dite') if self.is_feminin()
+                         else gettext('dit'))
                 out += f' {alias}\u00A0{pseudonyme}'
             return out
 

@@ -9,8 +9,7 @@ from django.db.models import Q
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.functions import Coalesce
 from django.utils.dates import MONTHS
-from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.translation import gettext_lazy as _
 from django.db.models import (
     IntegerField, ForeignKey, DateTimeField,
 )
@@ -49,7 +48,7 @@ class ScenariosExporter:
         f = BytesIO()
         with pandas.ExcelWriter(f, engine='xlsxwriter') as writer:
             for verbose_table_name, df in self.get_dataframes():
-                table_name = force_text(verbose_table_name)
+                table_name = str(verbose_table_name)
 
                 df.to_excel(writer, str(table_name),
                             index=True, freeze_panes=(2, 0))
@@ -218,13 +217,13 @@ class CustomExporter(Exporter):
         verbose_names = []
         for column in df.columns:
             if column in self.verbose_names:
-                verbose_name = force_text(self.verbose_names[column])
+                verbose_name = str(self.verbose_names[column])
                 verbose_names.append(verbose_name)
         df.columns = verbose_names
 
         df = df.replace(numpy.nan, '')
 
-        df.columns = pandas.MultiIndex.from_tuples(zip([force_text(self.title)] + spacer[:-1], df.columns))
+        df.columns = pandas.MultiIndex.from_tuples(zip([str(self.title)] + spacer[:-1], df.columns))
 
         if self.background_colors:
             df = df.style.apply(self._background_color, nb_lines=len(df.index), axis=1)
@@ -260,7 +259,7 @@ class EvenementScenarioExporter(CustomExporter):
         lieu = (obj.debut_lieu.get_ancestors(include_self=True)
                 .filter(nature__nom=nature).first())
         if lieu is not None:
-            return force_text(lieu)
+            return str(lieu)
 
     def get_pays(self, obj):
         return self.get_lieu(obj, 'pays')

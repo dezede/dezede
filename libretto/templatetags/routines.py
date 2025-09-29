@@ -3,7 +3,6 @@ from copy import copy
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template import Library, Template
-from django.utils.encoding import force_text
 from django.utils.safestring import SafeText, mark_safe
 from tinymce.models import HTMLField
 
@@ -175,7 +174,7 @@ def data_table_list_header(context):
     out = ''
     if has_count and (count != 1 or has_count_if_one):
         out = '%s ' % count
-    out += force_text(verbose_name if count == 1 else verbose_name_plural)
+    out += str(verbose_name if count == 1 else verbose_name_plural)
     return capfirst(out)
 
 
@@ -226,7 +225,7 @@ def evenement_list_def(context, evenements, verbose_name=None,
         evenements, verbose_name=verbose_name,
         verbose_name_plural=verbose_name_plural)
     counter = evenements.count()
-    name = force_text(verbose_name if counter == 1 else verbose_name_plural)
+    name = str(verbose_name if counter == 1 else verbose_name_plural)
     c = context.flatten()
     c.update({'name': name,
               'counter': counter,

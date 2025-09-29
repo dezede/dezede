@@ -6,9 +6,8 @@ from django.db.models import (
     DateField, PositiveSmallIntegerField, Model, CASCADE)
 from django.template.defaultfilters import date
 from django.urls import reverse
-from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
 from wagtail.api import APIField
 from wagtail.search.index import Indexed, SearchField, RelatedFields
@@ -153,7 +152,7 @@ class PeriodeDActivite(Model):
             return
         precision = getattr(self, attr_precision)
         if precision == self.YEAR:
-            return force_text(d.year)
+            return str(d.year)
         if precision == self.MONTH:
             return date(d, 'F Y')
         if precision == self.DAY:
@@ -174,26 +173,26 @@ class PeriodeDActivite(Model):
             if debut is None:
                 return ''
             if self.debut_precision == self.DAY:
-                t = ugettext('depuis le %(debut)s')
+                t = gettext('depuis le %(debut)s')
             else:
-                t = ugettext('depuis %(debut)s')
+                t = gettext('depuis %(debut)s')
         else:
             if debut is None:
                 if self.fin_precision == self.DAY:
-                    t = ugettext('jusqu’au %(fin)s')
+                    t = gettext('jusqu’au %(fin)s')
                 else:
-                    t = ugettext('jusqu’à %(fin)s')
+                    t = gettext('jusqu’à %(fin)s')
             else:
                 if self.debut_precision == self.DAY:
                     if self.fin_precision == self.DAY:
-                        t = ugettext('du %(debut)s au %(fin)s')
+                        t = gettext('du %(debut)s au %(fin)s')
                     else:
-                        t = ugettext('du %(debut)s à %(fin)s')
+                        t = gettext('du %(debut)s à %(fin)s')
                 else:
                     if self.fin_precision == self.DAY:
-                        t = ugettext('de %(debut)s au %(fin)s')
+                        t = gettext('de %(debut)s au %(fin)s')
                     else:
-                        t = ugettext('de %(debut)s à %(fin)s')
+                        t = gettext('de %(debut)s à %(fin)s')
         return t % {'debut': debut, 'fin': fin}
     smart_period.short_description = _('Période d’activité')
 
@@ -395,7 +394,7 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
         """
         with connection.cursor() as cursor:
             cursor.execute(sql, evenements_params + (
-                ugettext('Monde'), self.siege.path))
+                gettext('Monde'), self.siege.path))
             data = cursor.fetchall()
         new_data = []
         for i, (name, count) in enumerate(data):

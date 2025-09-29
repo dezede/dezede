@@ -11,9 +11,8 @@ from django.db.models import (
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
     NOT_PROVIDED, )
 from django.template.defaultfilters import time
-from django.utils.encoding import force_text
 from django.utils.html import strip_tags
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from autoslug import AutoSlugField
 from slugify import Slugify
 from tinymce.models import HTMLField
@@ -65,7 +64,7 @@ HEURE_APPROX_MSG = _('Ne remplir que si l’heure est approximative. '
 def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
     """
     Renvoie le nom au pluriel d'obj, si possible.
-    Sinon renvoie force_text(obj).
+    Sinon renvoie str(obj).
     """
     try:
         pluriel = getattr(obj, f'{attr_base}{attr_suffix}')
@@ -73,7 +72,7 @@ def calc_pluriel(obj, attr_base='nom', attr_suffix='_pluriel'):
             return pluriel
         return f'{getattr(obj, attr_base)}s'
     except (AttributeError, TypeError):
-        return force_text(obj)
+        return str(obj)
 
 
 ISNI_VALIDATORS = [
@@ -197,14 +196,14 @@ class CommonModel(SearchVectorAbstractModel, TypographicModel):
 
     @classmethod
     def class_name(cls):
-        return force_text(cls.__name__)
+        return str(cls.__name__)
 
     @classmethod
     def meta(cls):
         return cls._meta
 
     def related_label(self):
-        return force_text(self)
+        return str(self)
 
 
 class PublishedQuerySet(CommonQuerySet):
@@ -295,7 +294,7 @@ slugify_unicode_class = Slugify(translate=None, to_lower=True, max_length=50)
 
 
 def slugify_unicode(text):
-    return slugify_unicode_class(force_text(text))
+    return slugify_unicode_class(str(text))
 
 
 class SlugModel(Model):
@@ -306,9 +305,9 @@ class SlugModel(Model):
         abstract = True
 
     def get_slug(self):
-        s = slugify_unicode(force_text(self))
+        s = slugify_unicode(str(self))
         if not s:
-            return force_text(self._meta.verbose_name)
+            return str(self._meta.verbose_name)
         return s
 
 
@@ -321,9 +320,9 @@ class UniqueSlugModel(Model):
         abstract = True
 
     def get_slug(self):
-        s = slugify_unicode(force_text(self))
+        s = slugify_unicode(str(self))
         if not s:
-            return force_text(self._meta.verbose_name)
+            return str(self._meta.verbose_name)
         return s
 
 
@@ -439,16 +438,16 @@ class SpaceTimeValue:
             return ''
         if self.approx and self.heure_approx:
             return self.heure_approx
-        return time(self.heure, ugettext('H\hi'))
+        return time(self.heure, gettext('H\hi'))
 
     def moment_str(self, tags=True, short=False):
         l = []
         date = self.date_str(tags, short)
         heure = self.heure_str()
-        pat_date = (ugettext('%(date)s') if self.has_date and self.date
-                    else ugettext('%(date)s'))
-        pat_heure = (ugettext('à %(heure)s') if self.has_heure and self.heure
-                     else ugettext('%(heure)s'))
+        pat_date = (gettext('%(date)s') if self.has_date and self.date
+                    else gettext('%(date)s'))
+        pat_heure = (gettext('à %(heure)s') if self.has_heure and self.heure
+                     else gettext('%(heure)s'))
         l.append(pat_date % {'date': date})
         l.append(pat_heure % {'heure': heure})
         return str_list(l, ' ')

@@ -9,7 +9,6 @@ from django.db.models import ManyToManyField, Manager, Model
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.fields.related import ForeignObjectRel
 from django.db.models.query import QuerySet
-from django.utils.encoding import smart_text
 from typography.utils import replace
 from ...models.base import PublishedModel, CommonModel, SpaceTimeValue
 from ..utils import notify_send, print_info
@@ -90,7 +89,7 @@ def ask_for_old_new_or_create(obj, k, v, new_v):
         return OLD_NOW_OR_CREATE_CACHE[cache_key]
 
     intro = 'Deux possibilités pour le champ {0} de {1}'.format(k, obj)
-    v, new_v = colored_diff(smart_text(v), smart_text(new_v))
+    v, new_v = colored_diff(str(v), str(new_v))
     choices = (
         (v, 'valeur actuelle'),
         (new_v, 'valeur importable'),
@@ -115,13 +114,13 @@ def get_field_cmp_value(obj, k, v):
     if is_many_related_field(obj, k):
         return v.all()
     elif isinstance(v, str):
-        return smart_text(v)
+        return v
     return v
 
 
 def get_field_settable_value(new_v):
     if isinstance(new_v, str):
-        return replace(smart_text(new_v))
+        return replace(new_v)
     return new_v
 
 

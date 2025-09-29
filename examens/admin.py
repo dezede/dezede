@@ -1,7 +1,7 @@
 from django.contrib.admin import (
     TabularInline, StackedInline, register, ModelAdmin)
 from django.db.models import Avg
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .forms import LevelAdminForm, TakenLevelForm
 from .models import Level, LevelSource, TakenExam, TakenLevel

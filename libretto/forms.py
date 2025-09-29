@@ -16,7 +16,7 @@ from django.forms import (
     Select, ModelChoiceField,
 )
 from django.forms.models import ModelChoiceIterator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from psycopg2._range import NumericRange
 
 from common.utils.text import capfirst, str_list_w_last

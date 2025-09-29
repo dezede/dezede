@@ -1,4 +1,3 @@
-from django.utils.encoding import force_text
 import pandas
 
 from common.utils.file import FileAnalyzer
@@ -9,7 +8,7 @@ def get_row(source, oeuvre):
     individus = [a.individu for a in oeuvre.auteurs.all()]
     return {
         'permalien enregistrement': 'https://dezede.org' + source.permalien(),
-        'œuvre': force_text(oeuvre),
+        'œuvre': str(oeuvre),
         'permalien œuvre': 'https://dezede.org' + oeuvre.permalien(),
         'nom compositeur(s)': '; '.join([i.nom for i in individus]),
         'prénom compositeur(s)': '; '.join([i.prenoms for i in individus]),
@@ -22,7 +21,7 @@ def get_row(source, oeuvre):
             ['https://dezede.org' + i.permalien() for i in individus]),
         'date d’enregistrement': source.date,
         'orchestre': '; '.join(
-            [force_text(e) for e in source.ensembles.all()]),
+            [str(e) for e in source.ensembles.all()]),
     }
 
 

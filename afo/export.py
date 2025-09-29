@@ -1,5 +1,4 @@
 from datetime import timedelta
-from django.utils.encoding import force_text
 from dossiers.models import DossierDEvenements
 from exporter.base import Exporter
 from exporter.registry import exporter_registry
@@ -68,11 +67,11 @@ class AFOEvenementExporter(Exporter):
         ensembles_afo = dossier_afo.ensembles.all()
         ensembles = Evenement.objects.filter(pk=obj.pk).ensembles()
         ensembles = ensembles.filter(pk__in=ensembles_afo)
-        return ' / '.join([force_text(e) for e in ensembles])
+        return ' / '.join([str(e) for e in ensembles])
 
     @staticmethod
     def get_debut_date(obj):
-        return force_text(obj.debut_date)
+        return str(obj.debut_date)
 
     @staticmethod
     def _get_point(obj):
@@ -103,7 +102,7 @@ class AFOEvenementExporter(Exporter):
         ville = (obj.debut_lieu.get_ancestors(include_self=True)
                  .filter(nature__nom=nature).first())
         if ville is not None:
-            return force_text(ville)
+            return str(ville)
 
     def get_pays(self, obj):
         return self.get_ville(obj, 'pays')
@@ -155,12 +154,12 @@ class AFOElementDeProgrammeExporter(Exporter):
     @staticmethod
     def get_oeuvre(obj):
         if obj.oeuvre is not None:
-            return force_text(obj.oeuvre)
+            return str(obj.oeuvre)
 
     @staticmethod
     def get_oeuvre_id(obj):
         if obj.oeuvre_id is not None:
-            return force_text(obj.oeuvre_id)
+            return str(obj.oeuvre_id)
 
     @staticmethod
     def _get_compositeur_attr(obj, attr):
@@ -183,20 +182,20 @@ class AFOElementDeProgrammeExporter(Exporter):
              for m in self._get_compositeur_attr(obj, 'nom_complet')])
 
     def get_compositeur_id(self, obj):
-        return ' / '.join(map(force_text,
+        return ' / '.join(map(str,
                              self._get_compositeur_attr(obj, 'id')))
 
     def get_compositeur_naissance(self, obj):
         return ' / '.join(
-            map(force_text, self._get_compositeur_attr(obj, 'naissance_date')))
+            map(str, self._get_compositeur_attr(obj, 'naissance_date')))
 
     def get_compositeur_deces(self, obj):
         return ' / '.join(
-            map(force_text, self._get_compositeur_attr(obj, 'deces_date')))
+            map(str, self._get_compositeur_attr(obj, 'deces_date')))
 
     def get_compositeur_naissance_plus_20(self, obj):
         return ' / '.join([
-            '' if d == '' else force_text(d + timedelta(days=365.25*20))
+            '' if d == '' else str(d + timedelta(days=365.25*20))
             for d in self._get_compositeur_attr(obj, 'naissance_date')])
 
     def get_compositeur_periode(self, obj):
@@ -205,10 +204,10 @@ class AFOElementDeProgrammeExporter(Exporter):
         out = []
         for naissance in self._get_compositeur_attr(obj, 'naissance_date'):
             if naissance == '':
-                out.append(force_text(PERIOD_NAMES[-1]))
+                out.append(str(PERIOD_NAMES[-1]))
                 continue
             for k, (year0, year1) in PERIODS.items():
                 if year0 < naissance.year <= year1:
-                    out.append(force_text(PERIOD_NAMES[k]))
+                    out.append(str(PERIOD_NAMES[k]))
                     break
         return ' / '.join(out)

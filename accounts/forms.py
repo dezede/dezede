@@ -8,7 +8,7 @@ from django.forms import (
     Form, CharField, ModelMultipleChoiceField, BooleanField)
 from django.forms.widgets import CheckboxSelectMultiple, HiddenInput
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from tree.forms import TreeChoiceField
 
 

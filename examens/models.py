@@ -6,9 +6,8 @@ from django.db.models import (
     Model, PositiveSmallIntegerField, TextField, FloatField, ForeignKey,
     OneToOneField, ManyToManyField, BooleanField, DateTimeField, QuerySet,
     Max, Sum, F, SET_NULL, CASCADE)
-from django.utils.encoding import force_text
 from django.utils.formats import date_format
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from common.utils.file import FileAnalyzer
 from examens.utils import AnnotatedDiff
@@ -29,7 +28,7 @@ class Level(Model):
         ordering = ('number',)
 
     def __str__(self):
-        return force_text(self.number)
+        return str(self.number)
 
 
 def limit_choices_to_possible_sources():
@@ -83,7 +82,7 @@ class TakenExam(Model):
         ordering = ('user', 'session')
 
     def __str__(self):
-        return force_text(self.session if self.user is None else self.user)
+        return str(self.session if self.user is None else self.user)
 
     @property
     def last_passed_level_number(self):

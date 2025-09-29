@@ -8,7 +8,7 @@ os.environ['USE_COMPRESSOR'] = 'True'
 
 from noridjango.settings import *
 
-ugettext = lambda s: s
+gettext = lambda s: s
 
 
 SITE_URL = '/'
@@ -404,7 +404,6 @@ if DEBUG:
     INSTALLED_APPS = INSTALLED_APPS + [
         'django_extensions',
         'template_timings_panel',
-        'haystack_panel',
         'django_nose',
         'wagtail.contrib.styleguide',
     ]
@@ -426,7 +425,6 @@ if DEBUG:
         'debug_toolbar.panels.profiling.ProfilingPanel',
         # These third-party panels cannot be deactivated by default on the debug toolbar.
         # 'template_timings_panel.panels.TemplateTimings.TemplateTimings',
-        'haystack_panel.panel.HaystackDebugPanel',
     ]
     TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
     NOSE_ARGS = ['--with-doctest']

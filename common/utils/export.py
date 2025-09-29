@@ -9,7 +9,7 @@ from django.core.mail import EmailMessage, mail_admins
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.utils import translation
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from rq.timeouts import JobTimeoutException
 
 from accounts.models import HierarchicUser

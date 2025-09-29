@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django_rq import job
 from slugify import slugify
 
@@ -17,7 +16,7 @@ def dossier_to_pdf(dossier_pk, user_pk, site_pk, language_code):
     context = {'object': dossier}
     template_name = f'dossiers/{dossier._meta.model_name}_detail.tex'
     subject = _('du dossier « %s »') % dossier
-    filename = slugify(force_text(dossier))
+    filename = slugify(str(dossier))
     send_pdf(context, template_name, subject, filename, user_pk, site_pk,
              language_code)
 

@@ -11,10 +11,9 @@ from django.db.models import (
     SmallIntegerField, Max, CASCADE, CheckConstraint,
 )
 from django.urls import reverse
-from django.utils.encoding import force_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from wagtail.api import APIField
 from wagtail.search.index import Indexed, SearchField, RelatedFields
 
@@ -68,7 +67,7 @@ class ElementDeDistributionQuerySet(CommonQuerySet):
             'individu', 'ensemble', 'partie', 'profession')
 
     def html(self, tags=True):
-        return force_text(ElementDeDistributionBiGrouper(self, tags=tags))
+        return str(ElementDeDistributionBiGrouper(self, tags=tags))
 
 
 class ElementDeDistributionManager(CommonManager):
@@ -158,7 +157,7 @@ class ElementDeDistribution(CommonModel):
         return self.html(tags=False)
 
     def html(self, tags=True):
-        out = force_text(ElementDeDistributionBiGrouper((self,), tags=tags))
+        out = str(ElementDeDistributionBiGrouper((self,), tags=tags))
         if not tags:
             return strip_tags(out)
         return mark_safe(out)
@@ -172,7 +171,7 @@ class ElementDeDistribution(CommonModel):
         )
 
     def get_change_link(self):
-        return href(self.get_change_url(), force_text(self), new_tab=True)
+        return href(self.get_change_url(), str(self), new_tab=True)
 
     @staticmethod
     def autocomplete_search_fields():
@@ -647,7 +646,7 @@ class Evenement(Indexed, AutoriteModel):
         return self.get_absolute_url()
 
     def link(self):
-        return href(self.get_absolute_url(), force_text(self))
+        return href(self.get_absolute_url(), str(self))
     link.short_description = _('lien')
 
     def calc_caracteristiques(self, tags=True, caps=True):
@@ -675,10 +674,10 @@ class Evenement(Indexed, AutoriteModel):
         relache = ''
         circonstance = ''
         if self.circonstance:
-            circonstance = hlp(self.circonstance, ugettext('circonstance'),
+            circonstance = hlp(self.circonstance, gettext('circonstance'),
                                tags)
         if self.relache:
-            relache = microdata(ugettext('Relâche'), 'eventType', tags=tags)
+            relache = microdata(gettext('Relâche'), 'eventType', tags=tags)
 
         lieu = microdata(self.debut.lieu_str(tags), 'location',
                          tags=tags)
@@ -746,7 +745,7 @@ class Evenement(Indexed, AutoriteModel):
 
     def related_label(self):
         return href(reverse('admin:libretto_evenement_change',
-                            args=(self.pk,)), force_text(self), new_tab=True)
+                            args=(self.pk,)), str(self), new_tab=True)
 
     @staticmethod
     def autocomplete_search_fields():

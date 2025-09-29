@@ -8,10 +8,9 @@ from django.db.models import (
     SlugField, ForeignKey, ManyToManyField, Q, CASCADE,
 )
 from django.urls import reverse
-from django.utils.encoding import smart_text
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 
@@ -131,7 +130,7 @@ class Dossier(TreeModelMixin, PublishedModel):
         return mark_safe(self.titre)
 
     def link(self):
-        return href(self.get_absolute_url(), smart_text(self))
+        return href(self.get_absolute_url(), str(self))
 
     def short_link(self):
         return href(self.get_absolute_url(), self.titre_court or self.titre)

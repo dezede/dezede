@@ -1,5 +1,4 @@
 import os
-from django.utils.encoding import force_text
 from ...models import *
 from .utils import CommonTestCase
 
@@ -22,10 +21,10 @@ class OeuvreTestCase(CommonTestCase):
         def test_oeuvre(pk, n_queries, n_queries_prefetched, result):
             oeuvre = Oeuvre.objects.get(pk=pk)
             with self.assertNumQueries(n_queries):
-                self.assertEqual(force_text(oeuvre), result)
+                self.assertEqual(str(oeuvre), result)
             oeuvre = Oeuvre.objects.prefetch_all().get(pk=pk)
             with self.assertNumQueries(n_queries_prefetched):
-                self.assertEqual(force_text(oeuvre), result)
+                self.assertEqual(str(oeuvre), result)
 
         test_oeuvre(1, 0, 0, 'Carmen')
         test_oeuvre(2, 1, 1, 'Carmen, Acte I')
