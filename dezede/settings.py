@@ -167,20 +167,22 @@ EMAIL_PORT = 587
 EMAIL_TIMEOUT = 30
 
 TINYMCE_DEFAULT_CONFIG = {
-    'theme': 'advanced',
-    'plugins': 'contextmenu,fullscreen,inlinepopups,nonbreaking,paste,preview,searchreplace,table,smallcaps',
-    'theme_advanced_buttons1': 'fullscreen,preview,code,|,selectall,cut,copy,paste,pasteword,|,undo,redo,|,link,unlink,|,charmap,nonbreaking,|,search',
-    'theme_advanced_buttons2': 'removeformat,formatselect,|,smallcaps,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justify,|,bullist,numlist,outdent,indent,blockquote,|,sub,sup',
-    'theme_advanced_buttons3': 'tablecontrols',
-    'theme_advanced_toolbar_location': 'top',
-    'theme_advanced_toolbar_align': 'center',
-    'theme_advanced_statusbar_location': 'bottom',
-    'width': '650',
-    'height': '350',
-    'theme_advanced_resizing': 'true',
-    'theme_advanced_resizing_max_width': '1024',
+    'plugins': 'fullscreen preview link charmap nonbreaking searchreplace smallcaps lists table',
+    'menubar': False,
+    'toolbar': [
+        'fullscreen preview code | selectall cut copy paste | undo redo | link unlink | charmap nonbreaking | searchreplace',
+        'removeformat formatselect | smallcaps bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | subscript superscript',
+        'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | tablesplitcells tablemergecells',
+    ],
+    'min_width': 800,
+    'width': 800,
+    'max_width': 1024,
+    'height': 399,
+    'max_height': 1024,
+    'resize': 'both',
     'entity_encoding': 'raw',
     'element_format': 'html',
+    'branding': False,
 }
 
 THUMBNAIL_ALIASES = {

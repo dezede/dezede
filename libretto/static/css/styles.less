@@ -206,10 +206,10 @@ body {
   overflow-y: scroll;
   .font-feature-settings(@default-font-features);
   // For TinyMCE only: #content exists in front office, but not body#content.
-  &.mceContentBody, &#main {
+  &.mce-content-body, &#main {
     margin: 5px;
   }
-  &.mceContentBody {
+  &.mce-content-body {
     min-height: 0;
     min-width: 0;
     padding: 15px;
@@ -217,7 +217,7 @@ body {
 }
 
 //Both for front office and TinyMCE
-#main, .mceContentBody {
+#main, .mce-content-body {
   min-height: 100%;
   height: auto !important;  // Those two lines are a min-height hack for IE.
   height: 100%;             //
