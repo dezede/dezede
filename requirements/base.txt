@@ -28,7 +28,7 @@ elasticsearch==1.7.0
 django-redis==5.0.0
 
 # Data visualization frameworks
-djangorestframework==3.12.4
+djangorestframework==3.14.0
 django-tablature==0.2.3
 
 # Small but powerful tools
