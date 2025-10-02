@@ -5,6 +5,7 @@ import time
 
 from django.db import connection
 from django.db.models import Count
+from django.db.models.expressions import RawSQL
 from django.template import Context
 from django.template.base import Template
 from django.utils.safestring import mark_safe
@@ -28,10 +29,9 @@ def run():
     date_format = '%d/%m/%Y'
 
     headers = 'user__first_name', 'user__last_name', 'n_revisions', 'week'
-    data = Revision.objects.extra({
-        'week': connection.ops.date_trunc_sql('week', 'date_created')}) \
-        .values('week').annotate(n_revisions=Count('pk')) \
-        .values_list(*headers).order_by('user', 'week')
+    data = Revision.objects.annotate(
+        week=RawSQL(*connection.ops.date_trunc_sql('week', 'date_created', []))
+    ).values('week').annotate(n_revisions=Count('pk')).values_list(*headers).order_by('user', 'week')
 
     data = list(data)
 

@@ -8,8 +8,9 @@ from django.db import connection
 from django.db.models import (
     CharField, ForeignKey, ManyToManyField, BooleanField,
     PositiveSmallIntegerField, Q, PROTECT, Count, DecimalField,
-    SmallIntegerField, Max, CASCADE, CheckConstraint,
+    SmallIntegerField, Max, CASCADE, CheckConstraint
 )
+from django.db.models.expressions import RawSQL
 from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -434,8 +435,9 @@ class ElementDeProgramme(CommonModel):
 class EvenementQuerySet(PublishedQuerySet):
     def yearly_counts(self):
         return (
-            self.extra({'year': connection.ops.date_trunc_sql('year',
-                                                              'debut_date')})
+            self.annotate(year=RawSQL(*connection.ops.date_trunc_sql(
+                'year', 'debut_date', [],
+            )))
             .values('year').annotate(count=Count('pk', distinct=True))
             .order_by('year'))
 

@@ -4,6 +4,7 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
 from django.db import connection
 from django.db.models import Count
+from django.db.models.expressions import RawSQL
 from django.http import Http404
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
@@ -70,8 +71,9 @@ class EvenementsGraph(TemplateView):
 
         context['data'] = data = list(
             qs
-            .extra({'year': connection.ops.date_trunc_sql('year',
-                                                          'debut_date')})
+            .annotate(year=RawSQL(*connection.ops.date_trunc_sql(
+                'year', 'debut_date', [],
+            )))
             .values('year').annotate(n=Count('pk'))
             .order_by('year'))
 
