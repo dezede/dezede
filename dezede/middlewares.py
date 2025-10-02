@@ -2,12 +2,13 @@ from ipaddress import IPv6Address, ip_address
 import re
 from subprocess import check_output
 
-from django.core.exceptions import PermissionDenied
 from django.conf import settings
-from django.core.exceptions import TooManyFieldsSent
+from django.core.exceptions import PermissionDenied, TooManyFieldsSent
+from django.core.handlers.exception import get_exception_response
 from django.http import HttpRequest
 from django.shortcuts import render
 from django.template.response import TemplateResponse
+from django.urls import get_resolver, get_urlconf
 
 
 class MaintenanceModeMiddleware:
@@ -91,6 +92,12 @@ class CountryBlockMiddleware:
         if match is not None:
             country_code = match.group(1)
             if country_code in settings.BLOCKED_COUNTRIES:
-                raise PermissionDenied('Your country was blocked due to repeated abuse.')
+                # Like raising PermissionDenied, but without logging it.
+                return get_exception_response(
+                    request,
+                    get_resolver(get_urlconf()),
+                    403,
+                    PermissionDenied('Your country was blocked due to repeated abuse.'),
+                )
 
         return None
