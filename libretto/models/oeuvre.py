@@ -18,7 +18,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
-from psycopg2._range import NumericRange
+from psycopg.types.range import Range
 from rest_framework import serializers
 from wagtail.admin.panels import FieldPanel, FieldRowPanel
 from wagtail.api import APIField
@@ -691,8 +691,9 @@ def make_range_include_bounds(value):
     By default, all PostgreSQL ranges are with '[)' bounds, which is wrong
     for an ambitus.
     """
-    if isinstance(value, NumericRange):
-        return NumericRange(
+    if isinstance(value, Range):
+        # We do not use Range directly, because we want to use the specific range type.
+        return type(value)(
             lower=None if value.lower is None else (
                 value.lower + (0 if value.lower_inc else 1)
             ),
@@ -1062,7 +1063,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     def ambitus_html(self, tags=True):
         value = make_range_include_bounds(self.ambitus)
-        if isinstance(value, NumericRange):
+        if isinstance(value, Range):
             if value.lower is None or value.upper is None:
                 return ''
             note_min, octave_min = Pitch.database_to_form_values(value.lower)

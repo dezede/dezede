@@ -44,7 +44,7 @@ SITE_ID = 1
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
-STATICFILES_STORAGE = 'dezede.storage.NonStrictManifestStaticFilesStorage'
+STORAGES['staticfiles']["BACKEND"] = 'dezede.storage.NonStrictManifestStaticFilesStorage'
 STATICFILES_DIRS = (
     str(BASE_DIR / 'dezede/static'),
     str(BASE_DIR / 'public/static'),

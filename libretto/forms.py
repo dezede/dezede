@@ -17,7 +17,7 @@ from django.forms import (
 )
 from django.forms.models import ModelChoiceIterator
 from django.utils.translation import gettext_lazy as _
-from psycopg2._range import NumericRange
+from psycopg.types.range import Int4Range
 
 from common.utils.text import capfirst, str_list_w_last
 from .models import (
@@ -248,7 +248,7 @@ class AmbitusWidget(RangeWidget):
 
 class AmbitusField(BaseRangeField):
     base_field = PitchField
-    range_type = NumericRange
+    range_type = Int4Range
 
     def __init__(self, *args, **kwargs):
         # We force pass the widget here, otherwise it is ignored when
@@ -270,11 +270,11 @@ class AmbitusField(BaseRangeField):
 
     def compress(self, values):
         value = super().compress(values=values)
-        if isinstance(value, NumericRange) and not (
+        if isinstance(value, Int4Range) and not (
             value.lower_inc and value.upper_inc  # bounds are not '[]'
         ):
             # We force the range to be fully inclusive.
-            value = NumericRange(
+            value = Int4Range(
                 lower=value.lower, upper=value.upper, bounds='[]',
                 empty=value.isempty,
             )

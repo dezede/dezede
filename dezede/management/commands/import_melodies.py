@@ -9,7 +9,7 @@ from django.db import transaction
 
 import pandas
 from django.utils.html import linebreaks
-from psycopg2._range import NumericRange
+from psycopg.types.range import Int4Range
 from tqdm import tqdm
 
 from accounts.models import HierarchicUser
@@ -172,7 +172,7 @@ def format_ambitus(df: pandas.DataFrame):
     assert df.loc[has_ambitus, 'min_pitch'].le(df.loc[has_ambitus, 'max_pitch']).all()
     df.loc[has_ambitus, 'ambitus'] = (
         df[has_ambitus].apply(
-            lambda row: NumericRange(
+            lambda row: Int4Range(
                 row['min_pitch'], row['max_pitch'], bounds='[]'),
             axis=1,
         )
