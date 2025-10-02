@@ -1,6 +1,6 @@
 # Developer tools
 --extra-index-url https://__token__:glpat-PxTjSDKH4xLxZ3ZXe6E4@git.noripyt.com/api/v4/groups/55/-/packages/pypi/simple
-noridjango[dev]==3.2.8
+noridjango[dev]==4.0.8
 django-debug-toolbar-template-timings==0.9
 django-extensions==3.1.3
 
