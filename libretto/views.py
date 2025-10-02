@@ -329,9 +329,9 @@ class BibliothequeView(PublishedListView):
 
 class SourceModalView(PublishedDetailView):
     def get(self, request, *args, **kwargs):
-        if not request.is_ajax():
-            return redirect('source_permanent_detail', kwargs['pk'])
-        return super(SourceModalView, self).get(request, *args, **kwargs)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return super(SourceModalView, self).get(request, *args, **kwargs)
+        return redirect('source_permanent_detail', kwargs['pk'])
 
 
 class SourceViewSet(CommonViewSet):
