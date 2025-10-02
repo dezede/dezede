@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import path
 from .views import TakeLevelView
 
 
 urlpatterns = [
-    url(r'^source$', TakeLevelView.as_view(), name='source_examen'),
+    path('source', TakeLevelView.as_view(), name='source_examen'),
 ]
