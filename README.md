@@ -49,8 +49,8 @@ Preferred OS: Debian (latest stable release)
 **¡ This will delete your local database !**
 
 ```shell
-pip install docker-website-backup==1.2.0
-dwb --no-input clone dezede.org
+pip install docker-website-backup==2.0.3
+dwb clone --no-input dezede.org
 ```
 
 # Localisation
