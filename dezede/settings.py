@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'exporter',
 
     'wagtail_notes',
+    'wagtail_linksnippet',
     'wagtailfontawesomesvg',
     'wagtail.api.v2',
     'wagtail.contrib.forms',
@@ -459,6 +460,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
                 'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul', 'superscript', 'small-caps',
                 'hr', 'link', 'document-link', 'image', 'embed',
                 'blockquote', 'note-anchor', 'note-reference',
+                'individu-link', 'ensemble-link', 'lieu-link', 'oeuvre-link', 'partie-link', 'evenement-link',
             ],
         },
     },
@@ -469,6 +471,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
                 'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul', 'superscript', 'small-caps',
                 'hr', 'blockquote', 'note-anchor', 'note-reference',
                 'align-center', 'align-right',
+                'individu-link', 'ensemble-link', 'lieu-link', 'oeuvre-link', 'partie-link', 'evenement-link',
             ],
         },
     },

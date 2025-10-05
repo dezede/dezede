@@ -83,7 +83,7 @@ export default responsiveFontSizes(
           html: {
             scrollBehavior: "smooth",
           },
-          "a:not([class])": {
+          "a:not([class]), a[data-link-type]": {
             color: primary.dark,
             textDecoration: "none",
             "&:hover, &:active, &:focus": {

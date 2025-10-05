@@ -7,6 +7,7 @@ from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
 from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtail.snippets.wagtail_hooks import SnippetsMenuItem
+from wagtail_linksnippet.richtext_utils import add_snippet_link_button
 
 from common.utils.text import capfirst
 
@@ -73,6 +74,12 @@ class AutoriteViewSet(SnippetViewSet):
             choose_results_view_class = CustomChooseResultsView
 
         return CustomChooserViewSet
+
+    @property
+    def chooser_viewset(self):
+        viewset = super().chooser_viewset
+        add_snippet_link_button(viewset, feature_name=f'{self.model._meta.model_name}-link')
+        return viewset
 
 
 @register_snippet
