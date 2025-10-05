@@ -19,7 +19,7 @@ from dezede.utils import richtext_to_text
 from libretto.contants import INDIVIDU_SEARCH_FIELDS, LIEU_SEARCH_FIELDS
 from libretto.models.base import SpaceTimeFields
 
-from .blocks import BodyStreamBlock, ReferencesStreamBlock
+from .blocks import BodyStreamBlock
 
 
 original_get_url_parts = Page.get_url_parts
