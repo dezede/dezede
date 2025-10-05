@@ -136,11 +136,30 @@ class LetterCorpus(BasePage):
 
     @cached_property
     def from_count(self) -> int:
-        return Letter.objects.child_of(self).filter(sender=self.person).count()
+        return Letter.objects.child_of(self).filter(sender_persons=self.person).count()
 
     @cached_property
     def to_count(self) -> int:
         return Letter.objects.child_of(self).filter(recipient_persons=self.person).count()
+
+
+class LetterSender(Orderable):
+    letter = ParentalKey('correspondence.Letter', on_delete=CASCADE, related_name='senders')
+    person = ForeignKey(
+        'libretto.Individu', on_delete=PROTECT, related_name='letter_senders',
+        verbose_name=_('individu'),
+    )
+
+    panels = [
+        FieldPanel('person'),
+    ]
+    api_fields = [
+        APIField('person'),
+    ]
+
+    class Meta(Orderable.Meta):
+        verbose_name = _('expéditeur')
+        verbose_name_plural = _('expéditeurs')
 
 
 class LetterRecipient(Orderable):
@@ -188,10 +207,6 @@ class LetterImage(Orderable):
 
 
 class Letter(BasePageNoImage):
-    sender = ForeignKey(
-        'libretto.Individu', on_delete=PROTECT, related_name='sent_letters',
-        verbose_name=_('expéditeur')
-    )
     writing = SpaceTimeFields(verbose_name=_('rédaction'), for_wagtail=True)
     edition = CharField(_('édition'), max_length=50, blank=True)
     storage_place = ForeignKey(
@@ -204,13 +219,19 @@ class Letter(BasePageNoImage):
     transcription = RichTextField(_('transcription'), editor='transcription', blank=True)
     description = RichTextField(_('description'), blank=True)
 
+    sender_persons = ManyToManyField(
+        'libretto.Individu', through=LetterSender, related_name='sent_letters',
+    )
+
     recipient_persons = ManyToManyField(
         'libretto.Individu', through=LetterRecipient, related_name='received_letters',
     )
 
     parent_page_types = ['correspondence.LetterCorpus']
     content_panels = BasePageNoImage.content_panels + [
-        FieldPanel('sender'),
+        MultipleChooserPanel(
+            'senders', 'person', heading=_('Expéditeurs'), label=_('expéditeur'), min_num=1, max_num=10,
+        ),
         MultipleChooserPanel(
             'recipients', 'person', heading=_('Destinataires'), label=_('destinataire'), max_num=10,
         ),
@@ -237,9 +258,7 @@ class Letter(BasePageNoImage):
     ]
     search_fields = [
         *BasePageNoImage.search_fields,
-        RelatedFields('sender', [
-            SearchField('nom', boost=10),
-        ]),
+        RelatedFields('sender_persons', INDIVIDU_SEARCH_FIELDS),
         RelatedFields('recipient_persons', INDIVIDU_SEARCH_FIELDS),
         RelatedFields('writing_lieu', LIEU_SEARCH_FIELDS),
         SearchField('writing_lieu_approx'),
@@ -250,7 +269,7 @@ class Letter(BasePageNoImage):
     ]
     api_fields = [
         *BasePageNoImage.api_fields,
-        APIField('sender'),
+        APIField('senders'),
         APIField('recipients'),
         APIField('writing_lieu'),
         APIField('writing_lieu_approx'),

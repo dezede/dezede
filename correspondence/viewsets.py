@@ -68,7 +68,7 @@ class LetterCorpusAPIViewSet(CustomPagesAPIViewSet):
             'person_choices': self.serialize_queryset('person_choices', person_choices),
             'writing_place_choices': self.serialize_queryset('writing_place_choices', place_choices),
             'total_count': letters.count(),
-            'from_count': letters.filter(sender=corpus.person_id).count(),
+            'from_count': letters.filter(sender_persons=corpus.person_id).count(),
             'to_count': letters.filter(recipient_persons=corpus.person_id).count(),
         })
 
@@ -83,7 +83,7 @@ class LetterCorpusAPIViewSet(CustomPagesAPIViewSet):
 
         person = self.request.GET.get('person', '')
         if person.isdigit():
-            qs = qs.filter(Q(sender=person) | Q(recipient_persons=person))
+            qs = qs.filter(Q(sender_persons=person) | Q(recipient_persons=person))
 
         writing_place = self.request.GET.get('writing_place', '')
         if writing_place.isdigit():
@@ -92,12 +92,12 @@ class LetterCorpusAPIViewSet(CustomPagesAPIViewSet):
         if self.action == 'listing_view':
             tab = self.request.GET.get('tab', 'all')
             if tab == 'from':
-                qs = qs.filter(sender_id=corpus.person_id)
+                qs = qs.filter(sender_persons=corpus.person_id)
             elif tab == 'to':
                 qs = qs.filter(recipient_persons=corpus.person_id)
             elif tab == 'other':
                 qs = qs.exclude(
-                    sender_id=corpus.person_id,
+                    sender_persons=corpus.person_id,
                 ).exclude(
                     recipient_persons=corpus.person_id,
                 )
@@ -107,10 +107,10 @@ class LetterCorpusAPIViewSet(CustomPagesAPIViewSet):
         return (
             qs.order_by('writing_date')
             .select_related(
-                'sender', 'writing_lieu__nature', 'writing_lieu__parent',
+                'writing_lieu__nature', 'writing_lieu__parent',
             ).prefetch_related(
-                'recipients__person', 'letter_images__image',
-            )
+                'senders__person', 'recipients__person', 'letter_images__image',
+            ).distinct()
         )
 
     def listing_view(self, request, pk: int):

@@ -30,6 +30,7 @@ export type TBlock<E extends string = EBlockType, T = number> = {
 
 export enum EModelType {
   LETTER_IMAGE = "correspondence.LetterImage",
+  LETTER_SENDER = "correspondence.LetterSender",
   LETTER_RECIPIENT = "correspondence.LetterRecipient",
   PLACE = "libretto.Lieu",
   EVENT = "libretto.Evenement",
@@ -230,7 +231,9 @@ export type TPageResults<T = TPage> = {
 };
 
 export type TLetter = TPageDetailed & {
-  sender: TRelatedPerson;
+  senders: (TRelated<EModelType.LETTER_SENDER> & {
+    person: TRelatedPerson;
+  })[];
   recipients: (TRelated<EModelType.LETTER_RECIPIENT> & {
     person: TRelatedPerson;
   })[];

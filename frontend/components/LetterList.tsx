@@ -5,7 +5,12 @@ import OverflowContainer from "./OverflowContainer";
 import Typography from "@mui/material/Typography";
 import SpaceTime from "@/format/SpaceTime";
 import { PersonLabel } from "@/format/PersonChip";
-import { TLetter, TPageResults, TAsyncSearchParams } from "@/app/types";
+import {
+  TLetter,
+  TPageResults,
+  TAsyncSearchParams,
+  TRelatedPerson,
+} from "@/app/types";
 import { djangoFetchData, safeParseInt } from "@/app/utils";
 import { INDIVIDU_FIELDS, PLACE_FIELDS } from "@/app/constants";
 import Divider from "@mui/material/Divider";
@@ -13,6 +18,25 @@ import Empty from "./Empty";
 import ImageRendition from "./ImageRendition";
 import Box from "@mui/material/Box";
 import OurLink from "./OurLink";
+
+function PersonHorizontalList({ persons }: { persons: TRelatedPerson[] }) {
+  return (
+    <Stack
+      display="inline-flex"
+      direction="row"
+      spacing={1}
+      divider={<Divider orientation="vertical" flexItem />}
+      flexWrap="wrap"
+      useFlexGap
+    >
+      {persons.map((person) => (
+        <strong key={person.id}>
+          <PersonLabel {...person} />
+        </strong>
+      ))}
+    </Stack>
+  );
+}
 
 export default async function LetterList({
   parentPageId,
@@ -50,7 +74,7 @@ export default async function LetterList({
       limit: perPage,
     },
     [
-      `sender(${INDIVIDU_FIELDS})`,
+      `senders(person(${INDIVIDU_FIELDS}))`,
       `recipients(person(${INDIVIDU_FIELDS}))`,
       `writing_lieu(${PLACE_FIELDS})`,
       "writing_lieu_approx",
@@ -71,7 +95,7 @@ export default async function LetterList({
         ({
           id,
           meta: { html_url },
-          sender,
+          senders,
           recipients,
           writing_lieu,
           writing_lieu_approx,
@@ -126,18 +150,33 @@ export default async function LetterList({
                         justifyContent="space-between"
                         spacing={2}
                       >
-                        <Typography>
-                          De{" "}
-                          <strong>
-                            <PersonLabel {...sender} />
-                          </strong>{" "}
-                          à{" "}
-                          {recipients.map(({ person }) => (
-                            <strong key={person.id}>
-                              <PersonLabel {...person} />
-                            </strong>
-                          ))}
-                        </Typography>
+                        <Stack
+                          direction="row"
+                          spacing={1.5}
+                          flexWrap="wrap"
+                          useFlexGap
+                        >
+                          <Stack
+                            direction="row"
+                            spacing={1.5}
+                            flexWrap="nowrap"
+                          >
+                            <Typography>De</Typography>
+                            <PersonHorizontalList
+                              persons={senders.map(({ person }) => person)}
+                            />
+                          </Stack>
+                          <Stack
+                            direction="row"
+                            spacing={1.5}
+                            flexWrap="nowrap"
+                          >
+                            <Typography>à</Typography>
+                            <PersonHorizontalList
+                              persons={recipients.map(({ person }) => person)}
+                            />
+                          </Stack>
+                        </Stack>
                         <SpaceTime
                           place={writing_lieu}
                           fuzzyPlace={writing_lieu_approx}

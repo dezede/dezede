@@ -13,7 +13,7 @@ from wagtail.images.models import Image
 from willow.image import UnrecognisedImageFormatError
 
 from common.utils.file import FileAnalyzer
-from correspondence.models import Letter, LetterCorpus, LetterImage, LetterRecipient
+from correspondence.models import Letter, LetterCorpus, LetterImage, LetterRecipient, LetterSender
 from libretto.models.espace_temps import Lieu
 from libretto.models.evenement import Evenement
 from libretto.models.individu import Individu
@@ -63,10 +63,6 @@ class Command(BaseCommand):
             storage_choice = choice([True, False])
             letter = Letter(
                 title=str(source)[:255],
-                sender=(
-                    corpus.person if person_choice == 'sender'
-                    else Individu.objects.order_by('?')[0]
-                ),
                 writing_date=source.date,
                 writing_lieu=Lieu.objects.order_by('?')[0],
                 edition=choice([words(3, common=False), '']),
@@ -99,6 +95,13 @@ class Command(BaseCommand):
                 )
             LetterImage.objects.bulk_create(letter_images)
 
+            LetterSender.objects.create(
+                letter=letter,
+                person=(
+                    corpus.person if person_choice == 'sender'
+                    else Individu.objects.order_by('?')[0]
+                ),
+            )
             LetterRecipient.objects.create(
                 letter=letter,
                 person=(
@@ -107,5 +110,5 @@ class Command(BaseCommand):
                 ),
             )
             letter.save_revision().publish()
-        
+
         call_command('generate_thumbnails')

@@ -30,7 +30,7 @@ export default async function Letter({
   findPageData: TFindPageData;
 }) {
   const {
-    sender,
+    senders,
     recipients,
     writing_lieu,
     writing_lieu_approx,
@@ -49,7 +49,7 @@ export default async function Letter({
     findPageData.apiUrl,
     {},
     [
-      `sender(${INDIVIDU_FIELDS})`,
+      `senders(person(${INDIVIDU_FIELDS}))`,
       `recipients(person(${INDIVIDU_FIELDS}))`,
       `writing_lieu(${PLACE_FIELDS})`,
       `storage_place(${PLACE_FIELDS})`,
@@ -149,7 +149,9 @@ export default async function Letter({
                     maxWidth="100%"
                   >
                     <Typography color="textDisabled">De</Typography>
-                    <PersonChip {...sender} />
+                    {senders.map(({ person }) => (
+                      <PersonChip key={person.id} {...person} />
+                    ))}
                     <Typography color="textDisabled">à</Typography>
                     {recipients.map(({ person }) => (
                       <PersonChip key={person.id} {...person} />
