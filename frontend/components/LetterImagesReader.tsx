@@ -10,7 +10,6 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import ImageRendition from "./ImageRendition";
 import Empty from "./Empty";
-import References from "@/format/References";
 
 export default function LetterImagesReader({
   letterImages,
@@ -29,7 +28,7 @@ export default function LetterImagesReader({
   if (letterImages.length === 0) {
     return <Empty sx={{ height: "50vh" }}>Image manquante</Empty>;
   }
-  const { id, name, image, references } = letterImages[page];
+  const { id, name, image } = letterImages[page];
   return (
     <Grid container direction="column" wrap="nowrap">
       <Grid>
@@ -85,10 +84,6 @@ export default function LetterImagesReader({
             />
           </TransformComponent>
         </TransformWrapper>
-        <References
-          references={references}
-          sx={{ p: 2, justifyContent: "center" }}
-        />
       </Grid>
     </Grid>
   );

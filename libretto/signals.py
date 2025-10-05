@@ -23,7 +23,11 @@ def is_sender_ignored(sender: Type[Model]) -> bool:
     # (and sanitized). Skip also all the wagtail models.
     return issubclass(
         sender, (LogEntry, Page, Session, Revision, Version, Orderable)
-    ) or sender._meta.label in {'migrations.Migration'} or 'wagtail' in sender._meta.app_label
+    ) or sender._meta.label in {
+        'migrations.Migration',
+    } or 'wagtail' in sender._meta.app_label or any(
+        is_sender_ignored(base) for base in sender.__bases__ if issubclass(sender, Model)
+    )
 
 
 @receiver(pre_save)

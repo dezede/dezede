@@ -82,14 +82,6 @@ class Command(BaseCommand):
                         letter=letter,
                         image=image,
                         name=f"p. {source.page}" if source.page else f"p. {len(letter_images) + 1}",
-                        references=[
-                            {
-                                'id': str(uuid4()),
-                                'type': model._meta.model_name,
-                                'value': model.objects.order_by('?').values_list('pk', flat=True).first(),
-                            }
-                            for model in reference_models
-                        ],
                         sort_order=i,
                     )
                 )

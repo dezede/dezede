@@ -1,7 +1,12 @@
+from django.conf import settings
 from django.db import migrations, models
+from django.utils.html import escapejs
+from django.utils.translation import activate
 import django.db.models.deletion
 import modelcluster.fields
 import wagtail.fields
+
+from common.utils.text import str_list
 
 
 def move_sender(apps, schema_editor):
@@ -11,6 +16,25 @@ def move_sender(apps, schema_editor):
     for letter in Letter.objects.only('pk', 'sender_id'):
         bulk.append(LetterSender(letter=letter, person_id=letter.sender_id))
     LetterSender.objects.bulk_create(bulk)
+
+
+def move_references(apps, schema_editor):
+    activate(settings.LANGUAGE_CODE)
+    Letter = apps.get_model('correspondence.Letter')
+    for letter in Letter.objects.prefetch_related('letter_images'):
+        reference_links = []
+        for image in letter.letter_images.all():
+            for reference in image.references:
+                instance = reference.value
+                reference_links.append(
+                    f'<a linktype="{instance._meta.model_name}-link" '
+                    f'id="{instance.pk}" data-string="{escapejs(str(instance))}" '
+                    f'data-app-name="{instance._meta.app_label}" '
+                    f'data-model-name="{instance._meta.model_name}">{instance}</a>'
+                )
+        if reference_links:
+            letter.transcription += f'<p>Références : {str_list(reference_links)}</p>'
+        letter.save()
 
 
 class Migration(migrations.Migration):
@@ -60,5 +84,10 @@ class Migration(migrations.Migration):
             model_name='letter',
             name='sender_persons',
             field=models.ManyToManyField(related_name='sent_letters', through='correspondence.LetterSender', to='libretto.individu'),
+        ),
+        migrations.RunPython(move_references),
+        migrations.RemoveField(
+            model_name='letterimage',
+            name='references',
         ),
     ]

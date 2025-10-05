@@ -185,20 +185,15 @@ class LetterImage(Orderable):
     letter = ParentalKey('correspondence.Letter', on_delete=CASCADE, related_name='letter_images')
     image = ForeignKey('wagtailimages.Image', on_delete=PROTECT, related_name='+', verbose_name=_('image'))
     name = CharField(_('nom'), max_length=20, help_text=_('Exemple : « Page 1 » ou « Enveloppe »'))
-    references = StreamField(
-        ReferencesStreamBlock, verbose_name=_('références'), use_json_field=True, blank=True,
-    )
 
     panels = [
         FieldPanel('image'),
         FieldPanel('name'),
-        FieldPanel('references'),
     ]
     api_fields = [
         APIField('name'),
         APIField('image', serializer=ImageRenditionField(IMAGE_SPEC)),
         APIField('thumbnail', serializer=ImageRenditionField(THUMBNAIL_SPEC, source='image')),
-        APIField('references'),
     ]
 
     class Meta(Orderable.Meta):

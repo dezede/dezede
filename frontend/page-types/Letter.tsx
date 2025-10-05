@@ -56,14 +56,6 @@ export default async function Letter({
       "letter_images(-thumbnail)",
       "-transcription_text",
     ],
-    [
-      `references__individu(${INDIVIDU_FIELDS})`,
-      `references__lieu(${PLACE_FIELDS})`,
-      `references__partie(${PART_FIELDS})`,
-      `references__ensemble(${ENSEMBLE_FIELDS})`,
-      `references__evenement(${EVENT_FIELDS})`,
-      `references__oeuvre(${WORK_FIELDS})`,
-    ],
   );
   const metadataRows = [
     {

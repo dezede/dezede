@@ -170,7 +170,6 @@ export type TLetterImage = TRelated<EModelType.LETTER_IMAGE> & {
   name: string;
   image: TImageRendition;
   thumbnail: TImageRendition;
-  references: TReference[];
 };
 
 export enum EPageType {
