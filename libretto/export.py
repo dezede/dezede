@@ -17,7 +17,7 @@ class CommonModelExporter(Exporter):
             suffix = '_str'
             if s.endswith(suffix):
                 self.verbose_overrides[s] = self.get_verbose_name(
-                    s.split(suffix)[0]) + f' ({self.rendu})'
+                    s.split(suffix)[0]) + f' ({self.RENDU})'
             elif LOOKUP_SEP in s:
                 self.verbose_overrides[s] = self.fields[s].verbose_name
 

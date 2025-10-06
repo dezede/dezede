@@ -257,7 +257,6 @@ class Exporter(object):
             for verbose_table_name, df in self.get_dataframes():
                 df.to_excel(writer, str(verbose_table_name),
                             index=False)
-            writer.save()
         out = f.getvalue()
         f.close()
         return out

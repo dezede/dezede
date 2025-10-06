@@ -386,7 +386,7 @@ LOGGING = {
         **LOGGING['handlers'],
         'rq_console': {
             'level': 'DEBUG',
-            'class': 'rq.utils.ColorizingStreamHandler',
+            'class': 'rq.logutils.ColorizingStreamHandler',
             'formatter': 'rq_console',
             'exclude': ['%(asctime)s'],
         },
@@ -407,8 +407,6 @@ LOGGING = {
 if DEBUG:
     INSTALLED_APPS = INSTALLED_APPS + [
         'django_extensions',
-        'template_timings_panel',
-        'django_nose',
         'wagtail.contrib.styleguide',
     ]
     # FIXME: remove setting when we remove Haystack, HaystackDebugPanel and TemplateTimings.
@@ -427,11 +425,7 @@ if DEBUG:
         'debug_toolbar.panels.logging.LoggingPanel',
         'debug_toolbar.panels.redirects.RedirectsPanel',
         'debug_toolbar.panels.profiling.ProfilingPanel',
-        # These third-party panels cannot be deactivated by default on the debug toolbar.
-        # 'template_timings_panel.panels.TemplateTimings.TemplateTimings',
     ]
-    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-    NOSE_ARGS = ['--with-doctest']
 else:
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 

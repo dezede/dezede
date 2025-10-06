@@ -1,4 +1,5 @@
 from bleach import clean
+from bleach.css_sanitizer import CSSSanitizer
 from django.template.defaultfilters import date
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext
@@ -142,6 +143,9 @@ def em(txt):
     return f'<em>{txt}</em>'
 
 
+css_sanitizer = CSSSanitizer(allowed_css_properties=['text-decoration', 'text-align', 'padding-left'])
+
+
 def sanitize_html(html, include_links=True):
     tags = (
         'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -160,6 +164,6 @@ def sanitize_html(html, include_links=True):
             'p': ['style'],
             'table': ['align'],
         },
-        styles=('text-decoration', 'text-align', 'padding-left'),
+        css_sanitizer=css_sanitizer,
         strip=True,
     ).replace('&amp;', '&')

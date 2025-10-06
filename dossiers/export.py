@@ -57,7 +57,6 @@ class ScenariosExporter:
                 worksheet.set_column(0, 0, None, None, {'hidden': True})
                 worksheet.set_row(2, None, None, {'hidden': True})
 
-            writer.save()
         out = f.getvalue()
         f.close()
         return out

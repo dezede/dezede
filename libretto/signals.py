@@ -29,7 +29,7 @@ def is_sender_ignored(sender: Type[Model]) -> bool:
         is_sender_ignored(base) for base in sender.__bases__
         # Skip bases that are not subclasses of Model,
         # and skip Model itself as it has no _meta defined.
-        if issubclass(base, Model) and base is not Model
+        if issubclass(base, Model) and base is not Model and not base._meta.abstract
     )
 
 
