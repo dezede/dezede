@@ -15,6 +15,9 @@ TimeoutStartSec=0
 Restart=on-failure
 StartLimitInterval=60
 StartLimitBurst=3
+# Disables output as it is already logged by Docker JSON files.
+# This also avoids logging database dumps in journal and/or syslog.
+StandardOutput=null
 
 [Install]
 WantedBy=multi-user.target
