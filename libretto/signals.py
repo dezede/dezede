@@ -26,7 +26,10 @@ def is_sender_ignored(sender: Type[Model]) -> bool:
     ) or sender._meta.label in {
         'migrations.Migration',
     } or 'wagtail' in sender._meta.app_label or any(
-        is_sender_ignored(base) for base in sender.__bases__ if issubclass(sender, Model)
+        is_sender_ignored(base) for base in sender.__bases__
+        # Skip bases that are not subclasses of Model,
+        # and skip Model itself as it has no _meta defined.
+        if issubclass(base, Model) and base is not Model
     )
 
 
