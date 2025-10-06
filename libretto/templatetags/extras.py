@@ -1,4 +1,4 @@
-from html.parser import HTMLParser
+from html import unescape
 import re
 from bs4 import BeautifulSoup, Comment
 from django.core.exceptions import EmptyResultSet
@@ -17,7 +17,7 @@ register = Library()
 
 @register.filter
 def stripchars(text):
-    return HTMLParser().unescape(text)
+    return unescape(text)
 
 
 def fix_strange_characters(text):
