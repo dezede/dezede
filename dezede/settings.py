@@ -178,6 +178,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'min_width': 800,
     'width': 800,
     'max_width': 1024,
+    'min_height': 200,
     'height': 399,
     'max_height': 1024,
     'resize': 'both',
