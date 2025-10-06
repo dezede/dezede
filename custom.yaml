@@ -42,6 +42,11 @@ services:
       interval: 1s
       timeout: 1s
       retries: 60
+    # Elasticsearch can fail to boot if the number of open files is too low.
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
   migrate:
     command: sh -c "python manage.py collectstatic --ignore bootstrap/docs/* --no-input && python manage.py migrate"
     volumes:
