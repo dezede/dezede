@@ -150,10 +150,10 @@ class CustomExporter(Exporter):
 
     def _format_df(self, df, df_stats):
         def add_column(col_name, col_value, stats, tempdf):
-            data = {col_name: col_value}
+            data = {col_name: [col_value]}
             if stats:
                 data.update(stats)
-            return tempdf.append(data, ignore_index=True)
+            return pandas.concat([tempdf, pandas.DataFrame(data)], ignore_index=True)
 
         current = df.to_dict()
         newdf = pandas.DataFrame()
