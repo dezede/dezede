@@ -1,4 +1,4 @@
-FROM redis:7.2.5-alpine
+FROM redis:7.4.6-alpine
 
 RUN mkdir -p /var/run/redis/
 RUN chown root /var/run/redis/
