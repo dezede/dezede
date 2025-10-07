@@ -140,10 +140,14 @@ export default async function Letter({
                     {senders.map(({ person }) => (
                       <PersonChip key={person.id} {...person} />
                     ))}
-                    <Typography color="textDisabled">à</Typography>
-                    {recipients.map(({ person }) => (
-                      <PersonChip key={person.id} {...person} />
-                    ))}
+                    {recipients.length === 0 ? null : (
+                      <>
+                        <Typography color="textDisabled">à</Typography>
+                        {recipients.map(({ person }) => (
+                          <PersonChip key={person.id} {...person} />
+                        ))}
+                      </>
+                    )}
                   </Stack>
                   <SpaceTime
                     place={writing_lieu}
