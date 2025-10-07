@@ -166,16 +166,18 @@ export default async function LetterList({
                               persons={senders.map(({ person }) => person)}
                             />
                           </Stack>
-                          <Stack
-                            direction="row"
-                            spacing={1.5}
-                            flexWrap="nowrap"
-                          >
-                            <Typography>à</Typography>
-                            <PersonHorizontalList
-                              persons={recipients.map(({ person }) => person)}
-                            />
-                          </Stack>
+                          {recipients.length === 0 ? null : (
+                            <Stack
+                              direction="row"
+                              spacing={1.5}
+                              flexWrap="nowrap"
+                            >
+                              <Typography>à</Typography>
+                              <PersonHorizontalList
+                                persons={recipients.map(({ person }) => person)}
+                              />
+                            </Stack>
+                          )}
                         </Stack>
                         <SpaceTime
                           place={writing_lieu}

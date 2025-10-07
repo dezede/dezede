@@ -45,18 +45,14 @@ export default async function Letter({
     letter_images,
     transcription,
     description,
-  } = await djangoFetchData<TLetter>(
-    findPageData.apiUrl,
-    {},
-    [
-      `senders(person(${INDIVIDU_FIELDS}))`,
-      `recipients(person(${INDIVIDU_FIELDS}))`,
-      `writing_lieu(${PLACE_FIELDS})`,
-      `storage_place(${PLACE_FIELDS})`,
-      "letter_images(-thumbnail)",
-      "-transcription_text",
-    ],
-  );
+  } = await djangoFetchData<TLetter>(findPageData.apiUrl, {}, [
+    `senders(person(${INDIVIDU_FIELDS}))`,
+    `recipients(person(${INDIVIDU_FIELDS}))`,
+    `writing_lieu(${PLACE_FIELDS})`,
+    `storage_place(${PLACE_FIELDS})`,
+    "letter_images(-thumbnail)",
+    "-transcription_text",
+  ]);
   const metadataRows = [
     {
       key: "edition",
