@@ -438,7 +438,7 @@ class SpaceTimeValue:
             return ''
         if self.approx and self.heure_approx:
             return self.heure_approx
-        return time(self.heure, gettext('H\hi'))
+        return time(self.heure, gettext(r'H\hi'))
 
     def moment_str(self, tags=True, short=False):
         l = []
