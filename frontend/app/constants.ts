@@ -1,4 +1,4 @@
-export const ROOT_SLUG: string = "openletter";
+export const ROOT_SLUG: string = "musicaletters";
 
 export const INDIVIDU_FIELDS = [
   "particule_nom",

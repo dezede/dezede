@@ -24,7 +24,7 @@ export async function generateMetadata({
   const { title, seoTitle, description } = await findPage({ params });
   // TODO: Add teaser_thumbnail as an open graph image.
   return {
-    title: seoTitle || `${title} · OpenLetter × Dezède`,
+    title: seoTitle || `${title} · musicaLetters × Dezède`,
     description,
     openGraph: {
       siteName: "Dezède",
@@ -102,7 +102,7 @@ export default async function Layout({
                 href={`/${ROOT_SLUG}`}
                 color="inherit"
               >
-                OpenLetter
+                musicaLetters
               </Button>
               <Button
                 component="a"

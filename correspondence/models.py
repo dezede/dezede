@@ -37,7 +37,7 @@ class PageMonkeyPatching(Page):
         site_id, root_url, page_path = url_parts
         if page_path is None:
             return url_parts
-        return site_id, root_url, f'/openletter{page_path}'
+        return site_id, root_url, f'/musicaletters{page_path}'
 
 
 Page.get_url_parts = PageMonkeyPatching.get_url_parts

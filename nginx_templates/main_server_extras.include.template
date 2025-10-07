@@ -1,6 +1,6 @@
-# Copied from docker-compose-django, with just the path in `location` modified to `/openletter`.
+# Copied from docker-compose-django, with just the path in `location` modified to `/musicaletters`.
 
-location ~ ^/(openletter|_next|__nextjs|favicon.ico|.well-known) {
+location ~ ^/(musicaletters|_next|__nextjs|favicon.ico|.well-known) {
   proxy_pass http://react:3000;
   proxy_set_header X-Real-IP $remote_addr;
   proxy_set_header Host $http_host;
