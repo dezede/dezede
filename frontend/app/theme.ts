@@ -13,7 +13,7 @@ export default responsiveFontSizes(
     typography: {
       fontFamily: "var(--font-bodoni-moda)",
       h1: {
-        fontSize: "3rem",
+        fontSize: "2.5rem",
       },
       h2: {
         fontSize: "2.25rem",
