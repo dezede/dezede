@@ -7,19 +7,13 @@ import { TPageCard } from "@/app/types";
 import OverflowContainer from "./OverflowContainer";
 import Divider from "@mui/material/Divider";
 import ImageRendition from "./ImageRendition";
-import SpaceTime from "@/format/SpaceTime";
 import Box from "@mui/material/Box";
 import OurLink from "./OurLink";
 
 export default function PageCard({
   page: {
     title,
-    meta: {
-      html_url,
-      search_description,
-      first_published_at,
-      teaser_thumbnail,
-    },
+    meta: { html_url, search_description, teaser_thumbnail },
   },
 }: {
   page: TPageCard;
@@ -47,7 +41,6 @@ export default function PageCard({
                   alignItems="baseline"
                 >
                   <Typography variant="h3">{title}</Typography>
-                  <SpaceTime date={first_published_at} />
                 </Stack>
                 {search_description ? (
                   <Typography variant="body2">{search_description}</Typography>
