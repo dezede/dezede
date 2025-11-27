@@ -4,7 +4,6 @@ import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { TPageCard } from "@/app/types";
-import OverflowContainer from "./OverflowContainer";
 import Divider from "@mui/material/Divider";
 import ImageRendition from "./ImageRendition";
 import Box from "@mui/material/Box";
@@ -30,24 +29,22 @@ export default function PageCard({
               />
             </Box>
           )}
-          <OverflowContainer maxHeight={200}>
-            <CardContent>
-              <Stack spacing={2} divider={<Divider />}>
-                <Stack
-                  direction="column"
-                  flexWrap="nowrap"
-                  spacing={1}
-                  justifyContent="space-between"
-                  alignItems="baseline"
-                >
-                  <Typography variant="h3">{title}</Typography>
-                </Stack>
-                {search_description ? (
-                  <Typography variant="body2">{search_description}</Typography>
-                ) : null}
+          <CardContent sx={{ maxHeight: 200, overflowY: "auto" }}>
+            <Stack spacing={2} divider={<Divider />}>
+              <Stack
+                direction="column"
+                flexWrap="nowrap"
+                spacing={1}
+                justifyContent="space-between"
+                alignItems="baseline"
+              >
+                <Typography variant="h3">{title}</Typography>
               </Stack>
-            </CardContent>
-          </OverflowContainer>
+              {search_description ? (
+                <Typography variant="body2">{search_description}</Typography>
+              ) : null}
+            </Stack>
+          </CardContent>
         </Stack>
       </CardActionArea>
     </Card>
