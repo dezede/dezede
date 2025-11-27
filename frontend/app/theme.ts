@@ -14,7 +14,6 @@ export default responsiveFontSizes(
       fontFamily: "var(--font-bodoni-moda)",
       h1: {
         fontSize: "3rem",
-        fontFamily: "var(--font-bodoni-moda-sc)",
       },
       h2: {
         fontSize: "2.25rem",
@@ -22,7 +21,6 @@ export default responsiveFontSizes(
       },
       h3: {
         fontSize: "1.75rem",
-        fontFamily: "var(--font-bodoni-moda-sc)",
       },
       h4: {
         fontSize: "1.5rem",
