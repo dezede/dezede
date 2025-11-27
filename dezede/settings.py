@@ -466,7 +466,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
         'OPTIONS': {
             'features': [
                 'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul', 'superscript', 'small-caps',
-                'hr', 'blockquote', 'image', 'note-anchor', 'note-reference',
+                'hr', 'link', 'blockquote', 'image', 'note-anchor', 'note-reference',
                 'align-center', 'align-right',
                 'individu-link', 'ensemble-link', 'lieu-link', 'oeuvre-link', 'partie-link', 'evenement-link',
             ],
