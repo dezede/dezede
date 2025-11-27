@@ -30,7 +30,6 @@ export default function RichText({ value }: { value: string }) {
           hr: {
             border: "1px solid rgba(0, 0, 0, 0.12)",
             borderTop: "none",
-            maxWidth: "10rem",
             marginLeft: 0,
           },
         }}
