@@ -11,7 +11,7 @@ from wagtail_linksnippet.richtext_utils import add_snippet_link_button
 
 from common.utils.text import capfirst
 
-from .models import Individu, Lieu, Oeuvre, Evenement, Partie, Ensemble
+from .models import Individu, Lieu, Oeuvre, Evenement, Partie, Ensemble, Source
 
 
 @hooks.register('register_icons')
@@ -21,6 +21,7 @@ def register_icons(icons):
         'wagtailfontawesomesvg/solid/child.svg',
         'wagtailfontawesomesvg/solid/location-dot.svg',
         'wagtailfontawesomesvg/solid/book.svg',
+        'wagtailfontawesomesvg/solid/book-open.svg',
         'wagtailfontawesomesvg/solid/guitar.svg',
         'wagtailfontawesomesvg/solid/people-group.svg',
     ]
@@ -182,3 +183,17 @@ class EnsembleViewSet(AutoriteViewSet):
 
     def get_queryset(self, request):
         return Ensemble.objects.select_related('type')
+
+
+@register_snippet
+class SourceViewSet(AutoriteViewSet):
+    model = Source
+    icon = 'book-open'
+    list_display = ['__str__', 'type']
+    list_filter = ['type', *AutoriteViewSet.list_filter]
+
+    def get_queryset(self, request):
+        return Source.objects.select_related('type')
+
+    def get_chooser_extra_columns(self):
+        return [Column('type', label=capfirst(_('type')))]
