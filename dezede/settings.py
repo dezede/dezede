@@ -466,7 +466,9 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
         'OPTIONS': {
             'features': [
                 'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul', 'superscript', 'small-caps',
-                'hr', 'link', 'blockquote', 'image', 'note-anchor', 'note-reference',
+                'hr', 'blockquote', 'image', 'note-anchor', 'note-reference',
+                # Link has to be after notes, otherwise link replaces all notes after saving.
+                'link',
                 'align-center', 'align-right',
                 'individu-link', 'ensemble-link', 'lieu-link', 'oeuvre-link', 'partie-link', 'evenement-link', 'source-link',
             ],
