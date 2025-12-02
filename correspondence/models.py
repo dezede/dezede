@@ -225,10 +225,10 @@ class Letter(BasePageNoImage):
     parent_page_types = ['correspondence.LetterCorpus']
     content_panels = BasePageNoImage.content_panels + [
         MultipleChooserPanel(
-            'senders', 'person', heading=_('Expéditeurs'), label=_('expéditeur'), min_num=1, max_num=10,
+            'senders', 'person', heading=_('Expéditeurs'), label=_('expéditeur'), min_num=1, max_num=15,
         ),
         MultipleChooserPanel(
-            'recipients', 'person', heading=_('Destinataires'), label=_('destinataire'), max_num=10,
+            'recipients', 'person', heading=_('Destinataires'), label=_('destinataire'), max_num=15,
         ),
         MultiFieldPanel([
             FieldRowPanel([
