@@ -8,7 +8,7 @@ const primary = {
   contrastText: "#ffffff",
 };
 
-export default responsiveFontSizes(
+const theme = responsiveFontSizes(
   createTheme({
     typography: {
       fontFamily: "var(--font-bodoni-moda)",
@@ -77,24 +77,6 @@ export default responsiveFontSizes(
           html: {
             scrollBehavior: "smooth",
           },
-          h2: {
-            fontSize: "1.875rem",
-            fontWeight: "normal",
-          },
-          h3: {
-            fontSize: "1.45rem",
-            fontWeight: "normal",
-          },
-          h4: {
-            fontSize: "1.25rem",
-            fontWeight: "normal",
-          },
-          h5: {
-            fontSize: "1.05rem",
-          },
-          h6: {
-            fontSize: "0.9rem",
-          },
           "a:not([class]), a[data-link-type]": {
             color: primary.dark,
             textDecoration: "none",
@@ -155,3 +137,14 @@ export default responsiveFontSizes(
     },
   }),
 );
+
+const baseCssOverrides = theme.components?.MuiCssBaseline?.styleOverrides;
+if (typeof baseCssOverrides === "object") {
+  baseCssOverrides.h2 = theme.typography.h2;
+  baseCssOverrides.h3 = theme.typography.h3;
+  baseCssOverrides.h4 = theme.typography.h4;
+  baseCssOverrides.h5 = theme.typography.h5;
+  baseCssOverrides.h6 = theme.typography.h6;
+}
+
+export default theme;
