@@ -16,23 +16,19 @@ export default responsiveFontSizes(
         fontSize: "2.5rem",
       },
       h2: {
-        fontSize: "2.25rem",
-        fontFamily: "var(--font-bodoni-moda-sc)",
+        fontSize: "1.875rem",
       },
       h3: {
-        fontSize: "1.75rem",
+        fontSize: "1.45rem",
       },
       h4: {
-        fontSize: "1.5rem",
-        fontFamily: "var(--font-bodoni-moda-sc)",
+        fontSize: "1.25rem",
       },
       h5: {
-        fontSize: "1.25rem",
-        fontFamily: "var(--font-bodoni-moda-sc)",
+        fontSize: "1.05rem",
       },
       h6: {
-        fontSize: "1rem",
-        fontFamily: "var(--font-bodoni-moda-sc)",
+        fontSize: "0.9rem",
       },
     },
     colorSchemes: {
@@ -80,6 +76,24 @@ export default responsiveFontSizes(
         styleOverrides: {
           html: {
             scrollBehavior: "smooth",
+          },
+          h2: {
+            fontSize: "1.875rem",
+            fontWeight: "normal",
+          },
+          h3: {
+            fontSize: "1.45rem",
+            fontWeight: "normal",
+          },
+          h4: {
+            fontSize: "1.25rem",
+            fontWeight: "normal",
+          },
+          h5: {
+            fontSize: "1.05rem",
+          },
+          h6: {
+            fontSize: "0.9rem",
           },
           "a:not([class]), a[data-link-type]": {
             color: primary.dark,
