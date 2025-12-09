@@ -18,6 +18,7 @@ export default function SpaceTime({
   chip = false,
   variant = "body1",
   hideIcon = false,
+  wrap = false,
 }: {
   date?: string | null;
   fuzzyDate?: string;
@@ -28,6 +29,7 @@ export default function SpaceTime({
   chip?: boolean;
   variant?: TypographyVariant;
   hideIcon?: boolean;
+  wrap?: boolean;
 }) {
   const hasPlace = place !== null || fuzzyPlace !== "";
   const hasDate = date !== null || fuzzyDate !== "";
@@ -38,7 +40,7 @@ export default function SpaceTime({
       direction="row"
       spacing={1}
       alignItems="center"
-      flexWrap="wrap"
+      flexWrap={wrap ? "wrap" : "nowrap"}
       useFlexGap
       maxWidth="100%"
     >
@@ -55,12 +57,17 @@ export default function SpaceTime({
         )
       ) : null}
       {hasDateTime ? (
-        <Stack direction="row" spacing={0.5} alignItems="center">
+        <Stack
+          direction="row"
+          spacing={0.5}
+          alignItems="center"
+          flexWrap="nowrap"
+        >
           {hideIcon ? null : <EventOutlinedIcon fontSize="small" />}
-          <Typography variant={variant} fontSize="inherit">
+          <Typography variant={variant} fontSize="inherit" noWrap>
             <DateLabel dateString={date} fuzzyDate={fuzzyDate} />
           </Typography>
-          <Typography variant={variant} fontSize="inherit">
+          <Typography variant={variant} fontSize="inherit" noWrap>
             <TimeLabel timeString={time} fuzzyTime={fuzzyTime} />
           </Typography>
         </Stack>

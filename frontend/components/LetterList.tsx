@@ -146,9 +146,10 @@ export default async function LetterList({
                     >
                       <Stack
                         direction={{ xs: "column", md: "row" }}
-                        flexWrap="nowrap"
+                        flexWrap="wrap"
                         justifyContent="space-between"
                         spacing={2}
+                        useFlexGap
                       >
                         <Stack
                           direction="row"
