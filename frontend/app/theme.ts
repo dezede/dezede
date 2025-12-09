@@ -95,7 +95,7 @@ const theme = responsiveFontSizes(
             },
           },
           "span.sc": {
-            fontVariant: "small-caps",
+            fontFamily: "var(--font-bodoni-moda-sc)",
           },
         },
       },
