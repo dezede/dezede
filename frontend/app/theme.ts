@@ -1,5 +1,7 @@
 "use client";
-import { alpha, createTheme, responsiveFontSizes } from "@mui/material/styles";
+
+import type {} from "@mui/material/themeCssVarsAugmentation";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 const primary = {
   light: "#f09875",
@@ -8,8 +10,9 @@ const primary = {
   contrastText: "#ffffff",
 };
 
-const theme = responsiveFontSizes(
+export default responsiveFontSizes(
   createTheme({
+    cssVariables: true,
     typography: {
       fontFamily: "var(--font-bodoni-moda)",
       h1: {
@@ -72,33 +75,6 @@ const theme = responsiveFontSizes(
       },
     },
     components: {
-      MuiCssBaseline: {
-        styleOverrides: {
-          html: {
-            scrollBehavior: "smooth",
-          },
-          "a:not([class]), a[data-link-type]": {
-            color: primary.dark,
-            textDecoration: "none",
-            "&:hover, &:active, &:focus": {
-              textDecoration: "underline",
-            },
-            '&[data-note="anchor"], &[data-note="reference"]:focus': {
-              "&:focus": {
-                background: alpha(primary.dark, 0.15),
-                borderRadius: 4,
-              },
-            },
-            '&[data-note="reference"]': {
-              verticalAlign: "super",
-              fontSize: "0.85rem",
-            },
-          },
-          "span.sc": {
-            fontFamily: "var(--font-bodoni-moda-sc)",
-          },
-        },
-      },
       MuiButton: {
         defaultProps: {
           style: {
@@ -137,14 +113,3 @@ const theme = responsiveFontSizes(
     },
   }),
 );
-
-const baseCssOverrides = theme.components?.MuiCssBaseline?.styleOverrides;
-if (typeof baseCssOverrides === "object") {
-  baseCssOverrides.h2 = theme.typography.h2;
-  baseCssOverrides.h3 = theme.typography.h3;
-  baseCssOverrides.h4 = theme.typography.h4;
-  baseCssOverrides.h5 = theme.typography.h5;
-  baseCssOverrides.h6 = theme.typography.h6;
-}
-
-export default theme;

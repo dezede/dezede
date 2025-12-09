@@ -28,9 +28,8 @@ export default function RichText({ value }: { value: string }) {
             textAlign: "right",
           },
           hr: {
-            border: "1px solid rgba(0, 0, 0, 0.12)",
-            borderTop: "none",
-            marginLeft: 0,
+            borderTopWidth: 0,
+            borderStyle: "solid",
           },
         }}
       />

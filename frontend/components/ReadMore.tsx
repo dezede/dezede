@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { SxProps, useTheme } from "@mui/system";
+import { SxProps } from "@mui/system";
 import { Theme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Collapse from "@mui/material/Collapse";
@@ -18,8 +18,6 @@ export default function ReadMore({
   sx?: SxProps<Theme>;
   children: React.ReactNode;
 }) {
-  const theme = useTheme();
-
   const [collapseRequired, setCollapseRequired] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -61,7 +59,7 @@ export default function ReadMore({
         ref={collapseCoverRef}
         in={collapsed}
         enter={false}
-        sx={{
+        sx={(theme) => ({
           position: "absolute",
           bottom: 0,
           width: "100%",
@@ -70,9 +68,9 @@ export default function ReadMore({
             justifyContent: "center",
             alignItems: "end",
             minHeight: overflowHeight,
-            backgroundImage: `linear-gradient(to bottom, transparent 0%, ${theme.palette.background.default} 100%)`,
+            backgroundImage: `linear-gradient(to bottom, transparent 0%, ${theme.vars.palette.background.default} 100%)`,
           },
-        }}
+        })}
       >
         <Button
           variant="contained"

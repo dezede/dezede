@@ -4,6 +4,7 @@ import { Bodoni_Moda, Bodoni_Moda_SC } from "next/font/google";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 import CssBaseline from "@mui/material/CssBaseline";
+import CustomGlobalStyles from "@/components/CustomGlobalStyles";
 
 const bodoniModa = Bodoni_Moda({
   variable: "--font-bodoni-moda",
@@ -36,6 +37,7 @@ export default function RootLayout({
         <AppRouterCacheProvider options={{ key: "css" }}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
+            <CustomGlobalStyles />
             {children}
           </ThemeProvider>
         </AppRouterCacheProvider>

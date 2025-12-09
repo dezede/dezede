@@ -2,7 +2,7 @@
 
 import React from "react";
 import Box from "@mui/material/Box";
-import { SxProps, useTheme } from "@mui/system";
+import { SxProps } from "@mui/system";
 import { Theme } from "@mui/material/styles";
 
 export default function OverflowContainer({
@@ -16,7 +16,6 @@ export default function OverflowContainer({
   sx?: SxProps<Theme>;
   children: React.ReactNode;
 }) {
-  const theme = useTheme();
   return (
     <Box position="relative" maxHeight={maxHeight} overflow="hidden" sx={sx}>
       {children}
@@ -26,7 +25,8 @@ export default function OverflowContainer({
         width="100%"
         height={overflowHeight}
         sx={{
-          backgroundImage: `linear-gradient(to bottom, transparent 0%, ${theme.palette.background.paper} 100%)`,
+          backgroundImage: (theme) =>
+            `linear-gradient(to bottom, transparent 0%, ${theme.vars.palette.background.paper} 100%)`,
         }}
       />
     </Box>
