@@ -17,6 +17,7 @@ export default function SpaceTime({
   fuzzyPlace = "",
   chip = false,
   variant = "body1",
+  hideIcon = false,
 }: {
   date?: string | null;
   fuzzyDate?: string;
@@ -26,6 +27,7 @@ export default function SpaceTime({
   fuzzyPlace?: string;
   chip?: boolean;
   variant?: TypographyVariant;
+  hideIcon?: boolean;
 }) {
   const hasPlace = place !== null || fuzzyPlace !== "";
   const hasDate = date !== null || fuzzyDate !== "";
@@ -46,7 +48,7 @@ export default function SpaceTime({
         ) : (
           <Stack direction="row" spacing={0.5} alignItems="center">
             <PlaceOutlinedIcon fontSize="small" />
-            <Typography variant={variant}>
+            <Typography variant={variant} fontSize="inherit">
               {place === null ? fuzzyPlace : <PlaceLabel {...place} />}
             </Typography>
           </Stack>
@@ -54,11 +56,11 @@ export default function SpaceTime({
       ) : null}
       {hasDateTime ? (
         <Stack direction="row" spacing={0.5} alignItems="center">
-          <EventOutlinedIcon fontSize="small" />
-          <Typography variant={variant}>
+          {hideIcon ? null : <EventOutlinedIcon fontSize="small" />}
+          <Typography variant={variant} fontSize="inherit">
             <DateLabel dateString={date} fuzzyDate={fuzzyDate} />
           </Typography>
-          <Typography variant={variant}>
+          <Typography variant={variant} fontSize="inherit">
             <TimeLabel timeString={time} fuzzyTime={fuzzyTime} />
           </Typography>
         </Stack>

@@ -4,14 +4,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { djangoFetchData } from "@/app/utils";
-import {
-  ENSEMBLE_FIELDS,
-  EVENT_FIELDS,
-  INDIVIDU_FIELDS,
-  PART_FIELDS,
-  PLACE_FIELDS,
-  WORK_FIELDS,
-} from "@/app/constants";
+import { INDIVIDU_FIELDS, PLACE_FIELDS } from "@/app/constants";
 import PersonChip from "@/format/PersonChip";
 import RichText from "@/components/RichText";
 import Paper from "@mui/material/Paper";
@@ -23,6 +16,7 @@ import Metadata, { getFilteredRows } from "@/components/Metadata";
 import PlaceChip from "@/format/PlaceChip";
 import Box from "@mui/material/Box";
 import OurLink from "@/components/OurLink";
+import SmallCaps from "@/format/SmallCaps";
 
 export default async function Letter({
   findPageData,
@@ -45,6 +39,9 @@ export default async function Letter({
     letter_images,
     transcription,
     description,
+    owner,
+    last_published_at,
+    meta: { first_published_at },
   } = await djangoFetchData<TLetter>(findPageData.apiUrl, {}, [
     `senders(person(${INDIVIDU_FIELDS}))`,
     `recipients(person(${INDIVIDU_FIELDS}))`,
@@ -88,6 +85,30 @@ export default async function Letter({
         source_url === "" ? null : (
           <OurLink href={source_url}>{source_url}</OurLink>
         ),
+    },
+    {
+      key: "publication",
+      label: "Publication",
+      value: (
+        <Stack
+          direction="row"
+          spacing={1}
+          divider={<Divider orientation="vertical" flexItem />}
+          alignItems="stretch"
+          justifyContent="stretch"
+        >
+          <a href={`/utilisateurs/${owner.username}`}>
+            {owner.first_name} <SmallCaps>{owner.last_name}</SmallCaps>
+          </a>
+          <SpaceTime date={first_published_at} hideIcon />
+          {last_published_at !== first_published_at ? (
+            <Stack direction="row" spacing={0.5}>
+              <span>modifiée le</span>
+              <SpaceTime date={last_published_at} hideIcon />
+            </Stack>
+          ) : null}
+        </Stack>
+      ),
     },
   ];
   return (

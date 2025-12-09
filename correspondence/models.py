@@ -280,6 +280,8 @@ class Letter(BasePageNoImage):
         APIField('transcription', serializer=RichTextSerializer()),
         APIField('transcription_text'),
         APIField('description', serializer=RichTextSerializer()),
+        APIField('owner'),
+        APIField('last_published_at'),
     ]
 
     class Meta(BasePageNoImage.Meta):

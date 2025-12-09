@@ -40,6 +40,7 @@ export enum EModelType {
   PART = "libretto.Partie",
   WORK_GENRA = "libretto.GenreDOeuvre",
   SECTION = "libretto.Pupitre",
+  USER = "accounts.HierarchicUser",
 }
 
 export type TRelated<E extends string = EModelType | EPageType> = {
@@ -249,6 +250,12 @@ export type TLetter = TPageDetailed & {
   source_url: string;
   transcription: string;
   description: string;
+  owner: TRelated<EModelType.USER> & {
+    username: string;
+    first_name: string;
+    last_name: string;
+  };
+  last_published_at: string;
 };
 
 export enum ELetterTab {

@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
+from wagtail.api.conf import APIField
 
 from common.utils.html import href, sc
 from common.utils.text import str_list_w_last
@@ -111,6 +112,11 @@ class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
     objects = HierarchicUserManager()
 
     dezede_search_fields = ['first_name', 'last_name', 'username', 'email']
+    api_fields = [
+        APIField('username'),
+        APIField('first_name'),
+        APIField('last_name'),
+    ]
 
     class Meta:
         ordering = ['last_name', 'first_name']

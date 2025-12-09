@@ -11,6 +11,8 @@ import urllib
 from functools import cached_property
 from typing import Type, Union
 
+from accounts.models import HierarchicUser
+
 
 class CustomPagesAPIViewSet(PagesAPIViewSet):
     meta_fields = [
@@ -128,3 +130,8 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
     def serialize_queryset(self, name: str, queryset: QuerySet):
         serializer_class = self.get_related_serializer_class(name, queryset.model)
         return serializer_class(queryset, many=True, context=self.get_serializer_context()).data
+
+
+class HierarchicUserViewSet(BaseAPIViewSet):
+    model = HierarchicUser
+    nested_default_fields = BaseAPIViewSet.nested_default_fields + ['username', 'first_name', 'last_name']
