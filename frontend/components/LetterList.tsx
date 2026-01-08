@@ -19,21 +19,28 @@ import ImageRendition from "./ImageRendition";
 import Box from "@mui/material/Box";
 import OurLink from "./OurLink";
 
-function PersonHorizontalList({ persons }: { persons: TRelatedPerson[] }) {
+function PersonHorizontalList({
+  prefix,
+  persons,
+}: {
+  prefix: React.ReactNode;
+  persons: TRelatedPerson[];
+}) {
   return (
-    <Stack
-      display="inline-flex"
-      direction="row"
-      spacing={1}
-      divider={<Divider orientation="vertical" flexItem />}
-      flexWrap="wrap"
-      useFlexGap
-    >
-      {persons.map((person) => (
-        <strong key={person.id}>
-          <PersonLabel {...person} />
-        </strong>
-      ))}
+    <Stack direction="row" spacing={1.5} flexWrap="nowrap">
+      <span>{prefix}</span>
+      <Stack
+        display="inline-flex"
+        direction="row"
+        spacing={1}
+        divider={<Divider orientation="vertical" flexItem />}
+        flexWrap="wrap"
+        useFlexGap
+      >
+        {persons.map((person) => (
+          <PersonLabel key={person.id} person={person} component="strong" />
+        ))}
+      </Stack>
     </Stack>
   );
 }
@@ -157,27 +164,15 @@ export default async function LetterList({
                           flexWrap="wrap"
                           useFlexGap
                         >
-                          <Stack
-                            direction="row"
-                            spacing={1.5}
-                            flexWrap="nowrap"
-                          >
-                            <Typography>De</Typography>
-                            <PersonHorizontalList
-                              persons={senders.map(({ person }) => person)}
-                            />
-                          </Stack>
+                          <PersonHorizontalList
+                            prefix="De"
+                            persons={senders.map(({ person }) => person)}
+                          />
                           {recipients.length === 0 ? null : (
-                            <Stack
-                              direction="row"
-                              spacing={1.5}
-                              flexWrap="nowrap"
-                            >
-                              <Typography>à</Typography>
-                              <PersonHorizontalList
-                                persons={recipients.map(({ person }) => person)}
-                              />
-                            </Stack>
+                            <PersonHorizontalList
+                              prefix="à"
+                              persons={recipients.map(({ person }) => person)}
+                            />
                           )}
                         </Stack>
                         <SpaceTime

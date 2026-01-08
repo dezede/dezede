@@ -179,7 +179,7 @@ export default function LetterCorpusForm({
           value={ELetterTab.FROM}
           label={
             <LetterTabLabel count={fromCount}>
-              <small>De</small> <PersonLabel {...person} />
+              <small>De</small> <PersonLabel person={person} />
             </LetterTabLabel>
           }
           sx={tabSx}
@@ -188,7 +188,7 @@ export default function LetterCorpusForm({
           value={ELetterTab.TO}
           label={
             <LetterTabLabel count={toCount}>
-              <small>À</small> <PersonLabel {...person} />
+              <small>À</small> <PersonLabel person={person} />
             </LetterTabLabel>
           }
           sx={tabSx}

@@ -6,6 +6,8 @@ import { abbreviate, withParticule } from "@/app/utils";
 import { EPersonDesignation, EPersonTitre, TRelatedPerson } from "@/app/types";
 import SmallCaps from "./SmallCaps";
 import OurLink from "@/components/OurLink";
+import SafeText from "./SafeText";
+import Box, { type BoxProps } from "@mui/material/Box";
 
 function getSmallCapsLabel({
   designation,
@@ -53,14 +55,17 @@ export function getPersonLabel(person: TRelatedPerson): string {
   }
 }
 
-export function PersonLabel(person: TRelatedPerson) {
+export function PersonLabel({
+  person,
+  ...boxProps
+}: { person: TRelatedPerson } & BoxProps) {
   const smallCapsLabel = <SmallCaps>{getSmallCapsLabel(person)}</SmallCaps>;
   switch (person.designation) {
     case EPersonDesignation.STANDARD:
     case EPersonDesignation.BIRTH_NAME:
       const { prenoms, titre_display, pseudonyme } = person;
       return (
-        <span>
+        <Box {...boxProps}>
           {prenoms ? null : `${titre_display} `}
           {smallCapsLabel}
           {prenoms ? (
@@ -72,8 +77,10 @@ export function PersonLabel(person: TRelatedPerson) {
               {")"}
             </>
           ) : null}
-          {pseudonyme ? ` ${getPseudonymeSuffix(person)}` : null}
-        </span>
+          <SafeText
+            value={pseudonyme ? ` ${getPseudonymeSuffix(person)}` : ""}
+          />
+        </Box>
       );
     default:
       return smallCapsLabel;
@@ -85,7 +92,7 @@ export default function PersonChip(person: TRelatedPerson) {
     <Chip
       component={OurLink}
       href={`/individus/id/${person.id}/`}
-      label={<PersonLabel {...person} />}
+      label={<PersonLabel person={person} />}
       clickable
       size="small"
       icon={<BoyOutlinedIcon />}
