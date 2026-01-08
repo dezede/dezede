@@ -14,7 +14,7 @@ from common.utils.html import href, sc, hlp
 from common.utils.text import str_list, str_list_w_last, ex
 from rest_framework import fields as rest_fields
 from wagtail.api import APIField
-from wagtail.search.index import Indexed, SearchField
+from wagtail.search.index import Indexed
 
 from libretto.contants import INDIVIDU_SEARCH_FIELDS
 

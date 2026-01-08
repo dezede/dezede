@@ -17,6 +17,8 @@ from django.utils.translation import gettext, gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 from tinymce.models import HTMLField
+from wagtail.search.index import Indexed, SearchField
+
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
     SlugModel, PublishedManager, PublishedQuerySet, SpaceTimeFields,
@@ -148,7 +150,7 @@ class SourceManager(PublishedManager):
         return self.get_queryset().with_data_type(data_type)
 
 
-class Source(AutoriteModel):
+class Source(Indexed, AutoriteModel):
     parent = ForeignKey(
         'self', related_name='children', verbose_name=_('parent'),
         null=True, blank=True, on_delete=CASCADE,
@@ -246,6 +248,14 @@ class Source(AutoriteModel):
 
     objects = SourceManager()
 
+    search_fields = [
+        SearchField('titre', boost=10),
+        SearchField('date'),
+        SearchField('date_approx'),
+        SearchField('numero'),
+        SearchField('lieu_conservation'),
+        SearchField('cote'),
+    ]
     dezede_search_fields = [
         'titre',
         'date',
