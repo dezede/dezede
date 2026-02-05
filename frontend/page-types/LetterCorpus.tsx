@@ -1,12 +1,12 @@
 import {
   TFindPageData,
-  TPage,
   TRelatedPerson,
   TAsyncSearchParams,
   ELetterTab,
   TYearChoice,
   TRelatedPlace,
   TBodyStreamBlock,
+  TRelatedUser,
 } from "@/app/types";
 import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
@@ -23,6 +23,7 @@ import {
 import ClientPagination from "@/components/ClientPagination";
 import ReadMore from "@/components/ReadMore";
 import BodyStream from "@/blocks/BodyStream";
+import Citation from "@/components/Citation";
 
 export default async function LetterCorpus({
   findPageData,
@@ -42,24 +43,26 @@ export default async function LetterCorpus({
   const {
     person,
     body,
+    first_published_at,
+    owner,
     year_choices,
     person_choices,
     writing_place_choices,
     total_count,
     from_count,
     to_count,
-  } = await djangoFetchData<
-    TPage & {
-      person: TRelatedPerson;
-      body: TBodyStreamBlock;
-      year_choices: TYearChoice[];
-      person_choices: TRelatedPerson[];
-      writing_place_choices: TRelatedPlace[];
-      total_count: number;
-      from_count: number;
-      to_count: number;
-    }
-  >(
+  } = await djangoFetchData<{
+    person: TRelatedPerson;
+    body: TBodyStreamBlock;
+    first_published_at: string;
+    owner: TRelatedUser;
+    year_choices: TYearChoice[];
+    person_choices: TRelatedPerson[];
+    writing_place_choices: TRelatedPlace[];
+    total_count: number;
+    from_count: number;
+    to_count: number;
+  }>(
     `/api/correspondance/${findPageData.id}/`,
     {
       search,
@@ -122,6 +125,12 @@ export default async function LetterCorpus({
           />
         </Suspense>
         {pagination}
+        <Citation
+          title={findPageData.title}
+          url={findPageData.url}
+          firstPublishedAt={first_published_at}
+          editor={owner}
+        />
       </Stack>
     </Container>
   );

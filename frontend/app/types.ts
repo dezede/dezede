@@ -50,6 +50,12 @@ export type TRelated<E extends string = EModelType | EPageType> = {
   };
 };
 
+export type TRelatedUser = TRelated<EModelType.USER> & {
+  username: string;
+  first_name: string;
+  last_name: string;
+};
+
 export type TRelatedEvent = TRelated<EModelType.EVENT> & {
   debut_lieu: TRelatedPlace | null;
   debut_lieu_approx: string;
@@ -250,11 +256,7 @@ export type TLetter = TPageDetailed & {
   source_url: string;
   transcription: string;
   description: string;
-  owner: TRelated<EModelType.USER> & {
-    username: string;
-    first_name: string;
-    last_name: string;
-  };
+  owner: TRelatedUser;
   last_published_at: string;
 };
 

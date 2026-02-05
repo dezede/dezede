@@ -16,7 +16,8 @@ import Metadata, { getFilteredRows } from "@/components/Metadata";
 import PlaceChip from "@/format/PlaceChip";
 import Box from "@mui/material/Box";
 import OurLink from "@/components/OurLink";
-import SmallCaps from "@/format/SmallCaps";
+import Citation from "@/components/Citation";
+import UserLink from "@/components/UserLink";
 
 export default async function Letter({
   findPageData,
@@ -97,9 +98,7 @@ export default async function Letter({
           alignItems="stretch"
           justifyContent="stretch"
         >
-          <a href={`/utilisateurs/${owner.username}`}>
-            {owner.first_name} <SmallCaps>{owner.last_name}</SmallCaps>
-          </a>
+          <UserLink user={owner} />
           <SpaceTime date={first_published_at} hideIcon />
           {last_published_at !== first_published_at ? (
             <Stack direction="row" spacing={0.5}>
@@ -203,6 +202,16 @@ export default async function Letter({
           </Container>
         </Grid>
       ) : null}
+      <Grid>
+        <Container>
+          <Citation
+            title={findPageData.title}
+            url={findPageData.url}
+            firstPublishedAt={first_published_at}
+            editor={owner}
+          />
+        </Container>
+      </Grid>
     </Grid>
   );
 }

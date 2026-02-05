@@ -58,8 +58,10 @@ class LetterCorpusAPIViewSet(CustomPagesAPIViewSet):
             *get_only('libretto.Lieu'),
         )
         return Response({
-            'body': corpus.body.stream_block.get_api_representation(corpus.body, {'view': self}),
             'person': self.serialize_instance('person', corpus.person),
+            'body': corpus.body.stream_block.get_api_representation(corpus.body, {'view': self}),
+            'first_published_at': corpus.first_published_at,
+            'owner': self.serialize_instance('owner', corpus.owner),
             'year_choices': letters.annotate(
                 year=F('writing_date__year'),
             ).values('year').order_by('year').annotate(
