@@ -89,6 +89,14 @@ function decodeHeader(
   return decodeURIComponent(response.headers.get(header) ?? defaultValue);
 }
 
+function parseJsonHeader(
+  response: Response,
+  header: string,
+  defaultValue: string = "",
+) {
+  return JSON.parse(decodeHeader(response, header));
+}
+
 export const findPage = cache(async function findPage({
   params,
 }: {
@@ -113,20 +121,34 @@ export const findPage = cache(async function findPage({
   if (redirectResponse.status !== 302) {
     notFound();
   }
+
+  const {
+    id,
+    type,
+    title,
+    seo_title,
+    search_description,
+    ancestors,
+    previous,
+    next,
+    url,
+    owner,
+    first_published_at,
+  } = parseJsonHeader(redirectResponse, "X-Page-Data");
+
   return {
-    id: safeParseInt(redirectResponse.headers.get("X-Page-Id"), 0),
+    id,
     apiUrl: getRelativeUrl(redirectResponse.headers.get("location") ?? ""),
-    type: (redirectResponse.headers.get("X-Page-Type") ??
-      "wagtailcore.Page") as EPageType,
-    title: decodeHeader(redirectResponse, "X-Page-Title"),
-    seoTitle: decodeHeader(redirectResponse, "X-Page-Seo-Title"),
-    description: decodeHeader(redirectResponse, "X-Page-Description"),
-    ancestors: JSON.parse(decodeHeader(redirectResponse, "X-Page-Ancestors")),
-    previous: JSON.parse(
-      decodeHeader(redirectResponse, "X-Page-Previous", "null"),
-    ),
-    next: JSON.parse(decodeHeader(redirectResponse, "X-Page-Next", "null")),
-    url: decodeURIComponent(redirectResponse.headers.get("X-Page-Url") ?? ""),
+    type: (type ?? "wagtailcore.Page") as EPageType,
+    title,
+    seoTitle: seo_title,
+    description: search_description,
+    ancestors,
+    previous,
+    next,
+    url,
+    owner,
+    firstPublishedAt: first_published_at,
   };
 });
 

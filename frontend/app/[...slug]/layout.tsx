@@ -3,7 +3,7 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import LaunchIcon from "@mui/icons-material/Launch";
-import { ROOT_SLUG } from "@/app/constants";
+import { ROOT_SLUG, SITE_NAME } from "@/app/constants";
 import Grid from "@mui/material/Grid";
 import PageHeader from "@/components/PageHeader";
 import { Suspense } from "react";
@@ -24,7 +24,7 @@ export async function generateMetadata({
   const { title, seoTitle, description } = await findPage({ params });
   // TODO: Add teaser_thumbnail as an open graph image.
   return {
-    title: seoTitle || `${title} · musicaLetters × Dezède`,
+    title: seoTitle || `${title} · ${SITE_NAME} × Dezède`,
     description,
     openGraph: {
       siteName: "Dezède",
@@ -102,7 +102,7 @@ export default async function Layout({
                 href={`/${ROOT_SLUG}`}
                 color="inherit"
               >
-                musicaLetters
+                {SITE_NAME}
               </Button>
               <Button
                 component="a"
@@ -136,7 +136,12 @@ export default async function Layout({
         <Grid>
           <Container>
             <Paper sx={{ padding: { xs: 1, md: 0 } }}>
-              <Stack direction="row" justifyContent="space-between" spacing={2}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                spacing={2}
+                useFlexGap
+              >
                 <SiblingButton sibling={previous} icon={<ChevronLeftIcon />} />
                 <SiblingButton
                   sibling={next}

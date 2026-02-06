@@ -1,4 +1,5 @@
 export const ROOT_SLUG: string = "musicaletters";
+export const SITE_NAME: string = "musicaLetters";
 
 export const INDIVIDU_FIELDS = [
   "particule_nom",

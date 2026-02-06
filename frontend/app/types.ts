@@ -194,13 +194,15 @@ export type TFindPageData = {
   title: string;
   seoTitle: string;
   description: string;
-  ancestors: { id: number; title: string }[];
+  ancestors: TAncestors;
   previous: TSibling;
   next: TSibling;
   url: string;
+  owner: TRelatedUser;
+  firstPublishedAt: string;
 };
 
-export type TAncestors = { id: number; title: string }[];
+export type TAncestors = { id: number; title: string; owner: TRelatedUser }[];
 
 export type TPage<E extends string = EPageType> = {
   id: number;

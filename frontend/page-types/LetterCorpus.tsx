@@ -43,8 +43,6 @@ export default async function LetterCorpus({
   const {
     person,
     body,
-    first_published_at,
-    owner,
     year_choices,
     person_choices,
     writing_place_choices,
@@ -55,7 +53,6 @@ export default async function LetterCorpus({
     person: TRelatedPerson;
     body: TBodyStreamBlock;
     first_published_at: string;
-    owner: TRelatedUser;
     year_choices: TYearChoice[];
     person_choices: TRelatedPerson[];
     writing_place_choices: TRelatedPlace[];
@@ -125,12 +122,7 @@ export default async function LetterCorpus({
           />
         </Suspense>
         {pagination}
-        <Citation
-          title={findPageData.title}
-          url={findPageData.url}
-          firstPublishedAt={first_published_at}
-          editor={owner}
-        />
+        <Citation findPageData={findPageData} />
       </Stack>
     </Container>
   );

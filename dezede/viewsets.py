@@ -55,28 +55,27 @@ class CustomPagesAPIViewSet(PagesAPIViewSet):
             )
 
         response = redirect(url)
-        model = obj.content_type.model_class() if isinstance(obj, Page) else type(model)
-        response.headers['X-Page-Id'] = obj.pk
-        response.headers['X-Page-Type'] = model._meta.label
-        response.headers['X-Page-Title'] = urllib.parse.quote(obj.title if isinstance(obj, Page) else str(obj))
-        response.headers['X-Page-Seo-Title'] = urllib.parse.quote(obj.seo_title if isinstance(obj, Page) else str(obj))
-        response.headers['X-Page-Description'] = urllib.parse.quote(
-            obj.search_description if isinstance(obj, Page) else ''
-        )
-        response.headers['X-Page-Ancestors'] = urllib.parse.quote(json.dumps([
-                {'id': pk, 'title': title} for pk, title in obj.get_ancestors().filter(
-                    depth__gt=1,
-                ).values_list('pk', 'title')
-            ] if isinstance(obj, Page) else [])
-        )
-
-        response.headers['X-Page-Previous'] = json.dumps(
-            self.serialize_sibling(obj.get_prev_sibling()) if isinstance(obj, Page) else None
-        )
-        response.headers['X-Page-Next'] = json.dumps(
-            self.serialize_sibling(obj.get_next_sibling()) if isinstance(obj, Page) else None
-        )
-        response.headers['X-Page-Url'] = urllib.parse.quote(obj.relative_url(None) if isinstance(obj, Page) else '/')
+        obj: Page
+        model = obj.content_type.model_class()
+        response.headers['X-Page-Data'] = urllib.parse.quote(json.dumps({
+            'id': obj.pk,
+            'type': model._meta.label,
+            'title': obj.title,
+            'seo_title': obj.seo_title,
+            'search_description': obj.search_description,
+            'ancestors': [
+                {
+                    'id': ancestor.pk,
+                    'title': ancestor.title,
+                    'owner': self.serialize_instance('owner', ancestor.owner)
+                } for ancestor in obj.get_ancestors().filter(depth__gt=1).select_related('owner')
+            ],
+            'previous': self.serialize_sibling(obj.get_prev_sibling()),
+            'next': self.serialize_sibling(obj.get_next_sibling()),
+            'url': obj.relative_url(None),
+            'owner': self.serialize_instance('owner', obj.owner),
+            'first_published_at': obj.first_published_at.isoformat(),
+        }))
         return response
 
     @cached_property

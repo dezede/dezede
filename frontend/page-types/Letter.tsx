@@ -40,9 +40,7 @@ export default async function Letter({
     letter_images,
     transcription,
     description,
-    owner,
     last_published_at,
-    meta: { first_published_at },
   } = await djangoFetchData<TLetter>(findPageData.apiUrl, {}, [
     `senders(person(${INDIVIDU_FIELDS}))`,
     `recipients(person(${INDIVIDU_FIELDS}))`,
@@ -98,9 +96,9 @@ export default async function Letter({
           alignItems="stretch"
           justifyContent="stretch"
         >
-          <UserLink user={owner} />
-          <SpaceTime date={first_published_at} hideIcon />
-          {last_published_at !== first_published_at ? (
+          <UserLink user={findPageData.owner} />
+          <SpaceTime date={findPageData.firstPublishedAt} hideIcon />
+          {last_published_at !== findPageData.firstPublishedAt ? (
             <Stack direction="row" spacing={0.5}>
               <span>modifiée le</span>
               <SpaceTime date={last_published_at} hideIcon />
@@ -204,12 +202,7 @@ export default async function Letter({
       ) : null}
       <Grid>
         <Container>
-          <Citation
-            title={findPageData.title}
-            url={findPageData.url}
-            firstPublishedAt={first_published_at}
-            editor={owner}
-          />
+          <Citation findPageData={findPageData} showParent />
         </Container>
       </Grid>
     </Grid>
