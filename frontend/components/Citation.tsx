@@ -37,12 +37,13 @@ export default function Citation({
         <AccordionDetails>
           {editor === undefined ? null : (
             <>
-              <UserLink user={editor} /> (ed.),{" "}
+              <UserLink user={editor} />
+              {" (ed.), "}
             </>
           )}
           « {title} », <SpaceTime date={firstPublishedAt} hideIcon inline /> [en
-          ligne] <OurLink href={absoluteUrl}>{absoluteUrl}</OurLink> (Consulté
-          le <SpaceTime date={Date()} hideIcon inline />)
+          ligne] <OurLink href={absoluteUrl}>{absoluteUrl}</OurLink> (consulté
+          le <SpaceTime date={new Date().toISOString()} hideIcon inline />)
         </AccordionDetails>
       </Accordion>
     </div>

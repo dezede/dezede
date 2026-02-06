@@ -68,12 +68,22 @@ export default function SpaceTime({
         >
           {hideIcon ? null : <EventOutlinedIcon fontSize="small" />}
           {hasDate ? (
-            <Typography variant={variant} fontSize="inherit" noWrap>
+            <Typography
+              variant={variant}
+              fontSize="inherit"
+              noWrap
+              suppressHydrationWarning
+            >
               <DateLabel dateString={date} fuzzyDate={fuzzyDate} />
             </Typography>
           ) : null}
           {hasTime ? (
-            <Typography variant={variant} fontSize="inherit" noWrap>
+            <Typography
+              variant={variant}
+              fontSize="inherit"
+              noWrap
+              suppressHydrationWarning
+            >
               <TimeLabel timeString={time} fuzzyTime={fuzzyTime} />
             </Typography>
           ) : null}
