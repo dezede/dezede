@@ -1,4 +1,5 @@
-from ipaddress import IPv6Address, ip_address
+from functools import lru_cache
+from ipaddress import ip_address, IPv4Address, IPv6Address
 import re
 from subprocess import check_output
 
@@ -79,19 +80,24 @@ class CountryBlockMiddleware:
     def __call__(self, request):
         return self.get_response(request)
 
+    @classmethod
+    @lru_cache(maxsize=1024)
+    def get_country_code(cls, ip: IPv4Address | IPv6Address) -> str:
+        command = 'geoiplookup6' if isinstance(ip_address(ip), IPv6Address) else 'geoiplookup'
+        match = cls.pattern.match(check_output([command, ip]).decode().strip())
+        if match is None:
+            return ''
+        return match.group(1)
+
     def process_view(self, request, view_func, view_args, view_kwargs):
         if request.user.is_authenticated:
             return None
         if request.resolver_match.url_name == 'account_login' or 'admin' in request.resolver_match.namespaces:
             return None
+
         ip = get_client_ip(request)
-        command = 'geoiplookup'
-        if isinstance(ip_address(ip), IPv6Address):
-            command = 'geoiplookup6'
-        match = self.pattern.match(check_output([command, ip]).decode().strip())
-        if match is not None:
-            country_code = match.group(1)
-            if country_code in settings.BLOCKED_COUNTRIES:
-                return render(request, "429.html", status=429)
+        country_code = self.get_country_code(ip)
+        if country_code in settings.BLOCKED_COUNTRIES:
+            return render(request, "429.html", status=429)
 
         return None
