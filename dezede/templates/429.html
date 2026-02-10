@@ -2,11 +2,14 @@
 {% load i18n %}
 
 {% block header %}
-  <h1>{% block title %}{% trans "Erreur 403" %}{% endblock %}</h1>
+  <h1>{% block title %}{% trans "Erreur 429" %}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-  {% trans 'Vous n’avez pas l’autorisation d’accéder à cette page.' %}
+  {% trans 'Le serveur reçoit trop de demandes depuis votre région du monde.' %}
+  {% if not request.user.is_authenticated %}
+    {% trans 'Vous pouvez vous connecter pour contourner ce problème.' %}
+  {% endif %}
   <br />
   {% if not user.is_authenticated %}
     {% url 'account_login' as login_url %}

@@ -92,12 +92,6 @@ class CountryBlockMiddleware:
         if match is not None:
             country_code = match.group(1)
             if country_code in settings.BLOCKED_COUNTRIES:
-                # Like raising PermissionDenied, but without logging it.
-                return get_exception_response(
-                    request,
-                    get_resolver(get_urlconf()),
-                    403,
-                    PermissionDenied('Your country was blocked due to repeated abuse.'),
-                )
+                return render(request, "429.html", status=429)
 
         return None
