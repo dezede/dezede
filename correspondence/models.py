@@ -1,7 +1,7 @@
 from functools import cached_property, wraps
-from bs4 import BeautifulSoup
 from django.db.models import ForeignKey, CASCADE, PROTECT, CharField, ManyToManyField, URLField
 from django.http import Http404
+from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import (
@@ -249,7 +249,7 @@ class Letter(BasePageNoImage):
         FieldPanel('source_url'),
         InlinePanel('letter_images', heading=_('Images'), label=_('image'), max_num=20),
         FieldPanel('transcription'),
-        FieldPanel('description'),
+        FieldPanel('description', help_text=mark_safe('Se référer aux <a href="https://rism.info/fr/community/sigla.html">sigles des bibliothèques du RISM</a> pour la rédaction de ce champ.')),
     ]
     search_fields = [
         *BasePageNoImage.search_fields,
