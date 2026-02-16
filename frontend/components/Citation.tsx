@@ -10,6 +10,7 @@ import OurLink from "./OurLink";
 import UserLink, { UserLabel } from "./UserLink";
 import { useEffect, useMemo, useState } from "react";
 import { SITE_NAME } from "@/app/constants";
+import DateLabel from "@/format/DateLabel";
 
 export default function Citation({
   findPageData: { title, type, url, firstPublishedAt, owner, ancestors },
@@ -52,14 +53,14 @@ export default function Citation({
         <AccordionDetails>
           <>
             <UserLink user={owner} />
-            {" (ed.), "}
+            {" (éd.), "}
           </>
           {`« ${title} », `}
           {parentLabel}
           <em>{SITE_NAME}</em>,{" "}
-          <SpaceTime date={firstPublishedAt} hideIcon inline />, [en ligne]{" "}
-          <OurLink href={absoluteUrl}>{absoluteUrl}</OurLink> (consulté le{" "}
-          <SpaceTime date={new Date().toISOString()} hideIcon inline />)
+          <DateLabel dateString={firstPublishedAt} /> [en ligne]{" "}
+          <OurLink href={absoluteUrl}>{"dezede.org"}{decodeURI(url)}</OurLink> (consulté le{" "}
+          <DateLabel dateString={new Date().toISOString()} />)
         </AccordionDetails>
       </Accordion>
     </div>
