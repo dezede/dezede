@@ -465,7 +465,7 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
             'features': [
-                'h2', 'h3', 'h4', 'bold', 'italic', 'ol', 'ul', 'superscript', 'small-caps',
+                'h2', 'h3', 'h4', 'bold', 'italic', 'underline', 'ol', 'ul', 'superscript', 'small-caps',
                 'hr', 'blockquote', 'image', 'note-anchor', 'note-reference',
                 # Link has to be after notes, otherwise link replaces all notes after saving.
                 'link',

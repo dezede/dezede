@@ -40,6 +40,7 @@ def register_icons(icons):
     return icons + [
         'wagtailfontawesomesvg/solid/align-center.svg',
         'wagtailfontawesomesvg/solid/align-right.svg',
+        'wagtailfontawesomesvg/solid/underline.svg',
     ]
 
 
@@ -88,5 +89,24 @@ def register_small_caps_feature(features):
     db_conversion = {
         'from_database_format': {'span[class=sc]': InlineStyleElementHandler(type_)},
         'to_database_format': {'style_map': {type_: {'element': 'span', 'props': {'class': 'sc'}}}},
+    }
+    features.register_converter_rule('contentstate', feature_name, db_conversion)
+
+
+@hooks.register('register_rich_text_features')
+def register_underline_feature(features):
+    feature_name = 'underline'
+    type_ = 'UNDERLINE'
+    tag = 'u'
+    control = {
+        'type': type_,
+        'icon': 'underline',
+        'description': gettext('Souligné'),
+        'element': 'underline',
+    }
+    features.register_editor_plugin('draftail', feature_name, draftail_features.InlineStyleFeature(control))
+    db_conversion = {
+        'from_database_format': {tag: InlineStyleElementHandler(type_)},
+        'to_database_format': {'style_map': {type_: tag}},
     }
     features.register_converter_rule('contentstate', feature_name, db_conversion)
