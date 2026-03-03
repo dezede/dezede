@@ -14,10 +14,11 @@ import DateLabel from "@/format/DateLabel";
 
 export default function Citation({
   findPageData: { title, type, url, firstPublishedAt, owner, ancestors },
-  showParent = false,
+  showParent = false, showPublicationDate = false,
 }: {
   findPageData: TFindPageData;
   showParent?: boolean;
+  showPublicationDate?: boolean;
 }) {
   const [isClient, setIsClient] = useState(false);
 
@@ -43,7 +44,17 @@ export default function Citation({
     [EPageType.LETTER_CORPUS]: "ce corpus",
     [EPageType.LETTER]: "cette lettre",
   }[type];
+
   const absoluteUrl = `${isClient ? document.location.origin : ""}${url}`;
+
+  const publicationDate = useMemo(() => {
+    if (showPublicationDate) {
+      return <>, <DateLabel dateString={firstPublishedAt} /></>;
+    }
+    return null;
+    }, [showPublicationDate],
+  );
+
   return (
     <div>
       <Accordion>
@@ -57,8 +68,8 @@ export default function Citation({
           </>
           {`« ${title} », `}
           {parentLabel}
-          <em>{SITE_NAME}</em>,{" "}
-          <DateLabel dateString={firstPublishedAt} /> [en ligne]{" "}
+          <em>{SITE_NAME}</em>{publicationDate}{" "}
+          [en ligne]{" "}
           <OurLink href={absoluteUrl}>{"dezede.org"}{decodeURI(url)}</OurLink> (consulté le{" "}
           <DateLabel dateString={new Date().toISOString()} />)
         </AccordionDetails>

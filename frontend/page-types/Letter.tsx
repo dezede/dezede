@@ -202,7 +202,7 @@ export default async function Letter({
       ) : null}
       <Grid>
         <Container>
-          <Citation findPageData={findPageData} showParent />
+          <Citation findPageData={findPageData} showParent showPublicationDate />
         </Container>
       </Grid>
     </Grid>
