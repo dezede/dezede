@@ -241,12 +241,14 @@ class Letter(BasePageNoImage):
                 FieldPanel('writing_heure'), FieldPanel('writing_heure_approx'),
             ]),
         ], heading=_('Rédaction')),
-        FieldRowPanel([
-            FieldPanel('storage_place'),
-            FieldPanel('storage_call_number'),
-        ], heading=_('Manuscrit autographe')),
-        FieldPanel('edition', help_text='À remplir seulement à défaut de manuscrit autographe'),
-        FieldPanel('source_url', help_text='À remplir quand le manuscrit autographe ou l’imprimé est consultable en ligne'),
+        MultiFieldPanel([
+            FieldRowPanel([
+                FieldPanel('storage_place'),
+                FieldPanel('storage_call_number'),
+            ], heading=_('Manuscrit autographe')),
+            FieldPanel('edition', help_text='À remplir seulement à défaut de manuscrit autographe'),
+            FieldPanel('source_url', help_text='À remplir quand le manuscrit autographe ou l’imprimé est consultable en ligne'),
+        ], heading=_('Source principale de la transcription')),
         InlinePanel('letter_images', heading=_('Images'), label=_('image'), max_num=20),
         FieldPanel('transcription'),
         FieldPanel('description', help_text=mark_safe('Se référer aux <a href="https://rism.info/fr/community/sigla.html">sigles des bibliothèques du RISM</a> pour la rédaction de ce champ.')),

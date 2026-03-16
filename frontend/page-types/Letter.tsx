@@ -52,7 +52,7 @@ export default async function Letter({
   const metadataRows = [
     {
       key: "edition",
-      label: "Édition",
+      label: "Imprimé",
       value: <RichText value={edition} />,
     },
     {
