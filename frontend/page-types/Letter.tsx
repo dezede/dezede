@@ -53,7 +53,7 @@ export default async function Letter({
     {
       key: "edition",
       label: "Édition",
-      value: edition,
+      value: <RichText value={edition} />,
     },
     {
       key: "storage",

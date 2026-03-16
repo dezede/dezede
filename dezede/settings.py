@@ -474,6 +474,12 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
             ],
         },
     },
+    'edition': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': ['italic'],
+        }
+    }
 }
 
 # Custom settings

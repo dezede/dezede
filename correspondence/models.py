@@ -203,13 +203,13 @@ class LetterImage(Orderable):
 
 class Letter(BasePageNoImage):
     writing = SpaceTimeFields(verbose_name=_('rédaction'), for_wagtail=True)
-    edition = CharField(_('édition'), max_length=50, blank=True)
+    edition = RichTextField(_('imprimé'), editor='edition', blank=True)
     storage_place = ForeignKey(
         'libretto.Lieu', on_delete=PROTECT, related_name='stored_letters',
         verbose_name=_('lieu de conservation'), blank=True, null=True,
     )
     storage_call_number = CharField(_('cote'), max_length=60, blank=True)
-    source_url = URLField(_('URL d’origine'), blank=True)
+    source_url = URLField(_('en ligne (URL)'), blank=True)
 
     transcription = RichTextField(_('transcription'), editor='transcription', blank=True)
     description = RichTextField(_('description'), blank=True)
@@ -241,12 +241,12 @@ class Letter(BasePageNoImage):
                 FieldPanel('writing_heure'), FieldPanel('writing_heure_approx'),
             ]),
         ], heading=_('Rédaction')),
-        FieldPanel('edition'),
         FieldRowPanel([
             FieldPanel('storage_place'),
             FieldPanel('storage_call_number'),
-        ], heading=_('Conservation')),
-        FieldPanel('source_url'),
+        ], heading=_('Manuscrit autographe')),
+        FieldPanel('edition', help_text='À remplir seulement à défaut de manuscrit autographe'),
+        FieldPanel('source_url', help_text='À remplir quand le manuscrit autographe ou l’imprimé est consultable en ligne'),
         InlinePanel('letter_images', heading=_('Images'), label=_('image'), max_num=20),
         FieldPanel('transcription'),
         FieldPanel('description', help_text=mark_safe('Se référer aux <a href="https://rism.info/fr/community/sigla.html">sigles des bibliothèques du RISM</a> pour la rédaction de ce champ.')),

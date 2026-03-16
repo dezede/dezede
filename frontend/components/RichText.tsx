@@ -7,6 +7,7 @@ export default function RichText({ value }: { value: string }) {
         dangerouslySetInnerHTML={{ __html: value }}
         textAlign="justify"
         sx={{
+          whiteSpace: "normal",
           ".responsive-object": {
             position: "relative",
             clear: "both",
