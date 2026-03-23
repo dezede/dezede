@@ -167,6 +167,9 @@ EMAIL_HOST = 'ssl0.ovh.net'
 EMAIL_PORT = 587
 EMAIL_TIMEOUT = 30
 
+# Workaround to fix Open Street Map 403 errors on tiles.
+SECURE_REFERRER_POLICY = 'origin-when-cross-origin'
+
 TINYMCE_DEFAULT_CONFIG = {
     'plugins': 'fullscreen preview link charmap nonbreaking searchreplace smallcaps lists table',
     'menubar': False,
