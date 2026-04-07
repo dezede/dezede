@@ -106,6 +106,15 @@ export default async function Layout({
               </Button>
               <Button
                 component="a"
+                href="https://dezede.hypotheses.org/8934"
+                color="inherit"
+                variant="outlined"
+                startIcon={<LaunchIcon />}
+              >
+                Protocole
+              </Button>
+              <Button
+                component="a"
                 href="/"
                 color="inherit"
                 variant="outlined"
