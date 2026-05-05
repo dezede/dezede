@@ -5,7 +5,7 @@ from typing import Union
 from django.contrib.postgres.indexes import GinIndex
 from django.db.models import (
     CharField, DateField, ImageField, TextField, PositiveSmallIntegerField,
-    SlugField, ForeignKey, ManyToManyField, Q, CASCADE,
+    SlugField, ForeignKey, ManyToManyField, Q, CASCADE, PROTECT
 )
 from django.urls import reverse
 from django.utils.html import strip_tags
@@ -13,13 +13,16 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
+from wagtail.search.index import SearchField
 
 from accounts.models import HierarchicUser
+from correspondence.models import BasePage
 from libretto.models import (Lieu, Oeuvre, Evenement, Individu, Ensemble,
                              Source, Saison, GenreDOeuvre)
 from libretto.models.base import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from common.utils.html import href
+from libretto.models.oeuvre import Partie
 
 
 class CategorieDeDossiers(PublishedModel):
@@ -310,3 +313,55 @@ class DossierDOeuvres(Dossier):
                 *args, **kwargs,
             ).distinct()
         return Oeuvre.objects.none()
+
+
+class FilePage(BasePage):
+    short_title = CharField(_('titre court'), max_length=100, blank=True,
+                            help_text=_('Utilisé pour le chemin de fer.'))
+    # Métadonnées
+    scientific_editors = ManyToManyField(
+        'accounts.HierarchicUser', related_name='files',
+        verbose_name=_('éditeurs scientifiques'))
+    publication_date = DateField(_('date de publication'),
+                                 default=datetime.now)
+    publications = TextField(_('publication(s) associée(s)'), blank=True)
+    developpements = TextField(_('développements envisagés'), blank=True)
+    logo = ForeignKey(
+        'wagtailimages.Image', related_name='+', null=True, blank=True,
+        verbose_name=_('logo'), on_delete=PROTECT,
+    )
+
+    # Article
+    presentation = TextField(_('présentation'))
+    context = TextField(_('contexte historique'), blank=True)
+    references_and_methodology = TextField(_('sources et protocole'), blank=True)
+    bibliography = TextField(_('bibliographie indicative'), blank=True)
+
+    search_fields = [
+        *BasePage.search_fields,
+        SearchField('title'),
+    ]
+
+    class Meta(BasePage.Meta):
+        abstract = True
+        verbose_name = _('dossier')
+        verbose_name_plural = _('dossiers')
+
+
+class SourcesFilePage(FilePage):
+    debut = DateField(_('début'), blank=True, null=True)
+    fin = DateField(_('fin'), blank=True, null=True)
+    evenements = ManyToManyField(Evenement, blank=True, verbose_name=_('événements'),
+                              related_name='sourcesfiles')
+    oeuvres = ManyToManyField(Oeuvre, blank=True, verbose_name=_('œuvres'),
+                              related_name='sourcesfiles')
+    individus = ManyToManyField(
+        Individu, blank=True, verbose_name=_('individus'),
+        related_name='sourcesfiles',
+    )
+    ensembles = ManyToManyField(Ensemble, verbose_name=_('ensembles'),
+                                blank=True, related_name='sourcesfiles')
+    lieux = ManyToManyField(Lieu, blank=True, verbose_name=_('lieux'),
+                            related_name='sourcesfiles')
+    parties = ManyToManyField(Partie, blank=True, verbose_name=_('parties'),
+                            related_name='sourcesfiles')
