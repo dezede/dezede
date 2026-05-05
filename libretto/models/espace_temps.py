@@ -12,7 +12,7 @@ from tree.models import TreeModelMixin
 from wagtail.api import APIField
 from wagtail.search.index import SearchField, Indexed, RelatedFields
 
-from libretto.contants import LIEU_SEARCH_FIELDS
+from libretto.constants import LIEU_RELATED_SEARCH_FIELDS
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, PublishedManager,
@@ -30,7 +30,7 @@ __all__ = (
 )
 
 
-class NatureDeLieu(CommonModel, SlugModel):
+class NatureDeLieu(Indexed, CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
@@ -45,6 +45,10 @@ class NatureDeLieu(CommonModel, SlugModel):
             '« ville »'))
 
     dezede_search_fields = ['nom', 'nom_pluriel']
+    search_fields = [
+        SearchField('nom', boost=10),
+        SearchField('nom_pluriel', boost=10),
+    ]
     api_fields = [
         APIField('nom'),
         APIField('nom_pluriel'),
@@ -96,7 +100,13 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
     objects = LieuManager()
 
     dezede_search_fields = ['nom']
-    search_fields = LIEU_SEARCH_FIELDS
+    search_fields = [
+        SearchField('nom', boost=10),
+        RelatedFields('nature', [SearchField('nom')]),
+        RelatedFields('parent', LIEU_RELATED_SEARCH_FIELDS),
+        SearchField('historique', 0.1),
+        SearchField('notes_publiques', 0.1),
+    ]
     api_fields = [
         APIField('nom'),
         APIField('parent'),

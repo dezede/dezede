@@ -137,7 +137,7 @@ class SourceSerializer(CommonSerializer):
 
     class Meta:
         model = Source
-        exclude = ['search_vector', 'autocomplete_vector']
+        exclude = ['autocomplete_vector']
 
     def get_children(self, obj):
         return list(
@@ -161,7 +161,7 @@ class SourceSerializer(CommonSerializer):
 class AuteurSerializer(ModelSerializer):
     class Meta:
         model = Auteur
-        exclude = ['search_vector', 'autocomplete_vector']
+        exclude = ['autocomplete_vector']
 
 
 class ProfessionSerializer(CommonSerializer):
@@ -172,7 +172,7 @@ class ProfessionSerializer(CommonSerializer):
 
     class Meta:
         model = Profession
-        exclude = ('search_vector', 'autocomplete_vector')
+        exclude = ['autocomplete_vector']
 
 
 class EvenementSerializer(CommonSerializer):
@@ -182,7 +182,7 @@ class EvenementSerializer(CommonSerializer):
 
     class Meta:
         model = Evenement
-        exclude = ('search_vector', 'autocomplete_vector')
+        exclude = ['autocomplete_vector']
 
 
 class PartieSerializer(CommonSerializer):
@@ -191,4 +191,4 @@ class PartieSerializer(CommonSerializer):
 
     class Meta:
         model = Partie
-        exclude = ('search_vector', 'autocomplete_vector')
+        exclude = ['autocomplete_vector']

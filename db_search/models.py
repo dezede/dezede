@@ -8,7 +8,6 @@ from typography.utils import replace
 
 
 class SearchVectorAbstractModel(Model):
-    search_vector = SearchVectorField(null=True, blank=True, editable=False)
     autocomplete_vector = SearchVectorField(
         null=True, blank=True, editable=False,
     )
@@ -17,7 +16,6 @@ class SearchVectorAbstractModel(Model):
     class Meta:
         abstract = True
         indexes = [
-            GinIndex('search_vector', name='%(class)s_search'),
             GinIndex('autocomplete_vector', name='%(class)s_autocomplete'),
         ]
 
@@ -35,7 +33,6 @@ class SearchVectorAbstractModel(Model):
         search_fields = [
             Value(value) for value in search_fields if value is not None
         ]
-        self.search_vector = get_search_vector(search_fields)
         self.autocomplete_vector = get_search_vector(
             search_fields, config=settings.AUTOCOMPLETE_CONFIG,
         )

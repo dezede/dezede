@@ -1,7 +1,5 @@
-import operator
-from functools import partial, reduce
+from functools import partial
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin import (register, TabularInline, StackedInline,
                                   ModelAdmin, HORIZONTAL)
@@ -10,7 +8,6 @@ from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.admin import OSMGeoAdmin
-from django.contrib.postgres.search import SearchQuery
 from django.db.models import Q, TextField, ForeignKey
 from django.forms.models import modelformset_factory
 from django.shortcuts import redirect
@@ -20,6 +17,8 @@ from grappelli.forms import GrappelliSortableHiddenMixin
 from reversion.admin import VersionAdmin
 from super_inlines.admin import SuperInlineModelAdmin, SuperModelAdmin
 from tinymce.widgets import TinyMCE
+from wagtail.search.backends import get_search_backend
+from wagtail.search.index import Indexed
 
 from accounts.models import HierarchicUser
 from common.utils.cache import is_user_locked, lock_user
@@ -454,7 +453,6 @@ class SourcePartieInline(TabularInline):
 
 class CommonAdmin(CustomBaseModelAdmin, ModelAdmin):
     list_select_related = ['owner']
-    search_fields = ['search_vector']
     list_per_page = 20
     save_as = True
     additional_fields = ('owner',)
@@ -551,27 +549,19 @@ class CommonAdmin(CustomBaseModelAdmin, ModelAdmin):
 
         return NewChangeList
 
+    def get_search_fields(self, request):
+        if issubclass(self.model, Indexed):
+            return ['__search']  # Non-existent field, just to enable the frontend search field.
+        return []
+
     def get_search_results(self, request, queryset, search_term):
-        search_fields = self.get_search_fields(request)
-        if not search_term or not search_fields:
+        if not search_term or not issubclass(self.model, Indexed):
             return queryset, False
 
         search_term = replace(search_term)
 
-        # We do a single Q object and a single `.filter()`, otherwise with one filter per word
-        # it makes the ORM generate more join with each word, crashing the database at some point.
-        q = Q()
-        for word in search_term.split():
-            search_query = SearchQuery(
-                word, config=settings.WAGTAILSEARCH_BACKENDS['default']['SEARCH_CONFIG'],
-            )
-            q &= reduce(operator.or_, [
-                Q(**{search_field: search_query})
-                for search_field in search_fields
-            ])
-        queryset = queryset.filter(q)
-
-        return queryset.distinct(), True
+        s = get_search_backend()
+        return s.search(search_term, queryset, order_by_relevance=False).get_queryset(), True
 
 
 class PublishedAdmin(CommonAdmin):
@@ -632,7 +622,6 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     form = LieuAdminForm
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
-    search_fields = ['search_vector', 'parent__search_vector']
     list_select_related = ['parent__nature', 'nature', 'etat', 'owner']
     list_filter = ('nature',)
     raw_id_fields = ('parent',)
@@ -751,7 +740,6 @@ class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'type', 'membres_count')
     list_filter = (IsniListFilter,)
     list_select_related = ['type', 'etat', 'owner']
-    search_fields = ['search_vector', 'membres__individu__search_vector']
     inlines = (MembreInline,)
     raw_id_fields = ('siege', 'type')
     autocomplete_lookup_fields = {
@@ -788,7 +776,6 @@ class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_display = ('__str__', 'type', 'valeur', 'classement',)
     list_editable = ('valeur', 'classement',)
     list_select_related = ['type', 'owner']
-    search_fields = ['type__search_vector', 'search_vector']
 
 
 @register(Partie)
@@ -826,13 +813,6 @@ class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
                     'caracteristiques_html', 'auteurs_html',
                     'creation', 'link',)
-    search_fields = [
-        'auteurs__individu__search_vector',
-        'auteurs__ensemble__search_vector',
-        'search_vector',
-        'genre__search_vector',
-        'pupitres__partie__search_vector',
-    ]
     list_filter = ('genre', 'tonalite', 'arrangement', 'type_extrait')
     list_select_related = ('genre', 'etat', 'owner')
     date_hierarchy = 'creation_date'
@@ -915,7 +895,6 @@ class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
     list_display = ('__str__', 'relache', 'circonstance',
                     'has_source', 'has_program', 'link',)
     list_editable = ('relache', 'circonstance',)
-    search_fields = ['search_vector', 'debut_lieu__search_vector']
     list_filter = ('relache', EventHasSourceListFilter,
                    EventHasProgramListFilter)
     date_hierarchy = 'debut_date'
@@ -1015,7 +994,6 @@ class SourceAdmin(VersionAdmin, AutoriteAdmin):
     list_editable = ('parent', 'position', 'type', 'date')
     list_select_related = ('type', 'etat', 'owner')
     date_hierarchy = 'date'
-    search_fields = ['type__search_vector', 'search_vector']
     list_filter = (SourceHasParentListFilter, 'type', 'titre',
                    SourceHasEventsListFilter, SourceHasProgramListFilter)
     raw_id_fields = ('parent', 'evenements', 'editeurs_scientifiques')

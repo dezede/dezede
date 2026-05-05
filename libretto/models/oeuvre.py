@@ -24,6 +24,8 @@ from wagtail.admin.panels import FieldPanel, FieldRowPanel
 from wagtail.api import APIField
 from wagtail.search.index import Indexed, SearchField, RelatedFields
 
+from libretto.constants import ENSEMBLE_RELATED_SEARCH_FIELDS, OEUVRE_RELATED_SEARCH_FIELDS, PARTIE_RELATED_SEARCH_FIELDS, PROFESSION_RELATED_SEARCH_FIELDS, INDIVIDU_RELATED_SEARCH_FIELDS
+
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
     UniqueSlugModel, CommonQuerySet, CommonManager, PublishedManager,
@@ -60,7 +62,10 @@ class GenreDOeuvre(Indexed, CommonModel, SlugModel):
                               blank=True, verbose_name=_('parents'))
 
     dezede_search_fields = ['nom', 'nom_pluriel']
-    search_fields = [SearchField('nom'), SearchField('nom_pluriel')]
+    search_fields = [
+        SearchField('nom', boost=10),
+        SearchField('nom_pluriel', boost=10),
+    ]
     api_fields = [
         APIField('nom'),
         APIField('nom_pluriel'),
@@ -134,8 +139,12 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
         FieldPanel('premier_interprete'),
     ]
     search_fields = [
-        SearchField('nom'),
-        SearchField('nom_pluriel'),
+        SearchField('nom', boost=10),
+        SearchField('nom_pluriel', boost=10),
+        RelatedFields('oeuvre', OEUVRE_RELATED_SEARCH_FIELDS),
+        RelatedFields('professions', PROFESSION_RELATED_SEARCH_FIELDS),
+        RelatedFields('parent', PARTIE_RELATED_SEARCH_FIELDS),
+        SearchField('notes_publiques', boost=0.1),
     ]
     api_fields = [
         APIField('nom'),
@@ -312,8 +321,6 @@ class TypeDeParenteDOeuvres(TypeDeParente):
         verbose_name = _('type de parenté d’œuvres')
         verbose_name_plural = _('types de parentés d’œuvres')
         indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='typeparenteoeuv_search'),
             # We specify it manually, otherwise its name is too long.
             GinIndex('autocomplete_vector', name='typeparenteoeuv_autocomplete'),
         ]
@@ -888,22 +895,34 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         'opus', 'ict',
     ]
     search_fields = [
-        SearchField('prefixe_titre'), SearchField('titre', boost=True),
-        SearchField('prefixe_titre_secondaire'), SearchField('titre_secondaire'),
-        SearchField('numero'), SearchField('coupe'), SearchField('tempo'), SearchField('get_tonalite_display'),
-        SearchField('sujet'), SearchField('surnom', boost=10), SearchField('nom_courant', boost=10),
+        SearchField('prefixe_titre'),
+        SearchField('titre', boost=10),
+        SearchField('prefixe_titre_secondaire'),
+        SearchField('titre_secondaire', boost=2),
+        SearchField('numero'),
+        SearchField('coupe'),
+        SearchField('tempo'),
+        SearchField('get_tonalite_display'),
+        SearchField('sujet'),
+        SearchField('surnom', boost=10),
+        SearchField('nom_courant', boost=10),
         SearchField('incipit', boost=10),
         SearchField('opus', boost=10),
         SearchField('ict', boost=10),
+        SearchField('get_extrait'),
         RelatedFields('auteurs', [
-            RelatedFields('individu', Individu.search_fields),
-            RelatedFields('ensemble', Ensemble.search_fields),
+            RelatedFields('individu', INDIVIDU_RELATED_SEARCH_FIELDS),
+            RelatedFields('ensemble', ENSEMBLE_RELATED_SEARCH_FIELDS),
         ]),
-        RelatedFields('genre', GenreDOeuvre.search_fields),
+        RelatedFields('genre', [
+            SearchField('nom'),
+            SearchField('nom_pluriel'),
+        ]),
         RelatedFields('pupitres', [
-            RelatedFields('partie', Partie.search_fields),
+            RelatedFields('partie', PARTIE_RELATED_SEARCH_FIELDS),
         ]),
-        SearchField('get_extrait')
+        RelatedFields('extrait_de', OEUVRE_RELATED_SEARCH_FIELDS),
+        SearchField('notes_publiques', boost=0.1),
     ]
     api_fields = [
         APIField('prefixe_titre'),

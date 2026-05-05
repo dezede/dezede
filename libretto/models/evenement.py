@@ -18,6 +18,8 @@ from django.utils.translation import gettext, gettext_lazy as _
 from wagtail.api import APIField
 from wagtail.search.index import Indexed, SearchField, RelatedFields
 
+from libretto.constants import CARACTERISTIQUES_PROGRAMME_SEARCH_FIELDS, DISTRIBUTION_SEARCH_FIELDS, LIEU_RELATED_SEARCH_FIELDS, PROGRAMME_SEARCH_FIELDS
+
 from .base import (
     CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
     PublishedManager, PublishedQuerySet,
@@ -123,8 +125,6 @@ class ElementDeDistribution(CommonModel):
         ordering = ('partie', 'profession', 'individu', 'ensemble')
         indexes = [
             # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='elementdistrib_search'),
-            # We specify it manually, otherwise its name is too long.
             GinIndex('autocomplete_vector', name='elementdistrib_autocomplete'),
         ]
         constraints = [
@@ -183,7 +183,7 @@ class ElementDeDistribution(CommonModel):
         ]
 
 
-class TypeDeCaracteristiqueDeProgramme(CommonModel):
+class TypeDeCaracteristiqueDeProgramme(Indexed, CommonModel):
     nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
                     unique=True, db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
@@ -191,14 +191,16 @@ class TypeDeCaracteristiqueDeProgramme(CommonModel):
     classement = SmallIntegerField(_('classement'), default=1)
 
     dezede_search_fields = ['nom', 'nom_pluriel']
+    search_fields = [
+        SearchField('nom', boost=10),
+        SearchField('nom_pluriel', boost=10),
+    ]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('type de caractéristique de programme')
         verbose_name_plural = _('types de caractéristique de programme')
         ordering = ('classement',)
         indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='typecaracdeprogramme_search'),
             # We specify it manually, otherwise its name is too long.
             GinIndex('autocomplete_vector', name='typecaracprogr_autocomplete'),
         ]
@@ -245,7 +247,7 @@ class CaracteristiqueManager(CommonManager):
         return self.get_queryset().html(tags=tags, caps=caps)
 
 
-class CaracteristiqueDeProgramme(CommonModel):
+class CaracteristiqueDeProgramme(Indexed, CommonModel):
     type = ForeignKey(
         'TypeDeCaracteristiqueDeProgramme', null=True, blank=True,
         on_delete=PROTECT, related_name='caracteristiques',
@@ -260,6 +262,13 @@ class CaracteristiqueDeProgramme(CommonModel):
     objects = CaracteristiqueManager()
 
     dezede_search_fields = ['valeur']
+    search_fields = [
+        RelatedFields('type', [
+            SearchField('nom'),
+            SearchField('nom_pluriel'),
+        ]),
+        SearchField('valeur', boost=10),
+    ]
 
     class Meta(CommonModel.Meta):
         unique_together = ('type', 'valeur')
@@ -267,8 +276,6 @@ class CaracteristiqueDeProgramme(CommonModel):
         verbose_name_plural = _('caractéristiques de programme')
         ordering = ('type', 'classement', 'valeur')
         indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='caracdeprogramme_search'),
             # We specify it manually, otherwise its name is too long.
             GinIndex('autocomplete_vector', name='caracprogr_autocomplete'),
         ]
@@ -353,8 +360,6 @@ class ElementDeProgramme(CommonModel):
         verbose_name_plural = _('éléments de programme')
         ordering = ('position',)
         indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='elementprogr_search'),
             # We specify it manually, otherwise its name is too long.
             GinIndex('autocomplete_vector', name='elementprogr_autocomplete'),
         ]
@@ -597,15 +602,22 @@ class Evenement(Indexed, AutoriteModel):
     ]
     search_fields = [
         SearchField('circonstance', boost=10),
-        SearchField('debut_date'),
+        SearchField('debut_date', boost=2),
         SearchField('debut_heure'),
         SearchField('debut_lieu_approx'),
         SearchField('debut_date_approx'),
         SearchField('debut_heure_approx'),
-        RelatedFields('debut_lieu', [
-            SearchField('nom', boost=10),
-            RelatedFields('parent', [SearchField('nom')]),
-        ])
+        RelatedFields('debut_lieu', LIEU_RELATED_SEARCH_FIELDS),
+        SearchField('fin_date'),
+        SearchField('fin_heure'),
+        SearchField('fin_lieu_approx'),
+        SearchField('fin_date_approx'),
+        SearchField('fin_heure_approx'),
+        RelatedFields('fin_lieu', LIEU_RELATED_SEARCH_FIELDS),
+        RelatedFields('caracteristiques', CARACTERISTIQUES_PROGRAMME_SEARCH_FIELDS),
+        RelatedFields('distribution', DISTRIBUTION_SEARCH_FIELDS),
+        RelatedFields('programme', PROGRAMME_SEARCH_FIELDS),
+        SearchField('notes_publiques', boost=0.1),
     ]
     api_fields = [
         APIField('debut_lieu'),

@@ -1,6 +1,8 @@
 from django.contrib.admin import register
 from reversion.admin import VersionAdmin
-from libretto.admin import CommonAdmin, EvenementAdmin, LieuAdmin
+from libretto.admin import CommonAdmin
+from libretto.models.espace_temps import Lieu
+from libretto.models.evenement import Evenement
 from .models import *
 
 
@@ -11,10 +13,6 @@ class EvenementAFOAdmin(VersionAdmin, CommonAdmin):
     related_lookup_fields = {
         'fk': ('evenement',),
     }
-    search_fields = [
-        f'evenement__{search_field}'
-        for search_field in EvenementAdmin.search_fields
-    ]
 
     def get_queryset(self, request):
         qs = super(EvenementAFOAdmin, self).get_queryset(request)
@@ -23,6 +21,14 @@ class EvenementAFOAdmin(VersionAdmin, CommonAdmin):
             'evenement__debut_lieu__parent__nature',
             'owner',
         )
+
+    def get_search_results(self, request, queryset, search_term):
+        searched_queryset, may_have_duplicates = super().get_search_results(
+            request,
+            Evenement.objects.filter(pk__in=queryset.values('evenement_id')),
+            search_term,
+        )
+        return queryset.filter(evenement_id__in=searched_queryset), may_have_duplicates
 
 
 @register(LieuAFO)
@@ -33,13 +39,17 @@ class LieuAFOAdmin(VersionAdmin, CommonAdmin):
     related_lookup_fields = {
         'fk': ('lieu',),
     }
-    search_fields = [
-        f'lieu__{search_field}'
-        for search_field in LieuAdmin.search_fields
-    ]
 
     def get_queryset(self, request):
         qs = super(LieuAFOAdmin, self).get_queryset(request)
         return qs.select_related(
             'lieu__parent__nature', 'lieu__nature', 'owner',
         )
+
+    def get_search_results(self, request, queryset, search_term):
+        searched_queryset, may_have_duplicates = super().get_search_results(
+            request,
+            Lieu.objects.filter(pk__in=queryset.values('lieu_id')),
+            search_term,
+        )
+        return queryset.filter(evenement_id__in=searched_queryset), may_have_duplicates

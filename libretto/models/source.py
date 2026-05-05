@@ -17,7 +17,9 @@ from django.utils.translation import gettext, gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 from tinymce.models import HTMLField
-from wagtail.search.index import Indexed, SearchField
+from wagtail.search.index import Indexed, RelatedFields, SearchField
+
+from libretto.constants import SOURCE_RELATED_SEARCH_FIELDS
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
@@ -39,7 +41,7 @@ __all__ = (
 )
 
 
-class TypeDeSource(CommonModel, SlugModel):
+class TypeDeSource(Indexed, CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
@@ -47,6 +49,10 @@ class TypeDeSource(CommonModel, SlugModel):
     # TODO: Ajouter un classement et changer ordering en conséquence.
 
     dezede_search_fields = ['nom', 'nom_pluriel']
+    search_fields = [
+        SearchField('nom', boost=10),
+        SearchField('nom_pluriel', boost=10),
+    ]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('type de source')
@@ -249,12 +255,19 @@ class Source(Indexed, AutoriteModel):
     objects = SourceManager()
 
     search_fields = [
+        RelatedFields('parent', SOURCE_RELATED_SEARCH_FIELDS),
+        RelatedFields('type', [
+            SearchField('nom'),
+            SearchField('nom_pluriel'),
+        ]),
         SearchField('titre', boost=10),
         SearchField('date'),
         SearchField('date_approx'),
         SearchField('numero'),
         SearchField('lieu_conservation'),
         SearchField('cote'),
+        SearchField('transcription', boost=0.1),
+        SearchField('notes_publiques', boost=0.1),
     ]
     dezede_search_fields = [
         'titre',

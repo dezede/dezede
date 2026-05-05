@@ -12,6 +12,11 @@ class FixedPostgresSearchQueryCompiler(PostgresSearchQueryCompiler):
         # It's a Wagtail bug.
         pass
 
+    def _get_order_by(self):
+        # We use PostgreSQL, so FilterFields are pointless.
+        # It's a Wagtail bug.
+        yield from []
+
 
 class FixedPostgresSearchResults(PostgresSearchResults):
     def facet(self, field_name):

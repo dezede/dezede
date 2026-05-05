@@ -13,6 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from wagtail.api.conf import APIField
+from wagtail.search.index import Indexed, SearchField
 
 from common.utils.html import href, sc
 from common.utils.text import str_list_w_last
@@ -70,7 +71,7 @@ def _get_valid_modelnames_func(autorites_only=True):
     return ValidModelNames()
 
 
-class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
+class HierarchicUser(Indexed, SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
     show_email = BooleanField(_('afficher l’email'), default=False)
     website = URLField(_('site internet'), blank=True)
     website_verbose = CharField(
@@ -112,6 +113,12 @@ class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
     objects = HierarchicUserManager()
 
     dezede_search_fields = ['first_name', 'last_name', 'username', 'email']
+    search_fields = [
+        SearchField('first_name', boost=2),
+        SearchField('last_name', boost=10),
+        SearchField('username'),
+        SearchField('email'),
+    ]
     api_fields = [
         APIField('username'),
         APIField('first_name'),

@@ -1,11 +1,10 @@
-from multiprocessing import Value
 from typing import List, Union, Optional, Type
 
 from django.conf import settings
 from django.contrib.postgres.search import SearchVector, SearchQuery
 
 from django.db.migrations.operations.models import ModelOperation
-from django.db.models import Model
+from django.db.models import Model, Value
 
 
 class UpdateAllSearchVectors(ModelOperation):
@@ -44,7 +43,6 @@ def update_all_search_vectors(
     model: Type[Model], search_fields: List[str],
 ) -> None:
     model.objects.update(
-        search_vector=get_search_vector(search_fields),
         autocomplete_vector=get_search_vector(
             search_fields, config=settings.AUTOCOMPLETE_CONFIG,
         ),

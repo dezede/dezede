@@ -15,6 +15,7 @@ from common.utils.abbreviate import abbreviate
 from common.utils.html import capfirst, href, date_html, sc
 from common.utils.sql import get_raw_query
 from common.utils.text import str_list
+from libretto.constants import INDIVIDU_RELATED_SEARCH_FIELDS, PROFESSION_RELATED_SEARCH_FIELDS
 from libretto.models.individu import Individu
 from .base import (CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
                    UniqueSlugModel, AutoriteModel, ISNI_VALIDATORS, IsniModel)
@@ -26,7 +27,7 @@ __all__ = (
 
 
 # TODO: Songer à l’arrivée des Emplois.
-class Profession(AutoriteModel, UniqueSlugModel):
+class Profession(Indexed, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
@@ -43,6 +44,14 @@ class Profession(AutoriteModel, UniqueSlugModel):
 
     dezede_search_fields = [
         'nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel',
+    ]
+
+    search_fields = [
+        SearchField('nom', boost=10),
+        SearchField('nom_pluriel', boost=10),
+        SearchField('feminin', boost=10),
+        RelatedFields('parent', PROFESSION_RELATED_SEARCH_FIELDS),
+        SearchField('notes_publiques', boost=0.1),
     ]
 
     class Meta(AutoriteModel.Meta):
@@ -244,7 +253,7 @@ class Membre(CommonModel, PeriodeDActivite):
         return self.html()
 
 
-class TypeDEnsemble(CommonModel):
+class TypeDEnsemble(Indexed, CommonModel):
     nom = CharField(_('nom'), max_length=40, help_text=LOWER_MSG)
     nom_pluriel = CharField(_('nom pluriel'), max_length=45, blank=True,
                             help_text=PLURAL_MSG)
@@ -252,6 +261,10 @@ class TypeDEnsemble(CommonModel):
                         verbose_name=_('parent'), on_delete=CASCADE)
 
     dezede_search_fields = ['nom', 'nom_pluriel']
+    search_fields = [
+        SearchField('nom', boost=10),
+        SearchField('nom_pluriel', boost=10),
+    ]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('type d’ensemble')
@@ -298,8 +311,14 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
         *AutoriteModel.panels,
     ]
     search_fields = [
-        SearchField('particule_nom'), SearchField('nom', boost=10),
-        RelatedFields('individus', Individu.search_fields),
+        SearchField('particule_nom'),
+        SearchField('nom', boost=10),
+        RelatedFields('type', [
+            SearchField('nom'),
+            SearchField('nom_pluriel'),
+        ]),
+        RelatedFields('individus', INDIVIDU_RELATED_SEARCH_FIELDS),
+        SearchField('notes_publiques', boost=0.1),
     ]
     api_fields = [
         APIField('particule_nom'),

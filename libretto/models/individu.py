@@ -14,9 +14,9 @@ from common.utils.html import href, sc, hlp
 from common.utils.text import str_list, str_list_w_last, ex
 from rest_framework import fields as rest_fields
 from wagtail.api import APIField
-from wagtail.search.index import Indexed
+from wagtail.search.index import Indexed, RelatedFields, SearchField
 
-from libretto.contants import INDIVIDU_SEARCH_FIELDS
+from libretto.constants import PROFESSION_RELATED_SEARCH_FIELDS
 
 from .base import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
@@ -33,8 +33,6 @@ class TypeDeParenteDIndividus(TypeDeParente):
         verbose_name = _('type de parenté d’individus')
         verbose_name_plural = _('types de parenté d’individus')
         indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='typeparenteindiv_search'),
             # We specify it manually, otherwise its name is too long.
             GinIndex('autocomplete_vector', name='typeparenteindiv_autocomplete'),
         ]
@@ -147,7 +145,18 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
     dezede_search_fields = [
         'nom', 'nom_naissance', 'prenoms', 'pseudonyme',
     ]
-    search_fields = INDIVIDU_SEARCH_FIELDS
+    search_fields = [
+        SearchField('calc_titre'),
+        SearchField('particule_nom'),
+        SearchField('nom', boost=10),
+        SearchField('particule_nom_naissance'),
+        SearchField('nom_naissance', boost=2),
+        SearchField('pseudonyme', boost=10),
+        SearchField('prenoms', boost=2),
+        SearchField('prenoms_complets'),
+        RelatedFields('professions', PROFESSION_RELATED_SEARCH_FIELDS),
+        SearchField('notes_publiques', boost=0.1),
+    ]
     api_fields = [
         APIField('particule_nom'),
         APIField('nom'),

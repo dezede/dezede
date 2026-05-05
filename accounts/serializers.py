@@ -14,6 +14,6 @@ class UserSerializer(CommonSerializer):
             'password', 'email', 'last_login', 'date_joined', 'show_email',
             'willing_to_be_mentor', 'is_superuser', 'is_staff', 'is_active',
             'groups', 'user_permissions',
-            'path', 'search_vector', 'autocomplete_vector',
+            'path', 'autocomplete_vector',
             'content_type', 'object_id',
         )

@@ -16,7 +16,7 @@ from wagtail.search.index import SearchField, RelatedFields
 from correspondence.serializer_fields import RichTextSerializer
 from dezede.constants import IMAGE_SPEC, THUMBNAIL_SPEC
 from dezede.utils import richtext_to_text
-from libretto.contants import INDIVIDU_SEARCH_FIELDS, LIEU_SEARCH_FIELDS
+from libretto.constants import INDIVIDU_RELATED_SEARCH_FIELDS, LIEU_RELATED_SEARCH_FIELDS
 from libretto.models.base import SpaceTimeFields
 
 from .blocks import BodyStreamBlock
@@ -255,9 +255,9 @@ class Letter(BasePageNoImage):
     ]
     search_fields = [
         *BasePageNoImage.search_fields,
-        RelatedFields('sender_persons', INDIVIDU_SEARCH_FIELDS),
-        RelatedFields('recipient_persons', INDIVIDU_SEARCH_FIELDS),
-        RelatedFields('writing_lieu', LIEU_SEARCH_FIELDS),
+        RelatedFields('sender_persons', INDIVIDU_RELATED_SEARCH_FIELDS),
+        RelatedFields('recipient_persons', INDIVIDU_RELATED_SEARCH_FIELDS),
+        RelatedFields('writing_lieu', LIEU_RELATED_SEARCH_FIELDS),
         SearchField('writing_lieu_approx'),
         SearchField('writing_date'),
         SearchField('writing_date_approx'),
