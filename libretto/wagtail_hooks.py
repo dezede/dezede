@@ -322,7 +322,6 @@ class EverydayInputViewSetGroup(SnippetViewSetGroup):
 class OccasionalInputSnippetViewSetGroup(SnippetViewSetGroup):
     menu_label = _('Saisie occasionnelle')
     add_to_admin_menu = True
-    # TODO: add Parties and TypeDeSource
     items = [
         EtatViewSet, CaracteristiqueDeProgrammeViewSet, GenreDOeuvreViewSet,
         PartieViewSet, NatureDeLieuViewSet, ProfessionViewSet, SaisonViewSet,
