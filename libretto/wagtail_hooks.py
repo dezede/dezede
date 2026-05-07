@@ -30,6 +30,10 @@ def register_icons(icons):
         'wagtailfontawesomesvg/solid/book-open.svg',
         'wagtailfontawesomesvg/solid/guitar.svg',
         'wagtailfontawesomesvg/solid/people-group.svg',
+        'wagtailfontawesomesvg/solid/book-open.svg',
+        'wagtailfontawesomesvg/solid/tools.svg',
+        'wagtailfontawesomesvg/solid/file-audio.svg',
+        'wagtailfontawesomesvg/solid/file-video.svg',
     ]
 
 
@@ -212,30 +216,35 @@ class SourceViewSet(AutoriteViewSet):
 
 class EtatViewSet(SnippetViewSet):
     model = Etat
+    icon = 'view'
     list_display = ['nom', 'nom_pluriel', 'public', 'owner']
     list_filter = ['owner']
 
 
 class CaracteristiqueDeProgrammeViewSet(SnippetViewSet):
     model = CaracteristiqueDeProgramme
+    icon = 'book-open'
     list_display = ['__str__', 'classement', 'owner']
     list_filter = ['owner']
 
 
 class GenreDOeuvreViewSet(SnippetViewSet):
     model = GenreDOeuvre
+    icon = 'book'
     list_display = ['__str__', 'nom_pluriel', 'owner']
     list_filter = ['owner']
 
 
 class NatureDeLieuViewSet(SnippetViewSet):
     model = NatureDeLieu
+    icon = 'location-dot'
     list_display = ['nom', 'nom_pluriel', 'referent', 'owner']
     list_filter = ['referent', 'owner']
 
 
 class ProfessionViewSet(SnippetViewSet):
     model = Profession
+    icon = 'tools'
     list_display = ['nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel', 'parent', 'classement', 'etat', 'owner']
     list_filter = ['etat', 'owner']
 
@@ -248,36 +257,42 @@ class SaisonViewSet(SnippetViewSet):
 
 class TypeDEnsembleViewSet(SnippetViewSet):
     model = TypeDEnsemble
+    icon = 'people-group'
     list_display = ['nom', 'nom_pluriel', 'parent', 'owner']
     list_filter = ['owner']
 
 
 class TypeDeCaracteristiqueDeProgrammeViewSet(SnippetViewSet):
     model = TypeDeCaracteristiqueDeProgramme
+    icon = 'book-open'
     list_display = ['nom', 'nom_pluriel', 'classement', 'owner']
     list_filter = ['owner']
 
 
 class TypeDeParenteDIndividuViewSet(SnippetViewSet):
     model = TypeDeParenteDIndividus
+    icon = 'child'
     list_display = ['nom', 'nom_pluriel', 'nom_relatif', 'nom_relatif_pluriel', 'classement', 'owner']
     list_filter = ['owner']
 
 
 class TypeDeParenteDOeuvreViewSet(SnippetViewSet):
     model = TypeDeParenteDOeuvres
+    icon = 'book'
     list_display = ['nom', 'nom_pluriel', 'nom_relatif', 'nom_relatif_pluriel', 'classement', 'owner']
     list_filter = ['owner']
 
 
 class AudioViewSet(SnippetViewSet):
     model = Audio
+    icon = 'file-audio'
     list_display = ['titre', 'parent', 'position', 'date', 'type', 'has_events', 'has_program', 'link', 'etat', 'owner']
     list_filter = ['type', 'titre', 'owner']
 
 
 class VideoViewSet(SnippetViewSet):
     model = Video
+    icon = 'file-video'
     list_display = ['titre', 'parent', 'position', 'date', 'type', 'has_events', 'has_program', 'link', 'etat', 'owner']
     list_filter = ['type', 'titre', 'owner']
 
