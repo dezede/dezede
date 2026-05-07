@@ -6,12 +6,17 @@ from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
 from wagtail.snippets.views.snippets import SnippetViewSet
-from wagtail.snippets.wagtail_hooks import SnippetsMenuItem
 from wagtail_linksnippet.richtext_utils import add_snippet_link_button
 
 from common.utils.text import capfirst
 
-from .models import Individu, Lieu, Oeuvre, Evenement, Partie, Ensemble, Source
+from .models import (
+    Individu, Lieu, Oeuvre, Evenement, Partie, Ensemble, Source,
+    NatureDeLieu, Etat, CaracteristiqueDeProgramme, GenreDOeuvre,
+    Profession, Saison, Audio, Video,
+    TypeDEnsemble, TypeDeCaracteristiqueDeProgramme, TypeDeParenteDIndividus,
+    TypeDeParenteDOeuvres,
+)
 
 
 @hooks.register('register_icons')
@@ -25,10 +30,6 @@ def register_icons(icons):
         'wagtailfontawesomesvg/solid/guitar.svg',
         'wagtailfontawesomesvg/solid/people-group.svg',
     ]
-
-@hooks.register('construct_main_menu')
-def hide_snippets_menu_item(request, menu_items):
-    menu_items[:] = [item for item in menu_items if not isinstance(item, SnippetsMenuItem)]
 
 
 class AutoritePermissionPolicy(ModelPermissionPolicy):
@@ -81,6 +82,9 @@ class AutoriteViewSet(SnippetViewSet):
         viewset = super().chooser_viewset
         add_snippet_link_button(viewset, feature_name=f'{self.model._meta.model_name}-link')
         return viewset
+
+
+# TODO: add 'has_related_object' filter
 
 
 @register_snippet
@@ -197,3 +201,87 @@ class SourceViewSet(AutoriteViewSet):
 
     def get_chooser_extra_columns(self):
         return [Column('type', label=capfirst(_('type')))]
+
+
+@register_snippet
+class EtatViewSet(SnippetViewSet):
+    model = Etat
+    list_display = ['nom', 'nom_pluriel', 'public', 'owner']
+    list_filter = ['owner']
+
+
+@register_snippet
+class CaracteristiqueDeProgrammeViewSet(SnippetViewSet):
+    model = CaracteristiqueDeProgramme
+    list_display = ['__str__', 'classement', 'owner']
+    list_filter = ['owner']
+
+
+@register_snippet
+class GenreDOeuvreViewSet(SnippetViewSet):
+    model = GenreDOeuvre
+    list_display = ['__str__', 'nom_pluriel', 'owner']
+    list_filter = ['owner']
+
+
+@register_snippet
+class NatureDeLieuViewSet(SnippetViewSet):
+    model = NatureDeLieu
+    list_display = ['nom', 'nom_pluriel', 'referent', 'owner']
+    list_filter = ['referent', 'owner']
+
+
+@register_snippet
+class ProfessionViewSet(SnippetViewSet):
+    model = Profession
+    list_display = ['nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel', 'parent', 'classement', 'etat', 'owner']
+    list_filter = ['etat', 'owner']
+
+
+@register_snippet
+class SaisonViewSet(SnippetViewSet):
+    model = Saison
+    list_display = ['__str__', 'lieu', 'ensemble', 'debut', 'fin', 'evenements_count', 'owner']
+    list_filter = ['owner']
+
+
+@register_snippet
+class TypeDEnsembleViewSet(SnippetViewSet):
+    model = TypeDEnsemble
+    list_display = ['nom', 'nom_pluriel', 'parent', 'owner']
+    list_filter = ['owner']
+
+
+@register_snippet
+class TypeDeCaracteristiqueDeProgrammeViewSet(SnippetViewSet):
+    model = TypeDeCaracteristiqueDeProgramme
+    list_display = ['nom', 'nom_pluriel', 'classement', 'owner']
+    list_filter = ['owner']
+
+
+@register_snippet
+class TypeDeParenteDIndividuViewSet(SnippetViewSet):
+    model = TypeDeParenteDIndividus
+    list_display = ['nom', 'nom_pluriel', 'nom_relatif', 'nom_relatif_pluriel', 'classement', 'owner']
+    list_filter = ['owner']
+
+
+@register_snippet
+class TypeDeParenteDOeuvreViewSet(SnippetViewSet):
+    model = TypeDeParenteDOeuvres
+    list_display = ['nom', 'nom_pluriel', 'nom_relatif', 'nom_relatif_pluriel', 'classement', 'owner']
+    list_filter = ['owner']
+
+
+@register_snippet
+class AudioViewSet(SnippetViewSet):
+    model = Audio
+    list_display = ['titre', 'parent', 'position', 'date', 'type', 'has_events', 'has_program', 'link', 'etat', 'owner']
+    list_filter = ['type', 'titre', 'owner']
+
+
+@register_snippet
+class VideoViewSet(SnippetViewSet):
+    model = Video
+    list_display = ['titre', 'parent', 'position', 'date', 'type', 'has_events', 'has_program', 'link', 'etat', 'owner']
+    list_filter = ['type', 'titre', 'owner']
