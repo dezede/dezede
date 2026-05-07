@@ -6,7 +6,6 @@ from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
-from wagtail.snippets.wagtail_hooks import SnippetsMenuItem
 from wagtail_linksnippet.richtext_utils import add_snippet_link_button
 
 from common.utils.text import capfirst
@@ -35,12 +34,6 @@ def register_icons(icons):
         'wagtailfontawesomesvg/solid/file-audio.svg',
         'wagtailfontawesomesvg/solid/file-video.svg',
     ]
-
-
-# FIXME: replace with WAGTAILSNIPPETS_MENU_SHOW_ALL = False when upgrading to Wagtail 7.0.
-@hooks.register('construct_main_menu')
-def hide_snippets_menu_item(request, menu_items):
-    menu_items[:] = [item for item in menu_items if not isinstance(item, SnippetsMenuItem)]
 
 
 class AutoritePermissionPolicy(ModelPermissionPolicy):

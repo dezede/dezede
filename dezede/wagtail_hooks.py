@@ -8,6 +8,7 @@ from wagtail.admin.rich_text.converters.html_to_contentstate import (
 )
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 from wagtail.fields import RichTextField
+from wagtail.snippets.wagtail_hooks import SnippetsMenuItem
 
 from dezede.utils import richtext_to_text
 
@@ -110,3 +111,9 @@ def register_underline_feature(features):
         'to_database_format': {'style_map': {type_: tag}},
     }
     features.register_converter_rule('contentstate', feature_name, db_conversion)
+
+
+# FIXME: replace with WAGTAILSNIPPETS_MENU_SHOW_ALL = False when upgrading to Wagtail 7.0.
+@hooks.register('construct_main_menu')
+def hide_snippets_menu_item(request, menu_items):
+    menu_items[:] = [item for item in menu_items if not isinstance(item, SnippetsMenuItem)]
