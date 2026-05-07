@@ -16,7 +16,7 @@ from .models import (
     NatureDeLieu, Etat, CaracteristiqueDeProgramme, GenreDOeuvre,
     Profession, Saison, Audio, Video,
     TypeDEnsemble, TypeDeCaracteristiqueDeProgramme, TypeDeParenteDIndividus,
-    TypeDeParenteDOeuvres,
+    TypeDeParenteDOeuvres, TypeDeSource,
 )
 
 
@@ -261,6 +261,13 @@ class TypeDEnsembleViewSet(SnippetViewSet):
     list_filter = ['owner']
 
 
+class TypeDeSourceViewSet(SnippetViewSet):
+    model = TypeDeSource
+    icon = 'book-open'
+    list_display = ['nom', 'nom_pluriel', 'owner']
+    list_filter = ['owner']
+
+
 class TypeDeCaracteristiqueDeProgrammeViewSet(SnippetViewSet):
     model = TypeDeCaracteristiqueDeProgramme
     icon = 'book-open'
@@ -326,7 +333,8 @@ class OccasionalInputSnippetViewSetGroup(SnippetViewSetGroup):
     items = [
         EtatViewSet, CaracteristiqueDeProgrammeViewSet, GenreDOeuvreViewSet,
         PartieViewSet, NatureDeLieuViewSet, ProfessionViewSet, SaisonViewSet,
-        TypeDEnsembleViewSet, TypeDeCaracteristiqueDeProgrammeViewSet,
+        TypeDeSourceViewSet, TypeDEnsembleViewSet,
+        TypeDeCaracteristiqueDeProgrammeViewSet,
         TypeDeParenteDIndividuViewSet, TypeDeParenteDOeuvreViewSet,
         AudioViewSet, VideoViewSet,
     ]
