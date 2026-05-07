@@ -98,7 +98,6 @@ class AutoriteViewSet(SnippetViewSet):
 # TODO: add 'has_related_object' filter
 
 
-@register_snippet
 class EvenementViewSet(AutoriteViewSet):
     model = Evenement
     icon = 'calendar-day'
@@ -115,7 +114,6 @@ class EvenementViewSet(AutoriteViewSet):
         ).annotate_has_program_and_source()
 
 
-@register_snippet
 class IndividuViewSet(AutoriteViewSet):
     model = Individu
     icon = 'child'
@@ -136,7 +134,6 @@ class IndividuViewSet(AutoriteViewSet):
         ]
 
 
-@register_snippet
 class LieuViewSet(AutoriteViewSet):
     model = Lieu
     icon = 'location-dot'
@@ -150,7 +147,6 @@ class LieuViewSet(AutoriteViewSet):
         return [Column('nature', label=capfirst(_('nature')))]
 
 
-@register_snippet
 class OeuvreViewSet(AutoriteViewSet):
     model = Oeuvre
     icon = 'book'
@@ -176,7 +172,6 @@ class OeuvreViewSet(AutoriteViewSet):
         ]
 
 
-@register_snippet
 class PartieViewSet(AutoriteViewSet):
     model = Partie
     icon = 'guitar'
@@ -190,7 +185,6 @@ class PartieViewSet(AutoriteViewSet):
         return Partie.objects.select_related('parent', 'oeuvre', 'premier_interprete')
 
 
-@register_snippet
 class EnsembleViewSet(AutoriteViewSet):
     model = Ensemble
     icon = 'people-group'
@@ -200,7 +194,6 @@ class EnsembleViewSet(AutoriteViewSet):
         return Ensemble.objects.select_related('type')
 
 
-@register_snippet
 class SourceViewSet(AutoriteViewSet):
     model = Source
     icon = 'book-open'
@@ -316,13 +309,24 @@ class VideoViewSet(SnippetViewSet):
 
 
 @register_snippet
+class EverydayInputViewSetGroup(SnippetViewSetGroup):
+    menu_label = 'Saisie courante'
+    add_to_admin_menu = True
+    items = [
+        SourceViewSet, EvenementViewSet, IndividuViewSet, EnsembleViewSet,
+        LieuViewSet, OeuvreViewSet,
+    ]
+
+
+@register_snippet
 class OccasionalInputSnippetViewSetGroup(SnippetViewSetGroup):
     menu_label = 'Saisie occasionnelle'
     add_to_admin_menu = True
     # TODO: add Parties and TypeDeSource
     items = [
         EtatViewSet, CaracteristiqueDeProgrammeViewSet, GenreDOeuvreViewSet,
-        NatureDeLieuViewSet, ProfessionViewSet, SaisonViewSet, TypeDEnsembleViewSet,
-        TypeDeCaracteristiqueDeProgrammeViewSet, TypeDeParenteDIndividuViewSet,
-        TypeDeParenteDOeuvreViewSet, AudioViewSet, VideoViewSet,
+        PartieViewSet, NatureDeLieuViewSet, ProfessionViewSet, SaisonViewSet,
+        TypeDEnsembleViewSet, TypeDeCaracteristiqueDeProgrammeViewSet,
+        TypeDeParenteDIndividuViewSet, TypeDeParenteDOeuvreViewSet,
+        AudioViewSet, VideoViewSet,
     ]
