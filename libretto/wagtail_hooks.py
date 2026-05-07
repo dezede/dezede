@@ -245,13 +245,19 @@ class NatureDeLieuViewSet(SnippetViewSet):
 class ProfessionViewSet(SnippetViewSet):
     model = Profession
     icon = 'tools'
-    list_display = ['nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel', 'parent', 'classement', 'etat', 'owner']
+    list_display = [
+        'nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel', 'parent',
+        'classement', 'etat', 'owner',
+    ]
     list_filter = ['etat', 'owner']
 
 
 class SaisonViewSet(SnippetViewSet):
     model = Saison
-    list_display = ['__str__', 'lieu', 'ensemble', 'debut', 'fin', 'evenements_count', 'owner']
+    list_display = [
+        '__str__', 'lieu', 'ensemble', 'debut', 'fin', 'evenements_count',
+        'owner',
+    ]
     list_filter = ['owner']
 
 
@@ -272,28 +278,40 @@ class TypeDeCaracteristiqueDeProgrammeViewSet(SnippetViewSet):
 class TypeDeParenteDIndividuViewSet(SnippetViewSet):
     model = TypeDeParenteDIndividus
     icon = 'child'
-    list_display = ['nom', 'nom_pluriel', 'nom_relatif', 'nom_relatif_pluriel', 'classement', 'owner']
+    list_display = [
+        'nom', 'nom_pluriel', 'nom_relatif', 'nom_relatif_pluriel',
+        'classement', 'owner',
+    ]
     list_filter = ['owner']
 
 
 class TypeDeParenteDOeuvreViewSet(SnippetViewSet):
     model = TypeDeParenteDOeuvres
     icon = 'book'
-    list_display = ['nom', 'nom_pluriel', 'nom_relatif', 'nom_relatif_pluriel', 'classement', 'owner']
+    list_display = [
+        'nom', 'nom_pluriel', 'nom_relatif', 'nom_relatif_pluriel',
+        'classement', 'owner',
+    ]
     list_filter = ['owner']
 
 
 class AudioViewSet(SnippetViewSet):
     model = Audio
     icon = 'file-audio'
-    list_display = ['titre', 'parent', 'position', 'date', 'type', 'has_events', 'has_program', 'link', 'etat', 'owner']
+    list_display = [
+        'titre', 'parent', 'position', 'date', 'type', 'has_events',
+        'has_program', 'link', 'etat', 'owner',
+    ]
     list_filter = ['type', 'titre', 'owner']
 
 
 class VideoViewSet(SnippetViewSet):
     model = Video
     icon = 'file-video'
-    list_display = ['titre', 'parent', 'position', 'date', 'type', 'has_events', 'has_program', 'link', 'etat', 'owner']
+    list_display = [
+        'titre', 'parent', 'position', 'date', 'type', 'has_events',
+        'has_program', 'link', 'etat', 'owner',
+    ]
     list_filter = ['type', 'titre', 'owner']
 
 
@@ -303,7 +321,8 @@ class OccasionalInputSnippetViewSetGroup(SnippetViewSetGroup):
     add_to_admin_menu = True
     # TODO: add Parties and TypeDeSource
     items = [
-        EtatViewSet, CaracteristiqueDeProgrammeViewSet, GenreDOeuvreViewSet, NatureDeLieuViewSet, ProfessionViewSet,
-        SaisonViewSet, TypeDEnsembleViewSet, TypeDeCaracteristiqueDeProgrammeViewSet, TypeDeParenteDIndividuViewSet,
+        EtatViewSet, CaracteristiqueDeProgrammeViewSet, GenreDOeuvreViewSet,
+        NatureDeLieuViewSet, ProfessionViewSet, SaisonViewSet, TypeDEnsembleViewSet,
+        TypeDeCaracteristiqueDeProgrammeViewSet, TypeDeParenteDIndividuViewSet,
         TypeDeParenteDOeuvreViewSet, AudioViewSet, VideoViewSet,
     ]
