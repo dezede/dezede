@@ -310,7 +310,7 @@ class VideoViewSet(SnippetViewSet):
 
 @register_snippet
 class EverydayInputViewSetGroup(SnippetViewSetGroup):
-    menu_label = 'Saisie courante'
+    menu_label = _('Saisie courante')
     add_to_admin_menu = True
     items = [
         SourceViewSet, EvenementViewSet, IndividuViewSet, EnsembleViewSet,
@@ -320,7 +320,7 @@ class EverydayInputViewSetGroup(SnippetViewSetGroup):
 
 @register_snippet
 class OccasionalInputSnippetViewSetGroup(SnippetViewSetGroup):
-    menu_label = 'Saisie occasionnelle'
+    menu_label = _('Saisie occasionnelle')
     add_to_admin_menu = True
     # TODO: add Parties and TypeDeSource
     items = [
