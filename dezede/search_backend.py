@@ -3,10 +3,12 @@ from typing import Iterator, OrderedDict
 
 from django.db.models import Count
 from django.db.models.constants import LOOKUP_SEP
+from grappelli.views.related import AutocompleteLookup
 from wagtail.search.backends.database.postgres.postgres import (
     PostgresSearchBackend, PostgresSearchQueryCompiler, PostgresSearchResults
 )
 from wagtail.search.index import BaseField, Indexed, RelatedFields
+from wagtail.search.backends import get_search_backend
 
 
 class FixedPostgresSearchQueryCompiler(PostgresSearchQueryCompiler):
@@ -62,3 +64,21 @@ def faster_get_indexed_objects(cls):
     )
 
 Indexed.get_indexed_objects = classmethod(faster_get_indexed_objects)
+
+
+@wraps(AutocompleteLookup.get_searched_queryset)
+def wagtail_grappelli_get_searched_queryset(self, qs):
+    model = self.model
+    term = self.GET["term"]
+
+    try:
+        term = model.autocomplete_term_adjust(term)
+    except AttributeError:
+        pass
+
+    s = get_search_backend()
+
+    return s.autocomplete(term, model).get_queryset()
+
+
+AutocompleteLookup.get_searched_queryset = wagtail_grappelli_get_searched_queryset

@@ -2,7 +2,6 @@
 
 import autoslug.fields
 import datetime
-import db_search.sql
 from django.conf import settings
 import django.contrib.gis.db.models.fields
 import django.contrib.postgres.fields.ranges
@@ -10,7 +9,6 @@ import django.contrib.postgres.indexes
 import django.contrib.postgres.search
 import django.core.validators
 from django.db import migrations, models
-import django.db.migrations.operations.special
 import django.db.models.deletion
 import django.db.models.expressions
 import libretto.models.base

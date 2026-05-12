@@ -48,11 +48,10 @@ class TypeDeSource(Indexed, CommonModel, SlugModel):
                             db_index=True, help_text=PLURAL_MSG)
     # TODO: Ajouter un classement et changer ordering en conséquence.
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
     search_fields = [
-        SearchField('nom', boost=10),
+        SearchField('title', boost=10),
         SearchField('nom_pluriel', boost=10),
-        AutocompleteField('nom'),
+        AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
     ]
 
@@ -259,33 +258,15 @@ class Source(Indexed, AutoriteModel):
     search_fields = [
         RelatedFields('parent', SOURCE_RELATED_SEARCH_FIELDS),
         RelatedFields('type', [
-            SearchField('nom'),
+            SearchField('title'),
             SearchField('nom_pluriel'),
-            AutocompleteField('nom'),
+            AutocompleteField('title'),
             AutocompleteField('nom_pluriel'),
         ]),
-        SearchField('titre', boost=10),
-        SearchField('date'),
-        SearchField('date_approx'),
-        SearchField('numero'),
-        SearchField('lieu_conservation'),
-        SearchField('cote'),
+        SearchField('title', boost=10),
         SearchField('transcription', boost=0.1),
         SearchField('notes_publiques', boost=0.1),
-        AutocompleteField('titre'),
-        AutocompleteField('date'),
-        AutocompleteField('date_approx'),
-        AutocompleteField('numero'),
-        AutocompleteField('lieu_conservation'),
-        AutocompleteField('cote'),
-    ]
-    dezede_search_fields = [
-        'titre',
-        'date',
-        'date_approx',
-        'numero',
-        'lieu_conservation',
-        'cote',
+        AutocompleteField('title'),
     ]
 
     class Meta(AutoriteModel.Meta):
@@ -299,7 +280,6 @@ class Source(Indexed, AutoriteModel):
         )
         permissions = (('can_change_status', _('Peut changer l’état')),)
         indexes = [
-            *AutoriteModel.Meta.indexes,
             Index(fields=['position', 'page']),
         ]
 
@@ -660,13 +640,6 @@ class Source(Indexed, AutoriteModel):
         if self.is_image():
             thumbnailer = get_thumbnailer(self.fichier)
             return thumbnailer.get_thumbnail(aliases.get('medium')).url
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'autocomplete_vector__autocomplete',
-            'type__autocomplete_vector__autocomplete',
-        ]
 
 
 class AudioVideoAbstract(Source):

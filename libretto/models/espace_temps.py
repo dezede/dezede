@@ -44,11 +44,10 @@ class NatureDeLieu(Indexed, CommonModel, SlugModel):
             'jusqu’à un lieu référent, ici choisi comme étant ceux de nature '
             '« ville »'))
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
     search_fields = [
-        SearchField('nom', boost=10),
+        SearchField('title', boost=10),
         SearchField('nom_pluriel', boost=10),
-        AutocompleteField('nom'),
+        AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
     ]
     api_fields = [
@@ -101,17 +100,16 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = LieuManager()
 
-    dezede_search_fields = ['nom']
     search_fields = [
-        SearchField('nom', boost=10),
+        SearchField('title', boost=10),
         RelatedFields('nature', [
-            SearchField('nom'),
-            AutocompleteField('nom'),
+            SearchField('title'),
+            AutocompleteField('title'),
         ]),
         RelatedFields('parent', LIEU_RELATED_SEARCH_FIELDS),
         SearchField('historique', 0.1),
         SearchField('notes_publiques', 0.1),
-        AutocompleteField('nom'),
+        AutocompleteField('title'),
     ]
     api_fields = [
         APIField('nom'),
@@ -127,10 +125,7 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         ordering = ['path']
         unique_together = ('nom', 'parent',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
-        indexes = [
-            *PathField.get_indexes('lieu', 'path'),
-            *AutoriteModel.Meta.indexes,
-        ]
+        indexes = PathField.get_indexes('lieu', 'path')
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -208,13 +203,6 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     def __str__(self):
         return strip_tags(self.html(False))
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'autocomplete_vector__autocomplete',
-            'parent__autocomplete_vector__autocomplete',
-        ]
 
 
 class SaisonQuerySet(CommonQuerySet):

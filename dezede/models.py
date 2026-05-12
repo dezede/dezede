@@ -72,7 +72,6 @@ class Diapositive(Indexed, PublishedModel):
     position = PositiveSmallIntegerField(
         _('position'), default=get_default_position)
 
-    dezede_search_fields = ['title', 'subtitle']
     search_fields = [
         SearchField('title', boost=10),
         SearchField('subtitle', boost=2),

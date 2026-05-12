@@ -6,8 +6,6 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.db.models.expressions
 
-from db_search.sql import UpdateAllSearchVectors
-
 
 class Migration(migrations.Migration):
 
@@ -35,5 +33,4 @@ class Migration(migrations.Migration):
             model_name='diapositive',
             index=django.contrib.postgres.indexes.GinIndex(django.db.models.expressions.F('autocomplete_vector'), name='diapositive_autocomplete'),
         ),
-        UpdateAllSearchVectors('diapositive', ['title', 'subtitle']),
     ]

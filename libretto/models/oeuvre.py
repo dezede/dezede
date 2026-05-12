@@ -61,11 +61,10 @@ class GenreDOeuvre(Indexed, CommonModel, SlugModel):
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
                               blank=True, verbose_name=_('parents'))
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
     search_fields = [
-        SearchField('nom', boost=10),
+        SearchField('title', boost=10),
         SearchField('nom_pluriel', boost=10),
-        AutocompleteField('nom'),
+        AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
     ]
     api_fields = [
@@ -128,7 +127,6 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
         null=True, blank=True, verbose_name=_('premier(ère) interprète'),
     )
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
     panels = [
         FieldPanel('type', widget=RadioSelect),
         FieldRowPanel([
@@ -141,13 +139,13 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
         FieldPanel('premier_interprete'),
     ]
     search_fields = [
-        SearchField('nom', boost=10),
+        SearchField('title', boost=10),
         SearchField('nom_pluriel', boost=10),
         RelatedFields('oeuvre', OEUVRE_RELATED_SEARCH_FIELDS),
         RelatedFields('professions', PROFESSION_RELATED_SEARCH_FIELDS),
         RelatedFields('parent', PARTIE_RELATED_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
-        AutocompleteField('nom'),
+        AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
     ]
     api_fields = [
@@ -231,14 +229,6 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
     def short_html(self, pluriel=False, tags=True):
         return self.html(pluriel=pluriel, oeuvre=False, tags=tags)
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'autocomplete_vector__autocomplete',
-            'professions__autocomplete_vector__autocomplete',
-            'oeuvre__autocomplete_vector__autocomplete',
-        ]
-
 
 class PupitreQuerySet(CommonQuerySet):
     def oeuvres(self):
@@ -311,23 +301,11 @@ class Pupitre(CommonModel):
             out += f' ({self.partie.oeuvre})'
         return out
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'oeuvre__autocomplete_vector__autocomplete',
-            'partie__autocomplete_vector__autocomplete',
-            'partie__professions__autocomplete_vector__autocomplete',
-        ]
-
 
 class TypeDeParenteDOeuvres(TypeDeParente):
     class Meta(TypeDeParente.Meta):
         verbose_name = _('type de parenté d’œuvres')
         verbose_name_plural = _('types de parentés d’œuvres')
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='typeparenteoeuv_autocomplete'),
-        ]
 
 
 class ParenteDOeuvresManager(CommonManager):
@@ -892,36 +870,16 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = OeuvreManager()
 
-    dezede_search_fields = [
-        'prefixe_titre', 'titre',
-        'prefixe_titre_secondaire', 'titre_secondaire', 'numero',
-        'coupe', 'tempo', 'sujet', 'surnom', 'nom_courant', 'incipit',
-        'opus', 'ict',
-    ]
     search_fields = [
-        SearchField('prefixe_titre'),
-        SearchField('titre', boost=10),
-        SearchField('prefixe_titre_secondaire'),
-        SearchField('titre_secondaire', boost=2),
-        SearchField('numero'),
-        SearchField('coupe'),
-        SearchField('tempo'),
-        SearchField('get_tonalite_display'),
-        SearchField('sujet'),
-        SearchField('surnom', boost=10),
-        SearchField('nom_courant', boost=10),
-        SearchField('incipit', boost=10),
-        SearchField('opus', boost=10),
-        SearchField('ict', boost=10),
-        SearchField('get_extrait'),
+        SearchField('title', boost=10),
         RelatedFields('auteurs', [
             RelatedFields('individu', INDIVIDU_RELATED_SEARCH_FIELDS),
             RelatedFields('ensemble', ENSEMBLE_RELATED_SEARCH_FIELDS),
         ]),
         RelatedFields('genre', [
-            SearchField('nom'),
+            SearchField('title'),
             SearchField('nom_pluriel'),
-            AutocompleteField('nom'),
+            AutocompleteField('title'),
             AutocompleteField('nom_pluriel'),
         ]),
         RelatedFields('pupitres', [
@@ -929,21 +887,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         ]),
         RelatedFields('extrait_de', OEUVRE_RELATED_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
-        AutocompleteField('prefixe_titre'),
-        AutocompleteField('titre'),
-        AutocompleteField('prefixe_titre_secondaire'),
-        AutocompleteField('titre_secondaire'),
-        AutocompleteField('numero'),
-        AutocompleteField('coupe'),
-        AutocompleteField('tempo'),
-        AutocompleteField('get_tonalite_display'),
-        AutocompleteField('sujet'),
-        AutocompleteField('surnom'),
-        AutocompleteField('nom_courant'),
-        AutocompleteField('incipit'),
-        AutocompleteField('opus'),
-        AutocompleteField('ict'),
-        AutocompleteField('get_extrait'),
+        AutocompleteField('title'),
     ]
     api_fields = [
         APIField('prefixe_titre'),
@@ -979,10 +923,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         verbose_name_plural = _('œuvres')
         ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
-        indexes = [
-            *PathField.get_indexes('oeuvre', 'path'),
-            *AutoriteModel.Meta.indexes,
-        ]
+        indexes = PathField.get_indexes('oeuvre', 'path')
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -1273,13 +1214,3 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     _str = __str__
     _str.short_description = _('œuvre')
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'auteurs__individu__autocomplete_vector__autocomplete',
-            'auteurs__ensemble__autocomplete_vector__autocomplete',
-            'autocomplete_vector__autocomplete',
-            'genre__autocomplete_vector__autocomplete',
-            'pupitres__partie__autocomplete_vector__autocomplete',
-        ]

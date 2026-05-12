@@ -42,17 +42,13 @@ class Profession(Indexed, AutoriteModel, UniqueSlugModel):
                         verbose_name=_('parent'), on_delete=CASCADE)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
-    dezede_search_fields = [
-        'nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel',
-    ]
-
     search_fields = [
-        SearchField('nom', boost=10),
+        SearchField('title', boost=10),
         SearchField('nom_pluriel', boost=10),
         SearchField('nom_feminin', boost=10),
         RelatedFields('parent', PROFESSION_RELATED_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
-        AutocompleteField('nom'),
+        AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
         AutocompleteField('nom_feminin'),
     ]
@@ -263,11 +259,10 @@ class TypeDEnsemble(Indexed, CommonModel):
     parent = ForeignKey('self', null=True, blank=True, related_name='enfants',
                         verbose_name=_('parent'), on_delete=CASCADE)
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
     search_fields = [
-        SearchField('nom', boost=10),
+        SearchField('title', boost=10),
         SearchField('nom_pluriel', boost=10),
-        AutocompleteField('nom'),
+        AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
     ]
 
@@ -303,7 +298,6 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
         help_text=_('Exemple : « 0000000115201575 » '
                     'pour Le Poème Harmonique.'))
 
-    dezede_search_fields = ['particule_nom', 'nom']
     panels = [
         FieldRowPanel([FieldPanel('particule_nom'), FieldPanel('nom')]),
         FieldPanel('type'),
@@ -316,18 +310,16 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
         *AutoriteModel.panels,
     ]
     search_fields = [
-        SearchField('particule_nom'),
-        SearchField('nom', boost=10),
+        SearchField('title', boost=10),
         RelatedFields('type', [
-            SearchField('nom'),
+            SearchField('title'),
             SearchField('nom_pluriel'),
-            AutocompleteField('nom'),
+            AutocompleteField('title'),
             AutocompleteField('nom_pluriel'),
         ]),
         RelatedFields('individus', INDIVIDU_RELATED_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
-        AutocompleteField('particule_nom'),
-        AutocompleteField('nom'),
+        AutocompleteField('title'),
     ]
     api_fields = [
         APIField('particule_nom'),
@@ -440,10 +432,3 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
         return ('elements_de_distribution',)
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'autocomplete_vector__autocomplete',
-            'siege__autocomplete_vector__autocomplete',
-        ]

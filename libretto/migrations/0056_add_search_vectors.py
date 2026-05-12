@@ -5,8 +5,6 @@ import django.contrib.postgres.search
 from django.db import migrations
 import django.db.models.expressions
 
-from db_search.sql import UpdateAllSearchVectors
-
 
 class Migration(migrations.Migration):
 
@@ -224,23 +222,4 @@ class Migration(migrations.Migration):
             model_name='typedesource',
             index=django.contrib.postgres.indexes.GinIndex(django.db.models.expressions.F('search_vector'), name='typedesource_search'),
         ),
-        UpdateAllSearchVectors('caracteristiquedeprogramme', ['valeur']),
-        UpdateAllSearchVectors('elementdedistribution', []),
-        UpdateAllSearchVectors('elementdeprogramme', []),
-        UpdateAllSearchVectors('ensemble', ['particule_nom', 'nom']),
-        UpdateAllSearchVectors('evenement', ['circonstance', 'debut_date', 'debut_heure', 'debut_lieu_approx', 'debut_date_approx', 'debut_heure_approx']),
-        UpdateAllSearchVectors('genredoeuvre', ['nom', 'nom_pluriel']),
-        UpdateAllSearchVectors('individu', ['nom', 'nom_naissance', 'prenoms', 'pseudonyme']),
-        UpdateAllSearchVectors('lieu', ['nom']),
-        UpdateAllSearchVectors('naturedelieu', ['nom', 'nom_pluriel']),
-        UpdateAllSearchVectors('oeuvre', ['prefixe_titre', 'titre', 'prefixe_titre_secondaire', 'titre_secondaire', 'numero', 'coupe', 'tempo', 'sujet', 'surnom', 'nom_courant', 'incipit', 'opus', 'ict']),
-        UpdateAllSearchVectors('partie', ['nom', 'nom_pluriel']),
-        UpdateAllSearchVectors('profession', ['nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel']),
-        UpdateAllSearchVectors('pupitre', []),
-        UpdateAllSearchVectors('source', ['titre', 'date', 'date_approx', 'numero', 'lieu_conservation', 'cote']),
-        UpdateAllSearchVectors('typedecaracteristiquedeprogramme', ['nom', 'nom_pluriel']),
-        UpdateAllSearchVectors('typedensemble', ['nom', 'nom_pluriel']),
-        UpdateAllSearchVectors('typedeparentedindividus', ['nom', 'nom_relatif', 'nom_pluriel', 'nom_relatif_pluriel']),
-        UpdateAllSearchVectors('typedeparentedoeuvres', ['nom', 'nom_relatif', 'nom_pluriel', 'nom_relatif_pluriel',]),
-        UpdateAllSearchVectors('typedesource', ['nom', 'nom_pluriel']),
     ]

@@ -19,7 +19,6 @@ from common.utils.html import href, sc
 from common.utils.text import str_list_w_last
 from libretto.models.base import (
     AutoriteModel, CommonTreeManager, CommonTreeQuerySet, )
-from db_search.models import SearchVectorAbstractModel
 
 #
 # Hack to monkey patch the user model
@@ -71,7 +70,7 @@ def _get_valid_modelnames_func(autorites_only=True):
     return ValidModelNames()
 
 
-class HierarchicUser(Indexed, SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
+class HierarchicUser(Indexed, TreeModelMixin, AbstractUser):
     show_email = BooleanField(_('afficher l’email'), default=False)
     website = URLField(_('site internet'), blank=True)
     website_verbose = CharField(
@@ -112,14 +111,11 @@ class HierarchicUser(Indexed, SearchVectorAbstractModel, TreeModelMixin, Abstrac
 
     objects = HierarchicUserManager()
 
-    dezede_search_fields = ['first_name', 'last_name', 'username', 'email']
     search_fields = [
-        SearchField('first_name', boost=2),
-        SearchField('last_name', boost=10),
+        SearchField('title', boost=10),
         SearchField('username'),
         SearchField('email'),
-        AutocompleteField('first_name'),
-        AutocompleteField('last_name'),
+        AutocompleteField('title'),
         AutocompleteField('username'),
         AutocompleteField('email'),
     ]
@@ -133,13 +129,13 @@ class HierarchicUser(Indexed, SearchVectorAbstractModel, TreeModelMixin, Abstrac
         ordering = ['last_name', 'first_name']
         verbose_name = _('utilisateur')
         verbose_name_plural = _('utilisateurs')
-        indexes = [
-            *PathField.get_indexes('user', 'path'),
-            *SearchVectorAbstractModel.Meta.indexes,
-        ]
+        indexes = PathField.get_indexes('user', 'path')
 
     def __str__(self, tags=False):
         return self.html(tags=False)
+
+    def title(self) -> str:  # For IndexEntry.title_norm.
+        return str(self)
 
     def get_full_name(self, tags=False, reverse=False):
         full_name = f'{sc(self.last_name, tags=tags)} {self.first_name}' if (

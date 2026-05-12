@@ -123,10 +123,6 @@ class ElementDeDistribution(CommonModel):
         verbose_name = _('élément de distribution')
         verbose_name_plural = _('éléments de distribution')
         ordering = ('partie', 'profession', 'individu', 'ensemble')
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='elementdistrib_autocomplete'),
-        ]
         constraints = [
             # FIXME: Use an XOR when upgrading to Django >= 4.1.
             CheckConstraint(
@@ -174,14 +170,6 @@ class ElementDeDistribution(CommonModel):
     def get_change_link(self):
         return href(self.get_change_url(), str(self), new_tab=True)
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'partie__autocomplete_vector__autocomplete',
-            'individu__autocomplete_vector__autocomplete',
-            'ensemble__autocomplete_vector__autocomplete',
-        ]
-
 
 class TypeDeCaracteristiqueDeProgramme(Indexed, CommonModel):
     nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
@@ -190,11 +178,10 @@ class TypeDeCaracteristiqueDeProgramme(Indexed, CommonModel):
                             help_text=PLURAL_MSG)
     classement = SmallIntegerField(_('classement'), default=1)
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
     search_fields = [
-        SearchField('nom', boost=10),
+        SearchField('title', boost=10),
         SearchField('nom_pluriel', boost=10),
-        AutocompleteField('nom'),
+        AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
     ]
 
@@ -202,10 +189,6 @@ class TypeDeCaracteristiqueDeProgramme(Indexed, CommonModel):
         verbose_name = _('type de caractéristique de programme')
         verbose_name_plural = _('types de caractéristique de programme')
         ordering = ('classement',)
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='typecaracprogr_autocomplete'),
-        ]
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -263,16 +246,15 @@ class CaracteristiqueDeProgramme(Indexed, CommonModel):
 
     objects = CaracteristiqueManager()
 
-    dezede_search_fields = ['valeur']
     search_fields = [
         RelatedFields('type', [
-            SearchField('nom'),
+            SearchField('title'),
             SearchField('nom_pluriel'),
-            AutocompleteField('nom'),
+            AutocompleteField('title'),
             AutocompleteField('nom_pluriel'),
         ]),
-        SearchField('valeur', boost=10),
-        AutocompleteField('valeur'),
+        SearchField('title', boost=10),
+        AutocompleteField('title'),
     ]
 
     class Meta(CommonModel.Meta):
@@ -280,10 +262,6 @@ class CaracteristiqueDeProgramme(Indexed, CommonModel):
         verbose_name = _('caractéristique de programme')
         verbose_name_plural = _('caractéristiques de programme')
         ordering = ('type', 'classement', 'valeur')
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='caracprogr_autocomplete'),
-        ]
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -303,13 +281,6 @@ class CaracteristiqueDeProgramme(Indexed, CommonModel):
         if self.type:
             return f'{self.type} : {valeur}'
         return valeur
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'type__autocomplete_vector__autocomplete',
-            'autocomplete_vector__autocomplete',
-        ]
 
 
 class ElementDeProgrammeQueryset(CommonQuerySet):
@@ -364,10 +335,6 @@ class ElementDeProgramme(CommonModel):
         verbose_name = _('élément de programme')
         verbose_name_plural = _('éléments de programme')
         ordering = ('position',)
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='elementprogr_autocomplete'),
-        ]
 
     @staticmethod
     def invalidated_relations_when_saved(all_relations=False):
@@ -433,13 +400,6 @@ class ElementDeProgramme(CommonModel):
 
     def __str__(self):
         return strip_tags(self.html(False))
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'oeuvre__autocomplete_vector__autocomplete',
-            'oeuvre__genre__autocomplete_vector__autocomplete',
-        ]
 
 
 class EvenementQuerySet(PublishedQuerySet):
@@ -597,20 +557,8 @@ class Evenement(Indexed, AutoriteModel):
 
     objects = EvenementManager()
 
-    dezede_search_fields = [
-        'circonstance',
-        'debut_date',
-        'debut_heure',
-        'debut_lieu_approx',
-        'debut_date_approx',
-        'debut_heure_approx',
-    ]
     search_fields = [
-        SearchField('circonstance', boost=10),
-        SearchField('debut_date', boost=2),
-        SearchField('debut_date_approx'),
-        SearchField('debut_heure'),
-        SearchField('debut_heure_approx'),
+        SearchField('title', boost=10),
         RelatedFields('debut_lieu', LIEU_RELATED_SEARCH_FIELDS),
         SearchField('debut_lieu_approx'),
         SearchField('fin_date'),
@@ -623,12 +571,7 @@ class Evenement(Indexed, AutoriteModel):
         RelatedFields('distribution', DISTRIBUTION_SEARCH_FIELDS),
         RelatedFields('programme', PROGRAMME_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
-        AutocompleteField('circonstance'),
-        AutocompleteField('debut_date'),
-        AutocompleteField('debut_date_approx'),
-        AutocompleteField('debut_heure'),
-        AutocompleteField('debut_heure_approx'),
-        AutocompleteField('debut_lieu_approx'),
+        AutocompleteField('title'),
     ]
 
     api_fields = [
@@ -772,11 +715,3 @@ class Evenement(Indexed, AutoriteModel):
     def related_label(self):
         return href(reverse('admin:libretto_evenement_change',
                             args=(self.pk,)), str(self), new_tab=True)
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'autocomplete_vector__autocomplete',
-            'debut_lieu__autocomplete_vector__autocomplete',
-            'debut_lieu__parent__autocomplete_vector__autocomplete',
-        ]

@@ -20,7 +20,6 @@ from tree.query import TreeQuerySetMixin
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.search.index import AutocompleteField, Indexed, SearchField
 
-from db_search.models import SearchVectorAbstractModel
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 from common.utils.html import capfirst, date_html, href
@@ -114,7 +113,7 @@ class CommonManager(TypographicManager):
     queryset_class = CommonQuerySet
 
 
-class CommonModel(SearchVectorAbstractModel, TypographicModel):
+class CommonModel(TypographicModel):
     """
     Modèle commun à l’application, ajoutant diverses possibilités.
     """
@@ -126,9 +125,6 @@ class CommonModel(SearchVectorAbstractModel, TypographicModel):
 
     class Meta(TypographicModel.Meta):
         abstract = True  # = prototype de modèle, et non un vrai modèle.
-        indexes = [
-            *SearchVectorAbstractModel.Meta.indexes,
-        ]
 
     def _perform_unique_checks(self, unique_checks):
         # Taken from the overridden method.
@@ -205,6 +201,9 @@ class CommonModel(SearchVectorAbstractModel, TypographicModel):
 
     def related_label(self):
         return str(self)
+
+    def title(self) -> str:  # For IndexEntry.title_norm.
+        return self.related_label()
 
 
 class PublishedQuerySet(CommonQuerySet):
@@ -617,17 +616,12 @@ class TypeDeParente(Indexed, CommonModel):
         help_text=PLURAL_MSG)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
-    dezede_search_fields = [
-        'nom', 'nom_relatif', 'nom_pluriel', 'nom_relatif_pluriel',
-    ]
     search_fields = [
-        SearchField('nom', boost=10),
+        SearchField('title', boost=10),
         SearchField('nom_pluriel', boost=10),
-        SearchField('nom_relatif', boost=2),
         SearchField('nom_relatif_pluriel', boost=2),
-        AutocompleteField('nom'),
+        AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
-        AutocompleteField('nom_relatif'),
         AutocompleteField('nom_relatif_pluriel'),
     ]
 
@@ -667,10 +661,10 @@ class Etat(Indexed, CommonModel, UniqueSlugModel):
     public = BooleanField(_('publié'), default=True, db_index=True)
 
     search_fields = [
-        SearchField('nom', boost=10),
+        SearchField('title', boost=10),
         SearchField('nom_pluriel', boost=10),
         SearchField('message', boost=0.1),
-        AutocompleteField('nom'),
+        AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
     ]
 

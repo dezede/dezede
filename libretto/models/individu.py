@@ -32,10 +32,6 @@ class TypeDeParenteDIndividus(TypeDeParente):
     class Meta(TypeDeParente.Meta):
         verbose_name = _('type de parenté d’individus')
         verbose_name_plural = _('types de parenté d’individus')
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='typeparenteindiv_autocomplete'),
-        ]
 
 
 class ParenteDIndividus(CommonModel):
@@ -142,27 +138,12 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
 
     objects = IndividuManager()
 
-    dezede_search_fields = [
-        'nom', 'nom_naissance', 'prenoms', 'pseudonyme',
-    ]
     search_fields = [
-        SearchField('calc_titre'),
-        SearchField('particule_nom'),
-        SearchField('nom', boost=10),
-        SearchField('particule_nom_naissance'),
-        SearchField('nom_naissance', boost=2),
-        SearchField('pseudonyme', boost=10),
-        SearchField('prenoms', boost=2),
+        SearchField('title', boost=10),
         SearchField('prenoms_complets'),
         RelatedFields('professions', PROFESSION_RELATED_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
-        AutocompleteField('calc_titre'),
-        AutocompleteField('particule_nom'),
-        AutocompleteField('nom'),
-        AutocompleteField('particule_nom_naissance'),
-        AutocompleteField('nom_naissance'),
-        AutocompleteField('pseudonyme'),
-        AutocompleteField('prenoms'),
+        AutocompleteField('title'),
         AutocompleteField('prenoms_complets'),
     ]
     api_fields = [

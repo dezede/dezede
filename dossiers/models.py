@@ -27,20 +27,15 @@ class CategorieDeDossiers(Indexed, PublishedModel):
     nom = CharField(_('nom'), max_length=75)
     position = PositiveSmallIntegerField(_('position'), default=1)
 
-    dezede_search_fields = ['nom']
     search_fields = [
-        SearchField('nom', boost=10),
-        AutocompleteField('nom'),
+        SearchField('title', boost=10),
+        AutocompleteField('title'),
     ]
 
     class Meta(PublishedModel.Meta):
         ordering = ('position',)
         verbose_name = _('catégorie de dossiers')
         verbose_name_plural = _('catégories de dossiers')
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='categoriedossiers_autocomplete'),
-        ]
 
     def __str__(self):
         return self.nom
@@ -100,21 +95,20 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
 
     objects = DossierManager()
 
-    dezede_search_fields = ['titre', 'titre_court']
     search_fields = [
-        SearchField('titre', boost=10),
+        SearchField('title', boost=10),
         SearchField('titre_court', boost=10),
         RelatedFields('parent', [
-            SearchField('titre'),
+            SearchField('title'),
             SearchField('titre_court'),
-            AutocompleteField('titre'),
+            AutocompleteField('title'),
             AutocompleteField('titre_court'),
         ]),
         SearchField('presentation', boost=0.1),
         SearchField('contexte', boost=0.1),
         SearchField('sources_et_protocole', boost=0.1),
         SearchField('bibliographie', boost=0.1),
-        AutocompleteField('titre'),
+        AutocompleteField('title'),
         AutocompleteField('titre_court'),
     ]
 
@@ -123,11 +117,7 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
         verbose_name_plural = _('dossiers')
         ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
-        indexes = [
-            *PathField.get_indexes('dossiers', 'path'),
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='dossier_autocomplete'),
-        ]
+        indexes = PathField.get_indexes('dossiers', 'path')
 
     @property
     def specific(self) -> Union['DossierDEvenements', 'DossierDOeuvres']:

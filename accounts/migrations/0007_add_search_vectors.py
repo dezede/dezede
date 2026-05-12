@@ -5,8 +5,6 @@ import django.contrib.postgres.search
 from django.db import migrations, models
 import django.db.models.expressions
 
-from db_search.sql import UpdateAllSearchVectors
-
 
 class Migration(migrations.Migration):
 
@@ -32,5 +30,4 @@ class Migration(migrations.Migration):
             model_name='hierarchicuser',
             index=django.contrib.postgres.indexes.GinIndex(django.db.models.expressions.F('search_vector'), name='hierarchicuser_search'),
         ),
-        UpdateAllSearchVectors('hierarchicuser', ['first_name', 'last_name', 'username', 'email']),
     ]

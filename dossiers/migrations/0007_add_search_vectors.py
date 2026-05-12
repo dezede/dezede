@@ -5,8 +5,6 @@ import django.contrib.postgres.search
 from django.db import migrations
 import django.db.models.expressions
 
-from db_search.sql import UpdateAllSearchVectors
-
 
 class Migration(migrations.Migration):
 
@@ -35,6 +33,4 @@ class Migration(migrations.Migration):
             model_name='dossierdevenements',
             index=django.contrib.postgres.indexes.GinIndex(django.db.models.expressions.F('search_vector'), name='dossierdevenements_search'),
         ),
-        UpdateAllSearchVectors('categoriededossiers', ['nom']),
-        UpdateAllSearchVectors('dossierdevenements', ['titre', 'titre_court']),
     ]
