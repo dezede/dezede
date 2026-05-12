@@ -1,9 +1,12 @@
-from typing import OrderedDict
+from functools import wraps
+from typing import Iterator, OrderedDict
 
 from django.db.models import Count
+from django.db.models.constants import LOOKUP_SEP
 from wagtail.search.backends.database.postgres.postgres import (
     PostgresSearchBackend, PostgresSearchQueryCompiler, PostgresSearchResults
 )
+from wagtail.search.index import BaseField, Indexed, RelatedFields
 
 
 class FixedPostgresSearchQueryCompiler(PostgresSearchQueryCompiler):
@@ -37,3 +40,25 @@ class FixedPostgresSearchResults(PostgresSearchResults):
 class FixedPostgresSearchBackend(PostgresSearchBackend):
     query_compiler_class = FixedPostgresSearchQueryCompiler
     results_class = FixedPostgresSearchResults
+
+
+@wraps(Indexed.get_indexed_objects)
+def faster_get_indexed_objects(cls):
+    def recursive_relations_iterator(search_fields: list[BaseField | RelatedFields]) -> Iterator[list[str]]:
+        for search_field in search_fields:
+            if isinstance(search_field, RelatedFields):
+                has_nested_relations = False
+                for child_lookup_list in recursive_relations_iterator(search_field.fields):
+                    yield [search_field.field_name, *child_lookup_list]
+                    has_nested_relations = True
+                if not has_nested_relations:
+                    yield [search_field.field_name]
+
+    return cls.objects.prefetch_related(
+        *[
+            LOOKUP_SEP.join(lookup_list)
+            for lookup_list in recursive_relations_iterator(cls.get_search_fields())
+        ]
+    )
+
+Indexed.get_indexed_objects = classmethod(faster_get_indexed_objects)
