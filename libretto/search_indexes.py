@@ -9,7 +9,9 @@ from haystack.indexes import (
     IntegerField)
 from haystack.query import SearchQuerySet
 from tree.models import TreeModelMixin
+from wagtail.search.backends import get_search_backend
 
+from libretto.models.base import PublishedQuerySet
 from typography.utils import replace
 
 
@@ -166,8 +168,13 @@ def autocomplete_search(request, q, model=None, max_results=5):
                   if 'content_auto' in unified_index.get_index(model).fields]
         sqs = sqs.models(*models)
     else:
-        sqs = sqs.models(model)
-    sqs = filter_published(sqs, request)
+        s = get_search_backend()
+        qs = s.autocomplete(q, model).get_queryset()
+        if isinstance(qs, PublishedQuerySet):
+            qs = qs.published(request)
+        return qs[:max_results]
+
+    sqs = filter_sqs_published(sqs, request)
     sqs = sqs.autocomplete(content_auto=q)[:max_results]
 
     return list(result_iterator(sqs))
