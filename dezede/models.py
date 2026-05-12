@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from image_cropping import ImageRatioField
-from wagtail.search.index import Indexed, SearchField
+from wagtail.search.index import AutocompleteField, Indexed, SearchField
 from accounts.models import _get_valid_modelnames_func
 from libretto.models.base import PublishedModel
 
@@ -32,8 +32,8 @@ class Diapositive(Indexed, PublishedModel):
         ContentType, limit_choices_to={
             'model__in': _get_valid_modelnames_func(autorites_only=False)},
         verbose_name=_('type d’objet lié'), on_delete=CASCADE)
-    object_id = PositiveIntegerField(_('identifiant de l’objet lié'))
-    content_object = GenericForeignKey()
+    related_object_id = PositiveIntegerField(_('identifiant de l’objet lié'))
+    content_object = GenericForeignKey(fk_field='related_object_id')
     content_object.short_description = _('objet lié')
     # Contenu
     title = CharField(_('titre'), max_length=70)
@@ -76,6 +76,8 @@ class Diapositive(Indexed, PublishedModel):
     search_fields = [
         SearchField('title', boost=10),
         SearchField('subtitle', boost=2),
+        AutocompleteField('title'),
+        AutocompleteField('subtitle'),
     ]
 
     SLIDER_LG_WIDTH = 1140

@@ -14,7 +14,7 @@ from common.utils.html import href, sc, hlp
 from common.utils.text import str_list, str_list_w_last, ex
 from rest_framework import fields as rest_fields
 from wagtail.api import APIField
-from wagtail.search.index import Indexed, RelatedFields, SearchField
+from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
 from libretto.constants import PROFESSION_RELATED_SEARCH_FIELDS
 
@@ -156,6 +156,14 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
         SearchField('prenoms_complets'),
         RelatedFields('professions', PROFESSION_RELATED_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
+        AutocompleteField('calc_titre'),
+        AutocompleteField('particule_nom'),
+        AutocompleteField('nom'),
+        AutocompleteField('particule_nom_naissance'),
+        AutocompleteField('nom_naissance'),
+        AutocompleteField('pseudonyme'),
+        AutocompleteField('prenoms'),
+        AutocompleteField('prenoms_complets'),
     ]
     api_fields = [
         APIField('particule_nom'),

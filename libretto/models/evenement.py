@@ -16,7 +16,7 @@ from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
 from wagtail.api import APIField
-from wagtail.search.index import Indexed, SearchField, RelatedFields
+from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
 
 from libretto.constants import CARACTERISTIQUES_PROGRAMME_SEARCH_FIELDS, DISTRIBUTION_SEARCH_FIELDS, LIEU_RELATED_SEARCH_FIELDS, PROGRAMME_SEARCH_FIELDS
 
@@ -194,6 +194,8 @@ class TypeDeCaracteristiqueDeProgramme(Indexed, CommonModel):
     search_fields = [
         SearchField('nom', boost=10),
         SearchField('nom_pluriel', boost=10),
+        AutocompleteField('nom'),
+        AutocompleteField('nom_pluriel'),
     ]
 
     class Meta(CommonModel.Meta):
@@ -266,8 +268,11 @@ class CaracteristiqueDeProgramme(Indexed, CommonModel):
         RelatedFields('type', [
             SearchField('nom'),
             SearchField('nom_pluriel'),
+            AutocompleteField('nom'),
+            AutocompleteField('nom_pluriel'),
         ]),
         SearchField('valeur', boost=10),
+        AutocompleteField('valeur'),
     ]
 
     class Meta(CommonModel.Meta):
@@ -603,22 +608,29 @@ class Evenement(Indexed, AutoriteModel):
     search_fields = [
         SearchField('circonstance', boost=10),
         SearchField('debut_date', boost=2),
-        SearchField('debut_heure'),
-        SearchField('debut_lieu_approx'),
         SearchField('debut_date_approx'),
+        SearchField('debut_heure'),
         SearchField('debut_heure_approx'),
         RelatedFields('debut_lieu', LIEU_RELATED_SEARCH_FIELDS),
+        SearchField('debut_lieu_approx'),
         SearchField('fin_date'),
-        SearchField('fin_heure'),
-        SearchField('fin_lieu_approx'),
         SearchField('fin_date_approx'),
+        SearchField('fin_heure'),
         SearchField('fin_heure_approx'),
         RelatedFields('fin_lieu', LIEU_RELATED_SEARCH_FIELDS),
+        SearchField('fin_lieu_approx'),
         RelatedFields('caracteristiques', CARACTERISTIQUES_PROGRAMME_SEARCH_FIELDS),
         RelatedFields('distribution', DISTRIBUTION_SEARCH_FIELDS),
         RelatedFields('programme', PROGRAMME_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
+        AutocompleteField('circonstance'),
+        AutocompleteField('debut_date'),
+        AutocompleteField('debut_date_approx'),
+        AutocompleteField('debut_heure'),
+        AutocompleteField('debut_heure_approx'),
+        AutocompleteField('debut_lieu_approx'),
     ]
+
     api_fields = [
         APIField('debut_lieu'),
         APIField('debut_lieu_approx'),

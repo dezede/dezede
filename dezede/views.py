@@ -21,7 +21,7 @@ from dossiers.models import Dossier
 from libretto.models import (
     Oeuvre, Lieu, Individu, Source, Evenement, Ensemble, Profession, Partie,
 )
-from libretto.search_indexes import autocomplete_search, filter_published
+from libretto.search_indexes import autocomplete_search, filter_sqs_published
 from typography.utils import replace
 from .models import Diapositive
 
@@ -30,8 +30,8 @@ from .models import Diapositive
 def cache_generics(queryset):
     generics = {}
     for item in queryset:
-        if item.object_id is not None:
-            generics.setdefault(item.content_type_id, set()).add(item.object_id)
+        if item.related_object_id is not None:
+            generics.setdefault(item.content_type_id, set()).add(item.related_object_id)
 
     content_types = ContentType.objects.in_bulk(generics.keys())
 
@@ -42,7 +42,7 @@ def cache_generics(queryset):
 
     for item in queryset:
         try:
-            cached_val = relations[item.content_type_id][item.object_id]
+            cached_val = relations[item.content_type_id][item.related_object_id]
         except KeyError:
             cached_val = None
         setattr(item, '_content_object_cache', cached_val)
@@ -87,7 +87,7 @@ class CustomSearchView(SearchView):
 
     def get_results(self):
         sqs = super(CustomSearchView, self).get_results()
-        return filter_published(sqs, self.request)
+        return filter_sqs_published(sqs, self.request)
 
 
 def autocomplete(request):

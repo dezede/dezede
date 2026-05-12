@@ -13,7 +13,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
-from wagtail.search.index import Indexed, RelatedFields, SearchField
+from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
 from accounts.models import HierarchicUser
 from libretto.models import (Lieu, Oeuvre, Evenement, Individu, Ensemble,
@@ -30,6 +30,7 @@ class CategorieDeDossiers(Indexed, PublishedModel):
     dezede_search_fields = ['nom']
     search_fields = [
         SearchField('nom', boost=10),
+        AutocompleteField('nom'),
     ]
 
     class Meta(PublishedModel.Meta):
@@ -106,11 +107,15 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
         RelatedFields('parent', [
             SearchField('titre'),
             SearchField('titre_court'),
+            AutocompleteField('titre'),
+            AutocompleteField('titre_court'),
         ]),
         SearchField('presentation', boost=0.1),
         SearchField('contexte', boost=0.1),
         SearchField('sources_et_protocole', boost=0.1),
         SearchField('bibliographie', boost=0.1),
+        AutocompleteField('titre'),
+        AutocompleteField('titre_court'),
     ]
 
     class Meta(PublishedModel.Meta):

@@ -10,7 +10,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _, gettext
 from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
 from wagtail.api import APIField
-from wagtail.search.index import Indexed, SearchField, RelatedFields
+from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
 from common.utils.abbreviate import abbreviate
 from common.utils.html import capfirst, href, date_html, sc
 from common.utils.sql import get_raw_query
@@ -49,9 +49,12 @@ class Profession(Indexed, AutoriteModel, UniqueSlugModel):
     search_fields = [
         SearchField('nom', boost=10),
         SearchField('nom_pluriel', boost=10),
-        SearchField('feminin', boost=10),
+        SearchField('nom_feminin', boost=10),
         RelatedFields('parent', PROFESSION_RELATED_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
+        AutocompleteField('nom'),
+        AutocompleteField('nom_pluriel'),
+        AutocompleteField('nom_feminin'),
     ]
 
     class Meta(AutoriteModel.Meta):
@@ -264,6 +267,8 @@ class TypeDEnsemble(Indexed, CommonModel):
     search_fields = [
         SearchField('nom', boost=10),
         SearchField('nom_pluriel', boost=10),
+        AutocompleteField('nom'),
+        AutocompleteField('nom_pluriel'),
     ]
 
     class Meta(CommonModel.Meta):
@@ -316,9 +321,13 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
         RelatedFields('type', [
             SearchField('nom'),
             SearchField('nom_pluriel'),
+            AutocompleteField('nom'),
+            AutocompleteField('nom_pluriel'),
         ]),
         RelatedFields('individus', INDIVIDU_RELATED_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
+        AutocompleteField('particule_nom'),
+        AutocompleteField('nom'),
     ]
     api_fields = [
         APIField('particule_nom'),

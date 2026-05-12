@@ -1,4 +1,4 @@
-from wagtail.search.index import SearchField, RelatedFields
+from wagtail.search.index import AutocompleteField, SearchField, RelatedFields
 
 
 INDIVIDU_RELATED_SEARCH_FIELDS = [
@@ -9,24 +9,46 @@ INDIVIDU_RELATED_SEARCH_FIELDS = [
     SearchField('nom_naissance'),
     SearchField('pseudonyme'),
     SearchField('prenoms'),
+    AutocompleteField('calc_titre'),
+    AutocompleteField('particule_nom'),
+    AutocompleteField('nom'),
+    AutocompleteField('particule_nom_naissance'),
+    AutocompleteField('nom_naissance'),
+    AutocompleteField('pseudonyme'),
+    AutocompleteField('prenoms'),
+    AutocompleteField('prenoms_complets'),
 ]
 ENSEMBLE_RELATED_SEARCH_FIELDS = [
     SearchField('particule_nom'),
     SearchField('nom'),
+    AutocompleteField('particule_nom'),
+    AutocompleteField('nom'),
 ]
 LIEU_RELATED_SEARCH_FIELDS = [
     SearchField('nom'),
-    RelatedFields('parent', [SearchField('nom')]),
-    RelatedFields('nature', [SearchField('nom')]),
+    RelatedFields('parent', [
+        SearchField('nom'),
+        AutocompleteField('nom'),
+    ]),
+    RelatedFields('nature', [
+        SearchField('nom'),
+        AutocompleteField('nom'),
+    ]),
+    AutocompleteField('nom'),
 ]
 PROFESSION_RELATED_SEARCH_FIELDS = [
     SearchField('nom'),
     SearchField('nom_pluriel'),
-    SearchField('feminin'),
+    SearchField('nom_feminin'),
+    AutocompleteField('nom'),
+    AutocompleteField('nom_pluriel'),
+    AutocompleteField('nom_feminin'),
 ]
 PARTIE_RELATED_SEARCH_FIELDS = [
     SearchField('nom'),
     SearchField('nom_pluriel'),
+    AutocompleteField('nom'),
+    AutocompleteField('nom_pluriel'),
 ]
 OEUVRE_RELATED_SEARCH_FIELDS = [
     SearchField('prefixe_titre'),
@@ -55,6 +77,10 @@ OEUVRE_RELATED_SEARCH_FIELDS = [
     RelatedFields('pupitres', [
         RelatedFields('partie', PARTIE_RELATED_SEARCH_FIELDS),
     ]),
+    AutocompleteField('prefixe_titre'),
+    AutocompleteField('titre'),
+    AutocompleteField('prefixe_titre_secondaire'),
+    AutocompleteField('titre_secondaire'),
 ]
 SOURCE_RELATED_SEARCH_FIELDS = [
     RelatedFields('type', [
@@ -76,6 +102,7 @@ DISTRIBUTION_SEARCH_FIELDS = [
 ]
 CARACTERISTIQUES_PROGRAMME_SEARCH_FIELDS = [
     SearchField('valeur'),
+    AutocompleteField('valeur'),
 ]
 PROGRAMME_SEARCH_FIELDS = [
     RelatedFields('distribution', DISTRIBUTION_SEARCH_FIELDS),

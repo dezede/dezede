@@ -17,7 +17,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 from tinymce.models import HTMLField
-from wagtail.search.index import Indexed, RelatedFields, SearchField
+from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
 from libretto.constants import SOURCE_RELATED_SEARCH_FIELDS
 
@@ -52,6 +52,8 @@ class TypeDeSource(Indexed, CommonModel, SlugModel):
     search_fields = [
         SearchField('nom', boost=10),
         SearchField('nom_pluriel', boost=10),
+        AutocompleteField('nom'),
+        AutocompleteField('nom_pluriel'),
     ]
 
     class Meta(CommonModel.Meta):
@@ -259,6 +261,8 @@ class Source(Indexed, AutoriteModel):
         RelatedFields('type', [
             SearchField('nom'),
             SearchField('nom_pluriel'),
+            AutocompleteField('nom'),
+            AutocompleteField('nom_pluriel'),
         ]),
         SearchField('titre', boost=10),
         SearchField('date'),
@@ -268,6 +272,12 @@ class Source(Indexed, AutoriteModel):
         SearchField('cote'),
         SearchField('transcription', boost=0.1),
         SearchField('notes_publiques', boost=0.1),
+        AutocompleteField('titre'),
+        AutocompleteField('date'),
+        AutocompleteField('date_approx'),
+        AutocompleteField('numero'),
+        AutocompleteField('lieu_conservation'),
+        AutocompleteField('cote'),
     ]
     dezede_search_fields = [
         'titre',

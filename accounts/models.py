@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from wagtail.api.conf import APIField
-from wagtail.search.index import Indexed, SearchField
+from wagtail.search.index import AutocompleteField, Indexed, SearchField
 
 from common.utils.html import href, sc
 from common.utils.text import str_list_w_last
@@ -84,9 +84,9 @@ class HierarchicUser(Indexed, SearchVectorAbstractModel, TreeModelMixin, Abstrac
         ContentType, blank=True, null=True,
         limit_choices_to={'model__in': _get_valid_modelnames_func()},
         verbose_name=_('type d’autorité associée'), on_delete=CASCADE)
-    object_id = PositiveIntegerField(_('identifiant de l’autorité associée'),
+    related_object_id = PositiveIntegerField(_('identifiant de l’autorité associée'),
                                      blank=True, null=True)
-    content_object = GenericForeignKey()
+    content_object = GenericForeignKey(fk_field='related_object_id')
 
     mentor = ForeignKey(
         'self', null=True, blank=True, related_name='disciples',
@@ -118,6 +118,10 @@ class HierarchicUser(Indexed, SearchVectorAbstractModel, TreeModelMixin, Abstrac
         SearchField('last_name', boost=10),
         SearchField('username'),
         SearchField('email'),
+        AutocompleteField('first_name'),
+        AutocompleteField('last_name'),
+        AutocompleteField('username'),
+        AutocompleteField('email'),
     ]
     api_fields = [
         APIField('username'),

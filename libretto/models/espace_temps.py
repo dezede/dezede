@@ -10,7 +10,7 @@ from tinymce.models import HTMLField
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from wagtail.api import APIField
-from wagtail.search.index import SearchField, Indexed, RelatedFields
+from wagtail.search.index import AutocompleteField, SearchField, Indexed, RelatedFields
 
 from libretto.constants import LIEU_RELATED_SEARCH_FIELDS
 
@@ -48,6 +48,8 @@ class NatureDeLieu(Indexed, CommonModel, SlugModel):
     search_fields = [
         SearchField('nom', boost=10),
         SearchField('nom_pluriel', boost=10),
+        AutocompleteField('nom'),
+        AutocompleteField('nom_pluriel'),
     ]
     api_fields = [
         APIField('nom'),
@@ -102,10 +104,14 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
     dezede_search_fields = ['nom']
     search_fields = [
         SearchField('nom', boost=10),
-        RelatedFields('nature', [SearchField('nom')]),
+        RelatedFields('nature', [
+            SearchField('nom'),
+            AutocompleteField('nom'),
+        ]),
         RelatedFields('parent', LIEU_RELATED_SEARCH_FIELDS),
         SearchField('historique', 0.1),
         SearchField('notes_publiques', 0.1),
+        AutocompleteField('nom'),
     ]
     api_fields = [
         APIField('nom'),

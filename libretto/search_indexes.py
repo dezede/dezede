@@ -119,7 +119,7 @@ class ProfessionIndex(CommonSearchIndex, Indexable):
         return apps.get_model('libretto.Profession')
 
 
-def filter_published(sqs, request):
+def filter_sqs_published(sqs, request):
     user_id = request.user.id
     if request.user.is_superuser:
         return sqs

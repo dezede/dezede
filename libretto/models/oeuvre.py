@@ -22,7 +22,7 @@ from psycopg.types.range import Range
 from rest_framework import serializers
 from wagtail.admin.panels import FieldPanel, FieldRowPanel
 from wagtail.api import APIField
-from wagtail.search.index import Indexed, SearchField, RelatedFields
+from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
 
 from libretto.constants import ENSEMBLE_RELATED_SEARCH_FIELDS, OEUVRE_RELATED_SEARCH_FIELDS, PARTIE_RELATED_SEARCH_FIELDS, PROFESSION_RELATED_SEARCH_FIELDS, INDIVIDU_RELATED_SEARCH_FIELDS
 
@@ -65,6 +65,8 @@ class GenreDOeuvre(Indexed, CommonModel, SlugModel):
     search_fields = [
         SearchField('nom', boost=10),
         SearchField('nom_pluriel', boost=10),
+        AutocompleteField('nom'),
+        AutocompleteField('nom_pluriel'),
     ]
     api_fields = [
         APIField('nom'),
@@ -145,6 +147,8 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
         RelatedFields('professions', PROFESSION_RELATED_SEARCH_FIELDS),
         RelatedFields('parent', PARTIE_RELATED_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
+        AutocompleteField('nom'),
+        AutocompleteField('nom_pluriel'),
     ]
     api_fields = [
         APIField('nom'),
@@ -917,12 +921,29 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         RelatedFields('genre', [
             SearchField('nom'),
             SearchField('nom_pluriel'),
+            AutocompleteField('nom'),
+            AutocompleteField('nom_pluriel'),
         ]),
         RelatedFields('pupitres', [
             RelatedFields('partie', PARTIE_RELATED_SEARCH_FIELDS),
         ]),
         RelatedFields('extrait_de', OEUVRE_RELATED_SEARCH_FIELDS),
         SearchField('notes_publiques', boost=0.1),
+        AutocompleteField('prefixe_titre'),
+        AutocompleteField('titre'),
+        AutocompleteField('prefixe_titre_secondaire'),
+        AutocompleteField('titre_secondaire'),
+        AutocompleteField('numero'),
+        AutocompleteField('coupe'),
+        AutocompleteField('tempo'),
+        AutocompleteField('get_tonalite_display'),
+        AutocompleteField('sujet'),
+        AutocompleteField('surnom'),
+        AutocompleteField('nom_courant'),
+        AutocompleteField('incipit'),
+        AutocompleteField('opus'),
+        AutocompleteField('ict'),
+        AutocompleteField('get_extrait'),
     ]
     api_fields = [
         APIField('prefixe_titre'),

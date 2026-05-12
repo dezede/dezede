@@ -18,7 +18,7 @@ from slugify import Slugify
 from tinymce.models import HTMLField
 from tree.query import TreeQuerySetMixin
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.search.index import Indexed, SearchField
+from wagtail.search.index import AutocompleteField, Indexed, SearchField
 
 from db_search.models import SearchVectorAbstractModel
 from typography.models import TypographicModel, TypographicManager, \
@@ -625,6 +625,10 @@ class TypeDeParente(Indexed, CommonModel):
         SearchField('nom_pluriel', boost=10),
         SearchField('nom_relatif', boost=2),
         SearchField('nom_relatif_pluriel', boost=2),
+        AutocompleteField('nom'),
+        AutocompleteField('nom_pluriel'),
+        AutocompleteField('nom_relatif'),
+        AutocompleteField('nom_relatif_pluriel'),
     ]
 
     class Meta(CommonModel.Meta):
@@ -666,6 +670,8 @@ class Etat(Indexed, CommonModel, UniqueSlugModel):
         SearchField('nom', boost=10),
         SearchField('nom_pluriel', boost=10),
         SearchField('message', boost=0.1),
+        AutocompleteField('nom'),
+        AutocompleteField('nom_pluriel'),
     ]
 
     class Meta(object):

@@ -449,6 +449,7 @@ WAGTAILSEARCH_BACKENDS = {
     'default': {
         'BACKEND': 'dezede.search_backend.FixedPostgresSearchBackend',
         'SEARCH_CONFIG': 'french_unaccent_including_stopwords',
+        'AUTOCOMPLETE_SEARCH_CONFIG': 'simple_unaccent',
     },
 }
 
