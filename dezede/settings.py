@@ -42,7 +42,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 SITE_ID = 1
 
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
 
 STORAGES['staticfiles']["BACKEND"] = 'dezede.storage.NonStrictManifestStaticFilesStorage'
 STATICFILES_DIRS = (
@@ -436,6 +436,7 @@ else:
 # Wagtail settings
 #
 
+WAGTAIL_AUTOSAVE_INTERVAL = 0
 WAGTAILADMIN_NOTIFICATION_INCLUDE_SUPERUSERS = False
 WAGTAIL_SITE_NAME = constants.PROJECT_VERBOSE
 WAGTAILEMBEDS_RESPONSIVE_HTML = True
@@ -487,8 +488,6 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
 }
 
 # Custom settings
-
-AUTOCOMPLETE_CONFIG = 'simple_unaccent'
 
 BLOCKED_COUNTRIES = [
     # Sorted by biggest offenders first.
