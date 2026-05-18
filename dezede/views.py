@@ -15,6 +15,7 @@ from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, TemplateView
 from haystack.views import SearchView
+from wagtail.models import Page
 
 from common.utils.html import sanitize_html
 from dossiers.models import Dossier
@@ -103,7 +104,7 @@ def autocomplete(request):
             ('id', s.pk),
             ('str', (s.related_label() if hasattr(s, 'related_label')
                      else str(s))),
-            ('url', s.get_absolute_url()))) for s in suggestions
+            ('url', s.url if isinstance(s, Page) else s.get_absolute_url()))) for s in suggestions
         if s is not None]
     data = json.dumps(suggestions)
     return HttpResponse(data, content_type='application/json')

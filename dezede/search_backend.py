@@ -1,17 +1,18 @@
 from functools import wraps
 from typing import Iterator, OrderedDict
 
-from django.db.models import Count
+from django.db.models import F, Count, QuerySet
 from django.db.models.constants import LOOKUP_SEP
 from grappelli.views.related import AutocompleteLookup
 from wagtail.search.backends.database.postgres.postgres import (
-    PostgresSearchBackend, PostgresSearchQueryCompiler, PostgresSearchResults
+    IndexEntry, PostgresSearchBackend, PostgresSearchQueryCompiler, PostgresSearchResults, PostgresAutocompleteQueryCompiler
 )
-from wagtail.search.index import BaseField, Indexed, RelatedFields
+from wagtail.search.index import BaseField, Indexed, RelatedFields, class_is_indexed
 from wagtail.search.backends import get_search_backend
+from wagtail.search.backends.base import EmptySearchResults
 
 
-class FixedPostgresSearchQueryCompiler(PostgresSearchQueryCompiler):
+class FixedSearchCompilerMixin:
     def _get_filters_from_where_node(self, where_node, check_only=False):
         # We use PostgreSQL, so FilterFields are pointless.
         # It's a Wagtail bug.
@@ -21,6 +22,33 @@ class FixedPostgresSearchQueryCompiler(PostgresSearchQueryCompiler):
         # We use PostgreSQL, so FilterFields are pointless.
         # It's a Wagtail bug.
         yield from []
+
+    def get_search_fields_for_model(self):
+        if self.queryset.model is IndexEntry:
+            return []
+        return super().get_search_fields_for_model()
+
+    def _get_filterable_field(self, field_attname):
+        if self.queryset.model is IndexEntry:
+            return None
+        return super()._get_filterable_field(field_attname)
+
+
+class FixedPostgresSearchQueryCompiler(FixedSearchCompilerMixin, PostgresSearchQueryCompiler):
+    def get_index_vectors(self, search_query):
+        if self.queryset.model is IndexEntry:
+            return [
+                (F("title"), F("title_norm")),
+                (F("body"), 1.0),
+            ]
+        return super().get_index_vectors(search_query)
+
+
+class FixedPostgresAutocompleteQueryCompiler(FixedSearchCompilerMixin, PostgresAutocompleteQueryCompiler):
+    def get_index_vectors(self, search_query):
+        if self.queryset.model is IndexEntry:
+            return [(F("autocomplete"), F("title_norm"))]
+        return [(F("index_entries__autocomplete"), F("index_entries__title_norm"))]
 
 
 class FixedPostgresSearchResults(PostgresSearchResults):
@@ -41,7 +69,35 @@ class FixedPostgresSearchResults(PostgresSearchResults):
 
 class FixedPostgresSearchBackend(PostgresSearchBackend):
     query_compiler_class = FixedPostgresSearchQueryCompiler
+    autocomplete_query_compiler_class = FixedPostgresAutocompleteQueryCompiler
     results_class = FixedPostgresSearchResults
+
+    def _search(self, query_compiler_class, query, model_or_queryset, **kwargs):
+        # Copied from the BaseSearchBackend, with a condition changed to support querying IndexEntry directly.
+
+        # Find model/queryset
+        if isinstance(model_or_queryset, QuerySet):
+            model = model_or_queryset.model
+            queryset = model_or_queryset
+        else:
+            model = model_or_queryset
+            queryset = model_or_queryset.objects.all()
+
+        # Model must be a class that is in the index
+        if model is not IndexEntry and not class_is_indexed(model):
+            return EmptySearchResults()
+
+        # Check that there's still a query string after the clean up
+        if query == "":
+            return EmptySearchResults()
+
+        # Search
+        search_query_compiler = query_compiler_class(queryset, query, **kwargs)
+
+        # Check the query
+        search_query_compiler.check()
+
+        return self.results_class(self, search_query_compiler)
 
 
 @wraps(Indexed.get_indexed_objects)

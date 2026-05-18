@@ -1,17 +1,20 @@
 from django.apps import apps
 from django.conf import settings
-from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q, QuerySet
 from django.utils import translation
 from haystack import connections
 from haystack.exceptions import NotHandled
 from haystack.indexes import (
     SearchIndex, Indexable, CharField, EdgeNgramField, DateField, BooleanField,
     IntegerField)
-from haystack.query import SearchQuerySet
 from tree.models import TreeModelMixin
+from wagtail.models import Page
+from wagtail.query import PageQuerySet
 from wagtail.search.backends import get_search_backend
+from wagtail.search.models import IndexEntry
 
-from libretto.models.base import PublishedQuerySet
+from libretto.models.base import PublishedModel, PublishedQuerySet
 from typography.utils import replace
 
 
@@ -142,39 +145,43 @@ def get_haystack_index(model):
         return
 
 
-MINIMUM_SCORE = 5.0
-RATIO_BETWEEN_FIRST_AND_LAST = 1/3
+RATIO_BETWEEN_FIRST_AND_LAST = 1/5
 
 
-def result_iterator(sqs):
-    results = list(sqs)
+def result_iterator(qs: QuerySet):
+    results = list(qs)
 
     if results:
-        min_score = max(results[0].score * RATIO_BETWEEN_FIRST_AND_LAST,
-                        MINIMUM_SCORE)
+        min_score = results[0]._score * RATIO_BETWEEN_FIRST_AND_LAST
         for result in results:
-            if result.score < min_score:
+            if result._score < min_score:
                 break
-            yield result.object
+            if isinstance(result, IndexEntry):
+                yield result.content_object
+            else:
+                yield result
 
 
 def autocomplete_search(request, q, model=None, max_results=5):
     q = replace(q)
-    sqs = SearchQuerySet()
+    s = get_search_backend()
+
     if model is None:
-        unified_index = get_haystack_unified_index()
-        models = unified_index.get_indexed_models()
-        models = [model for model in models
-                  if 'content_auto' in unified_index.get_index(model).fields]
-        sqs = sqs.models(*models)
-    else:
-        s = get_search_backend()
-        qs = s.autocomplete(q, model).get_queryset()
-        if isinstance(qs, PublishedQuerySet):
-            qs = qs.published(request)
-        return qs[:max_results]
+        model = IndexEntry
 
-    sqs = filter_sqs_published(sqs, request)
-    sqs = sqs.autocomplete(content_auto=q)[:max_results]
+    qs = model.objects.all()
+    if isinstance(qs, PublishedQuerySet):
+        qs = qs.published(request)
+    elif isinstance(qs, PageQuerySet):
+        qs = qs.live()
+    elif qs.model is IndexEntry:
+        qs = qs.filter(
+            content_type__in=[
+                ContentType.objects.get_for_model(m) for m in apps.get_models()
+                if issubclass(m, (PublishedModel, Page))
+            ]
+        )
 
-    return list(result_iterator(sqs))
+    qs = s.autocomplete(q, qs).annotate_score('_score').get_queryset()
+
+    return list(result_iterator(qs[:max_results]))
