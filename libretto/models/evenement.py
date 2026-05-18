@@ -162,6 +162,9 @@ class ElementDeDistribution(CommonModel):
     def related_label(self):
         return self.get_change_link()
 
+    def title(self):
+        return str(self)
+
     def get_change_url(self):
         return reverse(
             'admin:libretto_elementdedistribution_change', args=(self.pk,),
@@ -715,3 +718,6 @@ class Evenement(Indexed, AutoriteModel):
     def related_label(self):
         return href(reverse('admin:libretto_evenement_change',
                             args=(self.pk,)), str(self), new_tab=True)
+
+    def title(self):
+        return str(self)
