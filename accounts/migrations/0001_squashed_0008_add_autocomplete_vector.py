@@ -25,7 +25,6 @@ class Migration(migrations.Migration):
         ('auth', '0001_initial'),
         ('contenttypes', '0001_initial'),
         ('tree', '0001_initial'),
-        ('db_search', '0001_create_search_configurations'),
     ]
 
     operations = [

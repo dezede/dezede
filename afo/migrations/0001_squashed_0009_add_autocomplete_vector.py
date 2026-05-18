@@ -15,7 +15,6 @@ class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('libretto', '0001_squashed_0063_upgrade_check_constraints'),
-        ('db_search', '0001_create_search_configurations'),
     ]
 
     operations = [

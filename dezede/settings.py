@@ -52,7 +52,6 @@ STATICFILES_DIRS = (
 
 
 INSTALLED_APPS = [
-    'db_search',
     'dezede',
     'noridjango',
     'common',

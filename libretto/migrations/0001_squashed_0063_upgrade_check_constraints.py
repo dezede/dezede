@@ -29,7 +29,6 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('contenttypes', '0001_initial'),
         ('tree', '0001_initial'),
-        ('db_search', '0001_create_search_configurations'),
     ]
 
     operations = [
