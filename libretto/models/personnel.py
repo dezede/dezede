@@ -59,13 +59,6 @@ class Profession(Indexed, AutoriteModel, UniqueSlugModel):
         ordering = ('classement', 'nom')
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        relations = ('auteurs', 'elements_de_distribution',)
-        if all_relations:
-            relations += ('enfants', 'individus', 'parties',)
-        return relations
-
     def get_absolute_url(self):
         return reverse('profession_detail', args=(self.slug,))
 
@@ -428,7 +421,3 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
 
     def clean(self):
         self.check_isni()
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('elements_de_distribution',)

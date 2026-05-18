@@ -639,12 +639,6 @@ class TypeDeParente(Indexed, CommonModel):
     def __str__(self):
         return f'{self.nom} ({self.nom_relatif})'
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('parentes',)
-        return ()
-
 
 #
 # Modèles communs

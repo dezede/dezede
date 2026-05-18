@@ -146,10 +146,6 @@ class ElementDeDistribution(CommonModel):
             ),
         ]
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('evenement', 'element_de_programme')
-
     def __str__(self):
         return self.html(tags=False)
 
@@ -192,10 +188,6 @@ class TypeDeCaracteristiqueDeProgramme(Indexed, CommonModel):
         verbose_name = _('type de caractéristique de programme')
         verbose_name_plural = _('types de caractéristique de programme')
         ordering = ('classement',)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('caracteristiques',)
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -266,10 +258,6 @@ class CaracteristiqueDeProgramme(Indexed, CommonModel):
         verbose_name_plural = _('caractéristiques de programme')
         ordering = ('type', 'classement', 'valeur')
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('elements_de_programme',)
-
     def html(self, tags=True, caps=False):
         value = self.valeur
         if caps:
@@ -338,12 +326,6 @@ class ElementDeProgramme(CommonModel):
         verbose_name = _('élément de programme')
         verbose_name_plural = _('éléments de programme')
         ordering = ('position',)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('evenement',)
-        return ()
 
     def calc_caracteristiques(self, tags=False):
         if self.pk is None:
@@ -604,12 +586,6 @@ class Evenement(Indexed, AutoriteModel):
         ordering = ('debut_date', 'debut_heure', 'debut_lieu',
                     'debut_lieu_approx')
         permissions = (('can_change_status', _('Peut changer l’état')),)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('dossiersdevenements',)
-        return ()
 
     def get_absolute_url(self):
         return reverse('evenement_pk', args=(self.pk,))

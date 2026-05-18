@@ -78,13 +78,6 @@ class GenreDOeuvre(Indexed, CommonModel, SlugModel):
         verbose_name_plural = _('genres d’œuvre')
         ordering = ('nom',)
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        relations = ('oeuvres',)
-        if all_relations:
-            relations += ('enfants',)
-        return relations
-
     def __str__(self):
         return strip_tags(self.nom)
 
@@ -178,10 +171,6 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
                 ),
             })
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('pupitres',)
-
     def interpretes(self):
         return self.elements_de_distribution.individus()
 
@@ -270,10 +259,6 @@ class Pupitre(CommonModel):
         verbose_name_plural = _('pupitres')
         ordering = ('-soliste', 'partie')
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('oeuvre',)
-
     def __str__(self):
         n_min = self.quantite_min
         n_max = self.quantite_max
@@ -339,12 +324,6 @@ class ParenteDOeuvres(CommonModel):
         verbose_name_plural = _('parentés d’œuvres')
         ordering = ('type',)
         unique_together = ('type', 'mere', 'fille',)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('mere', 'fille',)
-        return ()
 
     def __str__(self):
         return f'{self.fille} {self.type.nom} {self.mere}'
@@ -472,12 +451,6 @@ class Auteur(CommonModel):
                 name='auteur_has_individu_xor_ensemble',
             ),
         ]
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return (
-            'oeuvre', 'source',
-        )
 
     def html(self, tags=True):
         return mark_safe(str(AuteurBiGrouper((self,), tags=tags)))
@@ -924,15 +897,6 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
         indexes = PathField.get_indexes('oeuvre', 'path')
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        relations = ('enfants', 'elements_de_programme',)
-        if all_relations:
-            relations += (
-                'dossiersdevenements', 'dossiersdoeuvres', 'filles',
-            )
-        return relations
 
     def get_absolute_url(self):
         return reverse('oeuvre_detail', args=[self.slug])

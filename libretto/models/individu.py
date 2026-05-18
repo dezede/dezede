@@ -47,12 +47,6 @@ class ParenteDIndividus(CommonModel):
         verbose_name_plural = _('parentés d’individus')
         ordering = ('type', 'parent', 'enfant')
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('parent', 'enfant')
-        return ()
-
     def clean(self):
         try:
             parent, enfant = self.parent, self.enfant
@@ -173,13 +167,6 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
         verbose_name_plural = _('individus')
         ordering = ('nom',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        relations = ('auteurs', 'elements_de_distribution',)
-        if all_relations:
-            relations += ('enfants', 'dossiersdevenements', 'dossiersdoeuvres')
-        return relations
 
     def get_slug(self):
         parent = super(Individu, self).get_slug()

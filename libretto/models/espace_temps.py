@@ -61,12 +61,6 @@ class NatureDeLieu(Indexed, CommonModel, SlugModel):
         verbose_name_plural = _('natures de lieu')
         ordering = ('slug',)
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('lieux',)
-        return ()
-
     def pluriel(self):
         return calc_pluriel(self)
 
@@ -126,19 +120,6 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         unique_together = ('nom', 'parent',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
         indexes = PathField.get_indexes('lieu', 'path')
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        relations = (
-            'enfants', 'evenement_debut_set', 'evenement_fin_set',
-        )
-        if all_relations:
-            relations += (
-                'individu_naissance_set', 'individu_deces_set',
-                'oeuvre_creation_set',
-                'dossiersdevenements', 'dossiersdoeuvres',
-            )
-        return relations
 
     def get_absolute_url(self):
         return reverse('lieu_detail', args=[self.slug])

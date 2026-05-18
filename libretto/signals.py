@@ -14,6 +14,7 @@ from reversion.models import Revision, Version
 from wagtail.models import Page, Orderable
 
 from common.utils.html import sanitize_html
+from dezede.search_backend import get_search_relations
 from .forms import FasterModelChoiceIterator
 from .search_indexes import get_haystack_index
 
@@ -49,52 +50,14 @@ def handle_whitespaces(sender, **kwargs):
         obj.handle_whitespaces()
 
 
-def get_obj_key(obj, id_attr='pk'):
-    meta = obj._meta
-    return '%s.%s.%s' % (
-        meta.app_label, meta.model_name, getattr(obj, id_attr),
-    )
-
-
-def get_stale_objects(instance, explored=None, all_relations=False):
-    if explored is None:
-        explored = []
-
-    if instance is None:
-        return
-
-    obj_key = get_obj_key(instance)
-    if obj_key in explored:
-        return
-
-    yield instance
-
-    explored.append(obj_key)
-
-    relations = getattr(instance, 'invalidated_relations_when_saved',
-                        lambda all_relations: ())(all_relations=all_relations)
-    for relation in relations:
-        try:
-            related = getattr(instance, relation)
-        except ObjectDoesNotExist:
-            continue
-        if isinstance(related, Manager):
-            related = related.all()
-        if callable(related):
-            related = related()
-        if isinstance(related, QuerySet):
-            for obj in related:
-                for sub_obj in get_stale_objects(
-                        obj, explored, all_relations=all_relations):
-                    yield sub_obj
-        else:
-            for sub_related in get_stale_objects(
-                    related, explored, all_relations=all_relations):
-                yield sub_related
+def get_stale_objects(instance):
+    for related_model, lookups in get_search_relations()[instance._meta.model]['related'].items():
+        for lookup in lookups:
+            yield from related_model.objects.filter(**{lookup: instance}).iterator(chunk_size=1000)
 
 
 def auto_update_haystack(action, instance):
-    for obj in get_stale_objects(instance, all_relations=True):
+    for obj in get_stale_objects(instance):
         model = obj.__class__
 
         index = get_haystack_index(model)

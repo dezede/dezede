@@ -1,6 +1,8 @@
-from functools import wraps
+from collections import defaultdict
+from functools import lru_cache, wraps
 from typing import Iterator, OrderedDict
 
+from django.apps import apps
 from django.db.models import F, Count, QuerySet
 from django.db.models.constants import LOOKUP_SEP
 from grappelli.views.related import AutocompleteLookup
@@ -100,24 +102,40 @@ class FixedPostgresSearchBackend(PostgresSearchBackend):
         return self.results_class(self, search_query_compiler)
 
 
+def recursive_relations_iterator(search_fields: list[BaseField | RelatedFields]) -> Iterator[list[str]]:
+    for search_field in search_fields:
+        if isinstance(search_field, RelatedFields):
+            has_nested_relations = False
+            for child_lookup_list in recursive_relations_iterator(search_field.fields):
+                yield [search_field.field_name, *child_lookup_list]
+                has_nested_relations = True
+            if not has_nested_relations:
+                yield [search_field.field_name]
+
+
+@lru_cache
+def get_search_relations():
+    relations = defaultdict(lambda: {
+        'contained_relations': [],
+        'related': defaultdict(set),
+    })
+    for model in apps.get_models():
+        if not issubclass(model, Indexed):
+            continue
+        contained_relations = []
+        for lookups in recursive_relations_iterator(model.get_search_fields()):
+            contained_relations.append(LOOKUP_SEP.join(lookups))
+            related_model = model
+            for i, lookup in enumerate(lookups):
+                related_model = related_model._meta.get_field(lookup).related_model
+                relations[related_model]['related'][model].add(LOOKUP_SEP.join(lookups[:i+1]))
+        relations[model]['contained_relations'] = contained_relations
+    return relations
+
+
 @wraps(Indexed.get_indexed_objects)
 def faster_get_indexed_objects(cls):
-    def recursive_relations_iterator(search_fields: list[BaseField | RelatedFields]) -> Iterator[list[str]]:
-        for search_field in search_fields:
-            if isinstance(search_field, RelatedFields):
-                has_nested_relations = False
-                for child_lookup_list in recursive_relations_iterator(search_field.fields):
-                    yield [search_field.field_name, *child_lookup_list]
-                    has_nested_relations = True
-                if not has_nested_relations:
-                    yield [search_field.field_name]
-
-    return cls.objects.prefetch_related(
-        *[
-            LOOKUP_SEP.join(lookup_list)
-            for lookup_list in recursive_relations_iterator(cls.get_search_fields())
-        ]
-    )
+    return cls.objects.prefetch_related(*get_search_relations()[cls]['contained_relations'])
 
 Indexed.get_indexed_objects = classmethod(faster_get_indexed_objects)
 
