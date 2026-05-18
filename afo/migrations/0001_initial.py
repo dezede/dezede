@@ -4,7 +4,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0004_auto_20150422_1719'),
+        ('libretto', '0001_squashed_0063_upgrade_check_constraints'),
     ]
 
     operations = [

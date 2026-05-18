@@ -40,7 +40,7 @@ def move_references(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0003_alter_auteur_owner_and_more'),
+        ('libretto', '0001_squashed_0063_upgrade_check_constraints'),
         ('correspondence', '0004_auto_20250906_0008'),
     ]
 
