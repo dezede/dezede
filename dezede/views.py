@@ -16,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, TemplateView
 from wagtail.models import Page
 from wagtail.search.backends import get_search_backend
+from wagtail.search.backends.base import EmptySearchResults
 from wagtail.search.models import IndexEntry
 
 from common.utils.html import sanitize_html
@@ -63,6 +64,9 @@ class HomeView(ListView):
 class SearchView(ListView):
     model = IndexEntry
     template_name = 'search/search.html'
+    content_models = [
+        Dossier, Ensemble, Individu, Lieu, Oeuvre, Profession, Partie, Source, Evenement,
+    ]
 
     def get_model_choices(self):
         return [
@@ -70,22 +74,29 @@ class SearchView(ListView):
                 'model': model,
                 'value': model._meta.label,
                 'label': model._meta.verbose_name_plural,
-            } for model in [
-                Dossier, Ensemble, Individu, Lieu, Oeuvre, Profession, Partie, Source, Evenement,
-            ]]
+            } for model in self.content_models]
 
     def get_queryset(self):
         self.q = replace(self.request.GET.get('q', ''))
         self.selected_models = self.request.GET.getlist('models', [])
         s = get_search_backend()
         qs = IndexEntry.objects.all()
+        filtered_models = [model for model in self.content_models]
         if self.selected_models:
-            qs = qs.filter(content_type__in=[
-                ContentType.objects.get_for_model(choice['model'])
-                for choice in self.get_model_choices()
-                if choice['value'] in self.selected_models
-            ])
-        return s.search(self.q, qs).get_queryset()
+            filtered_models = [
+                model for model in filtered_models
+                if model._meta.label in self.selected_models
+            ]
+        qs = qs.filter(content_type__in=[
+            ContentType.objects.get_for_model(model)
+            for model in filtered_models
+        ])
+        if self.q:
+            results = s.search(self.q, qs)
+            if isinstance(results, EmptySearchResults):
+                return qs.none()
+            return results.get_queryset()
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
