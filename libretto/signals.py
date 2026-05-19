@@ -1,10 +1,10 @@
+from itertools import batched
 from typing import Type
 from django.apps import apps
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
-from django.db.models import Manager, QuerySet, Model
+from django.db.models import QuerySet, Model
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
 from django_rq import job
@@ -12,6 +12,7 @@ import django_rq
 from haystack.signals import BaseSignalProcessor
 from reversion.models import Revision, Version
 from wagtail.models import Page, Orderable
+from wagtail.search.backends import get_search_backend
 
 from common.utils.html import sanitize_html
 from dezede.search_backend import get_search_relations
@@ -50,24 +51,36 @@ def handle_whitespaces(sender, **kwargs):
         obj.handle_whitespaces()
 
 
-def get_stale_objects(instance):
+def get_stale_objects(instance) -> list[QuerySet]:
+    model_querysets = {}
     for related_model, lookups in get_search_relations()[instance._meta.model]['related'].items():
         for lookup in lookups:
-            yield from related_model.objects.filter(**{lookup: instance}).iterator(chunk_size=1000)
+            qs = related_model.objects.filter(**{lookup: instance})
+            if related_model in model_querysets:
+                model_querysets[related_model] |= qs
+            else:
+                model_querysets[related_model] = qs
+
+    return [qs.distinct() for qs in model_querysets.values()]
 
 
-def auto_update_haystack(action, instance):
-    for obj in get_stale_objects(instance):
-        model = obj.__class__
-
-        index = get_haystack_index(model)
+def auto_update_haystack(instance):
+    for qs in get_stale_objects(instance):
+        index = get_haystack_index(qs.model)
         if index is None:
             continue
-
-        if action == 'delete':
-            index.remove_object(obj)
-        else:
+        qs = qs.prefetch_related(*get_search_relations()[qs.model]['contained_relations'])
+        for obj in qs.iterator(chunk_size=1000):
             index.update_object(obj)
+
+
+def auto_update_wagtail_search(instance: Model):
+    s = get_search_backend()
+    for qs in get_stale_objects(instance):
+        qs = qs.prefetch_related(*get_search_relations()[qs.model]['contained_relations'])
+        index = s.get_index_for_model(qs.model)
+        for batch in batched(qs.iterator(chunk_size=1000), n=1000):
+            index.add_items(qs.model, batch)
 
 
 @job
@@ -86,7 +99,11 @@ def auto_invalidate(action, app_label, model_name, pk):
         return
 
     try:
-        auto_update_haystack(action, model._default_manager.get(pk=pk))
+        auto_update_wagtail_search(model._default_manager.get(pk=pk))
+    except model.DoesNotExist:
+        pass  # The object was deleted in the meantime.
+    try:
+        auto_update_haystack(model._default_manager.get(pk=pk))
     except model.DoesNotExist:
         pass  # The object was deleted in the meantime.
 
