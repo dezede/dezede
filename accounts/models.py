@@ -13,12 +13,12 @@ from django.utils.translation import gettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from wagtail.api.conf import APIField
+from wagtail.search.index import AutocompleteField, Indexed, SearchField
 
 from common.utils.html import href, sc
 from common.utils.text import str_list_w_last
 from libretto.models.base import (
     AutoriteModel, CommonTreeManager, CommonTreeQuerySet, )
-from db_search.models import SearchVectorAbstractModel
 
 #
 # Hack to monkey patch the user model
@@ -70,7 +70,7 @@ def _get_valid_modelnames_func(autorites_only=True):
     return ValidModelNames()
 
 
-class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
+class HierarchicUser(Indexed, TreeModelMixin, AbstractUser):
     show_email = BooleanField(_('afficher l’email'), default=False)
     website = URLField(_('site internet'), blank=True)
     website_verbose = CharField(
@@ -83,9 +83,9 @@ class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
         ContentType, blank=True, null=True,
         limit_choices_to={'model__in': _get_valid_modelnames_func()},
         verbose_name=_('type d’autorité associée'), on_delete=CASCADE)
-    object_id = PositiveIntegerField(_('identifiant de l’autorité associée'),
+    related_object_id = PositiveIntegerField(_('identifiant de l’autorité associée'),
                                      blank=True, null=True)
-    content_object = GenericForeignKey()
+    content_object = GenericForeignKey(fk_field='related_object_id')
 
     mentor = ForeignKey(
         'self', null=True, blank=True, related_name='disciples',
@@ -111,7 +111,14 @@ class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
 
     objects = HierarchicUserManager()
 
-    dezede_search_fields = ['first_name', 'last_name', 'username', 'email']
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('username'),
+        SearchField('email'),
+        AutocompleteField('title'),
+        AutocompleteField('username'),
+        AutocompleteField('email'),
+    ]
     api_fields = [
         APIField('username'),
         APIField('first_name'),
@@ -122,13 +129,13 @@ class HierarchicUser(SearchVectorAbstractModel, TreeModelMixin, AbstractUser):
         ordering = ['last_name', 'first_name']
         verbose_name = _('utilisateur')
         verbose_name_plural = _('utilisateurs')
-        indexes = [
-            *PathField.get_indexes('user', 'path'),
-            *SearchVectorAbstractModel.Meta.indexes,
-        ]
+        indexes = PathField.get_indexes('user', 'path')
 
     def __str__(self, tags=False):
         return self.html(tags=False)
+
+    def title(self) -> str:  # For IndexEntry.title_norm.
+        return str(self)
 
     def get_full_name(self, tags=False, reverse=False):
         full_name = f'{sc(self.last_name, tags=tags)} {self.first_name}' if (

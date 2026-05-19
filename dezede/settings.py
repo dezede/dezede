@@ -42,7 +42,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 SITE_ID = 1
 
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
 
 STORAGES['staticfiles']["BACKEND"] = 'dezede.storage.NonStrictManifestStaticFilesStorage'
 STATICFILES_DIRS = (
@@ -52,7 +52,6 @@ STATICFILES_DIRS = (
 
 
 INSTALLED_APPS = [
-    'db_search',
     'dezede',
     'noridjango',
     'common',
@@ -205,109 +204,10 @@ IMAGE_CROPPING_THUMB_SIZE = (800, 600)
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'dezede.elasticsearch_backend.ConfigurableElasticSearchEngine',
-        'URL': f'elasticsearch:9200',
-        'INDEX_NAME': 'dezede',
-        'TIMEOUT': 60*5,  # seconds
-        'INCLUDE_SPELLING': True,
+        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
     },
 }
-HAYSTACK_SIGNAL_PROCESSOR = 'libretto.signals.AutoInvalidatorSignalProcessor'
-HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
-ELASTICSEARCH_INDEX_SETTINGS = {
-    'settings': {
-        'analysis': {
-            'analyzer': {
-                'default': {
-                    'type': 'custom',
-                    'tokenizer': 'standard',
-                    'char_filter': ['html_strip'],
-                    'filter': [
-                        'lowercase',
-                        'snowball_fr',
-                        'snowball_de',
-                        'asciifolding',
-                        'elision',
-                        'worddelimiter',
-                    ],
-                },
-                'ngram_analyzer': {
-                    'type': 'custom',
-                    'tokenizer': 'standard',
-                    'char_filter': ['html_strip'],
-                    'filter': [
-                        'haystack_ngram',
-                        'lowercase',
-                        'snowball_fr',
-                        'snowball_de',
-                        'asciifolding',
-                        'elision',
-                        'worddelimiter',
-                    ],
-                },
-                'edgengram_analyzer': {
-                    'type': 'custom',
-                    'tokenizer': 'standard',
-                    'char_filter': ['html_strip'],
-                    'filter': [
-                        'haystack_edgengram',
-                        'lowercase',
-                        'snowball_fr',
-                        'snowball_de',
-                        'asciifolding',
-                        'elision',
-                        'worddelimiter',
-                    ],
-                }
-            },
-            'tokenizer': {
-                'haystack_ngram_tokenizer': {
-                    'type': 'nGram',
-                    'min_gram': 3,
-                    'max_gram': 15,
-                },
-                'haystack_edgengram_tokenizer': {
-                    'type': 'edgeNGram',
-                    'min_gram': 2,
-                    'max_gram': 15,
-                    'side': 'front'
-                }
-            },
-            'filter': {
-                'snowball_fr': {
-                    'type': 'snowball',
-                    'language': 'French',
-                },
-                'snowball_de': {
-                    'type': 'snowball',
-                    'language': 'German2',
-                },
-                'elision': {
-                    'type': 'elision',
-                    'articles': ['l', 'm', 't', 'qu', 'n', 's', 'j', 'd'],
-                },
-                'worddelimiter': {
-                    'type': 'word_delimiter',
-                    'preserve_original': True,
-                },
-                'haystack_ngram': {
-                    'type': 'nGram',
-                    'min_gram': 3,
-                    'max_gram': 15,
-                },
-                'haystack_edgengram': {
-                    'type': 'edgeNGram',
-                    'min_gram': 2,
-                    'max_gram': 15,
-                }
-            }
-        },
-        'index': {
-            'max_result_window': 1000000,
-        },
-    }
-}
 
 CACHES = {
     'default': {
@@ -400,10 +300,6 @@ LOGGING = {
             'handlers': ['rq_console', 'mail_admins'],
             'level': 'DEBUG',
         },
-        'elasticsearch': {
-            'handlers': ['rq_console', 'mail_admins'],
-            'level': 'WARNING',
-        },
     }
 }
 
@@ -436,6 +332,7 @@ else:
 # Wagtail settings
 #
 
+WAGTAIL_AUTOSAVE_INTERVAL = 0
 WAGTAILADMIN_NOTIFICATION_INCLUDE_SUPERUSERS = False
 WAGTAIL_SITE_NAME = constants.PROJECT_VERBOSE
 WAGTAILEMBEDS_RESPONSIVE_HTML = True
@@ -449,6 +346,7 @@ WAGTAILSEARCH_BACKENDS = {
     'default': {
         'BACKEND': 'dezede.search_backend.FixedPostgresSearchBackend',
         'SEARCH_CONFIG': 'french_unaccent_including_stopwords',
+        'AUTOCOMPLETE_SEARCH_CONFIG': 'simple_unaccent',
     },
 }
 
@@ -486,8 +384,6 @@ WAGTAILADMIN_RICH_TEXT_EDITORS = {
 }
 
 # Custom settings
-
-AUTOCOMPLETE_CONFIG = 'simple_unaccent'
 
 BLOCKED_COUNTRIES = [
     # Sorted by biggest offenders first.

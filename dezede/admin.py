@@ -12,7 +12,7 @@ class DiapositiveAdmin(ImageCroppingMixin, VersionAdmin, PublishedAdmin):
                     'position')
     list_editable = ('title', 'subtitle', 'position',)
     related_lookup_fields = {
-        'generic': (('content_type', 'object_id'),),
+        'generic': (('content_type', 'related_object_id'),),
     }
     radio_fields = {
         'text_align': HORIZONTAL,
@@ -21,7 +21,7 @@ class DiapositiveAdmin(ImageCroppingMixin, VersionAdmin, PublishedAdmin):
     }
     fieldsets = (
         (_('Objet lié'), {
-            'fields': (('content_type', 'object_id'),),
+            'fields': (('content_type', 'related_object_id'),),
             'description': _('La diapositive renverra à l’objet '
                              'que vous devez choisir de lier ici.'),
         }),

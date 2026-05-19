@@ -10,9 +10,9 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, DetailView
 from el_pagination.views import AjaxListView
-from haystack.query import SearchQuerySet
 from tree.query import TreeQuerySetMixin
 from viewsets.model import ModelViewSet
+from wagtail.search.backends import get_search_backend
 
 from common.utils.export import launch_export
 from common.utils.text import to_roman
@@ -123,9 +123,8 @@ class BaseEvenementListView(PublishedListView):
 
         search_query = data.get('q')
         if search_query:
-            sqs = SearchQuerySet().models(self.model)
-            sqs = sqs.auto_query(search_query)
-            qs = qs.filter(pk__in=sqs.values_list('pk', flat=True))
+            s = get_search_backend()
+            qs = s.search(search_query, qs, order_by_relevance=False).get_queryset()
 
         filters = self.get_filters(data)
         qs = qs.filter(filters).distinct()
@@ -249,9 +248,8 @@ class CommonTableView(TableView):
     def search(self, queryset, q):
         if not q:
             return queryset
-        sqs = SearchQuerySet().models(self.model).auto_query(q)
-        pk_list = [r.pk for r in sqs[:10 ** 6]]
-        return queryset.filter(pk__in=pk_list)
+        s = get_search_backend()
+        return s.search(q, queryset, order_by_relevance=False).get_queryset()
 
 
 class CommonViewSet(ModelViewSet):

@@ -16,7 +16,9 @@ from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
 from wagtail.api import APIField
-from wagtail.search.index import Indexed, SearchField, RelatedFields
+from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
+
+from libretto.constants import CARACTERISTIQUES_PROGRAMME_SEARCH_FIELDS, DISTRIBUTION_SEARCH_FIELDS, LIEU_RELATED_SEARCH_FIELDS, PROGRAMME_SEARCH_FIELDS
 
 from .base import (
     CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
@@ -121,12 +123,6 @@ class ElementDeDistribution(CommonModel):
         verbose_name = _('élément de distribution')
         verbose_name_plural = _('éléments de distribution')
         ordering = ('partie', 'profession', 'individu', 'ensemble')
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='elementdistrib_search'),
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='elementdistrib_autocomplete'),
-        ]
         constraints = [
             # FIXME: Use an XOR when upgrading to Django >= 4.1.
             CheckConstraint(
@@ -150,10 +146,6 @@ class ElementDeDistribution(CommonModel):
             ),
         ]
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('evenement', 'element_de_programme')
-
     def __str__(self):
         return self.html(tags=False)
 
@@ -166,6 +158,9 @@ class ElementDeDistribution(CommonModel):
     def related_label(self):
         return self.get_change_link()
 
+    def title(self):
+        return str(self)
+
     def get_change_url(self):
         return reverse(
             'admin:libretto_elementdedistribution_change', args=(self.pk,),
@@ -174,38 +169,25 @@ class ElementDeDistribution(CommonModel):
     def get_change_link(self):
         return href(self.get_change_url(), str(self), new_tab=True)
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'partie__autocomplete_vector__autocomplete',
-            'individu__autocomplete_vector__autocomplete',
-            'ensemble__autocomplete_vector__autocomplete',
-        ]
 
-
-class TypeDeCaracteristiqueDeProgramme(CommonModel):
+class TypeDeCaracteristiqueDeProgramme(Indexed, CommonModel):
     nom = CharField(_('nom'), max_length=200, help_text=ex(_('tonalité')),
                     unique=True, db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
                             help_text=PLURAL_MSG)
     classement = SmallIntegerField(_('classement'), default=1)
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('nom_pluriel', boost=10),
+        AutocompleteField('title'),
+        AutocompleteField('nom_pluriel'),
+    ]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('type de caractéristique de programme')
         verbose_name_plural = _('types de caractéristique de programme')
         ordering = ('classement',)
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='typecaracdeprogramme_search'),
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='typecaracprogr_autocomplete'),
-        ]
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('caracteristiques',)
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -245,7 +227,7 @@ class CaracteristiqueManager(CommonManager):
         return self.get_queryset().html(tags=tags, caps=caps)
 
 
-class CaracteristiqueDeProgramme(CommonModel):
+class CaracteristiqueDeProgramme(Indexed, CommonModel):
     type = ForeignKey(
         'TypeDeCaracteristiqueDeProgramme', null=True, blank=True,
         on_delete=PROTECT, related_name='caracteristiques',
@@ -259,23 +241,22 @@ class CaracteristiqueDeProgramme(CommonModel):
 
     objects = CaracteristiqueManager()
 
-    dezede_search_fields = ['valeur']
+    search_fields = [
+        RelatedFields('type', [
+            SearchField('title'),
+            SearchField('nom_pluriel'),
+            AutocompleteField('title'),
+            AutocompleteField('nom_pluriel'),
+        ]),
+        SearchField('title', boost=10),
+        AutocompleteField('title'),
+    ]
 
     class Meta(CommonModel.Meta):
         unique_together = ('type', 'valeur')
         verbose_name = _('caractéristique de programme')
         verbose_name_plural = _('caractéristiques de programme')
         ordering = ('type', 'classement', 'valeur')
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='caracdeprogramme_search'),
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='caracprogr_autocomplete'),
-        ]
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('elements_de_programme',)
 
     def html(self, tags=True, caps=False):
         value = self.valeur
@@ -291,13 +272,6 @@ class CaracteristiqueDeProgramme(CommonModel):
         if self.type:
             return f'{self.type} : {valeur}'
         return valeur
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'type__autocomplete_vector__autocomplete',
-            'autocomplete_vector__autocomplete',
-        ]
 
 
 class ElementDeProgrammeQueryset(CommonQuerySet):
@@ -352,18 +326,6 @@ class ElementDeProgramme(CommonModel):
         verbose_name = _('élément de programme')
         verbose_name_plural = _('éléments de programme')
         ordering = ('position',)
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='elementprogr_search'),
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='elementprogr_autocomplete'),
-        ]
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('evenement',)
-        return ()
 
     def calc_caracteristiques(self, tags=False):
         if self.pk is None:
@@ -423,13 +385,6 @@ class ElementDeProgramme(CommonModel):
 
     def __str__(self):
         return strip_tags(self.html(False))
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'oeuvre__autocomplete_vector__autocomplete',
-            'oeuvre__genre__autocomplete_vector__autocomplete',
-        ]
 
 
 class EvenementQuerySet(PublishedQuerySet):
@@ -587,26 +542,23 @@ class Evenement(Indexed, AutoriteModel):
 
     objects = EvenementManager()
 
-    dezede_search_fields = [
-        'circonstance',
-        'debut_date',
-        'debut_heure',
-        'debut_lieu_approx',
-        'debut_date_approx',
-        'debut_heure_approx',
-    ]
     search_fields = [
-        SearchField('circonstance', boost=10),
-        SearchField('debut_date'),
-        SearchField('debut_heure'),
+        SearchField('title', boost=10),
+        RelatedFields('debut_lieu', LIEU_RELATED_SEARCH_FIELDS),
         SearchField('debut_lieu_approx'),
-        SearchField('debut_date_approx'),
-        SearchField('debut_heure_approx'),
-        RelatedFields('debut_lieu', [
-            SearchField('nom', boost=10),
-            RelatedFields('parent', [SearchField('nom')]),
-        ])
+        SearchField('fin_date'),
+        SearchField('fin_date_approx'),
+        SearchField('fin_heure'),
+        SearchField('fin_heure_approx'),
+        RelatedFields('fin_lieu', LIEU_RELATED_SEARCH_FIELDS),
+        SearchField('fin_lieu_approx'),
+        RelatedFields('caracteristiques', CARACTERISTIQUES_PROGRAMME_SEARCH_FIELDS),
+        RelatedFields('distribution', DISTRIBUTION_SEARCH_FIELDS),
+        RelatedFields('programme', PROGRAMME_SEARCH_FIELDS),
+        SearchField('notes_publiques', boost=0.1),
+        AutocompleteField('title'),
     ]
+
     api_fields = [
         APIField('debut_lieu'),
         APIField('debut_lieu_approx'),
@@ -634,12 +586,6 @@ class Evenement(Indexed, AutoriteModel):
         ordering = ('debut_date', 'debut_heure', 'debut_lieu',
                     'debut_lieu_approx')
         permissions = (('can_change_status', _('Peut changer l’état')),)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('dossiersdevenements',)
-        return ()
 
     def get_absolute_url(self):
         return reverse('evenement_pk', args=(self.pk,))
@@ -749,10 +695,5 @@ class Evenement(Indexed, AutoriteModel):
         return href(reverse('admin:libretto_evenement_change',
                             args=(self.pk,)), str(self), new_tab=True)
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'autocomplete_vector__autocomplete',
-            'debut_lieu__autocomplete_vector__autocomplete',
-            'debut_lieu__parent__autocomplete_vector__autocomplete',
-        ]
+    def title(self):
+        return str(self)

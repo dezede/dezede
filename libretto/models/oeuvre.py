@@ -22,7 +22,9 @@ from psycopg.types.range import Range
 from rest_framework import serializers
 from wagtail.admin.panels import FieldPanel, FieldRowPanel
 from wagtail.api import APIField
-from wagtail.search.index import Indexed, SearchField, RelatedFields
+from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
+
+from libretto.constants import ENSEMBLE_RELATED_SEARCH_FIELDS, OEUVRE_RELATED_SEARCH_FIELDS, PARTIE_RELATED_SEARCH_FIELDS, PROFESSION_RELATED_SEARCH_FIELDS, INDIVIDU_RELATED_SEARCH_FIELDS
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel, SlugModel,
@@ -59,8 +61,12 @@ class GenreDOeuvre(Indexed, CommonModel, SlugModel):
     parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
                               blank=True, verbose_name=_('parents'))
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
-    search_fields = [SearchField('nom'), SearchField('nom_pluriel')]
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('nom_pluriel', boost=10),
+        AutocompleteField('title'),
+        AutocompleteField('nom_pluriel'),
+    ]
     api_fields = [
         APIField('nom'),
         APIField('nom_pluriel'),
@@ -71,13 +77,6 @@ class GenreDOeuvre(Indexed, CommonModel, SlugModel):
         verbose_name = _('genre d’œuvre')
         verbose_name_plural = _('genres d’œuvre')
         ordering = ('nom',)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        relations = ('oeuvres',)
-        if all_relations:
-            relations += ('enfants',)
-        return relations
 
     def __str__(self):
         return strip_tags(self.nom)
@@ -121,7 +120,6 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
         null=True, blank=True, verbose_name=_('premier(ère) interprète'),
     )
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
     panels = [
         FieldPanel('type', widget=RadioSelect),
         FieldRowPanel([
@@ -134,8 +132,14 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
         FieldPanel('premier_interprete'),
     ]
     search_fields = [
-        SearchField('nom'),
-        SearchField('nom_pluriel'),
+        SearchField('title', boost=10),
+        SearchField('nom_pluriel', boost=10),
+        RelatedFields('oeuvre', OEUVRE_RELATED_SEARCH_FIELDS),
+        RelatedFields('professions', PROFESSION_RELATED_SEARCH_FIELDS),
+        RelatedFields('parent', PARTIE_RELATED_SEARCH_FIELDS),
+        SearchField('notes_publiques', boost=0.1),
+        AutocompleteField('title'),
+        AutocompleteField('nom_pluriel'),
     ]
     api_fields = [
         APIField('nom'),
@@ -166,10 +170,6 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
                     'un rôle d’une œuvre donnée.'
                 ),
             })
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('pupitres',)
 
     def interpretes(self):
         return self.elements_de_distribution.individus()
@@ -218,14 +218,6 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
     def short_html(self, pluriel=False, tags=True):
         return self.html(pluriel=pluriel, oeuvre=False, tags=tags)
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'autocomplete_vector__autocomplete',
-            'professions__autocomplete_vector__autocomplete',
-            'oeuvre__autocomplete_vector__autocomplete',
-        ]
-
 
 class PupitreQuerySet(CommonQuerySet):
     def oeuvres(self):
@@ -267,10 +259,6 @@ class Pupitre(CommonModel):
         verbose_name_plural = _('pupitres')
         ordering = ('-soliste', 'partie')
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('oeuvre',)
-
     def __str__(self):
         n_min = self.quantite_min
         n_max = self.quantite_max
@@ -298,25 +286,11 @@ class Pupitre(CommonModel):
             out += f' ({self.partie.oeuvre})'
         return out
 
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'oeuvre__autocomplete_vector__autocomplete',
-            'partie__autocomplete_vector__autocomplete',
-            'partie__professions__autocomplete_vector__autocomplete',
-        ]
-
 
 class TypeDeParenteDOeuvres(TypeDeParente):
     class Meta(TypeDeParente.Meta):
         verbose_name = _('type de parenté d’œuvres')
         verbose_name_plural = _('types de parentés d’œuvres')
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='typeparenteoeuv_search'),
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='typeparenteoeuv_autocomplete'),
-        ]
 
 
 class ParenteDOeuvresManager(CommonManager):
@@ -350,12 +324,6 @@ class ParenteDOeuvres(CommonModel):
         verbose_name_plural = _('parentés d’œuvres')
         ordering = ('type',)
         unique_together = ('type', 'mere', 'fille',)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('mere', 'fille',)
-        return ()
 
     def __str__(self):
         return f'{self.fille} {self.type.nom} {self.mere}'
@@ -483,12 +451,6 @@ class Auteur(CommonModel):
                 name='auteur_has_individu_xor_ensemble',
             ),
         ]
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return (
-            'oeuvre', 'source',
-        )
 
     def html(self, tags=True):
         return mark_safe(str(AuteurBiGrouper((self,), tags=tags)))
@@ -881,29 +843,24 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = OeuvreManager()
 
-    dezede_search_fields = [
-        'prefixe_titre', 'titre',
-        'prefixe_titre_secondaire', 'titre_secondaire', 'numero',
-        'coupe', 'tempo', 'sujet', 'surnom', 'nom_courant', 'incipit',
-        'opus', 'ict',
-    ]
     search_fields = [
-        SearchField('prefixe_titre'), SearchField('titre', boost=True),
-        SearchField('prefixe_titre_secondaire'), SearchField('titre_secondaire'),
-        SearchField('numero'), SearchField('coupe'), SearchField('tempo'), SearchField('get_tonalite_display'),
-        SearchField('sujet'), SearchField('surnom', boost=10), SearchField('nom_courant', boost=10),
-        SearchField('incipit', boost=10),
-        SearchField('opus', boost=10),
-        SearchField('ict', boost=10),
+        SearchField('title', boost=10),
         RelatedFields('auteurs', [
-            RelatedFields('individu', Individu.search_fields),
-            RelatedFields('ensemble', Ensemble.search_fields),
+            RelatedFields('individu', INDIVIDU_RELATED_SEARCH_FIELDS),
+            RelatedFields('ensemble', ENSEMBLE_RELATED_SEARCH_FIELDS),
         ]),
-        RelatedFields('genre', GenreDOeuvre.search_fields),
+        RelatedFields('genre', [
+            SearchField('title'),
+            SearchField('nom_pluriel'),
+            AutocompleteField('title'),
+            AutocompleteField('nom_pluriel'),
+        ]),
         RelatedFields('pupitres', [
-            RelatedFields('partie', Partie.search_fields),
+            RelatedFields('partie', PARTIE_RELATED_SEARCH_FIELDS),
         ]),
-        SearchField('get_extrait')
+        RelatedFields('extrait_de', OEUVRE_RELATED_SEARCH_FIELDS),
+        SearchField('notes_publiques', boost=0.1),
+        AutocompleteField('title'),
     ]
     api_fields = [
         APIField('prefixe_titre'),
@@ -939,19 +896,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         verbose_name_plural = _('œuvres')
         ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
-        indexes = [
-            *PathField.get_indexes('oeuvre', 'path'),
-            *AutoriteModel.Meta.indexes,
-        ]
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        relations = ('enfants', 'elements_de_programme',)
-        if all_relations:
-            relations += (
-                'dossiersdevenements', 'dossiersdoeuvres', 'filles',
-            )
-        return relations
+        indexes = PathField.get_indexes('oeuvre', 'path')
 
     def get_absolute_url(self):
         return reverse('oeuvre_detail', args=[self.slug])
@@ -1233,13 +1178,3 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     _str = __str__
     _str.short_description = _('œuvre')
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'auteurs__individu__autocomplete_vector__autocomplete',
-            'auteurs__ensemble__autocomplete_vector__autocomplete',
-            'autocomplete_vector__autocomplete',
-            'genre__autocomplete_vector__autocomplete',
-            'pupitres__partie__autocomplete_vector__autocomplete',
-        ]

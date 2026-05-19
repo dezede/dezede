@@ -85,17 +85,6 @@ class CommonTestCase(TestCase):
             self.assertURL(change_url)
             self.assertSendForm(change_url)
 
-    def testAdminAutocomplete(self):
-        if self.model is None \
-                or not hasattr(self.model, 'autocomplete_search_fields'):
-            return
-
-        self.assertURL(reverse('grp_autocomplete_lookup'), {
-            'app_label': self.model._meta.app_label,
-            'model_name': self.model_name,
-            'term': 'et',
-        })
-
     def testTemplateRenders(self):
         if not hasattr(self.model, 'get_absolute_url'):
             return
