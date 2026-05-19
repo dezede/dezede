@@ -3,13 +3,11 @@ from typing import Type
 from django.apps import apps
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
-from django.db import connection
 from django.db.models import QuerySet, Model
-from django.db.models.signals import post_save, pre_delete, pre_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django_rq import job
 import django_rq
-from haystack.signals import BaseSignalProcessor
 from reversion.models import Revision, Version
 from wagtail.models import Page, Orderable
 from wagtail.search.backends import get_search_backend
@@ -17,7 +15,6 @@ from wagtail.search.backends import get_search_backend
 from common.utils.html import sanitize_html
 from dezede.search_backend import get_search_relations
 from .forms import FasterModelChoiceIterator
-from .search_indexes import get_haystack_index
 
 
 def is_sender_ignored(sender: Type[Model]) -> bool:
@@ -64,16 +61,6 @@ def get_stale_objects(instance) -> list[QuerySet]:
     return [qs.distinct() for qs in model_querysets.values()]
 
 
-def auto_update_haystack(instance):
-    for qs in get_stale_objects(instance):
-        index = get_haystack_index(qs.model)
-        if index is None:
-            continue
-        qs = qs.prefetch_related(*get_search_relations()[qs.model]['contained_relations'])
-        for obj in qs.iterator(chunk_size=1000):
-            index.update_object(obj)
-
-
 def auto_update_wagtail_search(instance: Model):
     s = get_search_backend()
     for qs in get_stale_objects(instance):
@@ -84,60 +71,24 @@ def auto_update_wagtail_search(instance: Model):
 
 
 @job
-def auto_invalidate(action, app_label, model_name, pk):
+def auto_invalidate(app_label, model_name, pk):
     model = apps.get_model(app_label, model_name)
-
-    if action == 'delete':
-        # Quand un objet est supprimé, la seule chose à faire est de supprimer
-        # l'entrée du moteur de recherche.  En effet, aucun autre objet ne
-        # de devrait être impacté car on a protégé les FK pour éviter
-        # les suppressions en cascade.
-        # WARNING: À surveiller tout de même.
-        index = get_haystack_index(model)
-        if index is not None:
-            index.remove_object('%s.%s.%s' % (app_label, model_name, pk))
-        return
-
     try:
         auto_update_wagtail_search(model._default_manager.get(pk=pk))
     except model.DoesNotExist:
         pass  # The object was deleted in the meantime.
-    try:
-        auto_update_haystack(model._default_manager.get(pk=pk))
-    except model.DoesNotExist:
-        pass  # The object was deleted in the meantime.
 
 
-class AutoInvalidatorSignalProcessor(BaseSignalProcessor):
-    def setup(self):
-        post_save.connect(self.enqueue_save)
-        pre_delete.connect(self.enqueue_delete)
+@receiver(post_save)
+def update_related_search_items(sender, instance, **kwargs):
+    if is_sender_ignored(sender):
+        return
 
-    def teardown(self):
-        post_save.disconnect(self.enqueue_save)
-        pre_delete.disconnect(self.enqueue_delete)
-
-    def enqueue_save(self, sender, instance, created, **kwargs):
-        def inner():
-            if created:
-                return self.enqueue('create', instance, sender, **kwargs)
-            return self.enqueue('save', instance, sender, **kwargs)
-        return connection.on_commit(inner)
-
-    def enqueue_delete(self, sender, instance, **kwargs):
-        return self.enqueue('delete', instance, sender, **kwargs)
-
-    def enqueue(self, action, instance, sender, **kwargs):
-        if is_sender_ignored(sender):
-            return
-
-        django_rq.enqueue(
-            auto_invalidate,
-            args=(action,
-                  instance._meta.app_label, instance._meta.model_name,
-                  instance.pk),
-            result_ttl=0,  # Don’t store the result.
-        )
+    django_rq.enqueue(
+        auto_invalidate,
+        args=(instance._meta.app_label, instance._meta.model_name, instance.pk),
+        result_ttl=0,  # Don’t store the result.
+    )
 
 
 FasterModelChoiceIterator.register_cleanup_signal()

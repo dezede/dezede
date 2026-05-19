@@ -204,109 +204,10 @@ IMAGE_CROPPING_THUMB_SIZE = (800, 600)
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'dezede.elasticsearch_backend.ConfigurableElasticSearchEngine',
-        'URL': f'elasticsearch:9200',
-        'INDEX_NAME': 'dezede',
-        'TIMEOUT': 60*5,  # seconds
-        'INCLUDE_SPELLING': True,
+        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
     },
 }
-HAYSTACK_SIGNAL_PROCESSOR = 'libretto.signals.AutoInvalidatorSignalProcessor'
-HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
 HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
-ELASTICSEARCH_INDEX_SETTINGS = {
-    'settings': {
-        'analysis': {
-            'analyzer': {
-                'default': {
-                    'type': 'custom',
-                    'tokenizer': 'standard',
-                    'char_filter': ['html_strip'],
-                    'filter': [
-                        'lowercase',
-                        'snowball_fr',
-                        'snowball_de',
-                        'asciifolding',
-                        'elision',
-                        'worddelimiter',
-                    ],
-                },
-                'ngram_analyzer': {
-                    'type': 'custom',
-                    'tokenizer': 'standard',
-                    'char_filter': ['html_strip'],
-                    'filter': [
-                        'haystack_ngram',
-                        'lowercase',
-                        'snowball_fr',
-                        'snowball_de',
-                        'asciifolding',
-                        'elision',
-                        'worddelimiter',
-                    ],
-                },
-                'edgengram_analyzer': {
-                    'type': 'custom',
-                    'tokenizer': 'standard',
-                    'char_filter': ['html_strip'],
-                    'filter': [
-                        'haystack_edgengram',
-                        'lowercase',
-                        'snowball_fr',
-                        'snowball_de',
-                        'asciifolding',
-                        'elision',
-                        'worddelimiter',
-                    ],
-                }
-            },
-            'tokenizer': {
-                'haystack_ngram_tokenizer': {
-                    'type': 'nGram',
-                    'min_gram': 3,
-                    'max_gram': 15,
-                },
-                'haystack_edgengram_tokenizer': {
-                    'type': 'edgeNGram',
-                    'min_gram': 2,
-                    'max_gram': 15,
-                    'side': 'front'
-                }
-            },
-            'filter': {
-                'snowball_fr': {
-                    'type': 'snowball',
-                    'language': 'French',
-                },
-                'snowball_de': {
-                    'type': 'snowball',
-                    'language': 'German2',
-                },
-                'elision': {
-                    'type': 'elision',
-                    'articles': ['l', 'm', 't', 'qu', 'n', 's', 'j', 'd'],
-                },
-                'worddelimiter': {
-                    'type': 'word_delimiter',
-                    'preserve_original': True,
-                },
-                'haystack_ngram': {
-                    'type': 'nGram',
-                    'min_gram': 3,
-                    'max_gram': 15,
-                },
-                'haystack_edgengram': {
-                    'type': 'edgeNGram',
-                    'min_gram': 2,
-                    'max_gram': 15,
-                }
-            }
-        },
-        'index': {
-            'max_result_window': 1000000,
-        },
-    }
-}
 
 CACHES = {
     'default': {
@@ -398,10 +299,6 @@ LOGGING = {
         'rq.worker': {
             'handlers': ['rq_console', 'mail_admins'],
             'level': 'DEBUG',
-        },
-        'elasticsearch': {
-            'handlers': ['rq_console', 'mail_admins'],
-            'level': 'WARNING',
         },
     }
 }
