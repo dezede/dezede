@@ -164,9 +164,14 @@ class PartieProfessionsExporter(Exporter):
 class PartieExporter(CommonModelExporter):
     model = Partie
     columns = (
-        'id', 'nom', 'nom_pluriel', 'professions_str', 'parent',
+        'id', 'nom', 'nom_pluriel', 'professions_str', 'parent', 'oeuvre',
+        'oeuvre_str',
     ) + AUTORITE_MODEL_COLUMNS
     m2ms = ('professions',)
+
+    @staticmethod
+    def get_oeuvre_str(obj):
+        return str(obj.oeuvre)
 
     @staticmethod
     def get_professions_str(obj):
