@@ -555,7 +555,7 @@ class Evenement(Indexed, AutoriteModel):
         RelatedFields('caracteristiques', CARACTERISTIQUES_PROGRAMME_SEARCH_FIELDS),
         RelatedFields('distribution', DISTRIBUTION_SEARCH_FIELDS),
         RelatedFields('programme', PROGRAMME_SEARCH_FIELDS),
-        SearchField('notes_publiques', boost=0.1),
+        SearchField('notes_publiques_text', boost=0.1),
         AutocompleteField('title'),
     ]
 

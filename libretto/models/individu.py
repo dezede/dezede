@@ -16,6 +16,7 @@ from rest_framework import fields as rest_fields
 from wagtail.api import APIField
 from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
+from dezede.utils import html_field_value_to_text
 from libretto.constants import PROFESSION_RELATED_SEARCH_FIELDS
 
 from .base import (
@@ -136,7 +137,8 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
         SearchField('title', boost=10),
         SearchField('prenoms_complets'),
         RelatedFields('professions', PROFESSION_RELATED_SEARCH_FIELDS),
-        SearchField('notes_publiques', boost=0.1),
+        SearchField('biographie_text', boost=0.1),
+        SearchField('notes_publiques_text', boost=0.1),
         AutocompleteField('title'),
         AutocompleteField('prenoms_complets'),
     ]
@@ -181,6 +183,10 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
     def link(self):
         return self.html()
     link.short_description = _('lien')
+
+    @property
+    def biographie_text(self) -> str:
+        return html_field_value_to_text(self.biographie)
 
     def oeuvres(self):
         oeuvres = self.auteurs.oeuvres()

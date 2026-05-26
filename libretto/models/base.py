@@ -20,6 +20,7 @@ from tree.query import TreeQuerySetMixin
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.search.index import AutocompleteField, Indexed, SearchField
 
+from dezede.utils import html_field_value_to_text
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 from common.utils.html import capfirst, date_html, href
@@ -288,6 +289,10 @@ class AutoriteModel(PublishedModel):
             FieldPanel('owner', read_only=True),
         ], heading=_('Notes'), classname="collapsed"),
     ]
+
+    @property
+    def notes_publiques_text(self) -> str:
+        return html_field_value_to_text(self.notes_publiques)
 
 
 slugify_unicode_class = Slugify(translate=None, to_lower=True, max_length=50)
@@ -657,7 +662,7 @@ class Etat(Indexed, CommonModel, UniqueSlugModel):
     search_fields = [
         SearchField('title', boost=10),
         SearchField('nom_pluriel', boost=10),
-        SearchField('message', boost=0.1),
+        SearchField('message_text', boost=0.1),
         AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
     ]
@@ -672,3 +677,7 @@ class Etat(Indexed, CommonModel, UniqueSlugModel):
 
     def pluriel(self):
         return calc_pluriel(self)
+
+    @property
+    def message_text(self) -> str:
+        return html_field_value_to_text(self.message)

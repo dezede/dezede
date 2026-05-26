@@ -19,6 +19,7 @@ from easy_thumbnails.files import get_thumbnailer
 from tinymce.models import HTMLField
 from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
+from dezede.utils import html_field_value_to_text
 from libretto.constants import SOURCE_RELATED_SEARCH_FIELDS
 
 from .base import (
@@ -258,8 +259,8 @@ class Source(Indexed, AutoriteModel):
             AutocompleteField('nom_pluriel'),
         ]),
         SearchField('title', boost=10),
-        SearchField('transcription', boost=0.1),
-        SearchField('notes_publiques', boost=0.1),
+        SearchField('transcription_text', boost=0.1),
+        SearchField('notes_publiques_text', boost=0.1),
         AutocompleteField('title'),
     ]
 
@@ -279,6 +280,10 @@ class Source(Indexed, AutoriteModel):
 
     def __str__(self):
         return strip_tags(self.html(False))
+
+    @property
+    def transcription_text(self) -> str:
+        return html_field_value_to_text(self.transcription)
 
     def has_presentation_tab(self):
         def iterator():

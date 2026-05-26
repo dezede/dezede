@@ -47,7 +47,7 @@ class Profession(Indexed, AutoriteModel, UniqueSlugModel):
         SearchField('nom_pluriel', boost=10),
         SearchField('nom_feminin', boost=10),
         RelatedFields('parent', PROFESSION_RELATED_SEARCH_FIELDS),
-        SearchField('notes_publiques', boost=0.1),
+        SearchField('notes_publiques_text', boost=0.1),
         AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
         AutocompleteField('nom_feminin'),
@@ -311,7 +311,7 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
             AutocompleteField('nom_pluriel'),
         ]),
         RelatedFields('individus', INDIVIDU_RELATED_SEARCH_FIELDS),
-        SearchField('notes_publiques', boost=0.1),
+        SearchField('notes_publiques_text', boost=0.1),
         AutocompleteField('title'),
     ]
     api_fields = [

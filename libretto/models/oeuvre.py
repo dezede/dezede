@@ -137,7 +137,7 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
         RelatedFields('oeuvre', OEUVRE_RELATED_SEARCH_FIELDS),
         RelatedFields('professions', PROFESSION_RELATED_SEARCH_FIELDS),
         RelatedFields('parent', PARTIE_RELATED_SEARCH_FIELDS),
-        SearchField('notes_publiques', boost=0.1),
+        SearchField('notes_publiques_text', boost=0.1),
         AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
     ]
@@ -859,7 +859,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
             RelatedFields('partie', PARTIE_RELATED_SEARCH_FIELDS),
         ]),
         RelatedFields('extrait_de', OEUVRE_RELATED_SEARCH_FIELDS),
-        SearchField('notes_publiques', boost=0.1),
+        SearchField('notes_publiques_text', boost=0.1),
         AutocompleteField('title'),
     ]
     api_fields = [

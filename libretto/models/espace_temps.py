@@ -12,6 +12,7 @@ from tree.models import TreeModelMixin
 from wagtail.api import APIField
 from wagtail.search.index import AutocompleteField, SearchField, Indexed, RelatedFields
 
+from dezede.utils import html_field_value_to_text
 from libretto.constants import LIEU_RELATED_SEARCH_FIELDS
 
 from .base import (
@@ -101,8 +102,8 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
             AutocompleteField('title'),
         ]),
         RelatedFields('parent', LIEU_RELATED_SEARCH_FIELDS),
-        SearchField('historique', 0.1),
-        SearchField('notes_publiques', 0.1),
+        SearchField('historique_text', 0.1),
+        SearchField('notes_publiques_text', 0.1),
         AutocompleteField('title'),
     ]
     api_fields = [
@@ -137,6 +138,10 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     def short_link(self):
         return self.html(short=True)
+
+    @property
+    def historique_text(self) -> str:
+        return html_field_value_to_text(self.historique)
 
     def evenements(self):
         qs = self.get_descendants(include_self=True)
