@@ -4,10 +4,14 @@ from typing import Iterator, OrderedDict
 
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import F, Case, CharField, Count, OuterRef, PositiveIntegerField, QuerySet, Subquery, When
+from django.db.models import (
+    F, Case, CharField, Count, Expression, FloatField, OuterRef, PositiveIntegerField, QuerySet, Subquery, When
+)
 from django.db.models.functions import Cast
 from django.db.models.constants import LOOKUP_SEP
 from grappelli.views.related import AutocompleteLookup
+from tree.models import TreeModelMixin
+from treebeard.mp_tree import MP_Node
 from wagtail.models import ReferenceIndex
 from wagtail.search.backends.database.postgres.postgres import (
     IndexEntry, PostgresSearchBackend, PostgresSearchQueryCompiler, PostgresSearchResults, PostgresAutocompleteQueryCompiler
@@ -43,7 +47,7 @@ class FixedSearchCompilerMixin:
             return None
         return super()._get_filterable_field(field_attname)
 
-    model_boosts = {
+    MODEL_BOOSTS = {
         ('libretto', 'oeuvre'): 4.0,
         ('libretto', 'source'): 0.5,
         ('libretto', 'individu'): 6.0,
@@ -52,20 +56,64 @@ class FixedSearchCompilerMixin:
         ('libretto', 'profession'): 2.0,
         ('dossiers', 'dossier'): 8.0,
     }
+    LEVEL_ATTENUATION = 0.1
 
-    def build_tsrank(self, vector, query, config=None, boost=1):
+    def build_tsrank(self, vector, query, config=None, boost=1) -> Expression:
         tsrank = super().build_tsrank(vector, query, config, boost)
         model = self.queryset.model
         content_type_expression = OuterRef('content_type') if model is IndexEntry else ContentType.objects.get_for_model(model)
         object_id_expression = OuterRef('object_id' if model is IndexEntry else 'pk')
+
+        django_tree_content_types = [
+            ContentType.objects.get_for_model(model) for model in apps.get_models()
+            if issubclass(model, TreeModelMixin)
+        ]
+        treebeard_content_types = [
+            ContentType.objects.get_for_model(model) for model in apps.get_models()
+            if issubclass(model, MP_Node)
+        ]
         if model is IndexEntry:
             tsrank *= Case(
                 *[
                     When(content_type=ContentType.objects.get_by_natural_key(app_label, model_name), then=boost)
-                    for (app_label, model_name), boost in self.model_boosts.items()
+                    for (app_label, model_name), boost in self.MODEL_BOOSTS.items()
                 ],
                 default=1.0,
-            )
+            ) / (1.0 + self.LEVEL_ATTENUATION * (
+                Case(
+                    *[
+                        When(content_type=content_type, then=Subquery(
+                            (tree_model := content_type.model_class()).objects.filter(
+                                pk=Cast(object_id_expression, tree_model._meta.pk)
+                            ).values('path__len')[:1]
+                        ))
+                        for content_type in django_tree_content_types
+                    ],
+                    *[
+                        When(content_type=content_type, then=Subquery(
+                            (treebeard_model := content_type.model_class()).objects.filter(
+                                pk=Cast(object_id_expression, treebeard_model._meta.pk)
+                            ).values('depth')[:1]
+                        ))
+                        for content_type in treebeard_content_types
+                    ],
+                    default=1.0,
+                    output_field=FloatField(),
+                ) - 1.0
+            ))
+        else:
+            if content_type_expression in django_tree_content_types:
+                tsrank /= (1.0 + self.LEVEL_ATTENUATION * (Subquery(
+                    (tree_model := content_type_expression.model_class()).objects.filter(
+                        pk=Cast(object_id_expression, tree_model._meta.pk)
+                    ).values('path__len')[:1]
+                ) - 1))
+            elif content_type_expression in treebeard_content_types:
+                tsrank /= (1.0 + self.LEVEL_ATTENUATION * (Subquery(
+                    (treebeard_model := content_type_expression.model_class()).objects.filter(
+                        pk=Cast(object_id_expression, treebeard_model._meta.pk)
+                    ).values('depth')[:1]
+                ) - 1))
         return tsrank * (
             1 + 0.01 * SubqueryCount(
                 ReferenceIndex.objects.filter(
