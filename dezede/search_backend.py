@@ -4,8 +4,8 @@ from typing import Iterator, OrderedDict
 
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import F, Case, Count, OuterRef, QuerySet, Subquery, When
-from django.db.models.functions import Coalesce
+from django.db.models import F, Case, CharField, Count, OuterRef, PositiveIntegerField, QuerySet, Subquery, When
+from django.db.models.functions import Cast
 from django.db.models.constants import LOOKUP_SEP
 from grappelli.views.related import AutocompleteLookup
 from wagtail.models import ReferenceIndex
@@ -15,6 +15,11 @@ from wagtail.search.backends.database.postgres.postgres import (
 from wagtail.search.index import BaseField, Indexed, RelatedFields, class_is_indexed
 from wagtail.search.backends import get_search_backend
 from wagtail.search.backends.base import EmptySearchResults
+
+
+class SubqueryCount(Subquery):
+    template = "(SELECT count(*) FROM (%(subquery)s) _count)"
+    output_field = PositiveIntegerField()
 
 
 class FixedSearchCompilerMixin:
@@ -38,31 +43,35 @@ class FixedSearchCompilerMixin:
             return None
         return super()._get_filterable_field(field_attname)
 
+    model_boosts = {
+        ('libretto', 'oeuvre'): 4.0,
+        ('libretto', 'source'): 0.5,
+        ('libretto', 'individu'): 6.0,
+        ('libretto', 'ensemble'): 4.0,
+        ('libretto', 'lieu'): 5.0,
+        ('libretto', 'profession'): 2.0,
+        ('dossiers', 'dossier'): 8.0,
+    }
+
     def build_tsrank(self, vector, query, config=None, boost=1):
         tsrank = super().build_tsrank(vector, query, config, boost)
-        return tsrank * Case(
-            *[
-                When(content_type=ContentType.objects.get_by_natural_key(app_label, model_name), then=boost)
-                for app_label, model_name, boost in [
-                    ('libretto', 'oeuvre', 4.0),
-                    ('libretto', 'source', 0.5),
-                    ('libretto', 'individu', 6.0),
-                    ('libretto', 'ensemble', 4.0),
-                    ('libretto', 'lieu', 5.0),
-                    ('libretto', 'profession', 2.0),
-                    ('dossiers', 'dossier', 8.0),
-                ]
-            ],
-            default=1.0,
-        ) * (
-            1 + Coalesce(
-                Subquery(
-                    ReferenceIndex.objects.filter(
-                        to_content_type=OuterRef('content_type'),
-                        to_object_id=OuterRef('object_id'),
-                    ).annotate(count=Count('pk')).values('count')[:1]
-                ) / 100,
-            0
+        model = self.queryset.model
+        content_type_expression = OuterRef('content_type') if model is IndexEntry else ContentType.objects.get_for_model(model)
+        object_id_expression = OuterRef('object_id' if model is IndexEntry else 'pk')
+        if model is IndexEntry:
+            tsrank *= Case(
+                *[
+                    When(content_type=ContentType.objects.get_by_natural_key(app_label, model_name), then=boost)
+                    for (app_label, model_name), boost in self.model_boosts.items()
+                ],
+                default=1.0,
+            )
+        return tsrank * (
+            1 + 0.01 * SubqueryCount(
+                ReferenceIndex.objects.filter(
+                    to_content_type=content_type_expression,
+                    to_object_id=Cast(object_id_expression, CharField()),
+                ),
             )
         )
 
