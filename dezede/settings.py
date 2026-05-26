@@ -199,12 +199,6 @@ THUMBNAIL_PROCESSORS = (
 ) + thumbnail_settings.THUMBNAIL_PROCESSORS
 IMAGE_CROPPING_THUMB_SIZE = (800, 600)
 
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-    },
-}
-
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
@@ -304,7 +298,6 @@ if DEBUG:
         'django_extensions',
         'wagtail.contrib.styleguide',
     ]
-    # FIXME: remove setting when we remove Haystack, HaystackDebugPanel and TemplateTimings.
     DEBUG_TOOLBAR_PANELS = [
         'debug_toolbar.panels.history.HistoryPanel',
         'debug_toolbar.panels.versions.VersionsPanel',

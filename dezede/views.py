@@ -8,13 +8,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sitemaps import Sitemap
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.contrib.syndication.views import Feed
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.http import HttpResponse
 from django.utils.feedgenerator import DefaultFeed, Enclosure
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, TemplateView
 from wagtail.models import Page
+from wagtail.query import PageQuerySet
 from wagtail.search.backends import get_search_backend
 from wagtail.search.backends.base import EmptySearchResults
 from wagtail.search.models import IndexEntry
@@ -24,7 +25,7 @@ from dossiers.models import Dossier
 from libretto.models import (
     Oeuvre, Lieu, Individu, Source, Evenement, Ensemble, Profession, Partie,
 )
-from libretto.search_indexes import autocomplete_search
+from libretto.models.base import PublishedModel, PublishedQuerySet
 from typography.utils import replace
 from .models import Diapositive
 
@@ -106,6 +107,42 @@ class SearchView(ListView):
             selected_models=self.selected_models,
         )
         return context
+
+
+def result_iterator(qs: QuerySet):
+    results = list(qs)
+
+    if results:
+        for result in results:
+            if isinstance(result, IndexEntry):
+                yield result.content_object
+            else:
+                yield result
+
+
+def autocomplete_search(request, q, model=None, max_results=5):
+    q = replace(q)
+    s = get_search_backend()
+
+    if model is None:
+        model = IndexEntry
+
+    qs = model.objects.all()
+    if isinstance(qs, PublishedQuerySet):
+        qs = qs.published(request)
+    elif isinstance(qs, PageQuerySet):
+        qs = qs.live()
+    elif qs.model is IndexEntry:
+        qs = qs.filter(
+            content_type__in=[
+                ContentType.objects.get_for_model(m) for m in apps.get_models()
+                if issubclass(m, (PublishedModel, Page))
+            ]
+        )
+
+    qs = s.autocomplete(q, qs).annotate_score('_score').get_queryset()
+
+    return list(result_iterator(qs[:max_results]))
 
 
 def autocomplete(request):
