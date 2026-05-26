@@ -46,18 +46,11 @@ class CommonSearchIndex(SearchIndex):
         return prepared_data
 
 
-
-RATIO_BETWEEN_FIRST_AND_LAST = 1/5
-
-
 def result_iterator(qs: QuerySet):
     results = list(qs)
 
     if results:
-        min_score = results[0]._score * RATIO_BETWEEN_FIRST_AND_LAST
         for result in results:
-            if result._score < min_score:
-                break
             if isinstance(result, IndexEntry):
                 yield result.content_object
             else:
