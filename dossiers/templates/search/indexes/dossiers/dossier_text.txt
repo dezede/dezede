@@ -1,7 +1,0 @@
-{{ object.titre|safe }}
-{{ object.titre_court|safe }}
-{{ object.parent|default_if_none:'' }}
-{{ object.presentation|safe }}
-{{ object.contexte|safe }}
-{{ object.sources_et_protocole|safe }}
-{{ object.bibliographie|safe }}

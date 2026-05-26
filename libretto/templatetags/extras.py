@@ -1,5 +1,6 @@
 from html import unescape
 import re
+from bleach import clean
 from bs4 import BeautifulSoup, Comment
 from django.core.exceptions import EmptyResultSet
 from django.contrib.gis.geos import GEOSGeometry
@@ -220,3 +221,27 @@ def change_results_order(context, order_by='default'):
     elif order_by == 'reversed':
         query_dict['order_by'] = order_by
     return '?' + query_dict.urlencode()
+
+
+@register.filter
+def highlight(content: str, query: str, fragment_size: int = 250):
+    highlighted = []
+    groups = re.split(
+        fr'({'|'.join(re.escape(word) for word in query.split())})',
+        clean(content, tags={}, strip=True),
+        flags=re.IGNORECASE,
+    )
+    for i, group in enumerate(groups):
+        if i % 2 == 0:
+            if i == 0:
+                if len(group) > fragment_size:
+                    group = '[…] ' + group[-(fragment_size - 4):].split(maxsplit=1)[1]
+            elif i == len(groups) - 1:
+                if len(group) > fragment_size:
+                    group = group[:fragment_size - 4].rsplit(maxsplit=1)[0] + ' […]'
+            elif len(group) > fragment_size * 2:
+                group = group[:fragment_size - 3].rsplit(maxsplit=1)[0] + ' […] ' + group[-(fragment_size - 3):].split(maxsplit=1)[1]
+            highlighted.append(group)
+        else:
+            highlighted.append(f'<mark>{group}</mark>')
+    return ''.join(highlighted)

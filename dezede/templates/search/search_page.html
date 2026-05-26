@@ -1,4 +1,4 @@
-{% load i18n highlight el_pagination_tags extras %}
+{% load i18n el_pagination_tags extras %}
 
 {% for result in object_list %}
   {% if result %}
@@ -23,11 +23,11 @@
           <small>
             {% if result.content_object.transcription %}
               {% with result.content_object.transcription|stripchars as content %}
-                {% highlight content with query html_tag 'mark' max_length 500 %}
+                {{ content|highlight:query }}
               {% endwith %}
             {% else %}
               {% with result.content_object.html|stripchars as content %}
-                {% highlight content with query html_tag 'mark' %}
+                {{ content|highlight:query }}
               {% endwith %}
             {% endif %}
           </small>

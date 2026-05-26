@@ -1,3 +1,0 @@
-{{ object.nom }}
-{{ object.type|default_if_none:'' }}
-{{ object.notes_publiques|safe }}

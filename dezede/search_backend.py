@@ -3,9 +3,12 @@ from functools import lru_cache, wraps
 from typing import Iterator, OrderedDict
 
 from django.apps import apps
-from django.db.models import F, Count, QuerySet
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import F, Case, Count, OuterRef, QuerySet, Subquery, When
+from django.db.models.functions import Coalesce
 from django.db.models.constants import LOOKUP_SEP
 from grappelli.views.related import AutocompleteLookup
+from wagtail.models import ReferenceIndex
 from wagtail.search.backends.database.postgres.postgres import (
     IndexEntry, PostgresSearchBackend, PostgresSearchQueryCompiler, PostgresSearchResults, PostgresAutocompleteQueryCompiler
 )
@@ -34,6 +37,34 @@ class FixedSearchCompilerMixin:
         if self.queryset.model is IndexEntry:
             return None
         return super()._get_filterable_field(field_attname)
+
+    def build_tsrank(self, vector, query, config=None, boost=1):
+        tsrank = super().build_tsrank(vector, query, config, boost)
+        return tsrank * Case(
+            *[
+                When(content_type=ContentType.objects.get_by_natural_key(app_label, model_name), then=boost)
+                for app_label, model_name, boost in [
+                    ('libretto', 'oeuvre', 4.0),
+                    ('libretto', 'source', 0.5),
+                    ('libretto', 'individu', 6.0),
+                    ('libretto', 'ensemble', 4.0),
+                    ('libretto', 'lieu', 5.0),
+                    ('libretto', 'profession', 2.0),
+                    ('dossiers', 'dossier', 8.0),
+                ]
+            ],
+            default=1.0,
+        ) * (
+            1 + Coalesce(
+                Subquery(
+                    ReferenceIndex.objects.filter(
+                        to_content_type=OuterRef('content_type'),
+                        to_object_id=OuterRef('object_id'),
+                    ).annotate(count=Count('pk')).values('count')[:1]
+                ) / 100,
+            0
+            )
+        )
 
 
 class FixedPostgresSearchQueryCompiler(FixedSearchCompilerMixin, PostgresSearchQueryCompiler):

@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'wagtail.embeds',
     'wagtail.sites',
     'wagtail.users',
+    'wagtail.search',
     'wagtail.snippets',
     'wagtail.documents',
     'wagtail.images',
@@ -87,10 +88,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
 
-    'haystack',
-    # Below haystack so we do not overwrite its `update_index`,
-    # but we can still call `wagtail_update_index`.
-    'wagtail.search',
     'django_rq',
     'correspondence',
     'libretto',
@@ -207,7 +204,6 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
     },
 }
-HAYSTACK_CUSTOM_HIGHLIGHTER = 'dezede.highlighting.CustomHighlighter'
 
 CACHES = {
     'default': {

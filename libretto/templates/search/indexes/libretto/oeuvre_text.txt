@@ -1,6 +1,0 @@
-{{ object.titre_descr }}
-{{ object.get_pupitres_str }}
-{% for individu in object.auteurs.individus %}
-  {{ individu.nom_complet }}
-{% endfor %}
-{{ object.notes_publiques|safe }}

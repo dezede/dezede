@@ -1,6 +1,0 @@
-{{ object.nom }}
-{{ object.nature|default_if_none:'' }}
-{{ object.parent|default_if_none:'' }}
-{{ object.html }}
-{{ object.historique|safe }}
-{{ object.notes_publiques|safe }}
