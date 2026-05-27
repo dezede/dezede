@@ -1,11 +1,11 @@
 from collections import defaultdict
 from functools import lru_cache, wraps
-from typing import Iterator, OrderedDict
+from typing import Iterator, OrderedDict, Type
 
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
-    F, Case, CharField, Count, Expression, FloatField, OuterRef, PositiveIntegerField, QuerySet, Subquery, When
+    F, CharField, Count, Expression, Model, OuterRef, PositiveIntegerField, QuerySet, Subquery
 )
 from django.db.models.functions import Cast
 from django.db.models.constants import LOOKUP_SEP
@@ -14,11 +14,14 @@ from tree.models import TreeModelMixin
 from treebeard.mp_tree import MP_Node
 from wagtail.models import ReferenceIndex
 from wagtail.search.backends.database.postgres.postgres import (
-    IndexEntry, PostgresSearchBackend, PostgresSearchQueryCompiler, PostgresSearchResults, PostgresAutocompleteQueryCompiler
+    IndexEntry, PostgresIndex, PostgresSearchBackend, PostgresSearchQueryCompiler,
+    PostgresSearchResults, PostgresAutocompleteQueryCompiler,
 )
 from wagtail.search.index import BaseField, Indexed, RelatedFields, class_is_indexed
 from wagtail.search.backends import get_search_backend
 from wagtail.search.backends.base import EmptySearchResults
+
+from dezede.models import IndexEntryExtension
 
 
 class SubqueryCount(Subquery):
@@ -47,81 +50,11 @@ class FixedSearchCompilerMixin:
             return None
         return super()._get_filterable_field(field_attname)
 
-    MODEL_BOOSTS = {
-        ('libretto', 'oeuvre'): 4.0,
-        ('libretto', 'source'): 0.5,
-        ('libretto', 'individu'): 6.0,
-        ('libretto', 'ensemble'): 4.0,
-        ('libretto', 'lieu'): 5.0,
-        ('libretto', 'profession'): 2.0,
-        ('dossiers', 'dossier'): 8.0,
-    }
-    LEVEL_ATTENUATION = 0.1
-
     def build_tsrank(self, vector, query, config=None, boost=1) -> Expression:
-        tsrank = super().build_tsrank(vector, query, config, boost)
-        model = self.queryset.model
-        content_type_expression = OuterRef('content_type') if model is IndexEntry else ContentType.objects.get_for_model(model)
-        object_id_expression = OuterRef('object_id' if model is IndexEntry else 'pk')
-
-        django_tree_content_types = [
-            ContentType.objects.get_for_model(model) for model in apps.get_models()
-            if issubclass(model, TreeModelMixin)
-        ]
-        treebeard_content_types = [
-            ContentType.objects.get_for_model(model) for model in apps.get_models()
-            if issubclass(model, MP_Node)
-        ]
-        if model is IndexEntry:
-            tsrank *= Case(
-                *[
-                    When(content_type=ContentType.objects.get_by_natural_key(app_label, model_name), then=boost)
-                    for (app_label, model_name), boost in self.MODEL_BOOSTS.items()
-                ],
-                default=1.0,
-            ) / (1.0 + self.LEVEL_ATTENUATION * (
-                Case(
-                    *[
-                        When(content_type=content_type, then=Subquery(
-                            (tree_model := content_type.model_class()).objects.filter(
-                                pk=Cast(object_id_expression, tree_model._meta.pk)
-                            ).values('path__len')[:1]
-                        ))
-                        for content_type in django_tree_content_types
-                    ],
-                    *[
-                        When(content_type=content_type, then=Subquery(
-                            (treebeard_model := content_type.model_class()).objects.filter(
-                                pk=Cast(object_id_expression, treebeard_model._meta.pk)
-                            ).values('depth')[:1]
-                        ))
-                        for content_type in treebeard_content_types
-                    ],
-                    default=1.0,
-                    output_field=FloatField(),
-                ) - 1.0
-            ))
-        else:
-            if content_type_expression in django_tree_content_types:
-                tsrank /= (1.0 + self.LEVEL_ATTENUATION * (Subquery(
-                    (tree_model := content_type_expression.model_class()).objects.filter(
-                        pk=Cast(object_id_expression, tree_model._meta.pk)
-                    ).values('path__len')[:1]
-                ) - 1))
-            elif content_type_expression in treebeard_content_types:
-                tsrank /= (1.0 + self.LEVEL_ATTENUATION * (Subquery(
-                    (treebeard_model := content_type_expression.model_class()).objects.filter(
-                        pk=Cast(object_id_expression, treebeard_model._meta.pk)
-                    ).values('depth')[:1]
-                ) - 1))
-        return tsrank * (
-            1 + 0.01 * SubqueryCount(
-                ReferenceIndex.objects.filter(
-                    to_content_type=content_type_expression,
-                    to_object_id=Cast(object_id_expression, CharField()),
-                ),
-            )
-        )
+        return F(
+            'extension__boost' if self.queryset.model is IndexEntry
+            else 'index_entries__extension__boost'
+        ) * super().build_tsrank(vector, query, config, boost)
 
 
 class FixedPostgresSearchQueryCompiler(FixedSearchCompilerMixin, PostgresSearchQueryCompiler):
@@ -157,10 +90,66 @@ class FixedPostgresSearchResults(PostgresSearchResults):
         )
 
 
+class FixedPostgresIndex(PostgresIndex):
+    MODEL_BOOSTS = {
+        ('libretto', 'oeuvre'): 4.0,
+        ('libretto', 'source'): 0.5,
+        ('libretto', 'individu'): 6.0,
+        ('libretto', 'ensemble'): 4.0,
+        ('libretto', 'lieu'): 5.0,
+        ('libretto', 'profession'): 2.0,
+        ('dossiers', 'dossier'): 8.0,
+    }
+    REFERENCE_BOOST = 0.001
+    LEVEL_ATTENUATION = 0.1
+
+    def update_row_boosts(self, model: Type[Model], objs: list[Model]):
+        content_type = ContentType.objects.get_for_model(model)
+
+        model_boost = self.MODEL_BOOSTS.get(model, 1.0)
+
+        references = ReferenceIndex.objects.filter(to_content_type=content_type)
+
+        references_boost = 1.0 + self.REFERENCE_BOOST * SubqueryCount(
+            references.filter(to_object_id=Cast(OuterRef('object_id'), CharField()))
+        )
+
+        depth_penalty = 1.0
+        if issubclass(model, (TreeModelMixin, MP_Node)):
+            depth_penalty = (
+                1.0 + self.LEVEL_ATTENUATION * (
+                    Subquery(
+                        model.objects.filter(
+                            pk=Cast(OuterRef('object_id'), model._meta.pk)
+                        ).values('path__len' if issubclass(model, TreeModelMixin) else 'depth')[:1]
+                    ) - 1
+                )
+            )
+
+        entries = IndexEntry.objects.filter(
+            content_type=content_type,
+            object_id__in=[f'{obj.pk}' for obj in objs],
+        ).values_list('pk').annotate(
+            boost=model_boost * references_boost / depth_penalty,
+        )
+
+        IndexEntryExtension.objects.bulk_create(
+            [IndexEntryExtension(pk=pk, boost=boost) for pk, boost in entries],
+            unique_fields=['pk'],
+            update_fields=['boost'],
+            update_conflicts=True,
+        )
+
+    def add_items(self, model, objs) -> None:
+        super().add_items(model, objs)
+        self.update_row_boosts(model, objs)
+
+
 class FixedPostgresSearchBackend(PostgresSearchBackend):
     query_compiler_class = FixedPostgresSearchQueryCompiler
     autocomplete_query_compiler_class = FixedPostgresAutocompleteQueryCompiler
     results_class = FixedPostgresSearchResults
+    index_class = FixedPostgresIndex
 
     def _search(self, query_compiler_class, query, model_or_queryset, **kwargs):
         # Copied from the BaseSearchBackend, with a condition changed to support querying IndexEntry directly.

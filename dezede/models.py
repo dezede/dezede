@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
-    CharField, ImageField, DecimalField, BooleanField, ForeignKey,
+    CharField, FloatField, ImageField, DecimalField, BooleanField, ForeignKey, Model, OneToOneField,
     PositiveIntegerField, PositiveSmallIntegerField, Max, CASCADE)
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -148,3 +148,8 @@ class Diapositive(Indexed, PublishedModel):
             f'height: {thumbnail_instance.height};" />'
         )
     thumbnail.short_description = _('miniature')
+
+
+class IndexEntryExtension(Model):
+    index_entry_ptr = OneToOneField('wagtailsearch.IndexEntry', related_name='extension', on_delete=CASCADE, primary_key=True)
+    boost = FloatField(default=1.0)
