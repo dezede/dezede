@@ -156,7 +156,7 @@ def autocomplete(request):
     suggestions = [
         OrderedDict((
             ('id', s.pk),
-            ('str', (s.related_label() if hasattr(s, 'related_label')
+            ('str', (s.title() if hasattr(s, 'title')
                      else str(s))),
             ('url', s.url if isinstance(s, Page) else s.get_absolute_url()))) for s in suggestions
         if s is not None]
