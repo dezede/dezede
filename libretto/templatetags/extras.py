@@ -226,11 +226,18 @@ def change_results_order(context, order_by='default'):
 @register.filter
 def highlight(content: str, query: str, fragment_size: int = 250):
     highlighted = []
+    words_re = '|'.join(re.escape(word) for word in query.split())
     groups = re.split(
-        fr'({'|'.join(re.escape(word) for word in query.split())})',
-        clean(content, tags={}, strip=True),
+        fr'(?<=\W)({words_re})(?=\W)',
+        # We add extra characters before and after, so our regexp also matches start of string and end of string.
+        f' {clean(content, tags={}, strip=True)} ',
         flags=re.IGNORECASE,
     )
+
+    # Remove extra character at the start and end of the text.
+    groups[0] = groups[0][1:]
+    groups[-1] = groups[-1][:-1]
+
     for i, group in enumerate(groups):
         if i % 2 == 0:
             if i == 0:
