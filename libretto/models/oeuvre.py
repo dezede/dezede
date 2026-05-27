@@ -845,6 +845,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     search_fields = [
         SearchField('title', boost=10),
+        SearchField('get_description', boost=2),
         RelatedFields('auteurs', [
             RelatedFields('individu', INDIVIDU_RELATED_SEARCH_FIELDS),
             RelatedFields('ensemble', ENSEMBLE_RELATED_SEARCH_FIELDS),
@@ -1091,7 +1092,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
         return str_list(l, infix=' ')
 
-    def get_description(self, tags=True):
+    def get_description(self, tags=False):
         l = []
         if self.has_titre_significatif():
             l.append(self.get_titre_non_significatif(tags=tags))
@@ -1173,7 +1174,7 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         return txt
 
     def __str__(self):
-        return strip_tags(self.titre_html(False))  # strip_tags car on autorise
+        return strip_tags(self.titre_html(tags=False))  # strip_tags car on autorise
                          # les rédacteurs à mettre des tags dans les CharFields
 
     _str = __str__
