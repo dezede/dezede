@@ -1,15 +1,17 @@
 from collections import defaultdict
 from functools import lru_cache, wraps
+from itertools import batched
 from typing import Iterator, OrderedDict, Type
 
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
-    F, CharField, Count, Expression, Model, OuterRef, PositiveIntegerField, QuerySet, Subquery
+    F, CharField, Count, Expression, Func, Model, OuterRef, QuerySet, Subquery
 )
-from django.db.models.functions import Cast
+from django.db.models.functions import Cast, Coalesce
 from django.db.models.constants import LOOKUP_SEP
 from grappelli.views.related import AutocompleteLookup
+from tree.fields import PathField
 from tree.models import TreeModelMixin
 from treebeard.mp_tree import MP_Node
 from wagtail.models import ReferenceIndex
@@ -22,11 +24,6 @@ from wagtail.search.backends import get_search_backend
 from wagtail.search.backends.base import EmptySearchResults
 
 from dezede.models import IndexEntryExtension
-
-
-class SubqueryCount(Subquery):
-    template = "(SELECT count(*) FROM (%(subquery)s) _count)"
-    output_field = PositiveIntegerField()
 
 
 class FixedSearchCompilerMixin:
@@ -102,16 +99,46 @@ class FixedPostgresIndex(PostgresIndex):
     }
     REFERENCE_BOOST = 0.001
     LEVEL_ATTENUATION = 0.1
+    ROW_BOOSTS_CHUNK_SIZE = 1000
 
-    def update_row_boosts(self, model: Type[Model], objs: list[Model]):
+    def update_tree_boosts_from_descendants(self, model: Type[Model], batch: list[Model]) -> None:
+        descendant_boosts_by_path = defaultdict(float)
+        for path, boost in model.objects.filter(
+            pk__in=[obj.pk for obj in batch]
+        ).values_list('path', 'index_entries__extension__boost'):
+            for i in range(1, len(path.value)):
+                key = tuple(path.value[:-i])
+                descendant_boosts_by_path[key] = max(descendant_boosts_by_path[key], boost)
+        parent_data = model.objects.filter(
+            path__in=descendant_boosts_by_path
+        ).values_list(
+            'index_entries', 'path', 'index_entries__extension__boost',
+        )
+        parent_entries = []
+        for index_entry_id, path, boost in parent_data:
+            descendant_boost = descendant_boosts_by_path.get(tuple(path))
+            if descendant_boost is not None and descendant_boost > boost:
+                parent_entries.append(
+                    IndexEntryExtension(pk=index_entry_id, boost=descendant_boost)
+                )
+        IndexEntryExtension.objects.bulk_create(
+            parent_entries,
+            unique_fields=['pk'],
+            update_fields=['boost'],
+            update_conflicts=True,
+        )
+
+    def update_row_boosts(self, model: Type[Model], objs: list[Model], stdout=None) -> None:
         content_type = ContentType.objects.get_for_model(model)
 
         model_boost = self.MODEL_BOOSTS.get(model, 1.0)
 
-        references = ReferenceIndex.objects.filter(to_content_type=content_type)
-
-        references_boost = 1.0 + self.REFERENCE_BOOST * SubqueryCount(
-            references.filter(to_object_id=Cast(OuterRef('object_id'), CharField()))
+        references_boost = 1.0 + self.REFERENCE_BOOST * Coalesce(
+            ReferenceIndex.objects.filter(
+                to_content_type=content_type,
+                to_object_id=Cast(OuterRef('object_id'), CharField()),
+            ).order_by().annotate(n=Func('pk', function='COUNT')).values('n'),
+            0,
         )
 
         depth_penalty = 1.0
@@ -126,19 +153,25 @@ class FixedPostgresIndex(PostgresIndex):
                 )
             )
 
-        entries = IndexEntry.objects.filter(
-            content_type=content_type,
-            object_id__in=[f'{obj.pk}' for obj in objs],
-        ).values_list('pk').annotate(
-            boost=model_boost * references_boost / depth_penalty,
-        )
+        for batch in batched(objs, self.ROW_BOOSTS_CHUNK_SIZE):
+            entries = IndexEntry.objects.filter(
+                content_type=content_type,
+                object_id__in=[f'{obj.pk}' for obj in batch],
+            ).values_list('pk').annotate(
+                boost=model_boost * references_boost / depth_penalty,
+            )
 
-        IndexEntryExtension.objects.bulk_create(
-            [IndexEntryExtension(pk=pk, boost=boost) for pk, boost in entries],
-            unique_fields=['pk'],
-            update_fields=['boost'],
-            update_conflicts=True,
-        )
+            index_entry_extensions = [IndexEntryExtension(pk=pk, boost=boost) for pk, boost in entries]
+            IndexEntryExtension.objects.bulk_create(
+                index_entry_extensions,
+                unique_fields=['pk'],
+                update_fields=['boost'],
+                update_conflicts=True,
+            )
+            if issubclass(model, TreeModelMixin):
+                self.update_tree_boosts_from_descendants(model, batch)
+            if stdout is not None:
+                stdout.write('.', ending='')
 
     def add_items(self, model, objs) -> None:
         super().add_items(model, objs)
