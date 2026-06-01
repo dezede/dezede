@@ -38,6 +38,7 @@ def register_icons(icons):
 
 class CommonViewSet(SnippetViewSet):
     list_display = ['owner']
+    # TODO: add 'has_related_object' filter
     list_filter = ['owner']
 
     def get_queryset(self, request):
@@ -98,9 +99,6 @@ class AutoriteViewSet(SnippetViewSet):
         viewset = super().chooser_viewset
         add_snippet_link_button(viewset, feature_name=f'{self.model._meta.model_name}-link')
         return viewset
-
-
-# TODO: add 'has_related_object' filter
 
 
 class EvenementViewSet(AutoriteViewSet):
@@ -227,7 +225,9 @@ class CaracteristiqueDeProgrammeViewSet(CommonViewSet):
 class GenreDOeuvreViewSet(CommonViewSet):
     model = GenreDOeuvre
     icon = 'book'
-    list_display = ['__str__', 'nom_pluriel', *CommonViewSet.list_display]
+    list_display = [
+        '__str__', 'nom_pluriel', 'has_related_objects', *CommonViewSet.list_display,
+    ]
 
 
 class NatureDeLieuViewSet(CommonViewSet):
@@ -253,28 +253,26 @@ class SaisonViewSet(CommonViewSet):
         '__str__', 'lieu', 'ensemble', 'debut', 'fin', 'evenements_count',
         *CommonViewSet.list_filter,
     ]
-    list_filter = ['owner']
 
 
 class TypeDEnsembleViewSet(CommonViewSet):
     model = TypeDEnsemble
     icon = 'people-group'
-    list_display = ['nom', 'nom_pluriel', 'parent', 'owner']
-    list_filter = ['owner']
+    list_display = ['nom', 'nom_pluriel', 'parent', *CommonViewSet.list_display]
 
 
 class TypeDeSourceViewSet(CommonViewSet):
     model = TypeDeSource
     icon = 'book-open'
-    list_display = ['nom', 'nom_pluriel', 'owner']
-    list_filter = ['owner']
+    list_display = ['nom', 'nom_pluriel', *CommonViewSet.list_display]
 
 
 class TypeDeCaracteristiqueDeProgrammeViewSet(CommonViewSet):
     model = TypeDeCaracteristiqueDeProgramme
     icon = 'book-open'
-    list_display = ['nom', 'nom_pluriel', 'classement', 'owner']
-    list_filter = ['owner']
+    list_display = [
+        'nom', 'nom_pluriel', 'classement', *CommonViewSet.list_display,
+    ]
 
 
 class TypeDeParenteDIndividuViewSet(CommonViewSet):
