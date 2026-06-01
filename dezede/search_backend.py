@@ -274,4 +274,12 @@ def wagtail_grappelli_get_searched_queryset(self, qs):
     return s.autocomplete(term, model).get_queryset()
 
 
+@wraps(AutocompleteLookup.get_queryset)
+def wagtail_grappelli_search_get_queryset(self):
+    qs = super(AutocompleteLookup, self).get_queryset()
+    qs = self.get_searched_queryset(qs)
+    return qs.distinct()
+
+
 AutocompleteLookup.get_searched_queryset = wagtail_grappelli_get_searched_queryset
+AutocompleteLookup.get_queryset = wagtail_grappelli_search_get_queryset
