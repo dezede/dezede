@@ -136,7 +136,7 @@ def autocomplete_search(request, q, model=None, max_results=5):
         qs = qs.filter(
             content_type__in=[
                 ContentType.objects.get_for_model(m) for m in apps.get_models()
-                if issubclass(m, (PublishedModel, Page)) and not m in {Diapositive}
+                if issubclass(m, (PublishedModel, Page)) and m not in {Diapositive, Dossier}
             ]
         )
 
