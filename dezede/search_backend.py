@@ -6,12 +6,11 @@ from typing import Iterator, OrderedDict, Type
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
-    F, CharField, Count, Expression, Func, Model, OuterRef, QuerySet, Subquery
+    F, CharField, Count, Expression, Func, Max, Model, OuterRef, QuerySet, Subquery
 )
-from django.db.models.functions import Cast, Coalesce
+from django.db.models.functions import Cast, Coalesce, Left
 from django.db.models.constants import LOOKUP_SEP
 from grappelli.views.related import AutocompleteLookup
-from tree.fields import PathField
 from tree.models import TreeModelMixin
 from treebeard.mp_tree import MP_Node
 from wagtail.models import ReferenceIndex
@@ -97,32 +96,42 @@ class FixedPostgresIndex(PostgresIndex):
         ('libretto', 'profession'): 2.0,
         ('dossiers', 'dossier'): 8.0,
     }
-    REFERENCE_BOOST = 0.001
+    REFERENCE_BOOST = 0.01
     LEVEL_ATTENUATION = 0.1
     ROW_BOOSTS_CHUNK_SIZE = 1000
 
     def update_tree_boosts_from_descendants(self, model: Type[Model], batch: list[Model]) -> None:
-        descendant_boosts_by_path = defaultdict(float)
-        for path, boost in model.objects.filter(
-            pk__in=[obj.pk for obj in batch]
-        ).values_list('path', 'index_entries__extension__boost'):
-            for i in range(1, len(path.value)):
-                key = tuple(path.value[:-i])
-                descendant_boosts_by_path[key] = max(descendant_boosts_by_path[key], boost)
-        parent_data = model.objects.filter(
+        paths_by_level = defaultdict(list)
+        for path, level in model.objects.filter(pk__in=[obj.pk for obj in batch]).values_list(
+            'path', 'path__len' if issubclass(model, TreeModelMixin) else 'depth',
+        ):
+            paths_by_level[level].append(path)
+        descendant_boosts_by_path = {}
+        for level, paths in paths_by_level.items():
+            for path, boost in model.objects.annotate(
+                truncated_path=(
+                    F(f'path__0_{level}') if issubclass(model, TreeModelMixin)
+                    else Left('path', MP_Node.steplen * level)
+                ),
+            ).filter(
+                **({'path__len__gt': level} if issubclass(model, TreeModelMixin) else {'depth': level}),
+                truncated_path__in=paths,
+            ).values_list('truncated_path').annotate(boost=Max('index_entries__extension__boost')):
+                descendant_boosts_by_path[tuple(path)] = boost
+        batch_data = model.objects.filter(
             path__in=descendant_boosts_by_path
         ).values_list(
             'index_entries', 'path', 'index_entries__extension__boost',
         )
-        parent_entries = []
-        for index_entry_id, path, boost in parent_data:
+        extensions = []
+        for index_entry_id, path, boost in batch_data:
             descendant_boost = descendant_boosts_by_path.get(tuple(path))
             if descendant_boost is not None and descendant_boost > boost:
-                parent_entries.append(
+                extensions.append(
                     IndexEntryExtension(pk=index_entry_id, boost=descendant_boost)
                 )
         IndexEntryExtension.objects.bulk_create(
-            parent_entries,
+            extensions,
             unique_fields=['pk'],
             update_fields=['boost'],
             update_conflicts=True,
@@ -168,7 +177,7 @@ class FixedPostgresIndex(PostgresIndex):
                 update_fields=['boost'],
                 update_conflicts=True,
             )
-            if issubclass(model, TreeModelMixin):
+            if issubclass(model, (TreeModelMixin, MP_Node)):
                 self.update_tree_boosts_from_descendants(model, batch)
             if stdout is not None:
                 stdout.write('.', ending='')
