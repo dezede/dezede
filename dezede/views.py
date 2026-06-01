@@ -136,7 +136,7 @@ def autocomplete_search(request, q, model=None, max_results=5):
         qs = qs.filter(
             content_type__in=[
                 ContentType.objects.get_for_model(m) for m in apps.get_models()
-                if issubclass(m, (PublishedModel, Page))
+                if issubclass(m, (PublishedModel, Page)) and not m in {Diapositive}
             ]
         )
 
@@ -156,7 +156,7 @@ def autocomplete(request):
     suggestions = [
         OrderedDict((
             ('id', s.pk),
-            ('str', (s.title() if hasattr(s, 'title')
+            ('str', (s.title() if hasattr(s, 'title') and callable(s.title)
                      else str(s))),
             ('url', s.url if isinstance(s, Page) else s.get_absolute_url()))) for s in suggestions
         if s is not None]
