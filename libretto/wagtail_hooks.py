@@ -36,6 +36,18 @@ def register_icons(icons):
     ]
 
 
+class CommonViewSet(SnippetViewSet):
+    list_display = ['owner']
+    list_filter = ['owner']
+
+    def get_queryset(self, request):
+        user = request.user
+        qs = self.model.objects.all()
+        if not user.is_superuser:
+            return qs.filter(owner__in=user.get_descendants(include_self=True))
+        return qs
+
+
 class AutoritePermissionPolicy(ModelPermissionPolicy):
     def user_has_permission(self, user, action):
         if action in {'add', 'change', 'delete'}:
@@ -200,32 +212,29 @@ class SourceViewSet(AutoriteViewSet):
         return [Column('type', label=capfirst(_('type')))]
 
 
-class EtatViewSet(SnippetViewSet):
+class EtatViewSet(CommonViewSet):
     model = Etat
     icon = 'view'
-    list_display = ['nom', 'nom_pluriel', 'public', 'owner']
-    list_filter = ['owner']
+    list_display = ['nom', 'nom_pluriel', 'public', *CommonViewSet.list_display]
 
 
-class CaracteristiqueDeProgrammeViewSet(SnippetViewSet):
+class CaracteristiqueDeProgrammeViewSet(CommonViewSet):
     model = CaracteristiqueDeProgramme
     icon = 'book-open'
-    list_display = ['__str__', 'classement', 'owner']
-    list_filter = ['owner']
+    list_display = ['__str__', 'classement', *CommonViewSet.list_display]
 
 
-class GenreDOeuvreViewSet(SnippetViewSet):
+class GenreDOeuvreViewSet(CommonViewSet):
     model = GenreDOeuvre
     icon = 'book'
-    list_display = ['__str__', 'nom_pluriel', 'owner']
-    list_filter = ['owner']
+    list_display = ['__str__', 'nom_pluriel', *CommonViewSet.list_display]
 
 
-class NatureDeLieuViewSet(SnippetViewSet):
+class NatureDeLieuViewSet(CommonViewSet):
     model = NatureDeLieu
     icon = 'location-dot'
-    list_display = ['nom', 'nom_pluriel', 'referent', 'owner']
-    list_filter = ['referent', 'owner']
+    list_display = ['nom', 'nom_pluriel', 'referent', *CommonViewSet.list_display]
+    list_filter = ['referent', *CommonViewSet.list_filter]
 
 
 class ProfessionViewSet(SnippetViewSet):
@@ -238,54 +247,52 @@ class ProfessionViewSet(SnippetViewSet):
     list_filter = ['etat', 'owner']
 
 
-class SaisonViewSet(SnippetViewSet):
+class SaisonViewSet(CommonViewSet):
     model = Saison
     list_display = [
         '__str__', 'lieu', 'ensemble', 'debut', 'fin', 'evenements_count',
-        'owner',
+        *CommonViewSet.list_filter,
     ]
     list_filter = ['owner']
 
 
-class TypeDEnsembleViewSet(SnippetViewSet):
+class TypeDEnsembleViewSet(CommonViewSet):
     model = TypeDEnsemble
     icon = 'people-group'
     list_display = ['nom', 'nom_pluriel', 'parent', 'owner']
     list_filter = ['owner']
 
 
-class TypeDeSourceViewSet(SnippetViewSet):
+class TypeDeSourceViewSet(CommonViewSet):
     model = TypeDeSource
     icon = 'book-open'
     list_display = ['nom', 'nom_pluriel', 'owner']
     list_filter = ['owner']
 
 
-class TypeDeCaracteristiqueDeProgrammeViewSet(SnippetViewSet):
+class TypeDeCaracteristiqueDeProgrammeViewSet(CommonViewSet):
     model = TypeDeCaracteristiqueDeProgramme
     icon = 'book-open'
     list_display = ['nom', 'nom_pluriel', 'classement', 'owner']
     list_filter = ['owner']
 
 
-class TypeDeParenteDIndividuViewSet(SnippetViewSet):
+class TypeDeParenteDIndividuViewSet(CommonViewSet):
     model = TypeDeParenteDIndividus
     icon = 'child'
     list_display = [
         'nom', 'nom_pluriel', 'nom_relatif', 'nom_relatif_pluriel',
-        'classement', 'owner',
+        'classement', *CommonViewSet.list_display,
     ]
-    list_filter = ['owner']
 
 
-class TypeDeParenteDOeuvreViewSet(SnippetViewSet):
+class TypeDeParenteDOeuvreViewSet(CommonViewSet):
     model = TypeDeParenteDOeuvres
     icon = 'book'
     list_display = [
         'nom', 'nom_pluriel', 'nom_relatif', 'nom_relatif_pluriel',
-        'classement', 'owner',
+        'classement', *CommonViewSet.list_display,
     ]
-    list_filter = ['owner']
 
 
 class AudioViewSet(SnippetViewSet):
