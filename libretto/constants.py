@@ -1,41 +1,30 @@
-from wagtail.search.index import AutocompleteField, SearchField, RelatedFields
+from wagtail.search.index import SearchField, RelatedFields
 
 
 INDIVIDU_RELATED_SEARCH_FIELDS = [
     SearchField('title'),
     SearchField('prenoms_complets'),
-    AutocompleteField('title'),
-    AutocompleteField('prenoms_complets'),
 ]
 ENSEMBLE_RELATED_SEARCH_FIELDS = [
     SearchField('title'),
-    AutocompleteField('title'),
 ]
 LIEU_RELATED_SEARCH_FIELDS = [
     SearchField('title'),
     RelatedFields('parent', [
         SearchField('title'),
-        AutocompleteField('title'),
     ]),
     RelatedFields('nature', [
         SearchField('title'),
-        AutocompleteField('title'),
     ]),
-    AutocompleteField('title'),
 ]
 PROFESSION_RELATED_SEARCH_FIELDS = [
     SearchField('title'),
     SearchField('nom_pluriel'),
     SearchField('nom_feminin'),
-    AutocompleteField('title'),
-    AutocompleteField('nom_pluriel'),
-    AutocompleteField('nom_feminin'),
 ]
 PARTIE_RELATED_SEARCH_FIELDS = [
     SearchField('title'),
     SearchField('nom_pluriel'),
-    AutocompleteField('title'),
-    AutocompleteField('nom_pluriel'),
 ]
 OEUVRE_RELATED_SEARCH_FIELDS = [
     SearchField('title', boost=10),
@@ -50,7 +39,6 @@ OEUVRE_RELATED_SEARCH_FIELDS = [
     RelatedFields('pupitres', [
         RelatedFields('partie', PARTIE_RELATED_SEARCH_FIELDS),
     ]),
-    AutocompleteField('title'),
 ]
 SOURCE_RELATED_SEARCH_FIELDS = [
     RelatedFields('type', [
@@ -67,7 +55,6 @@ DISTRIBUTION_SEARCH_FIELDS = [
 ]
 CARACTERISTIQUES_PROGRAMME_SEARCH_FIELDS = [
     SearchField('title'),
-    AutocompleteField('title'),
 ]
 PROGRAMME_SEARCH_FIELDS = [
     RelatedFields('distribution', DISTRIBUTION_SEARCH_FIELDS),

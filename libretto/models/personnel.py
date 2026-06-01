@@ -16,7 +16,6 @@ from common.utils.html import capfirst, href, date_html, sc
 from common.utils.sql import get_raw_query
 from common.utils.text import str_list
 from libretto.constants import INDIVIDU_RELATED_SEARCH_FIELDS, PROFESSION_RELATED_SEARCH_FIELDS
-from libretto.models.individu import Individu
 from .base import (CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
                    UniqueSlugModel, AutoriteModel, ISNI_VALIDATORS, IsniModel)
 from .evenement import Evenement
