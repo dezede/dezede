@@ -561,7 +561,14 @@ class CommonAdmin(CustomBaseModelAdmin, ModelAdmin):
         search_term = replace(search_term)
 
         s = get_search_backend()
-        return s.search(search_term, queryset, order_by_relevance=False).get_queryset(), True
+        queryset = s.search(search_term, queryset).get_queryset()
+        request._search_ordering = queryset.query.order_by
+        return queryset, True
+
+    def get_ordering(self, request):
+        if hasattr(request, '_search_ordering'):
+            return request._search_ordering
+        return super().get_ordering(request)
 
 
 class PublishedAdmin(CommonAdmin):
