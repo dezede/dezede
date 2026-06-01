@@ -88,13 +88,13 @@ class FixedPostgresSearchResults(PostgresSearchResults):
 
 class FixedPostgresIndex(PostgresIndex):
     MODEL_BOOSTS = {
-        ('libretto', 'oeuvre'): 4.0,
-        ('libretto', 'source'): 0.5,
-        ('libretto', 'individu'): 6.0,
-        ('libretto', 'ensemble'): 4.0,
-        ('libretto', 'lieu'): 5.0,
-        ('libretto', 'profession'): 2.0,
-        ('dossiers', 'dossier'): 8.0,
+        ('libretto.Œuvre'): 4.0,
+        ('libretto.Source'): 0.5,
+        ('libretto.Individu'): 6.0,
+        ('libretto.Ensemble'): 4.0,
+        ('libretto.Lieu'): 5.0,
+        ('libretto.Profession'): 2.0,
+        ('dossiers.Dossier'): 8.0,
     }
     REFERENCE_BOOST = 0.01
     LEVEL_ATTENUATION = 0.1
@@ -140,7 +140,7 @@ class FixedPostgresIndex(PostgresIndex):
     def update_row_boosts(self, model: Type[Model], objs: list[Model], stdout=None) -> None:
         content_type = ContentType.objects.get_for_model(model)
 
-        model_boost = self.MODEL_BOOSTS.get(model, 1.0)
+        model_boost = self.MODEL_BOOSTS.get((model._meta.label), 1.0)
 
         references_boost = 1.0 + self.REFERENCE_BOOST * Coalesce(
             ReferenceIndex.objects.filter(
