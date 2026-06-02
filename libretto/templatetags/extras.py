@@ -8,6 +8,7 @@ from django.db import connection
 from django.template import Library
 from django.utils.safestring import mark_safe
 from common.utils.sql import get_raw_query
+from common.utils.text import remove_diacritics
 from ..models import Lieu
 from common.utils.html import date_html as date_html_util
 from common.utils.abbreviate import abbreviate as abbreviate_func
@@ -226,7 +227,11 @@ def change_results_order(context, order_by='default'):
 @register.filter
 def highlight(content: str, query: str, fragment_size: int = 250):
     highlighted = []
-    words_re = '|'.join(re.escape(word) for word in query.split())
+    words = set(query.split())
+    # This handles removing diacritics from the query,
+    # but not highlighting words with diacritics that are missing in the query.
+    words.update({remove_diacritics(word) for word in query.split()})
+    words_re = '|'.join(re.escape(word) for word in words)
     groups = re.split(
         fr'(?<=\W)({words_re})(?=\W)',
         # We add extra characters before and after, so our regexp also matches start of string and end of string.
