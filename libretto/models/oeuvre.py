@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import re
 
+from bleach import clean
 from django.apps import apps
 from django.contrib.postgres.fields import IntegerRangeField
 from django.contrib.postgres.indexes import GinIndex
@@ -1179,3 +1180,6 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     _str = __str__
     _str.short_description = _('œuvre')
+
+    def title(self):
+        return clean(self.html(tags=False), tags=[], strip=True)
