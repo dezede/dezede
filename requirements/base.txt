@@ -1,5 +1,5 @@
 # Basics
-wagtail==6.3.5
+wagtail==7.3.2
 wagtail-notes==1.0.3
 https://github.com/BertrandBordage/wagtail_linksnippet/archive/refs/heads/main.zip
 wagtail-font-awesome-svg==2.0
@@ -22,8 +22,7 @@ django-image-cropping==1.7.0
 django-allauth==0.52.0
 
 # Search engine
-django-haystack==3.3.0
-elasticsearch==1.7.0
+modelsearch==1.2.2
 
 # Caching
 django-redis==6.0.0

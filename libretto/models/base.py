@@ -18,8 +18,9 @@ from slugify import Slugify
 from tinymce.models import HTMLField
 from tree.query import TreeQuerySetMixin
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.search.index import AutocompleteField, Indexed, SearchField
 
-from db_search.models import SearchVectorAbstractModel
+from dezede.utils import html_field_value_to_text
 from typography.models import TypographicModel, TypographicManager, \
     TypographicQuerySet
 from common.utils.html import capfirst, date_html, href
@@ -113,7 +114,7 @@ class CommonManager(TypographicManager):
     queryset_class = CommonQuerySet
 
 
-class CommonModel(SearchVectorAbstractModel, TypographicModel):
+class CommonModel(TypographicModel):
     """
     Modèle commun à l’application, ajoutant diverses possibilités.
     """
@@ -125,9 +126,6 @@ class CommonModel(SearchVectorAbstractModel, TypographicModel):
 
     class Meta(TypographicModel.Meta):
         abstract = True  # = prototype de modèle, et non un vrai modèle.
-        indexes = [
-            *SearchVectorAbstractModel.Meta.indexes,
-        ]
 
     def _perform_unique_checks(self, unique_checks):
         # Taken from the overridden method.
@@ -204,6 +202,9 @@ class CommonModel(SearchVectorAbstractModel, TypographicModel):
 
     def related_label(self):
         return str(self)
+
+    def title(self) -> str:  # For IndexEntry.title_norm.
+        return self.related_label()
 
 
 class PublishedQuerySet(CommonQuerySet):
@@ -288,6 +289,10 @@ class AutoriteModel(PublishedModel):
             FieldPanel('owner', read_only=True),
         ], heading=_('Notes'), classname="collapsed"),
     ]
+
+    @property
+    def notes_publiques_text(self) -> str:
+        return html_field_value_to_text(self.notes_publiques)
 
 
 slugify_unicode_class = Slugify(translate=None, to_lower=True, max_length=50)
@@ -604,7 +609,7 @@ class SpaceTimeFields:
         return f'<SpaceTimeFields: {self.name}>'
 
 
-class TypeDeParente(CommonModel):
+class TypeDeParente(Indexed, CommonModel):
     nom = CharField(_('nom'), max_length=100, help_text=LOWER_MSG,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=55, blank=True,
@@ -616,8 +621,13 @@ class TypeDeParente(CommonModel):
         help_text=PLURAL_MSG)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
-    dezede_search_fields = [
-        'nom', 'nom_relatif', 'nom_pluriel', 'nom_relatif_pluriel',
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('nom_pluriel', boost=10),
+        SearchField('nom_relatif_pluriel', boost=2),
+        AutocompleteField('title'),
+        AutocompleteField('nom_pluriel'),
+        AutocompleteField('nom_relatif_pluriel'),
     ]
 
     class Meta(CommonModel.Meta):
@@ -634,19 +644,13 @@ class TypeDeParente(CommonModel):
     def __str__(self):
         return f'{self.nom} ({self.nom_relatif})'
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('parentes',)
-        return ()
-
 
 #
 # Modèles communs
 #
 
 
-class Etat(CommonModel, UniqueSlugModel):
+class Etat(Indexed, CommonModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
                             help_text=PLURAL_MSG)
@@ -654,6 +658,14 @@ class Etat(CommonModel, UniqueSlugModel):
         _('message'), blank=True,
         help_text=_('Message à afficher dans la partie consultation.'))
     public = BooleanField(_('publié'), default=True, db_index=True)
+
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('nom_pluriel', boost=10),
+        SearchField('message_text', boost=0.1),
+        AutocompleteField('title'),
+        AutocompleteField('nom_pluriel'),
+    ]
 
     class Meta(object):
         verbose_name = _('état')
@@ -665,3 +677,7 @@ class Etat(CommonModel, UniqueSlugModel):
 
     def pluriel(self):
         return calc_pluriel(self)
+
+    @property
+    def message_text(self) -> str:
+        return html_field_value_to_text(self.message)

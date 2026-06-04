@@ -10,7 +10,7 @@ import wagtail.images.blocks
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0002_auto_20250727_0352'),
+        ('libretto', '0001_squashed_0063_upgrade_check_constraints'),
         ('correspondence', '0002_auto_20250905_1444'),
     ]
 

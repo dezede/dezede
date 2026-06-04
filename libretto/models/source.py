@@ -17,7 +17,10 @@ from django.utils.translation import gettext, gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 from tinymce.models import HTMLField
-from wagtail.search.index import Indexed, SearchField
+from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
+
+from dezede.utils import html_field_value_to_text
+from libretto.constants import SOURCE_RELATED_SEARCH_FIELDS
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
@@ -39,25 +42,24 @@ __all__ = (
 )
 
 
-class TypeDeSource(CommonModel, SlugModel):
+class TypeDeSource(Indexed, CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
                             db_index=True, help_text=PLURAL_MSG)
     # TODO: Ajouter un classement et changer ordering en conséquence.
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('nom_pluriel', boost=10),
+        AutocompleteField('title'),
+        AutocompleteField('nom_pluriel'),
+    ]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('type de source')
         verbose_name_plural = _('types de source')
         ordering = ('slug',)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('sources',)
-        return ()
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -249,20 +251,17 @@ class Source(Indexed, AutoriteModel):
     objects = SourceManager()
 
     search_fields = [
-        SearchField('titre', boost=10),
-        SearchField('date'),
-        SearchField('date_approx'),
-        SearchField('numero'),
-        SearchField('lieu_conservation'),
-        SearchField('cote'),
-    ]
-    dezede_search_fields = [
-        'titre',
-        'date',
-        'date_approx',
-        'numero',
-        'lieu_conservation',
-        'cote',
+        RelatedFields('parent', SOURCE_RELATED_SEARCH_FIELDS),
+        RelatedFields('type', [
+            SearchField('title'),
+            SearchField('nom_pluriel'),
+            AutocompleteField('title'),
+            AutocompleteField('nom_pluriel'),
+        ]),
+        SearchField('title', boost=10),
+        SearchField('transcription_text', boost=0.1),
+        SearchField('notes_publiques_text', boost=0.1),
+        AutocompleteField('title'),
     ]
 
     class Meta(AutoriteModel.Meta):
@@ -276,12 +275,15 @@ class Source(Indexed, AutoriteModel):
         )
         permissions = (('can_change_status', _('Peut changer l’état')),)
         indexes = [
-            *AutoriteModel.Meta.indexes,
             Index(fields=['position', 'page']),
         ]
 
     def __str__(self):
         return strip_tags(self.html(False))
+
+    @property
+    def transcription_text(self) -> str:
+        return html_field_value_to_text(self.transcription)
 
     def has_presentation_tab(self):
         def iterator():
@@ -637,13 +639,6 @@ class Source(Indexed, AutoriteModel):
         if self.is_image():
             thumbnailer = get_thumbnailer(self.fichier)
             return thumbnailer.get_thumbnail(aliases.get('medium')).url
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'autocomplete_vector__autocomplete',
-            'type__autocomplete_vector__autocomplete',
-        ]
 
 
 class AudioVideoAbstract(Source):

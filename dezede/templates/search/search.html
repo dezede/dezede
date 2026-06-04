@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n highlight humanize static_grouper %}
+{% load i18n humanize el_pagination_tags static_grouper %}
 
 {% block header %}
   <h1>{% block title %}{% trans "Recherche" %}{% endblock %}</h1>
@@ -8,7 +8,7 @@
 {% block content %}
   <form method="get" action=".">
     <div class="input-group col-xs-5">
-      <input type="text" name="q" value="{{ form.q.data|default:""|escape }}"
+      <input type="text" name="q" value="{{ query|default:""|escape }}"
              id="id_q" autofocus="autofocus"
              class="form-control" />
       <span class="input-group-btn">
@@ -19,16 +19,16 @@
     </div>
     <div class="form-group">
       <div class="btn-group btn-group-sm" data-toggle="buttons-checkbox">
-        {% for choice in form.models.field.choices %}
+        {% for model_choice in model_choices %}
           <button type="button"
-                  class="btn btn-default{% if choice.0 in form.models.data %}
+                  class="btn btn-default{% if model_choice.value in selected_models %}
                          active{% endif %}">
             <input type="hidden" name="models"
-                   {% if choice.0 not in form.models.data %}
+                   {% if model_choice.value not in selected_models %}
                    disabled="disabled"{% endif %}
-                   value="{{ choice.0 }}"
-                   id="id_models_{{ forloop.counter0 }}" />
-            {{ choice.1 }}</button>
+                   value="{{ model_choice.value }}"
+                   id="id_models_{{ model_choice.value }}" />
+            {{ model_choice.label|capfirst }}</button>
         {% endfor %}
       </div>
     </div>
@@ -54,19 +54,19 @@
   {% if query %}
     <hr />
 
+    {% paginate 10 object_list as paginated_entries %}
+
     <h3>
-      {{ paginator.object_list.count|apnumber|capfirst }}
-      {% blocktrans count counter=paginator.object_list|length %}résultat{% plural %}résultats{% endblocktrans %}
+      {% get_pages %}
+      {% with count=pages.total_count %}
+        {{ count|apnumber|capfirst }}
+        {% blocktrans count counter=count %}résultat{% plural %}résultats{% endblocktrans %}
+      {% endwith %}
     </h3>
 
-    {% if suggestion %}
-      <p>
-        {% trans "Essayez aussi :" %}
-        <a href="?q={{ suggestion|escape }}">{{ suggestion }}</a>
-      </p>
-    {% endif %}
-
-    {% include 'search/search_page.html' with object_list=paginator.object_list %}
+    {% show_pages %}
+    {% include 'search/search_page.html' with object_list=paginated_entries %}
+    {% show_pages %}
 
   {% else %}
     <p>{% trans "Saisir « chanteuse », « Molière », « opéra » ou encore « théâtre »" %}</p>

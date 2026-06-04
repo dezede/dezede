@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('libretto', '0002_auto_20250727_0352'),
+        ('libretto', '0001_squashed_0063_upgrade_check_constraints'),
         ('wagtailcore', '0089_log_entry_data_json_null_to_object'),
         ('wagtailimages', '0025_alter_image_file_alter_rendition_file'),
     ]

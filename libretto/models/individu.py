@@ -14,9 +14,10 @@ from common.utils.html import href, sc, hlp
 from common.utils.text import str_list, str_list_w_last, ex
 from rest_framework import fields as rest_fields
 from wagtail.api import APIField
-from wagtail.search.index import Indexed
+from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
-from libretto.contants import INDIVIDU_SEARCH_FIELDS
+from dezede.utils import html_field_value_to_text
+from libretto.constants import PROFESSION_RELATED_SEARCH_FIELDS
 
 from .base import (
     CommonModel, AutoriteModel, UniqueSlugModel, TypeDeParente,
@@ -32,12 +33,6 @@ class TypeDeParenteDIndividus(TypeDeParente):
     class Meta(TypeDeParente.Meta):
         verbose_name = _('type de parenté d’individus')
         verbose_name_plural = _('types de parenté d’individus')
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='typeparenteindiv_search'),
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='typeparenteindiv_autocomplete'),
-        ]
 
 
 class ParenteDIndividus(CommonModel):
@@ -52,12 +47,6 @@ class ParenteDIndividus(CommonModel):
         verbose_name = _('parenté d’individus')
         verbose_name_plural = _('parentés d’individus')
         ordering = ('type', 'parent', 'enfant')
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('parent', 'enfant')
-        return ()
 
     def clean(self):
         try:
@@ -144,10 +133,15 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
 
     objects = IndividuManager()
 
-    dezede_search_fields = [
-        'nom', 'nom_naissance', 'prenoms', 'pseudonyme',
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('prenoms_complets'),
+        RelatedFields('professions', PROFESSION_RELATED_SEARCH_FIELDS),
+        SearchField('biographie_text', boost=0.1),
+        SearchField('notes_publiques_text', boost=0.1),
+        AutocompleteField('title'),
+        AutocompleteField('prenoms_complets'),
     ]
-    search_fields = INDIVIDU_SEARCH_FIELDS
     api_fields = [
         APIField('particule_nom'),
         APIField('nom'),
@@ -176,13 +170,6 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
         ordering = ('nom',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
 
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        relations = ('auteurs', 'elements_de_distribution',)
-        if all_relations:
-            relations += ('enfants', 'dossiersdevenements', 'dossiersdoeuvres')
-        return relations
-
     def get_slug(self):
         parent = super(Individu, self).get_slug()
         return slugify_unicode(self.nom) or parent
@@ -196,6 +183,10 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
     def link(self):
         return self.html()
     link.short_description = _('lien')
+
+    @property
+    def biographie_text(self) -> str:
+        return html_field_value_to_text(self.biographie)
 
     def oeuvres(self):
         oeuvres = self.auteurs.oeuvres()

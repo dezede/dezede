@@ -8,7 +8,7 @@ import examens.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0053_alter_membre_instrument'),
+        ('libretto', '0001_squashed_0063_upgrade_check_constraints'),
         ('examens', '0003_auto_20180323_1925'),
     ]
 

@@ -27,26 +27,6 @@ services:
       interval: 1s
       timeout: 1s
       retries: 60
-  elasticsearch:
-    # FIXME: Use the alpine image when it is more stable (we get incomprehensible mountpoint issues with it).
-    image: elasticsearch:1.7.6
-    volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
-    expose:
-      - 9200
-    networks:
-      internal:
-    restart: always
-    healthcheck:
-      test: wget http://elasticsearch:9200 -q -O - > /dev/null
-      interval: 1s
-      timeout: 1s
-      retries: 60
-    # Elasticsearch can fail to boot if the number of open files is too low.
-    ulimits:
-      nofile:
-        soft: 65535
-        hard: 65535
   migrate:
     command: sh -c "python manage.py collectstatic --ignore bootstrap/docs/* --no-input && python manage.py migrate"
     volumes:
@@ -54,8 +34,6 @@ services:
       - static:/srv/static
     depends_on:
       redis:
-        condition: service_healthy
-      elasticsearch:
         condition: service_healthy
     deploy:
       resources:
@@ -89,8 +67,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
       migrate:
         condition: service_completed_successfully
   django:
@@ -102,8 +78,6 @@ services:
       - redis-socket:/var/run/redis
     depends_on:
       redis:
-        condition: service_healthy
-      elasticsearch:
         condition: service_healthy
       rq:
         condition: service_started
@@ -154,7 +128,6 @@ services:
 volumes:
   redis-data:
   redis-socket:
-  elasticsearch-data:
   static:
 
 

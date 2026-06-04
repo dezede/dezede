@@ -1,8 +1,4 @@
-{% load i18n highlight el_pagination_tags extras %}
-
-{% paginate 10 object_list %} {# FIXME: Utiliser HAYSTACK_SEARCH_RESULTS_PER_PAGE #}
-
-{% show_pages %}
+{% load i18n el_pagination_tags extras %}
 
 {% for result in object_list %}
   {% if result %}
@@ -11,9 +7,9 @@
 
         <div class="col-xs-1">
           <div class="btn-group-vertical btn-group-sm">
-            <a class="btn btn-default disabled {{ result.model.class_name.lower }}"
-               title="{{ result.verbose_name|capfirst }}" role="button">
-              {{ result.verbose_name.0|capfirst }}
+            <a class="btn btn-default disabled {{ result.content_object.class_name.lower }}"
+               title="{{ result.content_object.meta.verbose_name|capfirst }}" role="button">
+              {{ result.content_object.meta.verbose_name.0|capfirst }}
             </a>
             {# TODO: La case à cocher ci-dessous sera utile quand on aura un panier #}
 {#            <button type="button" class="btn btn-default" data-toggle="button" title="{% trans "Ajouter au panier" %}">#}
@@ -23,15 +19,15 @@
         </div>
 
         <div class="col-xs-11">
-          <h4>{{ result.object.link|default:result.object.html }}</h4>
+          <h4>{{ result.content_object.link|default:result.content_object.html }}</h4>
           <small>
-            {% if result.object.transcription %}
-              {% with result.object.transcription|stripchars as content %}
-                {% highlight content with query html_tag 'mark' max_length 500 %}
+            {% if result.content_object.transcription %}
+              {% with result.content_object.transcription|stripchars as content %}
+                {{ content|highlight:query }}
               {% endwith %}
             {% else %}
-              {% with result.object.html|stripchars as content %}
-                {% highlight content with query html_tag 'mark' %}
+              {% with result.content_object.html|stripchars as content %}
+                {{ content|highlight:query }}
               {% endwith %}
             {% endif %}
           </small>
@@ -41,5 +37,3 @@
     </div>
   {% endif %}
 {% endfor %}
-  
-{% show_pages %}

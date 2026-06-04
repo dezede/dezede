@@ -1,5 +1,6 @@
 from html import unescape
 import re
+from bleach import clean
 from bs4 import BeautifulSoup, Comment
 from django.core.exceptions import EmptyResultSet
 from django.contrib.gis.geos import GEOSGeometry
@@ -7,6 +8,7 @@ from django.db import connection
 from django.template import Library
 from django.utils.safestring import mark_safe
 from common.utils.sql import get_raw_query
+from common.utils.text import remove_diacritics
 from ..models import Lieu
 from common.utils.html import date_html as date_html_util
 from common.utils.abbreviate import abbreviate as abbreviate_func
@@ -220,3 +222,38 @@ def change_results_order(context, order_by='default'):
     elif order_by == 'reversed':
         query_dict['order_by'] = order_by
     return '?' + query_dict.urlencode()
+
+
+@register.filter
+def highlight(content: str, query: str, fragment_size: int = 250):
+    highlighted = []
+    words = set(query.split())
+    # This handles removing diacritics from the query,
+    # but not highlighting words with diacritics that are missing in the query.
+    words.update({remove_diacritics(word) for word in query.split()})
+    words_re = '|'.join(re.escape(word) for word in words)
+    groups = re.split(
+        fr'(?<=\W)({words_re})(?=\W)',
+        # We add extra characters before and after, so our regexp also matches start of string and end of string.
+        f' {clean(content, tags={}, strip=True)} ',
+        flags=re.IGNORECASE,
+    )
+
+    # Remove extra character at the start and end of the text.
+    groups[0] = groups[0][1:]
+    groups[-1] = groups[-1][:-1]
+
+    for i, group in enumerate(groups):
+        if i % 2 == 0:
+            if i == 0:
+                if len(group) > fragment_size:
+                    group = '[…] ' + group[-(fragment_size - 4):].split(maxsplit=1)[1]
+            elif i == len(groups) - 1:
+                if len(group) > fragment_size:
+                    group = group[:fragment_size - 4].rsplit(maxsplit=1)[0] + ' […]'
+            elif len(group) > fragment_size * 2:
+                group = group[:fragment_size - 3].rsplit(maxsplit=1)[0] + ' […] ' + group[-(fragment_size - 3):].split(maxsplit=1)[1]
+            highlighted.append(group)
+        else:
+            highlighted.append(f'<mark>{group}</mark>')
+    return ''.join(highlighted)

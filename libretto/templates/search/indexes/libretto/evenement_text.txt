@@ -1,9 +1,0 @@
-{{ object.circonstance }}
-{{ object.debut }}
-{{ object.fin }}
-{{ object.html }}
-{{ object.distribution.html }}
-{% for element in object.programme.all %}
-  {{ element.html }}
-{% endfor %}
-{{ object.notes_publiques|safe }}

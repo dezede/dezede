@@ -13,6 +13,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from tree.fields import PathField
 from tree.models import TreeModelMixin
+from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
 from accounts.models import HierarchicUser
 from libretto.models import (Lieu, Oeuvre, Evenement, Individu, Ensemble,
@@ -22,22 +23,19 @@ from libretto.models.base import PublishedModel, PublishedManager, \
 from common.utils.html import href
 
 
-class CategorieDeDossiers(PublishedModel):
+class CategorieDeDossiers(Indexed, PublishedModel):
     nom = CharField(_('nom'), max_length=75)
     position = PositiveSmallIntegerField(_('position'), default=1)
 
-    dezede_search_fields = ['nom']
+    search_fields = [
+        SearchField('title', boost=10),
+        AutocompleteField('title'),
+    ]
 
     class Meta(PublishedModel.Meta):
         ordering = ('position',)
         verbose_name = _('catégorie de dossiers')
         verbose_name_plural = _('catégories de dossiers')
-        indexes = [
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='categoriedossiers_search'),
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='categoriedossiers_autocomplete'),
-        ]
 
     def __str__(self):
         return self.nom
@@ -60,7 +58,7 @@ class DossierManager(CommonTreeManager, PublishedManager):
 #       ou par thème (ex: censure, livret, etc).
 
 
-class Dossier(TreeModelMixin, PublishedModel):
+class Dossier(Indexed, TreeModelMixin, PublishedModel):
     categorie = ForeignKey(
         CategorieDeDossiers, null=True, blank=True,
         related_name='dossiers', verbose_name=_('catégorie'),
@@ -97,20 +95,29 @@ class Dossier(TreeModelMixin, PublishedModel):
 
     objects = DossierManager()
 
-    dezede_search_fields = ['titre', 'titre_court']
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('titre_court', boost=10),
+        RelatedFields('parent', [
+            SearchField('title'),
+            SearchField('titre_court'),
+            AutocompleteField('title'),
+            AutocompleteField('titre_court'),
+        ]),
+        SearchField('presentation', boost=0.1),
+        SearchField('contexte', boost=0.1),
+        SearchField('sources_et_protocole', boost=0.1),
+        SearchField('bibliographie', boost=0.1),
+        AutocompleteField('title'),
+        AutocompleteField('titre_court'),
+    ]
 
     class Meta(PublishedModel.Meta):
         verbose_name = _('dossier')
         verbose_name_plural = _('dossiers')
         ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
-        indexes = [
-            *PathField.get_indexes('dossiers', 'path'),
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('search_vector', name='dossier_search'),
-            # We specify it manually, otherwise its name is too long.
-            GinIndex('autocomplete_vector', name='dossier_autocomplete'),
-        ]
+        indexes = PathField.get_indexes('dossiers', 'path')
 
     @property
     def specific(self) -> Union['DossierDEvenements', 'DossierDOeuvres']:
