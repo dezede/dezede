@@ -26,6 +26,7 @@ modelsearch==1.2.2
 
 # Caching
 django-redis==6.0.0
+redis<=8
 
 # Data visualization frameworks
 djangorestframework==3.15.2
