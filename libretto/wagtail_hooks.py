@@ -1,7 +1,12 @@
 from typing import List
+from django.forms import NumberInput
 from django.utils.translation import gettext_lazy as _
+from django_filters import RangeFilter
+from django_filters.filterset import filterset_factory
 from wagtail import hooks
+from wagtail.admin.filters import SuffixedMultiWidget, WagtailFilterSet
 from wagtail.admin.ui.tables import BaseColumn, BooleanColumn, Column
+from wagtail.models import ReferenceIndex
 from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
@@ -36,16 +41,50 @@ def register_icons(icons):
     ]
 
 
+# FIXME: Replace with the one from wagtail.admin.filters in >=7.4
+class NumberRangeWidget(SuffixedMultiWidget):
+    template_name = "wagtailadmin/widgets/range_input.html"
+    suffixes = ["min", "max"]
+
+    def __init__(self, attrs=None):
+        widgets = (
+            NumberInput(attrs={"placeholder": _("Minimum"), "min": "0"}),
+            NumberInput(attrs={"placeholder": _("Maximum"), "min": "0"}),
+        )
+        super().__init__(widgets, attrs)
+
+    def decompress(self, value):
+        if value:
+            return [value.start, value.stop]
+        return [None, None]
+
+
+class CommonFilterSet(WagtailFilterSet):
+    usage_count = RangeFilter(
+        field_name="usage_count",
+        label=_("Usage count"),
+        widget=NumberRangeWidget(),
+    )
+
+
 class CommonViewSet(SnippetViewSet):
     list_display = ['owner']
-    # TODO: add 'has_related_object' filter
-    list_filter = ['owner']
+    filterset_fields = ['owner']
+
+    @property
+    def filterset_class(self):
+        return filterset_factory(
+            self.model, filterset=CommonFilterSet, fields=self.filterset_fields,
+        )
 
     def get_queryset(self, request):
         user = request.user
         qs = self.model.objects.all()
         if not user.is_superuser:
             return qs.filter(owner__in=user.get_descendants(include_self=True))
+        qs = qs.annotate(
+            usage_count=ReferenceIndex.usage_count_subquery(self.model)
+        )
         return qs
 
 
@@ -233,8 +272,8 @@ class GenreDOeuvreViewSet(CommonViewSet):
 class NatureDeLieuViewSet(CommonViewSet):
     model = NatureDeLieu
     icon = 'location-dot'
-    list_display = ['nom', 'nom_pluriel', 'referent', *CommonViewSet.list_display]
-    list_filter = ['referent', *CommonViewSet.list_filter]
+    list_display = ['nom', 'nom_pluriel', BooleanColumn('referent', label=_('Référent'), sort_key='referent'), *CommonViewSet.list_display]
+    filterset_fields = ['referent', *CommonViewSet.filterset_fields]
 
 
 class ProfessionViewSet(SnippetViewSet):
@@ -251,7 +290,7 @@ class SaisonViewSet(CommonViewSet):
     model = Saison
     list_display = [
         '__str__', 'lieu', 'ensemble', 'debut', 'fin', 'evenements_count',
-        *CommonViewSet.list_filter,
+        *CommonViewSet.list_display,
     ]
 
 
