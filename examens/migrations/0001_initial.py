@@ -7,7 +7,7 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0032_auto_20160210_0508'),
+        ('libretto', '0001_squashed_0063_upgrade_check_constraints'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('sessions', '0001_initial'),
     ]

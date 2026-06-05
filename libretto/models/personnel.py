@@ -10,12 +10,12 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _, gettext
 from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
 from wagtail.api import APIField
-from wagtail.search.index import Indexed, SearchField, RelatedFields
+from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
 from common.utils.abbreviate import abbreviate
 from common.utils.html import capfirst, href, date_html, sc
 from common.utils.sql import get_raw_query
 from common.utils.text import str_list
-from libretto.models.individu import Individu
+from libretto.constants import INDIVIDU_RELATED_SEARCH_FIELDS, PROFESSION_RELATED_SEARCH_FIELDS
 from .base import (CommonModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
                    UniqueSlugModel, AutoriteModel, ISNI_VALIDATORS, IsniModel)
 from .evenement import Evenement
@@ -26,7 +26,7 @@ __all__ = (
 
 
 # TODO: Songer à l’arrivée des Emplois.
-class Profession(AutoriteModel, UniqueSlugModel):
+class Profession(Indexed, AutoriteModel, UniqueSlugModel):
     nom = CharField(_('nom'), max_length=200, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=230, blank=True,
@@ -41,8 +41,15 @@ class Profession(AutoriteModel, UniqueSlugModel):
                         verbose_name=_('parent'), on_delete=CASCADE)
     classement = SmallIntegerField(_('classement'), default=1, db_index=True)
 
-    dezede_search_fields = [
-        'nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel',
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('nom_pluriel', boost=10),
+        SearchField('nom_feminin', boost=10),
+        RelatedFields('parent', PROFESSION_RELATED_SEARCH_FIELDS),
+        SearchField('notes_publiques_text', boost=0.1),
+        AutocompleteField('title'),
+        AutocompleteField('nom_pluriel'),
+        AutocompleteField('nom_feminin'),
     ]
 
     class Meta(AutoriteModel.Meta):
@@ -50,13 +57,6 @@ class Profession(AutoriteModel, UniqueSlugModel):
         verbose_name_plural = _('professions')
         ordering = ('classement', 'nom')
         permissions = (('can_change_status', _('Peut changer l’état')),)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        relations = ('auteurs', 'elements_de_distribution',)
-        if all_relations:
-            relations += ('enfants', 'individus', 'parties',)
-        return relations
 
     def get_absolute_url(self):
         return reverse('profession_detail', args=(self.slug,))
@@ -244,14 +244,19 @@ class Membre(CommonModel, PeriodeDActivite):
         return self.html()
 
 
-class TypeDEnsemble(CommonModel):
+class TypeDEnsemble(Indexed, CommonModel):
     nom = CharField(_('nom'), max_length=40, help_text=LOWER_MSG)
     nom_pluriel = CharField(_('nom pluriel'), max_length=45, blank=True,
                             help_text=PLURAL_MSG)
     parent = ForeignKey('self', null=True, blank=True, related_name='enfants',
                         verbose_name=_('parent'), on_delete=CASCADE)
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('nom_pluriel', boost=10),
+        AutocompleteField('title'),
+        AutocompleteField('nom_pluriel'),
+    ]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('type d’ensemble')
@@ -285,7 +290,6 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
         help_text=_('Exemple : « 0000000115201575 » '
                     'pour Le Poème Harmonique.'))
 
-    dezede_search_fields = ['particule_nom', 'nom']
     panels = [
         FieldRowPanel([FieldPanel('particule_nom'), FieldPanel('nom')]),
         FieldPanel('type'),
@@ -298,8 +302,16 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
         *AutoriteModel.panels,
     ]
     search_fields = [
-        SearchField('particule_nom'), SearchField('nom', boost=10),
-        RelatedFields('individus', Individu.search_fields),
+        SearchField('title', boost=10),
+        RelatedFields('type', [
+            SearchField('title'),
+            SearchField('nom_pluriel'),
+            AutocompleteField('title'),
+            AutocompleteField('nom_pluriel'),
+        ]),
+        RelatedFields('individus', INDIVIDU_RELATED_SEARCH_FIELDS),
+        SearchField('notes_publiques_text', boost=0.1),
+        AutocompleteField('title'),
     ]
     api_fields = [
         APIField('particule_nom'),
@@ -408,14 +420,3 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
 
     def clean(self):
         self.check_isni()
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        return ('elements_de_distribution',)
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'autocomplete_vector__autocomplete',
-            'siege__autocomplete_vector__autocomplete',
-        ]

@@ -51,7 +51,7 @@ class HierarchicUserAdmin(VersionAdmin, CommonAdmin, UserAdmin):
     additional_list_display = ()
     additional_list_filters = ()
     related_lookup_fields = {
-        'generic': [['content_type', 'object_id'],],
+        'generic': [['content_type', 'related_object_id'],],
     }
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
@@ -64,7 +64,7 @@ class HierarchicUserAdmin(VersionAdmin, CommonAdmin, UserAdmin):
             'classes': ('grp-collapse grp-closed',),
             'description': _('À saisir s’il existe une autorité sur vous '
                              'dans la base de données.'),
-            'fields': (('content_type', 'object_id'),)}),
+            'fields': (('content_type', 'related_object_id'),)}),
         (_('Responsabilité scientifique'), {
             'fields': (('mentor', 'willing_to_be_mentor'),)}),
         (_('Informations complémentaires'), {

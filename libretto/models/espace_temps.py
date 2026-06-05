@@ -10,9 +10,10 @@ from tinymce.models import HTMLField
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from wagtail.api import APIField
-from wagtail.search.index import SearchField, Indexed, RelatedFields
+from wagtail.search.index import AutocompleteField, SearchField, Indexed, RelatedFields
 
-from libretto.contants import LIEU_SEARCH_FIELDS
+from dezede.utils import html_field_value_to_text
+from libretto.constants import LIEU_RELATED_SEARCH_FIELDS
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, PublishedManager,
@@ -30,7 +31,7 @@ __all__ = (
 )
 
 
-class NatureDeLieu(CommonModel, SlugModel):
+class NatureDeLieu(Indexed, CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
@@ -44,7 +45,12 @@ class NatureDeLieu(CommonModel, SlugModel):
             'jusqu’à un lieu référent, ici choisi comme étant ceux de nature '
             '« ville »'))
 
-    dezede_search_fields = ['nom', 'nom_pluriel']
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('nom_pluriel', boost=10),
+        AutocompleteField('title'),
+        AutocompleteField('nom_pluriel'),
+    ]
     api_fields = [
         APIField('nom'),
         APIField('nom_pluriel'),
@@ -55,12 +61,6 @@ class NatureDeLieu(CommonModel, SlugModel):
         verbose_name = _('nature de lieu')
         verbose_name_plural = _('natures de lieu')
         ordering = ('slug',)
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        if all_relations:
-            return ('lieux',)
-        return ()
 
     def pluriel(self):
         return calc_pluriel(self)
@@ -95,8 +95,17 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     objects = LieuManager()
 
-    dezede_search_fields = ['nom']
-    search_fields = LIEU_SEARCH_FIELDS
+    search_fields = [
+        SearchField('title', boost=10),
+        RelatedFields('nature', [
+            SearchField('title'),
+            AutocompleteField('title'),
+        ]),
+        RelatedFields('parent', LIEU_RELATED_SEARCH_FIELDS),
+        SearchField('historique_text', 0.1),
+        SearchField('notes_publiques_text', 0.1),
+        AutocompleteField('title'),
+    ]
     api_fields = [
         APIField('nom'),
         APIField('parent'),
@@ -111,23 +120,7 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         ordering = ['path']
         unique_together = ('nom', 'parent',)
         permissions = (('can_change_status', _('Peut changer l’état')),)
-        indexes = [
-            *PathField.get_indexes('lieu', 'path'),
-            *AutoriteModel.Meta.indexes,
-        ]
-
-    @staticmethod
-    def invalidated_relations_when_saved(all_relations=False):
-        relations = (
-            'enfants', 'evenement_debut_set', 'evenement_fin_set',
-        )
-        if all_relations:
-            relations += (
-                'individu_naissance_set', 'individu_deces_set',
-                'oeuvre_creation_set',
-                'dossiersdevenements', 'dossiersdoeuvres',
-            )
-        return relations
+        indexes = PathField.get_indexes('lieu', 'path')
 
     def get_absolute_url(self):
         return reverse('lieu_detail', args=[self.slug])
@@ -145,6 +138,10 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     def short_link(self):
         return self.html(short=True)
+
+    @property
+    def historique_text(self) -> str:
+        return html_field_value_to_text(self.historique)
 
     def evenements(self):
         qs = self.get_descendants(include_self=True)
@@ -192,13 +189,6 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     def __str__(self):
         return strip_tags(self.html(False))
-
-    @staticmethod
-    def autocomplete_search_fields():
-        return [
-            'autocomplete_vector__autocomplete',
-            'parent__autocomplete_vector__autocomplete',
-        ]
 
 
 class SaisonQuerySet(CommonQuerySet):

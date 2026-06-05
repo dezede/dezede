@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from django.db.models import Count
 from django.utils.html import strip_tags
 
-from libretto.search_indexes import autocomplete_search
+from dezede.views import autocomplete_search
 from common.utils.html import hlp
 from .models import *
 

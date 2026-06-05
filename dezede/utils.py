@@ -1,3 +1,6 @@
+from html import unescape
+
+from bleach import clean
 from bs4 import BeautifulSoup
 
 
@@ -10,3 +13,7 @@ def richtext_to_text(value: str):
             tag.unwrap()
     soup.smooth()  # Merges consecutive NavigableStrings.
     return soup.get_text(' ', strip=True)
+
+
+def html_field_value_to_text(value: str) -> str:
+    return unescape(clean(value, tags=[], strip=True))

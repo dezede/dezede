@@ -11,7 +11,7 @@ from noridjango.urls import urlpatterns as noridjango_urls
 
 from .api import wagtail_api_router
 from .views import (
-    HomeView, CustomSearchView, autocomplete, BibliographieView,
+    HomeView, SearchView, autocomplete, BibliographieView,
     RssFeed, GlobalSitemap,
 )
 
@@ -39,7 +39,7 @@ urlpatterns = [
     re_path(r'^i18n/', include('django.conf.urls.i18n')),
     re_path(r'^tinymce/', include('tinymce.urls')),
     re_path(r'^grappelli/', include('grappelli.urls')),
-    re_path(r'^recherche/', CustomSearchView(), name='haystack_search'),
+    re_path(r'^recherche/', SearchView.as_view(), name='global_search'),
     re_path(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),
     re_path(r'^autocomplete$', autocomplete, name='autocomplete'),

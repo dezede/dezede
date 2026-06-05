@@ -3,12 +3,13 @@ from decimal import Decimal
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
-    CharField, ImageField, DecimalField, BooleanField, ForeignKey,
+    CharField, FloatField, ImageField, DecimalField, BooleanField, ForeignKey, Model, OneToOneField,
     PositiveIntegerField, PositiveSmallIntegerField, Max, CASCADE)
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from image_cropping import ImageRatioField
+from wagtail.search.index import AutocompleteField, Indexed, SearchField
 from accounts.models import _get_valid_modelnames_func
 from libretto.models.base import PublishedModel
 
@@ -20,7 +21,7 @@ def get_default_position():
     return max_pos + 1
 
 
-class Diapositive(PublishedModel):
+class Diapositive(Indexed, PublishedModel):
     # TODO: Pouvoir paramétrer :
     #       couleur de fond, placement vertical, largeur du texte.
     # TODO: Ajuster automatiquement h1, h2, h3, ou h4 en fonction
@@ -31,8 +32,8 @@ class Diapositive(PublishedModel):
         ContentType, limit_choices_to={
             'model__in': _get_valid_modelnames_func(autorites_only=False)},
         verbose_name=_('type d’objet lié'), on_delete=CASCADE)
-    object_id = PositiveIntegerField(_('identifiant de l’objet lié'))
-    content_object = GenericForeignKey()
+    related_object_id = PositiveIntegerField(_('identifiant de l’objet lié'))
+    content_object = GenericForeignKey(fk_field='related_object_id')
     content_object.short_description = _('objet lié')
     # Contenu
     title = CharField(_('titre'), max_length=70)
@@ -71,7 +72,12 @@ class Diapositive(PublishedModel):
     position = PositiveSmallIntegerField(
         _('position'), default=get_default_position)
 
-    dezede_search_fields = ['title', 'subtitle']
+    search_fields = [
+        SearchField('title', boost=10),
+        SearchField('subtitle', boost=2),
+        AutocompleteField('title'),
+        AutocompleteField('subtitle'),
+    ]
 
     SLIDER_LG_WIDTH = 1140
     SLIDER_MD_WIDTH = 940
@@ -142,3 +148,8 @@ class Diapositive(PublishedModel):
             f'height: {thumbnail_instance.height};" />'
         )
     thumbnail.short_description = _('miniature')
+
+
+class IndexEntryExtension(Model):
+    index_entry_ptr = OneToOneField('wagtailsearch.IndexEntry', related_name='extension', on_delete=CASCADE, primary_key=True)
+    boost = FloatField(default=1.0)

@@ -1,5 +1,0 @@
-{{ object.nom|safe }}
-{{ object.parent|default_if_none:'' }}
-{{ object.nom_pluriel|safe }}
-{{ object.feminin|safe }}
-{{ object.notes_publiques|safe }}

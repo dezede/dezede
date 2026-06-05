@@ -8,20 +8,24 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sitemaps import Sitemap
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.contrib.syndication.views import Feed
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.http import HttpResponse
 from django.utils.feedgenerator import DefaultFeed, Enclosure
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, TemplateView
-from haystack.views import SearchView
+from wagtail.models import Page
+from wagtail.query import PageQuerySet
+from wagtail.search.backends import get_search_backend
+from wagtail.search.backends.base import EmptySearchResults
+from wagtail.search.models import IndexEntry
 
 from common.utils.html import sanitize_html
 from dossiers.models import Dossier
 from libretto.models import (
     Oeuvre, Lieu, Individu, Source, Evenement, Ensemble, Profession, Partie,
 )
-from libretto.search_indexes import autocomplete_search, filter_published
+from libretto.models.base import PublishedModel, PublishedQuerySet
 from typography.utils import replace
 from .models import Diapositive
 
@@ -30,8 +34,8 @@ from .models import Diapositive
 def cache_generics(queryset):
     generics = {}
     for item in queryset:
-        if item.object_id is not None:
-            generics.setdefault(item.content_type_id, set()).add(item.object_id)
+        if item.related_object_id is not None:
+            generics.setdefault(item.content_type_id, set()).add(item.related_object_id)
 
     content_types = ContentType.objects.in_bulk(generics.keys())
 
@@ -42,7 +46,7 @@ def cache_generics(queryset):
 
     for item in queryset:
         try:
-            cached_val = relations[item.content_type_id][item.object_id]
+            cached_val = relations[item.content_type_id][item.related_object_id]
         except KeyError:
             cached_val = None
         setattr(item, '_content_object_cache', cached_val)
@@ -58,36 +62,87 @@ class HomeView(ListView):
         return qs
 
 
-# TODO: Use the search engine filters to do this
-def clean_query(q):
-    return (q.lower().replace('(', '').replace(')', '').replace(',', '')
-            .replace('-', ' '))
+class SearchView(ListView):
+    model = IndexEntry
+    template_name = 'search/search.html'
+    content_models = [
+        Dossier, Ensemble, Individu, Lieu, Oeuvre, Profession, Partie, Source, Evenement,
+    ]
 
+    def get_model_choices(self):
+        return [
+            {
+                'model': model,
+                'value': model._meta.label,
+                'label': model._meta.verbose_name_plural,
+            } for model in self.content_models]
 
-class CustomSearchView(SearchView):
-    """
-    Custom SearchView to fix spelling suggestions.
-    """
+    def get_queryset(self):
+        self.q = replace(self.request.GET.get('q', ''))
+        self.selected_models = self.request.GET.getlist('models', [])
+        s = get_search_backend()
+        qs = IndexEntry.objects.all()
+        filtered_models = [model for model in self.content_models]
+        if self.selected_models:
+            filtered_models = [
+                model for model in filtered_models
+                if model._meta.label in self.selected_models
+            ]
+        qs = qs.filter(content_type__in=[
+            ContentType.objects.get_for_model(model)
+            for model in filtered_models
+        ])
+        if self.q:
+            results = s.search(self.q, qs)
+            if isinstance(results, EmptySearchResults):
+                return qs.none()
+            return results.get_queryset()
+        return qs
 
-    def build_form(self, form_kwargs=None):
-        self.request.GET = GET = self.request.GET.copy()
-        GET['q'] = replace(GET.get('q', ''))
-        return super(CustomSearchView, self).build_form(form_kwargs)
-
-    def extra_context(self):
-        context = {'suggestion': None}
-
-        if self.results.query.backend.include_spelling:
-            q = self.query or ''
-            suggestion = self.form.searchqueryset.spelling_suggestion(q) or ''
-            if clean_query(suggestion) != clean_query(q):
-                context['suggestion'] = suggestion
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            query=self.q,
+            model_choices=self.get_model_choices(),
+            selected_models=self.selected_models,
+        )
         return context
 
-    def get_results(self):
-        sqs = super(CustomSearchView, self).get_results()
-        return filter_published(sqs, self.request)
+
+def result_iterator(qs: QuerySet):
+    results = list(qs)
+
+    if results:
+        for result in results:
+            if isinstance(result, IndexEntry):
+                yield result.content_object
+            else:
+                yield result
+
+
+def autocomplete_search(request, q, model=None, max_results=5):
+    q = replace(q)
+    s = get_search_backend()
+
+    if model is None:
+        model = IndexEntry
+
+    qs = model.objects.all()
+    if isinstance(qs, PublishedQuerySet):
+        qs = qs.published(request)
+    elif isinstance(qs, PageQuerySet):
+        qs = qs.live()
+    elif qs.model is IndexEntry:
+        qs = qs.filter(
+            content_type__in=[
+                ContentType.objects.get_for_model(m) for m in apps.get_models()
+                if issubclass(m, (PublishedModel, Page)) and m not in {Diapositive, Dossier}
+            ]
+        )
+
+    qs = s.autocomplete(q, qs).annotate_score('_score').get_queryset()
+
+    return list(result_iterator(qs[:max_results]))
 
 
 def autocomplete(request):
@@ -101,9 +156,9 @@ def autocomplete(request):
     suggestions = [
         OrderedDict((
             ('id', s.pk),
-            ('str', (s.related_label() if hasattr(s, 'related_label')
+            ('str', (s.title() if hasattr(s, 'title') and callable(s.title)
                      else str(s))),
-            ('url', s.get_absolute_url()))) for s in suggestions
+            ('url', s.url if isinstance(s, Page) else s.get_absolute_url()))) for s in suggestions
         if s is not None]
     data = json.dumps(suggestions)
     return HttpResponse(data, content_type='application/json')
