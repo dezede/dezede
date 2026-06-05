@@ -202,7 +202,7 @@ class LetterImage(Orderable):
 
 
 class Letter(BasePageNoImage):
-    writing = SpaceTimeFields(verbose_name=_('rédaction'), for_wagtail=True)
+    writing = SpaceTimeFields(verbose_name=_('rédaction'))
     edition = RichTextField(_('imprimé'), editor='edition', blank=True)
     storage_place = ForeignKey(
         'libretto.Lieu', on_delete=PROTECT, related_name='stored_letters',

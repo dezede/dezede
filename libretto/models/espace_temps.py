@@ -18,9 +18,9 @@ from libretto.constants import LIEU_RELATED_SEARCH_FIELDS
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, PublishedManager,
-    calc_pluriel, SlugModel, UniqueSlugModel, PublishedQuerySet,
+    DATE_MSG, calc_pluriel, SlugModel, UniqueSlugModel, PublishedQuerySet,
     CommonTreeQuerySet, CommonTreeManager, CommonQuerySet, CommonManager,
-    slugify_unicode, WAGTAIL_DATE_MSG)
+    slugify_unicode)
 from common.utils.html import href
 from .evenement import Evenement
 from .individu import Individu
@@ -223,8 +223,8 @@ class Saison(CommonModel):
                           on_delete=CASCADE)
     lieu = ForeignKey('Lieu', related_name='saisons', blank=True, null=True,
                       verbose_name=_('lieu ou institution'), on_delete=CASCADE)
-    debut = DateField(_('début'), help_text=WAGTAIL_DATE_MSG)
-    fin = DateField(_('fin'), help_text=WAGTAIL_DATE_MSG)
+    debut = DateField(_('début'), help_text=DATE_MSG)
+    fin = DateField(_('fin'), help_text=DATE_MSG)
 
     objects = SaisonManager()
 

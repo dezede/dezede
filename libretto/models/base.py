@@ -46,14 +46,8 @@ LOWER_MSG = _('En minuscules.')
 PLURAL_MSG = _('À remplir si le pluriel n’est pas un simple '
                'ajout de « s ». Exemple : « animal » devient « animaux » '
                'et non « animals ».')
-DATE_MSG = _('Exemple : « 14/7/1789 » pour le 14 juillet 1789.')
+DATE_MSG = _('Exemple : « 1789-7-14 » pour le 14 juillet 1789.')
 DATE_MSG_EXTENDED = _(
-    'Exemple : « 14/7/1789 » pour le 14 juillet 1789. '
-    'En cas de date approximative, '
-    'saisir le premier jour du mois (« 1/10/1678 » pour octobre 1678) '
-    'ou de l’année (« 1/1/1830 » pour 1830).')
-WAGTAIL_DATE_MSG = _('Exemple : « 1789-7-14 » pour le 14 juillet 1789.')
-WAGTAIL_DATE_MSG_EXTENDED = _(
     'Exemple : « 1789-7-14 » pour le 14 juillet 1789. '
     'En cas de date approximative, '
     'saisir le premier jour du mois (« 1678-10-1 » pour octobre 1678) '
@@ -516,7 +510,7 @@ class SpaceTimeFields:
     def __init__(
         self, not_null_fields=(),
         has_date=True, has_heure=True, has_lieu=True, approx=True,
-        verbose_name=None, for_wagtail: bool = False,
+        verbose_name=None,
     ):
         self.not_null_fields = not_null_fields
         self.has_date = has_date
@@ -524,16 +518,12 @@ class SpaceTimeFields:
         self.has_lieu = has_lieu
         self.approx = approx
         self.verbose_name = verbose_name
-        self.for_wagtail = for_wagtail
         self.fields = OrderedDict()
 
     def fields_iterator(self):
         if self.has_date:
             is_null = 'date' not in self.not_null_fields
-            if self.for_wagtail:
-                date_msg = WAGTAIL_DATE_MSG_EXTENDED if self.approx else WAGTAIL_DATE_MSG
-            else:
-                date_msg = DATE_MSG_EXTENDED if self.approx else DATE_MSG
+            date_msg = DATE_MSG_EXTENDED if self.approx else DATE_MSG
             yield (
                 'date',
                 DateField(
