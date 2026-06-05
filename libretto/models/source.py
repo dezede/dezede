@@ -392,6 +392,7 @@ class Source(Indexed, AutoriteModel):
         if hasattr(self, '_has_events'):
             return self._has_events
         return self.evenements.exists()
+    # FIXME: remove once django admin is removed
     has_events.short_description = _('événements')
     has_events.boolean = True
     has_events.admin_order_field = 'evenements'
@@ -400,6 +401,7 @@ class Source(Indexed, AutoriteModel):
         if hasattr(self, '_has_program'):
             return self._has_program
         return self.evenements.with_program().exists()
+    # FIXME: remove once django admin is removed
     has_program.short_description = _('programme')
     has_program.boolean = True
 

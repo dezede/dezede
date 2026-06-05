@@ -7,7 +7,6 @@ from wagtail import hooks
 from wagtail.admin.filters import SuffixedMultiWidget, WagtailFilterSet
 from wagtail.admin.ui.tables import BaseColumn, BooleanColumn, Column
 from wagtail.models import ReferenceIndex
-from wagtail.permissions import ModelPermissionPolicy
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
@@ -87,21 +86,6 @@ class CommonViewSet(SnippetViewSet):
         )
         return qs
 
-
-class AutoritePermissionPolicy(ModelPermissionPolicy):
-    def user_has_permission(self, user, action):
-        if action in {'add', 'change', 'delete'}:
-            return False
-        return super().user_has_permission(user, action)
-
-
-class AutoriteViewSet(SnippetViewSet):
-    list_filter = ['etat']
-
-    @property
-    def permission_policy(self):
-        return AutoritePermissionPolicy(self.model)
-
     def get_chooser_extra_columns(self):
         return []
 
@@ -140,6 +124,11 @@ class AutoriteViewSet(SnippetViewSet):
         return viewset
 
 
+class AutoriteViewSet(CommonViewSet):
+    list_display = ['link', 'etat', *CommonViewSet.list_display]
+    filterset_fields = ['etat', *CommonViewSet.filterset_fields]
+
+
 class EvenementViewSet(AutoriteViewSet):
     model = Evenement
     icon = 'calendar-day'
@@ -147,7 +136,7 @@ class EvenementViewSet(AutoriteViewSet):
         '__str__', BooleanColumn('relache'), 'circonstance',
         BooleanColumn('has_source'), BooleanColumn('has_program'),
     ]
-    list_filter = ['relache', *AutoriteViewSet.list_filter]
+    filterset_fields = ['relache', *AutoriteViewSet.filterset_fields]
 
     def get_queryset(self, request):
         return Evenement.objects.select_related(
@@ -162,7 +151,7 @@ class IndividuViewSet(AutoriteViewSet):
     list_display = [
         '__str__', 'naissance', 'deces', 'calc_professions',
     ]
-    list_filter = ['titre', *AutoriteViewSet.list_filter]
+    filterset_fields = ['titre', *AutoriteViewSet.filterset_fields]
 
     def get_queryset(self, request):
         return Individu.objects.select_related(
@@ -180,7 +169,7 @@ class LieuViewSet(AutoriteViewSet):
     model = Lieu
     icon = 'location-dot'
     list_display = ['__str__', 'nature']
-    list_filter = ['nature', *AutoriteViewSet.list_filter]
+    filterset_fields = ['nature', *AutoriteViewSet.filterset_fields]
 
     def get_queryset(self, request):
         return Lieu.objects.select_related('nature')
@@ -193,8 +182,8 @@ class OeuvreViewSet(AutoriteViewSet):
     model = Oeuvre
     icon = 'book'
     list_display = ['__str__', 'auteurs_html', 'creation']
-    list_filter = [
-        'genre', 'tonalite', 'arrangement', 'type_extrait', *AutoriteViewSet.list_filter,
+    filterset_fields = [
+        'genre', 'tonalite', 'arrangement', 'type_extrait', *AutoriteViewSet.filterset_fields,
     ]
 
     def get_queryset(self, request):
@@ -221,7 +210,7 @@ class PartieViewSet(AutoriteViewSet):
         '__str__', 'parent', 'oeuvre', 'classement',
         'premier_interprete',
     ]
-    list_filter = ['type', *AutoriteViewSet.list_filter]
+    filterset_fields = ['type', *AutoriteViewSet.filterset_fields]
 
     def get_queryset(self, request):
         return Partie.objects.select_related('parent', 'oeuvre', 'premier_interprete')
@@ -230,7 +219,7 @@ class PartieViewSet(AutoriteViewSet):
 class EnsembleViewSet(AutoriteViewSet):
     model = Ensemble
     icon = 'people-group'
-    list_display = ['__str__', 'type', 'membres_count']
+    list_display = ['__str__', 'type', 'membres_count', *AutoriteViewSet.list_display]
 
     def get_queryset(self, request):
         return Ensemble.objects.select_related('type')
@@ -239,8 +228,13 @@ class EnsembleViewSet(AutoriteViewSet):
 class SourceViewSet(AutoriteViewSet):
     model = Source
     icon = 'book-open'
-    list_display = ['__str__', 'type']
-    list_filter = ['type', *AutoriteViewSet.list_filter]
+    list_display = [
+        'titre', 'parent', 'position', 'date', 'type',
+        BooleanColumn('has_events', label=_('Événements'), sort_key='evenements'),
+        BooleanColumn('has_program', label=_('Programme')),
+        'link', *AutoriteViewSet.list_display,
+    ]
+    filterset_fields = ['type', *AutoriteViewSet.filterset_fields]
 
     def get_queryset(self, request):
         return Source.objects.select_related('type')
@@ -276,14 +270,13 @@ class NatureDeLieuViewSet(CommonViewSet):
     filterset_fields = ['referent', *CommonViewSet.filterset_fields]
 
 
-class ProfessionViewSet(SnippetViewSet):
+class ProfessionViewSet(AutoriteViewSet):
     model = Profession
     icon = 'tools'
     list_display = [
         'nom', 'nom_pluriel', 'nom_feminin', 'nom_feminin_pluriel', 'parent',
-        'classement', 'etat', 'owner',
+        'classement', *AutoriteViewSet.list_display,
     ]
-    list_filter = ['etat', 'owner']
 
 
 class SaisonViewSet(CommonViewSet):
@@ -332,24 +325,14 @@ class TypeDeParenteDOeuvreViewSet(CommonViewSet):
     ]
 
 
-class AudioViewSet(SnippetViewSet):
+class AudioViewSet(SourceViewSet):
     model = Audio
     icon = 'file-audio'
-    list_display = [
-        'titre', 'parent', 'position', 'date', 'type', 'has_events',
-        'has_program', 'link', 'etat', 'owner',
-    ]
-    list_filter = ['type', 'titre', 'owner']
 
 
-class VideoViewSet(SnippetViewSet):
+class VideoViewSet(SourceViewSet):
     model = Video
     icon = 'file-video'
-    list_display = [
-        'titre', 'parent', 'position', 'date', 'type', 'has_events',
-        'has_program', 'link', 'etat', 'owner',
-    ]
-    list_filter = ['type', 'titre', 'owner']
 
 
 @register_snippet
