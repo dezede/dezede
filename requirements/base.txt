@@ -29,7 +29,7 @@ django-redis==6.0.0
 redis<8
 
 # Data visualization frameworks
-djangorestframework==3.15.2
+djangorestframework==3.17.1
 django-tablature==0.2.3
 
 # Small but powerful tools
@@ -60,6 +60,6 @@ bleach[css]==6.2.0
 pillow==11.3.0
 # For djangorestframework (optionals)
 pygments==2.19.2
-django-filter==23.5
+django-filter==25.1
 # For exporting DataFrames to XLSX, Pandas needs Jinja2 (yes…)
 jinja2==3.1.6
