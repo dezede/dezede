@@ -4,7 +4,6 @@ import re
 from bleach import clean
 from django.apps import apps
 from django.contrib.postgres.fields import IntegerRangeField
-from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator

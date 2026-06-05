@@ -299,7 +299,6 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
             FieldRowPanel([FieldPanel('debut'), FieldPanel('debut_precision')]),
             FieldRowPanel([FieldPanel('fin'), FieldPanel('fin_precision')]),
         ], heading=_('Période d’activité')),
-        *AutoriteModel.panels,
     ]
     search_fields = [
         SearchField('title', boost=10),

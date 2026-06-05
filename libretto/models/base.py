@@ -9,15 +9,19 @@ from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
-    NOT_PROVIDED, )
+)
 from django.template.defaultfilters import time
+from django.utils.functional import classproperty
 from django.utils.html import strip_tags
 from django.utils.translation import gettext, gettext_lazy as _
 from autoslug import AutoSlugField
 from slugify import Slugify
 from tinymce.models import HTMLField
 from tree.query import TreeQuerySetMixin
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.admin.panels import (
+    FieldPanel, ObjectList, TabbedInterface,
+    extract_panel_definitions_from_model_class,
+)
 from wagtail.search.index import AutocompleteField, Indexed, SearchField
 
 from dezede.utils import html_field_value_to_text
@@ -124,8 +128,20 @@ class CommonModel(TypographicModel):
         related_name='%(class)s')
     objects = CommonManager()
 
+    metadata_panels = [FieldPanel('owner', read_only=True)]
+
     class Meta(TypographicModel.Meta):
         abstract = True  # = prototype de modèle, et non un vrai modèle.
+
+    @classproperty
+    def edit_handler(cls):
+        panels = extract_panel_definitions_from_model_class(
+            cls, exclude=[panel.field_name for panel in cls.metadata_panels],
+        )
+        return TabbedInterface([
+            ObjectList(panels, heading=_('Content')),
+            ObjectList(cls.metadata_panels, heading=_('Metadata')),
+        ])
 
     def _perform_unique_checks(self, unique_checks):
         # Taken from the overridden method.
@@ -258,6 +274,8 @@ class PublishedModel(CommonModel):
 
     objects = PublishedManager()
 
+    metadata_panels = [FieldPanel('etat'), *CommonModel.metadata_panels]
+
     class Meta(CommonModel.Meta):
         abstract = True
 
@@ -281,13 +299,10 @@ class AutoriteModel(PublishedModel):
     class Meta(PublishedModel.Meta):
         abstract = True
 
-    panels = [
-        MultiFieldPanel([
-            FieldPanel('etat'),
-            FieldPanel('notes_publiques'),
-            FieldPanel('notes_privees'),
-            FieldPanel('owner', read_only=True),
-        ], heading=_('Notes'), classname="collapsed"),
+    metadata_panels = [
+        FieldPanel('notes_publiques'),
+        FieldPanel('notes_privees'),
+        *PublishedModel.metadata_panels,
     ]
 
     @property
