@@ -10,6 +10,7 @@ from tinymce.models import HTMLField
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from wagtail.api import APIField
+from wagtail.admin.panels import FieldRowPanel
 from wagtail.search.index import AutocompleteField, SearchField, Indexed, RelatedFields
 
 from dezede.utils import html_field_value_to_text
@@ -17,9 +18,9 @@ from libretto.constants import LIEU_RELATED_SEARCH_FIELDS
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, PublishedManager,
-    DATE_MSG, calc_pluriel, SlugModel, UniqueSlugModel, PublishedQuerySet,
+    calc_pluriel, SlugModel, UniqueSlugModel, PublishedQuerySet,
     CommonTreeQuerySet, CommonTreeManager, CommonQuerySet, CommonManager,
-    slugify_unicode)
+    slugify_unicode, WAGTAIL_DATE_MSG)
 from common.utils.html import href
 from .evenement import Evenement
 from .individu import Individu
@@ -222,10 +223,16 @@ class Saison(CommonModel):
                           on_delete=CASCADE)
     lieu = ForeignKey('Lieu', related_name='saisons', blank=True, null=True,
                       verbose_name=_('lieu ou institution'), on_delete=CASCADE)
-    debut = DateField(_('début'), help_text=DATE_MSG)
-    fin = DateField(_('fin'))
+    debut = DateField(_('début'), help_text=WAGTAIL_DATE_MSG)
+    fin = DateField(_('fin'), help_text=WAGTAIL_DATE_MSG)
 
     objects = SaisonManager()
+
+    panels = [
+        'ensemble',
+        'lieu',
+        FieldRowPanel(['debut', 'fin'], heading=_('Dates')),
+    ]
 
     class Meta(object):
         verbose_name = _('saison')
