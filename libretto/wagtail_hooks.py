@@ -175,13 +175,13 @@ class EvenementViewSet(AutoriteViewSet):
     model = Evenement
     icon = 'calendar-day'
     list_display = [
-        '__str__', BooleanColumn('relache'), 'circonstance',
-        BooleanColumn('has_source'), BooleanColumn('has_program'),
+        '__str__', 'relache', 'circonstance', 'has_source', 'has_program',
+        *AutoriteViewSet.list_display,
     ]
     filterset_fields = ['relache', *AutoriteViewSet.filterset_fields]
 
     def get_queryset(self, request):
-        return Evenement.objects.select_related(
+        return super().get_queryset(request).select_related(
             'debut_lieu', 'debut_lieu__nature',
             'debut_lieu__parent', 'debut_lieu__parent__nature',
         ).annotate_has_program_and_source()
@@ -192,11 +192,12 @@ class IndividuViewSet(AutoriteViewSet):
     icon = 'child'
     list_display = [
         '__str__', 'naissance', 'deces', 'calc_professions',
+        *AutoriteViewSet.list_display,
     ]
     filterset_fields = ['titre', *AutoriteViewSet.filterset_fields]
 
     def get_queryset(self, request):
-        return Individu.objects.select_related(
+        return super().get_queryset(request).select_related(
             'naissance_lieu', 'deces_lieu',
         ).prefetch_related('professions')
 
@@ -210,11 +211,11 @@ class IndividuViewSet(AutoriteViewSet):
 class LieuViewSet(AutoriteViewSet):
     model = Lieu
     icon = 'location-dot'
-    list_display = ['__str__', 'nature']
+    list_display = ['__str__', 'nature', *AutoriteViewSet.list_display]
     filterset_fields = ['nature', *AutoriteViewSet.filterset_fields]
 
     def get_queryset(self, request):
-        return Lieu.objects.select_related('nature')
+        return super().get_queryset(request).select_related('nature')
 
     def get_chooser_extra_columns(self):
         return [Column('nature', label=capfirst(_('nature')))]
@@ -223,13 +224,15 @@ class LieuViewSet(AutoriteViewSet):
 class OeuvreViewSet(AutoriteViewSet):
     model = Oeuvre
     icon = 'book'
-    list_display = ['__str__', 'auteurs_html', 'creation']
+    list_display = [
+        '__str__', 'auteurs_html', 'creation', *AutoriteViewSet.list_display,
+    ]
     filterset_fields = [
         'genre', 'tonalite', 'arrangement', 'type_extrait', *AutoriteViewSet.filterset_fields,
     ]
 
     def get_queryset(self, request):
-        return Oeuvre.objects.select_related(
+        return super().get_queryset(request).select_related(
             'genre', 'extrait_de__genre', 'creation_lieu',
         ).prefetch_related(
             'pupitres__partie',
@@ -250,36 +253,39 @@ class PartieViewSet(AutoriteViewSet):
     icon = 'guitar'
     list_display = [
         '__str__', 'parent', 'oeuvre', 'classement',
-        'premier_interprete',
+        'premier_interprete', *AutoriteViewSet.list_display,
     ]
     filterset_fields = ['type', *AutoriteViewSet.filterset_fields]
 
     def get_queryset(self, request):
-        return Partie.objects.select_related('parent', 'oeuvre', 'premier_interprete')
+        return super().get_queryset(request).select_related(
+            'parent', 'oeuvre', 'premier_interprete'
+        )
 
 
 class EnsembleViewSet(AutoriteViewSet):
     model = Ensemble
     icon = 'people-group'
-    list_display = ['__str__', 'type', 'membres_count', *AutoriteViewSet.list_display]
+    list_display = [
+        '__str__', 'type', 'membres_count', *AutoriteViewSet.list_display
+    ]
+    filterset_fields = ['type', *AutoriteViewSet.filterset_fields]
 
     def get_queryset(self, request):
-        return Ensemble.objects.select_related('type')
+        return super().get_queryset(request).select_related('type')
 
 
 class SourceViewSet(AutoriteViewSet):
     model = Source
     icon = 'book-open'
     list_display = [
-        'titre', 'parent', 'position', 'date', 'type',
-        BooleanColumn('has_events', label=_('Événements'), sort_key='evenements'),
-        BooleanColumn('has_program', label=_('Programme')),
-        'link', *AutoriteViewSet.list_display,
+        'titre', 'parent', 'position', 'date', 'type', 'has_events',
+        'has_program', 'link', *AutoriteViewSet.list_display,
     ]
     filterset_fields = ['type', *AutoriteViewSet.filterset_fields]
 
     def get_queryset(self, request):
-        return Source.objects.select_related('type')
+        return super().get_queryset(request).select_related('type')
 
     def get_chooser_extra_columns(self):
         return [Column('type', label=capfirst(_('type')))]
