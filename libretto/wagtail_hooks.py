@@ -1,15 +1,19 @@
+from functools import cached_property
 from typing import List
+from django.contrib.auth import get_user_model
+from django.core.exceptions import FieldDoesNotExist
+from django.db.models import BooleanField, ForeignKey
 from django.forms import NumberInput
 from django.utils.translation import gettext_lazy as _
 from django_filters import RangeFilter
 from django_filters.filterset import filterset_factory
 from wagtail import hooks
 from wagtail.admin.filters import SuffixedMultiWidget, WagtailFilterSet
-from wagtail.admin.ui.tables import BaseColumn, BooleanColumn, Column
+from wagtail.admin.ui.tables import BaseColumn, BooleanColumn, Column, UserColumn
 from wagtail.models import ReferenceIndex
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
-from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
+from wagtail.snippets.views.snippets import IndexView, SnippetViewSet, SnippetViewSetGroup
 from wagtail_linksnippet.richtext_utils import add_snippet_link_button
 
 from common.utils.text import capfirst
@@ -66,7 +70,45 @@ class CommonFilterSet(WagtailFilterSet):
     )
 
 
+class CommonIndexView(IndexView):
+    def improve_column(self, column: BaseColumn):
+        if column.__class__ != Column:
+            return column
+
+        attr = getattr(self.model, column.name)
+        if callable(attr) and getattr(attr, 'boolean', False):
+            return BooleanColumn(
+                column.name,
+                label=capfirst(getattr(attr, 'short_description', column.name)),
+                sort_key=getattr(attr, 'admin_order_field', None),
+            )
+
+        try:
+            field = self.model._meta.get_field(column.name)
+        except FieldDoesNotExist:
+            return column
+
+        label = capfirst(field.verbose_name)
+
+        if isinstance(field, BooleanField):
+            return BooleanColumn(
+                column.name,
+                label=label,
+                sort_key=column.name,
+            )
+
+        if isinstance(field, ForeignKey) and field.related_model is get_user_model():
+            return UserColumn(column.name, label=label, sort_key=column.name)
+
+        return column
+
+    @cached_property
+    def columns(self):
+        return [self.improve_column(col) for col in super().columns]
+
+
 class CommonViewSet(SnippetViewSet):
+    index_view_class = CommonIndexView
     list_display = ['owner']
     filterset_fields = ['owner']
 
@@ -266,7 +308,7 @@ class GenreDOeuvreViewSet(CommonViewSet):
 class NatureDeLieuViewSet(CommonViewSet):
     model = NatureDeLieu
     icon = 'location-dot'
-    list_display = ['nom', 'nom_pluriel', BooleanColumn('referent', label=_('Référent'), sort_key='referent'), *CommonViewSet.list_display]
+    list_display = ['nom', 'nom_pluriel', 'referent', *CommonViewSet.list_display]
     filterset_fields = ['referent', *CommonViewSet.filterset_fields]
 
 
