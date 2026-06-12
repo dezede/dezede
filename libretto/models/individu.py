@@ -13,6 +13,7 @@ from common.utils.abbreviate import abbreviate
 from common.utils.html import href, sc, hlp
 from common.utils.text import str_list, str_list_w_last, ex
 from rest_framework import fields as rest_fields
+from wagtail.admin.panels import FieldRowPanel, FieldPanel, MultiFieldPanel
 from wagtail.api import APIField
 from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
@@ -141,6 +142,30 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
         SearchField('notes_publiques_text', boost=0.1),
         AutocompleteField('title'),
         AutocompleteField('prenoms_complets'),
+    ]
+    panels = [
+        MultiFieldPanel([
+            FieldRowPanel([FieldPanel('titre'), FieldPanel('prenoms')]),
+            FieldRowPanel([FieldPanel('particule_nom'), FieldPanel('nom')]),
+            # TODO: ajouter professions
+        ]),
+        MultiFieldPanel([
+            FieldRowPanel([FieldPanel('naissance_date'), FieldPanel('naissance_date_approx')]),
+            FieldRowPanel([FieldPanel('naissance_lieu'), FieldPanel('naissance_lieu_approx')]),
+        ], heading=_('Naissance')),
+        MultiFieldPanel([
+            FieldRowPanel([FieldPanel('deces_date'), FieldPanel('deces_date_approx')]),
+            FieldRowPanel([FieldPanel('deces_lieu'), FieldPanel('deces_lieu_approx')]),
+        ], heading=_('Décès')),
+        MultiFieldPanel([
+            'pseudonyme',
+            'prenoms_complets',
+            FieldRowPanel([FieldPanel('particule_nom_naissance'), FieldPanel('nom_naissance')]),
+            'designation',
+            'biographie',
+            FieldRowPanel([FieldPanel('isni'), FieldPanel('sans_isni')]),
+        ], heading=_('Informations complémentaires'), classname='collapsed'),
+        # TODO: ajouter enfants
     ]
     api_fields = [
         APIField('particule_nom'),
