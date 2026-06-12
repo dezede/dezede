@@ -8,7 +8,9 @@ from django.template.defaultfilters import date
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _, gettext
-from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel, MultipleChooserPanel
 from wagtail.api import APIField
 from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
 from common.utils.abbreviate import abbreviate
@@ -202,8 +204,8 @@ def limit_choices_to_instruments():
 
 
 class Membre(CommonModel, PeriodeDActivite):
-    ensemble = ForeignKey('Ensemble', related_name='membres',
-                          verbose_name=_('ensemble'), on_delete=CASCADE)
+    ensemble = ParentalKey('Ensemble', related_name='membres',
+                           verbose_name=_('ensemble'), on_delete=CASCADE)
     # TODO: Ajouter nombre pour les membres d'orchestre pouvant être saisi
     #       au lieu d'un individu.
     individu = ForeignKey('Individu', related_name='membres',
@@ -217,6 +219,17 @@ class Membre(CommonModel, PeriodeDActivite):
         verbose_name=_('profession'), on_delete=CASCADE,
     )
     classement = SmallIntegerField(_('classement'), default=1)
+
+    panels = [
+        'individu',
+        'instrument',
+        'profession',
+        'classement',
+        MultiFieldPanel([
+            FieldRowPanel([FieldPanel('debut'), FieldPanel('debut_precision')]),
+            FieldRowPanel([FieldPanel('fin'), FieldPanel('fin_precision')]),
+        ], heading=_('Période d’activité')),
+    ]
 
     class Meta(object):
         verbose_name = _('membre')
@@ -267,7 +280,7 @@ class TypeDEnsemble(Indexed, CommonModel):
         return self.nom
 
 
-class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniModel):
+class Ensemble(Indexed, ClusterableModel, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniModel):
     particule_nom = CharField(
         _('particule du nom'), max_length=5, blank=True, db_index=True)
     nom = CharField(_('nom'), max_length=75, db_index=True)
@@ -299,6 +312,7 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
             FieldRowPanel([FieldPanel('debut'), FieldPanel('debut_precision')]),
             FieldRowPanel([FieldPanel('fin'), FieldPanel('fin_precision')]),
         ], heading=_('Période d’activité')),
+        MultipleChooserPanel('membres', 'individu'),
     ]
     search_fields = [
         SearchField('title', boost=10),
