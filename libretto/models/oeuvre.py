@@ -16,6 +16,8 @@ from django.urls import reverse
 from django.utils.html import strip_tags, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from psycopg.types.range import Range
@@ -35,7 +37,7 @@ from .base import (
 from common.utils.html import capfirst, hlp, href, cite, em
 from common.utils.text import str_list, str_list_w_last, to_roman, BiGrouper
 from .individu import Individu
-from .personnel import Ensemble, Profession
+from .personnel import Profession
 from .source import Source
 
 
@@ -409,10 +411,10 @@ class AuteurManager(CommonManager):
 class Auteur(CommonModel):
     # Une contrainte de base de données existe dans les migrations
     # pour éviter que les deux soient remplis.
-    oeuvre = ForeignKey(
+    oeuvre = ParentalKey(
         'Oeuvre', null=True, blank=True,
         related_name='auteurs', verbose_name=_('œuvre'), on_delete=CASCADE)
-    source = ForeignKey(
+    source = ParentalKey(
         'Source', null=True, blank=True,
         related_name='auteurs', verbose_name=_('source'), on_delete=CASCADE)
     # Une contrainte de base de données existe dans les migrations
@@ -428,6 +430,10 @@ class Auteur(CommonModel):
         verbose_name=_('profession'), on_delete=PROTECT)
 
     objects = AuteurManager()
+
+    panels = [
+        FieldRowPanel(['individu', 'ensemble', 'profession']),
+    ]
 
     class Meta:
         verbose_name = _('auteur')
@@ -668,7 +674,7 @@ def make_range_include_bounds(value):
     return value
 
 
-class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
+class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlugModel):
     prefixe_titre = CharField(_('article'), max_length=20, blank=True)
     titre = CharField(_('titre'), max_length=200, blank=True, db_index=True)
     coordination = CharField(_('coordination'), max_length=20, blank=True,

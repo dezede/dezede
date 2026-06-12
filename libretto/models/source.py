@@ -16,8 +16,10 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
+from modelcluster.models import ClusterableModel
 from tinymce.models import HTMLField
 from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
+from wagtail.admin.panels import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel
 
 from dezede.utils import html_field_value_to_text
 from libretto.constants import SOURCE_RELATED_SEARCH_FIELDS
@@ -152,7 +154,7 @@ class SourceManager(PublishedManager):
         return self.get_queryset().with_data_type(data_type)
 
 
-class Source(Indexed, AutoriteModel):
+class Source(Indexed, ClusterableModel, AutoriteModel):
     parent = ForeignKey(
         'self', related_name='children', verbose_name=_('parent'),
         null=True, blank=True, on_delete=CASCADE,
@@ -250,6 +252,28 @@ class Source(Indexed, AutoriteModel):
 
     objects = SourceManager()
 
+    panels = [
+        FieldRowPanel(['parent', 'position', 'est_promu']),
+        FieldRowPanel(['type', 'titre', 'legende']),
+        MultiFieldPanel([
+            FieldRowPanel(['date', 'date_approx']),
+            FieldRowPanel(['numero', 'page', 'folio']),
+            FieldRowPanel(['lieu_conservation', 'cote']),
+            'url',
+        ]),
+        FieldPanel('transcription', classname='collapsed'),
+        FieldRowPanel(['fichier', 'telechargement_autorise']),
+        InlinePanel('auteurs'),
+        # TODO: Enable this, in read-only.
+        # 'children_links',
+        MultiFieldPanel([
+            'editeurs_scientifiques', 'date_publication', 'publications',
+            'developpements', 'presentation', 'contexte',
+            'sources_et_protocole', 'bibliographie',
+        ], heading=_('Présentation'), classname='collapsed'),
+        # TODO: Add missing related data:
+        #       œuvres, parties, lieux, événements, ensembles.
+    ]
     search_fields = [
         RelatedFields('parent', SOURCE_RELATED_SEARCH_FIELDS),
         RelatedFields('type', [
