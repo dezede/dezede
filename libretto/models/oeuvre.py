@@ -22,7 +22,7 @@ from tree.fields import PathField
 from tree.models import TreeModelMixin
 from psycopg.types.range import Range
 from rest_framework import serializers
-from wagtail.admin.panels import FieldPanel, FieldRowPanel
+from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
 from wagtail.api import APIField
 from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
 
@@ -868,6 +868,47 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
         RelatedFields('extrait_de', OEUVRE_RELATED_SEARCH_FIELDS),
         SearchField('notes_publiques_text', boost=0.1),
         AutocompleteField('title'),
+    ]
+    panels = [
+        # TODO: ajouter 'auteurs'
+        MultiFieldPanel([
+            FieldRowPanel([FieldPanel('prefixe_titre'), FieldPanel('titre')]),
+            'coordination',
+            FieldRowPanel([
+                FieldPanel('prefixe_titre_secondaire'),
+                FieldPanel('titre_secondaire'),
+            ]),
+        ], heading=_('Titre significatif')),
+        MultiFieldPanel([
+            FieldRowPanel([FieldPanel('genre'), FieldPanel('numero')]),
+            FieldRowPanel([FieldPanel('coupe'), FieldPanel('indeterminee')]),
+        ]),
+        # TODO: ajouter 'effectif' (parties)
+        MultiFieldPanel([
+            'incipit',
+            FieldRowPanel([FieldPanel('tempo'), FieldPanel('tonalite')]),
+            # TODO: ajouter un widget spécial pour 'ambitus'
+            FieldRowPanel([FieldPanel('sujet'), FieldPanel('arrangement')]),
+        ], heading=_('Données musicales')),
+        MultiFieldPanel([
+            FieldRowPanel([FieldPanel('surnom'), FieldPanel('nom_courant')]),
+        ]),
+        MultiFieldPanel([
+            FieldRowPanel([FieldPanel('opus'), FieldPanel('ict')]),
+        ]),
+        MultiFieldPanel([
+            # TODO: ajouter 'extrait de',
+            FieldRowPanel([FieldPanel('type_extrait'), FieldPanel('numero_extrait')]),
+        ]),
+        MultiFieldPanel([
+            'creation_type',
+            FieldRowPanel([FieldPanel('creation_date'), FieldPanel('creation_date_approx')]),
+            FieldRowPanel([FieldPanel('creation_heure'), FieldPanel('creation_heure_approx')]),
+            FieldRowPanel([FieldPanel('creation_lieu'), FieldPanel('creation_lieu_approx')]),
+        ], heading=_('Création')),
+        # TODO: ajouter dédicataires
+        # MultiFieldPanel(['dedicataires'], heading=_('Édition')),
+        # TODO: ajouter 'oeuvres mères'
     ]
     api_fields = [
         APIField('prefixe_titre'),
