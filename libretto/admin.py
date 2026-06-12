@@ -684,51 +684,53 @@ class ProfessionAdmin(VersionAdmin, AutoriteAdmin):
     )
 
 
-@register(Individu)
-class IndividuAdmin(VersionAdmin, AutoriteAdmin):
-    list_display = ('__str__', 'nom', 'prenoms',
-                    'pseudonyme', 'titre', 'naissance',
-                    'deces', 'calc_professions', 'link',)
-    list_editable = ('nom', 'titre',)
-    list_filter = ('titre', IsniListFilter)
-    form = IndividuForm
-    raw_id_fields = ('naissance_lieu', 'deces_lieu', 'professions')
-    autocomplete_lookup_fields = {
-        'fk': ('naissance_lieu', 'deces_lieu'),
-        'm2m': ('professions', 'parentes'),
-    }
-    readonly_fields = ('__str__', 'html', 'link',)
-    inlines = (IndividuParentInline,)
-    fieldsets = (
-        (None, {
-            'fields': (('titre', 'prenoms'), ('particule_nom', 'nom'),
-                       'professions',),
-        }),
-        (_('Naissance'), {
-            'fields': (
-                ('naissance_date', 'naissance_date_approx'),
-                ('naissance_lieu', 'naissance_lieu_approx'))
-        }),
-        (_('Décès'), {
-            'fields': (
-                ('deces_date', 'deces_date_approx'),
-                ('deces_lieu', 'deces_lieu_approx'))
-        }),
-        (_('Informations complémentaires'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('pseudonyme',
-                       'prenoms_complets',
-                       ('particule_nom_naissance', 'nom_naissance'),
-                       'designation', 'biographie', ('isni', 'sans_isni')),
-        }),
-    )
-    fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'i', 'i')
+# This is no longer compatible with the new models
+#
+# @register(Individu)
+# class IndividuAdmin(VersionAdmin, AutoriteAdmin):
+#     list_display = ('__str__', 'nom', 'prenoms',
+#                     'pseudonyme', 'titre', 'naissance',
+#                     'deces', 'calc_professions', 'link',)
+#     list_editable = ('nom', 'titre',)
+#     list_filter = ('titre', IsniListFilter)
+#     form = IndividuForm
+#     raw_id_fields = ('naissance_lieu', 'deces_lieu', 'professions')
+#     autocomplete_lookup_fields = {
+#         'fk': ('naissance_lieu', 'deces_lieu'),
+#         'm2m': ('professions', 'parentes'),
+#     }
+#     readonly_fields = ('__str__', 'html', 'link',)
+#     inlines = (IndividuParentInline,)
+#     fieldsets = (
+#         (None, {
+#             'fields': (('titre', 'prenoms'), ('particule_nom', 'nom'),
+#                        'professions',),
+#         }),
+#         (_('Naissance'), {
+#             'fields': (
+#                 ('naissance_date', 'naissance_date_approx'),
+#                 ('naissance_lieu', 'naissance_lieu_approx'))
+#         }),
+#         (_('Décès'), {
+#             'fields': (
+#                 ('deces_date', 'deces_date_approx'),
+#                 ('deces_lieu', 'deces_lieu_approx'))
+#         }),
+#         (_('Informations complémentaires'), {
+#             'classes': ('grp-collapse grp-closed',),
+#             'fields': ('pseudonyme',
+#                        'prenoms_complets',
+#                        ('particule_nom_naissance', 'nom_naissance'),
+#                        'designation', 'biographie', ('isni', 'sans_isni')),
+#         }),
+#     )
+#     fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'i', 'i')
 
-    def get_queryset(self, request):
-        qs = super(IndividuAdmin, self).get_queryset(request)
-        return qs.select_related(
-            'naissance_lieu', 'deces_lieu', 'etat', 'owner'
-        ).prefetch_related('professions')
+#     def get_queryset(self, request):
+#         qs = super(IndividuAdmin, self).get_queryset(request)
+#         return qs.select_related(
+#             'naissance_lieu', 'deces_lieu', 'etat', 'owner'
+#         ).prefetch_related('professions')
 
 
 @register(TypeDEnsemble)

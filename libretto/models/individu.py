@@ -8,12 +8,16 @@ from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import (
     pgettext_lazy, gettext, gettext_lazy as _)
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 from tinymce.models import HTMLField
 from common.utils.abbreviate import abbreviate
 from common.utils.html import href, sc, hlp
 from common.utils.text import str_list, str_list_w_last, ex
 from rest_framework import fields as rest_fields
-from wagtail.admin.panels import FieldRowPanel, FieldPanel, MultiFieldPanel
+from wagtail.admin.panels import (
+    FieldPanel, FieldRowPanel, MultiFieldPanel, MultipleChooserPanel,
+)
 from wagtail.api import APIField
 from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
@@ -39,10 +43,12 @@ class TypeDeParenteDIndividus(TypeDeParente):
 class ParenteDIndividus(CommonModel):
     type = ForeignKey('TypeDeParenteDIndividus', related_name='parentes',
                       verbose_name=_('type'), on_delete=PROTECT)
-    parent = ForeignKey('Individu', related_name='enfances',
+    parent = ParentalKey('Individu', related_name='enfances',
                         verbose_name=_('individu parent'), on_delete=PROTECT)
     enfant = ForeignKey('Individu', related_name='parentes',
                         verbose_name=_('individu enfant'), on_delete=PROTECT)
+
+    panels = ['type', 'parent', 'enfant']
 
     class Meta(object):
         verbose_name = _('parenté d’individus')
@@ -64,6 +70,21 @@ class ParenteDIndividus(CommonModel):
             'enfant': self.enfant}
 
 
+class Occupation(CommonModel):
+    individu = ParentalKey('Individu', related_name='occupations',
+                           verbose_name=_('individu'), on_delete=PROTECT)
+    profession = ForeignKey('Profession', related_name='occupations',
+                            verbose_name=_('profession'), on_delete=PROTECT)
+
+    panels = ['individu', 'profession']
+
+    class Meta(CommonModel.Meta):
+        verbose_name = 'occupation'
+        verbose_name_plural = 'occupations'
+        # TODO: vérifier que l’ordre des professions est cohérent ailleurs
+        ordering = ('individu', 'profession')
+
+
 class IndividuQuerySet(PublishedQuerySet):
     def are_feminins(self):
         return all(i.is_feminin() for i in self)
@@ -77,7 +98,7 @@ class IndividuManager(PublishedManager):
         return self.get_queryset().are_feminins()
 
 
-class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
+class Individu(Indexed, ClusterableModel, AutoriteModel, UniqueSlugModel, IsniModel):
     particule_nom = CharField(
         _('particule du nom d’usage'), max_length=10, blank=True,
         db_index=True)
@@ -120,8 +141,8 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
     deces = SpaceTimeFields(has_heure=False,
                                   verbose_name=_('décès'))
     professions = ManyToManyField(
-        'Profession', related_name='individus', blank=True,
-        verbose_name=_('professions'))
+        'Profession', through='Occupation', related_name='individus',
+        blank=True, verbose_name=_('professions'))
     enfants = ManyToManyField(
         'self', through='ParenteDIndividus', related_name='parents',
         symmetrical=False, verbose_name=_('enfants'))
@@ -147,7 +168,8 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
         MultiFieldPanel([
             FieldRowPanel([FieldPanel('titre'), FieldPanel('prenoms')]),
             FieldRowPanel([FieldPanel('particule_nom'), FieldPanel('nom')]),
-            # TODO: ajouter professions
+        # FIXME: changer le nom du champ en utilisant le verbose name du modèle 'Occupation'
+        MultipleChooserPanel('occupations', 'profession'),
         ]),
         MultiFieldPanel([
             FieldRowPanel([FieldPanel('naissance_date'), FieldPanel('naissance_date_approx')]),
@@ -165,7 +187,8 @@ class Individu(Indexed, AutoriteModel, UniqueSlugModel, IsniModel):
             'biographie',
             FieldRowPanel([FieldPanel('isni'), FieldPanel('sans_isni')]),
         ], heading=_('Informations complémentaires'), classname='collapsed'),
-        # TODO: ajouter enfants
+        # FIXME: changer le nom du champ en utilisant le verbose name du modèle 'ParenteDIndividu'
+        MultipleChooserPanel('enfances', 'enfant'),
     ]
     api_fields = [
         APIField('particule_nom'),
