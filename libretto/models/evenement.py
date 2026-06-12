@@ -15,6 +15,9 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from wagtail.admin.panels import FieldRowPanel, InlinePanel, MultiFieldPanel
 from wagtail.api import APIField
 from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
 
@@ -92,10 +95,10 @@ class ElementDeDistributionManager(CommonManager):
 class ElementDeDistribution(CommonModel):
     # Une contrainte de base de données existe dans les migrations
     # pour éviter que les deux soient remplis.
-    evenement = ForeignKey(
+    evenement = ParentalKey(
         'Evenement', null=True, blank=True, related_name='distribution',
         verbose_name=_('événement'), on_delete=CASCADE)
-    element_de_programme = ForeignKey(
+    element_de_programme = ParentalKey(
         'ElementDeProgramme', null=True, blank=True, related_name='distribution',
         verbose_name=_('élément de programme'), on_delete=CASCADE)
 
@@ -118,6 +121,10 @@ class ElementDeDistribution(CommonModel):
     # TODO: Ajouter une FK (ou M2M?) vers Individu pour les remplacements.
 
     objects = ElementDeDistributionManager()
+
+    panels = [
+        FieldRowPanel(['individu', 'ensemble', 'partie', 'profession']),
+    ]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('élément de distribution')
@@ -294,9 +301,9 @@ class ElementDeProgrammeManager(CommonManager):
         return self.get_queryset().fill_numeros()
 
 
-class ElementDeProgramme(CommonModel):
-    evenement = ForeignKey('Evenement', related_name='programme',
-                           verbose_name=_('événement'), on_delete=CASCADE)
+class ElementDeProgramme(ClusterableModel, CommonModel):
+    evenement = ParentalKey('Evenement', related_name='programme',
+                            verbose_name=_('événement'), on_delete=CASCADE)
     oeuvre = ForeignKey(
         'Oeuvre', related_name='elements_de_programme',
         verbose_name=_('œuvre'), blank=True, null=True, on_delete=PROTECT,
@@ -321,6 +328,13 @@ class ElementDeProgramme(CommonModel):
                                  blank=True, null=True)
 
     objects = ElementDeProgrammeManager()
+    panels = [
+        FieldRowPanel(['oeuvre', 'autre']),
+        'caracteristiques',
+        FieldRowPanel(['numerotation', 'part_d_auteur']),
+        'position',
+        InlinePanel('distribution'),
+    ]
 
     class Meta(CommonModel.Meta):
         verbose_name = _('élément de programme')
@@ -522,7 +536,7 @@ plus_separated_integers_validator = RegexValidator(
     _('Entrez uniquement des entiers séparés par des « + ».'), 'invalid')
 
 
-class Evenement(Indexed, AutoriteModel):
+class Evenement(Indexed, ClusterableModel, AutoriteModel):
     debut = SpaceTimeFields(('date',),
                                   verbose_name=_('début'))
     fin = SpaceTimeFields(verbose_name=_('fin'))
@@ -541,6 +555,28 @@ class Evenement(Indexed, AutoriteModel):
         validators=[plus_separated_integers_validator], blank=True)
 
     objects = EvenementManager()
+
+    panels = [
+        MultiFieldPanel([
+            FieldRowPanel(['debut_date', 'debut_date_approx']),
+            FieldRowPanel(['debut_heure', 'debut_heure_approx']),
+            FieldRowPanel(['debut_lieu', 'debut_lieu_approx']),
+        ], heading=_('Début')),
+        MultiFieldPanel([
+            FieldRowPanel(['fin_date', 'fin_date_approx']),
+            FieldRowPanel(['fin_heure', 'fin_heure_approx']),
+            FieldRowPanel(['fin_lieu', 'fin_lieu_approx']),
+        ], heading=_('Fin')),
+        MultiFieldPanel([
+            FieldRowPanel(['circonstance', 'programme_incomplet', 'relache']),
+            'caracteristiques'
+        ]),
+        InlinePanel('distribution'),
+        InlinePanel('programme', classname="collapsed"),
+        MultiFieldPanel([
+            FieldRowPanel(['recette_generale', 'recette_par_billets']),
+        ], heading=_('Données économiques')),
+    ]
 
     search_fields = [
         SearchField('title', boost=10),
