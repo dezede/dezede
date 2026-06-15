@@ -3213,7 +3213,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='oeuvre',
             name='dedicataires',
-            field=models.ManyToManyField(blank=True, help_text='N’ajouter que des autorités confirmées. Dans le cas contraire, utiliser les notes.', related_name='dedicaces', to='libretto.Individu', verbose_name='dédié à'),
+            field=models.ManyToManyField(blank=True, help_text='N’ajouter que des autorités confirmées. Dans le cas contraire, utiliser les notes.', related_name='oeuvres_dediees', to='libretto.Individu', verbose_name='dédié à'),
         ),
         migrations.RemoveField(
             model_name='oeuvre',

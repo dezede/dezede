@@ -22,7 +22,9 @@ from tree.fields import PathField
 from tree.models import TreeModelMixin
 from psycopg.types.range import Range
 from rest_framework import serializers
-from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
+from wagtail.admin.panels import (
+        FieldPanel, FieldRowPanel, MultiFieldPanel, MultipleChooserPanel,
+)
 from wagtail.api import APIField
 from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
 
@@ -82,6 +84,20 @@ class GenreDOeuvre(Indexed, CommonModel, SlugModel):
 
     def __str__(self):
         return strip_tags(self.nom)
+
+
+class Dedicace(CommonModel):
+    oeuvre = ParentalKey('Oeuvre', related_name='dedicaces',
+                         verbose_name=_('oeuvre'), on_delete=PROTECT)
+    individu = ForeignKey('Individu', related_name='dedicaces',
+                          verbose_name=_('individu'), on_delete=PROTECT)
+
+    panels = ['oeuvre', 'individu']
+
+    class Meta(CommonModel.Meta):
+        verbose_name = 'dédicace'
+        verbose_name_plural = 'dédicaces'
+        ordering = ('oeuvre', 'individu')
 
 
 class Partie(Indexed, AutoriteModel, UniqueSlugModel):
@@ -236,7 +252,7 @@ class PupitreManager(CommonManager):
 
 
 class Pupitre(CommonModel):
-    oeuvre = ForeignKey('Oeuvre', related_name='pupitres',
+    oeuvre = ParentalKey('Oeuvre', related_name='pupitres',
                         verbose_name=_('œuvre'), on_delete=CASCADE)
     partie = ForeignKey(
         'Partie', related_name='pupitres',
@@ -247,6 +263,11 @@ class Pupitre(CommonModel):
     facultatif = BooleanField(_('ad libitum'), default=False,)
 
     objects = PupitreManager()
+
+    panels = [
+        'oeuvre', 'partie', 'soliste', 'quantite_min', 'quantite_max',
+        'facultatif',
+    ]
 
     api_fields = [
         APIField('partie'),
@@ -312,7 +333,7 @@ class ParenteDOeuvresManager(CommonManager):
 class ParenteDOeuvres(CommonModel):
     type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes',
                       verbose_name=_('type'), on_delete=PROTECT)
-    mere = ForeignKey(
+    mere = ParentalKey(
         'Oeuvre', related_name='parentes_filles', verbose_name=_('œuvre mère'),
         on_delete=CASCADE)
     fille = ForeignKey(
@@ -320,6 +341,8 @@ class ParenteDOeuvres(CommonModel):
         on_delete=CASCADE)
 
     objects = ParenteDOeuvresManager()
+
+    panels = ['type', 'mere', 'fille']
 
     class Meta(object):
         verbose_name = _('parenté d’œuvres')
@@ -778,8 +801,8 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
         (3, _('première édition')),
     )
     dedicataires = ManyToManyField(
-        'Individu', blank=True,
-        related_name='dedicaces', verbose_name=_('dédié à'), help_text=_(
+        'Individu', through='Dedicace', related_name='oeuvres_dediees',
+        blank=True, verbose_name=_('dédié à'), help_text=_(
             'N’ajouter que des autorités confirmées. '
             'Dans le cas contraire, utiliser les notes.'
         ),
@@ -870,7 +893,7 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
         AutocompleteField('title'),
     ]
     panels = [
-        # TODO: ajouter 'auteurs'
+        'auteurs',
         MultiFieldPanel([
             FieldRowPanel([FieldPanel('prefixe_titre'), FieldPanel('titre')]),
             'coordination',
@@ -883,7 +906,7 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
             FieldRowPanel([FieldPanel('genre'), FieldPanel('numero')]),
             FieldRowPanel([FieldPanel('coupe'), FieldPanel('indeterminee')]),
         ]),
-        # TODO: ajouter 'effectif' (parties)
+        'pupitres',
         MultiFieldPanel([
             'incipit',
             FieldRowPanel([FieldPanel('tempo'), FieldPanel('tonalite')]),
@@ -897,7 +920,7 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
             FieldRowPanel([FieldPanel('opus'), FieldPanel('ict')]),
         ]),
         MultiFieldPanel([
-            # TODO: ajouter 'extrait de',
+            'extrait_de',
             FieldRowPanel([FieldPanel('type_extrait'), FieldPanel('numero_extrait')]),
         ]),
         MultiFieldPanel([
@@ -906,9 +929,10 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
             FieldRowPanel([FieldPanel('creation_heure'), FieldPanel('creation_heure_approx')]),
             FieldRowPanel([FieldPanel('creation_lieu'), FieldPanel('creation_lieu_approx')]),
         ], heading=_('Création')),
-        # TODO: ajouter dédicataires
-        # MultiFieldPanel(['dedicataires'], heading=_('Édition')),
-        # TODO: ajouter 'oeuvres mères'
+        MultiFieldPanel([
+            MultipleChooserPanel('dedicaces', 'individu'),
+        ], heading=_('Édition')),
+        'parentes_filles',
     ]
     api_fields = [
         APIField('prefixe_titre'),

@@ -816,65 +816,67 @@ class PartieAdmin(VersionAdmin, AutoriteAdmin):
     )
 
 
-@register(Oeuvre)
-class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
-    form = OeuvreForm
-    list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
-                    'caracteristiques_html', 'auteurs_html',
-                    'creation', 'link',)
-    list_filter = ('genre', 'tonalite', 'arrangement', 'type_extrait')
-    list_select_related = ('genre', 'etat', 'owner')
-    date_hierarchy = 'creation_date'
-    raw_id_fields = ('genre', 'extrait_de', 'creation_lieu', 'dedicataires')
-    autocomplete_lookup_fields = {
-        'fk': ('genre', 'extrait_de', 'creation_lieu'),
-        'm2m': ('dedicataires',),
-    }
-    readonly_fields = ('__str__', 'html', 'link',)
-    inlines = (AuteurInline, PupitreInline, OeuvreMereInline)
-    fieldsets = (
-        (_('Titre significatif'), {
-            'fields': (('prefixe_titre', 'titre',), 'coordination',
-                       ('prefixe_titre_secondaire', 'titre_secondaire',),),
-        }),
-        (None, {
-            'fields': (('genre', 'numero'), ('coupe', 'indeterminee')),
-        }),
-        (_('Données musicales'), {
-            'fields': ('incipit', ('tempo', 'tonalite'),
-                       'ambitus',
-                       ('sujet', 'arrangement')),
-        }),
-        (None, {
-            'fields': (('surnom', 'nom_courant'),),
-        }),
-        (None, {
-            'fields': (('opus', 'ict'),),
-        }),
-        (None, {
-            'fields': ('extrait_de', ('type_extrait', 'numero_extrait')),
-        }),
-        (_('Création'), {
-            'fields': (
-                'creation_type',
-                ('creation_date', 'creation_date_approx'),
-                ('creation_heure', 'creation_heure_approx'),
-                ('creation_lieu', 'creation_lieu_approx'))
-        }),
-        (_('Édition'), {
-            'fields': ('dedicataires',)
-        }),
-    )
-    fieldsets_and_inlines_order = ('i', 'f', 'f', 'i', 'f', 'f', 'f', 'f', 'f')
-
-    def get_queryset(self, request):
-        qs = super(OeuvreAdmin, self).get_queryset(request)
-        return qs.select_related(
-            'genre', 'extrait_de', 'creation_lieu', 'etat', 'owner'
-        ).prefetch_related(
-            'auteurs__individu', 'auteurs__ensemble', 'auteurs__profession',
-            'pupitres__partie'
-        )
+# This is no longer compatible with the new models
+#
+# @register(Oeuvre)
+# class OeuvreAdmin(VersionAdmin, AutoriteAdmin):
+#     form = OeuvreForm
+#     list_display = ('__str__', 'titre', 'titre_secondaire', 'genre',
+#                     'caracteristiques_html', 'auteurs_html',
+#                     'creation', 'link',)
+#     list_filter = ('genre', 'tonalite', 'arrangement', 'type_extrait')
+#     list_select_related = ('genre', 'etat', 'owner')
+#     date_hierarchy = 'creation_date'
+#     raw_id_fields = ('genre', 'extrait_de', 'creation_lieu', 'dedicataires')
+#     autocomplete_lookup_fields = {
+#         'fk': ('genre', 'extrait_de', 'creation_lieu'),
+#         'm2m': ('dedicataires',),
+#     }
+#     readonly_fields = ('__str__', 'html', 'link',)
+#     inlines = (AuteurInline, PupitreInline, OeuvreMereInline)
+#     fieldsets = (
+#         (_('Titre significatif'), {
+#             'fields': (('prefixe_titre', 'titre',), 'coordination',
+#                        ('prefixe_titre_secondaire', 'titre_secondaire',),),
+#         }),
+#         (None, {
+#             'fields': (('genre', 'numero'), ('coupe', 'indeterminee')),
+#         }),
+#         (_('Données musicales'), {
+#             'fields': ('incipit', ('tempo', 'tonalite'),
+#                        'ambitus',
+#                        ('sujet', 'arrangement')),
+#         }),
+#         (None, {
+#             'fields': (('surnom', 'nom_courant'),),
+#         }),
+#         (None, {
+#             'fields': (('opus', 'ict'),),
+#         }),
+#         (None, {
+#             'fields': ('extrait_de', ('type_extrait', 'numero_extrait')),
+#         }),
+#         (_('Création'), {
+#             'fields': (
+#                 'creation_type',
+#                 ('creation_date', 'creation_date_approx'),
+#                 ('creation_heure', 'creation_heure_approx'),
+#                 ('creation_lieu', 'creation_lieu_approx'))
+#         }),
+#         (_('Édition'), {
+#             'fields': ('dedicataires',)
+#         }),
+#     )
+#     fieldsets_and_inlines_order = ('i', 'f', 'f', 'i', 'f', 'f', 'f', 'f', 'f')
+#
+#     def get_queryset(self, request):
+#         qs = super(OeuvreAdmin, self).get_queryset(request)
+#         return qs.select_related(
+#             'genre', 'extrait_de', 'creation_lieu', 'etat', 'owner'
+#         ).prefetch_related(
+#             'auteurs__individu', 'auteurs__ensemble', 'auteurs__profession',
+#             'pupitres__partie'
+#         )
 
 
 MAX_EXPORTED_EVENTS = 200
