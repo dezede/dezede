@@ -22,16 +22,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(migrate_data),
-        migrations.AddField(
-            model_name='individu',
-            name='professions_new',
-            field=models.ManyToManyField(blank=True, related_name='individus_new', through='libretto.Occupation', to='libretto.profession', verbose_name='professions'),
-        ),
         migrations.RemoveField(model_name='individu', name='professions'),
-        migrations.RenameField(
-            model_name='individu', old_name='professions_new', new_name='professions',
-        ),
-        migrations.AlterField(
+        migrations.AddField(
             model_name='individu',
             name='professions',
             field=models.ManyToManyField(blank=True, related_name='individus', through='libretto.Occupation', to='libretto.profession', verbose_name='professions'),
