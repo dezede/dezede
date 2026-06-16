@@ -17,6 +17,7 @@ from wagtail.snippets.views.snippets import IndexView, SnippetViewSet, SnippetVi
 from wagtail_linksnippet.richtext_utils import add_snippet_link_button
 
 from common.utils.text import capfirst
+from libretto.models.base import CommonModel
 
 from .models import (
     Individu, Lieu, Oeuvre, Evenement, Partie, Ensemble, Source,
@@ -42,6 +43,13 @@ def register_icons(icons):
         'wagtailfontawesomesvg/solid/file-audio.svg',
         'wagtailfontawesomesvg/solid/file-video.svg',
     ]
+
+
+@hooks.register('after_create_snippet')
+def add_owner(request, instance):
+    if isinstance(instance, CommonModel):
+        instance.owner = request.user
+        instance.save()
 
 
 # FIXME: Replace with the one from wagtail.admin.filters in >=7.4
