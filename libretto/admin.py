@@ -901,58 +901,58 @@ def events_to_pdf(modeladmin, request, queryset):
 events_to_pdf.short_description = _('Exporter en PDF')
 
 
-@register(Evenement)
-class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
-    list_display = ('__str__', 'relache', 'circonstance',
-                    'has_source', 'has_program', 'link',)
-    list_editable = ('relache', 'circonstance',)
-    list_filter = ('relache', EventHasSourceListFilter,
-                   EventHasProgramListFilter)
-    date_hierarchy = 'debut_date'
-    raw_id_fields = ('debut_lieu', 'fin_lieu', 'caracteristiques')
-    autocomplete_lookup_fields = {
-        'fk': ('debut_lieu', 'fin_lieu'),
-        'm2m': ('caracteristiques',),
-    }
-    readonly_fields = ('__str__', 'html', 'link')
-    inlines = (ElementDeDistributionInline, ElementDeProgrammeInline)
-    actions = [events_to_pdf]
-    fieldsets = (
-        (_('Début'), {
-            'fields': (
-                ('debut_date', 'debut_date_approx'),
-                ('debut_heure', 'debut_heure_approx'),
-                ('debut_lieu', 'debut_lieu_approx'))
-        }),
-        (_('Fin'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': (
-                ('fin_date', 'fin_date_approx'),
-                ('fin_heure', 'fin_heure_approx'),
-                ('fin_lieu', 'fin_lieu_approx'))
-        }),
-        (None, {
-            'fields': (('circonstance', 'programme_incomplet', 'relache',),
-                       'caracteristiques',),
-        }),
-        (_('Données économiques'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': (('recette_generale', 'recette_par_billets'),),
-        }),
-    )
-    fieldsets_and_inlines_order = ('f', 'f', 'f', 'i', 'i')
+# @register(Evenement)
+# class EvenementAdmin(SuperModelAdmin, VersionAdmin, AutoriteAdmin):
+#     list_display = ('__str__', 'relache', 'circonstance',
+#                     'has_source', 'has_program', 'link',)
+#     list_editable = ('relache', 'circonstance',)
+#     list_filter = ('relache', EventHasSourceListFilter,
+#                    EventHasProgramListFilter)
+#     date_hierarchy = 'debut_date'
+#     raw_id_fields = ('debut_lieu', 'fin_lieu', 'caracteristiques')
+#     autocomplete_lookup_fields = {
+#         'fk': ('debut_lieu', 'fin_lieu'),
+#         'm2m': ('caracteristiques',),
+#     }
+#     readonly_fields = ('__str__', 'html', 'link')
+#     inlines = (ElementDeDistributionInline, ElementDeProgrammeInline)
+#     actions = [events_to_pdf]
+#     fieldsets = (
+#         (_('Début'), {
+#             'fields': (
+#                 ('debut_date', 'debut_date_approx'),
+#                 ('debut_heure', 'debut_heure_approx'),
+#                 ('debut_lieu', 'debut_lieu_approx'))
+#         }),
+#         (_('Fin'), {
+#             'classes': ('grp-collapse grp-closed',),
+#             'fields': (
+#                 ('fin_date', 'fin_date_approx'),
+#                 ('fin_heure', 'fin_heure_approx'),
+#                 ('fin_lieu', 'fin_lieu_approx'))
+#         }),
+#         (None, {
+#             'fields': (('circonstance', 'programme_incomplet', 'relache',),
+#                        'caracteristiques',),
+#         }),
+#         (_('Données économiques'), {
+#             'classes': ('grp-collapse grp-closed',),
+#             'fields': (('recette_generale', 'recette_par_billets'),),
+#         }),
+#     )
+#     fieldsets_and_inlines_order = ('f', 'f', 'f', 'i', 'i')
 
-    def get_queryset(self, request):
-        qs = super(EvenementAdmin, self).get_queryset(request)
-        if request.resolver_match.url_name == 'libretto_evenement_change':
-            return qs.select_related(
-                'debut_lieu__nature', 'debut_lieu__parent__nature',
-            )
-        qs = qs.annotate_has_program_and_source()
-        return qs.select_related(
-            'debut_lieu', 'debut_lieu__nature',
-            'debut_lieu__parent', 'debut_lieu__parent__nature',
-            'etat', 'owner')
+#     def get_queryset(self, request):
+#         qs = super(EvenementAdmin, self).get_queryset(request)
+#         if request.resolver_match.url_name == 'libretto_evenement_change':
+#             return qs.select_related(
+#                 'debut_lieu__nature', 'debut_lieu__parent__nature',
+#             )
+#         qs = qs.annotate_has_program_and_source()
+#         return qs.select_related(
+#             'debut_lieu', 'debut_lieu__nature',
+#             'debut_lieu__parent', 'debut_lieu__parent__nature',
+#             'etat', 'owner')
 
 
 @register(TypeDeSource)

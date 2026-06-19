@@ -17,7 +17,9 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
-from wagtail.admin.panels import FieldRowPanel, InlinePanel, MultiFieldPanel
+from wagtail.admin.panels import (
+    FieldRowPanel, InlinePanel, MultiFieldPanel, MultipleChooserPanel, FieldPanel,
+)
 from wagtail.api import APIField
 from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
 
@@ -281,6 +283,24 @@ class CaracteristiqueDeProgramme(Indexed, CommonModel):
         return valeur
 
 
+class CaracteristiqueDeProgrammeElementDeProgramme(CommonModel):
+    element = ParentalKey(
+        'ElementDeProgramme', on_delete=PROTECT,
+        related_name='caracteristiquedeprogramme_elementdeprogrammes',
+    )
+    caracteristique = ForeignKey(
+        'CaracteristiqueDeProgramme', on_delete=PROTECT,
+        related_name='caracteristiquedeprogramme_elementdeprogrammes',
+    )
+
+    panels = [FieldPanel('caracteristique', heading=_('Caractéristique de programme'))]
+
+    class Meta(CommonModel.Meta):
+        verbose_name = _('caractéristique de programme')
+        verbose_name_plural = _('caractéristiques de programme')
+        ordering = ('element', 'caracteristique')
+
+
 class ElementDeProgrammeQueryset(CommonQuerySet):
     def fill_numeros(self):
         numbered = [e for e in self
@@ -312,8 +332,10 @@ class ElementDeProgramme(ClusterableModel, CommonModel):
                     '« avec ».'))
     autre = CharField(_('autre'), max_length=500, blank=True)
     caracteristiques = ManyToManyField(
-        CaracteristiqueDeProgramme, related_name='elements_de_programme',
-        blank=True, verbose_name=_('caractéristiques'))
+        'CaracteristiqueDeProgramme', related_name='elements_de_programme',
+        through='CaracteristiqueDeProgrammeElementDeProgramme',
+        blank=True, verbose_name=_('caractéristiques'),
+    )
     NUMEROTATIONS = (
         ('O', _('Numéros')),  # O pour Ordered
         ('B', _('Numéros entre crochets (supposition)')),  # B pour Brackets
@@ -330,7 +352,10 @@ class ElementDeProgramme(ClusterableModel, CommonModel):
     objects = ElementDeProgrammeManager()
     panels = [
         FieldRowPanel(['oeuvre', 'autre']),
-        'caracteristiques',
+        MultipleChooserPanel(
+            'caracteristiquedeprogramme_elementdeprogrammes',
+            'caracteristique', heading=_('Caractéristiques'),
+        ),
         FieldRowPanel(['numerotation', 'part_d_auteur']),
         'position',
         InlinePanel('distribution'),
@@ -399,6 +424,26 @@ class ElementDeProgramme(ClusterableModel, CommonModel):
 
     def __str__(self):
         return strip_tags(self.html(False))
+
+
+class CaracteristiqueDeProgrammeEvenement(CommonModel):
+    evenement = ParentalKey(
+        'Evenement', related_name='caracteristiquedeprogramme_evenements',
+        on_delete=PROTECT,
+    )
+    caracteristique = ForeignKey(
+        'CaracteristiqueDeProgramme',
+        related_name='caracteristiquedeprogramme_evenements', on_delete=PROTECT,
+    )
+
+    panels = [FieldPanel(
+        'caracteristique', heading=_('Caractéristique de programme')
+    )]
+
+    class Meta(CommonModel.Meta):
+        verbose_name = _('caractéristique de programme')
+        verbose_name_plural = _('caractéristiques de programme')
+        ordering = ('evenement', 'caracteristique')
 
 
 class EvenementQuerySet(PublishedQuerySet):
@@ -544,8 +589,9 @@ class Evenement(Indexed, ClusterableModel, AutoriteModel):
     relache = BooleanField(_('relâche'), default=False, db_index=True)
     circonstance = CharField(_('circonstance'), max_length=500, blank=True)
     caracteristiques = ManyToManyField(
-        CaracteristiqueDeProgramme, related_name='evenements', blank=True,
-        verbose_name=_('caractéristiques'))
+        CaracteristiqueDeProgramme, through='CaracteristiqueDeProgrammeEvenement',
+        related_name='evenements', blank=True, verbose_name=_('caractéristiques'),
+    )
 
     recette_generale = DecimalField(_('recette générale'), max_digits=9,
                                     decimal_places=2, blank=True, null=True)
@@ -569,7 +615,10 @@ class Evenement(Indexed, ClusterableModel, AutoriteModel):
         ], heading=_('Fin')),
         MultiFieldPanel([
             FieldRowPanel(['circonstance', 'programme_incomplet', 'relache']),
-            'caracteristiques'
+            MultipleChooserPanel(
+                'caracteristiquedeprogramme_evenements',
+                'caracteristique', heading=_('Caractéristiques'),
+            ),
         ]),
         InlinePanel('distribution'),
         InlinePanel('programme', classname="collapsed"),
