@@ -30,8 +30,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='parentedoeuvres',
-            name='mere',
-            field=modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='parentes_filles', to='libretto.oeuvre', verbose_name='œuvre mère'),
+            name='fille',
+            field=modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='parentes_meres', to='libretto.oeuvre', verbose_name='œuvre fille'),
         ),
         migrations.CreateModel(
             name='Dedicace',

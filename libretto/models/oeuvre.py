@@ -365,16 +365,16 @@ class ParenteDOeuvresManager(CommonManager):
 class ParenteDOeuvres(CommonModel):
     type = ForeignKey('TypeDeParenteDOeuvres', related_name='parentes',
                       verbose_name=_('type'), on_delete=PROTECT)
-    mere = ParentalKey(
+    mere = ForeignKey(
         'Oeuvre', related_name='parentes_filles', verbose_name=_('œuvre mère'),
         on_delete=CASCADE)
-    fille = ForeignKey(
+    fille = ParentalKey(
         'Oeuvre', related_name='parentes_meres', verbose_name=_('œuvre fille'),
         on_delete=CASCADE)
 
     objects = ParenteDOeuvresManager()
 
-    panels = [FieldRowPanel(['type', FieldPanel('fille', heading='Œuvre mère')])]
+    panels = [FieldRowPanel(['type', FieldPanel('mere', heading='Œuvre mère')])]
 
     class Meta(object):
         verbose_name = _('parenté d’œuvres')
@@ -964,7 +964,7 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
         MultiFieldPanel([
             MultipleChooserPanel('dedicaces', 'individu', heading=_('Dédicaces')),
         ], heading=_('Édition')),
-        MultipleChooserPanel('parentes_filles', 'fille', heading=_('Œuvres mères')),
+        MultipleChooserPanel('parentes_meres', 'mere', heading=_('Œuvres mères')),
     ]
     api_fields = [
         APIField('prefixe_titre'),
