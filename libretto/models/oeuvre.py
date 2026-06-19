@@ -56,8 +56,8 @@ class ParenteDeGenresDOeuvre(CommonModel):
     panels = [FieldPanel('parent', heading='Parent')]
 
     class Meta(CommonModel.Meta):
-        verbose_name = 'parenté de genres d’œuvre'
-        verbose_name_plural = 'parentés de genres d’œuvre'
+        verbose_name = _('parenté de genres d’œuvre')
+        verbose_name_plural = _('parentés de genres d’œuvre')
         ordering = ('parent', 'enfant')
 
 
@@ -115,8 +115,8 @@ class Dedicace(CommonModel):
     panels = ['individu']
 
     class Meta(CommonModel.Meta):
-        verbose_name = 'dédicace'
-        verbose_name_plural = 'dédicaces'
+        verbose_name = _('dédicace')
+        verbose_name_plural = _('dédicaces')
         ordering = ('oeuvre', 'individu')
 
 
@@ -127,8 +127,8 @@ class PartieProfession(CommonModel):
     panels = ['profession']
 
     class Meta(CommonModel.Meta):
-        verbose_name = 'profession'
-        verbose_name_plural = 'professions'
+        verbose_name = _('profession')
+        verbose_name_plural = _('professions')
         ordering = ('partie', 'profession')
 
 
@@ -374,7 +374,7 @@ class ParenteDOeuvres(CommonModel):
 
     objects = ParenteDOeuvresManager()
 
-    panels = [FieldRowPanel(['type', FieldPanel('mere', heading='Œuvre mère')])]
+    panels = [FieldRowPanel(['type', FieldPanel('mere', heading=_('Œuvre mère'))])]
 
     class Meta(object):
         verbose_name = _('parenté d’œuvres')
