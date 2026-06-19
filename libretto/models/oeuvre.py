@@ -92,7 +92,7 @@ class Dedicace(CommonModel):
     individu = ForeignKey('Individu', related_name='dedicaces',
                           verbose_name=_('individu'), on_delete=PROTECT)
 
-    panels = ['oeuvre', 'individu']
+    panels = ['individu']
 
     class Meta(CommonModel.Meta):
         verbose_name = 'dédicace'
@@ -265,8 +265,8 @@ class Pupitre(CommonModel):
     objects = PupitreManager()
 
     panels = [
-        'oeuvre', 'partie', 'soliste', 'quantite_min', 'quantite_max',
-        'facultatif',
+        FieldRowPanel(['partie', 'soliste', 'facultatif']),
+        FieldRowPanel(['quantite_min', 'quantite_max']),
     ]
 
     api_fields = [
@@ -342,7 +342,7 @@ class ParenteDOeuvres(CommonModel):
 
     objects = ParenteDOeuvresManager()
 
-    panels = ['type', 'mere', 'fille']
+    panels = [FieldRowPanel(['type', FieldPanel('fille', heading='Œuvre mère')])]
 
     class Meta(object):
         verbose_name = _('parenté d’œuvres')
@@ -906,7 +906,7 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
             FieldRowPanel([FieldPanel('genre'), FieldPanel('numero')]),
             FieldRowPanel([FieldPanel('coupe'), FieldPanel('indeterminee')]),
         ]),
-        'pupitres',
+        MultipleChooserPanel('pupitres', 'partie'),
         MultiFieldPanel([
             'incipit',
             FieldRowPanel([FieldPanel('tempo'), FieldPanel('tonalite')]),
@@ -930,9 +930,9 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
             FieldRowPanel([FieldPanel('creation_lieu'), FieldPanel('creation_lieu_approx')]),
         ], heading=_('Création')),
         MultiFieldPanel([
-            MultipleChooserPanel('dedicaces', 'individu'),
+            MultipleChooserPanel('dedicaces', 'individu', heading=_('Dédicaces')),
         ], heading=_('Édition')),
-        'parentes_filles',
+        MultipleChooserPanel('parentes_filles', 'fille', heading=_('Œuvres mères')),
     ]
     api_fields = [
         APIField('prefixe_titre'),

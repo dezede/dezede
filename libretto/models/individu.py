@@ -48,7 +48,7 @@ class ParenteDIndividus(CommonModel):
     enfant = ForeignKey('Individu', related_name='parentes',
                         verbose_name=_('individu enfant'), on_delete=PROTECT)
 
-    panels = ['type', 'parent', 'enfant']
+    panels = [FieldRowPanel(['type', FieldPanel('enfant', heading=_('Individu'))])]
 
     class Meta(object):
         verbose_name = _('parenté d’individus')
@@ -76,7 +76,7 @@ class Occupation(CommonModel):
     profession = ForeignKey('Profession', related_name='occupations',
                             verbose_name=_('profession'), on_delete=PROTECT)
 
-    panels = ['individu', 'profession']
+    panels = ['profession']
 
     class Meta(CommonModel.Meta):
         verbose_name = 'occupation'
@@ -187,8 +187,7 @@ class Individu(Indexed, ClusterableModel, AutoriteModel, UniqueSlugModel, IsniMo
             'biographie',
             FieldRowPanel([FieldPanel('isni'), FieldPanel('sans_isni')]),
         ], heading=_('Informations complémentaires'), classname='collapsed'),
-        # FIXME: changer le nom du champ en utilisant le verbose name du modèle 'ParenteDIndividu'
-        MultipleChooserPanel('enfances', 'enfant'),
+        MultipleChooserPanel('enfances', 'enfant', heading=_('Parentés')),
     ]
     api_fields = [
         APIField('particule_nom'),
