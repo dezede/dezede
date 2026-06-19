@@ -21,7 +21,7 @@ from wagtail.search.backends.base import EmptySearchResults
 from wagtail.search.models import IndexEntry
 
 from common.utils.html import sanitize_html
-from dossiers.models import Dossier
+from dossiers.models import CategorieDeDossiers, Dossier
 from libretto.models import (
     Oeuvre, Lieu, Individu, Source, Evenement, Ensemble, Profession, Partie,
 )
@@ -136,7 +136,7 @@ def autocomplete_search(request, q, model=None, max_results=5):
         qs = qs.filter(
             content_type__in=[
                 ContentType.objects.get_for_model(m) for m in apps.get_models()
-                if issubclass(m, (PublishedModel, Page)) and m not in {Diapositive, Dossier}
+                if issubclass(m, (PublishedModel, Page)) and m not in {Diapositive, Dossier, CategorieDeDossiers}
             ]
         )
 
