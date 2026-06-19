@@ -715,10 +715,10 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
             r'^[\d\w\-]+$', _('Vous ne pouvez saisir que des chiffres, '
                               'lettres non accentuées et tiret, '
                               'le tout sans espace.'))],
-        help_text=_(
+        help_text=mark_safe(_(
             'Exemple : « 5 » pour symphonie n° 5, « 7a » pour valse n° 7 a, '
             'ou encore « 3-7 » pour sonates n° 3 à 7. '
-            '<strong>Ne pas confondre avec le sous-numéro d’opus.</strong>'))
+            '<strong>Ne pas confondre avec le sous-numéro d’opus.</strong>')))
     coupe = CharField(
         _('coupe'), max_length=100, blank=True, db_index=True,
         validators=[RegexValidator(
@@ -727,18 +727,18 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
         help_text=_('Exemple : « trois actes » pour un opéra en trois actes.'))
     indeterminee = BooleanField(
         _('indéterminée'), default=False,
-        help_text=_(
+        help_text=mark_safe(_(
             'Cocher si l’œuvre n’est pas identifiable, par exemple '
             'un quatuor de Haydn, sans savoir lequel. '
             '<strong>Ne pas utiliser pour un extrait indéterminé</strong>, '
             'sélectionner plutôt dans le programme l’œuvre dont il est tiré '
             'et joindre une caractéristique le décrivant '
-            '(« un air », « un mouvement », etc.).'))
+            '(« un air », « un mouvement », etc.).')))
     incipit = CharField(
         _('incipit'), max_length=100, blank=True, db_index=True,
-        help_text=_('Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 '
+        help_text=mark_safe(_('Exemple : « Belle nuit, ô nuit d’amour » pour le n° 13 '
                     'de l’acte III des <em>Contes d’Hoffmann</em> '
-                    'd’Offenbach.'))
+                    'd’Offenbach.')))
     tempo = CharField(
         _('tempo'), max_length=50, blank=True, db_index=True,
         help_text=_('Exemple : « Largo », « Presto ma non troppo », etc. '
@@ -758,13 +758,13 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
     ambitus = IntegerRangeField(_('ambitus'), null=True, blank=True)
     sujet = CharField(
         _('sujet'), max_length=80, blank=True, db_index=True,
-        help_text=_(
+        help_text=mark_safe(_(
             'Exemple : « un thème de Beethoven » pour une variation sur un '
             'thème de Beethoven, « des motifs de '
             '&lt;em&gt;Lucia di Lammermoor&lt;/em&gt; » pour une fantaisie '
             'sur des motifs de <em>Lucia di Lammermoor</em> '
             '(&lt;em&gt; et &lt;/em&gt; sont les balises HTML '
-            'pour mettre en emphase).'))
+            'pour mettre en emphase).')))
     TRANSCRIPTION = 1
     ORCHESTRATION = 2
     ARRANGEMENTS = (
@@ -780,8 +780,8 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
                     'de Mozart.'))
     nom_courant = CharField(
         _('nom courant'), max_length=70, blank=True, db_index=True,
-        help_text=_('Exemple : « barcarolle » pour le n° 13 de l’acte III des '
-                    '<em>Contes d’Hoffmann</em> d’Offenbach.'))
+        help_text=mark_safe(_('Exemple : « barcarolle » pour le n° 13 de l’acte III des '
+                    '<em>Contes d’Hoffmann</em> d’Offenbach.')))
     opus = CharField(
         _('opus'), max_length=6, blank=True, db_index=True,
         validators=[RegexValidator(
@@ -858,10 +858,10 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
     NUMERO_EXTRAIT_RE = re.compile(NUMERO_EXTRAIT_PATTERN)
     numero_extrait = NumberCharField(
         _('numéro d’extrait'), max_length=10, blank=True, db_index=True,
-        help_text=_(
+        help_text=mark_safe(_(
             'Le numéro de l’extrait au sein de l’œuvre, par exemple « 3 » '
             'pour le 3<sup>e</sup> mouvement d’un concerto, « 4 » pour '
-            'l’acte IV d’un opéra, ou encore « 12b ».'),
+            'l’acte IV d’un opéra, ou encore « 12b ».')),
         validators=[RegexValidator(
             NUMERO_EXTRAIT_PATTERN,
             _('Vous devez saisir un nombre en chiffres arabes '

@@ -194,9 +194,9 @@ class Source(Indexed, ClusterableModel, AutoriteModel):
 
     transcription = HTMLField(
         _('transcription'), blank=True,
-        help_text=_('Recopier la source ou un extrait en suivant les règles '
+        help_text=mark_safe(_('Recopier la source ou un extrait en suivant les règles '
                     'définies dans '  # FIXME: Don’t hardcode the URL.
-                    '<a href="/examens/source">le didacticiel.</a>'),
+                    '<a href="/examens/source">le didacticiel.</a>')),
     )
 
     fichier = FileField(_('fichier'), upload_to='files/', blank=True)
