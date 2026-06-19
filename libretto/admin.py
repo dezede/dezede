@@ -787,33 +787,33 @@ class CaracteristiqueDeProgrammeAdmin(VersionAdmin, CommonAdmin):
     list_select_related = ['type', 'owner']
 
 
-@register(Partie)
-class PartieAdmin(VersionAdmin, AutoriteAdmin):
-    form = PartieForm
-    list_display = (
-        '__str__', 'nom', 'parent', 'oeuvre', 'classement',
-        'premier_interprete',
-    )
-    list_editable = (
-        'nom', 'parent', 'oeuvre', 'classement', 'premier_interprete',
-    )
-    list_filter = ('type',)
-    list_select_related = ('parent', 'etat', 'owner')
-    radio_fields = {'type': HORIZONTAL}
-    raw_id_fields = ('oeuvre', 'professions', 'parent', 'premier_interprete')
-    autocomplete_lookup_fields = {
-        'm2m': ('professions',),
-        'fk': ('oeuvre', 'parent', 'premier_interprete'),
-    }
-    fieldsets = (
-        (None, {
-            'fields': (
-                'type', ('nom', 'nom_pluriel'),
-                'oeuvre', 'professions', 'parent', 'classement',
-                'premier_interprete',
-            ),
-        }),
-    )
+# @register(Partie)
+# class PartieAdmin(VersionAdmin, AutoriteAdmin):
+#     form = PartieForm
+#     list_display = (
+#         '__str__', 'nom', 'parent', 'oeuvre', 'classement',
+#         'premier_interprete',
+#     )
+#     list_editable = (
+#         'nom', 'parent', 'oeuvre', 'classement', 'premier_interprete',
+#     )
+#     list_filter = ('type',)
+#     list_select_related = ('parent', 'etat', 'owner')
+#     radio_fields = {'type': HORIZONTAL}
+#     raw_id_fields = ('oeuvre', 'professions', 'parent', 'premier_interprete')
+#     autocomplete_lookup_fields = {
+#         'm2m': ('professions',),
+#         'fk': ('oeuvre', 'parent', 'premier_interprete'),
+#     }
+#     fieldsets = (
+#         (None, {
+#             'fields': (
+#                 'type', ('nom', 'nom_pluriel'),
+#                 'oeuvre', 'professions', 'parent', 'classement',
+#                 'premier_interprete',
+#             ),
+#         }),
+#     )
 
 
 # This is no longer compatible with the new models

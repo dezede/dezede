@@ -49,7 +49,19 @@ __all__ = (
 )
 
 
-class GenreDOeuvre(Indexed, CommonModel, SlugModel):
+class ParenteDeGenresDOeuvre(CommonModel):
+    parent = ForeignKey('GenreDOeuvre', related_name='parentes_parent', on_delete=PROTECT)
+    enfant = ParentalKey('GenreDOeuvre', related_name='parentes_enfant', on_delete=PROTECT)
+
+    panels = [FieldPanel('parent', heading='Parent')]
+
+    class Meta(CommonModel.Meta):
+        verbose_name = 'parenté de genres d’œuvre'
+        verbose_name_plural = 'parentés de genres d’œuvre'
+        ordering = ('parent', 'enfant')
+
+
+class GenreDOeuvre(Indexed, ClusterableModel, CommonModel, SlugModel):
     nom = CharField(_('nom'), max_length=255, help_text=LOWER_MSG, unique=True,
                     db_index=True)
     nom_pluriel = CharField(_('nom (au pluriel)'), max_length=430, blank=True,
@@ -62,14 +74,22 @@ class GenreDOeuvre(Indexed, CommonModel, SlugModel):
             '« Le jeune Henri, acte 2, scène 3 » car on remonte jusqu’à '
             'l’œuvre référente, ici choisie comme étant celle de nature '
             '« opéra »'))
-    parents = ManyToManyField('GenreDOeuvre', related_name='enfants',
-                              blank=True, verbose_name=_('parents'))
+    parents = ManyToManyField(
+        'GenreDOeuvre', through='ParenteDeGenresDOeuvre', related_name='enfants',
+        blank=True, verbose_name=_('parents')
+    )
 
     search_fields = [
         SearchField('title', boost=10),
         SearchField('nom_pluriel', boost=10),
         AutocompleteField('title'),
         AutocompleteField('nom_pluriel'),
+    ]
+    panels = [
+        'nom',
+        'nom_pluriel',
+        'referent',
+        MultipleChooserPanel('parentes_enfant', 'parent', heading='Parents'),
     ]
     api_fields = [
         APIField('nom'),
@@ -100,7 +120,19 @@ class Dedicace(CommonModel):
         ordering = ('oeuvre', 'individu')
 
 
-class Partie(Indexed, AutoriteModel, UniqueSlugModel):
+class PartieProfession(CommonModel):
+    partie = ParentalKey('Partie', related_name='partie_professions', on_delete=PROTECT)
+    profession = ForeignKey('Profession', related_name='partie_professions', on_delete=PROTECT)
+
+    panels = ['profession']
+
+    class Meta(CommonModel.Meta):
+        verbose_name = 'profession'
+        verbose_name_plural = 'professions'
+        ordering = ('partie', 'profession')
+
+
+class Partie(Indexed, ClusterableModel, AutoriteModel, UniqueSlugModel):
     """
     Partie de l’œuvre, c’est-à-dire typiquement un rôle ou un instrument pour
     une œuvre musicale.
@@ -127,8 +159,8 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
     # TODO: Changer le verbose_name en un genre de "types de voix"
     # pour les rôles, mais en plus générique (ou un help_text).
     professions = ManyToManyField(
-        'Profession', related_name='parties', verbose_name=_('professions'),
-        blank=True)
+        'Profession', through='PartieProfession', related_name='parties',
+        verbose_name=_('professions'), blank=True)
     parent = ForeignKey('self', related_name='enfants', blank=True, null=True,
                         verbose_name=_('rôle ou instrument parent'),
                         on_delete=CASCADE)
@@ -144,7 +176,7 @@ class Partie(Indexed, AutoriteModel, UniqueSlugModel):
             FieldPanel('nom'), FieldPanel('nom_pluriel'),
         ]),
         FieldPanel('oeuvre'),
-        # TODO: Add professions.
+        MultipleChooserPanel('partie_professions', 'profession', heading=_('Professions')),
         FieldPanel('parent'),
         FieldPanel('classement'),
         FieldPanel('premier_interprete'),
