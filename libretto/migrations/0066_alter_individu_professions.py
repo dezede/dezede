@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='parentedindividus',
-            name='parent',
-            field=modelcluster.fields.ParentalKey(on_delete=models.deletion.PROTECT, related_name='enfances', to='libretto.individu', verbose_name='individu parent'),
+            name='enfant',
+            field=modelcluster.fields.ParentalKey(on_delete=models.deletion.PROTECT, related_name='parentes', to='libretto.individu', verbose_name='individu enfant'),
         ),
     ]

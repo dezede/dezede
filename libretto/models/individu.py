@@ -43,12 +43,12 @@ class TypeDeParenteDIndividus(TypeDeParente):
 class ParenteDIndividus(CommonModel):
     type = ForeignKey('TypeDeParenteDIndividus', related_name='parentes',
                       verbose_name=_('type'), on_delete=PROTECT)
-    parent = ParentalKey('Individu', related_name='enfances',
+    parent = ForeignKey('Individu', related_name='enfances',
                         verbose_name=_('individu parent'), on_delete=PROTECT)
-    enfant = ForeignKey('Individu', related_name='parentes',
+    enfant = ParentalKey('Individu', related_name='parentes',
                         verbose_name=_('individu enfant'), on_delete=PROTECT)
 
-    panels = [FieldRowPanel(['type', FieldPanel('enfant', heading=_('Individu'))])]
+    panels = [FieldRowPanel(['type', FieldPanel('parent', heading=_('Individu'))])]
 
     class Meta(object):
         verbose_name = _('parenté d’individus')
@@ -187,7 +187,7 @@ class Individu(Indexed, ClusterableModel, AutoriteModel, UniqueSlugModel, IsniMo
             'biographie',
             FieldRowPanel([FieldPanel('isni'), FieldPanel('sans_isni')]),
         ], heading=_('Informations complémentaires'), classname='collapsed'),
-        MultipleChooserPanel('enfances', 'enfant', heading=_('Parentés')),
+        MultipleChooserPanel('parentes', 'parent', heading=_('Parentés')),
     ]
     api_fields = [
         APIField('particule_nom'),
