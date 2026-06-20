@@ -38,7 +38,6 @@ class Migration(migrations.Migration):
             name='PartieProfession',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('owner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='%(class)s', to=settings.AUTH_USER_MODEL, verbose_name='propriétaire')),
                 ('partie', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.PROTECT, related_name='partie_professions', to='libretto.partie')),
                 ('profession', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='partie_professions', to='libretto.profession')),
             ],
@@ -46,7 +45,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'profession',
                 'verbose_name_plural': 'professions',
                 'ordering': ('partie', 'profession'),
-                'abstract': False,
             },
         ),
         migrations.RunPython(migrate_partie_profession_data, migrations.RunPython.noop),
@@ -61,14 +59,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('enfant', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.PROTECT, related_name='parentes_enfant', to='libretto.genredoeuvre')),
-                ('owner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='%(class)s', to=settings.AUTH_USER_MODEL, verbose_name='propriétaire')),
                 ('parent', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='parentes_parent', to='libretto.genredoeuvre')),
             ],
             options={
                 'verbose_name': 'parenté de genres d’œuvre',
                 'verbose_name_plural': 'parentés de genres d’œuvre',
                 'ordering': ('parent', 'enfant'),
-                'abstract': False,
             },
         ),
         migrations.RunPython(migrate_parentedegenredoeuvre_data, migrations.RunPython.noop),

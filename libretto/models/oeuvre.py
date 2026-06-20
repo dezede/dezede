@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.core.validators import RegexValidator
 from django.db.models import (
-    CharField, ManyToManyField, ForeignKey, IntegerField,
+    Model, CharField, ManyToManyField, ForeignKey, IntegerField,
     BooleanField, SmallIntegerField, PROTECT, Count,
     PositiveSmallIntegerField, CASCADE, CheckConstraint, Q)
 from django.forms.widgets import RadioSelect
@@ -49,13 +49,13 @@ __all__ = (
 )
 
 
-class ParenteDeGenresDOeuvre(CommonModel):
+class ParenteDeGenresDOeuvre(Model):
     parent = ForeignKey('GenreDOeuvre', related_name='parentes_parent', on_delete=PROTECT)
     enfant = ParentalKey('GenreDOeuvre', related_name='parentes_enfant', on_delete=PROTECT)
 
     panels = [FieldPanel('parent', heading='Parent')]
 
-    class Meta(CommonModel.Meta):
+    class Meta(object):
         verbose_name = _('parenté de genres d’œuvre')
         verbose_name_plural = _('parentés de genres d’œuvre')
         ordering = ('parent', 'enfant')
@@ -106,7 +106,7 @@ class GenreDOeuvre(Indexed, ClusterableModel, CommonModel, SlugModel):
         return strip_tags(self.nom)
 
 
-class Dedicace(CommonModel):
+class Dedicace(Model):
     oeuvre = ParentalKey('Oeuvre', related_name='dedicaces',
                          verbose_name=_('oeuvre'), on_delete=PROTECT)
     individu = ForeignKey('Individu', related_name='dedicaces',
@@ -114,19 +114,19 @@ class Dedicace(CommonModel):
 
     panels = ['individu']
 
-    class Meta(CommonModel.Meta):
+    class Meta(object):
         verbose_name = _('dédicace')
         verbose_name_plural = _('dédicaces')
         ordering = ('oeuvre', 'individu')
 
 
-class PartieProfession(CommonModel):
+class PartieProfession(Model):
     partie = ParentalKey('Partie', related_name='partie_professions', on_delete=PROTECT)
     profession = ForeignKey('Profession', related_name='partie_professions', on_delete=PROTECT)
 
     panels = ['profession']
 
-    class Meta(CommonModel.Meta):
+    class Meta(object):
         verbose_name = _('profession')
         verbose_name_plural = _('professions')
         ordering = ('partie', 'profession')

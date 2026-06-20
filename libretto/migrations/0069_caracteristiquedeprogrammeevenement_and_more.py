@@ -50,13 +50,11 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('caracteristique', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='caracteristiquedeprogramme_evenements', to='libretto.caracteristiquedeprogramme')),
                 ('evenement', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.PROTECT, related_name='caracteristiquedeprogramme_evenements', to='libretto.evenement')),
-                ('owner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='%(class)s', to=settings.AUTH_USER_MODEL, verbose_name='propriétaire')),
             ],
             options={
                 'verbose_name': 'caractéristique de programme',
                 'verbose_name_plural': 'caractéristiques de programme',
                 'ordering': ('evenement', 'caracteristique'),
-                'abstract': False,
             },
         ),
         migrations.CreateModel(
@@ -65,13 +63,11 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('caracteristique', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='caracteristiquedeprogramme_elementdeprogrammes', to='libretto.caracteristiquedeprogramme')),
                 ('element', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.PROTECT, related_name='caracteristiquedeprogramme_elementdeprogrammes', to='libretto.elementdeprogramme')),
-                ('owner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='%(class)s', to=settings.AUTH_USER_MODEL, verbose_name='propriétaire')),
             ],
             options={
                 'verbose_name': 'caractéristique de programme',
                 'verbose_name_plural': 'caractéristiques de programme',
                 'ordering': ('element', 'caracteristique'),
-                'abstract': False,
             },
         ),
         migrations.RunPython(migrate_evenements_edp, migrations.RunPython.noop),

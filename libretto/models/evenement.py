@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import connection
 from django.db.models import (
-    CharField, ForeignKey, ManyToManyField, BooleanField,
+    Model, CharField, ForeignKey, ManyToManyField, BooleanField,
     PositiveSmallIntegerField, Q, PROTECT, Count, DecimalField,
     SmallIntegerField, Max, CASCADE, CheckConstraint
 )
@@ -283,7 +283,7 @@ class CaracteristiqueDeProgramme(Indexed, CommonModel):
         return valeur
 
 
-class CaracteristiqueDeProgrammeElementDeProgramme(CommonModel):
+class CaracteristiqueDeProgrammeElementDeProgramme(Model):
     element = ParentalKey(
         'ElementDeProgramme', on_delete=PROTECT,
         related_name='caracteristiquedeprogramme_elementdeprogrammes',
@@ -295,7 +295,7 @@ class CaracteristiqueDeProgrammeElementDeProgramme(CommonModel):
 
     panels = [FieldPanel('caracteristique', heading=_('Caractéristique de programme'))]
 
-    class Meta(CommonModel.Meta):
+    class Meta(object):
         verbose_name = _('caractéristique de programme')
         verbose_name_plural = _('caractéristiques de programme')
         ordering = ('element', 'caracteristique')
@@ -426,7 +426,7 @@ class ElementDeProgramme(ClusterableModel, CommonModel):
         return strip_tags(self.html(False))
 
 
-class CaracteristiqueDeProgrammeEvenement(CommonModel):
+class CaracteristiqueDeProgrammeEvenement(Model):
     evenement = ParentalKey(
         'Evenement', related_name='caracteristiquedeprogramme_evenements',
         on_delete=PROTECT,
@@ -440,7 +440,7 @@ class CaracteristiqueDeProgrammeEvenement(CommonModel):
         'caracteristique', heading=_('Caractéristique de programme')
     )]
 
-    class Meta(CommonModel.Meta):
+    class Meta(object):
         verbose_name = _('caractéristique de programme')
         verbose_name_plural = _('caractéristiques de programme')
         ordering = ('evenement', 'caracteristique')

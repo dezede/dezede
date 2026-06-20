@@ -89,14 +89,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('individu', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.PROTECT, related_name='occupations', to='libretto.individu', verbose_name='individu')),
-                ('owner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='%(class)s', to=settings.AUTH_USER_MODEL, verbose_name='propriétaire')),
                 ('profession', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='occupations', to='libretto.profession', verbose_name='profession')),
             ],
             options={
                 'verbose_name': 'occupation',
                 'verbose_name_plural': 'occupations',
                 'ordering': ('individu', 'profession'),
-                'abstract': False,
             },
         ),
     ]

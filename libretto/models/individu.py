@@ -2,7 +2,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import (
-    CharField, ForeignKey, ManyToManyField, PROTECT)
+    CharField, ForeignKey, ManyToManyField, PROTECT, Model)
 from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -70,7 +70,7 @@ class ParenteDIndividus(CommonModel):
             'enfant': self.enfant}
 
 
-class Occupation(CommonModel):
+class Occupation(Model):
     individu = ParentalKey('Individu', related_name='occupations',
                            verbose_name=_('individu'), on_delete=PROTECT)
     profession = ForeignKey('Profession', related_name='occupations',
@@ -78,7 +78,7 @@ class Occupation(CommonModel):
 
     panels = ['profession']
 
-    class Meta(CommonModel.Meta):
+    class Meta(object):
         verbose_name = 'occupation'
         verbose_name_plural = 'occupations'
         # TODO: vérifier que l’ordre des professions est cohérent ailleurs
