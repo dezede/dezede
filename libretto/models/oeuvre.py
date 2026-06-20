@@ -50,8 +50,8 @@ __all__ = (
 
 
 class ParenteDeGenresDOeuvre(Model):
-    parent = ForeignKey('GenreDOeuvre', related_name='parentes_parent', on_delete=PROTECT)
-    enfant = ParentalKey('GenreDOeuvre', related_name='parentes_enfant', on_delete=PROTECT)
+    parent = ForeignKey('GenreDOeuvre', related_name='parentes_parent', on_delete=CASCADE)
+    enfant = ParentalKey('GenreDOeuvre', related_name='parentes_enfant', on_delete=CASCADE)
 
     panels = [FieldPanel('parent', heading='Parent')]
 
@@ -108,9 +108,9 @@ class GenreDOeuvre(Indexed, ClusterableModel, CommonModel, SlugModel):
 
 class Dedicace(Model):
     oeuvre = ParentalKey('Oeuvre', related_name='dedicaces',
-                         verbose_name=_('oeuvre'), on_delete=PROTECT)
+                         verbose_name=_('oeuvre'), on_delete=CASCADE)
     individu = ForeignKey('Individu', related_name='dedicaces',
-                          verbose_name=_('individu'), on_delete=PROTECT)
+                          verbose_name=_('individu'), on_delete=CASCADE)
 
     panels = ['individu']
 
@@ -121,8 +121,8 @@ class Dedicace(Model):
 
 
 class PartieProfession(Model):
-    partie = ParentalKey('Partie', related_name='partie_professions', on_delete=PROTECT)
-    profession = ForeignKey('Profession', related_name='partie_professions', on_delete=PROTECT)
+    partie = ParentalKey('Partie', related_name='partie_professions', on_delete=CASCADE)
+    profession = ForeignKey('Profession', related_name='partie_professions', on_delete=CASCADE)
 
     panels = ['profession']
 

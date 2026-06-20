@@ -37,8 +37,8 @@ class Migration(migrations.Migration):
             name='Dedicace',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('individu', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='dedicaces', to='libretto.individu', verbose_name='individu')),
-                ('oeuvre', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.PROTECT, related_name='dedicaces', to='libretto.oeuvre', verbose_name='oeuvre')),
+                ('individu', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='dedicaces', to='libretto.individu', verbose_name='individu')),
+                ('oeuvre', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='dedicaces', to='libretto.oeuvre', verbose_name='oeuvre')),
             ],
             options={
                 'ordering': ('oeuvre', 'individu'),

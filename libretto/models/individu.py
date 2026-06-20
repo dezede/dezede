@@ -2,7 +2,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import (
-    CharField, ForeignKey, ManyToManyField, PROTECT, Model)
+    CharField, ForeignKey, ManyToManyField, PROTECT, CASCADE, Model)
 from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
@@ -72,9 +72,9 @@ class ParenteDIndividus(CommonModel):
 
 class Occupation(Model):
     individu = ParentalKey('Individu', related_name='occupations',
-                           verbose_name=_('individu'), on_delete=PROTECT)
+                           verbose_name=_('individu'), on_delete=CASCADE)
     profession = ForeignKey('Profession', related_name='occupations',
-                            verbose_name=_('profession'), on_delete=PROTECT)
+                            verbose_name=_('profession'), on_delete=CASCADE)
 
     panels = ['profession']
 

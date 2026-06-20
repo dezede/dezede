@@ -285,11 +285,11 @@ class CaracteristiqueDeProgramme(Indexed, CommonModel):
 
 class CaracteristiqueDeProgrammeElementDeProgramme(Model):
     element = ParentalKey(
-        'ElementDeProgramme', on_delete=PROTECT,
+        'ElementDeProgramme', on_delete=CASCADE,
         related_name='caracteristiquedeprogramme_elementdeprogrammes',
     )
     caracteristique = ForeignKey(
-        'CaracteristiqueDeProgramme', on_delete=PROTECT,
+        'CaracteristiqueDeProgramme', on_delete=CASCADE,
         related_name='caracteristiquedeprogramme_elementdeprogrammes',
     )
 
@@ -429,11 +429,11 @@ class ElementDeProgramme(ClusterableModel, CommonModel):
 class CaracteristiqueDeProgrammeEvenement(Model):
     evenement = ParentalKey(
         'Evenement', related_name='caracteristiquedeprogramme_evenements',
-        on_delete=PROTECT,
+        on_delete=CASCADE,
     )
     caracteristique = ForeignKey(
         'CaracteristiqueDeProgramme',
-        related_name='caracteristiquedeprogramme_evenements', on_delete=PROTECT,
+        related_name='caracteristiquedeprogramme_evenements', on_delete=CASCADE,
     )
 
     panels = [FieldPanel(
