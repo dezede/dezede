@@ -995,173 +995,173 @@ def split_pdf(modeladmin, request, queryset):
 split_pdf.short_description = _('Séparer le PDF')
 
 
-@register(Source)
-class SourceAdmin(VersionAdmin, AutoriteAdmin):
-    form = SourceForm
-    list_display = (
-        '__str__', 'parent', 'position', 'date', 'type', 'has_events',
-        'has_program', 'link',
-    )
-    list_editable = ('parent', 'position', 'type', 'date')
-    list_select_related = ('type', 'etat', 'owner')
-    date_hierarchy = 'date'
-    list_filter = (SourceHasParentListFilter, 'type', 'titre',
-                   SourceHasEventsListFilter, SourceHasProgramListFilter)
-    raw_id_fields = ('parent', 'evenements', 'editeurs_scientifiques')
-    autocomplete_lookup_fields = {
-        'fk': ('parent',),
-        'm2m': ('editeurs_scientifiques',),
-    }
-    related_lookup_fields = {
-        'm2m': ['evenements'],
-    }
-    readonly_fields = ('__str__', 'html', 'children_links')
-    inlines = (
-        AuteurInline, SourceIndividuInline, SourceOeuvreInline,
-        SourcePartieInline, SourceLieuInline, SourceEvenementInline,
-        SourceEnsembleInline,
-    )
-    actions = [split_pdf]
-    fieldsets = (
-        (None, {
-            'fields': (
-                ('parent', 'position', 'est_promu'),
-            ),
-        }),
-        (None, {
-            'fields': (
-                'type', 'titre', 'legende',
-            ),
-        }),
-        (None, {
-            'fields': (
-                ('date', 'date_approx'),
-                ('numero', 'page', 'folio',),
-                ('lieu_conservation', 'cote',),
-                'url',
-            )
-        }),
-        (_('Transcription'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': ('transcription',),
-        }),
-        (None, {
-            'fields': (('fichier', 'telechargement_autorise'),),
-        }),
-        (None, {
-            'fields': ('children_links',),
-        }),
-        (_('Présentation'), {
-            'classes': ('grp-collapse grp-closed',),
-            'fields': (
-                'editeurs_scientifiques', 'date_publication', 'publications',
-                'developpements', 'presentation', 'contexte',
-                'sources_et_protocole', 'bibliographie',
-            ),
-        })
-    )
-    fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'f', 'i', 'i',
-                                   'i', 'i', 'i', 'i', 'i', 'f')
-    admin_fields = AutoriteAdmin.admin_fields + ('est_promue',)
-    formfield_overrides = {
-        **AutoriteAdmin.formfield_overrides,
-        TextField: {'widget': TinyMCE},
-    }
+# @register(Source)
+# class SourceAdmin(VersionAdmin, AutoriteAdmin):
+#     form = SourceForm
+#     list_display = (
+#         '__str__', 'parent', 'position', 'date', 'type', 'has_events',
+#         'has_program', 'link',
+#     )
+#     list_editable = ('parent', 'position', 'type', 'date')
+#     list_select_related = ('type', 'etat', 'owner')
+#     date_hierarchy = 'date'
+#     list_filter = (SourceHasParentListFilter, 'type', 'titre',
+#                    SourceHasEventsListFilter, SourceHasProgramListFilter)
+#     raw_id_fields = ('parent', 'evenements', 'editeurs_scientifiques')
+#     autocomplete_lookup_fields = {
+#         'fk': ('parent',),
+#         'm2m': ('editeurs_scientifiques',),
+#     }
+#     related_lookup_fields = {
+#         'm2m': ['evenements'],
+#     }
+#     readonly_fields = ('__str__', 'html', 'children_links')
+#     inlines = (
+#         AuteurInline, SourceIndividuInline, SourceOeuvreInline,
+#         SourcePartieInline, SourceLieuInline, SourceEvenementInline,
+#         SourceEnsembleInline,
+#     )
+#     actions = [split_pdf]
+#     fieldsets = (
+#         (None, {
+#             'fields': (
+#                 ('parent', 'position', 'est_promu'),
+#             ),
+#         }),
+#         (None, {
+#             'fields': (
+#                 'type', 'titre', 'legende',
+#             ),
+#         }),
+#         (None, {
+#             'fields': (
+#                 ('date', 'date_approx'),
+#                 ('numero', 'page', 'folio',),
+#                 ('lieu_conservation', 'cote',),
+#                 'url',
+#             )
+#         }),
+#         (_('Transcription'), {
+#             'classes': ('grp-collapse grp-closed',),
+#             'fields': ('transcription',),
+#         }),
+#         (None, {
+#             'fields': (('fichier', 'telechargement_autorise'),),
+#         }),
+#         (None, {
+#             'fields': ('children_links',),
+#         }),
+#         (_('Présentation'), {
+#             'classes': ('grp-collapse grp-closed',),
+#             'fields': (
+#                 'editeurs_scientifiques', 'date_publication', 'publications',
+#                 'developpements', 'presentation', 'contexte',
+#                 'sources_et_protocole', 'bibliographie',
+#             ),
+#         })
+#     )
+#     fieldsets_and_inlines_order = ('f', 'f', 'f', 'f', 'f', 'i', 'i',
+#                                    'i', 'i', 'i', 'i', 'i', 'f')
+#     admin_fields = AutoriteAdmin.admin_fields + ('est_promue',)
+#     formfield_overrides = {
+#         **AutoriteAdmin.formfield_overrides,
+#         TextField: {'widget': TinyMCE},
+#     }
 
-    def get_queryset(self, request):
-        qs = super(SourceAdmin, self).get_queryset(request)
-        qs = qs.extra(
-            select={
-                '_has_events':
-                'EXISTS ('
-                '    SELECT 1 FROM %(evenement)s '
-                '    INNER JOIN %(m2m)s ON %(evenement)s.id '
-                '                          = %(m2m)s.evenement_id '
-                '    WHERE %(m2m)s.source_id = %(source)s.id)' % {
-                    'evenement': Evenement._meta.db_table,
-                    'm2m': Source.evenements.field.m2m_db_table(),
-                    'source': Source._meta.db_table,
-                },
-                '_has_program':
-                'EXISTS ('
-                '    SELECT 1 FROM %(evenement)s '
-                '    INNER JOIN %(m2m)s ON %(evenement)s.id '
-                '                          = %(m2m)s.evenement_id '
-                '    WHERE (%(m2m)s.source_id = %(source)s.id '
-                '           AND (%(evenement)s.relache = true '
-                '                OR EXISTS (SELECT 1 FROM %(programme)s '
-                '                           WHERE %(programme)s.evenement_id '
-                '                                 = %(evenement)s.id))))' % {
-                    'evenement': Evenement._meta.db_table,
-                    'm2m': Source.evenements.field.m2m_db_table(),
-                    'source': Source._meta.db_table,
-                    'programme': ElementDeProgramme._meta.db_table,
-                }
-            }
-        )
-        return qs.select_related('type', 'etat', 'owner')
+#     def get_queryset(self, request):
+#         qs = super(SourceAdmin, self).get_queryset(request)
+#         qs = qs.extra(
+#             select={
+#                 '_has_events':
+#                 'EXISTS ('
+#                 '    SELECT 1 FROM %(evenement)s '
+#                 '    INNER JOIN %(m2m)s ON %(evenement)s.id '
+#                 '                          = %(m2m)s.evenement_id '
+#                 '    WHERE %(m2m)s.source_id = %(source)s.id)' % {
+#                     'evenement': Evenement._meta.db_table,
+#                     'm2m': Source.evenements.field.m2m_db_table(),
+#                     'source': Source._meta.db_table,
+#                 },
+#                 '_has_program':
+#                 'EXISTS ('
+#                 '    SELECT 1 FROM %(evenement)s '
+#                 '    INNER JOIN %(m2m)s ON %(evenement)s.id '
+#                 '                          = %(m2m)s.evenement_id '
+#                 '    WHERE (%(m2m)s.source_id = %(source)s.id '
+#                 '           AND (%(evenement)s.relache = true '
+#                 '                OR EXISTS (SELECT 1 FROM %(programme)s '
+#                 '                           WHERE %(programme)s.evenement_id '
+#                 '                                 = %(evenement)s.id))))' % {
+#                     'evenement': Evenement._meta.db_table,
+#                     'm2m': Source.evenements.field.m2m_db_table(),
+#                     'source': Source._meta.db_table,
+#                     'programme': ElementDeProgramme._meta.db_table,
+#                 }
+#             }
+#         )
+#         return qs.select_related('type', 'etat', 'owner')
 
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        source = self.get_object(request, object_id)
-        if source is not None and isinstance(source.specific, (Video, Audio)):
-            change_url = source.get_change_url()
-            if change_url != request.path:
-                return redirect(change_url)
-        return super().change_view(
-            request, object_id, form_url=form_url, extra_context=extra_context,
-        )
+#     def change_view(self, request, object_id, form_url='', extra_context=None):
+#         source = self.get_object(request, object_id)
+#         if source is not None and isinstance(source.specific, (Video, Audio)):
+#             change_url = source.get_change_url()
+#             if change_url != request.path:
+#                 return redirect(change_url)
+#         return super().change_view(
+#             request, object_id, form_url=form_url, extra_context=extra_context,
+#         )
 
-    def children_links(self, instance):
-        return format_html_join(
-            ', ',
-            '<a href="{}">{}</a>',
-            [(child.get_change_url(), child.position)
-             for child in instance.children.order_by('position')]
-        )
-    children_links.short_description = _('Enfants')
-
-
-@register(Audio)
-class AudioAdmin(SourceAdmin):
-    readonly_fields = SourceAdmin.readonly_fields + (
-        'fichier_ogg', 'fichier_mpeg', 'extrait_ogg', 'extrait_mpeg',
-        'duree', 'duree_extrait',
-    )
-    fieldsets = (
-        SourceAdmin.fieldsets[0],
-        SourceAdmin.fieldsets[1],
-        SourceAdmin.fieldsets[2],
-        SourceAdmin.fieldsets[3],
-        (_('Fichiers'), {
-            'fields': (
-                ('fichier', 'duree'),
-                ('fichier_ogg', 'fichier_mpeg'),
-                ('extrait', 'duree_extrait'),
-                ('extrait_ogg', 'extrait_mpeg'),
-            ),
-        }),
-    )
+#     def children_links(self, instance):
+#         return format_html_join(
+#             ', ',
+#             '<a href="{}">{}</a>',
+#             [(child.get_change_url(), child.position)
+#              for child in instance.children.order_by('position')]
+#         )
+#     children_links.short_description = _('Enfants')
 
 
-@register(Video)
-class VideoAdmin(AudioAdmin):
-    readonly_fields = AudioAdmin.readonly_fields + (
-        'largeur', 'hauteur', 'largeur_extrait', 'hauteur_extrait',
-    )
-    fieldsets = (
-        SourceAdmin.fieldsets[0],
-        SourceAdmin.fieldsets[1],
-        SourceAdmin.fieldsets[2],
-        SourceAdmin.fieldsets[3],
-        (_('Fichiers'), {
-            'fields': (
-                ('fichier', 'duree',
-                 'largeur', 'hauteur'),
-                ('fichier_ogg', 'fichier_mpeg'),
-                ('extrait', 'duree_extrait',
-                 'largeur_extrait', 'hauteur_extrait'),
-                ('extrait_ogg', 'extrait_mpeg'),
-            ),
-        }),
-    )
+# @register(Audio)
+# class AudioAdmin(SourceAdmin):
+#     readonly_fields = SourceAdmin.readonly_fields + (
+#         'fichier_ogg', 'fichier_mpeg', 'extrait_ogg', 'extrait_mpeg',
+#         'duree', 'duree_extrait',
+#     )
+#     fieldsets = (
+#         SourceAdmin.fieldsets[0],
+#         SourceAdmin.fieldsets[1],
+#         SourceAdmin.fieldsets[2],
+#         SourceAdmin.fieldsets[3],
+#         (_('Fichiers'), {
+#             'fields': (
+#                 ('fichier', 'duree'),
+#                 ('fichier_ogg', 'fichier_mpeg'),
+#                 ('extrait', 'duree_extrait'),
+#                 ('extrait_ogg', 'extrait_mpeg'),
+#             ),
+#         }),
+#     )
+
+
+# @register(Video)
+# class VideoAdmin(AudioAdmin):
+#     readonly_fields = AudioAdmin.readonly_fields + (
+#         'largeur', 'hauteur', 'largeur_extrait', 'hauteur_extrait',
+#     )
+#     fieldsets = (
+#         SourceAdmin.fieldsets[0],
+#         SourceAdmin.fieldsets[1],
+#         SourceAdmin.fieldsets[2],
+#         SourceAdmin.fieldsets[3],
+#         (_('Fichiers'), {
+#             'fields': (
+#                 ('fichier', 'duree',
+#                  'largeur', 'hauteur'),
+#                 ('fichier_ogg', 'fichier_mpeg'),
+#                 ('extrait', 'duree_extrait',
+#                  'largeur_extrait', 'hauteur_extrait'),
+#                 ('extrait_ogg', 'extrait_mpeg'),
+#             ),
+#         }),
+#     )
 

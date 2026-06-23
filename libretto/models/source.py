@@ -3,9 +3,10 @@ import json
 from pathlib import Path
 
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import (
-    CharField, ForeignKey, ManyToManyField, PROTECT, URLField,
+    Model, CharField, ForeignKey, ManyToManyField, PROTECT, URLField,
     CASCADE, PositiveSmallIntegerField, FileField, BooleanField, DateField,
     TextField, Q, PositiveIntegerField, OuterRef, Exists, Index
 )
@@ -16,10 +17,10 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
-from modelcluster.models import ClusterableModel
+from modelcluster.models import ClusterableModel, ParentalKey
 from tinymce.models import HTMLField
 from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
-from wagtail.admin.panels import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, MultipleChooserPanel
 
 from dezede.utils import html_field_value_to_text
 from libretto.constants import SOURCE_RELATED_SEARCH_FIELDS
@@ -236,8 +237,9 @@ class Source(Indexed, ClusterableModel, AutoriteModel):
 
     # Métadonnées
     editeurs_scientifiques = ManyToManyField(
-        'accounts.HierarchicUser', related_name='sources_editees',
-        verbose_name=_('éditeurs scientifiques'), blank=True,
+        settings.AUTH_USER_MODEL, through='SourceUser',
+        related_name='sources_editees', blank=True,
+        verbose_name=_('éditeurs scientifiques'),
     )
     date_publication = DateField(_('date de publication'),
                                  default=datetime.datetime.now)
@@ -264,15 +266,19 @@ class Source(Indexed, ClusterableModel, AutoriteModel):
         FieldPanel('transcription', classname='collapsed'),
         FieldRowPanel(['fichier', 'telechargement_autorise']),
         InlinePanel('auteurs'),
+        MultipleChooserPanel('sourceoeuvre_set', 'oeuvre', heading=_('Œuvres liées')),
+        MultipleChooserPanel('sourcepartie_set', 'partie', heading=_('Parties liées')),
+        MultipleChooserPanel('sourcelieu_set', 'lieu', heading=_('Lieux liés')),
+        MultipleChooserPanel('sourceevenement_set', 'evenement', heading=_('Événements liés')),
+        MultipleChooserPanel('sourceensemble_set', 'ensemble', heading=_('Ensembles liés')),
         # TODO: Enable this, in read-only.
         # 'children_links',
         MultiFieldPanel([
-            'editeurs_scientifiques', 'date_publication', 'publications',
+            MultipleChooserPanel('sourceuser_set', 'user', heading=_('Éditeurs scientifiques')),
+            'date_publication', 'publications',
             'developpements', 'presentation', 'contexte',
             'sources_et_protocole', 'bibliographie',
         ], heading=_('Présentation'), classname='collapsed'),
-        # TODO: Add missing related data:
-        #       œuvres, parties, lieux, événements, ensembles.
     ]
     search_fields = [
         RelatedFields('parent', SOURCE_RELATED_SEARCH_FIELDS),
@@ -793,7 +799,7 @@ class Video(AudioVideoAbstract):
 
 
 class SourceEvenement(TypographicModel):
-    source = ForeignKey(Source, related_name='sourceevenement_set',
+    source = ParentalKey(Source, related_name='sourceevenement_set',
                         on_delete=CASCADE)
     evenement = ForeignKey('Evenement', verbose_name=_('événement'),
                            related_name='sourceevenement_set',
@@ -802,10 +808,12 @@ class SourceEvenement(TypographicModel):
     class Meta(object):
         db_table = 'libretto_source_evenements'
         unique_together = ('source', 'evenement')
+        verbose_name = _('événement')
+        verbose_name_plural = _('événements')
 
 
 class SourceOeuvre(TypographicModel):
-    source = ForeignKey(Source, related_name='sourceoeuvre_set',
+    source = ParentalKey(Source, related_name='sourceoeuvre_set',
                         on_delete=CASCADE)
     oeuvre = ForeignKey('Oeuvre', verbose_name=_('œuvre'),
                         related_name='sourceoeuvre_set',
@@ -814,10 +822,12 @@ class SourceOeuvre(TypographicModel):
     class Meta(object):
         db_table = 'libretto_source_oeuvres'
         unique_together = ('source', 'oeuvre')
+        verbose_name = _('œuvre')
+        verbose_name_plural = _('œuvres')
 
 
 class SourceIndividu(TypographicModel):
-    source = ForeignKey(Source, related_name='sourceindividu_set',
+    source = ParentalKey(Source, related_name='sourceindividu_set',
                         on_delete=CASCADE)
     individu = ForeignKey('Individu', verbose_name=_('individu'),
                           related_name='sourceindividu_set',
@@ -826,10 +836,12 @@ class SourceIndividu(TypographicModel):
     class Meta(object):
         db_table = 'libretto_source_individus'
         unique_together = ('source', 'individu')
+        verbose_name = _('individu')
+        verbose_name_plural = _('individus')
 
 
 class SourceEnsemble(TypographicModel):
-    source = ForeignKey(Source, related_name='sourceensemble_set',
+    source = ParentalKey(Source, related_name='sourceensemble_set',
                         on_delete=CASCADE)
     ensemble = ForeignKey('Ensemble', verbose_name=_('ensemble'),
                           related_name='sourceensemble_set',
@@ -838,10 +850,12 @@ class SourceEnsemble(TypographicModel):
     class Meta(object):
         db_table = 'libretto_source_ensembles'
         unique_together = ('source', 'ensemble')
+        verbose_name = _('individu')
+        verbose_name_plural = _('individus')
 
 
 class SourceLieu(TypographicModel):
-    source = ForeignKey(Source, related_name='sourcelieu_set',
+    source = ParentalKey(Source, related_name='sourcelieu_set',
                         on_delete=CASCADE)
     lieu = ForeignKey('Lieu', verbose_name=_('lieu'),
                       related_name='sourcelieu_set',
@@ -850,10 +864,12 @@ class SourceLieu(TypographicModel):
     class Meta(object):
         db_table = 'libretto_source_lieux'
         unique_together = ('source', 'lieu')
+        verbose_name = _('lieu')
+        verbose_name_plural = _('lieux')
 
 
 class SourcePartie(TypographicModel):
-    source = ForeignKey(Source, related_name='sourcepartie_set',
+    source = ParentalKey(Source, related_name='sourcepartie_set',
                         on_delete=CASCADE)
     partie = ForeignKey('Partie', verbose_name=_('rôle ou instrument'),
                         related_name='sourcepartie_set', on_delete=CASCADE)
@@ -861,3 +877,17 @@ class SourcePartie(TypographicModel):
     class Meta(object):
         db_table = 'libretto_source_parties'
         unique_together = ('source', 'partie')
+        verbose_name = _('partie')
+        verbose_name_plural = _('parties')
+
+
+class SourceUser(Model):
+    source = ParentalKey('Source', related_name='sourceuser_set', on_delete=CASCADE)
+    user = ForeignKey(settings.AUTH_USER_MODEL, related_name='sourceuser_set', on_delete=CASCADE)
+
+    panels = ['user']
+
+    class Meta(object):
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
+        ordering = ('source', 'user')

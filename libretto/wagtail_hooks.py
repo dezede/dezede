@@ -10,6 +10,7 @@ from django_filters.filterset import filterset_factory
 from wagtail import hooks
 from wagtail.admin.filters import SuffixedMultiWidget, WagtailFilterSet
 from wagtail.admin.ui.tables import BaseColumn, BooleanColumn, Column, UserColumn
+from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.models import ReferenceIndex
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
@@ -50,6 +51,15 @@ def add_owner(request, instance):
     if isinstance(instance, CommonModel):
         instance.owner = request.user
         instance.save()
+
+
+class HierarchicUserChooserViewSet(ChooserViewSet):
+    model = "accounts.HierarchicUser"
+
+
+@hooks.register("register_admin_viewset")
+def register_user_chooser_viewset():
+    return HierarchicUserChooserViewSet("hierarchicuser_chooser")
 
 
 # FIXME: Replace with the one from wagtail.admin.filters in >=7.4
