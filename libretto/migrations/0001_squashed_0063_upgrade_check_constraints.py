@@ -34,6 +34,9 @@ class Migration(migrations.Migration):
         # index, so the whole Wagtail schema must already exist.
         ('wagtailcore', '0097_baselogentry_uuid_action_timestamp_indexes'),
         ('wagtailsearch', '0009_remove_ngram_autocomplete'),
+        # Ensures the full-text search configurations exist before any data is
+        # indexed into the Wagtail search backend on a fresh database.
+        ('dezede', '0001_search_config'),
     ]
 
     operations = [
