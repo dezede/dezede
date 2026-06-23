@@ -61,8 +61,8 @@ class Migration(migrations.Migration):
             name='CaracteristiqueDeProgrammeElementDeProgramme',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('caracteristique', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='caracteristiquedeprogramme_elementdeprogrammes', to='libretto.caracteristiquedeprogramme')),
-                ('element', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='caracteristiquedeprogramme_elementdeprogrammes', to='libretto.elementdeprogramme')),
+                ('caracteristique', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='caracteristiquedeprogrammeelementdeprogramme_set', to='libretto.caracteristiquedeprogramme')),
+                ('element', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='caracteristiquedeprogrammeelementdeprogramme_set', to='libretto.elementdeprogramme')),
             ],
             options={
                 'verbose_name': 'caractéristique de programme',

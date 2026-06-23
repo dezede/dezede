@@ -121,8 +121,8 @@ class Dedicace(Model):
 
 
 class PartieProfession(Model):
-    partie = ParentalKey('Partie', related_name='partie_professions', on_delete=CASCADE)
-    profession = ForeignKey('Profession', related_name='partie_professions', on_delete=CASCADE)
+    partie = ParentalKey('Partie', related_name='partieprofession_set', on_delete=CASCADE)
+    profession = ForeignKey('Profession', related_name='partieprofession_set', on_delete=CASCADE)
 
     panels = ['profession']
 
@@ -176,7 +176,7 @@ class Partie(Indexed, ClusterableModel, AutoriteModel, UniqueSlugModel):
             FieldPanel('nom'), FieldPanel('nom_pluriel'),
         ]),
         FieldPanel('oeuvre'),
-        MultipleChooserPanel('partie_professions', 'profession', heading=_('Professions')),
+        MultipleChooserPanel('partieprofession_set', 'profession', heading=_('Professions')),
         FieldPanel('parent'),
         FieldPanel('classement'),
         FieldPanel('premier_interprete'),

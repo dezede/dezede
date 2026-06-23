@@ -286,11 +286,11 @@ class CaracteristiqueDeProgramme(Indexed, CommonModel):
 class CaracteristiqueDeProgrammeElementDeProgramme(Model):
     element = ParentalKey(
         'ElementDeProgramme', on_delete=CASCADE,
-        related_name='caracteristiquedeprogramme_elementdeprogrammes',
+        related_name='caracteristiquedeprogrammeelementdeprogramme_set',
     )
     caracteristique = ForeignKey(
         'CaracteristiqueDeProgramme', on_delete=CASCADE,
-        related_name='caracteristiquedeprogramme_elementdeprogrammes',
+        related_name='caracteristiquedeprogrammeelementdeprogramme_set',
     )
 
     panels = [FieldPanel('caracteristique', heading=_('Caractéristique de programme'))]
@@ -353,7 +353,7 @@ class ElementDeProgramme(ClusterableModel, CommonModel):
     panels = [
         FieldRowPanel(['oeuvre', 'autre']),
         MultipleChooserPanel(
-            'caracteristiquedeprogramme_elementdeprogrammes',
+            'caracteristiquedeprogrammeelementdeprogramme_set',
             'caracteristique', heading=_('Caractéristiques'),
         ),
         FieldRowPanel(['numerotation', 'part_d_auteur']),
