@@ -1,0 +1,11 @@
+{% load i18n %}
+<div class="w-field__wrapper">
+  <label class="w-field__label">{{ self.heading }}</label>
+  <div class="w-field__input">
+    {% if children %}
+      {% for url, child in children %}{% if not forloop.first %}, {% endif %}{% if url %}<a href="{{ url }}">{{ child.position }}</a>{% else %}{{ child.position }}{% endif %}{% endfor %}
+    {% else %}
+      <p>{% translate "Aucune source enfant." %}</p>
+    {% endif %}
+  </div>
+</div>

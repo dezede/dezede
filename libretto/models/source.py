@@ -24,6 +24,7 @@ from wagtail.admin.panels import FieldPanel, FieldRowPanel, InlinePanel, MultiFi
 
 from dezede.utils import html_field_value_to_text
 from libretto.constants import SOURCE_RELATED_SEARCH_FIELDS
+from libretto.panels import ChildrenLinksPanel
 
 from .base import (
     CommonModel, AutoriteModel, LOWER_MSG, PLURAL_MSG, calc_pluriel,
@@ -271,8 +272,7 @@ class Source(Indexed, ClusterableModel, AutoriteModel):
         MultipleChooserPanel('sourcelieu_set', 'lieu', heading=_('Lieux liés')),
         MultipleChooserPanel('sourceevenement_set', 'evenement', heading=_('Événements liés')),
         MultipleChooserPanel('sourceensemble_set', 'ensemble', heading=_('Ensembles liés')),
-        # TODO: Enable this, in read-only.
-        # 'children_links',
+        ChildrenLinksPanel(heading=_('Enfants')),
         MultiFieldPanel([
             MultipleChooserPanel('sourceuser_set', 'user', heading=_('Éditeurs scientifiques')),
             'date_publication', 'publications',
