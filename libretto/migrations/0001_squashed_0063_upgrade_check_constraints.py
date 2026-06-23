@@ -29,6 +29,11 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('contenttypes', '0001_initial'),
         ('tree', '0001_initial'),
+        # Creating the default Etat (via the `etat` field default) saves a
+        # Wagtail snippet, which updates the search index and the reference
+        # index, so the whole Wagtail schema must already exist.
+        ('wagtailcore', '0097_baselogentry_uuid_action_timestamp_indexes'),
+        ('wagtailsearch', '0009_remove_ngram_autocomplete'),
     ]
 
     operations = [
