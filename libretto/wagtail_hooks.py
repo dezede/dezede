@@ -14,7 +14,7 @@ from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.models import ReferenceIndex
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
-from wagtail.snippets.views.snippets import IndexView, SnippetViewSet, SnippetViewSetGroup
+from wagtail.snippets.views.snippets import CreateView, IndexView, SnippetViewSet, SnippetViewSetGroup
 from wagtail_linksnippet.richtext_utils import add_snippet_link_button
 
 from common.utils.text import capfirst
@@ -44,13 +44,6 @@ def register_icons(icons):
         'wagtailfontawesomesvg/solid/file-audio.svg',
         'wagtailfontawesomesvg/solid/file-video.svg',
     ]
-
-
-@hooks.register('after_create_snippet')
-def add_owner(request, instance):
-    if isinstance(instance, CommonModel):
-        instance.owner = request.user
-        instance.save()
 
 
 class HierarchicUserChooserViewSet(ChooserViewSet):
@@ -124,9 +117,18 @@ class CommonIndexView(IndexView):
     def columns(self):
         return [self.improve_column(col) for col in super().columns]
 
+class CommonCreateView(CreateView):
+    def get_initial_form_instance(self):
+        # super().get_initial_form_instance returns None unless it is locale-
+        # aware (ex: a page)
+        instance = super().get_initial_form_instance() or self.model()
+        if isinstance(instance, CommonModel):
+            instance.owner = self.request.user
+        return instance
 
 class CommonViewSet(SnippetViewSet):
     index_view_class = CommonIndexView
+    add_view_class = CommonCreateView
     list_display = ['owner']
     filterset_fields = ['owner']
 
