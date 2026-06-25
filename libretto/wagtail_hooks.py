@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models import BooleanField, ForeignKey
 from django.forms import NumberInput
+from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 from django_filters import RangeFilter
 from django_filters.filterset import filterset_factory
@@ -14,7 +15,10 @@ from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.models import ReferenceIndex
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
-from wagtail.snippets.views.snippets import CreateView, IndexView, SnippetViewSet, SnippetViewSetGroup
+from wagtail.snippets.views.snippets import (
+    CreateView, IndexView, EditView, DeleteView, CopyView, SnippetViewSet,
+    SnippetViewSetGroup,
+)
 from wagtail_linksnippet.richtext_utils import add_snippet_link_button
 
 from common.utils.text import capfirst
@@ -81,6 +85,37 @@ class CommonFilterSet(WagtailFilterSet):
     )
 
 
+def scope_to_owner(qs, user):
+    """Objects owned by `user` or one of their hierarchic descendants"""
+    if user.is_superuser:
+        return qs
+    return qs.filter(owner__in=user.get_descendants(include_self=True))
+
+
+class OwnershipScopedMixin:
+    """404 on instances the user may not edit/delete (SingleObjectMixin-based views)."""
+    def get_queryset(self):
+        return scope_to_owner(super().get_queryset(), self.request.user)
+
+
+class CommonEditView(OwnershipScopedMixin, EditView):
+    pass
+
+
+class CommonDeleteView(OwnershipScopedMixin, DeleteView):
+    pass
+
+
+class CommonCopyView(CopyView):
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if not scope_to_owner(
+            type(obj).objects.all(), self.request.user
+        ).filter(pk=obj.pk).exists():
+            raise Http404
+        return obj
+
+
 class CommonIndexView(IndexView):
     def improve_column(self, column: BaseColumn):
         if column.__class__ != Column:
@@ -129,6 +164,9 @@ class CommonCreateView(CreateView):
 class CommonViewSet(SnippetViewSet):
     index_view_class = CommonIndexView
     add_view_class = CommonCreateView
+    edit_view_class = CommonEditView
+    copy_view_class = CommonCopyView
+    delete_view_class = CommonDeleteView
     list_display = ['owner']
     filterset_fields = ['owner']
 
@@ -138,12 +176,9 @@ class CommonViewSet(SnippetViewSet):
             self.model, filterset=CommonFilterSet, fields=self.filterset_fields,
         )
 
+    # used by IndexView only
     def get_queryset(self, request):
-        user = request.user
-        qs = self.model.objects.all()
-        if not user.is_superuser:
-            return qs.filter(owner__in=user.get_descendants(include_self=True))
-        qs = qs.annotate(
+        return scope_to_owner(self.model.objects.all(), request.user).annotate(
             usage_count=ReferenceIndex.usage_count_subquery(self.model)
         )
         return qs
