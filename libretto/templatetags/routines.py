@@ -3,10 +3,15 @@ from copy import copy
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models.query import QuerySet
 from django.template import Library, Template
+from django.urls import NoReverseMatch, reverse
 from django.utils.safestring import SafeText, mark_safe
 from tinymce.models import HTMLField
+from wagtail.admin.admin_url_finder import AdminURLFinder
+from wagtail.permission_policies import ModelPermissionPolicy
+from wagtail.snippets.models import get_snippet_models
 
 from libretto.models.base import PublishedQuerySet
+from libretto.wagtail_hooks import scope_to_owner
 from common.utils.text import capfirst
 
 
@@ -21,6 +26,23 @@ def build_admin_view_name(perm):
     return 'admin:%s' % perm.replace('.', '_')
 
 
+def reverse_or_none(view_name, pk):
+    try:
+        return reverse(view_name, args=(pk,))
+    except NoReverseMatch:
+        return None
+
+
+def is_owner_scoped(model):
+    """True for CommonModel-based snippets, whose edit/delete views
+    (CommonEditView/CommonDeleteView) restrict access to objects owned by the
+    user or a descendant and return a 404 outside that scope.
+    """
+    if model not in get_snippet_models():
+        return False
+    return any(f.name == 'owner' for f in model._meta.concrete_fields)
+
+
 @register.filter
 def map_str(iterable):
     return map(str, iterable)
@@ -31,16 +53,46 @@ def frontend_admin(context, obj=None, size='xs'):
     request = context['request']
     if obj is None:
         obj = context['object']
-    Model = obj._meta.model
-    app_label = Model._meta.app_label
-    model_slug = Model._meta.model_name
+    model = obj._meta.model
+    app_label = model._meta.app_label
+    model_slug = model._meta.model_name
     change_perm = build_permission(app_label, model_slug, 'change')
     delete_perm = build_permission(app_label, model_slug, 'delete')
     user = request.user
-    has_change_perm = user.has_perm(change_perm)
-    has_delete_perm = user.has_perm(delete_perm)
-    admin_change = build_admin_view_name(change_perm)
-    admin_delete = build_admin_view_name(delete_perm)
+    is_snippet = model in get_snippet_models()
+
+    # CommonModel-based snippets are scoped to objects owned by the user (or a
+    # descendant): CommonEditView/CommonDeleteView return a 404 outside that
+    # scope. The edit/delete buttons must respect it too, otherwise they link
+    # to a 404 even though the user holds the model-level permission.
+    if is_owner_scoped(model) and not scope_to_owner(
+            model._default_manager.all(), user).filter(pk=obj.pk).exists():
+        change_url = delete_url = None
+    else:
+        # Models are being migrated from the Django admin to Wagtail snippets,
+        # so an object's edit/delete pages can live in either backend.
+        # AdminURLFinder resolves the Wagtail (snippet/page) edit URL and
+        # already respects the user's model-level permissions; we fall back to
+        # the Django admin for models still registered there (e.g. dossiers).
+        change_url = AdminURLFinder(user).get_edit_url(obj)
+        if change_url is None and user.has_perm(
+                '%s.change_%s' % (app_label, model_slug)):
+            change_url = reverse_or_none(
+                build_admin_view_name(change_perm), obj.pk)
+
+        # AdminURLFinder only resolves edit URLs, so for snippets we gate the
+        # delete URL on the snippet's own permission policy (the same one
+        # Wagtail uses) and fall back to the Django admin otherwise.
+        delete_url = None
+        if is_snippet:
+            if ModelPermissionPolicy(model).user_has_permission(user, 'delete'):
+                delete_url = reverse_or_none(
+                    'wagtailsnippets_%s_%s:delete' % (app_label, model_slug),
+                    obj.pk)
+        elif user.has_perm('%s.delete_%s' % (app_label, model_slug)):
+            delete_url = reverse_or_none(
+                build_admin_view_name(delete_perm), obj.pk)
+
     permalink = obj.permalien()
     absolute_permalink = 'http%s://%s%s' % ('s' if request.is_secure() else '',
                                             request.get_host(), permalink)
@@ -48,10 +100,8 @@ def frontend_admin(context, obj=None, size='xs'):
     assert size in ('', 'xs', 'sm', 'md', 'lg')
 
     return {
-        'has_change_perm': has_change_perm,
-        'has_delete_perm': has_delete_perm,
-        'admin_change': admin_change,
-        'admin_delete': admin_delete,
+        'change_url': change_url,
+        'delete_url': delete_url,
         'permalink': permalink,
         'absolute_permalink': absolute_permalink,
         'object': obj,
