@@ -33,3 +33,15 @@ align-center, align-right, align-justify {
 .Draftail-ToolbarButton__label {
     height: auto !important;
 }
+
+/* gis/css/ol3.css floats .dj_map_wrapper left, which collapses the field’s
+   height so Wagtail’s fixed “Enregistrer” footer overlaps the “Supprimer
+   toutes les localisations” link. Un-float it (the map fills the column
+   here) and give the link its own line with room below. */
+.dj_map_wrapper {
+    float: none !important;
+}
+.dj_map_wrapper .clear_features {
+    display: block;
+    margin-bottom: 1rem;
+}

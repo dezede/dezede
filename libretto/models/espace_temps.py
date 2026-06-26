@@ -1,4 +1,5 @@
 from django.contrib.gis.db.models import GeometryField
+from django.contrib.gis.forms import OSMWidget
 from django.core.exceptions import ValidationError
 from django.db.models import (
     CharField, ForeignKey, BooleanField, DateField, Q, PROTECT, CASCADE,
@@ -118,9 +119,18 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         FieldRowPanel(['nom', 'parent']),
         FieldRowPanel(['nature', 'is_institution']),
         'historique',
-        # TODO: ajouter 'geometry'
-        #'geometry',
-        FieldRowPanel([FieldPanel('latitude'), FieldPanel('longitude')]),
+        # Centred on France by default. lat/lon are in degrees here.
+        FieldPanel('geometry', widget=OSMWidget(attrs={
+            'default_lon': 2.7, 'default_lat': 46.8, 'default_zoom': 5,
+        })),
+        FieldRowPanel(
+            [FieldPanel('latitude'), FieldPanel('longitude')],
+            heading=_('Coordonnées (saisie manuelle)'),
+            help_text=_(
+                'Alternative à la carte ci-dessus. Si ces champs sont '
+                'modifiés sans toucher à la carte, ils définissent la '
+                'position du lieu.'),
+        ),
     ]
 
     class Meta(AutoriteModel.Meta):
