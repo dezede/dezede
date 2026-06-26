@@ -10,7 +10,7 @@ from tinymce.models import HTMLField
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from wagtail.api import APIField
-from wagtail.admin.panels import FieldRowPanel
+from wagtail.admin.panels import FieldPanel, FieldRowPanel
 from wagtail.search.index import AutocompleteField, SearchField, Indexed, RelatedFields
 
 from dezede.utils import html_field_value_to_text
@@ -113,6 +113,14 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         APIField('nature'),
         APIField('is_institution'),
         APIField('geometry'),
+    ]
+    panels = [
+        FieldRowPanel(['nom', 'parent']),
+        FieldRowPanel(['nature', 'is_institution']),
+        'historique',
+        # TODO: ajouter 'geometry'
+        #'geometry',
+        FieldRowPanel([FieldPanel('latitude'), FieldPanel('longitude')]),
     ]
 
     class Meta(AutoriteModel.Meta):
