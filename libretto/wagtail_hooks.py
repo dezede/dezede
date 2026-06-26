@@ -1,12 +1,13 @@
 from functools import cached_property
 from typing import List
+from django.contrib.admin.utils import quote
 from django.contrib.auth import get_user_model
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models import BooleanField, ForeignKey
 from django.forms import NumberInput
 from django.http import Http404
 from django.templatetags.static import static
-from django.urls import path
+from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django_filters import RangeFilter
@@ -15,6 +16,7 @@ from wagtail import hooks
 from wagtail.admin.filters import SuffixedMultiWidget, WagtailFilterSet
 from wagtail.admin.ui.tables import BaseColumn, BooleanColumn, Column, UserColumn
 from wagtail.admin.viewsets.chooser import ChooserViewSet
+from wagtail.admin.widgets import Button
 from wagtail.models import ReferenceIndex
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
@@ -33,6 +35,7 @@ from .forms import (
     ElementDeDistributionForm, ElementDeProgrammeForm,
 )
 from .models import (
+    Auteur,
     Individu, Lieu, Oeuvre, Evenement, Partie, Ensemble, Source,
     NatureDeLieu, Etat, CaracteristiqueDeProgramme, GenreDOeuvre,
     Profession, Saison, Audio, Video,
@@ -314,9 +317,58 @@ class LieuViewSet(AutoriteViewSet):
         return [Column('nature', label=capfirst(_('nature')))]
 
 
+class OeuvreCreateView(CommonCreateView):
+    def get_initial_form_instance(self):
+        instance = super().get_initial_form_instance()
+        # when creating an extract (``?extrait_de=<pk>``), preset the parent
+        # work and copy over its authors so the user only has to tweak them
+        # in the cases where they differ from the parent (e.g. an opera
+        # overture whose librettist is not an author).
+        extrait_de = Oeuvre.objects.filter(
+            pk=self.request.GET.get('extrait_de'),
+        ).first()
+        if extrait_de is not None:
+            instance.extrait_de = extrait_de
+            instance.auteurs.set([
+                Auteur(
+                    individu_id=auteur.individu_id,
+                    ensemble_id=auteur.ensemble_id,
+                    profession_id=auteur.profession_id,
+                )
+                for auteur in extrait_de.auteurs.all()
+            ])
+        return instance
+
+
+class OeuvreEditView(CommonEditView):
+    # Injected by ``OeuvreViewSet.get_edit_view_kwargs`` so we can link to the
+    # add view; the generic ``EditView`` only knows about edit/delete/copy URLs.
+    add_url_name = None
+
+    def get_header_more_buttons(self):
+        buttons = super().get_header_more_buttons()
+        if self.add_url_name and self.user_has_permission('add'):
+            add_url = reverse(self.add_url_name)
+            buttons.append(Button(
+                _('Ajouter un extrait'),
+                url=f'{add_url}?extrait_de={quote(self.object.pk)}',
+                icon_name='book-open',
+                priority=15,
+            ))
+        return sorted(buttons)
+
+
 class OeuvreViewSet(AutoriteViewSet):
     model = Oeuvre
     icon = 'book'
+    add_view_class = OeuvreCreateView
+    edit_view_class = OeuvreEditView
+
+    def get_edit_view_kwargs(self, **kwargs):
+        return super().get_edit_view_kwargs(
+            add_url_name=self.get_url_name('add'), **kwargs,
+        )
+
     list_display = [
         '__str__', 'auteurs_html', 'creation', *AutoriteViewSet.list_display,
     ]
