@@ -1,6 +1,25 @@
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.admin_url_finder import AdminURLFinder
-from wagtail.admin.panels import Panel
+from wagtail.admin.panels import InlinePanel, Panel
+
+
+class ValidatedInlinePanel(InlinePanel):
+    """
+    Like ``InlinePanel`` but honours the child model's ``base_form_class``.
+
+    Wagtail's ``InlinePanel`` builds the inline formset from the child's panels
+    only (fields/widgets), defaulting the form to ``ClusterForm`` and ignoring
+    any ``base_form_class`` declared on the child model. We inject it here so
+    the child form's ``clean()`` validation (e.g. INCOMPATIBLES) is enforced
+    when editing children inline.
+    """
+    def get_form_options(self):
+        opts = super().get_form_options()
+        base_form_class = getattr(
+            self.db_field.related_model, 'base_form_class', None)
+        if base_form_class is not None:
+            opts['formsets'][self.relation_name]['form'] = base_form_class
+        return opts
 
 
 class ChildrenLinksPanel(Panel):

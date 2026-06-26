@@ -942,7 +942,7 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
         MultiFieldPanel([
             'incipit',
             FieldRowPanel([FieldPanel('tempo'), FieldPanel('tonalite')]),
-            # TODO: ajouter un widget spécial pour 'ambitus'
+            FieldPanel('ambitus'),
             FieldRowPanel([FieldPanel('sujet'), FieldPanel('arrangement')]),
         ], heading=_('Données musicales')),
         MultiFieldPanel([

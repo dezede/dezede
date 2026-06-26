@@ -1,4 +1,5 @@
 from operator import xor
+from urllib.parse import urlencode
 
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
     AutoCompleteWidget
@@ -16,8 +17,12 @@ from django.forms import (
     Select, ModelChoiceField,
 )
 from django.forms.models import ModelChoiceIterator
+from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from psycopg.types.range import Int4Range
+from wagtail.admin.forms import WagtailAdminModelForm
 
 from common.utils.text import capfirst, str_list_w_last
 from .models import (
@@ -27,9 +32,9 @@ from .models.oeuvre import Pitch, make_range_include_bounds
 from range_slider.fields import RangeSliderField
 
 
-__all__ = ('IndividuForm', 'EnsembleForm', 'OeuvreForm',
+__all__ = ('IndividuForm', 'EnsembleForm', 'OeuvreForm', 'PartieForm',
            'ElementDeDistributionForm', 'ElementDeProgrammeForm',
-           'SourceForm', 'SaisonForm', 'EvenementListForm')
+           'SourceForm', 'SaisonForm', 'LieuForm', 'EvenementListForm')
 
 
 class FasterModelChoiceIterator(ModelChoiceIterator):
@@ -63,12 +68,51 @@ def formfield_for_dbfield(db_field, **kwargs):
     return db_field.formfield(**kwargs)
 
 
-class ConstrainedModelForm(ModelForm):
+class AjaxAutocompleteInput(TextInput):
+    """
+    Text input whose free-text suggestions are fetched over AJAX as you type.
+
+    Replaces the legacy ajax_select autocompletion (which relied on the Django
+    admin's jQuery stack and lookup URLs) with a dependency-free widget usable
+    in the Wagtail admin. It renders the input plus an initially-empty HTML5
+    ``<datalist>``; ``admin_autocomplete.js`` (loaded globally via the
+    ``insert_global_admin_js`` hook) listens for input and fills the datalist
+    from ``libretto_charfield_autocomplete``, so only the top matches for the
+    typed prefix are ever loaded — suited to high-cardinality fields too.
+    """
+    def __init__(self, model_label, field_name, attrs=None):
+        self.model_label = model_label
+        self.field_name = field_name
+        super().__init__(attrs)
+
+    def render(self, name, value, attrs=None, renderer=None):
+        list_id = '%s__datalist' % name
+        url = reverse('libretto_charfield_autocomplete') + '?' + urlencode(
+            {'model': self.model_label, 'field': self.field_name})
+        attrs = {
+            **(attrs or {}),
+            'list': list_id,
+            'autocomplete': 'off',
+            'data-autocomplete-url': url,
+        }
+        input_html = super().render(name, value, attrs, renderer)
+        return input_html + format_html('<datalist id="{}"></datalist>', list_id)
+
+
+class ConstrainedModelForm(WagtailAdminModelForm):
     REQUIRED_BY = ()
     INCOMPATIBLES = ()
+    # CharFields offering previously-entered values via AJAX autocompletion.
+    AUTOCOMPLETE_FIELDS = ()
 
-    class Meta:
-        formfield_callback = formfield_for_dbfield
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        model_label = self._meta.model._meta.label_lower
+        for fieldname in self.AUTOCOMPLETE_FIELDS:
+            field = self.fields.get(fieldname)
+            if field is not None:
+                field.widget = AjaxAutocompleteInput(
+                    model_label, fieldname, attrs=field.widget.attrs)
 
     def get_field_verbose(self, fieldname):
         return capfirst(
@@ -110,24 +154,11 @@ class IndividuForm(ConstrainedModelForm):
         (('naissance_date',), ('naissance_date_approx',)),
         (('deces_date',), ('deces_date_approx',)),
     )
+    AUTOCOMPLETE_FIELDS = ('prenoms',)
 
     class Meta(ConstrainedModelForm.Meta):
         model = Individu
         exclude = ()
-        widgets = {
-            'prenoms':
-                AutoCompleteWidget('individu__prenoms',
-                                   attrs={'style': 'width: 300px;'})
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(IndividuForm, self).__init__(*args, **kwargs)
-
-        def apply_style(fieldname, style):
-            self.fields[fieldname].widget.attrs['style'] = style
-
-        apply_style('particule_nom', 'width: 50px;')
-        apply_style('particule_nom_naissance', 'width: 50px;')
 
     def clean_designation(self):
         # Anticipe si la désignation donnera un résultat nul.
@@ -218,7 +249,7 @@ class PitchField(MultiValueField):
                 MaxValueValidator(15),
             ]),
         ]
-        super().__init__(fields, **kwargs, help_text=PITCH_HELP_TEXT)
+        super().__init__(fields, **kwargs, help_text=mark_safe(PITCH_HELP_TEXT))
 
     def compress(self, data_list):
         try:
@@ -254,7 +285,8 @@ class AmbitusField(BaseRangeField):
         # We force pass the widget here, otherwise it is ignored when
         # specified as a class attribute.
         super().__init__(
-            *args, widget=AmbitusWidget, help_text=PITCH_HELP_TEXT, **kwargs,
+            *args, widget=AmbitusWidget, help_text=mark_safe(PITCH_HELP_TEXT),
+            **kwargs,
         )
 
     def prepare_value(self, value):
@@ -297,7 +329,12 @@ class OeuvreForm(ConstrainedModelForm):
     INCOMPATIBLES = (
         ('coupe', 'numero'),
     )
-    ambitus = AmbitusField(label=_('Ambitus'), required=False)
+    AUTOCOMPLETE_FIELDS = (
+        'prefixe_titre', 'coordination', 'prefixe_titre_secondaire',
+        'coupe', 'tempo',
+    )
+
+    ambitus = AmbitusField(label=_('ambitus'), required=False)
 
     def clean(self):
         data = super(OeuvreForm, self).clean()
@@ -341,22 +378,6 @@ class OeuvreForm(ConstrainedModelForm):
     class Meta(ConstrainedModelForm.Meta):
         model = Oeuvre
         exclude = ()
-        widgets = {
-            'prefixe_titre':
-                AutoCompleteWidget('oeuvre__prefixe_titre',
-                                   attrs={'style': 'width: 50px;'}),
-            'coordination':
-                AutoCompleteWidget('oeuvre__coordination',
-                                   attrs={'style': 'width: 70px;'}),
-            'prefixe_titre_secondaire':
-                AutoCompleteWidget('oeuvre__prefixe_titre_secondaire',
-                                   attrs={'style': 'width: 50px;'}),
-            'coupe': AutoCompleteWidget('oeuvre__coupe',
-                                         attrs={'style': 'width: 500px;'}),
-            'tempo': AutoCompleteWidget('oeuvre__tempo',
-                                         attrs={'style': 'width: 500px;'}),
-            'numero_extrait': TextInput(attrs={'cols': 10}),
-        }
 
 
 class ElementDeDistributionForm(ConstrainedModelForm):
@@ -405,19 +426,11 @@ class SourceForm(ConstrainedModelForm):
         (('date',), ('date_approx',)),
         (('lieu_conservation', 'cote'), ('lieu_conservation', 'cote')),
     )
+    AUTOCOMPLETE_FIELDS = ('titre', 'lieu_conservation')
 
     class Meta(ConstrainedModelForm.Meta):
         model = Source
         exclude = ()
-        widgets = {
-            'titre': AutoCompleteWidget('source__titre',
-                                        attrs={'style': 'width: 600px;'}),
-            'numero': TextInput(attrs={'cols': 10}),
-            'folio': TextInput(attrs={'cols': 10}),
-            'page': TextInput(attrs={'cols': 10}),
-            'lieu_conservation': AutoCompleteWidget(
-                'source__lieu_conservation', attrs={'style': 'width: 600px;'}),
-        }
 
     def clean(self):
         data = super(SourceForm, self).clean()
@@ -438,11 +451,10 @@ class SourceForm(ConstrainedModelForm):
         return data
 
 
-class SaisonForm(ModelForm):
-    class Meta(object):
+class SaisonForm(WagtailAdminModelForm):
+    class Meta(WagtailAdminModelForm.Meta):
         model = Saison
         exclude = ()
-        formfield_callback = formfield_for_dbfield
 
     def clean(self):
         data = super(SaisonForm, self).clean()
@@ -531,16 +543,15 @@ class EvenementListForm(Form):
         self.fields['dates'].widget.queryset = queryset
 
 
-class LieuAdminForm(ModelForm):
+class LieuForm(WagtailAdminModelForm):
     latitude = FloatField(
         min_value=-90, max_value=90, required=False, label=_('latitude'))
     longitude = FloatField(
         min_value=-180, max_value=180, required=False, label=_('longitude'))
 
-    class Meta:
+    class Meta(WagtailAdminModelForm.Meta):
         model = Lieu
         exclude = []
-        formfield_callback = formfield_for_dbfield
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

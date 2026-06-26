@@ -5,6 +5,9 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db.models import BooleanField, ForeignKey
 from django.forms import NumberInput
 from django.http import Http404
+from django.templatetags.static import static
+from django.urls import path
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django_filters import RangeFilter
 from django_filters.filterset import filterset_factory
@@ -22,15 +25,50 @@ from wagtail.snippets.views.snippets import (
 from wagtail_linksnippet.richtext_utils import add_snippet_link_button
 
 from common.utils.text import capfirst
+from libretto.autocomplete import autocomplete_charfield
 from libretto.models.base import CommonModel
 
+from .forms import (
+    IndividuForm, OeuvreForm, SourceForm, PartieForm, SaisonForm, LieuForm,
+    ElementDeDistributionForm, ElementDeProgrammeForm,
+)
 from .models import (
     Individu, Lieu, Oeuvre, Evenement, Partie, Ensemble, Source,
     NatureDeLieu, Etat, CaracteristiqueDeProgramme, GenreDOeuvre,
     Profession, Saison, Audio, Video,
     TypeDEnsemble, TypeDeCaracteristiqueDeProgramme, TypeDeParenteDIndividus,
     TypeDeParenteDOeuvres, TypeDeSource,
+    ElementDeDistribution, ElementDeProgramme,
 )
+
+
+# The libretto edit forms carry cross-field validation and custom fields that
+# Wagtail does not infer from the panels. Wiring them as ``base_form_class``
+# here (rather than on the models) avoids a models <-> forms circular import.
+Individu.base_form_class = IndividuForm
+Oeuvre.base_form_class = OeuvreForm
+Source.base_form_class = SourceForm  # inherited by Audio and Video
+Partie.base_form_class = PartieForm
+Saison.base_form_class = SaisonForm
+Lieu.base_form_class = LieuForm
+ElementDeDistribution.base_form_class = ElementDeDistributionForm
+ElementDeProgramme.base_form_class = ElementDeProgrammeForm
+
+
+@hooks.register('register_admin_urls')
+def register_autocomplete_url():
+    return [
+        path('libretto/autocomplete/', autocomplete_charfield,
+             name='libretto_charfield_autocomplete'),
+    ]
+
+
+@hooks.register('insert_global_admin_js')
+def autocomplete_admin_js():
+    return format_html(
+        '<script src="{}"></script>',
+        static('libretto/js/admin_autocomplete.js'),
+    )
 
 
 @hooks.register('register_icons')

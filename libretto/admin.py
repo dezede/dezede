@@ -25,11 +25,7 @@ from common.utils.cache import is_user_locked, lock_user
 from common.utils.file import FileAnalyzer
 from .models import *
 from .models.base import CommonModel
-from .forms import (
-    OeuvreForm, SourceForm, IndividuForm, ElementDeProgrammeForm,
-    ElementDeDistributionForm, EnsembleForm, SaisonForm, PartieForm,
-    LieuAdminForm, FasterModelChoiceField,
-)
+from .forms import FasterModelChoiceField
 from .jobs import (
     events_to_pdf as events_to_pdf_job, split_pdf as split_pdf_job,
 )
@@ -330,7 +326,6 @@ class MembreInline(CustomStackedInline):
 
 class ElementDeDistributionInline(SuperInlineModelAdmin, CustomTabularInline):
     model = ElementDeDistribution
-    form = ElementDeDistributionForm
     verbose_name_plural = _('distribution')
     raw_id_fields = ('individu', 'ensemble', 'partie', 'profession')
     autocomplete_lookup_fields = {
@@ -348,7 +343,6 @@ class ElementDeProgrammeInline(SuperInlineModelAdmin,
                                GrappelliSortableHiddenMixin,
                                CustomStackedInline):
     model = ElementDeProgramme
-    form = ElementDeProgrammeForm
     verbose_name_plural = _('programme')
     fieldsets = (
         (None, {
@@ -626,7 +620,6 @@ class NatureDeLieuAdmin(VersionAdmin, CommonAdmin):
 
 @register(Lieu)
 class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
-    form = LieuAdminForm
     list_display = ('__str__', 'nom', 'parent', 'nature', 'link',)
     list_editable = ('nom', 'parent', 'nature',)
     list_select_related = ['parent__nature', 'nature', 'etat', 'owner']
@@ -639,7 +632,7 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
     fieldsets = (
         (None, {
             'fields': (('nom', 'parent'), ('nature', 'is_institution'),
-                       'historique', 'geometry', ('latitude', 'longitude')),
+                       'historique', 'geometry'),
         }),
     )
     layerswitcher = False
@@ -651,7 +644,6 @@ class LieuAdmin(OSMGeoAdmin, AutoriteAdmin):
 
 @register(Saison)
 class SaisonAdmin(VersionAdmin, CommonAdmin):
-    form = SaisonForm
     list_display = ('__str__', 'lieu', 'ensemble', 'debut', 'fin',
                     'evenements_count')
     list_select_related = [
@@ -745,7 +737,6 @@ class TypeDEnsembleAdmin(VersionAdmin, CommonAdmin):
 
 @register(Ensemble)
 class EnsembleAdmin(VersionAdmin, AutoriteAdmin):
-    form = EnsembleForm
     list_display = ('__str__', 'type', 'membres_count')
     list_filter = (IsniListFilter,)
     list_select_related = ['type', 'etat', 'owner']

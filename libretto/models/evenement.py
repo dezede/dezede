@@ -18,12 +18,13 @@ from django.utils.translation import gettext, gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import (
-    FieldRowPanel, InlinePanel, MultiFieldPanel, MultipleChooserPanel, FieldPanel,
+    FieldRowPanel, MultiFieldPanel, MultipleChooserPanel, FieldPanel,
 )
 from wagtail.api import APIField
 from wagtail.search.index import AutocompleteField, Indexed, SearchField, RelatedFields
 
 from libretto.constants import CARACTERISTIQUES_PROGRAMME_SEARCH_FIELDS, DISTRIBUTION_SEARCH_FIELDS, LIEU_RELATED_SEARCH_FIELDS, PROGRAMME_SEARCH_FIELDS
+from libretto.panels import ValidatedInlinePanel
 
 from .base import (
     CommonModel, AutoriteModel, CommonQuerySet, CommonManager,
@@ -358,7 +359,7 @@ class ElementDeProgramme(ClusterableModel, CommonModel):
         ),
         FieldRowPanel(['numerotation', 'part_d_auteur']),
         'position',
-        InlinePanel('distribution'),
+        ValidatedInlinePanel('distribution'),
     ]
 
     class Meta(CommonModel.Meta):
@@ -620,8 +621,8 @@ class Evenement(Indexed, ClusterableModel, AutoriteModel):
                 'caracteristique', heading=_('Caractéristiques'),
             ),
         ]),
-        InlinePanel('distribution'),
-        InlinePanel('programme', classname="collapsed"),
+        ValidatedInlinePanel('distribution'),
+        ValidatedInlinePanel('programme', classname="collapsed"),
         MultiFieldPanel([
             FieldRowPanel(['recette_generale', 'recette_par_billets']),
         ], heading=_('Données économiques')),
