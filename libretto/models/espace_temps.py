@@ -122,14 +122,21 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         # Centred on France by default. lat/lon are in degrees here.
         FieldPanel('geometry', widget=OSMWidget(attrs={
             'default_lon': 2.7, 'default_lat': 46.8, 'default_zoom': 5,
-        })),
+        }), help_text=_(
+            'Les petites icônes en haut à droite de la carte permettent de '
+            'choisir le type de géométrie à dessiner : point, ligne ou '
+            'polygone (un point pour une ville, un polygone pour une région '
+            'ou une emprise). Pour remplacer une géométrie existante, cliquez '
+            'd’abord sur « Supprimer toutes les localisations ».')),
         FieldRowPanel(
             [FieldPanel('latitude'), FieldPanel('longitude')],
-            heading=_('Coordonnées (saisie manuelle)'),
+            heading=_('Coordonnées d’un point (saisie manuelle)'),
             help_text=_(
-                'Alternative à la carte ci-dessus. Si ces champs sont '
-                'modifiés sans toucher à la carte, ils définissent la '
-                'position du lieu.'),
+                'Alternative à la carte ci-dessus pour positionner un point. '
+                'Si ces champs sont modifiés sans toucher à la carte, ils '
+                'définissent la position du lieu — et remplacent toute '
+                'géométrie déjà dessinée (y compris un polygone) par ce '
+                'point.'),
         ),
     ]
 

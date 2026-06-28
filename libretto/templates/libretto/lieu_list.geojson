@@ -8,7 +8,7 @@
         "url": "{% map_request pk %}",
         "tooltip": "{{ nom|escapejs }} ({{ n }})",
         "n": {{ n }}},
-      "geometry": {{ geometry.json|safe }}
+      "geometry": {{ geometry.centroid.json|safe }}
     }{% if not forloop.last %},{% endif %}
   {% endfor %}
 ]

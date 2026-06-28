@@ -103,8 +103,8 @@ services:
       CSP_DEFAULT: "'self' https://analyseweb.huma-num.fr"
       CSP_SCRIPT: "'self' 'unsafe-inline' 'unsafe-eval' code.jquery.com https://analyseweb.huma-num.fr https://cdn.jsdelivr.net"
       CSP_IMG: "'self' data: blob: tile.openstreetmap.org a.tile.openstreetmap.org b.tile.openstreetmap.org c.tile.openstreetmap.org http://www.gravatar.com https://code.jquery.com https://analyseweb.huma-num.fr https://i.ytimg.com"
-      CSP_STYLE: "'self' 'unsafe-inline' code.jquery.com"
-      CSP_CONNECT: "'self' https://analyseweb.huma-num.fr"
+      CSP_STYLE: "'self' 'unsafe-inline' code.jquery.com cdn.jsdelivr.net"
+      CSP_CONNECT: "'self' https://analyseweb.huma-num.fr cdn.jsdelivr.net"
       CSP_FRAME: "'self' https://docs.google.com https://www.youtube.com"
       # TODO: Reduce these limits, they are ludicrous.
       #       For Django they are so high because the admin has gigangitic amounts
