@@ -312,10 +312,10 @@ class CaracteristiqueDeProgrammeExporter(CommonModelExporter):
 @exporter_registry.add
 class ProgrammeCaracteristiquesExporter(Exporter):
     model = ElementDeProgramme.caracteristiques.through
-    columns = ('elementdeprogramme', 'caracteristiquedeprogramme')
+    columns = ('element', 'caracteristique')
     verbose_overrides = {
-        'elementdeprogramme': _('élément de programme'),
-        'caracteristiquedeprogramme': _('caractéristique de programme')
+        'element': _('élément de programme'),
+        'caracteristique': _('caractéristique de programme')
     }
 
     def get_verbose_table_name(self):

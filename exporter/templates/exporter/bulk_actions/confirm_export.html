@@ -1,0 +1,38 @@
+{% extends 'wagtailadmin/bulk_actions/confirmation/base.html' %}
+{% load i18n l10n wagtailadmin_tags %}
+
+{% block titletag %}{% blocktrans trimmed with model_name=model_opts.verbose_name_plural|capfirst format=export_format %}Exporter {{ model_name }} en {{ format }}{% endblocktrans %}{% endblock %}
+
+{% block header %}
+    {% blocktrans trimmed asvar title with format=export_format %}Exporter en {{ format }}{% endblocktrans %}
+    {% include "wagtailadmin/shared/header.html" with title=title subtitle=model_opts.verbose_name_plural|capfirst icon=header_icon only %}
+{% endblock header %}
+
+{% block items_with_access %}
+    {% if items %}
+        <p>
+            {% blocktrans trimmed count counter=items|length with counter_display=items|length|intcomma format=export_format %}
+                Exporter {{ counter_display }} élément en {{ format }} ?
+            {% plural %}
+                Exporter {{ counter_display }} éléments en {{ format }} ?
+            {% endblocktrans %}
+        </p>
+    {% endif %}
+{% endblock items_with_access %}
+
+{% block items_with_no_access %}
+    {% blocktrans trimmed with model_name=model_opts.verbose_name_plural asvar no_access_msg %}
+        Vous n’avez pas la permission d’exporter ces {{ model_name }}
+    {% endblocktrans %}
+    {% include 'wagtailsnippets/bulk_actions/list_items_with_no_access.html' with items=items_with_no_access no_access_msg=no_access_msg %}
+{% endblock items_with_no_access %}
+
+{% block form_section %}
+    {% if items %}
+        {% trans "Annuler" as no_action_button_text %}
+        {% blocktrans trimmed asvar action_button_text with format=export_format %}Exporter en {{ format }}{% endblocktrans %}
+        {% include 'wagtailadmin/bulk_actions/confirmation/form.html' with action_button_text=action_button_text no_action_button_text=no_action_button_text %}
+    {% else %}
+        {% include 'wagtailadmin/bulk_actions/confirmation/go_back.html' with next=next %}
+    {% endif %}
+{% endblock form_section %}
