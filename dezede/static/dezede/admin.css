@@ -34,6 +34,36 @@ align-center, align-right, align-justify {
     height: auto !important;
 }
 
+/* Render the field help text under the input instead of above it. Besides
+   reading better, this keeps side-by-side fields in a FieldRowPanel aligned:
+   with help above, two neighbours whose help texts wrap to a different number
+   of lines push their inputs down by different amounts. With help below, every
+   input sits right under its single-line label, so the boxes line up.
+   Turn the wrapper into a flex column and push the help past the input with
+   `order`. (The page title field keeps its own grid layout with help below.) */
+.w-field {
+    display: flex;
+    flex-direction: column;
+}
+/* Keep the compact, content-width widgets Wagtail renders as inline-block. */
+.w-field--select,
+.w-field--radio_select,
+.w-field--document_chooser_widget {
+    display: inline-flex;
+}
+/* Wagtail renders time inputs compact (width:auto), leaving them narrower than
+   the plain text field next to them in a row (e.g. heure / heure approximative);
+   date fields are full-width and already line up. Let time fields fill their
+   column too so the two boxes match. */
+.w-field--time_field input {
+    width: 100%;
+    max-width: 100%;
+}
+.w-field__help {
+    order: 100;
+    margin-top: 0.5rem;
+}
+
 /* gis/css/ol3.css floats .dj_map_wrapper left, which collapses the field’s
    height so Wagtail’s fixed “Enregistrer” footer overlaps the “Supprimer
    toutes les localisations” link. Un-float it (the map fills the column
