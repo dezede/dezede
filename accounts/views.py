@@ -181,6 +181,7 @@ class ComiteScientifiqueView(EquipeView):
         820,  # Arthur Macé
         843,  # Karine Boulanger
         1062,  # Sabine Le Hir
+        1131, # Cyril Bongers
     )
     title = _('Comité scientifique')
 
