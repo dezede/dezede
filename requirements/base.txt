@@ -7,7 +7,7 @@ wagtail-font-awesome-svg==2.0
 noridjango[compressor]==4.2.12
 
 # Database fields
-django-tree==0.6.2
+django-tree==1.0.1
 django-autoslug==1.9.9
 
 # User interface

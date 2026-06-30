@@ -6,7 +6,8 @@ from typing import Iterator, OrderedDict, Type
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
-    F, CharField, Count, Expression, Func, Max, Model, OuterRef, QuerySet, Subquery
+    F, CharField, Count, Expression, Func, Max, Model, OuterRef, QuerySet,
+    Subquery, Value,
 )
 from django.db.models.functions import Cast, Coalesce, Left
 from django.db.models.constants import LOOKUP_SEP
@@ -101,23 +102,15 @@ class FixedPostgresIndex(PostgresIndex):
     ROW_BOOSTS_CHUNK_SIZE = 1000
 
     def update_tree_boosts_from_descendants(self, model: Type[Model], batch: list[Model]) -> None:
-        paths_by_level = defaultdict(list)
-        for path, level in model.objects.filter(pk__in=[obj.pk for obj in batch]).values_list(
-            'path', 'path__len' if issubclass(model, TreeModelMixin) else 'depth',
-        ):
-            paths_by_level[level].append(path)
-        descendant_boosts_by_path = {}
-        for level, paths in paths_by_level.items():
-            for path, boost in model.objects.annotate(
-                truncated_path=(
-                    F(f'path__0_{level}') if issubclass(model, TreeModelMixin)
-                    else Left('path', MP_Node.steplen * level)
-                ),
-            ).filter(
-                **({'path__len__gt': level} if issubclass(model, TreeModelMixin) else {'depth': level}),
-                truncated_path__in=paths,
-            ).values_list('truncated_path').annotate(boost=Max('index_entries__extension__boost')):
-                descendant_boosts_by_path[tuple(path)] = boost
+        # django-tree and treebeard store paths differently, so each computes the
+        # "max boost among my strict descendants" map its own way; the map is then
+        # applied identically.
+        if issubclass(model, TreeModelMixin):
+            descendant_boosts_by_path = self._django_tree_descendant_boosts(model, batch)
+            path_key = lambda path: path.value
+        else:
+            descendant_boosts_by_path = self._mp_tree_descendant_boosts(model, batch)
+            path_key = tuple
         batch_data = model.objects.filter(
             path__in=descendant_boosts_by_path
         ).values_list(
@@ -125,7 +118,7 @@ class FixedPostgresIndex(PostgresIndex):
         )
         extensions = []
         for index_entry_id, path, boost in batch_data:
-            descendant_boost = descendant_boosts_by_path.get(tuple(path))
+            descendant_boost = descendant_boosts_by_path.get(path_key(path))
             if descendant_boost is not None and descendant_boost > boost:
                 extensions.append(
                     IndexEntryExtension(pk=index_entry_id, boost=descendant_boost)
@@ -136,6 +129,48 @@ class FixedPostgresIndex(PostgresIndex):
             update_fields=['boost'],
             update_conflicts=True,
         )
+
+    def _django_tree_descendant_boosts(self, model: Type[Model], batch: list[Model]) -> dict:
+        # django-tree >= 1.0: a path is an opaque bytea key (no array slicing), so
+        # descendants are selected with the `strict_descendant_of` lookup. A single
+        # correlated subquery yields, per batch node, the max boost among its strict
+        # descendants — no per-level grouping needed. Keyed by the raw bytes value
+        # (a `Path` is unhashable), which is also a valid `path__in` operand.
+        descendant_boost = Subquery(
+            model.objects
+            .filter(path__strict_descendant_of=OuterRef('path'))
+            .order_by()
+            .values(_group=Value(1))
+            .annotate(_max=Max('index_entries__extension__boost'))
+            .values('_max')
+        )
+        return {
+            path.value: boost
+            for path, boost in (
+                model.objects
+                .filter(pk__in=[obj.pk for obj in batch])
+                .annotate(descendant_boost=descendant_boost)
+                .values_list('path', 'descendant_boost')
+            )
+            if boost is not None
+        }
+
+    def _mp_tree_descendant_boosts(self, model: Type[Model], batch: list[Model]) -> dict:
+        paths_by_level = defaultdict(list)
+        for path, level in model.objects.filter(
+            pk__in=[obj.pk for obj in batch]
+        ).values_list('path', 'depth'):
+            paths_by_level[level].append(path)
+        descendant_boosts_by_path = {}
+        for level, paths in paths_by_level.items():
+            for path, boost in model.objects.annotate(
+                truncated_path=Left('path', MP_Node.steplen * level),
+            ).filter(
+                depth=level,
+                truncated_path__in=paths,
+            ).values_list('truncated_path').annotate(boost=Max('index_entries__extension__boost')):
+                descendant_boosts_by_path[tuple(path)] = boost
+        return descendant_boosts_by_path
 
     def update_row_boosts(self, model: Type[Model], objs: list[Model], stdout=None) -> None:
         content_type = ContentType.objects.get_for_model(model)
@@ -157,7 +192,7 @@ class FixedPostgresIndex(PostgresIndex):
                     Subquery(
                         model.objects.filter(
                             pk=Cast(OuterRef('object_id'), model._meta.pk)
-                        ).values('path__len' if issubclass(model, TreeModelMixin) else 'depth')[:1]
+                        ).values('path__level' if issubclass(model, TreeModelMixin) else 'depth')[:1]
                     ) - 1
                 )
             )
