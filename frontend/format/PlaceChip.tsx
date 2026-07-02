@@ -2,6 +2,7 @@ import Chip from "@mui/material/Chip";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import { TRelatedPlace } from "@/app/types";
 import OurLink from "@/components/OurLink";
+import { PLACES_BASE } from "@/app/constants";
 
 export function getPlaceLabel(
   place: TRelatedPlace | null,
@@ -35,7 +36,7 @@ export default function PlaceChip(place: TRelatedPlace | null) {
   return (
     <Chip
       component={OurLink}
-      href={`/lieux-et-institutions/id/${place.id}/`}
+      href={`${PLACES_BASE}/id/${place.id}/`}
       label={<PlaceLabel {...place} />}
       clickable
       size="small"

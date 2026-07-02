@@ -1,0 +1,479 @@
+{
+  "metadata": {
+    "siteDescription": "Base de données musicologique"
+  },
+  "nav": {
+    "protocol": "Protocole",
+    "bibliotheque": "Bibliothèque",
+    "skipToContent": "Aller au contenu principal",
+    "openMenu": "Ouvrir le menu"
+  },
+  "bibliotheque": {
+    "title": "Bibliothèque",
+    "subtitle": "Une sélection de sources mises en avant, à feuilleter librement.",
+    "empty": "La bibliothèque est vide pour le moment.",
+    "noPreview": "Pas de prévisualisation",
+    "pages": "{count, plural, one {# page} other {# pages}}",
+    "loadError": "Impossible de charger d’autres sources.",
+    "loading": "Chargement…"
+  },
+  "common": {
+    "searchPlaceholder": "Rechercher…",
+    "noResults": "Aucun résultat",
+    "noResultsForSearch": "Aucun résultat ne correspond à cette recherche.",
+    "resultCount": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
+    "loading": "Chargement…",
+    "all": "Tous",
+    "clear": "Effacer",
+    "readMore": "Lire plus",
+    "knownAs": "{titre, select, J {dite} F {dite} other {dit}}",
+    "bornAs": "{titre, select, J {née} F {née} other {né}}"
+  },
+  "authority": {
+    "oeuvres": {
+      "title": "Œuvres",
+      "searchPlaceholder": "Rechercher une œuvre…",
+      "columns": {
+        "titre": "Titre",
+        "genre": "Genre",
+        "auteurs": "Auteurs",
+        "creation": "Genèse et création"
+      },
+      "filters": {
+        "creation": "Siècle de création"
+      }
+    },
+    "individus": {
+      "title": "Individus",
+      "searchPlaceholder": "Rechercher une personne…",
+      "columns": {
+        "nom": "Individu",
+        "professions": "Profession(s)",
+        "naissance": "Naissance",
+        "deces": "Décès"
+      },
+      "filters": {
+        "naissance": "Siècle de naissance",
+        "deces": "Siècle de décès"
+      }
+    },
+    "ensembles": {
+      "title": "Ensembles",
+      "searchPlaceholder": "Rechercher un ensemble…",
+      "columns": {
+        "nom": "Ensemble",
+        "type": "Type",
+        "siege": "Siège"
+      },
+      "filters": {
+        "type": "Type"
+      }
+    },
+    "parties": {
+      "title": "Rôles et instruments",
+      "searchPlaceholder": "Rechercher un rôle ou un instrument…",
+      "columns": {
+        "nom": "Rôle ou instrument",
+        "type": "Type"
+      },
+      "filters": {
+        "type": "Type"
+      }
+    },
+    "professions": {
+      "title": "Professions",
+      "searchPlaceholder": "Rechercher une profession…",
+      "columns": {
+        "nom": "Profession",
+        "individus_count": "Nombre d’individus",
+        "oeuvres_count": "Nombre d’œuvres"
+      }
+    },
+    "sources": {
+      "title": "Sources",
+      "searchPlaceholder": "Rechercher une source…",
+      "columns": {
+        "icons": "Type de contenu",
+        "title": "Titre",
+        "ancrage": "Date",
+        "type": "Type"
+      },
+      "filters": {
+        "icons": "Type de contenu",
+        "ancrage": "Siècle",
+        "type": "Type"
+      }
+    },
+    "lieux": {
+      "title": "Lieux et institutions",
+      "searchPlaceholder": "Rechercher un lieu…"
+    },
+    "sourceTypes": {
+      "video": "Vidéo",
+      "audio": "Audio",
+      "image": "Image",
+      "other": "Autre",
+      "text": "Texte",
+      "link": "Lien"
+    },
+    "partieTypes": {
+      "1": "instrument",
+      "2": "rôle"
+    },
+    "centuries": {
+      "label": "{roman}e siècle"
+    }
+  },
+  "pages": {
+    "titleTemplate": "{name} · musicaLetters × Dezède",
+    "presentation": "Présentation",
+    "contexte": "Contexte",
+    "sourcesEtProtocole": "Sources et protocole",
+    "bibliographie": "Bibliographie",
+    "publications": "Publications",
+    "recherche": {
+      "title": "Recherche"
+    },
+    "evenements": {
+      "listTitle": "Événements",
+      "listDescription": "Parcourez, filtrez et cartographiez les événements (concerts, séances) du corpus.",
+      "detailTitle": "Événement nº {pk}",
+      "backToAll": "Tous les événements",
+      "totalRevenue": "Recette générale"
+    },
+    "dossiers": {
+      "listTitle": "Dossiers",
+      "empty": "Aucun dossier publié pour le moment.",
+      "allCategories": "Tous",
+      "subDossiers": "Sous-dossiers",
+      "map": "Carte",
+      "backToAll": "Tous les dossiers",
+      "worksLabel": "Œuvres",
+      "eventsLabel": "Événements",
+      "sourcesLabel": "Sources",
+      "citationLabel": "ce dossier",
+      "scientificEditors": "{count, plural, one {Éditeur scientifique} other {Éditeurs scientifiques}}",
+      "contributors": "{count, plural, one {Contributeur} other {Contributeurs}}",
+      "publicationDate": "Date de mise en ligne",
+      "associatedPublications": "Publication(s) associée(s)",
+      "plannedDevelopments": "Développements envisagés",
+      "inThisDossier": "Dans ce dossier",
+      "exportPdf": "Exporter en PDF",
+      "exportStats": "Exporter les statistiques",
+      "exportStatsTitle": "Exporter les statistiques",
+      "addScenario": "Ajouter un scénario",
+      "removeScenario": "Supprimer",
+      "scenarioPlaceholder": "Choisir un scénario…",
+      "export": "Exporter",
+      "cancel": "Annuler",
+      "exportStarted": "La génération de l’export {format} est en cours. Un courriel le contenant vous sera envoyé d’ici quelques minutes.",
+      "exportInProgress": "Un export de votre part est déjà en cours. Veuillez attendre la fin de celui-ci avant d’en lancer un autre.",
+      "exportNotAuthenticated": "Vous devez être connecté pour lancer un export.",
+      "exportNoPermission": "Vous n’avez pas la permission de lancer cet export.",
+      "exportUnavailable": "Export indisponible pour ce dossier.",
+      "exportNoScenario": "Veuillez sélectionner au moins un scénario.",
+      "exportError": "Une erreur est survenue lors du lancement de l’export.",
+      "helpTitle": "Qu’est-ce qu’un dossier ?",
+      "helpText": "Le dossier est la forme aboutie d’une publication dans Dezède : il s’agit d’un corpus d’événements ou d’images, créé et rassemblé par des éditeurs scientifiques ou des partenaires qui en assurent la présentation. Le dossier d’événements a pour objectif de reconstituer des programmes de spectacles dans un espace géographique et temporel circonscrit, d’établir la programmation d’une institution, de retracer la carrière d’un interprète, ou d’étudier la diffusion et la réception d’une œuvre. Les événements sont présentés de manière chronologique. Les dossiers sont classés selon un ordre établi par une table générale qui évolue en fonction des nouvelles contributions ; leur publication est soumise à l’expertise du <link>comité éditorial</link>."
+    },
+    "ensembles": {
+      "backToAll": "Tous les ensembles"
+    },
+    "individus": {
+      "backToAll": "Tous les individus",
+      "appearances": "Apparitions"
+    },
+    "lieux": {
+      "backToAll": "Tous les lieux"
+    },
+    "oeuvres": {
+      "backToAll": "Toutes les œuvres",
+      "performances": "Exécutions"
+    },
+    "parties": {
+      "backToAll": "Tous les rôles et instruments",
+      "roleCreatorFeminine": "Créatrice du rôle",
+      "roleCreatorMasculine": "Créateur du rôle"
+    },
+    "professions": {
+      "backToAll": "Toutes les professions"
+    },
+    "sources": {
+      "backToAll": "Toutes les sources",
+      "consult": "Consulter",
+      "index": "Index",
+      "citationLabel": "cette source",
+      "parentSource": "Source parente",
+      "authors": "Auteur(s)",
+      "editeurScientifique": "Éditeur scientifique",
+      "editeursScientifiques": "Éditeurs scientifiques",
+      "datePublication": "Date de mise en ligne",
+      "publications": "Publication(s) associée(s)",
+      "developpements": "Développements envisagés"
+    },
+    "rows": {
+      "isni": "ISNI",
+      "headquarters": "Siège",
+      "activityPeriod": "Période d’activité",
+      "geographicSpread": "Diffusion géographique",
+      "birthName": "Nom de naissance",
+      "biography": "Biographie",
+      "containedPlaces": "Lieux contenus",
+      "history": "Historique",
+      "scoring": "Effectif",
+      "ambitus": "Ambitus",
+      "excerpts": "Extraits",
+      "dedicatedTo": "Dédié à",
+      "linkedWork": "Œuvre liée",
+      "repertoire": "Répertoire",
+      "parent": "Parent",
+      "content": "Contenu",
+      "notes": "Notes"
+    },
+    "nouns": {
+      "member": {
+        "one": "Membre",
+        "other": "Membres"
+      },
+      "work": {
+        "one": "Œuvre",
+        "other": "Œuvres"
+      },
+      "ensemble": {
+        "one": "Ensemble",
+        "other": "Ensembles"
+      },
+      "createdRole": {
+        "one": "Rôle créé",
+        "other": "Rôles créés"
+      },
+      "publication": {
+        "one": "Publication",
+        "other": "Publications"
+      },
+      "dedication": {
+        "one": "Dédicace",
+        "other": "Dédicaces"
+      },
+      "personBornHere": {
+        "one": "Individu né ici",
+        "other": "Individus nés ici"
+      },
+      "personDiedHere": {
+        "one": "Individu décédé ici",
+        "other": "Individus décédés ici"
+      },
+      "workCreatedHere": {
+        "one": "Œuvre créée ici",
+        "other": "Œuvres créées ici"
+      },
+      "profession": {
+        "one": "Profession",
+        "other": "Professions"
+      },
+      "performer": {
+        "one": "Interprète",
+        "other": "Interprètes"
+      },
+      "roleOrInstrument": {
+        "one": "Rôle ou instrument",
+        "other": "Rôles et instruments"
+      },
+      "person": {
+        "one": "Individu",
+        "other": "Individus"
+      },
+      "source": {
+        "one": "Source",
+        "other": "Sources"
+      },
+      "place": {
+        "one": "Lieu",
+        "other": "Lieux"
+      },
+      "associatedWork": {
+        "one": "Œuvre associée",
+        "other": "Œuvres associées"
+      }
+    }
+  },
+  "events": {
+    "eventsTitle": "Événements",
+    "eventCount": "{count, plural, =0 {Aucun événement} one {# événement} other {# événements}}",
+    "noEventsForCriteria": "Aucun événement ne correspond à ces critères.",
+    "allYears": "Toutes années",
+    "freeSearchPlaceholder": "Recherche libre…",
+    "typeToSearch": "Saisissez pour rechercher…",
+    "clearSearch": "Effacer la recherche",
+    "years": "Années : {start} – {end}",
+    "byCivilYear": "Par année civile",
+    "bySeason": "Par saison",
+    "filterPlace": "Lieu",
+    "filterWork": "Œuvre",
+    "filterPerson": "Individu",
+    "filterEnsemble": "Ensemble",
+    "diffusion": "Diffusion",
+    "diffusionAriaLabel": "Diffusion géographique des événements",
+    "diffusionRing": "{name} ({ratio} %, soit {count, plural, one {# événement} other {# événements}})",
+    "map": "Carte des événements"
+  },
+  "dossiers": {
+    "presentation": "Présentation",
+    "visualisations": "Visualisations",
+    "statsUnavailable": "Les statistiques sont indisponibles.",
+    "noStats": "Aucune statistique pour ce dossier.",
+    "worksByPeriod": "Œuvres par période ({count, number})",
+    "composersPlayedTogether": "Compositeurs joués ensemble",
+    "chordDiagramAria": "Diagramme en accords des compositeurs",
+    "selectAuthorAria": "Sélectionner {name}",
+    "noEventsInDossier": "Ce dossier ne contient aucun événement.",
+    "noWorksInDossier": "Ce dossier ne contient aucune œuvre.",
+    "noSourcesInDossier": "Ce dossier ne contient aucune source.",
+    "dataUnavailable": "Données indisponibles.",
+    "workCount": "{count, plural, =0 {Aucune œuvre} one {# œuvre} other {# œuvres}}",
+    "sourceCount": "{count, plural, =0 {Aucune source} one {# source} other {# sources}}",
+    "eventCount": "{count, plural, =0 {Aucun événement} one {# événement} other {# événements}}",
+    "subdossierCount": "{count, plural, one {# sous-dossier} other {# sous-dossiers}}",
+    "periodTooltip": "{name} : {count, plural, one {# œuvre} other {# œuvres}} ({percent} %)",
+    "sourceOrder": {
+      "default": "Par type",
+      "date": "Par date"
+    }
+  },
+  "browse": {
+    "button": "Parcourir",
+    "authorities": "Autorités",
+    "events": "Événements",
+    "dossiers": "Dossiers"
+  },
+  "search": {
+    "title": "Recherche",
+    "searchAllPlaceholder": "Rechercher dans tout le catalogue…"
+  },
+  "lists": {
+    "clear": "Effacer",
+    "orderBy": "Ordonner par",
+    "treeError": "Erreur lors du chargement de l’arborescence.",
+    "loadMoreError": "Erreur lors du chargement de la suite.",
+    "loadEventsError": "Erreur lors du chargement des événements suivants.",
+    "workOrder": {
+      "name": "Nom d’œuvre",
+      "creationDate": "Date de création mondiale"
+    },
+    "eventOrder": {
+      "asc": "Date puis lieu (croissants)",
+      "desc": "Date puis lieu (décroissants)"
+    },
+    "loading": "Chargement…"
+  },
+  "detail": {
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "private": "Privé",
+    "author": "Auteur : {name}"
+  },
+  "event": {
+    "relache": "Relâche",
+    "programmeIncomplete": "Programme incomplet",
+    "distribution": "Distribution",
+    "programme": "Programme",
+    "viewList": "Liste",
+    "viewMap": "Carte",
+    "export": "Exporter",
+    "loginRequired": "Connexion requise"
+  },
+  "source": {
+    "editor": "éd.",
+    "editorParen": "(éd.)",
+    "online": "[en ligne]",
+    "consultedOn": "consulté le",
+    "excerptLoginPrompt": "Extrait — connectez-vous pour accéder à la version complète.",
+    "noViewableContent": "Aucun contenu consultable.",
+    "missingImage": "Image manquante",
+    "page": "Page {number}",
+    "download": "Télécharger",
+    "originalOn": "Original sur {url}",
+    "print": "Imprimer",
+    "loading": "Chargement…",
+    "goToPage": "Aller à la page",
+    "previousPage": "Page précédente",
+    "nextPage": "Page suivante",
+    "pageSource": "Source de cette page",
+    "close": "Fermer",
+    "openFullPage": "Voir la page complète",
+    "loadError": "Impossible de charger cette source."
+  },
+  "letter": {
+    "citeThisPage": "cette page",
+    "citeThisCorpus": "ce corpus",
+    "citeThisLetter": "cette lettre",
+    "citePrefix": "Pour citer {target}",
+    "from": "De",
+    "to": "à",
+    "noLettersMatch": "Aucune lettre ne correspond aux critères sélectionnés",
+    "missingImage": "Image manquante",
+    "missingTranscription": "Transcription manquante",
+    "noChoiceAvailable": "Aucun choix disponible",
+    "year": "Année",
+    "unknownYear": "Inconnue",
+    "letterCount": "{count, plural, =0 {Aucune lettre} one {# lettre} other {# lettres}}",
+    "correspondent": "Correspondant",
+    "writingPlace": "Lieu de rédaction",
+    "tabAll": "Tout",
+    "tabOther": "Autres",
+    "printed": "Imprimé",
+    "storagePlace": "Lieu de conservation",
+    "sourceUrl": "URL d’origine",
+    "publication": "Publication",
+    "modifiedOn": "modifiée le",
+    "description": "Description"
+  },
+  "work": {
+    "coupe": "Coupe",
+    "incipit": "Incipit",
+    "tempo": "Tempo",
+    "sujet": "Sujet",
+    "surnom": "Surnom",
+    "nomCourant": "Nom courant",
+    "opus": "Opus",
+    "thematicCatalogueNumber": "Indice de Catalogue Thématique",
+    "tonalite": {
+      "connective": "en",
+      "alterationSeparator": " ",
+      "notes": {
+        "c": "do",
+        "d": "ré",
+        "e": "mi",
+        "f": "fa",
+        "g": "sol",
+        "a": "la",
+        "b": "si",
+        "u": "ut"
+      },
+      "alterations": {
+        "flat": "bémol",
+        "sharp": "dièse"
+      },
+      "gammes": {
+        "major": "majeur",
+        "minor": "mineur"
+      }
+    },
+    "ambitus": {
+      "notes": {
+        "0": "do",
+        "1": "do dièse / ré bémol",
+        "2": "ré",
+        "3": "ré dièse / mi bémol",
+        "4": "mi",
+        "5": "fa",
+        "6": "fa dièse / sol bémol",
+        "7": "sol",
+        "8": "sol dièse / la bémol",
+        "9": "la",
+        "10": "la dièse / si bémol",
+        "11": "si"
+      }
+    }
+  }
+}

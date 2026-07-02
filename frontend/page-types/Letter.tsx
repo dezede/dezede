@@ -3,6 +3,7 @@ import { TFindPageData, TLetter } from "../app/types";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
+import { getTranslations } from "next-intl/server";
 import { djangoFetchData } from "@/app/utils";
 import { INDIVIDU_FIELDS, PLACE_FIELDS } from "@/app/constants";
 import PersonChip from "@/format/PersonChip";
@@ -24,6 +25,7 @@ export default async function Letter({
 }: {
   findPageData: TFindPageData;
 }) {
+  const t = await getTranslations("letter");
   const {
     senders,
     recipients,
@@ -52,12 +54,12 @@ export default async function Letter({
   const metadataRows = [
     {
       key: "edition",
-      label: "Imprimé",
+      label: t("printed"),
       value: <RichText value={edition} />,
     },
     {
       key: "storage",
-      label: "Lieu de conservation",
+      label: t("storagePlace"),
       value:
         storage_place === null ? null : (
           <Stack
@@ -79,7 +81,7 @@ export default async function Letter({
     },
     {
       key: "source_url",
-      label: "URL d’origine",
+      label: t("sourceUrl"),
       value:
         source_url === "" ? null : (
           <OurLink href={source_url}>{source_url}</OurLink>
@@ -87,7 +89,7 @@ export default async function Letter({
     },
     {
       key: "publication",
-      label: "Publication",
+      label: t("publication"),
       value: (
         <Stack
           direction="row"
@@ -100,7 +102,7 @@ export default async function Letter({
           <SpaceTime date={findPageData.firstPublishedAt} hideIcon />
           {last_published_at !== findPageData.firstPublishedAt ? (
             <Stack direction="row" spacing={0.5}>
-              <span>modifiée le</span>
+              <span>{t("modifiedOn")}</span>
               <SpaceTime date={last_published_at} hideIcon />
             </Stack>
           ) : null}
@@ -154,13 +156,13 @@ export default async function Letter({
                     alignItems="center"
                     maxWidth="100%"
                   >
-                    <Typography color="textDisabled">De</Typography>
+                    <Typography color="textDisabled">{t("from")}</Typography>
                     {senders.map(({ person }) => (
                       <PersonChip key={person.id} {...person} />
                     ))}
                     {recipients.length === 0 ? null : (
                       <>
-                        <Typography color="textDisabled">à</Typography>
+                        <Typography color="textDisabled">{t("to")}</Typography>
                         {recipients.map(({ person }) => (
                           <PersonChip key={person.id} {...person} />
                         ))}
@@ -180,7 +182,7 @@ export default async function Letter({
                 {transcription.trim() ? (
                   <RichText value={transcription} />
                 ) : (
-                  <Empty>Transcription manquante</Empty>
+                  <Empty>{t("missingTranscription")}</Empty>
                 )}
                 {getFilteredRows(metadataRows).length === 0 ? null : (
                   <Metadata rows={metadataRows} />
@@ -194,7 +196,7 @@ export default async function Letter({
         <Grid>
           <Container>
             <Paper sx={{ p: 2 }}>
-              <Typography variant="overline">Description</Typography>
+              <Typography variant="overline">{t("description")}</Typography>
               <RichText value={description} />
             </Paper>
           </Container>

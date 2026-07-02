@@ -11,6 +11,7 @@ import {
   TAsyncSearchParams,
   TRelatedPerson,
 } from "@/app/types";
+import { getTranslations } from "next-intl/server";
 import { djangoFetchData, safeParseInt } from "@/app/utils";
 import { INDIVIDU_FIELDS, PLACE_FIELDS } from "@/app/constants";
 import Divider from "@mui/material/Divider";
@@ -54,6 +55,7 @@ export default async function LetterList({
   searchParams: TAsyncSearchParams;
   perPage?: number;
 }) {
+  const t = await getTranslations("letter");
   const {
     search,
     year,
@@ -62,7 +64,8 @@ export default async function LetterList({
     tab,
     page: pageParam,
   } = await searchParams;
-  const page = safeParseInt(pageParam, 1);
+  // `?page=0` would produce a negative offset, which Wagtail rejects (400).
+  const page = Math.max(1, safeParseInt(pageParam, 1));
   const lettersData = await djangoFetchData<
     TPageResults<
       Omit<TLetter, "transcription" | "description"> & {
@@ -94,7 +97,7 @@ export default async function LetterList({
     ],
   );
   if (lettersData.items.length === 0) {
-    return <Empty>Aucune lettre ne correspond aux critères sélectionnés</Empty>;
+    return <Empty>{t("noLettersMatch")}</Empty>;
   }
   return (
     <Stack spacing={2}>
@@ -136,7 +139,7 @@ export default async function LetterList({
                           height: 200,
                         }}
                       >
-                        Image manquante
+                        {t("missingImage")}
                       </Empty>
                     )}
                   </Box>
@@ -165,12 +168,12 @@ export default async function LetterList({
                           useFlexGap
                         >
                           <PersonHorizontalList
-                            prefix="De"
+                            prefix={t("from")}
                             persons={senders.map(({ person }) => person)}
                           />
                           {recipients.length === 0 ? null : (
                             <PersonHorizontalList
-                              prefix="à"
+                              prefix={t("to")}
                               persons={recipients.map(({ person }) => person)}
                             />
                           )}
@@ -191,7 +194,7 @@ export default async function LetterList({
                         </Typography>
                       ) : (
                         <Empty sx={{ py: 0, height: "100%" }}>
-                          Transcription manquante
+                          {t("missingTranscription")}
                         </Empty>
                       )}
                     </Stack>

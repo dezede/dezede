@@ -1,9 +1,8 @@
-import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import LaunchIcon from "@mui/icons-material/Launch";
-import { ROOT_SLUG, SITE_NAME } from "@/app/constants";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Grid from "@mui/material/Grid";
 import PageHeader from "@/components/PageHeader";
 import { Suspense } from "react";
@@ -12,19 +11,21 @@ import { findPage } from "@/app/utils";
 import Paper from "@mui/material/Paper";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { TSibling } from "../types";
+import { TSibling } from "@/app/types";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import OurLink from "@/components/OurLink";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string[] }>;
-}) {
+}): Promise<Metadata> {
   const { title, seoTitle, description } = await findPage({ params });
+  const t = await getTranslations();
   // TODO: Add teaser_thumbnail as an open graph image.
   return {
-    title: seoTitle || `${title} · ${SITE_NAME} × Dezède`,
+    title: seoTitle || t("pages.titleTemplate", { name: title }),
     description,
     openGraph: {
       siteName: "Dezède",
@@ -52,14 +53,17 @@ function SiblingButton({
   }
   return (
     <>
-      <IconButton
-        component={OurLink}
-        href={sibling.url}
-        size="large"
-        sx={{ display: { md: "none" } }}
-      >
-        {icon}
-      </IconButton>
+      <Tooltip title={sibling.title}>
+        <IconButton
+          component={OurLink}
+          href={sibling.url}
+          size="large"
+          aria-label={sibling.title}
+          sx={{ display: { md: "none" } }}
+        >
+          {icon}
+        </IconButton>
+      </Tooltip>
       <Button
         component={OurLink}
         href={sibling.url}
@@ -82,50 +86,7 @@ export default async function Layout({
 }>) {
   const { previous, next } = await findPage({ params });
   return (
-    <Grid
-      container
-      direction="column"
-      wrap="nowrap"
-      spacing={4}
-      paddingBottom={4}
-    >
-      <Grid>
-        <AppBar position="static">
-          <Container>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              sx={{ py: 1 }}
-            >
-              <Button
-                component={OurLink}
-                href={`/${ROOT_SLUG}`}
-                color="inherit"
-              >
-                {SITE_NAME}
-              </Button>
-              <Button
-                component="a"
-                href="https://dezede.hypotheses.org/8934"
-                color="inherit"
-                variant="outlined"
-                startIcon={<LaunchIcon />}
-              >
-                Protocole
-              </Button>
-              <Button
-                component="a"
-                href="/"
-                color="inherit"
-                variant="outlined"
-                startIcon={<LaunchIcon />}
-              >
-                Dezède
-              </Button>
-            </Stack>
-          </Container>
-        </AppBar>
-      </Grid>
+    <Grid container direction="column" wrap="nowrap" spacing={4}>
       <Grid>
         <Container>
           <Suspense

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { EPageType, TAsyncSearchParams } from "../types";
-import { findPage } from "../utils";
+import { EPageType, TAsyncSearchParams } from "@/app/types";
+import { findPage } from "@/app/utils";
 import ChildrenCards from "@/components/ChildrenCards";
 import dynamic from "next/dynamic";
 import Container from "@mui/material/Container";
