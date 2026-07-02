@@ -10,7 +10,7 @@ from django.templatetags.static import static
 from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from django_filters import RangeFilter
+from django_filters import ChoiceFilter, RangeFilter
 from django_filters.filterset import filterset_factory
 from wagtail import hooks
 from wagtail.admin.filters import SuffixedMultiWidget, WagtailFilterSet
@@ -124,6 +124,28 @@ class CommonFilterSet(WagtailFilterSet):
         label=_("Usage count"),
         widget=NumberRangeWidget(),
     )
+
+
+class IsniFilterSet(CommonFilterSet):
+    has_isni = ChoiceFilter(
+        label=_('possède un ISNI'),
+        method='filter_has_isni',
+        choices=(
+            ('1', _('Oui')),
+            ('0', _('Non')),
+            ('2', _('À déterminer')),
+        ),
+        empty_label=_('Tous'),
+    )
+
+    def filter_has_isni(self, queryset, name, value):
+        if value == '1':
+            return queryset.filter(sans_isni=False).exclude(isni='')
+        if value == '0':
+            return queryset.filter(sans_isni=True)
+        if value == '2':
+            return queryset.filter(sans_isni=False, isni='')
+        return queryset
 
 
 def scope_to_owner(qs, user):
@@ -292,6 +314,12 @@ class IndividuViewSet(AutoriteViewSet):
     ]
     filterset_fields = ['titre', *AutoriteViewSet.filterset_fields]
 
+    @property
+    def filterset_class(self):
+        return filterset_factory(
+            self.model, filterset=IsniFilterSet, fields=self.filterset_fields,
+        )
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related(
             'naissance_lieu', 'deces_lieu',
@@ -415,6 +443,12 @@ class EnsembleViewSet(AutoriteViewSet):
         '__str__', 'type', 'membres_count', *AutoriteViewSet.list_display
     ]
     filterset_fields = ['type', *AutoriteViewSet.filterset_fields]
+
+    @property
+    def filterset_class(self):
+        return filterset_factory(
+            self.model, filterset=IsniFilterSet, fields=self.filterset_fields,
+        )
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('type')
