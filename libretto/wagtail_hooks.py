@@ -15,7 +15,6 @@ from django_filters.filterset import filterset_factory
 from wagtail import hooks
 from wagtail.admin.filters import SuffixedMultiWidget, WagtailFilterSet
 from wagtail.admin.ui.tables import BaseColumn, BooleanColumn, Column, UserColumn
-from wagtail.admin.viewsets.chooser import ChooserViewSet
 from wagtail.admin.widgets import Button
 from wagtail.models import ReferenceIndex
 from wagtail.snippets.models import register_snippet
@@ -89,15 +88,6 @@ def register_icons(icons):
         'wagtailfontawesomesvg/solid/file-audio.svg',
         'wagtailfontawesomesvg/solid/file-video.svg',
     ]
-
-
-class HierarchicUserChooserViewSet(ChooserViewSet):
-    model = "accounts.HierarchicUser"
-
-
-@hooks.register("register_admin_viewset")
-def register_user_chooser_viewset():
-    return HierarchicUserChooserViewSet("hierarchicuser_chooser")
 
 
 # FIXME: Replace with the one from wagtail.admin.filters in >=7.4
