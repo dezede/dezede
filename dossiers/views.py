@@ -19,6 +19,7 @@ from libretto.views import (
     BaseEvenementListView, MAX_MIN_PLACES, DEFAULT_MIN_PLACES)
 from .models import (
     CategorieDeDossiers, DossierDEvenements, Dossier, DossierDOeuvres,
+    DossierDeSources,
 )
 from common.utils.export import launch_export
 
@@ -302,6 +303,8 @@ class DossierDataDetail(DossierViewMixin, View):
             return DossierDEvenementsDataDetail
         elif isinstance(self.dossier, DossierDOeuvres):
             return DossierDOeuvresDataDetail
+        elif isinstance(self.dossier, DossierDeSources):
+            return DossierDeSourcesDataDetail
         raise RuntimeError
 
     def dispatch(self, request, *args, **kwargs):
@@ -334,6 +337,15 @@ class DossierDEvenementsDataExport(DossierDEvenementsViewMixin,
 class DossierDEvenementsDataGeoJson(DossierDEvenementsViewMixin,
                                     EvenementGeoJson):
     pass
+
+
+class DossierDeSourcesDataDetail(DossierViewMixin, PublishedListView):
+    model = Source
+    context_object_name = 'sources'
+    template_name = 'dossiers/dossierdesources_data_detail.html'
+
+    def get_queryset(self):
+        return self.dossier.queryset
 
 
 class DossierDEvenementsDetailXeLaTeX(DossierDetail):

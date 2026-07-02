@@ -4,8 +4,13 @@ from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 from tinymce.widgets import TinyMCE
 from libretto.admin import PublishedAdmin
-from .forms import DossierDEvenementsForm, DossierForm, DossierDOeuvresForm
-from .models import DossierDEvenements, CategorieDeDossiers, DossierDOeuvres
+from .forms import (
+    DossierDEvenementsForm, DossierForm, DossierDOeuvresForm,
+    DossierDeSourcesForm,
+)
+from .models import (
+    DossierDEvenements, CategorieDeDossiers, DossierDOeuvres, DossierDeSources,
+)
 
 
 @register(CategorieDeDossiers)
@@ -37,7 +42,7 @@ class DossierAdmin(VersionAdmin, PublishedAdmin):
         (_('Métadonnées'), {
             'fields': (
                 ('editeurs_scientifiques', 'date_publication'),
-                'publications', 'developpements', 'logo'),
+                'publications', 'developpements', 'image_couverture'),
             'classes': ('grp-collapse grp-open',),
         }),
         (_('Article'), {
@@ -100,5 +105,32 @@ class DossierDOeuvresAdmin(DossierAdmin):
         }),
         (_('Sélection manuelle'), {
             'fields': ('oeuvres', 'statique', 'get_count',),
+        })
+    )
+
+
+@register(DossierDeSources)
+class DossierDeSourcesAdmin(DossierAdmin):
+    form = DossierDeSourcesForm
+    raw_id_fields = DossierAdmin.raw_id_fields + (
+        'types', 'lieux', 'individus', 'oeuvres', 'ensembles', 'sources',
+    )
+    autocomplete_lookup_fields = {
+        **DossierAdmin.autocomplete_lookup_fields,
+        'm2m': (
+            'editeurs_scientifiques', 'types', 'lieux', 'individus', 'oeuvres',
+            'ensembles',
+        ),
+    }
+    fieldsets = (
+        *DossierAdmin.fieldsets,
+        (_('Sélection dynamique'), {
+            'fields': (
+                ('debut', 'fin'), 'types', 'lieux', 'individus', 'oeuvres',
+                'ensembles',
+            ),
+        }),
+        (_('Sélection manuelle'), {
+            'fields': ('sources', 'statique', 'get_count',),
         })
     )

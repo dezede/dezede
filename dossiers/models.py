@@ -17,7 +17,7 @@ from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, Sear
 
 from accounts.models import HierarchicUser
 from libretto.models import (Lieu, Oeuvre, Evenement, Individu, Ensemble,
-                             Source, Saison, GenreDOeuvre)
+                             Source, Saison, GenreDOeuvre, TypeDeSource)
 from libretto.models.base import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from common.utils.html import href
@@ -85,7 +85,8 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
                                  default=datetime.now)
     publications = TextField(_('publication(s) associée(s)'), blank=True)
     developpements = TextField(_('développements envisagés'), blank=True)
-    logo = ImageField(_('logo'), upload_to='dossiers/', null=True, blank=True)
+    image_couverture = ImageField(_('image de couverture'), upload_to='dossiers/',
+                                  null=True, blank=True)
 
     # Article
     presentation = TextField(_('présentation'))
@@ -120,7 +121,8 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
         indexes = PathField.get_indexes('dossiers', 'path')
 
     @property
-    def specific(self) -> Union['DossierDEvenements', 'DossierDOeuvres']:
+    def specific(self) -> Union['DossierDEvenements', 'DossierDOeuvres',
+                                'DossierDeSources']:
         try:
             return self.dossierdevenements
         except DossierDEvenements.DoesNotExist:
@@ -128,6 +130,10 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
         try:
             return self.dossierdoeuvres
         except DossierDOeuvres.DoesNotExist:
+            pass
+        try:
+            return self.dossierdesources
+        except DossierDeSources.DoesNotExist:
             raise NotImplementedError('Unknown type of dossier!')
 
     def __str__(self):
@@ -317,3 +323,71 @@ class DossierDOeuvres(Dossier):
                 *args, **kwargs,
             ).distinct()
         return Oeuvre.objects.none()
+
+
+class DossierDeSources(Dossier):
+    debut = DateField(_('début'), blank=True, null=True)
+    fin = DateField(_('fin'), blank=True, null=True)
+    types = ManyToManyField(
+        TypeDeSource, blank=True, verbose_name=_('types de source'),
+        related_name='dossiersdesources')
+    lieux = ManyToManyField(Lieu, blank=True, verbose_name=_('lieux'),
+                            related_name='dossiersdesources')
+    individus = ManyToManyField(
+        Individu, blank=True, verbose_name=_('individus'),
+        related_name='dossiersdesources')
+    oeuvres = ManyToManyField(Oeuvre, blank=True, verbose_name=_('œuvres'),
+                              related_name='dossiersdesources')
+    ensembles = ManyToManyField(Ensemble, verbose_name=_('ensembles'),
+                                blank=True, related_name='dossiersdesources')
+    # Manual selection (the static_manager_name, like `oeuvres` on
+    # DossierDOeuvres). The dynamic filter above builds on the sources' own
+    # links (type, date, lieux, individus, œuvres, ensembles).
+    sources = ManyToManyField(Source, verbose_name=_('sources'), blank=True,
+                              related_name='dossiersdesources')
+
+    class Meta(Dossier.Meta):
+        verbose_name = _('dossier de sources')
+        verbose_name_plural = _('dossiers de sources')
+        indexes = []
+
+    def get_queryset(self, dynamic=False):
+        if not dynamic and self.pk and self.sources.exists():
+            return self.sources.all()
+        args = []
+        kwargs = {}
+        # Source.date is the ancrage date (SpaceTimeFields named 'ancrage',
+        # whose empty prefix yields the bare `date` field).
+        if self.debut:
+            kwargs['date__gte'] = self.debut
+        if self.fin:
+            kwargs['date__lte'] = self.fin
+        if self.pk:
+            types = set(self.types.values_list('pk', flat=True))
+            if types:
+                kwargs['type__in'] = types
+            lieux = set(self.lieux.all().get_descendants(include_self=True))
+            if lieux:
+                kwargs['lieux__in'] = lieux
+            oeuvres = set(
+                self.oeuvres.all().get_descendants(include_self=True)
+            )
+            if oeuvres:
+                kwargs['oeuvres__in'] = oeuvres
+            individus = set(self.individus.values_list('pk', flat=True))
+            if individus:
+                kwargs['individus__in'] = individus
+            ensembles = set(self.ensembles.values_list('pk', flat=True))
+            if ensembles:
+                kwargs['ensembles__in'] = ensembles
+        if args or kwargs:
+            return Source.objects.filter(*args, **kwargs).distinct()
+        return Source.objects.none()
+
+    @cached_property
+    def contributors(self):
+        # The base implementation joins `sources__owner_id`, which makes no
+        # sense here since the queryset items *are* sources: each one is its own
+        # contributor via `owner_id`.
+        return HierarchicUser.objects.filter(
+            pk__in=set(self.queryset.values_list('owner_id', flat=True)))

@@ -3,7 +3,9 @@ from django.utils.translation import gettext_lazy as _
 
 from tree.forms import TreeChoiceField
 
-from .models import DossierDEvenements, Dossier, DossierDOeuvres
+from .models import (
+    DossierDEvenements, Dossier, DossierDOeuvres, DossierDeSources,
+)
 
 
 class DossierForm(forms.ModelForm):
@@ -71,6 +73,13 @@ class DossierDOeuvresForm(DossierForm):
 
     class Meta(DossierForm.Meta):
         model = DossierDOeuvres
+
+
+class DossierDeSourcesForm(DossierForm):
+    static_manager_name = 'sources'
+
+    class Meta(DossierForm.Meta):
+        model = DossierDeSources
 
 
 SCENARIOS = (
