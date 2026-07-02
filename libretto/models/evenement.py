@@ -613,7 +613,7 @@ class Evenement(Indexed, ClusterableModel, AutoriteModel):
             FieldRowPanel(['fin_date', 'fin_date_approx']),
             FieldRowPanel(['fin_heure', 'fin_heure_approx']),
             FieldRowPanel(['fin_lieu', 'fin_lieu_approx']),
-        ], heading=_('Fin')),
+        ], heading=_('Fin'), classname='collapsed'),
         MultiFieldPanel([
             FieldRowPanel(['circonstance', 'programme_incomplet', 'relache']),
             MultipleChooserPanel(
@@ -625,7 +625,7 @@ class Evenement(Indexed, ClusterableModel, AutoriteModel):
         ValidatedInlinePanel('programme', classname="collapsed"),
         MultiFieldPanel([
             FieldRowPanel(['recette_generale', 'recette_par_billets']),
-        ], heading=_('Données économiques')),
+        ], heading=_('Données économiques'), classname='collapsed'),
     ]
 
     search_fields = [
