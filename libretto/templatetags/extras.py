@@ -45,6 +45,17 @@ def escape_latex(text):
     return escaped_chars_re.sub(r'\\\1', text)
 
 
+# En français, babel active « : » pour y insérer automatiquement une espace
+# avant (typographie française). Ce comportement n'est pas souhaité pour les
+# heures au format numérique (« 11:15 ») : on désactive donc l'activation en
+# passant par \string, qui rend le caractère sans déclencher babel.
+time_colon_re = re.compile(r'(?<=\d):(?=\d{2}\b)')
+
+
+def protect_time_colons(text):
+    return time_colon_re.sub(r'\\string:', text)
+
+
 html_latex_bindings = (
     (dict(name='h1'), r'\part*{', r'}'),
     (dict(name='h2'), r'\chapter*{', r'}'),
@@ -82,7 +93,7 @@ def html_to_latex(html):
     >>> print(html_to_latex('Vive les <!-- cons -->poilus !'))
     Vive les poilus !
     """
-    html = escape_latex(stripchars(fix_strange_characters(html)))
+    html = protect_time_colons(escape_latex(stripchars(fix_strange_characters(html))))
     soup = BeautifulSoup(html, 'html.parser')
     for html_selectors, latex_open_tag, latex_close_tag in html_latex_bindings:
         for tag in soup.find_all(**html_selectors):

@@ -69,6 +69,9 @@ class TypeDeSource(Indexed, CommonModel, SlugModel):
 
 
 class SourceQuerySet(PublishedQuerySet):
+    def order_by_date(self):
+        return self.order_by('date')
+
     def group_by_type(self):
         sources = OrderedDefaultDict()
         for source in self:
@@ -635,10 +638,15 @@ class Source(Indexed, AutoriteModel):
             return thumbnailer.get_thumbnail(aliases.get('small')).url
 
     @property
-    def medium_thumbnail(self):
+    def medium_thumbnail_object(self):
         if self.is_image():
             thumbnailer = get_thumbnailer(self.fichier)
-            return thumbnailer.get_thumbnail(aliases.get('medium')).url
+            return thumbnailer.get_thumbnail(aliases.get('medium'))
+
+    @property
+    def medium_thumbnail(self):
+        thumbnail = self.medium_thumbnail_object
+        return thumbnail.url if thumbnail is not None else None
 
 
 class AudioVideoAbstract(Source):

@@ -1,4 +1,6 @@
 from typing import List
+from warnings import warn
+from django.db import ProgrammingError
 from django.utils.translation import gettext_lazy as _
 from wagtail import hooks
 from wagtail.admin.ui.tables import BaseColumn, BooleanColumn, Column
@@ -79,7 +81,14 @@ class AutoriteViewSet(SnippetViewSet):
     @property
     def chooser_viewset(self):
         viewset = super().chooser_viewset
-        add_snippet_link_button(viewset, feature_name=f'{self.model._meta.model_name}-link')
+        try:
+            add_snippet_link_button(viewset, feature_name=f'{self.model._meta.model_name}-link')
+        except ProgrammingError:
+            warn(
+                f'Could not initialize snippet link button for {self.model}, '
+                'likely because the database is being created. '
+                'Restart the server to register this model properly in Wagtail.'
+            )
         return viewset
 
 
