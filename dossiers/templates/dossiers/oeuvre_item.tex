@@ -1,0 +1,19 @@
+{% load i18n extras %}
+
+\needspace{4\baselineskip}
+\large\textbf{% templatetag openbrace %}{{ oeuvre.titre_html|html_to_latex }}}\normalsize
+
+{% with descr=oeuvre.description_html %}{% if descr %}{{ descr|html_to_latex }}
+
+{% endif %}{% endwith %}{% with auteurs=oeuvre.auteurs.html %}{% if auteurs %}{{ auteurs|html_to_latex }}
+
+{% endif %}{% endwith %}{% if oeuvre.creation %}{{ oeuvre.creation.html|html_to_latex }}
+
+{% endif %}{% for type, type_sources in oeuvre.sources.all.group_by_type %}\textbf{% templatetag openbrace %}{% if type_sources|length > 1 %}{{ type.pluriel|capfirst }}{% else %}{{ type|capfirst }}{% endif %} :}
+
+{% for source in type_sources %}{{ source.html|html_to_latex }}
+
+{% endfor %}{% endfor %}
+\nopagebreak[4]\medskip
+\noindent\rule{\linewidth}{0.4pt}
+\medskip

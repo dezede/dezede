@@ -63,13 +63,21 @@
   \twocolumn
   \setlength{\parskip}{0pt}
 
-  \addcontentsline{toc}{part}{ {% trans 'Événements' %} }
+  \addcontentsline{toc}{part}{ {% trans 'Sources' %} }
 
-  {% with evenements=object.get_queryset.prefetch_all %}
-    {% for evenement in evenements %}
-      {% with event_counter=forloop.counter %}
-        {% include 'libretto/evenement_item.tex' %}
-      {% endwith %}
+  {% with sources=object.get_queryset.order_by_date %}
+    {% for type, type_sources in sources.group_by_type %}
+      {% if type_sources|length > 1 %}{% with type_label=type.pluriel|capfirst %}
+        \section*{% templatetag openbrace %}{{ type_label }}}
+        \addcontentsline{toc}{section}{ {{ type_label }} }
+      {% endwith %}{% else %}{% with type_label=type|capfirst %}
+        \section*{% templatetag openbrace %}{{ type_label }}}
+        \addcontentsline{toc}{section}{ {{ type_label }} }
+      {% endwith %}{% endif %}
+
+      {% for source in type_sources %}
+        {% include 'dossiers/source_item.tex' %}
+      {% endfor %}
     {% endfor %}
   {% endwith %}
 

@@ -63,14 +63,10 @@
   \twocolumn
   \setlength{\parskip}{0pt}
 
-  \addcontentsline{toc}{part}{ {% trans 'Événements' %} }
+  \addcontentsline{toc}{part}{ {% trans 'Œuvres' %} }
 
-  {% with evenements=object.get_queryset.prefetch_all %}
-    {% for evenement in evenements %}
-      {% with event_counter=forloop.counter %}
-        {% include 'libretto/evenement_item.tex' %}
-      {% endwith %}
-    {% endfor %}
-  {% endwith %}
+  {% for oeuvre in object.get_queryset %}
+    {% include 'dossiers/oeuvre_item.tex' %}
+  {% endfor %}
 
 {% endblock %}
