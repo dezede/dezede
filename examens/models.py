@@ -104,6 +104,8 @@ class TakenExam(Model):
 
     @property
     def current_level(self):
+        if self.is_complete():
+            return None
         if not hasattr(self, '_current_level'):
             self._current_level = Level.objects.get(
                 number=self.last_passed_level_number + 1)
