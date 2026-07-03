@@ -1,5 +1,6 @@
 from django.forms import ModelForm
 from tinymce.widgets import TinyMCE
+from wagtail.admin.forms import WagtailAdminModelForm
 
 from common.utils.html import sanitize_html
 from typography.utils import replace
@@ -7,8 +8,8 @@ from typography.utils import replace
 from .models import Level, TakenLevel
 
 
-class LevelAdminForm(ModelForm):
-    class Meta:
+class LevelAdminForm(WagtailAdminModelForm):
+    class Meta(WagtailAdminModelForm.Meta):
         model = Level
         exclude = ()
         widgets = {

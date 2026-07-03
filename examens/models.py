@@ -8,12 +8,30 @@ from django.db.models import (
     Max, Sum, F, SET_NULL, CASCADE)
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from wagtail.admin.panels import FieldPanel, FieldRowPanel
 
 from common.utils.file import FileAnalyzer
 from examens.utils import AnnotatedDiff
+from libretto.panels import ValidatedInlinePanel
 
 
-class Level(Model):
+class ScoreFieldPanel(FieldPanel):
+    """
+    Read-only ``FieldPanel`` rendering a 0–1 score as ``%.1f / 20``.
+
+    Mirrors ``examens.admin.TakenLevelInline.get_score``. Only the display
+    formatting is customized; the underlying field is a real model field so
+    ``read_only=True`` heading/value resolution works unchanged.
+    """
+    def format_value_for_display(self, value):
+        if value is None:
+            return ''
+        return '%.1f / 20' % (value * 20.0)
+
+
+class Level(ClusterableModel):
     number = PositiveSmallIntegerField(
         _('numéro'), unique=True, default=1,
         validators=[MinValueValidator(1)])
@@ -21,6 +39,12 @@ class Level(Model):
     sources = ManyToManyField(
         'libretto.Source', through='LevelSource', related_name='+',
         verbose_name=_('sources'))
+
+    panels = [
+        FieldPanel('number'),
+        FieldPanel('help_message'),
+        ValidatedInlinePanel('level_sources', label=_('sources')),
+    ]
 
     class Meta:
         verbose_name = _('niveau')
@@ -39,8 +63,8 @@ def limit_choices_to_possible_sources():
 
 
 class LevelSource(Model):
-    level = ForeignKey(Level, related_name='level_sources', on_delete=CASCADE,
-                       verbose_name=_('niveau'))
+    level = ParentalKey(Level, related_name='level_sources', on_delete=CASCADE,
+                        verbose_name=_('niveau'))
     source = OneToOneField(
         'libretto.source', limit_choices_to=limit_choices_to_possible_sources,
         related_name='+', verbose_name=_('source'), on_delete=CASCADE)
@@ -65,7 +89,7 @@ class TakenExamQuerySet(QuerySet):
                                              - F('taken_levels__start')))
 
 
-class TakenExam(Model):
+class TakenExam(ClusterableModel):
     user = OneToOneField(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=CASCADE,
         related_name='+', verbose_name=_('utilisateur'))
@@ -75,6 +99,11 @@ class TakenExam(Model):
 
     objects = TakenExamQuerySet.as_manager()
     objects.use_for_related_fields = True
+
+    panels = [
+        FieldPanel('user'),
+        ValidatedInlinePanel('taken_levels', label=_('niveaux passés')),
+    ]
 
     class Meta:
         verbose_name = _('examen passé')
@@ -110,6 +139,12 @@ class TakenExam(Model):
             self._current_level = Level.objects.get(
                 number=self.last_passed_level_number + 1)
         return self._current_level
+
+    def get_average_score(self):
+        if getattr(self, 'avg_score', None) is not None:
+            return '%.1f / 20' % (self.avg_score * 20.0)
+    get_average_score.short_description = _('note moyenne')
+    get_average_score.admin_order_field = 'avg_score'
 
     def get_time_spent(self):
         if not hasattr(self, '_time_spent'):
@@ -148,9 +183,9 @@ class TakenLevelQuerySet(QuerySet):
 
 
 class TakenLevel(Model):
-    taken_exam = ForeignKey(TakenExam, related_name='taken_levels',
-                            verbose_name=_('examen passé'), editable=False,
-                            on_delete=CASCADE)
+    taken_exam = ParentalKey(TakenExam, related_name='taken_levels',
+                             verbose_name=_('examen passé'), editable=False,
+                             on_delete=CASCADE)
     level = ForeignKey(
         Level, verbose_name=_('niveau'), editable=False, related_name='+',
         on_delete=CASCADE)
@@ -166,6 +201,22 @@ class TakenLevel(Model):
 
     objects = TakenLevelQuerySet.as_manager()
     objects.use_for_related_fields = True
+
+    panels = [
+        FieldRowPanel([
+            FieldPanel('level', read_only=True),
+            FieldPanel('source', read_only=True),
+        ]),
+        FieldPanel('transcription'),
+        FieldRowPanel([
+            FieldPanel('passed', read_only=True),
+            ScoreFieldPanel('score', read_only=True),
+        ]),
+        FieldRowPanel([
+            FieldPanel('start', read_only=True),
+            FieldPanel('end', read_only=True),
+        ]),
+    ]
 
     class Meta:
         verbose_name = _('niveau passé')
