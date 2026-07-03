@@ -1,9 +1,5 @@
-from functools import cached_property
 from typing import List
 from django.contrib.admin.utils import quote
-from django.contrib.auth import get_user_model
-from django.core.exceptions import FieldDoesNotExist
-from django.db.models import BooleanField, ForeignKey
 from django.forms import NumberInput
 from django.http import Http404
 from django.templatetags.static import static
@@ -14,18 +10,19 @@ from django_filters import ChoiceFilter, RangeFilter
 from django_filters.filterset import filterset_factory
 from wagtail import hooks
 from wagtail.admin.filters import SuffixedMultiWidget, WagtailFilterSet
-from wagtail.admin.ui.tables import BaseColumn, BooleanColumn, Column, UserColumn
+from wagtail.admin.ui.tables import BaseColumn, Column
 from wagtail.admin.widgets import Button
 from wagtail.models import ReferenceIndex
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
 from wagtail.snippets.views.snippets import (
-    CreateView, IndexView, EditView, DeleteView, CopyView, SnippetViewSet,
+    CreateView, EditView, DeleteView, CopyView, SnippetViewSet,
     SnippetViewSetGroup,
 )
 from wagtail_linksnippet.richtext_utils import add_snippet_link_button
 
 from common.utils.text import capfirst
+from dezede.views import CommonIndexView
 from libretto.autocomplete import autocomplete_charfield
 from libretto.models.base import CommonModel
 
@@ -168,42 +165,6 @@ class CommonCopyView(CopyView):
             raise Http404
         return obj
 
-
-class CommonIndexView(IndexView):
-    def improve_column(self, column: BaseColumn):
-        if column.__class__ != Column:
-            return column
-
-        attr = getattr(self.model, column.name)
-        if callable(attr) and getattr(attr, 'boolean', False):
-            return BooleanColumn(
-                column.name,
-                label=capfirst(getattr(attr, 'short_description', column.name)),
-                sort_key=getattr(attr, 'admin_order_field', None),
-            )
-
-        try:
-            field = self.model._meta.get_field(column.name)
-        except FieldDoesNotExist:
-            return column
-
-        label = capfirst(field.verbose_name)
-
-        if isinstance(field, BooleanField):
-            return BooleanColumn(
-                column.name,
-                label=label,
-                sort_key=column.name,
-            )
-
-        if isinstance(field, ForeignKey) and field.related_model is get_user_model():
-            return UserColumn(column.name, label=label, sort_key=column.name)
-
-        return column
-
-    @cached_property
-    def columns(self):
-        return [self.improve_column(col) for col in super().columns]
 
 class CommonCreateView(CreateView):
     def get_initial_form_instance(self):

@@ -1,26 +1,34 @@
 import datetime
 import json
 from collections import OrderedDict
+from functools import cached_property
 from mimetypes import guess_type
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sitemaps import Sitemap
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.contrib.syndication.views import Feed
-from django.db.models import Q, QuerySet
+from django.core.exceptions import FieldDoesNotExist
+from django.db.models import BooleanField, ForeignKey, Q, QuerySet
 from django.http import HttpResponse
 from django.utils.feedgenerator import DefaultFeed, Enclosure
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, TemplateView
+from wagtail.admin.ui.tables import (
+    BaseColumn, BooleanColumn, Column, UserColumn,
+)
 from wagtail.models import Page
 from wagtail.query import PageQuerySet
 from wagtail.search.backends import get_search_backend
 from wagtail.search.backends.base import EmptySearchResults
 from wagtail.search.models import IndexEntry
+from wagtail.snippets.views.snippets import IndexView
 
 from common.utils.html import sanitize_html
+from common.utils.text import capfirst
 from dossiers.models import CategorieDeDossiers, Dossier
 from libretto.models import (
     Oeuvre, Lieu, Individu, Source, Evenement, Ensemble, Profession, Partie,
@@ -294,3 +302,45 @@ class GlobalSitemap(Sitemap):
         if isinstance(obj, (Source, Evenement, Partie)):
             return 0.1
         return 0.5
+
+
+class CommonIndexView(IndexView):
+    """
+    Wagtail snippet ``IndexView`` that prettifies auto-generated columns:
+    boolean methods become tick/cross icons, user foreign keys become
+    ``UserColumn``s, and labels/sort keys follow the model field metadata.
+    """
+    def improve_column(self, column: BaseColumn):
+        if column.__class__ != Column:
+            return column
+
+        attr = getattr(self.model, column.name)
+        if callable(attr) and getattr(attr, 'boolean', False):
+            return BooleanColumn(
+                column.name,
+                label=capfirst(getattr(attr, 'short_description', column.name)),
+                sort_key=getattr(attr, 'admin_order_field', None),
+            )
+
+        try:
+            field = self.model._meta.get_field(column.name)
+        except FieldDoesNotExist:
+            return column
+
+        label = capfirst(field.verbose_name)
+
+        if isinstance(field, BooleanField):
+            return BooleanColumn(
+                column.name,
+                label=label,
+                sort_key=column.name,
+            )
+
+        if isinstance(field, ForeignKey) and field.related_model is get_user_model():
+            return UserColumn(column.name, label=label, sort_key=column.name)
+
+        return column
+
+    @cached_property
+    def columns(self):
+        return [self.improve_column(col) for col in super().columns]
