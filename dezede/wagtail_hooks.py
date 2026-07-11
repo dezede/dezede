@@ -42,6 +42,7 @@ def register_icons(icons):
         'wagtailfontawesomesvg/solid/align-center.svg',
         'wagtailfontawesomesvg/solid/align-right.svg',
         'wagtailfontawesomesvg/solid/underline.svg',
+        'wagtailfontawesomesvg/solid/strikethrough.svg',
     ]
 
 
@@ -104,6 +105,25 @@ def register_underline_feature(features):
         'icon': 'underline',
         'description': gettext('Souligné'),
         'element': 'underline',
+    }
+    features.register_editor_plugin('draftail', feature_name, draftail_features.InlineStyleFeature(control))
+    db_conversion = {
+        'from_database_format': {tag: InlineStyleElementHandler(type_)},
+        'to_database_format': {'style_map': {type_: tag}},
+    }
+    features.register_converter_rule('contentstate', feature_name, db_conversion)
+
+
+@hooks.register('register_rich_text_features')
+def register_strikethrough_feature(features):
+    feature_name = 'strikethrough'
+    type_ = 'STRIKETHROUGH'
+    tag = 's'
+    control = {
+        'type': type_,
+        'icon': 'strikethrough',
+        'description': gettext('Barré'),
+        'element': 'strikethrough',
     }
     features.register_editor_plugin('draftail', feature_name, draftail_features.InlineStyleFeature(control))
     db_conversion = {

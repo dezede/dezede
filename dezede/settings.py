@@ -339,6 +339,7 @@ WAGTAILSEARCH_BACKENDS = {
     },
 }
 
+# TODO: add strikethrough to one of the editors
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     "default": {
         "WIDGET": "wagtail.admin.rich_text.DraftailRichTextArea",
