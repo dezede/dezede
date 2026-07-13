@@ -7,10 +7,12 @@ import Typography from "@mui/material/Typography";
 import { EPageType, TFindPageData } from "../app/types";
 import OurLink from "./OurLink";
 import UserLink, { UserLabel } from "./UserLink";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { SITE_NAME } from "@/app/constants";
 import DateLabel from "@/format/DateLabel";
+
+const subscribeNoop = () => () => {};
 
 export default function Citation({
   findPageData: { title, type, url, firstPublishedAt, owner, ancestors },
@@ -22,11 +24,11 @@ export default function Citation({
 }) {
   const t = useTranslations("letter");
   const tSource = useTranslations("source");
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const isClient = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
 
   const parentLabel = useMemo(() => {
     if (!showParent || ancestors.length === 0) {

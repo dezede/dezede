@@ -105,6 +105,9 @@ export default function SourceImagesReader({
 
   useLayoutEffect(() => {
     const height = relatedRef.current?.offsetHeight ?? 0;
+    // The height can only be read from the DOM after layout, so it can't be
+    // derived during render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRelatedMinHeight((previousMax) => Math.max(previousMax, height));
   }, [page]);
 
