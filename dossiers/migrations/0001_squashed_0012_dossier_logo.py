@@ -394,7 +394,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='dossier',
-            name='image_couverture',
-            field=models.ImageField(blank=True, null=True, upload_to='dossiers/', verbose_name='image de couverture'),
+            name='logo',
+            field=models.ImageField(blank=True, null=True, upload_to='dossiers/', verbose_name='logo'),
         ),
     ]

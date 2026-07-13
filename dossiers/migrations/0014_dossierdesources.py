@@ -12,6 +12,16 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RenameField(
+            model_name='dossier',
+            old_name='logo',
+            new_name='image_couverture',
+        ),
+        migrations.AlterField(
+            model_name='dossier',
+            name='image_couverture',
+            field=models.ImageField(blank=True, null=True, upload_to='dossiers/', verbose_name='image de couverture'),
+        ),
         migrations.CreateModel(
             name='DossierDeSources',
             fields=[
