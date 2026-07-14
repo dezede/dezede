@@ -19,6 +19,7 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 from modelcluster.models import ClusterableModel, ParentalKey
 from tinymce.models import HTMLField
+from tinymce.widgets import TinyMCE
 from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 from wagtail.admin.panels import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, MultipleChooserPanel
 
@@ -275,9 +276,13 @@ class Source(Indexed, ClusterableModel, AutoriteModel):
         ChildrenLinksPanel(heading=_('Enfants')),
         MultiFieldPanel([
             MultipleChooserPanel('sourceuser_set', 'user', heading=_('Éditeurs scientifiques')),
-            'date_publication', 'publications',
-            'developpements', 'presentation', 'contexte',
-            'sources_et_protocole', 'bibliographie',
+            'date_publication',
+            FieldPanel('publications', widget=TinyMCE),
+            FieldPanel('developpements', widget=TinyMCE),
+            FieldPanel('presentation', widget=TinyMCE),
+            FieldPanel('contexte', widget=TinyMCE),
+            FieldPanel('sources_et_protocole', widget=TinyMCE),
+            FieldPanel('bibliographie', widget=TinyMCE),
         ], heading=_('Présentation'), classname='collapsed'),
     ]
     search_fields = [

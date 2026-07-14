@@ -10,6 +10,7 @@ from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
+from tinymce.widgets import TinyMCE
 from wagtail.admin.panels import FieldPanel, FieldRowPanel
 
 from common.utils.file import FileAnalyzer
@@ -42,7 +43,7 @@ class Level(ClusterableModel):
 
     panels = [
         FieldPanel('number'),
-        FieldPanel('help_message'),
+        FieldPanel('help_message', widget=TinyMCE),
         ValidatedInlinePanel('level_sources', label=_('sources')),
     ]
 
@@ -207,7 +208,7 @@ class TakenLevel(Model):
             FieldPanel('level', read_only=True),
             FieldPanel('source', read_only=True),
         ]),
-        FieldPanel('transcription'),
+        FieldPanel('transcription', widget=TinyMCE),
         FieldRowPanel([
             FieldPanel('passed', read_only=True),
             ScoreFieldPanel('score', read_only=True),
