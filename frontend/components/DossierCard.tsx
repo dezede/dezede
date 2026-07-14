@@ -123,14 +123,18 @@ export default async function DossierCard({
         <CardActionArea component={OurLink} href={href}>
           {/* No fixed aspect ratio or object-fit: cover here — the image keeps
               its natural proportions (never cropped), which is what lets the
-              surrounding masonry layout pack cards of differing heights. */}
-          <Box sx={{ position: "relative", display: "block" }}>
+              surrounding masonry layout pack cards of differing heights.
+              Image and overlay are stacked via CSS grid (same grid area)
+              rather than absolute positioning, so the container grows to fit
+              the overlay's content even when a very wide/short image would
+              otherwise be too short to hold the title and chips. */}
+          <Box sx={{ display: "grid" }}>
             <Box
               component="img"
               src={dossier.cover_image}
               alt=""
               loading="lazy"
-              sx={{ display: "block", width: "100%", height: "auto" }}
+              sx={{ gridArea: "1 / 1", display: "block", width: "100%", height: "auto" }}
             />
             {/* Title and count/subdossier chips are both laid over the cover,
                 magazine-style, so the whole card reads as one framed picture.
@@ -139,9 +143,8 @@ export default async function DossierCard({
                 the picture. */}
             <Box
               sx={{
-                position: "absolute",
-                insetInline: 0,
-                bottom: 0,
+                gridArea: "1 / 1",
+                alignSelf: "end",
                 display: "flex",
                 flexDirection: "column",
                 gap: 1,
