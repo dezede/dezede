@@ -13,6 +13,7 @@ import { getTranslations } from "next-intl/server";
 import { TDossierCard } from "@/app/types";
 import { DOSSIERS_BASE } from "@/app/constants";
 import OurLink from "./OurLink";
+import ChipLabel from "./ChipLabel";
 
 // `dossiers`-namespace translator, threaded into the plain helper so it can be
 // called from both server components (DossierCard) and pages without a hook.
@@ -68,20 +69,28 @@ function DossierChips({
   const kind = kindLabel(dossier, t);
   const subdossiers = subdossierLabel(dossier, t);
   if (!kind && !subdossiers) return null;
+  const icon = kindIcon(dossier);
+  const iconSx = onImage ? { color: "primary.dark" } : undefined;
   const chipSx = onImage
     ? {
         bgcolor: "rgba(255,255,255,0.9)",
         color: "rgba(0,0,0,0.87)",
-        "& .MuiChip-icon": { color: "primary.dark" },
         "& .MuiChip-label": { lineHeight: 1 },
       }
-    : { "& .MuiChip-icon": { marginLeft: "6px" }, "& .MuiChip-label": { lineHeight: 1 } };
+    : { "& .MuiChip-label": { lineHeight: 1 } };
   return (
     <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
       {kind ? (
         <Chip
-          icon={kindIcon(dossier)}
-          label={kind}
+          label={
+            icon ? (
+              <ChipLabel icon={icon} iconSx={iconSx}>
+                {kind}
+              </ChipLabel>
+            ) : (
+              kind
+            )
+          }
           size="small"
           variant={onImage ? "filled" : "outlined"}
           sx={chipSx}
@@ -89,8 +98,11 @@ function DossierChips({
       ) : null}
       {subdossiers ? (
         <Chip
-          icon={<FolderOutlinedIcon />}
-          label={subdossiers}
+          label={
+            <ChipLabel icon={<FolderOutlinedIcon />} iconSx={iconSx}>
+              {subdossiers}
+            </ChipLabel>
+          }
           size="small"
           variant={onImage ? "filled" : "outlined"}
           sx={chipSx}
@@ -122,14 +134,18 @@ export default async function DossierCard({
         <CardActionArea component={OurLink} href={href}>
           {/* No fixed aspect ratio or object-fit: cover here — the image keeps
               its natural proportions (never cropped), which is what lets the
-              surrounding masonry layout pack cards of differing heights. */}
-          <Box sx={{ position: "relative", display: "block" }}>
+              surrounding masonry layout pack cards of differing heights.
+              Image and overlay are stacked via CSS grid (same grid area)
+              rather than absolute positioning, so the container grows to fit
+              the overlay's content even when a very wide/short image would
+              otherwise be too short to hold the title and chips. */}
+          <Box sx={{ display: "grid" }}>
             <Box
               component="img"
               src={dossier.cover_image}
               alt=""
               loading="lazy"
-              sx={{ display: "block", width: "100%", height: "auto" }}
+              sx={{ gridArea: "1 / 1", display: "block", width: "100%", height: "auto" }}
             />
             {/* Title and count/subdossier chips are both laid over the cover,
                 magazine-style, so the whole card reads as one framed picture.
@@ -138,9 +154,8 @@ export default async function DossierCard({
                 the picture. */}
             <Box
               sx={{
-                position: "absolute",
-                insetInline: 0,
-                bottom: 0,
+                gridArea: "1 / 1",
+                alignSelf: "end",
                 display: "flex",
                 flexDirection: "column",
                 gap: 1,
