@@ -146,20 +146,23 @@ export function PersonLabel({
   }
 }
 
-// "1810–1849" from the plain date columns, falling back to the free-text
-// approximations ("vers 1810"), spaced around the dash when one is present.
+// "1810–1849" from the free-text approximations ("vers 1810") when set — the
+// plain date columns can hold a merely plausible date used for sorting, so
+// the approximation (when the user entered one) is the more trustworthy
+// value to display — falling back to the plain date's year otherwise. Spaced
+// around the dash when one side is an approximation.
 function getLifeDates({
   naissance_date,
   naissance_date_approx,
   deces_date,
   deces_date_approx,
 }: TRelatedPerson): string {
-  const birth = naissance_date?.slice(0, 4) || naissance_date_approx || "";
-  const death = deces_date?.slice(0, 4) || deces_date_approx || "";
+  const birth = naissance_date_approx || naissance_date?.slice(0, 4) || "";
+  const death = deces_date_approx || deces_date?.slice(0, 4) || "";
   if (!birth && !death) {
     return "";
   }
-  const spaced = !naissance_date || !deces_date;
+  const spaced = Boolean(naissance_date_approx) || Boolean(deces_date_approx);
   return `${birth}${spaced ? " – " : "–"}${death}`;
 }
 
@@ -203,7 +206,7 @@ function PersonTooltipBody(person: TRelatedPerson) {
           color="inherit"
           sx={{ display: "block" }}
         >
-          {lifeDates}
+          <SafeText value={lifeDates} />
         </Typography>
       ) : null}
     </Box>
