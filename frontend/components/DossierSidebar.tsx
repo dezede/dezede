@@ -4,7 +4,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutlined";
 import { getLocale, getTranslations } from "next-intl/server";
 import { TDossierDetail, TDossierUser } from "@/app/types";
 import type { Locale } from "@/i18n/config";
@@ -46,8 +46,7 @@ function UserChips({ users }: { users: TDossierUser[] }) {
           component="a"
           href={user.url}
           clickable
-          icon={<PersonOutlineIcon />}
-          label={user.name}
+          label={<Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}><PersonOutlineIcon fontSize="inherit" /> <span>{user.name}</span></Stack>}
           size="small"
           variant="outlined"
         />

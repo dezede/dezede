@@ -4,7 +4,7 @@ import React from "react";
 import { useTranslations } from "next-intl";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
+import WorkOutlineIcon from "@mui/icons-material/WorkOutlineOutlined";
 import PianoIcon from "@mui/icons-material/Piano";
 import {
   EPersonTitre,

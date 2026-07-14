@@ -74,7 +74,11 @@ export default function DossierStats({ statsUrl }: { statsUrl: string }) {
         </Stack>
       ) : null}
       {hasChord ? (
-        <Stack spacing={1.5} component="section" alignItems="center">
+        <Stack
+          spacing={1.5}
+          component="section"
+          sx={{ alignItems: "center" }}
+        >
           <Typography variant="h2" sx={{ fontSize: "1.25rem", alignSelf: "flex-start" }}>
             {t("composersPlayedTogether")}
           </Typography>

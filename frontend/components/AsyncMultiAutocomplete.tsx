@@ -177,8 +177,9 @@ export default function AsyncMultiAutocomplete<T extends TEntity>({
           {...params}
           label={label}
           slotProps={{
+            ...params.slotProps,
             input: {
-              ...params.InputProps,
+              ...params.slotProps?.input,
               endAdornment: (
                 <>
                   {loading ? <CircularProgress size={18} /> : null}
@@ -193,7 +194,7 @@ export default function AsyncMultiAutocomplete<T extends TEntity>({
                       </IconButton>
                     </Tooltip>
                   ) : null}
-                  {params.InputProps.endAdornment}
+                  {params.slotProps?.input?.endAdornment}
                 </>
               ),
             },

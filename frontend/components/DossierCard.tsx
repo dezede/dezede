@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useMemo } from "react";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import Box from "@mui/material/Box";
@@ -10,7 +10,7 @@ import HistoryEduOutlinedIcon from "@mui/icons-material/HistoryEduOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import { getTranslations } from "next-intl/server";
-import { TDossierCard } from "@/app/types";
+import { TDossierCard, TDossierKind } from "@/app/types";
 import { DOSSIERS_BASE } from "@/app/constants";
 import OurLink from "./OurLink";
 import SafeText from "@/format/SafeText";
@@ -33,15 +33,6 @@ export function kindLabel(
     return t("sourceCount", { count: dossier.count });
   }
   return "";
-}
-
-// Same event/work icons used across the site (see SearchResultItem), so a
-// dossier's type reads at a glance on its count chip.
-export function kindIcon(dossier: TDossierCard): ReactElement | undefined {
-  if (dossier.kind === "evenements") return <EventOutlinedIcon />;
-  if (dossier.kind === "oeuvres") return <HistoryEduOutlinedIcon />;
-  if (dossier.kind === "sources") return <DescriptionOutlinedIcon />;
-  return undefined;
 }
 
 export function subdossierLabel(
@@ -77,11 +68,22 @@ function DossierChips({
         "& .MuiChip-label": { lineHeight: 1 },
       }
     : { "& .MuiChip-icon": { marginLeft: "6px" }, "& .MuiChip-label": { lineHeight: 1 } };
+  const icon = useMemo(() => {
+    if (kind === "evenements") return <EventOutlinedIcon />;
+    if (kind === "oeuvres") return <HistoryEduOutlinedIcon />;
+    if (kind === "sources") return <DescriptionOutlinedIcon />;
+    return undefined
+  }, [kind]);
   return (
-    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+    <Stack
+      direction="row"
+      spacing={1}
+      useFlexGap
+      sx={{ flexWrap: "wrap" }}
+    >
       {kind ? (
         <Chip
-          icon={kindIcon(dossier)}
+          icon={icon}
           label={kind}
           size="small"
           variant={onImage ? "filled" : "outlined"}

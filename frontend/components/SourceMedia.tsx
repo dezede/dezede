@@ -50,7 +50,7 @@ export default function SourceMedia({ source }: { source: TSourceDetail }) {
   let viewer = null;
   if (media) {
     viewer = (
-      <Stack spacing={1} alignItems="center">
+      <Stack spacing={1} sx={{ alignItems: "center" }}>
         {media.kind === "audio" ? (
           <audio controls preload="auto" style={{ width: "100%" }}>
             {media.sources.map((file) => (

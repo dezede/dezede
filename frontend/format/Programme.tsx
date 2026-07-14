@@ -57,10 +57,9 @@ function ProgrammeItem({ element }: { element: TProgrammeElement }) {
     <Box component="li" sx={{ listStyle: "none" }}>
       <Stack
         direction="row"
-        flexWrap="wrap"
-        alignItems="center"
         useFlexGap
         spacing={0.5}
+        sx={{ flexWrap: "wrap", alignItems: "center" }}
       >
         <NumberPrefix
           numerotation={element.numerotation}

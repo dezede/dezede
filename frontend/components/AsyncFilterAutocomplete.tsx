@@ -159,12 +159,13 @@ export default function AsyncFilterAutocomplete({
           {...params}
           label={label}
           slotProps={{
+            ...params.slotProps,
             input: {
-              ...params.InputProps,
+              ...params.slotProps?.input,
               endAdornment: (
                 <>
                   {loading ? <CircularProgress size={18} /> : null}
-                  {params.InputProps.endAdornment}
+                  {params.slotProps?.input?.endAdornment}
                 </>
               ),
             },

@@ -198,7 +198,11 @@ function PersonTooltipBody(person: TRelatedPerson) {
         ) : null}
       </Typography>
       {lifeDates ? (
-        <Typography variant="caption" color="inherit" display="block">
+        <Typography
+          variant="caption"
+          color="inherit"
+          sx={{ display: "block" }}
+        >
           {lifeDates}
         </Typography>
       ) : null}

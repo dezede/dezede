@@ -41,9 +41,9 @@ export default function SpaceTime({
     chip && place !== null ? (
       <PlaceChip {...place} />
     ) : (
-      <Stack direction="row" spacing={0.5} alignItems="center">
+      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
         <PlaceOutlinedIcon fontSize="small" />
-        <Typography variant={variant} fontSize="inherit">
+        <Typography variant={variant} sx={{ fontSize: "inherit" }}>
           {/* Like Django's `lieu_str` (and the date/time labels), the
               approximation wins over the exact place when both are set. */}
           {fuzzyPlace || (place === null ? null : <PlaceLabel {...place} />)}
@@ -52,14 +52,18 @@ export default function SpaceTime({
     )
   ) : null;
   const dateTimeNode = hasDateTime ? (
-    <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="nowrap">
+    <Stack
+      direction="row"
+      spacing={0.5}
+      sx={{ alignItems: "center", flexWrap: "nowrap" }}
+    >
       {hideIcon ? null : <EventOutlinedIcon fontSize="small" />}
       {hasDate ? (
         <Typography
           variant={variant}
-          fontSize="inherit"
           noWrap
           suppressHydrationWarning
+          sx={{ fontSize: "inherit" }}
         >
           <DateLabel dateString={date} fuzzyDate={fuzzyDate} />
         </Typography>
@@ -67,9 +71,9 @@ export default function SpaceTime({
       {hasTime ? (
         <Typography
           variant={variant}
-          fontSize="inherit"
           noWrap
           suppressHydrationWarning
+          sx={{ fontSize: "inherit" }}
         >
           <TimeLabel timeString={time} fuzzyTime={fuzzyTime} />
         </Typography>
@@ -80,11 +84,13 @@ export default function SpaceTime({
     <Stack
       direction="row"
       spacing={1}
-      alignItems="center"
-      flexWrap={wrap ? "wrap" : "nowrap"}
       useFlexGap
-      maxWidth="100%"
-      display={inline ? "inline-flex" : undefined}
+      sx={{
+        alignItems: "center",
+        flexWrap: wrap ? "wrap" : "nowrap",
+        maxWidth: "100%",
+        display: inline ? "inline-flex" : undefined,
+      }}
     >
       {placeNode}
       {dateTimeNode}

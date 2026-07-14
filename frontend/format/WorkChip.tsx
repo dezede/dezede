@@ -341,7 +341,11 @@ function WorkTooltipBody(work: TWorkChip) {
   return (
     <Box>
       {authorElements.length > 0 ? (
-        <Typography variant="caption" color="inherit" display="block">
+        <Typography
+          variant="caption"
+          color="inherit"
+          sx={{ display: "block" }}
+        >
           <CastingText elements={authorElements} />
         </Typography>
       ) : null}
@@ -349,7 +353,11 @@ function WorkTooltipBody(work: TWorkChip) {
         {title}
       </Typography>
       {subtitle ? (
-        <Typography variant="caption" color="inherit" display="block">
+        <Typography
+          variant="caption"
+          color="inherit"
+          sx={{ display: "block" }}
+        >
           {subtitle}
         </Typography>
       ) : null}

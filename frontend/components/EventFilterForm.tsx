@@ -42,7 +42,7 @@ function YearRange({ min, max }: { min: number; max: number }) {
       >
         {t("years", { start: value[0], end: value[1] })}
       </Typography>
-      <Box px={1}>
+      <Box sx={{ px: 1 }}>
         <Slider
           size="small"
           value={value}

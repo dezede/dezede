@@ -7,7 +7,7 @@ export default function EventCardSkeleton() {
     <Paper variant="outlined" sx={{ p: 2 }}>
       <Stack spacing={2}>
         <Stack spacing={0.5}>
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <Skeleton variant="text" width="38%" height={28} />
             <Skeleton variant="rounded" width={70} height={24} />
           </Stack>
@@ -17,7 +17,7 @@ export default function EventCardSkeleton() {
         </Stack>
         <Stack spacing={0.75}>
           <Skeleton variant="text" width="18%" height={16} />
-          <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+          <Stack direction="row" spacing={0.5} useFlexGap sx={{ flexWrap: "wrap" }}>
             <Skeleton variant="rounded" width={90} height={24} />
             <Skeleton variant="rounded" width={110} height={24} />
             <Skeleton variant="rounded" width={80} height={24} />

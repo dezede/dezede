@@ -64,15 +64,14 @@ export default async function Letter({
         storage_place === null ? null : (
           <Stack
             direction="row"
-            alignItems="baseline"
-            flexWrap="wrap"
             spacing={1}
             useFlexGap
             divider={
               <Divider orientation="vertical" flexItem variant="middle" />
             }
+            sx={{ alignItems: "baseline", flexWrap: "wrap" }}
           >
-            <Box maxWidth="100%">
+            <Box sx={{ maxWidth: "100%" }}>
               <PlaceChip {...storage_place} />
             </Box>
             {storage_call_number ? <span>{storage_call_number}</span> : null}
@@ -95,8 +94,7 @@ export default async function Letter({
           direction="row"
           spacing={1}
           divider={<Divider orientation="vertical" flexItem />}
-          alignItems="stretch"
-          justifyContent="stretch"
+          sx={{ alignItems: "stretch", justifyContent: "stretch" }}
         >
           <UserLink user={findPageData.owner} />
           <SpaceTime date={findPageData.firstPublishedAt} hideIcon />
@@ -111,13 +109,20 @@ export default async function Letter({
     },
   ];
   return (
-    <Grid container direction="column" spacing={4} wrap="nowrap">
+    <Grid
+      container
+      spacing={4}
+      sx={{ flexDirection: "column", flexWrap: "nowrap" }}
+    >
       <Grid container spacing={4}>
         <Grid
           size={{ xs: 12, md: 6, lg: 5 }}
-          display={
-            letter_images.length === 0 ? { xs: "none", md: "block" } : undefined
-          }
+          sx={{
+            display:
+              letter_images.length === 0
+                ? { xs: "none", md: "block" }
+                : undefined,
+          }}
         >
           <Paper
             sx={{
@@ -143,18 +148,19 @@ export default async function Letter({
               <Stack divider={<Divider />} spacing={1}>
                 <Stack
                   direction="row"
-                  justifyContent="space-between"
                   spacing={2}
                   useFlexGap
-                  flexWrap="wrap"
+                  sx={{ justifyContent: "space-between", flexWrap: "wrap" }}
                 >
                   <Stack
                     direction="row"
                     spacing={1}
-                    flexWrap="wrap"
                     useFlexGap
-                    alignItems="center"
-                    maxWidth="100%"
+                    sx={{
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                      maxWidth: "100%",
+                    }}
                   >
                     <Typography color="textDisabled">{t("from")}</Typography>
                     {senders.map(({ person }) => (

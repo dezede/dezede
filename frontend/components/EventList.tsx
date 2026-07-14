@@ -41,10 +41,12 @@ export default async function EventList({
       <Stack
         direction="row"
         spacing={2}
-        alignItems="center"
-        justifyContent="space-between"
-        flexWrap="wrap"
         useFlexGap
+        sx={{
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+        }}
       >
         <Typography
           variant="subtitle1"
@@ -55,7 +57,7 @@ export default async function EventList({
         >
           {t("eventCount", { count: data.count })}
         </Typography>
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
           <EventExportButton isAuthenticated={isAuthenticated} />
           <EventOrderSelect />
         </Stack>

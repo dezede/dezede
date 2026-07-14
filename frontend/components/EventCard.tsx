@@ -67,10 +67,9 @@ export default function EventCard({
             <Stack spacing={0.5}>
               <Stack
                 direction="row"
-                flexWrap="wrap"
-                alignItems="center"
                 useFlexGap
                 spacing={1}
+                sx={{ flexWrap: "wrap", alignItems: "center" }}
               >
                 <Link
                   component={OurLink}
@@ -81,10 +80,9 @@ export default function EventCard({
                 >
                   <Stack
                     direction="row"
-                    flexWrap="wrap"
-                    alignItems="center"
                     useFlexGap
                     spacing={1}
+                    sx={{ flexWrap: "wrap", alignItems: "center" }}
                   >
                     <SpaceTime
                       date={event.debut_date}
@@ -97,7 +95,7 @@ export default function EventCard({
                         <Typography
                           component="span"
                           color="text.secondary"
-                          fontSize="inherit"
+                          sx={{ fontSize: "inherit" }}
                         >
                           —
                         </Typography>
@@ -130,10 +128,9 @@ export default function EventCard({
               {hasStartPlace || hasEndPlace ? (
                 <Stack
                   direction="row"
-                  flexWrap="wrap"
-                  alignItems="center"
                   useFlexGap
                   spacing={1}
+                  sx={{ flexWrap: "wrap", alignItems: "center" }}
                 >
                   {hasStartPlace ? (
                     <SpaceTime
@@ -156,10 +153,9 @@ export default function EventCard({
           {hasSubtitle ? (
             <Stack
               direction="row"
-              flexWrap="wrap"
-              alignItems="center"
               useFlexGap
               spacing={1}
+              sx={{ flexWrap: "wrap", alignItems: "center" }}
             >
               {event.circonstance ? (
                 <Typography
@@ -183,10 +179,9 @@ export default function EventCard({
             <SectionLabel>{t("distribution")}</SectionLabel>
             <Stack
               direction="row"
-              flexWrap="wrap"
-              alignItems="center"
               useFlexGap
               spacing={0.5}
+              sx={{ flexWrap: "wrap", alignItems: "center" }}
             >
               <Casting elements={event.distribution} />
             </Stack>

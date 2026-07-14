@@ -16,7 +16,7 @@ import IconButton from "@mui/material/IconButton";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
 import TableChartOutlinedIcon from "@mui/icons-material/TableChartOutlined";
 import AddIcon from "@mui/icons-material/Add";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
 import { useTranslations } from "next-intl";
 import { apiPost, ApiPostError } from "@/app/api";
 import { TScenarioChoice } from "@/app/types";
@@ -138,7 +138,12 @@ export default function DossierExportButtons({
         <DialogContent>
           <Stack spacing={1.5} sx={{ mt: 1 }}>
             {rows.map((value, index) => (
-              <Stack key={index} direction="row" spacing={1} alignItems="center">
+              <Stack
+                key={index}
+                direction="row"
+                spacing={1}
+                sx={{ alignItems: "center" }}
+              >
                 <FormControl fullWidth size="small">
                   <InputLabel id={`scenario-label-${index}`}>
                     {t("dossiers.scenarioPlaceholder")}

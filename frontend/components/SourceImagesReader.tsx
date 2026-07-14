@@ -388,9 +388,8 @@ export default function SourceImagesReader({
       {images.length > 1 ? (
         <Stack
           direction="row"
-          alignItems="center"
           spacing={2}
-          sx={{ px: 2 }}
+          sx={{ px: 2, alignItems: "center" }}
         >
           <Slider
             value={page + 1}

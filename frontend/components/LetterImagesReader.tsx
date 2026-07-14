@@ -29,14 +29,16 @@ export default function LetterImagesReader({
   const next = page <= letterImages.length - 2 ? letterImages[page + 1] : null;
   const { id, name, image } = letterImages[page];
   return (
-    <Grid container direction="column" wrap="nowrap">
+    <Grid container wrap="nowrap" sx={{ flexDirection: "column" }}>
       <Grid>
         <Grid
           container
-          justifyContent="space-between"
-          alignItems="center"
           wrap="nowrap"
-          width="100%"
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
         >
           <Grid size={4}>
             <Button
@@ -49,9 +51,7 @@ export default function LetterImagesReader({
           </Grid>
           <Grid size={4}>
             <Typography
-              textAlign="center"
-              display="block"
-              sx={{ lineHeight: "36px" }}
+              sx={{ textAlign: "center", display: "block", lineHeight: "36px" }}
             >
               {name}
             </Typography>

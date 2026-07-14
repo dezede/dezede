@@ -102,7 +102,7 @@ export function SourceModalProvider({
         maxWidth="lg"
         fullWidth
         scroll="body"
-        PaperProps={{ sx: { minHeight: "90vh" } }}
+        slotProps={{ paper: { sx: { minHeight: "90vh" } } }}
         aria-labelledby="source-modal-title"
         aria-describedby="source-modal-content"
       >

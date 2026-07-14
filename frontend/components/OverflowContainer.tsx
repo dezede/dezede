@@ -17,14 +17,21 @@ export default function OverflowContainer({
   children: React.ReactNode;
 }) {
   return (
-    <Box position="relative" maxHeight={maxHeight} overflow="hidden" sx={sx}>
+    <Box
+      sx={{
+        position: "relative",
+        maxHeight,
+        overflow: "hidden",
+        ...sx,
+      }}
+    >
       {children}
       <Box
-        position="absolute"
-        top={maxHeight - overflowHeight}
-        width="100%"
-        height={overflowHeight}
         sx={{
+          position: "absolute",
+          top: maxHeight - overflowHeight,
+          width: "100%",
+          height: overflowHeight,
           backgroundImage: (theme) =>
             `linear-gradient(to bottom, transparent 0%, ${theme.vars.palette.background.paper} 100%)`,
         }}

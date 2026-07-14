@@ -67,7 +67,7 @@ export default function PeriodDistribution({
             key={period.name}
             direction="row"
             spacing={0.5}
-            alignItems="center"
+            sx={{ alignItems: "center" }}
           >
             <Box
               sx={{

@@ -28,15 +28,18 @@ function PersonHorizontalList({
   persons: TRelatedPerson[];
 }) {
   return (
-    <Stack direction="row" spacing={1.5} flexWrap="nowrap">
+    <Stack
+      direction="row"
+      spacing={1.5}
+      sx={{ flexWrap: "nowrap" }}
+    >
       <span>{prefix}</span>
       <Stack
-        display="inline-flex"
         direction="row"
         spacing={1}
         divider={<Divider orientation="vertical" flexItem />}
-        flexWrap="wrap"
         useFlexGap
+        sx={{ display: "inline-flex", flexWrap: "wrap" }}
       >
         {persons.map((person) => (
           <PersonLabel key={person.id} person={person} component="strong" />
@@ -120,7 +123,7 @@ export default async function LetterList({
             <Card key={id}>
               <CardActionArea component={OurLink} href={html_url}>
                 <Stack direction="row">
-                  <Box display={{ xs: "none", sm: "block" }}>
+                  <Box sx={{ display: { xs: "none", sm: "block" } }}>
                     {letter_images.length >= 1 ? (
                       <ImageRendition
                         rendition={letter_images[0].thumbnail}
@@ -151,21 +154,19 @@ export default async function LetterList({
                     <Stack
                       spacing={1}
                       divider={<Divider />}
-                      p={2}
-                      height="100%"
+                      sx={{ p: 2, height: "100%" }}
                     >
                       <Stack
                         direction={{ xs: "column", md: "row" }}
-                        flexWrap="wrap"
-                        justifyContent="space-between"
                         spacing={2}
                         useFlexGap
+                        sx={{ flexWrap: "wrap", justifyContent: "space-between" }}
                       >
                         <Stack
                           direction="row"
                           spacing={1.5}
-                          flexWrap="wrap"
                           useFlexGap
+                          sx={{ flexWrap: "wrap" }}
                         >
                           <PersonHorizontalList
                             prefix={t("from")}
@@ -189,7 +190,7 @@ export default async function LetterList({
                         />
                       </Stack>
                       {transcription_text ? (
-                        <Typography textAlign="justify">
+                        <Typography sx={{ textAlign: "justify" }}>
                           {transcription_text}
                         </Typography>
                       ) : (

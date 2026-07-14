@@ -49,7 +49,7 @@ export default function WorkListItem({ work }: { work: TDossierWork }) {
           ) : null}
         </Box>
         {authors.length > 0 ? (
-          <Stack direction="row" flexWrap="wrap" useFlexGap spacing={0.5}>
+          <Stack direction="row" useFlexGap spacing={0.5} sx={{ flexWrap: "wrap" }}>
             <Casting elements={authors} />
           </Stack>
         ) : null}

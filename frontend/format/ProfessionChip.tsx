@@ -1,5 +1,5 @@
 import Chip from "@mui/material/Chip";
-import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
+import WorkOutlineIcon from "@mui/icons-material/WorkOutlineOutlined";
 import { TRelatedProfession } from "@/app/types";
 import { capfirst } from "@/app/utils";
 import OurLink from "@/components/OurLink";

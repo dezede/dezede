@@ -94,7 +94,12 @@ export default function DossierIndexBrowser({
 
   return (
     <Stack spacing={2}>
-      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+      <Stack
+        direction="row"
+        spacing={1}
+        useFlexGap
+        sx={{ flexWrap: "wrap" }}
+      >
         <Chip
           label={allLabel}
           color={selected === null ? "primary" : undefined}

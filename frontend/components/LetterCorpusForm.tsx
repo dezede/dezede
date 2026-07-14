@@ -86,7 +86,7 @@ function LetterTabLabel({
   count: number;
 }) {
   return (
-    <Stack direction="row" spacing={1} alignItems="center">
+    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
       <span>{children}</span>
       <Chip label={count} size="small" />
     </Stack>
@@ -124,9 +124,8 @@ export default function LetterCorpusForm({
     <Paper>
       <Stack
         direction={{ xs: "column", md: "row" }}
-        flexWrap="nowrap"
-        p={2}
         spacing={2}
+        sx={{ flexWrap: "nowrap", p: 2 }}
       >
         <SearchTextField />
         <AutocompleteFilter
@@ -143,8 +142,7 @@ export default function LetterCorpusForm({
             <Stack
               direction="row"
               spacing={1}
-              justifyContent="space-between"
-              width="100%"
+              sx={{ justifyContent: "space-between", width: "100%" }}
             >
               <span>{option.year ?? t("unknownYear")}</span>
               <span>{t("letterCount", { count: option.count })}</span>

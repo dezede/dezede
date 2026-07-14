@@ -69,7 +69,7 @@ export default function DetailTable({
         "& .MuiChip-label": { whiteSpace: "normal" },
       }}
     >
-      <Stack spacing={1.5} display={{ md: "none" }}>
+      <Stack spacing={1.5} sx={{ display: { md: "none" } }}>
         {filteredRows.map((row) => (
           <div key={`${row.key}-sm`}>
             <Typography variant="subtitle2" color="textDisabled">

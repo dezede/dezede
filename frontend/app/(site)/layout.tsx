@@ -49,12 +49,14 @@ export default async function SiteLayout({
         <Container>
           <Stack
             direction="row"
-            alignItems="center"
-            justifyContent="space-between"
             spacing={1}
-            sx={{ py: 1 }}
+            sx={{ py: 1, alignItems: "center", justifyContent: "space-between" }}
           >
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{ alignItems: "center" }}
+            >
               <MobileNavDrawer />
               <Button
                 component={OurLink}
@@ -80,7 +82,7 @@ export default async function SiteLayout({
                 {tBrowse("events")}
               </Button>
             </Stack>
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <LanguageSwitcher />
               <Button
                 component="a"

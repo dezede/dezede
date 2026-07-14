@@ -148,10 +148,12 @@ export default async function DossierData({
             <Stack
               direction="row"
               spacing={2}
-              alignItems="center"
-              justifyContent="space-between"
-              flexWrap="wrap"
               useFlexGap
+              sx={{
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+              }}
             >
               <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                 {t("workCount", { count: data.count })}

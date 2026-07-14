@@ -86,7 +86,12 @@ export default async function Layout({
 }>) {
   const { previous, next } = await findPage({ params });
   return (
-    <Grid container direction="column" wrap="nowrap" spacing={4}>
+    <Grid
+      container
+      wrap="nowrap"
+      spacing={4}
+      sx={{ flexDirection: "column" }}
+    >
       <Grid>
         <Container>
           <Suspense
@@ -108,9 +113,9 @@ export default async function Layout({
             <Paper sx={{ padding: { xs: 1, md: 0 } }}>
               <Stack
                 direction="row"
-                justifyContent="space-between"
                 spacing={2}
                 useFlexGap
+                sx={{ justifyContent: "space-between" }}
               >
                 <SiblingButton sibling={previous} icon={<ChevronLeftIcon />} />
                 <SiblingButton
