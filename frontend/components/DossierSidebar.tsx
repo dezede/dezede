@@ -4,19 +4,12 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { getLocale, getTranslations } from "next-intl/server";
 import { TDossierDetail, TDossierUser } from "@/app/types";
-import { DOSSIERS_BASE } from "@/app/constants";
 import type { Locale } from "@/i18n/config";
 import { getDateLabel } from "@/format/DateLabel";
-import OurLink from "@/components/OurLink";
 import RichText from "@/components/RichText";
-import SafeText from "@/format/SafeText";
 import DossierExportButtons from "@/components/DossierExportButtons";
 
 // One labelled metadata block, dropped entirely when it has no content — the
@@ -67,9 +60,8 @@ function UserChips({ users }: { users: TDossierUser[] }) {
  * Right-hand metadata/actions panel for a dossier detail page, porting the
  * Django dossier sidebar (`dossiers/include/sidebar_base.html` +
  * `dossierdevenements_sidebar.html`): scientific editors, contributors, the
- * publication date, a compact « Dans ce dossier » child navigation, the
- * associated-publications / planned-developments notes, and — for the right
- * users — the PDF and statistics exports.
+ * publication date, the associated-publications / planned-developments
+ * notes, and — for the right users — the PDF and statistics exports.
  */
 export default async function DossierSidebar({
   dossier,
@@ -105,29 +97,6 @@ export default async function DossierSidebar({
         </Field>
 
         <Field label={t("dossiers.publicationDate")}>{publicationDate}</Field>
-
-        {dossier.children.length > 0 ? (
-          <Stack spacing={0.5}>
-            <Typography variant="subtitle2" color="textDisabled">
-              {t("dossiers.inThisDossier")}
-            </Typography>
-            <List disablePadding dense>
-              {dossier.children.map((child) => (
-                <ListItem key={child.id} disablePadding>
-                  <ListItemButton
-                    component={OurLink}
-                    href={`${DOSSIERS_BASE}/id/${child.id}/`}
-                    sx={{ borderRadius: 1, px: 1 }}
-                  >
-                    <ListItemText
-                      primary={<SafeText value={child.titre} />}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Stack>
-        ) : null}
 
         {hasNotes ? <Divider /> : null}
 
