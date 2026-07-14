@@ -148,7 +148,7 @@ export default function EventFilterForm({ facets }: { facets: TEventFacets }) {
                     <Typography
                       component="span"
                       variant="caption"
-                      color="text.secondary"
+                      color="textSecondary"
                     >
                       {option.nature.nom}
                     </Typography>
