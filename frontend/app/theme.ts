@@ -93,6 +93,15 @@ export default responsiveFontSizes(
       },
     },
     components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          // Smooth-scrolls in-page hash jumps (e.g. the dossier "jump to
+          // presentation" button) instead of snapping instantly.
+          html: {
+            scrollBehavior: "smooth",
+          },
+        },
+      },
       MuiAutocomplete: {
         styleOverrides: {
           // Keep the clear (×) button visible whenever a field has a value,

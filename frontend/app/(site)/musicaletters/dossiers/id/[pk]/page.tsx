@@ -20,6 +20,7 @@ import DossierCard, { kindLabel } from "@/components/DossierCard";
 import DossierStats from "@/components/DossierStats";
 import DossierMapSection from "@/components/DossierMapSection";
 import DossierSidebar from "@/components/DossierSidebar";
+import JumpToPresentationButton from "@/components/JumpToPresentationButton";
 import CitationReference from "@/components/CitationReference";
 
 const apiBase = "/api/public/dossiers/";
@@ -100,7 +101,7 @@ export default async function DossierDetailPage({
   // The metadata/actions sidebar lives inside the Présentation tab (regardless of
   // the dossier kind), so it is hidden on the Données and Visualisations tabs.
   const presentation = (
-    <Grid container spacing={4}>
+    <Grid container spacing={4} id="presentation">
       <Grid size={{ xs: 12, md: 8 }}>
         <Stack spacing={3}>
           <Section title={t("presentation")} body={dossier.presentation} />
@@ -161,6 +162,9 @@ export default async function DossierDetailPage({
           </Typography>
           <DetailAdminBar {...dossier} />
         </Stack>
+        {dossier.children.length > 0 ? (
+          <JumpToPresentationButton label={tDossiers("jumpToPresentation")} />
+        ) : null}
         {subdossiers}
         {hasData ? (
           <DossierTabs

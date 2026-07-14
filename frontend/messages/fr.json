@@ -318,6 +318,7 @@
   },
   "dossiers": {
     "presentation": "Présentation",
+    "jumpToPresentation": "Aller à la présentation",
     "visualisations": "Visualisations",
     "statsUnavailable": "Les statistiques sont indisponibles.",
     "noStats": "Aucune statistique pour ce dossier.",

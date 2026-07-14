@@ -318,6 +318,7 @@
   },
   "dossiers": {
     "presentation": "Presentation",
+    "jumpToPresentation": "Jump to presentation",
     "visualisations": "Visualisations",
     "statsUnavailable": "Statistics are unavailable.",
     "noStats": "No statistics for this file.",
