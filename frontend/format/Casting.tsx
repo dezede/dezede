@@ -3,7 +3,6 @@
 import React from "react";
 import { useTranslations } from "next-intl";
 import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutlineOutlined";
 import PianoIcon from "@mui/icons-material/Piano";
 import {
@@ -15,6 +14,7 @@ import {
 } from "@/app/types";
 import { biGroup, joinWithLast } from "@/app/utils";
 import OurLink from "@/components/OurLink";
+import OurChip from "@/components/OurChip";
 import { PARTS_BASE, PROFESSIONS_BASE } from "@/app/constants";
 import PersonChip, { PersonLabel } from "./PersonChip";
 import EnsembleChip, { getEnsembleLabel } from "./EnsembleChip";
@@ -178,7 +178,7 @@ function ValueChip({ value }: { value: TValue }) {
 function KeyChip({ keyItem, label }: { keyItem: TKey; label: string }) {
   if (keyItem.kind === "partie") {
     return (
-      <Chip
+      <OurChip
         component={OurLink}
         href={`${PARTS_BASE}/id/${keyItem.partie.id}/`}
         label={label}
@@ -189,7 +189,7 @@ function KeyChip({ keyItem, label }: { keyItem: TKey; label: string }) {
     );
   }
   return (
-    <Chip
+    <OurChip
       component={OurLink}
       href={`${PROFESSIONS_BASE}/id/${keyItem.profession.id}/`}
       label={label}

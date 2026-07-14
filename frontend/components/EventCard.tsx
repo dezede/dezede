@@ -9,6 +9,7 @@ import EventBusyOutlinedIcon from "@mui/icons-material/EventBusyOutlined";
 import { TEvent } from "@/app/types";
 import { EVENTS_BASE } from "@/app/constants";
 import OurLink from "@/components/OurLink";
+import OurChip from "@/components/OurChip";
 import SpaceTime from "@/format/SpaceTime";
 import Casting from "@/format/Casting";
 import Programme from "@/format/Programme";
@@ -110,7 +111,7 @@ export default function EventCard({
                   </Stack>
                 </Link>
                 {event.relache ? (
-                  <Chip
+                  <OurChip
                     icon={<EventBusyOutlinedIcon />}
                     label={t("relache")}
                     size="small"

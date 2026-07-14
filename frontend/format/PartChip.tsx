@@ -1,9 +1,9 @@
 import { TRelatedPart } from "@/app/types";
-import Chip from "@mui/material/Chip";
 import PianoIcon from "@mui/icons-material/Piano";
 import { buildWorkLabel } from "./WorkChip";
 import { LabelNodes, labelToText, TLabelNode } from "./richLabel";
 import OurLink from "@/components/OurLink";
+import OurChip from "@/components/OurChip";
 import { PARTS_BASE } from "@/app/constants";
 
 /**
@@ -44,7 +44,7 @@ export function PartLabel(part: TRelatedPart) {
 
 export default function PartChip(part: TRelatedPart) {
   return (
-    <Chip
+    <OurChip
       component={OurLink}
       href={`${PARTS_BASE}/id/${part.id}/`}
       label={<PartLabel {...part} />}

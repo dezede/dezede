@@ -1,6 +1,6 @@
 import { TRelatedEvent } from "@/app/types";
-import Chip from "@mui/material/Chip";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
+import OurChip from "@/components/OurChip";
 import { useLocale, useTranslations } from "next-intl";
 import { DEFAULT_LOCALE, type Locale } from "@/i18n/config";
 import { getDateLabel } from "./DateLabel";
@@ -44,7 +44,7 @@ export function EventLabel(event: TRelatedEvent) {
 
 export default function EventChip(event: TRelatedEvent) {
   return (
-    <Chip
+    <OurChip
       component={OurLink}
       href={`${EVENTS_BASE}/id/${event.id}/`}
       label={<EventLabel {...event} />}

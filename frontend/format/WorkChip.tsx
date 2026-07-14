@@ -4,7 +4,6 @@ import {
   TAuteur,
   TRelatedWork,
 } from "@/app/types";
-import Chip from "@mui/material/Chip";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -20,6 +19,7 @@ import {
 } from "./richLabel";
 import { CastingText, type TCastingElement } from "./Casting";
 import OurLink from "@/components/OurLink";
+import OurChip from "@/components/OurChip";
 import { WORKS_BASE } from "@/app/constants";
 import { useTranslations } from "next-intl";
 
@@ -373,7 +373,7 @@ export default function WorkChip(work: TWorkChip) {
       arrow
       disableInteractive
     >
-      <Chip
+      <OurChip
         component={OurLink}
         href={`${WORKS_BASE}/id/${work.id}/`}
         label={<WorkLabel work={work} />}

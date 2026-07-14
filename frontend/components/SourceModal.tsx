@@ -144,7 +144,17 @@ export function SourceModalProvider({
             </IconButton>
           </Stack>
         </Stack>
-        <DialogContent id="source-modal-content">
+        <DialogContent
+          id="source-modal-content"
+          // Any link inside the popup (related events' year chips, person/place/
+          // work chips, etc.) navigates the page underneath it, so the popup
+          // itself should close rather than linger open over new content.
+          onClick={(event) => {
+            if ((event.target as HTMLElement).closest("a")) {
+              close();
+            }
+          }}
+        >
           {error ? (
             <Typography color="error" sx={{ py: 4, textAlign: "center" }}>
               {t("loadError")}

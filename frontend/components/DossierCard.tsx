@@ -1,18 +1,17 @@
-import { ReactElement, useMemo } from "react";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Chip from "@mui/material/Chip";
 import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
 import HistoryEduOutlinedIcon from "@mui/icons-material/HistoryEduOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import { getTranslations } from "next-intl/server";
-import { TDossierCard, TDossierKind } from "@/app/types";
+import { TDossierCard } from "@/app/types";
 import { DOSSIERS_BASE } from "@/app/constants";
 import OurLink from "./OurLink";
+import OurChip from "./OurChip";
 import SafeText from "@/format/SafeText";
 
 // `dossiers`-namespace translator, threaded into the plain helper so it can be
@@ -64,16 +63,18 @@ function DossierChips({
     ? {
         bgcolor: "rgba(255,255,255,0.9)",
         color: "rgba(0,0,0,0.87)",
-        "& .MuiChip-icon": { color: "primary.dark" },
+        "& .MuiChip-label svg": { color: "primary.dark" },
         "& .MuiChip-label": { lineHeight: 1 },
       }
-    : { "& .MuiChip-icon": { marginLeft: "6px" }, "& .MuiChip-label": { lineHeight: 1 } };
-  const icon = useMemo(() => {
-    if (kind === "evenements") return <EventOutlinedIcon />;
-    if (kind === "oeuvres") return <HistoryEduOutlinedIcon />;
-    if (kind === "sources") return <DescriptionOutlinedIcon />;
-    return undefined
-  }, [kind]);
+    : { "& .MuiChip-label": { lineHeight: 1 } };
+  const icon =
+    dossier.kind === "evenements" ? (
+      <EventOutlinedIcon />
+    ) : dossier.kind === "oeuvres" ? (
+      <HistoryEduOutlinedIcon />
+    ) : dossier.kind === "sources" ? (
+      <DescriptionOutlinedIcon />
+    ) : undefined;
   return (
     <Stack
       direction="row"
@@ -82,7 +83,7 @@ function DossierChips({
       sx={{ flexWrap: "wrap" }}
     >
       {kind ? (
-        <Chip
+        <OurChip
           icon={icon}
           label={kind}
           size="small"
@@ -91,7 +92,7 @@ function DossierChips({
         />
       ) : null}
       {subdossiers ? (
-        <Chip
+        <OurChip
           icon={<FolderOutlinedIcon />}
           label={subdossiers}
           size="small"

@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutlined";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -11,6 +10,7 @@ import type { Locale } from "@/i18n/config";
 import { getDateLabel } from "@/format/DateLabel";
 import RichText from "@/components/RichText";
 import DossierExportButtons from "@/components/DossierExportButtons";
+import OurChip from "@/components/OurChip";
 
 // One labelled metadata block, dropped entirely when it has no content — the
 // same "only emit non-empty rows" rule the Django sidebar follows with its
@@ -41,12 +41,13 @@ function UserChips({ users }: { users: TDossierUser[] }) {
   return (
     <Stack direction="row" spacing={0.5} useFlexGap sx={{ flexWrap: "wrap" }}>
       {users.map((user, index) => (
-        <Chip
+        <OurChip
           key={`${user.url}-${index}`}
           component="a"
           href={user.url}
           clickable
-          label={<Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}><PersonOutlineIcon fontSize="inherit" /> <span>{user.name}</span></Stack>}
+          icon={<PersonOutlineIcon fontSize="inherit" />}
+          label={user.name}
           size="small"
           variant="outlined"
         />

@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import Tooltip from "@mui/material/Tooltip";
-import Chip from "@mui/material/Chip";
 import BoyOutlinedIcon from "@mui/icons-material/BoyOutlined";
+import OurChip from "@/components/OurChip";
 import { abbreviate, withParticule } from "@/app/utils";
 import { EPersonDesignation, TRelatedPerson } from "@/app/types";
 import SmallCaps from "./SmallCaps";
@@ -218,7 +218,7 @@ export default function PersonChip(person: TRelatedPerson) {
       arrow
       disableInteractive
     >
-      <Chip
+      <OurChip
         component={OurLink}
         href={`${PERSONS_BASE}/id/${person.id}/`}
         label={<PersonLabel person={person} />}

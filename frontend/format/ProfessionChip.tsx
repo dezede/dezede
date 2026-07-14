@@ -1,8 +1,8 @@
-import Chip from "@mui/material/Chip";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutlineOutlined";
 import { TRelatedProfession } from "@/app/types";
 import { capfirst } from "@/app/utils";
 import OurLink from "@/components/OurLink";
+import OurChip from "@/components/OurChip";
 import { PROFESSIONS_BASE } from "@/app/constants";
 
 export function getProfessionLabel({ nom }: TRelatedProfession): string {
@@ -11,7 +11,7 @@ export function getProfessionLabel({ nom }: TRelatedProfession): string {
 
 export default function ProfessionChip(profession: TRelatedProfession) {
   return (
-    <Chip
+    <OurChip
       component={OurLink}
       href={`${PROFESSIONS_BASE}/id/${profession.id}/`}
       label={getProfessionLabel(profession)}
