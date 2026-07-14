@@ -1,6 +1,6 @@
 from importlib import import_module
 
-from django.conf import settings
+from django.apps import apps
 from django.utils.module_loading import module_has_submodule
 
 from .base import Exporter
@@ -10,7 +10,8 @@ class Registry(dict):
     module_name = 'export'
 
     def autodiscover(self):
-        for app in settings.INSTALLED_APPS:
+        for app_config in apps.get_app_configs():
+            app = app_config.name
             mod = import_module(app)
             try:
                 import_module('%s.%s' % (app, self.module_name))

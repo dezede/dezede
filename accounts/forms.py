@@ -5,11 +5,43 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.sites.models import Site
 from django.forms import (
-    Form, CharField, ModelMultipleChoiceField, BooleanField)
+    Form, CharField, ModelMultipleChoiceField, BooleanField, DateTimeField)
 from django.forms.widgets import CheckboxSelectMultiple, HiddenInput
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
+from tinymce.widgets import TinyMCE
 from tree.forms import TreeChoiceField
+from wagtail.users.forms import UserCreationForm, UserEditForm
+
+HIERARCHIC_USER_EXTRA_FIELDS = ('avatar', 'presentation', 'fonctions', 'literature')
+HIERARCHIC_USER_EXTRA_WIDGETS = {
+    'presentation': TinyMCE,
+    'fonctions': TinyMCE,
+    'literature': TinyMCE,
+}
+
+
+class HierarchicUserCreationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        fields = UserCreationForm.Meta.fields | set(HIERARCHIC_USER_EXTRA_FIELDS)
+        widgets = {
+            **UserCreationForm.Meta.widgets,
+            **HIERARCHIC_USER_EXTRA_WIDGETS,
+        }
+
+
+class HierarchicUserEditForm(UserEditForm):
+    date_joined = DateTimeField(label=_('Inscription'), disabled=True, required=False)
+    last_login = DateTimeField(label=_('Dernière connexion'), disabled=True, required=False)
+
+    class Meta(UserEditForm.Meta):
+        fields = UserEditForm.Meta.fields | set(HIERARCHIC_USER_EXTRA_FIELDS) | {
+            'date_joined', 'last_login',
+        }
+        widgets = {
+            **UserEditForm.Meta.widgets,
+            **HIERARCHIC_USER_EXTRA_WIDGETS,
+        }
 
 
 def get_mentors():
