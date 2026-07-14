@@ -12,6 +12,7 @@ import { DOSSIERS_BASE } from "@/app/constants";
 import { fetchPublicJson } from "@/app/events";
 import OurLink from "@/components/OurLink";
 import RichText from "@/components/RichText";
+import SafeText from "@/format/SafeText";
 import DetailAdminBar from "@/components/DetailAdminBar";
 import DossierTabs from "@/components/DossierTabs";
 import DossierData from "@/components/DossierData";
@@ -31,7 +32,11 @@ export async function generateMetadata({
   const { pk } = await params;
   const dossier = await fetchPublicJson<TDossierDetail>(`${apiBase}${pk}/`);
   const t = await getTranslations();
-  return { title: t("pages.titleTemplate", { name: dossier.titre }) };
+  return {
+    title: t("pages.titleTemplate", {
+      name: dossier.titre.replace(/<[^>]*>/g, ""),
+    }),
+  };
 }
 
 function Section({ title, body }: { title: string; body: string }) {
@@ -152,7 +157,7 @@ export default async function DossierDetailPage({
           }}
         >
           <Typography variant="h1" sx={{ m: 0 }}>
-            {dossier.titre}
+            <SafeText value={dossier.titre} />
           </Typography>
           <DetailAdminBar {...dossier} />
         </Stack>

@@ -16,6 +16,7 @@ import type { Locale } from "@/i18n/config";
 import { getDateLabel } from "@/format/DateLabel";
 import OurLink from "@/components/OurLink";
 import RichText from "@/components/RichText";
+import SafeText from "@/format/SafeText";
 import DossierExportButtons from "@/components/DossierExportButtons";
 
 // One labelled metadata block, dropped entirely when it has no content — the
@@ -118,7 +119,9 @@ export default async function DossierSidebar({
                     href={`${DOSSIERS_BASE}/id/${child.id}/`}
                     sx={{ borderRadius: 1, px: 1 }}
                   >
-                    <ListItemText primary={child.titre} />
+                    <ListItemText
+                      primary={<SafeText value={child.titre} />}
+                    />
                   </ListItemButton>
                 </ListItem>
               ))}

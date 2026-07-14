@@ -13,6 +13,7 @@ import { getTranslations } from "next-intl/server";
 import { TDossierCard } from "@/app/types";
 import { DOSSIERS_BASE } from "@/app/constants";
 import OurLink from "./OurLink";
+import SafeText from "@/format/SafeText";
 
 // `dossiers`-namespace translator, threaded into the plain helper so it can be
 // called from both server components (DossierCard) and pages without a hook.
@@ -161,7 +162,7 @@ export default async function DossierCard({
                   textShadow: "0 1px 3px rgba(0,0,0,0.6)",
                 }}
               >
-                {dossier.titre}
+                <SafeText value={dossier.titre} />
               </Typography>
               <DossierChips dossier={dossier} t={t} onImage />
             </Box>
@@ -180,7 +181,7 @@ export default async function DossierCard({
       >
         <Stack spacing={1} sx={{ width: "100%" }}>
           <Typography variant="h3" sx={{ fontSize: "1.1rem", m: 0 }}>
-            {dossier.titre}
+            <SafeText value={dossier.titre} />
           </Typography>
           {dossier.excerpt ? (
             <Typography variant="body2" color="text.secondary">
