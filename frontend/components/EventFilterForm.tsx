@@ -134,7 +134,27 @@ export default function EventFilterForm({ facets }: { facets: TEventFacets }) {
               endpoint="lieux"
               label={t("filterPlace")}
               getOptionLabel={(option) => getPlaceLabel(option)}
-              groupBy={(option) => option.nature?.nom ?? ""}
+              renderOption={(option) => (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    alignItems: "baseline",
+                    columnGap: 1,
+                  }}
+                >
+                  <span>{getPlaceLabel(option)}</span>
+                  {option.nature?.nom ? (
+                    <Typography
+                      component="span"
+                      variant="caption"
+                      color="text.secondary"
+                    >
+                      {option.nature.nom}
+                    </Typography>
+                  ) : null}
+                </Box>
+              )}
             />
           </Box>
           <Box sx={{ flex: "1 1 200px", minWidth: 180 }}>

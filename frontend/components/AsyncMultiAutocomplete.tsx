@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
@@ -43,13 +44,13 @@ export default function AsyncMultiAutocomplete<T extends TEntity>({
   endpoint,
   label,
   getOptionLabel,
-  groupBy,
+  renderOption,
 }: {
   param: string;
   endpoint: string;
   label: string;
   getOptionLabel: (option: T) => string;
-  groupBy?: (option: T) => string;
+  renderOption?: (option: T) => React.ReactNode;
 }) {
   const t = useTranslations("events");
   const tCommon = useTranslations("common");
@@ -166,7 +167,15 @@ export default function AsyncMultiAutocomplete<T extends TEntity>({
       getOptionLabel={getOptionLabel}
       getOptionKey={(option) => option.id}
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      groupBy={groupBy}
+      renderOption={
+        renderOption === undefined
+          ? undefined
+          : ({ key, ...props }, option) => (
+              <Box key={key} component="li" {...props}>
+                {renderOption(option)}
+              </Box>
+            )
+      }
       loading={loading}
       loadingText={tCommon("loading")}
       noOptionsText={
