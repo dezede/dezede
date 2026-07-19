@@ -1,0 +1,5 @@
+# Extra rate-limit zone for Django traffic outside the API and the admin
+# (see django.include.template and django_public_rules.include.template
+# in this directory, which override the docker-compose-django defaults).
+limit_conn_zone $subnet zone=django_public_conn:1m;
+limit_req_zone $subnet zone=django_public_req:1m rate=${DJANGO_PUBLIC_LIMIT_REQ_RATE};
