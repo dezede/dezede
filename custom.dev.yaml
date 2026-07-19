@@ -1,0 +1,8 @@
+services:
+  anubis:
+    environment:
+      # Dev only serves plain HTTP (no TLS), so the pass cookie can't be marked
+      # Secure or the browser silently drops it, causing an infinite challenge loop.
+      COOKIE_SECURE: "false"
+    labels:
+      - traefik.http.routers.$PROJECT-anubis.entrypoints=web
