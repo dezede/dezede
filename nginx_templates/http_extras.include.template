@@ -1,3 +1,9 @@
+# Anubis now sits between Traefik and nginx, so X-Forwarded-For arrives with
+# two internal hops (real client, then Anubis's own address) instead of one.
+# Without this, nginx's realip module (non-recursive by default) stops one hop
+# too early and logs Anubis's address as the client for every request.
+real_ip_recursive on;
+
 # Extra rate-limit zone for Django traffic outside the API and the admin
 # (see django.include.template and django_public_rules.include.template
 # in this directory, which override the docker-compose-django defaults).

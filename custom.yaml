@@ -128,6 +128,60 @@ services:
       STATIC_LIMIT_REQ_DELAY: 100
     volumes:
       - static:/srv/static
+    labels:
+      # Anubis (below) is now the sole Traefik target for $DOMAIN; nginx is only
+      # reachable through it, over the same "traefik" network they both sit on.
+      traefik.enable: "false"
+  anubis:
+    image: ghcr.io/techarohq/anubis:v1.25.0
+    environment:
+      TZ: $TZ
+      BIND: ":8080"
+      TARGET: "http://nginx:80"
+      COOKIE_DOMAIN: $DOMAIN
+      ED25519_PRIVATE_KEY_HEX_FILE: /run/secrets/.env.secrets.anubis
+    secrets:
+      - .env.secrets.anubis
+    networks:
+      traefik:
+    read_only: true
+    tmpfs:
+      - /tmp/
+    expose:
+      - 8080
+    healthcheck:
+      test: [ "CMD", "anubis", "--healthcheck" ]
+      start_period: 60s
+      start_interval: 1s
+      interval: 60s
+      timeout: 60s
+      retries: 3
+    restart: unless-stopped
+    depends_on:
+      nginx:
+        condition: service_healthy
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 200M
+        reservations:
+          memory: 64M
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.$PROJECT-anubis.rule=Host(`$DOMAIN`) || $ALTERNATE_DOMAINS_TRAEFIK
+      - traefik.http.services.$PROJECT-anubis.loadbalancer.server.port=8080
+    logging:
+      options:
+        max-file: "3"
+        max-size: "10m"
+  traefik:
+    depends_on:
+      anubis:
+        condition: service_healthy
 
 
 volumes:
@@ -139,3 +193,5 @@ volumes:
 secrets:
   .env.secrets:
     file: ../.env.secrets
+  .env.secrets.anubis:
+    file: ../.env.secrets.anubis
