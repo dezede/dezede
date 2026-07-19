@@ -396,17 +396,17 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
             SELECT ancetre.nom, COUNT(evenement.id)
             FROM libretto_lieu AS ancetre
             INNER JOIN libretto_lieu AS lieu ON (
-                lieu.path[:array_length(ancetre.path, 1)] = ancetre.path)
+                substr(lieu.path, 1, octet_length(ancetre.path)) = ancetre.path)
             INNER JOIN evenements AS evenement ON (
                 evenement.debut_lieu_id = lieu.id)
-            WHERE (%s::decimal[])[:array_length(ancetre.path, 1)] = ancetre.path
+            WHERE substr(%s, 1, octet_length(ancetre.path)) = ancetre.path
             GROUP BY ancetre.id
-            ORDER BY array_length(ancetre.path, 1)
+            ORDER BY tree_level(ancetre.path)
         );
         """
         with connection.cursor() as cursor:
             cursor.execute(sql, evenements_params + (
-                gettext('Monde'), self.siege.path))
+                gettext('Monde'), self.siege.path.value))
             data = cursor.fetchall()
         new_data = []
         for i, (name, count) in enumerate(data):

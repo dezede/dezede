@@ -130,11 +130,11 @@ def get_data(evenements_qs, min_places, bbox):
 
     cursor.execute(f"""
     SELECT level
-    FROM generate_series(1, (SELECT max(array_length(path, 1)) FROM libretto_lieu)) AS _(level)
+    FROM generate_series(1, (SELECT max(tree_level(path)) FROM libretto_lieu)) AS _(level)
     LEFT JOIN ({lieux_query}) AS lieu ON true
     INNER JOIN ({valid_ancestors_query}) AS ancetre
-        ON lieu.path[:level] = ancetre.path
-    WHERE array_length(ancetre.path, 1) = level
+        ON substr(lieu.path, 1, octet_length(ancetre.path)) = ancetre.path
+    WHERE tree_level(ancetre.path) = level
     GROUP BY level
     HAVING COUNT(DISTINCT ancetre.id) >= %s
     ORDER BY level ASC
@@ -146,12 +146,12 @@ def get_data(evenements_qs, min_places, bbox):
 
     if level is None:
         cursor.execute(f"""
-        SELECT array_length(ancetre.path, 1), COUNT(DISTINCT ancetre.id)
+        SELECT tree_level(ancetre.path), COUNT(DISTINCT ancetre.id)
         FROM ({lieux_query}) AS lieu
         INNER JOIN ({valid_ancestors_query}) AS ancetre
-            ON lieu.path[:array_length(ancetre.path, 1)] = ancetre.path
-        GROUP BY array_length(ancetre.path, 1)
-        ORDER BY array_length(ancetre.path, 1) ASC
+            ON substr(lieu.path, 1, octet_length(ancetre.path)) = ancetre.path
+        GROUP BY tree_level(ancetre.path)
+        ORDER BY tree_level(ancetre.path) ASC
         """, params + valid_ancestors_params)
         counts_to_levels = {count: level for level, count in cursor.fetchall()}
         try:
@@ -172,10 +172,10 @@ def get_data(evenements_qs, min_places, bbox):
     FROM ({lieux_query}) AS evenement
     INNER JOIN libretto_lieu AS lieu ON lieu.id = evenement.debut_lieu_id
     INNER JOIN ({ancestors_query}) AS ancetre
-        ON ancetre.path = lieu.path[:%s]
+        ON ancetre.path = substr(lieu.path, 1, octet_length(ancetre.path))
     GROUP BY ancetre.id, ancetre.nom, ancetre.geometry
     ORDER BY n DESC;
-    """, params + ancestors_params + (level,))
+    """, params + ancestors_params)
     return cursor.fetchall()
 
 
