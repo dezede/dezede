@@ -17,7 +17,7 @@ location ~ ^/(api/|__debug__/) {
 }
 
 # The admin triggers many related-object queries, so it keeps the higher rate limits.
-location ~ ^/(admin/|wagtail-admin/|tree_node/) {
+location ~ ^/(admin/|wagtail-admin/|grappelli/|tinymce/|i18n/|tree_node/) {
   include /etc/nginx/conf.d/django_rules.include;
   proxy_intercept_errors on;
 }
