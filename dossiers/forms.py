@@ -1,15 +1,20 @@
 from django import forms
+from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
 from tree.forms import TreeChoiceField
 
-from .models import (
-    DossierDEvenements, Dossier, DossierDOeuvres, DossierDeSources,
-)
+from .models import Dossier, KIND_CHOICES
 
 
 class DossierForm(forms.ModelForm):
-    statique = forms.BooleanField(required=False)
+    # Unlike model fields (whose ``formfield()`` capfirsts the verbose name),
+    # an explicitly declared form field shows its label as-is.
+    types_de_donnees = forms.MultipleChoiceField(
+        choices=KIND_CHOICES, required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label=capfirst(_('types de données')),
+        help_text=_('Types de données présentés par ce dossier.'))
 
     class Meta(object):
         model = Dossier
@@ -22,20 +27,7 @@ class DossierForm(forms.ModelForm):
         css = {
             'all': ('css/custom_admin.css',),
         }
-
-    def __init__(self, *args, **kwargs):
-        instance = kwargs.get('instance')
-        if instance is not None:
-            initial = kwargs.get('initial', {})
-            initial['statique'] = getattr(
-                instance, self.static_manager_name,
-            ).exists()
-            kwargs['initial'] = initial
-        super().__init__(*args, **kwargs)
-
-    @property
-    def static_manager_name(self) -> str:
-        raise NotImplementedError
+        js = ('js/dossier_admin.js',)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -44,42 +36,7 @@ class DossierForm(forms.ModelForm):
             msg = 'Ne pas saisir de catégorie si le dossier a un parent.'
             self.add_error('categorie', msg)
             self.add_error('parent', msg)
-
-        static_data = cleaned_data.get(self.static_manager_name)
-
-        if cleaned_data['statique']:
-            if not static_data:
-                static_data = list(self.instance.dynamic_queryset)
-                if static_data:
-                    cleaned_data[self.static_manager_name] = static_data
-                    static_manager = getattr(self.instance, self.static_manager_name)
-                    static_manager.add(*static_data)
-        else:
-            cleaned_data[self.static_manager_name] = []
-            if self.instance.pk is not None:
-                static_manager = getattr(self.instance, self.static_manager_name)
-                static_manager.clear()
         return cleaned_data
-
-
-class DossierDEvenementsForm(DossierForm):
-    static_manager_name = 'evenements'
-
-    class Meta(DossierForm.Meta):
-        model = DossierDEvenements
-
-class DossierDOeuvresForm(DossierForm):
-    static_manager_name = 'oeuvres'
-
-    class Meta(DossierForm.Meta):
-        model = DossierDOeuvres
-
-
-class DossierDeSourcesForm(DossierForm):
-    static_manager_name = 'sources'
-
-    class Meta(DossierForm.Meta):
-        model = DossierDeSources
 
 
 SCENARIOS = (

@@ -4,11 +4,11 @@
 {% block export_pdf %}
   {% if user.is_authenticated and export_pdf %}
     <a id="export"
-       href="{% url 'dossierdevenements_detail_xelatex' object.slug %}"
+       href="{% url 'dossier_detail_xelatex' object.slug %}"
        class="btn btn-default btn-block">
       <i class="fa fa-book"></i> {% trans 'Exporter en PDF' %}
     </a>
-    {% if user.is_superuser %}
+    {% if user.is_superuser and 'evenements' in object.types_de_donnees %}
       <a href="#"
         data-toggle="modal"
         data-target="#scenarios"
@@ -22,7 +22,7 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               <h4 class="modal-title">{% trans "Exporter les statistiques" %}</h4>
             </div>
-            <form id="id_{{ formset.prefix }}" action="{% url 'dossierdevenement_export_scenario' object.slug %}" method="post">
+            <form id="id_{{ formset.prefix }}" action="{% url 'dossier_export_scenario' object.slug %}" method="post">
               {% csrf_token %}
               <div class="modal-body">
                 {{ formset.management_form }}

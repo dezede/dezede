@@ -1,0 +1,27 @@
+{% load i18n routines %}
+
+<ul class="nav nav-tabs nav-justified">
+  {% with presentation_url=object.get_absolute_url %}
+    <li{% if request.path == presentation_url %} class="active"{% endif %}>
+      <a href="{{ presentation_url }}">
+        {% trans 'Présentation' %}
+      </a>
+    </li>
+    {% for tab in object.kind_tabs %}
+      {% if tab.stats_url %}
+        <li{% if request.path == tab.stats_url %} class="active"{% endif %}>
+          <a href="{{ tab.stats_url }}">
+            {{ tab.stats_label }}
+          </a>
+        </li>
+      {% endif %}
+      <li{% if request.path == tab.data_url %} class="active"{% endif %}>
+        <a href="{{ tab.data_url }}">
+          {{ tab.label|capfirst }}
+          {% published tab.queryset as data %}
+          <span class="badge">{{ data.count }}</span>
+        </a>
+      </li>
+    {% endfor %}
+  {% endwith %}
+</ul>

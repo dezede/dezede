@@ -1,0 +1,9 @@
+{% extends 'dossiers/detail_base.html' %}
+
+{% block tabs %}
+  {% include 'dossiers/include/dossier_tabs.html' %}
+{% endblock %}
+
+{% block subcontent %}
+  {% include 'dossiers/include/dossier_content.html' with export_pdf=True %}
+{% endblock %}
