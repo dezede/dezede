@@ -1,18 +1,20 @@
 """
 Public, read-only DRF API for the Next.js (musicaLetters) frontend's dossiers
-section: the category index, a dossier's presentation, its events/works data
-list, the map GeoJSON and the statistics (period distribution + chord diagram).
+section: the category index, a dossier's presentation, its events/works/sources
+data lists, the map GeoJSON and the statistics (period distribution + chord
+diagram).
 
-The statistics replicate ``DossierDEvenementsStatsDetail`` in ``views.py`` so the
-React visualisations match the Django ones.
+The statistics replicate ``DossierStatsDetail`` in ``views.py`` so the React
+visualisations match the Django ones.
 """
 import json
+from html import unescape
 
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.contrib.sites.models import Site
 from django.core.exceptions import EmptyResultSet
-from django.db import connection
-from django.db.models import Count, F
+from django.db import connection, transaction
+from django.db.models import Count, F, IntegerField, Value
 from django.db.models.functions import ExtractYear
 from django.utils.html import strip_tags
 from django.utils.text import capfirst
@@ -37,30 +39,19 @@ from libretto.api.rest.public_viewsets import lookup_autocomplete
 from libretto.api.rest.viewsets import (
     EVENEMENT_PUBLIC_SELECT, EVENEMENT_PUBLIC_PREFETCH,
 )
-from libretto.models import GenreDOeuvre, Individu, TypeDeSource
+from libretto.models import GenreDOeuvre, Individu, Lieu, Oeuvre, TypeDeSource
 from libretto.templatetags.extras import get_data
 from libretto.views import DEFAULT_MIN_PLACES, MAX_MIN_PLACES
 
 from .forms import SCENARIOS
 from .jobs import dossier_to_pdf, dossier_to_xlsx
 from .models import (
-    CategorieDeDossiers, Dossier, DossierDEvenements, DossierDOeuvres,
-    DossierDeSources,
+    CategorieDeDossiers, Dossier, KIND_EVENEMENTS, KIND_OEUVRES, KIND_SOURCES,
 )
 from .views import (
     PERIODS, PERIOD_NAMES, PERIOD_COLORS, PERIOD_TEXT_COLORS, DEFAULT_PERIOD,
-    CHORD_DIAGRAM_SQL,
+    CHORD_DIAGRAM_SQL, WORKS_CHORD_DIAGRAM_SQL, STATS_KINDS,
 )
-
-
-def dossier_kind(dossier):
-    if isinstance(dossier, DossierDEvenements):
-        return 'evenements'
-    if isinstance(dossier, DossierDOeuvres):
-        return 'oeuvres'
-    if isinstance(dossier, DossierDeSources):
-        return 'sources'
-    return None
 
 
 def serialize_user(user):
@@ -73,36 +64,214 @@ def serialize_user(user):
 def excerpt(html, word_count=30):
     """Plain-text excerpt of a rich-text field: its first ``word_count`` words,
     with a trailing "[…]" when the text was actually truncated."""
+    # strip_tags removes the tags but leaves HTML entities (&eacute;, &nbsp;…),
+    # so unescape them to real characters; splitting first keeps entities that
+    # sit inside a word (e.g. "conserv&eacute;s") counted as one word.
     words = strip_tags(html).split()
     if not words:
         return ''
     text = ' '.join(words[:word_count])
     if len(words) > word_count:
         text += ' […]'
-    return text
+    return unescape(text)
 
 
-def serialize_card(dossier):
-    """Light card for the index/children lists."""
-    specific = dossier.specific
+def serialize_card(dossier, counts=None, children_count=None):
+    """Light card for the index/children lists. ``counts`` and
+    ``children_count`` can be precomputed (see ``list()``) to avoid
+    per-dossier queries. ``counts`` left as ``None`` means "not computed
+    here" — the index leaves it out and fetches it on demand via the
+    ``counts`` action so the cards render fast."""
     return {
-        'id': specific.pk,
-        'meta': {'type': f'{specific._meta.app_label}.'
-                         f'{specific._meta.object_name}'},
-        'titre': specific.titre,
-        'titre_court': specific.titre_court,
-        'slug': specific.slug,
-        'kind': dossier_kind(specific),
-        'count': specific.get_count(),
-        'children_count': specific.children.count(),
-        'cover_image': (specific.image_couverture.url
-                        if specific.image_couverture else None),
-        'excerpt': excerpt(specific.presentation),
-        'categorie_id': specific.categorie_id,
+        'id': dossier.pk,
+        'meta': {'type': f'{dossier._meta.app_label}.'
+                         f'{dossier._meta.object_name}'},
+        'titre': dossier.titre,
+        'titre_court': dossier.titre_court,
+        'slug': dossier.slug,
+        'kinds': dossier.active_kinds,
+        'counts': counts,
+        'children_count': (dossier.children.count() if children_count is None
+                           else children_count),
+        'cover_image': (dossier.image_couverture.url
+                        if dossier.image_couverture else None),
+        'excerpt': excerpt(dossier.presentation),
+        'categorie_id': dossier.categorie_id,
     }
 
 
-# -- Statistics (ported from DossierDEvenementsStatsDetail) ------------------
+def batch_static_counts(dossiers):
+    """Sizes of every dossier's per-kind manual selections, the three kinds'
+    aggregates fused into a single ``UNION ALL`` query (tagged by a kind index):
+    ``{kind: {dossier_id: n}}``."""
+    fields = ((KIND_EVENEMENTS, Dossier.evenements),
+              (KIND_OEUVRES, Dossier.oeuvres),
+              (KIND_SOURCES, Dossier.sources))
+    counts = {kind: {} for kind, _ in fields}
+    kinds = [kind for kind, _ in fields]
+    combined = None
+    for i, (kind, field) in enumerate(fields):
+        part = (field.through.objects.filter(dossier__in=dossiers)
+                .values('dossier_id').annotate(n=Count('pk'))
+                .annotate(k=Value(i, output_field=IntegerField()))
+                .values_list('dossier_id', 'n', 'k'))
+        combined = part if combined is None else combined.union(part, all=True)
+    if combined is not None:
+        for dossier_id, n, k in combined:
+            counts[kinds[k]][dossier_id] = n
+    return counts
+
+
+def fast_counts(dossier, static_counts, criteria=None):
+    """Same static-wins semantics as ``Dossier.counts()``, but reading the
+    manual-selection sizes from the ``batch_static_counts`` aggregates (and
+    the dynamic criteria from ``batch_criteria``, when given)."""
+    counts = {}
+    for kind in dossier.active_kinds:
+        n = static_counts[kind].get(dossier.pk, 0)
+        if not n:
+            n = dossier.get_queryset(
+                kind, dynamic=True, criteria=criteria,
+            ).values('pk').count()
+        counts[kind] = n
+    return counts
+
+
+# The dossier criteria fields batched by ``batch_criteria``, with the column
+# they map to in their through table.
+CRITERIA_M2M = (
+    ('lieux', 'lieux', 'lieu_id'),
+    ('oeuvres', 'filtre_oeuvres', 'oeuvre_id'),
+    ('individus', 'individus', 'individu_id'),
+    ('ensembles', 'ensembles', 'ensemble_id'),
+    ('sources', 'filtre_sources', 'source_id'),
+    ('saisons', 'saisons', 'saison_id'),
+    ('genres', 'genres', 'genredoeuvre_id'),
+    ('types_de_sources', 'types_de_sources', 'typedesource_id'),
+)
+
+
+def _expand_descendants(criteria, key, model):
+    """Replaces every dossier's ``key`` roots with the pks of the roots and
+    all their tree descendants, in two queries for all dossiers at once (the
+    per-root grouping is resolved through the binary tree paths)."""
+    roots = {pk for crit in criteria.values() for pk in crit[key]}
+    if not roots:
+        return
+    # ``values_list`` yields ``tree.types.Path`` wrappers; ``.value`` is the
+    # raw binary path.
+    descendants = [
+        (pk, bytes(path.value))
+        for pk, path in model.objects.filter(pk__in=roots)
+        .get_descendants(include_self=True).values_list('pk', 'path')]
+    # The roots are in ``descendants`` (include_self), so their paths come from
+    # that same query rather than a second one.
+    root_paths = {pk: path for pk, path in descendants if pk in roots}
+    for crit in criteria.values():
+        if not crit[key]:
+            continue
+        prefixes = tuple(root_paths[pk] for pk in crit[key]
+                         if pk in root_paths)
+        crit[key] = [pk for pk, path in descendants
+                     if path.startswith(prefixes)]
+
+
+def batch_criteria(dossiers):
+    """``Dossier.get_criteria()`` for many dossiers, all criteria fields read in
+    a single ``UNION ALL`` query (tagged by a field index) plus one query per
+    tree expansion: ``{dossier_id: criteria}``."""
+    criteria = {d.pk: {key: [] for key, _, _ in CRITERIA_M2M}
+                for d in dossiers}
+    keys = [key for key, _, _ in CRITERIA_M2M]
+    combined = None
+    for i, (key, field_name, column) in enumerate(CRITERIA_M2M):
+        through = getattr(Dossier, field_name).through
+        part = (through.objects.filter(dossier__in=dossiers)
+                .annotate(crit=Value(i, output_field=IntegerField()))
+                .values_list('dossier_id', column, 'crit'))
+        combined = part if combined is None else combined.union(part, all=True)
+    if combined is not None:
+        for dossier_id, object_id, crit in combined:
+            criteria[dossier_id][keys[crit]].append(object_id)
+    _expand_descendants(criteria, 'lieux', Lieu)
+    _expand_descendants(criteria, 'oeuvres', Oeuvre)
+    return criteria
+
+
+# Keeps each UNION ALL statement of ``batch_dynamic_counts`` well under
+# PostgreSQL's 65535 bound-parameter limit.
+COUNTS_BATCH_MAX_PARAMS = 30_000
+
+
+def batch_dynamic_counts(jobs):
+    """Counts of many dynamic querysets — ``jobs`` is a list of
+    ``(dossier_id, kind, queryset)`` — fused into a handful of ``UNION ALL``
+    statements instead of one round trip each: ``{(dossier_id, kind): n}``."""
+    kind_indexes = {kind: i for i, kind in
+                    enumerate((KIND_EVENEMENTS, KIND_OEUVRES, KIND_SOURCES))}
+    kinds = {i: kind for kind, i in kind_indexes.items()}
+    results = {}
+    parts, params = [], []
+
+    def flush():
+        if not parts:
+            return
+        # PostgreSQL JIT-compiles these large statements, which costs seconds
+        # of compilation for milliseconds of execution; SET LOCAL reverts it
+        # at the end of the transaction.
+        with transaction.atomic(), connection.cursor() as cursor:
+            cursor.execute('SET LOCAL jit = off')
+            cursor.execute(' UNION ALL '.join(parts), params)
+            for dossier_id, kind_index, n in cursor.fetchall():
+                results[(dossier_id, kinds[kind_index])] = n
+        parts.clear()
+        params.clear()
+
+    for i, (dossier_id, kind, queryset) in enumerate(jobs):
+        try:
+            sql, sql_params = get_raw_query(queryset.order_by().values('pk'))
+        except EmptyResultSet:
+            results[(dossier_id, kind)] = 0
+            continue
+        if params and len(params) + len(sql_params) > COUNTS_BATCH_MAX_PARAMS:
+            flush()
+        parts.append(
+            'SELECT %d AS dossier_id, %d AS kind, COUNT(*) AS n '
+            'FROM (%s) AS c%d'
+            % (dossier_id, kind_indexes[kind], sql, i))
+        params.extend(sql_params)
+    flush()
+    return results
+
+
+# Largest batch of dossiers the ``counts`` action will price in one request;
+# the frontend asks for the cards currently on screen, far fewer than this.
+COUNTS_REQUEST_MAX_IDS = 200
+
+
+def compute_counts(dossiers):
+    """Live per-dossier per-kind counts with the index's static-wins
+    semantics: manual-selection sizes from ``batch_static_counts``, and every
+    remaining dynamic count fused into a few ``UNION ALL`` statements.
+    Returns ``{dossier_id: {kind: n}}``. Never cached — always current."""
+    static_counts = batch_static_counts(dossiers)
+    criteria = batch_criteria(dossiers)
+    counts_by_pk = {d.pk: {} for d in dossiers}
+    jobs = []
+    for d in dossiers:
+        for kind in d.active_kinds:
+            n = static_counts[kind].get(d.pk, 0)
+            if n:
+                counts_by_pk[d.pk][kind] = n
+            else:
+                jobs.append((d.pk, kind, d.get_queryset(
+                    kind, dynamic=True, criteria=criteria[d.pk])))
+    for (dossier_id, kind), n in batch_dynamic_counts(jobs).items():
+        counts_by_pk[dossier_id][kind] = n
+    return counts_by_pk
+
+
+# -- Statistics (ported from DossierStatsDetail) ------------------------------
 
 def get_oeuvres_par_periode(oeuvres_qs):
     try:
@@ -137,9 +306,10 @@ def get_oeuvres_par_periode(oeuvres_qs):
             for k, count in data]
 
 
-def get_chord_diagram(dossier, n_auteurs=30):
-    evenements = dossier.queryset
-    individus = evenements.individus_auteurs()
+def get_chord_diagram(objects_qs, individus, chord_sql, n_auteurs=30):
+    """Author co-occurrence chord data over ``objects_qs`` (events sharing a
+    programme, or works sharing authors), with ``individus`` the involvement
+    rows the top-N ranking is computed from."""
     n_individus = individus.count()
     if n_individus == 0:
         return None
@@ -152,14 +322,14 @@ def get_chord_diagram(dossier, n_auteurs=30):
         individus_par_popularite.values_list('pk', 'n')[:n_auteurs]]
     individus = Individu.objects.filter(
         pk__in=individus_pks).order_by('naissance_date')
-    evenements = evenements.order_by().values('pk')
-    evenements_sql, evenements_params = get_raw_query(evenements)
+    objects_qs = objects_qs.order_by().values('pk')
+    objects_sql, objects_params = get_raw_query(objects_qs)
     individus_sql, individus_params = get_raw_query(
         individus.order_by().values('pk'))
 
     with connection.cursor() as cursor:
-        cursor.execute(CHORD_DIAGRAM_SQL % (individus_sql, evenements_sql),
-                       individus_params + evenements_params)
+        cursor.execute(chord_sql % (individus_sql, objects_sql),
+                       individus_params + objects_params)
         data = cursor.fetchall()
 
     if len(data) < 3:
@@ -221,8 +391,8 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
 
 class DossierViewSet(ReadOnlyModelViewSet):
     """Public dossiers API. ``list`` returns the category index; ``retrieve``
-    a dossier's presentation; plus events/works/geojson/stats sub-resources and
-    the PDF/statistics export POST actions."""
+    a dossier's presentation; plus events/works/sources/geojson/stats
+    sub-resources and the PDF/statistics export POST actions."""
     authentication_classes = [CsrfExemptSessionAuthentication]
     queryset = Dossier.objects.all()
 
@@ -234,24 +404,56 @@ class DossierViewSet(ReadOnlyModelViewSet):
         # a single masonry grid and filter it client-side by category chip
         # (children never carry a category of their own, see the model's
         # help_text, so this naturally only surfaces top-level dossiers).
-        dossiers = self.get_queryset().filter(parent__isnull=True).order_by(
-            F('date_publication').desc(nulls_last=True), '-pk')
+        dossiers = list(
+            self.get_queryset().filter(parent__isnull=True)
+            .annotate(n_children=Count('children')).order_by(
+                F('date_publication').desc(nulls_last=True), '-pk'))
         categories = CategorieDeDossiers.objects.published(request=request)
+        # The per-dossier counts — the dynamic ones especially — are ~97% of
+        # this endpoint's cost, so they are deliberately left out here: each
+        # card carries ``counts: null`` and the frontend fetches the counts of
+        # the cards it actually shows through the ``counts`` action. The index
+        # thus renders in tens of milliseconds while the counts stay live.
         return Response({
             'categories': [{'id': c.pk, 'nom': c.nom} for c in categories],
-            'dossiers': [serialize_card(d) for d in dossiers],
+            'dossiers': [
+                serialize_card(d, children_count=d.n_children)
+                for d in dossiers],
         })
 
+    @action(detail=False, methods=['get'])
+    def counts(self, request):
+        """Live per-kind counts for a batch of dossiers, computed on demand so
+        the index (see ``list()``) can render its cards first. Query string:
+        ``?ids=1,2,3``. Response: ``{"1": {"evenements": 42}, ...}``. Never
+        cached, so the returned counts are always current."""
+        ids = []
+        for token in request.query_params.get('ids', '').split(','):
+            token = token.strip()
+            if token.isdigit():
+                ids.append(int(token))
+            if len(ids) >= COUNTS_REQUEST_MAX_IDS:
+                break
+        dossiers = list(self.get_queryset().filter(pk__in=ids))
+        return Response(compute_counts(dossiers))
+
     def retrieve(self, request, *args, **kwargs):
-        dossier = self.get_object().specific
-        children = dossier.children.published(request)
-        is_evenements = isinstance(dossier, DossierDEvenements)
+        dossier = self.get_object()
+        children = list(dossier.children.published(request).annotate(
+            n_children=Count('children')))
+        # The dossier's and its children's counts, with the manual-selection
+        # sizes and criteria batched like the index's (see list()).
+        static_counts = batch_static_counts([dossier, *children])
+        criteria = batch_criteria([dossier, *children])
+        counts_by_pk = {
+            d.pk: fast_counts(d, static_counts, criteria=criteria[d.pk])
+            for d in [dossier, *children]}
         # Sidebar actions, mirroring the Django template gates: PDF export for any
-        # authenticated user on any dossier type (see the XeLaTeX templates in
-        # dossiers/templates/dossiers/), the statistics scenario export for
-        # superusers on event dossiers only (see ``dossierdevenements_sidebar.html``).
+        # authenticated user on any dossier, the statistics scenario export for
+        # superusers on dossiers presenting events.
         can_export_pdf = request.user.is_authenticated
-        can_export_stats = request.user.is_superuser and is_evenements
+        can_export_stats = (request.user.is_superuser
+                            and dossier.has_kind(KIND_EVENEMENTS))
         data = {
             'id': dossier.pk,
             'meta': {'type': f'{dossier._meta.app_label}.'
@@ -259,9 +461,12 @@ class DossierViewSet(ReadOnlyModelViewSet):
             'titre': dossier.titre,
             'titre_court': dossier.titre_court,
             'slug': dossier.slug,
-            'kind': dossier_kind(dossier),
-            'count': dossier.get_count(),
-            'children_count': children.count(),
+            'kinds': dossier.active_kinds,
+            'counts': counts_by_pk[dossier.pk],
+            # Active kinds with a « Visualisations » tab (map + statistics).
+            'stats_kinds': [kind for kind in dossier.active_kinds
+                            if kind in STATS_KINDS],
+            'children_count': len(children),
             'categorie_id': dossier.categorie_id,
             'presentation': dossier.presentation,
             'contexte': dossier.contexte,
@@ -281,7 +486,10 @@ class DossierViewSet(ReadOnlyModelViewSet):
             'can_export_stats': can_export_stats,
             'cover_image': (dossier.image_couverture.url
                             if dossier.image_couverture else None),
-            'children': [serialize_card(c) for c in children],
+            'children': [
+                serialize_card(c, counts=counts_by_pk[c.pk],
+                               children_count=c.n_children)
+                for c in children],
             'citation': self.get_citation(dossier),
             **ps.admin_link_data(dossier, request),
         }
@@ -308,13 +516,14 @@ class DossierViewSet(ReadOnlyModelViewSet):
 
     @action(detail=True)
     def evenements(self, request, pk=None):
-        dossier = self.get_object().specific
-        if not isinstance(dossier, DossierDEvenements):
+        dossier = self.get_object()
+        if not dossier.has_kind(KIND_EVENEMENTS):
             return Response({'count': 0, 'results': []})
         # Apply the same filters as the global event list (free text, dates,
         # lieu/oeuvre/individu/ensemble…) before the eager-loading, mirroring
         # EvenementViewSet.filter_queryset so the semantics cannot drift.
-        qs = filter_evenements_queryset(dossier.queryset, request.query_params)
+        qs = filter_evenements_queryset(
+            dossier.queryset_for(KIND_EVENEMENTS), request.query_params)
         qs = qs.select_related(*EVENEMENT_PUBLIC_SELECT) \
             .prefetch_related(*EVENEMENT_PUBLIC_PREFETCH)
         paginator = DossierPagination()
@@ -326,25 +535,25 @@ class DossierViewSet(ReadOnlyModelViewSet):
     @action(detail=True)
     def facets(self, request, pk=None):
         # Filter-form facets (date-slider bounds + filtered count + auth flag)
-        # for this dossier's events, scoped to dossier.queryset. Mirrors
+        # for this dossier's events, scoped to its events queryset. Mirrors
         # EvenementViewSet.facets via the shared helper.
-        dossier = self.get_object().specific
-        if not isinstance(dossier, DossierDEvenements):
+        dossier = self.get_object()
+        if not dossier.has_kind(KIND_EVENEMENTS):
             return Response({
                 'date_range': {'min_year': 1600, 'max_year': 1600},
                 'total_count': 0,
                 'is_authenticated': request.user.is_authenticated,
             })
         return Response(evenement_facets(
-            dossier.queryset, request.query_params,
+            dossier.queryset_for(KIND_EVENEMENTS), request.query_params,
             request.user.is_authenticated))
 
     @action(detail=True)
     def oeuvres(self, request, pk=None):
-        dossier = self.get_object().specific
-        if not isinstance(dossier, DossierDOeuvres):
+        dossier = self.get_object()
+        if not dossier.has_kind(KIND_OEUVRES):
             return Response({'count': 0, 'results': []})
-        qs = dossier.queryset.select_related(
+        qs = dossier.queryset_for(KIND_OEUVRES).select_related(
             'genre', 'creation_lieu__parent__nature', 'creation_lieu__nature',
         ).prefetch_related(
             'pupitres__partie', 'auteurs__individu', 'auteurs__ensemble',
@@ -352,7 +561,7 @@ class DossierViewSet(ReadOnlyModelViewSet):
         # Same list filters as the standalone œuvres index, scoped to this
         # dossier (free text, genre, author).
         qs = filter_oeuvres_queryset(qs, request.query_params)
-        # Mirror DossierDOeuvresDataDetail: order by world-premiere date when
+        # Mirror DossierOeuvresDataDetail: order by world-premiere date when
         # asked, otherwise keep the default tree (path) ordering.
         if request.query_params.get('order_by') == 'creation_date':
             qs = qs.order_by('creation_date')
@@ -364,22 +573,22 @@ class DossierViewSet(ReadOnlyModelViewSet):
 
     @action(detail=True)
     def genres(self, request, pk=None):
-        """Type-ahead options for the dossier d'œuvres ``genre`` filter, scoped
-        to the genres actually present in the dossier's works (the full genre
-        list is too long for a plain ``<select>``). Authors use the shared
+        """Type-ahead options for the works ``genre`` filter, scoped to the
+        genres actually present in the dossier's works (the full genre list is
+        too long for a plain ``<select>``). Authors use the shared
         ``/api/evenements/{individus,ensembles}/`` type-ahead."""
-        dossier = self.get_object().specific
-        if not isinstance(dossier, DossierDOeuvres):
+        dossier = self.get_object()
+        if not dossier.has_kind(KIND_OEUVRES):
             return Response([])
         return lookup_autocomplete(request, GenreDOeuvre.objects.filter(
-            pk__in=dossier.queryset.values('genre_id')))
+            pk__in=dossier.queryset_for(KIND_OEUVRES).values('genre_id')))
 
     @action(detail=True)
     def sources(self, request, pk=None):
-        dossier = self.get_object().specific
-        if not isinstance(dossier, DossierDeSources):
+        dossier = self.get_object()
+        if not dossier.has_kind(KIND_SOURCES):
             return Response({'count': 0, 'groups': []})
-        qs = dossier.queryset.select_related('type')
+        qs = dossier.queryset_for(KIND_SOURCES).select_related('type')
         # Same list filters as the standalone sources index, scoped to this
         # dossier (free text, content type, century). The source-type (`type`)
         # filter is the per-group key handled just below, so it is excluded here.
@@ -473,12 +682,12 @@ class DossierViewSet(ReadOnlyModelViewSet):
 
     @action(detail=True)
     def sources_filters(self, request, pk=None):
-        """Option lists for the dossier de sources filter bar. ``icons`` and
-        ``ancrage`` reuse the standalone-index static option lists; the source
-        ``type`` filter is a type-ahead (see ``source_types``), so it needs no
-        option list here."""
-        dossier = self.get_object().specific
-        if not isinstance(dossier, DossierDeSources):
+        """Option lists for the sources filter bar. ``icons`` and ``ancrage``
+        reuse the standalone-index static option lists; the source ``type``
+        filter is a type-ahead (see ``source_types``), so it needs no option
+        list here."""
+        dossier = self.get_object()
+        if not dossier.has_kind(KIND_SOURCES):
             return Response({'icons': [], 'ancrage': []})
         return Response({
             'icons': data_type_options(),
@@ -487,21 +696,26 @@ class DossierViewSet(ReadOnlyModelViewSet):
 
     @action(detail=True)
     def source_types(self, request, pk=None):
-        """Type-ahead options for the dossier de sources ``type`` filter, scoped
-        to the source types actually present in the dossier (the full source-type
-        list is too long for a plain ``<select>``)."""
-        dossier = self.get_object().specific
-        if not isinstance(dossier, DossierDeSources):
+        """Type-ahead options for the sources ``type`` filter, scoped to the
+        source types actually present in the dossier (the full source-type list
+        is too long for a plain ``<select>``)."""
+        dossier = self.get_object()
+        if not dossier.has_kind(KIND_SOURCES):
             return Response([])
         return lookup_autocomplete(request, TypeDeSource.objects.filter(
-            pk__in=dossier.queryset.values('type_id')))
+            pk__in=dossier.queryset_for(KIND_SOURCES).values('type_id')))
 
     @action(detail=True)
     def geojson(self, request, pk=None):
-        dossier = self.get_object().specific
-        if not isinstance(dossier, DossierDEvenements):
+        """Kind-scoped map data (``?kind=``): events by opening place (the
+        default), works by world-premiere place."""
+        dossier = self.get_object()
+        kind = request.query_params.get('kind', KIND_EVENEMENTS)
+        if kind not in STATS_KINDS or not dossier.has_kind(kind):
             return Response({'type': 'FeatureCollection', 'features': []})
-        qs = dossier.queryset
+        qs = dossier.queryset_for(kind)
+        lieu_field = ('debut_lieu' if kind == KIND_EVENEMENTS
+                      else 'creation_lieu')
         bbox = request.query_params.get('bbox')
         bbox = (Polygon.from_bbox([float(c) for c in bbox.split(',')])
                 if bbox else None)
@@ -511,7 +725,8 @@ class DossierViewSet(ReadOnlyModelViewSet):
                       else DEFAULT_MIN_PLACES)
         min_places = min(min_places, MAX_MIN_PLACES)
         features = []
-        for lieu_pk, nom, geometry, n in get_data(qs, min_places, bbox):
+        for lieu_pk, nom, geometry, n in get_data(qs, min_places, bbox,
+                                                  lieu_field):
             point = GEOSGeometry(geometry).point_on_surface
             features.append({
                 'type': 'Feature',
@@ -523,14 +738,30 @@ class DossierViewSet(ReadOnlyModelViewSet):
 
     @action(detail=True)
     def stats(self, request, pk=None):
-        dossier = self.get_object().specific
-        if not isinstance(dossier, DossierDEvenements):
+        """Kind-scoped statistics (``?kind=``): period distribution + chord
+        diagram, over the events' programme works (the default) or over the
+        dossier's own works."""
+        dossier = self.get_object()
+        kind = request.query_params.get('kind', KIND_EVENEMENTS)
+        if kind not in STATS_KINDS or not dossier.has_kind(kind):
             return Response({})
-        oeuvres_par_periode = get_oeuvres_par_periode(dossier.queryset.oeuvres())
+        if kind == KIND_EVENEMENTS:
+            evenements = dossier.queryset_for(KIND_EVENEMENTS)
+            oeuvres_qs = evenements.oeuvres()
+            chord = get_chord_diagram(
+                evenements, evenements.individus_auteurs(), CHORD_DIAGRAM_SQL)
+        else:
+            oeuvres_qs = dossier.queryset_for(KIND_OEUVRES)
+            chord = get_chord_diagram(
+                oeuvres_qs,
+                Individu.objects.filter(
+                    auteurs__oeuvre__in=oeuvres_qs).distinct(),
+                WORKS_CHORD_DIAGRAM_SQL)
+        oeuvres_par_periode = get_oeuvres_par_periode(oeuvres_qs)
         return Response({
             'oeuvres_par_periode': oeuvres_par_periode,
             'n_oeuvres': sum(p['count'] for p in oeuvres_par_periode),
-            'chord': get_chord_diagram(dossier),
+            'chord': chord,
         })
 
     def _enqueue_export(self, request, export_job, data, file_extension):
@@ -568,19 +799,19 @@ class DossierViewSet(ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['post'])
     def export_pdf(self, request, pk=None):
-        dossier = self.get_object().specific
+        dossier = self.get_object()
         return self._enqueue_export(request, dossier_to_pdf, dossier.pk, 'PDF')
 
     @action(detail=True, methods=['post'])
     def export_scenario(self, request, pk=None):
-        dossier = self.get_object().specific
+        dossier = self.get_object()
         if not request.user.is_superuser:
             return Response(
                 {'code': 'export_no_permission',
                  'detail': _('Vous n’avez pas la permission de lancer cet '
                              'export.')},
                 status=403)
-        if not isinstance(dossier, DossierDEvenements):
+        if not dossier.has_kind(KIND_EVENEMENTS):
             return Response(
                 {'code': 'export_unavailable',
                  'detail': _('Export indisponible pour ce dossier.')},
