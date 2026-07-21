@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslations } from "next-intl";
-import Tooltip from "@mui/material/Tooltip";
 import Link from "@mui/material/Link";
 import OurLink from "@/components/OurLink";
+import LabelTooltip from "@/format/LabelTooltip";
 
 // Strip HTML tags from an editor-entered string, mirroring Django's `strip_tags`
 // (used by `Oeuvre.__str__`) when we need the plain-text form of a label that
@@ -149,11 +149,7 @@ function renderNode(
     content = <cite style={{ fontStyle: "normal" }}>{content}</cite>;
   }
   if (node.tooltipKey !== undefined) {
-    content = (
-      <Tooltip title={t(node.tooltipKey)} arrow disableInteractive>
-        <span>{content}</span>
-      </Tooltip>
-    );
+    content = <LabelTooltip title={t(node.tooltipKey)}>{content}</LabelTooltip>;
   }
   if (node.href !== undefined) {
     content = (
