@@ -4,6 +4,7 @@ include:
       - docker-compose-django/react.yaml
       - custom.yaml
       - docker-compose-django/deployment.yaml
+      - custom.deployment.yaml
     env_file:
       - docker-compose-django/.env.base
       - .env.base

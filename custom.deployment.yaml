@@ -1,0 +1,5 @@
+services:
+  anubis:
+    labels:
+      - traefik.http.routers.$PROJECT-anubis.entrypoints=websecure
+      - traefik.http.routers.$PROJECT-anubis.tls.certresolver=letsencrypt

@@ -1,0 +1,28 @@
+location = ${NGINX_404_URL} {
+  include /etc/nginx/conf.d/django_public_rules.include;
+  proxy_intercept_errors off;
+  # Disables auth_basic on the 404 page, otherwise a location without basic auth
+  # will ask for basic auth when it needs to show the 404 page…
+  auth_basic off;
+}
+
+# Disables basic auth on the API and django-debug-toolbar (if relevant), as it can mess with auth tokens.
+# Search engines should not return API results anyways.
+# We add X-Robots-Tag as an extra layer against search engines.
+location ~ ^/(api/|__debug__/) {
+  include /etc/nginx/conf.d/django_rules.include;
+  proxy_intercept_errors on;
+  auth_basic off;
+  add_header X-Robots-Tag "noindex, noarchive, nosnippet, noimageindex";
+}
+
+# The admin triggers many related-object queries, so it keeps the higher rate limits.
+location ~ ^/(admin/|wagtail-admin/|grappelli/|tinymce/|i18n/|tree_node/) {
+  include /etc/nginx/conf.d/django_rules.include;
+  proxy_intercept_errors on;
+}
+
+location / {
+  include /etc/nginx/conf.d/django_public_rules.include;
+  proxy_intercept_errors on;
+}
