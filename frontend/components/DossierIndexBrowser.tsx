@@ -211,6 +211,7 @@ export default function DossierIndexBrowser({
                 key={i}
                 variant="rounded"
                 height={180}
+                animation={false}
                 sx={{
                   borderRadius: 2,
                   display: i < 4 ? "block" : { xs: "none", sm: "block" },

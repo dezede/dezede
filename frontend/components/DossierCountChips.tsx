@@ -146,6 +146,12 @@ export default function DossierCountChips({
           <Skeleton
             key={kind}
             variant="rounded"
+            // No pulse animation: the index paints up to ~130 of these at once,
+            // and a continuous CSS animation on every one (they don't pause just
+            // for being off-screen) means constant main-thread style/paint work
+            // that janks the first scroll-through. A static placeholder reads
+            // just as well for a sub-second count load.
+            animation={false}
             // `width` is in `ch`, which resolves against the element's own
             // font-size — so pin it to the small chip's font (0.8125rem), or
             // the skeleton (inheriting the larger body font) comes out wider
