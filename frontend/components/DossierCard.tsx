@@ -3,105 +3,31 @@ import CardActionArea from "@mui/material/CardActionArea";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
-import HistoryEduOutlinedIcon from "@mui/icons-material/HistoryEduOutlined";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
 import { getTranslations } from "next-intl/server";
-import { TDossierCard } from "@/app/types";
+import { TDossierCard, TDossierKind } from "@/app/types";
 import { DOSSIERS_BASE } from "@/app/constants";
 import OurLink from "./OurLink";
-import OurChip from "./OurChip";
+import DossierCountChips from "./DossierCountChips";
 import SafeText from "@/format/SafeText";
 
-// `dossiers`-namespace translator, threaded into the plain helper so it can be
-// called from both server components (DossierCard) and pages without a hook.
-type DossierTranslator = Awaited<ReturnType<typeof getTranslations<"dossiers">>>;
+// `dossiers`-namespace translator, threaded into the plain helpers so they can
+// be called from both server components (DossierCard) and pages without a hook.
+type DossierTranslator = Awaited<
+  ReturnType<typeof getTranslations<"dossiers">>
+>;
 
 export function kindLabel(
-  dossier: TDossierCard,
+  kind: TDossierKind,
+  count: number,
   t: DossierTranslator,
 ): string {
-  if (dossier.kind === "evenements") {
-    return t("eventCount", { count: dossier.count });
+  if (kind === "evenements") {
+    return t("eventCount", { count });
   }
-  if (dossier.kind === "oeuvres") {
-    return t("workCount", { count: dossier.count });
+  if (kind === "oeuvres") {
+    return t("workCount", { count });
   }
-  if (dossier.kind === "sources") {
-    return t("sourceCount", { count: dossier.count });
-  }
-  return "";
-}
-
-export function subdossierLabel(
-  dossier: TDossierCard,
-  t: DossierTranslator,
-): string {
-  if (!dossier.children_count) return "";
-  return t("subdossierCount", { count: dossier.children_count });
-}
-
-// Chips shown on a dossier card: its content-kind count (events/works/sources)
-// plus, when it has any, how many sub-dossiers it groups.
-function DossierChips({
-  dossier,
-  t,
-  onImage = false,
-}: {
-  dossier: TDossierCard;
-  t: DossierTranslator;
-  // When laid over the cover image, chips get a translucent light backing and
-  // dark text so they stay legible on the gradient scrim (an outlined chip would
-  // wash out against the artwork).
-  onImage?: boolean;
-}) {
-  const kind = kindLabel(dossier, t);
-  const subdossiers = subdossierLabel(dossier, t);
-  if (!kind && !subdossiers) return null;
-  const chipSx = onImage
-    ? {
-        bgcolor: "rgba(255,255,255,0.9)",
-        color: "rgba(0,0,0,0.87)",
-        "& .MuiChip-label svg": { color: "primary.dark" },
-        "& .MuiChip-label": { lineHeight: 1 },
-      }
-    : { "& .MuiChip-label": { lineHeight: 1 } };
-  const icon =
-    dossier.kind === "evenements" ? (
-      <EventOutlinedIcon />
-    ) : dossier.kind === "oeuvres" ? (
-      <HistoryEduOutlinedIcon />
-    ) : dossier.kind === "sources" ? (
-      <DescriptionOutlinedIcon />
-    ) : undefined;
-  return (
-    <Stack
-      direction="row"
-      spacing={1}
-      useFlexGap
-      sx={{ flexWrap: "wrap" }}
-    >
-      {kind ? (
-        <OurChip
-          icon={icon}
-          label={kind}
-          size="small"
-          variant={onImage ? "filled" : "outlined"}
-          sx={chipSx}
-        />
-      ) : null}
-      {subdossiers ? (
-        <OurChip
-          icon={<FolderOutlinedIcon />}
-          label={subdossiers}
-          size="small"
-          variant={onImage ? "filled" : "outlined"}
-          sx={chipSx}
-        />
-      ) : null}
-    </Stack>
-  );
+  return t("sourceCount", { count });
 }
 
 const hoverLift = {
@@ -109,20 +35,12 @@ const hoverLift = {
   "&:hover": { boxShadow: 6, transform: "translateY(-2px)" },
 } as const;
 
-export default async function DossierCard({
-  dossier,
-}: {
-  dossier: TDossierCard;
-}) {
-  const t = await getTranslations("dossiers");
+export default function DossierCard({ dossier }: { dossier: TDossierCard }) {
   const href = `${DOSSIERS_BASE}/id/${dossier.id}/`;
 
   if (dossier.cover_image) {
     return (
-      <Card
-        elevation={0}
-        sx={{ overflow: "hidden", ...hoverLift }}
-      >
+      <Card elevation={0} sx={{ overflow: "hidden", ...hoverLift }}>
         <CardActionArea component={OurLink} href={href}>
           {/* No fixed aspect ratio or object-fit: cover here — the image keeps
               its natural proportions (never cropped), which is what lets the
@@ -137,7 +55,12 @@ export default async function DossierCard({
               src={dossier.cover_image}
               alt=""
               loading="lazy"
-              sx={{ gridArea: "1 / 1", display: "block", width: "100%", height: "auto" }}
+              sx={{
+                gridArea: "1 / 1",
+                display: "block",
+                width: "100%",
+                height: "auto",
+              }}
             />
             {/* Title and count/subdossier chips are both laid over the cover,
                 magazine-style, so the whole card reads as one framed picture.
@@ -170,7 +93,13 @@ export default async function DossierCard({
               >
                 <SafeText value={dossier.titre} />
               </Typography>
-              <DossierChips dossier={dossier} t={t} onImage />
+              <DossierCountChips
+                dossierId={dossier.id}
+                kinds={dossier.kinds}
+                initialCounts={dossier.counts}
+                childrenCount={dossier.children_count}
+                onImage
+              />
             </Box>
           </Box>
         </CardActionArea>
@@ -194,7 +123,12 @@ export default async function DossierCard({
               {dossier.excerpt}
             </Typography>
           ) : null}
-          <DossierChips dossier={dossier} t={t} />
+          <DossierCountChips
+            dossierId={dossier.id}
+            kinds={dossier.kinds}
+            initialCounts={dossier.counts}
+            childrenCount={dossier.children_count}
+          />
         </Stack>
       </CardActionArea>
     </Card>

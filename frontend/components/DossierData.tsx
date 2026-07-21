@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
 import {
   TDossierDetail,
+  TDossierKind,
   TDossierSources,
   TDossierWork,
   TEventFacets,
@@ -61,21 +62,23 @@ const WORKS_PER_PAGE = 40;
 const SOURCES_PER_PAGE = 40;
 
 /**
- * The dossier's "Données" tab: its events (filter bar + cards + infinite scroll)
- * for a DossierDEvenements, its works (sortable rich list: title, authors,
- * genèse/création and sources) for a DossierDOeuvres, or its sources (icon +
- * title list) for a DossierDeSources.
+ * The data list of one of the dossier's kinds: its events (filter bar + cards
+ * + infinite scroll), its works (sortable rich list: title, authors,
+ * genèse/création and sources) or its sources (icon + title list). A dossier
+ * can present several kinds at once; each kind tab renders its own instance.
  */
 export default async function DossierData({
   dossier,
+  kind,
   searchParams,
 }: {
   dossier: TDossierDetail;
+  kind: TDossierKind;
   searchParams: TSearchParams;
 }) {
   const t = await getTranslations("dossiers");
-  if (dossier.kind === "evenements") {
-    if (dossier.count === 0) {
+  if (kind === "evenements") {
+    if ((dossier.counts.evenements ?? 0) === 0) {
       return <Empty>{t("noEventsInDossier")}</Empty>;
     }
     const endpoint = `/api/public/dossiers/${dossier.id}/evenements/`;
@@ -120,7 +123,7 @@ export default async function DossierData({
     );
   }
 
-  if (dossier.kind === "oeuvres") {
+  if (kind === "oeuvres") {
     const endpoint = `/api/public/dossiers/${dossier.id}/oeuvres/`;
     const params = workFilterParams(searchParams);
     // Two sort modes, mirroring DossierDOeuvresDataDetail: work name (default,
@@ -185,7 +188,7 @@ export default async function DossierData({
     );
   }
 
-  if (dossier.kind === "sources") {
+  if (kind === "sources") {
     const endpoint = `/api/public/dossiers/${dossier.id}/sources/`;
     const params = sourceFilterParams(searchParams);
     const stringParams = toStringParams(params);

@@ -4,58 +4,62 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { useTranslations } from "next-intl";
 
-// Stable URL hash slugs, indexed by tab position (Présentation / Données /
-// Visualisations). Kept independent of the visible labels so the link stays
-// readable and unchanged regardless of the dossier kind.
-const TAB_SLUGS = ["presentation", "donnees", "visualisations"];
+export type TDossierTabItem = {
+  // Stable URL hash slug ('presentation', 'evenements', 'oeuvres', 'sources').
+  // Kept independent of the visible labels so the link stays readable and
+  // unchanged regardless of the dossier contents.
+  slug: string;
+  label: string;
+  content: React.ReactNode;
+};
 
-function hashToTab(hash: string, tabCount: number): number {
+// The pre-merge frontend used a fixed « Données » tab; keep that hash working
+// by sending it to the first data tab (index 1).
+const LEGACY_SLUGS: Record<string, number> = { donnees: 1, visualisations: 1 };
+
+function hashToTab(hash: string, tabs: TDossierTabItem[]): number {
+  // A kind panel may extend the hash with its sub-view
+  // (e.g. #evenements-visualisations, see DossierKindPanel); only the first
+  // segment selects the tab. Tab slugs never contain a dash.
+  const slug = hash.replace(/^#/, "").split("-")[0];
+  const index = tabs.findIndex((tab) => tab.slug === slug);
+  if (index >= 0) {
+    return index;
+  }
+  const legacy = LEGACY_SLUGS[slug];
   // Falls back to Présentation for a missing or out-of-range slug (e.g.
-  // #visualisations on a dossier without visualisations).
-  const index = TAB_SLUGS.indexOf(hash.replace(/^#/, ""));
-  return index >= 0 && index < tabCount ? index : 0;
+  // #oeuvres on a dossier without works).
+  return legacy !== undefined && legacy < tabs.length ? legacy : 0;
 }
 
 /**
- * Client tab switcher for a dossier detail page (Présentation / Données /
- * Visualisations), mirroring the Django dossier tabs. The presentation and data
- * panels stay mounted (server-rendered); the visualisations panel is mounted on
- * demand so Leaflet and the charts load only when opened.
+ * Client tab switcher for a dossier detail page: Présentation plus one tab per
+ * kind of data the dossier presents (événements / œuvres / sources), mirroring
+ * the Django dossier tabs. Every panel stays mounted (they are
+ * server-rendered); the per-kind Visualisations live inside each kind's panel
+ * (see DossierKindPanel) and load only when opened.
  *
- * The active tab is mirrored into the URL hash (e.g. `#donnees`) so it survives
- * reloads and is shareable. We use the hash with `history.replaceState` rather
- * than a query param so switching tabs is instant: it never triggers a Next.js
- * navigation (which would re-render the server tree and lag).
+ * The active tab is mirrored into the URL hash (e.g. `#evenements`) so it
+ * survives reloads and is shareable. We use the hash with
+ * `history.replaceState` rather than a query param so switching tabs is
+ * instant: it never triggers a Next.js navigation (which would re-render the
+ * server tree and lag).
  */
-export default function DossierTabs({
-  presentation,
-  data,
-  visualisations,
-  dataLabel,
-  hasVisualisations,
-}: {
-  presentation: React.ReactNode;
-  data: React.ReactNode;
-  visualisations: React.ReactNode;
-  dataLabel: string;
-  hasVisualisations: boolean;
-}) {
-  const t = useTranslations("dossiers");
-  const tabCount = hasVisualisations ? 3 : 2;
+export default function DossierTabs({ tabs }: { tabs: TDossierTabItem[] }) {
   // Starts on Présentation so SSR/hydration match; the hash is read in the
   // effect below (the hash is not available during server rendering).
   const [tab, setTab] = useState(0);
+  const slugs = tabs.map((item) => item.slug).join(",");
 
   useEffect(() => {
-    const syncFromHash = () =>
-      setTab(hashToTab(window.location.hash, tabCount));
+    const syncFromHash = () => setTab(hashToTab(window.location.hash, tabs));
     syncFromHash();
     // Keep in sync with back/forward navigation and manual hash edits.
     window.addEventListener("hashchange", syncFromHash);
     return () => window.removeEventListener("hashchange", syncFromHash);
-  }, [tabCount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slugs]);
 
   const handleChange = (value: number) => {
     setTab(value);
@@ -64,8 +68,11 @@ export default function DossierTabs({
     const url =
       value === 0
         ? window.location.pathname + window.location.search
-        : `#${TAB_SLUGS[value]}`;
+        : `#${tabs[value].slug}`;
     window.history.replaceState(null, "", url);
+    // replaceState fires no hashchange event; dispatch one so the kind panels
+    // drop any `-visualisations` sub-view when their tab is left.
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
   };
 
   return (
@@ -77,50 +84,27 @@ export default function DossierTabs({
           variant="scrollable"
           allowScrollButtonsMobile
         >
-          <Tab
-            label={t("presentation")}
-            id="dossier-tab-0"
-            aria-controls="dossier-tabpanel-0"
-          />
-          <Tab
-            label={dataLabel}
-            id="dossier-tab-1"
-            aria-controls="dossier-tabpanel-1"
-          />
-          {hasVisualisations ? (
+          {tabs.map((item, index) => (
             <Tab
-              label={t("visualisations")}
-              id="dossier-tab-2"
-              aria-controls="dossier-tabpanel-2"
+              key={item.slug}
+              label={item.label}
+              id={`dossier-tab-${index}`}
+              aria-controls={`dossier-tabpanel-${index}`}
             />
-          ) : null}
+          ))}
         </Tabs>
       </Box>
-      <Box
-        role="tabpanel"
-        id="dossier-tabpanel-0"
-        aria-labelledby="dossier-tab-0"
-        hidden={tab !== 0}
-      >
-        {presentation}
-      </Box>
-      <Box
-        role="tabpanel"
-        id="dossier-tabpanel-1"
-        aria-labelledby="dossier-tab-1"
-        hidden={tab !== 1}
-      >
-        {data}
-      </Box>
-      {hasVisualisations && tab === 2 ? (
+      {tabs.map((item, index) => (
         <Box
+          key={item.slug}
           role="tabpanel"
-          id="dossier-tabpanel-2"
-          aria-labelledby="dossier-tab-2"
+          id={`dossier-tabpanel-${index}`}
+          aria-labelledby={`dossier-tab-${index}`}
+          hidden={tab !== index}
         >
-          {visualisations}
+          {item.content}
         </Box>
-      ) : null}
+      ))}
     </Box>
   );
 }

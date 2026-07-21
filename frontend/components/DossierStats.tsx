@@ -15,7 +15,13 @@ import Empty from "./Empty";
  * Fetches and renders a dossier's statistics (works-by-period bar and the
  * composer chord diagram), mirroring the Django "Visualisations" tab.
  */
-export default function DossierStats({ statsUrl }: { statsUrl: string }) {
+export default function DossierStats({
+  statsUrl,
+  kind = "evenements",
+}: {
+  statsUrl: string;
+  kind?: "evenements" | "oeuvres";
+}) {
   const t = useTranslations("dossiers");
   const [stats, setStats] = useState<TDossierStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -80,7 +86,9 @@ export default function DossierStats({ statsUrl }: { statsUrl: string }) {
           sx={{ alignItems: "center" }}
         >
           <Typography variant="h2" sx={{ fontSize: "1.25rem", alignSelf: "flex-start" }}>
-            {t("composersPlayedTogether")}
+            {kind === "oeuvres"
+              ? t("composersWroteTogether")
+              : t("composersPlayedTogether")}
           </Typography>
           <ChordDiagram chord={stats.chord!} />
         </Stack>

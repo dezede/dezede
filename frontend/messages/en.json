@@ -333,12 +333,18 @@
     "workCount": "{count, plural, =0 {No works} one {# work} other {# works}}",
     "sourceCount": "{count, plural, =0 {No sources} one {# source} other {# sources}}",
     "eventCount": "{count, plural, =0 {No events} one {# event} other {# events}}",
+    "eventLabel": "events",
+    "workLabel": "works",
+    "sourceLabel": "sources",
     "subdossierCount": "{count, plural, one {# subfile} other {# subfiles}}",
     "periodTooltip": "{name}: {count, plural, one {# work} other {# works}} ({percent} %)",
     "sourceOrder": {
       "default": "By type",
       "date": "By date"
-    }
+    },
+    "data": "Data",
+    "dataOrVisualisations": "Data or visualisations",
+    "composersWroteTogether": "Composers who wrote together"
   },
   "browse": {
     "button": "Browse",

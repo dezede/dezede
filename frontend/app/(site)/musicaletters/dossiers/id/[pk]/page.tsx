@@ -14,7 +14,8 @@ import OurLink from "@/components/OurLink";
 import RichText from "@/components/RichText";
 import SafeText from "@/format/SafeText";
 import DetailAdminBar from "@/components/DetailAdminBar";
-import DossierTabs from "@/components/DossierTabs";
+import DossierTabs, { TDossierTabItem } from "@/components/DossierTabs";
+import DossierKindPanel from "@/components/DossierKindPanel";
 import DossierData from "@/components/DossierData";
 import DossierCard, { kindLabel } from "@/components/DossierCard";
 import DossierStats from "@/components/DossierStats";
@@ -66,21 +67,12 @@ export default async function DossierDetailPage({
   const t = await getTranslations("pages");
   const tDossiers = await getTranslations("dossiers");
   const dossier = await fetchPublicJson<TDossierDetail>(`${apiBase}${pk}/`);
-  // A dossier with no events/works/sources has nothing to show on the Données
-  // or Visualisations tabs, so the tab chrome itself is dropped and only the
-  // Présentation content is rendered directly.
-  const hasData = dossier.count > 0;
-  const hasVisualisations = hasData && dossier.kind === "evenements";
-  // Show the amount of data in the tab label (e.g. "56 événements"), reusing the
-  // same count formatting as the dossier cards. Fall back to a plain label if
-  // the dossier has no kind/count.
-  const dataLabel =
-    kindLabel(dossier, tDossiers) ||
-    (dossier.kind === "sources"
-      ? t("dossiers.sourcesLabel")
-      : dossier.kind === "oeuvres"
-        ? t("dossiers.worksLabel")
-        : t("dossiers.eventsLabel"));
+  // One tab per active kind actually holding data; a dossier whose kinds are
+  // all empty has nothing to show besides the Présentation, so the tab chrome
+  // itself is dropped and only the Présentation content is rendered directly.
+  const dataKinds = dossier.kinds.filter(
+    (kind) => (dossier.counts[kind] ?? 0) > 0,
+  );
 
   const subdossiers =
     dossier.children.length > 0 ? (
@@ -98,8 +90,8 @@ export default async function DossierDetailPage({
       </Stack>
     ) : null;
 
-  // The metadata/actions sidebar lives inside the Présentation tab (regardless of
-  // the dossier kind), so it is hidden on the Données and Visualisations tabs.
+  // The metadata/actions sidebar lives inside the Présentation tab (regardless
+  // of the dossier kinds), so it is hidden on the per-kind data tabs.
   const presentation = (
     <Grid container spacing={4} id="presentation">
       <Grid size={{ xs: 12, md: 8 }}>
@@ -126,17 +118,52 @@ export default async function DossierDetailPage({
     </Grid>
   );
 
-  const visualisations = hasVisualisations ? (
-    <Stack spacing={4}>
-      <Box component="section">
-        <Typography variant="h2" sx={{ fontSize: "1.25rem", mb: 1.5 }}>
-          {t("dossiers.map")}
-        </Typography>
-        <DossierMapSection geojsonUrl={`${apiBase}${pk}/geojson/`} />
-      </Box>
-      <DossierStats statsUrl={`${apiBase}${pk}/stats/`} />
-    </Stack>
-  ) : null;
+  const tabs: TDossierTabItem[] = [
+    {
+      slug: "presentation",
+      label: tDossiers("presentation"),
+      content: presentation,
+    },
+    ...dataKinds.map((kind) => {
+      // Events and works get a Visualisations sub-view (map + statistics)
+      // inside their tab; sources are a plain data list.
+      const visualisations = dossier.stats_kinds.includes(kind) ? (
+        <Stack spacing={4}>
+          <Box component="section">
+            <Typography variant="h2" sx={{ fontSize: "1.25rem", mb: 1.5 }}>
+              {t("dossiers.map")}
+            </Typography>
+            <DossierMapSection
+              geojsonUrl={`${apiBase}${pk}/geojson/?kind=${kind}`}
+            />
+          </Box>
+          <DossierStats
+            statsUrl={`${apiBase}${pk}/stats/?kind=${kind}`}
+            kind={kind === "oeuvres" ? "oeuvres" : "evenements"}
+          />
+        </Stack>
+      ) : undefined;
+      return {
+        slug: kind,
+        // Show the amount of data in the tab label (e.g. "56 événements"),
+        // reusing the same count formatting as the dossier cards.
+        label: kindLabel(kind, dossier.counts[kind] ?? 0, tDossiers),
+        content: (
+          <DossierKindPanel
+            slug={kind}
+            data={
+              <DossierData
+                dossier={dossier}
+                kind={kind}
+                searchParams={resolvedSearchParams}
+              />
+            }
+            visualisations={visualisations}
+          />
+        ),
+      };
+    }),
+  ];
 
   return (
     <Container>
@@ -166,22 +193,7 @@ export default async function DossierDetailPage({
           <JumpToPresentationButton label={tDossiers("jumpToPresentation")} />
         ) : null}
         {subdossiers}
-        {hasData ? (
-          <DossierTabs
-            dataLabel={dataLabel}
-            hasVisualisations={hasVisualisations}
-            presentation={presentation}
-            data={
-              <DossierData
-                dossier={dossier}
-                searchParams={resolvedSearchParams}
-              />
-            }
-            visualisations={visualisations}
-          />
-        ) : (
-          presentation
-        )}
+        {dataKinds.length > 0 ? <DossierTabs tabs={tabs} /> : presentation}
       </Stack>
     </Container>
   );

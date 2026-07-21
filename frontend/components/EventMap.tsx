@@ -48,6 +48,19 @@ function computeRadius(
   );
 }
 
+// `geojsonUrl` may already carry query params (the dossier maps pass
+// `…/geojson/?kind=oeuvres`); merge them with the map's own params so the
+// final URL never ends up with two `?`.
+function buildGeojsonUrl(geojsonUrl: string, params: URLSearchParams): string {
+  const [path, query] = geojsonUrl.split("?", 2);
+  if (query) {
+    for (const [key, value] of new URLSearchParams(query)) {
+      params.set(key, value);
+    }
+  }
+  return `${path}?${params.toString()}`;
+}
+
 function MapLayer({
   filterQuery,
   minPlaces,
@@ -88,7 +101,7 @@ function MapLayer({
     abortRef.current = controller;
     onLoadingChange(true);
     try {
-      const response = await fetch(`${geojsonUrl}?${params.toString()}`, {
+      const response = await fetch(buildGeojsonUrl(geojsonUrl, params), {
         signal: controller.signal,
       });
       const data: TGeoJson | null = response.ok ? await response.json() : null;
@@ -205,7 +218,7 @@ export default function EventMap({
       const params = new URLSearchParams(filterQuery);
       params.set("min_places", MIN_PLACES.toString());
       try {
-        const response = await fetch(`${geojsonUrl}?${params.toString()}`, {
+        const response = await fetch(buildGeojsonUrl(geojsonUrl, params), {
           signal: controller.signal,
         });
         const data: TGeoJson | null = response.ok

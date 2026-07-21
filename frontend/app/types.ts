@@ -18,7 +18,6 @@ export type TImageRendition = {
   alt: string;
 };
 
-
 export enum EModelType {
   LETTER_IMAGE = "correspondence.LetterImage",
   LETTER_SENDER = "correspondence.LetterSender",
@@ -751,7 +750,7 @@ export type TSearchFacet = {
 
 // -- Dossiers ---------------------------------------------------------------
 
-export type TDossierKind = "evenements" | "oeuvres" | "sources" | null;
+export type TDossierKind = "evenements" | "oeuvres" | "sources";
 
 export type TDossierCard = {
   id: number;
@@ -759,8 +758,13 @@ export type TDossierCard = {
   titre: string;
   titre_court: string;
   slug: string;
-  kind: TDossierKind;
-  count: number;
+  // Active kinds in canonical order (a dossier can mix several), with the
+  // number of items each one selects. On the index the counts are computed
+  // lazily (the list() endpoint returns `null` and the frontend fetches them
+  // per visible card via the `counts` action), so `counts` is nullable here;
+  // the detail payload (TDossierDetail) always provides them.
+  kinds: TDossierKind[];
+  counts: Partial<Record<TDossierKind, number>> | null;
   children_count: number;
   cover_image: string | null;
   excerpt: string;
@@ -786,6 +790,11 @@ export type TDossierUser = { name: string; url: string };
 
 export type TDossierDetail = TDossierCard &
   TAdminLink & {
+    // The detail endpoint (retrieve()) computes the counts inline, so here
+    // they are always present (narrowing TDossierCard's nullable `counts`).
+    counts: Partial<Record<TDossierKind, number>>;
+    // Active kinds with a Visualisations panel (map + statistics).
+    stats_kinds: TDossierKind[];
     presentation: string;
     contexte: string;
     sources_et_protocole: string;
