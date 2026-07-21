@@ -127,33 +127,73 @@ class Migration(migrations.Migration):
             name='position',
             field=models.PositiveSmallIntegerField(default=1, verbose_name='position'),
         ),
-        migrations.AddIndex(
-            model_name='dossierdevenements',
-            index=models.Index(django.db.models.expressions.RawSQL('path[:array_length(path, 1) - 1]', ()), name='dossiers_path_parent_index'),
+        # The numeric[] path expression indexes below predate the binary
+        # (bytea) paths of django-tree 1.0: they can no longer exist on a
+        # freshly created database, so they are kept in migration state
+        # only (already-migrated databases created and dropped them for
+        # real before this file was edited).
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AddIndex(
+                    model_name='dossierdevenements',
+                    index=models.Index(django.db.models.expressions.RawSQL('path[:array_length(path, 1) - 1]', ()), name='dossiers_path_parent_index'),
+                ),
+            ],
+            database_operations=[],
         ),
-        migrations.AddIndex(
-            model_name='dossierdevenements',
-            index=models.Index(django.db.models.expressions.F('path__level'), name='dossiers_path_level_index'),
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AddIndex(
+                    model_name='dossierdevenements',
+                    index=models.Index(django.db.models.expressions.F('path__level'), name='dossiers_path_level_index'),
+                ),
+            ],
+            database_operations=[],
         ),
-        migrations.AddIndex(
-            model_name='dossierdevenements',
-            index=models.Index(django.db.models.expressions.F('path__0_1'), name='dossiers_path_slice_1_index'),
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AddIndex(
+                    model_name='dossierdevenements',
+                    index=models.Index(django.db.models.expressions.F('path__0_1'), name='dossiers_path_slice_1_index'),
+                ),
+            ],
+            database_operations=[],
         ),
-        migrations.AddIndex(
-            model_name='dossierdevenements',
-            index=models.Index(django.db.models.expressions.F('path__0_2'), name='dossiers_path_slice_2_index'),
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AddIndex(
+                    model_name='dossierdevenements',
+                    index=models.Index(django.db.models.expressions.F('path__0_2'), name='dossiers_path_slice_2_index'),
+                ),
+            ],
+            database_operations=[],
         ),
-        migrations.AddIndex(
-            model_name='dossierdevenements',
-            index=models.Index(django.db.models.expressions.F('path__0_3'), name='dossiers_path_slice_3_index'),
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AddIndex(
+                    model_name='dossierdevenements',
+                    index=models.Index(django.db.models.expressions.F('path__0_3'), name='dossiers_path_slice_3_index'),
+                ),
+            ],
+            database_operations=[],
         ),
-        migrations.AddIndex(
-            model_name='dossierdevenements',
-            index=models.Index(django.db.models.expressions.F('path__0_4'), name='dossiers_path_slice_4_index'),
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AddIndex(
+                    model_name='dossierdevenements',
+                    index=models.Index(django.db.models.expressions.F('path__0_4'), name='dossiers_path_slice_4_index'),
+                ),
+            ],
+            database_operations=[],
         ),
-        migrations.AddIndex(
-            model_name='dossierdevenements',
-            index=models.Index(django.db.models.expressions.F('path__0_5'), name='dossiers_path_slice_5_index'),
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.AddIndex(
+                    model_name='dossierdevenements',
+                    index=models.Index(django.db.models.expressions.F('path__0_5'), name='dossiers_path_slice_5_index'),
+                ),
+            ],
+            database_operations=[],
         ),
         migrations.AddField(
             model_name='categoriededossiers',
