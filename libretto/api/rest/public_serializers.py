@@ -365,7 +365,7 @@ class DossierWorkSerializer(WorkSerializer):
     """``WorkSerializer`` plus each work's grouped sources.
 
     Used by the dossier d'œuvres works list, which mirrors the Django
-    ``dossierdoeuvres_data_detail`` template: every work carries the same
+    ``dossier_oeuvres_data_detail`` template: every work carries the same
     grouped sources block shown on its detail page (see
     ``WorkDetailSerializer.get_sources``).
     """

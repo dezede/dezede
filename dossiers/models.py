@@ -1,7 +1,7 @@
 from datetime import datetime
 from functools import cached_property
-from typing import Union
 
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.db.models import (
     CharField, DateField, ImageField, TextField, PositiveSmallIntegerField,
@@ -21,6 +21,20 @@ from libretto.models import (Lieu, Oeuvre, Evenement, Individu, Ensemble,
 from libretto.models.base import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
 from common.utils.html import href
+
+
+KIND_EVENEMENTS = 'evenements'
+KIND_OEUVRES = 'oeuvres'
+KIND_SOURCES = 'sources'
+
+KIND_CHOICES = (
+    (KIND_EVENEMENTS, _('événements')),
+    (KIND_OEUVRES, _('œuvres')),
+    (KIND_SOURCES, _('sources')),
+)
+
+# Canonical presentation order of the kinds, whatever the stored order.
+KINDS_ORDER = (KIND_EVENEMENTS, KIND_OEUVRES, KIND_SOURCES)
 
 
 class CategorieDeDossiers(Indexed, PublishedModel):
@@ -94,6 +108,57 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
     sources_et_protocole = TextField(_('sources et protocole'), blank=True)
     bibliographie = TextField(_('bibliographie indicative'), blank=True)
 
+    # Types de données présentés par le dossier (événements/œuvres/sources).
+    # Chaque type actif applique les critères partagés ci-dessous à son propre
+    # modèle et dispose de sa propre sélection manuelle.
+    types_de_donnees = ArrayField(
+        CharField(max_length=20, choices=KIND_CHOICES),
+        default=list, blank=True, verbose_name=_('types de données'),
+        help_text=_('Types de données présentés par ce dossier.'))
+
+    # Critères partagés de la sélection dynamique. Chaque type actif les
+    # interprète sur son modèle : par exemple `debut`/`fin` filtrent la date
+    # des événements, la date de création des œuvres ou la date des sources.
+    debut = DateField(_('début'), blank=True, null=True)
+    fin = DateField(_('fin'), blank=True, null=True)
+    lieux = ManyToManyField(Lieu, blank=True, verbose_name=_('lieux'),
+                            related_name='dossiers')
+    individus = ManyToManyField(Individu, blank=True,
+                                verbose_name=_('individus'),
+                                related_name='dossiers')
+    ensembles = ManyToManyField(Ensemble, blank=True,
+                                verbose_name=_('ensembles'),
+                                related_name='dossiers')
+    # Critères ne s’appliquant qu’à certains types : genres (œuvres),
+    # types de sources (sources), circonstance et saisons (événements).
+    genres = ManyToManyField(GenreDOeuvre, blank=True,
+                             verbose_name=_('genres d’œuvre'),
+                             related_name='dossiers')
+    types_de_sources = ManyToManyField(TypeDeSource, blank=True,
+                                       verbose_name=_('types de source'),
+                                       related_name='dossiers')
+    circonstance = CharField(_('circonstance'), max_length=100, blank=True)
+    saisons = ManyToManyField(Saison, blank=True, verbose_name=_('saisons'),
+                              related_name='dossiers')
+    # Critères sur les œuvres et sources elles-mêmes ; à distinguer des
+    # sélections manuelles `oeuvres` et `sources` ci-dessous.
+    filtre_oeuvres = ManyToManyField(Oeuvre, blank=True,
+                                     verbose_name=_('œuvres'),
+                                     related_name='dossiers_filtre')
+    filtre_sources = ManyToManyField(Source, blank=True,
+                                     verbose_name=_('sources'),
+                                     related_name='dossiers_filtre')
+
+    # Sélection manuelle par type. Lorsqu’elle est remplie pour un type,
+    # elle remplace la sélection dynamique de ce type.
+    evenements = ManyToManyField(Evenement, blank=True,
+                                 verbose_name=_('événements'),
+                                 related_name='dossiers')
+    oeuvres = ManyToManyField(Oeuvre, blank=True, verbose_name=_('œuvres'),
+                              related_name='dossiers')
+    sources = ManyToManyField(Source, blank=True, verbose_name=_('sources'),
+                              related_name='dossiers')
+
     objects = DossierManager()
 
     search_fields = [
@@ -120,22 +185,6 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
         permissions = (('can_change_status', _('Peut changer l’état')),)
         indexes = PathField.get_indexes('dossiers', 'path')
 
-    @property
-    def specific(self) -> Union['DossierDEvenements', 'DossierDOeuvres',
-                                'DossierDeSources']:
-        try:
-            return self.dossierdevenements
-        except DossierDEvenements.DoesNotExist:
-            pass
-        try:
-            return self.dossierdoeuvres
-        except DossierDOeuvres.DoesNotExist:
-            pass
-        try:
-            return self.dossierdesources
-        except DossierDeSources.DoesNotExist:
-            raise NotImplementedError('Unknown type of dossier!')
-
     def __str__(self):
         return strip_tags(self.html())
 
@@ -154,62 +203,115 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
     def permalien(self):
         return reverse('dossier_permanent_detail', args=(self.pk,))
 
-    def get_data_absolute_url(self):
-        return reverse('dossier_data_detail', args=(self.slug,))
+    def get_data_absolute_url(self, kind=None):
+        if kind is None:
+            kinds = self.active_kinds
+            kind = kinds[0] if kinds else KIND_EVENEMENTS
+        return reverse('dossier_data_detail', args=(self.slug, kind))
+
+    @property
+    def active_kinds(self):
+        return [kind for kind in KINDS_ORDER if kind in self.types_de_donnees]
+
+    def has_kind(self, kind):
+        return kind in self.types_de_donnees
+
+    def kind_tabs(self):
+        """Template-facing description of each active kind: its label,
+        queryset, and per-kind URLs (data list + optional visualisations
+        page), for the tab bars and the PDF export."""
+        labels = dict(KIND_CHOICES)
+        multiple = len(self.active_kinds) > 1
+        tabs = []
+        for kind in self.active_kinds:
+            has_stats = kind in (KIND_EVENEMENTS, KIND_OEUVRES)
+            tabs.append({
+                'kind': kind,
+                'label': labels[kind],
+                'queryset': self.queryset_for(kind),
+                'data_url': self.get_data_absolute_url(kind),
+                'stats_url': (
+                    reverse('dossier_stats_detail', args=(self.slug, kind))
+                    if has_stats else None),
+                'stats_label': (_('Visualisations (%s)') % labels[kind]
+                                if multiple else _('Visualisations')),
+            })
+        return tabs
 
     @cached_property
-    def queryset(self):
-        return self.get_queryset(dynamic=False)
+    def _querysets(self):
+        return {}
+
+    def queryset_for(self, kind):
+        """Static-or-dynamic selection of ``kind``, cached per kind."""
+        if kind not in self._querysets:
+            self._querysets[kind] = self.get_queryset(kind)
+        return self._querysets[kind]
+
+    def get_queryset(self, kind, dynamic=False, criteria=None):
+        if criteria is None and self.pk:
+            criteria = self.criteria
+        if kind == KIND_EVENEMENTS:
+            return self._get_evenements_queryset(dynamic=dynamic,
+                                                 criteria=criteria)
+        if kind == KIND_OEUVRES:
+            return self._get_oeuvres_queryset(dynamic=dynamic,
+                                              criteria=criteria)
+        if kind == KIND_SOURCES:
+            return self._get_sources_queryset(dynamic=dynamic,
+                                              criteria=criteria)
+        raise ValueError(f'Unknown kind of dossier data: {kind!r}')
+
+    def get_count(self, kind):
+        # Count over the distinct pks only: counting the queryset directly
+        # would wrap a `SELECT DISTINCT <every column>` subquery, an order of
+        # magnitude slower on the big libretto tables.
+        return self.queryset_for(kind).values('pk').count()
+
+    def counts(self):
+        return {kind: self.get_count(kind) for kind in self.active_kinds}
+
+    def get_counts_display(self):
+        labels = dict(KIND_CHOICES)
+        return ' · '.join(f'{count} {labels[kind]}'
+                          for kind, count in self.counts().items())
+    get_counts_display.short_description = \
+        _('quantité de données sélectionnées')
+
+    @staticmethod
+    def _descendants_pks(manager, model):
+        """Pks of the criterion's objects and all their tree descendants,
+        or an empty list — without running the (whole-table) descendants query
+        when the criterion is empty."""
+        pks = list(manager.values_list('pk', flat=True))
+        if not pks:
+            return []
+        return list(model.objects.filter(pk__in=pks)
+                    .get_descendants(include_self=True)
+                    .values_list('pk', flat=True))
+
+    def get_criteria(self):
+        """The dynamic-selection criteria as plain pk lists (tree criteria
+        already expanded to their descendants), the shape the queryset
+        builders consume. ``dossiers.rest.batch_criteria`` builds the same
+        dicts for many dossiers in a fixed number of queries."""
+        return {
+            'lieux': self._descendants_pks(self.lieux, Lieu),
+            'oeuvres': self._descendants_pks(self.filtre_oeuvres, Oeuvre),
+            'individus': list(self.individus.values_list('pk', flat=True)),
+            'ensembles': list(self.ensembles.values_list('pk', flat=True)),
+            'sources': list(self.filtre_sources.values_list('pk', flat=True)),
+            'saisons': list(self.saisons.values_list('pk', flat=True)),
+            'genres': list(self.genres.values_list('pk', flat=True)),
+            'types_de_sources': list(
+                self.types_de_sources.values_list('pk', flat=True)),
+        }
 
     @cached_property
-    def dynamic_queryset(self):
-        return self.get_queryset(dynamic=True)
+    def criteria(self):
+        return self.get_criteria()
 
-    def get_queryset(self, dynamic=False):
-        raise NotImplementedError
-
-    def get_count(self):
-        return self.queryset.count()
-    get_count.short_description = _('quantité de données sélectionnées')
-
-    @cached_property
-    def contributors(self):
-        contributor_ids = set()
-        for owner_id, source_owner_id in self.queryset.values_list(
-            'owner_id', 'sources__owner_id'
-        ).distinct():
-            contributor_ids.add(owner_id)
-            contributor_ids.add(source_owner_id)
-        return HierarchicUser.objects.filter(pk__in=contributor_ids)
-
-
-class DossierDEvenements(Dossier):
-    debut = DateField(_('début'), blank=True, null=True)
-    fin = DateField(_('fin'), blank=True, null=True)
-    lieux = ManyToManyField(Lieu, blank=True, verbose_name=_('lieux'),
-                            related_name='dossiersdevenements')
-    oeuvres = ManyToManyField(Oeuvre, blank=True, verbose_name=_('œuvres'),
-                              related_name='dossiersdevenements')
-    individus = ManyToManyField(
-        Individu, blank=True, verbose_name=_('individus'),
-        related_name='dossiersdevenements',
-    )
-    circonstance = CharField(_('circonstance'), max_length=100, blank=True)
-    evenements = ManyToManyField(Evenement, verbose_name=_('événements'),
-                                 blank=True, related_name='dossiersdevenements')
-    ensembles = ManyToManyField(Ensemble, verbose_name=_('ensembles'),
-                                blank=True, related_name='dossiersdevenements')
-    sources = ManyToManyField(Source, verbose_name=_('sources'), blank=True,
-                              related_name='dossiersdevenements')
-    saisons = ManyToManyField(Saison, verbose_name=_('saisons'), blank=True,
-                              related_name='dossiersdevenements')
-
-    class Meta(Dossier.Meta):
-        verbose_name = _('dossier d’événements')
-        verbose_name_plural = _('dossiers d’événements')
-        indexes = []
-
-    def get_queryset(self, dynamic=False):
+    def _get_evenements_queryset(self, dynamic=False, criteria=None):
         if not dynamic and self.pk and self.evenements.exists():
             return self.evenements.all()
         args = []
@@ -218,40 +320,49 @@ class DossierDEvenements(Dossier):
             kwargs['debut_date__gte'] = self.debut
         if self.fin:
             kwargs['debut_date__lte'] = self.fin
-        if self.pk:
-            lieux = set(self.lieux.all().get_descendants(include_self=True))
-            if lieux:
-                kwargs['debut_lieu__in'] = lieux
-            oeuvres = set(
-                self.oeuvres.all().get_descendants(include_self=True)
-            )
-            if oeuvres:
-                kwargs['programme__oeuvre__in'] = oeuvres
-            individus = set(self.individus.values_list('pk', flat=True))
+        if criteria:
+            if criteria['lieux']:
+                kwargs['debut_lieu__in'] = criteria['lieux']
+            if criteria['oeuvres']:
+                # Semi-jointures (sous-requêtes d'ids, mêmes chemins de
+                # recherche) plutôt que des jointures : la requête externe
+                # reste sans jointure, ce qui évite au COUNT de dédupliquer
+                # des lignes larges multipliées par les LEFT JOIN.
+                args.append(Q(pk__in=Evenement.objects.filter(
+                    programme__oeuvre__in=criteria['oeuvres']).values('pk')))
+            individus = criteria['individus']
             if individus:
                 args.append(
-                    Q(programme__oeuvre__auteurs__individu__in=individus)
-                    | Q(programme__distribution__individu__in=individus)
-                    | Q(distribution__individu__in=individus)
+                    Q(pk__in=Evenement.objects.filter(
+                        programme__oeuvre__auteurs__individu__in=individus,
+                    ).values('pk'))
+                    | Q(pk__in=Evenement.objects.filter(
+                        programme__distribution__individu__in=individus,
+                    ).values('pk'))
+                    | Q(pk__in=Evenement.objects.filter(
+                        distribution__individu__in=individus,
+                    ).values('pk'))
                 )
-            if self.ensembles.exists():
+            if criteria['ensembles']:
                 evenements = Evenement.objects.extra(where=("""
                 id IN (
                     SELECT DISTINCT COALESCE(distribution.evenement_id, programme.evenement_id)
-                    FROM dossiers_dossierdevenements_ensembles AS dossier_ensemble
+                    FROM dossiers_dossier_ensembles AS dossier_ensemble
                     INNER JOIN libretto_elementdedistribution AS distribution
                         ON (distribution.ensemble_id = dossier_ensemble.ensemble_id)
                     LEFT JOIN libretto_elementdeprogramme AS programme
                         ON (programme.id = distribution.element_de_programme_id)
-                    WHERE dossier_ensemble.dossierdevenements_id = %s
+                    WHERE dossier_ensemble.dossier_id = %s
                 )""",), params=(self.pk,))
                 kwargs['pk__in'] = evenements
-            sources = set(self.sources.values_list('pk', flat=True))
-            if sources:
-                kwargs['sources__in'] = sources
-            saisons = self.saisons.all()
-            if saisons.exists():
-                kwargs['pk__in'] = saisons.evenements()
+            # Kept as a direct join (not a semi-jointure): its alias is
+            # reused by `contributors`, which must only see the owners of the
+            # *filtered* sources.
+            if criteria['sources']:
+                kwargs['sources__in'] = criteria['sources']
+            if criteria['saisons']:
+                kwargs['pk__in'] = Saison.objects.filter(
+                    pk__in=criteria['saisons']).evenements()
         if self.circonstance:
             kwargs['circonstance__icontains'] = self.circonstance
         if args or kwargs:
@@ -260,33 +371,7 @@ class DossierDEvenements(Dossier):
             ).distinct()
         return Evenement.objects.none()
 
-
-class DossierDOeuvres(Dossier):
-    debut = DateField(_('début'), blank=True, null=True)
-    fin = DateField(_('fin'), blank=True, null=True)
-    lieux = ManyToManyField(Lieu, blank=True, verbose_name=_('lieux'),
-                            related_name='dossiersdoeuvres')
-    genres = ManyToManyField(
-        GenreDOeuvre, blank=True, verbose_name=_('genres d’œuvre'),
-        related_name='dossiersdoeuvres',
-    )
-    individus = ManyToManyField(
-        Individu, blank=True, verbose_name=_('individus'),
-        related_name='dossiersdoeuvres',
-    )
-    ensembles = ManyToManyField(Ensemble, verbose_name=_('ensembles'),
-                                blank=True, related_name='dossiersdoeuvres')
-    sources = ManyToManyField(Source, verbose_name=_('sources'), blank=True,
-                              related_name='dossiersdoeuvres')
-    oeuvres = ManyToManyField(Oeuvre, blank=True, verbose_name=_('œuvres'),
-                              related_name='dossiersdoeuvres')
-
-    class Meta(Dossier.Meta):
-        verbose_name = _('dossier d’œuvres')
-        verbose_name_plural = _('dossiers d’œuvres')
-        indexes = []
-
-    def get_queryset(self, dynamic=False):
+    def _get_oeuvres_queryset(self, dynamic=False, criteria=None):
         if not dynamic and self.pk and self.oeuvres.exists():
             return self.oeuvres.all()
         args = []
@@ -297,61 +382,39 @@ class DossierDOeuvres(Dossier):
             kwargs['creation_date__gte'] = self.debut
         if self.fin:
             kwargs['creation_date__lte'] = self.fin
-        if self.pk:
-            lieux = set(self.lieux.all().get_descendants(include_self=True))
-            if lieux:
-                kwargs['creation_lieu__in'] = lieux
-            genres = set(self.genres.values_list('pk', flat=True))
-            if genres:
-                kwargs['genre__in'] = genres
-            individus = set(self.individus.values_list('pk', flat=True))
+        if criteria:
+            if criteria['lieux']:
+                kwargs['creation_lieu__in'] = criteria['lieux']
+            if criteria['genres']:
+                kwargs['genre__in'] = criteria['genres']
+            individus = criteria['individus']
             if individus:
+                # Semi-jointures, comme pour les événements ci-dessus.
                 args.append(
-                    Q(auteurs__individu__in=individus)
-                    | Q(dedicataires__in=individus)
+                    Q(pk__in=Oeuvre.objects.filter(
+                        auteurs__individu__in=individus).values('pk'))
+                    | Q(pk__in=Oeuvre.objects.filter(
+                        dedicataires__in=individus).values('pk'))
                 )
-            ensembles = set(self.ensembles.values_list('pk', flat=True))
-            if ensembles:
-                kwargs['auteurs__ensemble__in'] = ensembles
-            # For sources, we don't fetch them as there can be a huge amount
-            # of them (see the Opera Comique dossier for example).
-            sources = self.sources.values_list('pk', flat=True)
-            if sources.exists():
-                kwargs['sources__in'] = sources
+            if criteria['ensembles']:
+                args.append(Q(pk__in=Oeuvre.objects.filter(
+                    auteurs__ensemble__in=criteria['ensembles']).values('pk')))
+            # Kept as a direct join (not a semi-jointure): its alias is reused
+            # by `contributors`, which must only see the owners of the
+            # *filtered* sources.
+            if criteria['sources']:
+                kwargs['sources__in'] = criteria['sources']
+            # Le critère œuvres restreint ici les œuvres elles-mêmes
+            # (avec leur descendance).
+            if criteria['oeuvres']:
+                kwargs['pk__in'] = criteria['oeuvres']
         if args or kwargs:
             return Oeuvre.objects.filter(
                 *args, **kwargs,
             ).distinct()
         return Oeuvre.objects.none()
 
-
-class DossierDeSources(Dossier):
-    debut = DateField(_('début'), blank=True, null=True)
-    fin = DateField(_('fin'), blank=True, null=True)
-    types = ManyToManyField(
-        TypeDeSource, blank=True, verbose_name=_('types de source'),
-        related_name='dossiersdesources')
-    lieux = ManyToManyField(Lieu, blank=True, verbose_name=_('lieux'),
-                            related_name='dossiersdesources')
-    individus = ManyToManyField(
-        Individu, blank=True, verbose_name=_('individus'),
-        related_name='dossiersdesources')
-    oeuvres = ManyToManyField(Oeuvre, blank=True, verbose_name=_('œuvres'),
-                              related_name='dossiersdesources')
-    ensembles = ManyToManyField(Ensemble, verbose_name=_('ensembles'),
-                                blank=True, related_name='dossiersdesources')
-    # Manual selection (the static_manager_name, like `oeuvres` on
-    # DossierDOeuvres). The dynamic filter above builds on the sources' own
-    # links (type, date, lieux, individus, œuvres, ensembles).
-    sources = ManyToManyField(Source, verbose_name=_('sources'), blank=True,
-                              related_name='dossiersdesources')
-
-    class Meta(Dossier.Meta):
-        verbose_name = _('dossier de sources')
-        verbose_name_plural = _('dossiers de sources')
-        indexes = []
-
-    def get_queryset(self, dynamic=False):
+    def _get_sources_queryset(self, dynamic=False, criteria=None):
         if not dynamic and self.pk and self.sources.exists():
             return self.sources.all()
         args = []
@@ -362,32 +425,44 @@ class DossierDeSources(Dossier):
             kwargs['date__gte'] = self.debut
         if self.fin:
             kwargs['date__lte'] = self.fin
-        if self.pk:
-            types = set(self.types.values_list('pk', flat=True))
-            if types:
-                kwargs['type__in'] = types
-            lieux = set(self.lieux.all().get_descendants(include_self=True))
-            if lieux:
-                kwargs['lieux__in'] = lieux
-            oeuvres = set(
-                self.oeuvres.all().get_descendants(include_self=True)
-            )
-            if oeuvres:
-                kwargs['oeuvres__in'] = oeuvres
-            individus = set(self.individus.values_list('pk', flat=True))
-            if individus:
-                kwargs['individus__in'] = individus
-            ensembles = set(self.ensembles.values_list('pk', flat=True))
-            if ensembles:
-                kwargs['ensembles__in'] = ensembles
+        if criteria:
+            if criteria['types_de_sources']:
+                kwargs['type__in'] = criteria['types_de_sources']
+            if criteria['lieux']:
+                # Semi-jointures, comme pour les événements ci-dessus.
+                args.append(Q(pk__in=Source.objects.filter(
+                    lieux__in=criteria['lieux']).values('pk')))
+            if criteria['oeuvres']:
+                args.append(Q(pk__in=Source.objects.filter(
+                    oeuvres__in=criteria['oeuvres']).values('pk')))
+            if criteria['individus']:
+                args.append(Q(pk__in=Source.objects.filter(
+                    individus__in=criteria['individus']).values('pk')))
+            if criteria['ensembles']:
+                args.append(Q(pk__in=Source.objects.filter(
+                    ensembles__in=criteria['ensembles']).values('pk')))
+            # Le critère sources restreint ici les sources elles-mêmes.
+            if criteria['sources']:
+                kwargs['pk__in'] = criteria['sources']
         if args or kwargs:
             return Source.objects.filter(*args, **kwargs).distinct()
         return Source.objects.none()
 
     @cached_property
     def contributors(self):
-        # The base implementation joins `sources__owner_id`, which makes no
-        # sense here since the queryset items *are* sources: each one is its own
-        # contributor via `owner_id`.
-        return HierarchicUser.objects.filter(
-            pk__in=set(self.queryset.values_list('owner_id', flat=True)))
+        contributor_ids = set()
+        for kind in self.active_kinds:
+            queryset = self.queryset_for(kind)
+            if kind == KIND_SOURCES:
+                # Each source is its own contributor via `owner_id`; joining
+                # `sources__owner_id` would make no sense here since the
+                # queryset items *are* sources.
+                contributor_ids.update(
+                    queryset.values_list('owner_id', flat=True))
+            else:
+                for owner_id, source_owner_id in queryset.values_list(
+                    'owner_id', 'sources__owner_id'
+                ).distinct():
+                    contributor_ids.add(owner_id)
+                    contributor_ids.add(source_owner_id)
+        return HierarchicUser.objects.filter(pk__in=contributor_ids)

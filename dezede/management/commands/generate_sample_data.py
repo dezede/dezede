@@ -49,7 +49,7 @@ from tqdm import tqdm
 from common.utils.file import FileAnalyzer
 
 from dossiers.models import (
-    CategorieDeDossiers, DossierDEvenements, DossierDOeuvres, DossierDeSources,
+    CategorieDeDossiers, Dossier, KIND_EVENEMENTS, KIND_OEUVRES, KIND_SOURCES,
 )
 from libretto.models import (
     NatureDeLieu, Lieu, Individu, Profession, TypeDEnsemble, Ensemble, Membre,
@@ -1480,20 +1480,17 @@ class Command(BaseCommand):
         cf.seek(0)
 
     def create_dossiers(self):
-        # Deux types de dossiers existent : dossiers d’événements et dossiers
-        # d’œuvres. On en crée plusieurs de chaque, certains à sélection
-        # « dynamique » (critères : lieux, individus, genres, dates…), d’autres
-        # à sélection « manuelle » (événements ou œuvres explicitement listés),
-        # avec quelques dossiers imbriqués pour exercer l’arborescence.
+        # Un dossier peut présenter événements, œuvres et/ou sources
+        # (``types_de_donnees``). On en crée plusieurs de chaque type simple,
+        # certains à sélection « dynamique » (critères : lieux, individus,
+        # genres, dates…), d’autres à sélection « manuelle » (événements ou
+        # œuvres explicitement listés), avec quelques dossiers imbriqués pour
+        # exercer l’arborescence.
         self.categories = [
             CategorieDeDossiers.objects.get_or_create(
                 nom=nom, defaults={'position': pos, 'owner': self.owner})[0]
             for pos, nom in enumerate(CATEGORIES_DOSSIERS, start=1)]
-        used_slugs = set(
-            DossierDEvenements.objects.values_list('slug', flat=True))
-        used_slugs |= set(DossierDOeuvres.objects.values_list('slug', flat=True))
-        used_slugs |= set(
-            DossierDeSources.objects.values_list('slug', flat=True))
+        used_slugs = set(Dossier.objects.values_list('slug', flat=True))
 
         villes_noms = [v.nom for v in self.villes]
         genres = list(self.genres.values())
@@ -1505,7 +1502,8 @@ class Command(BaseCommand):
             sujet = random.choice(villes_noms) if villes_noms else 'la province'
             titre = random.choice(TITRES_DOSSIERS_EVENEMENTS).format(sujet)
             debut = self.random_date(1750, 1900)
-            dossier = DossierDEvenements(
+            dossier = Dossier(
+                types_de_donnees=[KIND_EVENEMENTS],
                 categorie=random.choice(self.categories),
                 circonstance=self.opt(random.choice(CIRCONSTANCES)),
                 debut=debut,
@@ -1518,7 +1516,7 @@ class Command(BaseCommand):
                 # Sélection dynamique : critères de filtrage.
                 dossier.lieux.set(random.sample(
                     self.villes, min(len(self.villes), random.randint(1, 3))))
-                dossier.oeuvres.set(random.sample(
+                dossier.filtre_oeuvres.set(random.sample(
                     self.oeuvres, min(len(self.oeuvres), random.randint(1, 3))))
                 dossier.individus.set(random.sample(
                     self.individus,
@@ -1537,7 +1535,7 @@ class Command(BaseCommand):
                     self.evenements,
                     min(len(self.evenements), random.randint(200, 500))))
             if self.coin(0.3):
-                dossier.sources.set(random.sample(
+                dossier.filtre_sources.set(random.sample(
                     self.sources, min(len(self.sources), random.randint(1, 3))))
             dossiers.append((dossier, True))
 
@@ -1550,7 +1548,8 @@ class Command(BaseCommand):
                 sujet = random.choice(NOMS)
             titre = random.choice(TITRES_DOSSIERS_OEUVRES).format(sujet)
             debut = self.random_date(1700, 1900)
-            dossier = DossierDOeuvres(
+            dossier = Dossier(
+                types_de_donnees=[KIND_OEUVRES],
                 categorie=random.choice(self.categories),
                 debut=debut,
                 fin=self.random_date(debut.year, 1960),
@@ -1577,7 +1576,7 @@ class Command(BaseCommand):
                     self.oeuvres,
                     min(len(self.oeuvres), random.randint(200, 400))))
             if self.coin(0.3):
-                dossier.sources.set(random.sample(
+                dossier.filtre_sources.set(random.sample(
                     self.sources, min(len(self.sources), random.randint(1, 3))))
             dossiers.append((dossier, True))
 
@@ -1589,33 +1588,23 @@ class Command(BaseCommand):
         # Un dossier contenu dans un autre ne peut pas être dans une catégorie.
         # Les dossiers parents ne conservent pas de sélection propre.
         parents = [d for d, can_parent in dossiers if can_parent]
-        filter_fields = {
-            'DossierDEvenements': [
-                'lieux', 'oeuvres', 'individus', 'ensembles', 'saisons',
-                'evenements', 'sources',
-            ],
-            'DossierDOeuvres': [
-                'genres', 'lieux', 'individus', 'ensembles', 'oeuvres',
-                'sources',
-            ],
-            'DossierDeSources': [
-                'types', 'lieux', 'individus', 'oeuvres', 'ensembles',
-                'sources',
-            ],
-        }
+        filter_fields = [
+            'lieux', 'individus', 'ensembles', 'saisons', 'genres',
+            'types_de_sources', 'filtre_oeuvres', 'filtre_sources',
+            'evenements', 'oeuvres', 'sources',
+        ]
         for parent in random.sample(parents,
                                     min(len(parents), max(1, len(parents) // 3))):
-            model = type(parent)
             prefixe = ('Compléments' if self.coin() else 'Annexe')
             titre = '%s : %s' % (prefixe, parent.titre)
-            enfant = model(parent=parent, categorie=None,
-                           **self._dossier_common_kwargs(titre, used_slugs))
+            enfant = Dossier(parent=parent, categorie=None,
+                             types_de_donnees=parent.types_de_donnees,
+                             **self._dossier_common_kwargs(titre, used_slugs))
             enfant.save()
             enfant.editeurs_scientifiques.add(self.owner)
-            for field_name in filter_fields.get(model.__name__, []):
+            for field_name in filter_fields:
                 getattr(parent, field_name).clear()
-            if hasattr(parent, 'debut') or hasattr(parent, 'fin'):
-                model.objects.filter(pk=parent.pk).update(debut=None, fin=None)
+            Dossier.objects.filter(pk=parent.pk).update(debut=None, fin=None)
         self.dossiers = [d for d, _ in dossiers]
 
     def create_dossiers_de_sources(self, used_slugs):
@@ -1636,7 +1625,8 @@ class Command(BaseCommand):
             sujet = (random.choice(noms_types) if noms_types
                      else random.choice(NOMS))
             titre = random.choice(TITRES_DOSSIERS_SOURCES).format(sujet)
-            dossier = DossierDeSources(
+            dossier = Dossier(
+                types_de_donnees=[KIND_SOURCES],
                 categorie=random.choice(self.categories),
                 **self._dossier_common_kwargs(titre, used_slugs))
             dossier.save()
@@ -1647,7 +1637,7 @@ class Command(BaseCommand):
                 types = random.sample(
                     self.types_source,
                     min(len(self.types_source), random.randint(1, 2)))
-                dossier.types.set(types)
+                dossier.types_de_sources.set(types)
                 qs = Source.objects.filter(
                     owner=self.owner, type__in=[t.pk for t in types]
                 ).exclude(date__isnull=True)
@@ -1662,10 +1652,11 @@ class Command(BaseCommand):
                 # Dimension liée supplémentaire, prise parmi les entités liées
                 # aux sources déjà filtrées (type + dates).
                 extra = random.choice(
-                    ['lieux', 'individus', 'oeuvres', 'ensembles', None, None])
+                    ['lieux', 'individus', 'filtre_oeuvres', 'ensembles',
+                     None, None])
                 if extra is not None:
                     extra_model = {'lieux': Lieu, 'individus': Individu,
-                                   'oeuvres': Oeuvre,
+                                   'filtre_oeuvres': Oeuvre,
                                    'ensembles': Ensemble}[extra]
                     pool = list(extra_model.objects.filter(
                         sources__in=qs).distinct()[:50])
@@ -1686,9 +1677,7 @@ class Command(BaseCommand):
         self.stdout.write('Suppression des données d’exemple existantes…')
         # Dossiers et saisons d’abord : ils référencent (en ManyToMany)
         # événements, œuvres, sources, etc. supprimés plus bas.
-        DossierDEvenements.objects.filter(owner=u).delete()
-        DossierDOeuvres.objects.filter(owner=u).delete()
-        DossierDeSources.objects.filter(owner=u).delete()
+        Dossier.objects.filter(owner=u).delete()
         CategorieDeDossiers.objects.filter(owner=u).delete()
         Saison.objects.filter(owner=u).delete()
         # D’abord la correspondance (musicaLetters) : ses pages référencent des
@@ -1766,12 +1755,16 @@ class Command(BaseCommand):
                     owner=self.owner,
                     type_fichier=FileAnalyzer.IMAGE).count(),
                 len(self.livres),
-                DossierDEvenements.objects.filter(owner=self.owner).count()
-                + DossierDOeuvres.objects.filter(owner=self.owner).count()
-                + DossierDeSources.objects.filter(owner=self.owner).count(),
-                DossierDEvenements.objects.filter(owner=self.owner).count(),
-                DossierDOeuvres.objects.filter(owner=self.owner).count(),
-                DossierDeSources.objects.filter(owner=self.owner).count())))
+                Dossier.objects.filter(owner=self.owner).count(),
+                Dossier.objects.filter(
+                    owner=self.owner,
+                    types_de_donnees__contains=[KIND_EVENEMENTS]).count(),
+                Dossier.objects.filter(
+                    owner=self.owner,
+                    types_de_donnees__contains=[KIND_OEUVRES]).count(),
+                Dossier.objects.filter(
+                    owner=self.owner,
+                    types_de_donnees__contains=[KIND_SOURCES]).count())))
         self.stdout.write(
             'Pensez à lancer « ./manage.py update_index » pour rendre '
             'la recherche et l’autocomplétion cohérentes.')
