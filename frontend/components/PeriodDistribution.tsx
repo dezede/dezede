@@ -1,3 +1,5 @@
+"use client";
+
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
@@ -8,6 +10,12 @@ import { TPeriod } from "@/app/types";
 /**
  * Stacked horizontal bar of works grouped by their composer's birth period,
  * mirroring the Django dossier statistics "œuvres par période" progress bar.
+ *
+ * Rendered as a Client Component on purpose: MUI <Tooltip> checks
+ * `React.isValidElement` on its child, and that returns inconsistent results
+ * across the RSC/SSR/hydration boundary for a child element authored in a Server
+ * Component, which makes Tooltip add an extra <span> wrapper on only one side and
+ * so mismatch during hydration.
  */
 export default function PeriodDistribution({
   periods,

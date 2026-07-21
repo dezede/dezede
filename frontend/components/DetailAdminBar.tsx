@@ -1,3 +1,5 @@
+"use client";
+
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
@@ -18,6 +20,13 @@ import { TAdminLink } from "@/app/types";
  *
  * These targets are Django routes (same origin, outside the Next.js app), so they
  * use plain `<a>` anchors for a full navigation rather than client-side routing.
+ *
+ * Rendered as a Client Component on purpose: MUI <Tooltip> checks
+ * `React.isValidElement` on its child, and that returns inconsistent results
+ * across the RSC/SSR/hydration boundary for a child element authored in a Server
+ * Component — so Tooltip wraps the child in an extra <span> on only one side,
+ * causing a hydration mismatch. Authoring the Tooltips here keeps both passes
+ * identical.
  */
 export default function DetailAdminBar({
   owner,
