@@ -1,4 +1,10 @@
 services:
+  # Only the entrypoint differs in dev (plain HTTP). The routing itself — static
+  # assets/media straight to nginx, everything else (HTML + API) through Anubis —
+  # is shared with prod (custom.yaml) so prod behaviour is reproducible locally.
+  nginx:
+    labels:
+      - traefik.http.routers.$PROJECT-nginx.entrypoints=web
   anubis:
     environment:
       # Dev only serves plain HTTP (no TLS), so the pass cookie can't be marked
