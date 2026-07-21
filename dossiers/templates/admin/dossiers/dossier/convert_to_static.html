@@ -1,0 +1,67 @@
+{% extends "admin/base_site.html" %}
+{% load humanize i18n %}
+
+{% block bodyclass %}grp-delete-confirmation{% endblock %}
+{% block content-class %}{% endblock %}
+
+{% block breadcrumbs %}
+  <ul class="grp-horizontal-list">
+    <li><a href="{% url 'admin:index' %}">{% trans "Home" %}</a></li>
+    <li><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a></li>
+    <li><a href="{% url 'admin:dossiers_dossier_changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a></li>
+    <li><a href="{% url 'admin:dossiers_dossier_change' object.pk %}">{{ object|truncatewords:"18" }}</a></li>
+    <li>{% trans "Convertir en dossier statique" %}</li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+  <div class="g-d-c">
+    <fieldset class="module grp-module">
+      <h2>
+        {% blocktrans with titre=object %}Êtes-vous sûr de vouloir convertir
+        le dossier « {{ titre }} » en dossier statique ?{% endblocktrans %}
+      </h2>
+      <div class="grp-row">
+        <p>
+          {% blocktrans %}La sélection actuellement calculée à partir des
+          critères dynamiques sera copiée dans la sélection manuelle de chaque
+          type de données ci-dessous. Le dossier cessera ensuite d’évoluer avec
+          la base : il présentera exactement les données figées ci-dessous,
+          jusqu’à une éventuelle reconversion en dossier
+          dynamique.{% endblocktrans %}
+        </p>
+      </div>
+      {% for row in rows %}
+        <div class="form-row grp-row grp-cells-1">
+          <div class="field-box l-2c-fluid l-d-4">
+            <div class="c-1"><label>{{ row.label|capfirst }}</label></div>
+            <div class="c-2">
+              <div class="grp-readonly">
+                {% blocktrans count count=row.count with n=row.count|intcomma %}{{ n }} donnée sera figée dans la sélection manuelle.{% plural %}{{ n }} données seront figées dans la sélection manuelle.{% endblocktrans %}
+                {% if row.static_count %}
+                  {% blocktrans count count=row.static_count with n=row.static_count|intcomma %}La sélection manuelle actuelle ({{ n }} donnée) sera remplacée.{% plural %}La sélection manuelle actuelle ({{ n }} données) sera remplacée.{% endblocktrans %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </fieldset>
+    <form method="post" novalidate>{% csrf_token %}
+      <footer class="grp-module grp-submit-row grp-fixed-footer">
+        <ul>
+          <li class="grp-float-left">
+            <a href="{% url 'admin:dossiers_dossier_change' object.pk %}"
+               class="grp-button grp-cancel-link">
+              {% trans "Non, revenir au dossier" %}
+            </a>
+          </li>
+          <li>
+            <input type="submit" class="grp-button grp-default"
+                   value="{% trans 'Oui, convertir en dossier statique' %}">
+          </li>
+        </ul>
+      </footer>
+    </form>
+  </div>
+{% endblock %}
