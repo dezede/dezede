@@ -16,6 +16,7 @@ from django.db.models import (
 from django.db.models.fields.related import ForeignObjectRel
 
 from common.utils.text import capfirst
+from dossiers.models import KIND_EVENEMENTS
 from exporter.base import Exporter
 from libretto.models import *
 
@@ -33,7 +34,9 @@ class ScenariosExporter:
             scenario = string.capwords(scenario.get('scenario')).replace('-', '')
             expt = f"dossiers.export.{scenario}"
             Exporter = self.loader(expt)
-            self.exporters.append(Exporter(dossier.queryset))
+            # The scenarios are all event-based (see SCENARIOS in forms.py).
+            self.exporters.append(
+                Exporter(dossier.queryset_for(KIND_EVENEMENTS)))
 
     def loader(self, path):
         module_name, class_name = path.rsplit(".", 1)

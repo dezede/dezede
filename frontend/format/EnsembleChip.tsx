@@ -1,9 +1,10 @@
 import { TRelatedEnsemble } from "@/app/types";
 import { withParticule } from "@/app/utils";
-import Chip from "@mui/material/Chip";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SmallCaps from "./SmallCaps";
 import OurLink from "@/components/OurLink";
+import OurChip from "@/components/OurChip";
+import { ENSEMBLES_BASE } from "@/app/constants";
 
 export function getEnsembleLabel({
   nom,
@@ -18,9 +19,9 @@ export function EnsembleLabel(ensemble: TRelatedEnsemble) {
 
 export default function EnsembleChip(ensemble: TRelatedEnsemble) {
   return (
-    <Chip
+    <OurChip
       component={OurLink}
-      href={`/ensembles/id/${ensemble.id}/`}
+      href={`${ENSEMBLES_BASE}/id/${ensemble.id}/`}
       label={<EnsembleLabel {...ensemble} />}
       clickable
       size="small"

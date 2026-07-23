@@ -21,7 +21,9 @@
 {% addstatic js %}
   <script>
     var map = L.map('map', {
-      layers: [L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')],
+      // Explicit https: a protocol-relative URL resolves to http on a
+      // plain-http dev host, which the CSP img-src (https-only) blocks.
+      layers: [L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')],
       minZoom: 2,
       maxZoom: 16,
       zoomControl: false,

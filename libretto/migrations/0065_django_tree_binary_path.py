@@ -41,20 +41,30 @@ class Migration(migrations.Migration):
         # 2. Drop the old numeric[] expression indexes. They are built on array
         #    operations that no longer make sense on a bytea column, so they must
         #    go before the type change.
-        migrations.RemoveIndex(model_name='lieu', name='lieu_path_parent_index'),
-        migrations.RemoveIndex(model_name='lieu', name='lieu_path_level_index'),
-        migrations.RemoveIndex(model_name='lieu', name='lieu_path_slice_1_index'),
-        migrations.RemoveIndex(model_name='lieu', name='lieu_path_slice_2_index'),
-        migrations.RemoveIndex(model_name='lieu', name='lieu_path_slice_3_index'),
-        migrations.RemoveIndex(model_name='lieu', name='lieu_path_slice_4_index'),
-        migrations.RemoveIndex(model_name='lieu', name='lieu_path_slice_5_index'),
-        migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_parent_index'),
-        migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_level_index'),
-        migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_slice_1_index'),
-        migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_slice_2_index'),
-        migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_slice_3_index'),
-        migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_slice_4_index'),
-        migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_slice_5_index'),
+        # State-only: on a freshly created database they were never created
+        # (their creation in the squashed migration is state-only too, since
+        # they cannot exist on the bytea column django-tree 1.0 creates);
+        # already-migrated databases dropped them for real before this file
+        # was edited.
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.RemoveIndex(model_name='lieu', name='lieu_path_parent_index'),
+                migrations.RemoveIndex(model_name='lieu', name='lieu_path_level_index'),
+                migrations.RemoveIndex(model_name='lieu', name='lieu_path_slice_1_index'),
+                migrations.RemoveIndex(model_name='lieu', name='lieu_path_slice_2_index'),
+                migrations.RemoveIndex(model_name='lieu', name='lieu_path_slice_3_index'),
+                migrations.RemoveIndex(model_name='lieu', name='lieu_path_slice_4_index'),
+                migrations.RemoveIndex(model_name='lieu', name='lieu_path_slice_5_index'),
+                migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_parent_index'),
+                migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_level_index'),
+                migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_slice_1_index'),
+                migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_slice_2_index'),
+                migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_slice_3_index'),
+                migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_slice_4_index'),
+                migrations.RemoveIndex(model_name='oeuvre', name='oeuvre_path_slice_5_index'),
+            ],
+            database_operations=[],
+        ),
 
         # 3. Convert the columns from numeric[] to bytea. There is no meaningful
         #    cast, so every path is dropped (set to NULL) and rebuilt at step 5.

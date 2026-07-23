@@ -4,13 +4,15 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
-import SpaceTime from "@/format/SpaceTime";
 import { EPageType, TFindPageData } from "../app/types";
 import OurLink from "./OurLink";
 import UserLink, { UserLabel } from "./UserLink";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useSyncExternalStore } from "react";
+import { useTranslations } from "next-intl";
 import { SITE_NAME } from "@/app/constants";
 import DateLabel from "@/format/DateLabel";
+
+const subscribeNoop = () => () => {};
 
 export default function Citation({
   findPageData: { title, type, url, firstPublishedAt, owner, ancestors },
@@ -20,11 +22,13 @@ export default function Citation({
   showParent?: boolean;
   showPublicationDate?: boolean;
 }) {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const t = useTranslations("letter");
+  const tSource = useTranslations("source");
+  const isClient = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
 
   const parentLabel = useMemo(() => {
     if (!showParent || ancestors.length === 0) {
@@ -33,45 +37,43 @@ export default function Citation({
     const parent = ancestors[ancestors.length - 1];
     return (
       <>
-        <em>{ancestors[ancestors.length - 1].title}</em>, éd.{" "}
+        <em>{ancestors[ancestors.length - 1].title}</em>, {tSource("editor")}{" "}
         <UserLabel user={parent.owner} />,{" "}
       </>
     );
-  }, [showParent, ancestors]);
+  }, [showParent, ancestors, tSource]);
 
   const typeLabel = {
-    [EPageType.LETTER_INDEX]: "cette page",
-    [EPageType.LETTER_CORPUS]: "ce corpus",
-    [EPageType.LETTER]: "cette lettre",
+    [EPageType.LETTER_INDEX]: t("citeThisPage"),
+    [EPageType.LETTER_CORPUS]: t("citeThisCorpus"),
+    [EPageType.LETTER]: t("citeThisLetter"),
   }[type];
 
   const absoluteUrl = `${isClient ? document.location.origin : ""}${url}`;
 
-  const publicationDate = useMemo(() => {
-    if (showPublicationDate) {
-      return <>, <DateLabel dateString={firstPublishedAt} /></>;
-    }
-    return null;
-    }, [showPublicationDate],
-  );
+  const publicationDate = showPublicationDate ? (
+    <>, <DateLabel dateString={firstPublishedAt} /></>
+  ) : null;
 
   return (
     <div>
       <Accordion>
         <AccordionSummary>
-          <Typography variant="overline">Pour citer {typeLabel}</Typography>
+          <Typography variant="overline">
+            {t("citePrefix", { target: typeLabel })}
+          </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <>
             <UserLink user={owner} />
-            {" (éd.), "}
+            {` ${tSource("editorParen")}, `}
           </>
           {`« ${title} », `}
           {parentLabel}
           <em>{SITE_NAME}</em>{publicationDate}{" "}
-          [en ligne]{" "}
-          <OurLink href={absoluteUrl}>{"dezede.org"}{decodeURI(url)}</OurLink> (consulté le{" "}
-          <DateLabel dateString={new Date().toISOString()} />)
+          {tSource("online")}{" "}
+          <OurLink href={absoluteUrl}>{"dezede.org"}{decodeURI(url)}</OurLink> ({tSource("consultedOn")}{" "}
+          <DateLabel dateString={new Date().toISOString().slice(0, 10)} />)
         </AccordionDetails>
       </Accordion>
     </div>

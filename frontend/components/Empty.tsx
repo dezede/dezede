@@ -11,14 +11,16 @@ export default function Empty({
 }) {
   return (
     <Box
-      py={10}
-      textAlign="center"
-      color="text.disabled"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      bgcolor="#00000014"
-      sx={sx}
+      sx={{
+        py: 10,
+        textAlign: "center",
+        color: "text.disabled",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        bgcolor: "#00000014",
+        ...sx,
+      }}
     >
       {children}
     </Box>

@@ -5,8 +5,8 @@ export default function RichText({ value }: { value: string }) {
     <Box>
       <Box
         dangerouslySetInnerHTML={{ __html: value }}
-        textAlign="justify"
         sx={{
+          textAlign: "justify",
           whiteSpace: "normal",
           ".responsive-object": {
             position: "relative",

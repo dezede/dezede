@@ -1,0 +1,104 @@
+{% extends 'libretto/base.tex' %}
+{% load i18n extras %}
+
+
+{% block document %}
+  \title{ {{ object.titre|html_to_latex }} }
+  \author{ {{ object.editeurs_scientifiques.html|html_to_latex }} }
+  \date{{% blocktrans with date=object.date_publication|date_html:True|html_to_latex %}
+      Publié dans \textit{Dezède}
+      le {{ date }} \\
+      Exporté le \today
+  {% endblocktrans %}}
+
+  \maketitle
+
+  \setlength{\parskip}{0.4\baselineskip}
+
+  \onecolumn
+
+  \addcontentsline{toc}{part}{ {% trans 'Présentation' %} }
+
+  {{ object.presentation|html_to_latex }}
+
+  {% if object.contexte %}
+    \section*{% templatetag openbrace %}{% trans 'Contexte historique' %}}
+    \addcontentsline{toc}{section}{ {% trans 'Contexte historique' %} }
+
+    {{ object.contexte|html_to_latex }}
+  {% endif %}
+
+  {% if object.sources_et_protocole %}
+    \section*{% templatetag openbrace %}{% trans 'Sources et protocole' %}}
+    \addcontentsline{toc}{section}{ {% trans 'Sources et protocole' %} }
+
+    {{ object.sources_et_protocole|html_to_latex }}
+  {% endif %}
+
+
+  {% if object.bibliographie %}
+    \section*{% templatetag openbrace %}{% trans 'Bibliographie indicative' %}}
+    \addcontentsline{toc}{section}{ {% trans 'Bibliographie indicative' %} }
+
+    {{ object.bibliographie|html_to_latex }}
+  {% endif %}
+
+  \begin{center}
+    \rule{0.25\linewidth}{0.5pt}
+  \end{center}
+
+  \fontsize{10pt}{12pt}\selectfont
+
+  {% blocktrans with editeurs=object.editeurs_scientifiques.html|html_to_latex contributeurs=object.contributors.html|html_to_latex %}
+    Dossier dirigé par {{ editeurs }},
+    avec la contribution de {{ contributeurs }}.
+  {% endblocktrans %}
+
+  {% blocktrans with date=object.date_publication|date_html:True|html_to_latex permalien=object.permalien %}
+    Publié dans \textit{Dezède}
+    le {{ date }} à l’adresse
+    {{ SITE }}{{ permalien }}
+  {% endblocktrans %}
+
+  \twocolumn
+  \setlength{\parskip}{0pt}
+
+  {% for tab in object.kind_tabs %}
+    {% if tab.kind == 'evenements' %}
+      \addcontentsline{toc}{part}{ {% trans 'Événements' %} }
+
+      {% with evenements=tab.queryset.prefetch_all %}
+        {% for evenement in evenements %}
+          {% with event_counter=forloop.counter %}
+            {% include 'libretto/evenement_item.tex' %}
+          {% endwith %}
+        {% endfor %}
+      {% endwith %}
+    {% elif tab.kind == 'oeuvres' %}
+      \addcontentsline{toc}{part}{ {% trans 'Œuvres' %} }
+
+      {% for oeuvre in tab.queryset %}
+        {% include 'dossiers/oeuvre_item.tex' %}
+      {% endfor %}
+    {% elif tab.kind == 'sources' %}
+      \addcontentsline{toc}{part}{ {% trans 'Sources' %} }
+
+      {% with sources=tab.queryset.order_by_date %}
+        {% for type, type_sources in sources.group_by_type %}
+          {% if type_sources|length > 1 %}{% with type_label=type.pluriel|capfirst %}
+            \section*{% templatetag openbrace %}{{ type_label }}}
+            \addcontentsline{toc}{section}{ {{ type_label }} }
+          {% endwith %}{% else %}{% with type_label=type|capfirst %}
+            \section*{% templatetag openbrace %}{{ type_label }}}
+            \addcontentsline{toc}{section}{ {{ type_label }} }
+          {% endwith %}{% endif %}
+
+          {% for source in type_sources %}
+            {% include 'dossiers/source_item.tex' %}
+          {% endfor %}
+        {% endfor %}
+      {% endwith %}
+    {% endif %}
+  {% endfor %}
+
+{% endblock %}

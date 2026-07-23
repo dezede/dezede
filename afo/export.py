@@ -1,5 +1,5 @@
 from datetime import timedelta
-from dossiers.models import DossierDEvenements
+from dossiers.models import Dossier
 from exporter.base import Exporter
 from exporter.registry import exporter_registry
 from libretto.export import CommonModelExporter
@@ -63,7 +63,7 @@ class AFOEvenementExporter(Exporter):
 
     @staticmethod
     def get_ensemble(obj):
-        dossier_afo = DossierDEvenements.objects.get(slug='afo')
+        dossier_afo = Dossier.objects.get(slug='afo')
         ensembles_afo = dossier_afo.ensembles.all()
         ensembles = Evenement.objects.filter(pk=obj.pk).ensembles()
         ensembles = ensembles.filter(pk__in=ensembles_afo)

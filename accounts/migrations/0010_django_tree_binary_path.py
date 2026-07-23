@@ -24,13 +24,23 @@ class Migration(migrations.Migration):
         tree.operations.DeleteTreeTrigger(model_lookup='hierarchicuser'),
 
         # 2. Drop the old numeric[] expression indexes before the type change.
-        migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_parent_index'),
-        migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_level_index'),
-        migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_slice_1_index'),
-        migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_slice_2_index'),
-        migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_slice_3_index'),
-        migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_slice_4_index'),
-        migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_slice_5_index'),
+        # State-only: on a freshly created database they were never created
+        # (their creation in the squashed migration is state-only too, since
+        # they cannot exist on the bytea column django-tree 1.0 creates);
+        # already-migrated databases dropped them for real before this file
+        # was edited.
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_parent_index'),
+                migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_level_index'),
+                migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_slice_1_index'),
+                migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_slice_2_index'),
+                migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_slice_3_index'),
+                migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_slice_4_index'),
+                migrations.RemoveIndex(model_name='hierarchicuser', name='user_path_slice_5_index'),
+            ],
+            database_operations=[],
+        ),
 
         # 3. Convert the column to bytea (paths dropped, rebuilt at step 5).
         migrations.RunSQL(

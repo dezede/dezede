@@ -72,6 +72,15 @@ class BaseEvenementListView(PublishedListView):
                      'programme__distribution__ensemble__in',
                      'programme__oeuvre__auteurs__ensemble__in'),
         'source': ('sources__in', 'sources__parent__in'),
+        # Not exposed by the HTML filter form, but used by the public API so
+        # the role/instrument and profession detail pages can embed the list of
+        # events that involve them (the HTML view never sends these keys, so its
+        # behaviour is unchanged).
+        'partie': ('distribution__partie__in',
+                   'programme__distribution__partie__in'),
+        'profession': ('distribution__profession__in',
+                       'programme__distribution__profession__in',
+                       'programme__oeuvre__auteurs__profession__in'),
     }
 
     @classmethod
@@ -121,27 +130,11 @@ class BaseEvenementListView(PublishedListView):
         if not self.valid_form:
             return qs
 
-        search_query = data.get('q')
-        if search_query:
-            s = get_search_backend()
-            qs = s.search(search_query, qs, order_by_relevance=False).get_queryset()
-
-        filters = self.get_filters(data)
-        qs = qs.filter(filters).distinct()
-        try:
-            start, end = int(data.get('dates_0')), int(data.get('dates_1'))
-            if data.get('par_saison', 'False') == 'True':
-                qs &= Saison.objects.between_years(start, end).evenements()
-            else:
-                qs = qs.filter(debut_date__range=(f'{start}-1-1',
-                                                  f'{end}-12-31'))
-        except (TypeError, ValueError):
-            pass
-
-        if data.get('order_by') == 'reversed':
-            qs = qs.reverse()
-
-        return qs
+        # The actual filtering (q, lieu/oeuvre/individu/ensemble, dates,
+        # par_saison, order_by) lives in a shared helper so the REST API and
+        # this view cannot drift apart.
+        from .api.rest.filters import filter_evenements_queryset
+        return filter_evenements_queryset(qs, data)
 
     def get_export_url(self):
         return reverse('evenements_export')
@@ -277,16 +270,15 @@ class CommonViewSet(ModelViewSet):
         super(CommonViewSet, self).__init__()
 
 
-CENTURIES = tuple(range(11, 22))
+# ``CENTURIES`` / ``CENTURIES_DATE_RANGES`` are shared with the public REST API
+# (see ``libretto.api.rest.authority_tables``) so the HTML tables and the JSON
+# grids filter dates identically.
+from .api.rest.authority_tables import CENTURIES, CENTURIES_DATE_RANGES
 
 CENTURIES_VERBOSES = [
     (str(i), to_roman(i) + str(_('<sup>e</sup> siècle')))
     for i in CENTURIES
 ][::-1]
-
-CENTURIES_DATE_RANGES = {
-    f'{i}': (f'{i-1}00-1-1', f'{i-1}99-12-31') for i in CENTURIES
-}
 
 
 class SourceTableView(PublishedMixin, CommonTableView):

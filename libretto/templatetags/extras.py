@@ -45,6 +45,17 @@ def escape_latex(text):
     return escaped_chars_re.sub(r'\\\1', text)
 
 
+# En français, babel active « : » pour y insérer automatiquement une espace
+# avant (typographie française). Ce comportement n'est pas souhaité pour les
+# heures au format numérique (« 11:15 ») : on désactive donc l'activation en
+# passant par \string, qui rend le caractère sans déclencher babel.
+time_colon_re = re.compile(r'(?<=\d):(?=\d{2}\b)')
+
+
+def protect_time_colons(text):
+    return time_colon_re.sub(r'\\string:', text)
+
+
 html_latex_bindings = (
     (dict(name='h1'), r'\part*{', r'}'),
     (dict(name='h2'), r'\chapter*{', r'}'),
@@ -82,7 +93,7 @@ def html_to_latex(html):
     >>> print(html_to_latex('Vive les <!-- cons -->poilus !'))
     Vive les poilus !
     """
-    html = escape_latex(stripchars(fix_strange_characters(html)))
+    html = protect_time_colons(escape_latex(stripchars(fix_strange_characters(html))))
     soup = BeautifulSoup(html, 'html.parser')
     for html_selectors, latex_open_tag, latex_close_tag in html_latex_bindings:
         for tag in soup.find_all(**html_selectors):
@@ -113,7 +124,10 @@ def abbreviate(string, min_len=1, tags=True, enabled=True):
     return abbreviate_func(string, min_len=min_len, tags=tags, enabled=enabled)
 
 
-def get_data(evenements_qs, min_places, bbox):
+def get_data(evenements_qs, min_places, bbox, lieu_field='debut_lieu'):
+    # Despite the historical naming, this aggregates any queryset carrying a
+    # place FK named ``lieu_field``: events by opening place (the default) or
+    # works by world-premiere place (``creation_lieu``).
     evenements_qs = evenements_qs.order_by()
 
     cursor = connection.cursor()
@@ -126,7 +140,7 @@ def get_data(evenements_qs, min_places, bbox):
         valid_ancestors.values('id', 'path'))
 
     lieux_query, params = get_raw_query(
-        evenements_qs.values('debut_lieu__path'))
+        evenements_qs.values(f'{lieu_field}__path'))
 
     cursor.execute(f"""
     SELECT level
@@ -160,7 +174,7 @@ def get_data(evenements_qs, min_places, bbox):
             return ()
 
     lieux_query, params = get_raw_query(
-        evenements_qs.values('pk', 'debut_lieu_id'))
+        evenements_qs.values('pk', f'{lieu_field}_id'))
 
     ancestors = valid_ancestors.filter(path__level=level)
     ancestors_query, ancestors_params = get_raw_query(
@@ -170,7 +184,7 @@ def get_data(evenements_qs, min_places, bbox):
     cursor.execute(f"""
     SELECT ancetre.id, ancetre.nom, ancetre.geometry, COUNT(evenement.id) AS n
     FROM ({lieux_query}) AS evenement
-    INNER JOIN libretto_lieu AS lieu ON lieu.id = evenement.debut_lieu_id
+    INNER JOIN libretto_lieu AS lieu ON lieu.id = evenement.{lieu_field}_id
     INNER JOIN ({ancestors_query}) AS ancetre
         ON ancetre.path = substr(lieu.path, 1, octet_length(ancetre.path))
     GROUP BY ancetre.id, ancetre.nom, ancetre.geometry
@@ -180,11 +194,11 @@ def get_data(evenements_qs, min_places, bbox):
 
 
 @register.simple_tag
-def get_map_data(evenement_qs, min_places, bbox):
+def get_map_data(evenement_qs, min_places, bbox, lieu_field='debut_lieu'):
     try:
         return [(pk, nom, GEOSGeometry(geometry), n)
                 for pk, nom, geometry, n in get_data(evenement_qs, min_places,
-                                                     bbox)]
+                                                     bbox, lieu_field)]
     except EmptyResultSet:
         return ()
 

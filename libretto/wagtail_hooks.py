@@ -1,5 +1,6 @@
 from typing import List
 from django.contrib.admin.utils import quote
+from django.db import ProgrammingError
 from django.forms import NumberInput
 from django.http import Http404
 from django.templatetags.static import static
@@ -20,6 +21,7 @@ from wagtail.snippets.views.snippets import (
     SnippetViewSetGroup,
 )
 from wagtail_linksnippet.richtext_utils import add_snippet_link_button
+from warnings import warn
 
 from common.utils.text import capfirst
 from dezede.views import CommonIndexView
@@ -231,7 +233,14 @@ class CommonViewSet(SnippetViewSet):
     @property
     def chooser_viewset(self):
         viewset = super().chooser_viewset
-        add_snippet_link_button(viewset, feature_name=f'{self.model._meta.model_name}-link')
+        try:
+            add_snippet_link_button(viewset, feature_name=f'{self.model._meta.model_name}-link')
+        except ProgrammingError:
+            warn(
+                f'Could not initialize snippet link button for {self.model}, '
+                'likely because the database is being created. '
+                'Restart the server to register this model properly in Wagtail.'
+            )
         return viewset
 
 

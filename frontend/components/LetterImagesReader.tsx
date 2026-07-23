@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { TLetterImage } from "@/app/types";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -16,28 +17,28 @@ export default function LetterImagesReader({
 }: {
   letterImages: TLetterImage[];
 }) {
-  const [page, setPage] = useState(0);
-  const previous = useMemo(
-    () => (page >= 1 ? letterImages[page - 1] : null),
-    [letterImages, page],
-  );
-  const next = useMemo(
-    () => (page <= letterImages.length - 2 ? letterImages[page + 1] : null),
-    [letterImages, page],
-  );
+  const t = useTranslations("letter");
+  const [rawPage, setPage] = useState(0);
   if (letterImages.length === 0) {
-    return <Empty sx={{ height: "50vh" }}>Image manquante</Empty>;
+    return <Empty sx={{ height: "50vh" }}>{t("missingImage")}</Empty>;
   }
+  // The page state survives client-side navigation between letters; clamp it
+  // so a letter with fewer images than the previous one cannot crash.
+  const page = Math.min(rawPage, letterImages.length - 1);
+  const previous = page >= 1 ? letterImages[page - 1] : null;
+  const next = page <= letterImages.length - 2 ? letterImages[page + 1] : null;
   const { id, name, image } = letterImages[page];
   return (
-    <Grid container direction="column" wrap="nowrap">
+    <Grid container wrap="nowrap" sx={{ flexDirection: "column" }}>
       <Grid>
         <Grid
           container
-          justifyContent="space-between"
-          alignItems="center"
           wrap="nowrap"
-          width="100%"
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
         >
           <Grid size={4}>
             <Button
@@ -50,9 +51,7 @@ export default function LetterImagesReader({
           </Grid>
           <Grid size={4}>
             <Typography
-              textAlign="center"
-              display="block"
-              sx={{ lineHeight: "36px" }}
+              sx={{ textAlign: "center", display: "block", lineHeight: "36px" }}
             >
               {name}
             </Typography>

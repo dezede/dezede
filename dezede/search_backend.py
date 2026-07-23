@@ -221,6 +221,19 @@ class FixedPostgresIndex(PostgresIndex):
         super().add_items(model, objs)
         self.update_row_boosts(model, objs)
 
+    def delete_item(self, item) -> None:
+        # ``super().delete_item`` raw-deletes the ``IndexEntry`` rows, which
+        # bypasses Django’s collector and would orphan our ``IndexEntryExtension``
+        # rows (and break the deferred FK at COMMIT). Remove them via the ORM first.
+        IndexEntryExtension.objects.filter(index_entry_ptr__in=item.index_entries.all()).delete()
+        super().delete_item(item)
+
+    def reset(self) -> None:
+        # ``super().reset`` raw-deletes every ``IndexEntry``, so clear all
+        # extensions first for the same reason as ``delete_item``.
+        IndexEntryExtension.objects.all().delete()
+        super().reset()
+
 
 class FixedPostgresSearchBackend(PostgresSearchBackend):
     query_compiler_class = FixedPostgresSearchQueryCompiler

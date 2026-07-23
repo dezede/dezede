@@ -43,13 +43,12 @@ export default function ImagesRowBlock({
   block: TImagesRowBlock;
 }) {
   return (
-    <Grid container alignItems="center" spacing={4}>
+    <Grid container spacing={4} sx={{ alignItems: "center" }}>
       {value.images.map(({ image, link_url, width }, index) => (
         <Grid
           key={`${index}:${image.url}`}
           size={WIDTHS[width]}
-          display="flex"
-          justifyContent="center"
+          sx={{ display: "flex", justifyContent: "center" }}
         >
           <LinkCard linkUrl={link_url}>
             <ImageRendition

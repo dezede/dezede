@@ -4,7 +4,6 @@ from decimal import Decimal
 import dezede.models
 from django.conf import settings
 import django.contrib.postgres.indexes
-from django.contrib.postgres.operations import UnaccentExtension
 import django.contrib.postgres.search
 from django.db import migrations, models
 import django.db.models.deletion
@@ -27,37 +26,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        UnaccentExtension(),
-        migrations.RunSQL(
-            """
-            -- Drops them in case they were already created by the `dezede` application.
-            DROP TEXT SEARCH CONFIGURATION IF EXISTS simple_unaccent;
-            DROP TEXT SEARCH CONFIGURATION IF EXISTS french_unaccent_including_stopwords;
-            DROP TEXT SEARCH DICTIONARY IF EXISTS french_stem_including_stopwords;
-
-            CREATE TEXT SEARCH DICTIONARY french_stem_including_stopwords (
-                TEMPLATE = snowball,
-                Language = french
-            );
-            CREATE TEXT SEARCH CONFIGURATION french_unaccent_including_stopwords (COPY = french);
-            ALTER TEXT SEARCH CONFIGURATION french_unaccent_including_stopwords
-                ALTER MAPPING FOR hword, hword_part, word
-                WITH unaccent, french_stem_including_stopwords;
-            ALTER TEXT SEARCH CONFIGURATION french_unaccent_including_stopwords
-                ALTER MAPPING FOR asciihword, asciiword, hword_asciipart
-                WITH french_stem_including_stopwords;
-
-            CREATE TEXT SEARCH CONFIGURATION simple_unaccent (COPY = simple);
-            ALTER TEXT SEARCH CONFIGURATION simple_unaccent
-                ALTER MAPPING FOR hword, hword_part, word
-                WITH unaccent, simple;
-            """,
-            """
-            DROP TEXT SEARCH CONFIGURATION simple_unaccent;
-            DROP TEXT SEARCH CONFIGURATION french_unaccent_including_stopwords;
-            DROP TEXT SEARCH DICTIONARY french_stem_including_stopwords;
-            """,
-        ),
         migrations.CreateModel(
             name='Diapositive',
             fields=[

@@ -18,7 +18,8 @@ node_modules/
 /tmp/
 /venv/
 /.venv/
-.env.secrets
+.env.secrets*
+!.env.secrets*.example
 
 # typescript
 *.tsbuildinfo

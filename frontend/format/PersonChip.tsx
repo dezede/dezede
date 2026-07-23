@@ -1,13 +1,17 @@
-import React from "react";
+"use client";
+
+import { useTranslations } from "next-intl";
 import Tooltip from "@mui/material/Tooltip";
-import Chip from "@mui/material/Chip";
 import BoyOutlinedIcon from "@mui/icons-material/BoyOutlined";
+import OurChip from "@/components/OurChip";
 import { abbreviate, withParticule } from "@/app/utils";
-import { EPersonDesignation, EPersonTitre, TRelatedPerson } from "@/app/types";
+import { EPersonDesignation, TRelatedPerson } from "@/app/types";
 import SmallCaps from "./SmallCaps";
 import OurLink from "@/components/OurLink";
 import SafeText from "./SafeText";
+import { PERSONS_BASE } from "@/app/constants";
 import Box, { type BoxProps } from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 function getSmallCapsLabel({
   designation,
@@ -31,11 +35,24 @@ function getSmallCapsLabel({
   }
 }
 
-function getPseudonymeSuffix({ titre, pseudonyme }: TRelatedPerson) {
-  return `${titre === EPersonTitre.MAN ? "dit" : "dite"}\u00A0${pseudonyme}`;
+// A `common`-scoped translator, used to localise the pseudonyme prefix
+// ("dit"/"dite" in French, "also known as" in English \u2014 see the `knownAs` key).
+export type TKnownAsTranslator = (
+  key: string,
+  values?: Record<string, string | number>,
+) => string;
+
+function getPseudonymeSuffix(
+  { titre, pseudonyme }: TRelatedPerson,
+  t: TKnownAsTranslator,
+) {
+  return `${t("knownAs", { titre })}\u00A0${pseudonyme}`;
 }
 
-export function getPersonLabel(person: TRelatedPerson): string {
+export function getPersonLabel(
+  person: TRelatedPerson,
+  t: TKnownAsTranslator,
+): string {
   const { prenoms, titre_display, pseudonyme } = person;
   let label = getSmallCapsLabel(person);
   switch (person.designation) {
@@ -48,17 +65,67 @@ export function getPersonLabel(person: TRelatedPerson): string {
         label = `${label} (${prenoms})`;
       }
       if (pseudonyme) {
-        label = `${label} ${getPseudonymeSuffix(person)}`;
+        label = `${label} ${getPseudonymeSuffix(person, t)}`;
       }
-    default:
-      return label;
+      break;
   }
+  return label;
+}
+
+// Mirrors Django's `Individu.nom_complet()` — i.e. `html(lon=True,
+// designation='S')`: the long, standard form used as the detail page heading.
+// First names come *before* the surname with no parentheses, `prenoms_complets`
+// is preferred over `prenoms`, the title prefix only shows when there are no
+// first names, and the person's own `designation` is ignored (always standard).
+export function getPersonFullName(
+  person: TRelatedPerson,
+  t: TKnownAsTranslator,
+): string {
+  const surname = withParticule(person.particule_nom, person.nom);
+  const prenoms = person.prenoms_complets || person.prenoms;
+  let label = surname;
+  if (prenoms) {
+    label = `${prenoms} ${surname}`;
+  } else if (surname && person.titre_display) {
+    label = `${person.titre_display} ${surname}`;
+  }
+  if (person.pseudonyme) {
+    label = `${label} ${getPseudonymeSuffix(person, t)}`;
+  }
+  return label;
+}
+
+// JSX counterpart of `getPersonFullName`, rendering the surname in small caps
+// (like Django's `sc`). Used for the individu detail page heading.
+export function PersonFullName({
+  person,
+  ...boxProps
+}: { person: TRelatedPerson } & BoxProps) {
+  const t = useTranslations("common");
+  const surname = withParticule(person.particule_nom, person.nom);
+  const prenoms = person.prenoms_complets || person.prenoms;
+  const { titre_display, pseudonyme } = person;
+  return (
+    <Box component="span" {...boxProps}>
+      {prenoms
+        ? `${prenoms} `
+        : surname && titre_display
+          ? `${titre_display} `
+          : null}
+      <SmallCaps>{surname}</SmallCaps>
+      {pseudonyme ? (
+        <SafeText value={` ${getPseudonymeSuffix(person, t)}`} />
+      ) : null}
+    </Box>
+  );
 }
 
 export function PersonLabel({
   person,
+  abbreviated = true,
   ...boxProps
-}: { person: TRelatedPerson } & BoxProps) {
+}: { person: TRelatedPerson; abbreviated?: boolean } & BoxProps) {
+  const t = useTranslations("common");
   const smallCapsLabel = <SmallCaps>{getSmallCapsLabel(person)}</SmallCaps>;
   switch (person.designation) {
     case EPersonDesignation.STANDARD:
@@ -66,19 +133,11 @@ export function PersonLabel({
       const { prenoms, titre_display, pseudonyme } = person;
       return (
         <Box {...boxProps}>
-          {prenoms ? null : `${titre_display} `}
+          {!prenoms && titre_display ? `${titre_display} ` : null}
           {smallCapsLabel}
-          {prenoms ? (
-            <>
-              {" ("}
-              <Tooltip title={prenoms} placement="top" arrow disableInteractive>
-                <span>{abbreviate(prenoms)}</span>
-              </Tooltip>
-              {")"}
-            </>
-          ) : null}
+          {prenoms ? ` (${abbreviated ? abbreviate(prenoms) : prenoms})` : null}
           <SafeText
-            value={pseudonyme ? ` ${getPseudonymeSuffix(person)}` : ""}
+            value={pseudonyme ? ` ${getPseudonymeSuffix(person, t)}` : ""}
           />
         </Box>
       );
@@ -87,15 +146,89 @@ export function PersonLabel({
   }
 }
 
+// "1810–1849" from the free-text approximations ("vers 1810") when set — the
+// plain date columns can hold a merely plausible date used for sorting, so
+// the approximation (when the user entered one) is the more trustworthy
+// value to display — falling back to the plain date's year otherwise. Spaced
+// around the dash when one side is an approximation.
+function getLifeDates({
+  naissance_date,
+  naissance_date_approx,
+  deces_date,
+  deces_date_approx,
+}: TRelatedPerson): string {
+  const birth = naissance_date_approx || naissance_date?.slice(0, 4) || "";
+  const death = deces_date_approx || deces_date?.slice(0, 4) || "";
+  if (!birth && !death) {
+    return "";
+  }
+  const spaced = Boolean(naissance_date_approx) || Boolean(deces_date_approx);
+  return `${birth}${spaced ? " – " : "–"}${death}`;
+}
+
+/**
+ * The person's detail shown on chip hover — full unabbreviated name (in the
+ * long, standard order of {@link PersonFullName}), birth name, pseudonyme and
+ * life dates — with surnames in small caps, like the rest of the site.
+ */
+function PersonTooltipBody(person: TRelatedPerson) {
+  const t = useTranslations("common");
+  const { titre_display, pseudonyme } = person;
+  const surname = withParticule(person.particule_nom, person.nom);
+  const prenoms = person.prenoms_complets || person.prenoms;
+  const birthName =
+    person.nom_naissance && person.nom_naissance !== person.nom
+      ? withParticule(person.particule_nom_naissance, person.nom_naissance)
+      : "";
+  const lifeDates = getLifeDates(person);
+  return (
+    <Box>
+      <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+        {prenoms
+          ? `${prenoms} `
+          : surname && titre_display
+            ? `${titre_display} `
+            : null}
+        <SmallCaps>{surname}</SmallCaps>
+        {birthName ? (
+          <>
+            {` ${t("bornAs", { titre: person.titre })} `}
+            <SmallCaps>{birthName}</SmallCaps>
+          </>
+        ) : null}
+        {pseudonyme ? (
+          <SafeText value={` ${getPseudonymeSuffix(person, t)}`} />
+        ) : null}
+      </Typography>
+      {lifeDates ? (
+        <Typography
+          variant="caption"
+          color="inherit"
+          sx={{ display: "block" }}
+        >
+          <SafeText value={lifeDates} />
+        </Typography>
+      ) : null}
+    </Box>
+  );
+}
+
 export default function PersonChip(person: TRelatedPerson) {
   return (
-    <Chip
-      component={OurLink}
-      href={`/individus/id/${person.id}/`}
-      label={<PersonLabel person={person} />}
-      clickable
-      size="small"
-      icon={<BoyOutlinedIcon />}
-    />
+    <Tooltip
+      title={<PersonTooltipBody {...person} />}
+      placement="top"
+      arrow
+      disableInteractive
+    >
+      <OurChip
+        component={OurLink}
+        href={`${PERSONS_BASE}/id/${person.id}/`}
+        label={<PersonLabel person={person} />}
+        clickable
+        size="small"
+        icon={<BoyOutlinedIcon />}
+      />
+    </Tooltip>
   );
 }

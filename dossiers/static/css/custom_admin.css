@@ -1,3 +1,19 @@
+/* « Types de données » : les trois cases à cocher sur une même ligne. */
+.grp-row.types_de_donnees #id_types_de_donnees > div {
+  display: inline-block;
+  margin-right: 25px;
+}
+
+.grp-row.types_de_donnees #id_types_de_donnees label {
+  margin: 0;
+}
+
+/* Grappelli force « margin: -6px 0 » sur les cases à cocher ; on garde son
+   alignement vertical mais on aère l’espace entre la case et son libellé. */
+.grp-row.types_de_donnees #id_types_de_donnees input[type="checkbox"] {
+  margin: -6px 4px -6px 0 !important;
+}
+
 input[type="text"],
 input[type="password"],
 .vDateField,

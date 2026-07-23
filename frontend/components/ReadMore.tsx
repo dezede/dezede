@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { SxProps } from "@mui/system";
 import { Theme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
@@ -18,6 +19,7 @@ export default function ReadMore({
   sx?: SxProps<Theme>;
   children: React.ReactNode;
 }) {
+  const t = useTranslations("common");
   const [collapseRequired, setCollapseRequired] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -80,7 +82,7 @@ export default function ReadMore({
           endIcon={<ExpandMoreIcon />}
           sx={{ borderRadius: 4 }}
         >
-          Lire plus
+          {t("readMore")}
         </Button>
       </Collapse>
     </Collapse>
