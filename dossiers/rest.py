@@ -137,8 +137,8 @@ def fast_counts(dossier, static_counts, criteria=None):
     return counts
 
 
-# The dossier criteria fields batched by ``batch_criteria``, with the column
-# they map to in their through table.
+# The dossier criteria fields batched by ``batch_criteria``, with the name of
+# the field pointing at the target on their through model.
 CRITERIA_M2M = (
     ('lieux', 'lieux', 'lieu_id'),
     ('oeuvres', 'filtre_oeuvres', 'oeuvre_id'),
@@ -146,8 +146,8 @@ CRITERIA_M2M = (
     ('ensembles', 'ensembles', 'ensemble_id'),
     ('sources', 'filtre_sources', 'source_id'),
     ('saisons', 'saisons', 'saison_id'),
-    ('genres', 'genres', 'genredoeuvre_id'),
-    ('types_de_sources', 'types_de_sources', 'typedesource_id'),
+    ('genres', 'genres', 'genre_id'),
+    ('types_de_sources', 'types_de_sources', 'type_de_source_id'),
 )
 
 

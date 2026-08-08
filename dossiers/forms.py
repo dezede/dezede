@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
+from wagtail.admin.forms import WagtailAdminModelForm
 
 from tree.forms import TreeChoiceField
 
@@ -29,14 +30,17 @@ class DossierForm(forms.ModelForm):
         }
         js = ('js/dossier_admin.js',)
 
-    def clean(self):
-        cleaned_data = super().clean()
-        if cleaned_data['categorie'] is not None \
-                and cleaned_data['parent'] is not None:
-            msg = 'Ne pas saisir de catégorie si le dossier a un parent.'
-            self.add_error('categorie', msg)
-            self.add_error('parent', msg)
-        return cleaned_data
+
+class DossierWagtailForm(WagtailAdminModelForm):
+    types_de_donnees = forms.MultipleChoiceField(
+        choices=KIND_CHOICES, required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label=capfirst(_('types de données')),
+        help_text=_('Types de données présentés par ce dossier.'))
+
+    class Meta(WagtailAdminModelForm.Meta):
+        model = Dossier
+        exclude = ()
 
 
 SCENARIOS = (

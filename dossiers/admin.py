@@ -1,5 +1,7 @@
 from django.contrib import messages
 from django.contrib.admin import register
+from django.contrib.admin.checks import ModelAdminChecks
+from django.contrib.admin.widgets import ManyToManyRawIdWidget
 from django.core.exceptions import PermissionDenied
 from django.db.models import TextField
 from django.http import Http404
@@ -26,8 +28,32 @@ class CategorieDeDossierAdmin(VersionAdmin, PublishedAdmin):
     )
 
 
+# Dossier's ManyToManyFields go through explicit models so the Wagtail admin can
+# offer searchable choosers (``MultipleChooserPanel``). Django's admin then
+# raises ``admin.E013``, which forbids a manually-``through`` M2M in ``fields``
+# /``fieldsets``, and ``formfield_for_manytomany()`` builds no form field for
+# one at all. Both guard against through models carrying extra data the admin
+# would silently ignore; ours carry none beyond their two foreign keys, so
+# ``ModelForm._save_m2m()`` can still ``set()`` them and the historical raw-id
+# widgets keep working. Lifting the two restrictions below for these fields
+# only leaves the rest of this admin — fieldsets, widgets, JS — untouched.
+DOSSIER_M2M_FIELDS = frozenset((
+    'editeurs_scientifiques', 'saisons', 'lieux', 'filtre_oeuvres',
+    'individus', 'ensembles', 'filtre_sources', 'genres',
+    'types_de_sources', 'evenements', 'oeuvres', 'sources',
+))
+
+
+class DossierAdminChecks(ModelAdminChecks):
+    def _check_field_spec_item(self, obj, field_name, label):
+        if field_name in DOSSIER_M2M_FIELDS:
+            return []
+        return super()._check_field_spec_item(obj, field_name, label)
+
+
 @register(Dossier)
 class DossierAdmin(VersionAdmin, PublishedAdmin):
+    checks_class = DossierAdminChecks
     form = DossierForm
     list_display = ('__str__',)
     prepopulated_fields = {'slug': ('titre',)}
@@ -90,6 +116,18 @@ class DossierAdmin(VersionAdmin, PublishedAdmin):
         **PublishedAdmin.formfield_overrides,
         TextField: {'widget': TinyMCE},
     }
+
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        # ``ModelAdmin`` builds no form field at all for a manually-``through``
+        # M2M, which would drop these from the fieldsets above. Build the very
+        # same raw-id field the base implementation produced when the through
+        # models were auto-created — they are all listed in ``raw_id_fields``.
+        if db_field.name in DOSSIER_M2M_FIELDS:
+            kwargs.setdefault(
+                'widget',
+                ManyToManyRawIdWidget(db_field.remote_field, self.admin_site))
+            return db_field.formfield(**kwargs)
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
 
     def get_urls(self):
         return [

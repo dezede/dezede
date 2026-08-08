@@ -1,3 +1,5 @@
+import json
+import re
 from datetime import date
 
 from django.contrib.auth import get_user_model
@@ -7,7 +9,9 @@ from django.urls import reverse
 from libretto.models import (
     Etat, Evenement, Lieu, NatureDeLieu, Oeuvre, Source, TypeDeSource,
 )
-from .models import Dossier, KIND_EVENEMENTS, KIND_OEUVRES, KIND_SOURCES
+from .models import (
+    Dossier, KIND_EVENEMENTS, KIND_OEUVRES, KIND_SOURCES, KINDS_ORDER,
+)
 
 
 # The real (PostgreSQL) search backend indexes every saved object through a
@@ -262,3 +266,79 @@ class DossierTestCase(TransactionTestCase):
         self.assertEqual(
             self.client.get(f'{base}/stats/', {'kind': KIND_SOURCES}).json(),
             {})
+
+
+@override_settings(WAGTAILSEARCH_BACKENDS={
+    'default': {
+        'BACKEND': 'wagtail.search.backends.database.fallback',
+    },
+})
+class DossierWagtailPanelsTestCase(TransactionTestCase):
+    """The Wagtail form hides the criteria and manual selections that do not
+    apply to the ticked « types de données », the way ``js/dossier_admin.js``
+    does in the Django admin. It relies on ``w-rules``, Wagtail's own
+    conditional-visibility Stimulus controller, so these tests pin down the
+    markup contract it needs."""
+
+    def setUp(self):
+        self.etat = Etat.objects.create(nom='public', slug='public',
+                                        public=True)
+        self.user = get_user_model().objects.create_superuser(
+            'test_superuser', 'a@b.com', 'test_password')
+        self.client.force_login(self.user)
+        self.dossier = Dossier.objects.create(
+            titre='Test', slug='test-panels', presentation='p',
+            etat=self.etat, owner=self.user)
+
+    def get_edit_html(self):
+        response = self.client.get(reverse(
+            'wagtailsnippets_dossiers_dossier:edit', args=(self.dossier.pk,)))
+        self.assertEqual(response.status_code, 200)
+        return response.content.decode()
+
+    @staticmethod
+    def rules(*kinds):
+        # As rendered in the HTML attribute, i.e. with escaped quotes.
+        return json.dumps(
+            {'types_de_donnees': list(kinds)}).replace('"', '&quot;')
+
+    def test_every_target_carries_its_own_controller(self):
+        # ``w-rules`` only toggles targets inside its own element. Rather than
+        # relying on a shared ancestor declaring the controller — which nothing
+        # would keep in place — every panel carrying a rule is its own
+        # controller, and this test is what enforces that.
+        html = self.get_edit_html()
+        tags = re.findall(r'<\w+[^>]*\bdata-w-rules=[^>]*>', html)
+        self.assertTrue(tags)
+        for tag in tags:
+            self.assertIn('data-controller="w-rules"', tag)
+            self.assertIn('data-w-rules-target="show"', tag)
+            self.assertIn('data-action="change@document-&gt;w-rules#resolve"',
+                          tag)
+        self.assertEqual(html.count('data-controller="w-rules"'), len(tags))
+
+    def test_each_kind_reveals_its_own_panels(self):
+        html = self.get_edit_html()
+        expected = {
+            # « Sélection dynamique » as a whole: any kind ticked.
+            self.rules(*KINDS_ORDER): 1,
+            # circonstance, saisons, sélection manuelle.
+            self.rules(KIND_EVENEMENTS): 3,
+            # genres, sélection manuelle.
+            self.rules(KIND_OEUVRES): 2,
+            # types de source, sélection manuelle.
+            self.rules(KIND_SOURCES): 2,
+        }
+        for rule, count in expected.items():
+            self.assertEqual(html.count(rule), count, rule)
+        self.assertEqual(html.count('data-w-rules-target="show"'),
+                         sum(expected.values()))
+
+    def test_rules_are_carried_by_collapsible_panel_elements(self):
+        # ``w-rules`` hides a target by setting ``hidden``, which only has a
+        # visible effect on the panel wrappers (a top-level ``.w-panel``
+        # section, or a ``.w-panel__wrapper`` inside a MultiFieldPanel).
+        for tag in re.findall(r'<\w+[^>]*data-w-rules-target="show"[^>]*>',
+                              self.get_edit_html()):
+            self.assertTrue(
+                re.search(r'class="[^"]*w-panel(__wrapper)?[\s"]', tag), tag)

@@ -1,18 +1,25 @@
+import json
 from datetime import datetime
 from functools import cached_property
 
 from django.contrib.postgres.fields import ArrayField
-from django.contrib.postgres.indexes import GinIndex
+from django.core.exceptions import ValidationError
 from django.db.models import (
     CharField, DateField, ImageField, TextField, PositiveSmallIntegerField,
-    SlugField, ForeignKey, ManyToManyField, Q, CASCADE,
+    SlugField, ForeignKey, ManyToManyField, Model, Q, CASCADE,
 )
 from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from tinymce.widgets import TinyMCE
 from tree.fields import PathField
 from tree.models import TreeModelMixin
+from wagtail.admin.panels import (
+    FieldPanel, FieldRowPanel, MultiFieldPanel, MultipleChooserPanel,
+)
 from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
 from accounts.models import HierarchicUser
@@ -20,6 +27,7 @@ from libretto.models import (Lieu, Oeuvre, Evenement, Individu, Ensemble,
                              Source, Saison, GenreDOeuvre, TypeDeSource)
 from libretto.models.base import PublishedModel, PublishedManager, \
     CommonTreeManager, PublishedQuerySet, CommonTreeQuerySet
+from typography.models import TypographicModel
 from common.utils.html import href
 
 
@@ -37,6 +45,30 @@ KIND_CHOICES = (
 KINDS_ORDER = (KIND_EVENEMENTS, KIND_OEUVRES, KIND_SOURCES)
 
 
+def kind_rules(*kinds):
+    """Panel ``attrs`` hiding a panel until one of ``kinds`` is ticked in
+    « types de données ».
+
+    ``w-rules`` is Wagtail's conditional-visibility Stimulus controller: it
+    toggles the ``hidden`` attribute of each ``show`` target whose rules match
+    the current form values. This is the Wagtail counterpart of the
+    ``dossier-kind-*`` fieldset classes the Django admin toggles from
+    ``js/dossier_admin.js``.
+
+    Each panel declares its own controller and is its own target, so a rule
+    stays entirely local: no ancestor has to be kept in place for these
+    attributes to mean anything. ``change`` has to be listened for on the
+    document because the « types de données » checkboxes sit outside the panel
+    being toggled.
+    """
+    return {
+        'data-controller': 'w-rules',
+        'data-action': 'change@document->w-rules#resolve',
+        'data-w-rules-target': 'show',
+        'data-w-rules': json.dumps({'types_de_donnees': list(kinds)}),
+    }
+
+
 class CategorieDeDossiers(Indexed, PublishedModel):
     nom = CharField(_('nom'), max_length=75)
     position = PositiveSmallIntegerField(_('position'), default=1)
@@ -45,6 +77,7 @@ class CategorieDeDossiers(Indexed, PublishedModel):
         SearchField('title', boost=10),
         AutocompleteField('title'),
     ]
+    panels = ['nom', 'position']
 
     class Meta(PublishedModel.Meta):
         ordering = ('position',)
@@ -72,7 +105,7 @@ class DossierManager(CommonTreeManager, PublishedManager):
 #       ou par thème (ex: censure, livret, etc).
 
 
-class Dossier(Indexed, TreeModelMixin, PublishedModel):
+class Dossier(Indexed, ClusterableModel, TreeModelMixin, PublishedModel):
     categorie = ForeignKey(
         CategorieDeDossiers, null=True, blank=True,
         related_name='dossiers', verbose_name=_('catégorie'),
@@ -94,7 +127,7 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
     # Métadonnées
     editeurs_scientifiques = ManyToManyField(
         'accounts.HierarchicUser', related_name='dossiers_edites',
-        verbose_name=_('éditeurs scientifiques'))
+        through='DossierUser', verbose_name=_('éditeurs scientifiques'))
     date_publication = DateField(_('date de publication'),
                                  default=datetime.now)
     publications = TextField(_('publication(s) associée(s)'), blank=True)
@@ -122,42 +155,49 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
     debut = DateField(_('début'), blank=True, null=True)
     fin = DateField(_('fin'), blank=True, null=True)
     lieux = ManyToManyField(Lieu, blank=True, verbose_name=_('lieux'),
-                            related_name='dossiers')
+                            through='DossierLieu', related_name='dossiers')
     individus = ManyToManyField(Individu, blank=True,
                                 verbose_name=_('individus'),
+                                through='DossierIndividu',
                                 related_name='dossiers')
     ensembles = ManyToManyField(Ensemble, blank=True,
                                 verbose_name=_('ensembles'),
+                                through='DossierEnsemble',
                                 related_name='dossiers')
     # Critères ne s’appliquant qu’à certains types : genres (œuvres),
     # types de sources (sources), circonstance et saisons (événements).
     genres = ManyToManyField(GenreDOeuvre, blank=True,
                              verbose_name=_('genres d’œuvre'),
+                             through='DossierGenre',
                              related_name='dossiers')
     types_de_sources = ManyToManyField(TypeDeSource, blank=True,
                                        verbose_name=_('types de source'),
+                                       through='DossierTypeDeSource',
                                        related_name='dossiers')
     circonstance = CharField(_('circonstance'), max_length=100, blank=True)
     saisons = ManyToManyField(Saison, blank=True, verbose_name=_('saisons'),
-                              related_name='dossiers')
+                              through='DossierSaison', related_name='dossiers')
     # Critères sur les œuvres et sources elles-mêmes ; à distinguer des
     # sélections manuelles `oeuvres` et `sources` ci-dessous.
     filtre_oeuvres = ManyToManyField(Oeuvre, blank=True,
                                      verbose_name=_('œuvres'),
+                                     through='DossierFiltreOeuvre',
                                      related_name='dossiers_filtre')
     filtre_sources = ManyToManyField(Source, blank=True,
                                      verbose_name=_('sources'),
+                                     through='DossierFiltreSource',
                                      related_name='dossiers_filtre')
 
     # Sélection manuelle par type. Lorsqu’elle est remplie pour un type,
     # elle remplace la sélection dynamique de ce type.
     evenements = ManyToManyField(Evenement, blank=True,
                                  verbose_name=_('événements'),
+                                 through='DossierEvenement',
                                  related_name='dossiers')
     oeuvres = ManyToManyField(Oeuvre, blank=True, verbose_name=_('œuvres'),
-                              related_name='dossiers')
+                              through='DossierOeuvre', related_name='dossiers')
     sources = ManyToManyField(Source, blank=True, verbose_name=_('sources'),
-                              related_name='dossiers')
+                              through='DossierSource', related_name='dossiers')
 
     objects = DossierManager()
 
@@ -177,6 +217,48 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
         AutocompleteField('title'),
         AutocompleteField('titre_court'),
     ]
+    panels = [
+        FieldRowPanel(['titre', 'titre_court']),
+        FieldRowPanel(['parent', 'position']),
+        FieldRowPanel(['categorie', 'slug']),
+        'image_couverture',
+        # Same block of fields as ``Source``'s « Présentation » panel, grouped
+        # the same way.
+        MultiFieldPanel([
+            MultipleChooserPanel('dossieruser_set', 'user', heading=_('Éditeurs scientifiques')),
+            'date_publication',
+            FieldPanel('publications', widget=TinyMCE),
+            FieldPanel('developpements', widget=TinyMCE),
+            FieldPanel('presentation', widget=TinyMCE),
+            FieldPanel('contexte', widget=TinyMCE),
+            FieldPanel('sources_et_protocole', widget=TinyMCE),
+            FieldPanel('bibliographie', widget=TinyMCE),
+        ], heading=_('Présentation'), classname='collapsed'),
+        'types_de_donnees',
+        # Criteria that only apply to some kinds are revealed by ``kind_rules``,
+        # as are the per-kind manual selections below.
+        MultiFieldPanel([
+            FieldRowPanel(['debut', 'fin']),
+            FieldPanel('circonstance', attrs=kind_rules(KIND_EVENEMENTS)),
+            MultipleChooserPanel('dossiersaison_set', 'saison', heading=_('Saisons'),
+                                 attrs=kind_rules(KIND_EVENEMENTS)),
+            MultipleChooserPanel('dossierlieu_set', 'lieu', heading=_('Lieux')),
+            MultipleChooserPanel('dossierindividu_set', 'individu', heading=_('Individus')),
+            MultipleChooserPanel('dossierensemble_set', 'ensemble', heading=_('Ensembles')),
+            MultipleChooserPanel('dossierfiltreoeuvre_set', 'oeuvre', heading=_('Œuvres')),
+            MultipleChooserPanel('dossierfiltresource_set', 'source', heading=_('Sources')),
+            MultipleChooserPanel('dossiergenre_set', 'genre', heading=_('Genres d’œuvre'),
+                                 attrs=kind_rules(KIND_OEUVRES)),
+            MultipleChooserPanel('dossiertypedesource_set', 'type_de_source', heading=_('Types de source'),
+                                 attrs=kind_rules(KIND_SOURCES)),
+        ], heading=_('Sélection dynamique'), attrs=kind_rules(*KINDS_ORDER)),
+        MultipleChooserPanel('dossierevenement_set', 'evenement', heading=_('Sélection manuelle des événements'),
+                             attrs=kind_rules(KIND_EVENEMENTS)),
+        MultipleChooserPanel('dossieroeuvre_set', 'oeuvre', heading=_('Sélection manuelle des œuvres'),
+                             attrs=kind_rules(KIND_OEUVRES)),
+        MultipleChooserPanel('dossiersource_set', 'source', heading=_('Sélection manuelle des sources'),
+                             attrs=kind_rules(KIND_SOURCES)),
+    ]
 
     class Meta(PublishedModel.Meta):
         verbose_name = _('dossier')
@@ -184,6 +266,13 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
         ordering = ['path']
         permissions = (('can_change_status', _('Peut changer l’état')),)
         indexes = PathField.get_indexes('dossiers', 'path')
+
+    def clean(self):
+        super().clean()
+        # Un dossier dans un autre dossier (parent) ne peut être catégorisé.
+        if self.categorie_id is not None and self.parent_id is not None:
+            msg = _('Ne pas saisir de catégorie si le dossier a un parent.')
+            raise ValidationError({'categorie': msg, 'parent': msg})
 
     def __str__(self):
         return strip_tags(self.html())
@@ -347,7 +436,7 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
                 evenements = Evenement.objects.extra(where=("""
                 id IN (
                     SELECT DISTINCT COALESCE(distribution.evenement_id, programme.evenement_id)
-                    FROM dossiers_dossier_ensembles AS dossier_ensemble
+                    FROM dossiers_dossierensemble AS dossier_ensemble
                     INNER JOIN libretto_elementdedistribution AS distribution
                         ON (distribution.ensemble_id = dossier_ensemble.ensemble_id)
                     LEFT JOIN libretto_elementdeprogramme AS programme
@@ -466,3 +555,163 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
                     contributor_ids.add(owner_id)
                     contributor_ids.add(source_owner_id)
         return HierarchicUser.objects.filter(pk__in=contributor_ids)
+
+
+# Explicit through models for every Dossier ManyToManyField, so the Wagtail
+# admin can expose each relation as a searchable ``MultipleChooserPanel`` (the
+# same pattern as ``Source``'s ``SourceOeuvre``/``SourceUser`` etc.). They took
+# over the tables Django had implicitly created for those M2Ms, which migration
+# 0016 then renames — tables to the default ``dossiers_<modelname>``, and the
+# three columns Django had named after the *target model* rather than the field
+# (``hierarchicuser_id``, ``genredoeuvre_id``, ``typedesource_id``) to their
+# default ``<field>_id``. Hence no ``db_table`` and no ``db_column`` here.
+
+
+class DossierUser(Model):
+    dossier = ParentalKey(Dossier, related_name='dossieruser_set',
+                          on_delete=CASCADE)
+    user = ForeignKey(HierarchicUser, verbose_name=_('éditeur scientifique'),
+                      related_name='dossieruser_set', on_delete=CASCADE)
+
+    panels = ['user']
+
+    class Meta:
+        unique_together = ('dossier', 'user')
+        verbose_name = _('éditeur scientifique')
+        verbose_name_plural = _('éditeurs scientifiques')
+
+
+class DossierLieu(TypographicModel):
+    dossier = ParentalKey(Dossier, related_name='dossierlieu_set',
+                          on_delete=CASCADE)
+    lieu = ForeignKey(Lieu, verbose_name=_('lieu'),
+                      related_name='dossierlieu_set', on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('dossier', 'lieu')
+        verbose_name = _('lieu')
+        verbose_name_plural = _('lieux')
+
+
+class DossierIndividu(TypographicModel):
+    dossier = ParentalKey(Dossier, related_name='dossierindividu_set',
+                          on_delete=CASCADE)
+    individu = ForeignKey(Individu, verbose_name=_('individu'),
+                          related_name='dossierindividu_set', on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('dossier', 'individu')
+        verbose_name = _('individu')
+        verbose_name_plural = _('individus')
+
+
+class DossierEnsemble(TypographicModel):
+    dossier = ParentalKey(Dossier, related_name='dossierensemble_set',
+                          on_delete=CASCADE)
+    ensemble = ForeignKey(Ensemble, verbose_name=_('ensemble'),
+                          related_name='dossierensemble_set', on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('dossier', 'ensemble')
+        verbose_name = _('ensemble')
+        verbose_name_plural = _('ensembles')
+
+
+class DossierGenre(TypographicModel):
+    dossier = ParentalKey(Dossier, related_name='dossiergenre_set',
+                          on_delete=CASCADE)
+    genre = ForeignKey(GenreDOeuvre, verbose_name=_('genre d’œuvre'),
+                       related_name='dossiergenre_set', on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('dossier', 'genre')
+        verbose_name = _('genre d’œuvre')
+        verbose_name_plural = _('genres d’œuvre')
+
+
+class DossierTypeDeSource(TypographicModel):
+    dossier = ParentalKey(Dossier, related_name='dossiertypedesource_set',
+                          on_delete=CASCADE)
+    type_de_source = ForeignKey(TypeDeSource, verbose_name=_('type de source'),
+                                related_name='dossiertypedesource_set',
+                                on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('dossier', 'type_de_source')
+        verbose_name = _('type de source')
+        verbose_name_plural = _('types de source')
+
+
+class DossierSaison(TypographicModel):
+    dossier = ParentalKey(Dossier, related_name='dossiersaison_set',
+                          on_delete=CASCADE)
+    saison = ForeignKey(Saison, verbose_name=_('saison'),
+                        related_name='dossiersaison_set', on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('dossier', 'saison')
+        verbose_name = _('saison')
+        verbose_name_plural = _('saisons')
+
+
+class DossierFiltreOeuvre(TypographicModel):
+    dossier = ParentalKey(Dossier, related_name='dossierfiltreoeuvre_set',
+                          on_delete=CASCADE)
+    oeuvre = ForeignKey(Oeuvre, verbose_name=_('œuvre'),
+                        related_name='dossierfiltreoeuvre_set',
+                        on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('dossier', 'oeuvre')
+        verbose_name = _('œuvre')
+        verbose_name_plural = _('œuvres')
+
+
+class DossierFiltreSource(TypographicModel):
+    dossier = ParentalKey(Dossier, related_name='dossierfiltresource_set',
+                          on_delete=CASCADE)
+    source = ForeignKey(Source, verbose_name=_('source'),
+                        related_name='dossierfiltresource_set',
+                        on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('dossier', 'source')
+        verbose_name = _('source')
+        verbose_name_plural = _('sources')
+
+
+class DossierEvenement(TypographicModel):
+    dossier = ParentalKey(Dossier, related_name='dossierevenement_set',
+                          on_delete=CASCADE)
+    evenement = ForeignKey(Evenement, verbose_name=_('événement'),
+                           related_name='dossierevenement_set',
+                           on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('dossier', 'evenement')
+        verbose_name = _('événement')
+        verbose_name_plural = _('événements')
+
+
+class DossierOeuvre(TypographicModel):
+    dossier = ParentalKey(Dossier, related_name='dossieroeuvre_set',
+                          on_delete=CASCADE)
+    oeuvre = ForeignKey(Oeuvre, verbose_name=_('œuvre'),
+                        related_name='dossieroeuvre_set', on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('dossier', 'oeuvre')
+        verbose_name = _('œuvre')
+        verbose_name_plural = _('œuvres')
+
+
+class DossierSource(TypographicModel):
+    dossier = ParentalKey(Dossier, related_name='dossiersource_set',
+                          on_delete=CASCADE)
+    source = ForeignKey(Source, verbose_name=_('source'),
+                        related_name='dossiersource_set', on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('dossier', 'source')
+        verbose_name = _('source')
+        verbose_name_plural = _('sources')
