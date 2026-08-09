@@ -1,18 +1,24 @@
+# ``Individu.professions`` gains an explicit through model, ``Occupation``, so the
+# Wagtail admin can offer a searchable MultipleChooserPanel. Rather than creating a
+# new table and copying every row into it, the table Django had already created
+# implicitly is adopted and renamed. Two steps, in this order:
+#
+# 1. A SeparateDatabaseAndState that adopts the existing table: the CreateModel
+#    declares the current ``db_table`` and the UNIQUE constraint already on it, hence
+#    ``database_operations=[]``. Nothing is created, copied or dropped; this only
+#    repoints Django's model state at the table that is already there.
+# 2. An AlterModelTable with ``table=None``, i.e. "use the default name", emitting
+#    ``ALTER TABLE libretto_individu_professions RENAME TO libretto_occupation``.
+#    The two columns already carry Django's default names (``individu_id`` and
+#    ``profession_id``), so no column rename is needed.
+#
+# In PostgreSQL the rename is metadata-only: no rows move, and indexes, constraints
+# and the id sequence keep their old names but stay attached (Django resolves them by
+# introspection, never by name).
+
 from django.db import migrations, models
 import django.db.models.deletion
 import modelcluster.fields
-
-
-def migrate_data(apps, schema_editor):
-    Individu = apps.get_model('libretto', 'Individu')
-    Occupation = apps.get_model('libretto', 'Occupation')
-    IndividuProfession = Individu.professions.through
-
-    occupations = [
-        Occupation(individu=obj.individu, profession=obj.profession)
-        for obj in IndividuProfession.objects.all()
-    ]
-    Occupation.objects.bulk_create(occupations)
 
 
 class Migration(migrations.Migration):
@@ -92,26 +98,32 @@ class Migration(migrations.Migration):
             name='date',
             field=models.DateField(blank=True, db_index=True, help_text='Exemple\xa0: « 1789-7-14 » pour le 14 juillet 1789. En cas de date approximative, saisir le premier jour du mois («\xa01678-10-1\xa0» pour octobre 1678) ou de l’année («\xa01830-1-1\xa0» pour 1830).', null=True, verbose_name='date'),
         ),
-        migrations.CreateModel(
-            name='Occupation',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('individu', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='occupations', to='libretto.individu', verbose_name='individu')),
-                ('profession', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='occupations', to='libretto.profession', verbose_name='profession')),
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.CreateModel(
+                    name='Occupation',
+                    fields=[
+                        ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                        ('individu', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='occupations', to='libretto.individu', verbose_name='individu')),
+                        ('profession', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='occupations', to='libretto.profession', verbose_name='profession')),
+                    ],
+                    options={
+                        'verbose_name': 'occupation',
+                        'verbose_name_plural': 'occupations',
+                        'ordering': ('individu', 'profession'),
+                        'db_table': 'libretto_individu_professions',
+                        'unique_together': {('individu', 'profession')},
+                    },
+                ),
+                migrations.AlterField(
+                    model_name='individu',
+                    name='professions',
+                    field=models.ManyToManyField(blank=True, related_name='individus', through='libretto.Occupation', to='libretto.profession', verbose_name='professions'),
+                ),
             ],
-            options={
-                'verbose_name': 'occupation',
-                'verbose_name_plural': 'occupations',
-                'ordering': ('individu', 'profession'),
-            },
+            database_operations=[],
         ),
-        migrations.RunPython(migrate_data),
-        migrations.RemoveField(model_name='individu', name='professions'),
-        migrations.AddField(
-            model_name='individu',
-            name='professions',
-            field=models.ManyToManyField(blank=True, related_name='individus', through='libretto.Occupation', to='libretto.profession', verbose_name='professions'),
-        ),
+        migrations.AlterModelTable(name='occupation', table=None),
         migrations.AlterField(
             model_name='parentedindividus',
             name='enfant',

@@ -15,7 +15,8 @@
 #        RENAME COLUMN``. Django names an implicit M2M's target column after
 #        the *target model*, not the field, so these three differed:
 #          editeurs_scientifiques  hierarchicuser_id -> user_id
-#            (the old name is proven by libretto/0070's copy_sourceuser_data)
+#            (libretto/0070 renames the same column, for the same reason, on
+#            Source.editeurs_scientifiques)
 #          genres                  genredoeuvre_id   -> genre_id
 #          types_de_sources        typedesource_id   -> type_de_source_id
 #

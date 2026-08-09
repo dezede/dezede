@@ -904,3 +904,4 @@ class SourceUser(Model):
         verbose_name = _('user')
         verbose_name_plural = _('users')
         ordering = ('source', 'user')
+        unique_together = ('source', 'user')

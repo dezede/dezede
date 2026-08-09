@@ -59,6 +59,7 @@ class ParenteDeGenresDOeuvre(Model):
         verbose_name = _('parenté de genres d’œuvre')
         verbose_name_plural = _('parentés de genres d’œuvre')
         ordering = ('parent', 'enfant')
+        unique_together = ('enfant', 'parent')
 
 
 class GenreDOeuvre(Indexed, ClusterableModel, CommonModel, SlugModel):
@@ -118,6 +119,7 @@ class Dedicace(Model):
         verbose_name = _('dédicace')
         verbose_name_plural = _('dédicaces')
         ordering = ('oeuvre', 'individu')
+        unique_together = ('oeuvre', 'individu')
 
 
 class PartieProfession(Model):
@@ -130,6 +132,7 @@ class PartieProfession(Model):
         verbose_name = _('profession')
         verbose_name_plural = _('professions')
         ordering = ('partie', 'profession')
+        unique_together = ('partie', 'profession')
 
 
 class Partie(Indexed, ClusterableModel, AutoriteModel, UniqueSlugModel):

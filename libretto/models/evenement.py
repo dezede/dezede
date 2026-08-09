@@ -300,6 +300,7 @@ class CaracteristiqueDeProgrammeElementDeProgramme(Model):
         verbose_name = _('caractéristique de programme')
         verbose_name_plural = _('caractéristiques de programme')
         ordering = ('element', 'caracteristique')
+        unique_together = ('element', 'caracteristique')
 
 
 class ElementDeProgrammeQueryset(CommonQuerySet):
@@ -445,6 +446,7 @@ class CaracteristiqueDeProgrammeEvenement(Model):
         verbose_name = _('caractéristique de programme')
         verbose_name_plural = _('caractéristiques de programme')
         ordering = ('evenement', 'caracteristique')
+        unique_together = ('evenement', 'caracteristique')
 
 
 class EvenementQuerySet(PublishedQuerySet):

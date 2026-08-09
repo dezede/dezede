@@ -83,6 +83,7 @@ class Occupation(Model):
         verbose_name_plural = 'occupations'
         # TODO: vérifier que l’ordre des professions est cohérent ailleurs
         ordering = ('individu', 'profession')
+        unique_together = ('individu', 'profession')
 
 
 class IndividuQuerySet(PublishedQuerySet):
