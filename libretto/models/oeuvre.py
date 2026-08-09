@@ -76,7 +76,8 @@ class GenreDOeuvre(Indexed, ClusterableModel, CommonModel, SlugModel):
             'l’œuvre référente, ici choisie comme étant celle de nature '
             '« opéra »'))
     parents = ManyToManyField(
-        'GenreDOeuvre', through='ParenteDeGenresDOeuvre', related_name='enfants',
+        'GenreDOeuvre', through='ParenteDeGenresDOeuvre',
+        through_fields=('enfant', 'parent'), related_name='enfants',
         blank=True, verbose_name=_('parents')
     )
 
@@ -902,7 +903,8 @@ class Oeuvre(Indexed, ClusterableModel, TreeModelMixin, AutoriteModel, UniqueSlu
             _('Vous devez saisir un nombre en chiffres arabes '
               'éventellement suivi de lettres.'))])
     filles = ManyToManyField(
-        'self', through='ParenteDOeuvres', related_name='meres',
+        'self', through='ParenteDOeuvres',
+        through_fields=('mere', 'fille'), related_name='meres',
         symmetrical=False, blank=True, verbose_name=_('filles'))
 
     objects = OeuvreManager()

@@ -145,7 +145,8 @@ class Individu(Indexed, ClusterableModel, AutoriteModel, UniqueSlugModel, IsniMo
         'Profession', through='Occupation', related_name='individus',
         blank=True, verbose_name=_('professions'))
     enfants = ManyToManyField(
-        'self', through='ParenteDIndividus', related_name='parents',
+        'self', through='ParenteDIndividus',
+        through_fields=('parent', 'enfant'), related_name='parents',
         symmetrical=False, verbose_name=_('enfants'))
     biographie = HTMLField(_('biographie'), blank=True)
 
