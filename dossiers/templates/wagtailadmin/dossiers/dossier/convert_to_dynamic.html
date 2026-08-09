@@ -1,0 +1,32 @@
+{% extends "wagtailadmin/generic/base.html" %}
+{% load humanize i18n %}
+
+{% block main_content %}
+  <h2>
+    {% blocktrans with titre=object %}Êtes-vous sûr de vouloir reconvertir
+    le dossier « {{ titre }} » en dossier dynamique ?{% endblocktrans %}
+  </h2>
+  <p>
+    {% blocktrans %}La sélection manuelle de chaque type de données
+    ci-dessous sera vidée : le dossier présentera de nouveau les données
+    calculées en direct à partir de ses critères de sélection dynamique,
+    et évoluera donc avec la base.{% endblocktrans %}
+  </p>
+  <dl>
+    {% for row in rows %}
+      <dt>{{ row.label|capfirst }}</dt>
+      <dd>
+        {% blocktrans count count=row.static_count with n=row.static_count|intcomma %}La sélection manuelle ({{ n }} donnée) sera vidée.{% plural %}La sélection manuelle ({{ n }} données) sera vidée.{% endblocktrans %}
+        {% blocktrans count count=row.count with n=row.count|intcomma %}La sélection dynamique qui la remplace contient actuellement {{ n }} donnée.{% plural %}La sélection dynamique qui la remplace contient actuellement {{ n }} données.{% endblocktrans %}
+      </dd>
+    {% endfor %}
+  </dl>
+  <form method="post" novalidate>{% csrf_token %}
+    <button type="submit" class="button">
+      {% trans "Oui, reconvertir en dossier dynamique" %}
+    </button>
+    <a href="{{ edit_url }}" class="button button-secondary">
+      {% trans "Non, revenir au dossier" %}
+    </a>
+  </form>
+{% endblock %}

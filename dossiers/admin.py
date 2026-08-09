@@ -9,12 +9,11 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
-import reversion
 from reversion.admin import VersionAdmin
 from tinymce.widgets import TinyMCE
 from libretto.admin import PublishedAdmin
 from .forms import DossierForm
-from .models import CategorieDeDossiers, Dossier, KIND_CHOICES
+from .models import CategorieDeDossiers, Dossier
 
 
 @register(CategorieDeDossiers)
@@ -148,87 +147,53 @@ class DossierAdmin(VersionAdmin, PublishedAdmin):
             raise Http404
         return dossier
 
-    @staticmethod
-    def _kind_labels():
-        return dict(KIND_CHOICES)
+    def _conversion_context(self, request, dossier, title):
+        return {
+            **self.admin_site.each_context(request),
+            'title': title,
+            'object': dossier,
+            'opts': self.opts,
+            'rows': dossier.conversion_rows(),
+        }
 
     def convert_to_static_view(self, request, object_id):
         """Snapshots each active kind's dynamic queryset into its manual
         selection, after a confirmation page detailing what will be frozen."""
         dossier = self._get_conversion_object(request, object_id)
-        if self._is_fully_static(dossier):
+        if dossier.is_fully_static:
             # Reached by URL although the button is hidden: nothing to do.
             self.message_user(
                 request,
                 _('« %s » est déjà un dossier statique.') % dossier,
                 messages.INFO)
             return redirect('admin:dossiers_dossier_change', dossier.pk)
-        labels = self._kind_labels()
         if request.method == 'POST':
-            with reversion.create_revision():
-                reversion.set_user(request.user)
-                reversion.set_comment('Conversion en dossier statique')
-                for kind in dossier.active_kinds:
-                    getattr(dossier, kind).set(
-                        dossier.get_queryset(kind, dynamic=True))
+            dossier.convert_to_static(request.user)
             self.message_user(
                 request,
                 _('« %s » a été converti en dossier statique.') % dossier,
                 messages.SUCCESS)
             return redirect('admin:dossiers_dossier_change', dossier.pk)
-        rows = [
-            {'label': labels[kind],
-             'count': dossier.get_queryset(kind, dynamic=True).count(),
-             'static_count': getattr(dossier, kind).count()}
-            for kind in dossier.active_kinds]
-        context = {
-            **self.admin_site.each_context(request),
-            'title': _('Convertir en dossier statique'),
-            'object': dossier,
-            'opts': self.opts,
-            'rows': rows,
-        }
         return TemplateResponse(
-            request, 'admin/dossiers/dossier/convert_to_static.html', context)
+            request, 'admin/dossiers/dossier/convert_to_static.html',
+            self._conversion_context(
+                request, dossier, _('Convertir en dossier statique')))
 
     def convert_to_dynamic_view(self, request, object_id):
         """Clears every kind's manual selection so the dossier goes back to
         being computed live from its dynamic criteria."""
         dossier = self._get_conversion_object(request, object_id)
-        labels = self._kind_labels()
         if request.method == 'POST':
-            with reversion.create_revision():
-                reversion.set_user(request.user)
-                reversion.set_comment('Reconversion en dossier dynamique')
-                for kind in dossier.active_kinds:
-                    getattr(dossier, kind).clear()
+            dossier.convert_to_dynamic(request.user)
             self.message_user(
                 request,
                 _('« %s » a été reconverti en dossier dynamique.') % dossier,
                 messages.SUCCESS)
             return redirect('admin:dossiers_dossier_change', dossier.pk)
-        rows = [
-            {'label': labels[kind],
-             'count': dossier.get_queryset(kind, dynamic=True).count(),
-             'static_count': getattr(dossier, kind).count()}
-            for kind in dossier.active_kinds]
-        context = {
-            **self.admin_site.each_context(request),
-            'title': _('Reconvertir en dossier dynamique'),
-            'object': dossier,
-            'opts': self.opts,
-            'rows': rows,
-        }
         return TemplateResponse(
-            request, 'admin/dossiers/dossier/convert_to_dynamic.html', context)
-
-    @staticmethod
-    def _is_fully_static(dossier):
-        """Whether every active kind already carries a manual selection —
-        i.e. the dossier is already static and converting it again would
-        change nothing."""
-        return all(getattr(dossier, kind).exists()
-                   for kind in dossier.active_kinds)
+            request, 'admin/dossiers/dossier/convert_to_dynamic.html',
+            self._conversion_context(
+                request, dossier, _('Reconvertir en dossier dynamique')))
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = extra_context or {}
@@ -237,12 +202,9 @@ class DossierAdmin(VersionAdmin, PublishedAdmin):
         except (Dossier.DoesNotExist, ValueError):
             dossier = None
         if dossier is not None and dossier.active_kinds:
-            has_static = any(
-                getattr(dossier, kind).exists()
-                for kind in dossier.active_kinds)
             extra_context.update(
-                show_convert_to_static=not self._is_fully_static(dossier),
-                show_convert_to_dynamic=has_static,
+                show_convert_to_static=not dossier.is_fully_static,
+                show_convert_to_dynamic=dossier.has_static_selection,
                 convert_static_url=reverse(
                     'admin:dossiers_dossier_convert_static',
                     args=(dossier.pk,)),

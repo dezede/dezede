@@ -14,12 +14,14 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
+import reversion
 from tinymce.widgets import TinyMCE
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from wagtail.admin.panels import (
     FieldPanel, FieldRowPanel, MultiFieldPanel, MultipleChooserPanel,
 )
+from wagtail.log_actions import log
 from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
 from accounts.models import HierarchicUser
@@ -366,6 +368,60 @@ class Dossier(Indexed, ClusterableModel, TreeModelMixin, PublishedModel):
                           for kind, count in self.counts().items())
     get_counts_display.short_description = \
         _('quantité de données sélectionnées')
+
+    # -- Conversion statique <-> dynamique -----------------------------------
+    # A dossier is « statique » for a given kind as soon as its manual M2M
+    # selection is non-empty: ``get_queryset()`` then serves that frozen list
+    # instead of recomputing it from the criteria. Converting therefore means
+    # snapshotting the dynamic queryset into the M2M (or clearing it to go
+    # back). These live on the model rather than in an admin so both the Wagtail
+    # admin and the (soon to be removed) Django one drive the same code.
+
+    @property
+    def is_fully_static(self):
+        """Whether every active kind already carries a manual selection — i.e.
+        the dossier is already static and converting it again would change
+        nothing."""
+        return all(getattr(self, kind).exists()
+                   for kind in self.active_kinds)
+
+    @property
+    def has_static_selection(self):
+        """Whether at least one active kind is frozen, i.e. there is something
+        to convert back to dynamic."""
+        return any(getattr(self, kind).exists()
+                   for kind in self.active_kinds)
+
+    def conversion_rows(self):
+        """Per-kind description of what a conversion would do, for the
+        confirmation pages: how many objects the dynamic criteria currently
+        select, and how many are frozen in the manual selection."""
+        labels = dict(KIND_CHOICES)
+        return [
+            {'label': labels[kind],
+             'count': self.get_queryset(kind, dynamic=True).count(),
+             'static_count': getattr(self, kind).count()}
+            for kind in self.active_kinds]
+
+    def convert_to_static(self, user=None):
+        """Freeze each active kind's dynamic queryset into its manual
+        selection. The dossier then stops following the database."""
+        with reversion.create_revision():
+            reversion.set_user(user)
+            reversion.set_comment('Conversion en dossier statique')
+            for kind in self.active_kinds:
+                getattr(self, kind).set(self.get_queryset(kind, dynamic=True))
+            log(self, 'dossiers.convert_to_static', user=user)
+
+    def convert_to_dynamic(self, user=None):
+        """Clear every manual selection so the dossier is computed live from
+        its dynamic criteria again."""
+        with reversion.create_revision():
+            reversion.set_user(user)
+            reversion.set_comment('Reconversion en dossier dynamique')
+            for kind in self.active_kinds:
+                getattr(self, kind).clear()
+            log(self, 'dossiers.convert_to_dynamic', user=user)
 
     @staticmethod
     def _descendants_pks(manager, model):

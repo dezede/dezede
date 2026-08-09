@@ -1,0 +1,36 @@
+{% extends "wagtailadmin/generic/base.html" %}
+{% load humanize i18n %}
+
+{% block main_content %}
+  <h2>
+    {% blocktrans with titre=object %}Êtes-vous sûr de vouloir convertir
+    le dossier « {{ titre }} » en dossier statique ?{% endblocktrans %}
+  </h2>
+  <p>
+    {% blocktrans %}La sélection actuellement calculée à partir des
+    critères dynamiques sera copiée dans la sélection manuelle de chaque
+    type de données ci-dessous. Le dossier cessera ensuite d’évoluer avec
+    la base : il présentera exactement les données figées ci-dessous,
+    jusqu’à une éventuelle reconversion en dossier
+    dynamique.{% endblocktrans %}
+  </p>
+  <dl>
+    {% for row in rows %}
+      <dt>{{ row.label|capfirst }}</dt>
+      <dd>
+        {% blocktrans count count=row.count with n=row.count|intcomma %}{{ n }} donnée sera figée dans la sélection manuelle.{% plural %}{{ n }} données seront figées dans la sélection manuelle.{% endblocktrans %}
+        {% if row.static_count %}
+          {% blocktrans count count=row.static_count with n=row.static_count|intcomma %}La sélection manuelle actuelle ({{ n }} donnée) sera remplacée.{% plural %}La sélection manuelle actuelle ({{ n }} données) sera remplacée.{% endblocktrans %}
+        {% endif %}
+      </dd>
+    {% endfor %}
+  </dl>
+  <form method="post" novalidate>{% csrf_token %}
+    <button type="submit" class="button">
+      {% trans "Oui, convertir en dossier statique" %}
+    </button>
+    <a href="{{ edit_url }}" class="button button-secondary">
+      {% trans "Non, revenir au dossier" %}
+    </a>
+  </form>
+{% endblock %}

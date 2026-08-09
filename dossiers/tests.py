@@ -2,9 +2,14 @@ import json
 import re
 from datetime import date
 
+from django.apps import apps
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import TransactionTestCase, override_settings
 from django.urls import reverse
+import reversion
+from reversion.models import Version
+from wagtail.models import ModelLogEntry
 
 from libretto.models import (
     Etat, Evenement, Lieu, NatureDeLieu, Oeuvre, Source, TypeDeSource,
@@ -14,22 +19,9 @@ from .models import (
 )
 
 
-# The real (PostgreSQL) search backend indexes every saved object through a
-# background task whose separate connection conflicts with the test
-# transaction; searching is not what is under test here, so it is swapped for
-# the no-op fallback backend. A TransactionTestCase (truncation-based
-# teardown) is used for the same reason: wagtail's ReferenceIndex writes
-# from signal handlers clash with the in-transaction constraint check of a
-# plain TestCase.
-@override_settings(WAGTAILSEARCH_BACKENDS={
-    'default': {
-        'BACKEND': 'wagtail.search.backends.database.fallback',
-    },
-})
-class DossierTestCase(TransactionTestCase):
-    """A merged dossier presenting several kinds of data at once: shared
-    dynamic criteria, per-kind querysets/counts, static freezing via the admin
-    conversion actions, and the kind-scoped URL/API gating."""
+class DossierFixtureMixin:
+    """A merged dossier presenting several kinds of data at once, with one
+    in-criteria and one out-of-criteria object per kind."""
 
     def setUp(self):
         cls = self  # per-test fixtures (truncated between tests)
@@ -81,6 +73,23 @@ class DossierTestCase(TransactionTestCase):
 
     def refreshed(self):
         return Dossier.objects.get(pk=self.dossier.pk)
+
+
+# The real (PostgreSQL) search backend indexes every saved object through a
+# background task whose separate connection conflicts with the test
+# transaction; searching is not what is under test here, so it is swapped for
+# the no-op fallback backend. A TransactionTestCase (truncation-based
+# teardown) is used for the same reason: wagtail's ReferenceIndex writes
+# from signal handlers clash with the in-transaction constraint check of a
+# plain TestCase.
+@override_settings(WAGTAILSEARCH_BACKENDS={
+    'default': {
+        'BACKEND': 'wagtail.search.backends.database.fallback',
+    },
+})
+class DossierTestCase(DossierFixtureMixin, TransactionTestCase):
+    """Shared dynamic criteria, per-kind querysets/counts, static freezing via
+    the admin conversion actions, and the kind-scoped URL/API gating."""
 
     # -- Model ----------------------------------------------------------------
 
@@ -342,3 +351,155 @@ class DossierWagtailPanelsTestCase(TransactionTestCase):
                               self.get_edit_html()):
             self.assertTrue(
                 re.search(r'class="[^"]*w-panel(__wrapper)?[\s"]', tag), tag)
+
+
+@override_settings(WAGTAILSEARCH_BACKENDS={
+    'default': {
+        'BACKEND': 'wagtail.search.backends.database.fallback',
+    },
+})
+class DossierWagtailConversionTestCase(DossierFixtureMixin, TransactionTestCase):
+    """« Convertir en dossier statique » and its reverse, in the Wagtail admin:
+    header buttons, confirmation pages, permissions, and the two history trails
+    a conversion must leave behind."""
+
+    CONVERT_LABEL = 'Convertir en dossier statique'
+    REVERT_LABEL = 'Reconvertir en dossier dynamique'
+
+    def url(self, name):
+        return reverse(f'wagtailsnippets_dossiers_dossier:{name}',
+                       args=(self.dossier.pk,))
+
+    def get_edit_html(self):
+        response = self.client.get(self.url('edit'))
+        self.assertEqual(response.status_code, 200)
+        return response.content.decode()
+
+    # -- Registration ---------------------------------------------------------
+
+    def test_reversion_registration_survives_the_django_admin(self):
+        # ``Dossier`` used to be registered with reversion only as a side
+        # effect of ``DossierAdmin`` inheriting ``VersionAdmin``. Since
+        # ``convert_to_static()`` creates its revision from the model layer,
+        # and an unregistered model makes ``create_revision()`` a silent no-op,
+        # the registration has to be owned by the app config instead — which is
+        # what re-running ``ready()`` on a cleared registry proves here.
+        self.assertTrue(reversion.is_registered(Dossier))
+        reversion.unregister(Dossier)
+        apps.get_app_config('dossiers').ready()
+        self.assertTrue(reversion.is_registered(Dossier))
+
+    # -- Header buttons -------------------------------------------------------
+
+    def test_buttons_reflect_the_current_state(self):
+        # Purely dynamic: only the freezing action is offered.
+        html = self.get_edit_html()
+        self.assertIn(self.CONVERT_LABEL, html)
+        self.assertNotIn(self.REVERT_LABEL, html)
+
+        # Fully static: only the way back is offered.
+        self.refreshed().convert_to_static(self.user)
+        html = self.get_edit_html()
+        self.assertNotIn(self.CONVERT_LABEL, html)
+        self.assertIn(self.REVERT_LABEL, html)
+
+        # Partially static: both, since each kind is frozen independently.
+        self.refreshed().oeuvres.clear()
+        html = self.get_edit_html()
+        self.assertIn(self.CONVERT_LABEL, html)
+        self.assertIn(self.REVERT_LABEL, html)
+
+    def test_no_buttons_without_a_kind_of_data(self):
+        Dossier.objects.filter(pk=self.dossier.pk).update(types_de_donnees=[])
+        html = self.get_edit_html()
+        self.assertNotIn(self.CONVERT_LABEL, html)
+        self.assertNotIn(self.REVERT_LABEL, html)
+        # And the URLs are not reachable either.
+        self.assertEqual(self.client.get(self.url('convert_static')).status_code,
+                         404)
+        self.assertEqual(self.client.get(self.url('convert_dynamic')).status_code,
+                         404)
+
+    # -- Conversion -----------------------------------------------------------
+
+    def test_convert_to_static_then_back_to_dynamic(self):
+        convert_url = self.url('convert_static')
+        response = self.client.get(convert_url)
+        self.assertEqual(response.status_code, 200)
+        # The confirmation page announces what each kind will freeze.
+        html = response.content.decode()
+        for label in ('Événements', 'Œuvres', 'Sources'):
+            self.assertIn(f'<dt>{label}</dt>', html)
+        self.assertEqual(
+            html.count('1 donnée sera figée dans la sélection manuelle.'), 3)
+
+        response = self.client.post(convert_url)
+        self.assertRedirects(response, self.url('edit'))
+        dossier = self.refreshed()
+        self.assertQuerySetEqual(dossier.evenements.all(), [self.evenement])
+        self.assertQuerySetEqual(dossier.oeuvres.all(), [self.oeuvre])
+        self.assertQuerySetEqual(dossier.sources.all(), [self.source])
+        # Frozen: the criteria no longer drive the selection.
+        dossier.debut = date(1990, 1, 1)
+        self.assertQuerySetEqual(dossier.get_queryset(KIND_EVENEMENTS),
+                                 [self.evenement])
+
+        # Already static: the page redirects instead of offering a no-op.
+        self.assertRedirects(self.client.get(convert_url), self.url('edit'))
+
+        revert_url = self.url('convert_dynamic')
+        self.assertEqual(self.client.get(revert_url).status_code, 200)
+        self.assertRedirects(self.client.post(revert_url), self.url('edit'))
+        dossier = self.refreshed()
+        self.assertFalse(dossier.evenements.exists())
+        self.assertFalse(dossier.oeuvres.exists())
+        self.assertFalse(dossier.sources.exists())
+
+    def test_conversion_is_recorded_in_both_histories(self):
+        self.client.post(self.url('convert_static'))
+
+        # django-reversion, which is what makes the change revertible.
+        versions = Version.objects.get_for_object(self.dossier)
+        self.assertEqual(versions.count(), 1)
+        self.assertEqual(versions.first().revision.comment,
+                         'Conversion en dossier statique')
+        self.assertEqual(versions.first().revision.user, self.user)
+
+        # Wagtail's log, which is what the snippet History tab shows.
+        entries = ModelLogEntry.objects.for_instance(self.dossier)
+        self.assertEqual([e.action for e in entries],
+                         ['dossiers.convert_to_static'])
+        self.assertEqual(entries.first().user, self.user)
+
+        self.client.post(self.url('convert_dynamic'))
+        self.assertEqual(
+            [e.action for e in
+             ModelLogEntry.objects.for_instance(self.dossier).order_by('pk')],
+            ['dossiers.convert_to_static', 'dossiers.convert_to_dynamic'])
+        self.assertEqual(Version.objects.get_for_object(self.dossier).count(), 2)
+
+    def test_history_tab_renders_the_conversion(self):
+        self.client.post(self.url('convert_static'))
+        response = self.client.get(self.url('history'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Converti en dossier statique',
+                      response.content.decode())
+
+    # -- Permissions ----------------------------------------------------------
+
+    def test_conversion_is_scoped_to_the_owner(self):
+        User = get_user_model()
+        other = User.objects.create_user('autre', 'autre@b.com', 'pw',
+                                         is_staff=True)
+        other.user_permissions.add(
+            Permission.objects.get(content_type__app_label='wagtailadmin',
+                                   codename='access_admin'),
+            Permission.objects.get(content_type__app_label='dossiers',
+                                   codename='change_dossier'))
+        self.client.force_login(other)
+        # Owned by another user, outside `other`'s hierarchy: invisible.
+        self.assertEqual(self.client.get(self.url('convert_static')).status_code,
+                         404)
+        self.assertEqual(self.client.post(self.url('convert_static')).status_code,
+                         404)
+        self.assertTrue(self.refreshed().evenements.count() == 0)
