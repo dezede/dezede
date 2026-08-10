@@ -14,14 +14,12 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
-import reversion
 from tinymce.widgets import TinyMCE
 from tree.fields import PathField
 from tree.models import TreeModelMixin
 from wagtail.admin.panels import (
     FieldPanel, FieldRowPanel, MultiFieldPanel, MultipleChooserPanel,
 )
-from wagtail.log_actions import log
 from wagtail.search.index import AutocompleteField, Indexed, RelatedFields, SearchField
 
 from accounts.models import HierarchicUser
@@ -403,25 +401,17 @@ class Dossier(Indexed, ClusterableModel, TreeModelMixin, PublishedModel):
              'static_count': getattr(self, kind).count()}
             for kind in self.active_kinds]
 
-    def convert_to_static(self, user=None):
+    def convert_to_static(self):
         """Freeze each active kind's dynamic queryset into its manual
         selection. The dossier then stops following the database."""
-        with reversion.create_revision():
-            reversion.set_user(user)
-            reversion.set_comment('Conversion en dossier statique')
-            for kind in self.active_kinds:
-                getattr(self, kind).set(self.get_queryset(kind, dynamic=True))
-            log(self, 'dossiers.convert_to_static', user=user)
+        for kind in self.active_kinds:
+            getattr(self, kind).set(self.get_queryset(kind, dynamic=True))
 
-    def convert_to_dynamic(self, user=None):
+    def convert_to_dynamic(self):
         """Clear every manual selection so the dossier is computed live from
         its dynamic criteria again."""
-        with reversion.create_revision():
-            reversion.set_user(user)
-            reversion.set_comment('Reconversion en dossier dynamique')
-            for kind in self.active_kinds:
-                getattr(self, kind).clear()
-            log(self, 'dossiers.convert_to_dynamic', user=user)
+        for kind in self.active_kinds:
+            getattr(self, kind).clear()
 
     @staticmethod
     def _descendants_pks(manager, model):

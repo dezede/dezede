@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
 from django.utils.translation import gettext_lazy as _
+import reversion
 from reversion.admin import VersionAdmin
 from tinymce.widgets import TinyMCE
 from libretto.admin import PublishedAdmin
@@ -168,7 +169,10 @@ class DossierAdmin(VersionAdmin, PublishedAdmin):
                 messages.INFO)
             return redirect('admin:dossiers_dossier_change', dossier.pk)
         if request.method == 'POST':
-            dossier.convert_to_static(request.user)
+            with reversion.create_revision():
+                reversion.set_user(request.user)
+                reversion.set_comment('Conversion en dossier statique')
+                dossier.convert_to_static()
             self.message_user(
                 request,
                 _('« %s » a été converti en dossier statique.') % dossier,
@@ -184,7 +188,10 @@ class DossierAdmin(VersionAdmin, PublishedAdmin):
         being computed live from its dynamic criteria."""
         dossier = self._get_conversion_object(request, object_id)
         if request.method == 'POST':
-            dossier.convert_to_dynamic(request.user)
+            with reversion.create_revision():
+                reversion.set_user(request.user)
+                reversion.set_comment('Reconversion en dossier dynamique')
+                dossier.convert_to_dynamic()
             self.message_user(
                 request,
                 _('« %s » a été reconverti en dossier dynamique.') % dossier,

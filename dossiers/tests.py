@@ -2,14 +2,10 @@ import json
 import re
 from datetime import date
 
-from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.test import TransactionTestCase, override_settings
 from django.urls import reverse
-import reversion
-from reversion.models import Version
-from wagtail.models import ModelLogEntry
 
 from libretto.models import (
     Etat, Evenement, Lieu, NatureDeLieu, Oeuvre, Source, TypeDeSource,
@@ -360,8 +356,7 @@ class DossierWagtailPanelsTestCase(TransactionTestCase):
 })
 class DossierWagtailConversionTestCase(DossierFixtureMixin, TransactionTestCase):
     """« Convertir en dossier statique » and its reverse, in the Wagtail admin:
-    header buttons, confirmation pages, permissions, and the two history trails
-    a conversion must leave behind."""
+    header buttons, confirmation pages and permissions."""
 
     CONVERT_LABEL = 'Convertir en dossier statique'
     REVERT_LABEL = 'Reconvertir en dossier dynamique'
@@ -375,20 +370,6 @@ class DossierWagtailConversionTestCase(DossierFixtureMixin, TransactionTestCase)
         self.assertEqual(response.status_code, 200)
         return response.content.decode()
 
-    # -- Registration ---------------------------------------------------------
-
-    def test_reversion_registration_survives_the_django_admin(self):
-        # ``Dossier`` used to be registered with reversion only as a side
-        # effect of ``DossierAdmin`` inheriting ``VersionAdmin``. Since
-        # ``convert_to_static()`` creates its revision from the model layer,
-        # and an unregistered model makes ``create_revision()`` a silent no-op,
-        # the registration has to be owned by the app config instead — which is
-        # what re-running ``ready()`` on a cleared registry proves here.
-        self.assertTrue(reversion.is_registered(Dossier))
-        reversion.unregister(Dossier)
-        apps.get_app_config('dossiers').ready()
-        self.assertTrue(reversion.is_registered(Dossier))
-
     # -- Header buttons -------------------------------------------------------
 
     def test_buttons_reflect_the_current_state(self):
@@ -398,7 +379,7 @@ class DossierWagtailConversionTestCase(DossierFixtureMixin, TransactionTestCase)
         self.assertNotIn(self.REVERT_LABEL, html)
 
         # Fully static: only the way back is offered.
-        self.refreshed().convert_to_static(self.user)
+        self.refreshed().convert_to_static()
         html = self.get_edit_html()
         self.assertNotIn(self.CONVERT_LABEL, html)
         self.assertIn(self.REVERT_LABEL, html)
@@ -454,36 +435,6 @@ class DossierWagtailConversionTestCase(DossierFixtureMixin, TransactionTestCase)
         self.assertFalse(dossier.evenements.exists())
         self.assertFalse(dossier.oeuvres.exists())
         self.assertFalse(dossier.sources.exists())
-
-    def test_conversion_is_recorded_in_both_histories(self):
-        self.client.post(self.url('convert_static'))
-
-        # django-reversion, which is what makes the change revertible.
-        versions = Version.objects.get_for_object(self.dossier)
-        self.assertEqual(versions.count(), 1)
-        self.assertEqual(versions.first().revision.comment,
-                         'Conversion en dossier statique')
-        self.assertEqual(versions.first().revision.user, self.user)
-
-        # Wagtail's log, which is what the snippet History tab shows.
-        entries = ModelLogEntry.objects.for_instance(self.dossier)
-        self.assertEqual([e.action for e in entries],
-                         ['dossiers.convert_to_static'])
-        self.assertEqual(entries.first().user, self.user)
-
-        self.client.post(self.url('convert_dynamic'))
-        self.assertEqual(
-            [e.action for e in
-             ModelLogEntry.objects.for_instance(self.dossier).order_by('pk')],
-            ['dossiers.convert_to_static', 'dossiers.convert_to_dynamic'])
-        self.assertEqual(Version.objects.get_for_object(self.dossier).count(), 2)
-
-    def test_history_tab_renders_the_conversion(self):
-        self.client.post(self.url('convert_static'))
-        response = self.client.get(self.url('history'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('Converti en dossier statique',
-                      response.content.decode())
 
     # -- Permissions ----------------------------------------------------------
 

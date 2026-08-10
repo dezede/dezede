@@ -31,22 +31,6 @@ def register_dossier_icons(icons):
     ]
 
 
-@hooks.register('register_log_actions')
-def register_dossier_log_actions(actions):
-    # ``ModelLogEntry.save()`` full-cleans the action against this registry, so
-    # an unregistered action raises rather than silently vanishing from the
-    # History tab. Wagtail core already maps ``models.Model`` to
-    # ``ModelLogEntry``, so only the two actions need declaring.
-    actions.register_action(
-        'dossiers.convert_to_static',
-        _('Conversion en dossier statique'),
-        _('Converti en dossier statique'))
-    actions.register_action(
-        'dossiers.convert_to_dynamic',
-        _('Reconversion en dossier dynamique'),
-        _('Reconverti en dossier dynamique'))
-
-
 class DossierConversionView(WagtailAdminTemplateMixin, View):
     """Confirmation page + action for the static <-> dynamic conversions.
 
@@ -95,7 +79,7 @@ class DossierConversionView(WagtailAdminTemplateMixin, View):
         return self.render_to_response(self.get_context_data())
 
     def post(self, request, *args, **kwargs):
-        self.convert(request.user)
+        self.convert()
         messages.success(request, self.success_message % self.object)
         return redirect(self.get_edit_url())
 
@@ -114,8 +98,8 @@ class ConvertToStaticView(DossierConversionView):
             return redirect(self.get_edit_url())
         return super().get(request, *args, **kwargs)
 
-    def convert(self, user):
-        self.object.convert_to_static(user)
+    def convert(self):
+        self.object.convert_to_static()
 
 
 class ConvertToDynamicView(DossierConversionView):
@@ -123,8 +107,8 @@ class ConvertToDynamicView(DossierConversionView):
     template_name = 'wagtailadmin/dossiers/dossier/convert_to_dynamic.html'
     success_message = _('« %s » a été reconverti en dossier dynamique.')
 
-    def convert(self, user):
-        self.object.convert_to_dynamic(user)
+    def convert(self):
+        self.object.convert_to_dynamic()
 
 
 class DossierEditView(CommonEditView):
