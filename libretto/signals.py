@@ -3,6 +3,7 @@ from typing import Type
 from django.apps import apps
 from django.contrib.admin.models import LogEntry
 from django.contrib.sessions.models import Session
+from django.db import transaction
 from django.db.models import QuerySet, Model
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
@@ -84,11 +85,16 @@ def update_related_search_items(sender, instance, **kwargs):
     if is_sender_ignored(sender):
         return
 
-    django_rq.enqueue(
+    # Enqueue only once the transaction is committed: the worker runs in another
+    # process, on another connection, so it cannot see uncommitted rows. Enqueuing
+    # inline lets the worker win the race against COMMIT, in which case
+    # ``auto_invalidate`` finds nothing and silently drops the reindexing.
+    args = (instance._meta.app_label, instance._meta.model_name, instance.pk)
+    transaction.on_commit(lambda: django_rq.enqueue(
         auto_invalidate,
-        args=(instance._meta.app_label, instance._meta.model_name, instance.pk),
+        args=args,
         result_ttl=0,  # Don’t store the result.
-    )
+    ))
 
 
 FasterModelChoiceIterator.register_cleanup_signal()
