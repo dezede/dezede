@@ -22,7 +22,7 @@ export default function PageCard({
       <CardActionArea component={OurLink} href={html_url}>
         <Stack direction="row">
           {teaser_thumbnail === null ? null : (
-            <Box display={{ xs: "none", sm: "block" }}>
+            <Box sx={{ display: { xs: "none", sm: "block" } }}>
               <ImageRendition
                 rendition={teaser_thumbnail}
                 style={{ display: "block" }}
@@ -33,10 +33,12 @@ export default function PageCard({
             <Stack spacing={2} divider={<Divider />}>
               <Stack
                 direction="column"
-                flexWrap="nowrap"
                 spacing={1}
-                justifyContent="space-between"
-                alignItems="baseline"
+                sx={{
+                  flexWrap: "nowrap",
+                  justifyContent: "space-between",
+                  alignItems: "baseline",
+                }}
               >
                 <Typography variant="h3">{title}</Typography>
               </Stack>

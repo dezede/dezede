@@ -32,7 +32,8 @@ export const djangoFetch = function djangoFetch(
   const searchParams = new URLSearchParams();
   if (params !== undefined) {
     Object.entries(params).forEach(([param, value]) => {
-      if (!value) {
+      // Keep 0 (a valid offset/limit); only drop absent or empty values.
+      if (value === undefined || value === null || value === "") {
         return;
       }
       if (typeof value === "number") {
@@ -94,7 +95,7 @@ function parseJsonHeader(
   header: string,
   defaultValue: string = "",
 ) {
-  return JSON.parse(decodeHeader(response, header));
+  return JSON.parse(decodeHeader(response, header, defaultValue));
 }
 
 export const findPage = cache(async function findPage({
@@ -156,27 +157,33 @@ function removeDiacritics(text: string): string {
   return text.normalize("NFKD").replaceAll(/\p{Mark}/gu, "");
 }
 
-const VOWELS_PATTERN = /^([AEIOUY]+)[^AEIOUY]+[AEIOUY]/i;
 const NON_LETTER = /(\P{L}+)/u;
+const VOWELS = "AEIOUYaeiouy";
 
-function abbreviateWord(word: string, minLength: number = 1): string {
-  if (word.length <= minLength) {
-    return word;
-  }
+function isVowel(letter: string): boolean {
+  return VOWELS.includes(letter);
+}
+
+// Mirrors Django's `common.utils.abbreviate` (with its default `min_len=1`):
+// a single leading vowel followed by a consonant is kept alone ("Amélie" →
+// "A."); otherwise everything up to and including the first consonant that is
+// followed by a vowel is kept ("Auguste" → "Aug.", "François" → "Fr.").
+// Words the rule cannot shorten ("de", "La", "A.-J.") stay intact.
+function abbreviateWord(word: string): string {
   const normalizedWord = removeDiacritics(word);
-  if (minLength === 1) {
-    const vowelMatch = normalizedWord.match(VOWELS_PATTERN);
-    if (vowelMatch !== null) {
-      return `${word.substring(0, vowelMatch[1].length)}.`;
-    }
-  }
-  const generalMatch = normalizedWord.match(
-    new RegExp(`^(\\w{${minLength},}?)[AEIOUY]\\w+`, "i"),
-  );
-  if (generalMatch === null) {
+  if (
+    normalizedWord.length >= 3 &&
+    isVowel(normalizedWord[0]) &&
+    !isVowel(normalizedWord[1])
+  ) {
     return `${word[0]}.`;
   }
-  return `${word.substring(0, generalMatch[1].length)}.`;
+  for (let i = 0; i + 2 < normalizedWord.length; i++) {
+    if (!isVowel(normalizedWord[i]) && isVowel(normalizedWord[i + 1])) {
+      return `${word.substring(0, i + 1)}.`;
+    }
+  }
+  return word;
 }
 
 export function abbreviate(text: string): string {
@@ -198,6 +205,24 @@ export function withParticule(particule: string, nom: string): string {
 
 export function capfirst(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+// French spelling of 1–9, mirroring Django's `humanize.apnumber` (used for
+// pupitre quantities, e.g. "un à quatre contrebasses"). Numbers ≥ 10 (or < 1)
+// stay as digits.
+const FRENCH_NUMBERS = [
+  "un",
+  "deux",
+  "trois",
+  "quatre",
+  "cinq",
+  "six",
+  "sept",
+  "huit",
+  "neuf",
+];
+export function apnumber(value: number): string {
+  return value >= 1 && value <= 9 ? FRENCH_NUMBERS[value - 1] : String(value);
 }
 export function joinWithLast(values: string[]) {
   if (values.length === 0) {
@@ -226,6 +251,71 @@ const ROMAN_BINDINGS = [
   { n: 4, s: "IV" },
   { n: 1, s: "I" },
 ];
+
+// Query params understood by the event API (and stored verbatim in the URL).
+export const EVENT_FILTER_PARAMS = [
+  "q",
+  "lieu",
+  "oeuvre",
+  "individu",
+  "ensemble",
+  "source",
+  "partie",
+  "profession",
+  "dates_0",
+  "dates_1",
+  "par_saison",
+  "order_by",
+] as const;
+
+/**
+ * Replicates Django's `common.utils.text.BiGrouper`: groups values by their
+ * identical (ordered) tuple of keys, preserving first-seen order. Used to render
+ * a distribution as "performer1, performer2 [role]".
+ */
+export function biGroup<E, V, K>(
+  elements: E[],
+  getValue: (element: E) => V | null,
+  getKey: (element: E) => K | null,
+  valueId: (value: V) => string,
+  keyId: (key: K) => string,
+): { values: V[]; keys: (K | null)[] }[] {
+  const order: string[] = [];
+  const valueOf = new Map<string, V>();
+  const keysOf = new Map<string, (K | null)[]>();
+  for (const element of elements) {
+    const value = getValue(element);
+    if (value === null) {
+      continue;
+    }
+    const vid = valueId(value);
+    if (!valueOf.has(vid)) {
+      valueOf.set(vid, value);
+      keysOf.set(vid, []);
+      order.push(vid);
+    }
+    keysOf.get(vid)!.push(getKey(element));
+  }
+  const signatureOrder: string[] = [];
+  const groupValues = new Map<string, V[]>();
+  const groupKeys = new Map<string, (K | null)[]>();
+  for (const vid of order) {
+    const keys = keysOf.get(vid)!;
+    const signature = keys
+      .map((key) => (key === null ? "\0" : keyId(key)))
+      .join("|");
+    if (!groupValues.has(signature)) {
+      groupValues.set(signature, []);
+      groupKeys.set(signature, keys);
+      signatureOrder.push(signature);
+    }
+    groupValues.get(signature)!.push(valueOf.get(vid)!);
+  }
+  return signatureOrder.map((signature) => ({
+    values: groupValues.get(signature)!,
+    keys: groupKeys.get(signature)!,
+  }));
+}
 
 export function toRoman(integer: number): string {
   if (integer < 1) {

@@ -876,7 +876,9 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
         APIField('indeterminee'),
         APIField('incipit'),
         APIField('tempo'),
-        APIField('tonalite', serializer=serializers.CharField(source='get_tonalite_display')),
+        # Raw tonalité code (e.g. ``Aa+``); the frontend localises it itself (see
+        # the matching note on ``WorkTitleMixin`` in the public serializers).
+        APIField('tonalite'),
         APIField('ambitus'),
         APIField('sujet'),
         APIField('arrangement', serializer=serializers.CharField(source='get_arrangement_display')),
@@ -913,8 +915,14 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 
     @property
     def categorie_type_extrait(self):
-        if self.type_extrait in self.TYPES_EXTRAIT_CACHES:
-            return 'hidden'
+        # Drives how `get_extrait` formats the designator: 'numero' → "№ X",
+        # 'ordinal' → "X.", 'roman' → roman numeral, 'default' → arabic.
+        # 'numero' and 'ordinal' are the "hidden" (cached) types whose
+        # designator is shown only when the work has a title.
+        if self.type_extrait == self.MORCEAU:
+            return 'numero'
+        if self.type_extrait in (self.MOUVEMENT, self.PIECE):
+            return 'ordinal'
         if self.type_extrait in self.TYPES_EXTRAIT_ROMAINS:
             return 'roman'
         return 'default'
@@ -1007,6 +1015,23 @@ class Oeuvre(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
     def pupitres_html(self, prefix=False, tags=True, solistes=False):
         return self.get_pupitres_str(prefix=prefix, tags=tags,
                                      solistes=solistes)
+
+    def ambitus_pitches(self):
+        """
+        Returns the ambitus as raw ``{'note': index, 'octave': n}`` endpoints
+        (or ``None``), so the frontend can localise the note names itself
+        instead of receiving a pre-rendered French string it cannot translate.
+        """
+        value = make_range_include_bounds(self.ambitus)
+        if not isinstance(value, Range) \
+                or value.lower is None or value.upper is None:
+            return None
+        note_min, octave_min = Pitch.database_to_form_values(value.lower)
+        note_max, octave_max = Pitch.database_to_form_values(value.upper)
+        return {
+            'lower': {'note': int(note_min), 'octave': octave_min},
+            'upper': {'note': int(note_max), 'octave': octave_max},
+        }
 
     def ambitus_html(self, tags=True):
         value = make_range_include_bounds(self.ambitus)

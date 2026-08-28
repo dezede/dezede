@@ -1,0 +1,14 @@
+{% load extras %}
+{% get_map_data oeuvres min_places bbox 'creation_lieu' as map_data %}
+[
+  {% for pk, nom, geometry, n in map_data %}
+    {
+      "type": "Feature",
+      "properties": {
+        "url": "{% map_request pk %}",
+        "tooltip": "{{ nom|escapejs }} ({{ n }})",
+        "n": {{ n }}},
+      "geometry": {{ geometry.json|safe }}
+    }{% if not forloop.last %},{% endif %}
+  {% endfor %}
+]

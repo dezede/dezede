@@ -12,9 +12,9 @@ from .export import ScenariosExporter
 
 @job
 def dossier_to_pdf(dossier_pk, user_pk, site_pk, language_code):
-    dossier = Dossier.objects.get(pk=dossier_pk).specific
+    dossier = Dossier.objects.get(pk=dossier_pk)
     context = {'object': dossier}
-    template_name = f'dossiers/{dossier._meta.model_name}_detail.tex'
+    template_name = 'dossiers/dossier_detail.tex'
     subject = _('du dossier « %s »') % dossier
     filename = slugify(str(dossier))
     send_pdf(context, template_name, subject, filename, user_pk, site_pk,
@@ -23,7 +23,7 @@ def dossier_to_pdf(dossier_pk, user_pk, site_pk, language_code):
 
 @job
 def dossier_to_xlsx(data, user_pk, site_pk, language_code):
-    dossier = Dossier.objects.get(pk=data.pop('dossier')).specific
+    dossier = Dossier.objects.get(pk=data.pop('dossier'))
     scenarios = list(filter(None, data.get('scenarios')))
     exporter = ScenariosExporter(dossier, scenarios)
     ids = "_".join([scenario.get('scenario').split('-')[1] for scenario in scenarios])

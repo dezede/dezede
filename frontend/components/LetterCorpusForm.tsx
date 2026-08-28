@@ -14,6 +14,7 @@ import {
   TYearChoice,
 } from "@/app/types";
 import React, { SyntheticEvent, useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useUpdateSearchParams } from "@/app/hooks";
 import { getPlaceLabel } from "@/format/PlaceChip";
 import Autocomplete, {
@@ -40,6 +41,7 @@ function AutocompleteFilter<T>({
   getOptionKey: (option: T | null) => string;
   renderOption?: (option: T) => React.ReactNode;
 }) {
+  const t = useTranslations("letter");
   const { updateSearchParams, searchParams } = useUpdateSearchParams();
   const [selected, setSelected] = useState<string>(
     searchParams.get(param) ?? "",
@@ -70,7 +72,7 @@ function AutocompleteFilter<T>({
       }
       renderInput={(params) => <TextField {...params} label={label} />}
       fullWidth
-      noOptionsText="Aucun choix disponible"
+      noOptionsText={t("noChoiceAvailable")}
       {...props}
     />
   );
@@ -84,7 +86,7 @@ function LetterTabLabel({
   count: number;
 }) {
   return (
-    <Stack direction="row" spacing={1} alignItems="center">
+    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
       <span>{children}</span>
       <Chip label={count} size="small" />
     </Stack>
@@ -108,6 +110,9 @@ export default function LetterCorpusForm({
   fromCount: number;
   toCount: number;
 }) {
+  const t = useTranslations("letter");
+  // For localising the pseudonyme suffix in person option labels.
+  const tCommon = useTranslations("common");
   const { updateSearchParams, searchParams } = useUpdateSearchParams();
   const [tab, setTab] = useState(searchParams.get("tab") ?? ELetterTab.ALL);
   const placeFilterOptions = createFilterOptions<TRelatedPlace>({
@@ -119,41 +124,41 @@ export default function LetterCorpusForm({
     <Paper>
       <Stack
         direction={{ xs: "column", md: "row" }}
-        flexWrap="nowrap"
-        p={2}
         spacing={2}
+        sx={{ flexWrap: "nowrap", p: 2 }}
       >
         <SearchTextField />
         <AutocompleteFilter
           param="year"
-          label="Année"
+          label={t("year")}
           options={yearChoices}
           getOptionKey={(option) =>
             (option?.year === null ? "null" : (option?.year ?? "")).toString()
           }
-          getOptionLabel={(option) => (option.year ?? "Inconnue").toString()}
+          getOptionLabel={(option) =>
+            (option.year ?? t("unknownYear")).toString()
+          }
           renderOption={(option) => (
             <Stack
               direction="row"
               spacing={1}
-              justifyContent="space-between"
-              width="100%"
+              sx={{ justifyContent: "space-between", width: "100%" }}
             >
-              <span>{option.year ?? "Inconnue"}</span>
-              <span>{option.count} lettres</span>
+              <span>{option.year ?? t("unknownYear")}</span>
+              <span>{t("letterCount", { count: option.count })}</span>
             </Stack>
           )}
         />
         <AutocompleteFilter
           param="person"
-          label="Correspondant"
+          label={t("correspondent")}
           options={personChoices}
           getOptionKey={(option) => (option?.id ?? "").toString()}
-          getOptionLabel={getPersonLabel}
+          getOptionLabel={(option) => getPersonLabel(option, tCommon)}
         />
         <AutocompleteFilter
           param="writing_place"
-          label="Lieu de rédaction"
+          label={t("writingPlace")}
           options={writingPlaceChoices}
           groupBy={(option) => option.nature.nom}
           getOptionKey={(option) => (option?.id ?? "").toString()}
@@ -172,14 +177,16 @@ export default function LetterCorpusForm({
       >
         <Tab
           value={ELetterTab.ALL}
-          label={<LetterTabLabel count={totalCount}>Tout</LetterTabLabel>}
+          label={
+            <LetterTabLabel count={totalCount}>{t("tabAll")}</LetterTabLabel>
+          }
           sx={tabSx}
         />
         <Tab
           value={ELetterTab.FROM}
           label={
             <LetterTabLabel count={fromCount}>
-              <small>De</small> <PersonLabel person={person} />
+              <small>{t("from")}</small> <PersonLabel person={person} />
             </LetterTabLabel>
           }
           sx={tabSx}
@@ -188,7 +195,7 @@ export default function LetterCorpusForm({
           value={ELetterTab.TO}
           label={
             <LetterTabLabel count={toCount}>
-              <small>À</small> <PersonLabel person={person} />
+              <small>{t("to")}</small> <PersonLabel person={person} />
             </LetterTabLabel>
           }
           sx={tabSx}
@@ -197,7 +204,7 @@ export default function LetterCorpusForm({
           value={ELetterTab.OTHER}
           label={
             <LetterTabLabel count={totalCount - fromCount - toCount}>
-              Autres
+              {t("tabOther")}
             </LetterTabLabel>
           }
           sx={tabSx}

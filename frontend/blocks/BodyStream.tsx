@@ -6,7 +6,7 @@ import PagesRowBlock from "@/blocks/PagesRowBlock";
 
 export default function BodyStream({ value }: { value: TBodyStreamBlock }) {
   return (
-    <Stack direction="column" flexWrap="nowrap" spacing={2}>
+    <Stack direction="column" spacing={2} sx={{ flexWrap: "nowrap" }}>
       {value.map((block) => {
         const { id, type, value } = block;
         switch (type) {

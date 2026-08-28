@@ -4,9 +4,9 @@ import type {} from "@mui/material/themeCssVarsAugmentation";
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 const primary = {
-  light: "#f09875",
-  main: "#ec8055",
-  dark: "#e75e27",
+  light: "#d97c2c",
+  main: "#b45309",   // Tailwind amber-700 — 4.83:1 on cream, 5.02:1 on white
+  dark: "#7c3906",   // 8.26:1 on cream, 7.97:1 on paper
   contrastText: "#ffffff",
 };
 
@@ -14,30 +14,48 @@ export default responsiveFontSizes(
   createTheme({
     cssVariables: true,
     typography: {
-      fontFamily: "var(--font-bodoni-moda)",
+      // Body / reading text uses Spectral; headings keep Bodoni Moda below.
+      fontFamily: "var(--font-body)",
+      body1: {
+        lineHeight: 1.6,
+      },
+      body2: {
+        lineHeight: 1.55,
+      },
       h1: {
+        fontFamily: "var(--font-bodoni-moda)",
         fontSize: "2.5rem",
+        lineHeight: 1.15,
       },
       h2: {
+        fontFamily: "var(--font-bodoni-moda)",
         fontSize: "1.875rem",
+        lineHeight: 1.2,
       },
       h3: {
+        fontFamily: "var(--font-bodoni-moda)",
         fontSize: "1.45rem",
       },
       h4: {
+        fontFamily: "var(--font-bodoni-moda)",
         fontSize: "1.25rem",
       },
       h5: {
+        fontFamily: "var(--font-bodoni-moda)",
         fontSize: "1.05rem",
       },
       h6: {
+        fontFamily: "var(--font-bodoni-moda)",
         fontSize: "0.9rem",
       },
     },
     colorSchemes: {
       dark: {
         palette: {
-          primary,
+          primary: {
+            ...primary,
+            dark: primary.light,  // #d97c2c — 6.5:1 on dark bg vs #7c3906's ~2:1
+          },
           secondary: {
             light: "#999999",
             main: "#888888",
@@ -75,6 +93,24 @@ export default responsiveFontSizes(
       },
     },
     components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          // Smooth-scrolls in-page hash jumps (e.g. the dossier "jump to
+          // presentation" button) instead of snapping instantly.
+          html: {
+            scrollBehavior: "smooth",
+          },
+        },
+      },
+      MuiAutocomplete: {
+        styleOverrides: {
+          // Keep the clear (×) button visible whenever a field has a value,
+          // instead of only revealing it on hover/focus (and never on touch).
+          clearIndicator: {
+            visibility: "visible",
+          },
+        },
+      },
       MuiButton: {
         defaultProps: {
           style: {
@@ -84,9 +120,11 @@ export default responsiveFontSizes(
       },
       MuiLink: {
         styleOverrides: {
-          root: {
-            color: primary.dark,
-          },
+          // Reference the CSS variable so links follow the active colour scheme
+          // (primary.dark is lightened in the dark scheme for contrast).
+          root: ({ theme }) => ({
+            color: theme.vars.palette.primary.dark,
+          }),
         },
       },
       MuiListSubheader: {
@@ -101,6 +139,15 @@ export default responsiveFontSizes(
           root: {
             backgroundImage: "none",
           },
+        },
+      },
+      MuiChip: {
+        styleOverrides: {
+          icon: ({ theme }) => ({
+            [theme.getColorSchemeSelector("dark")]: {
+              color: theme.vars.palette.text.primary,
+            },
+          }),
         },
       },
       MuiTab: {

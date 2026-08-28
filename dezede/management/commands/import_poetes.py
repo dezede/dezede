@@ -17,7 +17,7 @@ from django.utils.html import linebreaks
 from tqdm import tqdm
 
 from accounts.models import HierarchicUser
-from dossiers.models import DossierDOeuvres
+from dossiers.models import Dossier
 from libretto.models import Oeuvre, Profession, Individu, Auteur, Etat
 
 
@@ -38,7 +38,7 @@ class Command(BaseCommand):
 
         # ID Dossier "Mélodies françaises"
         self.oeuvres_dossier = list(
-            DossierDOeuvres.objects.get(pk=646).oeuvres.values_list('pk', flat=True)
+            Dossier.objects.get(pk=646).oeuvres.values_list('pk', flat=True)
         )
         # ID propriétaire "François Le Roux"
         self.owner = HierarchicUser.objects.get(pk=945)

@@ -34,7 +34,7 @@ function Value({ row }: { row: TRowType }) {
   const { key } = row;
   const values = "value" in row ? [{ value: row.value }] : row.values;
   return values.map(({ value }, index) => (
-    <Box key={`${key}:${index}`} display="flex">
+    <Box key={`${key}:${index}`} sx={{ display: "flex" }}>
       <Typography variant="subtitle2" noWrap>
         {value}
       </Typography>
@@ -61,7 +61,7 @@ export default function Metadata({
   }
   return (
     <div>
-      <Stack spacing={1} display={{ md: "none" }}>
+      <Stack spacing={1} sx={{ display: { md: "none" } }}>
         {filteredRows.map((row) => (
           <div key={`${row.key}-sm`}>
             <Header row={row} />

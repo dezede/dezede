@@ -14,7 +14,12 @@ export default function References({
     return null;
   }
   return (
-    <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={sx}>
+    <Stack
+      direction="row"
+      spacing={1}
+      useFlexGap
+      sx={{ flexWrap: "wrap", ...sx }}
+    >
       {references.map((reference) => (
         <ReferenceChip key={reference.id} reference={reference} />
       ))}

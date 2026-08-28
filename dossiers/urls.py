@@ -1,11 +1,12 @@
 from django.urls import path, re_path
 from dossiers.views import (
-    CategorieDeDossiersList, DossierDetail,
-    DossierDEvenementsStatsDetail,
-    DossierDEvenementsDetailXeLaTeX,
-    DossierDEvenementsDataGeoJson, DossierDEvenementsDataExport,
-    DossierDEvenementsScenario, DossierDataDetail)
+    CategorieDeDossiersList, DossierDetail, DossierStatsDetail,
+    DossierDetailXeLaTeX, DossierDataGeoJson, DossierEvenementsDataExport,
+    DossierScenario, DossierDataDetail, DossierLegacyDataRedirect)
 
+
+KIND = r'(?P<kind>evenements|oeuvres|sources)'
+STATS_KIND = r'(?P<kind>evenements|oeuvres)'
 
 urlpatterns = [
     path('', CategorieDeDossiersList.as_view(), name='dossier_index'),
@@ -13,31 +14,62 @@ urlpatterns = [
         name='dossier_detail'),
     path('id/<int:pk>/', DossierDetail.as_view(),
         name='dossier_permanent_detail'),
-    re_path(r'^(?P<slug>[\w-]+)/stats$', DossierDEvenementsStatsDetail.as_view(),
-        name='dossierdevenements_stats_detail'),
-    path('id/<int:pk>/stats', DossierDEvenementsStatsDetail.as_view(),
-        name='dossierdevenements_stats_permanent_detail'),
-    re_path(r'^(?P<slug>[\w-]+)/data$', DossierDataDetail.as_view(),
+
+    # Kind-scoped sub-resources.
+    re_path(rf'^(?P<slug>[\w-]+)/{KIND}/data$', DossierDataDetail.as_view(),
         name='dossier_data_detail'),
-    path('id/<int:pk>/data', DossierDataDetail.as_view(),
+    re_path(rf'^id/(?P<pk>\d+)/{KIND}/data$', DossierDataDetail.as_view(),
         name='dossier_data_permanent_detail'),
-    re_path(r'^(?P<slug>[\w-]+)/geojson$', DossierDEvenementsDataGeoJson.as_view(),
-        name='dossierdevenements_data_geojson'),
-    path('id/<int:pk>/geojson', DossierDEvenementsDataGeoJson.as_view(),
-        name='dossierdevenements_data_permanent_geojson'),
-    re_path(r'^(?P<slug>[\w-]+)/export$',
-        DossierDEvenementsDataExport.as_view(),
-        name='dossierdevenements_data_export'),
-    path('id/<int:pk>/export',
-        DossierDEvenementsDataExport.as_view(),
-        name='dossierdevenements_data_export'),
+    re_path(rf'^(?P<slug>[\w-]+)/{STATS_KIND}/stats$',
+        DossierStatsDetail.as_view(),
+        name='dossier_stats_detail'),
+    re_path(rf'^id/(?P<pk>\d+)/{STATS_KIND}/stats$',
+        DossierStatsDetail.as_view(),
+        name='dossier_stats_permanent_detail'),
+    re_path(rf'^(?P<slug>[\w-]+)/{STATS_KIND}/geojson$',
+        DossierDataGeoJson.as_view(),
+        name='dossier_data_geojson'),
+    re_path(rf'^id/(?P<pk>\d+)/{STATS_KIND}/geojson$',
+        DossierDataGeoJson.as_view(),
+        name='dossier_data_permanent_geojson'),
+    re_path(r'^(?P<slug>[\w-]+)/(?P<kind>evenements)/export$',
+        DossierEvenementsDataExport.as_view(),
+        name='dossier_data_export'),
+    re_path(r'^id/(?P<pk>\d+)/(?P<kind>evenements)/export$',
+        DossierEvenementsDataExport.as_view(),
+        name='dossier_data_permanent_export'),
+
+    # Exports of the whole dossier (kind-independent).
     re_path(r'^(?P<slug>[\w-]+)/export-pdf$',
-        DossierDEvenementsDetailXeLaTeX.as_view(),
-        name='dossierdevenements_detail_xelatex'),
+        DossierDetailXeLaTeX.as_view(),
+        name='dossier_detail_xelatex'),
     path('id/<int:pk>/export-pdf',
-        DossierDEvenementsDetailXeLaTeX.as_view(),
-        name='dossierdevenements_detail_permanent_xelatex'),
+        DossierDetailXeLaTeX.as_view(),
+        name='dossier_detail_permanent_xelatex'),
     re_path(r'^(?P<slug>[\w-]+)/export-scenario$',
-        DossierDEvenementsScenario.as_view(),
-        name='dossierdevenement_export_scenario')
+        DossierScenario.as_view(),
+        name='dossier_export_scenario'),
+
+    # Legacy kind-less URLs from before dossiers could mix several kinds of
+    # data; permanently redirected to their kind-scoped equivalents.
+    re_path(r'^(?P<slug>[\w-]+)/data$',
+        DossierLegacyDataRedirect.as_view()),
+    re_path(r'^id/(?P<pk>\d+)/data$',
+        DossierLegacyDataRedirect.as_view(
+            view_name='dossier_data_permanent_detail')),
+    re_path(r'^(?P<slug>[\w-]+)/stats$',
+        DossierLegacyDataRedirect.as_view(
+            view_name='dossier_stats_detail', kind='evenements')),
+    re_path(r'^id/(?P<pk>\d+)/stats$',
+        DossierLegacyDataRedirect.as_view(
+            view_name='dossier_stats_permanent_detail', kind='evenements')),
+    re_path(r'^(?P<slug>[\w-]+)/geojson$',
+        DossierLegacyDataRedirect.as_view(
+            view_name='dossier_data_geojson', kind='evenements')),
+    re_path(r'^id/(?P<pk>\d+)/geojson$',
+        DossierLegacyDataRedirect.as_view(
+            view_name='dossier_data_permanent_geojson', kind='evenements')),
+    re_path(r'^(?P<slug>[\w-]+)/export$',
+        DossierLegacyDataRedirect.as_view(
+            view_name='dossier_data_export', kind='evenements')),
 ]

@@ -1,0 +1,20 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+  {% if show_convert_to_static %}
+    <li>
+      <a href="{{ convert_static_url }}" class="grp-state-focus">
+        {% trans "Convertir en dossier statique" %}
+      </a>
+    </li>
+  {% endif %}
+  {% if show_convert_to_dynamic %}
+    <li>
+      <a href="{{ convert_dynamic_url }}" class="grp-state-focus">
+        {% trans "Reconvertir en dossier dynamique" %}
+      </a>
+    </li>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

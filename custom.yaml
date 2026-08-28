@@ -102,7 +102,7 @@ services:
     environment:
       CSP_DEFAULT: "'self' https://analyseweb.huma-num.fr"
       CSP_SCRIPT: "'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com code.jquery.com https://analyseweb.huma-num.fr"
-      CSP_IMG: "'self' data: blob: https://cdnjs.cloudflare.com a.tile.openstreetmap.org b.tile.openstreetmap.org c.tile.openstreetmap.org http://www.gravatar.com https://code.jquery.com https://analyseweb.huma-num.fr https://i.ytimg.com"
+      CSP_IMG: "'self' data: blob: https://cdnjs.cloudflare.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://www.gravatar.com https://code.jquery.com https://analyseweb.huma-num.fr https://i.ytimg.com"
       CSP_STYLE: "'self' 'unsafe-inline' https://cdnjs.cloudflare.com code.jquery.com"
       CSP_CONNECT: "'self' https://analyseweb.huma-num.fr"
       CSP_FRAME: "'self' https://docs.google.com https://www.youtube.com"
@@ -129,15 +129,27 @@ services:
     volumes:
       - static:/srv/static
     labels:
-      # Anubis (below) is now the sole Traefik target for $DOMAIN; nginx is only
-      # reachable through it, over the same "traefik" network they both sit on.
-      traefik.enable: "false"
+      # Static assets and uploaded media are public, cacheable, and have no
+      # scraping value: route them straight to nginx (higher priority than the
+      # Anubis router below) rather than through Anubis. Anubis is a proof-of-work
+      # gate for HTML page loads and EOFs under the many parallel sub-resource
+      # requests a page fires, so gating assets through it causes 502s under load.
+      # HTML page loads and the API still go through Anubis (the API is low
+      # concurrency and its callers carry the pass cookie, so it stays reliable).
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.$PROJECT-nginx.rule=Host(`$DOMAIN`) && (PathPrefix(`/_next/`) || PathPrefix(`/static/`) || PathPrefix(`/media/`))
+      - traefik.http.routers.$PROJECT-nginx.priority=1000
+      - traefik.http.services.$PROJECT-nginx.loadbalancer.server.port=80
   anubis:
     image: ghcr.io/techarohq/anubis:v1.25.0
     environment:
       TZ: $TZ
       BIND: ":8080"
       TARGET: "http://nginx:80"
+      # Forward the real vhost to nginx; without it Anubis sends Host: nginx and
+      # nginx's default server drops the request (444 -> proxy EOF -> 502).
+      TARGET_HOST: $DOMAIN
       COOKIE_DOMAIN: $DOMAIN
       ED25519_PRIVATE_KEY_HEX_FILE: /run/secrets/.env.secrets.anubis
     secrets:

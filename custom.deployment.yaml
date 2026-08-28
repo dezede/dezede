@@ -1,4 +1,10 @@
 services:
+  # The static-assets/media bypass router (defined in custom.yaml) needs the
+  # same TLS entrypoint as Anubis in production.
+  nginx:
+    labels:
+      - traefik.http.routers.$PROJECT-nginx.entrypoints=websecure
+      - traefik.http.routers.$PROJECT-nginx.tls.certresolver=letsencrypt
   anubis:
     labels:
       - traefik.http.routers.$PROJECT-anubis.entrypoints=websecure

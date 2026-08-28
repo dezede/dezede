@@ -11,6 +11,7 @@ import {
   TAsyncSearchParams,
   TRelatedPerson,
 } from "@/app/types";
+import { getTranslations } from "next-intl/server";
 import { djangoFetchData, safeParseInt } from "@/app/utils";
 import { INDIVIDU_FIELDS, PLACE_FIELDS } from "@/app/constants";
 import Divider from "@mui/material/Divider";
@@ -27,15 +28,18 @@ function PersonHorizontalList({
   persons: TRelatedPerson[];
 }) {
   return (
-    <Stack direction="row" spacing={1.5} flexWrap="nowrap">
+    <Stack
+      direction="row"
+      spacing={1.5}
+      sx={{ flexWrap: "nowrap" }}
+    >
       <span>{prefix}</span>
       <Stack
-        display="inline-flex"
         direction="row"
         spacing={1}
         divider={<Divider orientation="vertical" flexItem />}
-        flexWrap="wrap"
         useFlexGap
+        sx={{ display: "inline-flex", flexWrap: "wrap" }}
       >
         {persons.map((person) => (
           <PersonLabel key={person.id} person={person} component="strong" />
@@ -54,6 +58,7 @@ export default async function LetterList({
   searchParams: TAsyncSearchParams;
   perPage?: number;
 }) {
+  const t = await getTranslations("letter");
   const {
     search,
     year,
@@ -62,7 +67,8 @@ export default async function LetterList({
     tab,
     page: pageParam,
   } = await searchParams;
-  const page = safeParseInt(pageParam, 1);
+  // `?page=0` would produce a negative offset, which Wagtail rejects (400).
+  const page = Math.max(1, safeParseInt(pageParam, 1));
   const lettersData = await djangoFetchData<
     TPageResults<
       Omit<TLetter, "transcription" | "description"> & {
@@ -94,7 +100,7 @@ export default async function LetterList({
     ],
   );
   if (lettersData.items.length === 0) {
-    return <Empty>Aucune lettre ne correspond aux critères sélectionnés</Empty>;
+    return <Empty>{t("noLettersMatch")}</Empty>;
   }
   return (
     <Stack spacing={2}>
@@ -117,7 +123,7 @@ export default async function LetterList({
             <Card key={id}>
               <CardActionArea component={OurLink} href={html_url}>
                 <Stack direction="row">
-                  <Box display={{ xs: "none", sm: "block" }}>
+                  <Box sx={{ display: { xs: "none", sm: "block" } }}>
                     {letter_images.length >= 1 ? (
                       <ImageRendition
                         rendition={letter_images[0].thumbnail}
@@ -136,7 +142,7 @@ export default async function LetterList({
                           height: 200,
                         }}
                       >
-                        Image manquante
+                        {t("missingImage")}
                       </Empty>
                     )}
                   </Box>
@@ -148,29 +154,27 @@ export default async function LetterList({
                     <Stack
                       spacing={1}
                       divider={<Divider />}
-                      p={2}
-                      height="100%"
+                      sx={{ p: 2, height: "100%" }}
                     >
                       <Stack
                         direction={{ xs: "column", md: "row" }}
-                        flexWrap="wrap"
-                        justifyContent="space-between"
                         spacing={2}
                         useFlexGap
+                        sx={{ flexWrap: "wrap", justifyContent: "space-between" }}
                       >
                         <Stack
                           direction="row"
                           spacing={1.5}
-                          flexWrap="wrap"
                           useFlexGap
+                          sx={{ flexWrap: "wrap" }}
                         >
                           <PersonHorizontalList
-                            prefix="De"
+                            prefix={t("from")}
                             persons={senders.map(({ person }) => person)}
                           />
                           {recipients.length === 0 ? null : (
                             <PersonHorizontalList
-                              prefix="à"
+                              prefix={t("to")}
                               persons={recipients.map(({ person }) => person)}
                             />
                           )}
@@ -186,12 +190,12 @@ export default async function LetterList({
                         />
                       </Stack>
                       {transcription_text ? (
-                        <Typography textAlign="justify">
+                        <Typography sx={{ textAlign: "justify" }}>
                           {transcription_text}
                         </Typography>
                       ) : (
                         <Empty sx={{ py: 0, height: "100%" }}>
-                          Transcription manquante
+                          {t("missingTranscription")}
                         </Empty>
                       )}
                     </Stack>

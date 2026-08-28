@@ -3,7 +3,7 @@ import React from "react";
 
 export default function SmallCaps({ children }: { children: React.ReactNode }) {
   return (
-    <Box component="span" sx={{ fontFamily: "var(--font-bodoni-moda-sc)" }}>
+    <Box component="span" sx={{ fontFamily: "var(--sc-font)" }}>
       {children}
     </Box>
   );

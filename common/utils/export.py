@@ -127,7 +127,12 @@ def send_pdf(context, template_name, subject, filename, user_pk, site_pk,
         SITE=Site.objects.get(pk=site_pk),
         source_dict={})
     try:
-        tex = render_to_string(template_name, context)
+        # Le document XeLaTeX est toujours composé avec l’option « french »
+        # de babel : son contenu (données musicologiques, mise en forme)
+        # doit donc toujours être rendu en français, quelle que soit la
+        # langue de l’utilisateur ayant demandé l’export.
+        with translation.override('fr'):
+            tex = render_to_string(template_name, context)
     except JobTimeoutException:
         get_failure_mail(subject, user).send()
         unlock_user(user)

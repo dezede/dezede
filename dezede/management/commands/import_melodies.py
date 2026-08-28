@@ -13,7 +13,7 @@ from psycopg.types.range import Int4Range
 from tqdm import tqdm
 
 from accounts.models import HierarchicUser
-from dossiers.models import DossierDOeuvres, CategorieDeDossiers
+from dossiers.models import Dossier, CategorieDeDossiers, KIND_OEUVRES
 from libretto.models import Etat, Individu, Profession
 from libretto.models.oeuvre import (
     Pitch, GenreDOeuvre, TypeDeParenteDOeuvres, Partie, Oeuvre, ParenteDOeuvres,
@@ -693,7 +693,8 @@ class Command(BaseCommand):
 
     def import_dossier(self, df_oeuvres: pandas.DataFrame):
         self.stdout.write('Creating dossier…')
-        dossier = DossierDOeuvres(
+        dossier = Dossier(
+            types_de_donnees=[KIND_OEUVRES],
             categorie=CategorieDeDossiers.objects.get(nom='Archives du spectacle'),
             owner=OWNER, etat=ETAT, titre='Mélodies françaises',
             presentation='<p>Lorem ipsum</p>',

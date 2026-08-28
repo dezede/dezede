@@ -13,7 +13,7 @@ export default async function PageHeader({
 }) {
   const { title, ancestors, url } = await findPage({ params });
   return (
-    <Stack flexWrap="nowrap" spacing={4}>
+    <Stack spacing={4} sx={{ flexWrap: "nowrap" }}>
       {ancestors.length === 0 ? null : (
         <Breadcrumbs>
           {ancestors.map(({ id, title }, index) => (
