@@ -12,7 +12,6 @@
       </a>
     </td>
   </tr>
-{% endif %}
 
 {% paginate 10 evenements.yearly_counts using 'events' as yearly_counts %}
 {% for yearly_count in yearly_counts %}
@@ -36,3 +35,4 @@
   <td></td>
   <td>{% show_pages %}</td>
 </tr>
+{% endif %}
