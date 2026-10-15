@@ -7,7 +7,7 @@
       {{ name }}
     </th>
     <td>
-      <a href="{% url 'evenements' %}?{{ object.class_name|lower }}=|{{ object.pk }}|">
+      <a href="{% url 'evenements' %}?{{ filtre }}=|{{ object.pk }}|">
         <strong>{% trans 'Afficher tous les événements' %}</strong>
       </a>
     </td>
@@ -22,7 +22,7 @@
 
     <td>
       {% with year=yearly_count.year.year count=yearly_count.count %}
-        <a href="{% url 'evenements' %}?{{ object.class_name|lower }}=|{{ object.pk }}|&dates_0={{ year }}&dates_1={{ year }}">
+        <a href="{% url 'evenements' %}?{{ filtre }}=|{{ object.pk }}|&dates_0={{ year }}&dates_1={{ year }}">
           {{ year }} ({{ count }}
           {% filter abbreviate:4 %}{% trans 'événements' %}{% endfilter %})
         </a>

@@ -72,6 +72,16 @@ class BaseEvenementListView(PublishedListView):
                      'programme__distribution__ensemble__in',
                      'programme__oeuvre__auteurs__ensemble__in'),
         'source': ('sources__in', 'sources__parent__in'),
+        'apparition_individu': ('distribution__individu__in',
+                                'programme__distribution__individu__in'),
+        'apparition_ensemble': ('distribution__ensemble__in',
+                                'programme__distribution__ensemble__in'),
+        'auteur_individu': ('programme__oeuvre__auteurs__individu__in',),
+    }
+    BINDING_MODELS = {
+        'apparition_individu': 'individu',
+        'apparition_ensemble': 'ensemble',
+        'auteur_individu': 'individu',
     }
 
     @classmethod
@@ -81,7 +91,8 @@ class BaseEvenementListView(PublishedListView):
             if key not in cls.BINDINGS:
                 continue
             # Sépare les différents objets à partir d'une liste de pk.
-            Model = apps.get_model('libretto', key)
+            Model = apps.get_model(
+                'libretto', cls.BINDING_MODELS.get(key, key))
             pk_list = value.strip('|').split('|')
             objects = Model._default_manager.filter(pk__in=pk_list)
             # Inclus tous les événements impliquant les descendants
