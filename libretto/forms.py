@@ -42,7 +42,9 @@ class FasterModelChoiceIterator(ModelChoiceIterator):
         def clear_model_choice_cache(sender, **kwargs):
             cls._cache = {}
 
-        request_started.connect(clear_model_choice_cache)
+        # Signals hold receivers weakly by default, and this local function
+        # would be garbage-collected, so the cache would never clear.
+        request_started.connect(clear_model_choice_cache, weak=False)
 
     def __iter__(self):
         cache_key = str(self.queryset.query)
