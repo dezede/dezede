@@ -41,8 +41,8 @@
     {% data_table_list individu.oeuvres.prefetch_all %}
     {% data_table_list individu.membre_de 'ensemble_html' verbose_name=_('ensemble') verbose_name_plural=_('ensembles') %}
     {% data_table_list individu.parties_creees.all verbose_name=_('rôle créé') verbose_name_plural=_('rôles créés') %}
-    {% evenement_list_def individu.apparitions verbose_name=_('apparition') verbose_name_plural=_('apparitions') filtre='apparition_individu' %}
-    {% evenement_list_def individu.evenements_referents filtre='auteur_individu' %}
+    {% evenement_list_def individu.apparitions verbose_name=_('apparition') verbose_name_plural=_('apparitions') filtre='apparition_individu' link_label=_('Afficher tous les événements où cet individu a joué') %}
+    {% evenement_list_def individu.evenements_referents filtre='auteur_individu' link_label=_('Afficher tous les événements où des œuvres de cet individu ont été jouées') %}
     {% data_table_list individu.publications 'html' %}
 
 

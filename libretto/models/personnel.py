@@ -376,6 +376,10 @@ class Ensemble(Indexed, AutoriteModel, PeriodeDActivite, UniqueSlugModel, IsniMo
             evenement_ids = [t[0] for t in cursor.fetchall()]
         return Evenement.objects.filter(id__in=evenement_ids)
 
+    def evenements_referents(self):
+        return Evenement.objects.filter(
+            programme__oeuvre__auteurs__ensemble=self).distinct()
+
     def evenements_par_territoire(self, evenements_qs=None):
         if self.siege is None:
             return ()

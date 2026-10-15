@@ -8,7 +8,7 @@
     </th>
     <td>
       <a href="{% url 'evenements' %}?{{ filtre }}=|{{ object.pk }}|">
-        <strong>{% trans 'Afficher tous les événements' %}</strong>
+        <strong>{% if link_label %}{{ link_label }}{% else %}{% trans 'Afficher tous les événements' %}{% endif %}</strong>
       </a>
     </td>
   </tr>

@@ -77,11 +77,13 @@ class BaseEvenementListView(PublishedListView):
         'apparition_ensemble': ('distribution__ensemble__in',
                                 'programme__distribution__ensemble__in'),
         'auteur_individu': ('programme__oeuvre__auteurs__individu__in',),
+        'auteur_ensemble': ('programme__oeuvre__auteurs__ensemble__in',),
     }
     BINDING_MODELS = {
         'apparition_individu': 'individu',
         'apparition_ensemble': 'ensemble',
         'auteur_individu': 'individu',
+        'auteur_ensemble': 'ensemble',
     }
 
     @classmethod

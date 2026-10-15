@@ -19,7 +19,8 @@
     {% data_table_attr 'smart_period' caps=True %}
     {% data_table_list object.membres.all %}
     {% data_table_list object.oeuvres.prefetch_all %}
-    {% evenement_list_def object.apparitions filtre='apparition_ensemble' %}
+    {% evenement_list_def object.apparitions verbose_name=_('apparition') verbose_name_plural=_('apparitions') filtre='apparition_ensemble' link_label=_('Afficher tous les événements où cet ensemble a joué') %}
+    {% evenement_list_def object.evenements_referents filtre='auteur_ensemble' link_label=_('Afficher tous les événements où des œuvres de cet ensemble ont été jouées') %}
 
     {% data_table_attr 'notes_publiques' _('notes') %}
   </table>
