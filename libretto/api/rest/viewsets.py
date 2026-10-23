@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from accounts.models import HierarchicUser
@@ -50,8 +51,15 @@ class AuteurViewSet(ReadOnlyModelViewSet):
     queryset = Auteur.objects.all()
     serializer_class = AuteurSerializer
 
+    def get_queryset(self):
+        # An author row is as visible as the work or source it belongs to.
+        request = self.request
+        return super().get_queryset().filter(
+            Q(oeuvre__in=Oeuvre.objects.published(request))
+            | Q(source__in=Source.objects.published(request)))
 
-class ProfessionViewSet(ReadOnlyModelViewSet):
+
+class ProfessionViewSet(PublishedMixin, ReadOnlyModelViewSet):
     model = Profession
     queryset = Profession.objects.all()
     serializer_class = ProfessionSerializer

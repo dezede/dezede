@@ -376,7 +376,7 @@ class DossierDOeuvresDataDetail(DossierViewMixin, PublishedListView):
     template_name = 'dossiers/dossierdoeuvres_data_detail.html'
 
     def get_queryset(self):
-        qs = self.dossier.queryset.select_related(
+        qs = self.dossier.queryset.published(self.request).select_related(
             'genre', 'creation_lieu__parent__nature', 'creation_lieu__nature'
         ).prefetch_related(
             'auteurs__individu', 'auteurs__profession',
