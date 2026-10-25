@@ -1,5 +1,5 @@
 {% extends 'libretto/base.tex' %}
-{% load i18n extras %}
+{% load i18n extras routines %}
 
 
 {% block document %}
@@ -65,7 +65,8 @@
 
   \addcontentsline{toc}{part}{ {% trans 'Événements' %} }
 
-  {% with evenements=object.get_queryset.prefetch_all %}
+  {% published object.get_queryset as visibles %}
+  {% with evenements=visibles.prefetch_all %}
     {% for evenement in evenements %}
       {% with event_counter=forloop.counter %}
         {% include 'libretto/evenement_item.tex' %}

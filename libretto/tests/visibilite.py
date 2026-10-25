@@ -1,10 +1,15 @@
 from datetime import date
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory, TestCase
 
-from dossiers.models import DossierDOeuvres
+from django.contrib.sites.models import Site
+from django.template.loader import render_to_string
+from dossiers.export import ScenariosExporter
+from dossiers.jobs import dossier_to_xlsx
+from dossiers.models import DossierDEvenements, DossierDOeuvres
 from dossiers.views import DossierDOeuvresDataDetail
 from ..models import *
 
@@ -33,17 +38,18 @@ class VisibiliteTestCase(TestCase):
                                             etat=public)
         self.oeuvre_privee = Oeuvre.objects.create(
             titre='Œuvre privée', etat=prive, owner=self.proprietaire)
-        self.evenement = self._evenement(public, None)
-        self.evenement_prive = self._evenement(prive, self.proprietaire)
+        self.evenement = self._evenement(public, None, 'Circonstance publique')
+        self.evenement_prive = self._evenement(
+            prive, self.proprietaire, 'Circonstance privée')
 
         Auteur.objects.create(oeuvre=self.oeuvre_privee,
                               individu=Individu.objects.create(
                                   nom='Auteur test', etat=public))
 
-    def _evenement(self, etat, owner):
+    def _evenement(self, etat, owner, circonstance):
         evenement = Evenement.objects.create(
             debut_date=date(2000, 1, 1), debut_lieu=self.lieu, etat=etat,
-            owner=owner, notes_privees='secret')
+            owner=owner, circonstance=circonstance, notes_privees='secret')
         ElementDeProgramme.objects.create(
             evenement=evenement, oeuvre=self.oeuvre, position=1)
         ElementDeDistribution.objects.create(
@@ -103,3 +109,67 @@ class VisibiliteTestCase(TestCase):
                 self.assertEqual(
                     self.oeuvre_privee.pk in pks,
                     user in (self.proprietaire, self.super))
+
+    def _dossier_d_evenements(self):
+        ElementDeProgramme.objects.create(
+            evenement=self.evenement, oeuvre=self.oeuvre_privee, position=2)
+        dossier = DossierDEvenements.objects.create(
+            titre='Dossier événements test', slug='dossier-evenements-test',
+            etat=Etat.objects.get(nom='test public'))
+        dossier.evenements.add(self.evenement, self.evenement_prive)
+        return dossier
+
+    def testScenariosExportHidesUnpublished(self):
+        dossier = self._dossier_d_evenements()
+        for nom, (user, attendu) in self._viewers().items():
+            with self.subTest(nom):
+                request = self._request(user)
+                exporters = ScenariosExporter(
+                    dossier, [{'scenario': 'scenario-1'},
+                              {'scenario': 'scenario-7'}],
+                    request=request).exporters
+                self.assertEqual(len(exporters), 2)
+                self.assertEqual(exporters[0].queryset.count(), attendu)
+                oeuvres = {e.oeuvre for e in exporters[1].queryset}
+                self.assertEqual('Œuvre privée' in oeuvres,
+                                 user in (self.proprietaire, self.super))
+
+    def testScenariosExportersDontAccumulate(self):
+        dossier = self._dossier_d_evenements()
+        scenarios = [{'scenario': 'scenario-1'}]
+        ScenariosExporter(dossier, scenarios)
+        self.assertEqual(len(ScenariosExporter(dossier, scenarios).exporters), 1)
+
+    def testPdfExportHidesUnpublished(self):
+        dossier = self._dossier_d_evenements()
+        for nom, (user, attendu) in self._viewers().items():
+            with self.subTest(nom):
+                request = self._request(user)
+                tex = render_to_string(
+                    'dossiers/dossierdevenements_detail.tex',
+                    {'object': dossier, 'request': request,
+                     'user': request.user, 'SITE': Site.objects.get_current(),
+                     'source_dict': {}})
+                self.assertIn('Circonstance publique', tex)
+                self.assertEqual('Circonstance privée' in tex, attendu == 2)
+
+    def testXlsxJobFiltersByTheExportingUser(self):
+        dossier = self._dossier_d_evenements()
+        for user, attendu in ((self.autre, 1), (self.proprietaire, 2),
+                              (self.super, 2)):
+            with self.subTest(user.username):
+                data = {'dossier': dossier.pk,
+                        'scenarios': [{'scenario': 'scenario-1'}]}
+                with patch('dossiers.jobs.send_export') as send_export:
+                    dossier_to_xlsx(data, user.pk, 1, 'fr')
+                exporter = send_export.call_args.args[0]
+                self.assertEqual(
+                    exporter.exporters[0].queryset.count(), attendu)
+
+    def _get(self, url, user=None):
+        self.client.logout()
+        if user is not None:
+            self.client.force_login(user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        return response
