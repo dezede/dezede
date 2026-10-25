@@ -1,3 +1,4 @@
+import json
 import re
 from datetime import date
 from unittest.mock import patch
@@ -12,7 +13,9 @@ from django.contrib.sites.models import Site
 from django.template.loader import render_to_string
 from dossiers.export import ScenariosExporter
 from dossiers.jobs import dossier_to_xlsx
-from dossiers.models import Dossier, DossierDEvenements, DossierDOeuvres
+from dossiers.models import (
+    CategorieDeDossiers, Dossier, DossierDEvenements, DossierDOeuvres,
+)
 from dezede.models import IndexEntryExtension
 from dezede.search_backend import refresh_visibility
 from dezede.views import SearchView
@@ -407,3 +410,156 @@ class VisibiliteTestCase(TestCase):
                 self.assertEqual(
                     self.proprietaire.username in tex,
                     user in (self.proprietaire, self.super))
+
+    def _tree(self, path, user=None):
+        self.client.logout()
+        if user is not None:
+            self.client.force_login(user)
+        return self.client.get(f'/tree_node/{path}')
+
+    def _tree_nodes(self, path, user=None):
+        response = self._tree(path, user)
+        self.assertEqual(response.status_code, 200)
+        # The view serves JSON as text/html, so `response.json()` refuses it.
+        return {int(n['id']): n['label'] for n in json.loads(response.content)}
+
+    def _trees(self):
+        """Every tree of the site: its parent, the URL listing the children of
+        that parent, and a public and a private (owned) child."""
+        public = Etat.objects.get(nom='test public')
+        prive = Etat.objects.get(nom='test privé')
+
+        def enfants(creer):
+            return {'public': creer('public', public, None),
+                    'prive': creer('prive', prive, self.proprietaire)}
+
+        categorie = CategorieDeDossiers.objects.create(
+            nom='Catégorie test', etat=public)
+        autre_categorie = CategorieDeDossiers.objects.create(
+            nom='Autre catégorie test', etat=public)
+        partie = Partie.objects.create(
+            nom='Partie parent', type=Partie.INSTRUMENT, etat=public)
+        profession = Profession.objects.create(
+            nom='profession parent', etat=public)
+        dossier = DossierDEvenements.objects.create(
+            titre='Dossier parent', slug='dossier-parent',
+            categorie=autre_categorie, etat=public)
+        return {
+            'lieu': {
+                'parent': self.lieu,
+                'url': f'libretto/lieu/nom/{self.lieu.pk}',
+                'enfants': enfants(lambda s, etat, owner: Lieu.objects.create(
+                    nom=f'Lieu enfant {s}', nature=self.lieu.nature,
+                    parent=self.lieu, etat=etat, owner=owner)),
+            },
+            'oeuvre': {
+                'parent': self.oeuvre,
+                'url': f'libretto/oeuvre/short_html/{self.oeuvre.pk}',
+                'enfants': enfants(lambda s, etat, owner: Oeuvre.objects.create(
+                    titre=f'Extrait {s}', extrait_de=self.oeuvre, etat=etat,
+                    owner=owner)),
+            },
+            'partie': {
+                'parent': partie,
+                'url': f'libretto/partie/__str__/{partie.pk}',
+                'enfants': enfants(lambda s, etat, owner: Partie.objects.create(
+                    nom=f'Partie enfant {s}', type=Partie.INSTRUMENT,
+                    parent=partie, etat=etat, owner=owner)),
+            },
+            'profession': {
+                'parent': profession,
+                'url': f'libretto/profession/__str__/{profession.pk}',
+                'enfants': enfants(
+                    lambda s, etat, owner: Profession.objects.create(
+                        nom=f'profession enfant {s}', parent=profession,
+                        etat=etat, owner=owner)),
+            },
+            'categorie': {
+                'parent': categorie,
+                'url': f'dossiers/categoriededossiers/short_link/'
+                       f'{categorie.pk}',
+                'enfants': enfants(
+                    lambda s, etat, owner: DossierDEvenements.objects.create(
+                        titre=f'Dossier de catégorie {s}',
+                        slug=f'dossier-categorie-{s}', categorie=categorie,
+                        etat=etat, owner=owner)),
+            },
+            # `node` swaps the category for the dossier it names.
+            'dossier': {
+                'parent': dossier,
+                'url': f'dossiers/categoriededossiers/short_link/'
+                       f'{categorie.pk}?node={dossier.pk}',
+                'enfants': enfants(
+                    lambda s, etat, owner: DossierDEvenements.objects.create(
+                        titre=f'Sous-dossier {s}', slug=f'sous-dossier-{s}',
+                        parent=dossier, etat=etat, owner=owner)),
+            },
+        }
+
+    def testTreeNodeRejectsUnlistedModelsAndAttributes(self):
+        for combinaison in (
+            'accounts/hierarchicuser/password',
+            'accounts/hierarchicuser/email',
+            'libretto/lieu/delete',
+            'libretto/lieu/notes_privees',
+            'libretto/oeuvre/notes_privees',
+            'libretto/individu/nom',
+            # A listed model and a listed attribute, but not together.
+            'libretto/lieu/short_html',
+            'libretto/oeuvre/nom',
+        ):
+            for nom, user in (('anonyme', None), ('super', self.super)):
+                with self.subTest(combinaison=combinaison, viewer=nom):
+                    response = self._tree(combinaison + '/', user)
+                    self.assertEqual(response.status_code, 404)
+        self.assertTrue(Lieu.objects.filter(pk=self.lieu.pk).exists())
+
+    def testTreeNodeServesWhatThePagesAsk(self):
+        trees = self._trees()
+        pages = [
+            trees['lieu']['parent'].get_absolute_url(),
+            reverse('lieu_index'),
+            trees['oeuvre']['parent'].get_absolute_url(),
+            trees['partie']['parent'].get_absolute_url(),
+            trees['profession']['parent'].get_absolute_url(),
+            reverse('dossier_index'),
+        ]
+        urls = set()
+        for page in pages:
+            with self.subTest(page):
+                html = self._get(page).content.decode()
+                trouvees = re.findall(r'data-url="(/tree_node/[^"]*)"', html)
+                self.assertTrue(trouvees)
+                urls.update(trouvees)
+        for url in urls:
+            with self.subTest(url):
+                self.client.logout()
+                self.assertEqual(self.client.get(url).status_code, 200)
+
+    def testTreeNodeRootsHideUnpublished(self):
+        lieu_prive = Lieu.objects.create(
+            nom='Lieu racine privé', nature=self.lieu.nature,
+            etat=Etat.objects.get(nom='test privé'), owner=self.proprietaire)
+        racines = {
+            'libretto/lieu/nom/': (self.lieu, lieu_prive),
+            'libretto/oeuvre/short_html/': (self.oeuvre, self.oeuvre_privee),
+        }
+        for chemin, (visible, cache) in racines.items():
+            for nom, (user, attendu) in self._viewers().items():
+                with self.subTest(chemin=chemin, viewer=nom):
+                    pks = set(self._tree_nodes(chemin, user))
+                    self.assertIn(visible.pk, pks)
+                    self.assertEqual(cache.pk in pks, attendu == 2)
+
+    def testTreeNodeHidesUnpublishedChildren(self):
+        for tree_name, tree in self._trees().items():
+            enfants = tree['enfants']
+            for nom, (user, attendu) in self._viewers().items():
+                with self.subTest(tree=tree_name, viewer=nom):
+                    noeuds = self._tree_nodes(tree['url'], user)
+                    self.assertEqual(
+                        set(noeuds),
+                        {e.pk for e in enfants.values()} if attendu == 2
+                        else {enfants['public'].pk})
+                    self.assertIn(
+                        'public', noeuds[enfants['public'].pk].lower())

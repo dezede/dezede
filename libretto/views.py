@@ -514,6 +514,15 @@ class OeuvreViewSet(CommonViewSet):
 
 class TreeNode(PublishedDetailView):
     template_name = 'routines/tree_node.json'
+    # The template calls `attr` on every child, so a free value from the URL
+    # would run any method and read any field of any model.
+    ALLOWED_NODES = frozenset({
+        ('libretto', 'lieu', 'nom'),
+        ('libretto', 'oeuvre', 'short_html'),
+        ('libretto', 'partie', '__str__'),
+        ('libretto', 'profession', '__str__'),
+        ('dossiers', 'categoriededossiers', 'short_link'),
+    })
 
     def get_context_data(self, **kwargs):
         context = super(TreeNode, self).get_context_data(**kwargs)
@@ -535,6 +544,9 @@ class TreeNode(PublishedDetailView):
     def get(self, request, *args, **kwargs):
         app_label = self.kwargs['app_label']
         model_name = self.kwargs['model_name']
+        if (app_label, model_name, self.kwargs['attr']) \
+                not in self.ALLOWED_NODES:
+            raise Http404
 
         # FIXME: Ceci est un hack laid pour gérer les Dossier
         #        enfants de CategorieDeDossiers.
