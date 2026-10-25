@@ -1,3 +1,4 @@
+import re
 from datetime import date
 from unittest.mock import patch
 
@@ -5,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.test import RequestFactory, TestCase
+from django.urls import reverse
 
 from django.contrib.sites.models import Site
 from django.template.loader import render_to_string
@@ -343,3 +345,65 @@ class VisibiliteTestCase(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         return response
+
+    def _dossier_avec_contributeurs(self):
+        dossier = self._dossier_d_evenements()
+        source = Source.objects.create(
+            type=TypeDeSource.objects.create(nom='type test'),
+            titre='Source privée', etat=Etat.objects.get(nom='test privé'),
+            owner=self.autre)
+        source.evenements.add(self.evenement)
+        return dossier
+
+    def testDossierContributorsAreVisibleOnesOnly(self):
+        dossier = self._dossier_avec_contributeurs()
+        # The public event has no owner, so only the private event and the
+        # private source bring contributors.
+        attendus = {
+            'anonyme': set(),
+            'autre': {self.autre.pk},
+            'proprietaire': {self.proprietaire.pk},
+            'super': {self.proprietaire.pk, self.autre.pk},
+        }
+        for nom, (user, _) in self._viewers().items():
+            with self.subTest(nom):
+                contributeurs = dossier.get_contributors(self._request(user))
+                self.assertEqual({u.pk for u in contributeurs}, attendus[nom])
+
+    def testDossierContributorsAreComputedOncePerViewer(self):
+        dossier = self._dossier_avec_contributeurs()
+        request = self._request(self.autre)
+        first = dossier.get_contributors(request)
+        with self.assertNumQueries(0):
+            self.assertIs(dossier.get_contributors(request), first)
+        self.assertIsNot(
+            dossier.get_contributors(self._request(self.super)), first)
+
+    def testDossierContributorsDefaultToPublicData(self):
+        dossier = self._dossier_avec_contributeurs()
+        self.assertFalse(dossier.get_contributors().exists())
+
+    def testDossierPageShowsVisibleContributorsOnly(self):
+        dossier = self._dossier_avec_contributeurs()
+        url = reverse('dossier_detail', args=(dossier.slug,))
+        for nom, (user, _) in self._viewers().items():
+            with self.subTest(nom):
+                html = self._get(url, user).content.decode()
+                self.assertEqual(
+                    re.search(r'<dt>\s*Contributeurs?\s*</dt>', html)
+                    is not None,
+                    user is not None)
+
+    def testDossierPdfShowsVisibleContributorsOnly(self):
+        dossier = self._dossier_avec_contributeurs()
+        for nom, (user, _) in self._viewers().items():
+            with self.subTest(nom):
+                request = self._request(user)
+                tex = render_to_string(
+                    'dossiers/dossierdevenements_detail.tex',
+                    {'object': dossier, 'request': request,
+                     'user': request.user, 'SITE': Site.objects.get_current(),
+                     'source_dict': {}})
+                self.assertEqual(
+                    self.proprietaire.username in tex,
+                    user in (self.proprietaire, self.super))

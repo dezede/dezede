@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n routines %}
 
 <div class="row">
 
@@ -32,7 +32,8 @@
       <div class="panel-body">
         {% with editeurs_scientifiques=object.editeurs_scientifiques.all %}
           {% if editeurs_scientifiques %}
-            {{ editeurs_scientifiques.html }}{% if object.contributors|length > editeurs_scientifiques|length %} {% trans '(dir.)' %}{% endif %},
+            {% dossier_contributors object as contributors %}
+            {{ editeurs_scientifiques.html }}{% if contributors|length > editeurs_scientifiques|length %} {% trans '(dir.)' %}{% endif %},
           {% endif %}
         {% endwith %}
         {% now 'DATE_FORMAT' as now %}

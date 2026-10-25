@@ -1,4 +1,4 @@
-{% load i18n extras %}
+{% load i18n extras routines %}
 
 <aside id="sidebar">
 
@@ -32,18 +32,17 @@
       </div>
     {% endif %}
     <dl class="auto-links">
-      {% with contributors=object.contributors %}
-        {% if contributors %}
-          <dt>
-            {% if contributors|length < 2 %}
-              {% trans 'Contributeur' %}
-            {% else %}
-              {% trans 'Contributeurs' %}
-            {% endif %}
-          </dt>{# Supprimé dans revue #}
-          <dd>{{ contributors.html }}</dd>
-        {% endif %}
-      {% endwith %}
+      {% dossier_contributors object as contributors %}
+      {% if contributors %}
+        <dt>
+          {% if contributors|length < 2 %}
+            {% trans 'Contributeur' %}
+          {% else %}
+            {% trans 'Contributeurs' %}
+          {% endif %}
+        </dt>{# Supprimé dans revue #}
+        <dd>{{ contributors.html }}</dd>
+      {% endif %}
       <dt>{% trans 'Date de mise en ligne' %}</dt>
       <dd>{{ object.date_publication|date_html:True }}</dd>
       {# FIXME: Revoir cette condition quand le "voir aussi sera implémenté #}

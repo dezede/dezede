@@ -125,6 +125,11 @@ def published(context, qs):
 
 
 @register.simple_tag(takes_context=True)
+def dossier_contributors(context, dossier):
+    return dossier.get_contributors(context['request'])
+
+
+@register.simple_tag(takes_context=True)
 def prev_sibling(context, obj):
     request = context['request']
     return obj.get_prev_sibling(

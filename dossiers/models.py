@@ -166,14 +166,25 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
         return self.queryset.count()
     get_count.short_description = _('quantité de données sélectionnées')
 
-    @cached_property
-    def contributors(self):
-        contributor_ids = set()
-        for owner_id, source_owner_id in self.queryset.values_list(
-            'owner_id', 'sources__owner_id'
-        ).distinct():
-            contributor_ids.add(owner_id)
-            contributor_ids.add(source_owner_id)
+    def get_contributors(self, request=None):
+        # Kept per viewer on the instance: a render asks for it several times
+        # and each answer costs queries over every event of the dossier.
+        viewer = (None if request is None
+                  else (request.user.pk, request.user.is_superuser))
+        cache = self.__dict__.setdefault('_contributors_by_viewer', {})
+        if viewer not in cache:
+            cache[viewer] = self._find_contributors(request)
+        return cache[viewer]
+
+    def _find_contributors(self, request):
+        # Without a request, only public data counts.
+        visibles = self.queryset.published(request).order_by()
+        contributor_ids = set(visibles.values_list('owner_id', flat=True))
+        contributor_ids.update(
+            visibles
+            .filter(PublishedQuerySet._get_filters(request, prefix='sources__'))
+            .values_list('sources__owner_id', flat=True))
+        contributor_ids.discard(None)
         return HierarchicUser.objects.filter(pk__in=contributor_ids)
 
 
