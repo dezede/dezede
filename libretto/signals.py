@@ -14,7 +14,7 @@ from wagtail.models import Page, Orderable
 from wagtail.search.backends import get_search_backend
 
 from common.utils.html import sanitize_html
-from dezede.search_backend import get_search_relations
+from dezede.search_backend import get_search_relations, refresh_visibility
 from .forms import FasterModelChoiceIterator
 
 
@@ -95,6 +95,19 @@ def update_related_search_items(sender, instance, **kwargs):
         args=args,
         result_ttl=0,  # Don’t store the result.
     ))
+
+
+@job
+def refresh_search_visibility(etat_pk):
+    refresh_visibility(etat_pk)
+
+
+@receiver(post_save, sender='libretto.Etat')
+def update_search_visibility_of_etat(sender, instance, **kwargs):
+    # Saving an Etat doesn't save the objects that use it, so the visibility
+    # copied into their index entries has to be refreshed here.
+    transaction.on_commit(lambda: django_rq.enqueue(
+        refresh_search_visibility, args=(instance.pk,), result_ttl=0))
 
 
 FasterModelChoiceIterator.register_cleanup_signal()

@@ -177,7 +177,22 @@ class Dossier(Indexed, TreeModelMixin, PublishedModel):
         return HierarchicUser.objects.filter(pk__in=contributor_ids)
 
 
-class DossierDEvenements(Dossier):
+class IndexedAsDossier:
+    """Keeps one index entry per dossier, under `Dossier`.
+
+    Saving a subclass would otherwise index it under its own type, and search
+    only reads `Dossier` entries.
+    """
+
+    @classmethod
+    def get_indexed_objects(cls):
+        return cls.objects.none()
+
+    def get_indexed_instance(self):
+        return self.dossier_ptr
+
+
+class DossierDEvenements(IndexedAsDossier, Dossier):
     debut = DateField(_('début'), blank=True, null=True)
     fin = DateField(_('fin'), blank=True, null=True)
     lieux = ManyToManyField(Lieu, blank=True, verbose_name=_('lieux'),
@@ -255,7 +270,7 @@ class DossierDEvenements(Dossier):
         return Evenement.objects.none()
 
 
-class DossierDOeuvres(Dossier):
+class DossierDOeuvres(IndexedAsDossier, Dossier):
     debut = DateField(_('début'), blank=True, null=True)
     fin = DateField(_('fin'), blank=True, null=True)
     lieux = ManyToManyField(Lieu, blank=True, verbose_name=_('lieux'),

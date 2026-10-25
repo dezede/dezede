@@ -92,12 +92,24 @@ class SearchView(ListView):
             ContentType.objects.get_for_model(model)
             for model in filtered_models
         ])
+        qs = self.filter_visible(qs)
         if self.q:
             results = s.search(self.q, qs)
             if isinstance(results, EmptySearchResults):
                 return qs.none()
             return results.get_queryset()
         return qs
+
+    def filter_visible(self, qs):
+        # Same rule as `PublishedQuerySet.published`, on the visibility copied
+        # into the index entries.
+        user = self.request.user
+        if user.is_superuser:
+            return qs
+        visible = Q(extension__public=True)
+        if user.is_authenticated:
+            visible |= Q(extension__owner_pk=user.pk)
+        return qs.filter(visible)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
