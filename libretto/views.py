@@ -87,7 +87,7 @@ class BaseEvenementListView(PublishedListView):
     }
 
     @classmethod
-    def get_filters(cls, data):
+    def get_filters(cls, data, request=None):
         filters = Q()
         for key, value in data.items():
             if key not in cls.BINDINGS:
@@ -96,7 +96,9 @@ class BaseEvenementListView(PublishedListView):
             Model = apps.get_model(
                 'libretto', cls.BINDING_MODELS.get(key, key))
             pk_list = value.strip('|').split('|')
-            objects = Model._default_manager.filter(pk__in=pk_list)
+            # Un objet invisible est ignoré, comme s'il n'existait pas.
+            objects = Model._default_manager.filter(
+                pk__in=pk_list).published(request)
             # Inclus tous les événements impliquant les descendants
             # éventuels de chaque objet de value.
             if isinstance(objects, TreeQuerySetMixin):
@@ -118,11 +120,12 @@ class BaseEvenementListView(PublishedListView):
             qs = qs.filter(base_filter)
 
         data = self.request.GET
-        self.form = EvenementListForm(data, queryset=qs)
+        self.form = EvenementListForm(
+            data, queryset=qs, request=self.request)
         try:
             self.valid_form = self.form.is_valid()
         except:
-            self.form = EvenementListForm(queryset=qs)
+            self.form = EvenementListForm(queryset=qs, request=self.request)
             self.valid_form = False
             data = {}
         if self.enable_default_page and not data:
@@ -139,7 +142,7 @@ class BaseEvenementListView(PublishedListView):
             s = get_search_backend()
             qs = s.search(search_query, qs, order_by_relevance=False).get_queryset()
 
-        filters = self.get_filters(data)
+        filters = self.get_filters(data, self.request)
         qs = qs.filter(filters).distinct()
         try:
             start, end = int(data.get('dates_0')), int(data.get('dates_1'))

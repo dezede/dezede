@@ -595,6 +595,35 @@ class VisibiliteTestCase(TestCase):
                     self.assertIn(
                         'public', noeuds[enfants['public'].pk].lower())
 
+    def testEvenementFilterWidgetHidesUnpublishedNames(self):
+        individu = Individu.objects.create(
+            nom='Nom secret', etat=Etat.objects.get(nom='test privé'),
+            owner=self.proprietaire)
+        url = reverse('evenements') + f'?individu=|{individu.pk}|'
+        for nom, (user, attendu) in self._viewers().items():
+            with self.subTest(viewer=nom):
+                self.client.logout()
+                if user is not None:
+                    self.client.force_login(user)
+                contenu = self.client.get(url).content.decode()
+                self.assertEqual('Nom secret' in contenu, attendu == 2)
+
+    def testEvenementFilterIgnoresUnpublishedObjects(self):
+        ElementDeProgramme.objects.create(
+            evenement=self.evenement, oeuvre=self.oeuvre_privee, position=2)
+        self._evenement(Etat.objects.get(nom='test public'), None, 'Autre')
+        url = reverse('evenements') + f'?oeuvre=|{self.oeuvre_privee.pk}|'
+        # Le filtre n'agit que pour qui voit l'œuvre.
+        attendus = {'anonyme': 2, 'autre': 2, 'proprietaire': 1, 'super': 1}
+        for nom, (user, _) in self._viewers().items():
+            with self.subTest(viewer=nom):
+                self.client.logout()
+                if user is not None:
+                    self.client.force_login(user)
+                response = self.client.get(url)
+                self.assertEqual(
+                    len(response.context['object_list']), attendus[nom])
+
     def testChoosersShowWhichAutoritesAreNotPublished(self):
         public = Etat.objects.get(nom='test public')
         prive = Etat.objects.get(nom='test privé')
