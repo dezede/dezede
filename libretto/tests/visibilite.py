@@ -11,6 +11,7 @@ from django.urls import reverse
 
 from django.contrib.sites.models import Site
 from django.template.loader import render_to_string
+from bs4 import BeautifulSoup
 from dossiers.export import ScenariosExporter
 from dossiers.jobs import dossier_to_xlsx
 from dossiers.models import (
@@ -563,3 +564,35 @@ class VisibiliteTestCase(TestCase):
                         else {enfants['public'].pk})
                     self.assertIn(
                         'public', noeuds[enfants['public'].pk].lower())
+
+    def testChoosersShowWhichAutoritesAreNotPublished(self):
+        public = Etat.objects.get(nom='test public')
+        prive = Etat.objects.get(nom='test privé')
+        Individu.objects.create(nom='Zzzchoix publié', etat=public)
+        Individu.objects.create(nom='Zzzchoix caché', etat=prive)
+        self.client.force_login(self.super)
+        response = self.client.get(
+            reverse('wagtailsnippetchoosers_libretto_individu:choose_results'),
+            {'q': 'Zzzchoix'})
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode()
+        self.assertIn('Zzzchoix publié', html)
+        self.assertIn('Zzzchoix caché', html)
+        soup = BeautifulSoup(html, 'html.parser')
+
+        def icone_et_etat(nom):
+            ligne = next(tr for tr in soup.select('tr') if nom in tr.text)
+            (icone,) = [
+                svg['class'] for svg in ligne.select('svg')
+                if {'w-text-positive-100', 'w-text-text-error'}
+                & set(svg['class'])
+            ]
+            return icone, ligne.text
+
+        # A green tick for the published états, a red cross for the others.
+        icone, ligne = icone_et_etat('Zzzchoix publié')
+        self.assertIn('w-text-positive-100', icone)
+        self.assertIn('test public', ligne)
+        icone, ligne = icone_et_etat('Zzzchoix caché')
+        self.assertIn('w-text-text-error', icone)
+        self.assertIn('test privé', ligne)

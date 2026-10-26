@@ -53,19 +53,27 @@ class AutoriteViewSet(SnippetViewSet):
             Column('id', 'ID'),
             *original_columns,
             *self.get_chooser_extra_columns(),
+            Column('etat', label=_('État'), accessor='etat.nom'),
+            BooleanColumn(
+                'publie', label=_('Publié'), accessor='etat.public'),
             Column('link', label=_('Lien')),
         ]
 
     @property
     def chooser_viewset_class(self):
         get_columns = self.get_chooser_columns
-        class CustomChooseView(SnippetChooserViewSet.choose_view_class):
+
+        class WithEtat:
+            def get_object_list(self):
+                return super().get_object_list().select_related('etat')
+
+        class CustomChooseView(WithEtat, SnippetChooserViewSet.choose_view_class):
             @property
             def columns(self):
                 return get_columns([self.title_column])
 
 
-        class CustomChooseResultsView(SnippetChooserViewSet.choose_results_view_class):
+        class CustomChooseResultsView(WithEtat, SnippetChooserViewSet.choose_results_view_class):
             @property
             def columns(self):
                 return get_columns([self.title_column])
