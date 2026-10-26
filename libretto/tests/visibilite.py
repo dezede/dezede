@@ -3,6 +3,7 @@ import re
 from datetime import date
 from unittest.mock import patch
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
@@ -19,10 +20,12 @@ from dossiers.models import (
 )
 from dezede.models import IndexEntryExtension
 from dezede.search_backend import refresh_visibility
-from dezede.views import SearchView
+from dezede.views import SearchView, autocomplete_search
 from dossiers.views import DossierDOeuvresDataDetail
 from ..models import *
 from ..signals import refresh_search_visibility
+from wagtail.coreutils import get_supported_content_language_variant
+from wagtail.models import Locale, Page
 from wagtail.search.backends import get_search_backend
 from wagtail.search.models import IndexEntry
 
@@ -145,6 +148,52 @@ class VisibiliteTestCase(TestCase):
                     self._search_visibles(user),
                     pks if user in (self.proprietaire, self.super)
                     else {str(self.oeuvre.pk)})
+
+    def testAutocompleteWithoutModelHidesUnpublished(self):
+        for nom, (user, _) in self._viewers().items():
+            with self.subTest(nom):
+                request = self._request(user)
+                pks = {o.pk for o in autocomplete_search(request, 'Œuvre')}
+                self.assertEqual(
+                    pks,
+                    {self.oeuvre.pk, self.oeuvre_privee.pk}
+                    if user in (self.proprietaire, self.super)
+                    else {self.oeuvre.pk})
+
+    def testAutocompleteWithoutModelExcludesPages(self):
+        Locale.objects.get_or_create(
+            language_code=get_supported_content_language_variant(
+                settings.LANGUAGE_CODE))
+        racine = Page.get_first_root_node() or Page.add_root(
+            instance=Page(title='Racine', slug='racine'))
+        publiee = racine.add_child(
+            instance=Page(title='Pagetest publiée', slug='pagetest-publiee'))
+        racine.add_child(instance=Page(
+            title='Pagetest brouillon', slug='pagetest-brouillon', live=False))
+
+        # Guard against a vacuous pass: the page is indexed and the search
+        # does find it once a model is given.
+        self.assertTrue(IndexEntry.objects.filter(
+            content_type=ContentType.objects.get_for_model(Page),
+            object_id=str(publiee.pk)).exists())
+        self.assertEqual(
+            [p.pk for p in autocomplete_search(
+                self._request(self.super), 'Pagetest', Page)],
+            [publiee.pk])
+
+        for nom, (user, _) in self._viewers().items():
+            with self.subTest(nom):
+                resultats = autocomplete_search(self._request(user), 'Pagetest')
+                self.assertEqual(resultats, [])
+
+    def testAutocompleteViewWithoutModelHidesUnpublished(self):
+        self.client.logout()
+        response = self.client.get('/autocomplete', {'q': 'Œuvre'})
+        self.assertEqual(response.status_code, 200)
+        # The view escapes non-ASCII characters, so compare parsed values.
+        titres = {s['str'] for s in response.json()}
+        self.assertTrue(any('Œuvre publique' in t for t in titres))
+        self.assertFalse(any('Œuvre privée' in t for t in titres))
 
     def testSearchFollowsEtatChange(self):
         # Saving an Etat doesn't reindex the objects that use it.

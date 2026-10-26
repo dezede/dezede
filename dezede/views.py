@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sitemaps import Sitemap
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.contrib.syndication.views import Feed
-from django.db.models import Q, QuerySet
+from django.db.models import Exists, OuterRef, Q, QuerySet
 from django.http import HttpResponse
 from django.utils.feedgenerator import DefaultFeed, Enclosure
 from django.utils.html import strip_tags
@@ -27,7 +27,7 @@ from libretto.models import (
 )
 from libretto.models.base import PublishedModel, PublishedQuerySet
 from typography.utils import replace
-from .models import Diapositive
+from .models import Diapositive, IndexEntryExtension
 
 
 # Taken from https://gist.github.com/justinfx/3095246
@@ -60,6 +60,19 @@ class HomeView(ListView):
         qs = super(HomeView, self).get_queryset().published(self.request)
         cache_generics(qs)
         return qs
+
+
+def filter_visible_entries(qs, user):
+    if user.is_superuser:
+        return qs
+    visible = Q(public=True)
+    if user.is_authenticated:
+        visible |= Q(owner_pk=user.pk)
+    # A subquery, not a join on `extension`: filtering through the join makes
+    # PostgreSQL scan the whole extension table when a term has many matches.
+    return qs.filter(Exists(
+        IndexEntryExtension.objects.filter(
+            visible, index_entry_ptr_id=OuterRef('pk'))))
 
 
 class SearchView(ListView):
@@ -101,15 +114,7 @@ class SearchView(ListView):
         return qs
 
     def filter_visible(self, qs):
-        # Same rule as `PublishedQuerySet.published`, on the visibility copied
-        # into the index entries.
-        user = self.request.user
-        if user.is_superuser:
-            return qs
-        visible = Q(extension__public=True)
-        if user.is_authenticated:
-            visible |= Q(extension__owner_pk=user.pk)
-        return qs.filter(visible)
+        return filter_visible_entries(qs, self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -145,12 +150,19 @@ def autocomplete_search(request, q, model=None, max_results=5):
     elif isinstance(qs, PageQuerySet):
         qs = qs.live()
     elif qs.model is IndexEntry:
-        qs = qs.filter(
-            content_type__in=[
-                ContentType.objects.get_for_model(m) for m in apps.get_models()
-                if issubclass(m, (PublishedModel, Page)) and m not in {Diapositive, Dossier, CategorieDeDossiers}
-            ]
-        )
+        # Pages are left out: their index entries carry no visibility until
+        # a reindex, and nothing there filters drafts.
+        # `only` keeps the rows narrow: the ranking sort otherwise carries each
+        # entry's whole body and spills to disk on common terms.
+        qs = filter_visible_entries(
+            qs.filter(
+                content_type__in=[
+                    ContentType.objects.get_for_model(m) for m in apps.get_models()
+                    if issubclass(m, PublishedModel) and m not in {Diapositive, Dossier, CategorieDeDossiers}
+                ]
+            ),
+            request.user,
+        ).only('content_type', 'object_id')
 
     qs = s.autocomplete(q, qs).annotate_score('_score').get_queryset()
 
