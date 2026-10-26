@@ -398,6 +398,36 @@ class VisibiliteTestCase(TestCase):
                     is not None,
                     user is not None)
 
+    def testUserPageListsVisibleDossiersOnly(self):
+        publie = self._dossier_d_evenements()
+        prive = DossierDEvenements.objects.create(
+            titre='Dossier privé test', slug='dossier-prive-test',
+            etat=Etat.objects.get(nom='test privé'), owner=self.proprietaire)
+        for dossier in (publie, prive):
+            dossier.editeurs_scientifiques.add(self.autre)
+        url = reverse('user_profile', args=(self.autre.username,))
+        attendus = {
+            'anonyme': (True, False),
+            'autre': (True, False),
+            'proprietaire': (True, True),
+            'super': (True, True),
+        }
+        for nom, (user, _) in self._viewers().items():
+            with self.subTest(nom):
+                html = self._get(url, user).content.decode()
+                self.assertEqual(
+                    (publie.titre in html, prive.titre in html),
+                    attendus[nom])
+
+    def testUserPageHidesSectionWithoutVisibleDossier(self):
+        prive = DossierDEvenements.objects.create(
+            titre='Dossier privé test', slug='dossier-prive-test',
+            etat=Etat.objects.get(nom='test privé'), owner=self.proprietaire)
+        prive.editeurs_scientifiques.add(self.autre)
+        url = reverse('user_profile', args=(self.autre.username,))
+        html = self._get(url).content.decode()
+        self.assertNotIn('À consulter dans Dezède', html)
+
     def testDossierPdfShowsVisibleContributorsOnly(self):
         dossier = self._dossier_avec_contributeurs()
         for nom, (user, _) in self._viewers().items():
