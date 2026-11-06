@@ -147,7 +147,10 @@ AUTHENTICATION_BACKENDS = (
 ACCOUNT_ADAPTER = 'accounts.adapter.HierarchicUserAdapter'
 ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.HierarchicUserSignupForm'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = False
+# TODO: allauth 0.52 has no French text for the "account already exists" email
+# (subject and body), so it is sent half in English. Override
+# `account/email/account_already_exists_{subject,message}` or translate it.
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
