@@ -343,6 +343,8 @@ WAGTAILSEARCH_BACKENDS = {
     },
 }
 
+TEST_RUNNER = 'dezede.test_runner.ContentTypeCacheRunner'
+
 # TODO: add strikethrough to one of the editors
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     "default": {
