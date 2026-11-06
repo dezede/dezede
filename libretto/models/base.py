@@ -219,8 +219,9 @@ class CommonModel(TypographicModel):
 
 class PublishedQuerySet(CommonQuerySet):
     @staticmethod
-    def _get_filters(request=None):
-        filters = Q(etat__public=True)
+    def _get_filters(request=None, prefix=''):
+        # `prefix` lets callers filter through a relation, e.g. in a Count.
+        filters = Q(**{f'{prefix}etat__public': True})
         if request is None:
             return filters
 
@@ -228,7 +229,7 @@ class PublishedQuerySet(CommonQuerySet):
             return Q()
 
         if request.user.is_authenticated:
-            filters |= Q(owner=request.user.pk)
+            filters |= Q(**{f'{prefix}owner': request.user.pk})
         return filters
 
     def published(self, request=None):

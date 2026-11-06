@@ -153,3 +153,8 @@ class Diapositive(Indexed, PublishedModel):
 class IndexEntryExtension(Model):
     index_entry_ptr = OneToOneField('wagtailsearch.IndexEntry', related_name='extension', on_delete=CASCADE, primary_key=True)
     boost = FloatField(default=1.0)
+    # Copied from the indexed object so that searching IndexEntry can hide
+    # what the user may not see. Closed by default: an entry whose visibility
+    # was never computed stays hidden.
+    public = BooleanField(default=False)
+    owner_pk = PositiveIntegerField(null=True, blank=True)

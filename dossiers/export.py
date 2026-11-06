@@ -22,21 +22,22 @@ from libretto.models import *
 
 
 class ScenariosExporter:
-    exporters = []
-
     CONTENT_TYPES = {
         'xlsx': 'application/vnd.openxmlformats-officedocument'
                 '.spreadsheetml.sheet',
     }
 
-    def __init__(self, dossier, scenarios=()):
+    def __init__(self, dossier, scenarios=(), request=None):
+        # Per instance: a class-level list would carry the exporters of
+        # earlier dossiers over to the next export in the same worker.
+        self.exporters = []
+        # The scenarios are all event-based (see SCENARIOS in forms.py).
+        queryset = dossier.queryset_for(KIND_EVENEMENTS).published(request)
         for scenario in scenarios:
             scenario = string.capwords(scenario.get('scenario')).replace('-', '')
             expt = f"dossiers.export.{scenario}"
             Exporter = self.loader(expt)
-            # The scenarios are all event-based (see SCENARIOS in forms.py).
-            self.exporters.append(
-                Exporter(dossier.queryset_for(KIND_EVENEMENTS)))
+            self.exporters.append(Exporter(queryset, request=request))
 
     def loader(self, path):
         module_name, class_name = path.rsplit(".", 1)
@@ -87,8 +88,9 @@ class CustomExporter(Exporter):
     swaps = None
     display_total = True
 
-    def __init__(self, queryset=None):
+    def __init__(self, queryset=None, request=None):
         self.queryset = queryset
+        self.request = request
 
         if not self.columns:
             self.columns = [field.name for field in self.model._meta.fields]
@@ -362,10 +364,10 @@ class Scenario3(EvenementScenarioExporter):
     tab_name = _("3. Œuvres - chronologique")
     title = _("3. Œuvres : répartition chronologique")
 
-    def __init__(self, queryset=None):
+    def __init__(self, queryset=None, request=None):
         elements = []
 
-        for work in queryset.oeuvres():
+        for work in queryset.oeuvres().published(request):
             individus = {'names': [], 'pks': []}
             for individu in queryset.individus_auteurs().filter(auteurs__oeuvre__pk=work.pk).distinct():
                 name = self._get_individu_name(individu)
@@ -377,7 +379,7 @@ class Scenario3(EvenementScenarioExporter):
                 setattr(event, 'auteur', ', '.join(individus.get('names')))
                 elements.append(event)
 
-        super(Scenario3, self).__init__(queryset=elements)
+        super(Scenario3, self).__init__(queryset=elements, request=request)
 
 
 class Scenario4(EvenementScenarioExporter):
@@ -398,10 +400,10 @@ class Scenario4(EvenementScenarioExporter):
     tab_name = _("4. Œuvres - géographique")
     title = _("4. Œuvres : répartition géographique")
 
-    def __init__(self, queryset=None):
+    def __init__(self, queryset=None, request=None):
         elements = []
 
-        for work in queryset.oeuvres():
+        for work in queryset.oeuvres().published(request):
             individus = {'names': [], 'pks': []}
             for individu in queryset.individus_auteurs().filter(auteurs__oeuvre__pk=work.pk).distinct():
                 name = self._get_individu_name(individu)
@@ -413,7 +415,7 @@ class Scenario4(EvenementScenarioExporter):
                 setattr(event, 'auteur', ', '.join(individus.get('names')))
                 elements.append(event)
 
-        super(Scenario4, self).__init__(queryset=elements)
+        super(Scenario4, self).__init__(queryset=elements, request=request)
 
 
 class Scenario5(EvenementScenarioExporter):
@@ -430,11 +432,12 @@ class Scenario5(EvenementScenarioExporter):
     tab_name = _("5. Auteurs - chronologique")
     title = _("5. Auteurs : répartition chronologique")
 
-    def __init__(self, queryset=None):
+    def __init__(self, queryset=None, request=None):
         evenements = []
 
         for element_de_programme in ElementDeProgramme.objects.filter(
             evenement__in=queryset, oeuvre__isnull=False,
+            oeuvre__in=Oeuvre.objects.published(request),
         ).order_by(
             'oeuvre__auteurs__individu_id',
             'evenement__debut_date',
@@ -457,7 +460,7 @@ class Scenario5(EvenementScenarioExporter):
                 evenement.auteur = individu_name
                 evenements.append(evenement)
 
-        super(Scenario5, self).__init__(queryset=evenements)
+        super(Scenario5, self).__init__(queryset=evenements, request=request)
 
     def get_programmes(self, obj):
         return obj.programmes
@@ -477,7 +480,7 @@ class Scenario6(EvenementScenarioExporter):
     tab_name = _("6. Interprètes - chronologique")
     title = _("6. Interprètes : répartition chronologique")
 
-    def __init__(self, queryset=None):
+    def __init__(self, queryset=None, request=None):
         evenements = []
 
         for element_de_distribution in queryset.get_distributions().annotate(
@@ -486,6 +489,7 @@ class Scenario6(EvenementScenarioExporter):
             coalesced_evenement_id=Coalesce('element_de_programme__evenement_id', 'evenement_id'),
         ).filter(
             individu__isnull=False,
+            individu__in=Individu.objects.published(request),
         ).order_by(
             'individu_id', 'date', 'heure', 'coalesced_evenement_id',
         ).distinct(
@@ -498,7 +502,7 @@ class Scenario6(EvenementScenarioExporter):
             evenement.interprete = self._get_individu_name(element_de_distribution.individu)
             evenements.append(evenement)
 
-        super(Scenario6, self).__init__(queryset=evenements)
+        super(Scenario6, self).__init__(queryset=evenements, request=request)
 
     def get_interprete(self, obj):
         if hasattr(obj, 'interprete'):
@@ -521,11 +525,12 @@ class Scenario7(EvenementScenarioExporter):
     tab_name = _("7. Auteurs et œuvres")
     title = _("7. Auteurs et œuvres : répartition chronologique")
 
-    def __init__(self, queryset=None):
+    def __init__(self, queryset=None, request=None):
         evenements = []
 
         for element_de_programme in ElementDeProgramme.objects.filter(
             evenement__in=queryset, oeuvre__isnull=False,
+            oeuvre__in=Oeuvre.objects.published(request),
         ).order_by(
             'oeuvre__auteurs__individu_id',
             'evenement__debut_date',
@@ -550,7 +555,7 @@ class Scenario7(EvenementScenarioExporter):
                 evenement.oeuvre = element_de_programme.oeuvre.titre_html(tags=False)
                 evenements.append(evenement)
 
-        super(Scenario7, self).__init__(queryset=evenements)
+        super(Scenario7, self).__init__(queryset=evenements, request=request)
 
 
 class Scenario8(EvenementScenarioExporter):

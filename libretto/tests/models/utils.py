@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.test import TestCase
 from django.urls import reverse
-from django.utils import six
 
 
 def new(Model, **kwargs):
@@ -42,7 +41,7 @@ class CommonTestCase(TestCase):
             data = {}
         response = getattr(self.client, method)(url, data=data, follow=follow)
         self.assertIn(response.status_code, status_codes)
-        self.assertIsInstance(response.content, six.string_types)
+        self.assertIsInstance(response.content, bytes)
         return response
 
     def assertSendForm(self, url, method='post'):

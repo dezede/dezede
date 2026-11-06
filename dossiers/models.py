@@ -583,23 +583,31 @@ class Dossier(Indexed, ClusterableModel, TreeModelMixin, PublishedModel):
             return Source.objects.filter(*args, **kwargs).distinct()
         return Source.objects.none()
 
-    @cached_property
-    def contributors(self):
+    def get_contributors(self, request=None):
+        # Kept per viewer on the instance: a render asks for it several times
+        # and each answer costs queries over every object of the dossier.
+        viewer = (None if request is None
+                  else (request.user.pk, request.user.is_superuser))
+        cache = self.__dict__.setdefault('_contributors_by_viewer', {})
+        if viewer not in cache:
+            cache[viewer] = self._find_contributors(request)
+        return cache[viewer]
+
+    def _find_contributors(self, request):
+        # Without a request, only public data counts.
         contributor_ids = set()
         for kind in self.active_kinds:
-            queryset = self.queryset_for(kind)
-            if kind == KIND_SOURCES:
-                # Each source is its own contributor via `owner_id`; joining
-                # `sources__owner_id` would make no sense here since the
-                # queryset items *are* sources.
+            visibles = self.queryset_for(kind).published(request).order_by()
+            contributor_ids.update(visibles.values_list('owner_id', flat=True))
+            if kind != KIND_SOURCES:
+                # A source is its own contributor via `owner_id`, so only
+                # the other kinds have sources to join.
                 contributor_ids.update(
-                    queryset.values_list('owner_id', flat=True))
-            else:
-                for owner_id, source_owner_id in queryset.values_list(
-                    'owner_id', 'sources__owner_id'
-                ).distinct():
-                    contributor_ids.add(owner_id)
-                    contributor_ids.add(source_owner_id)
+                    visibles
+                    .filter(PublishedQuerySet._get_filters(
+                        request, prefix='sources__'))
+                    .values_list('sources__owner_id', flat=True))
+        contributor_ids.discard(None)
         return HierarchicUser.objects.filter(pk__in=contributor_ids)
 
 

@@ -1,5 +1,5 @@
 {% extends 'libretto/base.tex' %}
-{% load i18n extras %}
+{% load i18n extras routines %}
 
 
 {% block document %}
@@ -49,7 +49,8 @@
 
   \fontsize{10pt}{12pt}\selectfont
 
-  {% blocktrans with editeurs=object.editeurs_scientifiques.html|html_to_latex contributeurs=object.contributors.html|html_to_latex %}
+  {% dossier_contributors object as contributors %}
+  {% blocktrans with editeurs=object.editeurs_scientifiques.html|html_to_latex contributeurs=contributors.html|html_to_latex %}
     Dossier dirigé par {{ editeurs }},
     avec la contribution de {{ contributeurs }}.
   {% endblocktrans %}
@@ -67,7 +68,8 @@
     {% if tab.kind == 'evenements' %}
       \addcontentsline{toc}{part}{ {% trans 'Événements' %} }
 
-      {% with evenements=tab.queryset.prefetch_all %}
+      {% published tab.queryset as visibles %}
+      {% with evenements=visibles.prefetch_all %}
         {% for evenement in evenements %}
           {% with event_counter=forloop.counter %}
             {% include 'libretto/evenement_item.tex' %}

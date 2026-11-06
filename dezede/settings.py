@@ -147,7 +147,11 @@ AUTHENTICATION_BACKENDS = (
 ACCOUNT_ADAPTER = 'accounts.adapter.HierarchicUserAdapter'
 ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.HierarchicUserSignupForm'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = False
+# With this on, a repeated e-mail gets no form error: allauth mails the owner
+# instead, in a text it has no French translation for. Telling the visitor is
+# worth revealing that an account exists.
+ACCOUNT_PREVENT_ENUMERATION = False
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7

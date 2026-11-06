@@ -1,4 +1,6 @@
+from collections import defaultdict
 from functools import cached_property, wraps
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import ForeignKey, CASCADE, PROTECT, CharField, ManyToManyField, URLField
 from django.http import Http404
 from django.utils.html import mark_safe
@@ -10,14 +12,14 @@ from wagtail.admin.panels import (
 from wagtail.api import APIField
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.api.fields import ImageRenditionField
-from wagtail.models import Page, Orderable
+from wagtail.models import Orderable, Page, ReferenceIndex
 from wagtail.search.index import SearchField, RelatedFields
 
 from correspondence.serializer_fields import RichTextSerializer
 from dezede.constants import IMAGE_SPEC, THUMBNAIL_SPEC
 from dezede.utils import richtext_to_text
 from libretto.constants import INDIVIDU_RELATED_SEARCH_FIELDS, LIEU_RELATED_SEARCH_FIELDS
-from libretto.models.base import SpaceTimeFields
+from libretto.models.base import PublishedModel, SpaceTimeFields
 
 from .blocks import BodyStreamBlock
 
@@ -51,8 +53,45 @@ Page.show_in_menus_default = True
 
 
 class BasePageNoImage(Page):
+    # The people and places shown on the page, as fields of the page and as
+    # inline children (name -> field of the child).
+    AUTORITE_FIELDS = ()
+    AUTORITE_INLINES = {}
+
     class Meta(Page.Meta):
         abstract = True
+
+    def get_unpublished_autorites(self) -> list[PublishedModel]:
+        autorites = [getattr(self, name) for name in self.AUTORITE_FIELDS]
+        for name, field_name in self.AUTORITE_INLINES.items():
+            autorites += [
+                getattr(child, field_name) for child in getattr(self, name).all()
+            ]
+        return list(dict.fromkeys(
+            a for a in autorites if a is not None and not a.is_public))
+
+    def get_unpublished_links(self) -> list[PublishedModel]:
+        rich_text_fields = {
+            field.name for field in self._meta.get_fields()
+            if isinstance(field, (RichTextField, StreamField))
+        }
+        pks_by_model = defaultdict(set)
+        # `_extract_references_from_object` is private to Wagtail. It is the
+        # only way to find the links in rich text and in StreamField blocks.
+        for content_type_id, pk, model_path, *rest in (
+            ReferenceIndex._extract_references_from_object(self)
+        ):
+            model = ContentType.objects.get_for_id(content_type_id).model_class()
+            if (
+                model_path.split('.')[0] in rich_text_fields
+                and model is not None and issubclass(model, PublishedModel)
+            ):
+                pks_by_model[model].add(pk)
+        return [
+            autorite
+            for model, pks in pks_by_model.items()
+            for autorite in model.objects.filter(pk__in=pks, etat__public=False)
+        ]
 
     # FIXME: Make preview_modes compatible with Next.js
     #        instead of disabling it.
@@ -106,6 +145,8 @@ class LetterCorpus(BasePage):
         verbose_name=_('individu'),
     )
     body = StreamField(BodyStreamBlock(), blank=True, verbose_name=_('contenu'), use_json_field=True)
+
+    AUTORITE_FIELDS = ('person',)
 
     parent_page_types = ['correspondence.LetterIndex']
     content_panels = BasePage.content_panels + [
@@ -221,6 +262,9 @@ class Letter(BasePageNoImage):
     recipient_persons = ManyToManyField(
         'libretto.Individu', through=LetterRecipient, related_name='received_letters',
     )
+
+    AUTORITE_FIELDS = ('writing_lieu', 'storage_place')
+    AUTORITE_INLINES = {'senders': 'person', 'recipients': 'person'}
 
     parent_page_types = ['correspondence.LetterCorpus']
     content_panels = BasePageNoImage.content_panels + [

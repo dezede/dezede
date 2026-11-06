@@ -81,18 +81,36 @@ class BaseEvenementListView(PublishedListView):
         'profession': ('distribution__profession__in',
                        'programme__distribution__profession__in',
                        'programme__oeuvre__auteurs__profession__in'),
+        # The "all events" links on individu and ensemble pages count a single
+        # role each, whereas `individu` and `ensemble` match every role.
+        'apparition_individu': ('distribution__individu__in',
+                                'programme__distribution__individu__in'),
+        'apparition_ensemble': ('distribution__ensemble__in',
+                                'programme__distribution__ensemble__in'),
+        'auteur_individu': ('programme__oeuvre__auteurs__individu__in',),
+        'auteur_ensemble': ('programme__oeuvre__auteurs__ensemble__in',),
+    }
+    # Keys that are not a model name carry the pks of this model.
+    BINDING_MODELS = {
+        'apparition_individu': 'individu',
+        'apparition_ensemble': 'ensemble',
+        'auteur_individu': 'individu',
+        'auteur_ensemble': 'ensemble',
     }
 
     @classmethod
-    def get_filters(cls, data):
+    def get_filters(cls, data, request=None):
         filters = Q()
         for key, value in data.items():
             if key not in cls.BINDINGS:
                 continue
             # Sépare les différents objets à partir d'une liste de pk.
-            Model = apps.get_model('libretto', key)
+            Model = apps.get_model(
+                'libretto', cls.BINDING_MODELS.get(key, key))
             pk_list = value.strip('|').split('|')
-            objects = Model._default_manager.filter(pk__in=pk_list)
+            # Un objet invisible est ignoré, comme s'il n'existait pas.
+            objects = Model._default_manager.filter(
+                pk__in=pk_list).published(request)
             # Inclus tous les événements impliquant les descendants
             # éventuels de chaque objet de value.
             if isinstance(objects, TreeQuerySetMixin):
@@ -114,11 +132,12 @@ class BaseEvenementListView(PublishedListView):
             qs = qs.filter(base_filter)
 
         data = self.request.GET
-        self.form = EvenementListForm(data, queryset=qs)
+        self.form = EvenementListForm(
+            data, queryset=qs, request=self.request)
         try:
             self.valid_form = self.form.is_valid()
         except:
-            self.form = EvenementListForm(queryset=qs)
+            self.form = EvenementListForm(queryset=qs, request=self.request)
             self.valid_form = False
             data = {}
         if self.enable_default_page and not data:
@@ -134,7 +153,7 @@ class BaseEvenementListView(PublishedListView):
         # par_saison, order_by) lives in a shared helper so the REST API and
         # this view cannot drift apart.
         from .api.rest.filters import filter_evenements_queryset
-        return filter_evenements_queryset(qs, data)
+        return filter_evenements_queryset(qs, data, self.request)
 
     def get_export_url(self):
         return reverse('evenements_export')
@@ -493,6 +512,15 @@ class OeuvreViewSet(CommonViewSet):
 
 class TreeNode(PublishedDetailView):
     template_name = 'routines/tree_node.json'
+    # The template calls `attr` on every child, so a free value from the URL
+    # would run any method and read any field of any model.
+    ALLOWED_NODES = frozenset({
+        ('libretto', 'lieu', 'nom'),
+        ('libretto', 'oeuvre', 'short_html'),
+        ('libretto', 'partie', '__str__'),
+        ('libretto', 'profession', '__str__'),
+        ('dossiers', 'categoriededossiers', 'short_link'),
+    })
 
     def get_context_data(self, **kwargs):
         context = super(TreeNode, self).get_context_data(**kwargs)
@@ -514,6 +542,9 @@ class TreeNode(PublishedDetailView):
     def get(self, request, *args, **kwargs):
         app_label = self.kwargs['app_label']
         model_name = self.kwargs['model_name']
+        if (app_label, model_name, self.kwargs['attr']) \
+                not in self.ALLOWED_NODES:
+            raise Http404
 
         # FIXME: Ceci est un hack laid pour gérer les Dossier
         #        enfants de CategorieDeDossiers.
@@ -524,6 +555,11 @@ class TreeNode(PublishedDetailView):
         self.model = apps.get_model(app_label, model_name)
         if 'node' in self.request.GET:
             self.kwargs['pk'] = self.request.GET['node']
+        # Only the django-tree models have roots. Partie and Profession use a
+        # plain `parent` key, so their tree can only start from an object.
+        if self.kwargs.get('pk') is None \
+                and not hasattr(self.model.objects, 'filter_roots'):
+            raise Http404
         try:
             self.object = self.get_object()
         except AttributeError:

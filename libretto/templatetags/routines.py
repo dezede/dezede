@@ -175,6 +175,15 @@ def published(context, qs):
 
 
 @register.simple_tag(takes_context=True)
+def dossier_contributors(context, dossier):
+    # Source presentations reuse the dossier templates, and a Source has no
+    # contributors.
+    if not hasattr(dossier, 'get_contributors'):
+        return []
+    return dossier.get_contributors(context['request'])
+
+
+@register.simple_tag(takes_context=True)
 def prev_sibling(context, obj):
     request = context['request']
     return obj.get_prev_sibling(
@@ -270,7 +279,8 @@ def data_table_list(
 
 @register.inclusion_tag('routines/evenement_list_def.html', takes_context=True)
 def evenement_list_def(context, evenements, verbose_name=None,
-                       verbose_name_plural=None):
+                       verbose_name_plural=None, filtre=None,
+                       link_label=None):
     verbose_name, verbose_name_plural = get_verbose_name_from_object_list(
         evenements, verbose_name=verbose_name,
         verbose_name_plural=verbose_name_plural)
@@ -279,7 +289,9 @@ def evenement_list_def(context, evenements, verbose_name=None,
     c = context.flatten()
     c.update({'name': name,
               'counter': counter,
-              'evenements': evenements})
+              'evenements': evenements,
+              'link_label': link_label,
+              'filtre': filtre or context['object'].class_name().lower()})
     return c
 
 

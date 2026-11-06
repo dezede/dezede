@@ -27,7 +27,7 @@ from .authority_tables import CENTURIES_DATE_RANGES
 from ...models import Saison, Source
 
 
-def filter_evenements_queryset(qs, data):
+def filter_evenements_queryset(qs, data, request=None):
     # Imported lazily to avoid a circular import (views imports this module).
     from ...views import BaseEvenementListView
 
@@ -36,7 +36,7 @@ def filter_evenements_queryset(qs, data):
         s = get_search_backend()
         qs = s.autocomplete(search_query, qs).get_queryset()
 
-    qs = qs.filter(BaseEvenementListView.get_filters(data)).distinct()
+    qs = qs.filter(BaseEvenementListView.get_filters(data, request)).distinct()
 
     try:
         start, end = int(data.get('dates_0')), int(data.get('dates_1'))
@@ -56,10 +56,11 @@ def filter_evenements_queryset(qs, data):
 
 class EvenementFilterBackend(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        return filter_evenements_queryset(queryset, request.query_params)
+        return filter_evenements_queryset(
+            queryset, request.query_params, request)
 
 
-def evenement_facets(base_qs, query_params, is_authenticated):
+def evenement_facets(base_qs, query_params, is_authenticated, request=None):
     """Filter-form facets for an event queryset, shared by the global event API
     and the per-dossier event API so the two cannot drift.
 
@@ -75,7 +76,8 @@ def evenement_facets(base_qs, query_params, is_authenticated):
     min_year = min_date.year if min_date is not None else 1600
     max_year = (max_date.year if max_date is not None
                 else datetime.date.today().year)
-    total = filter_evenements_queryset(base_qs, query_params).count()
+    total = filter_evenements_queryset(
+        base_qs, query_params, request).count()
     return {
         'date_range': {'min_year': min_year, 'max_year': max_year},
         'total_count': total,

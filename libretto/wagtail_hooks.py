@@ -11,7 +11,7 @@ from django_filters import ChoiceFilter, RangeFilter
 from django_filters.filterset import filterset_factory
 from wagtail import hooks
 from wagtail.admin.filters import SuffixedMultiWidget, WagtailFilterSet
-from wagtail.admin.ui.tables import BaseColumn, Column
+from wagtail.admin.ui.tables import BaseColumn, BooleanColumn, Column
 from wagtail.admin.widgets import Button
 from wagtail.models import ReferenceIndex
 from wagtail.snippets.models import register_snippet
@@ -207,19 +207,27 @@ class CommonViewSet(SnippetViewSet):
             Column('id', 'ID'),
             *original_columns,
             *self.get_chooser_extra_columns(),
+            Column('etat', label=_('État'), accessor='etat.nom'),
+            BooleanColumn(
+                'publie', label=_('Publié'), accessor='etat.public'),
             Column('link', label=_('Lien')),
         ]
 
     @property
     def chooser_viewset_class(self):
         get_columns = self.get_chooser_columns
-        class CustomChooseView(SnippetChooserViewSet.choose_view_class):
+
+        class WithEtat:
+            def get_object_list(self):
+                return super().get_object_list().select_related('etat')
+
+        class CustomChooseView(WithEtat, SnippetChooserViewSet.choose_view_class):
             @property
             def columns(self):
                 return get_columns([self.title_column])
 
 
-        class CustomChooseResultsView(SnippetChooserViewSet.choose_results_view_class):
+        class CustomChooseResultsView(WithEtat, SnippetChooserViewSet.choose_results_view_class):
             @property
             def columns(self):
                 return get_columns([self.title_column])

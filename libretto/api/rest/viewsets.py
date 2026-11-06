@@ -1,7 +1,7 @@
 import json
 
 from django.contrib.gis.geos import GEOSGeometry, Polygon
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.utils.translation import gettext_lazy as _, get_language
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import action
@@ -68,8 +68,15 @@ class AuteurViewSet(ReadOnlyModelViewSet):
     queryset = Auteur.objects.all()
     serializer_class = AuteurSerializer
 
+    def get_queryset(self):
+        # An author row is as visible as the work or source it belongs to.
+        request = self.request
+        return super().get_queryset().filter(
+            Q(oeuvre__in=Oeuvre.objects.published(request))
+            | Q(source__in=Source.objects.published(request)))
 
-class ProfessionViewSet(ReadOnlyModelViewSet):
+
+class ProfessionViewSet(PublishedMixin, ReadOnlyModelViewSet):
     model = Profession
     queryset = Profession.objects.all()
     serializer_class = ProfessionSerializer
@@ -148,7 +155,7 @@ class EvenementViewSet(PublishedMixin, ReadOnlyModelViewSet):
     def facets(self, request):
         return Response(evenement_facets(
             self.get_queryset(), request.query_params,
-            request.user.is_authenticated))
+            request.user.is_authenticated, request))
 
     @action(detail=False)
     def yearly_counts(self, request):
@@ -157,7 +164,7 @@ class EvenementViewSet(PublishedMixin, ReadOnlyModelViewSet):
         # ``routines/evenement_list_def.html``). ``year`` is the civil year as an
         # int; the rows are ordered oldest-first.
         qs = filter_evenements_queryset(self.get_queryset(),
-                                        request.query_params)
+                                        request.query_params, request)
         return Response([
             {'year': row['year'].year, 'count': row['count']}
             for row in qs.yearly_counts()
@@ -166,8 +173,8 @@ class EvenementViewSet(PublishedMixin, ReadOnlyModelViewSet):
     @action(detail=False)
     def geojson(self, request):
         qs = filter_evenements_queryset(self.get_queryset(),
-                                        request.query_params)
-        bbox = request.query_params.get('bbox')
+                                        request.query_params, request)
+        bbox =request.query_params.get('bbox')
         if bbox:
             bbox = Polygon.from_bbox([float(c) for c in bbox.split(',')])
         else:
@@ -257,7 +264,8 @@ class EvenementViewSet(PublishedMixin, ReadOnlyModelViewSet):
                 'json': events_to_json}
         if fmt not in jobs:
             return Response({'detail': 'Invalid format.'}, status=400)
-        qs = filter_evenements_queryset(self.get_queryset(), request.query_params)
+        qs = filter_evenements_queryset(
+            self.get_queryset(), request.query_params, request)
         pk_list = list(qs.values_list('pk', flat=True))
         lock_user(request.user)
         site = Site.objects.get_current(request)

@@ -5,6 +5,7 @@ from typing import Iterator, OrderedDict, Type
 
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
+from django.db import connection
 from django.db.models import (
     F, CharField, Count, Expression, Func, Max, Model, OuterRef, QuerySet,
     Subquery, Value,
@@ -87,6 +88,49 @@ class FixedPostgresSearchResults(PostgresSearchResults):
         )
 
 
+def has_visibility(model: Type[Model]) -> bool:
+    local_names = {f.name for f in model._meta.local_fields}
+    return {'etat', 'owner'} <= local_names
+
+
+def refresh_visibility(etat_pk=None) -> None:
+    """Copies `etat.public` and `owner` of every indexed object to its index
+    entry, optionally only for the objects with the given état.
+
+    Needed when an Etat changes: the objects themselves aren't saved, so
+    nothing reindexes them.
+    """
+    quote = connection.ops.quote_name
+    ext = quote(IndexEntryExtension._meta.db_table)
+    entry = quote(IndexEntry._meta.db_table)
+    etat_table = quote(apps.get_model('libretto', 'Etat')._meta.db_table)
+    for model in apps.get_models():
+        if not issubclass(model, Indexed) or not has_visibility(model):
+            continue
+        etat_column = quote(model._meta.get_field('etat').column)
+        params = [ContentType.objects.get_for_model(model).pk]
+        extra = ''
+        if etat_pk is not None:
+            extra = f' AND obj.{etat_column} = %s'
+            params.append(etat_pk)
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"""
+                UPDATE {ext} AS ext
+                SET public = etat.public,
+                    owner_pk = obj.{quote(model._meta.get_field('owner').column)}
+                FROM {entry} AS entry,
+                     {quote(model._meta.db_table)} AS obj,
+                     {etat_table} AS etat
+                WHERE ext.index_entry_ptr_id = entry.id
+                  AND entry.content_type_id = %s
+                  AND entry.object_id = obj.{quote(model._meta.pk.column)}::text
+                  AND etat.id = obj.{etat_column}{extra}
+                """,
+                params,
+            )
+
+
 class FixedPostgresIndex(PostgresIndex):
     MODEL_BOOSTS = {
         ('libretto.Œuvre'): 4.0,
@@ -123,6 +167,9 @@ class FixedPostgresIndex(PostgresIndex):
                 extensions.append(
                     IndexEntryExtension(pk=index_entry_id, boost=descendant_boost)
                 )
+        # This is an upsert. An existing row only gets its `boost` changed, so
+        # `public` and `owner_pk` stay. A missing row would be created with the
+        # default `public=False`, and its object would be hidden from search.
         IndexEntryExtension.objects.bulk_create(
             extensions,
             unique_fields=['pk'],
@@ -172,6 +219,19 @@ class FixedPostgresIndex(PostgresIndex):
                 descendant_boosts_by_path[tuple(path)] = boost
         return descendant_boosts_by_path
 
+    @staticmethod
+    def get_visibility(model: Type[Model], batch: list[Model]) -> dict[str, tuple]:
+        # One query per batch is cheaper than two correlated subqueries per
+        # index entry.
+        if not has_visibility(model):
+            return {}
+        return {
+            str(pk): (public, owner_pk)
+            for pk, public, owner_pk in model.objects.filter(
+                pk__in=[obj.pk for obj in batch],
+            ).values_list('pk', 'etat__public', 'owner_id')
+        }
+
     def update_row_boosts(self, model: Type[Model], objs: list[Model], stdout=None) -> None:
         content_type = ContentType.objects.get_for_model(model)
 
@@ -201,15 +261,24 @@ class FixedPostgresIndex(PostgresIndex):
             entries = IndexEntry.objects.filter(
                 content_type=content_type,
                 object_id__in=[f'{obj.pk}' for obj in batch],
-            ).values_list('pk').annotate(
+            ).values_list('pk', 'object_id').annotate(
                 boost=model_boost * references_boost / depth_penalty,
             )
 
-            index_entry_extensions = [IndexEntryExtension(pk=pk, boost=boost) for pk, boost in entries]
+            visibility_by_object_id = self.get_visibility(model, batch)
+            # A model with an état hides an object missing from the map (it was
+            # deleted meanwhile); a model without one is always public.
+            fallback = (not has_visibility(model), None)
+            index_entry_extensions = []
+            for index_entry_id, object_id, boost in entries:
+                public, owner_pk = visibility_by_object_id.get(object_id, fallback)
+                index_entry_extensions.append(IndexEntryExtension(
+                    pk=index_entry_id, boost=boost,
+                    public=public, owner_pk=owner_pk))
             IndexEntryExtension.objects.bulk_create(
                 index_entry_extensions,
                 unique_fields=['pk'],
-                update_fields=['boost'],
+                update_fields=['boost', 'public', 'owner_pk'],
                 update_conflicts=True,
             )
             if issubclass(model, (TreeModelMixin, MP_Node)):

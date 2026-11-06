@@ -1,8 +1,9 @@
 from operator import xor
 from urllib.parse import urlencode
 
+from ajax_select import registry
 from ajax_select.fields import AutoCompleteSelectMultipleField, \
-    AutoCompleteWidget
+    AutoCompleteSelectMultipleWidget, AutoCompleteWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, HTML
 from datetime import timedelta
@@ -47,7 +48,9 @@ class FasterModelChoiceIterator(ModelChoiceIterator):
         def clear_model_choice_cache(sender, **kwargs):
             cls._cache = {}
 
-        request_started.connect(clear_model_choice_cache)
+        # Signals hold receivers weakly by default, and this local function
+        # would be garbage-collected, so the cache would never clear.
+        request_started.connect(clear_model_choice_cache, weak=False)
 
     def __iter__(self):
         cache_key = str(self.queryset.query)
@@ -489,17 +492,41 @@ class SaisonForm(WagtailAdminModelForm):
         return data
 
 
+class VisibleAutoCompleteSelectMultipleWidget(
+        AutoCompleteSelectMultipleWidget):
+    # `LookupChannel.get_objects` has no request, so the selected objects are
+    # filtered here, or an unpublished name would be written into the page.
+    request = None
+
+    def render(self, name, value, *args, **kwargs):
+        if value:
+            model = registry.get(self.channel).model
+            value = list(model._default_manager.filter(
+                pk__in=[v for v in value if str(v).isdigit()]
+            ).published(self.request))
+        return super().render(name, value, *args, **kwargs)
+
+
+class VisibleAutoCompleteSelectMultipleField(AutoCompleteSelectMultipleField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.widget = VisibleAutoCompleteSelectMultipleWidget(
+            channel=self.channel, help_text=self.widget.help_text,
+            show_help_text=self.widget.show_help_text,
+            plugin_options=self.widget.plugin_options)
+
+
 class EvenementListForm(Form):
     q = CharField(label=_('Recherche libre'), required=False)
     dates = RangeSliderField(required=False)
     par_saison = BooleanField(required=False, initial=False)
-    lieu = AutoCompleteSelectMultipleField('lieu', label=_('Lieu'),
-                                           required=False, help_text='')
-    oeuvre = AutoCompleteSelectMultipleField(
+    lieu = VisibleAutoCompleteSelectMultipleField(
+        'lieu', label=_('Lieu'), required=False, help_text='')
+    oeuvre = VisibleAutoCompleteSelectMultipleField(
         'oeuvre', required=False, label=_('Œuvre'), help_text='')
-    individu = AutoCompleteSelectMultipleField(
+    individu = VisibleAutoCompleteSelectMultipleField(
         'individu', required=False, label=_('Individu'), help_text='')
-    ensemble = AutoCompleteSelectMultipleField(
+    ensemble = VisibleAutoCompleteSelectMultipleField(
         'ensemble', required=False, label=_('Ensemble'), help_text='')
 
     def __init__(self, *args, **kwargs):
@@ -518,6 +545,7 @@ class EvenementListForm(Form):
             """ % (_('Par année civile'), _('Par saison'))
 
         queryset = kwargs.pop('queryset')
+        request = kwargs.pop('request', None)
 
         self.helper = FormHelper()
         self.helper.form_method = 'GET'
@@ -537,6 +565,9 @@ class EvenementListForm(Form):
         super(EvenementListForm, self).__init__(*args, **kwargs)
 
         for field in self.fields.values():
+            if isinstance(field.widget,
+                          VisibleAutoCompleteSelectMultipleWidget):
+                field.widget.request = request
             field.widget.attrs['placeholder'] = (field.label or '') + '…'
             field.label = ''
 

@@ -478,7 +478,7 @@ class DossierViewSet(ReadOnlyModelViewSet):
             # profile page (``/utilisateurs/<username>``) to link the chip to.
             'editeurs_scientifiques': [
                 serialize_user(u) for u in dossier.editeurs_scientifiques.all()],
-            'contributors': [serialize_user(u) for u in dossier.contributors],
+            'contributors': [serialize_user(u) for u in dossier.get_contributors(request)],
             'date_publication': (dossier.date_publication.isoformat()
                                  if dossier.date_publication else None),
             'developpements': dossier.developpements,
@@ -523,7 +523,8 @@ class DossierViewSet(ReadOnlyModelViewSet):
         # lieu/oeuvre/individu/ensemble…) before the eager-loading, mirroring
         # EvenementViewSet.filter_queryset so the semantics cannot drift.
         qs = filter_evenements_queryset(
-            dossier.queryset_for(KIND_EVENEMENTS), request.query_params)
+            dossier.queryset_for(KIND_EVENEMENTS), request.query_params,
+            request)
         qs = qs.select_related(*EVENEMENT_PUBLIC_SELECT) \
             .prefetch_related(*EVENEMENT_PUBLIC_PREFETCH)
         paginator = DossierPagination()
@@ -546,7 +547,7 @@ class DossierViewSet(ReadOnlyModelViewSet):
             })
         return Response(evenement_facets(
             dossier.queryset_for(KIND_EVENEMENTS), request.query_params,
-            request.user.is_authenticated))
+            request.user.is_authenticated, request))
 
     @action(detail=True)
     def oeuvres(self, request, pk=None):
