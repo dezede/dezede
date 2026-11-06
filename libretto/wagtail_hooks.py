@@ -141,6 +141,10 @@ def scope_to_owner(qs, user):
     """Objects owned by `user` or one of their hierarchic descendants"""
     if user.is_superuser:
         return qs
+    if not user.is_authenticated:
+        # The public pages ask for it too, and an anonymous user has neither
+        # an owner nor a place in the user tree.
+        return qs.none()
     return qs.filter(owner__in=user.get_descendants(include_self=True))
 
 
