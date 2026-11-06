@@ -126,6 +126,10 @@ def published(context, qs):
 
 @register.simple_tag(takes_context=True)
 def dossier_contributors(context, dossier):
+    # Source presentations reuse the dossier templates, and a Source has no
+    # contributors.
+    if not hasattr(dossier, 'get_contributors'):
+        return []
     return dossier.get_contributors(context['request'])
 
 
