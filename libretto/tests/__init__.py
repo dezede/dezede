@@ -1,3 +1,4 @@
+from .admin_urls import *
 from .api import *
 from .models import *
 from .ownership import *

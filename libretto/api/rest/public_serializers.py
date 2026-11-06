@@ -14,10 +14,10 @@ the public frontend).
 from collections import OrderedDict
 
 from django.template.defaultfilters import capfirst, filesizeformat
-from django.urls import reverse
 from django.utils.text import Truncator
 from rest_framework import serializers
 
+from ...admin_urls import get_admin_urls
 from ...models import (
     Individu, Ensemble, Lieu, NatureDeLieu, Oeuvre, Partie, Pupitre,
     GenreDOeuvre, Profession, Auteur, CaracteristiqueDeProgramme,
@@ -146,18 +146,20 @@ def admin_link_data(obj, request):
     same object-level ownership the admin enforces. Used by ``AdminLinkMixin`` and
     reused for the hand-built dossier detail.
     """
-    base = f'admin:{obj._meta.app_label}_{obj._meta.model_name}'
     owner = obj.owner
     user = getattr(request, 'user', None)
+    change_url, delete_url = get_admin_urls(user, obj)
+    # The frontend links to a URL whenever the matching `can_` flag is set, so
+    # a flag is never set without its URL.
     return {
         'owner': None if owner is None else {
             'username': owner.username, 'str': str(owner),
             'url': owner.get_absolute_url()},
         'is_public': getattr(obj, 'is_public', True),
-        'can_change': can_modify(user, obj, 'change'),
-        'can_delete': can_modify(user, obj, 'delete'),
-        'change_url': reverse(f'{base}_change', args=(obj.pk,)),
-        'delete_url': reverse(f'{base}_delete', args=(obj.pk,)),
+        'can_change': can_modify(user, obj, 'change') and change_url is not None,
+        'can_delete': can_modify(user, obj, 'delete') and delete_url is not None,
+        'change_url': change_url,
+        'delete_url': delete_url,
     }
 
 
@@ -175,13 +177,16 @@ class AdminLinkMixin(serializers.Serializer):
     change_url = serializers.SerializerMethodField()
     delete_url = serializers.SerializerMethodField()
 
-    def _admin_url(self, obj, action):
-        return reverse(
-            f'admin:{obj._meta.app_label}_{obj._meta.model_name}_{action}',
-            args=(obj.pk,))
-
     def _user(self):
         return getattr(self.context.get('request'), 'user', None)
+
+    def _admin_urls(self, obj):
+        # Four fields ask for them, and each answer costs queries.
+        cache = self.__dict__.setdefault('_admin_urls_by_object', {})
+        key = (obj._meta.label, obj.pk)
+        if key not in cache:
+            cache[key] = get_admin_urls(self._user(), obj)
+        return cache[key]
 
     def get_owner(self, obj):
         owner = obj.owner
@@ -194,16 +199,18 @@ class AdminLinkMixin(serializers.Serializer):
         return getattr(obj, 'is_public', True)
 
     def get_can_change(self, obj):
-        return can_modify(self._user(), obj, 'change')
+        return (can_modify(self._user(), obj, 'change')
+                and self._admin_urls(obj)[0] is not None)
 
     def get_can_delete(self, obj):
-        return can_modify(self._user(), obj, 'delete')
+        return (can_modify(self._user(), obj, 'delete')
+                and self._admin_urls(obj)[1] is not None)
 
     def get_change_url(self, obj):
-        return self._admin_url(obj, 'change')
+        return self._admin_urls(obj)[0]
 
     def get_delete_url(self, obj):
-        return self._admin_url(obj, 'delete')
+        return self._admin_urls(obj)[1]
 
 
 # -- Leaf entities ----------------------------------------------------------
