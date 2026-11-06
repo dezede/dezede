@@ -1,1 +1,2 @@
 from .register import RegisterTestCase
+from .password_reset import PasswordResetSharedEmailTestCase
