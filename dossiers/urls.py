@@ -24,7 +24,7 @@ urlpatterns = [
     re_path(r'^(?P<slug>[\w-]+)/geojson$', DossierDEvenementsDataGeoJson.as_view(),
         name='dossierdevenements_data_geojson'),
     path('id/<int:pk>/geojson', DossierDEvenementsDataGeoJson.as_view(),
-        name='dossierdevenements_data_permanent_geojson'),
+        name='dossierdevenements_data_geojson'),
     re_path(r'^(?P<slug>[\w-]+)/export$',
         DossierDEvenementsDataExport.as_view(),
         name='dossierdevenements_data_export'),
