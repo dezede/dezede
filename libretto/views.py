@@ -560,6 +560,11 @@ class TreeNode(PublishedDetailView):
         self.model = apps.get_model(app_label, model_name)
         if 'node' in self.request.GET:
             self.kwargs['pk'] = self.request.GET['node']
+        # Only the django-tree models have roots. Partie and Profession use a
+        # plain `parent` key, so their tree can only start from an object.
+        if self.kwargs.get('pk') is None \
+                and not hasattr(self.model.objects, 'filter_roots'):
+            raise Http404
         try:
             self.object = self.get_object()
         except AttributeError:

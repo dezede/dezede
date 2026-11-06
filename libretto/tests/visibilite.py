@@ -594,6 +594,13 @@ class VisibiliteTestCase(TestCase):
                     self.assertEqual(response.status_code, 404)
         self.assertTrue(Lieu.objects.filter(pk=self.lieu.pk).exists())
 
+    def testTreeNodeHasNoRootForModelsThatAreNotTrees(self):
+        for chemin in ('libretto/partie/__str__/',
+                       'libretto/profession/__str__/'):
+            for nom, user in (('anonyme', None), ('super', self.super)):
+                with self.subTest(chemin=chemin, viewer=nom):
+                    self.assertEqual(self._tree(chemin, user).status_code, 404)
+
     def testTreeNodeServesWhatThePagesAsk(self):
         trees = self._trees()
         pages = [
