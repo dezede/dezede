@@ -328,7 +328,7 @@ class PublicIndividuViewSet(PublicEntityViewSet):
             'select_related': ('type',),
         },
         'dedicaces': {
-            'queryset': lambda o: o.dedicaces.all(),
+            'queryset': lambda o: o.oeuvres_dediees.all(),
             'serializer': ps.WorkSerializer,
             'prefetch': ('genre', 'pupitres__partie', 'auteurs__individu',
                          'auteurs__ensemble', 'auteurs__profession'),

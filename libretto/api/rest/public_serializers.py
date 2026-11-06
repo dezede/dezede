@@ -543,7 +543,7 @@ class PersonDetailSerializer(AdminLinkMixin, EtatMixin,PersonSerializer):
         return self._published(obj.publications()).count()
 
     def get_dedicaces_count(self, obj):
-        return self._published(obj.dedicaces).count()
+        return self._published(obj.oeuvres_dediees).count()
 
     def get_parents(self, obj):
         parentes = obj.parentes.filter(
