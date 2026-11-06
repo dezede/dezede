@@ -28,7 +28,7 @@ class RegisterTestCase(CommonTestCase):
         user_data = {
             'first_name': 'This-Is',
             'last_name': 'A-Test',
-            'email': 'a@b.com',
+            'email': 'c@d.com',
             'username': 'this-is-a-test',
             'password1': 'empty-password',
             'password2': 'empty-password',
