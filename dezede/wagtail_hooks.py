@@ -8,9 +8,13 @@ from wagtail.admin.rich_text.converters.html_to_contentstate import (
 )
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 from wagtail.fields import RichTextField
+from wagtail.snippets.models import register_snippet
 from wagtail.snippets.wagtail_hooks import SnippetsMenuItem
 
 from dezede.utils import richtext_to_text
+from libretto.wagtail_hooks import CommonViewSet
+
+from .models import Diapositive
 
 
 class SearchableRichTextField(RichTextField):
@@ -137,3 +141,19 @@ def register_strikethrough_feature(features):
 @hooks.register('construct_main_menu')
 def hide_snippets_menu_item(request, menu_items):
     menu_items[:] = [item for item in menu_items if not isinstance(item, SnippetsMenuItem)]
+
+
+@register_snippet
+class DiapositiveViewSet(CommonViewSet):
+    model = Diapositive
+    icon = 'image'
+    menu_label = _('Diapositives')
+    add_to_admin_menu = True
+    list_display = [
+        'content_object', 'title', 'subtitle', 'thumbnail', 'position',
+        *CommonViewSet.list_display,
+    ]
+
+    def get_queryset(self, request):
+        # Without it, each row of the list queries its linked object.
+        return super().get_queryset(request).prefetch_related('content_object')

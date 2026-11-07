@@ -5,13 +5,16 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
     CharField, FloatField, ImageField, DecimalField, BooleanField, ForeignKey, Model, OneToOneField,
     PositiveIntegerField, PositiveSmallIntegerField, Max, CASCADE)
+from django.utils.functional import classproperty
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.files import get_thumbnailer
 from image_cropping import ImageRatioField
+from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
 from wagtail.search.index import AutocompleteField, Indexed, SearchField
 from accounts.models import _get_valid_modelnames_func
 from libretto.models.base import PublishedModel
+from .constants import LINKABLE_MODELS
 
 
 def get_default_position():
@@ -72,6 +75,30 @@ class Diapositive(Indexed, PublishedModel):
     position = PositiveSmallIntegerField(
         _('position'), default=get_default_position)
 
+    panels = [
+        MultiFieldPanel([
+            'content_type', *(FieldPanel(name) for name in LINKABLE_MODELS),
+        ], heading=_('Objet lié'), help_text=_(
+            'La diapositive renverra à l’objet que vous devez choisir de '
+            'lier ici.')),
+        MultiFieldPanel([
+            'title', 'subtitle',
+            FieldRowPanel(['text_align', 'text_background']),
+        ], heading=_('Texte')),
+        MultiFieldPanel([
+            'image', 'cropping',
+            FieldRowPanel(['image_align', 'opacity']),
+        ], heading=_('Arrière-plan')),
+        'position',
+    ]
+
+    @classproperty
+    def base_form_class(cls):
+        # Imported here: the form file needs every model, which are not all
+        # loaded when this one is.
+        from .forms import DiapositiveForm
+        return DiapositiveForm
+
     search_fields = [
         SearchField('title', boost=10),
         SearchField('subtitle', boost=2),
@@ -94,6 +121,14 @@ class Diapositive(Indexed, PublishedModel):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        # The home page cuts every slide with this crop and fails on an empty
+        # one: an empty crop, as left by a new image or by a form that cleared
+        # it, means the whole image.
+        if not self.cropping and self.image:
+            self.cropping = f'0,0,{self.image.width},{self.image.height}'
+        super().save(*args, **kwargs)
 
     def box(self, slider_ratio):
         x1, y1, x2, y2 = map(int, self.cropping.split(','))
