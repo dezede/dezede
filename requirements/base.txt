@@ -1,5 +1,5 @@
 # Basics
-wagtail==7.3.2
+wagtail==7.3.4
 wagtail-notes==1.0.3
 https://github.com/BertrandBordage/wagtail_linksnippet/archive/refs/heads/main.zip
 wagtail-font-awesome-svg==2.0
@@ -13,13 +13,13 @@ django-autoslug==1.9.9
 # User interface
 django-grappelli==3.0.9
 django-super-inlines==0.2.2
-django-tinymce==3.6.1
+django-tinymce==4.1.0
 django-crispy-forms==1.14.0
 django-ajax-selects==3.0.3
 django-image-cropping==1.7.0
 
 # User authentication
-django-allauth==0.52.0
+django-allauth==65.14.1
 
 # Search engine
 modelsearch==1.2.2
@@ -29,7 +29,7 @@ django-redis==6.0.0
 redis<8
 
 # Data visualization frameworks
-djangorestframework==3.15.2
+djangorestframework==3.17.2
 django-tablature==0.2.3
 
 # Small but powerful tools
@@ -53,13 +53,13 @@ numpy==1.26.4
 xlsxwriter==3.2.9
 
 # HTML cleaning
-bleach[css]==6.2.0
+bleach[css]==6.4.0
 
 # Dependencies
 # For easy-thumbnails
-pillow==11.3.0
+pillow==13.0.0
 # For djangorestframework (optionals)
-pygments==2.19.2
+pygments==2.20.0
 django-filter==23.5
 # For exporting DataFrames to XLSX, Pandas needs Jinja2 (yes…)
 jinja2==3.1.6
