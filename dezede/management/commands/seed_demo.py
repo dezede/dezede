@@ -293,24 +293,24 @@ def load_demo_data(images: dict):
     el_symphonie = ElementDeProgramme.objects.create(owner=demo, evenement=concert, oeuvre=symphonie, position=1)
     el_sonate = ElementDeProgramme.objects.create(owner=demo, evenement=concert, oeuvre=sonate, position=2)
     el_air = ElementDeProgramme.objects.create(owner=demo, evenement=concert, oeuvre=bouquet, position=3)
-    ElementDeDistribution.objects.create(owner=demo, evenement=concert, element_de_programme=el_symphonie, ensemble=ensemble)
-    ElementDeDistribution.objects.create(owner=demo, evenement=concert, element_de_programme=el_sonate, individu=marechal, partie=violon)
-    ElementDeDistribution.objects.create(owner=demo, evenement=concert, element_de_programme=el_sonate, individu=lenoir, partie=clavecin)
-    ElementDeDistribution.objects.create(owner=demo, evenement=concert, element_de_programme=el_air, individu=vasseur, profession=chanteur)
+    ElementDeDistribution.objects.create(owner=demo, element_de_programme=el_symphonie, ensemble=ensemble)
+    ElementDeDistribution.objects.create(owner=demo, element_de_programme=el_sonate, individu=marechal, partie=violon)
+    ElementDeDistribution.objects.create(owner=demo, element_de_programme=el_sonate, individu=lenoir, partie=clavecin)
+    ElementDeDistribution.objects.create(owner=demo, element_de_programme=el_air, individu=vasseur, profession=chanteur)
 
     premiere = Evenement.objects.create(
         owner=demo, debut_date=date(1772, 6, 4), debut_heure=time(20, 0), debut_lieu=theatre,
         circonstance='Création', recette_generale=Decimal('2080.00'))
     el_bouquet = ElementDeProgramme.objects.create(owner=demo, evenement=premiere, oeuvre=bouquet, position=1)
-    ElementDeDistribution.objects.create(owner=demo, evenement=premiere, element_de_programme=el_bouquet, individu=vasseur, partie=flore)
-    ElementDeDistribution.objects.create(owner=demo, evenement=premiere, element_de_programme=el_bouquet, ensemble=ensemble)
+    ElementDeDistribution.objects.create(owner=demo, element_de_programme=el_bouquet, individu=vasseur, partie=flore)
+    ElementDeDistribution.objects.create(owner=demo, element_de_programme=el_bouquet, ensemble=ensemble)
 
     soiree = Evenement.objects.create(
         owner=demo, debut_date=date(1773, 1, 12), debut_heure=time(20, 30), debut_lieu=saint_aubin,
         circonstance='Soirée privée', programme_incomplet=True)
     el_airs = ElementDeProgramme.objects.create(
         owner=demo, evenement=soiree, autre='Airs de divers auteurs', position=1)
-    ElementDeDistribution.objects.create(owner=demo, evenement=soiree, element_de_programme=el_airs, individu=lenoir, profession=claveciniste)
+    ElementDeDistribution.objects.create(owner=demo, element_de_programme=el_airs, individu=lenoir, profession=claveciniste)
 
     Evenement.objects.create(
         owner=demo, debut_date=date(1773, 2, 14), debut_lieu=theatre, relache=True, circonstance='Carême')
