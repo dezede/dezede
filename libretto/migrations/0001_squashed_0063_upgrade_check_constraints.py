@@ -36,6 +36,10 @@ class Migration(migrations.Migration):
         ('wagtailsearch', '0009_remove_ngram_autocomplete'),
     ]
 
+    # The ``*_path_*`` indexes below are numeric[] expression indexes, which
+    # cannot be built with django-tree >= 1.0 (bytea paths). They are only kept
+    # in the migration state, so that 0065 can drop them (``DROP INDEX IF
+    # EXISTS``) and create the bytea index.
     operations = [
         migrations.CreateModel(
             name='Caracteristique',
@@ -156,6 +160,22 @@ class Migration(migrations.Migration):
                 'verbose_name': 'status',
                 'verbose_name_plural': 'statuses',
             },
+        ),
+        # Creates the default Etat now with plain SQL, so that adding the `etat`
+        # fields below does not save it through the model (which would update
+        # the search index, whose text search configuration does not exist yet
+        # when this migration runs on an empty database).
+        migrations.RunSQL(
+            """
+            INSERT INTO libretto_etat (slug, nom, nom_pluriel, message, public)
+            VALUES (
+                'nouveau', 'nouveau', 'nouveaux',
+                '<p>Cette donnée a été créée récemment et nécessite plusieurs relectures.  À lire avec précaution.</p>',
+                true
+            )
+            ON CONFLICT DO NOTHING
+            """,
+            reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.CreateModel(
             name='Evenement',
@@ -2712,62 +2732,62 @@ class Migration(migrations.Migration):
             name='oeuvre',
             options={'ordering': ['path'], 'permissions': (('can_change_status', 'Peut changer l’état'),), 'verbose_name': 'œuvre', 'verbose_name_plural': 'œuvres'},
         ),
-        migrations.AddIndex(
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='lieu',
             index=models.Index(django.db.models.expressions.RawSQL('path[:array_length(path, 1) - 1]', ()), name='lieu_path_parent_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='lieu',
             index=models.Index(django.db.models.expressions.F('path__level'), name='lieu_path_level_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='lieu',
             index=models.Index(django.db.models.expressions.F('path__0_1'), name='lieu_path_slice_1_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='lieu',
             index=models.Index(django.db.models.expressions.F('path__0_2'), name='lieu_path_slice_2_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='lieu',
             index=models.Index(django.db.models.expressions.F('path__0_3'), name='lieu_path_slice_3_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='lieu',
             index=models.Index(django.db.models.expressions.F('path__0_4'), name='lieu_path_slice_4_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='lieu',
             index=models.Index(django.db.models.expressions.F('path__0_5'), name='lieu_path_slice_5_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='oeuvre',
             index=models.Index(django.db.models.expressions.RawSQL('path[:array_length(path, 1) - 1]', ()), name='oeuvre_path_parent_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='oeuvre',
             index=models.Index(django.db.models.expressions.F('path__level'), name='oeuvre_path_level_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='oeuvre',
             index=models.Index(django.db.models.expressions.F('path__0_1'), name='oeuvre_path_slice_1_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='oeuvre',
             index=models.Index(django.db.models.expressions.F('path__0_2'), name='oeuvre_path_slice_2_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='oeuvre',
             index=models.Index(django.db.models.expressions.F('path__0_3'), name='oeuvre_path_slice_3_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='oeuvre',
             index=models.Index(django.db.models.expressions.F('path__0_4'), name='oeuvre_path_slice_4_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='oeuvre',
             index=models.Index(django.db.models.expressions.F('path__0_5'), name='oeuvre_path_slice_5_index'),
-        ),
+        )]),
         migrations.AlterModelOptions(
             name='typedeparentedindividus',
             options={'ordering': ['classement'], 'verbose_name': 'type de parenté d’individus', 'verbose_name_plural': 'types de parenté d’individus'},

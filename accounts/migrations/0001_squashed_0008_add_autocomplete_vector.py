@@ -27,6 +27,10 @@ class Migration(migrations.Migration):
         ('tree', '0001_initial'),
     ]
 
+    # The ``user_path_*`` indexes below are numeric[] expression indexes, which
+    # cannot be built with django-tree >= 1.0 (bytea paths). They are only kept
+    # in the migration state, so that 0010 can drop them (``DROP INDEX IF
+    # EXISTS``) and create the bytea index.
     operations = [
         migrations.CreateModel(
             name='HierarchicUser',
@@ -191,34 +195,34 @@ class Migration(migrations.Migration):
             name='content_type',
             field=models.ForeignKey(blank=True, limit_choices_to={'model__in': ('individu', 'profession', 'source', 'evenement', 'ensemble', 'partie', 'lieu', 'oeuvre')}, null=True, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype', verbose_name='type d’autorité associée'),
         ),
-        migrations.AddIndex(
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='hierarchicuser',
             index=models.Index(django.db.models.expressions.RawSQL('path[:array_length(path, 1) - 1]', ()), name='user_path_parent_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='hierarchicuser',
             index=models.Index(django.db.models.expressions.F('path__level'), name='user_path_level_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='hierarchicuser',
             index=models.Index(django.db.models.expressions.F('path__0_1'), name='user_path_slice_1_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='hierarchicuser',
             index=models.Index(django.db.models.expressions.F('path__0_2'), name='user_path_slice_2_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='hierarchicuser',
             index=models.Index(django.db.models.expressions.F('path__0_3'), name='user_path_slice_3_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='hierarchicuser',
             index=models.Index(django.db.models.expressions.F('path__0_4'), name='user_path_slice_4_index'),
-        ),
-        migrations.AddIndex(
+        )]),
+        migrations.SeparateDatabaseAndState(state_operations=[migrations.AddIndex(
             model_name='hierarchicuser',
             index=models.Index(django.db.models.expressions.F('path__0_5'), name='user_path_slice_5_index'),
-        ),
+        )]),
         migrations.AddField(
             model_name='hierarchicuser',
             name='search_vector',

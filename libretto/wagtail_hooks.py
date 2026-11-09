@@ -7,11 +7,35 @@ from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.chooser import SnippetChooserViewSet
 from wagtail.snippets.views.snippets import SnippetViewSet
 from wagtail.snippets.wagtail_hooks import SnippetsMenuItem
-from wagtail_linksnippet.richtext_utils import add_snippet_link_button
+from wagtail_linksnippet.richtext_utils import (
+    make_editor_js, register_model_feature_)
 
 from common.utils.text import capfirst
 
 from .models import Individu, Lieu, Oeuvre, Evenement, Partie, Ensemble, Source
+
+
+def add_snippet_link_button(chooser_viewset, feature_name=None, icon=None):
+    # Same as wagtail_linksnippet's, but without querying ContentType: this
+    # runs at import time, which fails on a database that is not migrated yet.
+    opts = chooser_viewset.model._meta.concrete_model._meta
+    feature_name = feature_name or opts.model_name
+    model_config = {
+        'feature_name': feature_name.lower(),
+        'view_name': f'{chooser_viewset.url_namespace}:choose',
+        'type': feature_name.upper(),
+        'icon': icon or chooser_viewset.icon or 'link-external',
+        'app_label': opts.app_label,
+        'model_name': opts.model_name,
+    }
+
+    @hooks.register('insert_editor_js')
+    def register_editor_js():
+        return make_editor_js(model_config)()
+
+    @hooks.register('register_rich_text_features')
+    def register_model_feature(features):
+        register_model_feature_(features, model_config)
 
 
 @hooks.register('register_icons')
