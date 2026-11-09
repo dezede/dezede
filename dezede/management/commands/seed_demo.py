@@ -20,6 +20,7 @@ from io import BytesIO
 from PIL import Image as PILImage, ImageDraw
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
+from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.management import BaseCommand, CommandError
 from django.db import transaction
@@ -432,12 +433,19 @@ def load_demo_data(images: dict):
     index = Page.get_first_root_node().add_child(instance=LetterIndex(
         owner=demo, title='Correspondance', slug='correspondance', live=True,
         first_published_at=now, last_published_at=now))
+    # The hostname and port of the site build the links to its pages.
+    base_url = urllib.parse.urlsplit(settings.WAGTAILADMIN_BASE_URL)
+    site_values = dict(
+        hostname=base_url.hostname,
+        port=base_url.port or (443 if base_url.scheme == 'https' else 80),
+        site_name=settings.WAGTAIL_SITE_NAME, root_page=index)
     site = Site.objects.filter(is_default_site=True).first()
     if site is None:
-        Site.objects.create(hostname='localhost', root_page=index, is_default_site=True)
+        Site.objects.create(is_default_site=True, **site_values)
     else:
         welcome = site.root_page
-        site.root_page = index
+        for name, value in site_values.items():
+            setattr(site, name, value)
         site.save()
         if welcome.specific_class is Page and not welcome.get_children().exists():
             welcome.delete()
