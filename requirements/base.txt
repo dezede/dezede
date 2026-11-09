@@ -19,7 +19,7 @@ django-ajax-selects==3.0.3
 django-image-cropping==1.7.0
 
 # User authentication
-django-allauth==65.14.1
+django-allauth==0.52.0
 
 # Search engine
 modelsearch==1.2.2

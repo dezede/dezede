@@ -120,7 +120,6 @@ MIDDLEWARE = [
     'dezede.middlewares.MaxFieldsMiddleware',
     'dezede.middlewares.CountryBlockMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
 ]
 
 TEMPLATES = TEMPLATES[1:]  # We have Jinja2, but we don’t want to use it for frontend templates.
