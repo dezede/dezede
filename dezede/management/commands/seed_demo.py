@@ -128,7 +128,7 @@ def delete_demo_records():
         return
     # The letters first: they refer to people, places and images.
     for index in LetterIndex.objects.filter(owner=demo):
-        index.delete()  # Also deletes the corpuses and letters below it.
+        index.delete()  # Also deletes the corpuses, the letters and the site rooted here.
     LevelSource.objects.filter(source__owner=demo).delete()
     WagtailImage.objects.filter(uploaded_by_user=demo).delete()
     # Files that the database does not delete with their records.
@@ -426,12 +426,21 @@ def load_demo_data(images: dict):
         slide.image.save(*image_file(images, key), save=False)
         slide.save()
 
-    # Correspondence, in the Wagtail page tree under the home page.
-    home = Site.objects.get(is_default_site=True).root_page
+    # Correspondence. The index of letters is the root page of the site: it
+    # replaces Wagtail's default welcome page, which the frontend cannot show.
     now = timezone.now()
-    index = home.add_child(instance=LetterIndex(
+    index = Page.get_first_root_node().add_child(instance=LetterIndex(
         owner=demo, title='Correspondance', slug='correspondance', live=True,
         first_published_at=now, last_published_at=now))
+    site = Site.objects.filter(is_default_site=True).first()
+    if site is None:
+        Site.objects.create(hostname='localhost', root_page=index, is_default_site=True)
+    else:
+        welcome = site.root_page
+        site.root_page = index
+        site.save()
+        if welcome.specific_class is Page and not welcome.get_children().exists():
+            welcome.delete()
     corpus = index.add_child(instance=LetterCorpus(
         owner=demo, title='Lettres de Lambert Delorme', slug='lambert-delorme', person=delorme,
         live=True, first_published_at=now, last_published_at=now))
