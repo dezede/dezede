@@ -19,6 +19,7 @@ from io import BytesIO
 
 from PIL import Image as PILImage, ImageDraw
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site as DjangoSite
 from django.contrib.gis.geos import Point
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -435,6 +436,9 @@ def load_demo_data(images: dict):
         first_published_at=now, last_published_at=now))
     # The hostname and port of the site build the links to its pages.
     base_url = urllib.parse.urlsplit(settings.WAGTAILADMIN_BASE_URL)
+    # Django's own site (example.com by default) builds absolute URLs in emails.
+    DjangoSite.objects.filter(pk=settings.SITE_ID).update(
+        domain=base_url.netloc, name=settings.WAGTAIL_SITE_NAME)
     site_values = dict(
         hostname=base_url.hostname,
         port=base_url.port or (443 if base_url.scheme == 'https' else 80),

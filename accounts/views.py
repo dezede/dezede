@@ -1,5 +1,6 @@
 import datetime
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
 from django.db import connection
@@ -21,7 +22,7 @@ class GrantToAdmin(DetailView):
         user.is_active = True
         user.is_staff = True
         user.save()
-        site_url = 'https://' + Site.objects.get_current(self.request).domain
+        site_url = settings.WAGTAILADMIN_BASE_URL.split('://')[0] + '://' + Site.objects.get_current(self.request).domain
         email_content = render_to_string(
             'accounts/granted_to_admin_email.txt',
             {'user': user, 'site_url': site_url})
