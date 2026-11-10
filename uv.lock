@@ -472,7 +472,7 @@ requires-dist = [
     { name = "django-super-inlines", specifier = "==0.2.2" },
     { name = "django-tablature", specifier = "==0.2.3" },
     { name = "django-tinymce", specifier = "==4.1.0" },
-    { name = "django-tree", specifier = "==1.0.1" },
+    { name = "django-tree", specifier = "==1.1.0" },
     { name = "django-viewsets", specifier = "==0.3.0" },
     { name = "djangorestframework", specifier = "==3.17.2" },
     { name = "easy-thumbnails", specifier = "==2.10.1" },
@@ -806,14 +806,14 @@ wheels = [
 
 [[package]]
 name = "django-tree"
-version = "1.0.1"
+version = "1.1.0"
 source = { registry = "https://git.noripyt.com/api/v4/groups/55/-/packages/pypi/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/52/d7/bda1b6a9e8f52361cf587507880264962c3843123a15688ec3a635454c3d/django_tree-1.0.1.tar.gz", hash = "sha256:c42f70e279a7bee113ac60ed5f7fa26710e2b3685a6c23d20c70b4165e74d0da", size = 40896, upload-time = "2026-06-30T22:50:50.215Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4a/e2/2938766d97fbaeb7d032ff16b71175a66cd80a474f14780a342a8c0389f8/django_tree-1.1.0.tar.gz", hash = "sha256:6c088eb08ace22945b060cb6d3f87c079f9947e2e8c07111af6d5611f5fd71ef", size = 45822, upload-time = "2026-11-10T11:10:46.651Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b3/82/86d325473ba3514832be26e1dc11650e0cf8c5b3807b7103b51f7be1b84a/django_tree-1.0.1-py3-none-any.whl", hash = "sha256:3e59aae2ece99303cbf8246f81655cb9694ede040c603568719891cfa3bd3199", size = 45179, upload-time = "2026-06-30T22:50:48.783Z" },
+    { url = "https://files.pythonhosted.org/packages/1e/31/e8f68c34552fda3d7a86ec3aa14af57ad4132d514c0c44d59dadd2a51a16/django_tree-1.1.0-py3-none-any.whl", hash = "sha256:4c1baa8a8b9f4d6c9ddb298786196abbb834c01735552ce3aa1ced8c6a94dac0", size = 50004, upload-time = "2026-11-10T11:10:45.319Z" },
 ]
 
 [[package]]
