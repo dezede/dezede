@@ -46,7 +46,7 @@ rq==2.6
 
 # Data parsing/serialization
 beautifulsoup4==4.12.3
-lxml==6.0.2
+lxml==6.1.0
 defusedxml==0.7.1
 pandas==2.3.3
 numpy==1.26.4
