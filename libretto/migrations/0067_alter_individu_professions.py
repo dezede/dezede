@@ -24,7 +24,7 @@ import modelcluster.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0065_django_tree_binary_path'),
+        ('libretto', '0066_update_tree_trigger'),
     ]
 
     operations = [

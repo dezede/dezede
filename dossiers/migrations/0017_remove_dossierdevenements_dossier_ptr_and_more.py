@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('libretto', '0064_remove_caracteristiquedeprogramme_caracdeprogramme_search_and_more'),
-        ('dossiers', '0014_dossierdesources'),
+        ('dossiers', '0016_dossierdesources'),
         # The other 0014 leaf (django-tree 1.0 binary paths, merged from
         # master): depending on it linearises the migration graph.
         ('dossiers', '0014_django_tree_binary_path'),

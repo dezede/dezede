@@ -16,6 +16,7 @@ SITE_URL = '/'
 ADMINS = (
     ('Bertrand Bordage', 'bordage.bertrand@gmail.com'),
     ('Cécile Hauchemaille', 'cecile@noripyt.com'),
+    ('Auto-maintenance', 'maintenance@noripyt.com'),
 )
 MANAGERS = ADMINS
 

@@ -1,6 +1,5 @@
 from typing import List
 from django.contrib.admin.utils import quote
-from django.db import ProgrammingError
 from django.forms import NumberInput
 from django.http import Http404
 from django.templatetags.static import static
@@ -20,8 +19,8 @@ from wagtail.snippets.views.snippets import (
     CreateView, EditView, DeleteView, CopyView, SnippetViewSet,
     SnippetViewSetGroup,
 )
-from wagtail_linksnippet.richtext_utils import add_snippet_link_button
-from warnings import warn
+from wagtail_linksnippet.richtext_utils import (
+    make_editor_js, register_model_feature_)
 
 from common.utils.text import capfirst
 from dezede.views import CommonIndexView
@@ -70,6 +69,29 @@ def autocomplete_admin_js():
         '<script src="{}"></script>',
         static('libretto/js/admin_autocomplete.js'),
     )
+
+
+def add_snippet_link_button(chooser_viewset, feature_name=None, icon=None):
+    # Same as wagtail_linksnippet's, but without querying ContentType: this
+    # runs at import time, which fails on a database that is not migrated yet.
+    opts = chooser_viewset.model._meta.concrete_model._meta
+    feature_name = feature_name or opts.model_name
+    model_config = {
+        'feature_name': feature_name.lower(),
+        'view_name': f'{chooser_viewset.url_namespace}:choose',
+        'type': feature_name.upper(),
+        'icon': icon or chooser_viewset.icon or 'link-external',
+        'app_label': opts.app_label,
+        'model_name': opts.model_name,
+    }
+
+    @hooks.register('insert_editor_js')
+    def register_editor_js():
+        return make_editor_js(model_config)()
+
+    @hooks.register('register_rich_text_features')
+    def register_model_feature(features):
+        register_model_feature_(features, model_config)
 
 
 @hooks.register('register_icons')
@@ -245,14 +267,7 @@ class CommonViewSet(SnippetViewSet):
     @property
     def chooser_viewset(self):
         viewset = super().chooser_viewset
-        try:
-            add_snippet_link_button(viewset, feature_name=f'{self.model._meta.model_name}-link')
-        except ProgrammingError:
-            warn(
-                f'Could not initialize snippet link button for {self.model}, '
-                'likely because the database is being created. '
-                'Restart the server to register this model properly in Wagtail.'
-            )
+        add_snippet_link_button(viewset, feature_name=f'{self.model._meta.model_name}-link')
         return viewset
 
 

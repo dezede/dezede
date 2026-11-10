@@ -9,6 +9,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('libretto', '0064_remove_caracteristiquedeprogramme_caracdeprogramme_search_and_more'),
         ('dossiers', '0013_remove_categoriededossiers_categoriedossiers_search_and_more'),
+        ('dossiers', '0015_update_tree_trigger'),
     ]
 
     operations = [

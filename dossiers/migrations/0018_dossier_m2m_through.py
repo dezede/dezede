@@ -37,9 +37,9 @@ import modelcluster.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0070_alter_sourceensemble_options_and_more'),
+        ('libretto', '0071_alter_sourceensemble_options_and_more'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('dossiers', '0015_remove_dossierdevenements_dossier_ptr_and_more'),
+        ('dossiers', '0017_remove_dossierdevenements_dossier_ptr_and_more'),
     ]
 
     state_operations = [

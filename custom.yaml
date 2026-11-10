@@ -118,10 +118,6 @@ services:
       DJANGO_PUBLIC_LIMIT_REQ_RATE: 1r/s
       DJANGO_PUBLIC_LIMIT_REQ_BURST: 3
       DJANGO_PUBLIC_LIMIT_REQ_DELAY: 3
-      REACT_LIMIT_CONN: 20
-      REACT_LIMIT_REQ_RATE: 10r/s
-      REACT_LIMIT_REQ_BURST: 50
-      REACT_LIMIT_REQ_DELAY: 30
       STATIC_LIMIT_CONN: 100
       STATIC_LIMIT_REQ_RATE: 100r/s
       STATIC_LIMIT_REQ_BURST: 500
@@ -151,6 +147,9 @@ services:
       # nginx's default server drops the request (444 -> proxy EOF -> 502).
       TARGET_HOST: $DOMAIN
       COOKIE_DOMAIN: $DOMAIN
+      # Key: one line of 64 hex chars in .env.secrets.anubis (copied from the
+      # all-zero .env.secrets.anubis.example for previews). For real deployments
+      # generate one: openssl rand -hex 32 > .env.secrets.anubis
       ED25519_PRIVATE_KEY_HEX_FILE: /run/secrets/.env.secrets.anubis
     secrets:
       - .env.secrets.anubis

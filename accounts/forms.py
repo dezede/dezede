@@ -3,6 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, Reset, Fieldset, HTML
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.conf import settings
 from django.contrib.sites.models import Site
 from django.forms import (
     Form, CharField, ModelMultipleChoiceField, BooleanField, DateTimeField)
@@ -92,7 +93,7 @@ class HierarchicUserSignupForm(Form):
         super(HierarchicUserSignupForm, self).__init__(*args, **kwargs)
 
     def signup(self, request, user):
-        site_url = 'https://' + Site.objects.get_current(request).domain
+        site_url = settings.WAGTAILADMIN_BASE_URL.split('://')[0] + '://' + Site.objects.get_current(request).domain
         email_content = render_to_string(
             'accounts/grant_to_admin_demand_email.txt',
             {'user': user, 'site_url': site_url, 'mentor': user.mentor})
