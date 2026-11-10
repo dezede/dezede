@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('libretto', '0070_caracteristiquedeprogrammeevenement_and_more'),
+        ('libretto', '0071_caracteristiquedeprogrammeevenement_and_more'),
     ]
 
     operations = [

@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('libretto', '0069_partieprofession_parentedegenredoeuvre'),
+        ('libretto', '0070_partieprofession_parentedegenredoeuvre'),
     ]
 
     operations = [

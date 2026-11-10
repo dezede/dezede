@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('contenttypes', '0002_remove_content_type_name'),
-        ('dezede', '0012_indexentryextension_visibility'),
+        ('dezede', '0013_restore_diapositive_foreign_keys'),
     ]
 
     operations = [

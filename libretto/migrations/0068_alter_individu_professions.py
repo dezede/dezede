@@ -24,7 +24,7 @@ import modelcluster.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('libretto', '0066_update_tree_trigger'),
+        ('libretto', '0067_restore_missing_foreign_keys'),
     ]
 
     operations = [
