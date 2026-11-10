@@ -19,6 +19,23 @@ import tree.fields
 import tree.operations
 
 
+def add_missing_caracteristiques_foreign_keys(apps, schema_editor):
+    # Squashing put the M2M retarget and the DeleteModel of the old table in one
+    # migration, so Django discarded the queued foreign key to the characteristic.
+    # The migrations it replaces kept it.
+    for model_name in ('Evenement', 'ElementDeProgramme'):
+        through = apps.get_model('libretto', model_name)._meta.get_field(
+            'caracteristiques').remote_field.through
+        field = through._meta.get_field('caracteristiquedeprogramme')
+        with schema_editor.connection.cursor() as cursor:
+            constraints = schema_editor.connection.introspection.get_constraints(
+                cursor, through._meta.db_table)
+        if not any(c['foreign_key'] and c['columns'] == [field.column]
+                   for c in constraints.values()):
+            schema_editor.execute(schema_editor._create_fk_sql(
+                through, field, '_fk_%(to_table)s_%(to_column)s'))
+
+
 class Migration(migrations.Migration):
 
     replaces = [('libretto', '0001_initial'), ('libretto', '0002_create_typedensemble'), ('libretto', '0003_migrate_typedensemble'), ('libretto', '0004_auto_20150422_1719'), ('libretto', '0005_auto_20150423_0910'), ('libretto', '0006_auto_20150423_1841'), ('libretto', '0007_lieu_is_institution'), ('libretto', '0008_migrate_institutions'), ('libretto', '0009_auto_20150423_2042'), ('libretto', '0010_removes_useless_db_index'), ('libretto', '0011_oeuvre_arrangement'), ('libretto', '0012_migrate_arrangements'), ('libretto', '0013_auto_20150425_1207'), ('libretto', '0014_removes_polymorphic_caracteristics'), ('libretto', '0015_removes_3_mptt_usages'), ('libretto', '0016_typedeparentedindividus2_typedeparentedoeuvres2'), ('libretto', '0017_migrate_types_de_parente'), ('libretto', '0018_move_types_de_parente'), ('libretto', '0019_pupitre_facultatif'), ('libretto', '0020_removes_4_unused_models'), ('libretto', '0021_add_partie_type_oeuvre'), ('libretto', '0022_migrate_parties'), ('libretto', '0023_auto_20150430_1707'), ('libretto', '0024_auto_20150512_2212'), ('libretto', '0025_migrate_programme_distribution'), ('libretto', '0026_auto_20150512_2355'), ('libretto', '0027_auto_20150519_0413'), ('libretto', '0028_auto_20150526_0012'), ('libretto', '0029_add_auteur_ensemble_and_constraints'), ('libretto', '0030_auto_20150626_1634'), ('libretto', '0031_add_distribution_constraint'), ('libretto', '0032_auto_20160210_0508'), ('libretto', '0033_auto_20160624_2318'), ('libretto', '0034_auto_20160704_1122'), ('libretto', '0035_auto_20170109_1632'), ('libretto', '0036_auto_20170206_1652'), ('libretto', '0037_profession_nom_feminin_pluriel'), ('libretto', '0038_mptt_to_tree'), ('libretto', '0039_auto_20180807_1156'), ('libretto', '0040_auto_20190830_1727'), ('libretto', '0041_migrate_files'), ('libretto', '0042_auto_20190830_2210'), ('libretto', '0043_auto_20190905_1126'), ('libretto', '0044_auto_20190917_1200'), ('libretto', '0045_auto_20191126_1047'), ('libretto', '0046_auto_20191220_1022'), ('libretto', '0047_source_telechargement_autorise'), ('libretto', '0048_auto_20200302_1917'), ('libretto', '0049_auto_20200311_2001'), ('libretto', '0050_auto_20200511_1301'), ('libretto', '0051_auto_20200624_1605'), ('libretto', '0052_auto_20210210_1420'), ('libretto', '0053_alter_membre_instrument'), ('libretto', '0054_migrate_tree'), ('libretto', '0055_auto_20230706_2032'), ('libretto', '0056_add_search_vectors'), ('libretto', '0057_alter_oeuvre_sujet'), ('libretto', '0058_add_autocomplete_vector'), ('libretto', '0059_oeuvre_dedicataire'), ('libretto', '0060_oeuvre_ambitus'), ('libretto', '0061_change_dedicataire_into_dedicataires'), ('libretto', '0062_fix_numbercharfield_max_length'), ('libretto', '0063_upgrade_check_constraints')]
@@ -3307,4 +3324,5 @@ class Migration(migrations.Migration):
             model_name='elementdedistribution',
             constraint=models.CheckConstraint(check=models.Q(('partie__isnull', False), ('profession__isnull', False), _negated=True), name='distribution_has_not_partie_and_profession'),
         ),
+        migrations.RunPython(add_missing_caracteristiques_foreign_keys, migrations.RunPython.noop),
     ]
