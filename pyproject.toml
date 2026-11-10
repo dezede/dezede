@@ -8,7 +8,7 @@ dependencies = [
     "wagtail-linksnippet @ https://github.com/BertrandBordage/wagtail_linksnippet/archive/refs/heads/main.zip",
     "wagtail-font-awesome-svg==2.0",
     "noridjango[compressor]==4.2.12",
-    "django-tree==1.0.1",
+    "django-tree==1.1.0",
     "django-autoslug==1.9.9",
     "django-grappelli==3.0.9",
     "django-super-inlines==0.2.2",
