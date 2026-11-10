@@ -1,0 +1,66 @@
+[project]
+name = "dezede"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = [
+    "wagtail==7.3.4",
+    "wagtail-notes==1.0.3",
+    "wagtail-linksnippet @ https://github.com/BertrandBordage/wagtail_linksnippet/archive/refs/heads/main.zip",
+    "wagtail-font-awesome-svg==2.0",
+    "noridjango[compressor]==4.2.12",
+    "django-tree==1.0.1",
+    "django-autoslug==1.9.9",
+    "django-grappelli==3.0.9",
+    "django-super-inlines==0.2.2",
+    "django-tinymce==4.1.0",
+    "django-crispy-forms==1.14.0",
+    "django-ajax-selects==3.0.3",
+    "django-image-cropping==1.7.0",
+    "django-allauth==0.52.0",
+    "modelsearch==1.2.2",
+    "django-redis==6.0.0",
+    "redis<8",
+    "djangorestframework==3.17.2",
+    "django-tablature==0.2.3",
+    "django-reversion==6.0.0",
+    "django-el-pagination==4.1.2",
+    "easy-thumbnails==2.10.1",
+    "django-viewsets==0.3.0",
+    "tqdm==4.67.1",
+    "awesome-slugify==1.6.5",
+    "django-rq==3.1.0",
+    "rq==2.6",
+    "beautifulsoup4==4.12.3",
+    "lxml==6.1.0",
+    "defusedxml==0.7.1",
+    "pandas==2.3.3",
+    "numpy==1.26.4",
+    "xlsxwriter==3.2.9",
+    "bleach[css]==6.4.0",
+    "pillow==13.0.0",
+    "pygments==2.20.0",
+    "django-filter==23.5",
+    "jinja2==3.1.6",
+]
+
+[dependency-groups]
+dev = [
+    "noridjango[dev]==4.2.12",
+    "django-extensions==4.1",
+    "selenium==3.141.0",
+    "ipython",
+    "pyyaml",
+]
+prod = [
+    "gunicorn==23.0.0",
+]
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+name = "noripyt"
+url = "https://__token__:glpat-PxTjSDKH4xLxZ3ZXe6E4@git.noripyt.com/api/v4/groups/55/-/packages/pypi/simple"
+
+[tool.uv.sources]
+noridjango = { index = "noripyt" }
