@@ -3,4 +3,5 @@ from .api import *
 from .dedicaces import *
 from .models import *
 from .ownership import *
+from .revisions import *
 from .visibilite import *

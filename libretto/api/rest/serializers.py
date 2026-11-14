@@ -137,7 +137,7 @@ class SourceSerializer(CommonSerializer):
 
     class Meta:
         model = Source
-        exclude = ['notes_privees']
+        exclude = ['notes_privees', 'latest_revision']
 
     def get_children(self, obj):
         return list(
@@ -172,7 +172,7 @@ class ProfessionSerializer(CommonSerializer):
 
     class Meta:
         model = Profession
-        exclude = ['notes_privees']
+        exclude = ['notes_privees', 'latest_revision']
 
 
 class EvenementSerializer(CommonSerializer):
@@ -182,7 +182,7 @@ class EvenementSerializer(CommonSerializer):
 
     class Meta:
         model = Evenement
-        exclude = ['notes_privees']
+        exclude = ['notes_privees', 'latest_revision']
 
 
 class PartieSerializer(CommonSerializer):
@@ -191,4 +191,4 @@ class PartieSerializer(CommonSerializer):
 
     class Meta:
         model = Partie
-        exclude = ['notes_privees']
+        exclude = ['notes_privees', 'latest_revision']

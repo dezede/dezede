@@ -4,8 +4,10 @@ import re
 from math import ceil
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import NON_FIELD_ERRORS, FieldError, ValidationError
 from django.core.validators import MinLengthValidator, RegexValidator
+from django.db import DEFAULT_DB_ALIAS
 from django.db.models import (
     Model, CharField, BooleanField, ForeignKey, TextField,
     Manager, PROTECT, Q, SmallIntegerField, Count, DateField, TimeField,
@@ -22,6 +24,7 @@ from wagtail.admin.panels import (
     FieldPanel, ObjectList, TabbedInterface,
     extract_panel_definitions_from_model_class,
 )
+from wagtail.models import RevisionMixin
 from wagtail.search.index import AutocompleteField, Indexed, SearchField
 
 from dezede.utils import html_field_value_to_text
@@ -287,12 +290,32 @@ class PublishedModel(CommonModel):
         return public or request.user.pk == self.owner_id
 
 
-class AutoriteModel(PublishedModel):
+class KeptRevisions(GenericRelation):
+    def bulk_related_objects(self, objs, using=DEFAULT_DB_ALIAS):
+        return self.remote_field.model._base_manager.none()
+
+
+class AutoriteModel(RevisionMixin, PublishedModel):
     notes_publiques = HTMLField(blank=True, verbose_name=_('notes publiques'))
     notes_privees = HTMLField(blank=True, verbose_name=_('notes privées'))
 
+    # Wagtail's own relation cascades the deletion to the revisions. Django
+    # copies private fields from abstract bases, so setting it to None here
+    # does not remove it. This one has the same name and deletes nothing, so a
+    # deleted object can be restored from its last revision.
+    _revisions = KeptRevisions(
+        'wagtailcore.Revision', content_type_field='content_type',
+        object_id_field='object_id', for_concrete_model=False)
+
     class Meta(PublishedModel.Meta):
         abstract = True
+
+    def _update_from_revision(self, revision, changed=True):
+        # Wagtail calls save() here, which sends post_save a second time and
+        # reindexes the object for search. The first save already did it.
+        type(self)._base_manager.filter(pk=self.pk).update(
+            latest_revision=revision)
+        self.latest_revision = revision
 
     metadata_panels = [
         FieldPanel('notes_publiques'),

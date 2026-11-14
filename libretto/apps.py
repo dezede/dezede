@@ -7,6 +7,8 @@ class LibrettoConfig(AppConfig):
     def ready(self):
         # Register signals
         from . import signals
+        from .formsets import allow_deleted_children
+        allow_deleted_children()
 
         from wagtail.models import ReferenceIndex
         from .models import (

@@ -75,3 +75,9 @@ align-center, align-right, align-justify {
     display: block;
     margin-bottom: 1rem;
 }
+
+/* Wagtail gives the label column of the compare screen 15% of the table.
+   On a phone that breaks the label in the middle of a word. */
+.listing td.title:has(+ td.comparison) {
+  min-width: 9.5em;
+}
