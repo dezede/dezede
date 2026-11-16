@@ -2,8 +2,12 @@ from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import BaseCommand, CommandError
-from django.db import IntegrityError, transaction
-from wagtail.models import Revision, RevisionMixin
+from django.db import DatabaseError, connection, transaction
+from modelcluster.fields import ParentalKey
+from modelcluster.models import get_all_child_relations
+from wagtail.models import ModelLogEntry, Revision, RevisionMixin
+
+from libretto.reversion_import import doubtful_entry, doubtful_message
 
 
 class Command(BaseCommand):
@@ -65,6 +69,20 @@ class Command(BaseCommand):
             raise CommandError(
                 f'No revision found for {model._meta.label} {pk}.')
 
+        doubtful = doubtful_entry(source.pk)
+        if doubtful:
+            raise CommandError(
+                f'Revision {source.pk} is doubtful. '
+                + doubtful_message(doubtful) +
+                ' Choose another one with --revision.')
+
+        missing = self.missing_targets(
+            source.content_type.model_class(), source.content)
+        if missing:
+            raise CommandError(
+                'Cannot restore: linked objects are gone or missing (%s). '
+                'Choose an older revision with --revision.' % ', '.join(missing[:8])
+                + (' …' if len(missing) > 8 else ''))
         obj = self.build(source)
 
         self.stdout.write(
@@ -84,9 +102,11 @@ class Command(BaseCommand):
                 obj.save_revision(
                     user=user, previous_revision=source, log_action=True,
                     clean=False)
-        except IntegrityError as e:
-            raise CommandError(
-                f'Cannot restore: a linked object was probably deleted ({e}).')
+                # Foreign keys are checked at the end of the transaction,
+                # which would be outside this try.
+                connection.check_constraints()
+        except DatabaseError as e:
+            raise CommandError(f'Cannot restore: {e}')
         self.stdout.write(self.style.SUCCESS('Restored.'))
 
     def build(self, source):
@@ -95,16 +115,77 @@ class Command(BaseCommand):
             source.content)
         obj.pk = obj._meta.pk.to_python(source.object_id)
         obj.latest_revision = None
+        self.free_row_ids(obj)
         return obj
+
+    def missing_targets(self, model, content):
+        """
+        The linked objects that no longer exist. ``from_serializable_data``
+        would quietly empty those links, losing data.
+        """
+        wanted = {}
+        empty = []
+
+        def walk(model, row):
+            for field in model._meta.concrete_fields:
+                if (not field.many_to_one or field.primary_key
+                        or isinstance(field, ParentalKey)):
+                    continue
+                value = row.get(field.name)
+                if value is not None:
+                    wanted.setdefault(field.related_model, set()).add(value)
+                elif not field.null:
+                    # Old snapshots from before the field existed.
+                    empty.append(f'{model._meta.label}.{field.name} is empty')
+            for rel in get_all_child_relations(model):
+                for child in row.get(rel.get_accessor_name(), ()):
+                    walk(rel.related_model, child)
+        walk(model, content)
+        missing = sorted(set(empty))
+        for target, pks in wanted.items():
+            found = set(target._base_manager.filter(
+                pk__in=pks).values_list('pk', flat=True))
+            missing += [
+                f'{target._meta.label} {pk}' for pk in sorted(pks - found)]
+        return missing
+
+    def free_row_ids(self, obj):
+        """
+        A row id that exists is another parent's row now: the row would be
+        moved. It is saved as a new row instead.
+        """
+        rows = {}
+
+        def walk(instance):
+            for rel in get_all_child_relations(type(instance)):
+                for child in getattr(instance, rel.get_accessor_name()).all():
+                    if child.pk is not None:
+                        rows.setdefault(type(child), []).append(child)
+                    walk(child)
+        walk(obj)
+        for model, children in rows.items():
+            taken = set(model._base_manager.filter(
+                pk__in=[c.pk for c in children],
+            ).values_list('pk', flat=True))
+            for child in children:
+                if child.pk in taken:
+                    child.pk = None
 
     def list_deleted(self, model, revisions):
         existing = {str(pk) for pk in model._base_manager.values_list(
             'pk', flat=True)}
-        seen = set()
-        for revision in revisions.only('object_id', 'object_str', 'created_at'):
+        seen = {}
+        for revision in revisions.only(
+                'object_id', 'object_str', 'created_at'):
             if revision.object_id in existing or revision.object_id in seen:
                 continue
-            seen.add(revision.object_id)
+            seen[revision.object_id] = revision
+        doubtful = set(ModelLogEntry.objects.filter(
+            revision_id__in=[r.pk for r in seen.values()],
+            data__doubtful=True,
+        ).values_list('revision_id', flat=True))
+        for revision in seen.values():
+            mark = '\t(douteuse)' if revision.pk in doubtful else ''
             self.stdout.write(
                 f'{revision.object_id}\t{revision.created_at:%Y-%m-%d %H:%M}'
-                f'\t{revision.object_str}')
+                f'\t{revision.object_str}{mark}')

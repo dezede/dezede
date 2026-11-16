@@ -1,14 +1,17 @@
 from typing import List
+from django.contrib import messages
 from django.contrib.admin.utils import quote
 from django.forms import NumberInput
 from django.http import Http404
 from django.templatetags.static import static
 from django.urls import path, reverse
+from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django_filters import ChoiceFilter, RangeFilter
 from django_filters.filterset import filterset_factory
 from wagtail import hooks
+from wagtail.log_actions import LogFormatter
 from wagtail.admin.filters import SuffixedMultiWidget, WagtailFilterSet
 from wagtail.admin.ui.tables import BaseColumn, BooleanColumn, Column
 from wagtail.admin.widgets import Button
@@ -26,6 +29,11 @@ from common.utils.text import capfirst
 from dezede.views import CommonIndexView
 from libretto.autocomplete import autocomplete_charfield
 from libretto.models.base import CommonModel
+from libretto.reversion_import import (
+    ACTION_CREATE, ACTION_EDIT, ACTION_TODAY, doubtful_entry,
+    doubtful_message,
+    reason_label, readable_comment,
+)
 
 from .forms import (
     IndividuForm, OeuvreForm, SourceForm, PartieForm, SaisonForm, LieuForm,
@@ -203,6 +211,89 @@ class CommonCreateView(CreateView):
             instance.owner = self.request.user
         return instance
 
+class ReversionImportFormatter(LogFormatter):
+    """Reads everything from the log entry data: no query per History row."""
+    verb = ''
+
+    def format_message(self, log_entry):
+        data = log_entry.data
+        if data.get('snapshot_unreadable'):
+            note = ', version illisible'
+        elif data.get('doubtful'):
+            note = ', douteuse'
+        elif data.get('uncertain'):
+            note = ', incertaine'
+        else:
+            note = ''
+        return '%s (ancien historique%s)' % (self.verb, note)
+
+    def format_comment(self, log_entry):
+        data = log_entry.data
+        parts = [readable_comment(data.get('comment'))]
+        if not data.get('snapshot_unreadable'):
+            for word, key in (
+                    ('douteuse', 'doubtful_reasons'),
+                    ('incertaine', 'uncertain_reasons')):
+                reasons = sorted({reason_label(r) for r in data.get(key, ())})
+                if reasons:
+                    parts.append('%s : %s' % (word, ', '.join(reasons)))
+        return ' — '.join(filter(None, parts))
+
+
+class ReversionTodayFormatter(LogFormatter):
+    label = 'État au moment du passage à Wagtail'
+
+    def format_message(self, log_entry):
+        return self.label
+
+    def format_comment(self, log_entry):
+        return (
+            'Données d’aujourd’hui, qui ne figurent pas telles quelles dans '
+            'l’ancien historique.')
+
+
+@hooks.register('register_log_actions')
+def register_reversion_log_actions(actions):
+    actions.register_action(ACTION_TODAY)(ReversionTodayFormatter)
+    for action, verb in ((ACTION_EDIT, 'Modifié'), (ACTION_CREATE, 'Créé')):
+        actions.register_action(action)(type(
+            'ReversionImport' + verb, (ReversionImportFormatter,),
+            {'label': '%s (ancien historique)' % verb, 'verb': verb}))
+
+
+class RefuseDoubtfulRevisionMixin:
+    """
+    A revision imported from the old history may be incomplete. It can be
+    viewed and compared, but not restored: that would silently delete rows.
+    """
+    @cached_property
+    def doubtful(self):
+        return doubtful_entry(self.revision_id)
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        if self.doubtful:
+            # After Wagtail's own warning: on a phone the menu button hides
+            # the beginning of the first message.
+            messages.error(request, doubtful_message(self.doubtful))
+        return response
+
+    def post(self, request, *args, **kwargs):
+        if not self.doubtful:
+            return super().post(request, *args, **kwargs)
+        response = self.get(request, *args, **kwargs)
+        response.status_code = 403
+        return response
+
+    def _get_action_menu(self):
+        menu = super()._get_action_menu()
+        if self.doubtful:
+            # No "save" button on a version that cannot be restored.
+            menu.menu_items = []
+            menu.default_item = None
+        return menu
+
+
 class CommonViewSet(SnippetViewSet):
     index_view_class = CommonIndexView
     add_view_class = CommonCreateView
@@ -211,6 +302,13 @@ class CommonViewSet(SnippetViewSet):
     delete_view_class = CommonDeleteView
     list_display = ['owner']
     filterset_fields = ['owner']
+
+    @property
+    def revisions_revert_view_class(self):
+        return type(
+            '_DoubtfulSafeRevertView',
+            (RefuseDoubtfulRevisionMixin, super().revisions_revert_view_class),
+            {})
 
     @property
     def filterset_class(self):
