@@ -281,6 +281,88 @@ class WagtailRevisionsTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(evenement.programme.count(), 1)
 
+    # --- fields a revision does not have ---------------------------------
+
+    def revision_without(self, obj, *keys):
+        """A revision whose content lacks keys, as an older revision does."""
+        revision = obj.save_revision(clean=False)
+        for key in keys:
+            revision.content.pop(key)
+        revision.save()
+        return revision
+
+    def testAFieldAbsentFromTheContentKeepsTheLiveValue(self):
+        evenement = self.objets[Evenement]
+        revision = self.revision_without(evenement, 'circonstance')
+        Evenement.objects.filter(pk=evenement.pk).update(circonstance='today')
+        revision = Revision.objects.get(pk=revision.pk)  # no cached object
+        revision.content['recette_generale'] = None
+        revision.content['notes_publiques'] = 'old notes'
+        obj = revision.as_object()
+        self.assertEqual(obj.circonstance, 'today')
+        # A key that is there applies, even when it is None.
+        self.assertEqual(obj.notes_publiques, 'old notes')
+        self.assertIsNone(obj.recette_generale)
+
+    def testAChildRowMissingAKeyKeepsTheLiveChildValue(self):
+        evenement = self.objets[Evenement]
+        individu = Individu.objects.create(nom='Un', etat=self.etat)
+        line = ElementDeProgramme.objects.create(
+            evenement=evenement, oeuvre=self.objets[Oeuvre], position=5,
+            numerotation='B')
+        cast = ElementDeDistribution.objects.create(
+            element_de_programme=line, individu=individu)
+        revision = evenement.save_revision(clean=False)
+        row = revision.content['programme'][0]
+        row.pop('position')
+        row['numerotation'] = 'U'
+        row['distribution'][0].pop('individu')
+        revision.save()
+        obj = Evenement.objects.get(pk=evenement.pk).revisions.get(
+            pk=revision.pk).as_object()
+        line_now = obj.programme.get()
+        self.assertEqual(line_now.position, 5)
+        self.assertEqual(line_now.numerotation, 'U')
+        self.assertEqual(line_now.distribution.get().individu_id, individu.pk)
+        self.assertEqual(line_now.distribution.get().pk, cast.pk)
+
+    def testRevertingARevisionWithoutAFieldLeavesItAlone(self):
+        evenement = self.objets[Evenement]
+        revision = self.revision_without(evenement, 'circonstance')
+        Evenement.objects.filter(pk=evenement.pk).update(
+            circonstance='today', notes_publiques='avant')
+        revision.content['notes_publiques'] = 'old notes'
+        revision.save()
+        client = Client()
+        client.force_login(self.super)
+        url = reverse(
+            'wagtailsnippets_libretto_evenement:revisions_revert',
+            args=(evenement.pk, revision.pk))
+        response = client.get(url)
+        # The form shows today's value.
+        self.assertContains(response, 'today')
+        response = client.post(url, self._form_data(response))
+        self.assertEqual(response.status_code, 302)
+        evenement.refresh_from_db()
+        self.assertEqual(evenement.circonstance, 'today')
+        self.assertEqual(evenement.notes_publiques, 'old notes')
+
+    def testCompareShowsNoChangeForAFieldTheRevisionLacks(self):
+        evenement = self.objets[Evenement]
+        old = self.revision_without(evenement, 'circonstance')
+        Evenement.objects.filter(pk=evenement.pk).update(
+            circonstance='today', notes_publiques='<p>now</p>')
+        latest = Evenement.objects.get(pk=evenement.pk).save_revision(
+            clean=False)
+        client = Client()
+        client.force_login(self.super)
+        response = client.get(reverse(
+            'wagtailsnippets_libretto_evenement:revisions_compare',
+            args=(evenement.pk, old.pk, latest.pk)))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Notes publiques')
+        self.assertNotContains(response, 'Circonstance')
+
     def _restore_deleted(self, *args, **kwargs):
         out = StringIO()
         call_command('restore_deleted', *args, stdout=out, **kwargs)

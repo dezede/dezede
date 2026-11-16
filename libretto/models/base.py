@@ -24,6 +24,7 @@ from wagtail.admin.panels import (
     FieldPanel, ObjectList, TabbedInterface,
     extract_panel_definitions_from_model_class,
 )
+from modelcluster.models import get_all_child_relations
 from wagtail.models import RevisionMixin
 from wagtail.search.index import AutocompleteField, Indexed, SearchField
 
@@ -295,6 +296,33 @@ class KeptRevisions(GenericRelation):
         return self.remote_field.model._base_manager.none()
 
 
+def keep_absent_values(new, live, content):
+    """
+    Gives a field that ``content`` does not mention the value it has on the
+    live object. ``model_from_serializable_data`` only sets the keys it finds,
+    so without this a revision older than a field would reset that field to
+    its default. Keys that are present are not touched, even when None. A
+    field that is not serialized (such as a tree path) is left alone too.
+    """
+    for field in new._meta.concrete_fields:
+        if (field.primary_key or not field.serialize
+                or field.name == 'latest_revision'
+                or field.name in content):
+            continue
+        setattr(new, field.attname, getattr(live, field.attname))
+    for rel in get_all_child_relations(type(new)):
+        name = rel.get_accessor_name()
+        rows = {row['pk']: row for row in content.get(name, ())
+                if isinstance(row, dict) and row.get('pk') is not None}
+        if not rows:
+            continue
+        live_children = {c.pk: c for c in getattr(live, name).all()}
+        for child in getattr(new, name).all():
+            if child.pk in rows and child.pk in live_children:
+                keep_absent_values(
+                    child, live_children[child.pk], rows[child.pk])
+
+
 class AutoriteModel(RevisionMixin, PublishedModel):
     notes_publiques = HTMLField(blank=True, verbose_name=_('notes publiques'))
     notes_privees = HTMLField(blank=True, verbose_name=_('notes privées'))
@@ -309,6 +337,12 @@ class AutoriteModel(RevisionMixin, PublishedModel):
 
     class Meta(PublishedModel.Meta):
         abstract = True
+
+    def with_content_json(self, content):
+        # Wagtail's documented override point. See keep_absent_values.
+        obj = super().with_content_json(content)
+        keep_absent_values(obj, self, content)
+        return obj
 
     def _update_from_revision(self, revision, changed=True):
         # Wagtail calls save() here, which sends post_save a second time and
