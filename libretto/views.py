@@ -1,3 +1,4 @@
+from datetime import MAXYEAR, MINYEAR
 import re
 
 from django.apps import apps
@@ -146,11 +147,13 @@ class BaseEvenementListView(PublishedListView):
         qs = qs.filter(filters).distinct()
         try:
             start, end = int(data.get('dates_0')), int(data.get('dates_1'))
+            if not (MINYEAR <= start <= MAXYEAR and MINYEAR <= end <= MAXYEAR):
+                raise ValueError
             if data.get('par_saison', 'False') == 'True':
                 qs &= Saison.objects.between_years(start, end).evenements()
             else:
-                qs = qs.filter(debut_date__range=(f'{start}-1-1',
-                                                  f'{end}-12-31'))
+                qs = qs.filter(debut_date__range=(f'{start:04d}-01-01',
+                                                  f'{end:04d}-12-31'))
         except (TypeError, ValueError):
             pass
 
