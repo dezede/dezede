@@ -16,19 +16,19 @@
     "@mui/icons-material": "^7.3.1",
     "@mui/material": "^7.3.1",
     "@mui/material-nextjs": "^7.3.0",
-    "next": "16.0.8",
-    "react": "19.2.1",
-    "react-dom": "19.2.1",
-    "react-zoom-pan-pinch": "^3.7.0"
-  },
-  "devDependencies": {
     "@types/node": "^24.10.2",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
+    "next": "16.0.8",
+    "react": "19.2.1",
+    "react-dom": "19.2.1",
+    "react-zoom-pan-pinch": "^3.7.0",
+    "typescript": "^5"
+  },
+  "devDependencies": {
     "eslint": "^9",
     "eslint-config-next": "16.0.8",
-    "prettier": "^3.7.4",
-    "typescript": "^5"
+    "prettier": "^3.7.4"
   },
   "overrides": {
     "@types/react": "19.2.7",
