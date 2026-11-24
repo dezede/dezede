@@ -3,3 +3,10 @@ services:
     labels:
       - traefik.http.routers.$PROJECT-anubis.entrypoints=websecure
       - traefik.http.routers.$PROJECT-anubis.tls.certresolver=letsencrypt
+  django:
+    labels:
+      - ofelia.enabled=true
+      - ofelia.job-exec.$PROJECT-publish.schedule=0 0 * * * *
+      - ofelia.job-exec.$PROJECT-publish.command=norisk-run uiLUW_R7AtRabq60sOOlOsxG "./manage.py publish_scheduled_pages"
+      - ofelia.job-exec.$PROJECT-publish.user=django
+      - ofelia.job-exec.$PROJECT-publish.no-overlap=true

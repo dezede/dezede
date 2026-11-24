@@ -53,6 +53,7 @@ dev = [
 ]
 prod = [
     "gunicorn==23.0.0",
+    "norisk-run",
 ]
 
 [tool.uv]
@@ -62,5 +63,10 @@ package = false
 name = "noripyt"
 url = "https://__token__:glpat-PxTjSDKH4xLxZ3ZXe6E4@git.noripyt.com/api/v4/groups/55/-/packages/pypi/simple"
 
+[[tool.uv.index]]
+name = "noripyt-norisk-run"
+url = "https://__token__:glpat-PxTjSDKH4xLxZ3ZXe6E4@git.noripyt.com/api/v4/projects/22/packages/pypi/simple"
+
 [tool.uv.sources]
 noridjango = { index = "noripyt" }
+norisk-run = { index = "noripyt-norisk-run" }
