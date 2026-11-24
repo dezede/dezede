@@ -505,7 +505,7 @@ dev = [
 ]
 prod = [
     { name = "gunicorn", specifier = "==23.0.0" },
-    { name = "norisk-run", index = "https://git.noripyt.com/api/v4/projects/22/packages/pypi/simple" },
+    { name = "norisk-run" },
 ]
 
 [[package]]
@@ -1239,10 +1239,10 @@ dev = [
 [[package]]
 name = "norisk-run"
 version = "0.3.0"
-source = { registry = "https://git.noripyt.com/api/v4/projects/22/packages/pypi/simple" }
-sdist = { url = "https://git.noripyt.com/api/v4/projects/22/packages/pypi/files/8498285fb180fd05259a6c3132b3ec46fc41ab0f7ac8fc3663df725895df01ce/norisk_run-0.3.0.tar.gz", hash = "sha256:8498285fb180fd05259a6c3132b3ec46fc41ab0f7ac8fc3663df725895df01ce" }
+source = { registry = "https://git.noripyt.com/api/v4/groups/55/-/packages/pypi/simple" }
+sdist = { url = "https://git.noripyt.com/api/v4/groups/55/-/packages/pypi/files/8498285fb180fd05259a6c3132b3ec46fc41ab0f7ac8fc3663df725895df01ce/norisk_run-0.3.0.tar.gz", hash = "sha256:8498285fb180fd05259a6c3132b3ec46fc41ab0f7ac8fc3663df725895df01ce" }
 wheels = [
-    { url = "https://git.noripyt.com/api/v4/projects/22/packages/pypi/files/0feb6f27c9b65c4fe8745006db31bd5639b6068f30a530566de4a766806ad102/norisk_run-0.3.0-py3-none-any.whl", hash = "sha256:0feb6f27c9b65c4fe8745006db31bd5639b6068f30a530566de4a766806ad102" },
+    { url = "https://git.noripyt.com/api/v4/groups/55/-/packages/pypi/files/0feb6f27c9b65c4fe8745006db31bd5639b6068f30a530566de4a766806ad102/norisk_run-0.3.0-py3-none-any.whl", hash = "sha256:0feb6f27c9b65c4fe8745006db31bd5639b6068f30a530566de4a766806ad102" },
 ]
 
 [[package]]
