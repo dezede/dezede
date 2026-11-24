@@ -11,3 +11,8 @@ class EvenementListDatesTestCase(TestCase):
             response = self.client.get(
                 url, {'dates_0': dates[0], 'dates_1': dates[1]})
             self.assertEqual(response.status_code, 200, dates)
+
+    def test_short_years_by_season(self):
+        response = self.client.get(reverse('evenements'), {
+            'dates_0': 900, 'dates_1': 1000, 'par_saison': 'True'})
+        self.assertEqual(response.status_code, 200)

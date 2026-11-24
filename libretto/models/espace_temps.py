@@ -194,8 +194,8 @@ class Lieu(Indexed, TreeModelMixin, AutoriteModel, UniqueSlugModel):
 class SaisonQuerySet(CommonQuerySet):
     def between_years(self, year0, year1):
         return self.filter(
-            debut__range=(f'{year0}-1-1', f'{year1}-12-31'),
-            fin__range=(f'{year0}-1-1', f'{year1}-12-31'))
+            debut__range=(f'{year0:04d}-01-01', f'{year1:04d}-12-31'),
+            fin__range=(f'{year0:04d}-01-01', f'{year1:04d}-12-31'))
 
     def evenements(self):
         # FIXME: Implémenter ceci de manière plus performante.
