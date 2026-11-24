@@ -53,6 +53,7 @@ dev = [
 ]
 prod = [
     "gunicorn==23.0.0",
+    "norisk-run",
 ]
 
 [tool.uv]
