@@ -16,7 +16,7 @@ dependencies = [
     "django-crispy-forms==1.14.0",
     "django-ajax-selects==3.0.3",
     "django-image-cropping==1.7.0",
-    "django-allauth==0.52.0",
+    "django-allauth==65.14.1",
     "modelsearch==1.2.2",
     "django-redis==6.0.0",
     "redis<8",
